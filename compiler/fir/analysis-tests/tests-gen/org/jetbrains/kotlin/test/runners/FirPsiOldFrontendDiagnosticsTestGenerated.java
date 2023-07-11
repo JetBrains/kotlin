@@ -6265,6 +6265,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("delegatedConstructorArguments.kt")
+            public void testDelegatedConstructorArguments() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/delegatedConstructorArguments.kt");
+            }
+
+            @Test
             @TestMetadata("delegatedMemberProperyWriteInInit.kt")
             public void testDelegatedMemberProperyWriteInInit() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/delegatedMemberProperyWriteInInit.kt");

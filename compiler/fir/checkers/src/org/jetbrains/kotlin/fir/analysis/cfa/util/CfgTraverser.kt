@@ -15,7 +15,7 @@ fun <I : ControlFlowInfo<I, *, *>> ControlFlowGraph.collectDataForNode(
     direction: TraverseDirection,
     visitor: PathAwareControlFlowGraphVisitor<I>,
 ): Map<CFGNode<*>, PathAwareControlFlowInfo<I>> {
-    val nodeMap = HashMap<CFGNode<*>, PathAwareControlFlowInfo<I>>()
+    val nodeMap = LinkedHashMap<CFGNode<*>, PathAwareControlFlowInfo<I>>()
     var shouldContinue: Boolean
     do {
         shouldContinue = collectDataForNodeInternal(direction, visitor, nodeMap)

@@ -63,17 +63,16 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker() {
             if (node.fir.source == null) return
             if (variableSymbol.isLoopIterator) return
             val dataPerNode = data[node] ?: return
-            // TODO, KT-59832: merge values for labels, otherwise diagnostics are inconsistent
-            for (dataPerLabel in dataPerNode.values) {
-                val data = dataPerLabel[variableSymbol] ?: continue
 
+            val data = dataPerNode.values.mapNotNull { it[variableSymbol] }.reduceOrNull { acc, it -> acc.merge(it) }
+            if (data != null) {
                 variableSymbol.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
                 @OptIn(SymbolInternals::class)
                 val variable = variableSymbol.fir
                 val variableSource = variable.source
 
                 if (variableSource?.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION) {
-                    continue
+                    return
                 }
 
                 when {
@@ -83,18 +82,15 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker() {
                             node.fir.isCatchParameter == true -> {}
                             else -> {
                                 reporter.reportOn(variableSource, FirErrors.UNUSED_VARIABLE, context)
-                                break
                             }
                         }
                     }
                     data.isRedundantInit -> {
                         val source = variable.initializer?.source
                         reporter.reportOn(source, FirErrors.VARIABLE_INITIALIZER_IS_REDUNDANT, context)
-                        break
                     }
                     data == VariableStatus.ONLY_WRITTEN_NEVER_READ -> {
                         reporter.reportOn(variableSource, FirErrors.VARIABLE_NEVER_READ, context)
-                        break
                     }
                     else -> {
                     }

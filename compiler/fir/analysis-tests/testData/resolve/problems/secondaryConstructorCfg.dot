@@ -8,43 +8,43 @@ digraph secondaryConstructorCfg_kt {
         0 [label="Enter class B" style="filled" fillcolor=red];
         subgraph cluster_1 {
             color=blue
-            1 [label="Enter property" style="filled" fillcolor=red];
+            1 [label="Enter function <init>" style="filled" fillcolor=red];
             2 [label="Access variable R|<local>/p0|"];
-            3 [label="Exit property" style="filled" fillcolor=red];
-        }
-        subgraph cluster_2 {
-            color=blue
-            4 [label="Enter property" style="filled" fillcolor=red];
-            5 [label="Access variable R|<local>/p0|"];
-            6 [label="Access variable R|kotlin/String.length|"];
-            7 [label="Exit property" style="filled" fillcolor=red];
-        }
-        subgraph cluster_3 {
-            color=blue
-            8 [label="Enter init block" style="filled" fillcolor=red];
+            3 [label="Delegated constructor call: this<R|B|>(...)" style="filled" fillcolor=yellow];
+            subgraph cluster_2 {
+                color=blue
+                4 [label="Enter property" style="filled" fillcolor=red];
+                5 [label="Access variable R|<local>/p0|"];
+                6 [label="Exit property" style="filled" fillcolor=red];
+            }
+            subgraph cluster_3 {
+                color=blue
+                7 [label="Enter property" style="filled" fillcolor=red];
+                8 [label="Access variable R|<local>/p0|"];
+                9 [label="Access variable R|kotlin/String.length|"];
+                10 [label="Exit property" style="filled" fillcolor=red];
+            }
             subgraph cluster_4 {
                 color=blue
-                9 [label="Enter block"];
-                10 [label="Access variable R|<local>/p0|"];
-                11 [label="Access variable R|kotlin/String.length|"];
-                12 [label="Assignment: R|/B.p1|"];
-                13 [label="Const: String()"];
-                14 [label="Assignment: R|/B.p3|"];
-                15 [label="Exit block"];
+                11 [label="Enter init block" style="filled" fillcolor=red];
+                subgraph cluster_5 {
+                    color=blue
+                    12 [label="Enter block"];
+                    13 [label="Access variable R|<local>/p0|"];
+                    14 [label="Access variable R|kotlin/String.length|"];
+                    15 [label="Assignment: R|/B.p1|"];
+                    16 [label="Const: String()"];
+                    17 [label="Assignment: R|/B.p3|"];
+                    18 [label="Exit block"];
+                }
+                19 [label="Exit init block" style="filled" fillcolor=red];
             }
-            16 [label="Exit init block" style="filled" fillcolor=red];
-        }
-        subgraph cluster_5 {
-            color=blue
-            17 [label="Enter function <init>" style="filled" fillcolor=red];
-            18 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
-            19 [label="Exit function <init>" style="filled" fillcolor=red];
-        }
-        subgraph cluster_6 {
-            color=blue
-            20 [label="Enter function <init>" style="filled" fillcolor=red];
-            21 [label="Access variable R|<local>/p0|"];
-            22 [label="Delegated constructor call: this<R|B|>(...)" style="filled" fillcolor=yellow];
+            subgraph cluster_6 {
+                color=blue
+                20 [label="Enter function <init>" style="filled" fillcolor=red];
+                21 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
+                22 [label="Exit function <init>" style="filled" fillcolor=red];
+            }
             subgraph cluster_7 {
                 color=blue
                 23 [label="Enter block"];
@@ -56,31 +56,33 @@ digraph secondaryConstructorCfg_kt {
         }
         28 [label="Exit class B" style="filled" fillcolor=red];
     }
-    0 -> {1} [color=green];
+    0 -> {1 4} [color=green];
     0 -> {28} [style=dotted];
-    0 -> {1 4 8 17 20} [style=dashed];
+    0 -> {1 4 7 11 20} [style=dashed];
     1 -> {2};
     2 -> {3};
-    3 -> {4} [color=green];
+    3 -> {4} [color=green label="return@/B.B"];
+    3 -> {23} [color=red];
     4 -> {5};
     5 -> {6};
-    6 -> {7};
-    7 -> {8} [color=green];
+    6 -> {7} [color=green];
+    7 -> {8};
     8 -> {9};
     9 -> {10};
-    10 -> {11};
+    10 -> {11} [color=green];
     11 -> {12};
     12 -> {13};
     13 -> {14};
     14 -> {15};
     15 -> {16};
-    16 -> {17} [color=green];
+    16 -> {17};
     17 -> {18};
     18 -> {19};
-    19 -> {20 28} [color=green];
+    19 -> {20} [color=green];
     20 -> {21};
     21 -> {22};
-    22 -> {23};
+    22 -> {23} [color=green label="return@/B.B"];
+    22 -> {28} [color=green];
     23 -> {24};
     24 -> {25};
     25 -> {26};
