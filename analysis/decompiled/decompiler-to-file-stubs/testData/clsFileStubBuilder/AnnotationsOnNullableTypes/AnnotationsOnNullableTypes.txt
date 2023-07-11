@@ -7,6 +7,21 @@ PsiJetFileStubImpl[package=]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
     CLASS_BODY
+      PROPERTY[fqName=AnnotationsOnNullableTypes.lambdaType, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=lambdaType]
+        MODIFIER_LIST[public final]
+        TYPE_REFERENCE
+          MODIFIER_LIST[]
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=A]
+          NULLABLE_TYPE
+            FUNCTION_TYPE
+              VALUE_PARAMETER_LIST
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=C]
       PROPERTY[fqName=AnnotationsOnNullableTypes.lambdaParameter, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=lambdaParameter]
         MODIFIER_LIST[public final]
         TYPE_REFERENCE
@@ -26,6 +41,21 @@ PsiJetFileStubImpl[package=]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=C]
+      PROPERTY[fqName=AnnotationsOnNullableTypes.lambdaReturnValue, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=lambdaReturnValue]
+        MODIFIER_LIST[public final]
+        TYPE_REFERENCE
+          FUNCTION_TYPE
+            VALUE_PARAMETER_LIST
+            TYPE_REFERENCE
+              MODIFIER_LIST[]
+                ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
+                  CONSTRUCTOR_CALLEE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=A]
+              NULLABLE_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=C]
       PROPERTY[fqName=AnnotationsOnNullableTypes.lambdaReceiver, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=lambdaReceiver]
         MODIFIER_LIST[public final]
         TYPE_REFERENCE
@@ -45,36 +75,6 @@ PsiJetFileStubImpl[package=]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=C]
-      PROPERTY[fqName=AnnotationsOnNullableTypes.lambdaReturnValue, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=lambdaReturnValue]
-        MODIFIER_LIST[public final]
-        TYPE_REFERENCE
-          FUNCTION_TYPE
-            VALUE_PARAMETER_LIST
-            TYPE_REFERENCE
-              MODIFIER_LIST[]
-                ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
-                  CONSTRUCTOR_CALLEE
-                    TYPE_REFERENCE
-                      USER_TYPE
-                        REFERENCE_EXPRESSION[referencedName=A]
-              NULLABLE_TYPE
-                USER_TYPE
-                  REFERENCE_EXPRESSION[referencedName=C]
-      PROPERTY[fqName=AnnotationsOnNullableTypes.lambdaType, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=lambdaType]
-        MODIFIER_LIST[public final]
-        TYPE_REFERENCE
-          MODIFIER_LIST[]
-            ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
-              CONSTRUCTOR_CALLEE
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION[referencedName=A]
-          NULLABLE_TYPE
-            FUNCTION_TYPE
-              VALUE_PARAMETER_LIST
-              TYPE_REFERENCE
-                USER_TYPE
-                  REFERENCE_EXPRESSION[referencedName=C]
       PROPERTY[fqName=AnnotationsOnNullableTypes.lambdaTypeWithNullableReceiver, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=lambdaTypeWithNullableReceiver]
         MODIFIER_LIST[public final]
         TYPE_REFERENCE
@@ -94,6 +94,29 @@ PsiJetFileStubImpl[package=]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=C]
+      FUN[fqName=AnnotationsOnNullableTypes.receiverArgument, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=receiverArgument]
+        MODIFIER_LIST[public final]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=B]
+            TYPE_ARGUMENT_LIST
+              TYPE_PROJECTION[projectionKind=NONE]
+                TYPE_REFERENCE
+                  MODIFIER_LIST[]
+                    ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
+                      CONSTRUCTOR_CALLEE
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION[referencedName=A]
+                  NULLABLE_TYPE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=C]
+        VALUE_PARAMETER_LIST
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Unit]
       FUN[fqName=AnnotationsOnNullableTypes.parameter, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=parameter]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
@@ -137,6 +160,34 @@ PsiJetFileStubImpl[package=]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
+      FUN[fqName=AnnotationsOnNullableTypes.returnValue, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=returnValue]
+        MODIFIER_LIST[public final]
+        VALUE_PARAMETER_LIST
+        TYPE_REFERENCE
+          MODIFIER_LIST[]
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=A]
+          NULLABLE_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=C]
+      FUN[fqName=AnnotationsOnNullableTypes.returnTypeParameterValue, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=returnTypeParameterValue]
+        MODIFIER_LIST[public final]
+        TYPE_PARAMETER_LIST
+          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+        VALUE_PARAMETER_LIST
+        TYPE_REFERENCE
+          MODIFIER_LIST[]
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=A]
+          NULLABLE_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=T]
       FUN[fqName=AnnotationsOnNullableTypes.returnArgument, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=returnArgument]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
@@ -155,34 +206,6 @@ PsiJetFileStubImpl[package=]
                   NULLABLE_TYPE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=C]
-      FUN[fqName=AnnotationsOnNullableTypes.returnTypeParameterValue, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=returnTypeParameterValue]
-        MODIFIER_LIST[public final]
-        TYPE_PARAMETER_LIST
-          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
-        VALUE_PARAMETER_LIST
-        TYPE_REFERENCE
-          MODIFIER_LIST[]
-            ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
-              CONSTRUCTOR_CALLEE
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION[referencedName=A]
-          NULLABLE_TYPE
-            USER_TYPE
-              REFERENCE_EXPRESSION[referencedName=T]
-      FUN[fqName=AnnotationsOnNullableTypes.returnValue, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=returnValue]
-        MODIFIER_LIST[public final]
-        VALUE_PARAMETER_LIST
-        TYPE_REFERENCE
-          MODIFIER_LIST[]
-            ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
-              CONSTRUCTOR_CALLEE
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION[referencedName=A]
-          NULLABLE_TYPE
-            USER_TYPE
-              REFERENCE_EXPRESSION[referencedName=C]
       FUN[fqName=AnnotationsOnNullableTypes.functionWithAnnotatedReceiver, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=functionWithAnnotatedReceiver]
         MODIFIER_LIST[public final]
         TYPE_REFERENCE
@@ -196,29 +219,6 @@ PsiJetFileStubImpl[package=]
           NULLABLE_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=C]
-        VALUE_PARAMETER_LIST
-        TYPE_REFERENCE
-          USER_TYPE
-            USER_TYPE
-              REFERENCE_EXPRESSION[referencedName=kotlin]
-            REFERENCE_EXPRESSION[referencedName=Unit]
-      FUN[fqName=AnnotationsOnNullableTypes.receiverArgument, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=receiverArgument]
-        MODIFIER_LIST[public final]
-        TYPE_REFERENCE
-          USER_TYPE
-            REFERENCE_EXPRESSION[referencedName=B]
-            TYPE_ARGUMENT_LIST
-              TYPE_PROJECTION[projectionKind=NONE]
-                TYPE_REFERENCE
-                  MODIFIER_LIST[]
-                    ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
-                      CONSTRUCTOR_CALLEE
-                        TYPE_REFERENCE
-                          USER_TYPE
-                            REFERENCE_EXPRESSION[referencedName=A]
-                  NULLABLE_TYPE
-                    USER_TYPE
-                      REFERENCE_EXPRESSION[referencedName=C]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
           USER_TYPE
