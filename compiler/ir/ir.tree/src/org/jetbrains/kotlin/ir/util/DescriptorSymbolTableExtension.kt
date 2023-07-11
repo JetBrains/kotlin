@@ -27,7 +27,7 @@ typealias DescriptorBasedReferenceSymbolTableExtension = ReferenceSymbolTableExt
         >
 
 @ObsoleteDescriptorBasedAPI
-class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExtension<
+open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExtension<
         DeclarationDescriptor, ClassDescriptor, TypeAliasDescriptor, ScriptDescriptor, FunctionDescriptor,
         ClassConstructorDescriptor, PropertyDescriptor, ParameterDescriptor, TypeParameterDescriptor>(table)
 {
@@ -405,8 +405,7 @@ class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExtension<
         }
     }
 
-    // TODO: convert to extension
-    fun referenceValue(value: ValueDescriptor): IrValueSymbol {
+    open fun referenceValue(value: ValueDescriptor): IrValueSymbol {
         return when (value) {
             is ParameterDescriptor -> valueParameterSlice.referenced(value) { error("Undefined parameter referenced: $value") }
             is VariableDescriptor -> variableSlice.referenced(value) { error("Undefined variable referenced: $value") }

@@ -35,7 +35,12 @@ open class SymbolTable(
 
     @Suppress("LeakingThis")
     @OptIn(ObsoleteDescriptorBasedAPI::class)
-    override val descriptorExtension: DescriptorSymbolTableExtension = DescriptorSymbolTableExtension(this)
+    override val descriptorExtension: DescriptorSymbolTableExtension = createDescriptorExtension()
+
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
+    protected open fun createDescriptorExtension(): DescriptorSymbolTableExtension {
+        return DescriptorSymbolTableExtension(this)
+    }
 
     // ------------------------------------ script ------------------------------------
 

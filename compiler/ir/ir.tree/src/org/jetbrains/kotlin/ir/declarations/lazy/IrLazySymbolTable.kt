@@ -9,9 +9,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrLock
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
-import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
-import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.*
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class IrLazySymbolTable(private val originalTable: SymbolTable) : ReferenceSymbolTable by originalTable {
@@ -21,73 +19,104 @@ class IrLazySymbolTable(private val originalTable: SymbolTable) : ReferenceSymbo
     /*Don't force builtins class linking before unbound symbols linking: otherwise stdlib compilation will failed*/
     var stubGenerator: DeclarationStubGenerator? = null
 
-    fun referenceClass(descriptor: ClassDescriptor): IrClassSymbol {
-        synchronized(lock) {
-            return originalTable.descriptorExtension.referenceClass(descriptor).also {
-                if (!it.isBound) {
-                    stubGenerator?.generateClassStub(descriptor)
+    @ObsoleteDescriptorBasedAPI
+    override val descriptorExtension: DescriptorBasedReferenceSymbolTableExtension = ExtensionWrapper()
+
+    private inner class ExtensionWrapper : DescriptorSymbolTableExtension(originalTable) {
+        private val delegate get() = originalTable.descriptorExtension
+
+        override fun referenceClass(descriptor: ClassDescriptor): IrClassSymbol {
+            synchronized(lock) {
+                return delegate.referenceClass(descriptor).also {
+                    if (!it.isBound) {
+                        stubGenerator?.generateClassStub(descriptor)
+                    }
                 }
             }
         }
-    }
 
-    fun referenceTypeAlias(descriptor: TypeAliasDescriptor): IrTypeAliasSymbol {
-        synchronized(lock) {
-            return originalTable.descriptorExtension.referenceTypeAlias(descriptor).also {
-                if (!it.isBound) {
-                    stubGenerator?.generateTypeAliasStub(descriptor)
+        override fun referenceTypeAlias(descriptor: TypeAliasDescriptor): IrTypeAliasSymbol {
+            synchronized(lock) {
+                return delegate.referenceTypeAlias(descriptor).also {
+                    if (!it.isBound) {
+                        stubGenerator?.generateTypeAliasStub(descriptor)
+                    }
                 }
             }
         }
-    }
 
-    fun referenceConstructor(descriptor: ClassConstructorDescriptor): IrConstructorSymbol {
-        synchronized(lock) {
-            return originalTable.descriptorExtension.referenceConstructor(descriptor).also {
-                if (!it.isBound) {
-                    stubGenerator?.generateConstructorStub(descriptor)
+        override fun referenceConstructor(descriptor: ClassConstructorDescriptor): IrConstructorSymbol {
+            synchronized(lock) {
+                return delegate.referenceConstructor(descriptor).also {
+                    if (!it.isBound) {
+                        stubGenerator?.generateConstructorStub(descriptor)
+                    }
                 }
             }
         }
-    }
 
-    fun referenceEnumEntry(descriptor: ClassDescriptor): IrEnumEntrySymbol {
-        synchronized(lock) {
-            return originalTable.descriptorExtension.referenceEnumEntry(descriptor).also {
-                if (!it.isBound) {
-                    stubGenerator?.generateEnumEntryStub(descriptor)
+        override fun referenceEnumEntry(descriptor: ClassDescriptor): IrEnumEntrySymbol {
+            synchronized(lock) {
+                return delegate.referenceEnumEntry(descriptor).also {
+                    if (!it.isBound) {
+                        stubGenerator?.generateEnumEntryStub(descriptor)
+                    }
                 }
             }
         }
-    }
 
-    fun referenceSimpleFunction(descriptor: FunctionDescriptor): IrSimpleFunctionSymbol {
-        synchronized(lock) {
-            return originalTable.descriptorExtension.referenceSimpleFunction(descriptor).also {
-                if (!it.isBound) {
-                    stubGenerator?.generateFunctionStub(descriptor)
+        override fun referenceSimpleFunction(descriptor: FunctionDescriptor): IrSimpleFunctionSymbol {
+            synchronized(lock) {
+                return delegate.referenceSimpleFunction(descriptor).also {
+                    if (!it.isBound) {
+                        stubGenerator?.generateFunctionStub(descriptor)
+                    }
                 }
             }
         }
-    }
 
-    fun referenceProperty(descriptor: PropertyDescriptor): IrPropertySymbol {
-        synchronized(lock) {
-            return originalTable.descriptorExtension.referenceProperty(descriptor).also {
-                if (!it.isBound) {
-                    stubGenerator?.generatePropertyStub(descriptor)
+        override fun referenceProperty(descriptor: PropertyDescriptor): IrPropertySymbol {
+            synchronized(lock) {
+                return delegate.referenceProperty(descriptor).also {
+                    if (!it.isBound) {
+                        stubGenerator?.generatePropertyStub(descriptor)
+                    }
                 }
             }
         }
-    }
 
-    fun referenceTypeParameter(classifier: TypeParameterDescriptor): IrTypeParameterSymbol {
-        synchronized(lock) {
-            return originalTable.descriptorExtension.referenceTypeParameter(classifier).also {
-                if (!it.isBound) {
-                    stubGenerator?.generateOrGetTypeParameterStub(classifier)
+        override fun referenceTypeParameter(classifier: TypeParameterDescriptor): IrTypeParameterSymbol {
+            synchronized(lock) {
+                return delegate.referenceTypeParameter(classifier).also {
+                    if (!it.isBound) {
+                        stubGenerator?.generateOrGetTypeParameterStub(classifier)
+                    }
                 }
             }
+        }
+
+        override fun referenceValueParameter(descriptor: ParameterDescriptor): IrValueParameterSymbol {
+            return delegate.referenceValueParameter(descriptor)
+        }
+
+        override fun referenceValue(value: ValueDescriptor): IrValueSymbol {
+            return delegate.referenceValue(value)
+        }
+
+        override fun referenceScript(descriptor: ScriptDescriptor): IrScriptSymbol {
+            return delegate.referenceScript(descriptor)
+        }
+
+        override fun referenceField(descriptor: PropertyDescriptor): IrFieldSymbol {
+            return delegate.referenceField(descriptor)
+        }
+
+        override fun referenceDeclaredFunction(descriptor: FunctionDescriptor): IrSimpleFunctionSymbol {
+            return delegate.referenceDeclaredFunction(descriptor)
+        }
+
+        override fun referenceScopedTypeParameter(classifier: TypeParameterDescriptor): IrTypeParameterSymbol {
+            return delegate.referenceScopedTypeParameter(classifier)
         }
     }
 }
