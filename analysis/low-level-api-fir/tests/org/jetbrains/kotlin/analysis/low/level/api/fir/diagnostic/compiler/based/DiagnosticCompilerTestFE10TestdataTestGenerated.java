@@ -33560,6 +33560,18 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
                 }
 
                 @Test
+                @TestMetadata("simpleRecordsDefaultConstructor.kt")
+                public void testSimpleRecordsDefaultConstructor() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/testsWithJava17/jvmRecord/simpleRecordsDefaultConstructor.kt");
+                }
+
+                @Test
+                @TestMetadata("simpleRecordsWithSecondaryConstructor.kt")
+                public void testSimpleRecordsWithSecondaryConstructor() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/testsWithJava17/jvmRecord/simpleRecordsWithSecondaryConstructor.kt");
+                }
+
+                @Test
                 @TestMetadata("supertypesCheck.kt")
                 public void testSupertypesCheck() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/testsWithJava17/jvmRecord/supertypesCheck.kt");

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.java
 
+import com.intellij.psi.impl.light.LightRecordCanonicalConstructor
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -320,6 +321,7 @@ abstract class FirJavaFacade(
 
             if (javaClassDeclaredConstructors.isEmpty()
                 && javaClass.classKind == ClassKind.CLASS
+                && !javaClass.isRecord
                 && javaClass.hasDefaultConstructor()
             ) {
                 declarations += convertJavaConstructorToFir(
@@ -441,39 +443,46 @@ abstract class FirJavaFacade(
             }
         }
 
-        destination += buildJavaConstructor {
-            source = javaClass.toSourceElement(KtFakeSourceElementKind.ImplicitJavaRecordConstructor)
-            this.moduleData = moduleData
-            isFromSource = javaClass.isFromSource
+        /**
+         * It is possible that JavaClass already has a synthetic primary constructor ([LightRecordCanonicalConstructor])
+         * Such behavior depends on a platform version and psi providers
+         * (e.g., in IntelliJ plugin Java class can have additional declarations)
+         */
+        if (destination.none { it is FirJavaConstructor && it.isPrimary }) {
+            destination += buildJavaConstructor {
+                source = javaClass.toSourceElement(KtFakeSourceElementKind.ImplicitJavaRecordConstructor)
+                this.moduleData = moduleData
+                isFromSource = javaClass.isFromSource
 
-            val constructorId = CallableId(classId, classId.shortClassName)
-            symbol = FirConstructorSymbol(constructorId)
-            status = FirResolvedDeclarationStatusImpl(
-                Visibilities.Public,
-                Modality.FINAL,
-                EffectiveVisibility.Public
-            )
-            visibility = Visibilities.Public
-            isPrimary = true
-            returnTypeRef = classType.toFirResolvedTypeRef()
-            dispatchReceiverType = null
-            typeParameters += classTypeParameters.toRefs()
-            annotationBuilder = { emptyList() }
+                val constructorId = CallableId(classId, classId.shortClassName)
+                symbol = FirConstructorSymbol(constructorId)
+                status = FirResolvedDeclarationStatusImpl(
+                    Visibilities.Public,
+                    Modality.FINAL,
+                    EffectiveVisibility.Public
+                )
+                visibility = Visibilities.Public
+                isPrimary = true
+                returnTypeRef = classType.toFirResolvedTypeRef()
+                dispatchReceiverType = null
+                typeParameters += classTypeParameters.toRefs()
+                annotationBuilder = { emptyList() }
 
-            javaClass.recordComponents.mapTo(valueParameters) { component ->
-                buildJavaValueParameter {
-                    containingFunctionSymbol = this@buildJavaConstructor.symbol
-                    source = component.toSourceElement(KtFakeSourceElementKind.ImplicitRecordConstructorParameter)
-                    this.moduleData = moduleData
-                    isFromSource = component.isFromSource
-                    returnTypeRef = component.type.toFirJavaTypeRef(session, javaTypeParameterStack)
-                    name = component.name
-                    isVararg = component.isVararg
-                    annotationBuilder = { emptyList() }
+                javaClass.recordComponents.mapTo(valueParameters) { component ->
+                    buildJavaValueParameter {
+                        containingFunctionSymbol = this@buildJavaConstructor.symbol
+                        source = component.toSourceElement(KtFakeSourceElementKind.ImplicitRecordConstructorParameter)
+                        this.moduleData = moduleData
+                        isFromSource = component.isFromSource
+                        returnTypeRef = component.type.toFirJavaTypeRef(session, javaTypeParameterStack)
+                        name = component.name
+                        isVararg = component.isVararg
+                        annotationBuilder = { emptyList() }
+                    }
                 }
+            }.apply {
+                containingClassForStaticMemberAttr = classType.lookupTag
             }
-        }.apply {
-            containingClassForStaticMemberAttr = classType.lookupTag
         }
     }
 
@@ -636,7 +645,7 @@ abstract class FirJavaFacade(
                 hasStableParameterNames = false
             }
             this.visibility = visibility
-            isPrimary = javaConstructor == null
+            isPrimary = javaConstructor == null || source?.psi is LightRecordCanonicalConstructor
             returnTypeRef = buildResolvedTypeRef {
                 type = ownerClassBuilder.buildSelfTypeRef()
             }
