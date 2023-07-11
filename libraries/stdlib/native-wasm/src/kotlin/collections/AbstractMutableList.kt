@@ -17,6 +17,7 @@ package kotlin.collections
  *
  * @param E the type of elements contained in the list. The list is invariant in its element type.
  */
+@AllowDifferentMembersInActual // New 'removeRange', 'modCount' members are added compared to the expect declaration
 public actual abstract class AbstractMutableList<E> protected actual constructor() : AbstractMutableCollection<E>(), MutableList<E> {
     /**
      * The number of times this list is structurally modified.

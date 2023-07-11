@@ -9,6 +9,7 @@ package kotlin.reflect
  * Represents a type. Type is usually either a class with optional type arguments,
  * or a type parameter of some declaration, plus nullability.
  */
+@AllowDifferentMembersInActual // New 'KAnnotatedElement` supertype is added compared to the expect declaration
 public actual interface KType : KAnnotatedElement {
     /**
      * The declaration of the classifier used in this type.
