@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.IMPLEMENTING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.INLINE_CLASS_IN_EXTERNAL_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.INLINE_CLASS_IN_EXTERNAL_DECLARATION_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.ENUM_CLASS_IN_EXTERNAL_DECLARATION_WARNING
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.EXTERNAL_INTERFACE_AS_REIFIED_TYPE_ARGUMENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_EXTERNAL_INHERITORS_ONLY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.INLINE_EXTERNAL_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_EXTERNAL_ARGUMENT
@@ -167,6 +168,11 @@ object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             JS_EXTERNAL_ARGUMENT,
             "Expected argument with external type, but type ''{0}'' is non-external",
+            FirDiagnosticRenderers.RENDER_TYPE
+        )
+        map.put(
+            EXTERNAL_INTERFACE_AS_REIFIED_TYPE_ARGUMENT,
+            "Cannot pass external interface {0} for reified type parameter",
             FirDiagnosticRenderers.RENDER_TYPE
         )
         map.put(JS_NAME_PROHIBITED_FOR_EXTENSION_PROPERTY, "@JsName is prohibited for extension properties")

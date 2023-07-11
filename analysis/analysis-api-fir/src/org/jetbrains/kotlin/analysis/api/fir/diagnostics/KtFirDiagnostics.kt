@@ -3580,6 +3580,11 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val argType: KtType
     }
 
+    interface ExternalInterfaceAsReifiedTypeArgument : KtFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = ExternalInterfaceAsReifiedTypeArgument::class
+        val typeArgument: KtType
+    }
+
     interface NestedJsExport : KtFirDiagnostic<KtElement> {
         override val diagnosticClass get() = NestedJsExport::class
     }

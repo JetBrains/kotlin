@@ -81,6 +81,7 @@ object FirJsErrors {
     val EXTERNAL_INTERFACE_AS_CLASS_LITERAL by error0<KtElement>()
     val JS_EXTERNAL_INHERITORS_ONLY by error2<KtDeclaration, FirClassLikeSymbol<*>, FirClassLikeSymbol<*>>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
     val JS_EXTERNAL_ARGUMENT by error1<KtExpression, ConeKotlinType>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
+    val EXTERNAL_INTERFACE_AS_REIFIED_TYPE_ARGUMENT by error1<KtElement, ConeKotlinType>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
 
     // Export
     val NESTED_JS_EXPORT by error0<KtElement>()

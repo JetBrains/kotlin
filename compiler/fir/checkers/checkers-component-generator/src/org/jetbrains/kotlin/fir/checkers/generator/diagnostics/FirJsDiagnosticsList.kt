@@ -102,6 +102,9 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
         val JS_EXTERNAL_ARGUMENT by error<KtExpression>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
             parameter<ConeKotlinType>("argType")
         }
+        val EXTERNAL_INTERFACE_AS_REIFIED_TYPE_ARGUMENT by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
+            parameter<ConeKotlinType>("typeArgument")
+        }
     }
 
     val EXPORT by object : DiagnosticGroup("Export") {

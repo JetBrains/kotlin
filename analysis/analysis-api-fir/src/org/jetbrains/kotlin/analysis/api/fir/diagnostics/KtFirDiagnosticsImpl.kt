@@ -4329,6 +4329,12 @@ internal class JsExternalArgumentImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KtFirDiagnostic.JsExternalArgument
 
+internal class ExternalInterfaceAsReifiedTypeArgumentImpl(
+    override val typeArgument: KtType,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.ExternalInterfaceAsReifiedTypeArgument
+
 internal class NestedJsExportImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,

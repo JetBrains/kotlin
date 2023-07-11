@@ -5144,6 +5144,13 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirJsErrors.EXTERNAL_INTERFACE_AS_REIFIED_TYPE_ARGUMENT) { firDiagnostic ->
+        ExternalInterfaceAsReifiedTypeArgumentImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJsErrors.NESTED_JS_EXPORT) { firDiagnostic ->
         NestedJsExportImpl(
             firDiagnostic as KtPsiDiagnostic,
