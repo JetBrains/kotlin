@@ -158,11 +158,11 @@ internal class KtFirMetadataCalculator(
         private val session = firSession
 
         override fun visitElement(element: FirElement) {
-            (element as? FirDeclaration)?.symbol?.lazyResolveToPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
             element.acceptChildren(this)
         }
 
         override fun visitProperty(property: FirProperty) {
+            property.symbol.lazyResolveToPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
             property.backingField?.let {
                 val name = if (property.delegate != null) "${property.name.asString()}\$delegate" else property.name.asString()
                 bindings.put(
@@ -171,10 +171,12 @@ internal class KtFirMetadataCalculator(
                     session.jvmTypeMapper.mapType(it.returnTypeRef.coneType) to name
                 )
             }
-            super.visitProperty(property)
+            property.getter?.accept(this)
+            property.setter?.accept(this)
         }
 
         override fun visitFunction(function: FirFunction) {
+            function.symbol.lazyResolveToPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
             val descriptor = function.computeJvmDescriptor(customName = (function as? FirConstructor)?.let{ "" })
             val pos = descriptor.indexOf('(')
             val name = descriptor.substring(0, pos)
