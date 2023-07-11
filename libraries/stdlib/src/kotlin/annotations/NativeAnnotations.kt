@@ -5,6 +5,7 @@
 
 package kotlin.native
 
+import kotlin.experimental.ExperimentalNativeApi
 import kotlin.experimental.ExperimentalObjCName
 import kotlin.experimental.ExperimentalObjCRefinement
 
@@ -14,6 +15,7 @@ import kotlin.experimental.ExperimentalObjCRefinement
  * [externName] controls the name of top level function, [shortName] controls the short name.
  * If [externName] is empty, no top level declaration is being created.
  */
+@ExperimentalNativeApi
 @SinceKotlin("1.5")
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.BINARY)

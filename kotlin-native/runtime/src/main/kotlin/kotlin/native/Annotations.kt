@@ -5,6 +5,7 @@
 
 package kotlin.native
 
+import kotlin.experimental.ExperimentalNativeApi
 import kotlin.experimental.ExperimentalObjCName
 import kotlin.experimental.ExperimentalObjCRefinement
 import kotlin.reflect.KClass
@@ -86,6 +87,7 @@ public annotation class EagerInitialization
  * [externName] controls the name of top level function, [shortName] controls the short name.
  * If [externName] is empty, no top level declaration is being created.
  */
+@ExperimentalNativeApi
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.BINARY)
 public actual annotation class CName(actual val externName: String = "", actual val shortName: String = "")
