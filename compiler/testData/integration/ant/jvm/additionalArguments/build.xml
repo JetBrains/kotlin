@@ -11,6 +11,7 @@
         <javac srcdir="${test.data}" destdir="${temp}" includeantruntime="false">
             <withKotlin>
                 <compilerarg value="-version"/>
+                <compilerarg line="-Xuse-fir-lt=false"/>
             </withKotlin>
         </javac>
     </target>
