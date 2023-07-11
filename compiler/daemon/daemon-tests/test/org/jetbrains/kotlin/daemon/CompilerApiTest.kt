@@ -152,8 +152,10 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
 
     fun testSimpleScriptLocal() {
         val messageCollector = TestMessageCollector()
-        val (code, outputs) = compileLocally(messageCollector, File(getSimpleScriptBaseDir(), "script.kts").absolutePath,
-                                             "-d", tmpdir.absolutePath, "-Xreport-output-files", "-Xallow-any-scripts-in-source-roots")
+        val (code, outputs) = compileLocally(
+            messageCollector, File(getSimpleScriptBaseDir(), "script.kts").absolutePath,
+            "-d", tmpdir.absolutePath, "-Xreport-output-files", "-Xuse-fir-lt=false", "-Xallow-any-scripts-in-source-roots"
+        )
         Assert.assertEquals(0, code)
         Assert.assertTrue(outputs.isNotEmpty())
         Assert.assertEquals(File(tmpdir, "Script.class").absolutePath, outputs.first().outputFile?.absolutePath)
@@ -172,9 +174,9 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
                                                              inheritMemoryLimits = false, inheritOtherJvmOptions = false, inheritAdditionalProperties = false)
             try {
                 val (code, outputs) = compileOnDaemon(
-                        flagFile, compilerId, daemonJVMOptions, daemonOptions, TestMessageCollector(),
-                        File(getSimpleScriptBaseDir(), "script.kts").absolutePath,
-                        "-Xreport-output-files", "-Xallow-any-scripts-in-source-roots", "-d", tmpdir.absolutePath
+                    flagFile, compilerId, daemonJVMOptions, daemonOptions, TestMessageCollector(),
+                    File(getSimpleScriptBaseDir(), "script.kts").absolutePath,
+                    "-Xreport-output-files", "-Xuse-fir-lt=false", "-Xallow-any-scripts-in-source-roots", "-d", tmpdir.absolutePath
                 )
                 Assert.assertEquals(0, code)
                 Assert.assertTrue(outputs.isNotEmpty())

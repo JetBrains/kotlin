@@ -3,9 +3,13 @@
 
     <target name="build">
         <javac srcdir="${test.data}" destdir="${temp}" includeantruntime="false" failonerror="false">
-            <withKotlin/>
+            <withKotlin>
+                <compilerarg line="-Xuse-fir-lt=false"/>
+            </withKotlin>
         </javac>
 
-        <kotlinc src="${test.data}" output="${temp}" failonerror="false"/>
+        <kotlinc src="${test.data}" output="${temp}" failonerror="false">
+            <compilerarg line="-Xuse-fir-lt=false"/>
+        </kotlinc>
     </target>
 </project>
