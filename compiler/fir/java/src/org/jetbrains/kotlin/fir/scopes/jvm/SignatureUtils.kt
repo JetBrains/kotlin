@@ -146,7 +146,7 @@ private fun StringBuilder.appendConeType(
             append("L")
             append(classId.packageFqName.asString().replace(".", "/"))
             append("/")
-            append(classId.relativeClassName)
+            append(classId.relativeClassName.asString().replace('.', '$'))
             append(";")
         }
     }
