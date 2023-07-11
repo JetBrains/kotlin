@@ -23,7 +23,7 @@ class IrLazySymbolTable(private val originalTable: SymbolTable) : ReferenceSymbo
 
     fun referenceClass(descriptor: ClassDescriptor): IrClassSymbol {
         synchronized(lock) {
-            return originalTable.referenceClass(descriptor).also {
+            return originalTable.descriptorExtension.referenceClass(descriptor).also {
                 if (!it.isBound) {
                     stubGenerator?.generateClassStub(descriptor)
                 }
@@ -33,7 +33,7 @@ class IrLazySymbolTable(private val originalTable: SymbolTable) : ReferenceSymbo
 
     fun referenceTypeAlias(descriptor: TypeAliasDescriptor): IrTypeAliasSymbol {
         synchronized(lock) {
-            return originalTable.referenceTypeAlias(descriptor).also {
+            return originalTable.descriptorExtension.referenceTypeAlias(descriptor).also {
                 if (!it.isBound) {
                     stubGenerator?.generateTypeAliasStub(descriptor)
                 }
@@ -43,7 +43,7 @@ class IrLazySymbolTable(private val originalTable: SymbolTable) : ReferenceSymbo
 
     fun referenceConstructor(descriptor: ClassConstructorDescriptor): IrConstructorSymbol {
         synchronized(lock) {
-            return originalTable.referenceConstructor(descriptor).also {
+            return originalTable.descriptorExtension.referenceConstructor(descriptor).also {
                 if (!it.isBound) {
                     stubGenerator?.generateConstructorStub(descriptor)
                 }
@@ -53,7 +53,7 @@ class IrLazySymbolTable(private val originalTable: SymbolTable) : ReferenceSymbo
 
     fun referenceEnumEntry(descriptor: ClassDescriptor): IrEnumEntrySymbol {
         synchronized(lock) {
-            return originalTable.referenceEnumEntry(descriptor).also {
+            return originalTable.descriptorExtension.referenceEnumEntry(descriptor).also {
                 if (!it.isBound) {
                     stubGenerator?.generateEnumEntryStub(descriptor)
                 }
@@ -63,7 +63,7 @@ class IrLazySymbolTable(private val originalTable: SymbolTable) : ReferenceSymbo
 
     fun referenceSimpleFunction(descriptor: FunctionDescriptor): IrSimpleFunctionSymbol {
         synchronized(lock) {
-            return originalTable.referenceSimpleFunction(descriptor).also {
+            return originalTable.descriptorExtension.referenceSimpleFunction(descriptor).also {
                 if (!it.isBound) {
                     stubGenerator?.generateFunctionStub(descriptor)
                 }
@@ -73,7 +73,7 @@ class IrLazySymbolTable(private val originalTable: SymbolTable) : ReferenceSymbo
 
     fun referenceProperty(descriptor: PropertyDescriptor): IrPropertySymbol {
         synchronized(lock) {
-            return originalTable.referenceProperty(descriptor).also {
+            return originalTable.descriptorExtension.referenceProperty(descriptor).also {
                 if (!it.isBound) {
                     stubGenerator?.generatePropertyStub(descriptor)
                 }
@@ -83,7 +83,7 @@ class IrLazySymbolTable(private val originalTable: SymbolTable) : ReferenceSymbo
 
     fun referenceTypeParameter(classifier: TypeParameterDescriptor): IrTypeParameterSymbol {
         synchronized(lock) {
-            return originalTable.referenceTypeParameter(classifier).also {
+            return originalTable.descriptorExtension.referenceTypeParameter(classifier).also {
                 if (!it.isBound) {
                     stubGenerator?.generateOrGetTypeParameterStub(classifier)
                 }

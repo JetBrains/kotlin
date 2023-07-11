@@ -123,7 +123,7 @@ open class ModuleGenerator(
         gen.visitClassDescriptor(ErrorUtils.errorClass, fakeFile)
         gen.visitConstructorDescriptor(
             ErrorUtils.errorClass.unsubstitutedPrimaryConstructor!!,
-            context.symbolTable.referenceClass(ErrorUtils.errorClass).owner,
+            context.symbolTable.descriptorExtension.referenceClass(ErrorUtils.errorClass).owner,
         )
     }
 }

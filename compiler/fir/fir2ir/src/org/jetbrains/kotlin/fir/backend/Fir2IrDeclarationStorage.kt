@@ -640,7 +640,12 @@ class Fir2IrDeclarationStorage(
         irParent: IrClass
     ): IrAnonymousInitializer = convertCatching(anonymousInitializer) {
         return anonymousInitializer.convertWithOffsets { startOffset, endOffset ->
-            symbolTable.declareAnonymousInitializer(startOffset, endOffset, IrDeclarationOrigin.DEFINED, irParent.descriptor).apply {
+            symbolTable.descriptorExtension.declareAnonymousInitializer(
+                startOffset,
+                endOffset,
+                IrDeclarationOrigin.DEFINED,
+                irParent.descriptor
+            ).apply {
                 this.parent = irParent
                 initializerCache[anonymousInitializer] = this
             }

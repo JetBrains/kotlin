@@ -48,7 +48,7 @@ abstract class IrAbstractDescriptorBasedFunctionFactory {
 
     fun functionN(n: Int) = functionN(n) { callback ->
         val descriptor = functionClassDescriptor(n)
-        declareClass(descriptor) { symbol ->
+        descriptorExtension.declareClass(descriptor) { symbol ->
             callback(symbol)
         }
     }
@@ -56,7 +56,7 @@ abstract class IrAbstractDescriptorBasedFunctionFactory {
     fun kFunctionN(n: Int): IrClass {
         return kFunctionN(n) { callback ->
             val descriptor = kFunctionClassDescriptor(n)
-            declareClass(descriptor) { symbol ->
+            descriptorExtension.declareClass(descriptor) { symbol ->
                 callback(symbol)
             }
         }
@@ -64,14 +64,14 @@ abstract class IrAbstractDescriptorBasedFunctionFactory {
 
     fun suspendFunctionN(n: Int): IrClass = suspendFunctionN(n) { callback ->
         val descriptor = suspendFunctionClassDescriptor(n)
-        declareClass(descriptor) { symbol ->
+        descriptorExtension.declareClass(descriptor) { symbol ->
             callback(symbol)
         }
     }
 
     fun kSuspendFunctionN(n: Int): IrClass = kSuspendFunctionN(n) { callback ->
         val descriptor = kSuspendFunctionClassDescriptor(n)
-        declareClass(descriptor) { symbol ->
+        descriptorExtension.declareClass(descriptor) { symbol ->
             callback(symbol)
         }
     }
@@ -96,7 +96,7 @@ class IrDescriptorBasedFunctionFactory(
     private val referenceFunctionsWhenKFunctionAreReferenced: Boolean = false,
 ) : IrAbstractDescriptorBasedFunctionFactory() {
     val getPackageFragment =
-        getPackageFragment ?: symbolTable::declareExternalPackageFragmentIfNotExists
+        getPackageFragment ?: symbolTable.descriptorExtension::declareExternalPackageFragmentIfNotExists
 
     // TODO: Lazieness
 
@@ -107,8 +107,10 @@ class IrDescriptorBasedFunctionFactory(
 
     private val irFactory: IrFactory get() = symbolTable.irFactory
 
-    val functionClass = symbolTable.referenceClass(irBuiltIns.builtIns.getBuiltInClassByFqName(FqName("kotlin.Function")))
-    val kFunctionClass = symbolTable.referenceClass(irBuiltIns.builtIns.getBuiltInClassByFqName(FqName("kotlin.reflect.KFunction")))
+    val functionClass =
+        symbolTable.descriptorExtension.referenceClass(irBuiltIns.builtIns.getBuiltInClassByFqName(FqName("kotlin.Function")))
+    val kFunctionClass =
+        symbolTable.descriptorExtension.referenceClass(irBuiltIns.builtIns.getBuiltInClassByFqName(FqName("kotlin.reflect.KFunction")))
 
     override fun functionClassDescriptor(arity: Int): FunctionClassDescriptor =
         irBuiltIns.builtIns.getFunction(arity) as FunctionClassDescriptor
@@ -190,7 +192,7 @@ class IrDescriptorBasedFunctionFactory(
                         getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BACKEND).first()
                     }
                 }
-                return symbolTable.declareSimpleFunction(descriptor, factory).symbol
+                return symbolTable.descriptorExtension.declareSimpleFunction(descriptor, factory).symbol
             }
 
             override fun FunctionDescriptor.valueParameterDescriptor(index: Int): ValueParameterDescriptor {
@@ -406,7 +408,7 @@ class IrDescriptorBasedFunctionFactory(
 
         fun createFakeOverrideFunction(descriptor: FunctionDescriptor, property: IrPropertySymbol?): IrSimpleFunction {
             val returnType = descriptor.returnType?.let { toIrType(it) } ?: error("No return type for $descriptor")
-            val newFunction = symbolTable.declareSimpleFunction(descriptor) {
+            val newFunction = symbolTable.descriptorExtension.declareSimpleFunction(descriptor) {
                 descriptor.run {
                     irFactory.createSimpleFunction(
                         startOffset = offset,
@@ -430,7 +432,8 @@ class IrDescriptorBasedFunctionFactory(
             }
 
             newFunction.parent = this
-            newFunction.overriddenSymbols = descriptor.overriddenDescriptors.memoryOptimizedMap { symbolTable.referenceSimpleFunction(it.original) }
+            newFunction.overriddenSymbols =
+                descriptor.overriddenDescriptors.memoryOptimizedMap { symbolTable.descriptorExtension.referenceSimpleFunction(it.original) }
             newFunction.dispatchReceiverParameter = descriptor.dispatchReceiverParameter?.let { newFunction.createValueParameter(it) }
             newFunction.extensionReceiverParameter = descriptor.extensionReceiverParameter?.let { newFunction.createValueParameter(it) }
             newFunction.contextReceiverParametersCount = descriptor.contextReceiverParameters.size
@@ -444,7 +447,7 @@ class IrDescriptorBasedFunctionFactory(
         }
 
         fun createFakeOverrideProperty(descriptor: PropertyDescriptor): IrProperty {
-            return symbolTable.declareProperty(descriptor) {
+            return symbolTable.descriptorExtension.declareProperty(descriptor) {
                 irFactory.createProperty(
                     startOffset = offset,
                     endOffset = offset,

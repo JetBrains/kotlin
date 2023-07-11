@@ -79,7 +79,7 @@ private fun StatementGenerator.generateContextReceiverForDelegatingConstructorCa
     return object : ExpressionValue(irReceiverType) {
         override fun load(): IrExpression = IrGetValueImpl(
             defaultStartOffset, defaultEndOffset, irReceiverType,
-            context.symbolTable.referenceValueParameter(receiverParameter)
+            context.symbolTable.descriptorExtension.referenceValueParameter(receiverParameter)
         )
     }
 }
@@ -114,7 +114,7 @@ private fun StatementGenerator.generateReceiver(defaultStartOffset: Int, default
                     else
                         IrGetValueImpl(
                             defaultStartOffset, defaultEndOffset, irReceiverType,
-                            context.symbolTable.referenceValueParameter(receiverClassDescriptor.thisAsReceiverParameter)
+                            context.symbolTable.descriptorExtension.referenceValueParameter(receiverClassDescriptor.thisAsReceiverParameter)
                         )
                 }
                 is ContextClassReceiver -> loadContextReceiver(receiver, defaultStartOffset, defaultEndOffset)
@@ -127,7 +127,7 @@ private fun StatementGenerator.generateReceiver(defaultStartOffset: Int, default
                 is ExtensionReceiver -> {
                     IrGetValueImpl(
                         defaultStartOffset, defaultStartOffset, irReceiverType,
-                        context.symbolTable.referenceValueParameter(receiver.declarationDescriptor.extensionReceiverParameter!!)
+                        context.symbolTable.descriptorExtension.referenceValueParameter(receiver.declarationDescriptor.extensionReceiverParameter!!)
                     )
                 }
                 is ContextReceiver -> {
@@ -135,7 +135,7 @@ private fun StatementGenerator.generateReceiver(defaultStartOffset: Int, default
                         .single { it.value == receiver.original }
                     IrGetValueImpl(
                         defaultStartOffset, defaultStartOffset, irReceiverType,
-                        context.symbolTable.referenceValueParameter(receiverParameter)
+                        context.symbolTable.descriptorExtension.referenceValueParameter(receiverParameter)
                     )
                 }
                 else ->
@@ -153,7 +153,7 @@ internal fun StatementGenerator.loadContextReceiver(
     val thisReceiver = IrGetValueImpl(
         defaultStartOffset, defaultEndOffset,
         thisAsReceiverParameter.type.toIrType(),
-        context.symbolTable.referenceValue(thisAsReceiverParameter)
+        context.symbolTable.descriptorExtension.referenceValue(thisAsReceiverParameter)
     )
 
     return IrGetFieldImpl(
@@ -176,19 +176,19 @@ internal fun StatementGenerator.generateSingletonReference(
         DescriptorUtils.isObject(descriptor) ->
             IrGetObjectValueImpl(
                 startOffset, endOffset, irType,
-                context.symbolTable.referenceClass(descriptor)
+                context.symbolTable.descriptorExtension.referenceClass(descriptor)
             )
         DescriptorUtils.isEnumEntry(descriptor) ->
             IrGetEnumValueImpl(
                 startOffset, endOffset, irType,
-                context.symbolTable.referenceEnumEntry(descriptor)
+                context.symbolTable.descriptorExtension.referenceEnumEntry(descriptor)
             )
         else -> {
             val companionObjectDescriptor = descriptor.companionObjectDescriptor
                 ?: throw java.lang.AssertionError("Class value without companion object: $descriptor")
             IrGetObjectValueImpl(
                 startOffset, endOffset, irType,
-                context.symbolTable.referenceClass(companionObjectDescriptor)
+                context.symbolTable.descriptorExtension.referenceClass(companionObjectDescriptor)
             )
         }
     }
@@ -287,7 +287,7 @@ private fun StatementGenerator.generateReceiverForCalleeImportedFromObject(
     return generateExpressionValue(objectType) {
         IrGetObjectValueImpl(
             startOffset, endOffset, objectType,
-            context.symbolTable.referenceClass(objectDescriptor)
+            context.symbolTable.descriptorExtension.referenceClass(objectDescriptor)
         )
     }
 }
@@ -473,7 +473,7 @@ private fun StatementGenerator.createFunctionForSuspendConversion(
         .getContributedFunctions(OperatorNameConventions.INVOKE, NoLookupLocation.FROM_BACKEND)
         .find { it.valueParameters.size == valueArgumentsCount }
         ?: error("No matching operator fun 'invoke' for suspend conversion: funType=$funType, suspendFunType=$suspendFunType")
-    val invokeSymbol = context.symbolTable.referenceSimpleFunction(invokeDescriptor.original)
+    val invokeSymbol = context.symbolTable.descriptorExtension.referenceSimpleFunction(invokeDescriptor.original)
 
     irAdapterFun.body = irBlockBody(startOffset, endOffset) {
         val irAdapteeCall = IrCallImpl(

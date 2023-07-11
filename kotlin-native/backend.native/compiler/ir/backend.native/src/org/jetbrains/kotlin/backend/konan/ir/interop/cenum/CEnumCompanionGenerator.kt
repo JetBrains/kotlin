@@ -52,8 +52,8 @@ internal class CEnumCompanionGenerator(
 
     private fun createCompanionConstructor(companionObjectDescriptor: ClassDescriptor): IrConstructor {
         val anyPrimaryConstructor = companionObjectDescriptor.builtIns.any.unsubstitutedPrimaryConstructor!!
-        val superConstructorSymbol = symbolTable.referenceConstructor(anyPrimaryConstructor)
-        val classSymbol = symbolTable.referenceClass(companionObjectDescriptor)
+        val superConstructorSymbol = symbolTable.descriptorExtension.referenceConstructor(anyPrimaryConstructor)
+        val classSymbol = symbolTable.descriptorExtension.referenceClass(companionObjectDescriptor)
         return createConstructor(companionObjectDescriptor.unsubstitutedPrimaryConstructor!!).also {
             postLinkageSteps.add {
                 it.body = irBuilder(irBuiltIns, it.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {

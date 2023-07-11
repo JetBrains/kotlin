@@ -204,7 +204,7 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
         prebuiltState: GenerationState.Builder,
     ): GenerationState {
         val generatorExtensions = object : JvmGeneratorExtensionsImpl(compilationState.environment.configuration) {
-            override fun getPreviousScripts() = state.history.map { compilationState.symbolTable.referenceScript(it.item) }
+            override fun getPreviousScripts() = state.history.map { compilationState.symbolTable.descriptorExtension.referenceScript(it.item) }
         }
         val codegenFactory = JvmIrCodegenFactory(
             compilationState.environment.configuration,

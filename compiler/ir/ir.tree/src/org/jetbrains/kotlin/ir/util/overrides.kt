@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.DescriptorMetadataSource
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
@@ -22,7 +23,7 @@ fun SymbolTable.declareSimpleFunctionWithOverrides(
     origin: IrDeclarationOrigin,
     descriptor: FunctionDescriptor
 ) =
-    declareSimpleFunction(descriptor) {
+    descriptorExtension.declareSimpleFunction(descriptor) {
         with(descriptor) {
             irFactory.createSimpleFunction(
                 startOffset = startOffset,

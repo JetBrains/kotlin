@@ -416,7 +416,7 @@ internal class OperatorExpressionGenerator(statementGenerator: StatementGenerato
         functionDescriptor: FunctionDescriptor,
         receiver: IrExpression
     ): IrExpression {
-        val originalSymbol = context.symbolTable.referenceSimpleFunction(functionDescriptor.original)
+        val originalSymbol = context.symbolTable.descriptorExtension.referenceSimpleFunction(functionDescriptor.original)
         return IrCallImpl.fromSymbolDescriptor(
             startOffset,
             endOffset,

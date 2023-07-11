@@ -507,18 +507,18 @@ internal class SymbolOverDescriptorsLookupUtils(val symbolTable: SymbolTable) : 
             // inspired by: irBuiltIns.findBuiltInClassMemberFunctions(this, name).singleOrNull()
             clazz.descriptor.unsubstitutedMemberScope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND)
                     .singleOrNull()
-                    ?.let { symbolTable.referenceSimpleFunction(it) }
+                    ?.let { symbolTable.descriptorExtension.referenceSimpleFunction(it) }
 
     override fun findMemberProperty(clazz: IrClassSymbol, name: Name): IrPropertySymbol? =
             clazz.descriptor.unsubstitutedMemberScope.getContributedVariables(name, NoLookupLocation.FROM_BACKEND)
                     .singleOrNull()
-                    ?.let { symbolTable.referenceProperty(it) }
+                    ?.let { symbolTable.descriptorExtension.referenceProperty(it) }
 
     override fun findMemberPropertyGetter(clazz: IrClassSymbol, name: Name): IrSimpleFunctionSymbol? =
             clazz.descriptor.unsubstitutedMemberScope.getContributedVariables(name, NoLookupLocation.FROM_BACKEND)
                     .singleOrNull()
                     ?.getter
-                    ?.let { symbolTable.referenceSimpleFunction(it) }
+                    ?.let { symbolTable.descriptorExtension.referenceSimpleFunction(it) }
 
     override fun getName(clazz: IrClassSymbol) = clazz.descriptor.name
     override fun isExtensionReceiverClass(property: IrPropertySymbol, expected: IrClassSymbol?): Boolean {
@@ -529,7 +529,7 @@ internal class SymbolOverDescriptorsLookupUtils(val symbolTable: SymbolTable) : 
         return function.descriptor.extensionReceiverParameter?.type?.let { TypeUtils.getClassDescriptor(it) } == expected?.descriptor
     }
 
-    override fun findGetter(property: IrPropertySymbol): IrSimpleFunctionSymbol = symbolTable.referenceSimpleFunction(property.descriptor.getter!!)
+    override fun findGetter(property: IrPropertySymbol): IrSimpleFunctionSymbol = symbolTable.descriptorExtension.referenceSimpleFunction(property.descriptor.getter!!)
 
     override fun isExtensionReceiverNullable(function: IrFunctionSymbol): Boolean? {
         return function.descriptor.extensionReceiverParameter?.type?.isMarkedNullable
@@ -570,13 +570,13 @@ internal class SymbolOverDescriptorsLookupUtils(val symbolTable: SymbolTable) : 
     override fun isSuspend(functionSymbol: IrFunctionSymbol): Boolean = functionSymbol.descriptor.isSuspend
     override fun getVisibility(function: IrFunctionSymbol): DescriptorVisibility = function.descriptor.visibility
 
-    override fun findPrimaryConstructor(clazz: IrClassSymbol) = clazz.descriptor.unsubstitutedPrimaryConstructor?.let { symbolTable.referenceConstructor(it) }
-    override fun findNoParametersConstructor(clazz: IrClassSymbol) = clazz.descriptor.constructors.singleOrNull { it.valueParameters.size == 0 }?.let { symbolTable.referenceConstructor(it) }
+    override fun findPrimaryConstructor(clazz: IrClassSymbol) = clazz.descriptor.unsubstitutedPrimaryConstructor?.let { symbolTable.descriptorExtension.referenceConstructor(it) }
+    override fun findNoParametersConstructor(clazz: IrClassSymbol) = clazz.descriptor.constructors.singleOrNull { it.valueParameters.size == 0 }?.let { symbolTable.descriptorExtension.referenceConstructor(it) }
 
     override fun findNestedClass(clazz: IrClassSymbol, name: Name): IrClassSymbol? {
         val classDescriptor = clazz.descriptor.defaultType.memberScope.getContributedClassifier(name, NoLookupLocation.FROM_BUILTINS) as? ClassDescriptor
         return classDescriptor?.let {
-            symbolTable.referenceClass(it)
+            symbolTable.descriptorExtension.referenceClass(it)
         }
     }
 

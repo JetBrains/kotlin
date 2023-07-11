@@ -119,7 +119,7 @@ internal class StatementGenerator(
             } else {
                 property
             }
-        return context.symbolTable.declareVariable(
+        return context.symbolTable.descriptorExtension.declareVariable(
             sourceElement.startOffsetSkippingComments, sourceElement.endOffset, IrDeclarationOrigin.DEFINED,
             variableDescriptor,
             variableDescriptor.type.toIrType(),
@@ -207,7 +207,7 @@ internal class StatementGenerator(
                 } else {
                     ktEntry
                 }
-            val irComponentVar = context.symbolTable.declareVariable(
+            val irComponentVar = context.symbolTable.descriptorExtension.declareVariable(
                 componentVarOffsetSource.startOffsetSkippingComments, componentVarOffsetSource.endOffset,
                 IrDeclarationOrigin.DEFINED,
                 componentVariable, componentVariable.type.toIrType(), irComponentCall
@@ -447,13 +447,13 @@ internal class StatementGenerator(
             IrGetObjectValueImpl(
                 startOffset, endOffset,
                 thisType,
-                context.symbolTable.referenceClass(classDescriptor)
+                context.symbolTable.descriptorExtension.referenceClass(classDescriptor)
             )
         } else {
             IrGetValueImpl(
                 startOffset, endOffset,
                 thisType,
-                context.symbolTable.referenceValueParameter(thisAsReceiverParameter)
+                context.symbolTable.descriptorExtension.referenceValueParameter(thisAsReceiverParameter)
             )
         }
     }
@@ -479,7 +479,7 @@ internal class StatementGenerator(
                 IrGetValueImpl(
                     startOffset, endOffset,
                     receiverType,
-                    context.symbolTable.referenceValueParameter(receiverParameter)
+                    context.symbolTable.descriptorExtension.referenceValueParameter(receiverParameter)
                 )
             }
 

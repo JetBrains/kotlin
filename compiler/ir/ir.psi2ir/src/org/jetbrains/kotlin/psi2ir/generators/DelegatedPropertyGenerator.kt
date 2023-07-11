@@ -60,7 +60,7 @@ internal class DelegatedPropertyGenerator(
 
         val kPropertyType = getKPropertyTypeForDelegatedProperty(propertyDescriptor)
 
-        val irProperty = context.symbolTable.declareProperty(
+        val irProperty = context.symbolTable.descriptorExtension.declareProperty(
             ktProperty.startOffsetSkippingComments, ktProperty.endOffset, IrDeclarationOrigin.DEFINED,
             propertyDescriptor,
             isDelegated = true
@@ -139,7 +139,7 @@ internal class DelegatedPropertyGenerator(
             val endOffset = ktDelegate.endOffset
             val origin = IrDeclarationOrigin.PROPERTY_DELEGATE
             val type = delegateDescriptor.type.toIrType()
-            context.symbolTable.declareField(
+            context.symbolTable.descriptorExtension.declareField(
                 startOffset, endOffset, origin, delegateDescriptor, type
             ) {
                 context.irFactory.createField(
@@ -221,7 +221,7 @@ internal class DelegatedPropertyGenerator(
                 IrGetValueImpl(
                     ktDelegate.startOffsetSkippingComments, ktDelegate.endOffset,
                     thisAsReceiverParameter.type.toIrType(),
-                    context.symbolTable.referenceValueParameter(thisAsReceiverParameter)
+                    context.symbolTable.descriptorExtension.referenceValueParameter(thisAsReceiverParameter)
                 )
             }
         }

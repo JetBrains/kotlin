@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.ir.util.*
@@ -54,7 +55,7 @@ internal interface DescriptorToIrTranslationMixin {
      * Additional elements are passed via [builder] callback.
      */
     fun createClass(descriptor: ClassDescriptor, builder: (IrClass) -> Unit): IrClass =
-            symbolTable.declareClass(descriptor) {
+            symbolTable.descriptorExtension.declareClass(descriptor) {
                 symbolTable.irFactory.createIrClassFromDescriptor(
                     SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB, it, descriptor
                 )
@@ -85,7 +86,7 @@ internal interface DescriptorToIrTranslationMixin {
     }
 
     fun createConstructor(constructorDescriptor: ClassConstructorDescriptor): IrConstructor {
-        val irConstructor = symbolTable.declareConstructor(constructorDescriptor) {
+        val irConstructor = symbolTable.descriptorExtension.declareConstructor(constructorDescriptor) {
             with(constructorDescriptor) {
                 IrConstructorImpl(
                     SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB, it, name, visibility,
@@ -107,7 +108,7 @@ internal interface DescriptorToIrTranslationMixin {
     }
 
     fun createProperty(propertyDescriptor: PropertyDescriptor): IrProperty {
-        val irProperty = symbolTable.declareProperty(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB, propertyDescriptor)
+        val irProperty = symbolTable.descriptorExtension.declareProperty(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB, propertyDescriptor, propertyDescriptor.isDelegated)
         irProperty.getter = propertyDescriptor.getter?.let {
             val irGetter = createFunction(it)
             irGetter.correspondingPropertySymbol = irProperty.symbol

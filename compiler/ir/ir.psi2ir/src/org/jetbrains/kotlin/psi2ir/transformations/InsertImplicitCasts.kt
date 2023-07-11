@@ -472,7 +472,7 @@ internal class InsertImplicitCasts(
         return IrCallImpl(
             startOffset, endOffset,
             targetType.toIrType(),
-            symbolTable.referenceSimpleFunction(coercionFunction),
+            symbolTable.descriptorExtension.referenceSimpleFunction(coercionFunction),
             typeArgumentsCount = 0, valueArgumentsCount = 0
         ).also { irCall ->
             irCall.dispatchReceiver = this
@@ -494,7 +494,7 @@ internal class InsertImplicitCasts(
         return IrCallImpl(
             startOffset, endOffset,
             targetType.toIrType(),
-            symbolTable.referenceSimpleFunction(coercionFunction),
+            symbolTable.descriptorExtension.referenceSimpleFunction(coercionFunction),
             typeArgumentsCount = 0, valueArgumentsCount = 0
         ).also { irCall ->
             irCall.extensionReceiver = this

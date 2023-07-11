@@ -73,7 +73,7 @@ internal class CStructVarCompanionGenerator(
                                 startOffset, endOffset, context.irBuiltIns.unitType,
                                 irBuiltIns.anyClass.owner.primaryConstructor!!.symbol
                         )
-                        +irInstanceInitializer(symbolTable.referenceClass(companionObjectDescriptor))
+                        +irInstanceInitializer(symbolTable.descriptorExtension.referenceClass(companionObjectDescriptor))
                     }
                 }
             }
@@ -88,7 +88,7 @@ internal class CStructVarCompanionGenerator(
                             it.putValueArgument(0, irLong(size))
                             it.putValueArgument(1, irInt(align))
                         }
-                        +irInstanceInitializer(symbolTable.referenceClass(companionObjectDescriptor))
+                        +irInstanceInitializer(symbolTable.descriptorExtension.referenceClass(companionObjectDescriptor))
                     }
                 }
             }

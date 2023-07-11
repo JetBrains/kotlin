@@ -51,7 +51,7 @@ internal class LazyIrFunctionFactory(
     override fun getDeclaration(symbol: IrSymbol) =
             (symbol.descriptor as? FunctionClassDescriptor)?.let { descriptor ->
                 buildClass(descriptor) {
-                    declareClass(descriptor) {
+                    descriptorExtension.declareClass(descriptor) {
                         createIrClass(descriptor)
                     }
                 }
@@ -103,7 +103,7 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
     override fun getDeclaration(symbol: IrSymbol) =
             (symbol.descriptor as? FunctionClassDescriptor)?.let { descriptor ->
                 buildClass(descriptor) {
-                    declareClass(descriptor) {
+                    descriptorExtension.declareClass(descriptor) {
                         createIrClass(it, descriptor)
                     }
                 }
@@ -124,7 +124,7 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
 
     fun buildAllClasses() {
         val maxArity = 255 // See [BuiltInFictitiousFunctionClassFactory].
-        (0 .. maxArity).forEach { arity ->
+        (0..maxArity).forEach { arity ->
             functionN(arity)
             kFunctionN(arity)
             suspendFunctionN(arity)
@@ -156,13 +156,11 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
     override fun kSuspendFunctionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass =
             buildClass(reflectionTypes.getKSuspendFunction(arity) as FunctionClassDescriptor, declarator)
 
-    private val functionSymbol = symbolTable.referenceClass(
-            irBuiltIns.builtIns.builtInsModule.findClassAcrossModuleDependencies(
-                    ClassId.topLevel(KonanFqNames.function))!!)
+    private val functionSymbol = symbolTable.descriptorExtension.referenceClass(irBuiltIns.builtIns.builtInsModule.findClassAcrossModuleDependencies(
+            ClassId.topLevel(KonanFqNames.function))!!)
 
-    private val kFunctionSymbol = symbolTable.referenceClass(
-            irBuiltIns.builtIns.builtInsModule.findClassAcrossModuleDependencies(
-                    ClassId.topLevel(KonanFqNames.kFunction))!!)
+    private val kFunctionSymbol = symbolTable.descriptorExtension.referenceClass(irBuiltIns.builtIns.builtInsModule.findClassAcrossModuleDependencies(
+            ClassId.topLevel(KonanFqNames.kFunction))!!)
 
     private val filesMap = mutableMapOf<PackageFragmentDescriptor, IrFile>()
 
@@ -179,8 +177,7 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
     }
 
     private fun createTypeParameter(descriptor: TypeParameterDescriptor): IrTypeParameter =
-            symbolTable.declareGlobalTypeParameter(
-                    SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, DECLARATION_ORIGIN_FUNCTION_CLASS,
+            symbolTable.descriptorExtension.declareGlobalTypeParameter(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, DECLARATION_ORIGIN_FUNCTION_CLASS,
                     descriptor
             )
 
@@ -198,7 +195,7 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
                 )
             }
         }
-        return symbolTable.declareSimpleFunction(descriptor, functionFactory)
+        return symbolTable.descriptorExtension.declareSimpleFunction(descriptor, functionFactory)
     }
 
     private fun createIrClass(symbol: IrClassSymbol, descriptor: ClassDescriptor): IrClass =
@@ -228,7 +225,7 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
                         }
                         val superTypeSymbol = when (val superTypeDescriptor = superType.constructor.declarationDescriptor) {
                             is FunctionClassDescriptor -> buildClass(superTypeDescriptor) {
-                                declareClass(superTypeDescriptor) {
+                                descriptorExtension.declareClass(superTypeDescriptor) {
                                     createIrClass(it, superTypeDescriptor)
                                 }
                             }.symbol
@@ -341,10 +338,10 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
                 }
             }
 
-            val newFunction = symbolTable.declareSimpleFunction(descriptor, functionDeclare)
+            val newFunction = symbolTable.descriptorExtension.declareSimpleFunction(descriptor, functionDeclare)
 
             newFunction.parent = this
-            newFunction.overriddenSymbols = descriptor.overriddenDescriptors.mapNotNull { symbolTable.referenceSimpleFunction(it.original) }
+            newFunction.overriddenSymbols = descriptor.overriddenDescriptors.mapNotNull { symbolTable.descriptorExtension.referenceSimpleFunction(it.original) }
             newFunction.dispatchReceiverParameter = descriptor.dispatchReceiverParameter?.let { newFunction.createValueParameter(it) }
             newFunction.extensionReceiverParameter = descriptor.extensionReceiverParameter?.let { newFunction.createValueParameter(it) }
             newFunction.valueParameters = descriptor.valueParameters.map { newFunction.createValueParameter(it) }
@@ -371,7 +368,7 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
                         isExpect = descriptor.isExpect,
                         isFakeOverride = true)
             }
-            val property = symbolTable.declareProperty(descriptor, propertyFactory = propertyDeclare)
+            val property = symbolTable.descriptorExtension.declareProperty(descriptor, propertyFactory = propertyDeclare)
 
             property.parent = this
             property.getter = descriptor.getter?.let { g -> createFakeOverrideFunction(g, property.symbol) }

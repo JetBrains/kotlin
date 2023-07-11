@@ -60,7 +60,7 @@ internal class CEnumClassGenerator(
      * Generates one if absent.
      */
     fun findOrGenerateCEnum(classDescriptor: ClassDescriptor, parent: IrDeclarationContainer): IrClass {
-        val irClassSymbol = symbolTable.referenceClass(classDescriptor)
+        val irClassSymbol = symbolTable.descriptorExtension.referenceClass(classDescriptor)
         return if (!irClassSymbol.isBound) {
             provideIrClassForCEnum(classDescriptor).also {
                 it.patchDeclarationParents(parent)
@@ -123,11 +123,10 @@ internal class CEnumClassGenerator(
     }
 
     private fun createEnumEntry(enumDescriptor: ClassDescriptor, entryDescriptor: ClassDescriptor): IrEnumEntry {
-        val enumEntry = symbolTable.declareEnumEntry(
-                SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
+        val enumEntry = symbolTable.descriptorExtension.declareEnumEntry(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
                 IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB, entryDescriptor
         )
-        val constructorSymbol = symbolTable.referenceConstructor(enumDescriptor.unsubstitutedPrimaryConstructor!!)
+        val constructorSymbol = symbolTable.descriptorExtension.referenceConstructor(enumDescriptor.unsubstitutedPrimaryConstructor!!)
         postLinkageSteps.add {
             enumEntry.initializerExpression = IrExpressionBodyImpl(IrEnumConstructorCallImpl(
                     SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
@@ -158,8 +157,8 @@ internal class CEnumClassGenerator(
         val irConstructor = createConstructor(descriptor.unsubstitutedPrimaryConstructor!!)
         val builtIns = (irBuiltIns as IrBuiltInsOverDescriptors).builtIns
         val enumConstructor = builtIns.enum.constructors.single()
-        val constructorSymbol = symbolTable.referenceConstructor(enumConstructor)
-        val classSymbol = symbolTable.referenceClass(descriptor)
+        val constructorSymbol = symbolTable.descriptorExtension.referenceConstructor(enumConstructor)
+        val classSymbol = symbolTable.descriptorExtension.referenceClass(descriptor)
         val type = descriptor.defaultType.toIrType()
         postLinkageSteps.add {
             irConstructor.body = irBuilder(irBuiltIns, irConstructor.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET)

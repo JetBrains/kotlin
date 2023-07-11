@@ -172,7 +172,7 @@ open class JvmGeneratorExtensionsImpl(
         return IrDelegatingConstructorCallImpl.fromSymbolDescriptor(
             ktPureClassOrObject.pureStartOffset, ktPureClassOrObject.pureEndOffset,
             context.irBuiltIns.unitType,
-            context.symbolTable.referenceConstructor(recordConstructor)
+            context.symbolTable.descriptorExtension.referenceConstructor(recordConstructor)
         )
     }
 

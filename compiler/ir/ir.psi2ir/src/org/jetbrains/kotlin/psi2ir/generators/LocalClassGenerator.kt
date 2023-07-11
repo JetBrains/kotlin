@@ -50,7 +50,7 @@ internal class LocalClassGenerator(statementGenerator: StatementGenerator) : Sta
         irBlock.statements.add(
             IrConstructorCallImpl.fromSymbolDescriptor(
                 startOffset, endOffset, objectLiteralType,
-                context.symbolTable.referenceConstructor(objectConstructor),
+                context.symbolTable.descriptorExtension.referenceConstructor(objectConstructor),
                 IrStatementOrigin.OBJECT_LITERAL
             )
         )

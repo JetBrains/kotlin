@@ -64,7 +64,7 @@ class JsCommonCoroutineSymbols(
     val coroutineIntrinsicsPackage = module.getPackage(COROUTINE_INTRINSICS_PACKAGE_FQNAME)
 
     val coroutineImpl =
-        symbolTable.referenceClass(findClass(coroutinePackage.memberScope, COROUTINE_IMPL_NAME))
+        symbolTable.descriptorExtension.referenceClass(findClass(coroutinePackage.memberScope, COROUTINE_IMPL_NAME))
 
     val coroutineImplLabelPropertyGetter by lazy(LazyThreadSafetyMode.NONE) { coroutineImpl.getPropertyGetter("state")!!.owner }
     val coroutineImplLabelPropertySetter by lazy(LazyThreadSafetyMode.NONE) { coroutineImpl.getPropertySetter("state")!!.owner }
@@ -75,14 +75,14 @@ class JsCommonCoroutineSymbols(
     val coroutineImplExceptionStatePropertyGetter by lazy(LazyThreadSafetyMode.NONE) { coroutineImpl.getPropertyGetter("exceptionState")!!.owner }
     val coroutineImplExceptionStatePropertySetter by lazy(LazyThreadSafetyMode.NONE) { coroutineImpl.getPropertySetter("exceptionState")!!.owner }
 
-    val continuationClass = symbolTable.referenceClass(
+    val continuationClass = symbolTable.descriptorExtension.referenceClass(
         coroutinePackage.memberScope.getContributedClassifier(
             CONTINUATION_NAME,
             NoLookupLocation.FROM_BACKEND
         ) as ClassDescriptor
     )
 
-    val coroutineSuspendedGetter = symbolTable.referenceSimpleFunction(
+    val coroutineSuspendedGetter = symbolTable.descriptorExtension.referenceSimpleFunction(
         coroutineIntrinsicsPackage.memberScope.getContributedVariables(
             COROUTINE_SUSPENDED_NAME,
             NoLookupLocation.FROM_BACKEND

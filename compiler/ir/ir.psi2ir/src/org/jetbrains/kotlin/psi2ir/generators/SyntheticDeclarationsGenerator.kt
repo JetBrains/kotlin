@@ -59,7 +59,7 @@ internal class SyntheticDeclarationsGenerator(context: GeneratorContext) : Decla
         if (descriptor.visibility != DescriptorVisibilities.INVISIBLE_FAKE &&
             descriptor.kind != CallableMemberDescriptor.Kind.DELEGATION // Skip mismatching delegates, see KT-46120
         ) {
-            symbolTable.declareSimpleFunctionIfNotExists(descriptor) {
+            symbolTable.descriptorExtension.declareSimpleFunctionIfNotExists(descriptor) {
                 createFunctionStub(descriptor, it).insertDeclaration(data)
             }
         }
@@ -84,11 +84,11 @@ internal class SyntheticDeclarationsGenerator(context: GeneratorContext) : Decla
         require(data != null)
 
         if (DescriptorUtils.isEnumEntry(descriptor)) {
-            symbolTable.declareEnumEntryIfNotExists(descriptor) {
+            symbolTable.descriptorExtension.declareEnumEntryIfNotExists(descriptor) {
                 createEnumEntruStub(descriptor, it).insertDeclaration(data)
             }
         } else {
-            symbolTable.declareClassIfNotExists(descriptor) {
+            symbolTable.descriptorExtension.declareClassIfNotExists(descriptor) {
                 createClassStub(descriptor, it).insertDeclaration(data)
             }
         }
@@ -101,7 +101,7 @@ internal class SyntheticDeclarationsGenerator(context: GeneratorContext) : Decla
     override fun visitTypeAliasDescriptor(descriptor: TypeAliasDescriptor, data: IrDeclarationContainer?) {
         require(data != null)
 
-        symbolTable.declareTypeAliasIfNotExists(descriptor) {
+        symbolTable.descriptorExtension.declareTypeAliasIfNotExists(descriptor) {
             declareTypeAliasStub(descriptor, it).insertDeclaration(data)
         }
     }
@@ -117,13 +117,13 @@ internal class SyntheticDeclarationsGenerator(context: GeneratorContext) : Decla
     override fun visitConstructorDescriptor(constructorDescriptor: ConstructorDescriptor, data: IrDeclarationContainer?) {
         require(data != null)
         assert(constructorDescriptor is ClassConstructorDescriptor)
-        symbolTable.declareConstructorIfNotExists(constructorDescriptor as ClassConstructorDescriptor) {
+        symbolTable.descriptorExtension.declareConstructorIfNotExists(constructorDescriptor as ClassConstructorDescriptor) {
             createConstructorStub(constructorDescriptor, it).insertDeclaration(data)
         }
     }
 
     override fun visitScriptDescriptor(scriptDescriptor: ScriptDescriptor, data: IrDeclarationContainer?) {
-        assert(symbolTable.referenceScript(scriptDescriptor).isBound) { "Script $scriptDescriptor isn't declared" }
+        assert(symbolTable.descriptorExtension.referenceScript(scriptDescriptor).isBound) { "Script $scriptDescriptor isn't declared" }
     }
 
     private fun createPropertyStub(descriptor: PropertyDescriptor, symbol: IrPropertySymbol): IrProperty {
@@ -132,7 +132,7 @@ internal class SyntheticDeclarationsGenerator(context: GeneratorContext) : Decla
 
     private fun declareAccessor(accessorDescriptor: PropertyAccessorDescriptor, property: IrProperty): IrSimpleFunction {
         // TODO: type parameters
-        return symbolTable.declareSimpleFunctionIfNotExists(accessorDescriptor) {
+        return symbolTable.descriptorExtension.declareSimpleFunctionIfNotExists(accessorDescriptor) {
             createFunctionStub(accessorDescriptor, it).also { acc ->
                 acc.parent = property.parent
                 acc.correspondingPropertySymbol = property.symbol
@@ -143,7 +143,7 @@ internal class SyntheticDeclarationsGenerator(context: GeneratorContext) : Decla
     override fun visitPropertyDescriptor(descriptor: PropertyDescriptor, data: IrDeclarationContainer?) {
         require(data != null)
         if (descriptor.visibility != DescriptorVisibilities.INVISIBLE_FAKE) {
-            symbolTable.declarePropertyIfNotExists(descriptor) {
+            symbolTable.descriptorExtension.declarePropertyIfNotExists(descriptor) {
                 createPropertyStub(descriptor, it).insertDeclaration(data).also { p ->
                     descriptor.getter?.let { g -> p.getter = declareAccessor(g, p) }
                     descriptor.setter?.let { s -> p.setter = declareAccessor(s, p) }

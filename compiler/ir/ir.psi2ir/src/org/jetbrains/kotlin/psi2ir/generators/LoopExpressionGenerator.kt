@@ -192,7 +192,7 @@ internal class LoopExpressionGenerator(statementGenerator: StatementGenerator) :
         val irLoopParameter =
             if (ktLoopParameter != null && ktLoopDestructuringDeclaration == null) {
                 val loopParameter = getOrFail(BindingContext.VALUE_PARAMETER, ktLoopParameter)
-                context.symbolTable.declareVariable(
+                context.symbolTable.descriptorExtension.declareVariable(
                     ktLoopParameter.startOffsetSkippingComments, ktLoopParameter.endOffset, IrDeclarationOrigin.FOR_LOOP_VARIABLE,
                     loopParameter, loopParameter.type.toIrType(),
                     irNextCall

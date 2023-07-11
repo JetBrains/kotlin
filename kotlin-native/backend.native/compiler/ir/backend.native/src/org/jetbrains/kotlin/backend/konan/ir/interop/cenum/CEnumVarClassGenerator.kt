@@ -59,11 +59,11 @@ internal class CEnumVarClassGenerator(
 
     private fun createPrimaryConstructor(enumVarClass: IrClass): IrConstructor {
         val irConstructor = createConstructor(enumVarClass.descriptor.unsubstitutedPrimaryConstructor!!)
-        val classSymbol = symbolTable.referenceClass(enumVarClass.descriptor)
+        val classSymbol = symbolTable.descriptorExtension.referenceClass(enumVarClass.descriptor)
         postLinkageSteps.add {
             irConstructor.body = irBuilder(irBuiltIns, irConstructor.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
                 +IrDelegatingConstructorCallImpl.fromSymbolOwner(
-                        startOffset, endOffset, context.irBuiltIns.unitType, symbols.enumVarConstructorSymbol
+                    startOffset, endOffset, context.irBuiltIns.unitType, symbols.enumVarConstructorSymbol
                 ).also {
                     it.putValueArgument(0, irGet(irConstructor.valueParameters[0]))
                 }
@@ -82,13 +82,13 @@ internal class CEnumVarClassGenerator(
             }
 
     private fun createCompanionConstructor(companionObjectDescriptor: ClassDescriptor, typeSize: Int): IrConstructor {
-        val classSymbol = symbolTable.referenceClass(companionObjectDescriptor)
+        val classSymbol = symbolTable.descriptorExtension.referenceClass(companionObjectDescriptor)
         return createConstructor(companionObjectDescriptor.unsubstitutedPrimaryConstructor!!).also {
             postLinkageSteps.add {
                 it.body = irBuilder(irBuiltIns, it.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
                     +IrDelegatingConstructorCallImpl.fromSymbolOwner(
-                            startOffset, endOffset, context.irBuiltIns.unitType,
-                            symbols.primitiveVarPrimaryConstructor
+                        startOffset, endOffset, context.irBuiltIns.unitType,
+                        symbols.primitiveVarPrimaryConstructor
                     ).also {
                         it.putValueArgument(0, irInt(typeSize))
                     }

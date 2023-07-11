@@ -42,10 +42,10 @@ private class ExpectDependencyGenerator(
 
     override fun visitClass(declaration: IrClass) {
         declaration.forEachExpect { expectDescriptor ->
-            val symbol = symbolTable.referenceClass(expectDescriptor as ClassDescriptor)
+            val symbol = symbolTable.descriptorExtension.referenceClass(expectDescriptor as ClassDescriptor)
             expectDescriptorToSymbol[expectDescriptor] = symbol
             expectDescriptor.constructors.forEach {
-                expectDescriptorToSymbol[it] = symbolTable.referenceConstructor(it as ClassConstructorDescriptor)
+                expectDescriptorToSymbol[it] = symbolTable.descriptorExtension.referenceConstructor(it as ClassConstructorDescriptor)
             }
         }
         super.visitDeclaration(declaration)
@@ -53,7 +53,7 @@ private class ExpectDependencyGenerator(
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction) {
         declaration.forEachExpect {
-            val symbol = symbolTable.referenceSimpleFunction(it as FunctionDescriptor)
+            val symbol = symbolTable.descriptorExtension.referenceSimpleFunction(it as FunctionDescriptor)
             expectDescriptorToSymbol[it] = symbol
         }
         super.visitDeclaration(declaration)
@@ -61,7 +61,7 @@ private class ExpectDependencyGenerator(
 
     override fun visitConstructor(declaration: IrConstructor) {
         declaration.forEachExpect {
-            val symbol = symbolTable.referenceConstructor(it as ClassConstructorDescriptor)
+            val symbol = symbolTable.descriptorExtension.referenceConstructor(it as ClassConstructorDescriptor)
             expectDescriptorToSymbol[it] = symbol
 
         }
@@ -70,7 +70,7 @@ private class ExpectDependencyGenerator(
 
     override fun visitProperty(declaration: IrProperty) {
         declaration.forEachExpect {
-            val symbol = symbolTable.referenceProperty(it as PropertyDescriptor)
+            val symbol = symbolTable.descriptorExtension.referenceProperty(it as PropertyDescriptor)
             expectDescriptorToSymbol[it] = symbol
         }
         super.visitDeclaration(declaration)
@@ -78,7 +78,7 @@ private class ExpectDependencyGenerator(
 
     override fun visitEnumEntry(declaration: IrEnumEntry) {
         declaration.forEachExpect {
-            val symbol = symbolTable.referenceEnumEntry(it as ClassDescriptor)
+            val symbol = symbolTable.descriptorExtension.referenceEnumEntry(it as ClassDescriptor)
             expectDescriptorToSymbol[it] = symbol
 
         }
@@ -88,7 +88,7 @@ private class ExpectDependencyGenerator(
     override fun visitTypeAlias(declaration: IrTypeAlias) {
         declaration.forEachExpect {
             val symbol = when (it) {
-                is ClassDescriptor -> symbolTable.referenceClass(it)
+                is ClassDescriptor -> symbolTable.descriptorExtension.referenceClass(it)
                 else -> error("Unexpected expect for actual type alias: $it")
             }
             expectDescriptorToSymbol[it] = symbol

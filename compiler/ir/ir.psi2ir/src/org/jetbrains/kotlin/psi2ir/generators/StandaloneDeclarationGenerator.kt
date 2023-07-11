@@ -39,7 +39,7 @@ internal class StandaloneDeclarationGenerator(private val context: GeneratorCont
         from: List<TypeParameterDescriptor>
     ) {
         generateTypeParameterDeclarations(irTypeParametersOwner, from) { startOffset, endOffset, typeParameterDescriptor ->
-            symbolTable.declareGlobalTypeParameter(startOffset, endOffset, IrDeclarationOrigin.DEFINED, typeParameterDescriptor)
+            symbolTable.descriptorExtension.declareGlobalTypeParameter(startOffset, endOffset, IrDeclarationOrigin.DEFINED, typeParameterDescriptor)
         }
     }
 
@@ -200,7 +200,7 @@ internal class StandaloneDeclarationGenerator(private val context: GeneratorCont
     }
 
     protected fun generateOverridenSymbols(irFunction: IrSimpleFunction, overridens: Collection<FunctionDescriptor>) {
-        irFunction.overriddenSymbols = overridens.map { symbolTable.referenceSimpleFunction(it.original) }
+        irFunction.overriddenSymbols = overridens.map { symbolTable.descriptorExtension.referenceSimpleFunction(it.original) }
     }
 
     fun generateSimpleFunction(

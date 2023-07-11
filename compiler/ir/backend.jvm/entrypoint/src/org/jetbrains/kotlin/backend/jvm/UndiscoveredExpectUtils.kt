@@ -36,12 +36,12 @@ class UndiscoveredExpectVisitor(
 ) : KtTreeVisitorVoid() {
     override fun visitClassOrObject(classOrObject: KtClassOrObject) {
         super.visitClassOrObject(classOrObject)
-        symbolTable.referenceClass(classOrObject.findExpectForActual(BindingContext.CLASS) ?: return)
+        symbolTable.descriptorExtension.referenceClass(classOrObject.findExpectForActual(BindingContext.CLASS) ?: return)
     }
 
     override fun visitTypeAlias(typeAlias: KtTypeAlias) {
         super.visitTypeAlias(typeAlias)
-        symbolTable.referenceTypeAlias(typeAlias.findExpectForActual(BindingContext.TYPE_ALIAS) ?: return)
+        symbolTable.descriptorExtension.referenceTypeAlias(typeAlias.findExpectForActual(BindingContext.TYPE_ALIAS) ?: return)
     }
 
     override fun visitPrimaryConstructor(constructor: KtPrimaryConstructor) {
@@ -65,7 +65,7 @@ class UndiscoveredExpectVisitor(
 
     override fun visitProperty(property: KtProperty) {
         super.visitProperty(property)
-        symbolTable.referenceProperty(
+        symbolTable.descriptorExtension.referenceProperty(
             property.findExpectForActualOfType<PropertyDescriptor, _, _>(BindingContext.VARIABLE) ?: return
         )
     }

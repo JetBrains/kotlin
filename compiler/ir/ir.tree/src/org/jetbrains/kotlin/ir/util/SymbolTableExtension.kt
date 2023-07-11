@@ -340,7 +340,7 @@ abstract class SymbolTableExtension<
         endOffset: Int,
         origin: IrDeclarationOrigin,
         descriptor: Property,
-        isDelegated: Boolean,/* = descriptor.isDelegated*/
+        isDelegated: Boolean
     ): IrProperty {
         return declareProperty(descriptor) { propertySymbol ->
             defaultPropertyFactory(startOffset, endOffset, origin, descriptor, isDelegated, propertySymbol)

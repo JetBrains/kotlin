@@ -29,9 +29,9 @@ class FragmentCompilerSymbolTableDecorator(
 ) : SymbolTable(signatureComposer, irFactory, nameProvider) {
 
     override fun referenceValueParameter(descriptor: ParameterDescriptor): IrValueParameterSymbol {
-        val fi = fragmentInfo ?: return super.referenceValueParameter(descriptor)
+        val fi = fragmentInfo ?: return super.descriptorExtension.referenceValueParameter(descriptor)
 
-        if (descriptor !is ReceiverParameterDescriptor) return super.referenceValueParameter(descriptor)
+        if (descriptor !is ReceiverParameterDescriptor) return super.descriptorExtension.referenceValueParameter(descriptor)
 
         val finderPredicate = when (val receiverValue = descriptor.value) {
             is ExtensionReceiver, is ContextReceiver -> { (targetDescriptor, _): EvaluatorFragmentParameterInfo ->
@@ -46,14 +46,14 @@ class FragmentCompilerSymbolTableDecorator(
         val parameterPosition =
             fi.parameters.indexOfFirst(finderPredicate)
         if (parameterPosition > -1) {
-            return super.referenceValueParameter(fi.methodDescriptor.valueParameters[parameterPosition])
+            return super.descriptorExtension.referenceValueParameter(fi.methodDescriptor.valueParameters[parameterPosition])
         }
-        return super.referenceValueParameter(descriptor)
+        return super.descriptorExtension.referenceValueParameter(descriptor)
     }
 
 
-    override fun referenceValue(value: ValueDescriptor): IrValueSymbol {
-        val fi = fragmentInfo ?: return super.referenceValue(value)
+    fun referenceValue(value: ValueDescriptor): IrValueSymbol {
+        val fi = fragmentInfo ?: return super.descriptorExtension.referenceValue(value)
 
         val finderPredicate = when (value) {
             is AbstractReceiverParameterDescriptor -> { (targetDescriptor, _): EvaluatorFragmentParameterInfo ->
@@ -67,9 +67,9 @@ class FragmentCompilerSymbolTableDecorator(
         val parameterPosition =
             fi.parameters.indexOfFirst(finderPredicate)
         if (parameterPosition > -1) {
-            return super.referenceValueParameter(fi.methodDescriptor.valueParameters[parameterPosition])
+            return super.descriptorExtension.referenceValueParameter(fi.methodDescriptor.valueParameters[parameterPosition])
         }
 
-        return super.referenceValue(value)
+        return super.descriptorExtension.referenceValue(value)
     }
 }

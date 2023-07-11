@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -109,7 +110,7 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
 
     private fun generateTypeAliasDeclaration(ktTypeAlias: KtTypeAlias): IrTypeAlias =
         with(getOrFail(BindingContext.TYPE_ALIAS, ktTypeAlias)) {
-            context.symbolTable.declareTypeAlias(this) { symbol ->
+            context.symbolTable.descriptorExtension.declareTypeAlias(this) { symbol: IrTypeAliasSymbol ->
                 context.irFactory.createTypeAlias(
                     startOffset = ktTypeAlias.startOffsetSkippingComments,
                     endOffset = ktTypeAlias.endOffset,
@@ -130,7 +131,7 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
         from: List<TypeParameterDescriptor>
     ) {
         generateTypeParameterDeclarations(irTypeParametersOwner, from) { startOffset, endOffset, typeParameterDescriptor ->
-            context.symbolTable.declareGlobalTypeParameter(
+            context.symbolTable.descriptorExtension.declareGlobalTypeParameter(
                 startOffset,
                 endOffset,
                 IrDeclarationOrigin.DEFINED,

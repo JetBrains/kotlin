@@ -47,7 +47,7 @@ internal class ScriptGenerator(declarationGenerator: DeclarationGenerator) : Dec
     fun generateScriptDeclaration(ktScript: KtScript): IrDeclaration? {
         val descriptor = getOrFail(BindingContext.DECLARATION_TO_DESCRIPTOR, ktScript) as ScriptDescriptor
 
-        return context.symbolTable.declareScript(ktScript.startOffsetSkippingComments, ktScript.endOffset, descriptor).buildWithScope { irScript ->
+        return context.symbolTable.descriptorExtension.declareScript(ktScript.startOffsetSkippingComments, ktScript.endOffset, descriptor).buildWithScope { irScript ->
 
             irScript.metadata = DescriptorMetadataSource.Script(descriptor)
 
@@ -56,7 +56,7 @@ internal class ScriptGenerator(declarationGenerator: DeclarationGenerator) : Dec
             fun makeParameter(descriptor: ParameterDescriptor, origin: IrDeclarationOrigin, index: Int = -1): IrValueParameter {
                 val type = descriptor.type.toIrType()
                 val varargElementType = descriptor.varargElementType?.toIrType()
-                return context.symbolTable.declareValueParameter(
+                return context.symbolTable.descriptorExtension.declareValueParameter(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                     origin,
                     descriptor,
@@ -94,7 +94,7 @@ internal class ScriptGenerator(declarationGenerator: DeclarationGenerator) : Dec
                 it.owner != irScript && it.descriptor !in importedScripts
             }
             irScript.earlierScripts?.forEach {
-                context.symbolTable.introduceValueParameter(it.owner.thisReceiver!!)
+                context.symbolTable.descriptorExtension.introduceValueParameter(it.owner.thisReceiver!!)
             }
 
             fun createValueParameter(valueParameterDescriptor: ValueParameterDescriptor): IrValueParameter {
@@ -138,7 +138,7 @@ internal class ScriptGenerator(declarationGenerator: DeclarationGenerator) : Dec
                 // TODO: initializer
                 // TODO: do not keep direct links
                 val type = providedProperty.type.toIrType()
-                val valueParameter = context.symbolTable.declareValueParameter(
+                val valueParameter = context.symbolTable.descriptorExtension.declareValueParameter(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                     IrDeclarationOrigin.SCRIPT_PROVIDED_PROPERTY, parameter, type
                 ) { symbol ->
@@ -186,7 +186,7 @@ internal class ScriptGenerator(declarationGenerator: DeclarationGenerator) : Dec
                     isInline = isInline,
                     isExpect = isExpect,
                     returnType = returnType,
-                    symbol = context.symbolTable.referenceConstructor(descriptor.unsubstitutedPrimaryConstructor),
+                    symbol = context.symbolTable.descriptorExtension.referenceConstructor(descriptor.unsubstitutedPrimaryConstructor),
                     isPrimary = isPrimary,
                     isExternal = isExternal,
                     containerSource = containerSource

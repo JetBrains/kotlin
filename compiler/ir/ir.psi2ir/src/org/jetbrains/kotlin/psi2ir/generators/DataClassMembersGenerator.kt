@@ -161,7 +161,7 @@ internal class DataClassMembersGenerator(
 
             val dataClassConstructor = classDescriptor.unsubstitutedPrimaryConstructor
                 ?: throw AssertionError("Data class should have a primary constructor: $classDescriptor")
-            val constructorSymbol = context.symbolTable.referenceConstructor(dataClassConstructor)
+            val constructorSymbol = context.symbolTable.descriptorExtension.referenceConstructor(dataClassConstructor)
 
             irDataClassMembersGenerator.generateCopyFunction(function, constructorSymbol)
         }

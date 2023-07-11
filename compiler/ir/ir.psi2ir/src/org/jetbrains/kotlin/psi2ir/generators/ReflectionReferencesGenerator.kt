@@ -546,12 +546,12 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
             variableDescriptor.getter ?: throw AssertionError("Local delegated property should have a getter: $variableDescriptor")
         val setterDescriptor = variableDescriptor.setter
 
-        val getterSymbol = context.symbolTable.referenceSimpleFunction(getterDescriptor)
-        val setterSymbol = setterDescriptor?.let { context.symbolTable.referenceSimpleFunction(it) }
+        val getterSymbol = context.symbolTable.descriptorExtension.referenceSimpleFunction(getterDescriptor)
+        val setterSymbol = setterDescriptor?.let { context.symbolTable.descriptorExtension.referenceSimpleFunction(it) }
 
         return IrLocalDelegatedPropertyReferenceImpl(
             startOffset, endOffset, type.toIrType(),
-            context.symbolTable.referenceLocalDelegatedProperty(variableDescriptor),
+            context.symbolTable.descriptorExtension.referenceLocalDelegatedProperty(variableDescriptor),
             irDelegateSymbol, getterSymbol, setterSymbol,
             origin
         ).apply {
@@ -566,16 +566,16 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
     )
 
     private fun resolvePropertySymbol(descriptor: PropertyDescriptor, mutable: Boolean): DelegatedPropertySymbols {
-        val symbol = context.symbolTable.referenceProperty(descriptor)
+        val symbol = context.symbolTable.descriptorExtension.referenceProperty(descriptor)
         val syntheticJavaProperty = context.extensions.unwrapSyntheticJavaProperty(descriptor)
         if (syntheticJavaProperty != null) {
             val (getMethod, setMethod) = syntheticJavaProperty
             // This is the special case of synthetic java properties when requested property doesn't even exist but IR design
             // requires its symbol to be bound so let do that
             // see `irText/declarations/provideDelegate/javaDelegate.kt` and KT-45297
-            val getterSymbol = context.symbolTable.referenceSimpleFunction(getMethod)
+            val getterSymbol = context.symbolTable.descriptorExtension.referenceSimpleFunction(getMethod)
             val setterSymbol = if (mutable) setMethod?.let {
-                context.symbolTable.referenceSimpleFunction(it)
+                context.symbolTable.descriptorExtension.referenceSimpleFunction(it)
             } else null
             if (!symbol.isBound) {
                 val offset = UNDEFINED_OFFSET
@@ -601,8 +601,8 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
             }
             return DelegatedPropertySymbols(symbol, getterSymbol, setterSymbol)
         } else {
-            val getterSymbol = descriptor.getter?.let { context.symbolTable.referenceSimpleFunction(it) }
-            val setterSymbol = if (mutable) descriptor.setter?.let { context.symbolTable.referenceSimpleFunction(it) } else null
+            val getterSymbol = descriptor.getter?.let { context.symbolTable.descriptorExtension.referenceSimpleFunction(it) }
+            val setterSymbol = if (mutable) descriptor.setter?.let { context.symbolTable.descriptorExtension.referenceSimpleFunction(it) } else null
             return DelegatedPropertySymbols(symbol, getterSymbol, setterSymbol)
         }
     }
@@ -638,7 +638,7 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
         when {
             originalProperty.isDelegated -> null
             originalProperty.getter != null -> null
-            else -> context.symbolTable.referenceField(originalProperty)
+            else -> context.symbolTable.descriptorExtension.referenceField(originalProperty)
         }
 
     private fun generateFunctionReference(

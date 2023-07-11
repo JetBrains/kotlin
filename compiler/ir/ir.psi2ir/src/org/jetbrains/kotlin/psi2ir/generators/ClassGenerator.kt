@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.expressions.typeParametersCount
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.util.*
@@ -68,7 +69,7 @@ internal class ClassGenerator(
         val visibility = visibility_ ?: classDescriptor.visibility
         val modality = getEffectiveModality(ktClassOrObject, classDescriptor)
 
-        return context.symbolTable.declareClass(classDescriptor) {
+        return context.symbolTable.descriptorExtension.declareClass(classDescriptor) { it: IrClassSymbol ->
             context.irFactory.createIrClassFromDescriptor(
                 startOffset, endOffset, IrDeclarationOrigin.DEFINED, it, classDescriptor,
                 context.symbolTable.nameProvider.nameForDeclaration(classDescriptor), visibility, modality
@@ -123,7 +124,7 @@ internal class ClassGenerator(
                 generateAdditionalMembersForEnumClass(irClass)
             }
 
-            irClass.sealedSubclasses = classDescriptor.sealedSubclasses.map { context.symbolTable.referenceClass(it) }
+            irClass.sealedSubclasses = classDescriptor.sealedSubclasses.map { context.symbolTable.descriptorExtension.referenceClass(it) }
         }
     }
 
@@ -225,7 +226,7 @@ internal class ClassGenerator(
             } else {
                 null
             }
-            context.symbolTable.declareField(
+            context.symbolTable.descriptorExtension.declareField(
                 ktDelegateExpression.startOffsetSkippingComments, ktDelegateExpression.endOffset,
                 IrDeclarationOrigin.DELEGATE,
                 delegateDescriptor, delegateDescriptor.type.toIrType(),
@@ -277,10 +278,12 @@ internal class ClassGenerator(
         val startOffset = irDelegate.startOffset
         val endOffset = irDelegate.endOffset
 
-        val irProperty = context.symbolTable.declareProperty(
-            startOffset, endOffset, IrDeclarationOrigin.DELEGATED_MEMBER,
-            delegatedDescriptor
-        )
+        val irProperty =
+            context.symbolTable.descriptorExtension.declareProperty(
+                startOffset, endOffset, IrDeclarationOrigin.DELEGATED_MEMBER,
+                delegatedDescriptor,
+                delegatedDescriptor.isDelegated
+            )
 
         irProperty.getter = generateDelegatedFunction(irDelegate, delegatedDescriptor.getter!!, delegateToDescriptor.getter!!)
 
@@ -298,7 +301,7 @@ internal class ClassGenerator(
     private fun IrProperty.generateOverrides(propertyDescriptor: PropertyDescriptor) {
         overriddenSymbols =
             propertyDescriptor.overriddenDescriptors.map { overriddenPropertyDescriptor ->
-                context.symbolTable.referenceProperty(overriddenPropertyDescriptor.original)
+                context.symbolTable.descriptorExtension.referenceProperty(overriddenPropertyDescriptor.original)
             }
     }
 
@@ -345,7 +348,7 @@ internal class ClassGenerator(
         val substitutedDelegateTo = substituteDelegateToDescriptor(delegatedDescriptor, delegateToDescriptor)
         val returnType = substitutedDelegateTo.returnType!!
 
-        val delegateToSymbol = context.symbolTable.referenceSimpleFunction(delegateToDescriptor.original)
+        val delegateToSymbol = context.symbolTable.descriptorExtension.referenceSimpleFunction(delegateToDescriptor.original)
 
         val irCall = IrCallImpl.fromSymbolDescriptor(
             startOffset, endOffset,
@@ -485,7 +488,7 @@ internal class ClassGenerator(
     ) {
         ktClassOrObject.primaryConstructor?.let { ktPrimaryConstructor ->
             irPrimaryConstructor.valueParameters.forEach {
-                context.symbolTable.introduceValueParameter(it)
+                context.symbolTable.descriptorExtension.introduceValueParameter(it)
             }
 
             ktPrimaryConstructor.valueParameters.forEachIndexed { i, ktParameter ->
@@ -523,10 +526,10 @@ internal class ClassGenerator(
 
         // TODO this is a hack, pass declaration parent through generator chain instead
         val enumClassDescriptor = enumEntryDescriptor.containingDeclaration as ClassDescriptor
-        val enumClassSymbol = context.symbolTable.referenceClass(enumClassDescriptor)
+        val enumClassSymbol = context.symbolTable.descriptorExtension.referenceClass(enumClassDescriptor)
         val irEnumClass = enumClassSymbol.owner
 
-        return context.symbolTable.declareEnumEntry(
+        return context.symbolTable.descriptorExtension.declareEnumEntry(
             ktEnumEntry.startOffsetSkippingComments,
             ktEnumEntry.endOffset,
             IrDeclarationOrigin.DEFINED,

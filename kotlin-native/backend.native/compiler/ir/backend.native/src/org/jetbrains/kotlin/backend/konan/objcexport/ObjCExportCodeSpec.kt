@@ -24,7 +24,7 @@ internal fun ObjCExportedInterface.createCodeSpec(symbolTable: SymbolTable): Obj
                 createObjCMethodSpecBaseMethod(
                         mapper,
                         namer,
-                        symbolTable.referenceSimpleFunction(it),
+                        symbolTable.descriptorExtension.referenceSimpleFunction(it),
                         it
                 )
         )
@@ -58,13 +58,13 @@ internal fun ObjCExportedInterface.createCodeSpec(symbolTable: SymbolTable): Obj
         methods += createObjCMethods(allBaseMethods)
 
         val binaryName = namer.getClassOrProtocolName(descriptor).binaryName
-        val irClassSymbol = symbolTable.referenceClass(descriptor)
+        val irClassSymbol = symbolTable.descriptorExtension.referenceClass(descriptor)
 
         if (descriptor.isInterface) {
             ObjCProtocolForKotlinInterface(binaryName, irClassSymbol, methods)
         } else {
             descriptor.constructors.filter { mapper.shouldBeExposed(it) }.mapTo(methods) {
-                val irConstructorSymbol = symbolTable.referenceConstructor(it)
+                val irConstructorSymbol = symbolTable.descriptorExtension.referenceConstructor(it)
                 val baseMethod = createObjCMethodSpecBaseMethod(mapper, namer, irConstructorSymbol, it)
 
                 if (descriptor.isArray) {
@@ -80,24 +80,26 @@ internal fun ObjCExportedInterface.createCodeSpec(symbolTable: SymbolTable): Obj
             }
 
             if (descriptor.needCompanionObjectProperty(namer, mapper)) {
-                methods += ObjCGetterForObjectInstance(namer.getCompanionObjectPropertySelector(descriptor),
-                        symbolTable.referenceClass(descriptor.companionObjectDescriptor!!))
+                methods += ObjCGetterForObjectInstance(
+                    namer.getCompanionObjectPropertySelector(descriptor),
+                    symbolTable.descriptorExtension.referenceClass(descriptor.companionObjectDescriptor!!)
+                )
             }
 
             if (descriptor.kind == ClassKind.ENUM_CLASS) {
                 descriptor.enumEntries.mapTo(methods) {
-                    ObjCGetterForKotlinEnumEntry(symbolTable.referenceEnumEntry(it), namer.getEnumEntrySelector(it))
+                    ObjCGetterForKotlinEnumEntry(symbolTable.descriptorExtension.referenceEnumEntry(it), namer.getEnumEntrySelector(it))
                 }
 
                 descriptor.getEnumValuesFunctionDescriptor()?.let {
                     methods += ObjCClassMethodForKotlinEnumValuesOrEntries(
-                            symbolTable.referenceSimpleFunction(it),
+                            symbolTable.descriptorExtension.referenceSimpleFunction(it),
                             namer.getEnumStaticMemberSelector(it)
                     )
                 }
                 descriptor.getEnumEntriesPropertyDescriptor()?.let {
                     methods += ObjCClassMethodForKotlinEnumValuesOrEntries(
-                            symbolTable.referenceSimpleFunction(it.getter!!),
+                            symbolTable.descriptorExtension.referenceSimpleFunction(it.getter!!),
                             namer.getEnumStaticMemberSelector(it)
                     )
                 }

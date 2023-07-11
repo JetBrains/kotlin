@@ -87,10 +87,11 @@ class EnumClassMembersGenerator(declarationGenerator: DeclarationGenerator) : De
         } ?: return
 
         irClass.addMember(
-            context.symbolTable.declareProperty(
+            context.symbolTable.descriptorExtension.declareProperty(
                 SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
                 IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER,
-                entriesProperty
+                entriesProperty,
+                entriesProperty.isDelegated
             ).also { irProperty ->
                 irProperty.getter = context.symbolTable.declareSimpleFunctionWithOverrides(
                     SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,

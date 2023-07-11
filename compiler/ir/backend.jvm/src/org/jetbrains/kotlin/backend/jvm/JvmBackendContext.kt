@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.irBlock
 import org.jetbrains.kotlin.ir.declarations.*
@@ -41,6 +42,7 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.org.objectweb.asm.Type
 import java.util.concurrent.ConcurrentHashMap
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 class JvmBackendContext(
     val state: GenerationState,
     override val irBuiltIns: IrBuiltIns,
@@ -192,7 +194,7 @@ class JvmBackendContext(
         }
 
         state.multiFieldValueClassUnboxInfo = lambda@{ descriptor ->
-            val irClass = symbolTable.lazyWrapper.referenceClass(descriptor).owner
+            val irClass = symbolTable.lazyWrapper.descriptorExtension.referenceClass(descriptor).owner
             val node = multiFieldValueClassReplacements.getRootMfvcNodeOrNull(irClass) ?: return@lambda null
             val leavesInfo =
                 node.leaves.map { Triple(defaultTypeMapper.mapType(it.type), it.fullMethodName.asString(), it.fullFieldName.asString()) }
@@ -201,10 +203,10 @@ class JvmBackendContext(
     }
 
     fun referenceClass(descriptor: ClassDescriptor): IrClassSymbol =
-        symbolTable.lazyWrapper.referenceClass(descriptor)
+        symbolTable.lazyWrapper.descriptorExtension.referenceClass(descriptor)
 
     internal fun referenceTypeParameter(descriptor: TypeParameterDescriptor): IrTypeParameterSymbol =
-        symbolTable.lazyWrapper.referenceTypeParameter(descriptor)
+        symbolTable.lazyWrapper.descriptorExtension.referenceTypeParameter(descriptor)
 
     override fun log(message: () -> String) {
         /*TODO*/

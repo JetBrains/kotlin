@@ -19,7 +19,7 @@ class ExceptionHelperCallsTransformer(private val context: JsIrBackendContext) :
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun referenceFunction(fqn: FqName) =
         context.getFunctions(fqn).singleOrNull()?.let {
-            context.symbolTable.referenceSimpleFunction(it)
+            context.symbolTable.descriptorExtension.referenceSimpleFunction(it)
         } ?: throw AssertionError("Function not found: $fqn")
 
     private val helperMapping = mapOf(
