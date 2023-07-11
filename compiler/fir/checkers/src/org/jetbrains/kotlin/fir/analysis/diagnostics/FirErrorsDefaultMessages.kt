@@ -746,7 +746,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(FUNCTION_CALL_EXPECTED, "Function invocation ''{0}({1})'' expected", TO_STRING, FUNCTION_PARAMETERS)
         map.put(
             FUNCTION_EXPECTED,
-            "Expression ''{0}'' of type {1} cannot be invoked as a function. The function ''invoke()'' is not found", TO_STRING, RENDER_TYPE
+            "Expression ''{0}'' of type ''{1}'' cannot be invoked as a function. The function ''invoke()'' is not found", TO_STRING, RENDER_TYPE
         )
         map.put(INTERFACE_AS_FUNCTION, "Interface ''{0}'' does not have constructors.", SYMBOL)
         map.put(EXPECT_CLASS_AS_FUNCTION, "Expected class ''{0}'' does not have default constructor.", SYMBOL)
@@ -801,7 +801,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(CYCLIC_INHERITANCE_HIERARCHY, "There's a cycle in the inheritance hierarchy for this type")
         map.put(
             EXPANDED_TYPE_CANNOT_BE_INHERITED,
-            "Type alias expands to {0}, which is not a class, an interface, or an object",
+            "Type alias expands to ''{0}'', which is not a class, an interface, or an object",
             RENDER_TYPE
         )
         map.put(PROJECTION_IN_IMMEDIATE_ARGUMENT_TO_SUPERTYPE, "Projections are not allowed for immediate arguments of a supertype")
@@ -981,7 +981,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             PLUGIN_ANNOTATION_AMBIGUITY,
-            "Resolution of the annotation type is ambiguous between {1} and the plugin annotation {0}. Please specify a fully qualified annotation name",
+            "Resolution of the annotation type is ambiguous between ''{1}'' and the plugin annotation ''{0}''. Please specify a fully qualified annotation name",
             RENDER_TYPE,
             RENDER_TYPE
         )
@@ -1102,31 +1102,31 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Intersection types are only supported for definitely non-nullable types: right part should be non-nullable Any"
         )
 
-        map.put(TYPE_MISMATCH, "Type mismatch: inferred type is {1} but {0} was expected", RENDER_TYPE, RENDER_TYPE, NOT_RENDERED)
+        map.put(TYPE_MISMATCH, "Type mismatch: inferred type is ''{1}'' but ''{0}'' was expected", RENDER_TYPE, RENDER_TYPE, NOT_RENDERED)
         map.put(
             TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR,
             "Type inference failed. The value of the type parameter {0} should be mentioned in input types (argument types, receiver type or expected type). Try to specify it explicitly.",
             SYMBOL
         )
-        map.put(THROWABLE_TYPE_MISMATCH, "Throwable type mismatch: actual type is {0}", RENDER_TYPE, NOT_RENDERED)
-        map.put(CONDITION_TYPE_MISMATCH, "Condition type mismatch: inferred type is {0} but Boolean was expected", RENDER_TYPE, NOT_RENDERED)
+        map.put(THROWABLE_TYPE_MISMATCH, "Throwable type mismatch: actual type is ''{0}''", RENDER_TYPE, NOT_RENDERED)
+        map.put(CONDITION_TYPE_MISMATCH, "Condition type mismatch: inferred type is ''{0}'' but Boolean was expected", RENDER_TYPE, NOT_RENDERED)
         map.put(
             ARGUMENT_TYPE_MISMATCH,
-            "Argument type mismatch: actual type is {1} but {0} was expected",
+            "Argument type mismatch: actual type is ''{1}'' but ''{0}'' was expected",
             RENDER_TYPE,
             RENDER_TYPE,
             NOT_RENDERED
         )
         map.put(
             ASSIGNMENT_TYPE_MISMATCH,
-            "Assignment type mismatch: actual type is {1} but {0} was expected",
+            "Assignment type mismatch: actual type is ''{1}'' but ''{0}'' was expected",
             RENDER_TYPE,
             RENDER_TYPE,
             NOT_RENDERED
         )
         map.put(
             RESULT_TYPE_MISMATCH,
-            "Function return type mismatch: actual type is {1} but {0} was expected",
+            "Function return type mismatch: actual type is ''{1}'' but ''{0}'' was expected",
             RENDER_TYPE,
             RENDER_TYPE,
         )
@@ -1140,10 +1140,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(AMBIGUOUS_FUNCTION_TYPE_KIND, "Multiple functional type conversions are not allowed for a single type. Detected type conversions: {0}", FUNCTIONAL_TYPE_KINDS)
         map.put(NEXT_NONE_APPLICABLE, "None of the ''next()'' functions is applicable for ''iterator()'' of type ''{0}''", SYMBOLS)
 
-        map.put(NO_CONTEXT_RECEIVER, "No required context receiver found: {0}", RENDER_TYPE)
+        map.put(NO_CONTEXT_RECEIVER, "No required context receiver found: ''{0}''", RENDER_TYPE)
         map.put(
             MULTIPLE_ARGUMENTS_APPLICABLE_FOR_CONTEXT_RECEIVER,
-            "Multiple arguments applicable for context receiver: {0}",
+            "Multiple arguments applicable for context receiver: ''{0}''",
             RENDER_TYPE
         )
         map.put(
@@ -1206,7 +1206,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(TYPE_PARAMETERS_IN_ENUM, "Enum class cannot have type parameters")
         map.put(
             CONFLICTING_PROJECTION,
-            "Projection is conflicting with variance of the corresponding type parameter of {0}. Remove the projection or replace it with ''*''",
+            "Projection is conflicting with variance of the corresponding type parameter of ''{0}''. Remove the projection or replace it with ''*''",
             RENDER_TYPE
         )
         map.put(
@@ -1216,7 +1216,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             REDUNDANT_PROJECTION,
-            "Projection is redundant: the corresponding type parameter of {0} has the same variance",
+            "Projection is redundant: the corresponding type parameter of ''{0}'' has the same variance",
             RENDER_TYPE
         )
         map.put(
@@ -1255,8 +1255,8 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             RENDER_TYPE
         )
         map.put(UPPER_BOUND_IS_EXTENSION_FUNCTION_TYPE, "Extension function type can not be used as an upper bound")
-        map.put(INCOMPATIBLE_TYPES, "Incompatible types: {0} and {1}", RENDER_TYPE, RENDER_TYPE)
-        map.put(INCOMPATIBLE_TYPES_WARNING, "Potentially incompatible types: {0} and {1}", RENDER_TYPE, RENDER_TYPE)
+        map.put(INCOMPATIBLE_TYPES, "Incompatible types: ''{0}'' and ''{1}''", RENDER_TYPE, RENDER_TYPE)
+        map.put(INCOMPATIBLE_TYPES_WARNING, "Potentially incompatible types: ''{0}'' and ''{1}''", RENDER_TYPE, RENDER_TYPE)
         map.put(
             SMARTCAST_IMPOSSIBLE,
             "Smart cast to ''{0}'' is impossible, because ''{1}'' is a {2}",
@@ -1268,12 +1268,12 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         map.put(
             TYPE_VARIANCE_CONFLICT_ERROR,
-            "Type parameter {0} is declared as ''{1}'' but occurs in ''{2}'' position in type {3}",
+            "Type parameter {0} is declared as ''{1}'' but occurs in ''{2}'' position in type ''{3}''",
             SYMBOL, RENDER_POSITION_VARIANCE, RENDER_POSITION_VARIANCE, RENDER_TYPE
         )
         map.put(
             TYPE_VARIANCE_CONFLICT_IN_EXPANDED_TYPE,
-            "Type parameter {0} is declared as ''{1}'' but occurs in ''{2}'' position in abbreviated type {3}",
+            "Type parameter {0} is declared as ''{1}'' but occurs in ''{2}'' position in abbreviated type ''{3}''",
             SYMBOL, RENDER_POSITION_VARIANCE, RENDER_POSITION_VARIANCE, RENDER_TYPE
         )
 
@@ -1310,7 +1310,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         map.put(
             RETURN_TYPE_MISMATCH,
-            "Return type mismatch: expected {0}, actual {1}",
+            "Return type mismatch: expected ''{0}'', actual ''{1}''",
             RENDER_TYPE,
             RENDER_TYPE,
             NOT_RENDERED,
@@ -1625,7 +1625,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(FUN_INTERFACE_WITH_SUSPEND_FUNCTION, "Fun interface abstract method can not be suspend")
 
         map.put(MULTIPLE_VARARG_PARAMETERS, "Multiple vararg-parameters are prohibited")
-        map.put(FORBIDDEN_VARARG_PARAMETER_TYPE, "Forbidden vararg parameter type: {0}", RENDER_TYPE)
+        map.put(FORBIDDEN_VARARG_PARAMETER_TYPE, "Forbidden vararg parameter type: ''{0}''", RENDER_TYPE)
         map.put(VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION, "A type annotation is required on a value parameter")
         map.put(CANNOT_INFER_PARAMETER_TYPE, "cannot infer a type for this parameter. Please specify it explicitly.")
         map.put(NO_TAIL_CALLS_FOUND, "A function is marked as tail-recursive but no tail calls are found.")
@@ -1693,7 +1693,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "It''s forbidden to use the extension property type parameter ''{0}'' in delegate. See https://youtrack.jetbrains.com/issue/KT-24643",
             SYMBOL
         )
-        map.put(INITIALIZER_TYPE_MISMATCH, "Initializer type mismatch: expected {0}, actual {1}", RENDER_TYPE, RENDER_TYPE, NOT_RENDERED)
+        map.put(INITIALIZER_TYPE_MISMATCH, "Initializer type mismatch: expected ''{0}'', actual ''{1}''", RENDER_TYPE, RENDER_TYPE, NOT_RENDERED)
         map.put(GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY, "Getter visibility must be the same as property visibility")
         map.put(
             SETTER_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY,
@@ -1852,7 +1852,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(INITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION, "Initializer required for destructuring declaration")
         map.put(
             COMPONENT_FUNCTION_MISSING,
-            "Destructuring declaration initializer of type {1} must have a ''{0}()'' function",
+            "Destructuring declaration initializer of type ''{1}'' must have a ''{0}()'' function",
             TO_STRING,
             RENDER_TYPE
         )
@@ -1939,10 +1939,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             NOT_RENDERED,
             NOT_RENDERED,
         )
-        map.put(UNNECESSARY_NOT_NULL_ASSERTION, "Unnecessary non-null assertion (!!) on a non-null receiver of type {0}", RENDER_TYPE)
+        map.put(UNNECESSARY_NOT_NULL_ASSERTION, "Unnecessary non-null assertion (!!) on a non-null receiver of type ''{0}''", RENDER_TYPE)
         map.put(NOT_NULL_ASSERTION_ON_LAMBDA_EXPRESSION, "Non-null assertion (!!) is called on a lambda expression")
         map.put(NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE, "Non-null assertion (!!) is called on a callable reference expression")
-        map.put(UNNECESSARY_SAFE_CALL, "Unnecessary safe call on a non-null receiver of type {0}", RENDER_TYPE)
+        map.put(UNNECESSARY_SAFE_CALL, "Unnecessary safe call on a non-null receiver of type ''{0}''", RENDER_TYPE)
         map.put(
             SAFE_CALL_WILL_CHANGE_NULLABILITY,
             """
@@ -1951,14 +1951,14 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
                 |  In future releases all safe calls will have nullable type: SomeType?""".trimMargin()
         )
         map.put(UNEXPECTED_SAFE_CALL, "Safe-call is not allowed here")
-        map.put(USELESS_ELVIS, "Elvis operator (?:) always returns the left operand of non-nullable type {0}", RENDER_TYPE)
+        map.put(USELESS_ELVIS, "Elvis operator (?:) always returns the left operand of non-nullable type ''{0}''", RENDER_TYPE)
         map.put(USELESS_ELVIS_RIGHT_IS_NULL, "Right operand of elvis operator (?:) is useless if it is null")
 
         // Casts and is-checks
-        map.put(CANNOT_CHECK_FOR_ERASED, "Cannot check for instance of erased type: {0}", RENDER_TYPE)
+        map.put(CANNOT_CHECK_FOR_ERASED, "Cannot check for instance of erased type: ''{0}''", RENDER_TYPE)
         map.put(CAST_NEVER_SUCCEEDS, "This cast can never succeed")
         map.put(USELESS_CAST, "No cast needed")
-        map.put(UNCHECKED_CAST, "Unchecked cast: {0} to {1}", RENDER_TYPE, RENDER_TYPE)
+        map.put(UNCHECKED_CAST, "Unchecked cast: ''{0}'' to ''{1}''", RENDER_TYPE, RENDER_TYPE)
         map.put(USELESS_IS_CHECK, "Check for instance is always ''{0}''", TO_STRING)
         map.put(IS_ENUM_ENTRY, "'is' over enum entry is not allowed, use comparison instead")
         map.put(ENUM_ENTRY_AS_TYPE, "Use of enum entry names as types is not allowed, use enum type instead")
@@ -2086,25 +2086,25 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             FORBIDDEN_IDENTITY_EQUALS,
-            "Identity equality for arguments of types {0} and {1} is forbidden",
+            "Identity equality for arguments of types ''{0}'' and ''{1}'' is forbidden",
             RENDER_TYPE,
             RENDER_TYPE
         )
         map.put(
             FORBIDDEN_IDENTITY_EQUALS_WARNING,
-            "Identity equality for arguments of types {0} and {1} is forbidden",
+            "Identity equality for arguments of types ''{0}'' and ''{1}'' is forbidden",
             RENDER_TYPE,
             RENDER_TYPE
         )
         map.put(
             DEPRECATED_IDENTITY_EQUALS,
-            "Identity equality for arguments of types {0} and {1} is deprecated",
+            "Identity equality for arguments of types ''{0}'' and ''{1}'' is deprecated",
             RENDER_TYPE,
             RENDER_TYPE
         )
         map.put(
             IMPLICIT_BOXING_IN_IDENTITY_EQUALS,
-            "Identity equality for arguments of types {0} and {1} can be unstable because of implicit boxing",
+            "Identity equality for arguments of types ''{0}'' and ''{1}'' can be unstable because of implicit boxing",
             RENDER_TYPE,
             RENDER_TYPE
         )
@@ -2132,7 +2132,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(RECURSIVE_TYPEALIAS_EXPANSION, "Recursive type alias in expansion")
         map.put(
             TYPEALIAS_SHOULD_EXPAND_TO_CLASS,
-            "Type alias expands to {0}, which is not a class, an interface, or an object",
+            "Type alias expands to ''{0}'', which is not a class, an interface, or an object",
             RENDER_TYPE
         )
 

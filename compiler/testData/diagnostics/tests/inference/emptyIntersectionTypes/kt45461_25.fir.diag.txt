@@ -1,4 +1,4 @@
-/kt45461_25.fir.kt:(176,180): warning: Unchecked cast: kotlin/Nothing? to S
+/kt45461_25.fir.kt:(176,180): warning: Unchecked cast: 'kotlin/Nothing?' to 'S'
 
 /kt45461_25.fir.kt:(206,209): warning: 'kotlin/Int' is a final type, and thus a value of the type parameter is predetermined
 

@@ -83,7 +83,7 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
     override val MAP = KtDiagnosticFactoryToRendererMap("FIR").also { map ->
         map.put(CONFLICTING_JVM_DECLARATIONS, "Platform declaration clash")
-        map.put(JAVA_TYPE_MISMATCH, "Java type mismatch expected {0} but found {1}. Use explicit cast", RENDER_TYPE, RENDER_TYPE)
+        map.put(JAVA_TYPE_MISMATCH, "Java type mismatch: expected ''{0}'' but found ''{1}''. Use explicit cast", RENDER_TYPE, RENDER_TYPE)
         map.put(UPPER_BOUND_CANNOT_BE_ARRAY, "Upper bound of a type parameter cannot be an array")
         map.put(STRICTFP_ON_CLASS, "'@Strictfp' annotation on classes is unsupported yet")
         map.put(SYNCHRONIZED_ON_ABSTRACT, "'@Synchronized' annotation cannot be used on abstract functions")

@@ -2,4 +2,4 @@
 
 /kt48765.kt:(345,351): warning: 'kotlin/String' is a final type, and thus a value of the type parameter is predetermined
 
-/kt48765.kt:(379,383): warning: Unchecked cast: kotlin/String to T
+/kt48765.kt:(379,383): warning: Unchecked cast: 'kotlin/String' to 'T'

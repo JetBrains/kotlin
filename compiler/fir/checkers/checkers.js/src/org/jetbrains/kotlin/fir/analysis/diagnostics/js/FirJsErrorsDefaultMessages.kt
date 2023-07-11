@@ -155,7 +155,7 @@ object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE,
-            "Can''t put non-external declarations in file marked with {0} annotation",
+            "Can''t put non-external declarations in file marked with ''{0}'' annotation",
             FirDiagnosticRenderers.RENDER_TYPE
         )
         map.put(
@@ -166,7 +166,7 @@ object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             JS_EXTERNAL_ARGUMENT,
-            "Expected argument with external type, but type {0} is non-external",
+            "Expected argument with external type, but type ''{0}'' is non-external",
             FirDiagnosticRenderers.RENDER_TYPE
         )
         map.put(JS_NAME_PROHIBITED_FOR_EXTENSION_PROPERTY, "@JsName is prohibited for extension properties")
@@ -177,12 +177,12 @@ object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(JS_NAME_ON_ACCESSOR_AND_PROPERTY, "@JsName can be either on a property or its accessors, not both of them")
         map.put(
             CANNOT_CHECK_FOR_EXTERNAL_INTERFACE,
-            "Cannot check for external interface: {0}",
+            "Cannot check for external interface: ''{0}''",
             FirDiagnosticRenderers.RENDER_TYPE,
         )
         map.put(
             UNCHECKED_CAST_TO_EXTERNAL_INTERFACE,
-            "Unchecked cast to external interface: {0} to {1}",
+            "Unchecked cast to external interface: ''{0}'' to ''{1}''",
             FirDiagnosticRenderers.RENDER_TYPE,
             FirDiagnosticRenderers.RENDER_TYPE,
         )
@@ -191,7 +191,7 @@ object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(WRONG_EXPORTED_DECLARATION, "Declaration of such kind ({0}) can''t be exported to JS", CommonRenderers.STRING)
         map.put(
             NON_EXPORTABLE_TYPE,
-            "Exported declaration uses non-exportable {0} type: {1}",
+            "Exported declaration uses non-exportable {0} type: ''{1}''",
             CommonRenderers.STRING,
             FirDiagnosticRenderers.RENDER_TYPE,
         )
