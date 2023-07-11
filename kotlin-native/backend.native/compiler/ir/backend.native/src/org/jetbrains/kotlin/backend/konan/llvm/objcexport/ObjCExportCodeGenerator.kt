@@ -1785,8 +1785,8 @@ private fun ObjCExportCodeGenerator.createDirectAdapters(
         )
     }
 
-    val inheritedAdapters = superClass?.getAllRequiredDirectAdapters().orEmpty()
-    val requiredAdapters = typeDeclaration.getAllRequiredDirectAdapters() - inheritedAdapters
+    val inheritedAdapters = superClass?.getAllRequiredDirectAdapters().orEmpty().toSet()
+    val requiredAdapters = typeDeclaration.getAllRequiredDirectAdapters().filter { !inheritedAdapters.contains(it) }
 
     return requiredAdapters.distinctBy { it.base.selector }.map { createMethodAdapter(it) }
 }
