@@ -1,4 +1,13 @@
-/kt51464.kt:13:15: error: not enough information to infer type variable R
+/kt51464.kt:2:16: warning: parameter 'value' is never used
+fun <T> flowOf(value: T): Flow<T> = TODO()
+               ^
+/kt51464.kt:8:30: warning: parameter 'transform' is never used
+fun <T, R> Flow<T>.transform(transform: FlowCollector<R>.(T) -> Unit): Flow<R> = TODO()
+                             ^
+/kt51464.kt:11:20: warning: parameter 'collector' is never used
+    fun <T> doEmit(collector: FlowCollector<T>) {}
+                   ^
+/kt51464.kt:12:15: warning: type parameter for a type argument R can't be inferred into declared upper bounds. Please provide any use-site type information. It will become an error in future releases.
     flowOf(1).transform { doEmit(this) }
               ^
 
