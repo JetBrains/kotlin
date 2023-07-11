@@ -8377,6 +8377,18 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
         }
 
         @Test
+        @TestMetadata("overloadMethodsWithSameParameterPrivateTypeName.kt")
+        public void testOverloadMethodsWithSameParameterPrivateTypeName() throws Exception {
+            runTest("js/js.translator/testData/box/nameClashes/overloadMethodsWithSameParameterPrivateTypeName.kt");
+        }
+
+        @Test
+        @TestMetadata("overloadMethodsWithSameParameterTypeName.kt")
+        public void testOverloadMethodsWithSameParameterTypeName() throws Exception {
+            runTest("js/js.translator/testData/box/nameClashes/overloadMethodsWithSameParameterTypeName.kt");
+        }
+
+        @Test
         @TestMetadata("propertyAndNativeMethod.kt")
         public void testPropertyAndNativeMethod() throws Exception {
             runTest("js/js.translator/testData/box/nameClashes/propertyAndNativeMethod.kt");

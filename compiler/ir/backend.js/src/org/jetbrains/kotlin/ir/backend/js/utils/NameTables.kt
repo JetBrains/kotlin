@@ -116,11 +116,11 @@ fun Int.toJsIdentifier(): String {
     }
 }
 
-private fun List<IrType>.joinTypes(): String {
+private fun List<IrType>.joinTypes(context: JsIrBackendContext): String {
     if (isEmpty()) {
         return ""
     }
-    return joinToString("$", "$") { superType -> superType.asString() }
+    return joinToString("$", "$") { superType -> superType.asString(context) }
 }
 
 fun calculateJsFunctionSignature(declaration: IrFunction, context: JsIrBackendContext): String {
@@ -133,25 +133,25 @@ fun calculateJsFunctionSignature(declaration: IrFunction, context: JsIrBackendCo
     declaration.typeParameters.ifNotEmpty {
         nameBuilder.append("_\$t")
         forEach { typeParam ->
-            nameBuilder.append("_").append(typeParam.name.asString()).append(typeParam.superTypes.joinTypes())
+            nameBuilder.append("_").append(typeParam.name.asString()).append(typeParam.superTypes.joinTypes(context))
         }
     }
     declaration.extensionReceiverParameter?.let {
-        val superTypes = it.type.superTypes().joinTypes()
-        nameBuilder.append("_r$${it.type.asString()}$superTypes")
+        val superTypes = it.type.superTypes().joinTypes(context)
+        nameBuilder.append("_r$${it.type.asString(context)}$superTypes")
     }
     declaration.valueParameters.ifNotEmpty {
         joinTo(nameBuilder, "") {
             val defaultValueSign = if (it.origin == JsLoweredDeclarationOrigin.JS_SHADOWED_DEFAULT_PARAMETER) "?" else ""
-            val superTypes = it.type.superTypes().joinTypes()
-            "_${it.type.asString()}$superTypes$defaultValueSign"
+            val superTypes = it.type.superTypes().joinTypes(context)
+            "_${it.type.asString(context)}$superTypes$defaultValueSign"
         }
     }
     declaration.returnType.let {
         // Return type is only used in signature for inline class and Unit types because
         // they are binary incompatible with supertypes.
         if (context.inlineClassesUtils.isTypeInlined(it) || it.isUnit()) {
-            nameBuilder.append("_ret$${it.asString()}")
+            nameBuilder.append("_ret$${it.asString(context)}")
         }
     }
 

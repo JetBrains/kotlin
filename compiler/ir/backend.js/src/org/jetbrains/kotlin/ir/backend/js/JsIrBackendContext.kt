@@ -77,6 +77,7 @@ class JsIrBackendContext(
     val globalInternationService = IrInterningService()
 
     val localClassNames = WeakHashMap<IrClass, String>()
+    val classToItsId = WeakHashMap<IrClass, String>()
 
     val minimizedNameGenerator: MinimizedNameGenerator =
         MinimizedNameGenerator()
