@@ -3,9 +3,6 @@ Buildfile: [TestData]/build.xml
 
 build:
   [kotlinc] Compiling [[TestData]/hello.kt] => [[Temp]/hello.jar]
-  [kotlinc] [TestData]/hello.kt:15:9: warning: variable 'result' is never used
-  [kotlinc]     val result = "$a$c$e$f$j"
-  [kotlinc]         ^
      [java] OK
 
 BUILD SUCCESSFUL

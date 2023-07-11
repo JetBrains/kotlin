@@ -4,6 +4,7 @@
     <target name="build">
         <kotlinc output="${temp}/hello.jar">
             <src path="${test.data}"/>
+            <compilerarg line="-Xuse-fir-lt=false"/>
         </kotlinc>
 
         <java classname="pkg.AKt" fork="true">
