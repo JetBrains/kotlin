@@ -51,7 +51,7 @@ fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
     generateTestGroupSuite(args) {
         testGroup("compiler/incremental-compilation-impl/test", "jps/jps-plugin/testData") {
-            testClass<AbstractIncrementalJvmCompilerRunnerTest>(
+            testClass<AbstractIncrementalK1JvmCompilerRunnerTest>(
                 init = incrementalJvmTestData(
                     targetBackend = TargetBackend.JVM_IR,
                     folderToExcludePatternMap = mapOf(
@@ -62,7 +62,7 @@ fun main(args: Array<String>) {
             )
 
             // K2
-            testClass<AbstractIncrementalFirJvmCompilerRunnerTest>(
+            testClass<AbstractIncrementalK2JvmCompilerRunnerTest>(
                 init = incrementalJvmTestData(
                     TargetBackend.JVM_IR,
                     folderToExcludePatternMap = mapOf(
@@ -207,7 +207,7 @@ fun main(args: Array<String>) {
         }
 
         testGroup("plugins/fir-plugin-prototype/fir-plugin-ic-test/tests-gen", "plugins/fir-plugin-prototype/fir-plugin-ic-test/testData") {
-            testClass<AbstractIncrementalFirJvmWithPluginCompilerRunnerTest> {
+            testClass<AbstractIncrementalK2JvmWithPluginCompilerRunnerTest> {
                 model("pureKotlin", extension = null, recursive = false, targetBackend = TargetBackend.JVM_IR)
             }
         }

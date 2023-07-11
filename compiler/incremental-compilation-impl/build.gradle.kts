@@ -50,7 +50,8 @@ projectTest("testJvmICWithJdk11", parallel = true) {
     workingDir = rootDir
     useJsIrBoxTests(version = version, buildDir = "$buildDir/")
     filter {
-        includeTestsMatching("org.jetbrains.kotlin.incremental.IncrementalJvmCompilerRunnerTestGenerated*")
+        includeTestsMatching("org.jetbrains.kotlin.incremental.IncrementalK1JvmCompilerRunnerTestGenerated*")
+        includeTestsMatching("org.jetbrains.kotlin.incremental.IncrementalK2JvmCompilerRunnerTestGenerated*")
     }
     javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
 }

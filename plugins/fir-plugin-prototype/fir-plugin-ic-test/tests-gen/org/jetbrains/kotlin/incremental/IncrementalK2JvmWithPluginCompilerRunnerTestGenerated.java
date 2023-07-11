@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/fir-plugin-prototype/fir-plugin-ic-test/testData/pureKotlin")
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
-public class IncrementalFirJvmWithPluginCompilerRunnerTestGenerated extends AbstractIncrementalFirJvmWithPluginCompilerRunnerTest {
+public class IncrementalK2JvmWithPluginCompilerRunnerTestGenerated extends AbstractIncrementalK2JvmWithPluginCompilerRunnerTest {
     private void runTest(String testDataFilePath) throws Exception {
         KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
     }
