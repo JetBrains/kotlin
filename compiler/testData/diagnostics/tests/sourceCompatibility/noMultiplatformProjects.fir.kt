@@ -7,8 +7,8 @@
 }
 
 <!NOT_A_MULTIPLATFORM_COMPILATION!>expect<!> class ExplicitExpect {
-    <!WRONG_MODIFIER_TARGET!>expect<!> fun explicitFoo()
-    <!WRONG_MODIFIER_TARGET!>expect<!> val explicitX: Int
+    <!NOT_A_MULTIPLATFORM_COMPILATION, WRONG_MODIFIER_TARGET!>expect<!> fun explicitFoo()
+    <!NOT_A_MULTIPLATFORM_COMPILATION, NOT_A_MULTIPLATFORM_COMPILATION, NOT_A_MULTIPLATFORM_COMPILATION, WRONG_MODIFIER_TARGET!>expect<!> val explicitX: Int
     <!NOT_A_MULTIPLATFORM_COMPILATION, WRONG_MODIFIER_TARGET!>expect<!> class ExplicitInner
 }
 
