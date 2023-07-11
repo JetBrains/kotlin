@@ -178,7 +178,6 @@ class FirJavaField @FirImplementationDetail constructor(
 internal class FirJavaFieldBuilder : FirFieldBuilder() {
     var modality: Modality? = null
     lateinit var visibility: Visibility
-    var isStatic: Boolean by Delegates.notNull()
     var isFromSource: Boolean by Delegates.notNull()
     lateinit var annotationBuilder: () -> List<FirAnnotation>
     var lazyInitializer: Lazy<FirExpression?>? = null

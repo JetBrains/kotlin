@@ -540,7 +540,6 @@ abstract class FirJavaFacade(
                 modality = javaField.modality
                 returnTypeRef = returnType.toFirJavaTypeRef(session)
                 isVar = !javaField.isFinal
-                isStatic = javaField.isStatic
                 annotationBuilder = { javaField.convertAnnotationsToFir(session) }
 
                 lazyInitializer = lazy {

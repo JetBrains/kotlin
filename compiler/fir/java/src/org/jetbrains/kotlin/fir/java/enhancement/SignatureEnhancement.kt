@@ -132,7 +132,6 @@ class FirSignatureEnhancement(
                     visibility = firElement.visibility
                     modality = firElement.modality
                     isVar = firElement.isVar
-                    isStatic = firElement.isStatic
                     annotationBuilder = { firElement.annotations }
                     status = firElement.status
                     if (firElement is FirJavaField) {
