@@ -59,24 +59,24 @@ infix fun ResolutionRequest.shouldResolveTo(variantName: String) {
     }
 }
 
-ResolutionRequest("dynamic", DEBUG, IOS_ARM64) shouldResolveTo "dynamicDebugFrameworkIosArm64"
-ResolutionRequest("dynamic", DEBUG, IOS_X64) shouldResolveTo "dynamicDebugFrameworkIosX64"
+ResolutionRequest("dynamicDebugFramework", DEBUG, IOS_ARM64) shouldResolveTo "dynamicDebugFrameworkIosArm64"
+ResolutionRequest("dynamicDebugFramework", DEBUG, IOS_X64) shouldResolveTo "dynamicDebugFrameworkIosX64"
 ResolutionRequest(DEBUG, IOS_ARM64, IOS_X64) shouldResolveTo "dynamicDebugFrameworkIosFat"
 
-ResolutionRequest("dynamic", DEBUG, MACOS_ARM64) shouldResolveTo "dynamicDebugFrameworkMacosArm64"
-ResolutionRequest("dynamic", DEBUG, MACOS_X64) shouldResolveTo "dynamicDebugFrameworkMacosX64"
+ResolutionRequest("dynamicDebugFramework", DEBUG, MACOS_ARM64) shouldResolveTo "dynamicDebugFrameworkMacosArm64"
+ResolutionRequest("dynamicDebugFramework", DEBUG, MACOS_X64) shouldResolveTo "dynamicDebugFrameworkMacosX64"
 ResolutionRequest(DEBUG, MACOS_ARM64, MACOS_X64) shouldResolveTo "dynamicDebugFrameworkOsxFat"
 
-ResolutionRequest("macosArm64Specific", DEBUG, MACOS_ARM64) shouldResolveTo "macosArm64SpecificDebugFrameworkMacosArm64"
-ResolutionRequest("macosArm64Specific", RELEASE, MACOS_ARM64) shouldResolveTo "macosArm64SpecificReleaseFrameworkMacosArm64"
+ResolutionRequest("macosArm64SpecificDebugFramework", DEBUG, MACOS_ARM64) shouldResolveTo "macosArm64SpecificDebugFrameworkMacosArm64"
+ResolutionRequest("macosArm64SpecificReleaseFramework", RELEASE, MACOS_ARM64) shouldResolveTo "macosArm64SpecificReleaseFrameworkMacosArm64"
 
-ResolutionRequest("macosX64Specific", DEBUG, MACOS_X64) shouldResolveTo "macosX64SpecificDebugFrameworkMacosX64"
-ResolutionRequest("macosX64Specific", RELEASE, MACOS_X64) shouldResolveTo "macosX64SpecificReleaseFrameworkMacosX64"
+ResolutionRequest("macosX64SpecificDebugFramework", DEBUG, MACOS_X64) shouldResolveTo "macosX64SpecificDebugFrameworkMacosX64"
+ResolutionRequest("macosX64SpecificReleaseFramework", RELEASE, MACOS_X64) shouldResolveTo "macosX64SpecificReleaseFrameworkMacosX64"
 
-ResolutionRequest("static", RELEASE, IOS_ARM64) shouldResolveTo "staticReleaseFrameworkIosArm64"
-ResolutionRequest("static", RELEASE, IOS_X64) shouldResolveTo "staticReleaseFrameworkIosX64"
+ResolutionRequest("staticReleaseFramework", RELEASE, IOS_ARM64) shouldResolveTo "staticReleaseFrameworkIosArm64"
+ResolutionRequest("staticReleaseFramework", RELEASE, IOS_X64) shouldResolveTo "staticReleaseFrameworkIosX64"
 ResolutionRequest(RELEASE, IOS_X64, IOS_ARM64) shouldResolveTo "staticReleaseFrameworkIosFat"
 
-ResolutionRequest("static", RELEASE, MACOS_ARM64) shouldResolveTo "staticReleaseFrameworkMacosArm64"
-ResolutionRequest("static", RELEASE, MACOS_X64) shouldResolveTo "staticReleaseFrameworkMacosX64"
+ResolutionRequest("staticReleaseFramework", RELEASE, MACOS_ARM64) shouldResolveTo "staticReleaseFrameworkMacosArm64"
+ResolutionRequest("staticReleaseFramework", RELEASE, MACOS_X64) shouldResolveTo "staticReleaseFrameworkMacosX64"
 ResolutionRequest(RELEASE, MACOS_ARM64, MACOS_X64) shouldResolveTo "staticReleaseFrameworkOsxFat"
