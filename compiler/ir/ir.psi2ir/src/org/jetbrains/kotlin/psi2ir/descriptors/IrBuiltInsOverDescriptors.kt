@@ -82,11 +82,15 @@ class IrBuiltInsOverDescriptors(
     private val kotlinInternalIrPackage = IrExternalPackageFragmentImpl.createEmptyExternalPackageFragment(builtInsModule, kotlinInternalPackage)
 
     private val packageFragmentDescriptor = IrBuiltinsPackageFragmentDescriptorImpl(builtInsModule, KOTLIN_INTERNAL_IR_FQN)
+
+    /*
+     * In REPL it's possible that builtins will be created several times with the same symbol table
+     * And since IrBuiltinsPackageFragmentDescriptorImpl has overridden equals, symbol for external package
+     *   will be the same for different descriptors (with same FQN). So we should create IrExternalPackageFragment
+     *   here only if it was not created before, on previous compilation
+     */
     override val operatorsPackageFragment: IrExternalPackageFragment =
-        IrExternalPackageFragmentImpl(
-            symbolTable.descriptorExtension.referenceExternalPackageFragment(packageFragmentDescriptor),
-            KOTLIN_INTERNAL_IR_FQN
-        )
+        symbolTable.descriptorExtension.declareExternalPackageFragmentIfNotExists(packageFragmentDescriptor)
 
     private fun ClassDescriptor.toIrSymbol(): IrClassSymbol {
         return symbolTable.descriptorExtension.referenceClass(this)
