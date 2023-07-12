@@ -22,10 +22,7 @@ kotlin {
             }
         }
 
-        create("commonIntegrationTest") {
-            requiresVisibilityOf(getByName("commonMain"))
-            requiresVisibilityOf(getByName("commonTest"))
-        }
+        create("commonIntegrationTest")
     }
 
     jvm {
@@ -57,9 +54,6 @@ kotlin {
         compilations.create("integrationTest") {
             associateWith(compilations["test"])
             defaultSourceSet.dependsOn(sourceSets["commonIntegrationTest"])
-            defaultSourceSet.requiresVisibilityOf(sourceSets["commonMain"])
-            defaultSourceSet.requiresVisibilityOf(sourceSets["commonTest"])
-            defaultSourceSet.requiresVisibilityOf(sourceSets["commonIntegrationTest"])
         }
     }
 }

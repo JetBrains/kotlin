@@ -119,30 +119,3 @@ class UnsatisfiedSourceSetVisibilityException(
             }
         }
 }
-
-fun checkSourceSetVisibilityRequirements(project: Project) = checkSourceSetVisibilityRequirements(
-    project.kotlinExtension.sourceSets
-)
-
-internal fun checkSourceSetVisibilityRequirements(
-    sourceSets: Iterable<KotlinSourceSet>,
-) {
-    sourceSets.forEach { sourceSet ->
-        val requiredVisibility = sourceSet.requiresVisibilityOf
-        val inferredVisibility =
-            getVisibleSourceSetsFromAssociateCompilations(sourceSet.internal.compilations)
-
-        val requiredButNotVisible = requiredVisibility - inferredVisibility - sourceSet.internal.withDependsOnClosure
-
-        if (requiredButNotVisible.isNotEmpty()) {
-            val compilations = sourceSet.internal.compilations
-
-            throw UnsatisfiedSourceSetVisibilityException(
-                sourceSet,
-                compilations,
-                inferredVisibility,
-                requiredButNotVisible
-            )
-        }
-    }
-}

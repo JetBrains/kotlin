@@ -22,10 +22,8 @@ import org.jetbrains.kotlin.gradle.plugin.ide.locateOrRegisterIdeResolveDependen
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin.Companion.sourceSetFreeCompilerArgsPropertyName
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.addBuildListenerForXcode
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.runDeprecationDiagnostics
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.sources.awaitPlatformCompilations
-import org.jetbrains.kotlin.gradle.plugin.sources.checkSourceSetVisibilityRequirements
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
@@ -173,12 +171,6 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
 
         project.launch {
             project.setupDefaultKotlinHierarchy()
-        }
-
-        project.launchInStage(KotlinPluginLifecycle.Stage.ReadyForExecution) {
-            project.runProjectConfigurationHealthCheck {
-                checkSourceSetVisibilityRequirements(project)
-            }
         }
     }
 

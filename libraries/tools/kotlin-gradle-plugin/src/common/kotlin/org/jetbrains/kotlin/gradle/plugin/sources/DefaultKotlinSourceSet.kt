@@ -121,18 +121,6 @@ abstract class DefaultKotlinSourceSet @Inject constructor(
         explicitlyAddedCustomSourceFilesExtensions.addAll(extensions)
     }
 
-
-    private val _requiresVisibilityOf = mutableSetOf<KotlinSourceSet>()
-
-    @Deprecated("Scheduled for removal with Kotlin 2.0")
-    override val requiresVisibilityOf: MutableSet<KotlinSourceSet>
-        get() = Collections.unmodifiableSet(_requiresVisibilityOf)
-
-    @Deprecated("Scheduled for removal with Kotlin 2.0")
-    override fun requiresVisibilityOf(other: KotlinSourceSet) {
-        _requiresVisibilityOf += other
-    }
-
     //region IDE import for Granular source sets metadata
 
     data class MetadataDependencyTransformation(

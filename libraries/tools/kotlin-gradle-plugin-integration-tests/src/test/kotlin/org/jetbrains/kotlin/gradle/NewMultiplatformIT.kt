@@ -1780,14 +1780,6 @@ open class NewMultiplatformIT : BaseGradleIT() {
                 // Native:
                 assertFileExists("build/classes/kotlin/linux64/integrationTest/klib/new-mpp-associate-compilations_integrationTest.klib")
             }
-
-            gradleBuildScript().appendText(
-                "\nkotlin.sourceSets { getByName(\"commonTest\").requiresVisibilityOf(getByName(\"commonIntegrationTest\")) }"
-            )
-            build {
-                assertFailed()
-                assertContains(UnsatisfiedSourceSetVisibilityException::class.java.simpleName)
-            }
         }
     }
 
