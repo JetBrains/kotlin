@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include <cinttypes>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
@@ -112,6 +113,24 @@ const void* Kotlin_Any_getTypeInfo(KConstRef obj) {
 
 void Kotlin_CPointer_CopyMemory(KNativePtr to, KNativePtr from, KInt count) {
   memcpy(to, from, count);
+}
+
+RUNTIME_NOTHROW RUNTIME_PURE KRef* Kotlin_arrayGetElementAddress(KRef array, KInt index) {
+    ArrayHeader* arr = array->array();
+    RuntimeAssert(index >= 0 && static_cast<uint32_t>(index) < arr->count_, "Index %" PRId32 " must be in [0, %" PRIu32 ")", index, arr->count_); 
+    return ArrayAddressOfElementAt(arr, index);
+}
+
+RUNTIME_NOTHROW RUNTIME_PURE KInt* Kotlin_intArrayGetElementAddress(KRef array, KInt index) {
+    ArrayHeader* arr = array->array();
+    RuntimeAssert(index >= 0 && static_cast<uint32_t>(index) < arr->count_, "Index %" PRId32 " must be in [0, %" PRIu32 ")", index, arr->count_);
+    return IntArrayAddressOfElementAt(arr, index);
+}
+
+RUNTIME_NOTHROW RUNTIME_PURE KLong* Kotlin_longArrayGetElementAddress(KRef array, KInt index) {
+    ArrayHeader* arr = array->array();
+    RuntimeAssert(index >= 0 && static_cast<uint32_t>(index) < arr->count_, "Index %" PRId32 " must be in [0, %" PRIu32 ")", index, arr->count_);
+    return LongArrayAddressOfElementAt(arr, index);
 }
 
 }  // extern "C"

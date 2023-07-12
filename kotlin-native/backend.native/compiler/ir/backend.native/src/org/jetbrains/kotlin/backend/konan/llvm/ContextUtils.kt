@@ -488,6 +488,11 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     val CompareAndSwapVolatileHeapRef by lazyRtFunction
     val GetAndSetVolatileHeapRef by lazyRtFunction
 
+    // TODO: Consider implementing them directly in the code generator.
+    val Kotlin_arrayGetElementAddress by lazyRtFunction
+    val Kotlin_intArrayGetElementAddress by lazyRtFunction
+    val Kotlin_longArrayGetElementAddress by lazyRtFunction
+
     val tlsMode by lazy {
         when (target) {
             KonanTarget.WASM32,

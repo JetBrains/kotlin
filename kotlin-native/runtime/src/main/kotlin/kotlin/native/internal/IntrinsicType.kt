@@ -91,5 +91,12 @@ internal class IntrinsicType {
         const val COMPARE_AND_EXCHANGE          = "COMPARE_AND_EXCHANGE"
         const val GET_AND_SET                   = "GET_AND_SET"
         const val GET_AND_ADD                   = "GET_AND_ADD"
+        const val ATOMIC_GET_ARRAY_ELEMENT      = "ATOMIC_GET_ARRAY_ELEMENT"
+        const val ATOMIC_SET_ARRAY_ELEMENT      = "ATOMIC_SET_ARRAY_ELEMENT"
+        const val COMPARE_AND_EXCHANGE_ARRAY_ELEMENT = "COMPARE_AND_EXCHANGE_ARRAY_ELEMENT"
+        const val GET_AND_SET_ARRAY_ELEMENT     = "GET_AND_SET_ARRAY_ELEMENT"
+        const val GET_AND_ADD_ARRAY_ELEMENT     = "GET_AND_ADD_ARRAY_ELEMENT"
+        const val COMPARE_AND_SET_ARRAY_ELEMENT = "COMPARE_AND_SET_ARRAY_ELEMENT"
+
     }
 }
