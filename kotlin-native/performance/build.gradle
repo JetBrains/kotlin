@@ -43,6 +43,7 @@ project.logger.info("kotlin_root: $kotlin_root")
 globalProperties.load(new java.io.FileReader(project.file("$kotlin_root/gradle.properties")))
 ext.kotlinNativeVersionInResources = true
 
+// TODO(Dmitrii Krasnov): add konanDataDir to the buildDistribution after KT-50463 will be in current bootstrap
 def platformManager = new PlatformManager(DistributionKt.buildDistribution(UtilsKt.getKotlinNativeDist(project).path), false)
 def kotlinDist = null
 if (hasProperty("kotlin_dist")) {

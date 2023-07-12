@@ -40,7 +40,9 @@ fun invokeInterop(flavor: String, args: Array<String>, runFromDaemon: Boolean): 
     val repos = arguments.repo
     val targetRequest = if (arguments is CInteropArguments) arguments.target
         else (arguments as JSInteropArguments).target.toString()
-    val target = PlatformManager(KonanHomeProvider.determineKonanHome()).targetManager(targetRequest).target
+    val target = PlatformManager(
+            KonanHomeProvider.determineKonanHome(),
+            konanDataDir = arguments.konanDataDir).targetManager(targetRequest).target
 
     val cinteropArgsToCompiler = Interop().interop(flavor, args,
             InternalInteropOptions(generatedDir.absolutePath,

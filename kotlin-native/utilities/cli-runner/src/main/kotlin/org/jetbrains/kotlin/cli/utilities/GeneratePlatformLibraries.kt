@@ -119,13 +119,18 @@ fun generatePlatformLibraries(args: Array<String>) = usingNativeMemoryAllocator 
             description = "Override konan.properties.values"
     ).multiple().delimiter(";")
 
+    val konanDataDir by argParser.option(ArgType.String,
+            fullName = "Xkonan-data-dir",
+            description = "Path to konan and dependencies root folder")
+
     argParser.parse(args)
 
     val distribution = Distribution(
             KonanHomeProvider.determineKonanHome(),
             onlyDefaultProfiles = false,
             runtimeFileOverride = null,
-            propertyOverrides = parseKeyValuePairs(overrideKonanProperties)
+            propertyOverrides = parseKeyValuePairs(overrideKonanProperties),
+            konanDataDir = konanDataDir
     )
 
     val platformManager = PlatformManager(distribution)
@@ -162,6 +167,11 @@ fun generatePlatformLibraries(args: Array<String>) = usingNativeMemoryAllocator 
                 if (overrideKonanProperties.isNotEmpty()) {
                     add("-Xoverride-konan-properties")
                     add(overrideKonanProperties.joinToString(";"))
+                }
+
+                konanDataDir?.let {
+                    add("-Xkonan-data-dir")
+                    add(it)
                 }
             }
     )

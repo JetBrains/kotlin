@@ -40,7 +40,9 @@ class NativeCompilerDownloader(
     }
 
     val compilerDirectory: File
-        get() = DependencyDirectories.localKonanDir.resolve(dependencyNameWithOsAndVersion)
+        get() = DependencyDirectories
+            .getLocalKonanDir(project.kotlinPropertiesProvider.konanDataDir)
+            .resolve(dependencyNameWithOsAndVersion)
 
     private val logger: Logger
         get() = project.logger

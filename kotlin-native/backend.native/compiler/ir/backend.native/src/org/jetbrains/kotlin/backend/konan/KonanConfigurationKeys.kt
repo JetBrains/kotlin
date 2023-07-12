@@ -165,6 +165,7 @@ class KonanConfigKeys {
         val SERIALIZED_DEPENDENCIES: CompilerConfigurationKey<String?> = CompilerConfigurationKey.create("path to serialized dependencies for native linking")
         val SAVE_DEPENDENCIES_PATH: CompilerConfigurationKey<String?> = CompilerConfigurationKey.create("path to save serialized dependencies to")
         val SAVE_LLVM_IR_DIRECTORY: CompilerConfigurationKey<String?> = CompilerConfigurationKey.create("directory to store LLVM IR from phases")
+        val KONAN_DATA_DIR: CompilerConfigurationKey<String?> = CompilerConfigurationKey.create("directory for storing konan dependencies, cache and prebuilds")
     }
 }
 

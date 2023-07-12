@@ -16,15 +16,17 @@ class Distribution private constructor(private val serialized: Serialized) : jav
         konanHome: String,
         onlyDefaultProfiles: Boolean = false,
         runtimeFileOverride: String? = null,
-        propertyOverrides: Map<String, String>? = null
-    ) : this(Serialized(konanHome, onlyDefaultProfiles, runtimeFileOverride, propertyOverrides))
+        propertyOverrides: Map<String, String>? = null,
+        konanDataDir: String? = null
+    ) : this(Serialized(konanHome, onlyDefaultProfiles, runtimeFileOverride, propertyOverrides, konanDataDir))
 
     val konanHome by serialized::konanHome
     private val onlyDefaultProfiles by serialized::onlyDefaultProfiles
     private val runtimeFileOverride by serialized::runtimeFileOverride
     private val propertyOverrides by serialized::propertyOverrides
+    private val konanDataDir by serialized::konanDataDir
 
-    val localKonanDir = DependencyDirectories.localKonanDir
+    val localKonanDir = DependencyDirectories.getLocalKonanDir(konanDataDir)
 
     val konanSubdir = "$konanHome/konan"
     val mainPropertyFileName = "$konanSubdir/konan.properties"
@@ -99,7 +101,9 @@ class Distribution private constructor(private val serialized: Serialized) : jav
 
     val launcherFiles = listOf("launcher.bc")
 
-    val dependenciesDir = DependencyDirectories.defaultDependenciesRoot.absolutePath
+    val dependenciesDir = DependencyDirectories
+        .getDependenciesRoot(konanDataDir)
+        .absolutePath
 
     val subTargetProvider = object: SubTargetProvider {
         override fun availableSubTarget(genericName: String) =
@@ -127,6 +131,7 @@ class Distribution private constructor(private val serialized: Serialized) : jav
         val onlyDefaultProfiles: Boolean,
         val runtimeFileOverride: String?,
         val propertyOverrides: Map<String, String>?,
+        val konanDataDir: String?,
     ) : java.io.Serializable {
         companion object {
             private const val serialVersionUID: Long = 0L
@@ -139,4 +144,8 @@ class Distribution private constructor(private val serialized: Serialized) : jav
 // TODO: Move into K/N?
 fun buildDistribution(konanHome: String) = Distribution(konanHome,true, null)
 
+fun buildDistribution(konanHome: String, konanDataDir: String?) = Distribution(konanHome,true, null, konanDataDir = konanDataDir)
+
 fun customerDistribution(konanHome: String) = Distribution(konanHome,false, null)
+
+fun customerDistribution(konanHome: String, konanDataDir: String?) = Distribution(konanHome,false, null, konanDataDir = konanDataDir)

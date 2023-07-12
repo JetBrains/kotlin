@@ -353,6 +353,10 @@ internal constructor(
     @get:Internal // these sources are normally a subset of `source` ones which are already tracked
     val commonSources: ConfigurableFileCollection = project.files()
 
+    @Optional
+    @get:Input
+    val konanDataDir: String? = project.konanDataDir
+
     @get:Nested
     override val multiplatformStructure: K2MultiplatformStructure = objectFactory.newInstance()
 
@@ -941,7 +945,7 @@ internal class CacheBuilder(
     }
 
     private fun ensureCompilerProvidedLibsPrecached() {
-        val distribution = Distribution(settings.runnerSettings.parent.konanHome)
+        val distribution = Distribution(settings.runnerSettings.parent.konanHome, konanDataDir = settings.runnerSettings.parent.konanDataDir)
         val platformLibs = mutableListOf<File>().apply {
             this += File(distribution.stdlib)
             this += File(distribution.platformLibs(konanTarget)).listFiles().orEmpty()

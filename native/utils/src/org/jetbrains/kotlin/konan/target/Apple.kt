@@ -21,10 +21,10 @@ import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.util.InternalServer
 
 class AppleConfigurablesImpl(
-        target: KonanTarget,
-        properties: Properties,
-        baseDir: String?
-) : AppleConfigurables, KonanPropertiesLoader(target, properties, baseDir) {
+    target: KonanTarget,
+    properties: Properties,
+    dependenciesDir: String?
+) : AppleConfigurables, KonanPropertiesLoader(target, properties, dependenciesDir) {
 
     private val sdkDependency = this.targetSysRoot!!
     private val toolchainDependency = this.targetToolchain!!

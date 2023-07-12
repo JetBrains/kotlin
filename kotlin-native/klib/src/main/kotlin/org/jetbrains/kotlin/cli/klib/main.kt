@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.library.resolverByName
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.PlatformManager
+import org.jetbrains.kotlin.konan.util.DependencyDirectories
 import org.jetbrains.kotlin.konan.util.DependencyProcessor
 import org.jetbrains.kotlin.konan.util.KonanHomeProvider
 import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION_WITH_DOT
@@ -93,7 +94,8 @@ object KlibToolLogger : Logger {
     override fun log(message: String) = println(message)
 }
 
-val defaultRepository = File(DependencyProcessor.localKonanDir.resolve("klib").absolutePath)
+// TODO(Dmitrii Krasnov): I'm not sure that we should put konan distribution dir here
+val defaultRepository = File(DependencyDirectories.localKonanDir.resolve("klib").absolutePath)
 
 open class ModuleDeserializer(val library: ByteArray) {
     protected val moduleHeader: KlibMetadataProtoBuf.Header

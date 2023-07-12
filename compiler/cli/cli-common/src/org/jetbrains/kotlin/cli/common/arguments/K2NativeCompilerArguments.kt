@@ -469,6 +469,9 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xsave-llvm-ir-directory", description = "Directory that should contain results of -Xsave-llvm-ir-after=<phase>")
     var saveLlvmIrDirectory: String? = null
 
+    @Argument(value = "-Xkonan-data-dir", description = "Custom path for konan distributions location")
+    var konanDataDir: String? = null
+
     override fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> =
         super.configureAnalysisFlags(collector, languageVersion).also {
             val optInList = it[AnalysisFlags.optIn] as List<*>

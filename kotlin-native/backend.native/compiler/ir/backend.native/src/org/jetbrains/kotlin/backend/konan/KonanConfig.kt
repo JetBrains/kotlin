@@ -42,7 +42,8 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
                 configuration.get(KonanConfigKeys.KONAN_HOME) ?: KonanHomeProvider.determineKonanHome(),
                 false,
                 configuration.get(KonanConfigKeys.RUNTIME_FILE),
-                overridenProperties
+                overridenProperties,
+                configuration.get(KonanConfigKeys.KONAN_DATA_DIR)
         )
     }
 

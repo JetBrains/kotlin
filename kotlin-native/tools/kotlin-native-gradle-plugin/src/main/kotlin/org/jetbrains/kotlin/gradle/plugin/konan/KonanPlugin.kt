@@ -46,8 +46,8 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.buildDistribution
 import org.jetbrains.kotlin.konan.target.customerDistribution
-import org.jetbrains.kotlin.konan.util.DependencyProcessor
 import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.konan.util.DependencyDirectories
 import java.io.File
 import javax.inject.Inject
 
@@ -166,7 +166,7 @@ internal fun Project.konanCompilerName(): String =
         "kotlin-native-${project.simpleOsName}-${project.konanVersion}"
 
 internal fun Project.konanCompilerDownloadDir(): String =
-        DependencyProcessor.localKonanDir.resolve(project.konanCompilerName()).absolutePath
+        DependencyDirectories.localKonanDir.resolve(project.konanCompilerName()).absolutePath
 
 // region Useful extensions and functions ---------------------------------------
 

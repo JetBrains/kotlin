@@ -126,7 +126,7 @@ abstract class KotlinToolRunner(
         }
     }
 
-    fun run(args: List<String>) {
+    open fun run(args: List<String>) {
         checkClasspath()
 
         if (mustRunViaExec) runViaExec(args) else runInProcess(args)

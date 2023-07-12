@@ -34,10 +34,12 @@ interface TargetableExternalStorage {
     fun downloadDependencies()
 }
 
-abstract class KonanPropertiesLoader(override val target: KonanTarget,
-                                     val properties: Properties,
-                                     private val baseDir: String? = null,
-                                     private val host: KonanTarget = HostManager.host) : Configurables {
+abstract class KonanPropertiesLoader(
+    override val target: KonanTarget,
+    val properties: Properties,
+    private val dependenciesRoot: String?,
+    private val host: KonanTarget = HostManager.host,
+) : Configurables {
     private val predefinedLlvmDistributions: Set<String> =
             properties.propertyList("predefinedLlvmDistributions").toSet()
 
@@ -87,13 +89,13 @@ abstract class KonanPropertiesLoader(override val target: KonanTarget,
     override fun absolute(value: String?): String =
             dependencyProcessor!!.resolve(value!!).absolutePath
     private val dependencyProcessor  by lazy {
-        baseDir?.let {
+        dependenciesRoot?.let {
             DependencyProcessor(
-                    dependenciesRoot = File(baseDir),
-                    properties = this,
-                    archiveType = defaultArchiveTypeByHost(host)
+                dependenciesRoot = File(dependenciesRoot),
+                properties = this,
+                archiveType = defaultArchiveTypeByHost(host)
             ){ url, currentBytes, totalBytes ->
-                print("\n(KonanProperies) Downloading dependency: $url (${currentBytes}/${totalBytes}). ")
+                print("\n(KonanProperties) Downloading dependency: $url (${currentBytes}/${totalBytes}). ")
             }
         }
     }

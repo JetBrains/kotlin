@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 import org.gradle.api.Project
 import org.jetbrains.kotlin.compilerRunner.KotlinNativeLibraryGenerationRunner
 import org.jetbrains.kotlin.compilerRunner.getKonanCacheKind
+import org.jetbrains.kotlin.compilerRunner.konanDataDir
 import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
@@ -28,7 +29,7 @@ import java.util.concurrent.ConcurrentHashMap
 internal class PlatformLibrariesGenerator(val project: Project, val konanTarget: KonanTarget) {
 
     private val distribution =
-        customerDistribution(project.konanHome)
+        customerDistribution(project.konanHome, konanDataDir = project.konanDataDir)
 
     private val platformLibsDirectory =
         File(distribution.platformLibs(konanTarget)).absoluteFile
