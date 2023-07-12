@@ -12,7 +12,7 @@ docker ps -a | grep $CONTAINER_NAME > /dev/null \
   && docker rm $CONTAINER_NAME > /dev/null
 
 echo "Running build script in container..."
-docker run -it -v "$PWD"/artifacts:/artifacts \
+docker run -v "$PWD"/artifacts:/artifacts \
   --env TARGET="$TARGET" \
   --env VERSION="$VERSION" \
   --env TOOLCHAIN_VERSION_SUFFIX="$TOOLCHAIN_VERSION_SUFFIX" \
