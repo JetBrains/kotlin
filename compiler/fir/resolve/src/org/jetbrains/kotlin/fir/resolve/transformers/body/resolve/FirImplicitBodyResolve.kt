@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
@@ -231,9 +232,13 @@ open class ReturnTypeCalculatorWithJump(
         if (declaration.isSubstitutionOrIntersectionOverride) {
             val fakeOverrideSubstitution = declaration.attributes.fakeOverrideSubstitution
                 ?: return declaration.returnTypeRef as FirResolvedTypeRef
+
+            // TODO: drop synchronized in KT-60385
             synchronized(fakeOverrideSubstitution) {
-                (declaration.returnTypeRef as? FirResolvedTypeRef)?.let { return it }
-                declaration.attributes.fakeOverrideSubstitution = null
+                if (declaration.attributes.fakeOverrideSubstitution == null) {
+                    return declaration.returnTypeRef as FirResolvedTypeRef
+                }
+
                 val (substitutor, baseSymbol) = fakeOverrideSubstitution
                 val baseDeclaration = baseSymbol.fir as FirCallableDeclaration
                 val baseReturnTypeRef = tryCalculateReturnType(baseDeclaration)
@@ -245,6 +250,8 @@ open class ReturnTypeCalculatorWithJump(
                     declaration.getter?.replaceReturnTypeRef(returnType)
                     declaration.setter?.valueParameters?.firstOrNull()?.replaceReturnTypeRef(returnType)
                 }
+
+                declaration.attributes.fakeOverrideSubstitution = null
                 return returnType
             }
         }

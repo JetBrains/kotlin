@@ -26,19 +26,21 @@ abstract class FakeOverrideTypeCalculator {
 
     abstract class AbstractFakeOverrideTypeCalculator : FakeOverrideTypeCalculator() {
         override fun computeReturnType(declaration: FirCallableDeclaration): FirResolvedTypeRef? {
-            val fakeOverrideSubstitution = declaration.attributes.fakeOverrideSubstitution
-                ?: return declaration.getResolvedTypeRef()
+            val fakeOverrideSubstitution = declaration.attributes.fakeOverrideSubstitution ?: return declaration.getResolvedTypeRef()
+
+            // TODO: drop synchronized in KT-60385
             synchronized(fakeOverrideSubstitution) {
                 if (declaration.attributes.fakeOverrideSubstitution == null) {
                     return declaration.returnTypeRef as FirResolvedTypeRef
                 }
+
                 val (substitutor, baseSymbol) = fakeOverrideSubstitution
                 val baseDeclaration = baseSymbol.fir as FirCallableDeclaration
                 val baseReturnType = computeReturnType(baseDeclaration)?.type ?: return null
-                declaration.attributes.fakeOverrideSubstitution = null
                 val coneType = substitutor.substituteOrSelf(baseReturnType)
                 val returnType = declaration.returnTypeRef.resolvedTypeFromPrototype(coneType)
                 declaration.replaceReturnTypeRef(returnType)
+                declaration.attributes.fakeOverrideSubstitution = null
                 return returnType
             }
         }
