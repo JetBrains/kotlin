@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirElementInterface
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
@@ -27,7 +27,7 @@ abstract class FirElvisExpression : FirExpression(), FirResolvable {
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitElvisExpression(this, data)
 
     @Suppress("UNCHECKED_CAST")
-    override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
+    override fun <E : FirElementInterface, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformElvisExpression(this, data) as E
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)

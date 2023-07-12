@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirElementInterface
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -14,15 +14,10 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirContextReceiverArgumentListOwner : FirElement {
+interface FirContextReceiverArgumentListOwner : FirElementInterface {
     override val source: KtSourceElement?
     val contextReceiverArguments: List<FirExpression>
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitContextReceiverArgumentListOwner(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
-        transformer.transformContextReceiverArgumentListOwner(this, data) as E
 
     fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>)
 }

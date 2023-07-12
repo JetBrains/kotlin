@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirElementInterface
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -15,15 +15,10 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-sealed interface FirResolvable : FirElement {
+sealed interface FirResolvable : FirElementInterface {
     override val source: KtSourceElement?
     val calleeReference: FirReference
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitResolvable(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
-        transformer.transformResolvable(this, data) as E
 
     fun replaceCalleeReference(newCalleeReference: FirReference)
 

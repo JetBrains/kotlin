@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirElementInterface
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
@@ -46,7 +46,7 @@ abstract class FirRegularClass : FirClass() {
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitRegularClass(this, data)
 
     @Suppress("UNCHECKED_CAST")
-    override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
+    override fun <E : FirElementInterface, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformRegularClass(this, data) as E
 
     abstract override fun replaceStatus(newStatus: FirDeclarationStatus)

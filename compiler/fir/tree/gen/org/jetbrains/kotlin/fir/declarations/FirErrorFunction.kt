@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirElementInterface
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
@@ -48,7 +48,7 @@ abstract class FirErrorFunction : FirFunction(), FirDiagnosticHolder {
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitErrorFunction(this, data)
 
     @Suppress("UNCHECKED_CAST")
-    override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
+    override fun <E : FirElementInterface, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformErrorFunction(this, data) as E
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)

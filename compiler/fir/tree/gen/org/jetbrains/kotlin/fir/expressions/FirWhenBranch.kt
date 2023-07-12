@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirElementInterface
 import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirWhenBranch : FirPureAbstractElement(), FirElement {
+abstract class FirWhenBranch : FirPureAbstractElement(), FirElementInterface {
     abstract override val source: KtSourceElement?
     abstract val condition: FirExpression
     abstract val result: FirBlock
@@ -23,7 +23,7 @@ abstract class FirWhenBranch : FirPureAbstractElement(), FirElement {
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitWhenBranch(this, data)
 
     @Suppress("UNCHECKED_CAST")
-    override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
+    override fun <E : FirElementInterface, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformWhenBranch(this, data) as E
 
     abstract fun <D> transformCondition(transformer: FirTransformer<D>, data: D): FirWhenBranch

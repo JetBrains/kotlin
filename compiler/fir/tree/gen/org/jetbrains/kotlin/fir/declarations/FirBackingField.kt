@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirElementInterface
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -53,7 +53,7 @@ abstract class FirBackingField : FirVariable(), FirTypeParametersOwner, FirState
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitBackingField(this, data)
 
     @Suppress("UNCHECKED_CAST")
-    override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
+    override fun <E : FirElementInterface, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformBackingField(this, data) as E
 
     abstract override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef)

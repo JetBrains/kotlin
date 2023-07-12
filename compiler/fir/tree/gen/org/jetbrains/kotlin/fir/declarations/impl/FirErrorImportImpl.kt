@@ -8,12 +8,14 @@
 package org.jetbrains.kotlin.fir.declarations.impl
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirErrorImport
 import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.accept
 
 /*
  * This file was generated automatically
@@ -31,11 +33,11 @@ internal class FirErrorImportImpl(
     override val aliasName: Name? get() = delegate.aliasName
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        delegate.accept(visitor, data)
+        (delegate as FirElement).accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirErrorImportImpl {
-        delegate = delegate.transform(transformer, data)
+        delegate = (delegate as FirElement).transform(transformer, data)
         return this
     }
 }

@@ -14,15 +14,10 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirAnnotationContainer : FirElement {
+interface FirAnnotationContainer : FirElementInterface {
     override val source: KtSourceElement?
     val annotations: List<FirAnnotation>
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitAnnotationContainer(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
-        transformer.transformAnnotationContainer(this, data) as E
 
     fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 

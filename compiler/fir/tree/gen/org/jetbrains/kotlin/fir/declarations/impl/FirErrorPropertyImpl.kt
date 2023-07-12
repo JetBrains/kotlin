@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.fir.declarations.impl
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.declarations.DeprecationsProvider
 import org.jetbrains.kotlin.fir.declarations.FirBackingField
@@ -36,6 +37,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.fir.MutableOrEmptyList
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
+import org.jetbrains.kotlin.fir.accept
 
 /*
  * This file was generated automatically
@@ -76,7 +78,7 @@ internal class FirErrorPropertyImpl(
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        status.accept(visitor, data)
+        (status as FirElement).accept(visitor, data)
         returnTypeRef.accept(visitor, data)
         contextReceivers.forEach { it.accept(visitor, data) }
         backingField?.accept(visitor, data)
@@ -96,7 +98,7 @@ internal class FirErrorPropertyImpl(
     }
 
     override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirErrorPropertyImpl {
-        status = status.transform(transformer, data)
+        status = (status as FirElement).transform(transformer, data)
         return this
     }
 

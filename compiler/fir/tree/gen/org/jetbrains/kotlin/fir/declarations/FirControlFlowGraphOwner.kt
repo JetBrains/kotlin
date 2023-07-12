@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirElementInterface
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -15,15 +15,10 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirControlFlowGraphOwner : FirElement {
+interface FirControlFlowGraphOwner : FirElementInterface {
     override val source: KtSourceElement?
     val controlFlowGraphReference: FirControlFlowGraphReference?
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitControlFlowGraphOwner(this, data)
-
-    @Suppress("UNCHECKED_CAST")
-    override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
-        transformer.transformControlFlowGraphOwner(this, data) as E
 
     fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?)
 }

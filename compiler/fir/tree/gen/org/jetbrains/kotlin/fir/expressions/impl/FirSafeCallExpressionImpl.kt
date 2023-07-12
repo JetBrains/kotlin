@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.fir.expressions.impl
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirExpressionRef
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirCheckedSafeCallSubject
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.fir.MutableOrEmptyList
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
+import org.jetbrains.kotlin.fir.accept
 
 /*
  * This file was generated automatically
@@ -36,7 +38,7 @@ internal class FirSafeCallExpressionImpl(
         typeRef.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
         receiver.accept(visitor, data)
-        selector.accept(visitor, data)
+        (selector as FirElement).accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirSafeCallExpressionImpl {
@@ -58,7 +60,7 @@ internal class FirSafeCallExpressionImpl(
     }
 
     override fun <D> transformSelector(transformer: FirTransformer<D>, data: D): FirSafeCallExpressionImpl {
-        selector = selector.transform(transformer, data)
+        selector = (selector as FirElement).transform(transformer, data)
         return this
     }
 
