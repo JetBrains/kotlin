@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.renderer
 
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
 
 abstract class FirErrorExpressionRenderer {
@@ -23,6 +24,6 @@ class FirErrorExpressionOnlyErrorRenderer : FirErrorExpressionRenderer() {
 class FirErrorExpressionExtendedRenderer : FirErrorExpressionRenderer() {
     override fun renderErrorExpression(errorExpression: FirErrorExpression) {
         printer.print("ERROR_EXPR(${errorExpression.diagnostic.reason})")
-        errorExpression.nonExpressionElement?.accept(components.visitor)
+        (errorExpression.nonExpressionElement as? FirElement)?.accept(components.visitor)
     }
 }
