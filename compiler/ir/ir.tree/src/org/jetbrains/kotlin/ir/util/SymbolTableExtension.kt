@@ -31,6 +31,7 @@ abstract class ReferenceSymbolTableExtension<Class, TypeAlias, Script, Function,
 typealias SymbolFactory<Declaration, Symbol> = (Declaration, IdSignature?) -> Symbol
 typealias OwnerFactory<Symbol, SymbolOwner> = (Symbol) -> SymbolOwner
 
+@OptIn(SymbolTableInternals::class)
 abstract class SymbolTableExtension<
         Declaration, Class, TypeAlias, Script, Function, Constructor,
         Property, ValueParameter, TypeParameter,
@@ -515,8 +516,6 @@ abstract class SymbolTableExtension<
             defaultTypeParameterFactory(startOffset, endOffset, origin, descriptor, it)
         },
     ): IrTypeParameter {
-        // TODO: looks little suspicious
-        //  Is it correct that we never create scoped type parameters by signatures?
         return scopedTypeParameterSlice.declare(
             descriptor,
             { createTypeParameterSymbol(descriptor, calculateSignature(descriptor)) },
@@ -586,9 +585,8 @@ abstract class SymbolTableExtension<
      * Basic idea is it traverse symbols which can be reasonable referered from other module
      *
      * Be careful when using it, and avoid it, except really need.
-     *
-     * TODO: add some OptIn
      */
+    @DelicateSymbolTableApi
     fun forEachDeclarationSymbol(block: (IrSymbol) -> Unit) {
         table.forEachDeclarationSymbol(block)
 
@@ -603,6 +601,7 @@ abstract class SymbolTableExtension<
         globalTypeParameterSlice.forEachSymbol { block(it) }
     }
 
+    @OptIn(DelicateSymbolTableApi::class)
     val allUnboundSymbols: Set<IrSymbol>
         get() = buildSet {
             fun addUnbound(slice: SymbolTableSlice<*, *, *>) {

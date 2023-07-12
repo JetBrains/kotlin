@@ -104,7 +104,7 @@ internal fun PhaseContext.fir2Ir(
         "`${irModuleFragment.name}` must be Name.special, since it's required by KlibMetadataModuleDescriptorFactoryImpl.createDescriptorOptionalBuiltIns()"
     }
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
+    @OptIn(ObsoleteDescriptorBasedAPI::class, DelicateSymbolTableApi::class)
     val usedPackages = buildSet {
         components.symbolTable.descriptorExtension.forEachDeclarationSymbol {
             val p = it.owner as? IrDeclaration ?: return@forEachDeclarationSymbol

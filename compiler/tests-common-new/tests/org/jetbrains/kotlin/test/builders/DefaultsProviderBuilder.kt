@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.test.services.DefaultsDsl
 import org.jetbrains.kotlin.test.services.DefaultsProvider
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKind
-import org.jetbrains.kotlin.test.model.TestArtifactKind
 
 @DefaultsDsl
 class DefaultsProviderBuilder {

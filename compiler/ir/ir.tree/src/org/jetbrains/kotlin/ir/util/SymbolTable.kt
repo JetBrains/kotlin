@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.declarations.lazy.IrLazySymbolTable
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
 
+@OptIn(SymbolTableInternals::class)
 open class SymbolTable(
     val signaturer: IdSignatureComposer,
     val irFactory: IrFactory,
@@ -98,7 +99,7 @@ open class SymbolTable(
         )
     }
 
-    // TODO: add OptIn
+    @SymbolTableInternals
     internal inline fun referenceClassImpl(
         signature: IdSignature,
         publicSymbolFactory: () -> IrClassSymbol,
@@ -148,7 +149,7 @@ open class SymbolTable(
         )
     }
 
-    // TODO: add OptIn
+    @SymbolTableInternals
     internal inline fun referenceConstructorImpl(
         signature: IdSignature,
         publicSymbolFactory: () -> IrConstructorSymbol,
@@ -188,7 +189,7 @@ open class SymbolTable(
         )
     }
 
-    // TODO: add OptIn
+    @SymbolTableInternals
     internal inline fun referenceEnumEntryImpl(
         signature: IdSignature,
         publicSymbolFactory: () -> IrEnumEntrySymbol,
@@ -228,7 +229,7 @@ open class SymbolTable(
         )
     }
 
-    // TODO: add OptIn
+    @SymbolTableInternals
     internal inline fun referenceFieldImpl(
         signature: IdSignature,
         publicSymbolFactory: () -> IrFieldSymbol,
@@ -280,7 +281,7 @@ open class SymbolTable(
         )
     }
 
-    // TODO: add OptIn
+    @SymbolTableInternals
     internal inline fun referencePropertyImpl(
         signature: IdSignature,
         publicSymbolFactory: () -> IrPropertySymbol,
@@ -320,7 +321,7 @@ open class SymbolTable(
         )
     }
 
-    // TODO: add OptIn
+    @SymbolTableInternals
     internal inline fun referenceTypeAliasImpl(
         signature: IdSignature,
         publicSymbolFactory: () -> IrTypeAliasSymbol,
@@ -371,7 +372,7 @@ open class SymbolTable(
         )
     }
 
-    // TODO: add OptIn
+    @SymbolTableInternals
     internal inline fun referenceSimpleFunctionImpl(
         signature: IdSignature,
         publicSymbolFactory: () -> IrSimpleFunctionSymbol,
@@ -400,7 +401,7 @@ open class SymbolTable(
         symbolFactory: (IdSignature) -> IrTypeParameterSymbol,
         typeParameterFactory: (IrTypeParameterSymbol) -> IrTypeParameter,
     ): IrTypeParameter {
-        // TODO: suspicios
+        // TODO: probably this function should be completely removed, since it doesn't cache anything. KT-60375
         return typeParameterFactory(symbolFactory(signature))
     }
 
@@ -412,7 +413,7 @@ open class SymbolTable(
         )
     }
 
-    // TODO: add OptIn
+    @SymbolTableInternals
     internal inline fun referenceTypeParameterImpl(
         signature: IdSignature,
         publicSymbolFactory: () -> IrTypeParameterSymbol,
@@ -428,25 +429,25 @@ open class SymbolTable(
 
     // ------------------------------------ scopes ------------------------------------
 
-    // TODO: move to extensions
+    // TODO: move to extensions, KT-60376
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun enterScope(symbol: IrSymbol) {
         descriptorExtension.enterScope(symbol)
     }
 
-    // TODO: move to extensions
+    // TODO: move to extensions, KT-60376
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun enterScope(owner: IrDeclaration) {
         descriptorExtension.enterScope(owner)
     }
 
-    // TODO: move to extensions
+    // TODO: move to extensions, KT-60376
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun leaveScope(symbol: IrSymbol) {
         descriptorExtension.leaveScope(symbol)
     }
 
-    // TODO: move to extensions
+    // TODO: move to extensions, KT-60376
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun leaveScope(owner: IrDeclaration) {
         descriptorExtension.leaveScope(owner)
@@ -459,9 +460,8 @@ open class SymbolTable(
      * Basic idea is it traverse symbols which can be reasonable referered from other module
      *
      * Be careful when using it, and avoid it, except really need.
-     *
-     * TODO: add some OptIn
      */
+    @DelicateSymbolTableApi
     fun forEachDeclarationSymbol(block: (IrSymbol) -> Unit) {
         classSlice.forEachSymbol { block(it) }
         constructorSlice.forEachSymbol { block(it) }
@@ -472,6 +472,12 @@ open class SymbolTable(
         fieldSlice.forEachSymbol { block(it) }
     }
 
+    /**
+     * This method should not be used directly, because in a lot of cases there are unbound symbols
+     *   not only in SymbolTable itself, but in descriptorExtension too
+     * So please use `SymbolTable.descriptorExtension.allUnboundSymbols` instead
+     */
+    @DelicateSymbolTableApi
     val allUnboundSymbols: Set<IrSymbol>
         get() = buildSet {
             fun addUnbound(slice: SymbolTableSlice<IdSignature, *, *>) {
@@ -487,6 +493,20 @@ open class SymbolTable(
             addUnbound(fieldSlice)
         }
 }
+
+/*
+ * This annotation marks that some method is actually part of SymbolTable implementation and should not be called
+ *   outside SymbolTable or its extension
+ */
+@RequiresOptIn
+annotation class SymbolTableInternals
+
+/*
+ * This annotation marks that some method of SymbolTable is not very safe and should be used only if you really
+ *   know what you are doing
+ */
+@RequiresOptIn
+annotation class DelicateSymbolTableApi
 
 inline fun <T> SymbolTable.withScope(owner: IrSymbol, block: SymbolTable.() -> T): T {
     enterScope(owner)

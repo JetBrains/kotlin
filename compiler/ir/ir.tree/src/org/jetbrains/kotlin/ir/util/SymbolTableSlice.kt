@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.IrBindableSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.util.PrivateForInline
 
 abstract class SymbolTableSlice<Key, SymbolOwner, Symbol>(val lock: IrLock)
         where SymbolOwner : IrSymbolOwner,
@@ -31,6 +32,7 @@ abstract class SymbolTableSlice<Key, SymbolOwner, Symbol>(val lock: IrLock)
     abstract fun get(key: Key): Symbol?
     abstract fun set(key: Key, symbol: Symbol)
 
+    @OptIn(PrivateForInline::class)
     inline fun declare(key: Key, createSymbol: () -> Symbol, createOwner: (Symbol) -> SymbolOwner): SymbolOwner {
         synchronized(lock) {
             val existing = get(key)
@@ -55,6 +57,7 @@ abstract class SymbolTableSlice<Key, SymbolOwner, Symbol>(val lock: IrLock)
         }
     }
 
+    @OptIn(PrivateForInline::class)
     inline fun declareIfNotExists(
         key: Key,
         createSymbol: () -> Symbol,
@@ -63,7 +66,6 @@ abstract class SymbolTableSlice<Key, SymbolOwner, Symbol>(val lock: IrLock)
         synchronized(lock) {
             val existing = get(key)
             val symbol = if (existing == null) {
-                // checkOriginal(descriptor) // TODO: remove?
                 val new = createSymbol()
                 set(key, new)
                 new
@@ -78,7 +80,7 @@ abstract class SymbolTableSlice<Key, SymbolOwner, Symbol>(val lock: IrLock)
         }
     }
 
-    // TODO: add PrivateToInline
+    @PrivateForInline
     @PublishedApi
     internal inline fun createOwnerSafe(symbol: Symbol, createOwner: (Symbol) -> SymbolOwner): SymbolOwner {
         val owner = createOwner(symbol)
@@ -101,7 +103,7 @@ abstract class SymbolTableSlice<Key, SymbolOwner, Symbol>(val lock: IrLock)
             signatureToSymbol[key] = symbol
         }
 
-        // TODO: add some OptIn
+        @SymbolTableInternals
         internal fun forEachSymbol(block: (IrSymbol) -> Unit) {
             signatureToSymbol.forEach { (_, symbol) -> block(symbol) }
         }
@@ -110,36 +112,42 @@ abstract class SymbolTableSlice<Key, SymbolOwner, Symbol>(val lock: IrLock)
     class Scoped<Key, SymbolOwner, Symbol>(lock: IrLock) : SymbolTableSlice<Key, SymbolOwner, Symbol>(lock)
             where SymbolOwner : IrSymbolOwner, Symbol : IrBindableSymbol<*, SymbolOwner> {
 
+        @OptIn(PrivateForInline::class)
         override fun set(key: Key, symbol: Symbol) {
             val scope = currentScope ?: noScope()
             scope[key] = symbol
         }
 
         @PublishedApi
-        // TODO: add PrivateForInline
+        @PrivateForInline
         internal var currentScope: SliceScope<Key, Symbol>? = null
-        private set
+            private set
 
+        @OptIn(PrivateForInline::class)
         override fun get(key: Key): Symbol? {
             return currentScope?.get(key)
         }
 
+        @OptIn(PrivateForInline::class)
         inline fun declareLocal(key: Key, createSymbol: () -> Symbol, createOwner: (Symbol) -> SymbolOwner): SymbolOwner {
             val scope = currentScope ?: noScope()
             val symbol = scope.getLocal(key) ?: createSymbol().also { scope[key] = it }
             return createOwnerSafe(symbol, createOwner)
         }
 
+        @OptIn(PrivateForInline::class)
         fun introduceLocal(descriptor: Key, symbol: Symbol) {
             val scope = currentScope ?: noScope()
             scope[descriptor]?.let { error("$descriptor is already bound to $it") }
             scope[descriptor] = symbol
         }
 
+        @OptIn(PrivateForInline::class)
         fun enterScope(owner: IrSymbol) {
             currentScope = SliceScope(owner, currentScope)
         }
 
+        @OptIn(PrivateForInline::class)
         fun leaveScope(owner: IrSymbol) {
             currentScope?.owner.let {
                 require(it == owner) { "Unexpected leaveScope: owner=$owner, currentScope.owner=$it" }
@@ -153,16 +161,17 @@ abstract class SymbolTableSlice<Key, SymbolOwner, Symbol>(val lock: IrLock)
             }
         }
 
+        @OptIn(PrivateForInline::class)
         fun dump(): String {
             return currentScope?.dump() ?: "<none>"
         }
 
         @PublishedApi
-        // TODO: add PrivateForInline
+        @PrivateForInline
         internal fun noScope(): Nothing = error("No active scope")
 
         @PublishedApi
-        // TODO: add PrivateForInline
+        @PrivateForInline
         internal class SliceScope<Key, Symbol>(val owner: IrSymbol, val parent: SliceScope<Key, Symbol>?) {
             private val signatureToSymbol = hashMapOf<Key, Symbol>()
 
