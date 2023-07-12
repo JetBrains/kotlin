@@ -17,10 +17,9 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.retryOnInval
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionCache
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirDeclarationForCompiledElementSearcher
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceNonLocalFirDeclaration
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalDeclaration
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
@@ -103,21 +102,21 @@ internal abstract class LLFirResolvableResolveSession(
         ktDeclaration: KtDeclaration,
         phase: FirResolvePhase
     ): FirBasedSymbol<*> {
-        val module = getModule(ktDeclaration.originalDeclaration ?: ktDeclaration)
+        val containingKtFile = ktDeclaration.containingKtFile
+        val module = getModule(containingKtFile.originalKtFile ?: containingKtFile)
         retryOnInvalidSession {
             return when (getModuleKind(module)) {
                 ModuleKind.RESOLVABLE_MODULE -> findSourceFirSymbol(ktDeclaration, module).also { resolveFirToPhase(it.fir, phase) }
-                ModuleKind.BINARY_MODULE -> findFirCompiledSymbol(ktDeclaration)
+                ModuleKind.BINARY_MODULE -> findFirCompiledSymbol(ktDeclaration, module)
             }
         }
     }
 
-    private fun findFirCompiledSymbol(ktDeclaration: KtDeclaration): FirBasedSymbol<*> {
+    private fun findFirCompiledSymbol(ktDeclaration: KtDeclaration, module: KtModule): FirBasedSymbol<*> {
         require(ktDeclaration.containingKtFile.isCompiled) {
             "This method will only work on compiled declarations, but this declaration is not compiled: ${ktDeclaration.getElementTextInContext()}"
         }
 
-        val module = getModule(ktDeclaration)
         val session = getSessionFor(module)
         val searcher = FirDeclarationForCompiledElementSearcher(session.symbolProvider)
         val firDeclaration = searcher.findNonLocalDeclaration(ktDeclaration)
