@@ -20,6 +20,11 @@ object Z {
     }
 }
 
+object W {
+    operator fun set(vararg va: Int, value: Int) {
+    }
+}
+
 fun test() {
     A[0] = <!TYPE_MISMATCH!>""<!>
     A[0] = 2.72
@@ -32,4 +37,6 @@ fun test() {
     D[0] = 2.72
 
     Z[<!TOO_MANY_ARGUMENTS!>0<!>] = <!TOO_MANY_ARGUMENTS!>""<!>
+
+    W[0] = 1
 }

@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.builder.buildNamedArgumentExpression
 import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.defaultParameterResolver
@@ -95,22 +94,6 @@ fun BodyResolveComponents.mapArguments(
             && function.name == OperatorNameConventions.SET
             && function.origin !is FirDeclarationOrigin.DynamicScope
 
-    if (isIndexedSetOperator &&
-        function.valueParameters.any { it.defaultValue != null || it.isVararg }
-    ) {
-        val v = nonLambdaArguments.last()
-        if (v !is FirNamedArgumentExpression) {
-            val namedV = buildNamedArgumentExpression {
-                source = v.source
-                expression = v
-                isSpread = false
-                name = function.valueParameters.last().name
-            }
-            nonLambdaArguments.removeAt(nonLambdaArguments.size - 1)
-            nonLambdaArguments.add(namedV)
-        }
-    }
-
     val processor = FirCallArgumentsProcessor(session, function, this, originScope, isIndexedSetOperator)
     processor.processNonLambdaArguments(nonLambdaArguments)
     if (externalArgument != null) {
@@ -172,15 +155,16 @@ private class FirCallArgumentsProcessor(
         when {
             // process position argument
             argument !is FirNamedArgumentExpression -> {
-                if (processPositionArgument(argument, isLastArgument)) {
-                    state = State.VARARG_POSITION
+                if (state == State.VARARG_POSITION && isIndexedSetOperator && isLastArgument) {
+                    // The last argument of an indexed set operator should be reserved for the last argument (the assigned value).
+                    // That's why if vararg presented, they should be completed
+                    completeVarargPositionArguments()
                 }
+                processPositionArgument(argument, isLastArgument)
             }
             // process named argument
             function.origin == FirDeclarationOrigin.DynamicScope -> {
-                if (processPositionArgument(argument.expression, isLastArgument)) {
-                    state = State.VARARG_POSITION
-                }
+                processPositionArgument(argument.expression, isLastArgument)
             }
             else -> {
                 if (state == State.VARARG_POSITION) {
@@ -191,11 +175,10 @@ private class FirCallArgumentsProcessor(
         }
     }
 
-    // return true, if it was mapped to vararg parameter
-    private fun processPositionArgument(argument: FirExpression, isLastArgument: Boolean): Boolean {
+    private fun processPositionArgument(argument: FirExpression, isLastArgument: Boolean) {
         if (state == State.NAMED_ONLY_ARGUMENTS) {
             addDiagnostic(MixingNamedAndPositionArguments(argument))
-            return false
+            return
         }
 
         // The last parameter of an indexed set operator should be reserved for the last argument (the assigned value).
@@ -219,19 +202,19 @@ private class FirCallArgumentsProcessor(
         val parameter = parameters.getOrNull(assignedParameterIndex)
         if (parameter == null) {
             addDiagnostic(TooManyArguments(argument, function))
-            return false
+            return
         }
 
         return if (!parameter.isVararg) {
             currentPositionedParameterIndex++
 
             result[parameter] = ResolvedCallArgument.SimpleArgument(argument)
-            false
+            state = State.POSITION_ARGUMENTS
         }
         // all position arguments will be mapped to current vararg parameter
         else {
             addVarargArgument(argument)
-            true
+            state = State.VARARG_POSITION
         }
     }
 
