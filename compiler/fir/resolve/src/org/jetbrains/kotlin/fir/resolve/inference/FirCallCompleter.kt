@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.visitors.transformSingle
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.addEqualityConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
@@ -341,7 +340,7 @@ class FirCallCompleter(
             }
             transformer.context.dropContextForAnonymousFunction(lambdaArgument)
 
-            val returnArguments = components.dataFlowAnalyzer.returnExpressionsOfAnonymousFunction(lambdaArgument)
+            val returnArguments = components.dataFlowAnalyzer.returnExpressionsOfAnonymousFunction(lambdaArgument).map { it.expression }
 
             return ReturnArgumentsAnalysisResult(returnArguments, builderInferenceSession)
         }

@@ -10,13 +10,13 @@ val a: () -> Unit = l@{
     if (true) 42
 }
 
-val b: () -> Unit = l@{
+val b: () -> Unit = <!INITIALIZER_TYPE_MISMATCH!>l@{
     // Error, coercion can't be applied at this position!
     if (true) return@l "hello"
 
     // However, this is OK, because here coercion is applied
     "hello"
-}
+}<!>
 
 val c: () -> Unit = {
     // Interesting enough, for such expessions we use expected type Unit

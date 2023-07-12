@@ -136,10 +136,10 @@ abstract class FirDataFlowAnalyzer(
         return variable.stability to types.toMutableList()
     }
 
-    fun returnExpressionsOfAnonymousFunctionOrNull(function: FirAnonymousFunction): Collection<FirExpression>? =
+    fun returnExpressionsOfAnonymousFunctionOrNull(function: FirAnonymousFunction): Collection<FirAnonymousFunctionReturnExpressionInfo>? =
         graphBuilder.returnExpressionsOfAnonymousFunction(function)
 
-    fun returnExpressionsOfAnonymousFunction(function: FirAnonymousFunction): Collection<FirExpression> =
+    fun returnExpressionsOfAnonymousFunction(function: FirAnonymousFunction): Collection<FirAnonymousFunctionReturnExpressionInfo> =
         returnExpressionsOfAnonymousFunctionOrNull(function)
             ?: error("anonymous function ${function.render()} not analyzed")
 

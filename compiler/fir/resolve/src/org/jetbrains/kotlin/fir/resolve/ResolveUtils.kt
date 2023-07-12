@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedErrorReference
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.dfa.PropertyStability
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.FirAnonymousFunctionReturnExpressionInfo
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType

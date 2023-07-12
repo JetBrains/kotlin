@@ -552,7 +552,7 @@ class FirCallCompletionResultsWriterTransformer(
         // The case where we can't find any return expressions not common, and happens when there are anonymous function arguments
         // that aren't mapped to any parameter in the call. So, we don't run body resolve transformation for them, thus there's
         // no control flow info either. Example: second lambda in the call like list.filter({}, {})
-        val returnExpressions = dataFlowAnalyzer.returnExpressionsOfAnonymousFunctionOrNull(anonymousFunction)
+        val returnExpressions = dataFlowAnalyzer.returnExpressionsOfAnonymousFunctionOrNull(anonymousFunction)?.map { it.expression }
             ?: return transformImplicitTypeRefInAnonymousFunction(anonymousFunction)
 
         val expectedType = data?.getExpectedType(anonymousFunction)?.let { expectedArgumentType ->

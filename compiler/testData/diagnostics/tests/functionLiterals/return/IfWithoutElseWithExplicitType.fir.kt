@@ -4,9 +4,9 @@ val a: () -> Int = <!INITIALIZER_TYPE_MISMATCH!>l@ {
     if (flag) return@l 4
 }<!>
 
-val b: () -> Unit = l@ {
+val b: () -> Unit = <!INITIALIZER_TYPE_MISMATCH!>l@ {
     if (flag) return@l 4
-}
+}<!>
 
 val c: () -> Any = l@ {
     if (flag) return@l 4

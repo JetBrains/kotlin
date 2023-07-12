@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.fir.util.listMultimapOf
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.getOrPutNullable
 
+data class FirAnonymousFunctionReturnExpressionInfo(val expression: FirExpression, val isExplicit: Boolean)
+
 @OptIn(CfgInternals::class)
 class ControlFlowGraphBuilder {
     private val graphs: Stack<ControlFlowGraph> = stackOf()
@@ -82,10 +84,10 @@ class ControlFlowGraphBuilder {
 
     // ----------------------------------- Public API -----------------------------------
 
-    fun returnExpressionsOfAnonymousFunction(function: FirAnonymousFunction): Collection<FirExpression>? {
+    fun returnExpressionsOfAnonymousFunction(function: FirAnonymousFunction): Collection<FirAnonymousFunctionReturnExpressionInfo>? {
         val exitNode = function.controlFlowGraphReference?.controlFlowGraph?.exitNode ?: return null
 
-        fun CFGNode<*>.returnExpression(): FirExpression? = when (this) {
+        fun CFGNode<*>.returnExpression(): FirAnonymousFunctionReturnExpressionInfo? = when (this) {
             is BlockExitNode -> when {
                 // lambda@{ x } -> x
                 // lambda@{ class C } -> Unit-returning stub
@@ -106,16 +108,21 @@ class ControlFlowGraphBuilder {
                                 lastStatement.source?.kind != KtFakeSourceElementKind.ImplicitReturn.FromLastStatement ->
                             null
                         else ->
-                            lastStatement as? FirExpression
-                                ?: buildUnitExpression { source = fir.statements.lastOrNull()?.source ?: fir.source }
+                            (lastStatement as? FirExpression
+                                ?: buildUnitExpression { source = fir.statements.lastOrNull()?.source ?: fir.source }).let {
+                                FirAnonymousFunctionReturnExpressionInfo(it, isExplicit = false)
+                            }
                     }
                 }
                 // fun() { terminatingExpression } -> nothing (checker will emit an error if return type is not Unit)
                 // fun() { throw } or fun() { returnsNothing() } -> Nothing-returning stub
                 else -> FirStub.takeIf { _ -> previousNodes.all { it is StubNode } }
+                    ?.let { FirAnonymousFunctionReturnExpressionInfo(it, isExplicit = false) }
             }
             // lambda@{ return@lambda x } -> x
-            is JumpNode -> (fir as? FirReturnExpression)?.takeIf { it.target.labeledElement.symbol == function.symbol }?.result
+            is JumpNode -> (fir as? FirReturnExpression)?.takeIf { it.target.labeledElement.symbol == function.symbol }?.result?.let {
+                FirAnonymousFunctionReturnExpressionInfo(it, isExplicit = true)
+            }
             else -> null // shouldn't happen? expression bodies are implicitly wrapped in `FirBlock`s
         }
 
