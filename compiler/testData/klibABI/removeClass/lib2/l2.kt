@@ -1,3 +1,5 @@
+@file:Suppress("NOTHING_TO_INLINE")
+
 fun createRemovedClass() {
     check(RemovedClass().toString() != "Yellow Submarine")
 }

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.js.testOld.V8IrJsTestChecker
 import org.jetbrains.kotlin.klib.PartialLinkageTestUtils
 import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.Dependencies
+import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.Dependency
 import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.MAIN_MODULE_NAME
 import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.ModuleBuildDirs
 import org.junit.jupiter.api.AfterEach
@@ -60,8 +61,8 @@ abstract class AbstractJsPartialLinkageTestCase(private val compilerType: Compil
             klibFile: File,
         ) = this@AbstractJsPartialLinkageTestCase.buildKlib(moduleName, buildDirs, dependencies, klibFile)
 
-        override fun buildBinaryAndRun(mainModuleKlibFile: File, dependencies: Dependencies) =
-            this@AbstractJsPartialLinkageTestCase.buildBinaryAndRun(mainModuleKlibFile, dependencies)
+        override fun buildBinaryAndRun(mainModule: Dependency, otherDependencies: Dependencies) =
+            this@AbstractJsPartialLinkageTestCase.buildBinaryAndRun(mainModule, otherDependencies)
 
         override fun onNonEmptyBuildDirectory(directory: File) {
             directory.listFiles()?.forEach(File::deleteRecursively)
@@ -110,19 +111,24 @@ abstract class AbstractJsPartialLinkageTestCase(private val compilerType: Compil
             listOf(
                 "-Xir-produce-klib-file",
                 "-ir-output-dir", klibFile.parentFile.absolutePath,
-                "-ir-output-name", moduleName
+                "-ir-output-name", moduleName,
+                "-Werror" // Halt on any unexpected warning.
             ),
             dependencies.toCompilerArgs(),
-            listOf("-language-version", "2.0").takeIf { compilerType.useFir },
+            listOf(
+                "-language-version", "2.0",
+                "-Xsuppress-version-warnings" // Don't fail on language version warnings.
+            ).takeIf { compilerType.useFir },
             kotlinSourceFilePaths
         )
     }
 
-    private fun buildBinaryAndRun(mainModuleKlibFile: File, allDependencies: Dependencies) {
+    private fun buildBinaryAndRun(mainModule: Dependency, otherDependencies: Dependencies) {
         // The modules in `Dependencies.regularDependencies` are already in topological order.
         // It is important to pass the provided and the produced JS files to Node in exactly the same order.
-        val knownModulesInTopologicalOrder: List<ModuleDetails> = allDependencies.regularDependencies.map { dependency ->
-            ModuleDetails(name = dependency.moduleName, outputDir = dependency.libraryFile.parentFile)
+        val knownModulesInTopologicalOrder: List<ModuleDetails> = buildList {
+            otherDependencies.regularDependencies.mapTo(this, ::ModuleDetails)
+            this += ModuleDetails(mainModule)
         }
         val knownModuleNames: Set<ModuleName> = knownModulesInTopologicalOrder.mapTo(hashSetOf(), ModuleDetails::name)
 
@@ -133,20 +139,19 @@ abstract class AbstractJsPartialLinkageTestCase(private val compilerType: Compil
                 "-Xir-produce-js",
                 "-Xir-per-module",
                 "-module-kind", "plain",
-                "-Xinclude=${mainModuleKlibFile.absolutePath}",
+                "-Xinclude=${mainModule.libraryFile.absolutePath}",
                 "-ir-output-dir", binariesDir.absolutePath,
-                "-ir-output-name", MAIN_MODULE_NAME
+                "-ir-output-name", MAIN_MODULE_NAME,
+                // IMPORTANT: Omitting PL arguments here. The default PL mode should be in effect.
+                // "-Xpartial-linkage=enable", "-Xpartial-linkage-loglevel=INFO",
+                "-Werror"
             ),
             listOf(
                 "-Xcache-directory",
                 buildDir.resolve("libs-cache").absolutePath
             ).takeIf { compilerType.useIc },
-            allDependencies.toCompilerArgs(),
-            listOf("-Xes-classes").takeIf { compilerType.es6Mode },
-            listOf(
-                "-Xpartial-linkage=enable",
-                "-Xpartial-linkage-loglevel=WARNING"
-            )
+            otherDependencies.toCompilerArgs(),
+            listOf("-Xes-classes").takeIf { compilerType.es6Mode }
         )
 
         // All JS files produced during the compiler call.
@@ -225,4 +230,6 @@ abstract class AbstractJsPartialLinkageTestCase(private val compilerType: Compil
 }
 
 private typealias ModuleName = String
-private class ModuleDetails(val name: ModuleName, val outputDir: File)
+private class ModuleDetails(val name: ModuleName, val outputDir: File) {
+    constructor(dependency: Dependency) : this(dependency.moduleName, dependency.libraryFile.parentFile)
+}

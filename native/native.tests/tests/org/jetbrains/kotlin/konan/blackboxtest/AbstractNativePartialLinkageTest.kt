@@ -9,6 +9,7 @@ import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.codegen.ProjectInfo
 import org.jetbrains.kotlin.klib.PartialLinkageTestUtils
 import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.Dependencies
+import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.Dependency
 import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.MAIN_MODULE_NAME
 import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.ModuleBuildDirs
 import org.jetbrains.kotlin.konan.blackboxtest.support.*
@@ -62,8 +63,8 @@ abstract class AbstractNativePartialLinkageTest : AbstractNativeSimpleTest() {
             klibFile: File
         ) = this@AbstractNativePartialLinkageTest.buildKlib(moduleName, buildDirs.sourceDir, dependencies, klibFile)
 
-        override fun buildBinaryAndRun(mainModuleKlibFile: File, dependencies: Dependencies) =
-            this@AbstractNativePartialLinkageTest.buildBinaryAndRun(dependencies)
+        override fun buildBinaryAndRun(mainModule: Dependency, otherDependencies: Dependencies) =
+            this@AbstractNativePartialLinkageTest.buildBinaryAndRun(mainModule, otherDependencies)
 
         override fun onNonEmptyBuildDirectory(directory: File) = backupDirectoryContents(directory)
 
@@ -103,7 +104,7 @@ abstract class AbstractNativePartialLinkageTest : AbstractNativeSimpleTest() {
             settings = testRunSettings,
             freeCompilerArgs = testCase.freeCompilerArgs,
             sourceModules = testCase.modules,
-            dependencies = createLibraryDependencies(dependencies, forExecutable = false),
+            dependencies = createLibraryDependencies(dependencies),
             expectedArtifact = klibArtifact
         )
 
@@ -112,7 +113,7 @@ abstract class AbstractNativePartialLinkageTest : AbstractNativeSimpleTest() {
         producedKlibs += ProducedKlib(moduleName, klibArtifact, dependencies) // Remember the artifact with its dependencies.
     }
 
-    private fun buildBinaryAndRun(allDependencies: Dependencies) {
+    private fun buildBinaryAndRun(mainModule: Dependency, otherDependencies: Dependencies) {
         val cacheDependencies = if (useStaticCacheForUserLibraries) {
             producedKlibs.map { producedKlib ->
                 buildCacheForKlib(producedKlib)
@@ -132,7 +133,11 @@ abstract class AbstractNativePartialLinkageTest : AbstractNativeSimpleTest() {
             freeCompilerArgs = testCase.freeCompilerArgs,
             sourceModules = testCase.modules,
             extras = testCase.extras,
-            dependencies = createLibraryDependencies(allDependencies, forExecutable = true) + cacheDependencies,
+            dependencies = buildList {
+                this += createIncludedDependency(mainModule)
+                this += createLibraryDependencies(otherDependencies)
+                this += cacheDependencies
+            },
             expectedArtifact = executableArtifact
         )
 
@@ -187,20 +192,17 @@ abstract class AbstractNativePartialLinkageTest : AbstractNativeSimpleTest() {
         }
     }
 
-    private fun createLibraryDependencies(
-        dependencies: Dependencies,
-        forExecutable: Boolean
-    ): Iterable<TestCompilationDependency<KLIB>> =
-        dependencies.regularDependencies.map { dependency ->
-            val klib = KLIB(dependency.libraryFile)
-            if (forExecutable && dependency.moduleName == MAIN_MODULE_NAME) klib.toIncludedDependency() else klib.toDependency()
-        } + dependencies.friendDependencies.map { KLIB(it.libraryFile).toFriendDependency() }
+    private fun createIncludedDependency(dependency: Dependency): TestCompilationDependency<KLIB> =
+        KLIB(dependency.libraryFile).toIncludedDependency()
 
-    private fun createLibraryCacheDependencies(
-        dependencies: Dependencies
-    ): Iterable<TestCompilationDependency<KLIBStaticCache>> = dependencies.regularDependencies.mapNotNull { dependency ->
-        if (dependency.libraryFile != stdlibFile) KLIB(dependency.libraryFile).toStaticCacheArtifact().toDependency() else null
-    }
+    private fun createLibraryDependencies(dependencies: Dependencies): Iterable<TestCompilationDependency<KLIB>> =
+        dependencies.regularDependencies.map { dependency -> KLIB(dependency.libraryFile).toDependency() } +
+                dependencies.friendDependencies.map { KLIB(it.libraryFile).toFriendDependency() }
+
+    private fun createLibraryCacheDependencies(dependencies: Dependencies): Iterable<TestCompilationDependency<KLIBStaticCache>> =
+        dependencies.regularDependencies.mapNotNull { dependency ->
+            if (dependency.libraryFile != stdlibFile) KLIB(dependency.libraryFile).toStaticCacheArtifact().toDependency() else null
+        }
 
     private fun KLIB.toDependency() = ExistingDependency(this, Library)
     private fun KLIB.toIncludedDependency() = ExistingDependency(this, IncludedLibrary)

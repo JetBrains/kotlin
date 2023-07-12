@@ -74,33 +74,33 @@ fun box() = abiTest {
 }
 
 // Shortcuts:
-private inline fun TestBuilder.success(expectedOutcome: String, noinline block: () -> Any) =
+private fun TestBuilder.success(expectedOutcome: String, block: () -> Any) =
     expectSuccess(expectedOutcome) { block().toString() }
 
-private inline fun TestBuilder.successViaException(testExceptionId: String, noinline block: () -> Unit) =
+private fun TestBuilder.successViaException(testExceptionId: String, block: () -> Unit) =
     expectFailure(custom { (it as? TestException)?.id == testExceptionId }, block)
 
-private inline fun TestBuilder.inaccessible(className: String, noinline block: () -> Unit) = expectFailure(
+private fun TestBuilder.inaccessible(className: String, block: () -> Unit) = expectFailure(
     linkage("Constructor '$className.<init>' can not be called: Private constructor declared in module <lib1> can not be accessed in module <lib2>"),
     block
 )
 
-private inline fun TestBuilder.unlinkedSymbolInValueParameter(signature: String, noinline block: () -> Unit) {
+private fun TestBuilder.unlinkedSymbolInValueParameter(signature: String, block: () -> Unit) {
     val functionName = signature.removePrefix("/").replace('.', '_') + "_valueParameter"
     unlinkedSymbol(signature, functionName, block)
 }
 
-private inline fun TestBuilder.unlinkedSymbolInReturnType(signature: String, noinline block: () -> Unit) {
+private fun TestBuilder.unlinkedSymbolInReturnType(signature: String, block: () -> Unit) {
     val functionName = signature.removePrefix("/").replace('.', '_') + "_returnType"
     unlinkedSymbol(signature, functionName, block)
 }
 
-private inline fun TestBuilder.unlinkedConstructorSymbol(signature: String, noinline block: () -> Unit) {
+private fun TestBuilder.unlinkedConstructorSymbol(signature: String, block: () -> Unit) {
     val constructorName = signature.removePrefix("/").split('.').takeLast(2).joinToString(".")
     expectFailure(linkage("Constructor '$constructorName' can not be called: No constructor found for symbol '$signature'"), block)
 }
 
-private inline fun TestBuilder.unlinkedSymbol(signature: String, functionName: String, noinline block: () -> Unit) {
+private fun TestBuilder.unlinkedSymbol(signature: String, functionName: String, block: () -> Unit) {
     // Need to slightly adjust the expected IR linkage error message. Reason: When Lazy IR is used the type of the
     // symbol is determined more accurately.
     val symbolKind = if ("InnerClass" in functionName && testMode.lazyIr.usedEverywhere)

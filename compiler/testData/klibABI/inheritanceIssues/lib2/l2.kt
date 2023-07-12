@@ -1,3 +1,5 @@
+@file:Suppress("NOTHING_TO_INLINE")
+
 fun getInterfaceToAbstractClass() = object : InterfaceToAbstractClass {}
 inline fun getInterfaceToAbstractClassInline() = object : InterfaceToAbstractClass {}
 fun getInterfaceToAbstractClassAsAny(): Any = object : InterfaceToAbstractClass {}

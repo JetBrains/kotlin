@@ -51,15 +51,15 @@ fun box() = abiTest {
 }
 
 // Shortcuts:
-private inline fun TestBuilder.success(expectedOutcome: String, noinline block: () -> String) =
+private fun TestBuilder.success(expectedOutcome: String, block: () -> String) =
     expectSuccess(expectedOutcome, block)
 
-private inline fun TestBuilder.unlinkedSymbol(signature: String, noinline block: () -> Unit) {
+private fun TestBuilder.unlinkedSymbol(signature: String, block: () -> Unit) {
     val functionName = signature.removePrefix("/").substringAfterLast(".")
     expectFailure(linkage("Function '$functionName' can not be called: No function found for symbol '$signature'"), block)
 }
 
-private inline fun TestBuilder.unlinkedTopLevelPrivateSymbol(signature: String, noinline block: () -> Unit) {
+private fun TestBuilder.unlinkedTopLevelPrivateSymbol(signature: String, block: () -> Unit) {
     if (testMode.lazyIr.usedEverywhere) {
         val functionName = signature.removePrefix("/").substringAfterLast(".")
         expectFailure(linkage("Function '$functionName' can not be called: Private function declared in module <lib1> can not be accessed in module <main>"), block)
@@ -67,7 +67,7 @@ private inline fun TestBuilder.unlinkedTopLevelPrivateSymbol(signature: String, 
         unlinkedSymbol(signature, block)
 }
 
-private inline fun TestBuilder.inaccessible(functionName: String, noinline block: () -> Unit) = expectFailure(
+private fun TestBuilder.inaccessible(functionName: String, block: () -> Unit) = expectFailure(
     linkage("Function '$functionName' can not be called: Private function declared in module <lib1> can not be accessed in module <main>"),
     block
 )

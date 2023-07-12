@@ -5,8 +5,8 @@ fun readRemovedOrNormalProperty(removed: Boolean): String = if (removed) removed
 fun readRemovedOrNormalPropertyOnObject1(removed: Boolean): String = if (removed) A().removedProperty1 else A().property1
 fun readRemovedOrNormalPropertyOnObject2(removed: Boolean): String = if (removed) A().removedProperty2 else A().property2
 
-inline fun callInlinedRemovedFunction() = removedFunction()
-inline fun readInlinedRemovedProperty() = removedProperty
+@Suppress("NOTHING_TO_INLINE") inline fun callInlinedRemovedFunction() = removedFunction()
+@Suppress("NOTHING_TO_INLINE") inline fun readInlinedRemovedProperty() = removedProperty
 
 class C2 : C() {
     override fun removedOpenFunction(): String = "O" // does not call super

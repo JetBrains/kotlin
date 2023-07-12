@@ -1,3 +1,4 @@
+@file:Suppress("NOTHING_TO_INLINE")
 
 fun getClassToEnumFoo(): ClassToEnum.Foo = ClassToEnum.Foo()
 inline fun getClassToEnumFooInline(): ClassToEnum.Foo = ClassToEnum.Foo()

@@ -27,5 +27,5 @@ fun box() = abiTest {
     expectSuccess("RegularClassInheritedFromExternalInterfaceInheritedFromOpenExternalClass.abstractFunction") { rcifeiifoec.abstractFunction() }
 }
 
-private inline fun TestBuilder.expectRuntimeFailure(errorMessage: String, noinline block: () -> Any) =
+private fun TestBuilder.expectRuntimeFailure(errorMessage: String, block: () -> Any) =
     expectFailure(custom { throwable -> throwable !is Exception && throwable.message == errorMessage }) { block() }
