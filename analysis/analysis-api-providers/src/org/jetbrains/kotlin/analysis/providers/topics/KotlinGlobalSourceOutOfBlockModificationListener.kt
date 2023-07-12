@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.project.structure.KtModule
 public fun interface KotlinGlobalSourceOutOfBlockModificationListener {
     /**
      * [onModification] is invoked in a write action before or after global out-of-block modification of all source [KtModule]s, excluding
-     * binary modules.
+     * [stable][org.jetbrains.kotlin.analysis.project.structure.isStableModule] modules.
      *
      * This event is published on global PSI changes.
      */

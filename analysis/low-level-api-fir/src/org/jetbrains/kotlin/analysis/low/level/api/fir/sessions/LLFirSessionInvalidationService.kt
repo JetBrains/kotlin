@@ -40,19 +40,19 @@ class LLFirSessionInvalidationService(private val project: Project) : Disposable
         )
         busConnection.subscribe(
             KotlinTopics.GLOBAL_MODULE_STATE_MODIFICATION,
-            KotlinGlobalModuleStateModificationListener { invalidateAll(includeBinaryModules = true) }
+            KotlinGlobalModuleStateModificationListener { invalidateAll(includeStableModules = true) }
         )
         busConnection.subscribe(
             KotlinTopics.GLOBAL_OUT_OF_BLOCK_MODIFICATION,
-            KotlinGlobalOutOfBlockModificationListener { invalidateAll(includeBinaryModules = true) }
+            KotlinGlobalOutOfBlockModificationListener { invalidateAll(includeStableModules = true) }
         )
         busConnection.subscribe(
             KotlinTopics.GLOBAL_SOURCE_MODULE_STATE_MODIFICATION,
-            KotlinGlobalSourceModuleStateModificationListener { invalidateAll(includeBinaryModules = false) },
+            KotlinGlobalSourceModuleStateModificationListener { invalidateAll(includeStableModules = false) },
         )
         busConnection.subscribe(
             KotlinTopics.GLOBAL_SOURCE_OUT_OF_BLOCK_MODIFICATION,
-            KotlinGlobalSourceOutOfBlockModificationListener { invalidateAll(includeBinaryModules = false) },
+            KotlinGlobalSourceOutOfBlockModificationListener { invalidateAll(includeStableModules = false) },
         )
     }
 
@@ -84,10 +84,10 @@ class LLFirSessionInvalidationService(private val project: Project) : Disposable
         }
     }
 
-    private fun invalidateAll(includeBinaryModules: Boolean) {
+    private fun invalidateAll(includeStableModules: Boolean) {
         ApplicationManager.getApplication().assertWriteAccessAllowed()
 
-        LLFirSessionCache.getInstance(project).removeAllSessions(includeBinaryModules)
+        LLFirSessionCache.getInstance(project).removeAllSessions(includeStableModules)
     }
 
     override fun dispose() {

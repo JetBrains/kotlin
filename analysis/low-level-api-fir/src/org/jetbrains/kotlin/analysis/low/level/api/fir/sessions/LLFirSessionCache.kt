@@ -91,22 +91,20 @@ class LLFirSessionCache(private val project: Project) {
     }
 
     /**
-     * Removes all sessions after global invalidation. If [includeBinarySessions] is `false`, only source sessions will be removed.
+     * Removes all sessions after global invalidation. If [includeStableModules] is `false`, sessions of stable modules will not be removed.
      *
      * [removeAllSessions] must be called in a write action.
      */
-    fun removeAllSessions(includeBinarySessions: Boolean) {
+    fun removeAllSessions(includeStableModules: Boolean) {
         ApplicationManager.getApplication().assertWriteAccessAllowed()
 
-        removeAllSessionsFrom(sourceCache)
-        if (includeBinarySessions) removeAllSessionsFrom(binaryCache)
-    }
-
-    private fun removeAllSessionsFrom(storage: SessionStorage) {
-        // Because `removeAllSessionsFrom` is executed in a write action, the order of setting `isValid` and clearing `storage` is not
-        // important.
-        storage.values.forEach { it.isValid = false }
-        storage.clear()
+        if (includeStableModules) {
+            removeAllSessionsFrom(sourceCache)
+            removeAllSessionsFrom(binaryCache)
+        } else {
+            // `binaryCache` can only contain binary and thus stable modules, so we only need to remove sessions from `sourceCache`.
+            removeAllMatchingSessionsFrom(sourceCache) { !it.isStableModule }
+        }
     }
 
     // Removing script sessions is only needed temporarily until KTIJ-25620 has been implemented.
@@ -118,11 +116,22 @@ class LLFirSessionCache(private val project: Project) {
     }
 
     private fun removeAllScriptSessionsFrom(storage: SessionStorage) {
+        removeAllMatchingSessionsFrom(storage) { it is KtScriptModule || it is KtScriptDependencyModule }
+    }
+
+    private fun removeAllSessionsFrom(storage: SessionStorage) {
+        // Because `removeAllSessionsFrom` is executed in a write action, the order of setting `isValid` and clearing `storage` is not
+        // important.
+        storage.values.forEach { it.isValid = false }
+        storage.clear()
+    }
+
+    private inline fun removeAllMatchingSessionsFrom(storage: SessionStorage, shouldBeRemoved: (KtModule) -> Boolean) {
         // `ConcurrentSoftValueHashMap` (the implementation used by `storage`) does not back its entry set but rather creates a copy, which
         // is in violation of the contract of `Map.entrySet`, and thus changes to the entry set are not reflected in `storage`. Because this
         // function is executed in a write action, we do not need the weak consistency guarantees made by `ConcurrentMap`'s iterator, so a
         // "collect and remove" approach also works.
-        val scriptEntries = storage.entries.filter { (module, _) -> module is KtScriptModule || module is KtScriptDependencyModule }
+        val scriptEntries = storage.entries.filter { (module, _) -> shouldBeRemoved(module) }
         for ((module, session) in scriptEntries) {
             session.isValid = false
             storage.remove(module)

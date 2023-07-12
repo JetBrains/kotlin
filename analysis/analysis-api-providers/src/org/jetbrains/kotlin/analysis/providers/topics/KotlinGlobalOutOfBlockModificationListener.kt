@@ -9,8 +9,7 @@ import org.jetbrains.kotlin.analysis.project.structure.KtModule
 
 public fun interface KotlinGlobalOutOfBlockModificationListener {
     /**
-     * [onModification] is invoked in a write action before or after global out-of-block modification of all [KtModule]s, including binary
-     * modules.
+     * [onModification] is invoked in a write action before or after global out-of-block modification of all [KtModule]s.
      *
      * This event is published to invalidate caches during/between tests.
      */

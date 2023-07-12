@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.project.structure.KtModule
 public fun interface KotlinGlobalSourceModuleStateModificationListener {
     /**
      * [onModification] is invoked in a write action before or after global modification of the module state of all source [KtModule]s,
-     * excluding binary modules.
+     * excluding [stable][org.jetbrains.kotlin.analysis.project.structure.isStableModule] modules.
      *
      * This event is published to invalidate caches during/between tests.
      */
