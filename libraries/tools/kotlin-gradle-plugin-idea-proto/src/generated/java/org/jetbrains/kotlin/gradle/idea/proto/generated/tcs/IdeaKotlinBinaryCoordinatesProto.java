@@ -273,6 +273,32 @@ private static final long serialVersionUID = 0L;
     return capabilities_.get(index);
   }
 
+  public static final int ATTRIBUTES_FIELD_NUMBER = 6;
+  private org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryAttributesProto attributes_;
+  /**
+   * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryAttributesProto attributes = 6;</code>
+   * @return Whether the attributes field is set.
+   */
+  @java.lang.Override
+  public boolean hasAttributes() {
+    return ((bitField0_ & 0x00000010) != 0);
+  }
+  /**
+   * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryAttributesProto attributes = 6;</code>
+   * @return The attributes.
+   */
+  @java.lang.Override
+  public org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryAttributesProto getAttributes() {
+    return attributes_ == null ? org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryAttributesProto.getDefaultInstance() : attributes_;
+  }
+  /**
+   * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryAttributesProto attributes = 6;</code>
+   */
+  @java.lang.Override
+  public org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryAttributesProtoOrBuilder getAttributesOrBuilder() {
+    return attributes_ == null ? org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryAttributesProto.getDefaultInstance() : attributes_;
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -302,6 +328,9 @@ private static final long serialVersionUID = 0L;
     for (int i = 0; i < capabilities_.size(); i++) {
       output.writeMessage(5, capabilities_.get(i));
     }
+    if (((bitField0_ & 0x00000010) != 0)) {
+      output.writeMessage(6, getAttributes());
+    }
     getUnknownFields().writeTo(output);
   }
 
@@ -326,6 +355,10 @@ private static final long serialVersionUID = 0L;
     for (int i = 0; i < capabilities_.size(); i++) {
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(5, capabilities_.get(i));
+    }
+    if (((bitField0_ & 0x00000010) != 0)) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(6, getAttributes());
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSize = size;
@@ -364,6 +397,11 @@ private static final long serialVersionUID = 0L;
     }
     if (!getCapabilitiesList()
         .equals(other.getCapabilitiesList())) return false;
+    if (hasAttributes() != other.hasAttributes()) return false;
+    if (hasAttributes()) {
+      if (!getAttributes()
+          .equals(other.getAttributes())) return false;
+    }
     if (!getUnknownFields().equals(other.getUnknownFields())) return false;
     return true;
   }
@@ -394,6 +432,10 @@ private static final long serialVersionUID = 0L;
     if (getCapabilitiesCount() > 0) {
       hash = (37 * hash) + CAPABILITIES_FIELD_NUMBER;
       hash = (53 * hash) + getCapabilitiesList().hashCode();
+    }
+    if (hasAttributes()) {
+      hash = (37 * hash) + ATTRIBUTES_FIELD_NUMBER;
+      hash = (53 * hash) + getAttributes().hashCode();
     }
     hash = (29 * hash) + getUnknownFields().hashCode();
     memoizedHashCode = hash;
@@ -512,13 +554,20 @@ private static final long serialVersionUID = 0L;
 
     // Construct using org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCoordinatesProto.newBuilder()
     private Builder() {
-
+      maybeForceBuilderInitialization();
     }
 
     private Builder(
         com.google.protobuf.GeneratedMessageV3.BuilderParent parent) {
       super(parent);
-
+      maybeForceBuilderInitialization();
+    }
+    private void maybeForceBuilderInitialization() {
+      if (com.google.protobuf.GeneratedMessageV3
+              .alwaysUseFieldBuilders) {
+        getCapabilitiesFieldBuilder();
+        getAttributesFieldBuilder();
+      }
     }
     @java.lang.Override
     public Builder clear() {
@@ -538,6 +587,12 @@ private static final long serialVersionUID = 0L;
         capabilitiesBuilder_.clear();
       }
       bitField0_ = (bitField0_ & ~0x00000010);
+      if (attributesBuilder_ == null) {
+        attributes_ = null;
+      } else {
+        attributesBuilder_.clear();
+      }
+      bitField0_ = (bitField0_ & ~0x00000020);
       return this;
     }
 
@@ -590,6 +645,14 @@ private static final long serialVersionUID = 0L;
         result.capabilities_ = capabilities_;
       } else {
         result.capabilities_ = capabilitiesBuilder_.build();
+      }
+      if (((from_bitField0_ & 0x00000020) != 0)) {
+        if (attributesBuilder_ == null) {
+          result.attributes_ = attributes_;
+        } else {
+          result.attributes_ = attributesBuilder_.build();
+        }
+        to_bitField0_ |= 0x00000010;
       }
       result.bitField0_ = to_bitField0_;
       onBuilt();
@@ -686,6 +749,9 @@ private static final long serialVersionUID = 0L;
           }
         }
       }
+      if (other.hasAttributes()) {
+        mergeAttributes(other.getAttributes());
+      }
       this.mergeUnknownFields(other.getUnknownFields());
       onChanged();
       return this;
@@ -745,6 +811,13 @@ private static final long serialVersionUID = 0L;
               }
               break;
             } // case 42
+            case 50: {
+              input.readMessage(
+                  getAttributesFieldBuilder().getBuilder(),
+                  extensionRegistry);
+              bitField0_ |= 0x00000020;
+              break;
+            } // case 50
             default: {
               if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                 done = true; // was an endgroup tag
@@ -1332,6 +1405,126 @@ private static final long serialVersionUID = 0L;
         capabilities_ = null;
       }
       return capabilitiesBuilder_;
+    }
+
+    private org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryAttributesProto attributes_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryAttributesProto, org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryAttributesProto.Builder, org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryAttributesProtoOrBuilder> attributesBuilder_;
+    /**
+     * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryAttributesProto attributes = 6;</code>
+     * @return Whether the attributes field is set.
+     */
+    public boolean hasAttributes() {
+      return ((bitField0_ & 0x00000020) != 0);
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryAttributesProto attributes = 6;</code>
+     * @return The attributes.
+     */
+    public org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryAttributesProto getAttributes() {
+      if (attributesBuilder_ == null) {
+        return attributes_ == null ? org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryAttributesProto.getDefaultInstance() : attributes_;
+      } else {
+        return attributesBuilder_.getMessage();
+      }
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryAttributesProto attributes = 6;</code>
+     */
+    public Builder setAttributes(org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryAttributesProto value) {
+      if (attributesBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        attributes_ = value;
+        onChanged();
+      } else {
+        attributesBuilder_.setMessage(value);
+      }
+      bitField0_ |= 0x00000020;
+      return this;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryAttributesProto attributes = 6;</code>
+     */
+    public Builder setAttributes(
+        org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryAttributesProto.Builder builderForValue) {
+      if (attributesBuilder_ == null) {
+        attributes_ = builderForValue.build();
+        onChanged();
+      } else {
+        attributesBuilder_.setMessage(builderForValue.build());
+      }
+      bitField0_ |= 0x00000020;
+      return this;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryAttributesProto attributes = 6;</code>
+     */
+    public Builder mergeAttributes(org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryAttributesProto value) {
+      if (attributesBuilder_ == null) {
+        if (((bitField0_ & 0x00000020) != 0) &&
+            attributes_ != null &&
+            attributes_ != org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryAttributesProto.getDefaultInstance()) {
+          attributes_ =
+            org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryAttributesProto.newBuilder(attributes_).mergeFrom(value).buildPartial();
+        } else {
+          attributes_ = value;
+        }
+        onChanged();
+      } else {
+        attributesBuilder_.mergeFrom(value);
+      }
+      bitField0_ |= 0x00000020;
+      return this;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryAttributesProto attributes = 6;</code>
+     */
+    public Builder clearAttributes() {
+      if (attributesBuilder_ == null) {
+        attributes_ = null;
+        onChanged();
+      } else {
+        attributesBuilder_.clear();
+      }
+      bitField0_ = (bitField0_ & ~0x00000020);
+      return this;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryAttributesProto attributes = 6;</code>
+     */
+    public org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryAttributesProto.Builder getAttributesBuilder() {
+      bitField0_ |= 0x00000020;
+      onChanged();
+      return getAttributesFieldBuilder().getBuilder();
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryAttributesProto attributes = 6;</code>
+     */
+    public org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryAttributesProtoOrBuilder getAttributesOrBuilder() {
+      if (attributesBuilder_ != null) {
+        return attributesBuilder_.getMessageOrBuilder();
+      } else {
+        return attributes_ == null ?
+            org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryAttributesProto.getDefaultInstance() : attributes_;
+      }
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryAttributesProto attributes = 6;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryAttributesProto, org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryAttributesProto.Builder, org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryAttributesProtoOrBuilder> 
+        getAttributesFieldBuilder() {
+      if (attributesBuilder_ == null) {
+        attributesBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryAttributesProto, org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryAttributesProto.Builder, org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryAttributesProtoOrBuilder>(
+                getAttributes(),
+                getParentForChildren(),
+                isClean());
+        attributes_ = null;
+      }
+      return attributesBuilder_;
     }
     @java.lang.Override
     public final Builder setUnknownFields(

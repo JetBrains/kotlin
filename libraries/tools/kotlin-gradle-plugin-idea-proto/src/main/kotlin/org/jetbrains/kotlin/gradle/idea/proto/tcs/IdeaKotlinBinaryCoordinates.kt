@@ -20,6 +20,7 @@ internal fun IdeaKotlinBinaryCoordinatesProto(
         coordinates.capabilities.forEach { capability ->
             this.capabilities.add(IdeaKotlinBinaryCapabilityProto(capability))
         }
+        this.attributes = IdeaKotlinBinaryAttributesProto(coordinates.attributes)
     }
 }
 
@@ -29,6 +30,7 @@ internal fun IdeaKotlinBinaryCoordinates(proto: IdeaKotlinBinaryCoordinatesProto
         module = proto.module,
         version = if (proto.hasVersion()) proto.version else null,
         sourceSetName = if (proto.hasSourceSetName()) proto.sourceSetName else null,
-        capabilities = proto.capabilitiesList.map(::IdeaKotlinBinaryCapability).toSet()
+        capabilities = proto.capabilitiesList.map(::IdeaKotlinBinaryCapability).toSet(),
+        attributes = IdeaKotlinBinaryAttributes(proto.attributes)
     )
 }

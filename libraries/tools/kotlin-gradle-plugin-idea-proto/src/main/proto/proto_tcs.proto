@@ -60,12 +60,17 @@ message IdeaKotlinBinaryCoordinatesProto {
   optional string version = 3;
   optional string source_set_name = 4;
   repeated IdeaKotlinBinaryCapabilityProto capabilities = 5;
+  optional IdeaKotlinBinaryAttributesProto attributes = 6;
 }
 
 message IdeaKotlinBinaryCapabilityProto {
   optional string group = 1;
   optional string name = 2;
   optional string version = 3;
+}
+
+message IdeaKotlinBinaryAttributesProto {
+  map<string, string> attributes = 1;
 }
 
 message IdeaKotlinSourceCoordinatesProto {

@@ -19,11 +19,8 @@ import org.jetbrains.kotlin.gradle.idea.tcs.extras.isIdeaProjectLevel
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
+import org.jetbrains.kotlin.gradle.plugin.ide.*
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver.Companion.gradleArtifact
-import org.jetbrains.kotlin.gradle.plugin.ide.IdeaKotlinBinaryCapability
-import org.jetbrains.kotlin.gradle.plugin.ide.IdeaKotlinBinaryCoordinates
-import org.jetbrains.kotlin.gradle.plugin.ide.IdeaKotlinProjectCoordinates
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeBinaryDependencyResolver.ArtifactResolutionStrategy
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationConfigurationsContainer
@@ -153,7 +150,7 @@ class IdeBinaryDependencyResolver @JvmOverloads constructor(
 
                 is ModuleComponentIdentifier -> {
                     IdeaKotlinResolvedBinaryDependency(
-                        coordinates = IdeaKotlinBinaryCoordinates(componentId, artifact.variant.capabilities),
+                        coordinates = IdeaKotlinBinaryCoordinates(componentId, artifact.variant.capabilities, artifact.variant.attributes),
                         binaryType = binaryType,
                         classpath = IdeaKotlinClasspath(artifact.file),
                     )
@@ -166,7 +163,8 @@ class IdeBinaryDependencyResolver @JvmOverloads constructor(
                             module = componentId.libraryName,
                             version = null,
                             sourceSetName = null,
-                            capabilities = artifact.variant.capabilities.map(::IdeaKotlinBinaryCapability).toSet()
+                            capabilities = artifact.variant.capabilities.map(::IdeaKotlinBinaryCapability).toSet(),
+                            attributes = IdeaKotlinBinaryAttributes(artifact.variant.attributes)
                         ), classpath = IdeaKotlinClasspath(artifact.file)
                     )
                 }

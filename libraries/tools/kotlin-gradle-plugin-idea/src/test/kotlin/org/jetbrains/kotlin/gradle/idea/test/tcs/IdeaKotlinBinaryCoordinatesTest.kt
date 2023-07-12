@@ -5,10 +5,13 @@
 
 package org.jetbrains.kotlin.gradle.idea.test.tcs
 
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryAttributes
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryCapability
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryCoordinates
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
+import kotlin.test.assertNotSame
 
 class IdeaKotlinBinaryCoordinatesTest {
 
@@ -108,7 +111,7 @@ class IdeaKotlinBinaryCoordinatesTest {
         assertEquals("myGroup:myModule-foo:1.0.0:commonMain", coordinates.displayString)
 
         assertEquals(
-            "myGroup:myModule:1.0.0:commonMain(myGroup:myModule-foo:1.0.0, notMyGroup:myModule-foo:1.0.0, notMyGroupEither:myModule-foo)",
+            "myGroup:myModule:commonMain:1.0.0(myGroup:myModule-foo:1.0.0, notMyGroup:myModule-foo:1.0.0, notMyGroupEither:myModule-foo)",
             coordinates.identityString
         )
     }
@@ -123,11 +126,48 @@ class IdeaKotlinBinaryCoordinatesTest {
                 IdeaKotlinBinaryCapability("notMyGroup", "myModule-foo", null),
             )
         )
-        assertEquals("myGroup:myModule-(foo, bar):1.0.0:commonMain", coordinates.displayString)
+        assertEquals("myGroup:myModule-(foo, bar):commonMain:1.0.0", coordinates.displayString)
 
         assertEquals(
-            "myGroup:myModule:1.0.0:commonMain(myGroup:myModule-foo:1.0.0, myGroup:myModule-bar:1.0.0, notMyGroup:myModule-foo)",
+            "myGroup:myModule:commonMain:1.0.0(myGroup:myModule-foo:1.0.0, myGroup:myModule-bar:1.0.0, notMyGroup:myModule-foo)",
             coordinates.identityString
         )
+    }
+
+    @Test
+    fun `test - displayString & identityString - sample 9`() {
+        val coordinates = IdeaKotlinBinaryCoordinates(
+            "myGroup", "myModule", "1.0.0", "commonMain",
+            capabilities = setOf(
+                IdeaKotlinBinaryCapability("myGroup", "myModule-foo", "1.0.0"),
+                IdeaKotlinBinaryCapability("myGroup", "myModule-bar", "1.0.0"),
+                IdeaKotlinBinaryCapability("notMyGroup", "myModule-foo", null),
+            ),
+            attributes = IdeaKotlinBinaryAttributes(
+                mapOf("a" to "valueA")
+            )
+        )
+        assertEquals("myGroup:myModule-(foo, bar):commonMain:1.0.0", coordinates.displayString)
+
+        assertEquals(
+            "myGroup:myModule:commonMain:1.0.0(myGroup:myModule-foo:1.0.0, myGroup:myModule-bar:1.0.0, notMyGroup:myModule-foo)+attributes(-823812975)",
+            coordinates.identityString
+        )
+    }
+
+    @Test
+    fun `test - equals`() {
+        val baseline = IdeaKotlinBinaryCoordinates(
+            "a", "b", "c", "d",
+            capabilities = setOf(IdeaKotlinBinaryCapability("x", "y", "z")),
+            attributes = IdeaKotlinBinaryAttributes(mapOf("a" to "valueA"))
+        )
+        assertNotSame(baseline, baseline.copy())
+        assertEquals(baseline, baseline.copy())
+        assertEquals(baseline.hashCode(), baseline.copy().hashCode())
+        assertEquals(baseline.identityString, baseline.copy().identityString)
+        assertNotEquals(baseline, baseline.copy(sourceSetName = null))
+        assertNotEquals(baseline, baseline.copy(capabilities = emptySet()))
+        assertNotEquals(baseline, baseline.copy(attributes = IdeaKotlinBinaryAttributes()))
     }
 }

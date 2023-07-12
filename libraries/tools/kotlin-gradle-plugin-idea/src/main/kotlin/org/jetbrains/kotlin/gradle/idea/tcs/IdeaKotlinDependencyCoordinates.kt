@@ -23,6 +23,12 @@ class IdeaKotlinBinaryCoordinates(
      * @since 1.9.20
      */
     val capabilities: Set<IdeaKotlinBinaryCapability> = emptySet(),
+
+    /**
+     * @see IdeaKotlinBinaryAttributes
+     * @since 1.9.20
+     */
+    val attributes: IdeaKotlinBinaryAttributes = IdeaKotlinBinaryAttributes(),
 ) : IdeaKotlinDependencyCoordinates {
 
     constructor(
@@ -54,6 +60,9 @@ class IdeaKotlinBinaryCoordinates(
             if (version != null) append(":$version")
             if (capabilities.isNotEmpty()) {
                 append(capabilities.joinToString(", ", "(", ")"))
+            }
+            if (attributes.isNotEmpty()) {
+                append("+attributes(${attributes.hashCode()})")
             }
         }
 
@@ -119,7 +128,7 @@ class IdeaKotlinBinaryCoordinates(
         if (version != other.version) return false
         if (sourceSetName != other.sourceSetName) return false
         if (capabilities != other.capabilities) return false
-
+        if (attributes != other.attributes) return false
         return true
     }
 
@@ -129,6 +138,7 @@ class IdeaKotlinBinaryCoordinates(
         result = 31 * result + (version?.hashCode() ?: 0)
         result = 31 * result + (sourceSetName?.hashCode() ?: 0)
         result = 31 * result + capabilities.hashCode()
+        result = 31 * result + attributes.hashCode()
         return result
     }
 
@@ -146,7 +156,8 @@ class IdeaKotlinBinaryCoordinates(
             module = module,
             version = version,
             sourceSetName = sourceSetName,
-            capabilities = capabilities
+            capabilities = capabilities,
+            attributes = attributes,
         )
     }
 
@@ -156,13 +167,15 @@ class IdeaKotlinBinaryCoordinates(
         version: String? = this.version,
         sourceSetName: String? = this.sourceSetName,
         capabilities: Set<IdeaKotlinBinaryCapability> = this.capabilities,
+        attributes: IdeaKotlinBinaryAttributes = this.attributes,
     ): IdeaKotlinBinaryCoordinates {
         return IdeaKotlinBinaryCoordinates(
             group = group,
             module = module,
             version = version,
             sourceSetName = sourceSetName,
-            capabilities = capabilities
+            capabilities = capabilities,
+            attributes = attributes
         )
     }
 
@@ -184,10 +197,14 @@ class IdeaKotlinBinaryCoordinates(
      * will be 'null'. In this case we use the 'copy' function to provide an instance that will have an emptySet instead.
      */
     private fun readResolve(): Any {
-        @Suppress("SENSELESS_COMPARISON")
-        if (capabilities == null) {
-            return copy(capabilities = emptySet())
+        @Suppress("SENSELESS_COMPARISON", "USELESS_ELVIS")
+        if (capabilities == null || attributes == null) {
+            return copy(
+                capabilities = capabilities ?: emptySet(),
+                attributes = attributes ?: IdeaKotlinBinaryAttributes()
+            )
         }
+
         return this
     }
 

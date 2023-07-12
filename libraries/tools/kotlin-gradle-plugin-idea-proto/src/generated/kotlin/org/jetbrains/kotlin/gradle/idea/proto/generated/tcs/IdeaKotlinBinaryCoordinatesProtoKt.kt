@@ -189,9 +189,38 @@ object IdeaKotlinBinaryCoordinatesProtoKt {
       _builder.clearCapabilities()
     }
 
+
+    /**
+     * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryAttributesProto attributes = 6;</code>
+     */
+    var attributes: org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryAttributesProto
+      @JvmName("getAttributes")
+      get() = _builder.getAttributes()
+      @JvmName("setAttributes")
+      set(value) {
+        _builder.setAttributes(value)
+      }
+    /**
+     * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryAttributesProto attributes = 6;</code>
+     */
+    fun clearAttributes() {
+      _builder.clearAttributes()
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryAttributesProto attributes = 6;</code>
+     * @return Whether the attributes field is set.
+     */
+    fun hasAttributes(): kotlin.Boolean {
+      return _builder.hasAttributes()
+    }
+    val IdeaKotlinBinaryCoordinatesProtoKt.Dsl.attributesOrNull: org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryAttributesProto?
+      get() = _builder.attributesOrNull
   }
 }
 @kotlin.jvm.JvmSynthetic
 inline fun org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCoordinatesProto.copy(block: org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCoordinatesProtoKt.Dsl.() -> kotlin.Unit): org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCoordinatesProto =
   org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCoordinatesProtoKt.Dsl._create(this.toBuilder()).apply { block() }._build()
+
+val org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCoordinatesProtoOrBuilder.attributesOrNull: org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryAttributesProto?
+  get() = if (hasAttributes()) getAttributes() else null
 
