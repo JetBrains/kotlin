@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.PrivateForInline
+import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 

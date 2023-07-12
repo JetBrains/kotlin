@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.builder
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.PrivateForInline
+import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticList
 
 @Suppress("UNUSED_VARIABLE", "LocalVariableName", "ClassName", "unused")

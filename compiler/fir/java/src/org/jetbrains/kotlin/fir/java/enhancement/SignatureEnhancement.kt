@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.kotlin.types.model.TypeSystemContext
+import org.jetbrains.kotlin.util.PrivateForInline
 
 class FirSignatureEnhancement(
     private val owner: FirRegularClass,

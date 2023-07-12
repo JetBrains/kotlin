@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve
 
-import org.jetbrains.kotlin.fir.PrivateForInline
+import org.jetbrains.kotlin.util.PrivateForInline
 
 class ScopeSession {
     private val scopes = hashMapOf<Any, HashMap<ScopeSessionKey<*, *>, Any>>()
