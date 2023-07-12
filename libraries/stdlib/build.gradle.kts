@@ -1,3 +1,4 @@
+@file:Suppress("UNUSED_VARIABLE", "NAME_SHADOWING")
 import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.component.UsageContext
 import java.nio.file.*
@@ -158,6 +159,7 @@ kotlin {
             }
         }
     }
+    @Suppress("DEPRECATION")
     jsV1Target = js("jsV1", LEGACY) {
         nodejs {
             testTask {
@@ -209,6 +211,7 @@ kotlin {
             browser {}
         }
         nodejs {
+            @Suppress("DEPRECATION")
             testTask {
                 useMocha {
                     timeout = "10s"
@@ -523,6 +526,7 @@ tasks {
 
         val sourceMapFile = file(jsOutputMapFileName)
         val jsOutputMetaFile = file(jsOutputMetaFileName)
+        @Suppress("DEPRECATION")
         val compileMetaFile = file(compileKotlinJsV1.outputFileProperty.get().path.replace(Regex("\\.js$"), ".meta.js"))
         val mainJsOutputDir = compileKotlinJsV1.destinationDirectory
         val sourceMapSourcesBaseDirs = listOf(mainJsOutputDir.get(), "${jsCommonDir}/runtime", jsV1Dir, rootDir).map { File(it.toString()) }
