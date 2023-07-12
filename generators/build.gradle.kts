@@ -67,6 +67,7 @@ dependencies {
     testApi(projectTests(":kotlin-lombok-compiler-plugin"))
     testApi(projectTests(":kotlin-power-assert-compiler-plugin"))
     testApi(projectTests(":kotlin-sam-with-receiver-compiler-plugin"))
+    testApi(projectTests(":kotlin-formver-compiler-plugin"))
     testApi(projectTests(":kotlin-assignment-compiler-plugin"))
     testApi(projectTests(":kotlinx-serialization-compiler-plugin"))
     testApi(projectTests(":kotlin-atomicfu-compiler-plugin"))

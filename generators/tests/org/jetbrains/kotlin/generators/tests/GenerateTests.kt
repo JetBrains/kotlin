@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.plugin.runners.AbstractFirLightTreePluginBlackBo
 import org.jetbrains.kotlin.fir.plugin.runners.AbstractFirLoadK2CompiledWithPluginJsKotlinTest
 import org.jetbrains.kotlin.fir.plugin.runners.AbstractFirLoadK2CompiledWithPluginJvmKotlinTest
 import org.jetbrains.kotlin.fir.plugin.runners.AbstractFirPsiPluginDiagnosticTest
+import org.jetbrains.kotlin.formver.plugin.runners.AbstractFirLightTreeFormVerPluginDiagnosticsTest
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
 import org.jetbrains.kotlin.generators.tests.IncrementalTestsGeneratorUtil.Companion.IcTestTypes.PURE_KOTLIN
@@ -370,6 +371,12 @@ fun main(args: Array<String>) {
             }
             testClass<AbstractFirLightTreeBlackBoxCodegenTestForSamWithReceiver> {
                 model("codegen", excludedPattern = excludedFirTestdataPattern)
+            }
+        }
+
+        testGroup("plugins/formal-verification/tests-gen", "plugins/formal-verification/testData") {
+            testClass<AbstractFirLightTreeFormVerPluginDiagnosticsTest> {
+                model("diagnostics")
             }
         }
 

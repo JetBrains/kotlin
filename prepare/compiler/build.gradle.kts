@@ -123,6 +123,7 @@ val distCompilerPluginProjects = listOf(
     ":kotlin-noarg-compiler-plugin",
     ":kotlin-power-assert-compiler-plugin",
     ":kotlin-sam-with-receiver-compiler-plugin",
+    ":kotlin-formver-compiler-plugin",
     ":kotlinx-serialization-compiler-plugin",
     ":kotlin-lombok-compiler-plugin",
     ":kotlin-assignment-compiler-plugin",
