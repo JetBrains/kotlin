@@ -217,4 +217,527 @@ interface IrFactory {
         startOffset: Int,
         endOffset: Int,
     ): IrBlockBody
+
+
+    @Deprecated(
+        message = "This method was moved to an extension." +
+                " This variant of the method will be removed when the 2024.2 IntelliJ platform is shipped (see KTIJ-26314).",
+        replaceWith = ReplaceWith(
+            """createBlockBody(
+                startOffset = startOffset,
+                endOffset = endOffset,
+                initializer = initializer,
+            )""",
+            "org.jetbrains.kotlin.ir.declarations.createBlockBody",
+        ),
+        level = DeprecationLevel.HIDDEN,
+    )
+    fun createBlockBody(
+        startOffset: Int,
+        endOffset: Int,
+        initializer: IrBlockBody.() -> Unit,
+    ): IrBlockBody = createBlockBody(
+        startOffset,
+        endOffset,
+        initializer,
+    )
+
+    @Deprecated(
+        message = "This method was moved to an extension." +
+                " This variant of the method will be removed when the 2024.2 IntelliJ platform is shipped (see KTIJ-26314).",
+        replaceWith = ReplaceWith(
+            """createBlockBody(
+                startOffset = startOffset,
+                endOffset = endOffset,
+                statements = statements,
+            )""",
+            "org.jetbrains.kotlin.ir.declarations.createBlockBody",
+        ),
+        level = DeprecationLevel.HIDDEN,
+    )
+    fun createBlockBody(
+        startOffset: Int,
+        endOffset: Int,
+        statements: List<IrStatement>,
+    ): IrBlockBody = createBlockBody(
+        startOffset,
+        endOffset,
+        statements,
+    )
+
+    @Deprecated(
+        message = "The method's parameters were reordered." +
+                " This variant of the method will be removed when the 2024.2 IntelliJ platform is shipped (see KTIJ-26314).",
+        replaceWith = ReplaceWith(
+            """createClass(
+                startOffset = startOffset,
+                endOffset = endOffset,
+                origin = origin,
+                name = name,
+                visibility = visibility,
+                symbol = symbol,
+                kind = kind,
+                modality = modality,
+                isExternal = isExternal,
+                isCompanion = isCompanion,
+                isInner = isInner,
+                isData = isData,
+                isValue = isValue,
+                isExpect = isExpect,
+                isFun = isFun,
+                source = source,
+            )""",
+        ),
+        level = DeprecationLevel.HIDDEN,
+    )
+    fun createClass(
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        symbol: IrClassSymbol,
+        name: Name,
+        kind: ClassKind,
+        visibility: DescriptorVisibility,
+        modality: Modality,
+        isCompanion: Boolean = false,
+        isInner: Boolean = false,
+        isData: Boolean = false,
+        isExternal: Boolean = false,
+        isValue: Boolean = false,
+        isExpect: Boolean = false,
+        isFun: Boolean = false,
+        source: SourceElement = SourceElement.NO_SOURCE,
+    ): IrClass = createClass(
+        startOffset,
+        endOffset,
+        origin,
+        name,
+        visibility,
+        symbol,
+        kind,
+        modality,
+        isExternal,
+        isCompanion,
+        isInner,
+        isData,
+        isValue,
+        isExpect,
+        isFun,
+        source,
+    )
+
+    @Deprecated(
+        message = "The method's parameters were reordered." +
+                " This variant of the method will be removed when the 2024.2 IntelliJ platform is shipped (see KTIJ-26314).",
+        replaceWith = ReplaceWith(
+            """createConstructor(
+                startOffset = startOffset,
+                endOffset = endOffset,
+                origin = origin,
+                name = name,
+                visibility = visibility,
+                isInline = isInline,
+                isExpect = isExpect,
+                returnType = returnType,
+                symbol = symbol,
+                isPrimary = isPrimary,
+                isExternal = isExternal,
+                containerSource = containerSource,
+            )""",
+        ),
+        level = DeprecationLevel.HIDDEN,
+    )
+    fun createConstructor(
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        symbol: IrConstructorSymbol,
+        name: Name,
+        visibility: DescriptorVisibility,
+        returnType: IrType,
+        isInline: Boolean,
+        isExternal: Boolean,
+        isPrimary: Boolean,
+        isExpect: Boolean,
+        containerSource: DeserializedContainerSource? = null,
+    ): IrConstructor = createConstructor(
+        startOffset,
+        endOffset,
+        origin,
+        name,
+        visibility,
+        isInline,
+        isExpect,
+        returnType,
+        symbol,
+        isPrimary,
+        isExternal,
+        containerSource,
+    )
+
+    @Deprecated(
+        message = "The method's parameters were reordered." +
+                " This variant of the method will be removed when the 2024.2 IntelliJ platform is shipped (see KTIJ-26314).",
+        replaceWith = ReplaceWith(
+            """createEnumEntry(
+                startOffset = startOffset,
+                endOffset = endOffset,
+                origin = origin,
+                name = name,
+                symbol = symbol,
+            )""",
+        ),
+        level = DeprecationLevel.HIDDEN,
+    )
+    fun createEnumEntry(
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        symbol: IrEnumEntrySymbol,
+        name: Name,
+    ): IrEnumEntry = createEnumEntry(
+        startOffset,
+        endOffset,
+        origin,
+        name,
+        symbol,
+    )
+
+    @Deprecated(
+        message = "This method was moved to an extension." +
+                " This variant of the method will be removed when the 2024.2 IntelliJ platform is shipped (see KTIJ-26314).",
+        replaceWith = ReplaceWith(
+            """createExpressionBody(
+                expression = expression,
+            )""",
+            "org.jetbrains.kotlin.ir.declarations.createExpressionBody",
+        ),
+        level = DeprecationLevel.HIDDEN,
+    )
+    fun createExpressionBody(expression: IrExpression): IrExpressionBody =
+        createExpressionBody(
+            expression,
+        )
+
+    @Deprecated(
+        message = "The method's parameters were reordered." +
+                " This variant of the method will be removed when the 2024.2 IntelliJ platform is shipped (see KTIJ-26314).",
+        replaceWith = ReplaceWith(
+            """createField(
+                startOffset = startOffset,
+                endOffset = endOffset,
+                origin = origin,
+                name = name,
+                visibility = visibility,
+                symbol = symbol,
+                type = type,
+                isFinal = isFinal,
+                isStatic = isStatic,
+                isExternal = isExternal,
+            )""",
+        ),
+        level = DeprecationLevel.HIDDEN,
+    )
+    fun createField(
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        symbol: IrFieldSymbol,
+        name: Name,
+        type: IrType,
+        visibility: DescriptorVisibility,
+        isFinal: Boolean,
+        isExternal: Boolean,
+        isStatic: Boolean,
+    ): IrField = createField(
+        startOffset,
+        endOffset,
+        origin,
+        name,
+        visibility,
+        symbol,
+        type,
+        isFinal,
+        isStatic,
+        isExternal,
+    )
+
+    @Deprecated(
+        message = "The method's parameters were reordered." +
+                " This variant of the method will be removed when the 2024.2 IntelliJ platform is shipped (see KTIJ-26314).",
+        replaceWith = ReplaceWith(
+            """createLocalDelegatedProperty(
+                startOffset = startOffset,
+                endOffset = endOffset,
+                origin = origin,
+                name = name,
+                symbol = symbol,
+                type = type,
+                isVar = isVar,
+            )""",
+        ),
+        level = DeprecationLevel.HIDDEN,
+    )
+    fun createLocalDelegatedProperty(
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        symbol: IrLocalDelegatedPropertySymbol,
+        name: Name,
+        type: IrType,
+        isVar: Boolean,
+    ): IrLocalDelegatedProperty = createLocalDelegatedProperty(
+        startOffset,
+        endOffset,
+        origin,
+        name,
+        symbol,
+        type,
+        isVar,
+    )
+
+    @Deprecated(
+        message = "The method's parameters were reordered." +
+                " This variant of the method will be removed when the 2024.2 IntelliJ platform is shipped (see KTIJ-26314).",
+        replaceWith = ReplaceWith(
+            """createProperty(
+                startOffset = startOffset,
+                endOffset = endOffset,
+                origin = origin,
+                name = name,
+                visibility = visibility,
+                modality = modality,
+                symbol = symbol,
+                isVar = isVar,
+                isConst = isConst,
+                isLateinit = isLateinit,
+                isDelegated = isDelegated,
+                isExternal = isExternal,
+                containerSource = containerSource,
+                isExpect = isExpect,
+                isFakeOverride = isFakeOverride,
+            )""",
+        ),
+        level = DeprecationLevel.HIDDEN,
+    )
+    fun createProperty(
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        symbol: IrPropertySymbol,
+        name: Name,
+        visibility: DescriptorVisibility,
+        modality: Modality,
+        isVar: Boolean,
+        isConst: Boolean,
+        isLateinit: Boolean,
+        isDelegated: Boolean,
+        isExternal: Boolean,
+        isExpect: Boolean = false,
+        isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+        containerSource: DeserializedContainerSource? = null,
+    ): IrProperty = createProperty(
+        startOffset,
+        endOffset,
+        origin,
+        name,
+        visibility,
+        modality,
+        symbol,
+        isVar,
+        isConst,
+        isLateinit,
+        isDelegated,
+        isExternal,
+        containerSource,
+        isExpect,
+        isFakeOverride,
+    )
+
+    @Deprecated(
+        message = "The method has been renamed, and its parameters were reordered." +
+                " This variant of the method will be removed when the 2024.2 IntelliJ platform is shipped (see KTIJ-26314).",
+        replaceWith = ReplaceWith(
+            """createSimpleFunction(
+                startOffset = startOffset,
+                endOffset = endOffset,
+                origin = origin,
+                name = name,
+                visibility = visibility,
+                isInline = isInline,
+                isExpect = isExpect,
+                returnType = returnType,
+                modality = modality,
+                symbol = symbol,
+                isTailrec = isTailrec,
+                isSuspend = isSuspend,
+                isOperator = isOperator,
+                isInfix = isInfix,
+                isExternal = isExternal,
+                containerSource = containerSource,
+                isFakeOverride = isFakeOverride,
+            )""",
+        ),
+        level = DeprecationLevel.HIDDEN,
+    )
+    fun createFunction(
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        symbol: IrSimpleFunctionSymbol,
+        name: Name,
+        visibility: DescriptorVisibility,
+        modality: Modality,
+        returnType: IrType,
+        isInline: Boolean,
+        isExternal: Boolean,
+        isTailrec: Boolean,
+        isSuspend: Boolean,
+        isOperator: Boolean,
+        isInfix: Boolean,
+        isExpect: Boolean,
+        isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+        containerSource: DeserializedContainerSource? = null,
+    ): IrSimpleFunction = createSimpleFunction(
+        startOffset,
+        endOffset,
+        origin,
+        name,
+        visibility,
+        isInline,
+        isExpect,
+        returnType,
+        modality,
+        symbol,
+        isTailrec,
+        isSuspend,
+        isOperator,
+        isInfix,
+        isExternal,
+        containerSource,
+        isFakeOverride,
+    )
+
+    @Deprecated(
+        message = "The method's parameters were reordered." +
+                " This variant of the method will be removed when the 2024.2 IntelliJ platform is shipped (see KTIJ-26314).",
+        replaceWith = ReplaceWith(
+            """createTypeAlias(
+                startOffset = startOffset,
+                endOffset = endOffset,
+                origin = origin,
+                name = name,
+                visibility = visibility,
+                symbol = symbol,
+                isActual = isActual,
+                expandedType = expandedType,
+            )""",
+        ),
+        level = DeprecationLevel.HIDDEN,
+    )
+    fun createTypeAlias(
+        startOffset: Int,
+        endOffset: Int,
+        symbol: IrTypeAliasSymbol,
+        name: Name,
+        visibility: DescriptorVisibility,
+        expandedType: IrType,
+        isActual: Boolean,
+        origin: IrDeclarationOrigin,
+    ): IrTypeAlias = createTypeAlias(
+        startOffset,
+        endOffset,
+        origin,
+        name,
+        visibility,
+        symbol,
+        isActual,
+        expandedType,
+    )
+
+    @Deprecated(
+        message = "The method's parameters were reordered." +
+                " This variant of the method will be removed when the 2024.2 IntelliJ platform is shipped (see KTIJ-26314).",
+        replaceWith = ReplaceWith(
+            """createTypeParameter(
+                startOffset = startOffset,
+                endOffset = endOffset,
+                origin = origin,
+                name = name,
+                symbol = symbol,
+                variance = variance,
+                index = index,
+                isReified = isReified,
+            )""",
+        ),
+        level = DeprecationLevel.HIDDEN,
+    )
+    fun createTypeParameter(
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        symbol: IrTypeParameterSymbol,
+        name: Name,
+        index: Int,
+        isReified: Boolean,
+        variance: Variance,
+    ): IrTypeParameter = createTypeParameter(
+        startOffset,
+        endOffset,
+        origin,
+        name,
+        symbol,
+        variance,
+        index,
+        isReified,
+    )
+
+    @Deprecated(
+        message = "The method's parameters were reordered." +
+                " This variant of the method will be removed when the 2024.2 IntelliJ platform is shipped (see KTIJ-26314).",
+        replaceWith = ReplaceWith(
+            """createValueParameter(
+                startOffset = startOffset,
+                endOffset = endOffset,
+                origin = origin,
+                name = name,
+                type = type,
+                isAssignable = isAssignable,
+                symbol = symbol,
+                index = index,
+                varargElementType = varargElementType,
+                isCrossinline = isCrossinline,
+                isNoinline = isNoinline,
+                isHidden = isHidden,
+            )""",
+        ),
+        level = DeprecationLevel.HIDDEN,
+    )
+    fun createValueParameter(
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        symbol: IrValueParameterSymbol,
+        name: Name,
+        index: Int,
+        type: IrType,
+        varargElementType: IrType?,
+        isCrossinline: Boolean,
+        isNoinline: Boolean,
+        isHidden: Boolean,
+        isAssignable: Boolean,
+    ): IrValueParameter = createValueParameter(
+        startOffset,
+        endOffset,
+        origin,
+        name,
+        type,
+        isAssignable,
+        symbol,
+        index,
+        varargElementType,
+        isCrossinline,
+        isNoinline,
+        isHidden,
+    )
 }

@@ -10,15 +10,18 @@ import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER") // TODO(KTIJ-26314): Remove this suppression
 fun IrFactory.createExpressionBody(expression: IrExpression): IrExpressionBody =
     createExpressionBody(expression.startOffset, expression.endOffset, expression)
 
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER") // TODO(KTIJ-26314): Remove this suppression
 fun IrFactory.createBlockBody(
     startOffset: Int,
     endOffset: Int,
     initializer: IrBlockBody.() -> Unit,
 ): IrBlockBody = createBlockBody(startOffset, endOffset).apply(initializer)
 
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER") // TODO(KTIJ-26314): Remove this suppression
 fun IrFactory.createBlockBody(
     startOffset: Int,
     endOffset: Int,
