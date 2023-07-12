@@ -13,7 +13,23 @@ import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 
-object ReturnTypeCalculatorForFullBodyResolve : ReturnTypeCalculator() {
+class ReturnTypeCalculatorForFullBodyResolve private constructor(
+    private val diagnosticKind: DiagnosticKind,
+    private val reason: String,
+) : ReturnTypeCalculator() {
+    companion object {
+        // It's actual only for local functions because simple members are being resolved at another phase.
+        // Local properties are just unresolved if they are used recursively.
+        val Default = ReturnTypeCalculatorForFullBodyResolve(
+            DiagnosticKind.RecursionInImplicitTypes,
+            "Recursion with local function"
+        )
+        val Contract = ReturnTypeCalculatorForFullBodyResolve(
+            DiagnosticKind.InferenceError,
+            "Cannot calculate return type during full-body resolution (local class/object?)"
+        )
+    }
+
     override val fakeOverrideTypeCalculator: FakeOverrideTypeCalculator
         get() = FakeOverrideTypeCalculator.Forced
 
@@ -24,11 +40,6 @@ object ReturnTypeCalculatorForFullBodyResolve : ReturnTypeCalculator() {
             return FakeOverrideTypeCalculator.Forced.computeReturnType(declaration)
         }
 
-        return buildErrorTypeRef {
-            diagnostic = ConeSimpleDiagnostic(
-                "Cannot calculate return type during full-body resolution (local class/object?): ${declaration.render()}",
-                DiagnosticKind.InferenceError
-            )
-        }
+        return buildErrorTypeRef { diagnostic = ConeSimpleDiagnostic("$reason: ${declaration.render()}", diagnosticKind) }
     }
 }

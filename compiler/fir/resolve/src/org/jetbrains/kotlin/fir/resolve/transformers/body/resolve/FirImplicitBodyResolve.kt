@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFull
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.runContractResolveForLocalClass
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.fakeOverrideSubstitution
-import org.jetbrains.kotlin.fir.delegatedWrapperData
 import org.jetbrains.kotlin.fir.scopes.impl.originalForWrappedIntegerOperator
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
@@ -193,7 +192,7 @@ open class ReturnTypeCalculatorWithJump(
     override fun tryCalculateReturnTypeOrNull(declaration: FirCallableDeclaration): FirResolvedTypeRef {
         // Local declarations must be handled by `ReturnTypeCalculatorForFullBodyResolve` to avoid resolution cycles in LL FIR.
         if (declaration.visibility == Visibilities.Local) {
-            return ReturnTypeCalculatorForFullBodyResolve.tryCalculateReturnType(declaration)
+            return ReturnTypeCalculatorForFullBodyResolve.Default.tryCalculateReturnType(declaration)
         }
 
         if (declaration is FirValueParameter && declaration.returnTypeRef is FirImplicitTypeRef) {

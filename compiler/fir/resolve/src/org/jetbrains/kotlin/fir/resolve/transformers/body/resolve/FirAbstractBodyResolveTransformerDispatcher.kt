@@ -24,7 +24,7 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
     phase: FirResolvePhase,
     override var implicitTypeOnly: Boolean,
     scopeSession: ScopeSession,
-    val returnTypeCalculator: ReturnTypeCalculator = ReturnTypeCalculatorForFullBodyResolve,
+    val returnTypeCalculator: ReturnTypeCalculator = ReturnTypeCalculatorForFullBodyResolve.Default,
     outerBodyResolveContext: BodyResolveContext? = null,
     val firResolveContextCollector: FirResolveContextCollector? = null,
 ) : FirAbstractBodyResolveTransformer(phase) {

@@ -34,7 +34,7 @@ open class FirAnnotationArgumentsResolveTransformer(
     scopeSession: ScopeSession,
     resolvePhase: FirResolvePhase,
     outerBodyResolveContext: BodyResolveContext? = null,
-    returnTypeCalculator: ReturnTypeCalculator = ReturnTypeCalculatorForFullBodyResolve,
+    returnTypeCalculator: ReturnTypeCalculator = ReturnTypeCalculatorForFullBodyResolve.Default,
     firResolveContextCollector: FirResolveContextCollector? = null,
 ) : FirAbstractBodyResolveTransformerDispatcher(
     session,

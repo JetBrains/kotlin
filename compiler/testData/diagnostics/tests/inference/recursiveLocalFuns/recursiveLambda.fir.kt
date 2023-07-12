@@ -1,5 +1,5 @@
 fun foo() {
     fun bar() = {
-        bar()
+        <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM, TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>bar()<!>
     }
 }

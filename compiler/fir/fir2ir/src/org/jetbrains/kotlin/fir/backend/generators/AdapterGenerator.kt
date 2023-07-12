@@ -567,7 +567,7 @@ internal class AdapterGenerator(
         }
         // On the other hand, the actual type should be either a functional type or a subtype of a class that has a contributed `invoke`.
         val expectedFunctionType = getFunctionTypeForPossibleSamType(parameter.returnTypeRef.coneType)
-        return argument.isFunctional(session, scopeSession, expectedFunctionType, ReturnTypeCalculatorForFullBodyResolve)
+        return argument.isFunctional(session, scopeSession, expectedFunctionType, ReturnTypeCalculatorForFullBodyResolve.Default)
     }
 
     internal fun getFunctionTypeForPossibleSamType(parameterType: ConeKotlinType): ConeKotlinType? {
