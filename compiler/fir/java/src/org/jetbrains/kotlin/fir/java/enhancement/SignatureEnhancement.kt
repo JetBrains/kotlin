@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.java.resolveIfJavaType
 import org.jetbrains.kotlin.fir.java.symbols.FirJavaOverriddenSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.java.toConeKotlinTypeProbablyFlexible
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.scopes.jvm.computeJvmDescriptor
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
@@ -251,6 +252,9 @@ class FirSignatureEnhancement(
         val functionSymbol: FirFunctionSymbol<*>
         var isJavaRecordComponent = false
 
+        val typeParameterSubstitutionMap = mutableMapOf<FirTypeParameterSymbol, ConeKotlinType>()
+        var typeParameterSubstitutor: ConeSubstitutorByMap? = null
+
         val function = when (firMethod) {
             is FirJavaConstructor -> {
                 val symbol = FirConstructorSymbol(methodId).also { functionSymbol = it }
@@ -288,6 +292,7 @@ class FirSignatureEnhancement(
                     moduleData = this@FirSignatureEnhancement.moduleData
                     resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                     origin = FirDeclarationOrigin.Enhancement
+                    // TODO: we should set a new origin / containing declaration to type parameters (KT-60440)
                     this.typeParameters += (enhancedTypeParameters ?: firMethod.typeParameters)
                 }
             }
@@ -297,14 +302,6 @@ class FirSignatureEnhancement(
                     source = firMethod.source
                     moduleData = this@FirSignatureEnhancement.moduleData
                     origin = FirDeclarationOrigin.Enhancement
-                    returnTypeRef = newReturnTypeRef
-                    receiverParameter = newReceiverTypeRef?.let { receiverType ->
-                        buildReceiverParameter {
-                            typeRef = receiverType
-                            annotations += firMethod.valueParameters.first().annotations
-                            source = receiverType.source?.fakeElement(KtFakeSourceElementKind.ReceiverFromType)
-                        }
-                    }
 
                     this.name = name!!
                     status = firMethod.status
@@ -316,10 +313,39 @@ class FirSignatureEnhancement(
                             "Unexpected type parameter type: ${typeParameter::class.simpleName}"
                         }
 
-                        buildTypeParameterCopy(typeParameter) {
+                        // TODO: we probably shouldn't build a copy second time. See performFirstRoundOfBoundsResolution (KT-60446)
+                        val newTypeParameter = buildTypeParameterCopy(typeParameter) {
                             origin = FirDeclarationOrigin.Enhancement
+                            symbol = FirTypeParameterSymbol()
                             containingDeclarationSymbol = functionSymbol
                         }
+                        typeParameterSubstitutionMap[typeParameter.symbol] = ConeTypeParameterTypeImpl(
+                            newTypeParameter.symbol.toLookupTag(), isNullable = false
+                        )
+                        newTypeParameter
+                    }
+                    if (typeParameterSubstitutionMap.isNotEmpty()) {
+                        typeParameterSubstitutor = ConeSubstitutorByMap(typeParameterSubstitutionMap, session)
+                    }
+                    returnTypeRef = newReturnTypeRef.withReplacedConeType(
+                        typeParameterSubstitutor?.substituteOrNull(newReturnTypeRef.coneType)
+                    )
+                    val substitutedReceiverTypeRef = newReceiverTypeRef?.withReplacedConeType(
+                        typeParameterSubstitutor?.substituteOrNull(newReturnTypeRef.coneType)
+                    )
+                    receiverParameter = substitutedReceiverTypeRef?.let { receiverType ->
+                        buildReceiverParameter {
+                            typeRef = receiverType
+                            annotations += firMethod.valueParameters.first().annotations
+                            source = receiverType.source?.fakeElement(KtFakeSourceElementKind.ReceiverFromType)
+                        }
+                    }
+                    typeParameters.forEach { typeParameter ->
+                        typeParameter.replaceBounds(
+                            typeParameter.bounds.map { boundTypeRef ->
+                                boundTypeRef.withReplacedConeType(typeParameterSubstitutor?.substituteOrNull(boundTypeRef.coneType))
+                            }
+                        )
                     }
 
                     dispatchReceiverType = firMethod.dispatchReceiverType
@@ -336,7 +362,9 @@ class FirSignatureEnhancement(
                     containingFunctionSymbol = functionSymbol
                     moduleData = this@FirSignatureEnhancement.moduleData
                     origin = FirDeclarationOrigin.Enhancement
-                    returnTypeRef = enhancedReturnType
+                    returnTypeRef = enhancedReturnType.withReplacedConeType(
+                        typeParameterSubstitutor?.substituteOrNull(enhancedReturnType.coneType)
+                    )
                     this.name = valueParameter.name
                     symbol = FirValueParameterSymbol(this.name)
                     defaultValue = valueParameter.defaultValue
@@ -388,6 +416,7 @@ class FirSignatureEnhancement(
             typeParametersCopy += if (typeParameter is FirTypeParameter) {
                 initialBounds.add(typeParameter.bounds.toList())
                 buildTypeParameterCopy(typeParameter) {
+                    // TODO: we should create a new symbol to avoid clashing (KT-60445)
                     bounds.clear()
                     typeParameter.bounds.mapTo(bounds) {
                         it.resolveIfJavaType(session, javaTypeParameterStack, FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_FIRST_ROUND)

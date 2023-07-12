@@ -33460,6 +33460,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
                 runTest("compiler/testData/codegen/box/multiplatform/k2/anonymousObjectAndSpecificImplementationInDeserializedIr.kt");
             }
 
+            @Test
+            @TestMetadata("javaMethodWithTypeParameter.kt")
+            public void testJavaMethodWithTypeParameter() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/k2/javaMethodWithTypeParameter.kt");
+            }
+
             @Nested
             @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/annotations")
             @TestDataPath("$PROJECT_ROOT")
