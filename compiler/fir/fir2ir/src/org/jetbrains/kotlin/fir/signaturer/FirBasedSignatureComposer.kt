@@ -84,10 +84,26 @@ class FirBasedSignatureComposer(val mangler: FirMangler) {
         }
     }
 
+    fun composeSignature(declaration: FirClassLikeDeclaration): IdSignature? {
+        return composeSignatureImpl(declaration, containingClass = null, forceExpect = false)
+    }
+
     fun composeSignature(
-        declaration: FirDeclaration,
+        declaration: FirCallableDeclaration,
         containingClass: ConeClassLikeLookupTag? = null,
-        forceExpect: Boolean = false,
+        forceExpect: Boolean = false
+    ): IdSignature? {
+        return composeSignatureImpl(declaration, containingClass, forceExpect)
+    }
+
+    fun composeSignature(declaration: FirScript): IdSignature? {
+        return composeSignatureImpl(declaration, containingClass = null, forceExpect = false)
+    }
+
+    private fun composeSignatureImpl(
+        declaration: FirDeclaration,
+        containingClass: ConeClassLikeLookupTag?,
+        forceExpect: Boolean
     ): IdSignature? {
         if (declaration is FirAnonymousObject || declaration is FirAnonymousFunction) return null
         if (declaration is FirRegularClass && declaration.classId.isLocal) return null

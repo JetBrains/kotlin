@@ -87,7 +87,7 @@ class Fir2IrPluginContext(
 
     private inline fun <R> referenceClassLikeSymbol(
         id: ClassId,
-        firSymbolExtractor: (ClassId) -> FirBasedSymbol<*>?,
+        firSymbolExtractor: (ClassId) -> FirClassLikeSymbol<*>?,
         irSymbolExtractor: (IdSignature) -> R
     ): R? {
         val firSymbol = firSymbolExtractor(id) ?: return null
