@@ -158,6 +158,7 @@ internal class KtFirMetadataCalculator(
         private val session = firSession
 
         override fun visitElement(element: FirElement) {
+            (element as? FirDeclaration)?.symbol?.lazyResolveToPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
             element.acceptChildren(this)
         }
 
