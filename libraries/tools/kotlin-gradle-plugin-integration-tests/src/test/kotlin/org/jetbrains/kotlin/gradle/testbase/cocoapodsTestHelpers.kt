@@ -154,6 +154,7 @@ fun cocoaPodsEnvironmentVariables(): Map<String, String> {
     return mapOf(
         "PATH" to path,
         "GEM_PATH" to gemPath,
+        "LC_ALL" to "en_US.UTF-8"
     )
 }
 
