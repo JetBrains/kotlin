@@ -28,20 +28,11 @@ dependencies {
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
 }
 
-val generationRoot = projectDir.resolve("tests-gen")
-
 sourceSets {
     "main" { none() }
     "test" {
         projectDefault()
-        java.srcDirs(generationRoot.name)
-    }
-}
-
-if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
-    apply(plugin = "idea")
-    idea {
-        module.generatedSourceDirs.addAll(listOf(generationRoot))
+        generatedTestDir()
     }
 }
 

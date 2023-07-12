@@ -77,7 +77,7 @@ abstract class AbstractJsPartialLinkageTestCase(private val compilerType: Compil
     fun runTest(@TestDataFile testPath: String) = PartialLinkageTestUtils.runTest(JsTestConfiguration(testPath))
 
     private fun customizeMainModuleSources(moduleSourceDir: File) {
-        // Add @JsExport annotation to make box function be visible for Node.
+        // Add the @JsExport annotation to make the box function visible to Node.
         moduleSourceDir.walkTopDown().forEach { file ->
             if (file.extension == "kt") {
                 var modified = false
