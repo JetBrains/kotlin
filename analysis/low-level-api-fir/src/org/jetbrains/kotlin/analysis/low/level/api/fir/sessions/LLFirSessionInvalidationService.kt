@@ -9,6 +9,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.project.structure.*
+import org.jetbrains.kotlin.analysis.providers.KotlinAnchorModuleProvider
 import org.jetbrains.kotlin.analysis.providers.analysisMessageBus
 import org.jetbrains.kotlin.analysis.providers.topics.*
 
@@ -86,6 +87,17 @@ class LLFirSessionInvalidationService(private val project: Project) : Disposable
 
     private fun invalidateAll(includeStableModules: Boolean) {
         ApplicationManager.getApplication().assertWriteAccessAllowed()
+
+        // When anchor modules are configured and `includeStableModules` is `false`, we get a situation where the anchor module session will
+        // be invalidated (because it is a source session), while its library dependents won't be invalidated (because they are sessions of
+        // stable modules). But such library sessions also need to be invalidated because they depend on the anchor module.
+        //
+        // Invalidating anchor modules before all source sessions has the advantage that `invalidate`'s session existence check will work,
+        // so we do not have to invalidate dependent sessions if the anchor module does not exist in the first place.
+        if (!includeStableModules) {
+            val anchorModules = KotlinAnchorModuleProvider.getInstance(project)?.getAllAnchorModules()
+            anchorModules?.forEach(::invalidate)
+        }
 
         LLFirSessionCache.getInstance(project).removeAllSessions(includeStableModules)
     }
