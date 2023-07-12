@@ -29,7 +29,7 @@
   <dependencies>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
-      <artifactId>kotlin-stdlib-common</artifactId>
+      <artifactId>kotlin-stdlib</artifactId>
       <version>ArtifactsTest.version</version>
       <scope>compile</scope>
     </dependency>

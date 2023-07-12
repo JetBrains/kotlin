@@ -336,8 +336,8 @@ val annotationsMetadata by configurations.creating {
     }
 }
 dependencies {
-    commonMetadata(project(":kotlin-stdlib-common"))
-    annotationsMetadata(project(":kotlin-stdlib-common"))
+    commonMetadata(project(":kotlin-stdlib"))
+    annotationsMetadata(project(":kotlin-stdlib"))
 }
 artifacts {
     add(commonMetadata.name, tasks.getByPath(":kotlin-test:kotlin-test-common:jar"))
