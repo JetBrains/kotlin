@@ -426,7 +426,7 @@ class Fir2IrClassifierStorage(
         val irTypeParameter = with(typeParameter) {
             convertWithOffsets { startOffset, endOffset ->
                 signatureComposer.composeTypeParameterSignature(
-                    typeParameter, index, ownerSymbol.signature
+                    index, ownerSymbol.signature
                 )?.let { signature ->
                     if (ownerSymbol is IrClassifierSymbol) {
                         symbolTable.declareGlobalTypeParameter(

@@ -5,11 +5,9 @@
 
 package org.jetbrains.kotlin.fir.signaturer
 
-import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.backend.Fir2IrSignatureComposer
 import org.jetbrains.kotlin.fir.backend.FirMangler
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
@@ -24,10 +22,10 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
 // @NoMutableState -- we'll restore this annotation once we get rid of withFileSignature().
-class FirBasedSignatureComposer(override val mangler: FirMangler) : Fir2IrSignatureComposer {
+class FirBasedSignatureComposer(val mangler: FirMangler) {
     private var fileSignature: IdSignature.FileSignature? = null
 
-    override fun withFileSignature(sig: IdSignature.FileSignature, body: () -> Unit) {
+    fun withFileSignature(sig: IdSignature.FileSignature, body: () -> Unit) {
         fileSignature = sig
         body()
         fileSignature = null
@@ -86,11 +84,11 @@ class FirBasedSignatureComposer(override val mangler: FirMangler) : Fir2IrSignat
         }
     }
 
-    override fun composeSignature(
+    fun composeSignature(
         declaration: FirDeclaration,
-        containingClass: ConeClassLikeLookupTag?,
-        forceTopLevelPrivate: Boolean,
-        forceExpect: Boolean,
+        containingClass: ConeClassLikeLookupTag? = null,
+        forceTopLevelPrivate: Boolean = false,
+        forceExpect: Boolean = false,
     ): IdSignature? {
         if (declaration is FirAnonymousObject || declaration is FirAnonymousFunction) return null
         if (declaration is FirRegularClass && declaration.classId.isLocal) return null
@@ -169,8 +167,7 @@ class FirBasedSignatureComposer(override val mangler: FirMangler) : Fir2IrSignat
         }
     }
 
-    override fun composeTypeParameterSignature(
-        typeParameter: FirTypeParameter,
+    fun composeTypeParameterSignature(
         index: Int,
         containerSignature: IdSignature?
     ): IdSignature? {
@@ -181,11 +178,11 @@ class FirBasedSignatureComposer(override val mangler: FirMangler) : Fir2IrSignat
         )
     }
 
-    override fun composeAccessorSignature(
+    fun composeAccessorSignature(
         property: FirProperty,
         isSetter: Boolean,
-        containingClass: ConeClassLikeLookupTag?,
-        forceTopLevelPrivate: Boolean
+        containingClass: ConeClassLikeLookupTag? = null,
+        forceTopLevelPrivate: Boolean = false
     ): IdSignature? {
         val propSig: IdSignature.CommonSignature
         val fileSig: IdSignature.FileSignature?

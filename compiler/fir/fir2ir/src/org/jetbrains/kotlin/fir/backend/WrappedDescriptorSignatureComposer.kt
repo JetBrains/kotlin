@@ -5,12 +5,13 @@
 
 package org.jetbrains.kotlin.fir.backend
 
+import org.jetbrains.kotlin.fir.signaturer.FirBasedSignatureComposer
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.IdSignatureComposer
 
 class WrappedDescriptorSignatureComposer(
     private val delegate: IdSignatureComposer,
-    private val firComposer: Fir2IrSignatureComposer
+    private val firComposer: FirBasedSignatureComposer
 ) : IdSignatureComposer by delegate {
     override fun withFileSignature(fileSignature: IdSignature.FileSignature, body: () -> Unit) {
         firComposer.withFileSignature(fileSignature) {
