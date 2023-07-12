@@ -6,5 +6,4 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 @DslMarker
-@Retention(AnnotationRetention.SOURCE)
 annotation class KotlinTargetsDsl
