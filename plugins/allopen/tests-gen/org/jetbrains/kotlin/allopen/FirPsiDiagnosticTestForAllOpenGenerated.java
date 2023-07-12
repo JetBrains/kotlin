@@ -29,4 +29,10 @@ public class FirPsiDiagnosticTestForAllOpenGenerated extends AbstractFirPsiDiagn
     public void testKt54260() throws Exception {
         runTest("plugins/allopen/testData/diagnostics/kt54260.kt");
     }
+
+    @Test
+    @TestMetadata("smartcast.kt")
+    public void testSmartcast() throws Exception {
+        runTest("plugins/allopen/testData/diagnostics/smartcast.kt");
+    }
 }

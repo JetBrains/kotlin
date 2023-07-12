@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("plugins/allopen/testData/diagnostics")
 @TestDataPath("$PROJECT_ROOT")
-public class FirLightTreeDiagnosticTestForAllOpenGenerated extends AbstractFirLightTreeDiagnosticTestForAllOpen {
+public class DiagnosticTestForAllOpenBaseGenerated extends AbstractDiagnosticTestForAllOpenBase {
     @Test
     public void testAllFilesPresentInDiagnostics() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/allopen/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);

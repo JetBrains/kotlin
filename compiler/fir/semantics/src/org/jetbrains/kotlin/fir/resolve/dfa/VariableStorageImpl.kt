@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.dfa
 
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.modality
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.moduleData
@@ -162,6 +164,7 @@ class VariableStorageImpl(private val session: FirSession) : VariableStorage() {
             property.isVar -> PropertyStability.MUTABLE_PROPERTY
             property.receiverParameter != null -> PropertyStability.PROPERTY_WITH_GETTER
             property.getter.let { it != null && it !is FirDefaultPropertyAccessor } -> PropertyStability.PROPERTY_WITH_GETTER
+            property.visibility == Visibilities.Private -> PropertyStability.STABLE_VALUE
             property.modality != Modality.FINAL -> {
                 val dispatchReceiver = (originalFir.unwrapElement() as? FirQualifiedAccessExpression)?.dispatchReceiver ?: return null
                 val receiverType = dispatchReceiver.typeRef.coneTypeSafe<ConeClassLikeType>()?.fullyExpandedType(session) ?: return null

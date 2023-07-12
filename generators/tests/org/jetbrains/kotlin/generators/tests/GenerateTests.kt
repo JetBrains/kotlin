@@ -286,6 +286,9 @@ fun main(args: Array<String>) {
             testClass<AbstractFirPsiBytecodeListingTestForAllOpen> {
                 model("bytecodeListing", excludedPattern = excludedFirTestdataPattern)
             }
+            testClass<AbstractDiagnosticTestForAllOpenBase> {
+                model("diagnostics", excludedPattern = excludedFirTestdataPattern)
+            }
             testClass<AbstractFirLightTreeDiagnosticTestForAllOpen> {
                 model("diagnostics", excludedPattern = excludedFirTestdataPattern)
             }
