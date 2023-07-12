@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirElementInterface
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
@@ -155,6 +156,9 @@ fun FirVariableAssignment.unwrapLValue(): FirQualifiedAccessExpression? {
 
 val FirElement.calleeReference: FirReference?
     get() = (this as? FirResolvable)?.calleeReference ?: (this as? FirVariableAssignment)?.calleeReference
+
+val FirElementInterface.calleeReference: FirReference?
+    get() = (this as FirElement).calleeReference
 
 fun FirExpression.unwrapSmartcastExpression(): FirExpression =
     when (this) {

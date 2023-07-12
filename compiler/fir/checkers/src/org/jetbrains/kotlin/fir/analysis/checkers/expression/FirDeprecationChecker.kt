@@ -46,7 +46,7 @@ object FirDeprecationChecker : FirBasicExpressionChecker() {
             val constructorOnlyDeprecation = referencedSymbol.getDeprecation(context.session, expression) ?: return
             reportApiStatus(resolvedReference.source, referencedSymbol, null, constructorOnlyDeprecation, reporter, context)
         } else {
-            reportApiStatusIfNeeded(resolvedReference.source, referencedSymbol, context, reporter, callSite = expression)
+            reportApiStatusIfNeeded(resolvedReference.source, referencedSymbol, context, reporter, callSite = expression as FirElement)
         }
     }
 

@@ -1052,7 +1052,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
             is FirExpression -> iline { generate(statement) }
             is FirVariable -> iline { generate(statement) }
             is FirVariableAssignment -> iline { generate(statement) }
-            else -> unsupported(statement)
+            else -> unsupported(statement as FirElement)
         }
     }
 

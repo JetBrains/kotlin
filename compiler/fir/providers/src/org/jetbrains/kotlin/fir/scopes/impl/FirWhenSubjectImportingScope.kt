@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.builder.buildImport
+import org.jetbrains.kotlin.fir.declarations.builder.buildImportBase
 import org.jetbrains.kotlin.fir.declarations.builder.buildResolvedImport
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -42,7 +42,7 @@ class FirWhenSubjectImportingScope(
 
     companion object {
         private fun buildResolvedImportByClassId(classId: ClassId) = buildResolvedImport {
-            delegate = buildImport {
+            delegate = buildImportBase {
                 importedFqName = classId.asSingleFqName()
                 isAllUnder = true
             }

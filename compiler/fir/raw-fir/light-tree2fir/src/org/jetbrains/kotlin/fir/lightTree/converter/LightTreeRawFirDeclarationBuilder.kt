@@ -218,7 +218,7 @@ class LightTreeRawFirDeclarationBuilder(
             }
         }
 
-        return buildImport {
+        return buildImportBase {
             source = importDirective.toFirSourceElement()
             this.importedFqName = importedFqName
             this.isAllUnder = isAllUnder

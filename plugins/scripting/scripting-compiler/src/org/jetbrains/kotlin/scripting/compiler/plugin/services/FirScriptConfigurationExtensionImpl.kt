@@ -112,7 +112,7 @@ class FirScriptConfiguratorExtensionImpl(
             val endsWithStar = trimmed.endsWith("*")
             val stripped = if (endsWithStar) trimmed.substring(0, trimmed.length - 2) else trimmed
             val fqName = FqName.fromSegments(stripped.split("."))
-            fileBuilder.imports += buildImport {
+            fileBuilder.imports += buildImportBase {
                 fileBuilder.sourceFile?.project()?.let {
                     val dummyElement = KtPsiFactory(it, markGenerated = true).createColon()
                     source = KtFakeSourceElement(dummyElement, KtFakeSourceElementKind.ImplicitImport)

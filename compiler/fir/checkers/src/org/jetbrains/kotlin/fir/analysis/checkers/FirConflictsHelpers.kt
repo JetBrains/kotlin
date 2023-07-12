@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirMethodOfAnyImpl
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirNameConflictsTracker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl.Companion.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl.Companion.DEFAULT_STATUS_FOR_SUSPEND_MAIN_FUNCTION
 import org.jetbrains.kotlin.fir.declarations.impl.modifiersRepresentation
@@ -305,7 +304,6 @@ class FirDeclarationInspector {
                 action(constructor)
             }
 
-            override fun visitDeclarationStatus(declarationStatus: FirDeclarationStatus) {}
             override fun visitRegularClass(regularClass: FirRegularClass) {}
             override fun visitProperty(property: FirProperty) {}
             override fun visitSimpleFunction(simpleFunction: FirSimpleFunction) {}
@@ -315,6 +313,12 @@ class FirDeclarationInspector {
             acceptChildren(ClassConstructorVisitor())
         }
     }
+}
+
+@JvmName("checkConflictingElementsInterface")
+@Suppress("UNCHECKED_CAST")
+fun checkConflictingElements(elements: List<FirElementInterface>, context: CheckerContext, reporter: DiagnosticReporter) {
+    checkConflictingElements(elements as List<FirElement>, context, reporter)
 }
 
 fun checkConflictingElements(elements: List<FirElement>, context: CheckerContext, reporter: DiagnosticReporter) {

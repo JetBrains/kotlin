@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
-import org.jetbrains.kotlin.fir.declarations.builder.buildImport
+import org.jetbrains.kotlin.fir.declarations.builder.buildImportBase
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirImportResolveTransformer
@@ -30,7 +30,7 @@ class FirDefaultSimpleImportingScope(
         allDefaultImports
             ?.filter { !it.isAllUnder }
             ?.map {
-                buildImport {
+                buildImportBase {
                     importedFqName = it.fqName
                     isAllUnder = false
                 }.resolve(importResolveTransformer)
