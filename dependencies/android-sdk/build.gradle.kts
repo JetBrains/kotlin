@@ -151,9 +151,7 @@ unzipSdkTask("sdk-tools-$toolsOsDarwin", sdkToolsVersion, "", "")
 unzipSdkTask("build-tools", buildToolsVersion, "build-tools/29.0.3", toolsOs, buildTools, 1)
 unzipSdkTask("emulator-$toolsOsDarwin", "5264690", "", "", prepareTask = prepareEmulator)
 unzipSdkTask("armeabi-v7a", "19", "system-images/android-19/default","r05", prepareTask = prepareEmulator)
-if (!kotlinBuildProperties.isTeamcityBuild) {
-    unzipSdkTask("x86", "19", "system-images/android-19/default", "r06", prepareTask = prepareEmulator)
-}
+unzipSdkTask("x86", "19", "system-images/android-19/default", "r06", prepareTask = prepareEmulator)
 
 val clean by task<Delete> {
     delete(buildDir)
