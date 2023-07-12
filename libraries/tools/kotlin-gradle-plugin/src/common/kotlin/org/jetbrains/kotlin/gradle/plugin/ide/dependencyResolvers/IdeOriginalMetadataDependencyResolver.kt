@@ -34,7 +34,7 @@ internal object IdeOriginalMetadataDependencyResolver : IdeDependencyResolver {
             IdeaKotlinResolvedBinaryDependency(
                 binaryType = IdeaKotlinBinaryDependency.KOTLIN_COMPILE_BINARY_TYPE,
                 classpath = IdeaKotlinClasspath(artifact.file),
-                coordinates = IdeaKotlinBinaryCoordinates(moduleId)
+                coordinates = IdeaKotlinBinaryCoordinates(moduleId, artifact.variant.capabilities, artifact.variant.attributes)
             )
         }.toSet()
     }

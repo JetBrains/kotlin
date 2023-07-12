@@ -98,4 +98,19 @@ public interface IdeaKotlinBinaryCoordinatesProtoOrBuilder extends
    */
   org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryCapabilityProtoOrBuilder getCapabilitiesOrBuilder(
       int index);
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryAttributesProto attributes = 6;</code>
+   * @return Whether the attributes field is set.
+   */
+  boolean hasAttributes();
+  /**
+   * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryAttributesProto attributes = 6;</code>
+   * @return The attributes.
+   */
+  org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryAttributesProto getAttributes();
+  /**
+   * <code>optional .org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryAttributesProto attributes = 6;</code>
+   */
+  org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinBinaryAttributesProtoOrBuilder getAttributesOrBuilder();
 }

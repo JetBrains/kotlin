@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.idea.test.tcs
 
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryAttributes
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryCapability
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryCoordinates
 import kotlin.test.Test
@@ -127,6 +128,27 @@ class IdeaKotlinBinaryCoordinatesTest {
 
         assertEquals(
             "myGroup:myModule:1.0.0:commonMain(myGroup:myModule-foo:1.0.0, myGroup:myModule-bar:1.0.0, notMyGroup:myModule-foo)",
+            coordinates.identityString
+        )
+    }
+
+    @Test
+    fun `test - displayString & identityString - sample 9`() {
+        val coordinates = IdeaKotlinBinaryCoordinates(
+            "myGroup", "myModule", "1.0.0", "commonMain",
+            capabilities = setOf(
+                IdeaKotlinBinaryCapability("myGroup", "myModule-foo", "1.0.0"),
+                IdeaKotlinBinaryCapability("myGroup", "myModule-bar", "1.0.0"),
+                IdeaKotlinBinaryCapability("notMyGroup", "myModule-foo", null),
+            ),
+            attributes = IdeaKotlinBinaryAttributes(
+                mapOf("a" to "valueA")
+            )
+        )
+        assertEquals("myGroup:myModule-(foo, bar):1.0.0:commonMain", coordinates.displayString)
+
+        assertEquals(
+            "myGroup:myModule:1.0.0:commonMain(myGroup:myModule-foo:1.0.0, myGroup:myModule-bar:1.0.0, notMyGroup:myModule-foo)+attributes(-823812975)",
             coordinates.identityString
         )
     }

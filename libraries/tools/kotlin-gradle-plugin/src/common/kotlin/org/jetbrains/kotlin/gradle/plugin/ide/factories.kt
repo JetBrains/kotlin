@@ -8,11 +8,9 @@ package org.jetbrains.kotlin.gradle.plugin.ide
 import org.gradle.api.Project
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
+import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.capabilities.Capability
-import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryCapability
-import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryCoordinates
-import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinProjectCoordinates
-import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceCoordinates
+import org.jetbrains.kotlin.gradle.idea.tcs.*
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.KlibExtra
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.currentBuildId
@@ -45,12 +43,14 @@ internal fun IdeaKotlinSourceCoordinates(sourceSet: KotlinSourceSet): IdeaKotlin
 internal fun IdeaKotlinBinaryCoordinates(
     identifier: ModuleComponentIdentifier,
     capabilities: List<Capability> = emptyList(),
+    attributes: AttributeContainer,
 ): IdeaKotlinBinaryCoordinates {
     return IdeaKotlinBinaryCoordinates(
         group = identifier.group,
         module = identifier.module,
         version = identifier.version,
-        capabilities = capabilities.map(::IdeaKotlinBinaryCapability).toSet()
+        capabilities = capabilities.map(::IdeaKotlinBinaryCapability).toSet(),
+        attributes = IdeaKotlinBinaryAttributes(attributes)
     )
 }
 
@@ -59,6 +59,12 @@ internal fun IdeaKotlinBinaryCapability(capability: Capability): IdeaKotlinBinar
         group = capability.group,
         name = capability.name,
         version = capability.version
+    )
+}
+
+internal fun IdeaKotlinBinaryAttributes(attributes: AttributeContainer): IdeaKotlinBinaryAttributes {
+    return IdeaKotlinBinaryAttributes(
+        attributes.keySet().associate { key -> key.name to attributes.getAttribute(key).toString() }
     )
 }
 

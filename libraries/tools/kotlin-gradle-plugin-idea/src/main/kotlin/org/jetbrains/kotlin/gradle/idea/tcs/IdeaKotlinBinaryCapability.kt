@@ -5,7 +5,16 @@
 
 package org.jetbrains.kotlin.gradle.idea.tcs
 
+import org.jetbrains.kotlin.gradle.idea.utils.stringInterner
 import java.io.Serializable
+
+fun IdeaKotlinBinaryCapability(group: String, name: String, version: String?): IdeaKotlinBinaryCapability {
+    return IdeaKotlinBinaryCapabilityImpl(
+        group = stringInterner.getOrPut(group),
+        name = stringInterner.getOrPut(name),
+        version = if (version != null) stringInterner.getOrPut(version) else null
+    )
+}
 
 /**
  * Several variants can be published under a given set of maven coordinates (group, module, version),
@@ -21,12 +30,24 @@ import java.io.Serializable
  * @since 1.9.20
  */
 @IdeaKotlinModel
-class IdeaKotlinBinaryCapability(
-    val group: String,
-    val name: String,
-    val version: String?,
-) : Serializable {
-    internal companion object {
+sealed interface IdeaKotlinBinaryCapability : Serializable {
+    val group: String
+    val name: String
+    val version: String?
+
+    fun copy(
+        group: String = this.group,
+        name: String = this.name,
+        version: String? = this.version,
+    ): IdeaKotlinBinaryCapability
+}
+
+private class IdeaKotlinBinaryCapabilityImpl(
+    override val group: String,
+    override val name: String,
+    override val version: String?,
+) : IdeaKotlinBinaryCapability {
+    companion object {
         const val serialVersionUID = 0L
     }
 
@@ -37,10 +58,10 @@ class IdeaKotlinBinaryCapability(
         }
     }
 
-    fun copy(
-        group: String = this.group,
-        name: String = this.name,
-        version: String? = this.version,
+    override fun copy(
+        group: String,
+        name: String,
+        version: String?,
     ): IdeaKotlinBinaryCapability {
         return IdeaKotlinBinaryCapability(group = group, name = name, version = version)
     }

@@ -23,6 +23,12 @@ class IdeaKotlinBinaryCoordinates(
      * @since 1.9.20
      */
     val capabilities: Set<IdeaKotlinBinaryCapability> = emptySet(),
+
+    /**
+     * @see IdeaKotlinBinaryAttributes
+     * @since 1.9.20
+     */
+    val attributes: IdeaKotlinBinaryAttributes = IdeaKotlinBinaryAttributes(),
 ) : IdeaKotlinDependencyCoordinates {
 
     constructor(
@@ -54,6 +60,9 @@ class IdeaKotlinBinaryCoordinates(
             if (sourceSetName != null) append(":$sourceSetName")
             if (capabilities.isNotEmpty()) {
                 append(capabilities.joinToString(", ", "(", ")"))
+            }
+            if (attributes.isNotEmpty()) {
+                append("+attributes(${attributes.hashCode()})")
             }
         }
 
@@ -156,13 +165,15 @@ class IdeaKotlinBinaryCoordinates(
         version: String? = this.version,
         sourceSetName: String? = this.sourceSetName,
         capabilities: Set<IdeaKotlinBinaryCapability> = this.capabilities,
+        attributes: IdeaKotlinBinaryAttributes = this.attributes,
     ): IdeaKotlinBinaryCoordinates {
         return IdeaKotlinBinaryCoordinates(
             group = group,
             module = module,
             version = version,
             sourceSetName = sourceSetName,
-            capabilities = capabilities
+            capabilities = capabilities,
+            attributes = attributes
         )
     }
 
@@ -184,10 +195,14 @@ class IdeaKotlinBinaryCoordinates(
      * will be 'null'. In this case we use the 'copy' function to provide an instance that will have an emptySet instead.
      */
     private fun readResolve(): Any {
-        @Suppress("SENSELESS_COMPARISON")
-        if (capabilities == null) {
-            return copy(capabilities = emptySet())
+        @Suppress("SENSELESS_COMPARISON", "USELESS_ELVIS")
+        if (capabilities == null || attributes == null) {
+            return copy(
+                capabilities = capabilities ?: emptySet(),
+                attributes = attributes ?: IdeaKotlinBinaryAttributes()
+            )
         }
+
         return this
     }
 
