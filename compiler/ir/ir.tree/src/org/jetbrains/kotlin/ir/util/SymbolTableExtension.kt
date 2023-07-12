@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.IrLock
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.utils.threadLocal
 
@@ -109,9 +110,11 @@ abstract class SymbolTableExtension<
 
     protected abstract fun defaultScriptFactory(startOffset: Int, endOffset: Int, script: Script, symbol: IrScriptSymbol): IrScript
 
-    protected abstract fun createScriptSymbol(declaration: Script, signature: IdSignature?): IrScriptSymbol
+    protected open fun createScriptSymbol(declaration: Script, signature: IdSignature?): IrScriptSymbol {
+        return IrScriptSymbolImpl()
+    }
 
-    // ------------------------------------ script ------------------------------------
+    // ------------------------------------ class ------------------------------------
 
     fun declareClass(declaration: Class, classFactory: (IrClassSymbol) -> IrClass): IrClass {
         return declare(
@@ -148,8 +151,13 @@ abstract class SymbolTableExtension<
         return signature?.let { createPublicClassSymbol(declaration, signature) } ?: createPrivateClassSymbol(declaration)
     }
 
-    protected abstract fun createPublicClassSymbol(declaration: Class, signature: IdSignature): IrClassSymbol
-    protected abstract fun createPrivateClassSymbol(descriptor: Class): IrClassSymbol
+    protected open fun createPublicClassSymbol(declaration: Class, signature: IdSignature): IrClassSymbol {
+        return IrClassPublicSymbolImpl(signature)
+    }
+
+    protected open fun createPrivateClassSymbol(descriptor: Class): IrClassSymbol {
+        return IrClassSymbolImpl()
+    }
 
     // ------------------------------------ constructor ------------------------------------
 
@@ -191,8 +199,13 @@ abstract class SymbolTableExtension<
         return signature?.let { createPublicConstructorSymbol(declaration, signature) } ?: createPrivateConstructorSymbol(declaration)
     }
 
-    protected abstract fun createPublicConstructorSymbol(declaration: Constructor, signature: IdSignature): IrConstructorSymbol
-    protected abstract fun createPrivateConstructorSymbol(declaration: Constructor): IrConstructorSymbol
+    protected open fun createPublicConstructorSymbol(declaration: Constructor, signature: IdSignature): IrConstructorSymbol {
+        return IrConstructorPublicSymbolImpl(signature)
+    }
+
+    protected open fun createPrivateConstructorSymbol(declaration: Constructor): IrConstructorSymbol {
+        return IrConstructorSymbolImpl()
+    }
 
     // ------------------------------------ enum entry ------------------------------------
 
@@ -240,8 +253,13 @@ abstract class SymbolTableExtension<
         return signature?.let { createPublicEnumEntrySymbol(declaration, signature) } ?: createPrivateEnumEntrySymbol(declaration)
     }
 
-    protected abstract fun createPublicEnumEntrySymbol(declaration: Class, signature: IdSignature): IrEnumEntrySymbol
-    protected abstract fun createPrivateEnumEntrySymbol(declaration: Class): IrEnumEntrySymbol
+    protected open fun createPublicEnumEntrySymbol(declaration: Class, signature: IdSignature): IrEnumEntrySymbol {
+        return IrEnumEntryPublicSymbolImpl(signature)
+    }
+
+    protected open fun createPrivateEnumEntrySymbol(declaration: Class): IrEnumEntrySymbol {
+        return IrEnumEntrySymbolImpl()
+    }
 
     protected abstract fun defaultEnumEntryFactory(
         startOffset: Int,
@@ -311,8 +329,14 @@ abstract class SymbolTableExtension<
         return signature?.let { createPublicFieldSymbol(declaration, signature) } ?: createPrivateFieldSymbol(declaration)
     }
 
-    protected abstract fun createPublicFieldSymbol(declaration: Property, signature: IdSignature): IrFieldSymbol
-    protected abstract fun createPrivateFieldSymbol(declaration: Property): IrFieldSymbol
+    protected open fun createPublicFieldSymbol(declaration: Property, signature: IdSignature): IrFieldSymbol {
+        return IrFieldPublicSymbolImpl(signature)
+    }
+
+    protected open fun createPrivateFieldSymbol(declaration: Property): IrFieldSymbol {
+        return IrFieldSymbolImpl()
+    }
+
 
     protected abstract fun defaultFieldFactory(
         startOffset: Int,
@@ -373,8 +397,13 @@ abstract class SymbolTableExtension<
         return signature?.let { createPublicPropertySymbol(declaration, signature) } ?: createPrivatePropertySymbol(declaration)
     }
 
-    protected abstract fun createPublicPropertySymbol(declaration: Property, signature: IdSignature): IrPropertySymbol
-    protected abstract fun createPrivatePropertySymbol(declaration: Property): IrPropertySymbol
+    protected open fun createPublicPropertySymbol(declaration: Property, signature: IdSignature): IrPropertySymbol {
+        return IrPropertyPublicSymbolImpl(signature)
+    }
+
+    protected open fun createPrivatePropertySymbol(declaration: Property): IrPropertySymbol {
+        return IrPropertySymbolImpl()
+    }
 
     protected abstract fun defaultPropertyFactory(
         startOffset: Int,
@@ -422,8 +451,13 @@ abstract class SymbolTableExtension<
         return signature?.let { createPublicTypeAliasSymbol(declaration, signature) } ?: createPrivateTypeAliasSymbol(declaration)
     }
 
-    protected abstract fun createPublicTypeAliasSymbol(declaration: TypeAlias, signature: IdSignature): IrTypeAliasSymbol
-    protected abstract fun createPrivateTypeAliasSymbol(declaration: TypeAlias): IrTypeAliasSymbol
+    protected open fun createPublicTypeAliasSymbol(declaration: TypeAlias, signature: IdSignature): IrTypeAliasSymbol {
+        return IrTypeAliasPublicSymbolImpl(signature)
+    }
+
+    protected open fun createPrivateTypeAliasSymbol(declaration: TypeAlias): IrTypeAliasSymbol {
+        return IrTypeAliasSymbolImpl()
+    }
 
     // ------------------------------------ function ------------------------------------
 
@@ -478,8 +512,13 @@ abstract class SymbolTableExtension<
         return signature?.let { createPublicFunctionSymbol(declaration, signature) } ?: createPrivateFunctionSymbol(declaration)
     }
 
-    protected abstract fun createPublicFunctionSymbol(declaration: Function, signature: IdSignature): IrSimpleFunctionSymbol
-    protected abstract fun createPrivateFunctionSymbol(declaration: Function): IrSimpleFunctionSymbol
+    protected open fun createPublicFunctionSymbol(declaration: Function, signature: IdSignature): IrSimpleFunctionSymbol {
+        return IrSimpleFunctionPublicSymbolImpl(signature)
+    }
+
+    protected open fun createPrivateFunctionSymbol(declaration: Function): IrSimpleFunctionSymbol {
+        return IrSimpleFunctionSymbolImpl()
+    }
 
     // ------------------------------------ type parameter ------------------------------------
 
@@ -543,8 +582,13 @@ abstract class SymbolTableExtension<
         return signature?.let { createPublicTypeParameterSymbol(declaration, signature) } ?: createPrivateTypeParameterSymbol(declaration)
     }
 
-    protected abstract fun createPublicTypeParameterSymbol(declaration: TypeParameter, signature: IdSignature): IrTypeParameterSymbol
-    protected abstract fun createPrivateTypeParameterSymbol(declaration: TypeParameter): IrTypeParameterSymbol
+    protected open fun createPublicTypeParameterSymbol(declaration: TypeParameter, signature: IdSignature): IrTypeParameterSymbol {
+        return IrTypeParameterPublicSymbolImpl(signature)
+    }
+
+    protected open fun createPrivateTypeParameterSymbol(declaration: TypeParameter): IrTypeParameterSymbol {
+        return IrTypeParameterSymbolImpl()
+    }
 
     protected abstract fun defaultTypeParameterFactory(
         startOffset: Int,
