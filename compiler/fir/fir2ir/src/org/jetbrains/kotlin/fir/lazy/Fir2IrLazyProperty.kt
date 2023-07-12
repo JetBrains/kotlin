@@ -25,10 +25,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
-import org.jetbrains.kotlin.ir.types.IrErrorType
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.isComposite
-import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -170,8 +167,7 @@ class Fir2IrLazyProperty(
         val signature = signatureComposer.composeAccessorSignature(
             fir,
             isSetter = false,
-            containingClass?.symbol?.toLookupTag(),
-            forceTopLevelPrivate = symbol.signature.isComposite()
+            containingClass?.symbol?.toLookupTag()
         )!!
         symbolTable.declareSimpleFunction(signature, symbolFactory = { Fir2IrSimpleFunctionSymbol(signature) }) { symbol ->
             Fir2IrLazyPropertyAccessor(
@@ -203,8 +199,7 @@ class Fir2IrLazyProperty(
             val signature = signatureComposer.composeAccessorSignature(
                 fir,
                 isSetter = true,
-                containingClass?.symbol?.toLookupTag(),
-                forceTopLevelPrivate = symbol.signature.isComposite()
+                containingClass?.symbol?.toLookupTag()
             )!!
             symbolTable.declareSimpleFunction(signature, symbolFactory = { Fir2IrSimpleFunctionSymbol(signature) }) { symbol ->
                 Fir2IrLazyPropertyAccessor(

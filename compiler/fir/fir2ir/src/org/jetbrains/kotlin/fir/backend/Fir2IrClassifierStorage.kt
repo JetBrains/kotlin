@@ -525,7 +525,6 @@ class Fir2IrClassifierStorage(
         enumEntry: FirEnumEntry,
         irParent: IrClass,
         predefinedOrigin: IrDeclarationOrigin? = null,
-        forceTopLevelPrivate: Boolean = false,
     ): IrEnumEntry {
         getCachedIrEnumEntry(enumEntry)?.let { return it }
         val containingFile = firProvider.getFirCallableContainerFile(enumEntry.symbol)
@@ -539,8 +538,7 @@ class Fir2IrClassifierStorage(
         return createIrEnumEntry(
             enumEntry,
             irParent = irParent,
-            predefinedOrigin = predefinedOrigin,
-            forceTopLevelPrivate
+            predefinedOrigin = predefinedOrigin
         )
     }
 
@@ -561,10 +559,9 @@ class Fir2IrClassifierStorage(
         enumEntry: FirEnumEntry,
         irParent: IrClass?,
         predefinedOrigin: IrDeclarationOrigin? = null,
-        forceTopLevelPrivate: Boolean = false,
     ): IrEnumEntry {
         return enumEntry.convertWithOffsets { startOffset, endOffset ->
-            val signature = signatureComposer.composeSignature(enumEntry, forceTopLevelPrivate = forceTopLevelPrivate)
+            val signature = signatureComposer.composeSignature(enumEntry)
             val result = declareIrEnumEntry(signature) { symbol ->
                 val origin = enumEntry.computeIrOrigin(predefinedOrigin)
                 irFactory.createEnumEntry(
@@ -600,7 +597,7 @@ class Fir2IrClassifierStorage(
         return initializer is FirAnonymousObjectExpression && initializer.anonymousObject.declarations.any { it !is FirConstructor }
     }
 
-    fun getIrClassSymbol(firClassSymbol: FirClassSymbol<*>, forceTopLevelPrivate: Boolean = false): IrClassSymbol {
+    fun getIrClassSymbol(firClassSymbol: FirClassSymbol<*>): IrClassSymbol {
         val firClass = firClassSymbol.fir
         getCachedIrClass(firClass)?.let { return it.symbol }
         if (firClass is FirAnonymousObject || firClass is FirRegularClass && firClass.visibility == Visibilities.Local) {
@@ -616,7 +613,7 @@ class Fir2IrClassifierStorage(
         getCachedIrClass(firClass)?.let { return it.symbol }
 
         val signature = runIf(configuration.linkViaSignatures) {
-            signatureComposer.composeSignature(firClass, forceTopLevelPrivate = forceTopLevelPrivate)
+            signatureComposer.composeSignature(firClass)
         }
         val irClass = firClass.convertWithOffsets { startOffset, endOffset ->
             declareIrClass(signature) { irClassSymbol ->

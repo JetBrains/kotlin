@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.DeserializableClass
-import org.jetbrains.kotlin.ir.util.isComposite
 import org.jetbrains.kotlin.ir.util.isEnumClass
 import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.name.Name
@@ -151,14 +150,13 @@ class Fir2IrLazyClass(
     }
 
     override val declarations: MutableList<IrDeclaration> by lazyVar(lock) {
-        val isTopLevelPrivate = symbol.signature.isComposite()
         val result = mutableListOf<IrDeclaration>()
         // NB: it's necessary to take all callables from scope,
         // e.g. to avoid accessing un-enhanced Java declarations with FirJavaTypeRef etc. inside
         val scope = fir.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true, memberRequiredPhase = null)
         scope.processDeclaredConstructors {
             if (shouldBuildStub(it.fir)) {
-                result += declarationStorage.getIrConstructorSymbol(it, forceTopLevelPrivate = isTopLevelPrivate).owner
+                result += declarationStorage.getIrConstructorSymbol(it).owner
             }
         }
 
@@ -166,7 +164,7 @@ class Fir2IrLazyClass(
             scope.processClassifiersByName(name) {
                 val declaration = it.fir as? FirRegularClass ?: return@processClassifiersByName
                 if (declaration.classId.outerClassId == fir.classId && shouldBuildStub(declaration)) {
-                    val nestedSymbol = classifierStorage.getIrClassSymbol(declaration.symbol, forceTopLevelPrivate = isTopLevelPrivate)
+                    val nestedSymbol = classifierStorage.getIrClassSymbol(declaration.symbol)
                     result += nestedSymbol.owner
                 }
             }
@@ -192,7 +190,7 @@ class Fir2IrLazyClass(
                         if (it.isAbstractMethodOfAny()) {
                             return@processFunctionsByName
                         }
-                        result += declarationStorage.getIrFunctionSymbol(it, forceTopLevelPrivate = isTopLevelPrivate).owner
+                        result += declarationStorage.getIrFunctionSymbol(it).owner
                     }
                 }
                 scope.processPropertiesByName(name) {
@@ -200,7 +198,7 @@ class Fir2IrLazyClass(
                     if (!shouldBuildStub(it.fir)) return@processPropertiesByName
                     if (it is FirPropertySymbol && (it.isStatic || it.dispatchReceiverClassLookupTagOrNull() == ownerLookupTag)) {
                         result.addIfNotNull(
-                            declarationStorage.getIrPropertySymbol(it, forceTopLevelPrivate = isTopLevelPrivate).owner as? IrDeclaration
+                            declarationStorage.getIrPropertySymbol(it).owner as? IrDeclaration
                         )
                     }
                 }

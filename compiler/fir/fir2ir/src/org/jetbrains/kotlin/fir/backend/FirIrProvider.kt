@@ -7,11 +7,9 @@ package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData.SymbolKind
 import org.jetbrains.kotlin.backend.common.serialization.kind
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.backend.generators.FakeOverrideGenerator
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
-import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
@@ -75,7 +73,6 @@ class FirIrProvider(val fir2IrComponents: Fir2IrComponents) : IrProvider {
 
         val firCandidates: List<FirDeclaration>
         val parent: IrDeclarationParent
-        var isTopLevelPrivate = false
         if (nameSegments.size == 1 && kind != SymbolKind.CLASS_SYMBOL) {
             firCandidates = symbolProvider.getTopLevelCallableSymbols(packageFqName, topName).map { it.fir }
             parent = packageFragment // TODO: need to insert file facade class on JVM
@@ -90,7 +87,6 @@ class FirIrProvider(val fir2IrComponents: Fir2IrComponents) : IrProvider {
                 firClass = firClass.declarations.singleOrNull { (it as? FirRegularClass)?.name?.asString() == midName } as? FirRegularClass
                     ?: return null
             }
-            isTopLevelPrivate = topLevelClass.visibility == Visibilities.Private
             val classId = firClass.classId
             val scope = firClass.unsubstitutedScope(
                 fir2IrComponents.session,
@@ -171,23 +167,22 @@ class FirIrProvider(val fir2IrComponents: Fir2IrComponents) : IrProvider {
 
         return when (kind) {
             SymbolKind.CLASS_SYMBOL -> classifierStorage.getIrClassSymbol(
-                (firDeclaration as FirRegularClass).symbol,
-                forceTopLevelPrivate = isTopLevelPrivate
+                (firDeclaration as FirRegularClass).symbol
             ).owner
             SymbolKind.ENUM_ENTRY_SYMBOL -> classifierStorage.getIrEnumEntry(
-                firDeclaration as FirEnumEntry, parent as IrClass, forceTopLevelPrivate = isTopLevelPrivate
+                firDeclaration as FirEnumEntry, parent as IrClass
             )
             SymbolKind.CONSTRUCTOR_SYMBOL -> {
                 val firConstructor = firDeclaration as FirConstructor
-                declarationStorage.getOrCreateIrConstructor(firConstructor, parent as IrClass, forceTopLevelPrivate = isTopLevelPrivate)
+                declarationStorage.getOrCreateIrConstructor(firConstructor, parent as IrClass)
             }
             SymbolKind.FUNCTION_SYMBOL -> {
                 val firSimpleFunction = firDeclaration as FirSimpleFunction
-                declarationStorage.getOrCreateIrFunction(firSimpleFunction, parent, forceTopLevelPrivate = isTopLevelPrivate)
+                declarationStorage.getOrCreateIrFunction(firSimpleFunction, parent)
             }
             SymbolKind.PROPERTY_SYMBOL -> {
                 val firProperty = firDeclaration as FirProperty
-                declarationStorage.getOrCreateIrProperty(firProperty, parent, forceTopLevelPrivate = isTopLevelPrivate)
+                declarationStorage.getOrCreateIrProperty(firProperty, parent)
             }
             SymbolKind.FIELD_SYMBOL -> {
                 val firField = firDeclaration as FirField

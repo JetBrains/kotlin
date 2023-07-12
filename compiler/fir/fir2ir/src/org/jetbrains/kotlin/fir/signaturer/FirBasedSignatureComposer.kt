@@ -87,7 +87,6 @@ class FirBasedSignatureComposer(val mangler: FirMangler) {
     fun composeSignature(
         declaration: FirDeclaration,
         containingClass: ConeClassLikeLookupTag? = null,
-        forceTopLevelPrivate: Boolean = false,
         forceExpect: Boolean = false,
     ): IdSignature? {
         if (declaration is FirAnonymousObject || declaration is FirAnonymousFunction) return null
@@ -102,7 +101,7 @@ class FirBasedSignatureComposer(val mangler: FirMangler) {
             calculatePublicSignature(declarationWithParentId)
         }
 
-        val resultSignature: IdSignature = if (isTopLevelPrivate(declaration) || forceTopLevelPrivate) {
+        val resultSignature: IdSignature = if (isTopLevelPrivate(declaration)) {
             val fileSig = fileSignature ?: declaration.fakeFileSignature(publicSignature)
             IdSignature.CompositeSignature(fileSig, publicSignature)
         } else
@@ -181,12 +180,11 @@ class FirBasedSignatureComposer(val mangler: FirMangler) {
     fun composeAccessorSignature(
         property: FirProperty,
         isSetter: Boolean,
-        containingClass: ConeClassLikeLookupTag? = null,
-        forceTopLevelPrivate: Boolean = false
+        containingClass: ConeClassLikeLookupTag? = null
     ): IdSignature? {
         val propSig: IdSignature.CommonSignature
         val fileSig: IdSignature.FileSignature?
-        when (val propertySignature = composeSignature(property, containingClass, forceTopLevelPrivate)) {
+        when (val propertySignature = composeSignature(property, containingClass)) {
             is IdSignature.CompositeSignature -> {
                 propSig = propertySignature.inner as? IdSignature.CommonSignature ?: return null
                 fileSig = propertySignature.container as? IdSignature.FileSignature ?: return null
