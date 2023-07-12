@@ -53,6 +53,12 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByPsiTestGenerated extends A
     }
 
     @Test
+    @TestMetadata("anonymousFunction.kt")
+    public void testAnonymousFunction() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByPsi/anonymousFunction.kt");
+    }
+
+    @Test
     @TestMetadata("anonymousObject.kt")
     public void testAnonymousObject() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByPsi/anonymousObject.kt");

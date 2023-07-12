@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtNameReferenceExpressionElementType
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
@@ -231,6 +232,7 @@ class LightTreeRawFirExpressionBuilder(
         lateinit var operationTokenName: String
         var leftArgNode: LighterASTNode? = null
         var rightArg: LighterASTNode? = null
+        val restArgs = mutableListOf<LighterASTNode>()
         var operationReferenceSource: KtLightSourceElement? = null
         binaryExpression.forEachChildren {
             when (it.tokenType) {
@@ -243,7 +245,11 @@ class LightTreeRawFirExpressionBuilder(
                     if (isLeftArgument) {
                         leftArgNode = it
                     } else {
-                        rightArg = it
+                        if (rightArg == null) {
+                            rightArg = it
+                        } else {
+                            restArgs.add(it)
+                        }
                     }
                 }
             }
@@ -264,6 +270,10 @@ class LightTreeRawFirExpressionBuilder(
                 buildErrorExpression(null, ConeSyntaxDiagnostic("No right operand"))
 
         val leftArgAsFir = getAsFirExpression<FirExpression>(leftArgNode, "No left operand")
+
+        val restArguments =
+            if (restArgs.isNotEmpty()) restArgs.map { getAsFirExpression<FirExpression>(it, "No additional operand") }.toList() else null
+
 
         // No need for the callee name since arguments are already generated
         context.calleeNamesForLambda.removeLast()
@@ -287,7 +297,14 @@ class LightTreeRawFirExpressionBuilder(
                     name = conventionCallName ?: operationTokenName.nameAsSafeName()
                 }
                 explicitReceiver = leftArgAsFir
-                argumentList = buildUnaryArgumentList(rightArgAsFir)
+                argumentList = if (restArguments != null) {
+                    buildArgumentList {
+                        arguments.add(rightArgAsFir)
+                        arguments += restArguments
+                    }
+                } else {
+                    buildUnaryArgumentList(rightArgAsFir)
+                }
                 origin = if (conventionCallName != null) FirFunctionCallOrigin.Operator else FirFunctionCallOrigin.Infix
             }
         } else {

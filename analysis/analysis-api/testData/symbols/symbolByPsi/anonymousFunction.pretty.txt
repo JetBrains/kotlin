@@ -1,0 +1,7 @@
+inline fun printAllValues()
+
+enum class RGB {
+  RED,
+  GREEN,
+  BLUE
+}

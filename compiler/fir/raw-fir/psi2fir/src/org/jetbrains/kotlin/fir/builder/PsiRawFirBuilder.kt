@@ -2582,6 +2582,14 @@ open class PsiRawFirBuilder(
 
             val leftArgument = expression.left.toFirExpression("No left operand")
             val rightArgument = expression.right.toFirExpression("No right operand")
+            val restArguments =
+                if (expression.children.filterIsInstance<KtExpression>().size > 3) {
+                    expression.children
+                        .filterIsInstance<KtExpression>()
+                        .drop(3)
+                        .map { it.toFirExpression("No additional operand") }
+                        .toList()
+                } else null
 
             // No need for the callee name since arguments are already generated
             context.calleeNamesForLambda.removeLast()
@@ -2613,7 +2621,14 @@ open class PsiRawFirBuilder(
                         name = conventionCallName ?: expression.operationReference.getReferencedNameAsName()
                     }
                     explicitReceiver = leftArgument
-                    argumentList = buildUnaryArgumentList(rightArgument)
+                    argumentList = if (restArguments != null) {
+                        buildArgumentList {
+                            arguments += rightArgument
+                            arguments += restArguments
+                        }
+                    } else {
+                        buildUnaryArgumentList(rightArgument)
+                    }
                     origin = if (conventionCallName != null) FirFunctionCallOrigin.Operator else FirFunctionCallOrigin.Infix
                 }
             } else {

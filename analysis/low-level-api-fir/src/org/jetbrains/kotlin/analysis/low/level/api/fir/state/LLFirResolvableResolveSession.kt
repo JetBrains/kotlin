@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 
 internal abstract class LLFirResolvableResolveSession(
@@ -152,7 +151,7 @@ internal abstract class LLFirResolvableResolveSession(
 
     protected abstract fun getModuleKind(module: KtModule): ModuleKind
 
-    private fun findDeclarationInSourceViaResolve(ktDeclaration: KtExpression): FirBasedSymbol<*> {
+    private fun findDeclarationInSourceViaResolve(ktDeclaration: KtDeclaration): FirBasedSymbol<*> {
         val firDeclaration = when (val fir = getOrBuildFirFor(ktDeclaration)) {
             is FirDeclaration -> fir
             is FirAnonymousFunctionExpression -> fir.anonymousFunction
