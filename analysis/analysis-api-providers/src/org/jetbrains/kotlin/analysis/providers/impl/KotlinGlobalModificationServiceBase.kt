@@ -25,14 +25,6 @@ public abstract class KotlinGlobalModificationServiceBase(private val project: P
     }
 
     @TestOnly
-    override fun publishGlobalOutOfBlockModification() {
-        ApplicationManager.getApplication().assertWriteAccessAllowed()
-
-        incrementModificationTrackers(includeBinaryTrackers = true)
-        project.analysisMessageBus.syncPublisher(KotlinTopics.GLOBAL_OUT_OF_BLOCK_MODIFICATION).onModification()
-    }
-
-    @TestOnly
     override fun publishGlobalSourceModuleStateModification() {
         ApplicationManager.getApplication().assertWriteAccessAllowed()
 

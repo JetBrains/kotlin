@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.analysis.providers.analysisMessageBus
  *  - [KotlinModuleStateModificationListener]
  *  - [KotlinModuleOutOfBlockModificationListener]
  *  - [KotlinGlobalModuleStateModificationListener]
- *  - [KotlinGlobalOutOfBlockModificationListener]
  *  - [KotlinGlobalSourceModuleStateModificationListener]
  *  - [KotlinGlobalSourceOutOfBlockModificationListener]
  *
@@ -46,9 +45,6 @@ public object KotlinTopics {
 
     public val GLOBAL_MODULE_STATE_MODIFICATION: Topic<KotlinGlobalModuleStateModificationListener> =
         Topic(KotlinGlobalModuleStateModificationListener::class.java, Topic.BroadcastDirection.TO_CHILDREN, true)
-
-    public val GLOBAL_OUT_OF_BLOCK_MODIFICATION: Topic<KotlinGlobalOutOfBlockModificationListener> =
-        Topic(KotlinGlobalOutOfBlockModificationListener::class.java, Topic.BroadcastDirection.TO_CHILDREN, true)
 
     public val GLOBAL_SOURCE_MODULE_STATE_MODIFICATION: Topic<KotlinGlobalSourceModuleStateModificationListener> =
         Topic(KotlinGlobalSourceModuleStateModificationListener::class.java, Topic.BroadcastDirection.TO_CHILDREN, true)
