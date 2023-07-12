@@ -28,8 +28,8 @@ public abstract class KotlinGlobalModificationService {
     public abstract fun publishGlobalModuleStateModification()
 
     /**
-     * Publishes an event of global out-of-block modification of all [KtModule]s, including binary modules. The event does not invalidate
-     * module state like [publishGlobalModuleStateModification], so some module structure-specific caches might persist.
+     * Publishes an event of global out-of-block modification of all [KtModule]s. The event does not invalidate module state like
+     * [publishGlobalModuleStateModification], so some module structure-specific caches might persist.
      */
     @TestOnly
     public abstract fun publishGlobalOutOfBlockModification()

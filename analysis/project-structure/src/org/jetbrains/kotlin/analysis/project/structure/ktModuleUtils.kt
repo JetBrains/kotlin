@@ -64,3 +64,11 @@ public inline fun <reified M : KtModule> KtModule.allDirectDependenciesOfType():
  */
 public fun computeTransitiveDependsOnDependencies(directDependsOnDependencies: List<KtModule>): List<KtModule> =
     topologicalSort(directDependsOnDependencies) { this.directDependsOnDependencies }
+
+/**
+ * A stable [KtModule] does not contain conventionally *editable* sources and cannot cause or be affected by out-of-block modification.
+ *
+ * Stable modules may still be subject to modification (e.g. when a JAR is added to a library), but in such cases, module state modification
+ * events will be raised.
+ */
+public val KtModule.isStableModule: Boolean get() = this is KtBinaryModule || this is KtLibrarySourceModule
