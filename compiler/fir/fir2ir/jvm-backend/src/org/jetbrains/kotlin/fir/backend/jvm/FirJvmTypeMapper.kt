@@ -84,7 +84,7 @@ class FirJvmTypeMapper(val session: FirSession) : FirSessionComponent {
             require(typeConstructor is ConeClassLikeLookupTag)
             val classId = typeConstructor.classId
             val name = if (classId.isLocal) safeShortClassName(classId) else classId.asString()
-            return name.replace(".", "$").replace("/", ".")
+            return name.replace(".", "$")
         }
 
         override fun getScriptInternalName(typeConstructor: TypeConstructorMarker): String =
