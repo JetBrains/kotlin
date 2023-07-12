@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.tree.generator.printer
 
+import org.jetbrains.kotlin.fir.tree.generator.baseAbstractElementType
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.model.Element
 import org.jetbrains.kotlin.util.SmartPrinter
@@ -21,15 +22,18 @@ fun printTransformer(elements: List<Element>, generationPath: File): GeneratedFi
         println("package $VISITOR_PACKAGE")
         println()
         elements.forEach { println("import ${it.fullQualifiedName}") }
+        printAdditionalImportForVisitor()
         println()
         printGeneratedMessage()
 
-        println("abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {")
+        println("abstract class FirTransformer<in D> : FirVisitor<${baseAbstractElementType.type}, D>() {")
         println()
         withIndent {
-            println("abstract fun <E : FirElement> transformElement(element: E, data: D): E")
+            println("abstract fun <E : ${baseAbstractElementType.type}> transformElement(element: E, data: D): E")
             println()
-            for (element in elements) {
+
+            val notInterfaceElements = elements.filter { it.kind?.isInterface == false }
+            for (element in notInterfaceElements) {
                 if (element == AbstractFirTreeBuilder.baseFirElement) continue
                 val varName = element.safeDecapitalizedName
                 print("open fun ")
@@ -45,17 +49,41 @@ fun printTransformer(elements: List<Element>, generationPath: File): GeneratedFi
                 println()
             }
 
-            for (element in elements) {
+            for ((element, _) in additionalElements) {
+                val varName = element.replaceFirstChar(Char::lowercaseChar)
+                println("open fun transform$element($varName: Fir$element, data: D): Fir$element {")
+                withIndent {
+                    println("return transformElement($varName, data)")
+                }
+                println("}")
+                println()
+            }
+
+            println("final override fun visitElement(element: ${baseAbstractElementType.type}, data: D): ${baseAbstractElementType.type} {")
+            withIndent {
+                println("return transformElement(element, data)")
+            }
+            println("}")
+            println()
+
+            for (element in notInterfaceElements) {
                 val varName = element.safeDecapitalizedName
                 print("final override fun ")
                 element.typeParameters.takeIf { it.isNotBlank() }?.let { print(it) }
 
-                println(
-                    "visit${element.name}($varName: ${element.typeWithArguments}, data: D): ${element.transformerType
-                        .typeWithArguments}${element.multipleUpperBoundsList()}{",
-                )
+                println("visit${element.name}($varName: ${element.typeWithArguments}, data: D): ${baseAbstractElementType.type} {",)
                 withIndent {
-                    println("return transform${element.name}($varName, data)")
+                    println("return transform${element.name}($varName, data) as ${baseAbstractElementType.type}")
+                }
+                println("}")
+                println()
+            }
+
+            for ((element, _) in additionalElements) {
+                val varName = element.replaceFirstChar(Char::lowercaseChar)
+                println("final override fun visit$element($varName: Fir$element, data: D): ${baseAbstractElementType.type} {")
+                withIndent {
+                    println("return transform$element($varName, data)")
                 }
                 println("}")
                 println()

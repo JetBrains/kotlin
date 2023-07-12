@@ -27,7 +27,7 @@ private class NodeImpl(val element: KindOwner) : Node {
         element.hashCode()
 }
 
-fun configureInterfacesAndAbstractClasses(builder: AbstractFirTreeBuilder) {
+fun configureInterfacesAndAbstractClasses(builder: AbstractFirTreeBuilder): Map<String, Implementation.Kind?> {
     val elements = collectElements(builder)
     val solution = solveGraphForClassVsInterface(
         elements,
@@ -36,6 +36,8 @@ fun configureInterfacesAndAbstractClasses(builder: AbstractFirTreeBuilder) {
     )
     updateKinds(elements, solution)
     updateSealedKinds(elements)
+
+    return elements.map { it.element }.filterIsInstance<Element>().associate { it.type to it.kind }
 }
 
 private fun collectElements(builder: AbstractFirTreeBuilder): List<NodeImpl> {

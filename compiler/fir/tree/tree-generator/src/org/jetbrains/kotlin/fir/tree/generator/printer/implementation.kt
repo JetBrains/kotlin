@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.tree.generator.printer
 
+import org.jetbrains.kotlin.fir.tree.generator.baseAbstractElementType
 import org.jetbrains.kotlin.fir.tree.generator.model.*
 import org.jetbrains.kotlin.fir.tree.generator.model.Implementation.Kind
 import org.jetbrains.kotlin.fir.tree.generator.pureAbstractElementType
@@ -12,7 +13,7 @@ import org.jetbrains.kotlin.util.SmartPrinter
 import org.jetbrains.kotlin.util.withIndent
 import java.io.File
 
-fun Implementation.generateCode(generationPath: File): GeneratedFile {
+fun Implementation.generateCode(generationPath: File, kinds: Map<String, Kind?>): GeneratedFile {
     val dir = generationPath.resolve(packageName.replace(".", "/"))
     val file = File(dir, "$type.kt")
     val stringBuilder = StringBuilder()
@@ -22,24 +23,34 @@ fun Implementation.generateCode(generationPath: File): GeneratedFile {
         println()
         println("package $packageName")
         println()
-        val imports = collectImports()
+        val imports = buildList {
+            addAll(collectImports())
+            add("org.jetbrains.kotlin.fir.accept")
+        }
         imports.forEach { println("import $it") }
         if (imports.isNotEmpty()) {
             println()
         }
         printGeneratedMessage()
-        printImplementation(this@generateCode)
+        printImplementation(this@generateCode, kinds)
     }
     return GeneratedFile(file, stringBuilder.toString())
 }
 
-fun SmartPrinter.printImplementation(implementation: Implementation) {
+fun SmartPrinter.printImplementation(implementation: Implementation, kinds: Map<String, Kind?>) {
+    fun Field.castToFirElementIfNeeded(varName: String = this.name): String {
+        val castToBaseElement = kinds[type]?.isInterface == true
+        return if (castToBaseElement) "($varName ${cast()} ${baseAbstractElementType.type})" else varName
+    }
+
     fun Field.transform() {
         when (this) {
             is FieldWithDefault -> origin.transform()
 
-            is FirField ->
-                println("$name = ${name}${call()}transform(transformer, data)")
+            is FirField -> {
+                val receiver = castToFirElementIfNeeded()
+                println("$name = ${receiver}${call()}transform(transformer, data)")
+            }
 
             is FieldList -> {
                 println("${name}.transformInplace(transformer, data)")
@@ -138,7 +149,10 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                 println()
             }
 
-            fun Field.acceptString(): String = "${name}${call()}accept(visitor, data)"
+            fun Field.acceptString(): String {
+                val receiver = castToFirElementIfNeeded()
+                return "${receiver}${call()}accept(visitor, data)"
+            }
             if (!isInterface && !isAbstract) {
                 print("override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {")
 
@@ -187,7 +201,8 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                                             }
 
                                             is FieldList -> {
-                                                println("${field.name}.forEach { it.accept(visitor, data) }")
+                                                val receiver = field.castToFirElementIfNeeded("it")
+                                                println("${field.name}.forEach { $receiver.accept(visitor, data) }")
                                             }
 
                                             else -> throw IllegalStateException()

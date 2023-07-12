@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.tree.generator.printer
 
+import org.jetbrains.kotlin.fir.tree.generator.baseAbstractElementType
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.firImplementationDetailType
 import org.jetbrains.kotlin.fir.tree.generator.model.*
@@ -53,6 +54,7 @@ fun Implementation.collectImports(base: List<String> = emptyList(), kind: Import
                 + arbitraryImportables.mapNotNull { it.fullQualifiedName }
                 + parents.mapNotNull { it.fullQualifiedName }
                 + listOfNotNull(
+            baseAbstractElementType.fullQualifiedName,
             pureAbstractElementType.fullQualifiedName?.takeIf { needPureAbstractElement },
             firImplementationDetailType.fullQualifiedName?.takeIf { isPublic || requiresOptIn },
         ),
@@ -148,6 +150,8 @@ fun Field.getMutableType(forBuilder: Boolean = false, notNull: Boolean = false):
 }
 
 fun Field.call(): String = if (nullable) "?." else "."
+
+fun Field.cast(): String = if (nullable) "as?" else "as"
 
 fun Element.multipleUpperBoundsList(): String {
     return typeArguments.filterIsInstance<TypeArgumentWithMultipleUpperBounds>().takeIf { it.isNotEmpty() }?.let { arguments ->
