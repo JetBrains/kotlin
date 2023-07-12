@@ -1,0 +1,266 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] anonymousFunctionWithAnnotatedParameter.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    @Target[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.message] message: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val message: String = R|<local>/message|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] val nullablePropertyWithAnnotatedType: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?
+        public? [ResolvedTo(RAW_FIR)] get(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] val propertyToResolve: String
+        public? [ResolvedTo(RAW_FIR)] get(): String { LAZY_BLOCK }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameter.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    @Target[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.message] message: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val message: String = R|<local>/message|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] val nullablePropertyWithAnnotatedType: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?
+        public? [ResolvedTo(RAW_FIR)] get(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] val propertyToResolve: String
+        public? [ResolvedTo(RAW_FIR)] get(): String { LAZY_BLOCK }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameter.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    @Target[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.message] message: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val message: String = R|<local>/message|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] val nullablePropertyWithAnnotatedType: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?
+        public? [ResolvedTo(RAW_FIR)] get(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? { LAZY_BLOCK }
+    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val propertyToResolve: String
+        public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): String { LAZY_BLOCK }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameter.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    @Target[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.message] message: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val message: String = R|<local>/message|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] val nullablePropertyWithAnnotatedType: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?
+        public? [ResolvedTo(RAW_FIR)] get(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? { LAZY_BLOCK }
+    public? final? [ResolvedTo(COMPANION_GENERATION)] val propertyToResolve: String
+        public? [ResolvedTo(COMPANION_GENERATION)] get(): String { LAZY_BLOCK }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameter.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    @Target[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.message] message: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val message: String = R|<local>/message|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] val nullablePropertyWithAnnotatedType: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?
+        public? [ResolvedTo(RAW_FIR)] get(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? { LAZY_BLOCK }
+    public? final? [ResolvedTo(SUPER_TYPES)] val propertyToResolve: String
+        public? [ResolvedTo(SUPER_TYPES)] get(): String { LAZY_BLOCK }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameter.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    @Target[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.message] message: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val message: String = R|<local>/message|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] val nullablePropertyWithAnnotatedType: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?
+        public? [ResolvedTo(RAW_FIR)] get(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? { LAZY_BLOCK }
+    public? final? [ResolvedTo(TYPES)] val propertyToResolve: R|kotlin/String|
+        public? [ResolvedTo(TYPES)] get(): R|kotlin/String| { LAZY_BLOCK }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameter.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    @Target[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.message] message: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val message: String = R|<local>/message|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] val nullablePropertyWithAnnotatedType: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?
+        public? [ResolvedTo(RAW_FIR)] get(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] val propertyToResolve: R|kotlin/String|
+        public [ResolvedTo(STATUS)] get(): R|kotlin/String| { LAZY_BLOCK }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameter.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    @Target[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.message] message: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val message: String = R|<local>/message|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] val nullablePropertyWithAnnotatedType: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?
+        public? [ResolvedTo(RAW_FIR)] get(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? { LAZY_BLOCK }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val propertyToResolve: R|kotlin/String|
+        public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): R|kotlin/String| { LAZY_BLOCK }
+
+ARGUMENTS_OF_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameter.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    @Target[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.message] message: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val message: String = R|<local>/message|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] val nullablePropertyWithAnnotatedType: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?
+        public? [ResolvedTo(RAW_FIR)] get(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? { LAZY_BLOCK }
+    public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] val propertyToResolve: R|kotlin/String|
+        public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] get(): R|kotlin/String| { LAZY_BLOCK }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameter.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    @Target[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.message] message: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val message: String = R|<local>/message|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] val nullablePropertyWithAnnotatedType: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?
+        public? [ResolvedTo(RAW_FIR)] get(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? { LAZY_BLOCK }
+    public final [ResolvedTo(CONTRACTS)] val propertyToResolve: R|kotlin/String|
+        public [ResolvedTo(CONTRACTS)] get(): R|kotlin/String| {
+            ^ nullablePropertyWithAnnotatedType#?.{ $subj$.let#(<L> = [ResolvedTo(RAW_FIR)] let@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+                <strcat>(String( (), it#, String()))
+            }
+            ) } ?: String()
+        }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameter.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    @Target[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.message] message: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val message: String = R|<local>/message|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] val nullablePropertyWithAnnotatedType: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?
+        public? [ResolvedTo(RAW_FIR)] get(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? { LAZY_BLOCK }
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val propertyToResolve: R|kotlin/String|
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String| {
+            ^ nullablePropertyWithAnnotatedType#?.{ $subj$.let#(<L> = [ResolvedTo(RAW_FIR)] let@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+                <strcat>(String( (), it#, String()))
+            }
+            ) } ?: String()
+        }
+
+ANNOTATIONS_ARGUMENTS_MAPPING:
+FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameter.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    @Target[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.message] message: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val message: String = R|<local>/message|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] val nullablePropertyWithAnnotatedType: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?
+        public? [ResolvedTo(RAW_FIR)] get(): @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>? { LAZY_BLOCK }
+    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] val propertyToResolve: R|kotlin/String|
+        public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] get(): R|kotlin/String| {
+            ^ nullablePropertyWithAnnotatedType#?.{ $subj$.let#(<L> = [ResolvedTo(RAW_FIR)] let@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+                <strcat>(String( (), it#, String()))
+            }
+            ) } ?: String()
+        }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameter.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class Anno : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.message] message: String): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val message: String = R|<local>/message|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+
+    }
+    public final [ResolvedTo(CONTRACTS)] val nullablePropertyWithAnnotatedType: R|@R|Anno|(String(outer))  kotlin/collections/List<@R|Anno|(String(middle))  kotlin/collections/List<@R|Anno|(String(inner))  kotlin/Int>>?|
+        public [ResolvedTo(CONTRACTS)] get(): R|@R|Anno|(String(outer))  kotlin/collections/List<@R|Anno|(String(middle))  kotlin/collections/List<@R|Anno|(String(inner))  kotlin/Int>>?| {
+            ^ Null(null)
+        }
+    public final [ResolvedTo(BODY_RESOLVE)] val propertyToResolve: R|kotlin/String|
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String| {
+            ^ R|/nullablePropertyWithAnnotatedType|?.{ $subj$.<Unresolved name: let>#(<L> = [ResolvedTo(BODY_RESOLVE)] let@fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+                ^ <strcat>(String( (), <Unresolved name: it>#, String()))
+            }
+            ) } ?: String()
+        }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameter.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.message] message: R|kotlin/String|): R|Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val message: R|kotlin/String| = R|<local>/message|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] val nullablePropertyWithAnnotatedType: R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>?|
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>?| {
+            ^ Null(null)
+        }
+    public final [ResolvedTo(BODY_RESOLVE)] val propertyToResolve: R|kotlin/String|
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String| {
+            ^ R|/nullablePropertyWithAnnotatedType|?.{ $subj$.<Unresolved name: let>#(<L> = [ResolvedTo(BODY_RESOLVE)] let@fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+                ^ <strcat>(String( (), <Unresolved name: it>#, String()))
+            }
+            ) } ?: String()
+        }

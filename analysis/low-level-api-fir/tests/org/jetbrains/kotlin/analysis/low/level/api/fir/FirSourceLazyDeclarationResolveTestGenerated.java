@@ -73,6 +73,24 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
     }
 
     @Test
+    @TestMetadata("anonymousFunctionWithAnnotatedParameter.kt")
+    public void testAnonymousFunctionWithAnnotatedParameter() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/anonymousFunctionWithAnnotatedParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("anonymousFunctionWithAnnotatedParameter2.kt")
+    public void testAnonymousFunctionWithAnnotatedParameter2() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/anonymousFunctionWithAnnotatedParameter2.kt");
+    }
+
+    @Test
+    @TestMetadata("anonymousFunctionWithAnnotatedParameterOnImplicitTypePhase.kt")
+    public void testAnonymousFunctionWithAnnotatedParameterOnImplicitTypePhase() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/anonymousFunctionWithAnnotatedParameterOnImplicitTypePhase.kt");
+    }
+
+    @Test
     @TestMetadata("classMembers.kt")
     public void testClassMembers() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/lazyResolve/classMembers.kt");
