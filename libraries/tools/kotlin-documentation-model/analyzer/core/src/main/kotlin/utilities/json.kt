@@ -13,6 +13,7 @@ import com.fasterxml.jackson.core.type.TypeReference as JacksonTypeReference
 private val objectMapper = run {
     val module = SimpleModule().apply {
         addSerializer(FileSerializer)
+        addAbstractTypeMapping(Set::class.java, LinkedHashSet::class.java)
     }
     jacksonObjectMapper()
         .registerModule(module)
