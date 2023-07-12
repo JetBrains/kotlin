@@ -18,15 +18,12 @@ import org.jetbrains.kotlin.ir.interpreter.exceptions.verify
 import org.jetbrains.kotlin.ir.interpreter.stack.CallStack
 import org.jetbrains.kotlin.ir.interpreter.state.*
 import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 
-internal fun IrExpression.handleAndDropResult(callStack: CallStack, dropOnlyUnit: Boolean = false) {
-    val dropResult = fun() {
-        if (!dropOnlyUnit && !this.type.isUnit() || callStack.peekState().isUnit()) callStack.popState()
-    }
+internal fun IrExpression.handleAndDropResult(callStack: CallStack) {
+    val dropResult = fun() { callStack.popState() }
     callStack.pushInstruction(CustomInstruction(dropResult))
     callStack.pushCompoundInstruction(this)
 }
@@ -212,6 +209,7 @@ private fun unfoldInstanceInitializerCall(instanceInitializerCall: IrInstanceIni
     val toInitialize = irClass.declarations.filter { it is IrProperty || it is IrAnonymousInitializer }
     val state = irClass.thisReceiver?.symbol?.let { callStack.loadState(it) } // try to avoid recalculation of properties
 
+    callStack.pushSimpleInstruction(instanceInitializerCall)
     toInitialize.reversed().forEach {
         when {
             it is IrAnonymousInitializer -> callStack.pushCompoundInstruction(it.body)
@@ -258,7 +256,7 @@ private fun unfoldStatements(statements: List<IrStatement>, callStack: CallStack
             is IrExpression ->
                 when {
                     i.isLastIndex() -> callStack.pushCompoundInstruction(statement)
-                    else -> statement.handleAndDropResult(callStack, dropOnlyUnit = true)
+                    else -> statement.handleAndDropResult(callStack)
                 }
             else -> callStack.pushCompoundInstruction(statement)
         }
@@ -435,7 +433,7 @@ private fun unfoldStringConcatenation(expression: IrStringConcatenation, environ
 private fun unfoldComposite(element: IrComposite, callStack: CallStack) {
     when (element.origin) {
         IrStatementOrigin.DESTRUCTURING_DECLARATION, IrStatementOrigin.DO_WHILE_LOOP, null -> // is null for body of do while loop
-            element.statements.reversed().forEach { callStack.pushCompoundInstruction(it) }
+            unfoldStatements(element.statements, callStack)
         else -> TODO("${element.origin} not implemented")
     }
 }
