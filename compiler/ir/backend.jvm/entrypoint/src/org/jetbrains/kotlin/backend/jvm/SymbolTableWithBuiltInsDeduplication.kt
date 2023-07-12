@@ -51,7 +51,7 @@ class SymbolTableWithBuiltInsDeduplication(
 
     private inner class Extension : DescriptorSymbolTableExtension(this) {
         /**
-         * Gets or creates the [IrClassSymbol] for [descriptor], or for the built-in descriptor with the same name if [descriptor] is a
+         * Gets or creates the [IrClassSymbol] for [declaration], or for the built-in descriptor with the same name if [declaration] is a
          * duplicate built-in.
          *
          * Note that not all built-in symbols may have been bound or created by the time [irBuiltIns] has been bound. However, [referenceClass]
@@ -59,19 +59,19 @@ class SymbolTableWithBuiltInsDeduplication(
          * create a stub for the symbol if [referenceClass] was invoked from the stub generator.
          */
         @ObsoleteDescriptorBasedAPI
-        override fun referenceClass(descriptor: ClassDescriptor): IrClassSymbol {
-            val irBuiltIns = this@SymbolTableWithBuiltInsDeduplication.irBuiltIns ?: return super.referenceClass(descriptor)
+        override fun referenceClass(declaration: ClassDescriptor): IrClassSymbol {
+            val irBuiltIns = this@SymbolTableWithBuiltInsDeduplication.irBuiltIns ?: return super.referenceClass(declaration)
 
             // We need to find out whether `descriptor` is possibly a built-in symbol before it's actually retrieved to break recursion as
             // `irBuiltIns.findClass` uses `referenceClass` recursively.
-            val builtInDescriptor = irBuiltIns.findBuiltInClassDescriptor(descriptor)
+            val builtInDescriptor = irBuiltIns.findBuiltInClassDescriptor(declaration)
             if (builtInDescriptor != null) {
                 // We need to delegate to the supertype implementation here to break recursion. `findBuiltInClassDescriptor` will return
                 // `descriptor` even if `descriptor` was found via `findBuiltInClassDescriptor`.
                 return super.referenceClass(builtInDescriptor)
             }
 
-            return super.referenceClass(descriptor)
+            return super.referenceClass(declaration)
         }
     }
 

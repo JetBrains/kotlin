@@ -25,98 +25,98 @@ class IrLazySymbolTable(private val originalTable: SymbolTable) : ReferenceSymbo
     private inner class ExtensionWrapper : DescriptorSymbolTableExtension(originalTable) {
         private val delegate get() = originalTable.descriptorExtension
 
-        override fun referenceClass(descriptor: ClassDescriptor): IrClassSymbol {
+        override fun referenceClass(declaration: ClassDescriptor): IrClassSymbol {
             synchronized(lock) {
-                return delegate.referenceClass(descriptor).also {
+                return delegate.referenceClass(declaration).also {
                     if (!it.isBound) {
-                        stubGenerator?.generateClassStub(descriptor)
+                        stubGenerator?.generateClassStub(declaration)
                     }
                 }
             }
         }
 
-        override fun referenceTypeAlias(descriptor: TypeAliasDescriptor): IrTypeAliasSymbol {
+        override fun referenceTypeAlias(declaration: TypeAliasDescriptor): IrTypeAliasSymbol {
             synchronized(lock) {
-                return delegate.referenceTypeAlias(descriptor).also {
+                return delegate.referenceTypeAlias(declaration).also {
                     if (!it.isBound) {
-                        stubGenerator?.generateTypeAliasStub(descriptor)
+                        stubGenerator?.generateTypeAliasStub(declaration)
                     }
                 }
             }
         }
 
-        override fun referenceConstructor(descriptor: ClassConstructorDescriptor): IrConstructorSymbol {
+        override fun referenceConstructor(declaration: ClassConstructorDescriptor): IrConstructorSymbol {
             synchronized(lock) {
-                return delegate.referenceConstructor(descriptor).also {
+                return delegate.referenceConstructor(declaration).also {
                     if (!it.isBound) {
-                        stubGenerator?.generateConstructorStub(descriptor)
+                        stubGenerator?.generateConstructorStub(declaration)
                     }
                 }
             }
         }
 
-        override fun referenceEnumEntry(descriptor: ClassDescriptor): IrEnumEntrySymbol {
+        override fun referenceEnumEntry(declaration: ClassDescriptor): IrEnumEntrySymbol {
             synchronized(lock) {
-                return delegate.referenceEnumEntry(descriptor).also {
+                return delegate.referenceEnumEntry(declaration).also {
                     if (!it.isBound) {
-                        stubGenerator?.generateEnumEntryStub(descriptor)
+                        stubGenerator?.generateEnumEntryStub(declaration)
                     }
                 }
             }
         }
 
-        override fun referenceSimpleFunction(descriptor: FunctionDescriptor): IrSimpleFunctionSymbol {
+        override fun referenceSimpleFunction(declaration: FunctionDescriptor): IrSimpleFunctionSymbol {
             synchronized(lock) {
-                return delegate.referenceSimpleFunction(descriptor).also {
+                return delegate.referenceSimpleFunction(declaration).also {
                     if (!it.isBound) {
-                        stubGenerator?.generateFunctionStub(descriptor)
+                        stubGenerator?.generateFunctionStub(declaration)
                     }
                 }
             }
         }
 
-        override fun referenceProperty(descriptor: PropertyDescriptor): IrPropertySymbol {
+        override fun referenceProperty(declaration: PropertyDescriptor): IrPropertySymbol {
             synchronized(lock) {
-                return delegate.referenceProperty(descriptor).also {
+                return delegate.referenceProperty(declaration).also {
                     if (!it.isBound) {
-                        stubGenerator?.generatePropertyStub(descriptor)
+                        stubGenerator?.generatePropertyStub(declaration)
                     }
                 }
             }
         }
 
-        override fun referenceTypeParameter(classifier: TypeParameterDescriptor): IrTypeParameterSymbol {
+        override fun referenceTypeParameter(declaration: TypeParameterDescriptor): IrTypeParameterSymbol {
             synchronized(lock) {
-                return delegate.referenceTypeParameter(classifier).also {
+                return delegate.referenceTypeParameter(declaration).also {
                     if (!it.isBound) {
-                        stubGenerator?.generateOrGetTypeParameterStub(classifier)
+                        stubGenerator?.generateOrGetTypeParameterStub(declaration)
                     }
                 }
             }
         }
 
-        override fun referenceValueParameter(descriptor: ParameterDescriptor): IrValueParameterSymbol {
-            return delegate.referenceValueParameter(descriptor)
+        override fun referenceValueParameter(declaration: ParameterDescriptor): IrValueParameterSymbol {
+            return delegate.referenceValueParameter(declaration)
         }
 
         override fun referenceValue(value: ValueDescriptor): IrValueSymbol {
             return delegate.referenceValue(value)
         }
 
-        override fun referenceScript(descriptor: ScriptDescriptor): IrScriptSymbol {
-            return delegate.referenceScript(descriptor)
+        override fun referenceScript(declaration: ScriptDescriptor): IrScriptSymbol {
+            return delegate.referenceScript(declaration)
         }
 
-        override fun referenceField(descriptor: PropertyDescriptor): IrFieldSymbol {
-            return delegate.referenceField(descriptor)
+        override fun referenceField(declaration: PropertyDescriptor): IrFieldSymbol {
+            return delegate.referenceField(declaration)
         }
 
-        override fun referenceDeclaredFunction(descriptor: FunctionDescriptor): IrSimpleFunctionSymbol {
-            return delegate.referenceDeclaredFunction(descriptor)
+        override fun referenceDeclaredFunction(declaration: FunctionDescriptor): IrSimpleFunctionSymbol {
+            return delegate.referenceDeclaredFunction(declaration)
         }
 
-        override fun referenceScopedTypeParameter(classifier: TypeParameterDescriptor): IrTypeParameterSymbol {
-            return delegate.referenceScopedTypeParameter(classifier)
+        override fun referenceScopedTypeParameter(declaration: TypeParameterDescriptor): IrTypeParameterSymbol {
+            return delegate.referenceScopedTypeParameter(declaration)
         }
     }
 }

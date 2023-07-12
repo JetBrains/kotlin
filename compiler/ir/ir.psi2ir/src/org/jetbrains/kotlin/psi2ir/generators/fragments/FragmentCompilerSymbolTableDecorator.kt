@@ -34,12 +34,12 @@ class FragmentCompilerSymbolTableDecorator(
     }
 
     private inner class ExtensionDecorator : DescriptorSymbolTableExtension(this) {
-        override fun referenceValueParameter(descriptor: ParameterDescriptor): IrValueParameterSymbol {
-            val fi = fragmentInfo ?: return super.referenceValueParameter(descriptor)
+        override fun referenceValueParameter(declaration: ParameterDescriptor): IrValueParameterSymbol {
+            val fi = fragmentInfo ?: return super.referenceValueParameter(declaration)
 
-            if (descriptor !is ReceiverParameterDescriptor) return super.referenceValueParameter(descriptor)
+            if (declaration !is ReceiverParameterDescriptor) return super.referenceValueParameter(declaration)
 
-            val finderPredicate = when (val receiverValue = descriptor.value) {
+            val finderPredicate = when (val receiverValue = declaration.value) {
                 is ExtensionReceiver, is ContextReceiver -> { (targetDescriptor, _): EvaluatorFragmentParameterInfo ->
                     receiverValue == (targetDescriptor as? ReceiverParameterDescriptor)?.value
                 }
@@ -54,7 +54,7 @@ class FragmentCompilerSymbolTableDecorator(
             if (parameterPosition > -1) {
                 return super.referenceValueParameter(fi.methodDescriptor.valueParameters[parameterPosition])
             }
-            return super.referenceValueParameter(descriptor)
+            return super.referenceValueParameter(declaration)
         }
 
         override fun referenceValue(value: ValueDescriptor): IrValueSymbol {

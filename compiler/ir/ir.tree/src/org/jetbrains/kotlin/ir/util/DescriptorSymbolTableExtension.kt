@@ -80,17 +80,17 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
         return IrScriptImpl(symbol, nameProvider.nameForDeclaration(script), irFactory, startOffset, endOffset)
     }
 
-    override fun createScriptSymbol(descriptor: ScriptDescriptor, signature: IdSignature?): IrScriptSymbol {
-        return IrScriptSymbolImpl(descriptor)
+    override fun createScriptSymbol(declaration: ScriptDescriptor, signature: IdSignature?): IrScriptSymbol {
+        return IrScriptSymbolImpl(declaration)
     }
 
     // ------------------------------------ class ------------------------------------
 
-    override fun referenceClass(descriptor: ClassDescriptor): IrClassSymbol {
-        return if (descriptor is IrBasedClassDescriptor) {
-            descriptor.owner.symbol
+    override fun referenceClass(declaration: ClassDescriptor): IrClassSymbol {
+        return if (declaration is IrBasedClassDescriptor) {
+            declaration.owner.symbol
         } else {
-            super.referenceClass(descriptor)
+            super.referenceClass(declaration)
         }
     }
 
@@ -105,8 +105,8 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
         )
     }
 
-    override fun createPublicClassSymbol(descriptor: ClassDescriptor, signature: IdSignature): IrClassSymbol {
-        return IrClassPublicSymbolImpl(signature, descriptor)
+    override fun createPublicClassSymbol(declaration: ClassDescriptor, signature: IdSignature): IrClassSymbol {
+        return IrClassPublicSymbolImpl(signature, declaration)
     }
 
     override fun createPrivateClassSymbol(descriptor: ClassDescriptor): IrClassSymbol {
@@ -130,12 +130,12 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
         )
     }
 
-    override fun createPublicConstructorSymbol(descriptor: ClassConstructorDescriptor, signature: IdSignature): IrConstructorSymbol {
-        return IrConstructorPublicSymbolImpl(signature, descriptor)
+    override fun createPublicConstructorSymbol(declaration: ClassConstructorDescriptor, signature: IdSignature): IrConstructorSymbol {
+        return IrConstructorPublicSymbolImpl(signature, declaration)
     }
 
-    override fun createPrivateConstructorSymbol(descriptor: ClassConstructorDescriptor): IrConstructorSymbol {
-        return IrConstructorSymbolImpl(descriptor)
+    override fun createPrivateConstructorSymbol(declaration: ClassConstructorDescriptor): IrConstructorSymbol {
+        return IrConstructorSymbolImpl(declaration)
     }
 
     // ------------------------------------ enum entry ------------------------------------
@@ -155,12 +155,12 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
         )
     }
 
-    override fun createPublicEnumEntrySymbol(descriptor: ClassDescriptor, signature: IdSignature): IrEnumEntrySymbol {
-        return IrEnumEntryPublicSymbolImpl(signature, descriptor)
+    override fun createPublicEnumEntrySymbol(declaration: ClassDescriptor, signature: IdSignature): IrEnumEntrySymbol {
+        return IrEnumEntryPublicSymbolImpl(signature, declaration)
     }
 
-    override fun createPrivateEnumEntrySymbol(descriptor: ClassDescriptor): IrEnumEntrySymbol {
-        return IrEnumEntrySymbolImpl(descriptor)
+    override fun createPrivateEnumEntrySymbol(declaration: ClassDescriptor): IrEnumEntrySymbol {
+        return IrEnumEntrySymbolImpl(declaration)
     }
 
     override fun defaultEnumEntryFactory(
@@ -175,19 +175,19 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
 
     // ------------------------------------ field ------------------------------------
 
-    override fun createPublicFieldSymbol(descriptor: PropertyDescriptor, signature: IdSignature): IrFieldSymbol {
-        return IrFieldPublicSymbolImpl(signature, descriptor)
+    override fun createPublicFieldSymbol(declaration: PropertyDescriptor, signature: IdSignature): IrFieldSymbol {
+        return IrFieldPublicSymbolImpl(signature, declaration)
     }
 
-    override fun createPrivateFieldSymbol(descriptor: PropertyDescriptor): IrFieldSymbol {
-        return IrFieldSymbolImpl(descriptor)
+    override fun createPrivateFieldSymbol(declaration: PropertyDescriptor): IrFieldSymbol {
+        return IrFieldSymbolImpl(declaration)
     }
 
     override fun defaultFieldFactory(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        descriptor: PropertyDescriptor,
+        declaration: PropertyDescriptor,
         type: IrType,
         visibility: DescriptorVisibility?,
         symbol: IrFieldSymbol,
@@ -196,7 +196,7 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
             startOffset = startOffset,
             endOffset = endOffset,
             origin = origin,
-            name = nameProvider.nameForDeclaration(descriptor),
+            name = nameProvider.nameForDeclaration(declaration),
             visibility = visibility ?: symbol.descriptor.visibility,
             symbol = symbol,
             type = type,
@@ -225,19 +225,19 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
         )
     }
 
-    override fun createPublicPropertySymbol(descriptor: PropertyDescriptor, signature: IdSignature): IrPropertySymbol {
-        return IrPropertyPublicSymbolImpl(signature, descriptor)
+    override fun createPublicPropertySymbol(declaration: PropertyDescriptor, signature: IdSignature): IrPropertySymbol {
+        return IrPropertyPublicSymbolImpl(signature, declaration)
     }
 
-    override fun createPrivatePropertySymbol(descriptor: PropertyDescriptor): IrPropertySymbol {
-        return IrPropertySymbolImpl(descriptor)
+    override fun createPrivatePropertySymbol(declaration: PropertyDescriptor): IrPropertySymbol {
+        return IrPropertySymbolImpl(declaration)
     }
 
     override fun defaultPropertyFactory(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        descriptor: PropertyDescriptor,
+        declaration: PropertyDescriptor,
         isDelegated: Boolean,
         symbol: IrPropertySymbol,
     ): IrProperty {
@@ -245,17 +245,17 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
             startOffset = startOffset,
             endOffset = endOffset,
             origin = origin,
-            name = nameProvider.nameForDeclaration(descriptor),
-            visibility = descriptor.visibility,
-            modality = descriptor.modality,
+            name = nameProvider.nameForDeclaration(declaration),
+            visibility = declaration.visibility,
+            modality = declaration.modality,
             symbol = symbol,
-            isVar = descriptor.isVar,
-            isConst = descriptor.isConst,
-            isLateinit = descriptor.isLateInit,
+            isVar = declaration.isVar,
+            isConst = declaration.isConst,
+            isLateinit = declaration.isLateInit,
             isDelegated = isDelegated,
-            isExternal = descriptor.isEffectivelyExternal(),
-            isExpect = descriptor.isExpect,
-            isFakeOverride = descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE,
+            isExternal = declaration.isEffectivelyExternal(),
+            isExpect = declaration.isExpect,
+            isFakeOverride = declaration.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE,
         ).apply {
             metadata = DescriptorMetadataSource.Property(symbol.descriptor)
         }
@@ -263,12 +263,12 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
 
     // ------------------------------------ typealias ------------------------------------
 
-    override fun createPublicTypeAliasSymbol(descriptor: TypeAliasDescriptor, signature: IdSignature): IrTypeAliasSymbol {
-        return IrTypeAliasPublicSymbolImpl(signature, descriptor)
+    override fun createPublicTypeAliasSymbol(declaration: TypeAliasDescriptor, signature: IdSignature): IrTypeAliasSymbol {
+        return IrTypeAliasPublicSymbolImpl(signature, declaration)
     }
 
-    override fun createPrivateTypeAliasSymbol(descriptor: TypeAliasDescriptor): IrTypeAliasSymbol {
-        return IrTypeAliasSymbolImpl(descriptor)
+    override fun createPrivateTypeAliasSymbol(declaration: TypeAliasDescriptor): IrTypeAliasSymbol {
+        return IrTypeAliasSymbolImpl(declaration)
     }
 
     // ------------------------------------ function ------------------------------------
@@ -288,36 +288,36 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
         )
     }
 
-    override fun createPublicFunctionSymbol(descriptor: FunctionDescriptor, signature: IdSignature): IrSimpleFunctionSymbol {
-        return IrSimpleFunctionPublicSymbolImpl(signature, descriptor)
+    override fun createPublicFunctionSymbol(declaration: FunctionDescriptor, signature: IdSignature): IrSimpleFunctionSymbol {
+        return IrSimpleFunctionPublicSymbolImpl(signature, declaration)
     }
 
-    override fun createPrivateFunctionSymbol(descriptor: FunctionDescriptor): IrSimpleFunctionSymbol {
-        return IrSimpleFunctionSymbolImpl(descriptor)
+    override fun createPrivateFunctionSymbol(declaration: FunctionDescriptor): IrSimpleFunctionSymbol {
+        return IrSimpleFunctionSymbolImpl(declaration)
     }
 
     // ------------------------------------ type parameter ------------------------------------
 
-    override fun createPublicTypeParameterSymbol(descriptor: TypeParameterDescriptor, signature: IdSignature): IrTypeParameterSymbol {
-        return IrTypeParameterPublicSymbolImpl(signature, descriptor)
+    override fun createPublicTypeParameterSymbol(declaration: TypeParameterDescriptor, signature: IdSignature): IrTypeParameterSymbol {
+        return IrTypeParameterPublicSymbolImpl(signature, declaration)
     }
 
-    override fun createPrivateTypeParameterSymbol(descriptor: TypeParameterDescriptor): IrTypeParameterSymbol {
-        return IrTypeParameterSymbolImpl(descriptor)
+    override fun createPrivateTypeParameterSymbol(declaration: TypeParameterDescriptor): IrTypeParameterSymbol {
+        return IrTypeParameterSymbolImpl(declaration)
     }
 
     override fun defaultTypeParameterFactory(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
-        descriptor: TypeParameterDescriptor,
+        declaration: TypeParameterDescriptor,
         symbol: IrTypeParameterSymbol,
     ): IrTypeParameter {
         return irFactory.createTypeParameter(
             startOffset = startOffset,
             endOffset = endOffset,
             origin = origin,
-            name = nameProvider.nameForDeclaration(descriptor),
+            name = nameProvider.nameForDeclaration(declaration),
             symbol = symbol,
             variance = symbol.descriptor.variance,
             index = symbol.descriptor.index,
@@ -399,9 +399,9 @@ open class DescriptorSymbolTableExtension(table: SymbolTable) : SymbolTableExten
         valueParameterSlice.introduceLocal(irValueParameter.descriptor, irValueParameter.symbol)
     }
 
-    override fun referenceValueParameter(descriptor: ParameterDescriptor): IrValueParameterSymbol {
-        return valueParameterSlice.referenced(descriptor) {
-            error("Undefined parameter referenced: $descriptor\n${valueParameterSlice.dump()}")
+    override fun referenceValueParameter(declaration: ParameterDescriptor): IrValueParameterSymbol {
+        return valueParameterSlice.referenced(declaration) {
+            error("Undefined parameter referenced: $declaration\n${valueParameterSlice.dump()}")
         }
     }
 
