@@ -44,10 +44,6 @@ class LLFirSessionInvalidationService(private val project: Project) : Disposable
             KotlinGlobalModuleStateModificationListener { invalidateAll(includeStableModules = true) }
         )
         busConnection.subscribe(
-            KotlinTopics.GLOBAL_OUT_OF_BLOCK_MODIFICATION,
-            KotlinGlobalOutOfBlockModificationListener { invalidateAll(includeStableModules = true) }
-        )
-        busConnection.subscribe(
             KotlinTopics.GLOBAL_SOURCE_MODULE_STATE_MODIFICATION,
             KotlinGlobalSourceModuleStateModificationListener { invalidateAll(includeStableModules = false) },
         )
