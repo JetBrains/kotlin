@@ -43,6 +43,7 @@ internal fun <V : Any> createCache(compute: (Class<*>) -> V): CacheByClass<V> {
  * ClassValue -> KPackageImpl.getClass() -> UrlClassloader -> all loaded classes by this CL ->
  *  -> kotlin.reflect.jvm.internal.ClassValueCache -> ClassValue
  */
+@kotlin.reflect.jvm.internal.SuppressJdk6SignatureCheck
 private class ComputableClassValue<V>(@JvmField val compute: (Class<*>) -> V) : ClassValue<SoftReference<V>>() {
     override fun computeValue(type: Class<*>): SoftReference<V> {
         return SoftReference(compute(type))
@@ -51,6 +52,7 @@ private class ComputableClassValue<V>(@JvmField val compute: (Class<*>) -> V) : 
     fun createNewCopy() = ComputableClassValue(compute)
 }
 
+@kotlin.reflect.jvm.internal.SuppressJdk6SignatureCheck
 private class ClassValueCache<V>(compute: (Class<*>) -> V) : CacheByClass<V>() {
 
     @Volatile

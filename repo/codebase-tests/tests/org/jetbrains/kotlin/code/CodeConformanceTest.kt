@@ -191,11 +191,14 @@ class CodeConformanceTest : TestCase() {
                 "org.jetbrains.jet" in source
             },
             FileTestCase(
-                "%d source files contain references to package kotlin.reflect.jvm.internal.impl.\n" +
+                message = "%d source files contain references to package kotlin.reflect.jvm.internal.impl.\n" +
                         "This package contains internal reflection implementation and is a result of a " +
                         "post-processing of kotlin-reflect.jar by jarjar.\n" +
                         "Most probably you meant to use classes from org.jetbrains.kotlin.**.\n" +
-                        "Please change references in these files or exclude them in this test:\n%s"
+                        "Please change references in these files or exclude them in this test:\n%s",
+                allowedFiles = listOf(
+                    "libraries/tools/jdk-api-validator/src/test/JdkApiUsageTest.kt"
+                )
             ) { _, source ->
                 "kotlin.reflect.jvm.internal.impl" in source
             },

@@ -282,6 +282,7 @@
 /libraries/kotlin-dom-api-compat/ "Kotlin JS"
 /libraries/tools/kotlin-build-tools-enum-compat/ "Kotlin Build Tools"
 /libraries/tools/gradle/ "Kotlin Build Tools"
+/libraries/tools/jdk-api-validator/ "Kotlin Libraries"
 /libraries/tools/kotlin-allopen/ "Kotlin Build Tools"
 /libraries/tools/kotlin-annotations-jvm/ "Kotlin Libraries"
 /libraries/tools/kotlin-assignment/ "Kotlin Build Tools"
