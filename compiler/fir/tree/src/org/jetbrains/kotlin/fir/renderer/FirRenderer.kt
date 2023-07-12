@@ -481,11 +481,7 @@ class FirRenderer(
         }
 
         override fun visitStatement(statement: FirStatement) {
-            if (statement is FirStubStatement) {
-                print("[StubStatement]")
-            } else {
-                visitElement(statement)
-            }
+            visitElement(statement)
         }
 
         override fun visitReturnExpression(returnExpression: FirReturnExpression) {

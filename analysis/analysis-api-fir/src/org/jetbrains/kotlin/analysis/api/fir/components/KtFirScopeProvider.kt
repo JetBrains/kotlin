@@ -246,7 +246,6 @@ internal class KtFirScopeProvider(
 
     private fun getScopeKind(firScope: FirScope, indexInTower: Int): KtScopeKind = when (firScope) {
         is FirNameAwareOnlyCallablesScope -> getScopeKind(firScope.delegate, indexInTower)
-        is FirNameAwareOnlyClassifiersScope -> getScopeKind(firScope.delegate, indexInTower)
 
         is FirLocalScope -> KtScopeKind.LocalScope(indexInTower)
         is FirTypeScope -> KtScopeKind.TypeScope(indexInTower)

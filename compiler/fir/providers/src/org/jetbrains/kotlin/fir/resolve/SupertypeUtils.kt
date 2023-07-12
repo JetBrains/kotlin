@@ -164,11 +164,10 @@ fun lookupSuperTypes(
     symbol: FirClassifierSymbol<*>,
     lookupInterfaces: Boolean,
     deep: Boolean,
-    useSiteSession: FirSession,
-    supertypeSupplier: SupertypeSupplier = SupertypeSupplier.Default
+    useSiteSession: FirSession
 ): List<ConeClassLikeType> {
     return SmartList<ConeClassLikeType>().also {
-        symbol.collectSuperTypes(it, SmartSet.create(), deep, lookupInterfaces, false, useSiteSession, supertypeSupplier)
+        symbol.collectSuperTypes(it, SmartSet.create(), deep, lookupInterfaces, false, useSiteSession, SupertypeSupplier.Default)
     }
 }
 

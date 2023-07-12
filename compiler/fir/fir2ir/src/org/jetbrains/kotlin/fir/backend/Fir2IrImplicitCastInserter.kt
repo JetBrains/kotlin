@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.backend
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.impl.FirStubStatement
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.render
@@ -111,7 +110,6 @@ class Fir2IrImplicitCastInserter(
     override fun visitStatement(statement: FirStatement, data: IrElement): IrElement {
         return when (statement) {
             is FirTypeAlias -> data
-            FirStubStatement -> data
             is FirUnitExpression -> coerceToUnitIfNeeded(data as IrExpression, irBuiltIns)
             is FirBlock -> (data as IrContainerExpression).insertImplicitCasts()
             else -> statement.accept(this, data)
