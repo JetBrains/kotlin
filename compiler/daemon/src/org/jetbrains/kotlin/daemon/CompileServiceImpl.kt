@@ -559,8 +559,9 @@ abstract class CompileServiceImplBase(
         val modulesApiHistory = incrementalCompilationOptions.multiModuleICSettings?.run {
             val modulesInfo = incrementalCompilationOptions.modulesInfo
                 ?: error("The build is configured to use the history-file based IC approach, but doesn't provide the modulesInfo")
-
-            ModulesApiHistoryJs(incrementalCompilationOptions.rootProjectDir, modulesInfo)
+            val rootProjectDir = incrementalCompilationOptions.rootProjectDir
+                ?: error("rootProjectDir is expected to be non null when the history-file based IC approach is used")
+            ModulesApiHistoryJs(rootProjectDir, modulesInfo)
         } ?: EmptyModulesApiHistory
 
         val compiler = IncrementalJsCompilerRunner(
@@ -617,6 +618,9 @@ abstract class CompileServiceImplBase(
             reporter.info { "Use module detection: $useModuleDetection" }
             val modulesInfo = incrementalCompilationOptions.modulesInfo
                 ?: error("The build is configured to use the history-file based IC approach, but doesn't provide the modulesInfo")
+            check(projectRoot != null) {
+                "rootProjectDir is expected to be non null when the history-file based IC approach is used"
+            }
 
             if (!useModuleDetection) {
                 ModulesApiHistoryJvm(projectRoot, modulesInfo)

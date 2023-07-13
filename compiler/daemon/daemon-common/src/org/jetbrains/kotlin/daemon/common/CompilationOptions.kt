@@ -73,7 +73,7 @@ class IncrementalCompilationOptions(
     /**
      * Root project directory, used to resolve relative paths
      */
-    val rootProjectDir: File,
+    val rootProjectDir: File?,
     kotlinScriptExtensions: Array<String>? = null,
     val withAbiSnapshot: Boolean = false,
     val preciseCompilationResultsBackup: Boolean = false,

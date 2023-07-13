@@ -19,7 +19,7 @@ import java.io.File
 @VisibleForTesting
 class BuildReportICReporter(
     private val compilationResults: CompilationResults,
-    rootDir: File,
+    rootDir: File?,
     private val isVerbose: Boolean = false
 ) : ICReporterBase(rootDir), RemoteICReporter {
     private val icLogLines = arrayListOf<String>()

@@ -19,7 +19,7 @@ import java.io.File
 @VisibleForTesting
 class DebugMessagesICReporter(
     private val servicesFacade: CompilerServicesFacadeBase,
-    rootDir: File,
+    rootDir: File?,
     private val reportSeverity: ICReporter.ReportSeverity
 ) : ICReporterBase(rootDir), RemoteICReporter {
 
