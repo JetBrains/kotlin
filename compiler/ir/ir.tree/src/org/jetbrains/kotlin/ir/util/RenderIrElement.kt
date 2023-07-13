@@ -540,7 +540,7 @@ internal fun DescriptorRenderer.renderDescriptor(descriptor: DeclarationDescript
         render(descriptor)
 
 private fun IrDeclarationWithName.renderSignatureIfEnabled(printSignatures: Boolean): String =
-    symbol.signature.takeIf { printSignatures }?.let {"signature:${it.render()} "} ?: ""
+    if (printSignatures) symbol.signature?.let { "signature:${it.render()} " }.orEmpty() else ""
 
 internal fun IrDeclaration.renderOriginIfNonTrivial(): String =
     if (origin != IrDeclarationOrigin.DEFINED) "$origin " else ""
