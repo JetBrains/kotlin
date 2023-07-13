@@ -196,8 +196,8 @@ internal object FirToConstantValueTransformer : FirDefaultVisitor<ConstantValue<
         functionCall: FirFunctionCall,
         data: FirToConstantValueTransformerData
     ): ConstantValue<*>? {
-        if (functionCall.isArrayOfCall) {
-            return FirArrayOfCallTransformer().transformFunctionCall(functionCall, null).accept(this, data)
+        if (functionCall.isArrayOfCall(data.session)) {
+            return FirArrayOfCallTransformer().transformFunctionCall(functionCall, data.session).accept(this, data)
         }
         return visitQualifiedAccessExpression(functionCall, data)
     }
@@ -289,7 +289,7 @@ internal object FirToConstantValueChecker : FirDefaultVisitor<Boolean, FirSessio
     }
 
     override fun visitFunctionCall(functionCall: FirFunctionCall, data: FirSession): Boolean {
-        if (functionCall.isArrayOfCall) return functionCall.arguments.all { it.accept(this, data) }
+        if (functionCall.isArrayOfCall(data)) return functionCall.arguments.all { it.accept(this, data) }
         return visitQualifiedAccessExpression(functionCall, data)
     }
 

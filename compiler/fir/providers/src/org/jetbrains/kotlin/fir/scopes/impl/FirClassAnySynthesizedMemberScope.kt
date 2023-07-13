@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.FirSimpleFunctionBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.isEquals
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
@@ -46,7 +47,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
  * This declared scope wrapper is created for data/value classes and provides Any method stubs, if necessary
  */
 class FirClassAnySynthesizedMemberScope(
-    session: FirSession,
+    private val session: FirSession,
     private val declaredMemberScope: FirContainingNamesAwareScope,
     klass: FirRegularClass,
     scopeSession: ScopeSession,
@@ -118,7 +119,7 @@ class FirClassAnySynthesizedMemberScope(
             }
             else -> {
                 lazyResolveToPhase(FirResolvePhase.TYPES)
-                fir.isEquals()
+                fir.isEquals(session)
             }
         }
     }

@@ -30,6 +30,7 @@ object FirNotNullAssertionChecker : FirCheckNotNullCallChecker() {
         }
         // TODO: use of Unit is subject to change.
         //  See BodyResolveComponents.typeForQualifier in ResolveUtils.kt which returns Unit for no value type.
+        @OptIn(UnexpandedTypeCheck::class)
         if (argument is FirResolvedQualifier && argument.typeRef.isUnit) {
             // Would be reported as NO_COMPANION_OBJECT
             return

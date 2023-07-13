@@ -45,7 +45,8 @@ val ConeKotlinType.isPrimitiveNumberOrNullableType: Boolean
 val ConeKotlinType.isArrayType: Boolean
     get() {
         return isBuiltinType(StandardClassIds.Array, false) ||
-                StandardClassIds.primitiveArrayTypeByElementType.values.any { isBuiltinType(it, false) }
+                StandardClassIds.primitiveArrayTypeByElementType.values.any { isBuiltinType(it, false) } ||
+                StandardClassIds.unsignedArrayTypeByElementType.values.any { isBuiltinType(it, false) }
     }
 
 // Same as [KotlinBuiltIns#isNonPrimitiveArray]

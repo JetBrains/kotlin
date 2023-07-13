@@ -34,15 +34,40 @@ val FirTypeRef.coneType: ConeKotlinType
 val FirTypeRef.coneTypeOrNull: ConeKotlinType?
     get() = coneTypeSafe()
 
+@RequiresOptIn(
+    "This type check never expands type aliases. Use with care (probably Ok for expression & constructor types). " +
+            "Generally this.coneType.fullyExpandedType(session).isSomeType is better"
+)
+annotation class UnexpandedTypeCheck
+
+@UnexpandedTypeCheck
 val FirTypeRef.isAny: Boolean get() = isBuiltinType(StandardClassIds.Any, false)
+
+@UnexpandedTypeCheck
 val FirTypeRef.isNullableAny: Boolean get() = isBuiltinType(StandardClassIds.Any, true)
+
+@UnexpandedTypeCheck
 val FirTypeRef.isNothing: Boolean get() = isBuiltinType(StandardClassIds.Nothing, false)
+
+@UnexpandedTypeCheck
 val FirTypeRef.isNullableNothing: Boolean get() = isBuiltinType(StandardClassIds.Nothing, true)
+
+@UnexpandedTypeCheck
 val FirTypeRef.isUnit: Boolean get() = isBuiltinType(StandardClassIds.Unit, false)
+
+@UnexpandedTypeCheck
 val FirTypeRef.isBoolean: Boolean get() = isBuiltinType(StandardClassIds.Boolean, false)
+
+@UnexpandedTypeCheck
 val FirTypeRef.isInt: Boolean get() = isBuiltinType(StandardClassIds.Int, false)
+
+@UnexpandedTypeCheck
 val FirTypeRef.isString: Boolean get() = isBuiltinType(StandardClassIds.String, false)
+
+@UnexpandedTypeCheck
 val FirTypeRef.isEnum: Boolean get() = isBuiltinType(StandardClassIds.Enum, false)
+
+@UnexpandedTypeCheck
 val FirTypeRef.isArrayType: Boolean
     get() =
         isBuiltinType(StandardClassIds.Array, false)

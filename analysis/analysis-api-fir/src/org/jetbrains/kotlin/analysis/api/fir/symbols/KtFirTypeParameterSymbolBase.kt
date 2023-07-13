@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.isNullableAny
 import org.jetbrains.kotlin.fir.analysis.checkers.typeParameterSymbols
+import org.jetbrains.kotlin.fir.types.UnexpandedTypeCheck
 
 /**
  * [KtFirTypeParameterSymbolBase] provides shared implementations for [KtFirTypeParameterSymbol] and [KtFirPsiJavaTypeParameterSymbol].
@@ -29,6 +30,7 @@ internal sealed class KtFirTypeParameterSymbolBase : KtTypeParameterSymbol(), Kt
             KtFirAnnotationListForDeclaration.create(firSymbol, analysisSession.useSiteSession, token)
         }
 
+    @OptIn(UnexpandedTypeCheck::class)
     override val upperBounds: List<KtType> by cached {
         firSymbol.resolvedBounds.mapNotNull { type ->
             if (type.isNullableAny) return@mapNotNull null

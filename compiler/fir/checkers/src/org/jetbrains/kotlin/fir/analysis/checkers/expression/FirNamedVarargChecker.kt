@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
+import org.jetbrains.kotlin.fir.types.UnexpandedTypeCheck
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isArrayType
 
@@ -50,6 +51,8 @@ object FirNamedVarargChecker : FirCallChecker() {
             val typeRef = argument.expression.typeRef
             if (typeRef is FirErrorTypeRef) return
             if (argument.expression is FirArrayOfCall) return
+
+            @OptIn(UnexpandedTypeCheck::class)
             if (allowAssignArray && typeRef.isArrayType) return
 
             if (isAnnotation) {

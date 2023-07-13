@@ -536,7 +536,7 @@ abstract class FirDataFlowAnalyzer(
 
         return session.declaredMemberScope(this, memberRequiredPhase = FirResolvePhase.STATUS)
             .getFunctions(OperatorNameConventions.EQUALS)
-            .any { it.fir.isEquals() }
+            .any { it.fir.isEquals(session) }
     }
 
     // ----------------------------------- Jump -----------------------------------
@@ -1107,6 +1107,7 @@ abstract class FirDataFlowAnalyzer(
         }
     }
 
+    @OptIn(UnexpandedTypeCheck::class)
     fun exitElvis(elvisExpression: FirElvisExpression, isLhsNotNull: Boolean, callCompleted: Boolean) {
         val node = graphBuilder.exitElvis(isLhsNotNull, callCompleted)
         node.mergeIncomingFlow { flow ->

@@ -214,6 +214,7 @@ private object WhenOnNullableExhaustivenessChecker : WhenExhaustivenessChecker()
     private object ConditionChecker : AbstractConditionChecker<Flags>() {
         override fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall, data: Flags) {
             val argument = equalityOperatorCall.arguments[1]
+            @OptIn(UnexpandedTypeCheck::class)
             if (argument.typeRef.isNullableNothing) {
                 data.containsNull = true
             }

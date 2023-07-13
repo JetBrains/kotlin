@@ -451,7 +451,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             addReceiversFromExtensions(result)
 
             if (enableArrayOfCallTransformation) {
-                return arrayOfCallTransformer.transformFunctionCall(result, null)
+                return arrayOfCallTransformer.transformFunctionCall(result, session)
             }
             return result
         }

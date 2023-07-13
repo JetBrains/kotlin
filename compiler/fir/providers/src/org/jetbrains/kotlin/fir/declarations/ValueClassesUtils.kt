@@ -88,7 +88,10 @@ fun FirSimpleFunction.isTypedEqualsInValueClass(session: FirSession): Boolean =
             contextReceivers.isEmpty() && receiverParameter == null
                     && name == OperatorNameConventions.EQUALS
                     && this@run.isInline && valueParameters.size == 1
-                    && (returnTypeRef.isBoolean || returnTypeRef.isNothing)
-                    && valueParameters[0].returnTypeRef.coneType.let { it is ConeClassLikeType && it.replaceArgumentsWithStarProjections() == valueClassStarProjection }
+                    && returnTypeRef.coneType.fullyExpandedType(session).let {
+                it.isBoolean || it.isNothing
+            } && valueParameters[0].returnTypeRef.coneType.let {
+                it is ConeClassLikeType && it.replaceArgumentsWithStarProjections() == valueClassStarProjection
+            }
         }
-    } ?: false
+    } == true

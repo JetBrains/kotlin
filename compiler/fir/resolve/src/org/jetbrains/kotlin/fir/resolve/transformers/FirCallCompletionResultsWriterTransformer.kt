@@ -249,7 +249,7 @@ class FirCallCompletionResultsWriterTransformer(
         }
 
         if (enableArrayOfCallTransformation) {
-            return arrayOfCallTransformer.transformFunctionCall(result, null)
+            return arrayOfCallTransformer.transformFunctionCall(result, session)
         }
 
         return result
@@ -618,7 +618,7 @@ class FirCallCompletionResultsWriterTransformer(
             session.lookupTracker?.recordTypeResolveAsLookup(result.typeRef, result.source, context.file.source)
         }
         // Have to delay this until the type is written to avoid adding a return if the type is Unit.
-        result.addReturnToLastStatementIfNeeded()
+        result.addReturnToLastStatementIfNeeded(session)
         return result
     }
 

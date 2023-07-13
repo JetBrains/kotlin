@@ -364,6 +364,7 @@ internal class ClassMemberGenerator(
              *   constructor() : this(10) // <---- this call, IrDelegatingConstructorCall
              * }
              */
+            @OptIn(UnexpandedTypeCheck::class)
             if ((constructor.isFromEnumClass || constructor.returnTypeRef.isEnum) && this.isSuper) {
                 IrEnumConstructorCallImpl(
                     startOffset, endOffset,

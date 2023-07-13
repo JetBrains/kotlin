@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.resolve.dfa.PersistentFlow
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.UnexpandedTypeCheck
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitNothingTypeRef
 import org.jetbrains.kotlin.fir.types.isNothing
@@ -815,6 +816,8 @@ object FirStub : FirExpression() {
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirExpression = this
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement = this
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) { assert(newAnnotations.isEmpty()) }
+
+    @OptIn(UnexpandedTypeCheck::class)
     override fun replaceTypeRef(newTypeRef: FirTypeRef) { assert(newTypeRef.isNothing) }
 }
 

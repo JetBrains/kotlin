@@ -96,12 +96,3 @@ val FirCallableSymbol<*>.isExtension: Boolean
         is FirProperty -> fir.receiverParameter != null
         is FirVariable -> false
     }
-
-fun FirSimpleFunction.isEquals(): Boolean {
-    if (name != OperatorNameConventions.EQUALS) return false
-    if (valueParameters.size != 1) return false
-    if (contextReceivers.isNotEmpty()) return false
-    if (receiverParameter != null) return false
-    val parameter = valueParameters.first()
-    return parameter.returnTypeRef.isNullableAny
-}

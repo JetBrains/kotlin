@@ -54,16 +54,17 @@ import kotlin.contracts.contract
 fun FirAnonymousFunction.shouldReturnUnit(returnStatements: Collection<FirExpression>): Boolean =
     isLambda && returnStatements.any { it is FirUnitExpression }
 
-fun FirAnonymousFunction.addReturnToLastStatementIfNeeded() {
+fun FirAnonymousFunction.addReturnToLastStatementIfNeeded(session: FirSession) {
     // If this lambda's resolved, expected return type is Unit, we don't need an explicit return statement.
     // During conversion (to backend IR), the last expression will be coerced to Unit if needed.
-    if (returnTypeRef.isUnit) return
+    if (returnTypeRef.coneType.fullyExpandedType(session).isUnit) return
 
     val body = this.body ?: return
     val lastStatement = body.statements.lastOrNull() as? FirExpression ?: return
     if (lastStatement is FirReturnExpression) return
 
     val returnType = (body.typeRef as? FirResolvedTypeRef) ?: return
+    @OptIn(UnexpandedTypeCheck::class)
     if (returnType.isNothing) return
 
     val returnTarget = FirFunctionTarget(null, isLambda = isLambda).also { it.bind(this) }

@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isUnit
 
 object RedundantReturnUnitType : FirSimpleFunctionChecker() {
@@ -23,7 +25,7 @@ object RedundantReturnUnitType : FirSimpleFunctionChecker() {
         if (declaration.source?.kind is KtFakeSourceElementKind) return
         if (returnType.annotations.isNotEmpty()) return
 
-        if (returnType.isUnit) {
+        if (returnType.coneType.fullyExpandedType(context.session).isUnit) {
             reporter.reportOn(declaration.returnTypeRef.source, FirErrors.REDUNDANT_RETURN_UNIT_TYPE, context)
         }
     }

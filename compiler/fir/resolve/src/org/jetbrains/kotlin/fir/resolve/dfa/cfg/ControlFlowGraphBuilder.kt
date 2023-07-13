@@ -1065,6 +1065,7 @@ class ControlFlowGraphBuilder {
     //  it would be much easier if we could build calls after full completion only, at least for Nothing calls
     //  KT-59726
     // @returns `true` if node actually returned Nothing
+    @OptIn(UnexpandedTypeCheck::class)
     private fun completeFunctionCall(node: FunctionCallNode): Boolean {
         if (!node.fir.resultType.isNothing) return false
         val stub = StubNode(node.owner, node.level)
@@ -1082,6 +1083,7 @@ class ControlFlowGraphBuilder {
 
     // ----------------------------------- Resolvable call -----------------------------------
 
+    @OptIn(UnexpandedTypeCheck::class)
     fun exitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression): QualifiedAccessNode {
         val returnsNothing = qualifiedAccessExpression.resultType.isNothing
         val node = createQualifiedAccessNode(qualifiedAccessExpression)
@@ -1093,6 +1095,7 @@ class ControlFlowGraphBuilder {
         return node
     }
 
+    @OptIn(UnexpandedTypeCheck::class)
     fun exitSmartCastExpression(smartCastExpression: FirSmartCastExpression): SmartCastExpressionExitNode {
         val returnsNothing = smartCastExpression.resultType.isNothing
         val node = createSmartCastExitNode(smartCastExpression)
@@ -1126,6 +1129,7 @@ class ControlFlowGraphBuilder {
         return argumentListSplitNodes.pop()?.also { addNewSimpleNode(it) }
     }
 
+    @OptIn(UnexpandedTypeCheck::class)
     fun exitFunctionCall(functionCall: FirFunctionCall, callCompleted: Boolean): FunctionCallNode {
         val returnsNothing = functionCall.resultType.isNothing
         val node = createFunctionCallNode(functionCall)
@@ -1171,6 +1175,7 @@ class ControlFlowGraphBuilder {
         return createThrowExceptionNode(throwExpression).also { addNonSuccessfullyTerminatingNode(it) }
     }
 
+    @OptIn(UnexpandedTypeCheck::class)
     fun exitCheckNotNullCall(checkNotNullCall: FirCheckNotNullCall, callCompleted: Boolean): CheckNotNullCallNode {
         val node = createCheckNotNullCallNode(checkNotNullCall)
         unifyDataFlowFromPostponedLambdas(node, callCompleted)

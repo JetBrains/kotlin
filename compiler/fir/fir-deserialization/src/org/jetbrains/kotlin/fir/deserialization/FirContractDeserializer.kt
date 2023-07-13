@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.UnexpandedTypeCheck
 import org.jetbrains.kotlin.fir.types.isBoolean
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.isInstanceType
@@ -37,7 +38,7 @@ class FirContractDeserializer(private val c: FirDeserializationContext) :
     override fun extractVariable(
         valueParameterIndex: Int,
         owner: FirContractDescriptionOwner
-    ): KtValueParameterReference<ConeKotlinType, ConeDiagnostic>?  {
+    ): KtValueParameterReference<ConeKotlinType, ConeDiagnostic>? {
         val name: String
         val ownerFunction = owner as FirSimpleFunction
         val typeRef = if (valueParameterIndex < 0) {
@@ -49,6 +50,7 @@ class FirContractDeserializer(private val c: FirDeserializationContext) :
             parameter.returnTypeRef
         } ?: return null
 
+        @OptIn(UnexpandedTypeCheck::class)
         return if (!typeRef.isBoolean)
             KtValueParameterReference(valueParameterIndex, name)
         else

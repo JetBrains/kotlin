@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.isEquals
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitAnyTypeRef
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -192,7 +191,7 @@ object FirValueClassDeclarationChecker : FirRegularClassChecker() {
                     )
                 }
 
-                primaryConstructorParameter.returnTypeRef.isInapplicableParameterType() -> {
+                primaryConstructorParameter.returnTypeRef.isInapplicableParameterType(context.session) -> {
                     reporter.reportOn(
                         primaryConstructorParameter.returnTypeRef.source,
                         FirErrors.VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE,
@@ -227,7 +226,7 @@ object FirValueClassDeclarationChecker : FirRegularClassChecker() {
                     if (it !is FirSimpleFunction) {
                         return@forEach
                     }
-                    if (it.isEquals()) equalsFromAnyOverriding = it
+                    if (it.isEquals(context.session)) equalsFromAnyOverriding = it
                     if (it.isTypedEqualsInValueClass(context.session)) typedEquals = it
                 }
                 equalsFromAnyOverriding to typedEquals
@@ -268,8 +267,8 @@ object FirValueClassDeclarationChecker : FirRegularClassChecker() {
         return isVararg || !primaryConstructorProperty.isVal || isOpen
     }
 
-    private fun FirTypeRef.isInapplicableParameterType() =
-        isUnit || isNothing
+    private fun FirTypeRef.isInapplicableParameterType(session: FirSession): Boolean =
+        coneType.fullyExpandedType(session).let { it.isUnit || it.isNothing }
 
     private fun ConeKotlinType.isGenericArrayOfTypeParameter(): Boolean {
         if (this.typeArguments.firstOrNull() is ConeStarProjection || !isPotentiallyArray())

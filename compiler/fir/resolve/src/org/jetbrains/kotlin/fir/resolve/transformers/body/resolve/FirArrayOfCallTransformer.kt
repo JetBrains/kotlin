@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.expressions.*
@@ -14,7 +15,10 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildArrayOfCall
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.fir.types.isArrayType
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 
@@ -23,9 +27,9 @@ import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
  *
  * Note that arrayOf() calls only in [FirAnnotation] or the default value of annotation constructor are transformed.
  */
-class FirArrayOfCallTransformer : FirDefaultTransformer<Nothing?>() {
-    private fun toArrayOfCall(functionCall: FirFunctionCall): FirArrayOfCall? {
-        if (!functionCall.isArrayOfCall) return null
+class FirArrayOfCallTransformer : FirDefaultTransformer<FirSession>() {
+    private fun toArrayOfCall(functionCall: FirFunctionCall, session: FirSession): FirArrayOfCall? {
+        if (!functionCall.isArrayOfCall(session)) return null
         if (functionCall.calleeReference !is FirResolvedNamedReference) return null
         return buildArrayOfCall {
             source = functionCall.source
@@ -42,25 +46,25 @@ class FirArrayOfCallTransformer : FirDefaultTransformer<Nothing?>() {
         }
     }
 
-    override fun transformFunctionCall(functionCall: FirFunctionCall, data: Nothing?): FirStatement {
+    override fun transformFunctionCall(functionCall: FirFunctionCall, data: FirSession): FirStatement {
         functionCall.transformChildren(this, data)
-        return toArrayOfCall(functionCall) ?: functionCall
+        return toArrayOfCall(functionCall, data) ?: functionCall
     }
 
-    override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
+    override fun <E : FirElement> transformElement(element: E, data: FirSession): E {
         @Suppress("UNCHECKED_CAST")
         return (element.transformChildren(this, data) as E)
     }
 
     companion object {
-        val FirFunctionCall.isArrayOfCall: Boolean
-            get() {
-                val function: FirCallableDeclaration = getOriginalFunction() ?: return false
-                return function is FirSimpleFunction &&
-                        function.returnTypeRef.isArrayType &&
-                        isArrayOf(function, arguments) &&
-                        function.receiverParameter == null
-            }
+        fun FirFunctionCall.isArrayOfCall(session: FirSession): Boolean {
+            val function: FirCallableDeclaration = getOriginalFunction() ?: return false
+            val returnTypeRef = function.returnTypeRef
+            return function is FirSimpleFunction &&
+                    returnTypeRef.coneTypeSafe<ConeKotlinType>()?.fullyExpandedType(session)?.isArrayType == true &&
+                    isArrayOf(function, arguments) &&
+                    function.receiverParameter == null
+        }
 
         private val arrayOfNames = hashSetOf("kotlin/arrayOf") +
                 hashSetOf(

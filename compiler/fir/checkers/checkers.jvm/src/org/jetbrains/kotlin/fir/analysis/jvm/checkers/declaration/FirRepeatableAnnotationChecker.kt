@@ -165,7 +165,7 @@ object FirRepeatableAnnotationChecker : FirBasicDeclarationChecker() {
         val valueParameterSymbols = containerCtor.valueParameterSymbols
         val parameterName = StandardClassIds.Annotations.ParameterNames.value
         val value = valueParameterSymbols.find { it.name == parameterName }
-        if (value == null || !value.resolvedReturnTypeRef.isArrayType ||
+        if (value == null || !value.resolvedReturnTypeRef.coneType.fullyExpandedType(context.session).isArrayType ||
             value.resolvedReturnTypeRef.type.typeArguments.single().type != annotationClass.defaultType()
         ) {
             reporter.reportOn(

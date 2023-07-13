@@ -17,7 +17,9 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.fir.types.isNullableAny
 import org.jetbrains.kotlin.fir.types.toSymbol
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 fun FirClass.constructors(session: FirSession): List<FirConstructorSymbol> {
     val result = mutableListOf<FirConstructorSymbol>()
@@ -93,3 +95,12 @@ private fun FirFunction.containsDefaultValue(index: Int): Boolean = valueParamet
 
 fun FirFunction.itOrExpectHasDefaultParameterValue(index: Int): Boolean =
     containsDefaultValue(index) || symbol.getSingleExpectForActualOrNull()?.fir?.containsDefaultValue(index) == true
+
+fun FirSimpleFunction.isEquals(session: FirSession): Boolean {
+    if (name != OperatorNameConventions.EQUALS) return false
+    if (valueParameters.size != 1) return false
+    if (contextReceivers.isNotEmpty()) return false
+    if (receiverParameter != null) return false
+    val parameter = valueParameters.first()
+    return parameter.returnTypeRef.coneType.fullyExpandedType(session).isNullableAny
+}

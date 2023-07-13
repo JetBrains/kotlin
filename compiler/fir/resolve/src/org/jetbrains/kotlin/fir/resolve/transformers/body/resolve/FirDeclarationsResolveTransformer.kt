@@ -860,7 +860,7 @@ open class FirDeclarationsResolveTransformer(
 
         lambda.replaceTypeRef(lambda.constructFunctionTypeRef(session, resolvedLambdaAtom?.expectedFunctionTypeKind))
         session.lookupTracker?.recordTypeResolveAsLookup(lambda.typeRef, lambda.source, context.file.source)
-        lambda.addReturnToLastStatementIfNeeded()
+        lambda.addReturnToLastStatementIfNeeded(session)
         return lambda
     }
 

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
 import org.jetbrains.kotlin.fir.resolve.createFunctionType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnsupportedCallableReferenceTarget
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.extractInputOutputTypesFromCallableReferenceExpectedType
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.scope
@@ -248,10 +249,14 @@ private fun BodyResolveComponents.getCallableReferenceAdaptation(
         }
     }
 
-    val coercionStrategy = if (returnExpectedType.isUnitOrFlexibleUnit && !function.returnTypeRef.isUnit)
-        CoercionStrategy.COERCION_TO_UNIT
-    else
-        CoercionStrategy.NO_COERCION
+    val returnTypeRef = function.returnTypeRef
+    val coercionStrategy =
+        if (returnExpectedType.isUnitOrFlexibleUnit &&
+            returnTypeRef.coneTypeSafe<ConeKotlinType>()?.fullyExpandedType(session)?.isUnit != true
+        )
+            CoercionStrategy.COERCION_TO_UNIT
+        else
+            CoercionStrategy.NO_COERCION
 
     val adaptedArguments = if (expectedType.isBaseTypeForNumberedReferenceTypes)
         emptyMap()
