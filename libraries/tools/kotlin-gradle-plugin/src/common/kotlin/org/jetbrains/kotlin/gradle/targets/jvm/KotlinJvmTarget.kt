@@ -11,8 +11,12 @@ import org.gradle.api.Project
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.plugins.JavaBasePlugin
+import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.tasks.SourceSet
+import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.compile.AbstractCompile
+import org.gradle.api.tasks.testing.Test
+import org.gradle.jvm.tasks.Jar
 import org.gradle.language.jvm.tasks.ProcessResources
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
@@ -172,7 +176,33 @@ abstract class KotlinJvmTarget @Inject constructor(
             }
         }
 
+        project.plugins.withType(JavaPlugin::class.java) {
+            // Eliminate the Java output configurations from dependency resolution to avoid ambiguity between them and
+            // the equivalent configurations created for the target:
+            project.configurations.findByName(JavaPlugin.API_ELEMENTS_CONFIGURATION_NAME)?.isCanBeConsumed = false
+            project.configurations.findByName(JavaPlugin.RUNTIME_ELEMENTS_CONFIGURATION_NAME)?.isCanBeConsumed = false
+            disableJavaPluginTasks(javaSourceSets)
+        }
+
         withJavaEnabledFutureImpl.complete(Unit)
+    }
+
+    private fun disableJavaPluginTasks(javaSourceSet: SourceSetContainer) {
+        // A 'normal' build should not do redundant job like running the tests twice or building two JARs,
+        // so disable some tasks and just make them depend on the others:
+        val targetJar = project.tasks.withType(Jar::class.java).named(artifactsTaskName)
+
+        project.tasks.withType(Jar::class.java).named(javaSourceSet.getByName("main").jarTaskName) { javaJar ->
+            (javaJar.source as? ConfigurableFileCollection)?.setFrom(targetJar.map { it.source })
+            javaJar.archiveFileName.set(targetJar.flatMap { it.archiveFileName })
+            javaJar.dependsOn(targetJar)
+            javaJar.enabled = false
+        }
+
+        project.tasks.withType(Test::class.java).named(JavaPlugin.TEST_TASK_NAME) { javaTestTask ->
+            javaTestTask.dependsOn(project.tasks.named(testTaskName))
+            javaTestTask.enabled = false
+        }
     }
 
     private fun setupJavaSourceSetSourcesAndResources(
