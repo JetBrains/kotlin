@@ -67,6 +67,10 @@ public class CompositeKotlinDeclarationProvider private constructor(
         return providers.flatMapTo(mutableSetOf()) { it.computePackageSetWithTopLevelCallableDeclarations() }
     }
 
+    override fun packageExists(packageFqName: FqName): Boolean {
+        return providers.any { it.packageExists(packageFqName) }
+    }
+
     public companion object {
         public fun create(providers: List<KotlinDeclarationProvider>): KotlinDeclarationProvider {
             return when (providers.size) {

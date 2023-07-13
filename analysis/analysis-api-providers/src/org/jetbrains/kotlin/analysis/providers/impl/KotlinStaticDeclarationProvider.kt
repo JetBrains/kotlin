@@ -103,6 +103,11 @@ public class KotlinStaticDeclarationProvider internal constructor(
         return packageNames.mapTo(mutableSetOf()) { it.asString() }
     }
 
+    override fun packageExists(packageFqName: FqName): Boolean {
+        return getTopLevelCallableNamesInPackage(packageFqName).isNotEmpty() ||
+                getTopLevelKotlinClassLikeDeclarationNamesInPackage(packageFqName).isNotEmpty()
+    }
+
     override fun getTopLevelProperties(callableId: CallableId): Collection<KtProperty> =
         index.topLevelPropertyMap[callableId.packageName]
             ?.filter { ktProperty ->

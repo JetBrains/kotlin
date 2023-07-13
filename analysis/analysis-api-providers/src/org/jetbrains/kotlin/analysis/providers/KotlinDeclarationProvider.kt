@@ -45,6 +45,8 @@ public abstract class KotlinDeclarationProvider {
     public abstract fun findFilesForScript(scriptFqName: FqName): Collection<KtScript>
 
     public abstract fun computePackageSetWithTopLevelCallableDeclarations(): Set<String>
+
+    public abstract fun packageExists(packageFqName: FqName): Boolean
 }
 
 public abstract class KotlinDeclarationProviderFactory {

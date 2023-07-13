@@ -222,6 +222,10 @@ class LLFirResolveExtensionToolDeclarationProvider internal constructor(
         return extensionProvider.getFilesByPackage(packageFqName).flatMapTo(mutableSetOf()) { it.getTopLevelCallableNames() }
     }
 
+    override fun packageExists(packageFqName: FqName): Boolean {
+        return getDeclarationProvidersByPackage(packageFqName) { it.getFilePackageName() == packageFqName }.iterator().hasNext()
+    }
+
     override fun findFilesForFacadeByPackage(packageFqName: FqName): Collection<KtFile> = forbidAnalysis {
         return getDeclarationProvidersByPackage(packageFqName) { file ->
             file.getTopLevelCallableNames().isNotEmpty()

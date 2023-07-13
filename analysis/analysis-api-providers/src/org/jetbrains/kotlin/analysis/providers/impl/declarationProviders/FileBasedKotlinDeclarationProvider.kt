@@ -133,6 +133,10 @@ public class FileBasedKotlinDeclarationProvider(public val kotlinFile: KtFile) :
         return setOf(kotlinFile.packageFqName.asString())
     }
 
+    override fun packageExists(packageFqName: FqName): Boolean {
+        return kotlinFile.packageFqName == packageFqName
+    }
+
     override fun findFilesForScript(scriptFqName: FqName): Collection<KtScript> =
         listOfNotNull(kotlinFile.script?.takeIf { it.fqName == scriptFqName })
 

@@ -269,10 +269,7 @@ internal open class StubBasedFirDeserializedSymbolProvider(
     }
 
     override fun getPackage(fqName: FqName): FqName? =
-        fqName.takeIf {
-            symbolNamesProvider.getTopLevelClassifierNamesInPackage(fqName)?.isNotEmpty() == true ||
-                    symbolNamesProvider.getPackageNamesWithTopLevelCallables()?.contains(fqName.asString()) == true
-        }
+        fqName.takeIf { declarationProvider.packageExists(fqName) }
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
         if (!symbolNamesProvider.mayHaveTopLevelClassifier(classId)) return null
