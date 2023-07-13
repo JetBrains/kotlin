@@ -64,12 +64,12 @@ class IrBuiltInsOverFir(
 
     private val any by createClass(kotlinIrPackage, IdSignatureValues.any, build = { modality = Modality.OPEN }) {
         createConstructor()
+        createMemberFunction("toString", stringType, modality = Modality.OPEN, isIntrinsicConst = false)
+        createMemberFunction("hashCode", intType, modality = Modality.OPEN, isIntrinsicConst = false)
         createMemberFunction(
             OperatorNameConventions.EQUALS, booleanType, "other" to anyNType,
             modality = Modality.OPEN, isOperator = true, isIntrinsicConst = false
         )
-        createMemberFunction("hashCode", intType, modality = Modality.OPEN, isIntrinsicConst = false)
-        createMemberFunction("toString", stringType, modality = Modality.OPEN, isIntrinsicConst = false)
     }
     override val anyClass: IrClassSymbol get() = any.klass
     override val anyType: IrType get() = any.type
