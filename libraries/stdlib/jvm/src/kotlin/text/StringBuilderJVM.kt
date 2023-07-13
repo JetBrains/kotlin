@@ -169,32 +169,32 @@ public inline fun StringBuilder.appendLine(value: StringBuilder?): StringBuilder
 /** Appends [value] to this [StringBuilder], followed by a line feed character (`\n`). */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
-public inline fun StringBuilder.appendLine(value: Int): StringBuilder = append(value).appendLine()
+public actual inline fun StringBuilder.appendLine(value: Int): StringBuilder = append(value).appendLine()
 
 /** Appends [value] to this [StringBuilder], followed by a line feed character (`\n`). */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
-public inline fun StringBuilder.appendLine(value: Short): StringBuilder = append(value.toInt()).appendLine()
+public actual inline fun StringBuilder.appendLine(value: Short): StringBuilder = append(value.toInt()).appendLine()
 
 /** Appends [value] to this [StringBuilder], followed by a line feed character (`\n`). */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
-public inline fun StringBuilder.appendLine(value: Byte): StringBuilder = append(value.toInt()).appendLine()
+public actual inline fun StringBuilder.appendLine(value: Byte): StringBuilder = append(value.toInt()).appendLine()
 
 /** Appends [value] to this [StringBuilder], followed by a line feed character (`\n`). */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
-public inline fun StringBuilder.appendLine(value: Long): StringBuilder = append(value).appendLine()
+public actual inline fun StringBuilder.appendLine(value: Long): StringBuilder = append(value).appendLine()
 
 /** Appends [value] to this [StringBuilder], followed by a line feed character (`\n`). */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
-public inline fun StringBuilder.appendLine(value: Float): StringBuilder = append(value).appendLine()
+public actual inline fun StringBuilder.appendLine(value: Float): StringBuilder = append(value).appendLine()
 
 /** Appends [value] to this [StringBuilder], followed by a line feed character (`\n`). */
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
-public inline fun StringBuilder.appendLine(value: Double): StringBuilder = append(value).appendLine()
+public actual inline fun StringBuilder.appendLine(value: Double): StringBuilder = append(value).appendLine()
 
 
 private object SystemProperties {

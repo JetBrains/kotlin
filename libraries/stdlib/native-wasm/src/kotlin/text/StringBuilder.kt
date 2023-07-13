@@ -142,24 +142,67 @@ actual class StringBuilder private constructor (
      */
     actual fun append(value: Any?): StringBuilder = append(value.toString())
 
+    // TODO: optimize the append overloads with primitive value!
+
     /**
      * Appends the string representation of the specified boolean [value] to this string builder and returns this instance.
      *
      * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
      * and then that string was appended to this string builder.
      */
-    // TODO: optimize those!
     actual fun append(value: Boolean): StringBuilder = append(value.toString())
-    fun append(value: Byte): StringBuilder = append(value.toString())
-    fun append(value: Short): StringBuilder = append(value.toString())
-    fun append(value: Int): StringBuilder {
+
+    /**
+     * Appends the string representation of the specified byte [value] to this string builder and returns this instance.
+     *
+     * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
+     * and then that string was appended to this string builder.
+     */
+    actual fun append(value: Byte): StringBuilder = append(value.toString())
+
+    /**
+     * Appends the string representation of the specified short [value] to this string builder and returns this instance.
+     *
+     * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
+     * and then that string was appended to this string builder.
+     */
+    actual fun append(value: Short): StringBuilder = append(value.toString())
+
+    /**
+     * Appends the string representation of the specified int [value] to this string builder and returns this instance.
+     *
+     * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
+     * and then that string was appended to this string builder.
+     */
+    actual fun append(value: Int): StringBuilder {
         ensureExtraCapacity(11)
         _length += insertInt(array, _length, value)
         return this
     }
-    fun append(value: Long): StringBuilder = append(value.toString())
-    fun append(value: Float): StringBuilder = append(value.toString())
-    fun append(value: Double): StringBuilder = append(value.toString())
+
+    /**
+     * Appends the string representation of the specified long [value] to this string builder and returns this instance.
+     *
+     * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
+     * and then that string was appended to this string builder.
+     */
+    actual fun append(value: Long): StringBuilder = append(value.toString())
+
+    /**
+     * Appends the string representation of the specified float [value] to this string builder and returns this instance.
+     *
+     * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
+     * and then that string was appended to this string builder.
+     */
+    actual fun append(value: Float): StringBuilder = append(value.toString())
+
+    /**
+     * Appends the string representation of the specified double [value] to this string builder and returns this instance.
+     *
+     * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
+     * and then that string was appended to this string builder.
+     */
+    actual fun append(value: Double): StringBuilder = append(value.toString())
 
     /**
      * Appends characters in the specified character array [value] to this string builder and returns this instance.
@@ -253,6 +296,8 @@ actual class StringBuilder private constructor (
         return (this as CharSequence).lastIndexOf(string, startIndex, ignoreCase = false)
     }
 
+    // TODO: optimize the insert overloads with primitive value!
+
     /**
      * Inserts the string representation of the specified boolean [value] into this string builder at the specified [index] and returns this instance.
      *
@@ -261,14 +306,67 @@ actual class StringBuilder private constructor (
      *
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
-    // TODO: optimize those!
     actual fun insert(index: Int, value: Boolean): StringBuilder = insert(index, value.toString())
-    fun insert(index: Int, value: Byte)    = insert(index, value.toString())
-    fun insert(index: Int, value: Short)   = insert(index, value.toString())
-    fun insert(index: Int, value: Int)     = insert(index, value.toString())
-    fun insert(index: Int, value: Long)    = insert(index, value.toString())
-    fun insert(index: Int, value: Float)   = insert(index, value.toString())
-    fun insert(index: Int, value: Double)  = insert(index, value.toString())
+
+    /**
+     * Inserts the string representation of the specified byte [value] into this string builder at the specified [index] and returns this instance.
+     *
+     * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
+     * and then that string was inserted into this string builder at the specified [index].
+     *
+     * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
+     */
+    actual fun insert(index: Int, value: Byte): StringBuilder = insert(index, value.toString())
+
+    /**
+     * Inserts the string representation of the specified short [value] into this string builder at the specified [index] and returns this instance.
+     *
+     * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
+     * and then that string was inserted into this string builder at the specified [index].
+     *
+     * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
+     */
+    actual fun insert(index: Int, value: Short): StringBuilder = insert(index, value.toString())
+
+    /**
+     * Inserts the string representation of the specified int [value] into this string builder at the specified [index] and returns this instance.
+     *
+     * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
+     * and then that string was inserted into this string builder at the specified [index].
+     *
+     * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
+     */
+    actual fun insert(index: Int, value: Int): StringBuilder = insert(index, value.toString())
+
+    /**
+     * Inserts the string representation of the specified long [value] into this string builder at the specified [index] and returns this instance.
+     *
+     * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
+     * and then that string was inserted into this string builder at the specified [index].
+     *
+     * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
+     */
+    actual fun insert(index: Int, value: Long): StringBuilder = insert(index, value.toString())
+
+    /**
+     * Inserts the string representation of the specified float [value] into this string builder at the specified [index] and returns this instance.
+     *
+     * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
+     * and then that string was inserted into this string builder at the specified [index].
+     *
+     * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
+     */
+    actual fun insert(index: Int, value: Float): StringBuilder = insert(index, value.toString())
+
+    /**
+     * Inserts the string representation of the specified double [value] into this string builder at the specified [index] and returns this instance.
+     *
+     * The overall effect is exactly as if the [value] were converted to a string by the `value.toString()` method,
+     * and then that string was inserted into this string builder at the specified [index].
+     *
+     * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
+     */
+    actual fun insert(index: Int, value: Double): StringBuilder = insert(index, value.toString())
 
     /**
      * Inserts the specified character [value] into this string builder at the specified [index] and returns this instance.
