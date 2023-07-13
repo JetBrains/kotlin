@@ -61,11 +61,10 @@ fun VirtualFile.findScriptDefinition(project: Project): ScriptDefinition? {
     return findScriptDefinition(project, VirtualFileScriptSource(this))
 }
 
-fun findScriptDefinition(project: Project, script: SourceCode): ScriptDefinition {
-    val scriptDefinitionProvider = ScriptDefinitionProvider.getInstance(project) ?: return null
-        ?: throw IllegalStateException("Unable to get script definition: ScriptDefinitionProvider is not configured.")
-
-    return scriptDefinitionProvider.findDefinition(script) ?: scriptDefinitionProvider.getDefaultDefinition()
+fun findScriptDefinition(project: Project, script: SourceCode): ScriptDefinition? {
+    val scriptDefinitionProvider = ScriptDefinitionProvider.getInstance(project)
+        ?: error("Unable to get script definition: ScriptDefinitionProvider is not configured.")
+    return scriptDefinitionProvider.findDefinition(script)
 }
 
 private const val JAVA_CLASS_FILE_TYPE_DOT_DEFAULT_EXTENSION = ".class"
