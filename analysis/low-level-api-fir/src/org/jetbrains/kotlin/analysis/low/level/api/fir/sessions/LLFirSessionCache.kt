@@ -86,7 +86,7 @@ class LLFirSessionCache(private val project: Project) {
 
     private fun removeSessionFrom(module: KtModule, storage: SessionStorage): Boolean {
         val session = storage.remove(module) ?: return false
-        session.isValid = false
+        session.markInvalid()
         return true
     }
 
@@ -122,7 +122,7 @@ class LLFirSessionCache(private val project: Project) {
     private fun removeAllSessionsFrom(storage: SessionStorage) {
         // Because `removeAllSessionsFrom` is executed in a write action, the order of setting `isValid` and clearing `storage` is not
         // important.
-        storage.values.forEach { it.isValid = false }
+        storage.values.forEach { it.markInvalid() }
         storage.clear()
     }
 
@@ -133,7 +133,7 @@ class LLFirSessionCache(private val project: Project) {
         // "collect and remove" approach also works.
         val scriptEntries = storage.entries.filter { (module, _) -> shouldBeRemoved(module) }
         for ((module, session) in scriptEntries) {
-            session.isValid = false
+            session.markInvalid()
             storage.remove(module)
         }
     }
