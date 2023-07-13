@@ -128,6 +128,12 @@ public class KotlinKapt4ContextTestGenerated extends AbstractKotlinKapt4ContextT
     }
 
     @Test
+    @TestMetadata("defaultImplsWithTypeParameters.kt")
+    public void testDefaultImplsWithTypeParameters() throws Exception {
+        runTest("plugins/kapt4/testData/../../kapt3/kapt3-compiler/testData/converter/defaultImplsWithTypeParameters.kt");
+    }
+
+    @Test
     @TestMetadata("defaultPackage.kt")
     public void testDefaultPackage() throws Exception {
         runTest("plugins/kapt4/testData/../../kapt3/kapt3-compiler/testData/converter/defaultPackage.kt");
