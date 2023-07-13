@@ -1160,6 +1160,18 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
         }
 
         @Test
+        @TestMetadata("propagateFlexibleTypeToAnonymousFunction.kt")
+        public void testPropagateFlexibleTypeToAnonymousFunction() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/wholeDeclaration/propagateFlexibleTypeToAnonymousFunction.kt");
+        }
+
+        @Test
+        @TestMetadata("propagateFlexibleTypeToAnonymousFunction2.kt")
+        public void testPropagateFlexibleTypeToAnonymousFunction2() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/wholeDeclaration/propagateFlexibleTypeToAnonymousFunction2.kt");
+        }
+
+        @Test
         @TestMetadata("secondaryConstructorValueParameter.kt")
         public void testSecondaryConstructorValueParameter() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/wholeDeclaration/secondaryConstructorValueParameter.kt");

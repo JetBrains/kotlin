@@ -20259,6 +20259,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
             }
 
             @Test
+            @TestMetadata("propagateFlexibleTypeToAnonymousFunction.kt")
+            public void testPropagateFlexibleTypeToAnonymousFunction() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/j+k/propagateFlexibleTypeToAnonymousFunction.kt");
+            }
+
+            @Test
             @TestMetadata("protectedStaticSamePackage.kt")
             public void testProtectedStaticSamePackage() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/j+k/protectedStaticSamePackage.kt");

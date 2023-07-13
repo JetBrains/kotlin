@@ -481,9 +481,8 @@ fun FirCheckedSafeCallSubject.propagateTypeFromOriginalReceiver(
         .coneTypeSafe<ConeKotlinType>() ?: return
 
     val expandedReceiverType = receiverType.fullyExpandedType(session)
-
-    val resolvedTypeRef =
-        typeRef.resolvedTypeFromPrototype(expandedReceiverType.makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext))
+    val updatedReceiverType = expandedReceiverType.makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext).independentInstance()
+    val resolvedTypeRef = typeRef.resolvedTypeFromPrototype(updatedReceiverType)
     replaceTypeRef(resolvedTypeRef)
     session.lookupTracker?.recordTypeResolveAsLookup(resolvedTypeRef, source, file.source)
 }
@@ -506,7 +505,7 @@ fun FirSafeCallExpression.propagateTypeFromQualifiedAccessAfterNullCheck(
         }
     }
 
-    val resolvedTypeRef = typeRef.resolvedTypeFromPrototype(resultingType)
+    val resolvedTypeRef = typeRef.resolvedTypeFromPrototype(resultingType.independentInstance())
     replaceTypeRef(resolvedTypeRef)
     session.lookupTracker?.recordTypeResolveAsLookup(resolvedTypeRef, source, file.source)
 }

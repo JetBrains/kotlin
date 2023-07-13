@@ -118,7 +118,7 @@ class PostponedArgumentsAnalyzer(
         val stubsForPostponedVariables = c.bindingStubsForPostponedVariables()
         val currentSubstitutor = c.buildCurrentSubstitutor(stubsForPostponedVariables.mapKeys { it.key.freshTypeConstructor(c) })
 
-        fun substitute(type: ConeKotlinType) = currentSubstitutor.safeSubstitute(c, type) as ConeKotlinType
+        fun substitute(type: ConeKotlinType) = (currentSubstitutor.safeSubstitute(c, type) as ConeKotlinType).independentInstance()
 
         val receiver = lambda.receiver?.let(::substitute)
         val contextReceivers = lambda.contextReceivers.map(::substitute)

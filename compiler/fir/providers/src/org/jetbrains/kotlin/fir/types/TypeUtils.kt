@@ -100,6 +100,73 @@ fun ConeDefinitelyNotNullType.Companion.create(
 fun ConeDynamicType.Companion.create(session: FirSession): ConeDynamicType =
     ConeDynamicType(session.builtinTypes.nothingType.type, session.builtinTypes.nullableAnyType.type)
 
+/**
+ * This call is required if you want to use a type with annotations that are linked to a declaration from this declaration inside another
+ * to avoid concurrent modification problems (see KT-60387).
+ *
+ * Otherwise, those annotations can be transformed from different threads simultaneously that is error-prone.
+ * Example:
+ * ```kotlin
+ * val declaration: @Anno("outer") Int? get() = null
+ * val anotherDeclaration: String get() = declaration?.let { "$it" }.toString()
+ * ```
+ * here for `declaration?.let { "$it" }` will be created an anonymous function with argument that
+ * will have the same type as the return type of `declaration`.
+ * So, now we have 2 possible scenarios:
+ *
+ * Wrong case 1 – The type was inserted to a new type ref as it is.
+ * This means that a type reference from `declaration` and from the anonymous lambda will have the same instance of `Anno`.
+ * Now we resole `anotherDeclaration` to [FirResolvePhase.BODY_RESOLVE] phase
+ * and as a result we will have resolved annotation arguments in the type.
+ * At the same time, `declaration` can be still in [FirResolvePhase.CONTRACTS] phase, because no one called a resolution yet.
+ * So now imagine a situation when one thread (1) wants to read annotation arguments from the fully resolved anonymous function,
+ * and another thread (2) wants to resolve `declaration` to [FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING] phase.
+ * As a result, we will have a moment there thread 2 will replace arguments with a lazy expression
+ * to be sure that we will have a safe basis for resolution (see StateKeeper concept in LL FIR).
+ * And thread 1 will see unexpected unresolved annotation arguments in fully resolved function, because those type references
+ * use the same instance of the type (`FirArgumentListImpl` cannot be cast to `FirResolvedArgumentList`).
+ * So we lost here.
+ *
+ * Right case 2 – The type was "copied" by [independentInstance].
+ * In this case, `declaration` and `anotherDeclaration` will have different instances of one `@Anno("outer") Int?` type.
+ * This means that we can't come to a situation where we can modify a fully resolved annotation from another thread.
+ *
+ * @return an instance of a type that has no annotations associated with any declaration,
+ * so it won't be changed from LL FIR lazy transformers concurrently
+ *
+ * @see CustomAnnotationTypeAttribute.independentInstance
+ */
+fun ConeKotlinType.independentInstance(): ConeKotlinType = instanceWithIndependentArguments().instanceWithIndependentAnnotations()
+
+private fun ConeKotlinType.instanceWithIndependentArguments(): ConeKotlinType {
+    val typeProjections = typeArguments
+    if (typeProjections.isEmpty()) return this
+
+    var argumentsChanged = false
+    val newArguments = type.typeArguments.map { originalArgument ->
+        if (originalArgument !is ConeKotlinType)
+            originalArgument
+        else
+            originalArgument.independentInstance().also {
+                if (it !== originalArgument) {
+                    argumentsChanged = true
+                }
+            }
+    }
+
+    return if (argumentsChanged) withArguments(newArguments.toTypedArray()) else this
+}
+
+private fun ConeKotlinType.instanceWithIndependentAnnotations(): ConeKotlinType {
+    val custom = attributes.custom ?: return this
+    val newAnnotations = custom.independentInstance()
+    if (newAnnotations === custom) {
+        return this
+    }
+
+    val newAttributes = attributes.remove(custom).plus(newAnnotations)
+    return withAttributes(newAttributes)
+}
 
 fun ConeKotlinType.makeConeTypeDefinitelyNotNullOrNotNull(
     typeContext: ConeTypeContext,
