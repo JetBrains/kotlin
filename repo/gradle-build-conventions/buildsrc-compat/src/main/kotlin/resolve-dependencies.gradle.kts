@@ -20,6 +20,8 @@ tasks.register("resolveDependencies") {
                 configurations.detachedConfiguration(implicitDependency).resolve()
             }
 
+            configurations.findByName("commonCompileClasspath")?.resolve()
+
             plugins.withId("java-base") {
                 val service = project.extensions.getByType<JavaToolchainService>()
                 val javaExtension = extensions.getByType<JavaPluginExtension>()
