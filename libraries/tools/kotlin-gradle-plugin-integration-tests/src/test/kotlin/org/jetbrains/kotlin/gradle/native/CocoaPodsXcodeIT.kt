@@ -256,7 +256,7 @@ private fun TestProject.manualPodInstall(taskPrefix: String, iosAppPath: Path) {
     build("$taskPrefix:$DUMMY_FRAMEWORK_TASK_NAME", buildOptions = buildOptions)
 
     runProcess(
-        cmd = listOf("pod", "install"),
+        cmd = listOf("env", "pod", "install"),
         environmentVariables = environmentVariables.environmentalVariables,
         workingDir = iosAppPath.toFile(),
     )

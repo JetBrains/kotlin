@@ -13,22 +13,11 @@ internal fun runCommand(
     command: List<String>,
     logger: Logger? = null,
     errorHandler: ((retCode: Int, output: String, process: Process) -> String?)? = null,
-    exceptionHandler: ((ex: IOException) -> Unit)? = null,
     processConfiguration: ProcessBuilder.() -> Unit = { }
 ): String {
-    var process: Process? = null
-    try {
-        process = ProcessBuilder(command)
-            .apply {
-                this.processConfiguration()
-            }.start()
-    } catch (e: IOException) {
-        if (exceptionHandler != null) exceptionHandler(e) else throw e
-    }
-
-    if (process == null) {
-        throw IllegalStateException("Failed to run command ${command.joinToString(" ")}")
-    }
+    val process = ProcessBuilder(command).apply {
+        this.processConfiguration()
+    }.start()
 
     var inputText = ""
     var errorText = ""
