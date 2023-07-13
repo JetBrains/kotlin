@@ -196,13 +196,14 @@ fun KGPBaseTest.nativeProjectWithCocoapodsAndIosAppPodFile(
     projectName: String = templateProjectName,
     gradleVersion: GradleVersion,
     buildOptions: BuildOptions = this.defaultBuildOptions,
+    environmentVariables: EnvironmentalVariables = EnvironmentalVariables(cocoaPodsEnvironmentVariables()),
     projectBlock: TestProject.() -> Unit = {},
 ) {
     nativeProject(
         projectName,
         gradleVersion,
         buildOptions = buildOptions,
-        environmentVariables = EnvironmentalVariables(cocoaPodsEnvironmentVariables())
+        environmentVariables = environmentVariables,
     ) {
         preparePodfile("ios-app", ImportMode.FRAMEWORKS)
         projectBlock()

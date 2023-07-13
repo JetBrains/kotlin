@@ -42,14 +42,14 @@ abstract class AbstractPodInstallTask : CocoapodsTask() {
 
     @TaskAction
     open fun doPodInstall() {
-        val podInstallCommand = listOf("pod", "install")
+        // env is used here to work around the JVM PATH caching when spawning a child process with custom environment, i.e. LC_ALL
+        // The caching causes the ProcessBuilder to ignore changes in the PATH that may occur on incremental runs of the Gradle daemon
+        // KT-60394
+        val podInstallCommand = listOf("env", "pod", "install")
 
         runCommand(podInstallCommand,
                    logger,
-                   errorHandler = ::handleError,
-                   exceptionHandler = { e: IOException ->
-                       CocoapodsErrorHandlingUtil.handle(e, podInstallCommand)
-                   },
+                   errorHandler = { retCode, output, process -> sharedHandleError(podInstallCommand, retCode, output, process) },
                    processConfiguration = {
                        directory(workingDir.get())
                        // CocoaPods requires to be run with Unicode external encoding
@@ -63,17 +63,14 @@ abstract class AbstractPodInstallTask : CocoapodsTask() {
         }
     }
 
-    abstract fun handleError(retCode: Int, error: String, process: Process): String?
-}
-
-private object CocoapodsErrorHandlingUtil {
-    fun handle(e: IOException, command: List<String>) {
-        if (e.message?.contains("No such file or directory") == true) {
-            val message = """ 
-               |'${command.take(2).joinToString(" ")}' command failed with an exception:
-               | ${e.message}
+    private fun sharedHandleError(podInstallCommand: List<String>, retCode: Int, error: String, process: Process): String? {
+        return if (error.contains("No such file or directory")) {
+            val command = podInstallCommand.joinToString(" ")
+            """ 
+               |'$command' command failed with an exception:
+               | $error
                |        
-               |        Full command: ${command.joinToString(" ")}
+               |        Full command: $command
                |        
                |        Possible reason: CocoaPods is not installed
                |        Please check that CocoaPods v1.10 or above is installed.
@@ -83,10 +80,10 @@ private object CocoapodsErrorHandlingUtil {
                |        To install CocoaPods execute 'sudo gem install cocoapods'
                |
             """.trimMargin()
-            throw IllegalStateException(message)
         } else {
-            throw e
+            handleError(retCode, error, process)
         }
     }
 
+    abstract fun handleError(retCode: Int, error: String, process: Process): String?
 }

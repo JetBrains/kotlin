@@ -554,18 +554,18 @@ class CocoaPodsIT : KGPBaseTest() {
     @DisplayName("Cinterop commonization on")
     @GradleTest
     fun testCinteropCommonizationOn(gradleVersion: GradleVersion) {
-        testCinteropCommonizationExecutes(gradleVersion, buildArguments=arrayOf("-Pkotlin.mpp.enableCInteropCommonization=true"))
+        testCinteropCommonizationExecutes(gradleVersion, buildArguments = arrayOf("-Pkotlin.mpp.enableCInteropCommonization=true"))
     }
 
     @DisplayName("Cinterop commonization unspecified")
     @GradleTest
     fun testCinteropCommonizationUnspecified(gradleVersion: GradleVersion) {
-        testCinteropCommonizationExecutes(gradleVersion, buildArguments=emptyArray())
+        testCinteropCommonizationExecutes(gradleVersion, buildArguments = emptyArray())
     }
 
     private fun testCinteropCommonizationExecutes(
         gradleVersion: GradleVersion,
-        buildArguments: Array<String>
+        buildArguments: Array<String>,
     ) {
         nativeProjectWithCocoapodsAndIosAppPodFile(cocoapodsCommonizationProjectName, gradleVersion) {
             buildWithCocoapodsWrapper(":commonize", *buildArguments) {
@@ -875,18 +875,92 @@ class CocoaPodsIT : KGPBaseTest() {
         }
     }
 
+    private val maybeCocoaPodsIsNotInstalledError = "Possible reason: CocoaPods is not installed"
+    private val maybePodfileIsIncorrectError = "Please, check that podfile contains following lines in header"
+
+    @DisplayName("Pod install emits correct error when pod binary is not present in PATH")
+    @GradleTest
+    fun testPodInstallErrorWithoutCocoaPodsInPATH(gradleVersion: GradleVersion) {
+        val pathWithoutCocoapods = "/bin:/usr/bin"
+        nativeProjectWithCocoapodsAndIosAppPodFile(
+            gradleVersion = gradleVersion,
+            environmentVariables = EnvironmentalVariables(
+                mapOf("PATH" to pathWithoutCocoapods)
+            )
+        ) {
+            buildGradleKts.addCocoapodsBlock(
+                """
+                    podfile = project.file("ios-app/Podfile")
+                """.trimIndent()
+            )
+
+            buildAndFailWithCocoapodsWrapper(
+                podInstallTaskName,
+            ) {
+                assertOutputDoesNotContain(maybePodfileIsIncorrectError)
+                assertOutputContains(maybeCocoaPodsIsNotInstalledError)
+            }
+        }
+    }
+
+    @DisplayName("Pod install emits other errors when pod install runs, but fails later")
+    @GradleTest
+    fun testOtherPodInstallErrors(gradleVersion: GradleVersion) {
+        nativeProjectWithCocoapodsAndIosAppPodFile(
+            gradleVersion = gradleVersion
+        ) {
+            buildGradleKts.addCocoapodsBlock(
+                """
+                    podfile = project.file("ios-app/Podfile")
+                """.trimIndent()
+            )
+
+            projectPath.resolve("ios-app/Podfile").append(
+                """
+                    raise "Dead"
+                """.trimIndent()
+            )
+
+            buildAndFailWithCocoapodsWrapper(
+                podInstallTaskName,
+            ) {
+                assertOutputContains(maybePodfileIsIncorrectError)
+                assertOutputDoesNotContain(maybeCocoaPodsIsNotInstalledError)
+            }
+        }
+    }
+
+    private fun TestProject.buildAndFailWithCocoapodsWrapper(
+        vararg buildArguments: String,
+        assertions: BuildResult.() -> Unit = {},
+    ) = buildWithCocoapodsWrapperUsing { buildOptions ->
+        buildAndFail(
+            *buildArguments,
+            buildOptions = buildOptions,
+            assertions = assertions,
+        )
+    }
+
     private fun TestProject.buildWithCocoapodsWrapper(
         vararg buildArguments: String,
         assertions: BuildResult.() -> Unit = {},
+    ) = buildWithCocoapodsWrapperUsing { buildOptions ->
+        build(
+            *buildArguments,
+            buildOptions = buildOptions,
+            assertions = assertions,
+        )
+    }
+
+    private fun TestProject.buildWithCocoapodsWrapperUsing(
+        builder: TestProject.(BuildOptions) -> Unit,
     ) {
         val buildOptions = this.buildOptions.copy(
             nativeOptions = this.buildOptions.nativeOptions.copy(
                 cocoapodsGenerateWrapper = true
             )
         )
-        build(*buildArguments, buildOptions = buildOptions) {
-            assertions()
-        }
+        builder(buildOptions)
     }
 
     private fun TestProject.addPodToPodfile(iosAppLocation: String, pod: String) {
