@@ -5991,6 +5991,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
             }
 
             @Test
+            @TestMetadata("errorInsideDelegationCallNoPrimary.kt")
+            public void testErrorInsideDelegationCallNoPrimary() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/constructorConsistency/errorInsideDelegationCallNoPrimary.kt");
+            }
+
+            @Test
             @TestMetadata("getset.kt")
             public void testGetset() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/constructorConsistency/getset.kt");

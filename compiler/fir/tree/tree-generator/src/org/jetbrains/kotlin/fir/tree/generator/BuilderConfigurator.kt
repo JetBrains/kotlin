@@ -89,7 +89,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             fields from functionCall
         }
 
-        for (constructorType in listOf("FirPrimaryConstructor", "FirConstructorImpl")) {
+        for (constructorType in listOf("FirPrimaryConstructor", "FirConstructorImpl", "FirErrorConstructor")) {
             builder(constructor, constructorType) {
                 parents += abstractConstructorBuilder
                 defaultNull("delegatedConstructor")

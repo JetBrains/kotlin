@@ -20,6 +20,10 @@ FILE: withSuppression.kt
     public abstract interface A : R|kotlin/Any| {
     }
     public abstract interface B : R|@R|kotlin/Suppress|(names = vararg(String(SUPERTYPE_INITIALIZED_IN_INTERFACE)))  A| {
+        public error_constructor(): R|B| {
+            super<R|@R|kotlin/Suppress|(names = vararg(String(SUPERTYPE_INITIALIZED_IN_INTERFACE)))  A|>()
+        }
+
     }
     public final data class D : R|kotlin/Any| {
         @R|kotlin/Suppress|(names = vararg(String(DATA_CLASS_VARARG_PARAMETER))) public constructor(vararg x: R|kotlin/Array<out kotlin/String>|): R|D| {

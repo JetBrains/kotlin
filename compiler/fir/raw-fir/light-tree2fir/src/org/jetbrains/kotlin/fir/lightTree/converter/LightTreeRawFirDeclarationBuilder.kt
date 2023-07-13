@@ -891,12 +891,15 @@ class LightTreeRawFirDeclarationBuilder(
         isEnumEntry: Boolean = false,
         containingClassIsExpectClass: Boolean
     ): PrimaryConstructor? {
-        if (primaryConstructor == null && !classWrapper.isEnumEntry() && classWrapper.hasSecondaryConstructor) return null
-        val classKind = classWrapper.classBuilder.classKind
-        if (primaryConstructor == null &&
-            (containingClassIsExpectClass && classKind != ClassKind.ENUM_CLASS && classKind != ClassKind.ENUM_ENTRY)
-        ) return null
-        if (primaryConstructor == null && classWrapper.isInterface()) return null
+        fun ClassKind.isEnumRelated(): Boolean = this == ClassKind.ENUM_CLASS || this == ClassKind.ENUM_ENTRY
+        val shouldGenerateImplicitConstructor =
+            (classWrapper.isEnumEntry() || !classWrapper.hasSecondaryConstructor) &&
+            !classWrapper.isInterface() &&
+            (!containingClassIsExpectClass || classWrapper.classBuilder.classKind.isEnumRelated())
+        val isErrorConstructor = primaryConstructor == null && !shouldGenerateImplicitConstructor
+        if (isErrorConstructor && classWrapper.delegatedSuperCalls.isEmpty()) {
+            return null
+        }
 
         val constructorSymbol = FirConstructorSymbol(callableIdForClassConstructor())
         var modifiers = Modifier()
@@ -963,25 +966,29 @@ class LightTreeRawFirDeclarationBuilder(
             isFromEnumClass = classWrapper.isEnum()
         }
 
+        val builder = if (isErrorConstructor) FirErrorConstructorBuilder() else FirPrimaryConstructorBuilder()
+        builder.apply {
+            source = primaryConstructor?.toFirSourceElement()
+                ?: selfTypeSource?.fakeElement(KtFakeSourceElementKind.ImplicitConstructor)
+            moduleData = baseModuleData
+            origin = FirDeclarationOrigin.Source
+            returnTypeRef = classWrapper.delegatedSelfTypeRef
+            dispatchReceiverType = classWrapper.obtainDispatchReceiverForConstructor()
+            this.status = status
+            symbol = constructorSymbol
+            annotations += modifiers.annotations
+            typeParameters += constructorTypeParametersFromConstructedClass(classWrapper.classBuilder.typeParameters)
+            this.valueParameters += valueParameters.map { it.firValueParameter }
+            delegatedConstructor = firDelegatedCall
+            this.body = null
+            this.contextReceivers.addAll(convertContextReceivers(classNode))
+        }
+
         return PrimaryConstructor(
-            buildPrimaryConstructor {
-                source = primaryConstructor?.toFirSourceElement()
-                    ?: selfTypeSource?.fakeElement(KtFakeSourceElementKind.ImplicitConstructor)
-                moduleData = baseModuleData
-                origin = FirDeclarationOrigin.Source
-                returnTypeRef = classWrapper.delegatedSelfTypeRef
-                dispatchReceiverType = classWrapper.obtainDispatchReceiverForConstructor()
-                this.status = status
-                symbol = constructorSymbol
-                annotations += modifiers.annotations
-                typeParameters += constructorTypeParametersFromConstructedClass(classWrapper.classBuilder.typeParameters)
-                this.valueParameters += valueParameters.map { it.firValueParameter }
-                delegatedConstructor = firDelegatedCall
-                this.body = null
-                this.contextReceivers.addAll(convertContextReceivers(classNode))
-            }.apply {
+            builder.build().apply {
                 containingClassForStaticMemberAttr = currentDispatchReceiverType()!!.lookupTag
-            }, valueParameters
+            },
+            valueParameters,
         )
     }
 

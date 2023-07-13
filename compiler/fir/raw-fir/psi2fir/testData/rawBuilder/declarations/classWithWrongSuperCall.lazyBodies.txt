@@ -33,12 +33,20 @@ FILE: classWithWrongSuperCall.kt
 
     }
     public? final? class F : A {
+        public? error_constructor(): R|F| {
+            LAZY_super<A>
+        }
+
         public? constructor(): R|F| {
             LAZY_super<A>
         }
 
     }
     public? final? class G : A {
+        public? error_constructor(): R|G| {
+            LAZY_super<A>
+        }
+
         public? constructor(): R|G| {
             LAZY_super<A>
         }

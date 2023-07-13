@@ -30,6 +30,10 @@ FILE: [ResolvedTo(IMPORTS)] qualifiedCallInsideSuperCall5.kt
 
     }
     public final [ResolvedTo(STATUS)] class G : R|A| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=G] error_constructor(): R|G| {
+            LAZY_super<R|A|>
+        }
+
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=G] constructor(): R|G| {
             super<R|A|>([ResolvedTo(RAW_FIR)] fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                 local final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/String| {

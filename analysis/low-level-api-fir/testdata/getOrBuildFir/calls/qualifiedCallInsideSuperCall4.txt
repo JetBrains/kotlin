@@ -1,20 +1,9 @@
 KT element: KtNameReferenceExpression
-FIR element: FirRegularClassImpl
+FIR element: FirResolvedNamedReferenceImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-public final [ResolvedTo(BODY_RESOLVE)] class G : R|A| {
-    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=G] constructor(): R|G| {
-        super<R|A|>([ResolvedTo(RAW_FIR)] fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
-            local final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/String| {
-                ^foo Q|C|.R|/A.prop|.R|kotlin/String.toString|()
-            }
-
-        }
-        )
-    }
-
-}
+R|/A.prop|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] qualifiedCallInsideSuperCall4.kt
@@ -28,9 +17,9 @@ FILE: [ResolvedTo(IMPORTS)] qualifiedCallInsideSuperCall4.kt
             public [ResolvedTo(CONTRACTS)] [ContainingClassKey=A] get(): R|kotlin/String|
 
     }
-    public? final? [ResolvedTo(RAW_FIR)] object B : A {
-        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
-            LAZY_super<A>
+    public final [ResolvedTo(STATUS)] object B : R|A| {
+        private [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
+            LAZY_super<R|A|>
         }
 
     }
@@ -41,6 +30,16 @@ FILE: [ResolvedTo(IMPORTS)] qualifiedCallInsideSuperCall4.kt
 
     }
     public final [ResolvedTo(BODY_RESOLVE)] class G : R|A| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=G] error_constructor(): R|G| {
+            super<R|A|>([ResolvedTo(RAW_FIR)] fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                local final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/String| {
+                    ^foo Q|B|.R|/A.prop|.R|kotlin/String.toString|()
+                }
+
+            }
+            )
+        }
+
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=G] constructor(): R|G| {
             super<R|A|>([ResolvedTo(RAW_FIR)] fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
                 local final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/String| {

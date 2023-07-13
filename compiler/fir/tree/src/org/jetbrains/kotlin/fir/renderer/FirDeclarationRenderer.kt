@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.renderer
 
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirErrorConstructor
 import org.jetbrains.kotlin.fir.isCatchParameter
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
@@ -22,6 +23,9 @@ open class FirDeclarationRenderer {
             declaration.dispatchReceiverType?.let {
                 typeRenderer.render(it)
                 printer.print(".")
+            }
+            if (declaration is FirErrorConstructor) {
+                printer.print("error_")
             }
             printer.print("constructor")
             return

@@ -54,12 +54,32 @@ FILE: classWithWrongSuperCall.kt
 
     }
     public? final? class F : A {
+        public? [ContainingClassKey=F] error_constructor(): R|F| {
+            super<A>(fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+                local final? fun foo(): <implicit> {
+                    ^foo B#.prop#.toString#()
+                }
+
+            }
+            )
+        }
+
         public? [ContainingClassKey=F] constructor(): R|F| {
             super<A>()
         }
 
     }
     public? final? class G : A {
+        public? [ContainingClassKey=G] error_constructor(): R|G| {
+            super<A>(fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+                local final? fun foo(): <implicit> {
+                    ^foo B#.prop#.toString#()
+                }
+
+            }
+            )
+        }
+
         public? [ContainingClassKey=G] constructor(): R|G| {
             super<A>(fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
                 local final? fun foo(): <implicit> {

@@ -9,7 +9,7 @@ class B : A {
 
 <!SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR!>class C : A(20) {
     <!EXPLICIT_DELEGATION_CALL_REQUIRED!>constructor()<!>
-    constructor(z: String) : this()
+    constructor(z: String) : <!OVERLOAD_RESOLUTION_AMBIGUITY!>this<!>()
 }<!>
 
 class D() : A(20) {

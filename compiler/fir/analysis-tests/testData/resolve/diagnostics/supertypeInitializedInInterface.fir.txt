@@ -2,6 +2,10 @@ FILE: supertypeInitializedInInterface.kt
     public abstract interface A : R|kotlin/Any| {
     }
     public abstract interface B : R|A| {
+        public error_constructor(): R|B| {
+            super<R|A|>()
+        }
+
     }
     public open class C : R|kotlin/Any| {
         public constructor(): R|C| {
@@ -10,8 +14,22 @@ FILE: supertypeInitializedInInterface.kt
 
     }
     public abstract interface D : R|C| {
+        public error_constructor(): R|D| {
+            super<R|C|>()
+        }
+
     }
     public abstract interface E : R|kotlin/Any| {
+        public error_constructor(): R|E| {
+            super<R|kotlin/Any|>()
+        }
+
     }
     public abstract interface F : R|A|, R|B|, R|C|, R|D|, R|kotlin/Any| {
+        public error_constructor(): R|F| {
+            super<R|B|>()
+            super<R|D|>()
+            super<R|kotlin/Any|>()
+        }
+
     }

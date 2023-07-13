@@ -20,6 +20,10 @@ FILE: explicitDelegationCallRequired.kt
 
     }
     public final class C : R|A| {
+        public error_constructor(): R|C| {
+            super<R|A|>(Int(20))
+        }
+
         public constructor(): R|C| {
             super<R|A|>()
         }

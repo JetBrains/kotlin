@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.SingleNonLoca
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirErrorConstructor
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
@@ -148,7 +149,10 @@ internal class NonReanalyzableClassDeclarationStructureElement(
         }
 
         override fun visitConstructor(constructor: FirConstructor, data: MutableMap<KtElement, FirElement>) {
-            if (constructor is FirPrimaryConstructor && constructor.source?.kind == KtFakeSourceElementKind.ImplicitConstructor) {
+            if (
+                (constructor is FirPrimaryConstructor || constructor is FirErrorConstructor) &&
+                constructor.source?.kind == KtFakeSourceElementKind.ImplicitConstructor
+            ) {
                 NonReanalyzableNonClassDeclarationStructureElement.Recorder.visitConstructor(constructor, data)
             }
         }

@@ -956,10 +956,17 @@ open class PsiRawFirBuilder(
             // TODO: in case we have no primary constructor,
             // it may be not possible to determine delegated super type right here
             delegatedSuperTypeRef = delegatedSuperTypeRef ?: defaultDelegatedSuperTypeRef
-            val shouldGenerateImplicitPrimaryConstructor =
-                !hasExplicitPrimaryConstructor() && !hasSecondaryConstructors() && !(containingClassIsExpectClass && classKind != ClassKind.ENUM_CLASS)
 
-            if (primaryConstructor != null || (this !is KtClass || !this.isInterface()) && shouldGenerateImplicitPrimaryConstructor) {
+            // We are never here as part of enum entry
+            val shouldGenerateImplicitPrimaryConstructor =
+                !hasSecondaryConstructors() &&
+                !(containingClassIsExpectClass && classKind != ClassKind.ENUM_CLASS) &&
+                (this !is KtClass || !this.isInterface())
+
+            val hasPrimaryConstructor = primaryConstructor != null || shouldGenerateImplicitPrimaryConstructor
+
+
+            if (hasPrimaryConstructor || superTypeCallEntry != null) {
                 val firPrimaryConstructor = primaryConstructor.toFirConstructor(
                     superTypeCallEntry,
                     delegatedSuperTypeRef,
@@ -969,6 +976,7 @@ open class PsiRawFirBuilder(
                     allSuperTypeCallEntries,
                     containingClassIsExpectClass,
                     copyConstructedTypeRefWithImplicitSource = true,
+                    isErrorConstructor = !hasPrimaryConstructor,
                 )
                 container.declarations += firPrimaryConstructor
             }
@@ -988,6 +996,7 @@ open class PsiRawFirBuilder(
             allSuperTypeCallEntries: List<Pair<KtSuperTypeCallEntry, FirTypeRef>>,
             containingClassIsExpectClass: Boolean,
             copyConstructedTypeRefWithImplicitSource: Boolean,
+            isErrorConstructor: Boolean = false,
         ): FirConstructor {
             val constructorSource = this?.toFirSourceElement()
                 ?: owner.toKtPsiSourceElement(KtFakeSourceElementKind.ImplicitConstructor)
@@ -1040,7 +1049,8 @@ open class PsiRawFirBuilder(
                 isFromSealedClass = owner.hasModifier(SEALED_KEYWORD) && explicitVisibility !== Visibilities.Private
                 isFromEnumClass = owner.hasModifier(ENUM_KEYWORD)
             }
-            return buildPrimaryConstructor {
+            val builder = if (isErrorConstructor) FirErrorConstructorBuilder() else FirPrimaryConstructorBuilder()
+            builder.apply {
                 source = constructorSource
                 moduleData = baseModuleData
                 origin = FirDeclarationOrigin.Source
@@ -1054,9 +1064,8 @@ open class PsiRawFirBuilder(
                 this@toFirConstructor?.extractAnnotationsTo(this)
                 this@toFirConstructor?.extractValueParametersTo(this, symbol, ValueParameterDeclaration.PRIMARY_CONSTRUCTOR)
                 this.body = null
-            }.apply {
-                containingClassForStaticMemberAttr = currentDispatchReceiverType()!!.lookupTag
             }
+            return builder.build().apply { containingClassForStaticMemberAttr = currentDispatchReceiverType()!!.lookupTag }
         }
 
         private fun KtClassOrObject.obtainDispatchReceiverForConstructor(): ConeClassLikeType? =
