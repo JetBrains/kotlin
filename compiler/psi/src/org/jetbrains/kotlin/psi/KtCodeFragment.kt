@@ -27,7 +27,6 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.tree.IElementType
 import com.intellij.testFramework.LightVirtualFile
 import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import java.util.*
 
 abstract class KtCodeFragment(
@@ -82,14 +81,7 @@ abstract class KtCodeFragment(
     override fun isValid() = true
 
     override fun getContext(): PsiElement? {
-        if (fakeContextForJavaFile != null) return fakeContextForJavaFile
-        if (context != null && context !is KtElement) {
-            val logInfoForContextElement = (context as? PsiFile)?.virtualFile?.path ?: context.getElementTextWithContext()
-            LOG.warn("CodeFragment with non-kotlin context should have fakeContextForJavaFile set: \noriginalContext = $logInfoForContextElement")
-            return null
-        }
-
-        return context
+        return fakeContextForJavaFile ?: context
     }
 
     override fun getResolveScope() = context?.resolveScope ?: super.getResolveScope()
