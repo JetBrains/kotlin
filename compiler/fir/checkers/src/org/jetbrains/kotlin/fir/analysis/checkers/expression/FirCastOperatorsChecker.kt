@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.expressions.FirOperation
 import org.jetbrains.kotlin.fir.expressions.FirTypeOperatorCall
 import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.types.ConeDynamicType
 import org.jetbrains.kotlin.fir.types.coneType
 
 object FirCastOperatorsChecker : FirTypeOperatorCallChecker() {
@@ -29,21 +30,32 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker() {
 
         val isSafeAs = expression.operation == FirOperation.SAFE_AS
         if (expression.operation == FirOperation.AS || isSafeAs) {
-            val castType = checkCasting(actualType, targetType, isSafeAs, context)
-            if (castType == CastingType.Impossible) {
-                if (context.languageVersionSettings.supportsFeature(LanguageFeature.EnableDfaWarningsInK2)) {
-                    reporter.reportOn(expression.source, FirErrors.CAST_NEVER_SUCCEEDS, context)
+            if (targetType is ConeDynamicType) {
+                reporter.reportOn(conversionTypeRef.source, FirErrors.DYNAMIC_NOT_ALLOWED, context)
+            } else {
+                val castType = checkCasting(actualType, targetType, isSafeAs, context)
+                if (castType == CastingType.Impossible) {
+                    if (context.languageVersionSettings.supportsFeature(LanguageFeature.EnableDfaWarningsInK2)) {
+                        reporter.reportOn(expression.source, FirErrors.CAST_NEVER_SUCCEEDS, context)
+                    }
+                } else if (castType == CastingType.Always) {
+                    if (context.languageVersionSettings.supportsFeature(LanguageFeature.EnableDfaWarningsInK2)) {
+                        reporter.reportOn(expression.source, FirErrors.USELESS_CAST, context)
+                    }
+                } else if (isCastErased(actualType, targetType, context)) {
+                    reporter.reportOn(expression.source, FirErrors.UNCHECKED_CAST, actualType, targetType, context)
                 }
-            } else if (castType == CastingType.Always) {
-                if (context.languageVersionSettings.supportsFeature(LanguageFeature.EnableDfaWarningsInK2)) {
-                    reporter.reportOn(expression.source, FirErrors.USELESS_CAST, context)
-                }
-            } else if (isCastErased(actualType, targetType, context)) {
-                reporter.reportOn(expression.source, FirErrors.UNCHECKED_CAST, actualType, targetType, context)
             }
         } else if (expression.operation == FirOperation.IS) {
+            if (targetType is ConeDynamicType) {
+                reporter.reportOn(conversionTypeRef.source, FirErrors.DYNAMIC_NOT_ALLOWED, context)
+            }
             if (!context.isContractBody && isCastErased(actualType, targetType, context)) {
                 reporter.reportOn(conversionTypeRef.source, FirErrors.CANNOT_CHECK_FOR_ERASED, targetType, context)
+            }
+        } else if (expression.operation == FirOperation.NOT_IS) {
+            if (targetType is ConeDynamicType) {
+                reporter.reportOn(conversionTypeRef.source, FirErrors.DYNAMIC_NOT_ALLOWED, context)
             }
         }
     }

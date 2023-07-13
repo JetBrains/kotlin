@@ -3183,6 +3183,11 @@ internal class IsEnumEntryImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtTypeReference>(firDiagnostic, token), KtFirDiagnostic.IsEnumEntry
 
+internal class DynamicNotAllowedImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtTypeReference>(firDiagnostic, token), KtFirDiagnostic.DynamicNotAllowed
+
 internal class EnumEntryAsTypeImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,

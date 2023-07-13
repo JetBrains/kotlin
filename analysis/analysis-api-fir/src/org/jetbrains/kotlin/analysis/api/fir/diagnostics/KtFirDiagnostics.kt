@@ -2641,6 +2641,10 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = IsEnumEntry::class
     }
 
+    interface DynamicNotAllowed : KtFirDiagnostic<KtTypeReference> {
+        override val diagnosticClass get() = DynamicNotAllowed::class
+    }
+
     interface EnumEntryAsType : KtFirDiagnostic<KtTypeReference> {
         override val diagnosticClass get() = EnumEntryAsType::class
     }
