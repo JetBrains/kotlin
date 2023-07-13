@@ -56,8 +56,8 @@ class IdeaKotlinBinaryCoordinates(
     val identityString: String
         get() = buildString {
             append("$group:$module")
-            if (version != null) append(":$version")
             if (sourceSetName != null) append(":$sourceSetName")
+            if (version != null) append(":$version")
             if (capabilities.isNotEmpty()) {
                 append(capabilities.joinToString(", ", "(", ")"))
             }
@@ -107,13 +107,13 @@ class IdeaKotlinBinaryCoordinates(
                     append(classifyingCapabilities.joinToString(prefix = "(", postfix = ")", separator = ", ") { capability ->
                         capability.name.removePrefix(module).removePrefix("-")
                     })
-                    if (version != null) append(":$version")
                     if (sourceSetName != null) append(":$sourceSetName")
+                    if (version != null) append(":$version")
                 }
                 else -> buildString {
                     append("$group:$module")
-                    if (version != null) append(":$version")
                     if (sourceSetName != null) append(":$sourceSetName")
+                    if (version != null) append(":$version")
                 }
             }
         }
