@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.fir.java
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
@@ -14,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.buildUnaryArgumentList
@@ -35,6 +38,8 @@ import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.java.structure.impl.JavaElementImpl
 import org.jetbrains.kotlin.name.ClassId
@@ -43,6 +48,7 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.toKtPsiSourceElement
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import java.util.*
 
 internal fun Iterable<JavaAnnotation>.convertAnnotationsToFir(
@@ -210,10 +216,9 @@ private fun JavaAnnotationArgument.mapJavaRetentionArgument(session: FirSession)
 
 private fun fillAnnotationArgumentMapping(
     session: FirSession,
-    javaTypeParameterStack: JavaTypeParameterStack,
     lookupTag: ConeClassLikeLookupTagImpl,
     annotationArguments: Collection<JavaAnnotationArgument>,
-    destination: MutableMap<Name, FirExpression>
+    destination: MutableMap<Name, FirExpression>,
 ) {
     if (annotationArguments.isEmpty()) return
 
@@ -226,56 +231,71 @@ private fun fillAnnotationArgumentMapping(
     annotationArguments.associateTo(destination) { argument ->
         val name = argument.name ?: StandardClassIds.Annotations.ParameterNames.value
         val parameter = annotationConstructor?.valueParameters?.find { it.name == name }
-        name to argument.toFirExpression(session, javaTypeParameterStack, parameter?.returnTypeRef)
+        name to argument.toFirExpression(session, JavaTypeParameterStack.EMPTY, parameter?.returnTypeRef)
     }
 }
 
 private fun JavaAnnotation.toFirAnnotationCall(
     session: FirSession, javaTypeParameterStack: JavaTypeParameterStack
-): FirAnnotation {
-    return buildAnnotation {
-        val lookupTag = when (classId) {
-            StandardClassIds.Annotations.Java.Target -> StandardClassIds.Annotations.Target
-            StandardClassIds.Annotations.Java.Retention -> StandardClassIds.Annotations.Retention
-            StandardClassIds.Annotations.Java.Documented -> StandardClassIds.Annotations.MustBeDocumented
-            StandardClassIds.Annotations.Java.Deprecated -> StandardClassIds.Annotations.Deprecated
-            else -> classId
-        }?.toLookupTag()
-        annotationTypeRef = if (lookupTag != null) {
-            buildResolvedTypeRef {
-                type = ConeClassLikeTypeImpl(lookupTag, emptyArray(), isNullable = false)
-            }
-        } else {
-            val unresolvedName = classId?.shortClassName ?: SpecialNames.NO_NAME_PROVIDED
-            buildErrorTypeRef { diagnostic = ConeUnresolvedReferenceError(unresolvedName) }
+): FirAnnotation = buildAnnotation {
+    val lookupTag = when (classId) {
+        StandardClassIds.Annotations.Java.Target -> StandardClassIds.Annotations.Target
+        StandardClassIds.Annotations.Java.Retention -> StandardClassIds.Annotations.Retention
+        StandardClassIds.Annotations.Java.Documented -> StandardClassIds.Annotations.MustBeDocumented
+        StandardClassIds.Annotations.Java.Deprecated -> StandardClassIds.Annotations.Deprecated
+        else -> classId
+    }?.toLookupTag()
+    annotationTypeRef = if (lookupTag != null) {
+        buildResolvedTypeRef {
+            type = ConeClassLikeTypeImpl(lookupTag, emptyArray(), isNullable = false)
         }
+    } else {
+        val unresolvedName = classId?.shortClassName ?: SpecialNames.NO_NAME_PROVIDED
+        buildErrorTypeRef { diagnostic = ConeUnresolvedReferenceError(unresolvedName) }
+    }
 
-        argumentMapping = buildAnnotationArgumentMapping {
-            when (classId) {
-                StandardClassIds.Annotations.Java.Target -> {
+    /**
+     * This is required to avoid contract violation during [org.jetbrains.kotlin.fir.declarations.getDeprecationForCallSite]
+     * Because argument transformation may lead to [org.jetbrains.kotlin.fir.declarations.FirResolvePhase.TYPES]+ lazy resolution
+     * See KT-59342
+     * TODO: KT-60520
+     */
+    argumentMapping = object : FirAnnotationArgumentMapping() {
+        override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
+        override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement = this
+        override val source: KtSourceElement? get() = null
+
+        override val mapping: Map<Name, FirExpression> by lazy {
+            when {
+                classId == StandardClassIds.Annotations.Java.Target -> {
                     when (val argument = arguments.firstOrNull()) {
                         is JavaArrayAnnotationArgument -> argument.getElements().mapJavaTargetArguments(session)
                         is JavaEnumValueAnnotationArgument -> listOf(argument).mapJavaTargetArguments(session)
                         else -> null
                     }?.let {
-                        mapping[StandardClassIds.Annotations.ParameterNames.targetAllowedTargets] = it
+                        mapOf(StandardClassIds.Annotations.ParameterNames.targetAllowedTargets to it)
                     }
                 }
-                StandardClassIds.Annotations.Java.Retention -> {
+
+                classId == StandardClassIds.Annotations.Java.Retention -> {
                     arguments.firstOrNull()?.mapJavaRetentionArgument(session)?.let {
-                        mapping[StandardClassIds.Annotations.ParameterNames.retentionValue] = it
+                        mapOf(StandardClassIds.Annotations.ParameterNames.retentionValue to it)
                     }
                 }
-                StandardClassIds.Annotations.Java.Deprecated -> {
-                    mapping[StandardClassIds.Annotations.ParameterNames.deprecatedMessage] =
-                        "Deprecated in Java".createConstantOrError(session)
+
+                classId == StandardClassIds.Annotations.Java.Deprecated -> {
+                    mapOf(
+                        StandardClassIds.Annotations.ParameterNames.deprecatedMessage to "Deprecated in Java".createConstantOrError(session)
+                    )
                 }
-                else -> {
-                    if (lookupTag != null) {
-                        fillAnnotationArgumentMapping(session, javaTypeParameterStack, lookupTag, arguments, mapping)
-                    }
+
+                lookupTag == null -> null
+                else -> arguments.ifNotEmpty {
+                    val mapping = LinkedHashMap<Name, FirExpression>(size)
+                    fillAnnotationArgumentMapping(session, lookupTag, this, mapping)
+                    mapping
                 }
-            }
+            }.orEmpty()
         }
     }
 }

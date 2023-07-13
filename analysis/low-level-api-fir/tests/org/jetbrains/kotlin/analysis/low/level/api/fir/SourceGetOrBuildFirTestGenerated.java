@@ -508,6 +508,12 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
         }
 
         @Test
+        @TestMetadata("kt60387.kt")
+        public void testKt60387() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/declarations/kt60387.kt");
+        }
+
+        @Test
         @TestMetadata("ktij23263.kt")
         public void testKtij23263() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/declarations/ktij23263.kt");
