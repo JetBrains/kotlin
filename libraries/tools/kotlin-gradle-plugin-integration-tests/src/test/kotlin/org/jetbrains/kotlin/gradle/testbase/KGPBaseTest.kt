@@ -27,6 +27,7 @@ import java.nio.file.Path
 @Tag("JUnit5")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @WithMuteInDatabase
+@TagsCountValidator
 @TestDataPath("\$CONTENT_ROOT/resources/testProject")
 @OsCondition
 abstract class KGPBaseTest {
