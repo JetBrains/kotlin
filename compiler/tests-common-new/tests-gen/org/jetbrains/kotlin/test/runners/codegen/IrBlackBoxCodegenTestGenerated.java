@@ -547,6 +547,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("annotationWithTypeParameters.kt")
+            public void testAnnotationWithTypeParameters() throws Exception {
+                runTest("compiler/testData/codegen/box/annotations/instances/annotationWithTypeParameters.kt");
+            }
+
+            @Test
+            @TestMetadata("annotationWithTypeParametersJvm.kt")
+            public void testAnnotationWithTypeParametersJvm() throws Exception {
+                runTest("compiler/testData/codegen/box/annotations/instances/annotationWithTypeParametersJvm.kt");
+            }
+
+            @Test
             @TestMetadata("annotationsUnsignedTypes.kt")
             public void testAnnotationsUnsignedTypes() throws Exception {
                 runTest("compiler/testData/codegen/box/annotations/instances/annotationsUnsignedTypes.kt");
@@ -592,6 +604,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("multimoduleInlining.kt")
             public void testMultimoduleInlining() throws Exception {
                 runTest("compiler/testData/codegen/box/annotations/instances/multimoduleInlining.kt");
+            }
+
+            @Test
+            @TestMetadata("multimoduleTypeParams.kt")
+            public void testMultimoduleTypeParams() throws Exception {
+                runTest("compiler/testData/codegen/box/annotations/instances/multimoduleTypeParams.kt");
             }
 
             @Test

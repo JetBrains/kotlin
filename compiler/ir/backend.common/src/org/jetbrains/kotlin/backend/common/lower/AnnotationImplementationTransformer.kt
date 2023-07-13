@@ -79,7 +79,6 @@ abstract class AnnotationImplementationTransformer(val context: BackendContext, 
     override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
         val constructedClass = expression.type.classOrNull?.owner ?: return super.visitConstructorCall(expression)
         if (!constructedClass.isAnnotationClass) return super.visitConstructorCall(expression)
-        if (constructedClass.typeParameters.isNotEmpty()) return super.visitConstructorCall(expression) // Not supported yet
         require(expression.symbol.owner.isPrimary) { "Non-primary constructors of annotations are not supported" }
 
         val implClass = implementations.getOrPut(constructedClass) { createAnnotationImplementation(constructedClass) }
@@ -158,6 +157,7 @@ abstract class AnnotationImplementationTransformer(val context: BackendContext, 
             createImplicitParameterDeclarationWithWrappedDescriptor()
             superTypes = listOf(annotationClass.defaultType)
             platformSetup()
+            // Type parameters can be copied from annotationClass, but in fact they are never used by any of the backends.
         }
 
         val ctor = subclass.addConstructor {

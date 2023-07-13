@@ -483,6 +483,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/annotations/instances/annotationType.kt");
             }
 
+            @TestMetadata("annotationWithTypeParameters.kt")
+            public void testAnnotationWithTypeParameters() throws Exception {
+                runTest("compiler/testData/codegen/box/annotations/instances/annotationWithTypeParameters.kt");
+            }
+
+            @TestMetadata("annotationWithTypeParametersJvm.kt")
+            public void testAnnotationWithTypeParametersJvm() throws Exception {
+                runTest("compiler/testData/codegen/box/annotations/instances/annotationWithTypeParametersJvm.kt");
+            }
+
             @TestMetadata("annotationsUnsignedTypes.kt")
             public void testAnnotationsUnsignedTypes() throws Exception {
                 runTest("compiler/testData/codegen/box/annotations/instances/annotationsUnsignedTypes.kt");
@@ -516,6 +526,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestMetadata("multimoduleInlining.kt")
             public void testMultimoduleInlining() throws Exception {
                 runTest("compiler/testData/codegen/box/annotations/instances/multimoduleInlining.kt");
+            }
+
+            @TestMetadata("multimoduleTypeParams.kt")
+            public void testMultimoduleTypeParams() throws Exception {
+                runTest("compiler/testData/codegen/box/annotations/instances/multimoduleTypeParams.kt");
             }
 
             @TestMetadata("multiplatformInstantiation.kt")

@@ -32,9 +32,7 @@ object FirConstructorCallChecker : FirFunctionCallChecker() {
                     klass !is FirRegularClass || klass.classKind != ClassKind.ANNOTATION_CLASS
                 }
             ) {
-                if (!context.languageVersionSettings.supportsFeature(LanguageFeature.InstantiationOfAnnotationClasses) ||
-                    declarationClass.typeParameterSymbols.isNotEmpty()
-                ) reporter.reportOn(
+                if (!context.languageVersionSettings.supportsFeature(LanguageFeature.InstantiationOfAnnotationClasses)) reporter.reportOn(
                     expression.source,
                     FirErrors.ANNOTATION_CLASS_CONSTRUCTOR_CALL,
                     context

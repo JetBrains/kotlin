@@ -15,5 +15,5 @@ fun box() {
     val a = A()
     val b = B(4)
     val c = C()
-    val foo = <!ANNOTATION_CLASS_CONSTRUCTOR_CALL!>G(Int::class)<!>
+    val foo = G(Int::class)
 }
