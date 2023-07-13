@@ -34,7 +34,7 @@ val FirBasedSymbol<*>.llFirModuleData: LLFirModuleData
 class LLFirModuleData(
     val ktModule: KtModule,
 ) : FirModuleData() {
-    override val name: Name get() = Name.special("<${(ktModule as? KtSourceModule)?.run { stableModuleName ?: name } ?: ktModule.moduleDescription}>")
+    override val name: Name get() = Name.special("<${(ktModule as? KtSourceModule)?.run { stableModuleName ?: moduleName } ?: ktModule.moduleDescription}>")
 
     override val dependencies: List<FirModuleData> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         ktModule.directRegularDependencies.map(::LLFirModuleData)
