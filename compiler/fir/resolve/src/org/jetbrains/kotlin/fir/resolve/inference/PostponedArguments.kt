@@ -66,7 +66,7 @@ fun Candidate.preprocessLambdaArgument(
             ?: FunctionTypeKind.Function
         val lambdaType = createFunctionType(
             functionTypeKind,
-            if (resolvedArgument.coerceFirstParameterToExtensionReceiver) parameters.drop(1) else parameters,
+            parameters,
             resolvedArgument.receiver,
             resolvedArgument.returnType,
             contextReceivers = resolvedArgument.contextReceivers,

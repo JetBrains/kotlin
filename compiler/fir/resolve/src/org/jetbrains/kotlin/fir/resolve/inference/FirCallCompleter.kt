@@ -277,17 +277,16 @@ class FirCallCompleter(
 
             val expectedReturnTypeRef = expectedReturnType?.let { lambdaArgument.returnTypeRef.resolvedTypeFromPrototype(it) }
 
-            if (receiverType == null) {
-                lambdaArgument.replaceReceiverParameter(null)
-            } else {
-                lambdaArgument.receiverParameter?.apply {
-                    replaceTypeRef(
-                        typeRef.resolvedTypeFromPrototype(
-                            receiverType.approximateLambdaInputType(),
-                            source?.fakeElement(KtFakeSourceElementKind.ImplicitTypeRef),
-                        )
-                    )
+            when {
+                receiverType == null -> lambdaArgument.replaceReceiverParameter(null)
+                !lambdaAtom.coerceFirstParameterToExtensionReceiver -> {
+                    lambdaArgument.receiverParameter?.apply {
+                        val type = receiverType.approximateLambdaInputType()
+                        val source = source?.fakeElement(KtFakeSourceElementKind.ImplicitTypeRef)
+                        replaceTypeRef(typeRef.resolvedTypeFromPrototype(type, source))
+                    }
                 }
+                else -> lambdaArgument.replaceReceiverParameter(null)
             }
 
             if (contextReceivers.isNotEmpty()) {
@@ -304,8 +303,15 @@ class FirCallCompleter(
 
             val lookupTracker = session.lookupTracker
             val fileSource = components.file.source
+            val theParameters = when {
+                lambdaAtom.coerceFirstParameterToExtensionReceiver -> when (receiverType) {
+                    null -> error("Coercion to extension receiver while no receiver present")
+                    else -> listOf(receiverType) + parameters
+                }
+                else -> parameters
+            }
             lambdaArgument.valueParameters.forEachIndexed { index, parameter ->
-                val newReturnType = parameters[index].approximateLambdaInputType()
+                val newReturnType = theParameters[index].approximateLambdaInputType()
                 val newReturnTypeRef = if (parameter.returnTypeRef is FirImplicitTypeRef) {
                     newReturnType.toFirResolvedTypeRef(parameter.source?.fakeElement(KtFakeSourceElementKind.ImplicitReturnTypeOfLambdaValueParameter))
                 } else parameter.returnTypeRef.resolvedTypeFromPrototype(newReturnType)

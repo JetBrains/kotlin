@@ -24,7 +24,7 @@ fun extractLambdaInfoFromFunctionType(
     returnTypeVariable: ConeTypeVariableForLambdaReturnType?,
     components: BodyResolveComponents,
     candidate: Candidate?,
-    duringCompletion: Boolean,
+    allowCoercionToExtensionReceiver: Boolean,
 ): ResolvedLambdaAtom? {
     val session = components.session
     if (expectedType == null) return null
@@ -35,7 +35,7 @@ fun extractLambdaInfoFromFunctionType(
             returnTypeVariable,
             components,
             candidate,
-            duringCompletion
+            allowCoercionToExtensionReceiver,
         )
     }
     val expectedFunctionKind = expectedType.functionTypeKind(session) ?: return null
@@ -77,7 +77,7 @@ fun extractLambdaInfoFromFunctionType(
     val parameters = if (argument.isLambda && !argument.hasExplicitParameterList && expectedParameters.size < 2) {
         expectedParameters // Infer existence of a parameter named `it` of an appropriate type.
     } else {
-        if (duringCompletion &&
+        if (allowCoercionToExtensionReceiver &&
             argument.isLambda &&
             isExtensionFunctionType &&
             valueParametersTypesIncludingReceiver.size == argumentValueParameters.size
@@ -90,7 +90,11 @@ fun extractLambdaInfoFromFunctionType(
             }
         }
 
-        argumentValueParameters.mapIndexed { index, parameter ->
+        if (coerceFirstParameterToExtensionReceiver) {
+            argumentValueParameters.drop(1)
+        } else {
+            argumentValueParameters
+        }.mapIndexed { index, parameter ->
             parameter.returnTypeRef.coneTypeSafe()
                 ?: expectedParameters.getOrNull(index)
                 ?: ConeErrorType(ConeCannotInferValueParameterType(parameter.symbol))
