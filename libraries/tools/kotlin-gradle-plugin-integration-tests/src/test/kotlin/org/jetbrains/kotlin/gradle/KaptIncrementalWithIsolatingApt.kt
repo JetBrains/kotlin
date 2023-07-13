@@ -285,7 +285,6 @@ open class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
         }
     }
 
-    @AndroidGradlePluginTests
     @DisplayName("KT-34340: origins in classpath")
     @GradleAndroidTest
     @DisabledOnOs(OS.WINDOWS, disabledReason = "https://youtrack.jetbrains.com/issue/KTI-405")

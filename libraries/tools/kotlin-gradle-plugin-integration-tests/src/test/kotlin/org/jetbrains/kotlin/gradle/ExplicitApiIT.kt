@@ -14,9 +14,9 @@ import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 
 @DisplayName("Explicit API DSL")
-@JvmGradlePluginTests
 class ExplicitApiIT : KGPBaseTest() {
 
+    @JvmGradlePluginTests
     @DisplayName("Explicit api warning mode produces warnings")
     @GradleTest
     fun explicitApiWarning(gradleVersion: GradleVersion) {
@@ -46,6 +46,7 @@ class ExplicitApiIT : KGPBaseTest() {
         }
     }
 
+    @JvmGradlePluginTests
     @DisplayName("Explicit api strict mode produces errors on violation")
     @GradleTest
     fun explicitApiStrict(gradleVersion: GradleVersion) {
@@ -70,6 +71,7 @@ class ExplicitApiIT : KGPBaseTest() {
         }
     }
 
+    @JvmGradlePluginTests
     @DisplayName("KT-57653: Explicit api warning mode is not overridden by freeCompilerArgs")
     @GradleTest
     fun explicitApiWarningFreeArgsOverride(gradleVersion: GradleVersion) {

@@ -6,6 +6,7 @@ plugins {
 
 android {
     compileSdkVersion 30
+    namespace 'com.example.mylibrary2'
 
     defaultConfig {
         minSdkVersion 16
@@ -22,6 +23,8 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 }
+
+kotlin.jvmToolchain(8)
 
 dependencies {
     kapt 'org.parceler:parceler:1.1.12'
