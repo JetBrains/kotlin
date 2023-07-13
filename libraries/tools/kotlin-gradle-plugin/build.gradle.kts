@@ -170,11 +170,6 @@ tasks {
         }
     }
 
-    withType<ValidatePlugins>().configureEach {
-        failOnWarning.set(true)
-        enableStricterValidation.set(true)
-    }
-
     withType<ShadowJar>().configureEach {
         relocate("com.github.gundy", "$kotlinEmbeddableRootPackage.com.github.gundy")
         relocate("de.undercouch.gradle.tasks.download", "$kotlinEmbeddableRootPackage.de.undercouch.gradle.tasks.download")
@@ -187,9 +182,12 @@ tasks {
     }
 }
 
-projectTest {
-    dependsOn(tasks.named("validatePlugins"))
+tasks.named("validatePlugins") {
+    // We're manually registering and wiring validation tasks for each plugin variant
+    enabled = false
+}
 
+projectTest {
     workingDir = rootDir
 }
 

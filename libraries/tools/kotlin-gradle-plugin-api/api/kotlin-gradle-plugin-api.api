@@ -566,11 +566,6 @@ public final class org/jetbrains/kotlin/gradle/dsl/jvm/JvmTargetValidationMode :
 	public static fun values ()[Lorg/jetbrains/kotlin/gradle/dsl/jvm/JvmTargetValidationMode;
 }
 
-public abstract class org/jetbrains/kotlin/gradle/plugin/AbstractCompileWithDependenciesTracking : org/gradle/api/tasks/compile/AbstractCompile {
-	public fun <init> ()V
-	public fun isDependentTaskOutOfDate (Lorg/gradle/api/Task;)Z
-}
-
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/CInteropSettings : org/gradle/api/Named {
 	public abstract fun compilerOpts (Ljava/util/List;)V
 	public abstract fun compilerOpts ([Ljava/lang/String;)V

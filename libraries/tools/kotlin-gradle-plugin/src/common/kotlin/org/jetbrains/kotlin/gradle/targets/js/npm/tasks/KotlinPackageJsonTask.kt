@@ -9,6 +9,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
+import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.gradle.utils.CompositeProjectComponentArtifactMetada
 import org.jetbrains.kotlin.gradle.utils.`is`
 import java.io.File
 
+@DisableCachingByDefault
 abstract class KotlinPackageJsonTask :
     DefaultTask(),
     UsesKotlinNpmResolutionManager,

@@ -12,11 +12,13 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
+import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.utils.contentEquals
 import java.io.File
 import javax.inject.Inject
 
+@DisableCachingByDefault
 abstract class YarnLockCopyTask : DefaultTask() {
 
     @get:NormalizeLineEndings
@@ -56,6 +58,7 @@ abstract class YarnLockCopyTask : DefaultTask() {
     }
 }
 
+@DisableCachingByDefault
 abstract class YarnLockStoreTask : YarnLockCopyTask() {
     @Input
     lateinit var yarnLockMismatchReport: Provider<YarnLockMismatchReport>

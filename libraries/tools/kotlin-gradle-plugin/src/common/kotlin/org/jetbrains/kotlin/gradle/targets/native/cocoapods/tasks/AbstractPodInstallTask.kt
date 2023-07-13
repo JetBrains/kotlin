@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.gradle.targets.native.tasks
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
+import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.utils.onlyIfCompat
 import org.jetbrains.kotlin.gradle.utils.runCommand
 import java.io.File
@@ -20,12 +21,14 @@ import java.io.IOException
  * to obtain sources or artifacts for the declared dependencies.
  * This task is a part of CocoaPods integration infrastructure.
  */
+@DisableCachingByDefault(because = "Abstract super-class, not to be instantiated directly")
 abstract class AbstractPodInstallTask : CocoapodsTask() {
     init {
         onlyIfCompat("Podfile location is set") { podfile.isPresent }
     }
 
     @get:Optional
+    @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:InputFile
     abstract val podfile: Property<File?>
 

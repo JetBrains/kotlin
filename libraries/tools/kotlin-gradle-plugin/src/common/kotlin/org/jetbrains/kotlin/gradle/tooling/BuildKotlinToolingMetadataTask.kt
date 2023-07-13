@@ -84,6 +84,7 @@ internal val GradleKpmModule.buildKotlinToolingMetadataTask: TaskProvider<BuildK
         )
     }
 
+@DisableCachingByDefault
 abstract class BuildKotlinToolingMetadataTask : DefaultTask() {
 
     @DisableCachingByDefault

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.native.tasks
 import org.gradle.api.DefaultTask
 import org.gradle.api.Task
 import org.gradle.api.tasks.*
+import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBinary
 import org.jetbrains.kotlin.gradle.plugin.performance.PerformanceExtension
@@ -18,6 +19,7 @@ import java.io.File
 /**
  * The task generates performance report for Kotlin/Native binary.
  */
+@DisableCachingByDefault
 open class NativePerformanceReport : DefaultTask() {
     @Internal
     lateinit var binary: NativeBinary

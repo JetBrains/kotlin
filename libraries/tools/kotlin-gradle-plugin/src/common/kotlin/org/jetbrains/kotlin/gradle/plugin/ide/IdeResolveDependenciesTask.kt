@@ -10,6 +10,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependencyCoordinates
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
@@ -32,6 +33,7 @@ internal fun Project.locateOrRegisterIdeResolveDependenciesTask(): TaskProvider<
  * This will invoke the [IdeMultiplatformImport] to resolve all dependencies (like the IDE would).
  * Outputs are written as json and protobufs
  */
+@DisableCachingByDefault(because = "Used for debugging/diagnostic purpose.")
 internal open class IdeResolveDependenciesTask : DefaultTask() {
 
     @TaskAction

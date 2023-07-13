@@ -13,6 +13,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
+import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.*
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.CocoapodsDependency.PodLocation.*
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.cocoapodsBuildDirs
@@ -24,12 +25,14 @@ import javax.inject.Inject
 /**
  * The task compiles external cocoa pods sources.
  */
+@DisableCachingByDefault
 abstract class PodBuildTask @Inject constructor(
     providerFactory: ProviderFactory,
     projectLayout: ProjectLayout,
     objectFactory: ObjectFactory,
 ) : CocoapodsTask() {
 
+    @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:InputFile
     abstract val buildSettingsFile: RegularFileProperty
 
@@ -44,6 +47,7 @@ abstract class PodBuildTask @Inject constructor(
 
     private val synthetic = projectLayout.cocoapodsBuildDirs.synthetic(family)
 
+    @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:IgnoreEmptyDirectories
     @get:InputDirectory
     internal val srcDir: Provider<Directory> = pod.flatMap { pod ->

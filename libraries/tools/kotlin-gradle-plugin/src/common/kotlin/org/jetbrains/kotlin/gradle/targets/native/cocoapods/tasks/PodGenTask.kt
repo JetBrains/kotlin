@@ -13,6 +13,7 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
+import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.*
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.cocoapodsBuildDirs
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.platformLiteral
@@ -25,6 +26,7 @@ import javax.inject.Inject
 /**
  * The task generates a synthetic project with all cocoapods dependencies
  */
+@DisableCachingByDefault
 abstract class PodGenTask @Inject constructor(projectLayout: ProjectLayout) : CocoapodsTask() {
 
     init {
@@ -33,6 +35,7 @@ abstract class PodGenTask @Inject constructor(projectLayout: ProjectLayout) : Co
         }
     }
 
+    @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:InputFile
     internal abstract val podspec: Property<File>
 
@@ -51,6 +54,7 @@ abstract class PodGenTask @Inject constructor(projectLayout: ProjectLayout) : Co
     @get:Nested
     internal abstract val pods: ListProperty<CocoapodsDependency>
 
+    @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:Optional
     @get:InputFile
     internal abstract val xcodeVersion: RegularFileProperty

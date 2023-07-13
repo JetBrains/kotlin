@@ -11,6 +11,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.dsl.DependencyHandler
+import org.gradle.api.artifacts.transform.CacheableTransform
 import org.gradle.api.artifacts.transform.InputArtifact
 import org.gradle.api.artifacts.transform.TransformAction
 import org.gradle.api.artifacts.transform.TransformOutputs
@@ -18,6 +19,7 @@ import org.gradle.api.artifacts.transform.TransformParameters
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.file.FileSystemLocation
 import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.Classpath
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
@@ -115,7 +117,9 @@ private fun configureDiscoveryTransformation(
     project.dependencies.registerOnceDiscoverScriptExtensionsTransform()
 }
 
+@CacheableTransform
 internal abstract class DiscoverScriptExtensionsTransformAction : TransformAction<TransformParameters.None> {
+    @get:Classpath
     @get:InputArtifact
     @get:NormalizeLineEndings
     abstract val inputArtifact: Provider<FileSystemLocation>

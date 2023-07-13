@@ -15,6 +15,7 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.testing.*
+import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.internal.testing.KotlinTestRunnerListener
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.internal.KotlinTestReportCompatibilityHelper
@@ -44,6 +45,7 @@ import org.jetbrains.kotlin.gradle.utils.toUri
  * In this case, only topmost aggregate test task will override reporting,
  * event if child tasks will be executed.
  */
+@DisableCachingByDefault
 abstract class KotlinTestReport : TestReport(), UsesTestReportService {
     @Transient
     @Internal

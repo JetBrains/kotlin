@@ -12,6 +12,7 @@ import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.internal.hash.FileHasher
+import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.targets.js.extractWithUpToDate
@@ -21,6 +22,7 @@ import java.io.File
 import java.net.URI
 import javax.inject.Inject
 
+@DisableCachingByDefault
 abstract class YarnSetupTask : DefaultTask() {
     @Transient
     private val settings = project.yarn

@@ -12,6 +12,7 @@ import org.gradle.api.file.ProjectLayout
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
+import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
@@ -144,6 +145,7 @@ private fun Project.registerAssembleFatForXCFrameworkTask(
     }
 }
 
+@DisableCachingByDefault
 abstract class XCFrameworkTask
 @Inject
 internal constructor(

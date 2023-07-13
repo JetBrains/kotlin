@@ -10,14 +10,17 @@ package org.jetbrains.kotlin.gradle.targets.native.tasks
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
+import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.CocoapodsDependency
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.SpecRepos
 import org.jetbrains.kotlin.gradle.targets.native.cocoapods.MissingCocoapodsMessage
 import org.jetbrains.kotlin.gradle.targets.native.cocoapods.MissingSpecReposMessage
 import java.io.File
 
+@DisableCachingByDefault
 abstract class PodInstallTask : AbstractPodInstallTask() {
 
+    @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:Optional
     @get:InputFile
     abstract val podspec: Property<File?>

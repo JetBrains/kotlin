@@ -247,28 +247,6 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("Validate Gradle plugins inputs")
-    // TODO(Dmitrii Krasnov): validate-external-gradle-plugin has been removed in Gradle 8.0,
-    //  so this test should be removed after correct configuring k-g-p and k-g-p-api tasks
-    @GradleTestVersions(
-        minVersion = TestVersions.Gradle.G_7_6,
-        maxVersion = TestVersions.Gradle.G_7_6
-    ) // Always should use only latest Gradle version
-    @GradleTest
-    internal fun validatePluginInputs(gradleVersion: GradleVersion) {
-        project("kotlinProject", gradleVersion) {
-            buildGradle.modify {
-                """
-                plugins {
-                    id "validate-external-gradle-plugin"
-                ${it.substringAfter("plugins {")}
-                """.trimIndent()
-            }
-
-            build("validateExternalPlugins")
-        }
-    }
-
     @DisplayName("Accessing Kotlin SourceSet in KotlinDSL")
     @GradleTestVersions(maxVersion = TestVersions.Gradle.G_7_1)
     @GradleTest

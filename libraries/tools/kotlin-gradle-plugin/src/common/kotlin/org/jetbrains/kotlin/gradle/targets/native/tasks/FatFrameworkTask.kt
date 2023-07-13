@@ -12,6 +12,7 @@ import org.gradle.api.file.FileTree
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
+import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
@@ -115,6 +116,7 @@ class FrameworkDescriptor(
 /**
  * Task running lipo to create a fat framework from several simple frameworks. It also merges headers, plists and module files.
  */
+@DisableCachingByDefault
 open class FatFrameworkTask
 @Inject
 internal constructor(

@@ -207,6 +207,7 @@ class Kapt3AndroidIT : Kapt3BaseIT() {
                         this.argsFile = argsFile
                     } 
     
+                    @PathSensitive(PathSensitivity.RELATIVE)
                     @InputFile
                     File inputFile = null
     

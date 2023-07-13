@@ -229,9 +229,11 @@ internal abstract class FrameworkCopy : DefaultTask() {
     @get:Inject
     abstract val execOperations: ExecOperations
 
+    @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:InputDirectory
     abstract val sourceFramework: DirectoryProperty
 
+    @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:InputFiles
     @get:IgnoreEmptyDirectories
     protected val sourceDsym = sourceFramework.mapToFile().map { File(it.path + ".dSYM") }

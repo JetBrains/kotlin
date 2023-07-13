@@ -15,6 +15,7 @@ import org.gradle.api.tasks.*
 import org.gradle.api.tasks.options.Option
 import org.gradle.process.ProcessForkOptions
 import org.gradle.process.internal.DefaultProcessForkOptions
+import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
@@ -26,6 +27,7 @@ import java.io.File
 import java.util.concurrent.Callable
 import javax.inject.Inject
 
+@DisableCachingByDefault(because = "Abstract super-class, not to be instantiated directly")
 abstract class KotlinNativeTest : KotlinTest() {
     @get:Inject
     abstract val providerFactory: ProviderFactory
@@ -198,6 +200,7 @@ abstract class KotlinNativeTest : KotlinTest() {
 /**
  * A task running Kotlin/Native tests on a host machine.
  */
+@DisableCachingByDefault
 abstract class KotlinNativeHostTest : KotlinNativeTest() {
     @get:Internal
     override val testCommand: TestCommand = object : TestCommand() {
@@ -217,6 +220,7 @@ abstract class KotlinNativeHostTest : KotlinNativeTest() {
 /**
  * A task running Kotlin/Native tests on a simulator (iOS/watchOS/tvOS).
  */
+@DisableCachingByDefault
 abstract class KotlinNativeSimulatorTest : KotlinNativeTest() {
     @Deprecated("Use the property 'device' instead")
     @get:Internal

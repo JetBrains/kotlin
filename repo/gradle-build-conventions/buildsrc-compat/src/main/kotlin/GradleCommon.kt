@@ -14,6 +14,7 @@ import org.gradle.api.attributes.java.TargetJvmEnvironment
 import org.gradle.api.attributes.java.TargetJvmVersion
 import org.gradle.api.attributes.plugin.GradlePluginApiVersion
 import org.gradle.api.component.AdhocComponentWithVariants
+import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.plugins.JavaLibraryPlugin
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPluginExtension
@@ -21,10 +22,14 @@ import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.SourceSet
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.jvm.tasks.Jar
+import org.gradle.jvm.toolchain.JavaToolchainService
 import org.gradle.kotlin.dsl.*
+import org.gradle.kotlin.dsl.support.uppercaseFirstChar
 import org.gradle.plugin.devel.plugins.JavaGradlePluginPlugin
+import org.gradle.plugin.devel.tasks.ValidatePlugins
 import org.jetbrains.dokka.DokkaVersion
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.dokka.gradle.GradleExternalDocumentationLinkBuilder
@@ -173,6 +178,8 @@ fun Project.createGradleCommonSourceSet(): SourceSet {
             moduleName = "${this@createGradleCommonSourceSet.name}_${commonSourceSet.name}"
         }
     }
+
+    registerValidatePluginTasks(commonSourceSet)
 
     return commonSourceSet
 }
@@ -513,6 +520,8 @@ fun Project.createGradlePluginVariant(
         }
     }
 
+    registerValidatePluginTasks(variantSourceSet)
+
     return variantSourceSet
 }
 
@@ -767,3 +776,35 @@ private fun GradleExternalDocumentationLinkBuilder.addWorkaroundForElementList(p
 }
 
 private val SourceSet.embeddedConfigurationName get() = "${name}Embedded"
+
+// We want to still validate Gradle types without applying `java-gradle-plugin`
+// Following configuration is a copy of configuration for the task done by the `java-gradle-plugin`
+fun Project.registerValidatePluginTasks(
+    sourceSet: SourceSet
+): TaskProvider<ValidatePlugins> {
+    val validatePluginsTask = tasks.register<ValidatePlugins>("validatePlugins${sourceSet.name.capitalize()}") {
+        group = "Plugin development" // PLUGIN_DEVELOPMENT_GROUP
+        // VALIDATE_PLUGIN_TASK_DESCRIPTION
+        description = "Validates the plugin by checking parameter annotations on task and artifact transform types etc."
+
+        enableStricterValidation.set(true)
+        failOnWarning.set(true)
+        outputFile.set(project.layout.buildDirectory.file("reports/plugin-development/validation-report-${sourceSet.name}.txt"))
+        classes.from({ sourceSet.output.classesDirs })
+        classpath.from({ sourceSet.compileClasspath })
+
+        val javaPluginExtension = project.extensions.getByType<JavaPluginExtension>()
+        val toolchainService = project.extensions.getByType<JavaToolchainService>()
+        launcher.convention(toolchainService.launcherFor(javaPluginExtension.toolchain))
+    }
+
+    tasks.named(JavaBasePlugin.CHECK_TASK_NAME) {
+        dependsOn(validatePluginsTask)
+    }
+
+    tasks.named("test") {
+        dependsOn(validatePluginsTask)
+    }
+
+    return validatePluginsTask
+}

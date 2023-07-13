@@ -15,10 +15,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.*
-import org.gradle.work.ChangeType
-import org.gradle.work.Incremental
-import org.gradle.work.InputChanges
-import org.gradle.work.NormalizeLineEndings
+import org.gradle.work.*
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.BuildTime
@@ -52,6 +49,7 @@ import java.io.File
 import javax.inject.Inject
 import org.jetbrains.kotlin.gradle.tasks.cleanOutputsAndLocalState as cleanOutputsAndLocalStateUtil
 
+@DisableCachingByDefault(because = "Abstract super-class, not to be instantiated directly")
 abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constructor(
     objectFactory: ObjectFactory,
     workerExecutor: WorkerExecutor

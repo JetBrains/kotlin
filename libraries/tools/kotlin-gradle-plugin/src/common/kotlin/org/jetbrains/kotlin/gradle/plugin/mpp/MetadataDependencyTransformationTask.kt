@@ -95,6 +95,7 @@ open class MetadataDependencyTransformationTask
         .fileProperty()
         .apply { set(outputsDir.resolve("${kotlinSourceSet.name}.visibleSourceSets")) }
 
+    @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:InputFiles
     protected val parentVisibleSourceSetFiles: FileCollection = project.filesProvider {
         parentTransformationTasks.map { taskProvider ->
@@ -104,6 +105,7 @@ open class MetadataDependencyTransformationTask
         }
     }
 
+    @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:InputFiles
     protected val parentTransformedLibraries: FileCollection = project.filesProvider {
         parentTransformationTasks.map { taskProvider ->

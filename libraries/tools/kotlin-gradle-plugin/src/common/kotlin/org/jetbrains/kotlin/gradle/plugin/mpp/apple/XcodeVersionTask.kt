@@ -42,6 +42,7 @@ internal abstract class XcodeVersionTask : DefaultTask() {
         }
     }
 
+    @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:InputFiles // @InputFiles instead of @InputFile because it allows non-existing files
     abstract val xcodeSelectLink: ConfigurableFileCollection
 

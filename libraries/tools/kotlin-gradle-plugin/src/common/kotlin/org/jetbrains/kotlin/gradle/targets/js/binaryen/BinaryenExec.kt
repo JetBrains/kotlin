@@ -7,12 +7,14 @@ package org.jetbrains.kotlin.gradle.targets.js.binaryen
 
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.*
+import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
 import javax.inject.Inject
 
+@DisableCachingByDefault
 open class BinaryenExec
 @Inject
 constructor() : AbstractExecTask<BinaryenExec>(BinaryenExec::class.java) {
@@ -62,6 +64,7 @@ constructor() : AbstractExecTask<BinaryenExec>(BinaryenExec::class.java) {
         "-Oz",
     )
 
+    @PathSensitive(PathSensitivity.RELATIVE)
     @InputFile
     @NormalizeLineEndings
     val inputFileProperty: RegularFileProperty = project.newFileProperty()

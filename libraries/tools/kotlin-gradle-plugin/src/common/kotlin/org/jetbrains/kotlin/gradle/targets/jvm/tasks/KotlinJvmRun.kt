@@ -7,6 +7,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.toolchain.JavaToolchainService
+import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -41,6 +42,7 @@ import org.jetbrains.kotlin.tooling.core.UnsafeApi
  * ```
  */
 @InternalKotlinGradlePluginApi
+@DisableCachingByDefault
 open class KotlinJvmRun : JavaExec()
 
 @ExperimentalKotlinGradlePluginApi

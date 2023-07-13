@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.d8
 
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.*
+import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.gradle.targets.js.addWasmExperimentalArguments
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
 
+@DisableCachingByDefault
 open class D8Exec : AbstractExecTask<D8Exec>(D8Exec::class.java) {
     init {
         onlyIf {

@@ -19,6 +19,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
+import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.compilerRunner.KotlinNativeCompilerRunner
 import org.jetbrains.kotlin.compilerRunner.KotlinToolRunner
 import org.jetbrains.kotlin.gradle.dsl.*
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.konan.util.visibleName
 import java.io.File
 import javax.inject.Inject
 
+@DisableCachingByDefault
 @Suppress("LeakingThis")
 abstract class KotlinNativeLinkArtifactTask @Inject constructor(
     @get:Input val konanTarget: KonanTarget,
@@ -93,6 +95,7 @@ abstract class KotlinNativeLinkArtifactTask @Inject constructor(
     @get:Input
     abstract val binaryOptions: MapProperty<String, String>
 
+    @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:Optional
     @get:InputFile
     abstract val xcodeVersion: RegularFileProperty

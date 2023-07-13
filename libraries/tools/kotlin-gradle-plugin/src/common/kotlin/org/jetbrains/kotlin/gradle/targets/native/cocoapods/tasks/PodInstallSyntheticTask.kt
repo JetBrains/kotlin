@@ -11,10 +11,12 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.OutputDirectory
+import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.platformLiteral
 import org.jetbrains.kotlin.konan.target.Family
 import java.io.File
 
+@DisableCachingByDefault
 abstract class PodInstallSyntheticTask : AbstractPodInstallTask() {
 
     @get:Input

@@ -11,6 +11,7 @@ interface IncrementalSyncTask : Task {
     @get:InputFiles
     @get:NormalizeLineEndings
     @get:IgnoreEmptyDirectories
+    @get:PathSensitive(PathSensitivity.ABSOLUTE)
     @get:SkipWhenEmpty
     val from: ConfigurableFileCollection
 
