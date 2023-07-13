@@ -37,6 +37,27 @@ FILE fqName:<root> fileName:/typeAliasWithUnsafeVariance.kt
           CONSTRUCTOR_CALL 'public constructor <init> (action: kotlin.Function1<RenderingT of <root>.Tag, kotlin.Unit>) declared in <root>.Tag' type=<root>.Tag<RenderingT of <root>.Tag> origin=null
             <class: RenderingT>: RenderingT of <root>.Tag
             action: GET_VAR 'action: kotlin.Function1<RenderingT of <root>.Tag, kotlin.Unit> declared in <root>.Tag.copy' type=kotlin.Function1<RenderingT of <root>.Tag, kotlin.Unit> origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.Tag<RenderingT of <root>.Tag>) returnType:kotlin.String
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:<root>.Tag<RenderingT of <root>.Tag>
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.Tag'
+          STRING_CONCATENATION type=kotlin.String
+            CONST String type=kotlin.String value="Tag("
+            CONST String type=kotlin.String value="action="
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:action type:kotlin.Function1<RenderingT of <root>.Tag, kotlin.Unit> visibility:private [final]' type=kotlin.Function1<RenderingT of <root>.Tag, kotlin.Unit> origin=null
+              receiver: GET_VAR '<this>: <root>.Tag<RenderingT of <root>.Tag> declared in <root>.Tag.toString' type=<root>.Tag<RenderingT of <root>.Tag> origin=null
+            CONST String type=kotlin.String value=")"
+    FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.Tag<RenderingT of <root>.Tag>) returnType:kotlin.Int
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:<root>.Tag<RenderingT of <root>.Tag>
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.Tag'
+          CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Function1' type=kotlin.Int origin=null
+            $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:action type:kotlin.Function1<RenderingT of <root>.Tag, kotlin.Unit> visibility:private [final]' type=kotlin.Function1<RenderingT of <root>.Tag, kotlin.Unit> origin=null
+              receiver: GET_VAR '<this>: <root>.Tag<RenderingT of <root>.Tag> declared in <root>.Tag.hashCode' type=<root>.Tag<RenderingT of <root>.Tag> origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.Tag<RenderingT of <root>.Tag>, other:kotlin.Any?) returnType:kotlin.Boolean [operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -71,27 +92,6 @@ FILE fqName:<root> fileName:/typeAliasWithUnsafeVariance.kt
               CONST Boolean type=kotlin.Boolean value=false
         RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Tag'
           CONST Boolean type=kotlin.Boolean value=true
-    FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.Tag<RenderingT of <root>.Tag>) returnType:kotlin.Int
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:<root>.Tag<RenderingT of <root>.Tag>
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.Tag'
-          CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Function1' type=kotlin.Int origin=null
-            $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:action type:kotlin.Function1<RenderingT of <root>.Tag, kotlin.Unit> visibility:private [final]' type=kotlin.Function1<RenderingT of <root>.Tag, kotlin.Unit> origin=null
-              receiver: GET_VAR '<this>: <root>.Tag<RenderingT of <root>.Tag> declared in <root>.Tag.hashCode' type=<root>.Tag<RenderingT of <root>.Tag> origin=null
-    FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.Tag<RenderingT of <root>.Tag>) returnType:kotlin.String
-      overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:<root>.Tag<RenderingT of <root>.Tag>
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.Tag'
-          STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="Tag("
-            CONST String type=kotlin.String value="action="
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:action type:kotlin.Function1<RenderingT of <root>.Tag, kotlin.Unit> visibility:private [final]' type=kotlin.Function1<RenderingT of <root>.Tag, kotlin.Unit> origin=null
-              receiver: GET_VAR '<this>: <root>.Tag<RenderingT of <root>.Tag> declared in <root>.Tag.toString' type=<root>.Tag<RenderingT of <root>.Tag> origin=null
-            CONST String type=kotlin.String value=")"
   FUN name:getTag visibility:public modality:FINAL <> () returnType:<root>.Tag<*>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun getTag (): <root>.Tag<*> declared in <root>'

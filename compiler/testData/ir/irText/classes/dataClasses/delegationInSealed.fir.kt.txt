@@ -37,6 +37,14 @@ sealed class A : CharSequence {
       return B(c = c)
     }
 
+    override fun toString(): String {
+      return "B(" + "c=" + <this>.#c + ")"
+    }
+
+    override fun hashCode(): Int {
+      return <this>.#c.hashCode()
+    }
+
     override operator fun equals(other: Any?): Boolean {
       when {
         EQEQEQ(arg0 = <this>, arg1 = other) -> return true
@@ -51,14 +59,7 @@ sealed class A : CharSequence {
       return true
     }
 
-    override fun hashCode(): Int {
-      return <this>.#c.hashCode()
-    }
-
-    override fun toString(): String {
-      return "B(" + "c=" + <this>.#c + ")"
-    }
-
   }
 
 }
+

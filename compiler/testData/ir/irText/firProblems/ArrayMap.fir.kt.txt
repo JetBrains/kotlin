@@ -295,6 +295,19 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
       return Entry<T>(key = key, value = value)
     }
 
+    override fun toString(): String {
+      return "Entry(" + "key=" + <this>.#key + ", " + "value=" + <this>.#value + ")"
+    }
+
+    override fun hashCode(): Int {
+      var result: Int = <this>.#key.hashCode()
+      result = result.times(other = 31).plus(other = when {
+        EQEQ(arg0 = <this>.#value, arg1 = null) -> 0
+        else -> <this>.#value.hashCode()
+      })
+      return result
+    }
+
     override operator fun equals(other: Any?): Boolean {
       when {
         EQEQEQ(arg0 = <this>, arg1 = other) -> return true
@@ -312,19 +325,7 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
       return true
     }
 
-    override fun hashCode(): Int {
-      var result: Int = <this>.#key.hashCode()
-      result = result.times(other = 31).plus(other = when {
-        EQEQ(arg0 = <this>.#value, arg1 = null) -> 0
-        else -> <this>.#value.hashCode()
-      })
-      return result
-    }
-
-    override fun toString(): String {
-      return "Entry(" + "key=" + <this>.#key + ", " + "value=" + <this>.#value + ")"
-    }
-
   }
 
 }
+

@@ -43,6 +43,27 @@ FILE fqName:<root> fileName:/iteratorOperator.kt
         RETURN type=kotlin.Nothing from='public final fun copy (i: kotlin.Int): <root>.Counter declared in <root>.Counter'
           CONSTRUCTOR_CALL 'public constructor <init> (i: kotlin.Int) declared in <root>.Counter' type=<root>.Counter origin=null
             i: GET_VAR 'i: kotlin.Int declared in <root>.Counter.copy' type=kotlin.Int origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.Counter) returnType:kotlin.String
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:<root>.Counter
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.Counter'
+          STRING_CONCATENATION type=kotlin.String
+            CONST String type=kotlin.String value="Counter("
+            CONST String type=kotlin.String value="i="
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:i type:kotlin.Int visibility:private' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.Counter declared in <root>.Counter.toString' type=<root>.Counter origin=null
+            CONST String type=kotlin.String value=")"
+    FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.Counter) returnType:kotlin.Int
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:<root>.Counter
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.Counter'
+          CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+            $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:i type:kotlin.Int visibility:private' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.Counter declared in <root>.Counter.hashCode' type=<root>.Counter origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.Counter, other:kotlin.Any?) returnType:kotlin.Boolean [operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -77,27 +98,6 @@ FILE fqName:<root> fileName:/iteratorOperator.kt
               CONST Boolean type=kotlin.Boolean value=false
         RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Counter'
           CONST Boolean type=kotlin.Boolean value=true
-    FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.Counter) returnType:kotlin.Int
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:<root>.Counter
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.Counter'
-          CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
-            $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:i type:kotlin.Int visibility:private' type=kotlin.Int origin=null
-              receiver: GET_VAR '<this>: <root>.Counter declared in <root>.Counter.hashCode' type=<root>.Counter origin=null
-    FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.Counter) returnType:kotlin.String
-      overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:<root>.Counter
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.Counter'
-          STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="Counter("
-            CONST String type=kotlin.String value="i="
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:i type:kotlin.Int visibility:private' type=kotlin.Int origin=null
-              receiver: GET_VAR '<this>: <root>.Counter declared in <root>.Counter.toString' type=<root>.Counter origin=null
-            CONST String type=kotlin.String value=")"
   CLASS CLASS name:CounterConfig modality:FINAL visibility:public [data] superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CounterConfig
     CONSTRUCTOR visibility:public <> (max:kotlin.Int) returnType:<root>.CounterConfig [primary]
@@ -134,6 +134,27 @@ FILE fqName:<root> fileName:/iteratorOperator.kt
         RETURN type=kotlin.Nothing from='public final fun copy (max: kotlin.Int): <root>.CounterConfig declared in <root>.CounterConfig'
           CONSTRUCTOR_CALL 'public constructor <init> (max: kotlin.Int) declared in <root>.CounterConfig' type=<root>.CounterConfig origin=null
             max: GET_VAR 'max: kotlin.Int declared in <root>.CounterConfig.copy' type=kotlin.Int origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.CounterConfig) returnType:kotlin.String
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:<root>.CounterConfig
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.CounterConfig'
+          STRING_CONCATENATION type=kotlin.String
+            CONST String type=kotlin.String value="CounterConfig("
+            CONST String type=kotlin.String value="max="
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:max type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.CounterConfig declared in <root>.CounterConfig.toString' type=<root>.CounterConfig origin=null
+            CONST String type=kotlin.String value=")"
+    FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.CounterConfig) returnType:kotlin.Int
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:<root>.CounterConfig
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.CounterConfig'
+          CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+            $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:max type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.CounterConfig declared in <root>.CounterConfig.hashCode' type=<root>.CounterConfig origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.CounterConfig, other:kotlin.Any?) returnType:kotlin.Boolean [operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -168,27 +189,6 @@ FILE fqName:<root> fileName:/iteratorOperator.kt
               CONST Boolean type=kotlin.Boolean value=false
         RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.CounterConfig'
           CONST Boolean type=kotlin.Boolean value=true
-    FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.CounterConfig) returnType:kotlin.Int
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:<root>.CounterConfig
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.CounterConfig'
-          CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
-            $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:max type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
-              receiver: GET_VAR '<this>: <root>.CounterConfig declared in <root>.CounterConfig.hashCode' type=<root>.CounterConfig origin=null
-    FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.CounterConfig) returnType:kotlin.String
-      overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:<root>.CounterConfig
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.CounterConfig'
-          STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="CounterConfig("
-            CONST String type=kotlin.String value="max="
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:max type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
-              receiver: GET_VAR '<this>: <root>.CounterConfig declared in <root>.CounterConfig.toString' type=<root>.CounterConfig origin=null
-            CONST String type=kotlin.String value=")"
   CLASS CLASS name:CounterIterator modality:FINAL visibility:public superTypes:[kotlin.collections.Iterator<kotlin.Int>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CounterIterator
     FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:<root>.CounterConfig visibility:private [final]

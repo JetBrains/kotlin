@@ -52,6 +52,14 @@ data class DataClass : Derived, Delegate {
     return DataClass(delegate = delegate)
   }
 
+  override fun toString(): String {
+    return "DataClass(" + "delegate=" + <this>.#delegate + ")"
+  }
+
+  override fun hashCode(): Int {
+    return <this>.#delegate.hashCode()
+  }
+
   override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
@@ -66,12 +74,5 @@ data class DataClass : Derived, Delegate {
     return true
   }
 
-  override fun hashCode(): Int {
-    return <this>.#delegate.hashCode()
-  }
-
-  override fun toString(): String {
-    return "DataClass(" + "delegate=" + <this>.#delegate + ")"
-  }
-
 }
+

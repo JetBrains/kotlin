@@ -18,6 +18,14 @@ data class Counter {
     return Counter(i = i)
   }
 
+  override fun toString(): String {
+    return "Counter(" + "i=" + <this>.#i + ")"
+  }
+
+  override fun hashCode(): Int {
+    return <this>.#i.hashCode()
+  }
+
   override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
@@ -30,14 +38,6 @@ data class Counter {
       EQEQ(arg0 = <this>.#i, arg1 = tmp0_other_with_cast.#i).not() -> return false
     }
     return true
-  }
-
-  override fun hashCode(): Int {
-    return <this>.#i.hashCode()
-  }
-
-  override fun toString(): String {
-    return "Counter(" + "i=" + <this>.#i + ")"
   }
 
 }
@@ -61,6 +61,14 @@ data class CounterConfig {
     return CounterConfig(max = max)
   }
 
+  override fun toString(): String {
+    return "CounterConfig(" + "max=" + <this>.#max + ")"
+  }
+
+  override fun hashCode(): Int {
+    return <this>.#max.hashCode()
+  }
+
   override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
@@ -73,14 +81,6 @@ data class CounterConfig {
       EQEQ(arg0 = <this>.#max, arg1 = tmp0_other_with_cast.#max).not() -> return false
     }
     return true
-  }
-
-  override fun hashCode(): Int {
-    return <this>.#max.hashCode()
-  }
-
-  override fun toString(): String {
-    return "CounterConfig(" + "max=" + <this>.#max + ")"
   }
 
 }
@@ -139,3 +139,4 @@ fun box(): String {
     else -> "fail"
   }
 }
+

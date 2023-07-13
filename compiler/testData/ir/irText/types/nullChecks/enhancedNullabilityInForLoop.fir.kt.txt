@@ -101,6 +101,16 @@ data class P {
     return P(x = x, y = y)
   }
 
+  override fun toString(): String {
+    return "P(" + "x=" + <this>.#x + ", " + "y=" + <this>.#y + ")"
+  }
+
+  override fun hashCode(): Int {
+    var result: Int = <this>.#x.hashCode()
+    result = result.times(other = 31).plus(other = <this>.#y.hashCode())
+    return result
+  }
+
   override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
@@ -116,16 +126,6 @@ data class P {
       EQEQ(arg0 = <this>.#y, arg1 = tmp0_other_with_cast.#y).not() -> return false
     }
     return true
-  }
-
-  override fun hashCode(): Int {
-    var result: Int = <this>.#x.hashCode()
-    result = result.times(other = 31).plus(other = <this>.#y.hashCode())
-    return result
-  }
-
-  override fun toString(): String {
-    return "P(" + "x=" + <this>.#x + ", " + "y=" + <this>.#y + ")"
   }
 
 }

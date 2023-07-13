@@ -17,6 +17,27 @@ FILE fqName:<root> fileName:/inlineCollectionOfInlineClass.kt
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.IT'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.IT declared in <root>.IT.<get-x>' type=<root>.IT origin=null
+    FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.IT) returnType:kotlin.String
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:<root>.IT
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.IT'
+          STRING_CONCATENATION type=kotlin.String
+            CONST String type=kotlin.String value="IT("
+            CONST String type=kotlin.String value="x="
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.IT declared in <root>.IT.toString' type=<root>.IT origin=null
+            CONST String type=kotlin.String value=")"
+    FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.IT) returnType:kotlin.Int
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:<root>.IT
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.IT'
+          CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+            $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.IT declared in <root>.IT.hashCode' type=<root>.IT origin=null
     FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.IT, other:kotlin.Any?) returnType:kotlin.Boolean [operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -44,27 +65,6 @@ FILE fqName:<root> fileName:/inlineCollectionOfInlineClass.kt
               CONST Boolean type=kotlin.Boolean value=false
         RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.IT'
           CONST Boolean type=kotlin.Boolean value=true
-    FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.IT) returnType:kotlin.Int
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:<root>.IT
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.IT'
-          CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
-            $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
-              receiver: GET_VAR '<this>: <root>.IT declared in <root>.IT.hashCode' type=<root>.IT origin=null
-    FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.IT) returnType:kotlin.String
-      overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:<root>.IT
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.IT'
-          STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="IT("
-            CONST String type=kotlin.String value="x="
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
-              receiver: GET_VAR '<this>: <root>.IT declared in <root>.IT.toString' type=<root>.IT origin=null
-            CONST String type=kotlin.String value=")"
   CLASS CLASS name:InlineMutableSet modality:FINAL visibility:public [value] superTypes:[kotlin.collections.MutableSet<<root>.IT>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.InlineMutableSet
     CONSTRUCTOR visibility:public <> (ms:kotlin.collections.MutableSet<<root>.IT>) returnType:<root>.InlineMutableSet [primary]
@@ -199,6 +199,27 @@ FILE fqName:<root> fileName:/inlineCollectionOfInlineClass.kt
             $this: CALL 'private final fun <get-ms> (): kotlin.collections.MutableSet<<root>.IT> declared in <root>.InlineMutableSet' type=kotlin.collections.MutableSet<<root>.IT> origin=GET_PROPERTY
               $this: GET_VAR '<this>: <root>.InlineMutableSet declared in <root>.InlineMutableSet.retainAll' type=<root>.InlineMutableSet origin=null
             elements: GET_VAR 'elements: kotlin.collections.Collection<<root>.IT> declared in <root>.InlineMutableSet.retainAll' type=kotlin.collections.Collection<<root>.IT> origin=null
+    FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.InlineMutableSet) returnType:kotlin.String
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:<root>.InlineMutableSet
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.InlineMutableSet'
+          STRING_CONCATENATION type=kotlin.String
+            CONST String type=kotlin.String value="InlineMutableSet("
+            CONST String type=kotlin.String value="ms="
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:ms type:kotlin.collections.MutableSet<<root>.IT> visibility:private [final]' type=kotlin.collections.MutableSet<<root>.IT> origin=null
+              receiver: GET_VAR '<this>: <root>.InlineMutableSet declared in <root>.InlineMutableSet.toString' type=<root>.InlineMutableSet origin=null
+            CONST String type=kotlin.String value=")"
+    FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.InlineMutableSet) returnType:kotlin.Int
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:<root>.InlineMutableSet
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.InlineMutableSet'
+          CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.collections.MutableSet' type=kotlin.Int origin=null
+            $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:ms type:kotlin.collections.MutableSet<<root>.IT> visibility:private [final]' type=kotlin.collections.MutableSet<<root>.IT> origin=null
+              receiver: GET_VAR '<this>: <root>.InlineMutableSet declared in <root>.InlineMutableSet.hashCode' type=<root>.InlineMutableSet origin=null
     FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.InlineMutableSet, other:kotlin.Any?) returnType:kotlin.Boolean [operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -226,24 +247,3 @@ FILE fqName:<root> fileName:/inlineCollectionOfInlineClass.kt
               CONST Boolean type=kotlin.Boolean value=false
         RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.InlineMutableSet'
           CONST Boolean type=kotlin.Boolean value=true
-    FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.InlineMutableSet) returnType:kotlin.Int
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:<root>.InlineMutableSet
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.InlineMutableSet'
-          CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.collections.MutableSet' type=kotlin.Int origin=null
-            $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:ms type:kotlin.collections.MutableSet<<root>.IT> visibility:private [final]' type=kotlin.collections.MutableSet<<root>.IT> origin=null
-              receiver: GET_VAR '<this>: <root>.InlineMutableSet declared in <root>.InlineMutableSet.hashCode' type=<root>.InlineMutableSet origin=null
-    FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.InlineMutableSet) returnType:kotlin.String
-      overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:<root>.InlineMutableSet
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.InlineMutableSet'
-          STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="InlineMutableSet("
-            CONST String type=kotlin.String value="ms="
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:ms type:kotlin.collections.MutableSet<<root>.IT> visibility:private [final]' type=kotlin.collections.MutableSet<<root>.IT> origin=null
-              receiver: GET_VAR '<this>: <root>.InlineMutableSet declared in <root>.InlineMutableSet.toString' type=<root>.InlineMutableSet origin=null
-            CONST String type=kotlin.String value=")"

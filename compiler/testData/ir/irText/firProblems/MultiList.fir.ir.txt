@@ -35,6 +35,36 @@ FILE fqName:<root> fileName:/MultiList.kt
           CONSTRUCTOR_CALL 'public constructor <init> (value: T of <root>.Some) declared in <root>.Some' type=<root>.Some<T of <root>.Some> origin=null
             <class: T>: T of <root>.Some
             value: GET_VAR 'value: T of <root>.Some declared in <root>.Some.copy' type=T of <root>.Some origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.Some<T of <root>.Some>) returnType:kotlin.String
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:<root>.Some<T of <root>.Some>
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.Some'
+          STRING_CONCATENATION type=kotlin.String
+            CONST String type=kotlin.String value="Some("
+            CONST String type=kotlin.String value="value="
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.Some visibility:private [final]' type=T of <root>.Some origin=null
+              receiver: GET_VAR '<this>: <root>.Some<T of <root>.Some> declared in <root>.Some.toString' type=<root>.Some<T of <root>.Some> origin=null
+            CONST String type=kotlin.String value=")"
+    FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.Some<T of <root>.Some>) returnType:kotlin.Int
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:<root>.Some<T of <root>.Some>
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.Some'
+          WHEN type=kotlin.Int origin=null
+            BRANCH
+              if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.Some visibility:private [final]' type=T of <root>.Some origin=null
+                  receiver: GET_VAR '<this>: <root>.Some<T of <root>.Some> declared in <root>.Some.hashCode' type=<root>.Some<T of <root>.Some> origin=null
+                arg1: CONST Null type=kotlin.Nothing? value=null
+              then: CONST Int type=kotlin.Int value=0
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Any' type=kotlin.Int origin=null
+                $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.Some visibility:private [final]' type=T of <root>.Some origin=null
+                  receiver: GET_VAR '<this>: <root>.Some<T of <root>.Some> declared in <root>.Some.hashCode' type=<root>.Some<T of <root>.Some> origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.Some<T of <root>.Some>, other:kotlin.Any?) returnType:kotlin.Boolean [operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -69,36 +99,6 @@ FILE fqName:<root> fileName:/MultiList.kt
               CONST Boolean type=kotlin.Boolean value=false
         RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Some'
           CONST Boolean type=kotlin.Boolean value=true
-    FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.Some<T of <root>.Some>) returnType:kotlin.Int
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:<root>.Some<T of <root>.Some>
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.Some'
-          WHEN type=kotlin.Int origin=null
-            BRANCH
-              if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.Some visibility:private [final]' type=T of <root>.Some origin=null
-                  receiver: GET_VAR '<this>: <root>.Some<T of <root>.Some> declared in <root>.Some.hashCode' type=<root>.Some<T of <root>.Some> origin=null
-                arg1: CONST Null type=kotlin.Nothing? value=null
-              then: CONST Int type=kotlin.Int value=0
-            BRANCH
-              if: CONST Boolean type=kotlin.Boolean value=true
-              then: CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Any' type=kotlin.Int origin=null
-                $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.Some visibility:private [final]' type=T of <root>.Some origin=null
-                  receiver: GET_VAR '<this>: <root>.Some<T of <root>.Some> declared in <root>.Some.hashCode' type=<root>.Some<T of <root>.Some> origin=null
-    FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.Some<T of <root>.Some>) returnType:kotlin.String
-      overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:<root>.Some<T of <root>.Some>
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.Some'
-          STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="Some("
-            CONST String type=kotlin.String value="value="
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.Some visibility:private [final]' type=T of <root>.Some origin=null
-              receiver: GET_VAR '<this>: <root>.Some<T of <root>.Some> declared in <root>.Some.toString' type=<root>.Some<T of <root>.Some> origin=null
-            CONST String type=kotlin.String value=")"
   CLASS INTERFACE name:MyList modality:ABSTRACT visibility:public superTypes:[kotlin.collections.List<<root>.Some<T of <root>.MyList>>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.MyList<T of <root>.MyList>
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false

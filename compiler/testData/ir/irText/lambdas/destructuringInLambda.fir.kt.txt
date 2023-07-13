@@ -25,6 +25,16 @@ data class A {
     return A(x = x, y = y)
   }
 
+  override fun toString(): String {
+    return "A(" + "x=" + <this>.#x + ", " + "y=" + <this>.#y + ")"
+  }
+
+  override fun hashCode(): Int {
+    var result: Int = <this>.#x.hashCode()
+    result = result.times(other = 31).plus(other = <this>.#y.hashCode())
+    return result
+  }
+
   override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
@@ -42,16 +52,6 @@ data class A {
     return true
   }
 
-  override fun hashCode(): Int {
-    var result: Int = <this>.#x.hashCode()
-    result = result.times(other = 31).plus(other = <this>.#y.hashCode())
-    return result
-  }
-
-  override fun toString(): String {
-    return "A(" + "x=" + <this>.#x + ", " + "y=" + <this>.#y + ")"
-  }
-
 }
 
 var fn: Function1<A, Int>
@@ -62,3 +62,4 @@ var fn: Function1<A, Int>
 
   get
   set
+

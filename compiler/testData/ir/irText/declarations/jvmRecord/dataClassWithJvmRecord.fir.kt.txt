@@ -18,6 +18,14 @@ data class MyRec : Record {
     return MyRec(name = name)
   }
 
+  override fun toString(): String {
+    return "MyRec(" + "name=" + <this>.#name + ")"
+  }
+
+  override fun hashCode(): Int {
+    return <this>.#name.hashCode()
+  }
+
   override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
@@ -32,16 +40,9 @@ data class MyRec : Record {
     return true
   }
 
-  override fun hashCode(): Int {
-    return <this>.#name.hashCode()
-  }
-
-  override fun toString(): String {
-    return "MyRec(" + "name=" + <this>.#name + ")"
-  }
-
 }
 
 fun test(rec: MyRec) {
   rec.<get-name>() /*~> Unit */
 }
+
