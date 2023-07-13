@@ -123,6 +123,10 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             withCopy()
         }
 
+        builder(annotation) {
+            withCopy()
+        }
+
         builder(annotationCall) {
             parents += callBuilder
             default("argumentList") {
