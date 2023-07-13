@@ -141,11 +141,6 @@ internal open class StubBasedFirDeserializedSymbolProvider(
 
         return ArrayList<FirNamedFunctionSymbol>(topLevelFunctions.size).apply {
             for (function in topLevelFunctions) {
-                val file = function.containingKtFile
-                if (file.virtualFile.extension == MetadataPackageFragment.METADATA_FILE_EXTENSION) {
-                    continue
-                }
-
                 val functionStub = function.stub as? KotlinFunctionStubImpl ?: loadStubByElement(function)
                 val containerSource = getFacadeContainerSource(function.containingKtFile, functionStub?.origin)
 
