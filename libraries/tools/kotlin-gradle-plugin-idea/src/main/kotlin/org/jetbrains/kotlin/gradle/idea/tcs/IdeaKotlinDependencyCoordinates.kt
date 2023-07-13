@@ -128,7 +128,7 @@ class IdeaKotlinBinaryCoordinates(
         if (version != other.version) return false
         if (sourceSetName != other.sourceSetName) return false
         if (capabilities != other.capabilities) return false
-
+        if (attributes != other.attributes) return false
         return true
     }
 
@@ -138,6 +138,7 @@ class IdeaKotlinBinaryCoordinates(
         result = 31 * result + (version?.hashCode() ?: 0)
         result = 31 * result + (sourceSetName?.hashCode() ?: 0)
         result = 31 * result + capabilities.hashCode()
+        result = 31 * result + attributes.hashCode()
         return result
     }
 
@@ -155,7 +156,8 @@ class IdeaKotlinBinaryCoordinates(
             module = module,
             version = version,
             sourceSetName = sourceSetName,
-            capabilities = capabilities
+            capabilities = capabilities,
+            attributes = attributes,
         )
     }
 
