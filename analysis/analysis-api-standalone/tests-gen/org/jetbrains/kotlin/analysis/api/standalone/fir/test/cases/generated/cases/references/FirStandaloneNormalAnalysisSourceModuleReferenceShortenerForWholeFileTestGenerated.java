@@ -43,7 +43,7 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceShortenerForWholeFi
 
     @Test
     public void testAllFilesPresentInReferenceShortenerWholeFile() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/referenceShortenerWholeFile"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/referenceShortenerWholeFile"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
     }
 
     @Test
@@ -56,5 +56,17 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceShortenerForWholeFi
     @TestMetadata("fileWithMultipleDeclarations.kt")
     public void testFileWithMultipleDeclarations() throws Exception {
         runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortenerWholeFile/fileWithMultipleDeclarations.kt");
+    }
+
+    @Test
+    @TestMetadata("scriptFileWithImportStatement.kts")
+    public void testScriptFileWithImportStatement() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortenerWholeFile/scriptFileWithImportStatement.kts");
+    }
+
+    @Test
+    @TestMetadata("scriptFileWithoutImportStatements.kts")
+    public void testScriptFileWithoutImportStatements() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortenerWholeFile/scriptFileWithoutImportStatements.kts");
     }
 }

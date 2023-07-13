@@ -235,7 +235,7 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
             model("referenceShortener")
         }
         test(AbstractReferenceShortenerForWholeFileTest::class) {
-            model("referenceShortenerWholeFile")
+            model("referenceShortenerWholeFile", pattern = TestGeneratorUtil.KT_OR_KTS)
         }
     }
 
