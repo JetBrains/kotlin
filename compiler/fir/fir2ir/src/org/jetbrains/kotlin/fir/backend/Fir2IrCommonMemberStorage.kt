@@ -19,10 +19,7 @@ class Fir2IrCommonMemberStorage(
 ) {
     val firSignatureComposer = FirBasedSignatureComposer(firMangler)
 
-    val symbolTable = SymbolTable(
-        signaturer = WrappedDescriptorSignatureComposer(signatureComposer, firSignatureComposer),
-        irFactory = IrFactoryImpl
-    )
+    val symbolTable = SymbolTable(signaturer = signatureComposer, irFactory = IrFactoryImpl)
 
     val classCache: MutableMap<FirRegularClass, IrClass> = mutableMapOf()
 

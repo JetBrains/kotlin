@@ -23,14 +23,6 @@ import org.jetbrains.kotlin.name.FqName
 
 // @NoMutableState -- we'll restore this annotation once we get rid of withFileSignature().
 class FirBasedSignatureComposer(val mangler: FirMangler) {
-    private var fileSignature: IdSignature.FileSignature? = null
-
-    fun withFileSignature(sig: IdSignature.FileSignature, body: () -> Unit) {
-        fileSignature = sig
-        body()
-        fileSignature = null
-    }
-
     private data class FirDeclarationWithParentId(val declaration: FirDeclaration, val classId: ClassId?, val forceExpect: Boolean)
 
     private val signatureCache = mutableMapOf<FirDeclarationWithParentId, IdSignature.CommonSignature>()
@@ -123,7 +115,7 @@ class FirBasedSignatureComposer(val mangler: FirMangler) {
         }
 
         val resultSignature: IdSignature = if (isTopLevelPrivate(declaration)) {
-            val fileSig = fileSignature ?: declaration.fakeFileSignature(publicSignature)
+            val fileSig = declaration.fakeFileSignature(publicSignature)
             IdSignature.CompositeSignature(fileSig, publicSignature)
         } else
             publicSignature
