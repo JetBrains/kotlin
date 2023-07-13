@@ -18,6 +18,7 @@ import java.nio.file.Path
 import kotlin.io.path.exists
 import kotlin.io.path.name
 import kotlin.test.assertEquals
+import kotlin.test.fail
 
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
 @DisplayName("K/N tests cocoapods with xcodebuild")
@@ -255,9 +256,20 @@ private fun TestProject.gradlePodInstall(taskPrefix: String, @Suppress("UNUSED_P
 private fun TestProject.manualPodInstall(taskPrefix: String, iosAppPath: Path) {
     build("$taskPrefix:$DUMMY_FRAMEWORK_TASK_NAME", buildOptions = buildOptions)
 
-    runProcess(
-        cmd = listOf("env", "pod", "install"),
+    val command = listOf("env", "pod", "install")
+    val result = runProcess(
+        cmd = command,
         environmentVariables = environmentVariables.environmentalVariables,
         workingDir = iosAppPath.toFile(),
     )
+
+    if (result.exitCode != 0) {
+        fail(
+            """
+            |${command.joinToString(" ")} failed with exist code ${result.exitCode}
+            |stdout: ${result.output}
+            |stderr: ${result.stdErr}
+            """.trimMargin()
+        )
+    }
 }
