@@ -6,8 +6,12 @@
 package org.jetbrains.kotlin.buildtools.internal
 
 import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
+import org.jetbrains.kotlin.buildtools.api.SourcesChanges
+import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathSnapshotBasedIncrementalCompilationApproachParameters
 import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration
 import org.jetbrains.kotlin.daemon.common.*
+import org.jetbrains.kotlin.incremental.ClasspathChanges
+import org.jetbrains.kotlin.incremental.ClasspathSnapshotFiles
 import java.io.Serializable
 import java.rmi.server.UnicastRemoteObject
 
@@ -17,8 +21,48 @@ internal val JvmCompilationConfigurationImpl.asDaemonCompilationOptions: Compila
         val reportCategories = arrayOf(ReportCategory.COMPILER_MESSAGE.code, ReportCategory.IC_MESSAGE.code) // TODO: automagically compute the value, related to BasicCompilerServicesWithResultsFacadeServer
         val reportSeverity = ReportSeverity.INFO.code // TODO: automagically compute the value, related to BasicCompilerServicesWithResultsFacadeServer
         val requestedCompilationResults = emptyArray<Int>() // TODO: automagically compute the value, related to DaemonCompilationResults
-        return when (aggregatedIcConfiguration?.options) {
-            is ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration -> TODO("Incremental compilation within the daemon is not yet supported")
+        val aggregatedIcConfiguration = aggregatedIcConfiguration
+        return when (val options = aggregatedIcConfiguration?.options) {
+            is ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration -> {
+                val sourcesChanges = aggregatedIcConfiguration.sourcesChanges
+                val params = aggregatedIcConfiguration.parameters as ClasspathSnapshotBasedIncrementalCompilationApproachParameters
+                val snapshotFiles =
+                    ClasspathSnapshotFiles(params.newClasspathSnapshotFiles, params.shrunkClasspathSnapshot.parentFile)
+                IncrementalCompilationOptions(
+                    areFileChangesKnown = sourcesChanges is SourcesChanges.Known,
+                    modifiedFiles = if (sourcesChanges is SourcesChanges.Known) sourcesChanges.modifiedFiles else null,
+                    deletedFiles = if (sourcesChanges is SourcesChanges.Known) sourcesChanges.removedFiles else null,
+                    classpathChanges = when {
+                        !params.shrunkClasspathSnapshot.exists() -> ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableDueToMissingClasspathSnapshot(
+                            snapshotFiles
+                        )
+                        options.forcedNonIncrementalMode -> ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableForNonIncrementalRun(
+                            snapshotFiles
+                        )
+                        options.assuredNoClasspathSnapshotsChanges -> ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun.NoChanges(
+                            snapshotFiles
+                        )
+                        else -> {
+                            ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun.ToBeComputedByIncrementalCompiler(snapshotFiles)
+                        }
+                    },
+                    workingDir = aggregatedIcConfiguration.workingDir,
+                    compilerMode = CompilerMode.INCREMENTAL_COMPILER,
+                    targetPlatform = CompileService.TargetPlatform.JVM,
+                    reportCategories = reportCategories,
+                    reportSeverity = reportSeverity,
+                    requestedCompilationResults = requestedCompilationResults,
+                    usePreciseJavaTracking = options.preciseJavaTrackingEnabled,
+                    outputFiles = options.outputDirs,
+                    multiModuleICSettings = null, // required only for the build history approach
+                    modulesInfo = null, // required only for the build history approach
+                    rootProjectDir = options.projectDir,
+                    kotlinScriptExtensions = ktsExtensionsAsArray,
+                    withAbiSnapshot = false,
+                    preciseCompilationResultsBackup = options.preciseCompilationResultsBackupEnabled,
+                    keepIncrementalCompilationCachesInMemory = options.incrementalCompilationCachesKeptInMemory,
+                )
+            }
             else -> CompilationOptions(
                 compilerMode = CompilerMode.NON_INCREMENTAL_COMPILER,
                 targetPlatform = CompileService.TargetPlatform.JVM,

@@ -41,7 +41,9 @@ internal class JvmCompilationConfigurationImpl(
         sourcesChanges: SourcesChanges,
         approachParameters: P,
         options: IncrementalJvmCompilationConfiguration<P>,
-    ) = TODO("Incremental compilation is not yet supported to run via the Build Tools API")
+    ) {
+        aggregatedIcConfiguration = AggregatedIcConfiguration(options, approachParameters, sourcesChanges, workingDirectory)
+    }
 }
 
 internal abstract class JvmIncrementalCompilationConfigurationImpl<P : IncrementalCompilationApproachParameters>(
@@ -50,6 +52,7 @@ internal abstract class JvmIncrementalCompilationConfigurationImpl<P : Increment
     override var incrementalCompilationCachesKeptInMemory: Boolean = false,
     override var projectDir: File? = null,
     override var forcedNonIncrementalMode: Boolean = false,
+    override var outputDirs: Set<File> = emptySet(),
 ) : IncrementalJvmCompilationConfiguration<P> {
     override fun useProjectDir(projectDir: File): IncrementalJvmCompilationConfiguration<P> {
         this.projectDir = projectDir
@@ -73,6 +76,11 @@ internal abstract class JvmIncrementalCompilationConfigurationImpl<P : Increment
 
     override fun forceNonIncrementalMode(value: Boolean): IncrementalJvmCompilationConfiguration<P> {
         forcedNonIncrementalMode = value
+        return this
+    }
+
+    override fun useOutputDirs(outputDirs: Collection<File>): IncrementalJvmCompilationConfiguration<P> {
+        this.outputDirs = outputDirs.toSet()
         return this
     }
 }
@@ -109,6 +117,11 @@ internal class ClasspathSnapshotBasedIncrementalJvmCompilationConfigurationImpl(
 
     override fun assureNoClasspathSnapshotsChanges(value: Boolean): ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration {
         assuredNoClasspathSnapshotsChanges = value
+        return this
+    }
+
+    override fun useOutputDirs(outputDirs: Collection<File>): ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration {
+        super.useOutputDirs(outputDirs)
         return this
     }
 }

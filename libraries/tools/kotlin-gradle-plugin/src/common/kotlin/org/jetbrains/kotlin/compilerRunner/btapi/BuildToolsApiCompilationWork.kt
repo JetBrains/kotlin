@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.buildtools.api.*
+import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathSnapshotBasedIncrementalCompilationApproachParameters
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.compilerRunner.GradleKotlinCompilerWorkArguments
 import org.jetbrains.kotlin.compilerRunner.asFinishLogMessage
@@ -26,9 +27,17 @@ import org.jetbrains.kotlin.gradle.plugin.internal.BuildIdService
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskLoggers
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.tasks.throwExceptionIfCompilationFailed
+import org.jetbrains.kotlin.incremental.ChangedFiles
+import org.jetbrains.kotlin.incremental.ClasspathChanges
 import org.slf4j.LoggerFactory
 import java.io.File
-import java.util.*
+
+@OptIn(ExperimentalBuildToolsApi::class)
+private val ChangedFiles.asSourcesChanges: SourcesChanges
+    get() = when (this) {
+        is ChangedFiles.Known -> SourcesChanges.Known(modified, removed)
+        is ChangedFiles.Unknown -> SourcesChanges.Unknown
+    }
 
 @OptIn(ExperimentalBuildToolsApi::class)
 internal abstract class BuildToolsApiCompilationWork : WorkAction<BuildToolsApiCompilationWork.BuildToolsApiCompilationParameters> {
@@ -81,6 +90,34 @@ internal abstract class BuildToolsApiCompilationWork : WorkAction<BuildToolsApiC
                 }
             }
             val jvmCompilationConfig = compilationService.makeJvmCompilationConfiguration()
+                .useLogger(log)
+                .useKotlinScriptFilenameExtensions(workArguments.kotlinScriptExtensions.toList())
+            val icEnv = workArguments.incrementalCompilationEnvironment
+            val classpathChanges = icEnv?.classpathChanges
+            if (classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled) {
+                val classpathSnapshotsConfig = jvmCompilationConfig.makeClasspathSnapshotBasedIncrementalCompilationConfiguration()
+                    .useProjectDir(icEnv.rootProjectDir)
+                    .usePreciseJavaTracking(icEnv.usePreciseJavaTracking)
+                    .usePreciseCompilationResultsBackup(icEnv.preciseCompilationResultsBackup)
+                    .keepIncrementalCompilationCachesInMemory(icEnv.keepIncrementalCompilationCachesInMemory)
+                    .useOutputDirs(workArguments.outputFiles)
+                    .forceNonIncrementalMode(classpathChanges !is ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun)
+                val classpathSnapshotsParameters = ClasspathSnapshotBasedIncrementalCompilationApproachParameters(
+                    classpathChanges.classpathSnapshotFiles.currentClasspathEntrySnapshotFiles,
+                    classpathChanges.classpathSnapshotFiles.shrunkPreviousClasspathSnapshotFile,
+                )
+                when (classpathChanges) {
+                    is ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun.NoChanges -> classpathSnapshotsConfig.assureNoClasspathSnapshotsChanges()
+                    is ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableForNonIncrementalRun -> classpathSnapshotsConfig.forceNonIncrementalMode()
+                    else -> {}
+                }
+                jvmCompilationConfig.useIncrementalCompilation(
+                    icEnv.workingDir,
+                    icEnv.changedFiles.asSourcesChanges,
+                    classpathSnapshotsParameters,
+                    classpathSnapshotsConfig,
+                )
+            }
             val result = compilationService.compileJvm(
                 buildId,
                 executionConfig,

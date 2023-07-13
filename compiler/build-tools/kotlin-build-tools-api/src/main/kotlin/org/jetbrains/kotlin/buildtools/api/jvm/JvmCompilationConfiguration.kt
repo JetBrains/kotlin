@@ -147,6 +147,21 @@ public interface IncrementalJvmCompilationConfiguration<P : IncrementalCompilati
      * @see [forcedNonIncrementalMode]
      */
     public fun forceNonIncrementalMode(value: Boolean = true): IncrementalJvmCompilationConfiguration<P>
+
+    /**
+     * The directories that the compiler will clean in the case of fallback to non-incremental compilation.
+     *
+     * The default ones are calculated in the case of a `null` value as a set of the incremental compilation working directory
+     * passed to [JvmCompilationConfiguration.useIncrementalCompilation] and the classes output directory from the compiler arguments.
+     *
+     * If the value is set explicitly, it must contain the above-mentioned default directories.
+     */
+    public val outputDirs: Set<File>?
+
+    /**
+     * @see [IncrementalJvmCompilationConfiguration.outputDirs]]
+     */
+    public fun useOutputDirs(outputDirs: Collection<File>): IncrementalJvmCompilationConfiguration<P>
 }
 
 /**
@@ -180,6 +195,8 @@ public interface ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration :
     override fun keepIncrementalCompilationCachesInMemory(value: Boolean): ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration
 
     override fun forceNonIncrementalMode(value: Boolean): ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration
+
+    override fun useOutputDirs(outputDirs: Collection<File>): ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration
 }
 
 /**

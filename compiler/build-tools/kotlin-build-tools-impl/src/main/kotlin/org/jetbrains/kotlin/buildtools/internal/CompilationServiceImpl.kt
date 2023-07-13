@@ -58,8 +58,7 @@ internal object CompilationServiceImpl : CompilationService {
             "Initial JVM compilation configuration object must be acquired from the `makeJvmCompilationConfiguration` method."
         }
         val loggerAdapter = KotlinLoggerMessageCollectorAdapter(compilationConfig.logger)
-        val selectedStrategy = strategyConfig.selectedStrategy
-        return when (selectedStrategy) {
+        return when (val selectedStrategy = strategyConfig.selectedStrategy) {
             is CompilerExecutionStrategy.InProcess -> compileInProcess(loggerAdapter, sources, arguments)
             is CompilerExecutionStrategy.Daemon -> compileWithinDaemon(
                 projectId,
