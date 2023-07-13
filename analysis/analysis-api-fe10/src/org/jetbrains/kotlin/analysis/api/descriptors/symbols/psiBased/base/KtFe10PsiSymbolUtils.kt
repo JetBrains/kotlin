@@ -66,7 +66,7 @@ internal val KtElement.ktSymbolKind: KtSymbolKind
         if (this is KtDeclaration) {
             return when (this.getParentOfType<KtDeclaration>(strict = true)) {
                 null -> KtSymbolKind.TOP_LEVEL
-                is KtCallableDeclaration, is KtPropertyAccessor -> KtSymbolKind.LOCAL
+                is KtCallableDeclaration -> KtSymbolKind.LOCAL
                 else -> KtSymbolKind.CLASS_MEMBER
             }
         }

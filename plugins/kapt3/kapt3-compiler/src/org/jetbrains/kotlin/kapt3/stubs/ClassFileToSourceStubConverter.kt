@@ -1046,8 +1046,8 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
                     getNonErrorType(descriptor.type, METHOD_PARAMETER_TYPE, ktTypeProvider, lazyType)
 
                 fun PsiElement.getCallableDeclaration(): KtCallableDeclaration? = when (this) {
-                    is KtCallableDeclaration -> if (this is KtFunction) null else this
                     is KtPropertyAccessor -> property
+                    is KtCallableDeclaration -> if (this is KtFunction) null else this
                     else -> null
                 }
 

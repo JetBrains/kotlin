@@ -22,12 +22,13 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDynamicExtensionAnnotation
 import org.jetbrains.kotlin.types.isDynamic
 
 object DynamicReceiverChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
-        if (descriptor !is CallableDescriptor || declaration !is KtCallableDeclaration || descriptor.hasDynamicExtensionAnnotation()) return
+        if (descriptor !is CallableDescriptor || declaration !is KtCallableDeclaration || descriptor.hasDynamicExtensionAnnotation() || declaration is KtPropertyAccessor) return
 
         // function expression
         if (declaration is KtNamedFunction && declaration.name == null) return

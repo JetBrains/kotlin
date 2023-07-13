@@ -71,6 +71,15 @@ class KtFe10ExpressionTypeProvider(
     }
 
     override fun getReturnTypeForKtDeclaration(declaration: KtDeclaration): KtType {
+        if (declaration is KtPropertyAccessor) {
+            val bindingContext = analysisContext.analyze(declaration)
+            val kotlinType = bindingContext[BindingContext.PROPERTY_ACCESSOR, declaration]?.returnType
+                ?: ErrorUtils.createErrorType(
+                    ErrorTypeKind.IMPLICIT_RETURN_TYPE_FOR_PROPERTY_ACCESSOR, declaration.property.name ?: "<unknown>"
+                )
+
+            return kotlinType.toKtType(analysisContext)
+        }
         // Handle callable declarations with explicit return type first
         if (declaration is KtCallableDeclaration) {
             val typeReference = declaration.typeReference
@@ -101,16 +110,6 @@ class KtFe10ExpressionTypeProvider(
             val bindingContext = analysisContext.analyze(declaration)
             val kotlinType = bindingContext[BindingContext.VARIABLE, declaration]?.returnType
                 ?: ErrorUtils.createErrorType(ErrorTypeKind.IMPLICIT_RETURN_TYPE_FOR_PROPERTY, declaration.name ?: "<unknown>")
-
-            return kotlinType.toKtType(analysisContext)
-        }
-
-        if (declaration is KtPropertyAccessor) {
-            val bindingContext = analysisContext.analyze(declaration)
-            val kotlinType = bindingContext[BindingContext.PROPERTY_ACCESSOR, declaration]?.returnType
-                ?: ErrorUtils.createErrorType(
-                    ErrorTypeKind.IMPLICIT_RETURN_TYPE_FOR_PROPERTY_ACCESSOR, declaration.property.name ?: "<unknown>"
-                )
 
             return kotlinType.toKtType(analysisContext)
         }

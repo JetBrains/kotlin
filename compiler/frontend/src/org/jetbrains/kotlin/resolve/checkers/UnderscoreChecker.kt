@@ -60,7 +60,7 @@ object UnderscoreChecker : DeclarationChecker {
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (declaration is KtProperty && descriptor !is VariableDescriptor) return
-        if (declaration is KtCallableDeclaration) {
+        if (declaration is KtCallableDeclaration && declaration !is KtPropertyAccessor) {
             for (parameter in declaration.valueParameters) {
                 checkNamed(
                     parameter, context.trace, context.languageVersionSettings,

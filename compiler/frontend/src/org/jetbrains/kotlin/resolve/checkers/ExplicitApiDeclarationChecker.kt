@@ -117,6 +117,7 @@ class ExplicitApiDeclarationChecker : DeclarationChecker {
             if (element.containingFile is KtCodeFragment) return false
             if (element is KtFunctionLiteral) return false // TODO(Mikhail Glukhikh): should KtFunctionLiteral be KtCallableDeclaration at all?
             if (element is KtConstructor<*>) return false
+            if (element is KtPropertyAccessor) return false
             if (element.typeReference != null) return false
 
             if (element is KtNamedFunction && element.hasBlockBody()) return false

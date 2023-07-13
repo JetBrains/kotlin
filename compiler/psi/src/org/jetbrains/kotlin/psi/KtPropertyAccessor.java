@@ -17,21 +17,27 @@
 package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.util.NlsSafe;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.AstLoadingFilter;
+import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
+import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.psi.stubs.KotlinPropertyAccessorStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
+import org.jetbrains.kotlin.psi.typeRefHelpers.TypeRefHelpersKt;
 
 import java.util.Collections;
 import java.util.List;
 
 public class KtPropertyAccessor extends KtDeclarationStub<KotlinPropertyAccessorStub>
-        implements KtDeclarationWithBody, KtModifierListOwner, KtDeclarationWithInitializer {
+        implements KtDeclarationWithBody, KtModifierListOwner, KtDeclarationWithInitializer, KtCallableDeclaration {
     public KtPropertyAccessor(@NotNull ASTNode node) {
         super(node);
     }
@@ -200,5 +206,88 @@ public class KtPropertyAccessor extends KtDeclarationStub<KotlinPropertyAccessor
     @Override
     public int getTextOffset() {
         return getNamePlaceholder().getTextRange().getStartOffset();
+    }
+
+
+    @Nullable
+    @Override
+    public KtParameterList getValueParameterList() {
+        return getParameterList();
+    }
+
+    @Nullable
+    @Override
+    public KtTypeReference getReceiverTypeReference() {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public KtTypeReference getTypeReference() {
+        return getReturnTypeReference();
+    }
+
+    @Nullable
+    @Override
+    public KtTypeReference setTypeReference(@Nullable KtTypeReference typeRef) {
+        return TypeRefHelpersKt.setTypeReference(this, getValueParameterList(), typeRef);
+    }
+
+    @Nullable
+    @Override
+    public PsiElement getColon() {
+        return findChildByType(KtTokens.COLON);
+    }
+
+    @Override
+    public @Nullable PsiElement getNameIdentifier() {
+        return null;
+    }
+
+    @Override
+    public PsiElement setName(@NlsSafe @NotNull String name) throws IncorrectOperationException {
+        throw new IncorrectOperationException("Name cannot be set for KtPropertyAccessor");
+    }
+
+    @Nullable
+    @Override
+    public Name getNameAsName() {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public Name getNameAsSafeName() {
+        return SpecialNames.NO_NAME_PROVIDED;
+    }
+
+    @Nullable
+    @Override
+    public FqName getFqName() {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public KtTypeParameterList getTypeParameterList() {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public KtTypeConstraintList getTypeConstraintList() {
+        return null;
+    }
+
+    @NotNull
+    @Override
+    public List<KtTypeConstraint> getTypeConstraints() {
+        return Collections.emptyList();
+    }
+
+    @NotNull
+    @Override
+    public List<KtTypeParameter> getTypeParameters() {
+        return Collections.emptyList();
     }
 }

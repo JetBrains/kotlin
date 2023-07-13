@@ -25,7 +25,8 @@ object PositioningStrategies {
             if (element is KtNamedDeclaration &&
                 element !is KtObjectDeclaration &&
                 element !is KtSecondaryConstructor &&
-                element !is KtFunction
+                element !is KtFunction &&
+                element !is KtPropertyAccessor
             ) {
                 if (element.nameIdentifier == null) {
                     return false
@@ -87,8 +88,8 @@ object PositioningStrategies {
 
         private fun getElementToMark(declaration: KtDeclaration): PsiElement {
             val (returnTypeRef, nameIdentifierOrPlaceholder) = when (declaration) {
-                is KtCallableDeclaration -> Pair(declaration.typeReference, declaration.nameIdentifier)
                 is KtPropertyAccessor -> Pair(declaration.returnTypeReference, declaration.namePlaceholder)
+                is KtCallableDeclaration -> Pair(declaration.typeReference, declaration.nameIdentifier)
                 else -> Pair(null, null)
             }
 

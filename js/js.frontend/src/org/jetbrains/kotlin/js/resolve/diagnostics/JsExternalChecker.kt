@@ -114,8 +114,8 @@ object JsExternalChecker : DeclarationChecker {
                 }
 
                 val elementToReport = when (declaration) {
-                    is KtCallableDeclaration -> declaration.typeReference
                     is KtPropertyAccessor -> declaration.returnTypeReference
+                    is KtCallableDeclaration -> declaration.typeReference
                     else -> declaration
                 }
 
