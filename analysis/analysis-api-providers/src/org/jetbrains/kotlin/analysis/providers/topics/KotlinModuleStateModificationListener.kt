@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.analysis.project.structure.KtModule
 
 public fun interface KotlinModuleStateModificationListener {
     /**
-     * [onModification] is invoked in a write action before or after the [module] is moved, removed, or its structure is changed.
-     * [isRemoval] signals if the event is a removal.
+     * [onModification] is invoked in a write action *before* the [module] is moved, removed, or its structure is changed. [isRemoval]
+     * signals if the event is a removal.
      */
     public fun onModification(module: KtModule, isRemoval: Boolean)
 }
