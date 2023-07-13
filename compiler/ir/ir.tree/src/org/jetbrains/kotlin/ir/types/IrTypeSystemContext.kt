@@ -140,8 +140,13 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     override fun TypeArgumentMarker.getVariance(): TypeVariance =
         (this as? IrTypeProjection)?.variance?.convertVariance() ?: TypeVariance.OUT
 
-    override fun TypeArgumentMarker.replaceType(newType: KotlinTypeMarker): TypeArgumentMarker =
-        IrTypeProjectionImpl(newType as IrType, (this as IrTypeProjection).variance)
+    override fun TypeArgumentMarker.replaceType(newType: KotlinTypeMarker): TypeArgumentMarker {
+        require(this is IrTypeArgument)
+        return when (this) {
+            is IrStarProjection -> this
+            is IrTypeProjection -> IrTypeProjectionImpl(newType as IrType, this.variance)
+        }
+    }
 
     override fun TypeArgumentMarker.getType() = (this as IrTypeProjection).type
 
