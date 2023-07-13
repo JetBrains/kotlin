@@ -40585,6 +40585,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
             }
 
             @Test
+            @TestMetadata("collections.kt")
+            public void testCollections() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/multiplatform/collections.kt");
+            }
+
+            @Test
             @TestMetadata("jvmOverloads.kt")
             public void testJvmOverloads() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/multiplatform/jvmOverloads.kt");
