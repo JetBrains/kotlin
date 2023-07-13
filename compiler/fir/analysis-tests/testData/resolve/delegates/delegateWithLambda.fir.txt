@@ -31,7 +31,7 @@ FILE: delegateWithLambda.kt
         }
         )
             public get(): R|kotlin/String| {
-                ^ this@R|/Test|.D|/Test.x|.R|SubstitutionOverride</LazyDelegate.getValue: R|Stub (chain inference): TypeVariable(_T)|>|(this@R|/Test|, ::R|/Test.x|)
+                ^ this@R|/Test|.D|/Test.x|.R|SubstitutionOverride</LazyDelegate.getValue: R|Stub (chain inference): TypeVariable(+T)|>|(this@R|/Test|, ::R|/Test.x|)
             }
 
     }

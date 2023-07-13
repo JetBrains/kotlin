@@ -240,7 +240,7 @@ class FirDelegatedPropertyInferenceSession(
             val variable = variableWithConstraints.typeVariable as ConeTypeVariable
 
             val syntheticVariable = syntheticTypeVariableByTypeVariable.getOrPut(variable) {
-                ConeTypeVariable("_" + variable.typeConstructor.name).also {
+                ConeTypeVariable("+" + variable.typeConstructor.name).also {
                     currentConstraintSystem.registerVariable(it)
                 }
             }
