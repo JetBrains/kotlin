@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import java.lang.ref.WeakReference
-import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicLong
 
 @OptIn(PrivateSessionConstructor::class)
@@ -32,20 +31,20 @@ abstract class LLFirSession(
     val project: Project
         get() = ktModule.project
 
-    private val _isValid = AtomicBoolean(true)
-
     /**
      * Whether the [LLFirSession] is valid. The session should not be used if it is invalid.
-     *
-     * [isValid] should be set to `false` at the same time as the session is removed from [LLFirSessionCache]. Hence, [isValid] should be
+     */
+    @Volatile
+    var isValid: Boolean = true
+        private set
+
+    /**
+     * [markInvalid] should be called at the same time as the session is removed from [LLFirSessionCache]. Hence, session validity should be
      * managed by [LLFirSessionCache].
      */
-    var isValid: Boolean
-        get() = _isValid.get()
-        internal set(value) {
-            check(!value) { "An invalid LL FIR session cannot become valid again." }
-            _isValid.set(value)
-        }
+    internal fun markInvalid() {
+        isValid = false
+    }
 
     fun invalidate() {
         val application = ApplicationManager.getApplication()
