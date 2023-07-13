@@ -264,11 +264,15 @@ val jsTestsTask = tasks.register<Test>("kgpJsTests") {
 val nativeTestsTask = tasks.register<Test>("kgpNativeTests") {
     group = KGP_TEST_TASKS_GROUP
     description = "Run tests for Kotlin/Native part of Gradle plugin"
-    maxParallelForks = maxParallelTestForks
+    maxParallelForks = 1
     useJUnitPlatform {
         includeTags("NativeKGP")
         excludeTags("JvmKGP", "JsKGP", "DaemonsKGP", "OtherKGP", "MppKGP", "AndroidKGP")
         includeEngines("junit-jupiter")
+
+        systemProperties["junit.jupiter.execution.parallel.enabled"] = "true"
+        systemProperties["junit.jupiter.execution.parallel.mode.default"] = "concurrent"
+        systemProperties["junit.jupiter.execution.parallel.mode.classes.default"] = "concurrent"
     }
 }
 
