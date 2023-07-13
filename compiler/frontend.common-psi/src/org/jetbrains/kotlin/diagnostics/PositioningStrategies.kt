@@ -1031,6 +1031,13 @@ object PositioningStrategies {
         }
     }
 
+    @JvmField
+    val TYPEALIAS_TYPE_REFERENCE = object : PositioningStrategy<KtTypeAlias>() {
+        override fun mark(element: KtTypeAlias): List<TextRange> {
+            return markElement(element.getTypeReference() ?: element)
+        }
+    }
+
     /**
      * @param locateReferencedName whether to remove any nested parentheses while locating the reference element. This is useful for
      * diagnostics on super and unresolved references. For example, with the following, only the part inside the parentheses should be

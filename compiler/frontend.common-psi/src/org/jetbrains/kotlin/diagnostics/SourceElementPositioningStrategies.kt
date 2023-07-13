@@ -384,4 +384,9 @@ object SourceElementPositioningStrategies {
         LightTreePositioningStrategies.CALL_ELEMENT_WITH_DOT,
         PositioningStrategies.CALL_ELEMENT_WITH_DOT
     )
+
+    val TYPEALIAS_TYPE_REFERENCE = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.TYPEALIAS_TYPE_REFERENCE,
+        PositioningStrategies.TYPEALIAS_TYPE_REFERENCE,
+    )
 }

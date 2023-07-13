@@ -114,6 +114,7 @@ enum class PositioningStrategy(private val strategy: String? = null) {
     INLINE_FUN_MODIFIER,
     CALL_ELEMENT_WITH_DOT,
     EXPECT_ACTUAL_MODIFIER,
+    TYPEALIAS_TYPE_REFERENCE,
     ;
 
     val expressionToCreate get() = "SourceElementPositioningStrategies.${strategy ?: name}"

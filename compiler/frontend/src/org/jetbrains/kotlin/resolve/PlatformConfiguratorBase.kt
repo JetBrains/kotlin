@@ -58,6 +58,7 @@ private val DEFAULT_DECLARATION_CHECKERS = listOf(
     DataObjectContentChecker,
     EnumEntriesRedeclarationChecker,
     VolatileAnnotationChecker,
+    ActualTypealiasToSpecialAnnotationChecker,
 )
 
 private val DEFAULT_CALL_CHECKERS = listOf(
