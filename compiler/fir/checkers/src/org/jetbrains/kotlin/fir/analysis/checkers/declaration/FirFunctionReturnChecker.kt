@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.BlockExitNode
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isNothing
 import org.jetbrains.kotlin.fir.types.isUnit
 
@@ -32,7 +34,8 @@ object FirFunctionReturnChecker : FirFunctionChecker() {
         if (declaration is FirPropertyAccessor && declaration.isSetter) return
         if (declaration is FirConstructor) return
         if (declaration is FirAnonymousFunction && declaration.isLambda) return
-        if (declaration.returnTypeRef.isUnit || declaration.returnTypeRef.isNothing) return
+        val returnType = declaration.returnTypeRef.coneType.fullyExpandedType(context.session)
+        if (returnType.isUnit || returnType.isNothing) return
         val graph = declaration.controlFlowGraphReference?.controlFlowGraph ?: return
 
         val blockExitNode = graph.exitNode.previousNodes.lastOrNull { it is BlockExitNode } ?: return
