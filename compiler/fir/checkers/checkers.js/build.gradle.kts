@@ -10,6 +10,10 @@ dependencies {
     api(project(":js:js.ast"))
     api(project(":compiler:fir:checkers"))
 
+    // FE checks for modules use ModuleKind
+    // This dependency can be removed when we stop supporting PLANE and UMD module systems
+    implementation(project(":js:js.serializer"))
+
     /*
      * We can't remove this dependency until we use
      *   diagnostics framework from FE 1.0

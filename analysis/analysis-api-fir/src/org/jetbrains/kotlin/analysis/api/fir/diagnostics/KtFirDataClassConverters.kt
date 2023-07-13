@@ -1118,6 +1118,26 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirJsErrors.CALL_FROM_UMD_MUST_BE_JS_MODULE_AND_JS_NON_MODULE) { firDiagnostic ->
+        CallFromUmdMustBeJsModuleAndJsNonModuleImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.CALL_TO_JS_MODULE_WITHOUT_MODULE_SYSTEM) { firDiagnostic ->
+        CallToJsModuleWithoutModuleSystemImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.CALL_TO_JS_NON_MODULE_WITH_MODULE_SYSTEM) { firDiagnostic ->
+        CallToJsNonModuleWithModuleSystemImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJsErrors.RUNTIME_ANNOTATION_NOT_SUPPORTED) { firDiagnostic ->
         RuntimeAnnotationNotSupportedImpl(
             firDiagnostic as KtPsiDiagnostic,

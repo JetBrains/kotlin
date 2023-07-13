@@ -10,7 +10,10 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.CALL_FROM_UMD_MUST_BE_JS_MODULE_AND_JS_NON_MODULE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.CALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.CALL_TO_JS_MODULE_WITHOUT_MODULE_SYSTEM
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.CALL_TO_JS_NON_MODULE_WITH_MODULE_SYSTEM
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.CANNOT_CHECK_FOR_EXTERNAL_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.EXTENSION_FUNCTION_IN_EXTERNAL_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.EXTERNAL_ANONYMOUS_INITIALIZER
@@ -76,6 +79,18 @@ object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             NESTED_JS_MODULE_PROHIBITED,
             "@JsModule and @JsNonModule can't appear on here since the file is already marked by either @JsModule or @JsNonModule"
+        )
+        map.put(
+            CALL_FROM_UMD_MUST_BE_JS_MODULE_AND_JS_NON_MODULE,
+            "When accessing module declarations from UMD, they must be marked by both @JsModule and @JsNonModule"
+        )
+        map.put(
+            CALL_TO_JS_MODULE_WITHOUT_MODULE_SYSTEM,
+            "Can''t access {0} marked with @JsModule annotation from non-modular project", FirDiagnosticRenderers.SYMBOL
+        )
+        map.put(
+            CALL_TO_JS_NON_MODULE_WITH_MODULE_SYSTEM,
+            "Can''t access {0} marked with @JsNonModule annotation from modular project", FirDiagnosticRenderers.SYMBOL
         )
         map.put(
             WRONG_MULTIPLE_INHERITANCE,

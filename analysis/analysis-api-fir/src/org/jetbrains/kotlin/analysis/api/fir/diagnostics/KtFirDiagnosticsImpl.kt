@@ -967,6 +967,23 @@ internal class NestedJsModuleProhibitedImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.NestedJsModuleProhibited
 
+internal class CallFromUmdMustBeJsModuleAndJsNonModuleImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.CallFromUmdMustBeJsModuleAndJsNonModule
+
+internal class CallToJsModuleWithoutModuleSystemImpl(
+    override val callee: KtSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.CallToJsModuleWithoutModuleSystem
+
+internal class CallToJsNonModuleWithModuleSystemImpl(
+    override val callee: KtSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.CallToJsNonModuleWithModuleSystem
+
 internal class RuntimeAnnotationNotSupportedImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,

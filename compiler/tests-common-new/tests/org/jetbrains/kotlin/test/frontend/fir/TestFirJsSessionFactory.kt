@@ -29,7 +29,6 @@ object TestFirJsSessionFactory {
         testServices: TestServices,
         configuration: CompilerConfiguration,
         extensionRegistrars: List<FirExtensionRegistrar>,
-        languageVersionSettings: LanguageVersionSettings,
         registerExtraComponents: ((FirSession) -> Unit),
     ): FirSession {
         val resolvedLibraries = resolveLibraries(configuration, getAllJsDependenciesPaths(module, testServices))
@@ -40,14 +39,17 @@ object TestFirJsSessionFactory {
             sessionProvider,
             moduleDataProvider,
             extensionRegistrars,
-            languageVersionSettings,
+            configuration,
             registerExtraComponents,
         )
     }
 
     fun createModuleBasedSession(
-        mainModuleData: FirModuleData, sessionProvider: FirProjectSessionProvider, extensionRegistrars: List<FirExtensionRegistrar>,
-        languageVersionSettings: LanguageVersionSettings, lookupTracker: LookupTracker?,
+        mainModuleData: FirModuleData,
+        sessionProvider: FirProjectSessionProvider,
+        extensionRegistrars: List<FirExtensionRegistrar>,
+        configuration: CompilerConfiguration,
+        lookupTracker: LookupTracker?,
         registerExtraComponents: ((FirSession) -> Unit),
         sessionConfigurator: FirSessionConfigurator.() -> Unit,
     ): FirSession =
@@ -55,7 +57,7 @@ object TestFirJsSessionFactory {
             mainModuleData,
             sessionProvider,
             extensionRegistrars,
-            languageVersionSettings,
+            configuration,
             lookupTracker,
             icData = null,
             registerExtraComponents,

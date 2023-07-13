@@ -30,4 +30,14 @@ object JsExpressionCheckers : ExpressionCheckers() {
         get() = setOf(
             FirJsExternalArgumentCallChecker
         )
+
+    override val getClassCallCheckers: Set<FirGetClassCallChecker>
+        get() = setOf(
+            FirJsModuleGetClassCallChecker
+        )
+
+    override val qualifiedAccessExpressionCheckers: Set<FirQualifiedAccessExpressionChecker>
+        get() = setOf(
+            FirJsModuleQualifiedAccessChecker
+        )
 }

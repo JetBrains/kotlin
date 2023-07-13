@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.js.checkers
 
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
@@ -21,6 +22,9 @@ import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.types.isAny
+import org.jetbrains.kotlin.fir.types.isNullableAny
+import org.jetbrains.kotlin.fir.types.toSymbol
 import org.jetbrains.kotlin.js.PredefinedAnnotation
 import org.jetbrains.kotlin.js.common.isES5IdentifierPart
 import org.jetbrains.kotlin.js.common.isES5IdentifierStart
@@ -133,7 +137,7 @@ fun FirBasedSymbol<*>.isExportedObject(session: FirSession): Boolean {
     }
 }
 
-private fun FirBasedSymbol<*>.getContainingFile(session: FirSession): FirFile? {
+internal fun FirBasedSymbol<*>.getContainingFile(session: FirSession): FirFile? {
     return when (this) {
         is FirCallableSymbol<*> -> session.firProvider.getFirCallableContainerFile(this)
         is FirClassLikeSymbol<*> -> session.firProvider.getFirClassifierContainerFileIfAny(this)
@@ -148,3 +152,15 @@ fun FirBasedSymbol<*>.isNativeInterface(context: CheckerContext) = isNativeInter
 fun FirBasedSymbol<*>.isPredefinedObject(context: CheckerContext) = isPredefinedObject(context.session)
 
 fun FirBasedSymbol<*>.isExportedObject(context: CheckerContext) = isExportedObject(context.session)
+
+internal fun FirClass.superClassNotAny(session: FirSession) = superConeTypes
+    .filterNot { it.isAny || it.isNullableAny }
+    .find { it.toSymbol(session)?.classKind == ClassKind.CLASS }
+
+internal fun getRootDeclarationSymbol(symbol: FirBasedSymbol<*>, session: FirSession): FirBasedSymbol<*> {
+    return generateSequence(symbol) { it.getContainingClassSymbol(session) }.last()
+}
+
+internal fun isTopLevelSymbol(symbol: FirBasedSymbol<*>, session: FirSession): Boolean {
+    return symbol.getContainingClassSymbol(session) == null
+}

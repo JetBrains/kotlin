@@ -224,7 +224,6 @@ open class FirFrontendFacade(
                     testServices,
                     configuration,
                     extensionRegistrars,
-                    languageVersionSettings,
                     registerExtraComponents = ::registerExtraComponents,
                 )
             }
@@ -380,7 +379,7 @@ open class FirFrontendFacade(
                     moduleData,
                     sessionProvider,
                     extensionRegistrars,
-                    languageVersionSettings,
+                    testServices.compilerConfigurationProvider.getCompilerConfiguration(module),
                     null,
                     registerExtraComponents = ::registerExtraComponents,
                     sessionConfigurator,

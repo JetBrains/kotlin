@@ -127,7 +127,7 @@ fun <F> prepareJsSessions(
                 sessionProvider,
                 libraryList.moduleDataProvider,
                 extensionRegistrars,
-                configuration.languageVersionSettings,
+                configuration,
                 registerExtraComponents = {},
             )
         }
@@ -136,7 +136,7 @@ fun <F> prepareJsSessions(
             moduleData,
             sessionProvider,
             extensionRegistrars,
-            configuration.languageVersionSettings,
+            configuration,
             lookupTracker,
             icData = icData,
             registerExtraComponents = {},

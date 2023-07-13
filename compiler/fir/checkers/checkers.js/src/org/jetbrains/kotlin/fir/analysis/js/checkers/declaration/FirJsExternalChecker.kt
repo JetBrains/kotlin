@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.analysis.js.checkers.isNativeObject
+import org.jetbrains.kotlin.fir.analysis.js.checkers.superClassNotAny
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -202,10 +203,6 @@ object FirJsExternalChecker : FirBasicDeclarationChecker() {
             !isVararg -> null
             else -> returnTypeRef.coneType.typeArguments.firstOrNull()?.type
         }
-
-    private fun FirClass.superClassNotAny(session: FirSession) = superConeTypes
-        .filterNot { it.isAny || it.isNullableAny }
-        .find { it.toSymbol(session)?.classKind == ClassKind.CLASS }
 
     private fun FirClass.superInterfaces(session: FirSession) = superConeTypes
         .filterNot { it.isAny || it.isNullableAny }

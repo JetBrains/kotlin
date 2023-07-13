@@ -806,6 +806,20 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = NestedJsModuleProhibited::class
     }
 
+    interface CallFromUmdMustBeJsModuleAndJsNonModule : KtFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = CallFromUmdMustBeJsModuleAndJsNonModule::class
+    }
+
+    interface CallToJsModuleWithoutModuleSystem : KtFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = CallToJsModuleWithoutModuleSystem::class
+        val callee: KtSymbol
+    }
+
+    interface CallToJsNonModuleWithModuleSystem : KtFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = CallToJsNonModuleWithModuleSystem::class
+        val callee: KtSymbol
+    }
+
     interface RuntimeAnnotationNotSupported : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = RuntimeAnnotationNotSupported::class
     }
