@@ -38,9 +38,9 @@ FILE: provideDelegate.kt
             super<R|kotlin/Any|>()
         }
 
-        public final val x: R|kotlin/Int|by R|/delegate|<R|kotlin/Int|>(Int(1)).R|SubstitutionOverride</DelegateProvider.provideDelegate: R|Delegate<Stub (chain inference): TypeVariable(_T)>|>|(this@R|/A|, ::R|/A.x|)
+        public final val x: R|kotlin/Int|by R|/delegate|<R|kotlin/Int|>(Int(1)).R|SubstitutionOverride</DelegateProvider.provideDelegate: R|Delegate<Stub (chain inference): TypeVariable(+T)>|>|(this@R|/A|, ::R|/A.x|)
             public get(): R|kotlin/Int| {
-                ^ this@R|/A|.D|/A.x|.R|SubstitutionOverride</Delegate.getValue: R|Stub (chain inference): TypeVariable(_T)|>|(this@R|/A|, ::R|/A.x|)
+                ^ this@R|/A|.D|/A.x|.R|SubstitutionOverride</Delegate.getValue: R|Stub (chain inference): TypeVariable(+T)|>|(this@R|/A|, ::R|/A.x|)
             }
 
     }

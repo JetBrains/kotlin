@@ -30,14 +30,14 @@ FILE: hideBySeverity.kt
             super<R|BaseState|>()
         }
 
-        public final val hideBySeverityDerived: R|kotlin/collections/MutableSet<kotlin/Int>|by this@R|/Some|.R|/BaseState.propertyDerived|<R|kotlin/collections/MutableSet<kotlin/Int>|>(R|kotlin/collections/mutableSetOf|<R|kotlin/Int|>()).R|SubstitutionOverride</StoredPropertyDerived.provideDelegate: R|StoredPropertyBase<Stub (chain inference): TypeVariable(_PROPERTY_TYPE)>|>|(this@R|/Some|, ::R|/Some.hideBySeverityDerived|)
+        public final val hideBySeverityDerived: R|kotlin/collections/MutableSet<kotlin/Int>|by this@R|/Some|.R|/BaseState.propertyDerived|<R|kotlin/collections/MutableSet<kotlin/Int>|>(R|kotlin/collections/mutableSetOf|<R|kotlin/Int|>()).R|SubstitutionOverride</StoredPropertyDerived.provideDelegate: R|StoredPropertyBase<Stub (chain inference): TypeVariable(+PROPERTY_TYPE)>|>|(this@R|/Some|, ::R|/Some.hideBySeverityDerived|)
             public get(): R|kotlin/collections/MutableSet<kotlin/Int>| {
-                ^ this@R|/Some|.D|/Some.hideBySeverityDerived|.R|SubstitutionOverride</StoredPropertyBase.getValue: R|Stub (chain inference): TypeVariable(_PROPERTY_TYPE)|>|(this@R|/Some|, ::R|/Some.hideBySeverityDerived|)
+                ^ this@R|/Some|.D|/Some.hideBySeverityDerived|.R|SubstitutionOverride</StoredPropertyBase.getValue: R|Stub (chain inference): TypeVariable(+PROPERTY_TYPE)|>|(this@R|/Some|, ::R|/Some.hideBySeverityDerived|)
             }
 
         public final val hideBySeverityBase: R|kotlin/collections/MutableSet<kotlin/Int>|by this@R|/Some|.R|/BaseState.propertyBase|<R|kotlin/collections/MutableSet<kotlin/Int>|>(R|kotlin/collections/mutableSetOf|<R|kotlin/Int|>())
             public get(): R|kotlin/collections/MutableSet<kotlin/Int>| {
-                ^ this@R|/Some|.D|/Some.hideBySeverityBase|.R|SubstitutionOverride</StoredPropertyBase.getValue: R|Stub (chain inference): TypeVariable(_PROPERTY_TYPE)|>|(this@R|/Some|, ::R|/Some.hideBySeverityBase|)
+                ^ this@R|/Some|.D|/Some.hideBySeverityBase|.R|SubstitutionOverride</StoredPropertyBase.getValue: R|Stub (chain inference): TypeVariable(+PROPERTY_TYPE)|>|(this@R|/Some|, ::R|/Some.hideBySeverityBase|)
             }
 
     }
