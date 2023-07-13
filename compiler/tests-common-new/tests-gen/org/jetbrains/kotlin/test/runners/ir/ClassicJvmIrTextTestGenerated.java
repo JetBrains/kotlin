@@ -356,6 +356,12 @@ public class ClassicJvmIrTextTestGenerated extends AbstractClassicJvmIrTextTest 
             }
 
             @Test
+            @TestMetadata("dataObject.kt")
+            public void testDataObject() throws Exception {
+                runTest("compiler/testData/ir/irText/classes/dataClasses/dataObject.kt");
+            }
+
+            @Test
             @TestMetadata("delegationInSealed.kt")
             public void testDelegationInSealed() throws Exception {
                 runTest("compiler/testData/ir/irText/classes/dataClasses/delegationInSealed.kt");
@@ -2622,12 +2628,6 @@ public class ClassicJvmIrTextTestGenerated extends AbstractClassicJvmIrTextTest 
         @TestMetadata("coercionToUnitForNestedWhen.kt")
         public void testCoercionToUnitForNestedWhen() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/coercionToUnitForNestedWhen.kt");
-        }
-
-        @Test
-        @TestMetadata("dataObject.kt")
-        public void testDataObject() throws Exception {
-            runTest("compiler/testData/ir/irText/firProblems/dataObject.kt");
         }
 
         @Test

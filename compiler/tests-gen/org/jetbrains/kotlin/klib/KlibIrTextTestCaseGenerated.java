@@ -274,6 +274,11 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
                 runTest("compiler/testData/ir/irText/classes/dataClasses/dataClassesGeneric.kt");
             }
 
+            @TestMetadata("dataObject.kt")
+            public void testDataObject() throws Exception {
+                runTest("compiler/testData/ir/irText/classes/dataClasses/dataObject.kt");
+            }
+
             @TestMetadata("delegationInSealed.kt")
             public void testDelegationInSealed() throws Exception {
                 runTest("compiler/testData/ir/irText/classes/dataClasses/delegationInSealed.kt");
@@ -1978,11 +1983,6 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
         @TestMetadata("cannotCastToFunction.kt")
         public void testCannotCastToFunction() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/cannotCastToFunction.kt");
-        }
-
-        @TestMetadata("dataObject.kt")
-        public void testDataObject() throws Exception {
-            runTest("compiler/testData/ir/irText/firProblems/dataObject.kt");
         }
 
         @TestMetadata("DeepCopyIrTree.kt")
