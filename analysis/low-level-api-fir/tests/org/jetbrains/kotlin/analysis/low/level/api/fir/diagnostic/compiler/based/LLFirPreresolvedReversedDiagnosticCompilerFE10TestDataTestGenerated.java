@@ -166,6 +166,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
         }
 
         @Test
+        @TestMetadata("checkTypeWithExactTest.kt")
+        public void testCheckTypeWithExactTest() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/checkTypeWithExactTest.kt");
+        }
+
+        @Test
         @TestMetadata("CompareToWithErrorType.kt")
         public void testCompareToWithErrorType() throws Exception {
             runTest("compiler/testData/diagnostics/tests/CompareToWithErrorType.kt");
