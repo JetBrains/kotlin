@@ -256,10 +256,13 @@ private fun TestProject.gradlePodInstall(taskPrefix: String, @Suppress("UNUSED_P
 private fun TestProject.manualPodInstall(taskPrefix: String, iosAppPath: Path) {
     build("$taskPrefix:$DUMMY_FRAMEWORK_TASK_NAME", buildOptions = buildOptions)
 
+    val environmentalVariables = environmentVariables.environmentalVariables.toMutableMap()
+    environmentalVariables.getOrPut("LC_ALL") { "en_US.UTF-8" }
+
     val command = listOf("env", "pod", "install")
     val result = runProcess(
         cmd = command,
-        environmentVariables = environmentVariables.environmentalVariables,
+        environmentVariables = environmentalVariables,
         workingDir = iosAppPath.toFile(),
     )
 
