@@ -83,7 +83,7 @@ fun test2() { // to extension lambda 1
     val i27a: E1 = when (e) { E.VALUE ->  { s -> this + s.length } } // oi+ ni+
 
     val w28 = W2 <!ARGUMENT_TYPE_MISMATCH!>{ i: Int, <!CANNOT_INFER_PARAMETER_TYPE!>s<!> -> i <!OVERLOAD_RESOLUTION_AMBIGUITY!>+<!> s.<!UNRESOLVED_REFERENCE!>length<!> }<!> // oi- ni-
-    val i28: E1 = id { i: Int, <!CANNOT_INFER_PARAMETER_TYPE!>s<!> -> i <!OVERLOAD_RESOLUTION_AMBIGUITY!>+<!> s.<!UNRESOLVED_REFERENCE!>length<!> } // oi- ni-
+    val i28: E1 = id { i: Int, s -> i + s.length } // oi- ni-
     val w29 = W2 <!ARGUMENT_TYPE_MISMATCH!>{ i: Int, s: String -> i + s.length }<!> // oi- ni-
     val i29: E1 = id { i: Int, s: String -> i + s.length } // oi+ ni+
 

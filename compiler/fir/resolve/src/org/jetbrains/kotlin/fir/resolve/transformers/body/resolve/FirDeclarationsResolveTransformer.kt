@@ -816,7 +816,8 @@ open class FirDeclarationsResolveTransformer(
     ): FirAnonymousFunction {
         val resolvedLambdaAtom = (expectedTypeRef as? FirResolvedTypeRef)?.let {
             extractLambdaInfoFromFunctionType(
-                it.type, anonymousFunction, returnTypeVariable = null, components, candidate = null, duringCompletion = false
+                it.type, anonymousFunction, returnTypeVariable = null, components, candidate = null,
+                allowCoercionToExtensionReceiver = true,
             )
         }
         var lambda = anonymousFunction
@@ -826,7 +827,9 @@ open class FirDeclarationsResolveTransformer(
         }
         lambda = buildAnonymousFunctionCopy(lambda) {
             receiverParameter = lambda.receiverParameter?.takeIf { it.typeRef !is FirImplicitTypeRef }
-                ?: resolvedLambdaAtom?.receiver?.let { coneKotlinType ->
+                ?: resolvedLambdaAtom?.receiver?.takeIf {
+                    !resolvedLambdaAtom.coerceFirstParameterToExtensionReceiver
+                }?.let { coneKotlinType ->
                     lambda.receiverParameter?.apply {
                         replaceTypeRef(typeRef.resolvedTypeFromPrototype(coneKotlinType))
                     }
@@ -903,7 +906,16 @@ open class FirDeclarationsResolveTransformer(
                 listOf(itParam)
             }
 
-            else -> obtainValueParametersFromExpectedParameterTypes(resolvedLambdaAtom.parameters, lambda)
+            else -> {
+                val parameters = if (resolvedLambdaAtom.coerceFirstParameterToExtensionReceiver) {
+                    val receiver = resolvedLambdaAtom.receiver ?: error("Coercion to an extension function type, but no receiver found")
+                    listOf(receiver) + resolvedLambdaAtom.parameters
+                } else {
+                    resolvedLambdaAtom.parameters
+                }
+
+                obtainValueParametersFromExpectedParameterTypes(parameters, lambda)
+            }
         }
     }
 

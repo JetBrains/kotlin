@@ -15377,6 +15377,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/fir/emptyIntersectionWarning.kt");
         }
 
+        @TestMetadata("selectingLambdas.kt")
+        public void ignoreSelectingLambdas() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/selectingLambdas.kt");
+        }
+
         @TestMetadata("typeParameterInClashingAccessor.kt")
         public void ignoreTypeParameterInClashingAccessor() throws Exception {
             runTest("compiler/testData/codegen/box/fir/typeParameterInClashingAccessor.kt");
