@@ -41355,6 +41355,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             }
 
             @Test
+            @TestMetadata("nothingTypeAlias.kt")
+            public void testNothingTypeAlias() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/typealias/nothingTypeAlias.kt");
+            }
+
+            @Test
             @TestMetadata("typeAliasSamAdapterConstructors.kt")
             public void testTypeAliasSamAdapterConstructors() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/typealias/typeAliasSamAdapterConstructors.kt");

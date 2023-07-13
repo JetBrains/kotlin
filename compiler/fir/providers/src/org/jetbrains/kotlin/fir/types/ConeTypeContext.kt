@@ -143,12 +143,12 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun SimpleTypeMarker.isMarkedNullable(): Boolean {
         require(this is ConeKotlinType)
-        return this.nullability.isNullable
+        return fullyExpandedType(session).nullability.isNullable
     }
 
     override fun SimpleTypeMarker.withNullability(nullable: Boolean): SimpleTypeMarker {
         require(this is ConeKotlinType)
-        return withNullability(ConeNullability.create(nullable), session.typeContext)
+        return fullyExpandedType(session).withNullability(ConeNullability.create(nullable), session.typeContext) as SimpleTypeMarker
     }
 
     override fun SimpleTypeMarker.typeConstructor(): TypeConstructorMarker {
