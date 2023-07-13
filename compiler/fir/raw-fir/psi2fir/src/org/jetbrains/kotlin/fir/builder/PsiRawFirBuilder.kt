@@ -1181,10 +1181,12 @@ open class PsiRawFirBuilder(
                 moduleData = baseModuleData
                 origin = FirDeclarationOrigin.Source
                 symbol = FirCodeFragmentSymbol()
-                block = when (file) {
-                    is KtExpressionCodeFragment -> file.getContentElement()?.toFirBlock() ?: buildEmptyExpressionBlock()
-                    is KtBlockCodeFragment -> configureBlockWithoutBuilding(file.getContentElement()).build()
-                    else -> error("Unexpected code fragment type: " + file::class.java)
+                block = buildOrLazyBlock {
+                    when (file) {
+                        is KtExpressionCodeFragment -> file.getContentElement()?.toFirBlock() ?: buildEmptyExpressionBlock()
+                        is KtBlockCodeFragment -> configureBlockWithoutBuilding(file.getContentElement()).build()
+                        else -> error("Unexpected code fragment type: " + file::class.java)
+                    }
                 }
             }
         }
