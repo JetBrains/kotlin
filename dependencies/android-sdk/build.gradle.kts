@@ -28,6 +28,7 @@ repositories {
 val buildToolsVersion = "r29.0.3"
 val platformToolsVersion = "r28.0.1"
 val sdkToolsVersion = "4333796" /*26.1.1*/
+val emulatorVersion = "5264690"
 
 dependencies {
     implicitDependencies("google:build-tools:$buildToolsVersion:linux@zip")
@@ -41,6 +42,10 @@ dependencies {
     implicitDependencies("google:sdk-tools-linux:$sdkToolsVersion@zip")
     implicitDependencies("google:sdk-tools-windows:$sdkToolsVersion@zip")
     implicitDependencies("google:sdk-tools-darwin:$sdkToolsVersion@zip")
+
+    implicitDependencies("google:emulator-linux:$emulatorVersion@zip")
+    implicitDependencies("google:emulator-windows:$emulatorVersion@zip")
+    implicitDependencies("google:emulator-darwin:$emulatorVersion@zip")
 }
 
 val androidSdk by configurations.creating
@@ -149,7 +154,7 @@ unzipSdkTask("android_m2repository", "r44", "extras/android", "")
 unzipSdkTask("platform-tools", platformToolsVersion, "", toolsOsDarwin)
 unzipSdkTask("sdk-tools-$toolsOsDarwin", sdkToolsVersion, "", "")
 unzipSdkTask("build-tools", buildToolsVersion, "build-tools/29.0.3", toolsOs, buildTools, 1)
-unzipSdkTask("emulator-$toolsOsDarwin", "5264690", "", "", prepareTask = prepareEmulator)
+unzipSdkTask("emulator-$toolsOsDarwin", emulatorVersion, "", "", prepareTask = prepareEmulator)
 unzipSdkTask("armeabi-v7a", "19", "system-images/android-19/default","r05", prepareTask = prepareEmulator)
 unzipSdkTask("x86", "19", "system-images/android-19/default", "r06", prepareTask = prepareEmulator)
 
