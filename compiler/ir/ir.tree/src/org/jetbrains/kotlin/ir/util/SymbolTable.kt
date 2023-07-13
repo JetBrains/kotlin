@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.util
 
-import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrLock
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
@@ -35,7 +34,7 @@ open class SymbolTable(
     val lazyWrapper = IrLazySymbolTable(this)
 
     @Suppress("LeakingThis")
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
+    @ObsoleteDescriptorBasedAPI
     override val descriptorExtension: DescriptorSymbolTableExtension = createDescriptorExtension()
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
