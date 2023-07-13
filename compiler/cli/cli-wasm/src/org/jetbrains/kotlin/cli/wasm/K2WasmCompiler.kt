@@ -9,7 +9,6 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
-import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.wasm.compileToLoweredIr
 import org.jetbrains.kotlin.backend.wasm.compileWasm
 import org.jetbrains.kotlin.backend.wasm.dce.eliminateDeadDeclarations
@@ -41,6 +40,7 @@ import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.incremental.js.IncrementalNextRoundChecker
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.ir.backend.js.*
+import org.jetbrains.kotlin.ir.backend.js.dce.DceDumpNameCache
 import org.jetbrains.kotlin.ir.backend.js.dce.dumpDeclarationIrSizesIfNeed
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.linkage.partial.setupPartialLinkageConfig
@@ -52,7 +52,6 @@ import org.jetbrains.kotlin.konan.file.ZipFileSystemCacheableAccessor
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.IncrementalNextRoundException
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.serialization.js.ModuleKind
@@ -91,11 +90,11 @@ class K2WasmCompiler : CLICompiler<K2WasmCompilerArguments>() {
         if (pluginLoadResult != OK) return pluginLoadResult
 
         if (arguments.script) {
-            messageCollector.report(ERROR, "K/Wasm does not support Kotlin script (*.kts) files")
+            messageCollector.report(ERROR, "Kotlin/Wasm does not support Kotlin script (*.kts) files")
             return COMPILATION_ERROR
         }
 
-        if (arguments.freeArgs.isEmpty() && !(incrementalCompilationIsEnabledForJs(arguments))) {
+        if (arguments.freeArgs.isEmpty() && arguments.incrementalCompilation == true) {
             if (arguments.version) {
                 return OK
             }
@@ -138,7 +137,6 @@ class K2WasmCompiler : CLICompiler<K2WasmCompilerArguments>() {
 
         configurationWasm.put(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE, arguments.allowKotlinPackage)
         configurationWasm.put(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME, arguments.renderInternalDiagnosticNames)
-        configurationWasm.put(JSConfigurationKeys.PROPERTY_LAZY_INITIALIZATION, arguments.propertyLazyInitialization)
 
         val zipAccessor = DisposableZipFileSystemAccessor(64)
         Disposer.register(rootDisposable, zipAccessor)
@@ -149,12 +147,12 @@ class K2WasmCompiler : CLICompiler<K2WasmCompilerArguments>() {
         val outputDirPath = arguments.outputDir
         val moduleName = arguments.moduleName
         if (outputDirPath == null) {
-            messageCollector.report(ERROR, "Specify output dir via -ir-output-dir", null)
+            messageCollector.report(ERROR, "Specify output dir via -output-dir", null)
             return COMPILATION_ERROR
         }
 
         if (moduleName == null) {
-            messageCollector.report(ERROR, "Specify output name via -ir-output-name", null)
+            messageCollector.report(ERROR, "Specify output name via -output-name", null)
             return COMPILATION_ERROR
         }
 
@@ -162,7 +160,7 @@ class K2WasmCompiler : CLICompiler<K2WasmCompilerArguments>() {
             return COMPILATION_ERROR
         }
 
-        if (sourcesFiles.isEmpty() && (!incrementalCompilationIsEnabledForJs(arguments)) && arguments.includes.isNullOrEmpty()) {
+        if (sourcesFiles.isEmpty() && arguments.incrementalCompilation != true && arguments.includes.isNullOrEmpty()) {
             messageCollector.report(ERROR, "No source files", null)
             return COMPILATION_ERROR
         }
@@ -189,7 +187,7 @@ class K2WasmCompiler : CLICompiler<K2WasmCompilerArguments>() {
             val outputKlibPath =
                 if (arguments.produceKlibFile) outputDir.resolve("$moduleName.klib").normalize().absolutePath
                 else outputDirPath
-            if (configuration.get(CommonConfigurationKeys.USE_FIR) == true) {
+            if (configuration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
                 sourceModule = processSourceModuleWithK2(environmentForWasm, libraries, friendLibraries, arguments, outputKlibPath)
             } else {
                 sourceModule = processSourceModule(environmentForWasm, libraries, friendLibraries, arguments, outputKlibPath)
@@ -225,16 +223,16 @@ class K2WasmCompiler : CLICompiler<K2WasmCompilerArguments>() {
 
             val (allModules, backendContext) = compileToLoweredIr(
                 depsDescriptors = module,
-                phaseConfig = PhaseConfig(wasmPhases),
+                phaseConfig = createPhaseConfig(wasmPhases, arguments, messageCollector),
                 irFactory = IrFactoryImpl,
-                exportedDeclarations = setOf(FqName("main")),
-                propertyLazyInitialization = arguments.propertyLazyInitialization,
+                propertyLazyInitialization = true,
             )
+            val dceDumpNameCache = DceDumpNameCache()
             if (arguments.dce) {
-                eliminateDeadDeclarations(allModules, backendContext)
+                eliminateDeadDeclarations(allModules, backendContext, dceDumpNameCache)
             }
 
-            dumpDeclarationIrSizesIfNeed(arguments.dumpDeclarationIrSizesToFile, allModules)
+            dumpDeclarationIrSizesIfNeed(arguments.dumpDeclarationIrSizesToFile, allModules, dceDumpNameCache)
 
             val generateSourceMaps = configuration.getBoolean(JSConfigurationKeys.SOURCE_MAP)
 
@@ -244,7 +242,7 @@ class K2WasmCompiler : CLICompiler<K2WasmCompilerArguments>() {
                 baseFileName = moduleName,
                 emitNameSection = arguments.debug,
                 allowIncompleteImplementations = arguments.dce,
-                generateWat = configuration.get(JSConfigurationKeys.WASM_GENERATE_WAT, false),
+                generateWat = configuration.getBoolean(JSConfigurationKeys.WASM_GENERATE_WAT),
                 generateSourceMaps = generateSourceMaps
             )
 
@@ -261,7 +259,7 @@ class K2WasmCompiler : CLICompiler<K2WasmCompilerArguments>() {
     }
 
     private fun processSourceModule(
-        environmentForJS: KotlinCoreEnvironment,
+        environmentForWasm: KotlinCoreEnvironment,
         libraries: List<String>,
         friendLibraries: List<String>,
         arguments: K2WasmCompilerArguments,
@@ -270,28 +268,28 @@ class K2WasmCompiler : CLICompiler<K2WasmCompilerArguments>() {
         lateinit var sourceModule: ModulesStructure
         do {
             sourceModule = prepareAnalyzedSourceModule(
-                environmentForJS.project,
-                environmentForJS.getSourceFiles(),
-                environmentForJS.configuration,
+                environmentForWasm.project,
+                environmentForWasm.getSourceFiles(),
+                environmentForWasm.configuration,
                 libraries,
                 friendLibraries,
-                AnalyzerWithCompilerReport(environmentForJS.configuration)
+                AnalyzerWithCompilerReport(environmentForWasm.configuration)
             )
             val result = sourceModule.jsFrontEndResult.jsAnalysisResult
             if (result is JsAnalysisResult.RetryWithAdditionalRoots) {
-                environmentForJS.addKotlinSourceRoots(result.additionalKotlinRoots)
+                environmentForWasm.addKotlinSourceRoots(result.additionalKotlinRoots)
             }
         } while (result is JsAnalysisResult.RetryWithAdditionalRoots)
 
         if (sourceModule.jsFrontEndResult.jsAnalysisResult.shouldGenerateCode && (arguments.produceKlibDir || arguments.produceKlibFile)) {
             val moduleSourceFiles = (sourceModule.mainModule as MainModule.SourceFiles).files
-            val icData = environmentForJS.configuration.incrementalDataProvider?.getSerializedData(moduleSourceFiles) ?: emptyList()
+            val icData = environmentForWasm.configuration.incrementalDataProvider?.getSerializedData(moduleSourceFiles) ?: emptyList()
             val expectDescriptorToSymbol = mutableMapOf<DeclarationDescriptor, IrSymbol>()
 
             val (moduleFragment, _) = generateIrForKlibSerialization(
-                environmentForJS.project,
+                environmentForWasm.project,
                 moduleSourceFiles,
-                environmentForJS.configuration,
+                environmentForWasm.configuration,
                 sourceModule.jsFrontEndResult.jsAnalysisResult,
                 sourceModule.allDependencies,
                 icData,
@@ -304,7 +302,7 @@ class K2WasmCompiler : CLICompiler<K2WasmCompilerArguments>() {
 
             val metadataSerializer =
                 KlibMetadataIncrementalSerializer(
-                    environmentForJS.configuration,
+                    environmentForWasm.configuration,
                     sourceModule.project,
                     sourceModule.jsFrontEndResult.hasErrors
                 )
@@ -341,9 +339,7 @@ class K2WasmCompiler : CLICompiler<K2WasmCompilerArguments>() {
 
         val lookupTracker = configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER) ?: LookupTracker.DO_NOTHING
 
-        val analyzedOutput = if (
-            configuration.getBoolean(CommonConfigurationKeys.USE_FIR) && configuration.getBoolean(CommonConfigurationKeys.USE_LIGHT_TREE)
-        ) {
+        val analyzedOutput = if (configuration.getBoolean(CommonConfigurationKeys.USE_LIGHT_TREE)) {
             val groupedSources = collectSources(configuration, environmentForWasm.project, messageCollector)
 
             compileModulesToAnalyzedFirWithLightTree(
@@ -458,6 +454,7 @@ class K2WasmCompiler : CLICompiler<K2WasmCompilerArguments>() {
         configuration.putIfNotNull(JSConfigurationKeys.INCREMENTAL_NEXT_ROUND_CHECKER, services[IncrementalNextRoundChecker::class.java])
         configuration.putIfNotNull(CommonConfigurationKeys.LOOKUP_TRACKER, services[LookupTracker::class.java])
         configuration.putIfNotNull(CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER, services[ExpectActualTracker::class.java])
+        configuration.putIfNotNull(JSConfigurationKeys.WASM_TARGET, arguments.target?.let(WasmTarget::fromName))
 
         val errorTolerancePolicy = arguments.errorTolerancePolicy?.let { ErrorTolerancePolicy.resolvePolicy(it) }
         configuration.putIfNotNull(JSConfigurationKeys.ERROR_TOLERANCE_POLICY, errorTolerancePolicy)

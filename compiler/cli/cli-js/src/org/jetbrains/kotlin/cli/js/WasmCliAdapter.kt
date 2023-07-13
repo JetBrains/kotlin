@@ -27,7 +27,6 @@ fun convertJsCliArgumentsToWasmCliArguments(from: K2JSCompilerArguments): K2Wasm
     to.produceWasm = from.irProduceJs
     to.produceKlibDir = from.irProduceKlibDir
     to.produceKlibFile = from.irProduceKlibFile
-    to.propertyLazyInitialization = from.irPropertyLazyInitialization
     to.libraries = from.libraries
     to.moduleName = from.irModuleName ?: from.moduleName
     to.outputDir = from.outputDir
@@ -41,6 +40,7 @@ fun convertJsCliArgumentsToWasmCliArguments(from: K2JSCompilerArguments): K2Wasm
     to.enableAsserts = from.wasmEnableAsserts
     to.generateWat = from.wasmGenerateWat
     to.kClassFqn = from.wasmKClassFqn
+    to.target = from.wasmTarget
 
     return to
 }

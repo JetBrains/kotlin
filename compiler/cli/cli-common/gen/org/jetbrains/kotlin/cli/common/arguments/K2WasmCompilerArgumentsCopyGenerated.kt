@@ -35,12 +35,12 @@ fun copyK2WasmCompilerArguments(from: K2WasmCompilerArguments, to: K2WasmCompile
     to.produceKlibDir = from.produceKlibDir
     to.produceKlibFile = from.produceKlibFile
     to.produceWasm = from.produceWasm
-    to.propertyLazyInitialization = from.propertyLazyInitialization
     to.sourceMap = from.sourceMap
     to.sourceMapBaseDirs = from.sourceMapBaseDirs
     to.sourceMapEmbedSources = from.sourceMapEmbedSources
     to.sourceMapNamesPolicy = from.sourceMapNamesPolicy
     to.sourceMapPrefix = from.sourceMapPrefix
+    to.target = from.target
 
     return to
 }

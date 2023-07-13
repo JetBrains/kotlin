@@ -203,13 +203,6 @@ class K2WasmCompilerArguments : CommonCompilerArguments() {
             field = value
         }
 
-    @Argument(value = "-Xproperty-lazy-initialization", description = "Perform lazy initialization for properties")
-    var propertyLazyInitialization = true
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
     @Argument(
         value = "-Xinclude",
         valueDescription = "<path>",
@@ -327,6 +320,17 @@ class K2WasmCompilerArguments : CommonCompilerArguments() {
         set(value) {
             checkFrozen()
             field = value
+        }
+
+    @Argument(
+        value = "-target",
+        shortName = "-t",
+        description = "Set up Wasm target (wasm-js or wasm-wasi)"
+    )
+    var target: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
         }
 
     override fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> {

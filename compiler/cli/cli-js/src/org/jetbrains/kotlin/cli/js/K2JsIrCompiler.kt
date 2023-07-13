@@ -527,7 +527,6 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
     ): IcCachesArtifacts? {
         val cacheDirectory = arguments.cacheDirectory
 
-        // TODO: Use JS IR IC infrastructure for WASM?
         if (cacheDirectory != null) {
             val cacheGuard = IncrementalCacheGuard(cacheDirectory).also {
                 if (it.acquire() == IncrementalCacheGuard.AcquireStatus.CACHE_CLEARED) {
