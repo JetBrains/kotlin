@@ -35,55 +35,6 @@ class FirBasedSignatureComposer(val mangler: FirMangler) {
 
     private val signatureCache = mutableMapOf<FirDeclarationWithParentId, IdSignature.CommonSignature>()
 
-    inner class SignatureBuilder(private val forceExpect: Boolean) : FirVisitor<Unit, Any?>() {
-        var hashId: Long? = null
-        var mask = 0L
-
-        private fun setExpected(f: Boolean) {
-            mask = mask or IdSignature.Flags.IS_EXPECT.encode(f || forceExpect)
-        }
-
-        override fun visitElement(element: FirElement, data: Any?) {
-            TODO("Should not be here")
-        }
-
-        override fun visitRegularClass(regularClass: FirRegularClass, data: Any?) {
-            setExpected(regularClass.isExpect)
-            //platformSpecificClass(descriptor)
-        }
-
-        override fun visitScript(script: FirScript, data: Any?) {
-        }
-
-        override fun visitTypeAlias(typeAlias: FirTypeAlias, data: Any?) {
-            setExpected(typeAlias.isExpect)
-        }
-
-        override fun visitConstructor(constructor: FirConstructor, data: Any?) {
-            hashId = mangler.run { constructor.signatureMangle(compatibleMode = false) }
-            setExpected(constructor.isExpect)
-        }
-
-        override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: Any?) {
-            hashId = mangler.run { simpleFunction.signatureMangle(compatibleMode = false) }
-            setExpected(simpleFunction.isExpect)
-        }
-
-        override fun visitProperty(property: FirProperty, data: Any?) {
-            hashId = mangler.run { property.signatureMangle(compatibleMode = false) }
-            setExpected(property.isExpect)
-        }
-
-        override fun visitField(field: FirField, data: Any?) {
-            hashId = mangler.run { field.signatureMangle(compatibleMode = false) }
-            setExpected(field.isExpect)
-        }
-
-        override fun visitEnumEntry(enumEntry: FirEnumEntry, data: Any?) {
-            setExpected(enumEntry.isExpect)
-        }
-    }
-
     fun composeSignature(declaration: FirClassLikeDeclaration): IdSignature? {
         return composeSignatureImpl(declaration, containingClass = null, forceExpect = false)
     }
@@ -98,6 +49,60 @@ class FirBasedSignatureComposer(val mangler: FirMangler) {
 
     fun composeSignature(declaration: FirScript): IdSignature? {
         return composeSignatureImpl(declaration, containingClass = null, forceExpect = false)
+    }
+
+    fun composeTypeParameterSignature(
+        index: Int,
+        containerSignature: IdSignature?
+    ): IdSignature? {
+        if (containerSignature == null) return null
+        return IdSignature.CompositeSignature(
+            containerSignature,
+            IdSignature.LocalSignature(MangleConstant.TYPE_PARAMETER_MARKER_NAME, index.toLong(), null)
+        )
+    }
+
+    fun composeAccessorSignature(
+        property: FirProperty,
+        isSetter: Boolean,
+        containingClass: ConeClassLikeLookupTag? = null
+    ): IdSignature? {
+        val propSig: IdSignature.CommonSignature
+        val fileSig: IdSignature.FileSignature?
+        when (val propertySignature = composeSignature(property, containingClass)) {
+            is IdSignature.CompositeSignature -> {
+                propSig = propertySignature.inner as? IdSignature.CommonSignature ?: return null
+                fileSig = propertySignature.container as? IdSignature.FileSignature ?: return null
+            }
+            is IdSignature.CommonSignature -> {
+                propSig = propertySignature
+                fileSig = null
+            }
+            else -> return null
+        }
+        val id = with(mangler) {
+            if (isSetter) {
+                property.setterOrDefault().signatureMangle(compatibleMode = false)
+            } else {
+                property.getterOrDefault().signatureMangle(compatibleMode = false)
+            }
+        }
+        val accessorFqName = if (isSetter) {
+            propSig.declarationFqName + ".<set-${property.name.asString()}>"
+        } else {
+            propSig.declarationFqName + ".<get-${property.name.asString()}>"
+        }
+        val commonSig = IdSignature.CommonSignature(
+            packageFqName = propSig.packageFqName,
+            declarationFqName = accessorFqName,
+            id = id,
+            mask = propSig.mask,
+            description = null, // TODO(KT-59486): Save mangled name here
+        )
+        val accessorSig = IdSignature.AccessorSignature(propSig, commonSig)
+        return if (fileSig != null) {
+            IdSignature.CompositeSignature(fileSig, accessorSig)
+        } else accessorSig
     }
 
     private fun composeSignatureImpl(
@@ -182,58 +187,53 @@ class FirBasedSignatureComposer(val mangler: FirMangler) {
         }
     }
 
-    fun composeTypeParameterSignature(
-        index: Int,
-        containerSignature: IdSignature?
-    ): IdSignature? {
-        if (containerSignature == null) return null
-        return IdSignature.CompositeSignature(
-            containerSignature,
-            IdSignature.LocalSignature(MangleConstant.TYPE_PARAMETER_MARKER_NAME, index.toLong(), null)
-        )
-    }
+    private inner class SignatureBuilder(private val forceExpect: Boolean) : FirVisitor<Unit, Any?>() {
+        var hashId: Long? = null
+        var mask = 0L
 
-    fun composeAccessorSignature(
-        property: FirProperty,
-        isSetter: Boolean,
-        containingClass: ConeClassLikeLookupTag? = null
-    ): IdSignature? {
-        val propSig: IdSignature.CommonSignature
-        val fileSig: IdSignature.FileSignature?
-        when (val propertySignature = composeSignature(property, containingClass)) {
-            is IdSignature.CompositeSignature -> {
-                propSig = propertySignature.inner as? IdSignature.CommonSignature ?: return null
-                fileSig = propertySignature.container as? IdSignature.FileSignature ?: return null
-            }
-            is IdSignature.CommonSignature -> {
-                propSig = propertySignature
-                fileSig = null
-            }
-            else -> return null
+        private fun setExpected(f: Boolean) {
+            mask = mask or IdSignature.Flags.IS_EXPECT.encode(f || forceExpect)
         }
-        val id = with(mangler) {
-            if (isSetter) {
-                property.setterOrDefault().signatureMangle(compatibleMode = false)
-            } else {
-                property.getterOrDefault().signatureMangle(compatibleMode = false)
-            }
+
+        override fun visitElement(element: FirElement, data: Any?) {
+            TODO("Should not be here")
         }
-        val accessorFqName = if (isSetter) {
-            propSig.declarationFqName + ".<set-${property.name.asString()}>"
-        } else {
-            propSig.declarationFqName + ".<get-${property.name.asString()}>"
+
+        override fun visitRegularClass(regularClass: FirRegularClass, data: Any?) {
+            setExpected(regularClass.isExpect)
+            //platformSpecificClass(descriptor)
         }
-        val commonSig = IdSignature.CommonSignature(
-            packageFqName = propSig.packageFqName,
-            declarationFqName = accessorFqName,
-            id = id,
-            mask = propSig.mask,
-            description = null, // TODO(KT-59486): Save mangled name here
-        )
-        val accessorSig = IdSignature.AccessorSignature(propSig, commonSig)
-        return if (fileSig != null) {
-            IdSignature.CompositeSignature(fileSig, accessorSig)
-        } else accessorSig
+
+        override fun visitScript(script: FirScript, data: Any?) {
+        }
+
+        override fun visitTypeAlias(typeAlias: FirTypeAlias, data: Any?) {
+            setExpected(typeAlias.isExpect)
+        }
+
+        override fun visitConstructor(constructor: FirConstructor, data: Any?) {
+            hashId = mangler.run { constructor.signatureMangle(compatibleMode = false) }
+            setExpected(constructor.isExpect)
+        }
+
+        override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: Any?) {
+            hashId = mangler.run { simpleFunction.signatureMangle(compatibleMode = false) }
+            setExpected(simpleFunction.isExpect)
+        }
+
+        override fun visitProperty(property: FirProperty, data: Any?) {
+            hashId = mangler.run { property.signatureMangle(compatibleMode = false) }
+            setExpected(property.isExpect)
+        }
+
+        override fun visitField(field: FirField, data: Any?) {
+            hashId = mangler.run { field.signatureMangle(compatibleMode = false) }
+            setExpected(field.isExpect)
+        }
+
+        override fun visitEnumEntry(enumEntry: FirEnumEntry, data: Any?) {
+            setExpected(enumEntry.isExpect)
+        }
     }
 
     private fun isTopLevelPrivate(declaration: FirDeclaration): Boolean =
@@ -241,21 +241,24 @@ class FirBasedSignatureComposer(val mangler: FirMangler) {
 
     // We only need file signatures to distinguish between declarations with the same fqName across different files,
     // so FirDeclaration itself is an appropriate id.
-    private fun FirDeclaration.fakeFileSignature(commonSignature: IdSignature.CommonSignature) =
-        IdSignature.FileSignature(
+    private fun FirDeclaration.fakeFileSignature(commonSignature: IdSignature.CommonSignature): IdSignature.FileSignature {
+        return IdSignature.FileSignature(
             this, FqName(commonSignature.packageFqName + "." + commonSignature.declarationFqName), "<unknown>"
         )
+    }
 
-    private fun FirProperty.getterOrDefault() =
-        getter ?: FirDefaultPropertyGetter(
+    private fun FirProperty.getterOrDefault(): FirPropertyAccessor {
+        return getter ?: FirDefaultPropertyGetter(
             source = null,
             moduleData, origin, returnTypeRef, visibility, symbol
         )
+    }
 
-    private fun FirProperty.setterOrDefault() =
-        setter ?: FirDefaultPropertySetter(
+    private fun FirProperty.setterOrDefault(): FirPropertyAccessor {
+        return setter ?: FirDefaultPropertySetter(
             source = null,
             moduleData, origin, returnTypeRef, visibility, symbol
         )
+    }
 
 }
