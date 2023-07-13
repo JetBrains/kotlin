@@ -6974,6 +6974,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
                 }
 
                 @Test
+                @TestMetadata("returnAliasedUnitNotRequired.kt")
+                public void testReturnAliasedUnitNotRequired() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/definiteReturn/returnAliasedUnitNotRequired.kt");
+                }
+
+                @Test
                 @TestMetadata("ReturnFromFunctionInObject.kt")
                 public void testReturnFromFunctionInObject() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/definiteReturn/ReturnFromFunctionInObject.kt");
