@@ -122,8 +122,6 @@ class CompilerPluginRuntimeVersionCheckTest {
     }
 
     private fun setupProjectBuildGradle() {
-        val kotlinGradlePlugin =
-            "org.jetbrains.kotlin:kotlin-gradle-plugin:${projectSetup.props.kotlinVersion}"
         val repositoriesBlock = buildString {
             appendLine("repositories {")
             appendLine("maven { url \"${projectSetup.props.tipOfTreeMavenRepoPath}\" }")
@@ -145,7 +143,7 @@ class CompilerPluginRuntimeVersionCheckTest {
                 $repositoriesBlock
                 dependencies {
                     classpath "${projectSetup.props.agpDependency}"
-                    classpath "$kotlinGradlePlugin"
+                    classpath "${projectSetup.props.kgpDependency}"
                 }
             }
 
