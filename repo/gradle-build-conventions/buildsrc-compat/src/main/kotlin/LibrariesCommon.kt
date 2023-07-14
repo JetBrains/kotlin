@@ -13,6 +13,7 @@ import org.gradle.api.plugins.BasePluginExtension
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.kotlin.dsl.*
 import org.gradle.process.CommandLineArgumentProvider
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
@@ -71,8 +72,11 @@ fun Project.configureFrontendIr() = tasks.withType<KotlinJvmCompile>().configure
         if (project.kotlinBuildProperties.useFirForLibraries) {
             freeCompilerArgs.add("-Xuse-k2")
             allWarningsAsErrors.set(false)
-        } else if (project.kotlinBuildProperties.useFir) {
-            freeCompilerArgs.add("-Xskip-prerelease-check")
+        } else {
+            languageVersion.set(KotlinVersion.KOTLIN_1_9)
+            if (project.kotlinBuildProperties.useFir) {
+                freeCompilerArgs.add("-Xskip-prerelease-check")
+            }
         }
 
         val renderDiagnosticNames by extra(project.kotlinBuildProperties.renderDiagnosticNames)
