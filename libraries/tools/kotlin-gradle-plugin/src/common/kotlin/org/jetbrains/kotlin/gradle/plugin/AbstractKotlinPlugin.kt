@@ -194,8 +194,7 @@ internal abstract class AbstractKotlinPlugin(
                     javaSourceSet.resources.setSrcDirs(
                         listOf { kotlinSourceSet.resources.sourceDirectories }
                     )
-                    @Suppress("DEPRECATION")
-                    kotlinCompilation.source(kotlinSourceSet)
+                    kotlinCompilation.addSourceSet(kotlinSourceSet)
                     project.compatibilityConventionRegistrar.addConvention(javaSourceSet, kotlinSourceSetDslName, kotlinSourceSet)
                     javaSourceSet.addExtension(kotlinSourceSetDslName, kotlinSourceSet.kotlin)
                 } else {
@@ -205,8 +204,7 @@ internal abstract class AbstractKotlinPlugin(
             }
 
             kotlinTarget.compilations.all { kotlinCompilation ->
-                @Suppress("DEPRECATION")
-                kotlinCompilation.source(kotlinCompilation.defaultSourceSet)
+                kotlinCompilation.addSourceSet(kotlinCompilation.defaultSourceSet)
             }
 
             kotlinTarget.compilations.run {

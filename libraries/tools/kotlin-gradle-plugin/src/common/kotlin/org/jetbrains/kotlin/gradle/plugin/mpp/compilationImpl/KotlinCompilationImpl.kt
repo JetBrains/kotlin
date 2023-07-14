@@ -11,14 +11,13 @@ import org.gradle.api.Action
 import org.gradle.api.GradleException
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.file.FileCollection
-import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.HierarchyAttributeContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
-import org.jetbrains.kotlin.gradle.plugin.mpp.moduleNameForCompilation
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.utils.ObservableSet
@@ -58,7 +57,7 @@ internal class KotlinCompilationImpl constructor(
 
     override val extras: MutableExtras = mutableExtrasOf()
 
-    val sourceSets get() = params.sourceSets
+    override val sourceSets get() = params.sourceSets
 
     override val configurations: KotlinCompilationConfigurationsContainer
         get() = params.dependencyConfigurations
@@ -90,7 +89,7 @@ internal class KotlinCompilationImpl constructor(
     override val kotlinSourceSets: ObservableSet<KotlinSourceSet>
         get() = sourceSets.kotlinSourceSets
 
-    @Deprecated("scheduled for removal with Kotlin 2.0")
+    @Deprecated("scheduled for removal with Kotlin 2.0", level = DeprecationLevel.ERROR)
     override fun source(sourceSet: KotlinSourceSet) {
         sourceSets.source(sourceSet)
     }

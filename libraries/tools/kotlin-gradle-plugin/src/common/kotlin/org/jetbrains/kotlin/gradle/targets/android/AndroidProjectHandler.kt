@@ -7,7 +7,8 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 import com.android.build.api.attributes.BuildTypeAttr
-import com.android.build.gradle.*
+import com.android.build.gradle.BaseExtension
+import com.android.build.gradle.BasePlugin
 import com.android.build.gradle.api.*
 import org.gradle.api.InvalidUserCodeException
 import org.gradle.api.NamedDomainObjectCollection
@@ -25,14 +26,16 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
-import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.internal.*
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
 import org.jetbrains.kotlin.gradle.internal.checkAndroidAnnotationProcessorDependencyUsage
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilationFactory
+import org.jetbrains.kotlin.gradle.plugin.mpp.addSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.android.KotlinAndroidSourceSets.applyKotlinAndroidSourceSetLayout
 import org.jetbrains.kotlin.gradle.plugin.sources.android.findKotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -203,12 +206,10 @@ internal class AndroidProjectHandler(
         }
 
         // Register the source only after the task is created, because the task is required for that:
-        @Suppress("DEPRECATION")
-        compilation.source(defaultSourceSet)
+        compilation.addSourceSet(defaultSourceSet)
 
         compilation.androidVariant.forEachKotlinSourceSet(project) { kotlinSourceSet ->
-            @Suppress("DEPRECATION")
-            compilation.source(kotlinSourceSet)
+            compilation.addSourceSet(kotlinSourceSet)
         }
     }
 

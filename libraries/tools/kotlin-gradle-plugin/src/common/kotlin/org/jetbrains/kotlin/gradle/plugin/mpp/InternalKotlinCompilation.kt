@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationConfigurationsContainer
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationSourceSetsContainer
 import org.jetbrains.kotlin.gradle.utils.ObservableSet
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
 
@@ -22,6 +23,7 @@ internal interface InternalKotlinCompilation<out T : KotlinCommonOptions> : Kotl
     val configurations: KotlinCompilationConfigurationsContainer
     val friendPaths: Iterable<FileCollection>
     val processResourcesTaskName: String?
+    val sourceSets: KotlinCompilationSourceSetsContainer
 }
 
 internal val <T : KotlinCommonOptions> KotlinCompilation<T>.internal: InternalKotlinCompilation<T>
@@ -33,3 +35,6 @@ internal suspend fun InternalKotlinCompilation<*>.awaitAllKotlinSourceSets(): Se
     KotlinPluginLifecycle.Stage.AfterFinaliseCompilations.await()
     return allKotlinSourceSets
 }
+
+internal fun KotlinCompilation<*>.addSourceSet(kotlinSourceSet: KotlinSourceSet) =
+    internal.sourceSets.source(kotlinSourceSet)

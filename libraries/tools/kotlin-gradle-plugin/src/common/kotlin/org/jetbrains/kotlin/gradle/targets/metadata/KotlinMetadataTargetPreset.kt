@@ -54,8 +54,7 @@ class KotlinMetadataTargetPreset(
             val mainCompilation = compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
             val commonMainSourceSet = project.kotlinExtension.sourceSets.getByName(KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME)
 
-            @Suppress("DEPRECATION")
-            mainCompilation.source(commonMainSourceSet)
+            mainCompilation.addSourceSet(commonMainSourceSet)
 
             project.whenEvaluated {
                 // Since there's no default source set, apply language settings from commonMain:

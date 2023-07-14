@@ -79,7 +79,7 @@ class KotlinMetadataTargetConfigurator :
                     // it isn't necessary for KLib compilations
                     // see [KotlinCompilationSourceSetInclusion.AddSourcesWithoutDependsOnClosure]
                     defaultSourceSet.internal.dependsOnClosure.forAll {
-                        source(it)
+                        addSourceSet(it)
                     }
                 } else {
                     // Clear the dependencies of the compilation so that they don't take time resolving during task graph construction:
