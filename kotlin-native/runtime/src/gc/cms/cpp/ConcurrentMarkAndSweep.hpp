@@ -59,7 +59,10 @@ public:
 
         void OnSuspendForGC() noexcept;
 
-        void safePoint() noexcept { barriers_.onCheckpoint(); }
+        void safePoint() noexcept {
+            gc_.markDispatcher_.onSafePoint(commonThreadData());
+            barriers_.onCheckpoint();
+        }
 
         Allocator CreateAllocator() noexcept { return Allocator(gc::Allocator(), *this); }
 
@@ -74,16 +77,25 @@ public:
 
         mm::ThreadData& commonThreadData() const;
 
-    private:
+    public: // FIXME
         friend ConcurrentMarkAndSweep;
         ConcurrentMarkAndSweep& gc_;
         mm::ThreadData& threadData_;
         gcScheduler::GCSchedulerThreadData& gcScheduler_;
         BarriersThreadData barriers_;
 
+    public: // FIXME
         std::atomic<bool> rootSetLocked_ = false;
         std::atomic<bool> published_ = false;
         std::atomic<bool> cooperative_ = false;
+
+    public: // FIXME
+        std::mutex rootSetMutex_;
+        std::atomic<bool> markQueueReady_ = false;
+        ManuallyScoped<mark::ParallelMark::ParallelProcessor::WorkSource> markQueue_;
+        std::atomic<bool> rootSetCollected_ = false;
+
+        std::mutex flushMutex_;
     };
 
     using ObjectData = ThreadData::ObjectData;
@@ -120,7 +132,7 @@ public:
     int64_t Schedule() noexcept { return state_.schedule(); }
     void WaitFinalized(int64_t epoch) noexcept { state_.waitEpochFinalized(epoch); }
 
-private:
+public: // FIXME
     void mainGCThreadBody();
     void auxiliaryGCThreadBody();
     void PerformFullGC(int64_t epoch) noexcept;

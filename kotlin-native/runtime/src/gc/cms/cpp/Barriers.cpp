@@ -12,12 +12,16 @@
 #include "SafePoint.hpp"
 #include "ThreadData.hpp"
 #include "ThreadRegistry.hpp"
+#include "GCImpl.hpp"
+#include "ParallelMark.hpp"
 
 using namespace kotlin;
 
 namespace {
 
 std::atomic<ObjHeader* (*)(ObjHeader*)> weakRefBarrier = nullptr;
+
+[[clang::no_destroy]] std::atomic<bool> markBarriersEnabled = false;
 
 ObjHeader* weakRefBarrierImpl(ObjHeader* weakReferee) noexcept {
     if (!weakReferee) return nullptr;
@@ -36,7 +40,9 @@ NO_INLINE ObjHeader* weakRefReadSlowPath(std::atomic<ObjHeader*>& weakReferee) n
     return barrier ? barrier(weak) : weak;
 }
 
-void waitForThreadsToReachCheckpoint() {
+} // namespace
+
+void gc::waitForThreadsToReachCheckpoint() {
     // Reset checkpoint on all threads.
     for (auto& thr : mm::ThreadRegistry::Instance().LockForIter()) {
         thr.gc().impl().gc().barriers().resetCheckpoint();
@@ -55,9 +61,10 @@ void waitForThreadsToReachCheckpoint() {
     }
 }
 
-} // namespace
-
 void gc::BarriersThreadData::onCheckpoint() noexcept {
+    if (!visitedCheckpoint_.load(std::memory_order_relaxed)) {
+        RuntimeLogDebug({kTagGC}, "Checkpoint: weak = %p mark = %d", weakRefBarrier.load(std::memory_order_relaxed), markBarriersEnabled.load(std::memory_order_relaxed));
+    }
     visitedCheckpoint_.store(true, std::memory_order_release);
 }
 
@@ -94,4 +101,48 @@ OBJ_GETTER(kotlin::gc::WeakRefRead, std::atomic<ObjHeader*>& weakReferee) noexce
         result = weakReferee.load(std::memory_order_relaxed);
     }
     RETURN_OBJ(result);
+}
+
+void gc::EnableMarkBarriers() {
+    markBarriersEnabled.store(true, std::memory_order_seq_cst);
+}
+
+void gc::DisableMarkBarriers() {
+    markBarriersEnabled.store(false, std::memory_order_seq_cst);
+}
+
+ALWAYS_INLINE void gc::SetRefInMark(ObjHeader** location, ObjHeader* value) noexcept {
+    RuntimeLogDebug({kTagGC}, "Write%s: %p overwritten by %p", (markBarriersEnabled.load(std::memory_order_relaxed) ? " [barrier]" : ""), *location, value);
+    if (markBarriersEnabled.load(std::memory_order_relaxed)) {
+        // TODO check if location is black!
+        //      but be careful then
+        auto prev = *location;
+        if (prev != nullptr) {
+            if (!gc::isMarked(prev)) {
+                auto threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
+                RuntimeAssert(threadData->gc().impl().gc().markQueueReady_, "Mark queue must be initialized");
+                auto& queue = *threadData->gc().impl().gc().markQueue_;
+
+                bool markIdle = threadData->gc().impl().gc().gc_.markDispatcher_.pacer_.is(mark::MarkPacer::Phase::kIdle);
+                std::atomic_thread_fence(std::memory_order_seq_cst);
+
+                bool enqueued = gc::mark::ParallelMark::MarkTraits::tryEnqueue(queue, prev);
+                if (enqueued) {
+                    RuntimeAssert(!markIdle, "Barrier found unmarked object %p when mark is not in progress", prev);
+                }
+                // dbg
+                // queue.flush();
+                // RuntimeAssert(queue.empty(), "TODO");
+            }
+        }
+    }
+}
+
+ALWAYS_INLINE void gc::NewObjInMark(ObjHeader* obj) noexcept {
+    RuntimeLogDebug({kTagGC}, "New object%s: %p", (markBarriersEnabled.load(std::memory_order_relaxed) ? " [barrier]" : ""), obj);
+    // FIXME do we need it??
+    if (markBarriersEnabled.load(std::memory_order_relaxed)) {
+        bool marked = gc::mark::ParallelMark::MarkTraits::tryMark(obj);
+        RuntimeAssert(marked, "New obj must be unmarked");
+    }
 }

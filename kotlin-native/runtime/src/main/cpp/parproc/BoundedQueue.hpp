@@ -95,6 +95,17 @@ public:
         return true;
     }
 
+    std::size_t size() const noexcept {
+        // TODO check the code
+        auto dequeue = dequeuePos_.load(std::memory_order_relaxed);
+        auto enqueue = enqueuePos_.load(std::memory_order_relaxed);
+        if (enqueue > dequeue) {
+            return enqueue - dequeue;
+        } else {
+            return dequeue - enqueue;
+        }
+    }
+
 private:
     struct Cell {
         // TODO describe

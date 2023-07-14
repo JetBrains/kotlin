@@ -25,7 +25,7 @@ public:
          * Each thread is free to start as soon as it reaches a safe point.
          * No need to wait for others.
          */
-        kReady,
+        kReady, // TODO rename
         /**
          * All mutator threads must be in a safe state at this point:
          * 1) Suspended on a safe point;
@@ -40,6 +40,7 @@ public:
          * Parallel mark can't stop before all the created workers begin the marking.
          */
         kParallelMark,
+        kTearDown,
         /** A shutdown was requested. There is nothing more to wait for. */
         kShutdown,
     };
@@ -71,12 +72,13 @@ private:
  */
 class ParallelMark : private Pinned {
     using MarkStackImpl = intrusive_forward_list<ObjectData>;
+public:
     // work balancing parameters were chosen pretty arbitrary
     using ParallelProcessor = ParallelProcessor<MarkStackImpl, 512, 4096>;
-public:
+
     class MarkTraits {
     public:
-        using MarkQueue = ParallelProcessor::Worker;
+        using MarkQueue = ParallelProcessor::WorkSource;
         using ObjectFactory = ObjectData::ObjectFactory;
 
         static void clear(MarkQueue& queue) noexcept {
@@ -94,12 +96,20 @@ public:
 
         static ALWAYS_INLINE bool tryEnqueue(MarkQueue& queue, ObjHeader* object) noexcept {
             auto& objectData = ObjectFactory::NodeRef::From(object).ObjectData();
-            return compiler::gcMarkSingleThreaded() ? queue.tryPushLocal(objectData) : queue.tryPush(objectData);
+            bool marked = compiler::gcMarkSingleThreaded() ? queue.tryPushLocal(objectData) : queue.tryPush(objectData);
+            if (marked) {
+                RuntimeLogDebug({ kTagGC }, "Mark %p", object);
+            }
+            return marked;
         }
 
         static ALWAYS_INLINE bool tryMark(ObjHeader* object) noexcept {
             auto& objectData = ObjectFactory::NodeRef::From(object).ObjectData();
-            return objectData.tryMark();
+            bool marked = objectData.tryMark();
+            if (marked) {
+                RuntimeLogDebug({ kTagGC }, "Mark %p", object);
+            }
+            return marked;
         }
 
         static ALWAYS_INLINE void processInMark(MarkQueue& markQueue, ObjHeader* object) noexcept {
@@ -117,6 +127,8 @@ public:
 
     /** To be run by a single "main" GC thread during STW. */
     void runMainInSTW();
+
+    void onSafePoint(mm::ThreadData& mutatorThread);
 
     /**
      * To be run by mutator threads that would like to participate in mark.
@@ -141,7 +153,7 @@ public:
         setParallelismLevel(maxParallelism, mutatorsCooperate);
     }
 
-private:
+public: // FIXME
     GCHandle& gcHandle();
 
     void setParallelismLevel(size_t maxParallelism, bool mutatorsCooperate);
@@ -157,8 +169,9 @@ private:
     }
 
     void completeRootSetAndMark(ParallelProcessor::Worker& parallelWorker);
-    void completeMutatorsRootSet(MarkTraits::MarkQueue& markQueue);
-    void tryCollectRootSet(mm::ThreadData& thread, ParallelProcessor::Worker& markQueue);
+    void completeMutatorsRootSet(MarkTraits::MarkQueue& workerMarkQueue);
+    void tryCreateMarkQueueAndCollectRS(mm::ThreadData& thread);
+    void tryCollectRootSet(mm::ThreadData& thread, ParallelProcessor::WorkSource& markQueue);
     void parallelMark(ParallelProcessor::Worker& worker);
 
     std::optional<ParallelProcessor::Worker> createWorker();
@@ -175,6 +188,8 @@ private:
 
     std::mutex workerCreationMutex_;
     std::atomic<std::size_t> activeWorkersCount_ = 0;
+
+    std::atomic<bool> newWork_ = false;
 };
 
 } // namespace kotlin::gc::mark

@@ -23,6 +23,9 @@ private:
     std::atomic<bool> visitedCheckpoint_ = false;
 };
 
+// make private?
+void waitForThreadsToReachCheckpoint();
+
 // Must be called during STW.
 void EnableWeakRefBarriers() noexcept;
 
@@ -30,5 +33,11 @@ void EnableWeakRefBarriers() noexcept;
 void DisableWeakRefBarriers() noexcept;
 
 OBJ_GETTER(WeakRefRead, std::atomic<ObjHeader*>& weakReferee) noexcept;
+
+void EnableMarkBarriers();
+void DisableMarkBarriers();
+
+void SetRefInMark(ObjHeader** location, ObjHeader* value) noexcept;
+void NewObjInMark(ObjHeader* value) noexcept;
 
 } // namespace kotlin::gc

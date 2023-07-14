@@ -15,11 +15,13 @@ using namespace kotlin;
 
 ALWAYS_INLINE void mm::SetStackRef(ObjHeader** location, ObjHeader* value) noexcept {
     AssertThreadState(ThreadState::kRunnable);
+    gc::BeforeSetRef(location, value);
     *location = value;
 }
 
 ALWAYS_INLINE void mm::SetHeapRef(ObjHeader** location, ObjHeader* value) noexcept {
     AssertThreadState(ThreadState::kRunnable);
+    gc::BeforeSetRef(location, value);
     *location = value;
 }
 
@@ -31,11 +33,15 @@ ALWAYS_INLINE void mm::SetHeapRef(ObjHeader** location, ObjHeader* value) noexce
 
 ALWAYS_INLINE void mm::SetHeapRefAtomic(ObjHeader** location, ObjHeader* value) noexcept {
     AssertThreadState(ThreadState::kRunnable);
+    // FIXME ???
+    gc::BeforeSetRef(location, value);
     __atomic_store_n(location, value, __ATOMIC_RELEASE);
 }
 
 ALWAYS_INLINE void mm::SetHeapRefAtomicSeqCst(ObjHeader** location, ObjHeader* value) noexcept {
     AssertThreadState(ThreadState::kRunnable);
+    // FIXME ???
+    gc::BeforeSetRef(location, value);
     __atomic_store_n(location, value, __ATOMIC_SEQ_CST);
 }
 
@@ -49,6 +55,8 @@ ALWAYS_INLINE OBJ_GETTER(mm::ReadHeapRefAtomic, ObjHeader** location) noexcept {
 
 ALWAYS_INLINE OBJ_GETTER(mm::CompareAndSwapHeapRef, ObjHeader** location, ObjHeader* expected, ObjHeader* value) noexcept {
     AssertThreadState(ThreadState::kRunnable);
+    // FIXME ADD BARRIERS!!!!!!!
+
     // TODO: Make this work with GCs that can stop thread at any point.
     ObjHeader* actual = expected;
     __atomic_compare_exchange_n(location, &actual, value, false, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
@@ -57,6 +65,8 @@ ALWAYS_INLINE OBJ_GETTER(mm::CompareAndSwapHeapRef, ObjHeader** location, ObjHea
 
 ALWAYS_INLINE bool mm::CompareAndSetHeapRef(ObjHeader** location, ObjHeader* expected, ObjHeader* value) noexcept {
     AssertThreadState(ThreadState::kRunnable);
+    // FIXME ADD BARRIERS!!!!!!!!
+
     // TODO: Make this work with GCs that can stop thread at any point.
     ObjHeader* actual = expected;
     return __atomic_compare_exchange_n(location, &actual, value, false, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
@@ -64,6 +74,8 @@ ALWAYS_INLINE bool mm::CompareAndSetHeapRef(ObjHeader** location, ObjHeader* exp
 
 ALWAYS_INLINE OBJ_GETTER(mm::GetAndSetHeapRef, ObjHeader** location, ObjHeader* value) noexcept {
     AssertThreadState(ThreadState::kRunnable);;
+    // FIXME ADD BARRIERS!!!!!!!!
+
     auto *actual = __atomic_exchange_n(location, value,  __ATOMIC_SEQ_CST);
     RETURN_OBJ(actual);
 }
@@ -74,6 +86,8 @@ ALWAYS_INLINE OBJ_GETTER(mm::GetAndSetHeapRef, ObjHeader** location, ObjHeader* 
 OBJ_GETTER(mm::AllocateObject, ThreadData* threadData, const TypeInfo* typeInfo) noexcept {
     AssertThreadState(threadData, ThreadState::kRunnable);
     // TODO: Make this work with GCs that can stop thread at any point.
+
+    // FIXME barrier is inside but do we really need it?
     auto* object = threadData->gc().CreateObject(typeInfo);
     RETURN_OBJ(object);
 }
@@ -81,6 +95,8 @@ OBJ_GETTER(mm::AllocateObject, ThreadData* threadData, const TypeInfo* typeInfo)
 OBJ_GETTER(mm::AllocateArray, ThreadData* threadData, const TypeInfo* typeInfo, uint32_t elements) noexcept {
     AssertThreadState(threadData, ThreadState::kRunnable);
     // TODO: Make this work with GCs that can stop thread at any point.
+
+    // FIXME barrier is inside but do we really need it?
     auto* array = threadData->gc().CreateArray(typeInfo, static_cast<uint32_t>(elements));
     // `ArrayHeader` and `ObjHeader` are expected to be compatible.
     RETURN_OBJ(reinterpret_cast<ObjHeader*>(array));

@@ -113,3 +113,6 @@ bool gc::isMarked(ObjHeader* object) noexcept {
 ALWAYS_INLINE OBJ_GETTER(gc::tryRef, std::atomic<ObjHeader*>& object) noexcept {
     RETURN_OBJ(object.load(std::memory_order_relaxed));
 }
+
+ALWAYS_INLINE void gc::BeforeSetRef(ObjHeader** location, ObjHeader* value) noexcept {
+}

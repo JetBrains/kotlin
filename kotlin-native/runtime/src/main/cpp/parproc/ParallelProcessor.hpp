@@ -74,13 +74,11 @@ class ParallelProcessor : private Pinned {
     };
 
 public:
-    class Worker : private Pinned {
+    class WorkSource : private Pinned {
         friend ParallelProcessor;
     public:
-        explicit Worker(ParallelProcessor& dispatcher) : dispatcher_(dispatcher) {
-            dispatcher_.registeredWorkers_.fetch_add(1, std::memory_order_relaxed);
-            RuntimeLogDebug({ "balancing" }, "Worker registered");
-        }
+        explicit WorkSource(ParallelProcessor& dispatcher) : dispatcher_(dispatcher), isWorker_(false) {}
+        explicit WorkSource(ParallelProcessor& dispatcher, bool isWorker) : dispatcher_(dispatcher), isWorker_(isWorker) {}
 
         ALWAYS_INLINE bool localEmpty() const noexcept {
             return batch_.empty() && overflowList_.empty();
@@ -128,8 +126,34 @@ public:
             return batch_.tryPop();
         }
 
-    private:
+        ALWAYS_INLINE bool forceFlush() noexcept {
+            // FIXME simplify?
+            while (true) {
+                if (!batch_.empty()) {
+                    bool released = dispatcher_.releaseBatch(std::move(batch_));
+                    if (released) {
+                        RuntimeLogDebug({ "balancing" }, "Work queue force flushed");
+                        batch_ = Batch{};
+                    } else {
+                        RuntimeLogDebug({ "balancing" }, "Failed to force flush work queue");
+                        return false;
+                    };
+                }
+                RuntimeAssert(batch_.empty(), "Now must be empty");
+                if (overflowList_.empty()) {
+                    RuntimeAssert(localEmpty(), "Now local is empty");
+                    return true;
+                } else {
+                    RuntimeLogDebug({ "balancing" }, "Refiling batch from overflow list");
+                    batch_.fillFrom(overflowList_);
+                }
+            }
+        }
+
+    // FIXME
+    protected:
         bool waitForMoreWork() noexcept {
+            RuntimeAssert(isWorker_, "Must be a worker");
             RuntimeAssert(batch_.empty(), "Local batch must be depleted before waiting for shared work");
             RuntimeAssert(overflowList_.empty(), "Local overflow list must be depleted before waiting for shared work");
 
@@ -148,9 +172,9 @@ public:
                 // we are the last ones awake
                 RuntimeLogDebug({ "balancing" }, "Worker has detected termination");
                 dispatcher_.allDone_ = true;
+                dispatcher_.waitingWorkers_.fetch_sub(1, std::memory_order_relaxed);
                 lock.unlock();
                 dispatcher_.waitCV_.notify_all();
-                dispatcher_.waitingWorkers_.fetch_sub(1, std::memory_order_relaxed);
                 return false;
             }
 
@@ -165,9 +189,22 @@ public:
         }
 
         ParallelProcessor& dispatcher_;
+        const bool isWorker_; // FIXME
 
         Batch batch_;
         ListImpl overflowList_;
+    };
+
+    class Worker : public WorkSource {
+        friend ParallelProcessor;
+    public:
+        explicit Worker(ParallelProcessor& dispatcher) : WorkSource(dispatcher, true) {
+            RuntimeAssert(this->isWorker_, "Must be a worker");
+            this->dispatcher_.registeredWorkers_.fetch_add(1, std::memory_order_relaxed);
+            RuntimeLogDebug({ "balancing" }, "Worker registered");
+        }
+
+    private:
     };
 
     ParallelProcessor() = default;
@@ -178,6 +215,24 @@ public:
 
     size_t registeredWorkers() {
         return registeredWorkers_.load(std::memory_order_relaxed);
+    }
+
+    bool workAvailable() const noexcept {
+        return sharedBatches_.size() > 0;
+    }
+
+    void undo() noexcept {
+        // FIXME encapsulate
+        std::unique_lock lock(waitMutex_);
+        allDone_ = false;
+    }
+
+    void stop() noexcept {
+        {
+            std::unique_lock lock(waitMutex_);
+            allDone_ = true;
+        }
+        waitCV_.notify_all();
     }
 
 private:

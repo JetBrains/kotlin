@@ -83,6 +83,8 @@ private:
 bool isMarked(ObjHeader* object) noexcept;
 OBJ_GETTER(tryRef, std::atomic<ObjHeader*>& object) noexcept;
 
+void BeforeSetRef(ObjHeader** location, ObjHeader* value) noexcept;
+
 inline constexpr bool kSupportsMultipleMutators = true;
 
 } // namespace gc

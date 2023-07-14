@@ -7,7 +7,9 @@
 
 #include <cinttypes>
 #include <optional>
+#include <iostream>
 
+#include "Barriers.hpp"
 #include "CallsChecker.hpp"
 #include "CompilerConstants.hpp"
 #include "GlobalData.hpp"
@@ -22,6 +24,7 @@
 
 #ifdef CUSTOM_ALLOCATOR
 #include "Heap.hpp"
+#include "GCApi.hpp"
 #endif
 
 using namespace kotlin;
@@ -66,22 +69,45 @@ ScopedThread createGCThread(const char* name, Body&& body) {
 // TODO move to common
 [[maybe_unused]] inline void checkMarkCorrectness(mm::ObjectFactory<gc::ConcurrentMarkAndSweep>::Iterable& heap) {
     if (compiler::runtimeAssertsMode() == compiler::RuntimeAssertsMode::kIgnore) return;
-    for (auto objRef: heap) {
-        auto obj = objRef.GetObjHeader();
-        auto& objData = objRef.ObjectData();
+//    for (auto objRef: heap) {
+//        auto obj = objRef.GetObjHeader();
+//        auto& objData = objRef.ObjectData();
+//        if (objData.marked()) {
+//            traverseReferredObjects(obj, [obj](ObjHeader* field) {
+//                if (field->heap()) {
+//                    auto& fieldObjData =
+//                            mm::ObjectFactory<gc::ConcurrentMarkAndSweep>::NodeRef::From(field).ObjectData();
+//                    // TODO distinguish new allocations RuntimeAssert(fieldObjData.marked(), "Field %p of an alive obj %p must be alive", field, obj);
+//                }
+//            });
+//        }
+//    }
+}
+} // namespace
+#ifdef CUSTOM_ALLOCATOR
+[[maybe_unused]] NO_INLINE bool checkMarkCorrectness(alloc::Heap& heap) {
+    if (compiler::runtimeAssertsMode() == compiler::RuntimeAssertsMode::kIgnore) return true;
+    bool correct = true;
+    heap.forEach([&](uint8_t& heapObjPtr){
+        auto* heapObj = reinterpret_cast<alloc::HeapObjHeader*>(&heapObjPtr);
+        auto* obj = &heapObj->object;
+        auto& objData = heapObj->gcData;
         if (objData.marked()) {
-            traverseReferredObjects(obj, [obj](ObjHeader* field) {
+            traverseReferredObjects(obj, [&, obj](ObjHeader* field) {
                 if (field->heap()) {
                     auto& fieldObjData =
                             mm::ObjectFactory<gc::ConcurrentMarkAndSweep>::NodeRef::From(field).ObjectData();
                     RuntimeAssert(fieldObjData.marked(), "Field %p of an alive obj %p must be alive", field, obj);
+                    correct = false;
                 }
             });
         }
-    }
+    });
+    return true;
 }
+#endif
 
-} // namespace
+// TODO } // namespace
 
 void gc::ConcurrentMarkAndSweep::ThreadData::SafePointAllocation(size_t size) noexcept {
     gcScheduler_.OnSafePointAllocation(size);
@@ -113,9 +139,8 @@ void gc::ConcurrentMarkAndSweep::ThreadData::OnOOM(size_t size) noexcept {
 }
 
 void gc::ConcurrentMarkAndSweep::ThreadData::OnSuspendForGC() noexcept {
-    CallsCheckerIgnoreGuard guard;
-
-    gc_.markDispatcher_.runOnMutator(commonThreadData());
+    // CallsCheckerIgnoreGuard guard;
+    //gc_.markDispatcher_.runOnMutator(commonThreadData());
 }
 
 bool gc::ConcurrentMarkAndSweep::ThreadData::tryLockRootSet() {
@@ -148,6 +173,7 @@ void gc::ConcurrentMarkAndSweep::ThreadData::clearMarkFlags() {
     published_.store(false, std::memory_order_relaxed);
     cooperative_.store(false, std::memory_order_relaxed);
     rootSetLocked_.store(false, std::memory_order_release);
+    rootSetCollected_.store(false, std::memory_order_release);
 }
 
 mm::ThreadData& gc::ConcurrentMarkAndSweep::ThreadData::commonThreadData() const {
@@ -224,21 +250,18 @@ void gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
     markDispatcher_.beginMarkingEpoch(gcHandle);
     GCLogDebug(epoch, "Main GC requested marking in mutators");
 
-    // Request STW
-    bool didSuspend = mm::RequestThreadsSuspension();
-    RuntimeAssert(didSuspend, "Only GC thread can request suspension");
-    gcHandle.suspensionRequested();
+//    // Request STW
+//    bool didSuspend = mm::RequestThreadsSuspension();
+//    RuntimeAssert(didSuspend, "Only GC thread can request suspension");
+//    gcHandle.suspensionRequested();
+//
+//    RuntimeAssert(!kotlin::mm::IsCurrentThreadRegistered(), "GC must run on unregistered thread");
+//
+//    markDispatcher_.waitForThreadsPauseMutation();
+//    GCLogDebug(epoch, "All threads have paused mutation");
+//    gcHandle.threadsAreSuspended();
 
-    RuntimeAssert(!kotlin::mm::IsCurrentThreadRegistered(), "GC must run on unregistered thread");
-
-    markDispatcher_.waitForThreadsPauseMutation();
-    GCLogDebug(epoch, "All threads have paused mutation");
-    gcHandle.threadsAreSuspended();
-
-#ifdef CUSTOM_ALLOCATOR
-    heap_.PrepareForGC();
-#endif
-
+    // FIXME CAREFUL HERE?
     auto& scheduler = gcScheduler_;
     scheduler.gcData().OnPerformFullGC();
 
@@ -246,17 +269,34 @@ void gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
 
     markDispatcher_.runMainInSTW();
 
-    markDispatcher_.endMarkingEpoch();
-
     auto markStats = gcHandle.getMarked();
     scheduler.gcData().UpdateAliveSetBytes(markStats.markedSizeBytes);
 
-#ifndef CUSTOM_ALLOCATOR
+    // FIXME a little pause
+    // Request STW
+    bool didSuspend = mm::RequestThreadsSuspension();
+    RuntimeAssert(didSuspend, "Only GC thread can request suspension");
+    gcHandle.suspensionRequested();
+
+    RuntimeAssert(!kotlin::mm::IsCurrentThreadRegistered(), "GC must run on unregistered thread");
+    mm::WaitForThreadsSuspension();
+    GCLogDebug(epoch, "All threads have paused mutation");
+    gcHandle.threadsAreSuspended();
+
+    markDispatcher_.endMarkingEpoch();
+    gc::DisableMarkBarriers();
+
+#ifdef CUSTOM_ALLOCATOR
+    //heap_.graphviz();
+    checkMarkCorrectness(heap_);
+    // FIXME nested thread iter lock!!!
+    heap_.PrepareForGC();
+#else
     // Taking the locks before the pause is completed. So that any destroying thread
     // would not publish into the global state at an unexpected time.
     std::optional extraObjectFactoryIterable = mm::GlobalData::Instance().extraObjectDataFactory().LockForIter();
     std::optional objectFactoryIterable = objectFactory_.LockForIter();
-    checkMarkCorrectness(*objectFactoryIterable);
+    // FIXME checkMarkCorrectness(*objectFactoryIterable);
 #endif
 
     if (compiler::concurrentWeakSweep()) {

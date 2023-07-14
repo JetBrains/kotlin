@@ -1,8 +1,10 @@
 #include "ParallelMark.hpp"
 
+#include "Barriers.hpp"
 #include "MarkStack.hpp"
 #include "MarkAndSweepUtils.hpp"
 #include "GCStatistics.hpp"
+#include "SafePoint.hpp"
 #include "Utils.hpp"
 #include "std_support/Memory.hpp"
 
@@ -18,6 +20,24 @@ void spinWait(Cond&& until) {
     while (!until()) {
         std::this_thread::yield();
     }
+}
+
+void flushLocalQueue0(mm::ThreadData& thread) {
+    if (!thread.gc().impl().gc().markQueue_->localEmpty()) {
+        bool flushed = thread.gc().impl().gc().markQueue_->forceFlush();
+        if (!flushed) {
+            RuntimeLogDebug({kTagGC}, "Failed to flush local queue (tid#%d) !!!!!!!!", thread.threadId());
+        }
+        thread.gc().impl().gc().gc_.markDispatcher_.newWork_ = true; // TODO release
+        RuntimeLogDebug({kTagGC}, "Local queue (tid#%d) force flush", thread.threadId());
+    } else {
+        RuntimeLogDebug({kTagGC}, "Local queue (tid#%d) is empty", thread.threadId());
+    }
+}
+
+void flushLocalQueue(mm::ThreadData& thread) {
+    std::unique_lock lock(thread.gc().impl().gc().flushMutex_);
+    flushLocalQueue0(thread);
 }
 
 } // namespace
@@ -100,7 +120,7 @@ void gc::mark::ParallelMark::endMarkingEpoch() {
         // We must now wait for every worker to finish the Mark procedure:
         // wake up from possible waiting, publish statistics, etc.
         // Only then it's safe to destroy the parallelProcessor and proceed to other GC tasks such as sweep.
-        spinWait([=]() { return activeWorkersCount_.load(std::memory_order_relaxed) == 0; });
+        // FIXME spinWait([=]() { return activeWorkersCount_.load(std::memory_order_relaxed) == 0; });
 
         std::unique_lock guard(workerCreationMutex_);
         RuntimeAssert(activeWorkersCount_ == 0, "All the workers must already finish");
@@ -121,20 +141,128 @@ void gc::mark::ParallelMark::runMainInSTW() {
         ParallelProcessor::Worker mainWorker(*parallelProcessor_);
         GCLogDebug(gcHandle().getEpoch(), "Creating main (#0) mark worker");
 
-        pacer_.begin(MarkPacer::Phase::kRootSet);
-        completeMutatorsRootSet(mainWorker);
-        spinWait([this] {
-            return allMutators([](mm::ThreadData& mut) { return mut.gc().impl().gc().published(); });
-        });
+        for (auto& thread : *lockedMutatorsList_) {
+            thread.gc().impl().gc().markQueue_.construct(*parallelProcessor_);
+            thread.gc().impl().gc().markQueueReady_ = true; // TODO remove
+        }
+
+        {
+            bool didSuspend = mm::RequestThreadsSuspension();
+            RuntimeAssert(didSuspend, "Only GC thread can request suspension");
+            // TODO gcHandle().suspensionRequested();
+            RuntimeAssert(!kotlin::mm::IsCurrentThreadRegistered(), "GC must run on unregistered thread");
+            mm::WaitForThreadsSuspension();
+            GCLogDebug(gcHandle().getEpoch(), "All threads have paused mutation");
+            // TODO gcHandle().threadsAreSuspended();
+
+            // NOTE Before suspend a thread will try to collect it's root set
+
+            // In STW
+            EnableMarkBarriers();
+            // TODO collect RS somewhere here?
+
+            mm::ResumeThreads();
+            // TODO gcHandle().threadsAreResumed();
+        }
+
+        {
+            // for threads to wait unlit their RS's are collected
+            mm::SafePointActivator spGuard;
+
+            // complete RS for those who were in native code
+            pacer_.begin(MarkPacer::Phase::kRootSet);
+            completeMutatorsRootSet(mainWorker);
+            spinWait([this] {
+                return allMutators([](mm::ThreadData& mut) { return mut.gc().impl().gc().rootSetCollected_.load(std::memory_order_acquire); });
+            });
+        }
+
         // global root set must be collected after all the mutator's global data have been published
+        // FIXME lock special refs registry for iteration!!!
         collectRootSetGlobals<MarkTraits>(gcHandle(), mainWorker);
 
         pacer_.begin(MarkPacer::Phase::kParallelMark);
-        parallelMark(mainWorker);
+        //parallelMark(mainWorker);
+        {
+            std::size_t iter = 0;
+            while (true) {
+                GCLogDebug(gcHandle().getEpoch(), "Mark loop %zu has begun", iter);
+                Mark<MarkTraits>(gcHandle(), mainWorker);
+                parallelProcessor_->undo();
+                
+                // flush all queues
+                {
+                    newWork_ = false;
+                    for (auto& mut : *lockedMutatorsList_) {
+                        mut.gc().impl().gc().barriers().resetCheckpoint();
+                    }
+                    mm::SafePointActivator safePointActivator;
+
+                    spinWait([this] {
+                        GCLogDebug(gcHandle().getEpoch(), "Checking all mutators");
+                        return allMutators([](mm::ThreadData& mut) {
+                            auto& gcData = mut.gc().impl().gc();
+                            if (gcData.barriers().visitedCheckpoint()) return true;
+                            if (mut.suspensionData().suspendedOrNative()) {
+                                std::unique_lock lock(gcData.flushMutex_);
+                                flushLocalQueue0(mut);
+                                gcData.barriers().onCheckpoint();
+                                return true;
+                            }
+                            return false;
+                        });
+                    });
+                }
+                GCLogDebug(gcHandle().getEpoch(), "Mutator queues flushed");
+
+                if (!newWork_) {
+                    GCLogDebug(gcHandle().getEpoch(), "No new work found");
+                    RuntimeAssert(!parallelProcessor_->workAvailable(), "Must be no work");
+                    break;
+                }
+                GCLogDebug(gcHandle().getEpoch(), "New work found");
+                ++iter;
+            }
+            GCLogDebug(gcHandle().getEpoch(), "Stopping parallel processing");
+            parallelProcessor_->stop();
+
+            {
+                std::unique_lock guard(workerCreationMutex_);
+                activeWorkersCount_.fetch_sub(1, std::memory_order_relaxed);
+                pacer_.begin(MarkPacer::Phase::kTearDown);
+            }
+
+            // We must now wait for every worker to finish the Mark procedure:
+            // wake up from possible waiting, publish statistics, etc.
+            // Only then it's safe to destroy the parallelProcessor and proceed to other GC tasks such as sweep.
+            spinWait([=]() { return activeWorkersCount_.load(std::memory_order_relaxed) == 0; });
+        }
+    }
+}
+
+void gc::mark::ParallelMark::onSafePoint(mm::ThreadData& mutatorThread) {
+    auto& gcData = mutatorThread.gc().impl().gc();
+    if (pacer_.is(MarkPacer::Phase::kReady) || pacer_.is(MarkPacer::Phase::kRootSet)) {
+        RuntimeAssert(gcData.markQueueReady_, "The queue must be ready");
+        tryCollectRootSet(mutatorThread, *gcData.markQueue_);
+        RuntimeAssert(gcData.rootSetCollected_, "The root set must be collected");
+        // this is the release?
+        flushLocalQueue(mutatorThread);
+    }
+    if (pacer_.is(MarkPacer::Phase::kParallelMark)) {
+        RuntimeAssert(gcData.markQueueReady_, "The queue must be ready");
+        RuntimeAssert(gcData.rootSetCollected_, "The root set must be collected");
+        flushLocalQueue(mutatorThread);
+    }
+    if (pacer_.is(MarkPacer::Phase::kIdle)) {
+        // FIXME use after deinit
+        // RuntimeAssert(gcData.markQueue_->localEmpty(), "The queue must be empty");
     }
 }
 
 void gc::mark::ParallelMark::runOnMutator(mm::ThreadData& mutatorThread) {
+    RuntimeAssert(false, "Should not suspend mutators in CMS");
+
     if (compiler::gcMarkSingleThreaded() || !mutatorsCooperate_) return;
 
     auto epoch = gcHandle().getEpoch();
@@ -195,26 +323,38 @@ void gc::mark::ParallelMark::completeRootSetAndMark(ParallelProcessor::Worker& p
     parallelMark(parallelWorker);
 }
 
-void gc::mark::ParallelMark::completeMutatorsRootSet(MarkTraits::MarkQueue& markQueue) {
+void gc::mark::ParallelMark::completeMutatorsRootSet(MarkTraits::MarkQueue& workerMarkQueue) {
     // workers compete for mutators to collect their root set
-    for (auto& thread: *lockedMutatorsList_) {
-        tryCollectRootSet(thread, markQueue);
+    for (auto& mutator: *lockedMutatorsList_) {
+        tryCollectRootSet(mutator, workerMarkQueue);
     }
 }
 
-void gc::mark::ParallelMark::tryCollectRootSet(mm::ThreadData& thread, MarkTraits::MarkQueue& markQueue) {
+void gc::mark::ParallelMark::tryCreateMarkQueueAndCollectRS(mm::ThreadData& thread) {
+    // TODO remove
+}
+
+void gc::mark::ParallelMark::tryCollectRootSet(mm::ThreadData& thread, ParallelProcessor::WorkSource& markQueue) {
     auto& gcData = thread.gc().impl().gc();
+    std::unique_lock lock(gcData.rootSetMutex_);
     if (!gcData.tryLockRootSet()) return;
+    RuntimeAssert(gcData.markQueueReady_.load(std::memory_order_relaxed), "Mark queue must be ready");
 
     GCLogDebug(gcHandle().getEpoch(), "Root set collection on thread %d for thread %d",
                konan::currentThreadId(), thread.threadId());
     gcData.publish();
     collectRootSetForThread<MarkTraits>(gcHandle(), markQueue, thread);
+    gcData.rootSetCollected_.store(true, std::memory_order_release);
 }
 
 void gc::mark::ParallelMark::parallelMark(ParallelProcessor::Worker& worker) {
-    GCLogDebug(gcHandle().getEpoch(), "Mark loop has begun");
-    Mark<MarkTraits>(gcHandle(), worker);
+    std::size_t iter = 0;
+    while (pacer_.is(MarkPacer::Phase::kParallelMark)) {
+        GCLogDebug(gcHandle().getEpoch(), "Mark loop %zu has begun", iter);
+        Mark<MarkTraits>(gcHandle(), worker);
+        // TODO rest a bit
+        ++iter;
+    }
 
     std::unique_lock guard(workerCreationMutex_);
     activeWorkersCount_.fetch_sub(1, std::memory_order_relaxed);
@@ -237,6 +377,10 @@ void gc::mark::ParallelMark::resetMutatorFlags() {
         if (!compiler::gcMarkSingleThreaded()) {
             // single threaded mark do not use this flag
             RuntimeAssert(gcData.published(), "Must have been published during mark");
+            // TODO mutex?
+            std::unique_lock lock(gcData.rootSetMutex_);
+            gcData.markQueue_.destroy();
+            gcData.markQueueReady_ = false;
         }
         gcData.clearMarkFlags();
     }

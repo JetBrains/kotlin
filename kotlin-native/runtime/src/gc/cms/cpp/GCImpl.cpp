@@ -45,19 +45,25 @@ void gc::GC::ThreadData::ClearForTests() noexcept {
 }
 
 ALWAYS_INLINE ObjHeader* gc::GC::ThreadData::CreateObject(const TypeInfo* typeInfo) noexcept {
+    ObjHeader* obj;
 #ifndef CUSTOM_ALLOCATOR
-    return impl_->objectFactoryThreadQueue().CreateObject(typeInfo);
+    obj = impl_->objectFactoryThreadQueue().CreateObject(typeInfo);
 #else
-    return impl_->alloc().CreateObject(typeInfo);
+    obj = impl_->alloc().CreateObject(typeInfo);
 #endif
+    gc::NewObjInMark(obj);
+    return obj;
 }
 
 ALWAYS_INLINE ArrayHeader* gc::GC::ThreadData::CreateArray(const TypeInfo* typeInfo, uint32_t elements) noexcept {
+    ArrayHeader* arr;
 #ifndef CUSTOM_ALLOCATOR
-    return impl_->objectFactoryThreadQueue().CreateArray(typeInfo, elements);
+    arr = impl_->objectFactoryThreadQueue().CreateArray(typeInfo, elements);
 #else
-    return impl_->alloc().CreateArray(typeInfo, elements);
+    arr = impl_->alloc().CreateArray(typeInfo, elements);
 #endif
+    gc::NewObjInMark(arr->obj());
+    return arr;
 }
 
 void gc::GC::ThreadData::OnSuspendForGC() noexcept {
@@ -129,10 +135,15 @@ void gc::GC::WaitFinalizers(int64_t epoch) noexcept {
 }
 
 bool gc::isMarked(ObjHeader* object) noexcept {
+    if (!object->heap()) return true; // FIXME rename method or SNRH
     auto& objectData = mm::ObjectFactory<gc::ConcurrentMarkAndSweep>::NodeRef::From(object).ObjectData();
     return objectData.marked();
 }
 
 ALWAYS_INLINE OBJ_GETTER(gc::tryRef, std::atomic<ObjHeader*>& object) noexcept {
     RETURN_RESULT_OF(gc::WeakRefRead, object);
+}
+
+ALWAYS_INLINE void gc::BeforeSetRef(ObjHeader** location, ObjHeader* value) noexcept {
+    gc::SetRefInMark(location, value);
 }
