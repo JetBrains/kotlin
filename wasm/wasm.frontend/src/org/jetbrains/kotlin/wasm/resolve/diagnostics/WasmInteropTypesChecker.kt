@@ -17,16 +17,18 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.wasm.util.hasValidJsCodeBody
 
 // TODO: Implement in K2: KT-56849
-object WasmInteropTypesChecker : DeclarationChecker {
+object WasmExportAnnotationChecker : DeclarationChecker {
+    private val wasmExportFqName = FqName("kotlin.wasm.WasmExport")
+    private val jsExportFqName = FqName("kotlin.js.JsExport")
+
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (descriptor !is FunctionDescriptor) return
-
-        if (!descriptor.annotations.hasAnnotation(FqName("kotlin.wasm.WasmExport"))) return
+        if (!descriptor.annotations.hasAnnotation(wasmExportFqName)) return
 
         val trace = context.trace
         val bindingContext = trace.bindingContext
 
-        if (descriptor.annotations.hasAnnotation(FqName("kotlin.js.JsExport"))) {
+        if (descriptor.annotations.hasAnnotation(jsExportFqName)) {
             val reportOn = descriptor.findPsi() ?: declaration
             trace.report(ErrorsWasm.JS_AND_WASM_EXPORTS_ON_SAME_DECLARATION.on(reportOn))
         }
@@ -40,5 +42,7 @@ object WasmInteropTypesChecker : DeclarationChecker {
             val reportOn = descriptor.findPsi() ?: declaration
             trace.report(ErrorsWasm.NESTED_WASM_EXPORT.on(reportOn))
         }
+
+        WasmImportAnnotationChecker.checkSignatureIsPrimitive(descriptor, trace, declaration)
     }
 }

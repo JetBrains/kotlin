@@ -30,9 +30,9 @@ object WasmPlatformConfigurator : PlatformConfiguratorBase(
         JsExportDeclarationChecker,
         WasmExternalDeclarationChecker,
         WasmImportAnnotationChecker,
+        WasmExportAnnotationChecker,
         WasmJsFunAnnotationChecker,
         WasmJsInteropTypesChecker,
-        WasmInteropTypesChecker,
     ),
     additionalCallCheckers = listOf(
         JsModuleCallChecker,

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.wasm.resolve.diagnostics
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.components.isVararg
@@ -44,26 +45,12 @@ object WasmImportAnnotationChecker : DeclarationChecker {
         if (!DescriptorUtils.isTopLevelDeclaration(descriptor)) {
             trace.report(ErrorsWasm.NESTED_WASM_IMPORT.on(wasmImportPsi))
         }
+
         if (descriptor is FunctionDescriptor) {
             if (!descriptor.isEffectivelyExternal()) {
                 trace.report(ErrorsWasm.WASM_IMPORT_ON_NON_EXTERNAL_DECLARATION.on(wasmImportPsi))
             }
-            for (parameter: ValueParameterDescriptor in descriptor.valueParameters) {
-                val valueParameterDeclaration by lazy { DescriptorToSourceUtils.descriptorToDeclaration(parameter)!! }
-                if (parameter.declaresDefaultValue()) {
-                    trace.report(ErrorsWasm.WASM_IMPORT_PARAMETER_DEFAULT_VALUE.on(valueParameterDeclaration))
-                }
-                if (parameter.isVararg) {
-                    trace.report(ErrorsWasm.WASM_IMPORT_VARARG_PARAMETER.on(valueParameterDeclaration))
-                }
-                if (!isParameterTypeSupported(parameter.type)) {
-                    trace.report(ErrorsWasm.WASM_IMPORT_UNSUPPORTED_PARAMETER_TYPE.on(valueParameterDeclaration, parameter.type))
-                }
-            }
-            val returnType = descriptor.returnType
-            if (returnType != null && !isReturnTypeSupported(returnType)) {
-                trace.report(ErrorsWasm.WASM_IMPORT_UNSUPPORTED_RETURN_TYPE.on(declaration, returnType))
-            }
+            checkSignatureIsPrimitive(descriptor, trace, declaration)
         }
     }
 
@@ -72,5 +59,23 @@ object WasmImportAnnotationChecker : DeclarationChecker {
 
     private fun isReturnTypeSupported(type: KotlinType): Boolean =
         isParameterTypeSupported(type) || type.isUnit()
-}
 
+    fun checkSignatureIsPrimitive(descriptor: FunctionDescriptor, trace: BindingTrace, declaration: KtDeclaration) {
+        for (parameter: ValueParameterDescriptor in descriptor.valueParameters) {
+            val valueParameterDeclaration by lazy { DescriptorToSourceUtils.descriptorToDeclaration(parameter)!! }
+            if (parameter.declaresDefaultValue()) {
+                trace.report(ErrorsWasm.WASM_IMPORT_EXPORT_PARAMETER_DEFAULT_VALUE.on(valueParameterDeclaration))
+            }
+            if (parameter.isVararg) {
+                trace.report(ErrorsWasm.WASM_IMPORT_EXPORT_VARARG_PARAMETER.on(valueParameterDeclaration))
+            }
+            if (!isParameterTypeSupported(parameter.type)) {
+                trace.report(ErrorsWasm.WASM_IMPORT_EXPORT_UNSUPPORTED_PARAMETER_TYPE.on(valueParameterDeclaration, parameter.type))
+            }
+        }
+        val returnType = descriptor.returnType
+        if (returnType != null && !isReturnTypeSupported(returnType)) {
+            trace.report(ErrorsWasm.WASM_IMPORT_EXPORT_UNSUPPORTED_RETURN_TYPE.on(declaration, returnType))
+        }
+    }
+}
