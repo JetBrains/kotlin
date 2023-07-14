@@ -1,10 +1,1 @@
-compiler/testData/cli/jvm/jsr305Migration.kt:2:19: warning: type mismatch: inferred type is Nothing? but String was expected
-    annotated.foo(null)
-                  ^
-compiler/testData/cli/jvm/jsr305Migration.kt:3:19: warning: type mismatch: inferred type is Nothing? but String was expected
-    annotated.bar(null)
-                  ^
-compiler/testData/cli/jvm/jsr305Migration.kt:4:5: warning: unsafe use of a nullable receiver of type String?
-    annotated.nullable().length
-    ^
 OK
