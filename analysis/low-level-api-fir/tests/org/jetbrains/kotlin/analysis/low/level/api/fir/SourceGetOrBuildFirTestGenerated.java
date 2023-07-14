@@ -478,6 +478,12 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
         }
 
         @Test
+        @TestMetadata("constructorParameter.kt")
+        public void testConstructorParameter() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/declarations/constructorParameter.kt");
+        }
+
+        @Test
         @TestMetadata("constructorProperty.kt")
         public void testConstructorProperty() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/declarations/constructorProperty.kt");
