@@ -56,7 +56,7 @@ class FirScriptConfiguratorExtensionImpl(
         check(configuration != null) { "Configuration for ${sourceFile.asString()} wasn't found" }
 
         // TODO: rewrite/extract decision logic for clarity
-        configuration[ScriptCompilationConfiguration.baseClass]?.let { baseClass ->
+        configuration.getNoDefault(ScriptCompilationConfiguration.baseClass)?.let { baseClass ->
             val baseClassFqn = FqName.fromSegments(baseClass.typeName.split("."))
             contextReceivers.add(buildContextReceiverWithFqName(baseClassFqn, Name.special(SCRIPT_SPECIAL_NAME_STRING)))
 

@@ -175,6 +175,14 @@ private class ScriptsToClassesLowering(val context: JvmBackendContext, val inner
     }
 
     private fun finalizeScriptClass(irScript: IrScript, symbolRemapper: ScriptsToClassesSymbolRemapper) {
+
+        if (irScript.thisReceiver == null) {
+            // This is a placeholder that is transformed to a proper receiver for script class down below, but it is needed for
+            // collecting captured script instances (see ClosureAnnotator.ClosureCollectorVisitor.processScriptCapturing)
+            val type = IrSimpleTypeImpl(irScript.symbol, false, emptyList(), emptyList())
+            irScript.thisReceiver = irScript.createThisReceiverParameter(context, IrDeclarationOrigin.INSTANCE_RECEIVER, type)
+        }
+
         val irScriptClass = irScript.targetClass!!.owner
         val typeRemapper = SimpleTypeRemapper(symbolRemapper)
         val capturingClasses = collectCapturingClasses(irScript, typeRemapper)
@@ -558,16 +566,10 @@ private class ScriptToClassTransformer(
         }
     }
 
-    val scriptThisType = IrSimpleTypeImpl(irScriptClass.symbol, false, emptyList(), emptyList())
     val scriptClassReceiver =
-        irScript.thisReceiver?.let {
-            it.type = scriptThisType
+        irScript.thisReceiver!!.let {
+            it.type = IrSimpleTypeImpl(irScriptClass.symbol, false, emptyList(), emptyList())
             it.transform(this, ScriptToClassTransformerContext(null, null, null, false))
-        } ?: run {
-            context.symbolTable.enterScope(irScriptClass)
-            val newReceiver = irScriptClass.createThisReceiverParameter(IrDeclarationOrigin.INSTANCE_RECEIVER, scriptThisType)
-            context.symbolTable.leaveScope(irScriptClass)
-            newReceiver
         }
 
     private fun IrDeclaration.transformParent() {
@@ -592,7 +594,7 @@ private class ScriptToClassTransformer(
             typeRemapper.withinScope(this) {
                 val newDispatchReceiverParameter = dispatchReceiverParameter?.transform(data) ?: run {
                     if (this.isCurrentScriptTopLevelDeclaration(data)) {
-                        createThisReceiverParameter(IrDeclarationOrigin.SCRIPT_THIS_RECEIVER, scriptClassReceiver.type)
+                        createThisReceiverParameter(context, IrDeclarationOrigin.SCRIPT_THIS_RECEIVER, scriptClassReceiver.type)
                     } else null
                 }
                 val isInScriptConstructor = this@transformFunctionChildren is IrConstructor && (parent == irScript || parent == irScriptClass)
@@ -619,24 +621,6 @@ private class ScriptToClassTransformer(
                 valueParameters = valueParameters.transform(dataForChildren)
                 body = body?.transform(dataForChildren)
             }
-        }
-
-    private fun IrDeclarationParent.createThisReceiverParameter(origin: IrDeclarationOrigin, type: IrType): IrValueParameter =
-        context.symbolTable.irFactory.createValueParameter(
-            startOffset = startOffset,
-            endOffset = endOffset,
-            origin = origin,
-            name = SpecialNames.THIS,
-            type = type,
-            isAssignable = false,
-            symbol = IrValueParameterSymbolImpl(),
-            index = UNDEFINED_PARAMETER_INDEX,
-            varargElementType = null,
-            isCrossinline = false,
-            isNoinline = false,
-            isHidden = false,
-        ).also {
-            it.parent = this
         }
 
     private fun IrTypeParameter.remapSuperTypes(): IrTypeParameter = apply {
@@ -691,7 +675,7 @@ private class ScriptToClassTransformer(
     override fun visitConstructor(declaration: IrConstructor, data: ScriptToClassTransformerContext): IrConstructor = declaration.apply {
         if (declaration in capturingClassesConstructors) {
             declaration.dispatchReceiverParameter =
-                declaration.createThisReceiverParameter(IrDeclarationOrigin.INSTANCE_RECEIVER, scriptClassReceiver.type)
+                declaration.createThisReceiverParameter(context, IrDeclarationOrigin.INSTANCE_RECEIVER, scriptClassReceiver.type)
         }
         transformParent()
         transformFunctionChildren(data)
@@ -1062,3 +1046,25 @@ private val IrScript.needsReceiverProcessing: Boolean
     // in K2 we need to add dispatch receiver to the top-level declarations, and in all cases receivers should be replaced
     // for all kinds of implicit receivers
     get() = origin == SCRIPT_K2_ORIGIN || importedScripts?.isNotEmpty() == true || earlierScripts?.isNotEmpty() == true || implicitReceiversParameters.isNotEmpty()
+
+private fun IrDeclarationParent.createThisReceiverParameter(
+    context: JvmBackendContext,
+    origin: IrDeclarationOrigin,
+    type: IrType
+): IrValueParameter =
+    context.symbolTable.irFactory.createValueParameter(
+        startOffset = startOffset,
+        endOffset = endOffset,
+        origin = origin,
+        name = SpecialNames.THIS,
+        type = type,
+        isAssignable = false,
+        symbol = IrValueParameterSymbolImpl(),
+        index = UNDEFINED_PARAMETER_INDEX,
+        varargElementType = null,
+        isCrossinline = false,
+        isNoinline = false,
+        isHidden = false,
+    ).also {
+        it.parent = this
+    }
