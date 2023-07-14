@@ -320,12 +320,16 @@ class WasmIrToBinary(
     }
 
     private fun appendStructTypeDeclaration(type: WasmStructDeclaration) {
+        b.writeVarInt7(-0x30)
+
         val superType = type.superType
         if (superType != null) {
-            b.writeVarInt7(-0x30)
             appendVectorSize(1)
             appendModuleFieldReference(superType.owner)
+        } else {
+            appendVectorSize(0)
         }
+
         b.writeVarInt7(-0x21)
         b.writeVarUInt32(type.fields.size)
         type.fields.forEach {
