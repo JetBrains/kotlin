@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalDeclaration
 
 internal class LLFirResolveSessionDepended(
     val originalFirResolveSession: LLFirResolvableResolveSession,
@@ -78,7 +79,10 @@ internal class LLFirResolveSessionDepended(
         TODO("Diagnostics are not implemented for depended state")
 
     override fun resolveToFirSymbol(ktDeclaration: KtDeclaration, phase: FirResolvePhase): FirBasedSymbol<*> {
-        return originalFirResolveSession.resolveToFirSymbol(ktDeclaration, phase)
+        val declarationToResolve = ktDeclaration.originalDeclaration ?: ktDeclaration
+        ktToFirMapping?.getElement(declarationToResolve)?.let { it as? FirDeclaration }?.symbol?.let { return it }
+
+        return originalFirResolveSession.resolveToFirSymbol(declarationToResolve, phase)
     }
 
     override fun getTowerContextProvider(ktFile: KtFile): FirTowerContextProvider =
