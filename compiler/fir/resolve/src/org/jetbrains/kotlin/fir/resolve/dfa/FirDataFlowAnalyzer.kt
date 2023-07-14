@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBod
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.transformers.unwrapAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.scopes.getFunctions
-import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
+import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
@@ -534,9 +534,12 @@ abstract class FirDataFlowAnalyzer(
         //     return true
         // }
 
-        return session.declaredMemberScope(this, memberRequiredPhase = FirResolvePhase.STATUS)
-            .getFunctions(OperatorNameConventions.EQUALS)
-            .any { it.fir.isEquals(session) }
+        return this.unsubstitutedScope(
+            session, components.scopeSession, withForcedTypeCalculator = false, memberRequiredPhase = FirResolvePhase.STATUS
+        ).getFunctions(OperatorNameConventions.EQUALS).any {
+            !it.isSubstitutionOrIntersectionOverride && it.fir.isEquals(session) &&
+                    it.dispatchReceiverClassLookupTagOrNull() == this.toLookupTag()
+        }
     }
 
     // ----------------------------------- Jump -----------------------------------
