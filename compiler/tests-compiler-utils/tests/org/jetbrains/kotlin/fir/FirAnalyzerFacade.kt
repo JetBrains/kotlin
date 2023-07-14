@@ -5,24 +5,18 @@
 
 package org.jetbrains.kotlin.fir
 
+import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmVisibilityConverter
-import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
-import org.jetbrains.kotlin.fir.pipeline.ModuleCompilerAnalyzedOutput
-import org.jetbrains.kotlin.fir.pipeline.runCheckers
-import org.jetbrains.kotlin.fir.pipeline.runResolution
+import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.providers.firProvider
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.sourceFiles.LightTreeFile
 import org.jetbrains.kotlin.test.FirParser
 
 abstract class AbstractFirAnalyzerFacade {
@@ -42,7 +36,7 @@ class FirAnalyzerFacade(
     val session: FirSession,
     val fir2IrConfiguration: Fir2IrConfiguration,
     val ktFiles: Collection<KtFile> = emptyList(), // may be empty if light tree mode enabled
-    val lightTreeFiles: Collection<LightTreeFile> = emptyList(), // may be empty if light tree mode disabled
+    val lightTreeFiles: Collection<KtSourceFile> = emptyList(), // may be empty if light tree mode disabled
     val parser: FirParser,
     val diagnosticReporterForLightTree: DiagnosticReporter? = null
 ) : AbstractFirAnalyzerFacade() {
@@ -55,24 +49,9 @@ class FirAnalyzerFacade(
 
     private fun buildRawFir() {
         if (firFiles != null) return
-        val firProvider = (session.firProvider as FirProviderImpl)
         firFiles = when (parser) {
-            FirParser.LightTree -> {
-                val builder = LightTree2Fir(session, firProvider.kotlinScopeProvider, diagnosticReporterForLightTree)
-                lightTreeFiles.map {
-                    builder.buildFirFile(it.lightTree, it.sourceFile, it.linesMapping).also { firFile ->
-                        firProvider.recordFile(firFile)
-                    }
-                }
-            }
-            FirParser.Psi -> {
-                val builder = PsiRawFirBuilder(session, firProvider.kotlinScopeProvider)
-                ktFiles.map {
-                    builder.buildFirFile(it).also { firFile ->
-                        firProvider.recordFile(firFile)
-                    }
-                }
-            }
+            FirParser.LightTree -> session.buildFirViaLightTree(lightTreeFiles, diagnosticReporterForLightTree)
+            FirParser.Psi -> session.buildFirFromKtFiles(ktFiles)
         }
     }
 

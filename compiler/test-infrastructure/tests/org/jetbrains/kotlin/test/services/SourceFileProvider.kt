@@ -10,14 +10,10 @@ import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.KtInMemoryTextSourceFile
 import org.jetbrains.kotlin.KtSourceFile
-import org.jetbrains.kotlin.fir.lightTree.LightTreeParsingErrorListener
-import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.sourceFiles.LightTreeFile
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.util.KtTestUtil
-import org.jetbrains.kotlin.toSourceLinesMapping
 import java.io.File
 
 abstract class SourceFilePreprocessor(val testServices: TestServices) {
@@ -112,26 +108,16 @@ fun SourceFileProvider.getKtFilesForSourceFiles(testFiles: Collection<TestFile>,
     }.toMap()
 }
 
-fun SourceFileProvider.getLightTreeKtFileForSourceFile(
-    testFile: TestFile,
-    errorListener: (KtSourceFile) -> LightTreeParsingErrorListener?
-): LightTreeFile {
-    val shortName = testFile.toLightTreeShortName()
-    val sourceFile = KtInMemoryTextSourceFile(shortName, "/$shortName", getContentOfSourceFile(testFile))
-    val linesMapping = sourceFile.text.toSourceLinesMapping()
-    val lightTree = LightTree2Fir.buildLightTree(sourceFile.text, errorListener(sourceFile))
-    return LightTreeFile(lightTree, sourceFile, linesMapping)
-}
-
 fun TestFile.toLightTreeShortName() = name.substringAfterLast('/').substringAfterLast('\\')
 
-fun SourceFileProvider.getLightTreeFilesForSourceFiles(
+fun SourceFileProvider.getKtSourceFilesForSourceFiles(
     testFiles: Collection<TestFile>,
-    errorListener: (KtSourceFile) -> LightTreeParsingErrorListener?
-): Map<TestFile, LightTreeFile> {
+): Map<TestFile, KtSourceFile> {
     return testFiles.mapNotNull {
         if (!it.isKtFile) return@mapNotNull null
-        it to getLightTreeKtFileForSourceFile(it, errorListener)
+        val shortName = it.toLightTreeShortName()
+        val ktSourceFile = KtInMemoryTextSourceFile(shortName, "/$shortName", getContentOfSourceFile(it))
+        it to ktSourceFile
     }.toMap()
 }
 
