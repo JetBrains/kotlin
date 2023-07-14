@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import java.io.File
-import java.lang.annotation.ElementType
 import javax.lang.model.element.ElementKind
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
@@ -78,20 +77,6 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
         private val JAVA_KEYWORDS = Tokens.TokenKind.values()
             .filter { JAVA_KEYWORD_FILTER_REGEX.matches(it.toString().orEmpty()) }
             .mapTo(hashSetOf(), Any::toString)
-
-        private val kotlin2JvmTargetMap = mapOf(
-            AnnotationTarget.CLASS to ElementType.TYPE,
-            AnnotationTarget.ANNOTATION_CLASS to ElementType.ANNOTATION_TYPE,
-            AnnotationTarget.CONSTRUCTOR to ElementType.CONSTRUCTOR,
-            AnnotationTarget.LOCAL_VARIABLE to ElementType.LOCAL_VARIABLE,
-            AnnotationTarget.FUNCTION to ElementType.METHOD,
-            AnnotationTarget.PROPERTY_GETTER to ElementType.METHOD,
-            AnnotationTarget.PROPERTY_SETTER to ElementType.METHOD,
-            AnnotationTarget.FIELD to ElementType.FIELD,
-            AnnotationTarget.VALUE_PARAMETER to ElementType.PARAMETER,
-            AnnotationTarget.TYPE_PARAMETER to ElementType.TYPE_PARAMETER,
-            AnnotationTarget.TYPE to ElementType.TYPE_USE
-        )
     }
 
     private val strictMode = options[KaptFlag.STRICT]
@@ -106,10 +91,9 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
     }
 
     private fun convertTopLevelClass(lightClass: KtLightClass): KaptStub? {
-//        val origin = origins[lightClass]// ?: return null // TODO: handle synthetic declarations from plugins
-        val ktFile = origins[lightClass] ?: return null //origin?.element?.containingFile as? KtFile ?: return null
+        val ktFile = origins[lightClass] ?: return null
         val lineMappings = Kapt4LineMappingCollector()
-        val packageName = (lightClass.parent as? PsiJavaFile)?.packageName ?: TODO()
+        val packageName = (lightClass.parent as? PsiJavaFile)?.packageName ?: return null
         val packageClause = runUnless(packageName.isBlank()) { treeMaker.FqName(packageName) }
 
         val unresolvedQualifiersRecorder = UnresolvedQualifiersRecorder(ktFile)
@@ -128,13 +112,6 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
         if (kdocCommentKeeper != null) {
             topLevel.docComments = kdocCommentKeeper.getDocTable(topLevel)
         }
-//        TODO
-//        KaptJavaFileObject(topLevel, classDeclaration).apply {
-//            topLevel.sourcefile = this
-//            mutableBindings[clazz.name] = this
-//        }
-//
-//        postProcess(topLevel)
 
         return KaptStub(topLevel, lineMappings.serialize())
     }
@@ -313,34 +290,6 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
         return JavacList.from(imports)
     }
 
-    // Done
-    private fun getClassAccessFlags(lightClass: PsiClass, isNested: Boolean): Int {
-        val parentClass = lightClass.parent as? PsiClass
-
-        var access = lightClass.accessFlags
-        access = access or when {
-            lightClass.isRecord -> Opcodes.ACC_RECORD
-            lightClass.isInterface -> Opcodes.ACC_INTERFACE
-            lightClass.isEnum -> Opcodes.ACC_ENUM
-            else -> 0
-        }
-
-        if (parentClass?.isInterface == true) {
-            // Classes inside interfaces should always be public and static.
-            // See com.sun.tools.javac.comp.Enter.visitClassDef for more information.
-            return (access or Opcodes.ACC_PUBLIC or Opcodes.ACC_STATIC) and
-                    Opcodes.ACC_PRIVATE.inv() and Opcodes.ACC_PROTECTED.inv() // Remove private and protected modifiers
-        }
-
-        if (isNested) {
-            access = access or Opcodes.ACC_STATIC
-        }
-        if (lightClass.isAnnotationType) {
-            access = access or Opcodes.ACC_ANNOTATION
-        }
-        return access
-    }
-
     private fun convertMetadataAnnotation(metadata: Metadata): JCAnnotation {
         val argumentsWithNames = mapOf(
             "k" to metadata.kind,
@@ -416,28 +365,6 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
             is PsiAnnotation -> convertAnnotation(containingClass, value, packageFqName, filtered) ?: TODO()
             else -> treeMaker.SimpleName(value.text)
         }
-    }
-
-    private fun createJavaTargetAnnotation(retentionAnnotation: PsiAnnotation): JCAnnotation? {
-        val kotlinTargetNames = mutableListOf<String>()
-
-        fun collect(value: PsiAnnotationMemberValue?) {
-            when (value) {
-                is PsiArrayInitializerMemberValue -> value.initializers.forEach { collect(it) }
-                is PsiExpression -> kotlinTargetNames += value.text.substringAfterLast(".")
-            }
-        }
-
-        collect(retentionAnnotation.parameterList.attributes.firstOrNull()?.value)
-
-        val kotlinTargets = kotlinTargetNames.map { AnnotationTarget.valueOf(it) }
-        val javaTargets = kotlinTargets.mapNotNull { kotlin2JvmTargetMap[it] }
-        if (javaTargets.isEmpty()) return null
-        val jArguments = mapJList(javaTargets) { treeMaker.SimpleName("${ElementType::class.java.canonicalName}.${it.name}") }
-        return treeMaker.Annotation(
-            treeMaker.FqName(java.lang.annotation.Target::class.java.canonicalName),
-            JavacList.of(treeMaker.Assign(treeMaker.SimpleName("value"), treeMaker.NewArray(null, null,jArguments)))
-        )
     }
 
     context(UnresolvedQualifiersRecorder)
@@ -523,17 +450,9 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
         packageFqName: String,
         explicitInitializer: JCExpression? = null
     ): JCVariableDecl? {
-//        if (field.isSynthetic || isIgnored(field.invisibleAnnotations)) return null // TODO
-        // not needed anymore
-
         val fieldAnnotations = field.annotations.asList()
 
         if (isIgnored(fieldAnnotations)) return null
-
-//        val fieldAnnotations = when {
-//            !isIrBackend && descriptor is PropertyDescriptor -> descriptor.backingField?.annotations
-//            else -> descriptor?.annotations
-//        } ?: Annotations.EMPTY
 
         val access = field.accessFlags
         val modifiers = convertModifiers(
@@ -549,8 +468,6 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
         val type = field.type
 
         if (!checkIfValidTypeName(containingClass, type)) return null
-
-//        fun typeFromAsm() = signatureParser.parseFieldSignature(field.signature, treeMaker.RawType(type))
 
         // Enum type must be an identifier (Javac requirement)
         val typeExpression = if (isEnum(access)) {
@@ -828,11 +745,6 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
         }
 
 
-//        if (type.toString() == "PsiType:RootClass") {
-//            val res = type.resolvedClass
-//            Unit
-//        }
-
         val internalName = type.qualifiedName
         // Ignore type names with Java keywords in it
         if (internalName.split('/', '.').any { it in JAVA_KEYWORDS }) {
@@ -926,15 +838,6 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
     @Suppress("UNUSED_PARAMETER")
     private fun getClassName(lightClass: PsiClass, isDefaultImpls: Boolean, packageFqName: String): String {
         return lightClass.name!!
-//        return when (descriptor) {
-//            is PackageFragmentDescriptor -> {
-//                val className = if (packageFqName.isEmpty()) lightClass.name else lightClass.name.drop(packageFqName.length + 1)
-//                if (className.isEmpty()) throw IllegalStateException("Invalid package facade class name: ${lightClass.name}")
-//                className
-//            }
-//
-//            else -> if (isDefaultImpls) "DefaultImpls" else descriptor.name.asString()
-//        }
     }
 
     private fun isValidQualifiedName(name: FqName) = name.pathSegments().all { isValidIdentifier(it.asString()) }
@@ -946,14 +849,9 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
 
         if (name in JAVA_KEYWORDS) return false
 
-        if (name.isEmpty()
-            || !Character.isJavaIdentifierStart(name[0])
-            || name.drop(1).any { !Character.isJavaIdentifierPart(it) }
-        ) {
-            return false
-        }
-
-        return true
+        return !(name.isEmpty()
+                || !Character.isJavaIdentifierStart(name[0])
+                || name.drop(1).any { !Character.isJavaIdentifierPart(it) })
     }
 
     /**
@@ -1099,4 +997,4 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
 
 private const val LONG_DEPRECATED = Opcodes.ACC_DEPRECATED.toLong()
 private fun isDeprecated(access: Long) = (access and LONG_DEPRECATED) != 0L
-internal fun isEnum(access: Int) = (access and Opcodes.ACC_ENUM) != 0
+private fun isEnum(access: Int) = (access and Opcodes.ACC_ENUM) != 0

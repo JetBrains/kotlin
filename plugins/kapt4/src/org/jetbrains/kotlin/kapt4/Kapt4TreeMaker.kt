@@ -36,13 +36,8 @@ class Kapt4TreeMaker(
         return FqName(type.internalName)
     }
 
-    // TODO
     @Suppress("FunctionName")
     fun RawType(type: PsiType?): JCTree.JCExpression {
-//        convertBuiltinType(type)?.let { return it }
-//        if (type.sort == ARRAY) {
-//            return TypeArray(Type(AsmUtil.correctElementType(type)))
-//        } )
         return when (type) {
             is PsiArrayType -> TypeArray(RawType(type.componentType))
             is PsiWildcardType -> Wildcard(TypeBoundKind(BoundKind.UNBOUND), null)

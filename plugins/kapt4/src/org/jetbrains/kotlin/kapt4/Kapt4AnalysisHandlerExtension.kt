@@ -153,10 +153,8 @@ class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
 
             kaptStub.writeMetadataIfNeeded(forSource = sourceFile)
         }
-        val errorPackage = File(context.options.stubsOutputDir, "error")
-        errorPackage.mkdirs()
-        val nonExistentClass = File(errorPackage, "NonExistentClass.java")
-        nonExistentClass.writeText("package error;\npublic class NonExistentClass {}\n")
+        File(File(context.options.stubsOutputDir, "error").apply { mkdirs() }, "NonExistentClass.java")
+            .writeText("package error;\npublic class NonExistentClass {}\n")
     }
 
     private fun runProcessors(
@@ -186,7 +184,6 @@ class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
             processingContext.doAnnotationProcessing(
                 sourcesToProcess,
                 processors.processors,
-                //                    binaryTypesToReprocess = collectAggregatedTypes(context.sourcesToReprocess)
             )
             processedSources += sourcesToProcess
             sourcesToProcess = options.sourcesOutputDir.walkTopDown()

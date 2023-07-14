@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("UnstableApiUsage")
+
 package org.jetbrains.kotlin.kapt4
 
 import com.intellij.psi.JvmPsiConversionHelper
