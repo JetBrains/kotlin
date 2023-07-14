@@ -39,7 +39,8 @@ val copySources by task<Sync> {
                  "kotlin/text/TypeAliases.kt")
     from(stdlibProjectDir.resolve("src"))
         .include("kotlin/collections/TypeAliases.kt",
-                 "kotlin/enums/EnumEntriesSerializationProxy.kt")
+                 "kotlin/enums/EnumEntriesSerializationProxy.kt",
+                 "kotlin/enums/EnumEntriesJVM.kt")
     from(stdlibProjectDir.resolve("../src"))
         .include("kotlin/util/Standard.kt",
                  "kotlin/internal/Annotations.kt",
@@ -52,8 +53,13 @@ val copySources by task<Sync> {
     into(File(buildDir, "src"))
 }
 
-tasks.withType<KotlinCompile> {
+
+
+tasks.compileKotlin {
     dependsOn(copySources)
+    val commonSources = listOf(
+        "kotlin/enums/EnumEntries.kt"
+    ).map { copySources.get().destinationDir.resolve(it) }
     kotlinOptions {
         freeCompilerArgs += listOf(
             "-Xallow-kotlin-package",
@@ -62,6 +68,11 @@ tasks.withType<KotlinCompile> {
             "-opt-in=kotlin.contracts.ExperimentalContracts"
         )
         moduleName = "kotlin-stdlib"
+    }
+    doFirst {
+        kotlinOptions.freeCompilerArgs += listOf(
+            "-Xcommon-sources=${commonSources.joinToString(File.pathSeparator)}",
+        )
     }
 }
 
