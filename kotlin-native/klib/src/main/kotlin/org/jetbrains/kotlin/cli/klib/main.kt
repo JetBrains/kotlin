@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.cli.klib
 
 // TODO: Extract `library` package as a shared jar?
-import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLinker
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
 import org.jetbrains.kotlin.backend.common.serialization.BasicIrModuleDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
@@ -28,9 +28,6 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
-import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageConfig
-import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageLogLevel
-import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageMode
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.DumpIrTreeOptions
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
@@ -62,15 +59,14 @@ fun printUsage() {
     println("where the commands are:")
     println("\tinfo\tgeneral information about the library")
     println("\tinstall\tinstall the library to the local repository")
-    println("\tir\tprint out the ir for the library")
+    println("\tdump-ir\tprint out the intermediate representation (IR) for the library (to be used for debugging purposes only)")
     println("\tcontents\tlist contents of the library")
     println("\tsignatures\tlist of ID signatures in the library")
     println("\tremove\tremove the library from the local repository")
     println("and the options are:")
     println("\t-repository <path>\twork with the specified repository")
     println("\t-target <name>\tinspect specifics of the given target")
-    println("\t-print-signatures [true|false]\tprint ID signature for every declaration (only for \"contents\" and \"ir\" commands)")
-    println("\t-partial-linkage [true|false]\tprint IR with or without partial linkage (only for \"ir\" command)")
+    println("\t-print-signatures [true|false]\tprint ID signature for every declaration (only for \"contents\" and \"dump-ir\" commands)")
 }
 
 private fun parseArgs(args: Array<String>): Map<String, List<String>> {
@@ -196,24 +192,16 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?, v
         library?.libraryFile?.deleteRecursively()
     }
 
-    class KlibToolLinker(module: ModuleDescriptor, irBuiltIns: IrBuiltIns, symbolTable: SymbolTable, partialLinkageEnabled: Boolean
+    class KlibToolLinker(
+        module: ModuleDescriptor, irBuiltIns: IrBuiltIns, symbolTable: SymbolTable
     ) : KotlinIrLinker(module, KlibToolLogger, irBuiltIns, symbolTable, emptyList()) {
         override val fakeOverrideBuilder = FakeOverrideBuilder(
-                linker = this,
-                symbolTable = symbolTable,
-                mangler = KonanManglerIr,
-                typeSystem = IrTypeSystemContextImpl(builtIns),
-                friendModules = emptyMap(),
-                partialLinkageSupport =
-                createPartialLinkageSupportForLinker(
-                        PartialLinkageConfig(
-                                if (partialLinkageEnabled) PartialLinkageMode.ENABLE else PartialLinkageMode.DISABLE,
-                                PartialLinkageLogLevel.DEFAULT
-                        ),
-                        allowErrorTypes = true,
-                        irBuiltIns,
-                        messageLogger
-                )
+            linker = this,
+            symbolTable = symbolTable,
+            mangler = KonanManglerIr,
+            typeSystem = IrTypeSystemContextImpl(builtIns),
+            friendModules = emptyMap(),
+            partialLinkageSupport = PartialLinkageSupportForLinker.DISABLED,
         )
         override val translationPluginContext: TranslationPluginContext
             get() = TODO("Not needed for ir dumping")
@@ -240,7 +228,7 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?, v
     }
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
-    fun ir(output: Appendable, printSignatures: Boolean, partialLinkageEnabled: Boolean) {
+    fun ir(output: Appendable, printSignatures: Boolean) {
         val module = loadModule()
         if (module.kotlinLibrary.isInterop) error("Deserializing IR from IR-less libraries is not supported yet")
         val versionSpec = LanguageVersionSettingsImpl(currentLanguageVersion, currentApiVersion)
@@ -248,7 +236,7 @@ class Library(val libraryNameOrPath: String, val requestedRepository: String?, v
         val symbolTable = SymbolTable(idSignaturer, IrFactoryImpl)
         val typeTranslator = TypeTranslatorImpl(symbolTable, versionSpec, module)
         val irBuiltIns = IrBuiltInsOverDescriptors(module.builtIns, typeTranslator, symbolTable)
-        val linker = KlibToolLinker(module, irBuiltIns, symbolTable, partialLinkageEnabled)
+        val linker = KlibToolLinker(module, irBuiltIns, symbolTable)
         module.allDependencyModules.forEach {
             linker.deserializeOnlyHeaderModule(it, it.kotlinLibrary)
             linker.resolveModuleDeserializer(it, null).init()
@@ -321,12 +309,11 @@ fun main(args: Array<String>) {
 
     val repository = command.options["-repository"]?.last()
     val printSignatures = command.options["-print-signatures"]?.last()?.toBoolean() == true
-    val partialLinkageEnabled = command.options["-partial-linkage"]?.last()?.toBoolean() == true
 
     val library = Library(command.library, repository, target)
 
     when (command.verb) {
-        "ir" -> library.ir(System.out, printSignatures, partialLinkageEnabled)
+        "dump-ir" -> library.ir(System.out, printSignatures)
         "contents" -> library.contents(System.out, printSignatures)
         "signatures" -> library.signatures(System.out)
         "info" -> library.info()

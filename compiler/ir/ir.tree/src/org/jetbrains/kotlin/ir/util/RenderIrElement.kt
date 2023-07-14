@@ -901,6 +901,7 @@ private fun renderTypeParameter(declaration: IrTypeParameter, renderer: RenderIr
     declaration.runTrimEnd {
         "TYPE_PARAMETER ${renderOriginIfNonTrivial()}" +
                 "name:$name index:$index variance:$variance " +
+                renderSignatureIfEnabled(options.printSignatures) +
                 "superTypes:[${
                     superTypes.joinToString(separator = "; ") {
                         it.renderTypeWithRenderer(

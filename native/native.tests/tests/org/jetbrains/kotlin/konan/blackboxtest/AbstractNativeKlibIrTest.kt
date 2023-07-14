@@ -40,10 +40,15 @@ abstract class AbstractNativeKlibIrTest : AbstractNativeSimpleTest() {
 
         val testPathNoExtension = testPathFull.canonicalPath.substringBeforeLast(".")
 
-        val expectedContentsNoSig = File("$testPathNoExtension.ir.txt")
+        val firSpecificExt =
+            if (this::class.java.simpleName.startsWith("Fir") && !firIdentical(testPathFull))
+                ".fir"
+            else ""
+
+        val expectedContentsNoSig = File("$testPathNoExtension.ir$firSpecificExt.txt")
         assertIrMatchesExpected(testCompilationResult, expectedContentsNoSig, printSignatures = false)
 
-        val expectedContentsWithSig = File("$testPathNoExtension.sig.ir.txt")
+        val expectedContentsWithSig = File("$testPathNoExtension.sig.ir$firSpecificExt.txt")
         assertIrMatchesExpected(testCompilationResult, expectedContentsWithSig, printSignatures = true)
     }
 

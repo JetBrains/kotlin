@@ -243,6 +243,9 @@ internal fun AbstractNativeSimpleTest.muteTestIfNecessary(testDataFileContents: 
     Assumptions.assumeFalse(mutedWhenValues.any { it == pipelineType.mutedOption.name })
 }
 
+internal fun AbstractNativeSimpleTest.firIdentical(testDataFile: File) =
+     InTextDirectivesUtils.isDirectiveDefined(FileUtil.loadFile(testDataFile), TestDirectives.FIR_IDENTICAL.name)
+
 internal fun AbstractNativeSimpleTest.freeCompilerArgs(testDataFile: File) = freeCompilerArgs(FileUtil.loadFile(testDataFile))
 internal fun AbstractNativeSimpleTest.freeCompilerArgs(testDataFileContents: String) =
     directiveValues(testDataFileContents, TestDirectives.FREE_COMPILER_ARGS.name)

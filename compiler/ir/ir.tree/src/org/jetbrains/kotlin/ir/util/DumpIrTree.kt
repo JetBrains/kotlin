@@ -50,6 +50,7 @@ fun IrFile.dumpTreesFromLineNumber(lineNumber: Int, options: DumpIrTreeOptions =
  * @property verboseErrorTypes Whether to dump the value of [IrErrorType.kotlinType] for [IrErrorType] nodes
  * @property printFacadeClassInFqNames Whether printed fully-qualified names of top-level declarations should include the name of
  * the file facade class (see [IrDeclarationOrigin.FILE_CLASS])
+ * @property printSignatures Whether to print signatures for nodes that have public signatures
  */
 data class DumpIrTreeOptions(
     val normalizeNames: Boolean = false,
