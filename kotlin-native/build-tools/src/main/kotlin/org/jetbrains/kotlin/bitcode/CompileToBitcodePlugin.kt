@@ -603,7 +603,10 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
                 filter.set(project.findProperty("gtest_filter") as? String)
                 tsanSuppressionsFile.set(project.layout.projectDirectory.file("tsan_suppressions.txt"))
                 this.target.set(target)
-                this.executionTimeout.set(Duration.ofMinutes(30)) // The tests binaries are big.
+                this.executionTimeout.set(
+                    (project.findProperty("gtest_timeout") as? String)?.let {
+                        Duration.parse("PT${it}")
+                    } ?: Duration.ofMinutes(30)) // The tests binaries are big.
 
                 usesService(runGTestSemaphore)
             }

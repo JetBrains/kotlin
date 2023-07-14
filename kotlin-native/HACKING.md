@@ -141,12 +141,13 @@ To run Kotlin/Native target-specific tests use (takes time):
   case of targets that are tricky to execute tests on.
 
  ### Runtime unit tests
- 
-To run runtime unit tests on the host machine for both mimalloc and the standard allocator:
+
+To run all runtime unit tests on the host machine:
 
     ./gradlew :kotlin-native:runtime:hostRuntimeTests
-       
-To run tests for only one of these two allocators, run `:kotlin-native:runtime:hostStdAllocRuntimeTests` or `:kotlin-native:runtime:hostMimallocRuntimeTests`.
+
+Use `-Pgtest_filter=` to filter which tests to run (uses Google Test filter syntax).
+Use `-Pgtest_timeout=` to limit how much time each test executable can take (accepts values like `30s`, `1h15m20s`, and so on).
 
 We use [Google Test](https://github.com/google/googletest) to execute the runtime unit tests. The build automatically fetches
 the specified Google Test revision to `kotlin-native/runtime/googletest`. It is possible to manually modify the downloaded GTest sources for debug
