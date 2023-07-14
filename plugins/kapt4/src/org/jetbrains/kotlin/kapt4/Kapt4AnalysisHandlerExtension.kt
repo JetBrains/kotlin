@@ -153,6 +153,10 @@ class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
 
             kaptStub.writeMetadataIfNeeded(forSource = sourceFile)
         }
+        val errorPackage = File(context.options.stubsOutputDir, "error")
+        errorPackage.mkdirs()
+        val nonExistentClass = File(errorPackage, "NonExistentClass.java")
+        nonExistentClass.writeText("package error;\npublic class NonExistentClass {}\n")
     }
 
     private fun runProcessors(
@@ -161,6 +165,7 @@ class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
         logger: KaptLogger
     ) {
         var sourcesToProcess = options.collectJavaSourceFiles(context.sourcesToReprocess)
+
         var processedSources = emptySet<File>()
         val processorLoader = object : ProcessorLoader(options, logger) {
             override fun doLoadProcessors(classpath: LinkedHashSet<File>, classLoader: ClassLoader): List<Processor> =
