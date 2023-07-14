@@ -7,6 +7,10 @@ This mode is not recommended for production use,
 as no stability/compatibility guarantees are given on
 compiler or generated code. Use it at your own risk!
 
-error: source '$TESTDATA_DIR$/src/a.kt' does not belong to any module
-error: source '$TESTDATA_DIR$/src/b.kt' does not belong to any module
+compiler/testData/cli/jvm/hmpp/src/b.kt:1:14: error: actual class A : Any has no corresponding expected declaration
+actual class A {
+             ^
+compiler/testData/cli/jvm/hmpp/src/b.kt:2:16: error: actual fun foo(): Unit has no corresponding expected declaration
+    actual fun foo() {}
+               ^
 COMPILATION_ERROR
