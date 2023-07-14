@@ -23,6 +23,7 @@ internal sealed class WasmVM(val shortName: String) {
         override fun run(entryMjs: String, jsFiles: List<String>, workingDirectory: File?) {
             tool.run(
                 "--experimental-wasm-gc",
+                "--wasm-final-types",
                 *jsFiles.toTypedArray(),
                 "--module",
                 entryMjs,
