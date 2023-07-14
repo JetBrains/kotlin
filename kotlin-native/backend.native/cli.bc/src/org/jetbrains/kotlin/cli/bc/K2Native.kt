@@ -137,6 +137,9 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 spawnedConfiguration.setupCommonArguments(spawnedArguments, this@K2Native::createMetadataVersion)
                 spawnedConfiguration.setupFromArguments(spawnedArguments)
                 spawnedConfiguration.setupPartialLinkageConfig(configuration.partialLinkageConfig)
+                configuration.get(CommonConfigurationKeys.USE_FIR)?.let {
+                    spawnedConfiguration.put(CommonConfigurationKeys.USE_FIR, it)
+                }
                 configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS)?.let {
                     spawnedConfiguration.put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, it)
                 }

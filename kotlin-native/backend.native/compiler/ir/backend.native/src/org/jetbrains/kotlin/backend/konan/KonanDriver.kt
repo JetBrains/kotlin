@@ -166,6 +166,8 @@ class KonanDriver(
 
         // For the second stage, remove already compiled source files from the configuration.
         configuration.put(CLIConfigurationKeys.CONTENT_ROOTS, listOf())
+        // Frontend version must not be passed to 2nd stage (same as Gradle plugin does when calling CLI compiler), since there are no sources anymore
+        configuration.put(CommonConfigurationKeys.USE_FIR, false)
         // For the second stage, provide just compiled intermediate KLib as "-Xinclude=" param.
         require(intermediateKLib.exists) { "Intermediate KLib $intermediateKLib must have been created by successful first compilation stage" }
         configuration.put(KonanConfigKeys.INCLUDED_LIBRARIES,
