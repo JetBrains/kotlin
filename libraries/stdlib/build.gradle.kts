@@ -68,7 +68,7 @@ kotlin {
 //        }
     }
     jvm {
-        withJava()
+
         compilations {
             val compileOnlyDeclarations by creating {
                 compileTaskProvider.configure {
@@ -78,7 +78,6 @@ kotlin {
                 }
             }
 
-            project.sourceSets.create("main")
             val main by getting {
                 compileTaskProvider.configure {
                     this as UsesKotlinJavaToolchain
@@ -153,6 +152,7 @@ kotlin {
                 mainJdk7.output.allOutputs,
                 mainJdk8.output.allOutputs,
             ), main.configurations.compileDependencyConfiguration)
+
             val test by getting {
                 compileTaskProvider.configure {
                     kotlinOptions {
@@ -181,6 +181,8 @@ kotlin {
                 }
             }
         }
+
+        withJava()
     }
     jsV1Target = js("jsV1", LEGACY) {
         nodejs {
@@ -301,7 +303,7 @@ kotlin {
                 "jvm/runtime",
                 "$builtinsDir/src"
             )
-            project.sourceSets["main"].java.srcDirs(*jvmSrcDirs)
+            project.sourceSets.maybeCreate("main").java.srcDirs(*jvmSrcDirs)
             kotlin.setSrcDirs(jvmSrcDirs.toList())
         }
 

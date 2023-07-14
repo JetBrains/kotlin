@@ -35,10 +35,6 @@ import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmRunDslImpl
 import org.jetbrains.kotlin.gradle.targets.jvm.tasks.registerMainRunTask
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.gradle.utils.CompletableFuture
-import org.jetbrains.kotlin.gradle.utils.Future
-import org.jetbrains.kotlin.gradle.utils.findAppliedAndroidPluginIdOrNull
-import org.jetbrains.kotlin.gradle.utils.future
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import java.util.concurrent.Callable
 import javax.inject.Inject
