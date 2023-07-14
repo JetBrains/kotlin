@@ -546,6 +546,31 @@ object KotlinToolingDiagnostics {
             throwable = trace
         )
     }
+
+    object KotlinTargetAlreadyDeclared : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke(targetDslFunctionName: String, targetName: String, trace: Throwable?) = build(
+            """
+                Kotlin Target '$targetDslFunctionName()' is already declared.
+                Declaring multiple Kotlin Targets of the same type is deprecated.
+                
+                i.e.
+                    kotlin {
+                        $targetDslFunctionName()                       
+                        $targetDslFunctionName("$targetName") /* <- second '$targetDslFunctionName' target in the project is deprecated */
+                    }
+                    
+                Please use different Gradle Projects or create Kotlin Compilations.
+                For example:
+                
+                    kotlin {
+                        $targetDslFunctionName() {
+                            val $targetName by compilations.creating                           
+                        }
+                    }
+            """.trimIndent(),
+            throwable = trace
+        )
+    }
 }
 
 private fun String.indentLines(nSpaces: Int = 4, skipFirstLine: Boolean = true): String {

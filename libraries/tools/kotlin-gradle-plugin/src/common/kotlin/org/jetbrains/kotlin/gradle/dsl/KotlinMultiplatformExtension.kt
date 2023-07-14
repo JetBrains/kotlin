@@ -5,14 +5,20 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
-import org.gradle.api.*
+import org.gradle.api.Action
+import org.gradle.api.InvalidUserCodeException
+import org.gradle.api.NamedDomainObjectCollection
+import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinaliseDsl
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.KotlinTargetAlreadyDeclared
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.KotlinHierarchyDslImpl
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTargetPreset
 import javax.inject.Inject
 
 @Suppress("DEPRECATION")
@@ -194,7 +200,7 @@ internal abstract class DefaultTargetsFromPresetExtension @Inject constructor(
     }
 }
 
-internal fun KotlinTarget.isProducedFromPreset(kotlinTargetPreset: KotlinTargetPreset<*>): Boolean =
+private fun KotlinTarget.isProducedFromPreset(kotlinTargetPreset: KotlinTargetPreset<*>): Boolean =
     preset == kotlinTargetPreset
 
 internal fun <T : KotlinTarget> KotlinTargetsContainerWithPresets.configureOrCreate(
@@ -211,6 +217,9 @@ internal fun <T : KotlinTarget> KotlinTargetsContainerWithPresets.configureOrCre
         }
 
         existingTarget == null -> {
+            if (this is KotlinMultiplatformExtension) {
+                project.reportIfTargetOfTheSameTypeAlreadyCreated(targets, targetPreset, targetName)
+            }
             val newTarget = targetPreset.createTarget(targetName)
             targets.add(newTarget)
             configure(newTarget)
@@ -227,3 +236,21 @@ internal fun <T : KotlinTarget> KotlinTargetsContainerWithPresets.configureOrCre
         }
     }
 }
+
+private fun Project.reportIfTargetOfTheSameTypeAlreadyCreated(
+    targets: NamedDomainObjectCollection<KotlinTarget>,
+    preset: KotlinTargetPreset<*>,
+    targetName: String,
+) {
+    val existingTargets = targets.matching { it.preset?.name == preset.name }
+    val targetDslFunctionName = when(preset) {
+        is KotlinJsIrTargetPreset -> "js"
+        is KotlinJsTargetPreset -> "js"
+        is KotlinAndroidTargetPreset -> "androidTarget"
+        else -> preset.name
+    }
+    if (existingTargets.isNotEmpty()) {
+        kotlinToolingDiagnosticsCollector.report(this, KotlinTargetAlreadyDeclared(targetDslFunctionName, targetName, Throwable()))
+    }
+}
+

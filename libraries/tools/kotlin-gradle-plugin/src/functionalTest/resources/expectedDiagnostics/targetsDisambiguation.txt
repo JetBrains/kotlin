@@ -1,3 +1,93 @@
+[KotlinTargetAlreadyDeclared | WARNING] Kotlin Target 'linuxArm64()' is already declared.
+Declaring multiple Kotlin Targets of the same type is deprecated.
+
+i.e.
+    kotlin {
+        linuxArm64()
+        linuxArm64("linuxArm_B") /* <- second 'linuxArm64' target in the project is deprecated */
+    }
+
+Please use different Gradle Projects or create Kotlin Compilations.
+For example:
+
+    kotlin {
+        linuxArm64() {
+            val linuxArm_B by compilations.creating
+        }
+    }
+----
+[KotlinTargetAlreadyDeclared | WARNING] Kotlin Target 'jvm()' is already declared.
+Declaring multiple Kotlin Targets of the same type is deprecated.
+
+i.e.
+    kotlin {
+        jvm()
+        jvm("jvm_B") /* <- second 'jvm' target in the project is deprecated */
+    }
+
+Please use different Gradle Projects or create Kotlin Compilations.
+For example:
+
+    kotlin {
+        jvm() {
+            val jvm_B by compilations.creating
+        }
+    }
+----
+[KotlinTargetAlreadyDeclared | WARNING] Kotlin Target 'jvm()' is already declared.
+Declaring multiple Kotlin Targets of the same type is deprecated.
+
+i.e.
+    kotlin {
+        jvm()
+        jvm("jvm_C") /* <- second 'jvm' target in the project is deprecated */
+    }
+
+Please use different Gradle Projects or create Kotlin Compilations.
+For example:
+
+    kotlin {
+        jvm() {
+            val jvm_C by compilations.creating
+        }
+    }
+----
+[KotlinTargetAlreadyDeclared | WARNING] Kotlin Target 'jvm()' is already declared.
+Declaring multiple Kotlin Targets of the same type is deprecated.
+
+i.e.
+    kotlin {
+        jvm()
+        jvm("jvm_D") /* <- second 'jvm' target in the project is deprecated */
+    }
+
+Please use different Gradle Projects or create Kotlin Compilations.
+For example:
+
+    kotlin {
+        jvm() {
+            val jvm_D by compilations.creating
+        }
+    }
+----
+[KotlinTargetAlreadyDeclared | WARNING] Kotlin Target 'js()' is already declared.
+Declaring multiple Kotlin Targets of the same type is deprecated.
+
+i.e.
+    kotlin {
+        js()
+        js("js_B") /* <- second 'js' target in the project is deprecated */
+    }
+
+Please use different Gradle Projects or create Kotlin Compilations.
+For example:
+
+    kotlin {
+        js() {
+            val js_B by compilations.creating
+        }
+    }
+----
 [TargetsNeedDisambiguation | WARNING] The following targets are not distinguishable:
   * 'js_A', 'js_B'
   * 'jvm_C', 'jvm_D'
