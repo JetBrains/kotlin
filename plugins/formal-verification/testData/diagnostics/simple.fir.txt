@@ -1,0 +1,17 @@
+FILE: simple.kt
+    public final fun without_contract(): R|kotlin/Unit| {
+    }
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun with_contract(): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            Returns(WILDCARD)
+        >
+     {
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|()
+            }
+            )
+        }
+
+    }

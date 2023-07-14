@@ -6,13 +6,21 @@
 package org.jetbrains.kotlin.formver.plugin
 
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirSimpleFunctionChecker
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirFunctionChecker
+import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
+import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
+import org.jetbrains.kotlin.fir.declarations.FirFunction
 import java.lang.Exception
 
-object ExampleDeclarationChecker : FirSimpleFunctionChecker() {
-    override fun check(declaration: FirSimpleFunction, context: CheckerContext, reporter: DiagnosticReporter) {
+object ExampleDeclarationChecker : FirFunctionChecker() {
+    override fun check(declaration: FirFunction, context: CheckerContext, reporter: DiagnosticReporter) {
+        if (declaration !is FirContractDescriptionOwner) return
+        val contractDescription = declaration.contractDescription as? FirResolvedContractDescription ?: return
+
+        if (!contractDescription.effects.isEmpty()) {
+            reporter.reportOn(declaration.source, PluginErrors.FUNCTION_WITH_UNVERIFIED_CONTRACT, context)
+        }
     }
 }

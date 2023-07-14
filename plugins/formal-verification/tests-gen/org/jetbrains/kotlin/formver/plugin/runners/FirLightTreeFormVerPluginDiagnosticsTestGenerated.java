@@ -23,4 +23,10 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
     public void testAllFilesPresentInDiagnostics() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/formal-verification/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
+
+    @Test
+    @TestMetadata("simple.kt")
+    public void testSimple() throws Exception {
+        runTest("plugins/formal-verification/testData/diagnostics/simple.kt");
+    }
 }
