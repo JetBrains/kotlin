@@ -7,5 +7,10 @@ This mode is not recommended for production use,
 as no stability/compatibility guarantees are given on
 compiler or generated code. Use it at your own risk!
 
-error: source '$TESTDATA_DIR$/src/a.kt' does not belong to any module
+compiler/testData/cli/jvm/hmpp/src/a.kt:1:1: error: expected A has no actual declaration in module <main> for JVM
+expect class A {
+^
+compiler/testData/cli/jvm/hmpp/src/a.kt:5:1: error: expected B has no actual declaration in module <main> for JVM
+expect class B {
+^
 COMPILATION_ERROR
