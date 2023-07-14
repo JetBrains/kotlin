@@ -240,8 +240,8 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
     for (source in arguments.freeArgs) {
         if (source.endsWith(JavaFileType.DOT_DEFAULT_EXTENSION)) continue
         if (modules.none { source in it.sources }) {
-            reportError("Source '$source' does not belong to any module")
-            wasError = true
+            reportWarning("Source '$source' does not belong to any module")
+            return null
         }
     }
 
