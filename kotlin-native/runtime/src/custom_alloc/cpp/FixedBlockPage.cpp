@@ -86,4 +86,17 @@ bool FixedBlockPage::Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQ
     return nextFree_.first > 0 || nextFree_.last < end_;
 }
 
+void FixedBlockPage::graphviz(std::ostream& out, std::string_view stackName) {
+    out << "subgraph cluster_" << std::hex << this << " {" << std::endl;
+    out << "label = \"FixedBlockPage(" << std::dec << blockSize_ << ")"
+        << "@0x" << std::hex << this
+        << " " << stackName
+        << "\"" << std:: endl;
+
+    for (auto& heapObj: *this) {
+        graphvizObj(out, reinterpret_cast<HeapObjHeader*>(&heapObj));
+    }
+    out << "}" << std::endl;
+}
+
 } // namespace kotlin::alloc

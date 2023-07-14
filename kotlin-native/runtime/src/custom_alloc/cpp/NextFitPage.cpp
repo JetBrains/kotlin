@@ -104,4 +104,9 @@ bool NextFitPage::CheckInvariants() noexcept {
     }
 }
 
+NextFitPage::iterator::iterator(NextFitPage& page, Cell* cell) : cell_(cell), end_(page.cells_ + NEXT_FIT_PAGE_CELL_COUNT) {
+    skipUnallocated();
+}
+NextFitPage::iterator NextFitPage::end() { return iterator(*this, cells_ + NEXT_FIT_PAGE_CELL_COUNT); }
+
 } // namespace kotlin::alloc

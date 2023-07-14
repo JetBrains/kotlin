@@ -82,6 +82,33 @@ public:
         RuntimeAssert(isEmpty(), "AtomicStack must be empty on destruction");
     }
 
+    class iterator {
+    public:
+        explicit iterator(T* elem) : elem_(elem) {}
+        iterator() : iterator(nullptr) {}
+
+        T& operator*() noexcept { return *elem_; }
+        T* operator->() noexcept { return elem_; }
+
+        iterator& operator++() noexcept {
+            elem_ = elem_->next_;
+            return *this;
+        }
+        iterator operator++(int) noexcept {
+            auto result = *this;
+            ++(*this);
+            return result;
+        }
+
+        bool operator==(const iterator& rhs) const noexcept { return elem_ == rhs.elem_; }
+        bool operator!=(const iterator& rhs) const noexcept { return !(*this == rhs); }
+    private:
+        T* elem_;
+    };
+
+    iterator begin() { return iterator(stack_.load(std::memory_order_relaxed)); }
+    iterator end() { return iterator(); }
+
 private:
     std::atomic<T*> stack_{nullptr};
 };

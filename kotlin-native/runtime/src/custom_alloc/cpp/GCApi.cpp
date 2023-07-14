@@ -22,6 +22,7 @@
 #include "GCStatistics.hpp"
 #include "KAssert.h"
 #include "ObjectFactory.hpp"
+#include "KString.h"
 
 namespace {
 
@@ -117,6 +118,28 @@ void Free(void* ptr, size_t size) noexcept {
 
 size_t GetAllocatedBytes() noexcept {
     return allocatedBytesCounter.load(std::memory_order_relaxed);
+}
+
+void graphvizObj(std::ostream& out, HeapObjHeader* objHeader) {
+    bool marked = objHeader->gcData.marked();
+    auto obj = &objHeader->object;
+    auto typeInfo = obj->type_info();
+    auto typeName = CreateCStringFromString(typeInfo->relativeName_);
+    ScopeGuard freeTypeName([=]() { std_support::free(typeName); });
+    out << "obj_" << std::hex << obj
+        << " [label=\"" << typeName << "@0x" << std::hex << obj;
+    if (marked) {
+        out << " [marked]";
+    }
+    out << "\"";
+    if (marked) {
+        out << ", color=yellow";
+    }
+    out << "]" << std::endl;
+
+    traverseReferredObjects(obj, [&](ObjHeader* referred){
+        out << std::hex << "obj_" << obj << "->" << "obj_" << referred << std::endl;
+    });
 }
 
 } // namespace kotlin::alloc

@@ -34,6 +34,40 @@ public:
     // Testing method
     bool CheckInvariants() noexcept;
 
+    class iterator {
+    public:
+        iterator(NextFitPage& page, Cell* cell);
+        explicit iterator(NextFitPage& page) : iterator(page, page.cells_ + 1) {}
+
+        uint8_t& operator*() noexcept { return *cell_->data_; }
+        uint8_t* operator->() noexcept { return cell_->data_; }
+
+        iterator& operator++() noexcept {
+            cell_ = cell_->Next();
+            skipUnallocated();
+            return *this;
+        }
+        iterator operator++(int) noexcept {
+            auto result = *this;
+            ++(*this);
+            return result;
+        }
+
+        bool operator==(const iterator& rhs) const noexcept { return cell_ == rhs.cell_; }
+        bool operator!=(const iterator& rhs) const noexcept { return !(*this == rhs); }
+    private:
+        void skipUnallocated() noexcept {
+            while (cell_ != end_ && !cell_->isAllocated_) {
+                cell_ = cell_->Next();
+            }
+        }
+        Cell* cell_;
+        Cell* end_;
+    };
+
+    iterator begin() { return iterator(*this); }
+    iterator end();
+
 private:
     explicit NextFitPage(uint32_t cellCount) noexcept;
 

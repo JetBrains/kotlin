@@ -31,6 +31,14 @@ public:
 
     bool Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQueue) noexcept;
 
+    using iterator = uint8_t*;
+
+    iterator begin() {
+        if (isAllocated_) return reinterpret_cast<iterator>(data_);
+        return end();
+    }
+    iterator end() { return reinterpret_cast<iterator>(data_) + 1; }
+
 private:
     friend class AtomicStack<SingleObjectPage>;
 

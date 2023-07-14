@@ -80,4 +80,16 @@ ExtraObjectPage* Heap::GetExtraObjectPage(FinalizerQueue& finalizerQueue) noexce
     return extraObjectPages_.GetPage(0, finalizerQueue, concurrentSweepersCount_);
 }
 
+NO_INLINE void Heap::graphviz(std::ostream& out) {
+    out << "digraph Heap {" << std::endl;
+    for (auto& fixedBlockPageStore: fixedBlockPages_) {
+        fixedBlockPageStore.graphviz(out);
+    }
+    out << "}" << std::endl;
+}
+
+NO_INLINE void Heap::graphviz() {
+    graphviz(std::cerr);
+}
+
 } // namespace kotlin::alloc

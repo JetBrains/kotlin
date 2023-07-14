@@ -174,6 +174,7 @@ uint8_t* CustomAllocator::AllocateInFixedBlockPage(uint32_t cellCount) noexcept 
     while ((page = heap_.GetFixedBlockPage(cellCount, finalizerQueue_))) {
         uint8_t* block = page->TryAllocate();
         if (block) {
+            CustomAllocDebug("Acquired FixedBlockPage(%d) %p", cellCount, page);
             fixedBlockPages_[cellCount] = page;
             return block;
         }

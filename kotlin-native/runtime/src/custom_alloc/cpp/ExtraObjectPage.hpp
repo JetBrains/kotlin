@@ -48,6 +48,49 @@ public:
 
     bool Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQueue) noexcept;
 
+//    class iterator {
+//    public:
+//        explicit iterator(ExtraObjectPage& page, ExtraObjectCell* cell)
+//            : cell_(cell)
+//            , end_(page.cells_ + EXTRA_OBJECT_COUNT)
+//            , nextFree_(&page.nextFree_) {
+//            skipFree();
+//        }
+//
+//        mm::ExtraObjectData& operator*() noexcept { return *obj(); }
+//        mm::ExtraObjectData* operator->() noexcept { return obj(); }
+//
+//        iterator& operator++() noexcept {
+//            ++cell_;
+//            skipFree();
+//            return *this;
+//        }
+//        iterator operator++(int) noexcept {
+//            auto result = *this;
+//            ++(*this);
+//            return result;
+//        }
+//
+//        bool operator==(const iterator& rhs) const noexcept { return cell_ == rhs.cell_; }
+//        bool operator!=(const iterator& rhs) const noexcept { return !(*this == rhs); }
+//    private:
+//        void skipFree() {
+//            while (cell_ < end_ && cell_ == *nextFree_) {
+//                nextFree_ = &cell_->next_;
+//                ++cell_;
+//            }
+//        }
+//        mm::ExtraObjectData* obj() const {
+//            return cell_->Data();
+//        }
+//        ExtraObjectCell* cell_;
+//        ExtraObjectCell* end_;
+//        ExtraObjectCell** nextFree_;
+//    };
+//
+//    iterator begin() { return iterator(*this, cells_); }
+//    iterator end() { return iterator(*this, cells_ + EXTRA_OBJECT_COUNT); }
+
 private:
     friend class AtomicStack<ExtraObjectPage>;
 

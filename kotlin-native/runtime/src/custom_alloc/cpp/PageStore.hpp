@@ -84,6 +84,95 @@ public:
         while ((page = unswept_.Pop())) page->Destroy();
     }
 
+//    class iterator {
+//    public:
+//        iterator(PageStore<T>& owner, std::size_t startStack) : curStack_(startStack) {
+//            stackIterators_[0] = owner.empty_.begin();
+//            stackIterators_[1] = owner.ready_.begin();
+//            stackIterators_[2] = owner.used_.begin();
+//            stackIterators_[3] = owner.unswept_.begin();
+//
+//            stackBoundaries_[0] = owner.empty_.end();
+//            stackBoundaries_[1] = owner.ready_.end();
+//            stackBoundaries_[2] = owner.used_.end();
+//            stackBoundaries_[3] = owner.unswept_.end();
+//        }
+//        explicit iterator(PageStore<T>& owner) : iterator(owner, 4) {}
+//
+//        HeapObjHeader& operator*() noexcept { return *cur(); }
+//        HeapObjHeader* operator->() noexcept { return cur(); }
+//
+//        iterator& operator++() noexcept {
+//            auto& updatedIter = ++stackIterators_[curStack_];
+//            if (updatedIter == stackBoundaries_[curStack_]) {
+//                ++curStack_;
+//            }
+//            return *this;
+//        }
+//        iterator operator++(int) noexcept {
+//            auto result = *this;
+//            ++(*this);
+//            return result;
+//        }
+//
+//        bool operator==(const iterator& rhs) const noexcept {
+//            if (curStack_ != rhs.curStack_) return false;
+//            if (curStack_ > 3) return true;
+//            return stackIterators_[curStack_] == rhs.stackIterators_[curStack_];
+//        }
+//        bool operator!=(const iterator& rhs) const noexcept { return !(*this == rhs); }
+//    private:
+//        HeapObjHeader* cur() noexcept {
+//            return **(stackIterators_[curStack_]);
+//        }
+//
+//        typename AtomicStack<T>::iterator stackIterators_[4];
+//        typename AtomicStack<T>::iterator stackBoundaries_[4];
+//        std::size_t curStack_ = 0;
+//    };
+//
+//    iterator begin() { return iterator(*this, 0); }
+//    iterator end() { return iterator(*this, 4); }
+
+    template<typename Fun>
+    void forEach(Fun fun) {
+        for (auto& emptyPage: empty_) {
+            for (auto& obj: emptyPage) {
+                fun(obj);
+            }
+        }
+        for (auto& readyPage: ready_) {
+            for (auto& obj: readyPage) {
+                fun(obj);
+            }
+        }
+        for (auto& usedPage: used_) {
+            for (auto& obj: usedPage) {
+                fun(obj);
+            }
+        }
+        for (auto& unsweptPage: unswept_) {
+            for (auto& obj: unsweptPage) {
+                fun(obj);
+            }
+        }
+    }
+
+    void graphviz(std::ostream& out) {
+        for (auto& emptyPage: empty_) {
+            emptyPage.graphviz(out, "Empty");
+        }
+        for (auto& readyPage: ready_) {
+            readyPage.graphviz(out, "Ready");
+        }
+        for (auto& usedPage: used_) {
+            usedPage.graphviz(out, "Used");
+        }
+        for (auto& unsweptPage: unswept_) {
+            unsweptPage.graphviz(out, "Unswept");
+        }
+    }
+
 private:
     T* SweepSingle(GCSweepScope& sweepHandle, T* page, AtomicStack<T>& from, AtomicStack<T>& to, FinalizerQueue& finalizerQueue) noexcept {
         if (!page) {

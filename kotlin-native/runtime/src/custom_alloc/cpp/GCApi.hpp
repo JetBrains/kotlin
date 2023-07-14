@@ -45,6 +45,8 @@ void Free(void* ptr, size_t size) noexcept;
 
 size_t GetAllocatedBytes() noexcept;
 
+void graphvizObj(std::ostream& out, HeapObjHeader* objHeader);
+
 } // namespace kotlin::alloc
 
 #endif

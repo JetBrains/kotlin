@@ -8,6 +8,7 @@
 
 #include <atomic>
 #include <cstring>
+#include <iostream>
 
 #include "AtomicStack.hpp"
 #include "CustomAllocConstants.hpp"
@@ -34,6 +35,19 @@ public:
     NextFitPage* GetNextFitPage(uint32_t cellCount, FinalizerQueue& finalizerQueue) noexcept;
     SingleObjectPage* GetSingleObjectPage(uint64_t cellCount, FinalizerQueue& finalizerQueue) noexcept;
     ExtraObjectPage* GetExtraObjectPage(FinalizerQueue& finalizerQueue) noexcept;
+
+    // FIXME create iterator?
+    template<typename Fun>
+    void forEach(Fun fun) {
+        for (auto& fixedBlockPageStore: fixedBlockPages_) {
+            fixedBlockPageStore.forEach(fun);
+        }
+        nextFitPages_.forEach(fun);
+        singleObjectPages_.forEach(fun);
+    }
+
+    void graphviz(std::ostream& out);
+    void graphviz();
 
 private:
     PageStore<FixedBlockPage> fixedBlockPages_[FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE + 1];
