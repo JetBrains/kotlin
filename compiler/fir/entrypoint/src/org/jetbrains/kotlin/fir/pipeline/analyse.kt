@@ -21,6 +21,7 @@ fun FirSession.runResolution(firFiles: List<FirFile>): Pair<ScopeSession, List<F
 
 fun FirSession.runCheckers(scopeSession: ScopeSession, firFiles: List<FirFile>, reporter: DiagnosticReporter) {
     val collector = FirDiagnosticsCollector.create(this, scopeSession)
+    collector.collectDiagnosticsInSettings(reporter)
     for (file in firFiles) {
         withFileAnalysisExceptionWrapping(file) {
             collector.collectDiagnostics(file, reporter)

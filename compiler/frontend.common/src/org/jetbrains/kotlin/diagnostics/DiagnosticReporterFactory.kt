@@ -11,14 +11,14 @@ import org.jetbrains.kotlin.diagnostics.impl.SimpleDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.impl.SimpleDiagnosticsCollectorWithSuppress
 
 object DiagnosticReporterFactory {
-    fun createReporter(disableSuppress: Boolean = false): BaseDiagnosticsCollector {
+    fun createReporter(rawReport: (Boolean, String) -> Unit = { _, _ -> }, disableSuppress: Boolean = false): BaseDiagnosticsCollector {
         return if (disableSuppress) {
-            SimpleDiagnosticsCollector()
+            SimpleDiagnosticsCollector(rawReport)
         } else {
-            SimpleDiagnosticsCollectorWithSuppress()
+            SimpleDiagnosticsCollectorWithSuppress(rawReport)
         }
     }
 
-    fun createPendingReporter(): PendingDiagnosticsCollectorWithSuppress =
-        PendingDiagnosticsCollectorWithSuppress()
+    fun createPendingReporter(rawReport: (Boolean, String) -> Unit = { _, _ -> }): PendingDiagnosticsCollectorWithSuppress =
+        PendingDiagnosticsCollectorWithSuppress(rawReport)
 }

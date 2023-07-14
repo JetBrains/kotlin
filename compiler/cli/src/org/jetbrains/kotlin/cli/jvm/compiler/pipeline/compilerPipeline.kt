@@ -103,7 +103,9 @@ fun compileModulesUsingFrontendIrAndLightTree(
         )
 
         val renderDiagnosticName = moduleConfiguration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
-        val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter()
+        val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter { isError, message ->
+            messageCollector.report(if (isError) CompilerMessageSeverity.ERROR else CompilerMessageSeverity.WARNING, message)
+        }
         val compilerEnvironment = ModuleCompilerEnvironment(projectEnvironment, diagnosticsReporter)
 
         performanceManager?.notifyAnalysisStarted()

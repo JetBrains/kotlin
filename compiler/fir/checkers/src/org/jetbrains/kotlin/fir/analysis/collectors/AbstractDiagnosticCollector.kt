@@ -25,9 +25,14 @@ abstract class AbstractDiagnosticCollector(
     override val scopeSession: ScopeSession = ScopeSession(),
     protected val createComponents: (DiagnosticReporter) -> DiagnosticCollectorComponents,
 ) : SessionHolder {
+
+    fun collectDiagnosticsInSettings(reporter: DiagnosticReporter) {
+        val visitor = createVisitor(createComponents(reporter))
+        visitor.checkSettings()
+    }
+
     fun collectDiagnostics(firDeclaration: FirDeclaration, reporter: DiagnosticReporter) {
-        val components = createComponents(reporter)
-        val visitor = createVisitor(components)
+        val visitor = createVisitor(createComponents(reporter))
         session.lazyDeclarationResolver.disableLazyResolveContractChecksInside {
             firDeclaration.accept(visitor, null)
         }

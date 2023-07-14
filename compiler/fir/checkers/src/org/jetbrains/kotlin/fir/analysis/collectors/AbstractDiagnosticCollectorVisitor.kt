@@ -36,6 +36,8 @@ abstract class AbstractDiagnosticCollectorVisitor(
 
     protected abstract fun checkElement(element: FirElement)
 
+    open fun checkSettings() {}
+
     override fun visitElement(element: FirElement, data: Nothing?) {
         when (element) {
             is FirAnnotationContainer -> withAnnotationContainer(element) {
