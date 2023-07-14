@@ -1,4 +1,5 @@
 import org.gradle.internal.deprecation.DeprecatableConfiguration
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
 
 // Contains common configuration that should be applied to all projects
@@ -195,6 +196,10 @@ fun Project.configureKotlinCompilationOptions() {
                     } else {
                         freeCompilerArgs += "-Xskip-prerelease-check"
                     }
+                }
+                if (KotlinVersion.DEFAULT >= KotlinVersion.KOTLIN_2_0 && project.path in projectsWithDisabledFirBootstrap) {
+                    languageVersion = "1.9"
+                    options.progressiveMode.set(false)
                 }
                 if (renderDiagnosticNames) {
                     freeCompilerArgs += "-Xrender-internal-diagnostic-names"
