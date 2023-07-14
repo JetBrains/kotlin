@@ -30,6 +30,9 @@ inline val FirMemberDeclaration.effectiveVisibility: EffectiveVisibility
 inline val FirMemberDeclaration.allowsToHaveFakeOverride: Boolean
     get() = !Visibilities.isPrivate(visibility) && visibility != Visibilities.InvisibleFake
 
+inline val FirMemberDeclaration.isOverridable: Boolean
+    get() = status.modality != Modality.FINAL && status.visibility != Visibilities.Private
+
 inline val FirMemberDeclaration.isActual: Boolean get() = status.isActual
 inline val FirMemberDeclaration.isExpect: Boolean get() = status.isExpect
 inline val FirMemberDeclaration.isInner: Boolean get() = status.isInner

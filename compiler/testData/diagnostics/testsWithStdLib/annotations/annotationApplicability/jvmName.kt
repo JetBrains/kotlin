@@ -1,4 +1,5 @@
-// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
+// FIR_IDENTICAL
+// !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER_ERROR
 
 @JvmName("a")
 fun foo() {}
@@ -73,6 +74,34 @@ abstract class AB {
 
     <!INAPPLICABLE_JVM_NAME!>@JvmName("AB_openFun")<!>
     open fun openFun() {}
+
+    @JvmName("AB_protectedFinalFun")
+    protected fun protectedFinalFun() {}
+
+    <!INAPPLICABLE_JVM_NAME!>@JvmName("AB_protectedOpenFun")<!>
+    protected open fun protectedOpenFun() {}
+
+    <!INAPPLICABLE_JVM_NAME!>@JvmName("AB_protectedAbstractFun")<!>
+    protected abstract fun protectedAbstractFun()
+
+    @JvmName("AB_internalFinalFun")
+    internal fun internalFinalFun() {}
+
+    <!INAPPLICABLE_JVM_NAME!>@JvmName("AB_internalOpenFun")<!>
+    internal open fun internalOpenFun() {}
+
+    <!INAPPLICABLE_JVM_NAME!>@JvmName("AB_internalAbstractFun")<!>
+    internal abstract fun internalAbstractFun()
+
+    @JvmName("AB_privateFinalFun")
+    private fun privateFinalFun() {}
+
+    // Possible via AllOpen compiler plugin
+    @JvmName("AB_privateOpenFun")
+    <!INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MODIFIERS!>open<!> fun privateOpenFun() {}
+
+    @JvmName("AB_privateAbstractFun")
+    <!INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MODIFIERS!>abstract<!> fun privateAbstractFun()
 }
 
 class D: AB() {
@@ -83,6 +112,10 @@ class D: AB() {
 
     <!INAPPLICABLE_JVM_NAME!>@JvmName("D_openFun")<!>
     final override fun openFun() {}
+
+    protected override fun protectedAbstractFun() {}
+
+    internal override fun internalAbstractFun() {}
 
     @JvmName("D_finalFun")
     fun finalFun() {}
