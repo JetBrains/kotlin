@@ -162,6 +162,8 @@ internal class KtFirMetadataCalculator(
             element.acceptChildren(this)
         }
 
+        override fun visitEnumEntry(enumEntry: FirEnumEntry) {}
+
         override fun visitProperty(property: FirProperty) {
             property.symbol.lazyResolveToPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
             property.backingField?.let {
