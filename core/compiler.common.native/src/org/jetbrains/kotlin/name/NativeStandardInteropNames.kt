@@ -12,6 +12,7 @@ object NativeStandardInteropNames {
     internal val CStructVar = Name.identifier("CStructVar")
     internal val ObjCObjectBase = Name.identifier("ObjCObjectBase")
     internal val ObjCObject = Name.identifier("ObjCObject")
+    val ExperimentalForeignApi = Name.identifier("ExperimentalForeignApi")
 
     object ForwardDeclarations {
         private val cNamesPackage = FqName("cnames")

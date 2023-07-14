@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.library.metadata.impl
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
@@ -182,14 +184,26 @@ class ForwardDeclarationsPackageFragmentDescriptor(
         private val declarations = storageManager.createMemoizedFunction(this::createDeclaration)
 
         private val supertype by storageManager.createLazyValue {
-            val descriptor = builtIns.builtInsModule.getPackage(NativeStandardInteropNames.cInteropPackage)
-                .memberScope
-                .getContributedClassifier(supertypeName, NoLookupLocation.FROM_BACKEND) as ClassDescriptor
+            findCinteropClass(supertypeName).defaultType
+        }
 
-            descriptor.defaultType
+        private val experimentalAnnotationType by storageManager.createLazyValue {
+            findCinteropClass(NativeStandardInteropNames.ExperimentalForeignApi).defaultType
+        }
+
+        private fun findCinteropClass(name: Name): ClassDescriptor {
+            return builtIns.builtInsModule.getPackage(NativeStandardInteropNames.cInteropPackage)
+                .memberScope
+                .getContributedClassifier(name, NoLookupLocation.FROM_BACKEND) as ClassDescriptor
         }
 
         private fun createDeclaration(name: Name): ClassDescriptor {
+            val experimentalAnnotation = AnnotationDescriptorImpl(
+                experimentalAnnotationType,
+                emptyMap(),
+                SourceElement.NO_SOURCE
+            )
+
             return object : ClassDescriptorImpl(
                 this@ForwardDeclarationsPackageFragmentDescriptor,
                 name,
@@ -201,6 +215,7 @@ class ForwardDeclarationsPackageFragmentDescriptor(
                 LockBasedStorageManager.NO_LOCKS
             ) {
                 override fun isExpect(): Boolean = isExpect
+                override val annotations: Annotations = Annotations.create(listOf(experimentalAnnotation))
             }.apply {
                 this.initialize(MemberScope.Empty, emptySet(), null)
             }
