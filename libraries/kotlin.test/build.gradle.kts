@@ -4,6 +4,7 @@ import plugins.configureDefaultPublishing
 import plugins.configureKotlinPomAttributes
 import groovy.util.Node
 import groovy.util.NodeList
+import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 
 plugins {
     id("org.jetbrains.kotlin.multiplatform") apply false
@@ -260,19 +261,36 @@ val (jsApi, jsRuntime) = listOf("api", "runtime").map { usage ->
         attributes {
             attribute(Usage.USAGE_ATTRIBUTE, objects.named("kotlin-$usage"))
             attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
+            attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir)
         }
     }
 }
 jsRuntime.extendsFrom(jsApi)
 
+val (jsV1Api, jsV1Runtime) = listOf("api", "runtime").map { usage ->
+    configurations.create("jsV1${usage.capitalize()}") {
+        isCanBeConsumed = true
+        isCanBeResolved = true
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named("kotlin-$usage"))
+            attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
+            attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.legacy)
+        }
+    }
+}
+jsV1Runtime.extendsFrom(jsV1Api)
+
 dependencies {
     jsApi(project(":kotlin-stdlib"))
+    jsV1Api(project(":kotlin-stdlib"))
 }
 
 artifacts {
     val jsJar = tasks.getByPath(":kotlin-test:kotlin-test-js:libraryJarWithIr")
     add(jsApi.name, jsJar)
     add(jsRuntime.name, jsJar)
+    add(jsV1Api.name, jsJar)
+    add(jsV1Runtime.name, jsJar)
 }
 
 val jsComponent = componentFactory.adhoc("js").apply {
@@ -280,6 +298,12 @@ val jsComponent = componentFactory.adhoc("js").apply {
         mapToMavenScope("compile")
     }
     addVariantsFromConfiguration(jsRuntime) {
+        mapToMavenScope("runtime")
+    }
+    addVariantsFromConfiguration(jsV1Api) {
+        mapToMavenScope("compile")
+    }
+    addVariantsFromConfiguration(jsV1Runtime) {
         mapToMavenScope("runtime")
     }
 }
