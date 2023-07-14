@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir
 
-import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
@@ -44,9 +43,7 @@ class FirAnalyzerFacade(
     val fir2IrConfiguration: Fir2IrConfiguration,
     val ktFiles: Collection<KtFile> = emptyList(), // may be empty if light tree mode enabled
     val lightTreeFiles: Collection<LightTreeFile> = emptyList(), // may be empty if light tree mode disabled
-    val irGeneratorExtensions: Collection<IrGenerationExtension>,
     val parser: FirParser,
-    val enablePluginPhases: Boolean = false,
     val diagnosticReporterForLightTree: DiagnosticReporter? = null
 ) : AbstractFirAnalyzerFacade() {
     private var firFiles: List<FirFile>? = null
