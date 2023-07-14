@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.fir.pipeline
 
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.KtDiagnostic
+import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.collectors.FirDiagnosticsCollector
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -19,12 +20,20 @@ fun FirSession.runResolution(firFiles: List<FirFile>): Pair<ScopeSession, List<F
     return resolveProcessor.scopeSession to firFiles
 }
 
-fun FirSession.runCheckers(scopeSession: ScopeSession, firFiles: List<FirFile>, reporter: DiagnosticReporter) {
+fun FirSession.runCheckers(
+    scopeSession: ScopeSession,
+    firFiles: List<FirFile>,
+    reporter: BaseDiagnosticsCollector
+): Map<FirFile, List<KtDiagnostic>> {
     val collector = FirDiagnosticsCollector.create(this, scopeSession)
     collector.collectDiagnosticsInSettings(reporter)
     for (file in firFiles) {
         withFileAnalysisExceptionWrapping(file) {
             collector.collectDiagnostics(file, reporter)
         }
+    }
+    return firFiles.associateWith {
+        val path = it.sourceFile?.path ?: return@associateWith emptyList()
+        reporter.diagnosticsByFilePath[path] ?: emptyList()
     }
 }

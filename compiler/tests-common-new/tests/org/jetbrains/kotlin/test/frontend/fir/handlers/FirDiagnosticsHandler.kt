@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.lazyDeclarationResolver
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.name.FqNameUnsafe
@@ -80,9 +81,11 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
 
     override fun processModule(module: TestModule, info: FirOutputArtifact) {
         for (part in info.partsForDependsOnModules) {
-            val diagnosticsPerFile = part.firAnalyzerFacade.runCheckers()
-            val currentModule = part.module
+            val firAnalyzerFacade = part.firAnalyzerFacade
+            val lazyDeclarationResolver = firAnalyzerFacade.result.outputs.single().session.lazyDeclarationResolver
+            val diagnosticsPerFile = lazyDeclarationResolver.disableLazyResolveContractChecksInside { firAnalyzerFacade.runCheckers() }
 
+            val currentModule = part.module
             val lightTreeComparingModeEnabled = FirDiagnosticsDirectives.COMPARE_WITH_LIGHT_TREE in currentModule.directives
             val lightTreeEnabled = currentModule.directives.singleValue(FirDiagnosticsDirectives.FIR_PARSER) == FirParser.LightTree
             val forceRenderArguments = FirDiagnosticsDirectives.RENDER_DIAGNOSTICS_MESSAGES in currentModule.directives

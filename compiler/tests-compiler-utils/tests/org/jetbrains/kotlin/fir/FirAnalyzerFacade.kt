@@ -9,17 +9,17 @@ import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
-import org.jetbrains.kotlin.fir.analysis.collectors.FirDiagnosticsCollector
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmVisibilityConverter
 import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
 import org.jetbrains.kotlin.fir.pipeline.ModuleCompilerAnalyzedOutput
+import org.jetbrains.kotlin.fir.pipeline.runCheckers
+import org.jetbrains.kotlin.fir.pipeline.runResolution
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
-import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveProcessor
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.sourceFiles.LightTreeFile
@@ -79,25 +79,14 @@ class FirAnalyzerFacade(
     override fun runResolution(): List<FirFile> {
         if (firFiles == null) buildRawFir()
         if (_scopeSession != null) return firFiles!!
-        val resolveProcessor = FirTotalResolveProcessor(session)
-        resolveProcessor.process(firFiles!!)
-        _scopeSession = resolveProcessor.scopeSession
+        _scopeSession = session.runResolution(firFiles!!).first
         return firFiles!!
     }
 
     override fun runCheckers(): Map<FirFile, List<KtDiagnostic>> {
         if (_scopeSession == null) runResolution()
         if (collectedDiagnostics != null) return collectedDiagnostics!!
-        val collector = FirDiagnosticsCollector.create(session, scopeSession)
-        collectedDiagnostics = buildMap {
-            for (file in firFiles!!) {
-                withFileAnalysisExceptionWrapping(file) {
-                    val reporter = DiagnosticReporterFactory.createPendingReporter()
-                    collector.collectDiagnostics(file, reporter)
-                    put(file, reporter.diagnostics)
-                }
-            }
-        }
+        collectedDiagnostics = session.runCheckers(scopeSession, firFiles!!, DiagnosticReporterFactory.createPendingReporter())
         return collectedDiagnostics!!
     }
 

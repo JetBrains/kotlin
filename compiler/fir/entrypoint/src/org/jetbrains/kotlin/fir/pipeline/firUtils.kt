@@ -66,7 +66,7 @@ fun buildResolveAndCheckFirFromKtFiles(
 fun resolveAndCheckFir(
     session: FirSession,
     firFiles: List<FirFile>,
-    diagnosticsReporter: DiagnosticReporter
+    diagnosticsReporter: BaseDiagnosticsCollector
 ): ModuleCompilerAnalyzedOutput {
     val (scopeSession, fir) = session.runResolution(firFiles)
     session.runCheckers(scopeSession, fir, diagnosticsReporter)
@@ -76,7 +76,7 @@ fun resolveAndCheckFir(
 fun buildResolveAndCheckFirViaLightTree(
     session: FirSession,
     ktFiles: Collection<KtSourceFile>,
-    diagnosticsReporter: DiagnosticReporter,
+    diagnosticsReporter: BaseDiagnosticsCollector,
     countFilesAndLines: KFunction2<Int, Int, Unit>?
 ): ModuleCompilerAnalyzedOutput {
     val firFiles = session.buildFirViaLightTree(ktFiles, diagnosticsReporter, countFilesAndLines)

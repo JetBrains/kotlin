@@ -30,11 +30,11 @@ abstract class FirLazyDeclarationResolver : FirSessionComponent {
         lazyResolveContractChecksEnabled = false
     }
 
-    inline fun disableLazyResolveContractChecksInside(action: () -> Unit) {
+    inline fun <T> disableLazyResolveContractChecksInside(action: () -> T): T {
         val current = lazyResolveContractChecksEnabled
         lazyResolveContractChecksEnabled = false
         try {
-            action()
+            return action()
         } finally {
             lazyResolveContractChecksEnabled = current
         }
