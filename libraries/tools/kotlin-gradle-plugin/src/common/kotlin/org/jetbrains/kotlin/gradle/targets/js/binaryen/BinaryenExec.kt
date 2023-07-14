@@ -50,7 +50,8 @@ constructor() : AbstractExecTask<BinaryenExec>(BinaryenExec::class.java) {
         "--inline-functions-with-loops",
         "--traps-never-happen",
         "--fast-math",
-        "--type-ssa",
+        // without "--type-merging" it produces increases the size 
+        // "--type-ssa",
         "-O3",
         "-O3",
         "--gufa",
