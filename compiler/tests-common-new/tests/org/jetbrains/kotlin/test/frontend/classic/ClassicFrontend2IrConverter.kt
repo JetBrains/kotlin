@@ -154,7 +154,8 @@ class ClassicFrontend2IrConverter(
         }
 
         val errorPolicy = configuration.get(JSConfigurationKeys.ERROR_TOLERANCE_POLICY) ?: ErrorTolerancePolicy.DEFAULT
-        val hasErrors = TopDownAnalyzerFacadeForWasm.checkForErrors(sourceFiles, analysisResult.bindingContext, errorPolicy)
+        val analyzerFacade = TopDownAnalyzerFacadeForWasm.facadeFor(configuration.get(JSConfigurationKeys.WASM_TARGET))
+        val hasErrors = analyzerFacade.checkForErrors(sourceFiles, analysisResult.bindingContext, errorPolicy)
         val metadataSerializer = KlibMetadataIncrementalSerializer(configuration, project, hasErrors)
 
         return IrBackendInput.WasmBackendInput(

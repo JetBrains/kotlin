@@ -23,6 +23,9 @@ public interface ErrorsWasm {
     DiagnosticFactory0<PsiElement> WASM_EXPORT_ON_EXTERNAL_DECLARATION = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> JS_AND_WASM_EXPORTS_ON_SAME_DECLARATION = DiagnosticFactory0.create(ERROR);
 
+    DiagnosticFactory0<PsiElement> WASI_EXTERNAL_NOT_TOP_LEVEL_FUNCTION = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> WASI_EXTERNAL_FUNCTION_WITHOUT_IMPORT = DiagnosticFactory0.create(ERROR);
+
     DiagnosticFactory0<PsiElement> NESTED_WASM_IMPORT = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> WASM_IMPORT_ON_NON_EXTERNAL_DECLARATION = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> WASM_IMPORT_EXPORT_PARAMETER_DEFAULT_VALUE = DiagnosticFactory0.create(ERROR);
