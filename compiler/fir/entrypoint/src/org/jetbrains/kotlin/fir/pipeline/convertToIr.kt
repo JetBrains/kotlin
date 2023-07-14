@@ -36,7 +36,27 @@ data class ModuleCompilerAnalyzedOutput(
     val session: FirSession,
     val scopeSession: ScopeSession,
     val fir: List<FirFile>
-)
+) {
+    fun convertToIr(
+        fir2IrExtensions: Fir2IrExtensions,
+        fir2IrConfiguration: Fir2IrConfiguration,
+        commonMemberStorage: Fir2IrCommonMemberStorage,
+        irBuiltIns: IrBuiltInsOverFir?,
+        irMangler: KotlinMangler.IrMangler,
+        visibilityConverter: Fir2IrVisibilityConverter,
+        kotlinBuiltIns: KotlinBuiltIns,
+    ): Fir2IrResult {
+        return Fir2IrConverter.createModuleFragmentWithSignaturesIfNeeded(
+            session, scopeSession, fir,
+            fir2IrExtensions, fir2IrConfiguration,
+            irMangler, IrFactoryImpl, visibilityConverter,
+            Fir2IrJvmSpecialAnnotationSymbolProvider(), // TODO KT-60526: replace with appropriate (probably empty) implementation for other backends.
+            kotlinBuiltIns = kotlinBuiltIns,
+            commonMemberStorage = commonMemberStorage,
+            initializedIrBuiltIns = irBuiltIns
+        )
+    }
+}
 
 data class Fir2IrActualizedResult(
     val irModuleFragment: IrModuleFragment,
@@ -165,22 +185,3 @@ fun IrPluginContext.applyIrGenerationExtensions(irModuleFragment: IrModuleFragme
     }
 }
 
-private fun ModuleCompilerAnalyzedOutput.convertToIr(
-    fir2IrExtensions: Fir2IrExtensions,
-    fir2IrConfiguration: Fir2IrConfiguration,
-    commonMemberStorage: Fir2IrCommonMemberStorage,
-    irBuiltIns: IrBuiltInsOverFir?,
-    irMangler: KotlinMangler.IrMangler,
-    visibilityConverter: Fir2IrVisibilityConverter,
-    kotlinBuiltIns: KotlinBuiltIns,
-): Fir2IrResult {
-    return Fir2IrConverter.createModuleFragmentWithSignaturesIfNeeded(
-        session, scopeSession, fir,
-        fir2IrExtensions, fir2IrConfiguration,
-        irMangler, IrFactoryImpl, visibilityConverter,
-        Fir2IrJvmSpecialAnnotationSymbolProvider(), // TODO: replace with appropriate (probably empty) implementation for other backends.
-        kotlinBuiltIns = kotlinBuiltIns,
-        commonMemberStorage = commonMemberStorage,
-        initializedIrBuiltIns = irBuiltIns
-    )
-}

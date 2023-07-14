@@ -12,17 +12,16 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.fir.analysis.collectors.FirDiagnosticsCollector
 import org.jetbrains.kotlin.fir.backend.*
-import org.jetbrains.kotlin.fir.backend.jvm.Fir2IrJvmSpecialAnnotationSymbolProvider
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmVisibilityConverter
 import org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
+import org.jetbrains.kotlin.fir.pipeline.ModuleCompilerAnalyzedOutput
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveProcessor
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
-import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.sourceFiles.LightTreeFile
 import org.jetbrains.kotlin.test.FirParser
@@ -112,16 +111,14 @@ class FirAnalyzerFacade(
     ): Fir2IrResult {
         if (_scopeSession == null) runResolution()
 
-        return Fir2IrConverter.createModuleFragmentWithSignaturesIfNeeded(
-            session, _scopeSession!!, firFiles!!,
+        return ModuleCompilerAnalyzedOutput(this.session, this.scopeSession, firFiles!!.toList()).convertToIr(
             fir2IrExtensions,
             fir2IrConfiguration,
-            JvmIrMangler, IrFactoryImpl,
+            commonMemberStorage,
+            irBuiltIns,
+            JvmIrMangler,
             FirJvmVisibilityConverter,
-            Fir2IrJvmSpecialAnnotationSymbolProvider(),
-            kotlinBuiltIns = DefaultBuiltIns.Instance, // TODO: consider passing externally,
-            commonMemberStorage = commonMemberStorage,
-            initializedIrBuiltIns = irBuiltIns
+            DefaultBuiltIns.Instance
         )
     }
 }
