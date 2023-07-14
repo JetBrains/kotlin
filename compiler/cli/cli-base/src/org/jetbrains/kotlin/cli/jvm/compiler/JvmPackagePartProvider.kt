@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.load.kotlin.JvmPackagePartProviderBase
 import org.jetbrains.kotlin.load.kotlin.loadModuleMapping
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
+import org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
 import org.jetbrains.kotlin.resolve.jvm.JvmCompilerDeserializationConfiguration
 import java.io.ByteArrayOutputStream
@@ -81,6 +82,16 @@ fun tryLoadModuleMapping(
 } catch (e: EOFException) {
     messageCollector.report(
         ERROR, "Error occurred when reading the module: ${e.message}", CompilerMessageLocation.create(modulePath)
+    )
+    messageCollector.report(
+        LOGGING,
+        String(ByteArrayOutputStream().also { e.printStackTrace(PrintStream(it)) }.toByteArray()),
+        CompilerMessageLocation.create(modulePath)
+    )
+    null
+} catch (e: InvalidProtocolBufferException) {
+    messageCollector.report(
+        ERROR, "Protocol rrror occurred when reading the module: ${e.message}", CompilerMessageLocation.create(modulePath)
     )
     messageCollector.report(
         LOGGING,
