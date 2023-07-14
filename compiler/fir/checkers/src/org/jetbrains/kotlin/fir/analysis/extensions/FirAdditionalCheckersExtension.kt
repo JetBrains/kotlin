@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.extensions
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.LanguageVersionSettingsCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.type.TypeCheckers
@@ -22,6 +23,7 @@ abstract class FirAdditionalCheckersExtension(session: FirSession) : FirExtensio
     open val declarationCheckers: DeclarationCheckers = DeclarationCheckers.EMPTY
     open val expressionCheckers: ExpressionCheckers = ExpressionCheckers.EMPTY
     open val typeCheckers: TypeCheckers = TypeCheckers.EMPTY
+    open val languageVersionSettingsCheckers: LanguageVersionSettingsCheckers = LanguageVersionSettingsCheckers.EMPTY
 
     final override val name: FirExtensionPointName
         get() = NAME

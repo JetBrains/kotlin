@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.NoMutableState
 import org.jetbrains.kotlin.fir.SessionConfiguration
+import org.jetbrains.kotlin.fir.analysis.checkers.LanguageVersionSettingsCheckers
+import org.jetbrains.kotlin.fir.analysis.checkers.config.ComposedLanguageVersionSettingsCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.ComposedDeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ComposedExpressionCheckers
@@ -31,6 +33,9 @@ class CheckersComponent : FirSessionComponent {
     val typeCheckers: TypeCheckers get() = _typeCheckers
     private val _typeCheckers = ComposedTypeCheckers()
 
+    val languageVersionSettingsCheckers: LanguageVersionSettingsCheckers get() = _languageVersionSettingsCheckers
+    private val _languageVersionSettingsCheckers = ComposedLanguageVersionSettingsCheckers()
+
     @SessionConfiguration
     @OptIn(CheckersComponentInternal::class)
     fun register(checkers: DeclarationCheckers) {
@@ -50,10 +55,17 @@ class CheckersComponent : FirSessionComponent {
     }
 
     @SessionConfiguration
+    @OptIn(CheckersComponentInternal::class)
+    fun register(checkers: LanguageVersionSettingsCheckers) {
+        _languageVersionSettingsCheckers.register(checkers)
+    }
+
+    @SessionConfiguration
     fun register(checkers: FirAdditionalCheckersExtension) {
         register(checkers.declarationCheckers)
         register(checkers.expressionCheckers)
         register(checkers.typeCheckers)
+        register(checkers.languageVersionSettingsCheckers)
     }
 }
 
