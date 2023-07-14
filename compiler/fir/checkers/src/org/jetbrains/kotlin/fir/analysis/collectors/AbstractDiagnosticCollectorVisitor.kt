@@ -36,7 +36,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
 
     protected abstract fun checkElement(element: FirElement)
 
-    abstract fun start()
+    open fun start() {}
 
     override fun visitElement(element: FirElement, data: Nothing?) {
         when (element) {
