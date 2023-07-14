@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.fir
 
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCall
@@ -42,6 +44,9 @@ class SerializationFirDeclarationsForMetadataProvider(session: FirSession) : Fir
 
     private fun generateDeserializationConstructor(klass: FirClass): FirDeclaration =
         createConstructor(klass.symbol, SerializationPluginKey, isPrimary = false) {
+            // deserialization constructor for final classes could be internal, because it can't be called in inheritors
+            visibility = if (klass.isFinal) Visibilities.Internal else Visibilities.Public
+
             val serializableProperties =
                 session.serializablePropertiesProvider.getSerializablePropertiesForClass(klass.symbol).serializableProperties
             val bitMaskSlotCount = serializableProperties.bitMaskSlotCount()
@@ -71,6 +76,9 @@ class SerializationFirDeclarationsForMetadataProvider(session: FirSession) : Fir
             SerialEntityNames.WRITE_SELF_NAME,
             session.builtinTypes.unitType.type
         ) {
+            // write$Self for final classes could be internal, because it can't be called in inheritors
+            visibility = if (klass.isFinal) Visibilities.Internal else Visibilities.Public
+
             klass.typeParameters.forEach {
                 typeParameter(it.symbol.name)
             }

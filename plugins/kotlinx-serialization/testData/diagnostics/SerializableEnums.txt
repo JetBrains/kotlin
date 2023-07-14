@@ -12,7 +12,7 @@ public object EnumSerializer : kotlinx.serialization.KSerializer<ExplicitlyMarke
 
 @kotlinx.serialization.Serializable public final data class EnumUsage {
     public constructor EnumUsage(/*0*/ s: SimpleEnum, /*1*/ m: MarkedNameEnum, /*2*/ e: ExplicitlyMarkedEnum)
-    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "This synthesized declaration should not be used directly", replaceWith = kotlin.ReplaceWith(expression = "", imports = {})) public /*synthesized*/ constructor EnumUsage(/*0*/ seen1: kotlin.Int, /*1*/ s: SimpleEnum?, /*2*/ m: MarkedNameEnum?, /*3*/ e: ExplicitlyMarkedEnum?, /*4*/ serializationConstructorMarker: kotlinx.serialization.internal.SerializationConstructorMarker?)
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "This synthesized declaration should not be used directly", replaceWith = kotlin.ReplaceWith(expression = "", imports = {})) internal /*synthesized*/ constructor EnumUsage(/*0*/ seen1: kotlin.Int, /*1*/ s: SimpleEnum?, /*2*/ m: MarkedNameEnum?, /*3*/ e: ExplicitlyMarkedEnum?, /*4*/ serializationConstructorMarker: kotlinx.serialization.internal.SerializationConstructorMarker?)
     public final val e: ExplicitlyMarkedEnum
     public final val m: MarkedNameEnum
     public final val s: SimpleEnum
@@ -23,7 +23,7 @@ public object EnumSerializer : kotlinx.serialization.KSerializer<ExplicitlyMarke
     public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
-    @kotlin.jvm.JvmStatic public final /*synthesized*/ fun `write$Self`(/*0*/ self: EnumUsage, /*1*/ output: kotlinx.serialization.encoding.CompositeEncoder, /*2*/ serialDesc: kotlinx.serialization.descriptors.SerialDescriptor): kotlin.Unit
+    @kotlin.jvm.JvmStatic internal final /*synthesized*/ fun `write$Self`(/*0*/ self: EnumUsage, /*1*/ output: kotlinx.serialization.encoding.CompositeEncoder, /*2*/ serialDesc: kotlinx.serialization.descriptors.SerialDescriptor): kotlin.Unit
 
     @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "This synthesized declaration should not be used directly", replaceWith = kotlin.ReplaceWith(expression = "", imports = {})) public object `$serializer` : kotlinx.serialization.internal.GeneratedSerializer<EnumUsage> {
         private constructor `$serializer`()

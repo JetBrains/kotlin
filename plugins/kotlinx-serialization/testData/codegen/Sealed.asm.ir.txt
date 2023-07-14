@@ -271,7 +271,7 @@ public final class Container : java/lang/Object {
 
     public final Result getR()
 
-    public final static void write$Self(Container self, kotlinx.serialization.encoding.CompositeEncoder output, kotlinx.serialization.descriptors.SerialDescriptor serialDesc) {
+    public final static void write$Self$main(Container self, kotlinx.serialization.encoding.CompositeEncoder output, kotlinx.serialization.descriptors.SerialDescriptor serialDesc) {
         LABEL (L0)
         LINENUMBER (18)
           GETSTATIC (Container, $childSerializers, [Lkotlinx/serialization/KSerializer;)
@@ -724,7 +724,7 @@ public final class Result$OK : Result {
 
     public final java.lang.String getS()
 
-    public final static void write$Self(Result$OK self, kotlinx.serialization.encoding.CompositeEncoder output, kotlinx.serialization.descriptors.SerialDescriptor serialDesc) {
+    public final static void write$Self$main(Result$OK self, kotlinx.serialization.encoding.CompositeEncoder output, kotlinx.serialization.descriptors.SerialDescriptor serialDesc) {
         LABEL (L0)
         LINENUMBER (14)
           ALOAD (0)

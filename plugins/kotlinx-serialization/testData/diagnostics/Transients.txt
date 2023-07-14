@@ -2,7 +2,7 @@ package
 
 @kotlinx.serialization.Serializable public final data class WithTransients {
     public constructor WithTransients(/*0*/ missing: kotlin.Int)
-    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "This synthesized declaration should not be used directly", replaceWith = kotlin.ReplaceWith(expression = "", imports = {})) public /*synthesized*/ constructor WithTransients(/*0*/ seen1: kotlin.Int, /*1*/ serializationConstructorMarker: kotlinx.serialization.internal.SerializationConstructorMarker?)
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "This synthesized declaration should not be used directly", replaceWith = kotlin.ReplaceWith(expression = "", imports = {})) internal /*synthesized*/ constructor WithTransients(/*0*/ seen1: kotlin.Int, /*1*/ serializationConstructorMarker: kotlinx.serialization.internal.SerializationConstructorMarker?)
     @kotlinx.serialization.Transient public final lateinit var allowTransientLateinitWithoutInitializer: kotlin.String
     @kotlinx.serialization.Transient public final val missing: kotlin.Int
     @kotlinx.serialization.Transient public final val redundant: kotlin.Int
@@ -11,7 +11,7 @@ package
     public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
-    @kotlin.jvm.JvmStatic public final /*synthesized*/ fun `write$Self`(/*0*/ self: WithTransients, /*1*/ output: kotlinx.serialization.encoding.CompositeEncoder, /*2*/ serialDesc: kotlinx.serialization.descriptors.SerialDescriptor): kotlin.Unit
+    @kotlin.jvm.JvmStatic internal final /*synthesized*/ fun `write$Self`(/*0*/ self: WithTransients, /*1*/ output: kotlinx.serialization.encoding.CompositeEncoder, /*2*/ serialDesc: kotlinx.serialization.descriptors.SerialDescriptor): kotlin.Unit
 
     @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "This synthesized declaration should not be used directly", replaceWith = kotlin.ReplaceWith(expression = "", imports = {})) public object `$serializer` : kotlinx.serialization.internal.GeneratedSerializer<WithTransients> {
         private constructor `$serializer`()

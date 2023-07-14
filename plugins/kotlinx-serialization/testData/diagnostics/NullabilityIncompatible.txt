@@ -2,12 +2,12 @@ package
 
 @kotlinx.serialization.Serializable public final class Foo {
     public constructor Foo(/*0*/ foo: Nope)
-    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "This synthesized declaration should not be used directly", replaceWith = kotlin.ReplaceWith(expression = "", imports = {})) public /*synthesized*/ constructor Foo(/*0*/ seen1: kotlin.Int, /*1*/ foo: Nope?, /*2*/ serializationConstructorMarker: kotlinx.serialization.internal.SerializationConstructorMarker?)
+    @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "This synthesized declaration should not be used directly", replaceWith = kotlin.ReplaceWith(expression = "", imports = {})) internal /*synthesized*/ constructor Foo(/*0*/ seen1: kotlin.Int, /*1*/ foo: Nope?, /*2*/ serializationConstructorMarker: kotlinx.serialization.internal.SerializationConstructorMarker?)
     public final val foo: Nope
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    @kotlin.jvm.JvmStatic public final /*synthesized*/ fun `write$Self`(/*0*/ self: Foo, /*1*/ output: kotlinx.serialization.encoding.CompositeEncoder, /*2*/ serialDesc: kotlinx.serialization.descriptors.SerialDescriptor): kotlin.Unit
+    @kotlin.jvm.JvmStatic internal final /*synthesized*/ fun `write$Self`(/*0*/ self: Foo, /*1*/ output: kotlinx.serialization.encoding.CompositeEncoder, /*2*/ serialDesc: kotlinx.serialization.descriptors.SerialDescriptor): kotlin.Unit
 
     @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "This synthesized declaration should not be used directly", replaceWith = kotlin.ReplaceWith(expression = "", imports = {})) public object `$serializer` : kotlinx.serialization.internal.GeneratedSerializer<Foo> {
         private constructor `$serializer`()

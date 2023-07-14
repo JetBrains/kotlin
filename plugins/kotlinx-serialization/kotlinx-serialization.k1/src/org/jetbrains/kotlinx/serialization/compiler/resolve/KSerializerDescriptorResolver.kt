@@ -347,7 +347,8 @@ object KSerializerDescriptorResolver {
 
         functionDescriptor.initialize(
             consParams,
-            DescriptorVisibilities.PUBLIC
+            // load constructor for final classes could be internal, because it can't be used in inheritors
+            if (classDescriptor.modality == Modality.FINAL) DescriptorVisibilities.INTERNAL else DescriptorVisibilities.PUBLIC
         )
 
         functionDescriptor.returnType = classDescriptor.defaultType
@@ -586,7 +587,8 @@ object KSerializerDescriptorResolver {
             args,
             returnType,
             Modality.FINAL,
-            DescriptorVisibilities.PUBLIC
+            // write$Self for final classes could be internal, because it can't be called in inheritors
+            if (thisClass.modality == Modality.FINAL) DescriptorVisibilities.INTERNAL else DescriptorVisibilities.PUBLIC
         )
 
         return f

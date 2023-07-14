@@ -190,7 +190,7 @@ public final class ListOfUsers$$serializer : java/lang/Object, kotlinx/serializa
           ALOAD (2)
           ALOAD (4)
           ALOAD (3)
-          INVOKESTATIC (ListOfUsers, write$Self, (LListOfUsers;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V)
+          INVOKESTATIC (ListOfUsers, write$Self$main, (LListOfUsers;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V)
           ALOAD (4)
           ALOAD (3)
           INVOKEINTERFACE (kotlinx/serialization/encoding/CompositeEncoder, endStructure, (Lkotlinx/serialization/descriptors/SerialDescriptor;)V)
@@ -310,7 +310,7 @@ public final class ListOfUsers : java/lang/Object {
 
     public final java.util.List getList()
 
-    public final static void write$Self(ListOfUsers self, kotlinx.serialization.encoding.CompositeEncoder output, kotlinx.serialization.descriptors.SerialDescriptor serialDesc) {
+    public final static void write$Self$main(ListOfUsers self, kotlinx.serialization.encoding.CompositeEncoder output, kotlinx.serialization.descriptors.SerialDescriptor serialDesc) {
         LABEL (L0)
         LINENUMBER (12)
           GETSTATIC (ListOfUsers, $childSerializers, [Lkotlinx/serialization/KSerializer;)
@@ -512,7 +512,7 @@ public final class OptionalUser$$serializer : java/lang/Object, kotlinx/serializ
           ALOAD (2)
           ALOAD (4)
           ALOAD (3)
-          INVOKESTATIC (OptionalUser, write$Self, (LOptionalUser;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V)
+          INVOKESTATIC (OptionalUser, write$Self$main, (LOptionalUser;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V)
           ALOAD (4)
           ALOAD (3)
           INVOKEINTERFACE (kotlinx/serialization/encoding/CompositeEncoder, endStructure, (Lkotlinx/serialization/descriptors/SerialDescriptor;)V)
@@ -661,7 +661,7 @@ public final class OptionalUser : java/lang/Object {
 
     public final User getUser()
 
-    public final static void write$Self(OptionalUser self, kotlinx.serialization.encoding.CompositeEncoder output, kotlinx.serialization.descriptors.SerialDescriptor serialDesc) {
+    public final static void write$Self$main(OptionalUser self, kotlinx.serialization.encoding.CompositeEncoder output, kotlinx.serialization.descriptors.SerialDescriptor serialDesc) {
         LABEL (L0)
         LINENUMBER (9)
           ALOAD (1)
@@ -911,7 +911,7 @@ public final class User$$serializer : java/lang/Object, kotlinx/serialization/in
           ALOAD (2)
           ALOAD (4)
           ALOAD (3)
-          INVOKESTATIC (User, write$Self, (LUser;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V)
+          INVOKESTATIC (User, write$Self$main, (LUser;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V)
           ALOAD (4)
           ALOAD (3)
           INVOKEINTERFACE (kotlinx/serialization/encoding/CompositeEncoder, endStructure, (Lkotlinx/serialization/descriptors/SerialDescriptor;)V)
@@ -1025,7 +1025,7 @@ public final class User : java/lang/Object {
 
     public final java.lang.String getLastName()
 
-    public final static void write$Self(User self, kotlinx.serialization.encoding.CompositeEncoder output, kotlinx.serialization.descriptors.SerialDescriptor serialDesc) {
+    public final static void write$Self$main(User self, kotlinx.serialization.encoding.CompositeEncoder output, kotlinx.serialization.descriptors.SerialDescriptor serialDesc) {
         LABEL (L0)
         LINENUMBER (6)
           ALOAD (1)
