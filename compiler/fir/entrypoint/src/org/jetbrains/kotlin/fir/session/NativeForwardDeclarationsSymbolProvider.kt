@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
 import org.jetbrains.kotlin.fir.declarations.getDeprecationsProvider
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
+import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProviderWithoutCallables
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -26,13 +28,15 @@ import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.constructClassType
+import org.jetbrains.kotlin.fir.types.toLookupTag
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.includedForwardDeclarations
 import org.jetbrains.kotlin.library.isInterop
-import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
+import org.jetbrains.kotlin.name.NativeStandardInteropNames
 
 class NativeForwardDeclarationsSymbolProvider(
     session: FirSession,
@@ -112,6 +116,18 @@ class NativeForwardDeclarationsSymbolProvider(
             superTypeRefs += buildResolvedTypeRef {
                 type = ConeClassLikeLookupTagImpl(forwardDeclarationKind.superClassId)
                     .constructClassType(emptyArray(), isNullable = false)
+            }
+
+            annotations += buildAnnotation {
+                annotationTypeRef = buildResolvedTypeRef {
+                    val annotationClassId = ClassId(
+                        NativeStandardInteropNames.cInteropPackage,
+                        NativeStandardInteropNames.ExperimentalForeignApi
+                    )
+                    type = annotationClassId.toLookupTag()
+                        .constructClassType(typeArguments = emptyArray(), isNullable = false)
+                }
+                argumentMapping = FirEmptyAnnotationArgumentMapping
             }
         }.apply {
             replaceDeprecationsProvider(getDeprecationsProvider(session))
