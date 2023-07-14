@@ -273,6 +273,7 @@ val nativeTestsTask = tasks.register<Test>("kgpNativeTests") {
         systemProperties["junit.jupiter.execution.parallel.enabled"] = "true"
         systemProperties["junit.jupiter.execution.parallel.mode.default"] = "concurrent"
         systemProperties["junit.jupiter.execution.parallel.mode.classes.default"] = "concurrent"
+        systemProperties["junit.jupiter.execution.parallel.config.dynamic.factor"] = "2"
     }
 }
 
