@@ -5,6 +5,10 @@ class Test : J {
 
   }
 
+  private val j: J
+    field = j
+    private get
+
   override fun takeNotNull(@NotNull x: @EnhancedNullability String) {
     <this>.#j.takeNotNull(x = x)
   }
@@ -31,8 +35,5 @@ class Test : J {
     return <this>.#j.returnsFlexible()
   }
 
-  private val j: J
-    field = j
-    private get
-
 }
+

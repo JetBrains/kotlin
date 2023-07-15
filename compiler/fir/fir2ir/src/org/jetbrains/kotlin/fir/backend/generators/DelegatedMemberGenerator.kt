@@ -96,6 +96,38 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
 
         val subClassLookupTag = firSubClass.symbol.toLookupTag()
 
+        val primaryConstructorValueParamNames: List<Name> = subClass.declarations
+            .mapNotNull { (it as? IrConstructor)?.valueParameters }
+            .flatten().map { it.name }
+        subClassScope.processAllPropertiesSortedByTypeAndName(primaryConstructorValueParamNames) { propertySymbol ->
+            if (propertySymbol !is FirPropertySymbol) return@processAllPropertiesSortedByTypeAndName
+
+            val unwrapped =
+                propertySymbol.unwrapDelegateTarget(subClassLookupTag, firField)
+                    ?: return@processAllPropertiesSortedByTypeAndName
+
+            val delegateToSymbol = findDelegateToSymbol(
+                unwrapped.unwrapSubstitutionOverrides().symbol,
+                { name, processor ->
+                    delegateToScope.processPropertiesByName(name) {
+                        if (it !is FirPropertySymbol) return@processPropertiesByName
+                        processor(it)
+                    }
+                },
+                delegateToScope::processOverriddenProperties
+            ) ?: return@processAllPropertiesSortedByTypeAndName
+
+            val delegateToLookupTag = delegateToSymbol.dispatchReceiverClassLookupTagOrNull()
+                ?: return@processAllPropertiesSortedByTypeAndName
+
+            val irSubProperty = generateDelegatedProperty(
+                subClass, firSubClass, propertySymbol.fir
+            )
+            bodiesInfo += DeclarationBodyInfo(irSubProperty, irField, delegateToSymbol, delegateToLookupTag)
+            declarationStorage.cacheDelegatedProperty(propertySymbol.fir, irSubProperty)
+            subClass.addMember(irSubProperty)
+        }
+
         subClassScope.processAllFunctions { functionSymbol ->
             val unwrapped =
                 functionSymbol.unwrapDelegateTarget(subClassLookupTag, firField)
@@ -117,35 +149,6 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
             bodiesInfo += DeclarationBodyInfo(irSubFunction, irField, delegateToSymbol, delegateToLookupTag)
             declarationStorage.cacheDelegationFunction(functionSymbol.fir, irSubFunction)
             subClass.addMember(irSubFunction)
-        }
-
-        subClassScope.processAllProperties { propertySymbol ->
-            if (propertySymbol !is FirPropertySymbol) return@processAllProperties
-
-            val unwrapped =
-                propertySymbol.unwrapDelegateTarget(subClassLookupTag, firField)
-                    ?: return@processAllProperties
-
-            val delegateToSymbol = findDelegateToSymbol(
-                unwrapped.unwrapSubstitutionOverrides().symbol,
-                { name, processor ->
-                    delegateToScope.processPropertiesByName(name) {
-                        if (it !is FirPropertySymbol) return@processPropertiesByName
-                        processor(it)
-                    }
-                },
-                delegateToScope::processOverriddenProperties
-            ) ?: return@processAllProperties
-
-            val delegateToLookupTag = delegateToSymbol.dispatchReceiverClassLookupTagOrNull()
-                ?: return@processAllProperties
-
-            val irSubProperty = generateDelegatedProperty(
-                subClass, firSubClass, propertySymbol.fir
-            )
-            bodiesInfo += DeclarationBodyInfo(irSubProperty, irField, delegateToSymbol, delegateToLookupTag)
-            declarationStorage.cacheDelegatedProperty(propertySymbol.fir, irSubProperty)
-            subClass.addMember(irSubProperty)
         }
     }
 

@@ -44,16 +44,6 @@ class Fir2IrClassifierStorage : Fir2IrComponents {
 
   }
 
-  override val session: FirSession
-    override get(): FirSession {
-      return <this>.#components.<get-session>()
-    }
-
-  override val classifierStorage: Fir2IrClassifierStorage
-    override get(): Fir2IrClassifierStorage {
-      return <this>.#components.<get-classifierStorage>()
-    }
-
   private val components: Fir2IrComponents
     field = components
     private get
@@ -62,4 +52,15 @@ class Fir2IrClassifierStorage : Fir2IrComponents {
     field = <this>.<get-session>().<get-name>()
     private get
 
+  override val classifierStorage: Fir2IrClassifierStorage
+    override get(): Fir2IrClassifierStorage {
+      return <this>.#components.<get-classifierStorage>()
+    }
+
+  override val session: FirSession
+    override get(): FirSession {
+      return <this>.#components.<get-session>()
+    }
+
 }
+

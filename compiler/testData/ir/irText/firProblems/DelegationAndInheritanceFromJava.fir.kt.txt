@@ -5,6 +5,12 @@ class Impl : A, B {
 
   }
 
+  private /* final field */ val $$delegate_0: B = b
+  override val size: Int
+    override get(): Int {
+      return <this>.#$$delegate_0.<get-size>()
+    }
+
   override fun add(element: @FlexibleNullability String?): Boolean {
     return <this>.#$$delegate_0.add(element = element)
   }
@@ -45,15 +51,9 @@ class Impl : A, B {
     return <this>.#$$delegate_0.containsAll(elements = elements)
   }
 
-  override val size: Int
-    override get(): Int {
-      return <this>.#$$delegate_0.<get-size>()
-    }
-
-  private /* final field */ val $$delegate_0: B = b
-
 }
 
 fun box(): String {
   return "OK"
 }
+

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 interface A {
     fun f(x: String = "OK"): String
 }

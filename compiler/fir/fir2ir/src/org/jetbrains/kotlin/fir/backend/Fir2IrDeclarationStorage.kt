@@ -1091,12 +1091,18 @@ class Fir2IrDeclarationStorage(
         // Either take a corresponding constructor property backing field,
         // or create a separate delegate field
         val irField = getOrCreateDelegateIrField(field, owner, irClass)
+        // If it's a property backing field, it should not be added to the class
+        if (irField.correspondingPropertySymbol == null) {
+            // Declaration should be added to irClass before generated delegated members which use it.
+            // This order is same as in K1, see ClassGenerator.generateDelegatedImplementationMembers()
+            irClass.declarations += irField
+        }
         delegatedMemberGenerator.generate(irField, field, owner, irClass)
         if (owner.isLocalClassOrAnonymousObject()) {
             delegatedMemberGenerator.generateBodies()
         }
-        // If it's a property backing field, it should not be added to the class in Fir2IrConverter, so it's not returned
-        return irField.takeIf { it.correspondingPropertySymbol == null }
+        // Returning null, so Fir2IrConverter would not add it to `irClass.declarations` for the second time.
+        return null
     }
 
     private fun getOrCreateDelegateIrField(field: FirField, owner: FirClass, irClass: IrClass): IrField {

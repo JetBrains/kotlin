@@ -254,7 +254,7 @@ class Fir2IrConverter(
     // This is needed because converting synthetic fields for implementation delegation needs to know
     // existing declarations in the class to avoid adding redundant delegated members.
     private fun syntheticPropertiesLast(declarations: Iterable<FirDeclaration>): Iterable<FirDeclaration> {
-        return declarations.sortedBy { it !is FirField && it.isSynthetic }
+        return declarations.sortedBy { it.isSynthetic }
     }
 
     private fun registerClassAndNestedClasses(klass: FirClass, parent: IrDeclarationParent): IrClass {

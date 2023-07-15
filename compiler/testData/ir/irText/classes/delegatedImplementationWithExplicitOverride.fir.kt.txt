@@ -27,12 +27,12 @@ class C : IFooBar {
 
   }
 
-  override fun foo() {
-    <this>.#$$delegate_0.foo()
+  override fun bar() {
   }
 
   private /* final field */ val $$delegate_0: FooBarImpl = FooBarImpl
-  override fun bar() {
+  override fun foo() {
+    <this>.#$$delegate_0.foo()
   }
 
 }

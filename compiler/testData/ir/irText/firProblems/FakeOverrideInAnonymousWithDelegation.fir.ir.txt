@@ -54,6 +54,10 @@ FILE fqName:<root> fileName:/FakeOverrideInAnonymousWithDelegation.kt
                 BLOCK_BODY
                   DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
                   INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Bar]'
+              FIELD DELEGATE name:$$delegate_0 type:<root>.Wrapper.dummy.<no name provided> visibility:private [final]
+                EXPRESSION_BODY
+                  CALL 'private final fun <get-dummy> (): <root>.Wrapper.dummy.<no name provided> declared in <root>.Wrapper' type=<root>.Wrapper.dummy.<no name provided> origin=GET_PROPERTY
+                    $this: GET_VAR '<this>: <root>.Wrapper declared in <root>.Wrapper' type=<root>.Wrapper origin=null
               PROPERTY DELEGATED_MEMBER name:foo visibility:public modality:OPEN [val]
                 overridden:
                   public open foo: kotlin.String
@@ -67,10 +71,6 @@ FILE fqName:<root> fileName:/FakeOverrideInAnonymousWithDelegation.kt
                       CALL 'public open fun <get-foo> (): kotlin.String declared in <root>.Bar' type=kotlin.String origin=null
                         $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Wrapper.dummy.<no name provided> visibility:private [final]' type=<root>.Wrapper.dummy.<no name provided> origin=null
                           receiver: GET_VAR '<this>: <root>.Wrapper.bar.<no name provided> declared in <root>.Wrapper.bar.<no name provided>.<get-foo>' type=<root>.Wrapper.bar.<no name provided> origin=null
-              FIELD DELEGATE name:$$delegate_0 type:<root>.Wrapper.dummy.<no name provided> visibility:private [final]
-                EXPRESSION_BODY
-                  CALL 'private final fun <get-dummy> (): <root>.Wrapper.dummy.<no name provided> declared in <root>.Wrapper' type=<root>.Wrapper.dummy.<no name provided> origin=GET_PROPERTY
-                    $this: GET_VAR '<this>: <root>.Wrapper declared in <root>.Wrapper' type=<root>.Wrapper origin=null
               FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
                 overridden:
                   public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Bar

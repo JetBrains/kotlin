@@ -90,15 +90,6 @@ FILE fqName:<root> fileName:/SignatureClash.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:DataClass modality:FINAL visibility:public [data] superTypes:[<root>.Derived; <root>.Delegate]'
-    FUN DELEGATED_MEMBER name:bar visibility:public modality:OPEN <> ($this:<root>.DataClass) returnType:kotlin.Unit
-      overridden:
-        public abstract fun bar (): kotlin.Unit declared in <root>.Derived
-        public abstract fun bar (): kotlin.Unit declared in <root>.Delegate
-      $this: VALUE_PARAMETER name:<this> type:<root>.DataClass
-      BLOCK_BODY
-        CALL 'public abstract fun bar (): kotlin.Unit declared in <root>.Delegate' type=kotlin.Unit origin=null
-          $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:delegate type:<root>.Delegate visibility:private [final]' type=<root>.Delegate origin=null
-            receiver: GET_VAR '<this>: <root>.DataClass declared in <root>.DataClass.bar' type=<root>.DataClass origin=null
     PROPERTY name:delegate visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:delegate type:<root>.Delegate visibility:private [final]
         EXPRESSION_BODY
@@ -110,6 +101,15 @@ FILE fqName:<root> fileName:/SignatureClash.kt
           RETURN type=kotlin.Nothing from='public final fun <get-delegate> (): <root>.Delegate declared in <root>.DataClass'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:delegate type:<root>.Delegate visibility:private [final]' type=<root>.Delegate origin=null
               receiver: GET_VAR '<this>: <root>.DataClass declared in <root>.DataClass.<get-delegate>' type=<root>.DataClass origin=null
+    FUN DELEGATED_MEMBER name:bar visibility:public modality:OPEN <> ($this:<root>.DataClass) returnType:kotlin.Unit
+      overridden:
+        public abstract fun bar (): kotlin.Unit declared in <root>.Derived
+        public abstract fun bar (): kotlin.Unit declared in <root>.Delegate
+      $this: VALUE_PARAMETER name:<this> type:<root>.DataClass
+      BLOCK_BODY
+        CALL 'public abstract fun bar (): kotlin.Unit declared in <root>.Delegate' type=kotlin.Unit origin=null
+          $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:delegate type:<root>.Delegate visibility:private [final]' type=<root>.Delegate origin=null
+            receiver: GET_VAR '<this>: <root>.DataClass declared in <root>.DataClass.bar' type=<root>.DataClass origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.DataClass) returnType:<root>.Delegate [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.DataClass
       BLOCK_BODY
