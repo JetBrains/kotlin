@@ -19,9 +19,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationI
 import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactory
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
-import org.jetbrains.kotlin.gradle.utils.LenientFuture
-import org.jetbrains.kotlin.gradle.utils.future
-import org.jetbrains.kotlin.gradle.utils.lenient
 import javax.inject.Inject
 
 open class KotlinJvmCompilation @Inject internal constructor(
@@ -67,17 +64,19 @@ open class KotlinJvmCompilation @Inject internal constructor(
      * will be enabled after call to this method.
      */
     internal val compileJavaTaskProviderSafe: Provider<JavaCompile> = target.project.providers
-        .provider { javaSourceSet.getOrNull() }
+        .provider { javaSourceSet }
         .flatMap { javaSourceSet ->
-            @Suppress("RedundantRequireNotNullCall") // IDE and CLI disagree here
             checkNotNull(javaSourceSet)
             project.tasks.named(javaSourceSet.compileJavaTaskName, JavaCompile::class.java)
         }
 
-    internal val javaSourceSet: LenientFuture<SourceSet> = target.project.future {
-        target.withJavaEnabledFuture.await()
-        target.project.javaSourceSets.maybeCreate(compilationName)
-    }.lenient
+    internal val javaSourceSet
+        get() = if (target.withJavaEnabled) maybeCreateJavaSourceSet() else null
+
+    internal fun maybeCreateJavaSourceSet(): SourceSet {
+        check(target.withJavaEnabled)
+        return target.project.javaSourceSets.maybeCreate(compilationName)
+    }
 
     override val processResourcesTaskName: String
         get() = compilation.processResourcesTaskName ?: error("Missing 'processResourcesTaskName'")

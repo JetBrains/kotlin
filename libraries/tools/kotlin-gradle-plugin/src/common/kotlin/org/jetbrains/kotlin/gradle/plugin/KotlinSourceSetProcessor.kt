@@ -15,7 +15,6 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Jar
-import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessor
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaCompilation
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
@@ -41,7 +40,7 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
     protected val javaSourceSet: SourceSet?
         get() = when (val compilation = compilationInfo.safeAs<KotlinCompilationInfo.TCS>()?.origin) {
             is KotlinWithJavaCompilation<*, *> -> compilation.javaSourceSet
-            is KotlinJvmCompilation -> compilation.javaSourceSet.getOrNull()
+            is KotlinJvmCompilation -> compilation.javaSourceSet
             else -> null
         }
 
