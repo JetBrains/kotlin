@@ -674,7 +674,9 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
 
                                 initInstanceSymbol -> error("Should've been lowered: ${value.render()}")
 
-                                saveCoroutineState -> DataFlowIR.Node.SaveCoroutineState(liveVariables[value]!!.map { variables[it]!!.value })
+                                saveCoroutineState -> DataFlowIR.Node.SaveCoroutineState().also { node ->
+                                    liveVariables[value]!!.mapTo(node.liveVariables) { variables[it]!!.value }
+                                }
 
                                 restoreCoroutineState -> // This is a no-op for all analyses so far.
                                     DataFlowIR.Node.StaticCall(

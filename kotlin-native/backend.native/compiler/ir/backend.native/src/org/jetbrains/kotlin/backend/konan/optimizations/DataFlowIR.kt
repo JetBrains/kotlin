@@ -255,7 +255,9 @@ internal object DataFlowIR {
 
         class ArrayWrite(val callee: FunctionSymbol, val array: Edge, val index: Edge, val value: Edge, val type: Type) : Node()
 
-        class SaveCoroutineState(val liveVariables: List<Variable>) : Node()
+        class SaveCoroutineState : Node() {
+            val liveVariables = mutableListOf<Variable>()
+        }
 
         class Variable(values: List<Edge>, val type: Type, val kind: VariableKind) : Node() {
             val values = mutableListOf<Edge>().also { it += values }
