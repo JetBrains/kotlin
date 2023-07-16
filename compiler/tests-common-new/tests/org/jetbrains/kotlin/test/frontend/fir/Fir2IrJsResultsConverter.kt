@@ -18,8 +18,6 @@ import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
-import org.jetbrains.kotlin.fir.AbstractFirAnalyzerFacade
-import org.jetbrains.kotlin.fir.FirAnalyzerFacade
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.js.FirJsKotlinMangler
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
@@ -35,7 +33,6 @@ import org.jetbrains.kotlin.ir.backend.js.incrementalDataProvider
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.library.unresolvedDependencies
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
@@ -88,16 +85,12 @@ class Fir2IrJsResultsConverter(
 
         for ((index, part) in inputArtifact.partsForDependsOnModules.withIndex()) {
             val (irModuleFragment, components, pluginContext) =
-                part.firAnalyzerFacade.convertToJsIr(
-                    part.firFiles.values,
-                    fir2IrExtensions = Fir2IrExtensions.Default,
+                part.firAnalyzerFacade.result.outputs.single().convertToJsIr(
                     module,
                     configuration,
                     testServices,
                     commonMemberStorage,
                     irBuiltIns,
-                    irMangler,
-                    generateSignatures = true,
                 )
             irBuiltIns = components.irBuiltIns
             mainPluginContext = pluginContext
@@ -156,36 +149,31 @@ class Fir2IrJsResultsConverter(
     }
 }
 
-fun AbstractFirAnalyzerFacade.convertToJsIr(
-    firFiles: Collection<FirFile>,
-    fir2IrExtensions: Fir2IrExtensions,
+fun ModuleCompilerAnalyzedOutput.convertToJsIr(
     module: TestModule,
     configuration: CompilerConfiguration,
     testServices: TestServices,
     commonMemberStorage: Fir2IrCommonMemberStorage,
-    irBuiltIns: IrBuiltInsOverFir?,
-    irMangler: KotlinMangler.IrMangler,
-    generateSignatures: Boolean
+    irBuiltIns: IrBuiltInsOverFir?
 ): Fir2IrResult {
-    this as FirAnalyzerFacade
     // TODO: consider avoiding repeated libraries resolution
     val libraries = resolveLibraries(configuration, getAllJsDependenciesPaths(module, testServices))
     val (dependencies, builtIns) = loadResolvedLibraries(libraries, configuration.languageVersionSettings, testServices)
 
     val fir2IrConfiguration = Fir2IrConfiguration(
         languageVersionSettings = configuration.languageVersionSettings,
-        linkViaSignatures = generateSignatures,
+        linkViaSignatures = true,
         evaluatedConstTracker = configuration
             .putIfAbsent(CommonConfigurationKeys.EVALUATED_CONST_TRACKER, EvaluatedConstTracker.create()),
         inlineConstTracker = null,
     )
 
-    return ModuleCompilerAnalyzedOutput(this.session, this.scopeSession, firFiles.toList()).convertToIr(
-        fir2IrExtensions,
+    return convertToIr(
+        Fir2IrExtensions.Default,
         fir2IrConfiguration,
         commonMemberStorage,
         irBuiltIns,
-        irMangler,
+        JsManglerIr,
         Fir2IrVisibilityConverter.Default,
         builtIns ?: DefaultBuiltIns.Instance // TODO: consider passing externally,
     ).also {

@@ -6,35 +6,26 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.KtSourceFile
-import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
-import org.jetbrains.kotlin.fir.backend.*
-import org.jetbrains.kotlin.fir.backend.jvm.FirJvmVisibilityConverter
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.FirParser
 
 abstract class AbstractFirAnalyzerFacade {
     abstract val scopeSession: ScopeSession
+    abstract val result: FirResult
+
     abstract fun runCheckers(): Map<FirFile, List<KtDiagnostic>>
 
     abstract fun runResolution(): List<FirFile>
-
-    abstract fun convertToIr(
-        fir2IrExtensions: Fir2IrExtensions,
-        commonMemberStorage: Fir2IrCommonMemberStorage,
-        irBuiltIns: IrBuiltInsOverFir?
-    ): Fir2IrResult
 }
 
 class FirAnalyzerFacade(
     val session: FirSession,
-    val fir2IrConfiguration: Fir2IrConfiguration,
     val ktFiles: Collection<KtFile> = emptyList(), // may be empty if light tree mode enabled
     val lightTreeFiles: Collection<KtSourceFile> = emptyList(), // may be empty if light tree mode disabled
     val parser: FirParser,
@@ -44,6 +35,9 @@ class FirAnalyzerFacade(
     private var _scopeSession: ScopeSession? = null
     override val scopeSession: ScopeSession
         get() = _scopeSession!!
+
+    override val result: FirResult
+        get() = FirResult(listOf(ModuleCompilerAnalyzedOutput(session, scopeSession, firFiles!!)))
 
     private var collectedDiagnostics: Map<FirFile, List<KtDiagnostic>>? = null
 
@@ -67,23 +61,5 @@ class FirAnalyzerFacade(
         if (collectedDiagnostics != null) return collectedDiagnostics!!
         collectedDiagnostics = session.runCheckers(scopeSession, firFiles!!, DiagnosticReporterFactory.createPendingReporter())
         return collectedDiagnostics!!
-    }
-
-    override fun convertToIr(
-        fir2IrExtensions: Fir2IrExtensions,
-        commonMemberStorage: Fir2IrCommonMemberStorage,
-        irBuiltIns: IrBuiltInsOverFir?
-    ): Fir2IrResult {
-        if (_scopeSession == null) runResolution()
-
-        return ModuleCompilerAnalyzedOutput(this.session, this.scopeSession, firFiles!!.toList()).convertToIr(
-            fir2IrExtensions,
-            fir2IrConfiguration,
-            commonMemberStorage,
-            irBuiltIns,
-            JvmIrMangler,
-            FirJvmVisibilityConverter,
-            DefaultBuiltIns.Instance
-        )
     }
 }
