@@ -229,6 +229,7 @@ fun transformFirToIr(
         fir2IrExtensions,
         Fir2IrConfiguration(
             languageVersionSettings = moduleStructure.compilerConfiguration.languageVersionSettings,
+            diagnosticReporter = diagnosticsReporter,
             linkViaSignatures = false,
             evaluatedConstTracker = moduleStructure.compilerConfiguration
                 .putIfAbsent(CommonConfigurationKeys.EVALUATED_CONST_TRACKER, EvaluatedConstTracker.create()),
@@ -240,12 +241,10 @@ fun transformFirToIr(
         firMangler = FirJsKotlinMangler(),
         visibilityConverter = Fir2IrVisibilityConverter.Default,
         kotlinBuiltIns = builtInsModule ?: DefaultBuiltIns.Instance,
-        diagnosticReporter = diagnosticsReporter,
-        actualizerTypeContextProvider = ::IrTypeSystemContextImpl,
-        fir2IrResultPostCompute = {
-            (this.irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = librariesDescriptors }
-        }
-    )
+        actualizerTypeContextProvider = ::IrTypeSystemContextImpl
+    ) {
+        (this.irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = librariesDescriptors }
+    }
 }
 
 private class Fir2KlibSerializer(

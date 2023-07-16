@@ -6,8 +6,8 @@ import org.jetbrains.kotlin.backend.common.serialization.metadata.DynamicTypeDes
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.phases.Fir2IrOutput
 import org.jetbrains.kotlin.backend.konan.driver.phases.FirOutput
-import org.jetbrains.kotlin.backend.konan.ir.SymbolOverIrLookupUtils
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
+import org.jetbrains.kotlin.backend.konan.ir.SymbolOverIrLookupUtils
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIdSignaturer
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.descriptors.isEmpty
 import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
-import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
@@ -35,8 +34,8 @@ import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
+import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
-import org.jetbrains.kotlin.name.*
 
 internal val KlibFactories = KlibMetadataFactories(::KonanBuiltIns, DynamicTypeDeserializer)
 
@@ -73,21 +72,22 @@ internal fun PhaseContext.fir2Ir(
     }
     val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter()
 
+    val fir2IrConfiguration = Fir2IrConfiguration(
+            languageVersionSettings = configuration.languageVersionSettings,
+            diagnosticReporter = diagnosticsReporter,
+            linkViaSignatures = false,
+            evaluatedConstTracker = configuration
+                    .putIfAbsent(CommonConfigurationKeys.EVALUATED_CONST_TRACKER, EvaluatedConstTracker.create()),
+            inlineConstTracker = null,
+    )
     val (irModuleFragment, components, pluginContext, irActualizedResult) = input.firResult.convertToIrAndActualize(
             fir2IrExtensions,
-            Fir2IrConfiguration(
-                    languageVersionSettings = configuration.languageVersionSettings,
-                    linkViaSignatures = false,
-                    evaluatedConstTracker = configuration
-                            .putIfAbsent(CommonConfigurationKeys.EVALUATED_CONST_TRACKER, EvaluatedConstTracker.create()),
-                    inlineConstTracker = null,
-            ),
+            fir2IrConfiguration,
             IrGenerationExtension.getInstances(config.project),
             signatureComposer = DescriptorSignatureComposerStub(KonanManglerDesc),
             irMangler = KonanManglerIr,
             firMangler = FirNativeKotlinMangler(),
             visibilityConverter = Fir2IrVisibilityConverter.Default,
-            diagnosticReporter = diagnosticsReporter,
             kotlinBuiltIns = builtInsModule ?: DefaultBuiltIns.Instance,
             actualizerTypeContextProvider = ::IrTypeSystemContextImpl,
             fir2IrResultPostCompute = {

@@ -24,10 +24,13 @@ import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticMarker
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.fir.backend.Fir2IrCommonMemberStorage
@@ -80,9 +83,11 @@ internal class KtFirCompilerFacility(
 
         val generateClassFilter = SingleFileGenerateClassFilter(file, compilationPeerData.inlinedClasses)
         val fir2IrExtensions = JvmFir2IrExtensions(effectiveConfiguration, JvmIrDeserializerImpl(), JvmIrMangler)
+        val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter()
 
         val fir2IrConfiguration = Fir2IrConfiguration(
             effectiveConfiguration.languageVersionSettings,
+            diagnosticsReporter,
             linkViaSignatures = false,
             effectiveConfiguration[CommonConfigurationKeys.EVALUATED_CONST_TRACKER] ?: EvaluatedConstTracker.create(),
             effectiveConfiguration[CommonConfigurationKeys.INLINE_CONST_TRACKER]
@@ -117,6 +122,7 @@ internal class KtFirCompilerFacility(
             effectiveConfiguration,
         ).generateDeclaredClassFilter(generateClassFilter)
             .codegenFactory(codegenFactory)
+            .diagnosticReporter(diagnosticsReporter)
             .build()
 
         try {

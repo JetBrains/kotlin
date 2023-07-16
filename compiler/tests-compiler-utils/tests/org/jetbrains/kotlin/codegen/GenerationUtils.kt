@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.FirAnalyzerFacade
 import org.jetbrains.kotlin.fir.FirTestSessionFactoryHelper
 import org.jetbrains.kotlin.fir.backend.Fir2IrCommonMemberStorage
@@ -126,9 +127,11 @@ object GenerationUtils {
         )
 
         val fir2IrExtensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl(), JvmIrMangler)
+        val diagnosticReporter = DiagnosticReporterFactory.createReporter()
 
         val fir2IrConfiguration = Fir2IrConfiguration(
             languageVersionSettings = configuration.languageVersionSettings,
+            diagnosticReporter = diagnosticReporter,
             linkViaSignatures = linkViaSignatures,
             evaluatedConstTracker = configuration
                 .putIfAbsent(CommonConfigurationKeys.EVALUATED_CONST_TRACKER, EvaluatedConstTracker.create()),
@@ -160,6 +163,8 @@ object GenerationUtils {
             true
         ).jvmBackendClassResolver(
             FirJvmBackendClassResolver(components)
+        ).diagnosticReporter(
+            diagnosticReporter
         ).build()
 
         generationState.beforeCompile()

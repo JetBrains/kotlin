@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.js.FirJsKotlinMangler
@@ -80,13 +81,15 @@ class Fir2IrWasmResultsConverter(
         var irBuiltIns: IrBuiltInsOverFir? = null
 
         val commonMemberStorage = Fir2IrCommonMemberStorage(IdSignatureDescriptor(JsManglerDesc), FirJsKotlinMangler())
+        val diagnosticReporter = DiagnosticReporterFactory.createReporter()
 
         for ((index, part) in inputArtifact.partsForDependsOnModules.withIndex()) {
             val (irModuleFragment, components, pluginContext) =
                 part.firAnalyzerFacade.result.outputs.single().convertToWasmIr(
+                    testServices,
                     module,
                     configuration,
-                    testServices,
+                    diagnosticReporter,
                     commonMemberStorage,
                     irBuiltIns,
                 )
@@ -117,7 +120,7 @@ class Fir2IrWasmResultsConverter(
             sourceFiles,
             configuration.incrementalDataProvider?.getSerializedData(sourceFiles) ?: emptyList(),
             expectDescriptorToSymbol = mutableMapOf(),
-            diagnosticReporter = DiagnosticReporterFactory.createReporter(),
+            diagnosticReporter = diagnosticReporter,
             hasErrors = inputArtifact.hasErrors,
             descriptorMangler = commonMemberStorage.symbolTable.signaturer.mangler,
             irMangler = JsManglerIr,
@@ -146,9 +149,10 @@ class Fir2IrWasmResultsConverter(
 }
 
 fun ModuleCompilerAnalyzedOutput.convertToWasmIr(
+    testServices: TestServices,
     module: TestModule,
     configuration: CompilerConfiguration,
-    testServices: TestServices,
+    diagnosticReporter: DiagnosticReporter,
     commonMemberStorage: Fir2IrCommonMemberStorage,
     irBuiltIns: IrBuiltInsOverFir?
 ): Fir2IrResult {
@@ -158,6 +162,7 @@ fun ModuleCompilerAnalyzedOutput.convertToWasmIr(
 
     val fir2IrConfiguration = Fir2IrConfiguration(
         languageVersionSettings = configuration.languageVersionSettings,
+        diagnosticReporter = diagnosticReporter,
         linkViaSignatures = true,
         evaluatedConstTracker = configuration
             .putIfAbsent(CommonConfigurationKeys.EVALUATED_CONST_TRACKER, EvaluatedConstTracker.create()),

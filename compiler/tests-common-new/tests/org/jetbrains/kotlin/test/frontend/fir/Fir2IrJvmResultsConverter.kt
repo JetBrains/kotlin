@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.container.get
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.backend.Fir2IrCommonMemberStorage
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
@@ -92,17 +93,18 @@ class Fir2IrJvmResultsConverter(
             .getBoolean(JVMConfigurationKeys.LINK_VIA_SIGNATURES)
         val commonMemberStorage = Fir2IrCommonMemberStorage(signatureComposerForJvmFir2Ir(generateSignatures), FirJvmKotlinMangler())
         var irBuiltIns: IrBuiltInsOverFir? = null
+        val diagnosticReporter = DiagnosticReporterFactory.createReporter()
 
         for ((index, firOutputPart) in inputArtifact.partsForDependsOnModules.withIndex()) {
             val compilerConfiguration = compilerConfigurationProvider.getCompilerConfiguration(module)
             val fir2IrConfiguration = Fir2IrConfiguration(
                 languageVersionSettings = module.languageVersionSettings,
+                diagnosticReporter = diagnosticReporter,
                 linkViaSignatures = compilerConfiguration.getBoolean(JVMConfigurationKeys.LINK_VIA_SIGNATURES),
                 evaluatedConstTracker = compilerConfiguration
                     .putIfAbsent(CommonConfigurationKeys.EVALUATED_CONST_TRACKER, EvaluatedConstTracker.create()),
                 inlineConstTracker = compilerConfiguration[CommonConfigurationKeys.INLINE_CONST_TRACKER],
             )
-
             val (irModuleFragment, components, pluginContext) = firOutputPart.firAnalyzerFacade.result.outputs.single().convertToIr(
                 fir2IrExtensions,
                 fir2IrConfiguration,
@@ -139,6 +141,8 @@ class Fir2IrJvmResultsConverter(
             true
         ).jvmBackendClassResolver(
             FirJvmBackendClassResolver(mainModuleComponents)
+        ).diagnosticReporter(
+            diagnosticReporter
         ).build()
 
         val result = IrBackendInput.JvmIrBackendInput(
