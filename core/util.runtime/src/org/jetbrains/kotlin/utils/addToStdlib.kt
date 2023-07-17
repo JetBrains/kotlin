@@ -89,6 +89,14 @@ inline fun <reified T> List<*>.castAll(): List<@kotlin.internal.NoInfer T> {
     return this as List<T>
 }
 
+@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
+@UnsafeCastFunction
+inline fun <reified T> Collection<*>.castAll(): Collection<@kotlin.internal.NoInfer T> {
+    for (element in this) element as T
+    @Suppress("UNCHECKED_CAST")
+    return this as Collection<T>
+}
+
 fun <T> sequenceOfLazyValues(vararg elements: () -> T): Sequence<T> = elements.asSequence().map { it() }
 
 fun <T1, T2> Pair<T1, T2>.swap(): Pair<T2, T1> = Pair(second, first)

@@ -1,4 +1,5 @@
 // IGNORE_BACKEND: JS
+// IGNORE_BACKEND_K2: ANY
 
 // Test for KT-36188 bug compatibility between non-IR and IR backends
 
