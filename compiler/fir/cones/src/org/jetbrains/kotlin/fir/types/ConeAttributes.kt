@@ -96,9 +96,10 @@ class ConeAttributes private constructor(attributes: List<ConeAttribute<*>>) : A
         if (attribute in this) return this
         if (isEmpty()) return predefinedAttributes[attribute] ?: ConeAttributes(attribute)
         val newAttributes = buildList {
-            addAll(this)
+            addAll(arrayMap)
             add(attribute)
         }
+
         return ConeAttributes(newAttributes)
     }
 

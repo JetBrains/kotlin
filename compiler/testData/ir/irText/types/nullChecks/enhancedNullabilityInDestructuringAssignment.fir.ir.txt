@@ -131,66 +131,66 @@ FILE fqName:<root> fileName:/enhancedNullabilityInDestructuringAssignment.kt
         y: GET_VAR 'val y: kotlin.Int declared in <root>.test1' type=kotlin.Int origin=null
   FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-      VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:@[FlexibleNullability] <root>.Q<@[EnhancedNullability] kotlin.String, @[EnhancedNullability] kotlin.String>? [val]
-        CALL 'public open fun notNullComponents (): @[FlexibleNullability] <root>.Q<@[EnhancedNullability] kotlin.String, @[EnhancedNullability] kotlin.String>? declared in <root>.J' type=@[FlexibleNullability] <root>.Q<@[EnhancedNullability] kotlin.String, @[EnhancedNullability] kotlin.String>? origin=null
-      VAR name:x type:@[EnhancedNullability] kotlin.String [val]
-        TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
-          CALL 'public final fun component1 (): T1 of <root>.Q declared in <root>.Q' type=@[EnhancedNullability] kotlin.String origin=COMPONENT_N(index=1)
-            $this: GET_VAR 'val tmp_1: @[FlexibleNullability] <root>.Q<@[EnhancedNullability] kotlin.String, @[EnhancedNullability] kotlin.String>? declared in <root>.test2' type=@[FlexibleNullability] <root>.Q<@[EnhancedNullability] kotlin.String, @[EnhancedNullability] kotlin.String>? origin=null
-      VAR name:y type:@[EnhancedNullability] kotlin.String [val]
-        TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
-          CALL 'public final fun component2 (): T2 of <root>.Q declared in <root>.Q' type=@[EnhancedNullability] kotlin.String origin=COMPONENT_N(index=2)
-            $this: GET_VAR 'val tmp_1: @[FlexibleNullability] <root>.Q<@[EnhancedNullability] kotlin.String, @[EnhancedNullability] kotlin.String>? declared in <root>.test2' type=@[FlexibleNullability] <root>.Q<@[EnhancedNullability] kotlin.String, @[EnhancedNullability] kotlin.String>? origin=null
+      VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:@[FlexibleNullability] <root>.Q<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String, @[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String>? [val]
+        CALL 'public open fun notNullComponents (): @[FlexibleNullability] <root>.Q<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String, @[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String>? declared in <root>.J' type=@[FlexibleNullability] <root>.Q<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String, @[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String>? origin=null
+      VAR name:x type:@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String [val]
+        TYPE_OP type=@[NotNull(value = <null>)] kotlin.String origin=IMPLICIT_NOTNULL typeOperand=@[NotNull(value = <null>)] kotlin.String
+          CALL 'public final fun component1 (): T1 of <root>.Q declared in <root>.Q' type=@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String origin=COMPONENT_N(index=1)
+            $this: GET_VAR 'val tmp_1: @[FlexibleNullability] <root>.Q<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String, @[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String>? declared in <root>.test2' type=@[FlexibleNullability] <root>.Q<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String, @[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String>? origin=null
+      VAR name:y type:@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String [val]
+        TYPE_OP type=@[NotNull(value = <null>)] kotlin.String origin=IMPLICIT_NOTNULL typeOperand=@[NotNull(value = <null>)] kotlin.String
+          CALL 'public final fun component2 (): T2 of <root>.Q declared in <root>.Q' type=@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String origin=COMPONENT_N(index=2)
+            $this: GET_VAR 'val tmp_1: @[FlexibleNullability] <root>.Q<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String, @[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String>? declared in <root>.test2' type=@[FlexibleNullability] <root>.Q<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String, @[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String>? origin=null
       CALL 'public final fun use (x: kotlin.Any, y: kotlin.Any): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        x: GET_VAR 'val x: @[EnhancedNullability] kotlin.String declared in <root>.test2' type=@[EnhancedNullability] kotlin.String origin=null
-        y: GET_VAR 'val y: @[EnhancedNullability] kotlin.String declared in <root>.test2' type=@[EnhancedNullability] kotlin.String origin=null
+        x: GET_VAR 'val x: @[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String declared in <root>.test2' type=@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String origin=null
+        y: GET_VAR 'val y: @[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String declared in <root>.test2' type=@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String origin=null
   FUN name:test2Desugared visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-      VAR name:tmp type:@[FlexibleNullability] <root>.Q<@[EnhancedNullability] kotlin.String, @[EnhancedNullability] kotlin.String>? [val]
-        CALL 'public open fun notNullComponents (): @[FlexibleNullability] <root>.Q<@[EnhancedNullability] kotlin.String, @[EnhancedNullability] kotlin.String>? declared in <root>.J' type=@[FlexibleNullability] <root>.Q<@[EnhancedNullability] kotlin.String, @[EnhancedNullability] kotlin.String>? origin=null
-      VAR name:x type:kotlin.String [val]
-        TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
-          CALL 'public final fun component1 (): T1 of <root>.Q declared in <root>.Q' type=@[EnhancedNullability] kotlin.String origin=null
-            $this: GET_VAR 'val tmp: @[FlexibleNullability] <root>.Q<@[EnhancedNullability] kotlin.String, @[EnhancedNullability] kotlin.String>? declared in <root>.test2Desugared' type=@[FlexibleNullability] <root>.Q<@[EnhancedNullability] kotlin.String, @[EnhancedNullability] kotlin.String>? origin=null
-      VAR name:y type:kotlin.String [val]
-        TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
-          CALL 'public final fun component2 (): T2 of <root>.Q declared in <root>.Q' type=@[EnhancedNullability] kotlin.String origin=null
-            $this: GET_VAR 'val tmp: @[FlexibleNullability] <root>.Q<@[EnhancedNullability] kotlin.String, @[EnhancedNullability] kotlin.String>? declared in <root>.test2Desugared' type=@[FlexibleNullability] <root>.Q<@[EnhancedNullability] kotlin.String, @[EnhancedNullability] kotlin.String>? origin=null
+      VAR name:tmp type:@[FlexibleNullability] <root>.Q<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String, @[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String>? [val]
+        CALL 'public open fun notNullComponents (): @[FlexibleNullability] <root>.Q<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String, @[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String>? declared in <root>.J' type=@[FlexibleNullability] <root>.Q<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String, @[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String>? origin=null
+      VAR name:x type:@[NotNull(value = <null>)] kotlin.String [val]
+        TYPE_OP type=@[NotNull(value = <null>)] kotlin.String origin=IMPLICIT_NOTNULL typeOperand=@[NotNull(value = <null>)] kotlin.String
+          CALL 'public final fun component1 (): T1 of <root>.Q declared in <root>.Q' type=@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String origin=null
+            $this: GET_VAR 'val tmp: @[FlexibleNullability] <root>.Q<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String, @[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String>? declared in <root>.test2Desugared' type=@[FlexibleNullability] <root>.Q<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String, @[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String>? origin=null
+      VAR name:y type:@[NotNull(value = <null>)] kotlin.String [val]
+        TYPE_OP type=@[NotNull(value = <null>)] kotlin.String origin=IMPLICIT_NOTNULL typeOperand=@[NotNull(value = <null>)] kotlin.String
+          CALL 'public final fun component2 (): T2 of <root>.Q declared in <root>.Q' type=@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String origin=null
+            $this: GET_VAR 'val tmp: @[FlexibleNullability] <root>.Q<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String, @[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String>? declared in <root>.test2Desugared' type=@[FlexibleNullability] <root>.Q<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String, @[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String>? origin=null
       CALL 'public final fun use (x: kotlin.Any, y: kotlin.Any): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        x: GET_VAR 'val x: kotlin.String declared in <root>.test2Desugared' type=kotlin.String origin=null
-        y: GET_VAR 'val y: kotlin.String declared in <root>.test2Desugared' type=kotlin.String origin=null
+        x: GET_VAR 'val x: @[NotNull(value = <null>)] kotlin.String declared in <root>.test2Desugared' type=@[NotNull(value = <null>)] kotlin.String origin=null
+        y: GET_VAR 'val y: @[NotNull(value = <null>)] kotlin.String declared in <root>.test2Desugared' type=@[NotNull(value = <null>)] kotlin.String origin=null
   FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-      VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:<root>.Q<@[EnhancedNullability] kotlin.String, @[EnhancedNullability] kotlin.String> [val]
-        TYPE_OP type=<root>.Q<@[EnhancedNullability] kotlin.String, @[EnhancedNullability] kotlin.String> origin=IMPLICIT_NOTNULL typeOperand=<root>.Q<@[EnhancedNullability] kotlin.String, @[EnhancedNullability] kotlin.String>
-          CALL 'public open fun notNullQAndComponents (): @[EnhancedNullability] <root>.Q<@[EnhancedNullability] kotlin.String, @[EnhancedNullability] kotlin.String> declared in <root>.J' type=@[EnhancedNullability] <root>.Q<@[EnhancedNullability] kotlin.String, @[EnhancedNullability] kotlin.String> origin=null
-      VAR name:x type:@[EnhancedNullability] kotlin.String [val]
-        TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
-          CALL 'public final fun component1 (): T1 of <root>.Q declared in <root>.Q' type=@[EnhancedNullability] kotlin.String origin=COMPONENT_N(index=1)
-            $this: GET_VAR 'val tmp_2: <root>.Q<@[EnhancedNullability] kotlin.String, @[EnhancedNullability] kotlin.String> declared in <root>.test3' type=<root>.Q<@[EnhancedNullability] kotlin.String, @[EnhancedNullability] kotlin.String> origin=null
-      VAR name:y type:@[EnhancedNullability] kotlin.String [val]
-        TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
-          CALL 'public final fun component2 (): T2 of <root>.Q declared in <root>.Q' type=@[EnhancedNullability] kotlin.String origin=COMPONENT_N(index=2)
-            $this: GET_VAR 'val tmp_2: <root>.Q<@[EnhancedNullability] kotlin.String, @[EnhancedNullability] kotlin.String> declared in <root>.test3' type=<root>.Q<@[EnhancedNullability] kotlin.String, @[EnhancedNullability] kotlin.String> origin=null
+      VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:<root>.Q<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String, @[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String> [val]
+        TYPE_OP type=<root>.Q<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String, @[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String> origin=IMPLICIT_NOTNULL typeOperand=<root>.Q<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String, @[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String>
+          CALL 'public open fun notNullQAndComponents (): @[EnhancedNullability] <root>.Q<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String, @[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String> declared in <root>.J' type=@[EnhancedNullability] <root>.Q<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String, @[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String> origin=null
+      VAR name:x type:@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String [val]
+        TYPE_OP type=@[NotNull(value = <null>)] kotlin.String origin=IMPLICIT_NOTNULL typeOperand=@[NotNull(value = <null>)] kotlin.String
+          CALL 'public final fun component1 (): T1 of <root>.Q declared in <root>.Q' type=@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String origin=COMPONENT_N(index=1)
+            $this: GET_VAR 'val tmp_2: <root>.Q<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String, @[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String> declared in <root>.test3' type=<root>.Q<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String, @[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String> origin=null
+      VAR name:y type:@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String [val]
+        TYPE_OP type=@[NotNull(value = <null>)] kotlin.String origin=IMPLICIT_NOTNULL typeOperand=@[NotNull(value = <null>)] kotlin.String
+          CALL 'public final fun component2 (): T2 of <root>.Q declared in <root>.Q' type=@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String origin=COMPONENT_N(index=2)
+            $this: GET_VAR 'val tmp_2: <root>.Q<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String, @[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String> declared in <root>.test3' type=<root>.Q<@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String, @[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String> origin=null
       CALL 'public final fun use (x: kotlin.Any, y: kotlin.Any): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        x: GET_VAR 'val x: @[EnhancedNullability] kotlin.String declared in <root>.test3' type=@[EnhancedNullability] kotlin.String origin=null
-        y: GET_VAR 'val y: @[EnhancedNullability] kotlin.String declared in <root>.test3' type=@[EnhancedNullability] kotlin.String origin=null
+        x: GET_VAR 'val x: @[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String declared in <root>.test3' type=@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String origin=null
+        y: GET_VAR 'val y: @[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String declared in <root>.test3' type=@[EnhancedNullability] @[NotNull(value = <null>)] kotlin.String origin=null
   FUN name:test4 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-      VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:kotlin.collections.IndexedValue<@[EnhancedNullability] <root>.P> [val]
-        CALL 'public final fun first <T> (): T of kotlin.collections.first declared in kotlin.collections' type=kotlin.collections.IndexedValue<@[EnhancedNullability] <root>.P> origin=null
-          <T>: kotlin.collections.IndexedValue<@[EnhancedNullability] <root>.P>
-          $receiver: CALL 'public final fun withIndex <T> (): kotlin.collections.Iterable<kotlin.collections.IndexedValue<T of kotlin.collections.withIndex>> declared in kotlin.collections' type=kotlin.collections.Iterable<kotlin.collections.IndexedValue<@[EnhancedNullability] <root>.P>> origin=null
-            <T>: @[EnhancedNullability] <root>.P
-            $receiver: TYPE_OP type=@[FlexibleMutability] kotlin.collections.MutableList<@[EnhancedNullability] <root>.P> origin=IMPLICIT_NOTNULL typeOperand=@[FlexibleMutability] kotlin.collections.MutableList<@[EnhancedNullability] <root>.P>
-              CALL 'public open fun listOfNotNull (): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[EnhancedNullability] <root>.P>? declared in <root>.J' type=@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[EnhancedNullability] <root>.P>? origin=null
+      VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:kotlin.collections.IndexedValue<@[EnhancedNullability] @[NotNull(value = <null>)] <root>.P> [val]
+        CALL 'public final fun first <T> (): T of kotlin.collections.first declared in kotlin.collections' type=kotlin.collections.IndexedValue<@[EnhancedNullability] @[NotNull(value = <null>)] <root>.P> origin=null
+          <T>: kotlin.collections.IndexedValue<@[EnhancedNullability] @[NotNull(value = <null>)] <root>.P>
+          $receiver: CALL 'public final fun withIndex <T> (): kotlin.collections.Iterable<kotlin.collections.IndexedValue<T of kotlin.collections.withIndex>> declared in kotlin.collections' type=kotlin.collections.Iterable<kotlin.collections.IndexedValue<@[EnhancedNullability] @[NotNull(value = <null>)] <root>.P>> origin=null
+            <T>: @[EnhancedNullability] @[NotNull(value = <null>)] <root>.P
+            $receiver: TYPE_OP type=@[FlexibleMutability] kotlin.collections.MutableList<@[EnhancedNullability] @[NotNull(value = <null>)] <root>.P> origin=IMPLICIT_NOTNULL typeOperand=@[FlexibleMutability] kotlin.collections.MutableList<@[EnhancedNullability] @[NotNull(value = <null>)] <root>.P>
+              CALL 'public open fun listOfNotNull (): @[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[EnhancedNullability] @[NotNull(value = <null>)] <root>.P>? declared in <root>.J' type=@[FlexibleNullability] @[FlexibleMutability] kotlin.collections.MutableList<@[EnhancedNullability] @[NotNull(value = <null>)] <root>.P>? origin=null
       VAR name:x type:kotlin.Int [val]
         CALL 'public final fun component1 (): kotlin.Int declared in kotlin.collections.IndexedValue' type=kotlin.Int origin=COMPONENT_N(index=1)
-          $this: GET_VAR 'val tmp_3: kotlin.collections.IndexedValue<@[EnhancedNullability] <root>.P> declared in <root>.test4' type=kotlin.collections.IndexedValue<@[EnhancedNullability] <root>.P> origin=null
-      VAR name:y type:@[EnhancedNullability] <root>.P [val]
-        TYPE_OP type=<root>.P origin=IMPLICIT_NOTNULL typeOperand=<root>.P
-          CALL 'public final fun component2 (): T of kotlin.collections.IndexedValue declared in kotlin.collections.IndexedValue' type=@[EnhancedNullability] <root>.P origin=COMPONENT_N(index=2)
-            $this: GET_VAR 'val tmp_3: kotlin.collections.IndexedValue<@[EnhancedNullability] <root>.P> declared in <root>.test4' type=kotlin.collections.IndexedValue<@[EnhancedNullability] <root>.P> origin=null
+          $this: GET_VAR 'val tmp_3: kotlin.collections.IndexedValue<@[EnhancedNullability] @[NotNull(value = <null>)] <root>.P> declared in <root>.test4' type=kotlin.collections.IndexedValue<@[EnhancedNullability] @[NotNull(value = <null>)] <root>.P> origin=null
+      VAR name:y type:@[EnhancedNullability] @[NotNull(value = <null>)] <root>.P [val]
+        TYPE_OP type=@[NotNull(value = <null>)] <root>.P origin=IMPLICIT_NOTNULL typeOperand=@[NotNull(value = <null>)] <root>.P
+          CALL 'public final fun component2 (): T of kotlin.collections.IndexedValue declared in kotlin.collections.IndexedValue' type=@[EnhancedNullability] @[NotNull(value = <null>)] <root>.P origin=COMPONENT_N(index=2)
+            $this: GET_VAR 'val tmp_3: kotlin.collections.IndexedValue<@[EnhancedNullability] @[NotNull(value = <null>)] <root>.P> declared in <root>.test4' type=kotlin.collections.IndexedValue<@[EnhancedNullability] @[NotNull(value = <null>)] <root>.P> origin=null
       CALL 'public final fun use (x: kotlin.Any, y: kotlin.Any): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         x: GET_VAR 'val x: kotlin.Int declared in <root>.test4' type=kotlin.Int origin=null
-        y: GET_VAR 'val y: @[EnhancedNullability] <root>.P declared in <root>.test4' type=@[EnhancedNullability] <root>.P origin=null
+        y: GET_VAR 'val y: @[EnhancedNullability] @[NotNull(value = <null>)] <root>.P declared in <root>.test4' type=@[EnhancedNullability] @[NotNull(value = <null>)] <root>.P origin=null
