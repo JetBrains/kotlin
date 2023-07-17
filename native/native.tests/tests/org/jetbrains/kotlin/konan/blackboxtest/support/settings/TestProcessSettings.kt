@@ -259,9 +259,18 @@ internal sealed class CacheMode {
     }
 }
 
+private fun KotlinVersion.toCanonicalString(): String =
+    "$major.$minor"
+
 internal enum class PipelineType(val mutedOption: MutedOption, val compilerFlags: List<String>) {
-    K1(MutedOption.K1, emptyList()),
-    K2(MutedOption.K2, listOf("-language-version", "2.0"));
+    K1(
+        MutedOption.K1,
+        listOf("-language-version", "1.9")
+    ),
+    K2(
+        MutedOption.K2,
+        listOf("-language-version", if (KotlinVersion.CURRENT.major < 2) "2.0" else KotlinVersion.CURRENT.toCanonicalString())
+    );
 
     override fun toString() = if (compilerFlags.isEmpty()) "" else compilerFlags.joinToString(prefix = "(", postfix = ")", separator = " ")
 }
