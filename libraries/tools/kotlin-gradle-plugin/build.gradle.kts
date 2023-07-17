@@ -32,6 +32,7 @@ kotlin {
                 "org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi",
             )
         )
+        suppressWarnings = true
     }
 }
 
