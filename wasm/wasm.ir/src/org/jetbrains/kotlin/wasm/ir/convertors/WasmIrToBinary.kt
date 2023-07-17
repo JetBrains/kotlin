@@ -13,6 +13,23 @@ import org.jetbrains.kotlin.wasm.ir.source.location.Box
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocationMapping
 
+private object WasmBinary {
+    const val MAGIC = 0x6d736100u
+    const val VERSION = 1u
+
+    // https://webassembly.github.io/spec/core/binary/instructions.html#control-instructions
+    const val EMPTY_TYPE_FOR_BLOCK: Byte = -0x40 // 0x40
+
+    // TODO Change the link to final spec when it's merged
+    // https://webassembly.github.io/gc/core/binary/types.html
+    const val FUNC_TYPE: Byte = -0x20 // 0x60
+    const val STRUCT_TYPE: Byte = -0x21 // 0x5F
+    const val ARRAY_TYPE: Byte = -0x22 // 0x5E
+    const val SUB_TYPE: Byte = -0x30 // 0x50
+    const val SUB_FINAL_TYPE: Byte = -0x32 // 0x4E
+    const val REC_GROUP: Byte = -0x31 // 0x4F
+}
+
 class WasmIrToBinary(
     outputStream: OutputStream,
     val module: WasmModule,
@@ -29,8 +46,8 @@ class WasmIrToBinary(
     private var offsets = persistentListOf<Box>()
 
     fun appendWasmModule() {
-        b.writeUInt32(0x6d736100u) // WebAssembly magic
-        b.writeUInt32(1u)          // version
+        b.writeUInt32(WasmBinary.MAGIC)
+        b.writeUInt32(WasmBinary.VERSION)
 
         with(module) {
             // type section
@@ -39,7 +56,7 @@ class WasmIrToBinary(
                 appendVectorSize(functionTypes.size + numRecGroups)
                 functionTypes.forEach { appendFunctionTypeDeclaration(it) }
                 if (!recGroupTypes.isEmpty()) {
-                    b.writeByte(0x4f)
+                    b.writeVarInt7(WasmBinary.REC_GROUP)
                     appendVectorSize(recGroupTypes.size)
                     recGroupTypes.forEach {
                         when (it) {
@@ -297,7 +314,7 @@ class WasmIrToBinary(
     }
 
     private fun appendFunctionTypeDeclaration(type: WasmFunctionType) {
-        b.writeVarInt7(-0x20)
+        b.writeVarInt7(WasmBinary.FUNC_TYPE)
         b.writeVarUInt32(type.parameterTypes.size)
         type.parameterTypes.forEach { appendType(it) }
         b.writeVarUInt32(type.resultTypes.size)
@@ -308,7 +325,7 @@ class WasmIrToBinary(
         when (type) {
             is WasmImmediate.BlockType.Function -> appendModuleFieldReference(type.type)
             is WasmImmediate.BlockType.Value -> when (type.type) {
-                null -> b.writeVarInt7(-0x40)
+                null -> b.writeVarInt7(WasmBinary.EMPTY_TYPE_FOR_BLOCK)
                 else -> appendType(type.type)
             }
         }
@@ -320,7 +337,7 @@ class WasmIrToBinary(
     }
 
     private fun appendStructTypeDeclaration(type: WasmStructDeclaration) {
-        b.writeVarInt7(-0x30)
+        b.writeVarInt7(WasmBinary.SUB_TYPE)
 
         val superType = type.superType
         if (superType != null) {
@@ -330,7 +347,7 @@ class WasmIrToBinary(
             appendVectorSize(0)
         }
 
-        b.writeVarInt7(-0x21)
+        b.writeVarInt7(WasmBinary.STRUCT_TYPE)
         b.writeVarUInt32(type.fields.size)
         type.fields.forEach {
             appendFiledType(it)
@@ -338,7 +355,7 @@ class WasmIrToBinary(
     }
 
     private fun appendArrayTypeDeclaration(type: WasmArrayDeclaration) {
-        b.writeVarInt7(-0x22)
+        b.writeVarInt7(WasmBinary.ARRAY_TYPE)
         appendFiledType(type.field)
     }
 
