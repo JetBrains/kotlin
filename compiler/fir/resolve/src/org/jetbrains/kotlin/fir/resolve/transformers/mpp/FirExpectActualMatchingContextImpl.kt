@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.mpp.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualCollectionArgumentsCompatibilityCheckStrategy
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext.AnnotationCallInfo
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -317,7 +318,11 @@ class FirExpectActualMatchingContextImpl private constructor(
     override val DeclarationSymbolMarker.annotations: List<AnnotationCallInfo>
         get() = asSymbol().resolvedAnnotationsWithArguments.map(::AnnotationCallInfoImpl)
 
-    override fun areAnnotationArgumentsEqual(annotation1: AnnotationCallInfo, annotation2: AnnotationCallInfo): Boolean {
+    override fun areAnnotationArgumentsEqual(
+        annotation1: AnnotationCallInfo,
+        annotation2: AnnotationCallInfo,
+        collectionArgumentsCompatibilityCheckStrategy: ExpectActualCollectionArgumentsCompatibilityCheckStrategy,
+    ): Boolean {
         fun AnnotationCallInfo.getFirAnnotation(): FirAnnotation {
             return (this as AnnotationCallInfoImpl).annotation
         }

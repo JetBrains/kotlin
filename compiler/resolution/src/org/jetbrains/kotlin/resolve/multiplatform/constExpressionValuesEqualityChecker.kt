@@ -6,10 +6,15 @@
 package org.jetbrains.kotlin.resolve.multiplatform
 
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualCollectionArgumentsCompatibilityCheckStrategy
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 
-internal fun ExpectActualMatchingContext<*>.areExpressionConstValuesEqual(a: Any?, b: Any?): Boolean {
+internal fun ExpectActualMatchingContext<*>.areExpressionConstValuesEqual(
+    a: Any?,
+    b: Any?,
+    collectionArgumentsCompatibilityCheckStrategy: ExpectActualCollectionArgumentsCompatibilityCheckStrategy,
+): Boolean {
     return when {
         a is AnnotationDescriptor && b is AnnotationDescriptor -> {
             val aArgs = a.allValueArguments
@@ -17,16 +22,20 @@ internal fun ExpectActualMatchingContext<*>.areExpressionConstValuesEqual(a: Any
             a.fqName == b.fqName &&
                     aArgs.size == bArgs.size &&
                     areCompatibleExpectActualTypes(a.type, b.type) &&
-                    aArgs.keys.all { k -> areExpressionConstValuesEqual(aArgs[k], bArgs[k]) }
+                    aArgs.keys.all { k -> areExpressionConstValuesEqual(aArgs[k], bArgs[k], collectionArgumentsCompatibilityCheckStrategy) }
         }
         a is ConstantValue<*> && b is ConstantValue<*> -> {
-            areExpressionConstValuesEqual(a.value, b.value)
+            areExpressionConstValuesEqual(a.value, b.value, collectionArgumentsCompatibilityCheckStrategy)
         }
         a is Collection<*> && b is Collection<*> -> {
-            a.size == b.size && a.zip(b).all { (f, s) -> areExpressionConstValuesEqual(f, s) }
+            collectionArgumentsCompatibilityCheckStrategy.areCompatible(a, b) { f, s ->
+                areExpressionConstValuesEqual(f, s, collectionArgumentsCompatibilityCheckStrategy)
+            }
         }
         a is Array<*> && b is Array<*> -> {
-            a.size == b.size && a.zip(b).all { (f, s) -> areExpressionConstValuesEqual(f, s) }
+            collectionArgumentsCompatibilityCheckStrategy.areCompatible(a.toList(), b.toList()) { f, s ->
+                areExpressionConstValuesEqual(f, s, collectionArgumentsCompatibilityCheckStrategy)
+            }
         }
         else -> a == b
     }

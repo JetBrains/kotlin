@@ -160,7 +160,11 @@ interface ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemC
 
     val DeclarationSymbolMarker.annotations: List<AnnotationCallInfo>
 
-    fun areAnnotationArgumentsEqual(annotation1: AnnotationCallInfo, annotation2: AnnotationCallInfo): Boolean
+    fun areAnnotationArgumentsEqual(
+        annotation1: AnnotationCallInfo,
+        annotation2: AnnotationCallInfo,
+        collectionArgumentsCompatibilityCheckStrategy: ExpectActualCollectionArgumentsCompatibilityCheckStrategy,
+    ): Boolean
 
     val DeclarationSymbolMarker.hasSourceAnnotationsErased: Boolean
 

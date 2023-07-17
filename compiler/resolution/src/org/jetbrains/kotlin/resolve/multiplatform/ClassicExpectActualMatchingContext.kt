@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.components.ClassicTypeSystemContextForCS
+import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualCollectionArgumentsCompatibilityCheckStrategy
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext.AnnotationCallInfo
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
@@ -337,11 +338,18 @@ class ClassicExpectActualMatchingContext(val platformModule: ModuleDescriptor) :
     override val DeclarationSymbolMarker.annotations: List<AnnotationCallInfo>
         get() = asDescriptor().annotations.map(::AnnotationCallInfoImpl)
 
-
-    override fun areAnnotationArgumentsEqual(annotation1: AnnotationCallInfo, annotation2: AnnotationCallInfo): Boolean {
+    override fun areAnnotationArgumentsEqual(
+        annotation1: AnnotationCallInfo,
+        annotation2: AnnotationCallInfo,
+        collectionArgumentsCompatibilityCheckStrategy: ExpectActualCollectionArgumentsCompatibilityCheckStrategy,
+    ): Boolean {
         fun AnnotationCallInfo.getDescriptor(): AnnotationDescriptor = (this as AnnotationCallInfoImpl).annotationDescriptor
 
-        return areExpressionConstValuesEqual(annotation1.getDescriptor(), annotation2.getDescriptor())
+        return areExpressionConstValuesEqual(
+            annotation1.getDescriptor(),
+            annotation2.getDescriptor(),
+            collectionArgumentsCompatibilityCheckStrategy,
+        )
     }
 
     private class AnnotationCallInfoImpl(

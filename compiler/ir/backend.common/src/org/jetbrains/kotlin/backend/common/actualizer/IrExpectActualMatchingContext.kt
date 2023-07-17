@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.mpp.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualCollectionArgumentsCompatibilityCheckStrategy
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext.AnnotationCallInfo
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
@@ -453,10 +454,17 @@ internal abstract class IrExpectActualMatchingContext(
     override val DeclarationSymbolMarker.annotations: List<AnnotationCallInfo>
         get() = asIr().annotations.map(::AnnotationCallInfoImpl)
 
-    override fun areAnnotationArgumentsEqual(annotation1: AnnotationCallInfo, annotation2: AnnotationCallInfo): Boolean {
+    override fun areAnnotationArgumentsEqual(
+        annotation1: AnnotationCallInfo, annotation2: AnnotationCallInfo,
+        collectionArgumentsCompatibilityCheckStrategy: ExpectActualCollectionArgumentsCompatibilityCheckStrategy,
+    ): Boolean {
         fun AnnotationCallInfo.getIrElement(): IrConstructorCall = (this as AnnotationCallInfoImpl).irElement
 
-        return areIrExpressionConstValuesEqual(annotation1.getIrElement(), annotation2.getIrElement())
+        return areIrExpressionConstValuesEqual(
+            annotation1.getIrElement(),
+            annotation2.getIrElement(),
+            collectionArgumentsCompatibilityCheckStrategy,
+        )
     }
 
     internal fun getClassIdAfterActualization(classId: ClassId): ClassId {

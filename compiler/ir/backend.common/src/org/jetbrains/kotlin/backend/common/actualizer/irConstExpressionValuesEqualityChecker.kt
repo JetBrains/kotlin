@@ -8,8 +8,13 @@ package org.jetbrains.kotlin.backend.common.actualizer
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.classOrFail
+import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualCollectionArgumentsCompatibilityCheckStrategy
 
-internal fun IrExpectActualMatchingContext.areIrExpressionConstValuesEqual(a: IrElement?, b: IrElement?): Boolean {
+internal fun IrExpectActualMatchingContext.areIrExpressionConstValuesEqual(
+    a: IrElement?,
+    b: IrElement?,
+    collectionArgumentsCompatibilityCheckStrategy: ExpectActualCollectionArgumentsCompatibilityCheckStrategy,
+): Boolean {
     return when {
         a == null || b == null -> (a == null) == (b == null)
 
@@ -25,15 +30,20 @@ internal fun IrExpectActualMatchingContext.areIrExpressionConstValuesEqual(a: Ir
         a is IrGetEnumValue && b is IrGetEnumValue -> equalBy(a, b) { it.symbol.signature?.toString() }
 
         a is IrVararg && b is IrVararg -> {
-            equalBy(a, b) { it.elements.size } &&
-                    a.elements.zip(b.elements).all { (f, s) -> areIrExpressionConstValuesEqual(f, s) }
+            collectionArgumentsCompatibilityCheckStrategy.areCompatible(a.elements, b.elements) { f, s ->
+                areIrExpressionConstValuesEqual(f, s, collectionArgumentsCompatibilityCheckStrategy)
+            }
         }
 
         a is IrConstructorCall && b is IrConstructorCall -> {
             equalBy(a, b) { it.valueArgumentsCount } &&
                     areCompatibleExpectActualTypes(a.type, b.type) &&
                     (0..<a.valueArgumentsCount).all { i ->
-                        areIrExpressionConstValuesEqual(a.getValueArgument(i), b.getValueArgument(i))
+                        areIrExpressionConstValuesEqual(
+                            a.getValueArgument(i),
+                            b.getValueArgument(i),
+                            collectionArgumentsCompatibilityCheckStrategy
+                        )
                     }
         }
 

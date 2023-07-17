@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.resolve.calls.mpp
 
 import org.jetbrains.kotlin.mpp.DeclarationSymbolMarker
 import org.jetbrains.kotlin.mpp.TypeAliasSymbolMarker
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 
 object AbstractExpectActualAnnotationMatchChecker {
@@ -46,17 +47,30 @@ object AbstractExpectActualAnnotationMatchChecker {
         val actualAnnotationsByName = actualSymbol.annotations.groupBy { it.classId }
 
         for (expectAnnotation in expectSymbol.annotations) {
-            if (expectAnnotation.classId in SKIPPED_CLASS_IDS || expectAnnotation.isOptIn) {
+            val expectClassId = expectAnnotation.classId ?: continue
+            if (expectClassId in SKIPPED_CLASS_IDS || expectAnnotation.isOptIn) {
                 continue
             }
             if (expectAnnotation.isRetentionSource && skipSourceAnnotations) {
                 continue
             }
-            val actualAnnotationsWithSameClassId = actualAnnotationsByName[expectAnnotation.classId] ?: emptyList()
-            if (actualAnnotationsWithSameClassId.none { areAnnotationArgumentsEqual(expectAnnotation, it) }) {
+            val actualAnnotationsWithSameClassId = actualAnnotationsByName[expectClassId] ?: emptyList()
+            val collectionCompatibilityChecker = getAnnotationCollectionArgumentsCompatibilityChecker(expectClassId)
+            if (actualAnnotationsWithSameClassId.none {
+                    areAnnotationArgumentsEqual(expectAnnotation, it, collectionCompatibilityChecker)
+                }) {
                 return Incompatibility(expectSymbol, actualSymbol)
             }
         }
         return null
+    }
+
+    private fun getAnnotationCollectionArgumentsCompatibilityChecker(annotationClassId: ClassId):
+            ExpectActualCollectionArgumentsCompatibilityCheckStrategy {
+        return if (annotationClassId == StandardClassIds.Annotations.Target) {
+            ExpectActualCollectionArgumentsCompatibilityCheckStrategy.ExpectIsSubsetOfActual
+        } else {
+            ExpectActualCollectionArgumentsCompatibilityCheckStrategy.Default
+        }
     }
 }
