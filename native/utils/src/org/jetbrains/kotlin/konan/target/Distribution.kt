@@ -20,6 +20,15 @@ class Distribution private constructor(private val serialized: Serialized) : jav
         konanDataDir: String? = null
     ) : this(Serialized(konanHome, onlyDefaultProfiles, runtimeFileOverride, propertyOverrides, konanDataDir))
 
+    // TODO: Remove after KT-50463 will be in current bootstrap
+    @Deprecated("Binary compatibility until bootstrap with KT-50463", level = DeprecationLevel.HIDDEN)
+    constructor(
+        konanHome: String,
+        onlyDefaultProfiles: Boolean = false,
+        runtimeFileOverride: String? = null,
+        propertyOverrides: Map<String, String>? = null,
+    ) : this(Serialized(konanHome, onlyDefaultProfiles, runtimeFileOverride, propertyOverrides, null))
+
     val konanHome by serialized::konanHome
     private val onlyDefaultProfiles by serialized::onlyDefaultProfiles
     private val runtimeFileOverride by serialized::runtimeFileOverride

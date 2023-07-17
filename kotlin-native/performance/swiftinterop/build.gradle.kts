@@ -12,7 +12,8 @@ plugins {
 val toolsPath = "../../tools"
 val targetExtension = "Macos"
 
-project.extra["platformManager"] = PlatformManager(projectDir.parentFile.parentFile.absolutePath, false)
+// TODO: add konanDataDir to the buildDistribution after KT-50463 will be in current bootstrap
+project.extra["platformManager"] = PlatformManager(buildDistribution(projectDir.parentFile.parentFile.absolutePath), false)
 swiftBenchmark {
     applicationName = "swiftInterop"
     commonSrcDirs = listOf("$toolsPath/benchmarks/shared/src/main/kotlin/report", "src", "../shared/src/main/kotlin")
