@@ -36,6 +36,8 @@ import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
+import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
+import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.resolve.BindingContext
 
 internal class KtFe10PsiNamedClassOrObjectSymbol(
@@ -61,6 +63,12 @@ internal class KtFe10PsiNamedClassOrObjectSymbol(
 
     override val isExternal: Boolean
         get() = withValidityAssertion { psi.hasModifier(KtTokens.EXTERNAL_KEYWORD) }
+
+    override val isActual: Boolean
+        get() = withValidityAssertion { descriptor?.isActual ?: psi.hasActualModifier() }
+
+    override val isExpect: Boolean
+        get() = withValidityAssertion { descriptor?.isExpect ?: psi.hasExpectModifier() }
 
     override val companionObject: KtNamedClassOrObjectSymbol?
         get() = withValidityAssertion {

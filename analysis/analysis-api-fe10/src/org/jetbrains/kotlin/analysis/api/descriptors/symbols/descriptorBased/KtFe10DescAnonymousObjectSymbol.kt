@@ -26,6 +26,9 @@ internal class KtFe10DescAnonymousObjectSymbol(
     override val superTypes: List<KtType>
         get() = withValidityAssertion { descriptor.typeConstructor.supertypes.map { it.toKtType(analysisContext) } }
 
+    override val isActual: Boolean get() = withValidityAssertion { descriptor.isActual }
+    override val isExpect: Boolean get() = withValidityAssertion { descriptor.isExpect }
+
     context(KtAnalysisSession)
     override fun createPointer(): KtSymbolPointer<KtAnonymousObjectSymbol> = withValidityAssertion {
         KtPsiBasedSymbolPointer.createForSymbolFromSource<KtAnonymousObjectSymbol>(this) ?: KtFe10NeverRestoringSymbolPointer()

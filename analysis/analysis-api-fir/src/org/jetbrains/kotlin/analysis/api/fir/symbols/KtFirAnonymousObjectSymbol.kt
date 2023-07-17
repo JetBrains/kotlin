@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.CanNotCreateSymbolPoin
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.fir.declarations.utils.isActual
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 
 internal class KtFirAnonymousObjectSymbol(
@@ -33,6 +35,9 @@ internal class KtFirAnonymousObjectSymbol(
     }
 
     override val superTypes: List<KtType> by cached { firSymbol.superTypesList(builder) }
+
+    override val isActual: Boolean get() = withValidityAssertion { firSymbol.isActual }
+    override val isExpect: Boolean get() = withValidityAssertion { firSymbol.isExpect }
 
     context(KtAnalysisSession)
     override fun createPointer(): KtSymbolPointer<KtAnonymousObjectSymbol> = withValidityAssertion {

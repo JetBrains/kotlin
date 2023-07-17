@@ -71,6 +71,8 @@ internal class KtFirNamedClassOrObjectSymbol(
     override val isInline: Boolean get() = withValidityAssertion { firSymbol.isInline }
     override val isFun: Boolean get() = withValidityAssertion { firSymbol.isFun }
     override val isExternal: Boolean get() = withValidityAssertion { firSymbol.isExternal }
+    override val isActual: Boolean get() = withValidityAssertion { firSymbol.isActual }
+    override val isExpect: Boolean get() = withValidityAssertion { firSymbol.isExpect }
 
     override val contextReceivers: List<KtContextReceiver> get() = withValidityAssertion { firSymbol.createContextReceivers(builder) }
 

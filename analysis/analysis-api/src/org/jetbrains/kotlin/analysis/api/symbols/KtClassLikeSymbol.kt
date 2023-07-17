@@ -33,7 +33,7 @@ public abstract class KtTypeParameterSymbol : KtClassifierSymbol(), KtNamedSymbo
     public abstract val isReified: Boolean
 }
 
-public sealed class KtClassLikeSymbol : KtClassifierSymbol(), KtSymbolWithKind, KtPossibleMemberSymbol {
+public sealed class KtClassLikeSymbol : KtClassifierSymbol(), KtSymbolWithKind, KtPossibleMemberSymbol, KtPossibleMultiplatformSymbol {
     public abstract val classIdIfNonLocal: ClassId?
 
     context(KtAnalysisSession)
