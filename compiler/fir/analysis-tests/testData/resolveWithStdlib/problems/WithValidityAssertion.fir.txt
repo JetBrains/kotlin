@@ -61,7 +61,7 @@ FILE: WithValidityAssertion.kt
         }
         )
             private get(): R|kotlin/collections/List<kotlin/String>| {
-                ^ this@R|/KtFirNonStarImportingScope|.D|/KtFirNonStarImportingScope.imports|.R|SubstitutionOverride</ValidityAwareCachedValue.getValue: R|Stub (chain inference): TypeVariable(_T)|>|(this@R|/KtFirNonStarImportingScope|, ::R|/KtFirNonStarImportingScope.imports|)
+                ^ this@R|/KtFirNonStarImportingScope|.D|/KtFirNonStarImportingScope.imports|.R|SubstitutionOverride</ValidityAwareCachedValue.getValue: R|kotlin/collections/List<kotlin/String>|>|(this@R|/KtFirNonStarImportingScope|, ::R|/KtFirNonStarImportingScope.imports|)
             }
 
         public final fun getCallableSymbols(nameFilter: R|KtScopeNameFilter|): R|kotlin/sequences/Sequence<KtCallableSymbol>| {
