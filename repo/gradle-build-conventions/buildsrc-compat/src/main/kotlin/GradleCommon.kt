@@ -65,18 +65,33 @@ val commonSourceSetName = "common"
  */
 fun Project.configureCommonPublicationSettingsForGradle(
     signingRequired: Boolean,
+    sbom: Boolean = true,
 ) {
     plugins.withId("maven-publish") {
-        configureDefaultPublishing(signingRequired)
-
         extensions.configure<PublishingExtension> {
             publications
                 .withType<MavenPublication>()
                 .configureEach {
                     configureKotlinPomAttributes(project)
+                    if (sbom) {
+                        if (name == "pluginMaven") {
+                            val sbomTask = configureSbom(target = "PluginMaven")
+                            artifact("$buildDir/spdx/PluginMaven/PluginMaven.spdx.json") {
+                                extension = "spdx.json"
+                                builtBy(sbomTask)
+                            }
+                        } else if (name == "Main") {
+                            val sbomTask = configureSbom()
+                            artifact("$buildDir/spdx/MainPublication/MainPublication.spdx.json") {
+                                extension = "spdx.json"
+                                builtBy(sbomTask)
+                            }
+                        }
+                    }
                 }
         }
     }
+    configureDefaultPublishing(signingRequired)
 }
 
 /**
