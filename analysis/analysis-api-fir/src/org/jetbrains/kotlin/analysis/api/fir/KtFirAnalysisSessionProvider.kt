@@ -35,17 +35,17 @@ class KtFirAnalysisSessionProvider(project: Project) : KtAnalysisSessionProvider
         LowMemoryWatcher.register(::clearCaches, project)
     }
 
-    override fun getAnalysisSession(useSiteKtElement: KtElement, factory: KtLifetimeTokenFactory): KtAnalysisSession {
+    override fun getAnalysisSession(useSiteKtElement: KtElement): KtAnalysisSession {
         val module = ProjectStructureProvider.getModule(project, useSiteKtElement, contextualModule = null)
-        return getAnalysisSessionByUseSiteKtModule(module, factory)
+        return getAnalysisSessionByUseSiteKtModule(module)
     }
 
-    override fun getAnalysisSessionByUseSiteKtModule(useSiteKtModule: KtModule, factory: KtLifetimeTokenFactory): KtAnalysisSession {
-        val key = Pair(useSiteKtModule, factory.identifier)
+    override fun getAnalysisSessionByUseSiteKtModule(useSiteKtModule: KtModule): KtAnalysisSession {
+        val key = Pair(useSiteKtModule, tokenFactory.identifier)
         return cache.computeIfAbsent(key) {
             CachedValuesManager.getManager(project).createCachedValue {
                 val firResolveSession = useSiteKtModule.getFirResolveSession(project)
-                val validityToken = factory.create(project)
+                val validityToken = tokenFactory.create(project)
 
                 CachedValueProvider.Result(
                     KtFirAnalysisSession.createAnalysisSessionByFirResolveSession(firResolveSession, validityToken),

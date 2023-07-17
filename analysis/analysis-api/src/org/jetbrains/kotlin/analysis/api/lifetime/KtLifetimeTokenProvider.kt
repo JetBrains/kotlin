@@ -9,19 +9,19 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 
 @KtAnalysisApiInternals
-public abstract class KtDefaultLifetimeTokenProvider {
-    public abstract fun getDefaultLifetimeTokenFactory(): KtLifetimeTokenFactory
+public abstract class KtLifetimeTokenProvider {
+    public abstract fun getLifetimeTokenFactory(): KtLifetimeTokenFactory
 
     public companion object {
         @KtAnalysisApiInternals
-        public fun getService(project: Project): KtDefaultLifetimeTokenProvider =
-            project.getService(KtDefaultLifetimeTokenProvider::class.java)
+        public fun getService(project: Project): KtLifetimeTokenProvider =
+            project.getService(KtLifetimeTokenProvider::class.java)
     }
 }
 
 @KtAnalysisApiInternals
-public class KtReadActionConfinementDefaultLifetimeTokenProvider: KtDefaultLifetimeTokenProvider() {
-    override fun getDefaultLifetimeTokenFactory(): KtLifetimeTokenFactory {
+public class KtReadActionConfinementLifetimeTokenProvider : KtLifetimeTokenProvider() {
+    override fun getLifetimeTokenFactory(): KtLifetimeTokenFactory {
         return KtReadActionConfinementLifetimeTokenFactory
     }
 }

@@ -11,7 +11,7 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.lifetime.impl.NoWriteActionInAnalyseCallChecker
-import org.jetbrains.kotlin.analysis.api.lifetime.KtDefaultLifetimeTokenProvider
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenFactory
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.psi.KtElement
@@ -21,63 +21,53 @@ import org.jetbrains.kotlin.psi.KtFile
  * Provides [KtAnalysisSession] by [contextElement]
  * Should not be used directly, consider using [analyse]/[analyzeWithReadAction]/[analyzeInModalWindow] instead
  */
-@KtAnalysisApiInternals
+@OptIn(KtAnalysisApiInternals::class)
 public abstract class KtAnalysisSessionProvider(public val project: Project) : Disposable {
+    @KtAnalysisApiInternals
+    public val tokenFactory: KtLifetimeTokenFactory = KtLifetimeTokenProvider.getService(project).getLifetimeTokenFactory()
 
     @Suppress("LeakingThis")
     public val noWriteActionInAnalyseCallChecker: NoWriteActionInAnalyseCallChecker = NoWriteActionInAnalyseCallChecker(this)
 
-    public abstract fun getAnalysisSession(useSiteKtElement: KtElement, factory: KtLifetimeTokenFactory): KtAnalysisSession
+    public abstract fun getAnalysisSession(useSiteKtElement: KtElement): KtAnalysisSession
 
-    public abstract fun getAnalysisSessionByUseSiteKtModule(useSiteKtModule: KtModule, factory: KtLifetimeTokenFactory): KtAnalysisSession
+    public abstract fun getAnalysisSessionByUseSiteKtModule(useSiteKtModule: KtModule): KtAnalysisSession
 
     public inline fun <R> analyseInDependedAnalysisSession(
         originalFile: KtFile,
         elementToReanalyze: KtElement,
-        nonDefaultLifetimeTokenFactory: KtLifetimeTokenFactory?,
-        action: KtAnalysisSession.() -> R
+        action: KtAnalysisSession.() -> R,
     ): R {
-        val factory =
-            nonDefaultLifetimeTokenFactory ?: KtDefaultLifetimeTokenProvider.getService(project).getDefaultLifetimeTokenFactory()
-
-        val originalAnalysisSession = getAnalysisSession(originalFile, factory)
+        val originalAnalysisSession = getAnalysisSession(originalFile)
         val dependedAnalysisSession = originalAnalysisSession
             .createContextDependentCopy(originalFile, elementToReanalyze)
-        return analyse(dependedAnalysisSession, factory, action)
+        return analyse(dependedAnalysisSession, action)
     }
 
     public inline fun <R> analyse(
         useSiteKtElement: KtElement,
-        nonDefaultLifetimeTokenFactory: KtLifetimeTokenFactory?,
-        action: KtAnalysisSession.() -> R
+        action: KtAnalysisSession.() -> R,
     ): R {
-        val factory =
-            nonDefaultLifetimeTokenFactory ?: KtDefaultLifetimeTokenProvider.getService(project).getDefaultLifetimeTokenFactory()
-        return analyse(getAnalysisSession(useSiteKtElement, factory), factory, action)
+        return analyse(getAnalysisSession(useSiteKtElement), action)
     }
 
     public inline fun <R> analyze(
         useSiteKtModule: KtModule,
-        nonDefaultLifetimeTokenFactory: KtLifetimeTokenFactory?,
-        action: KtAnalysisSession.() -> R
+        action: KtAnalysisSession.() -> R,
     ): R {
-        val factory =
-            nonDefaultLifetimeTokenFactory ?: KtDefaultLifetimeTokenProvider.getService(project).getDefaultLifetimeTokenFactory()
-
-        return analyse(getAnalysisSessionByUseSiteKtModule(useSiteKtModule, factory), factory, action)
+        return analyse(getAnalysisSessionByUseSiteKtModule(useSiteKtModule), action)
     }
 
     public inline fun <R> analyse(
         analysisSession: KtAnalysisSession,
-        factory: KtLifetimeTokenFactory,
-        action: KtAnalysisSession.() -> R
+        action: KtAnalysisSession.() -> R,
     ): R {
         noWriteActionInAnalyseCallChecker.beforeEnteringAnalysisContext()
-        factory.beforeEnteringAnalysisContext(analysisSession.token)
+        tokenFactory.beforeEnteringAnalysisContext(analysisSession.token)
         return try {
             analysisSession.action()
         } finally {
-            factory.afterLeavingAnalysisContext(analysisSession.token)
+            tokenFactory.afterLeavingAnalysisContext(analysisSession.token)
             noWriteActionInAnalyseCallChecker.afterLeavingAnalysisContext()
         }
     }

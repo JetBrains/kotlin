@@ -22,50 +22,40 @@ import org.jetbrains.kotlin.psi.KtFile
  * Uses [useSiteKtElement] as an [KtElement] which containing module is a use-site module,
  * i.e, the module from which perspective the project will be analyzed.
  *
- *  [nonDefaultLifetimeTokenFactory] represents lifetime and accessibility guaranties
- *  which will be applied to the [org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner] instances created during code analysis.
- *
  * @see KtAnalysisSession
- * @see KtLifetimeTokenFactory
  * @see analyzeWithReadAction
  */
 public inline fun <R> analyze(
     useSiteKtElement: KtElement,
-    nonDefaultLifetimeTokenFactory: KtLifetimeTokenFactory? = null,
     action: KtAnalysisSession.() -> R
 ): R =
     KtAnalysisSessionProvider.getInstance(useSiteKtElement.project)
-        .analyse(useSiteKtElement, nonDefaultLifetimeTokenFactory, action)
+        .analyse(useSiteKtElement, action)
 
 
 /**
  * Execute given [action] in [KtAnalysisSession] context
  * Uses [useSiteKtModule] as use-site module, i.e, the module from which perspective the project will be analyzed.
  *
- *  [nonDefaultLifetimeTokenFactory] represents lifetime and accessibility guaranties
- *  which will be applied to the [org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner] instances created during code analysis.
- *
  * @see KtAnalysisSession
  * @see KtLifetimeTokenFactory
  */
 public inline fun <R> analyze(
     useSiteKtModule: KtModule,
-    nonDefaultLifetimeTokenFactory: KtLifetimeTokenFactory? = null,
     crossinline action: KtAnalysisSession.() -> R
 ): R {
     val sessionProvider = KtAnalysisSessionProvider.getInstance(useSiteKtModule.project)
-    return sessionProvider.analyze(useSiteKtModule, nonDefaultLifetimeTokenFactory, action)
+    return sessionProvider.analyze(useSiteKtModule, action)
 }
 
 
 public inline fun <R> analyzeInDependedAnalysisSession(
     originalFile: KtFile,
     elementToReanalyze: KtElement,
-    nonDefaultLifetimeTokenFactory: KtLifetimeTokenFactory? = null,
     action: KtAnalysisSession.() -> R
 ): R =
     KtAnalysisSessionProvider.getInstance(originalFile.project)
-        .analyseInDependedAnalysisSession(originalFile, elementToReanalyze, nonDefaultLifetimeTokenFactory, action)
+        .analyseInDependedAnalysisSession(originalFile, elementToReanalyze, action)
 
 /**
  * Execute given [action] in [KtAnalysisSession] context like [analyze] does but execute it in read action
@@ -81,10 +71,9 @@ public inline fun <R> analyzeInDependedAnalysisSession(
  */
 public inline fun <R> analyzeWithReadAction(
     contextElement: KtElement,
-    nonDefaultLifetimeTokenFactory: KtLifetimeTokenFactory? = null,
     crossinline action: KtAnalysisSession.() -> R
 ): R = ApplicationManager.getApplication().runReadAction(Computable {
-    analyze(contextElement, nonDefaultLifetimeTokenFactory, action)
+    analyze(contextElement, action)
 })
 
 /**
@@ -97,13 +86,12 @@ public inline fun <R> analyzeWithReadAction(
 public inline fun <R> analyzeInModalWindow(
     contextElement: KtElement,
     windowTitle: String,
-    nonDefaultLifetimeTokenFactory: KtLifetimeTokenFactory? = null,
     crossinline action: KtAnalysisSession.() -> R
 ): R {
     ApplicationManager.getApplication().assertIsDispatchThread()
     val task = object : Task.WithResult<R, Exception>(contextElement.project, windowTitle, /*canBeCancelled*/ true) {
         override fun compute(indicator: ProgressIndicator): R =
-            analyzeWithReadAction(contextElement, nonDefaultLifetimeTokenFactory) { action() }
+            analyzeWithReadAction(contextElement) { action() }
     }
     task.queue()
     return task.result
