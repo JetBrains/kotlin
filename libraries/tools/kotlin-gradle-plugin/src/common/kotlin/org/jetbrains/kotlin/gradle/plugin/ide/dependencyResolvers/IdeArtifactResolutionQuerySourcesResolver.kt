@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.internal
  *
  * cc Anton Lakotka, Sebastian Sellmair
  */
-internal object IdeArtifactResolutionQuerySourcesAndDocumentationResolver : IdeAdditionalArtifactResolver {
+internal object IdeArtifactResolutionQuerySourcesResolver : IdeAdditionalArtifactResolver {
 
     override fun resolve(sourceSet: KotlinSourceSet, dependencies: Set<IdeaKotlinDependency>) {
         val binaryDependencies = dependencies.filterIsInstance<IdeaKotlinResolvedBinaryDependency>()

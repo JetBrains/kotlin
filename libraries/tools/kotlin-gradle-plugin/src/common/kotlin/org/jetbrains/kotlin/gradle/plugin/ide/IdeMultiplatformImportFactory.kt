@@ -127,7 +127,7 @@ internal fun IdeMultiplatformImport(extension: KotlinProjectExtension): IdeMulti
 
         if (extension.project.kotlinPropertiesProvider.enableSlowIdeSourcesJarResolver) {
             registerAdditionalArtifactResolver(
-                resolver = IdeArtifactResolutionQuerySourcesAndDocumentationResolver,
+                resolver = IdeArtifactResolutionQuerySourcesResolver,
                 constraint = SourceSetConstraint.unconstrained,
                 phase = IdeMultiplatformImport.AdditionalArtifactResolutionPhase.SourcesAndDocumentationResolution,
                 priority = IdeMultiplatformImport.Priority.normal

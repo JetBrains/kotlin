@@ -10,7 +10,7 @@ package org.jetbrains.kotlin.gradle.dependencyResolutionTests.tcs
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryDependency
-import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeArtifactResolutionQuerySourcesAndDocumentationResolver
+import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeArtifactResolutionQuerySourcesResolver
 import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
 import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImportStatistics
 import org.jetbrains.kotlin.gradle.util.*
@@ -68,10 +68,10 @@ class IdeAndroidDependencyResolutionTest {
         androidSourceSets.forEach { sourceSet ->
             project.kotlinIdeMultiplatformImport.resolveDependencies(sourceSet)
             if (
-                IdeArtifactResolutionQuerySourcesAndDocumentationResolver::class.java in
+                IdeArtifactResolutionQuerySourcesResolver::class.java in
                 project.kotlinIdeMultiplatformImportStatistics.getExecutionTimes()
             ) {
-                fail("${IdeArtifactResolutionQuerySourcesAndDocumentationResolver::class.simpleName} as executed on ${sourceSet.name}")
+                fail("${IdeArtifactResolutionQuerySourcesResolver::class.simpleName} as executed on ${sourceSet.name}")
             }
         }
     }
