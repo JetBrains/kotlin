@@ -99,12 +99,13 @@ When using metadata writers from Kotlin source code, it is very convenient to us
 // Writing metadata of a class
 val klass = KmClass().apply {
     // Setting the name and the modifiers of the class.
-    // Flags are constructed by invoking "flagsOf(...)"
     name = "MyClass"
-    flags = flagsOf(Flag.IS_PUBLIC)
+    visibility = Visibility.PUBLIC
 
     // Adding one public primary constructor
-    constructors += KmConstructor(flagsOf(Flag.IS_PUBLIC, Flag.Constructor.IS_PRIMARY)).apply {
+    constructors += KmConstructor().apply {
+        visibility = Visibility.PUBLIC
+        isSecondary = false
         // Setting the JVM signature (for example, to be used by kotlin-reflect)
         signature = JvmMethodSignature("<init>", "()V")
     }
