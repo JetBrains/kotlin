@@ -38693,6 +38693,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("kt55072.kt")
+            public void testKt55072() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/kt55072.kt");
+            }
+
+            @Test
             @TestMetadata("lambdaExpectedType.kt")
             public void testLambdaExpectedType() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/lambdaExpectedType.kt");

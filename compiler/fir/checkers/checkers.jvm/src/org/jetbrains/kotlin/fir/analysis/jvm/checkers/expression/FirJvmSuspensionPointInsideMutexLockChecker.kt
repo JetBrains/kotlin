@@ -5,46 +5,72 @@
 
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression
 
-import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
-import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChecker
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
+import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
-import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.resolvedArgumentMapping
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.resolve.transformers.unwrapAnonymousFunctionExpression
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.isSuspendOrKSuspendFunctionType
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 object FirJvmSuspensionPointInsideMutexLockChecker : FirFunctionCallChecker() {
     private val synchronizedCallableId = CallableId(FqName("kotlin"), Name.identifier("synchronized"))
     private val withLockCallableId = CallableId(FqName("kotlin.concurrent"), Name.identifier("withLock"))
+    private val synchronizedBlockParamName = Name.identifier("block")
 
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
         val symbol = expression.calleeReference.toResolvedCallableSymbol() ?: return
         if (!symbol.isSuspend) return
-        val closestAnonymousFunction = context.findClosest<FirAnonymousFunction>() ?: return
+        var anonymousFunctionArg: FirAnonymousFunction? = null
+        var isMutexLockFound = false
+        var isSuspendFunctionFound = false
 
-        for (call in context.callsOrAssignments.asReversed()) {
-            if (call is FirFunctionCall) {
-                val callableSymbol = call.calleeReference.toResolvedCallableSymbol() ?: continue
-                if (callableSymbol.callableId == synchronizedCallableId) {
-                    val unwrappedFirstArgument = call.arguments.elementAtOrNull(1)?.unwrapArgument() ?: return
-                    val firstArgumentAnonymousFunction =
-                        (unwrappedFirstArgument as? FirAnonymousFunctionExpression)?.anonymousFunction ?: return
-
-                    if (closestAnonymousFunction == firstArgumentAnonymousFunction) {
-                        reporter.reportOn(expression.source, FirJvmErrors.SUSPENSION_POINT_INSIDE_CRITICAL_SECTION, symbol, context)
+        for (element in context.containingElements.asReversed()) {
+            if (element is FirFunctionCall) {
+                val callableSymbol = element.calleeReference.toResolvedCallableSymbol() ?: continue
+                val enclosingAnonymousFuncParam = element.resolvedArgumentMapping?.firstNotNullOfOrNull { entry ->
+                    entry.key.unwrapAnonymousFunctionExpression()?.let {
+                        runIf(it == anonymousFunctionArg) { entry.value }
                     }
-                    return
-                } else if (callableSymbol.callableId == withLockCallableId) {
-                    reporter.reportOn(expression.source, FirJvmErrors.SUSPENSION_POINT_INSIDE_CRITICAL_SECTION, symbol, context)
-                    return
+                }
+
+                if ((enclosingAnonymousFuncParam?.returnTypeRef as? FirResolvedTypeRef)?.type?.isSuspendOrKSuspendFunctionType(context.session) == true) {
+                    isSuspendFunctionFound = true
+                    break
+                }
+
+                if (callableSymbol.callableId == synchronizedCallableId &&
+                    enclosingAnonymousFuncParam?.name == synchronizedBlockParamName ||
+                    callableSymbol.callableId == withLockCallableId
+                ) {
+                    isMutexLockFound = true
+                }
+            } else if (element is FirFunction) {
+                if (element.isSuspend) {
+                    isSuspendFunctionFound = true
+                    break
+                }
+                if (element is FirAnonymousFunction) {
+                    anonymousFunctionArg = element // For anonymous function argument `isSuspend` can be detected from the respective parameter
                 }
             }
+        }
+
+        // There is no need to report SUSPENSION_POINT_INSIDE_CRITICAL_SECTION if enclosing suspend function is not found
+        // Because ILLEGAL_SUSPEND_FUNCTION_CALL is reported in this case
+        if (isMutexLockFound && isSuspendFunctionFound) {
+            reporter.reportOn(expression.source, FirJvmErrors.SUSPENSION_POINT_INSIDE_CRITICAL_SECTION, symbol, context)
         }
     }
 }
