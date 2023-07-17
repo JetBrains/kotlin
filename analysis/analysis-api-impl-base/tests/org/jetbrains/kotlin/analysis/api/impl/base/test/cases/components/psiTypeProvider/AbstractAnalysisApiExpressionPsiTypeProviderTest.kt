@@ -25,7 +25,7 @@ abstract class AbstractAnalysisApiExpressionPsiTypeProviderTest : AbstractAnalys
         val declarationAtCaret = when (val element = testServices.expressionMarkerProvider.getSelectedElement(ktFile)) {
             is KtExpression -> element
             is KtValueArgument -> element.getArgumentExpression()!!
-            else -> error("Unexpected element: $element of ${element::class.java}")
+            else -> error("Unexpected element: $element of ${element::class}")
         }
         val containingDeclaration = declarationAtCaret.parentOfType<KtDeclaration>()
             ?: error("Can't find containing declaration for $declarationAtCaret")

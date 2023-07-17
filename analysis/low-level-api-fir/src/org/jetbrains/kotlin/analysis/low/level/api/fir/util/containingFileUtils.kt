@@ -34,6 +34,6 @@ fun FirElementWithResolveState.getContainingFile(): FirFile? {
             moduleComponents.cache.getCachedFirFile(ktFile)
                 ?: error("Fir file for dandling modifier list cannot be null")
         }
-        else -> errorWithFirSpecificEntries("Unsupported declaration ${this::class.java}", fir = this)
+        else -> errorWithFirSpecificEntries("Unsupported declaration ${this::class}", fir = this)
     }
 }

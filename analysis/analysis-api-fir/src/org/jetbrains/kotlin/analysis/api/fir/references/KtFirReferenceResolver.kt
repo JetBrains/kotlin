@@ -29,7 +29,7 @@ object KtFirReferenceResolver : ResolveCache.PolyVariantResolver<KtReference> {
             } catch (e: Exception) {
                 if (shouldIjPlatformExceptionBeRethrown(e)) throw e
 
-                errorWithAttachment("Unable to resolve reference ${ref.element::class.java}", cause = e) {
+                errorWithAttachment("Unable to resolve reference ${ref.element::class}", cause = e) {
                     withPsiEntry("reference", ref.element)
                 }
             }

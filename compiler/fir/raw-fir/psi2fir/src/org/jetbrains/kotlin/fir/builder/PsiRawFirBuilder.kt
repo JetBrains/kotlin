@@ -1198,7 +1198,7 @@ open class PsiRawFirBuilder(
                 block = when (file) {
                     is KtExpressionCodeFragment -> file.getContentElement()?.toFirBlock() ?: buildEmptyExpressionBlock()
                     is KtBlockCodeFragment -> configureBlockWithoutBuilding(file.getContentElement()).build()
-                    else -> error("Unexpected code fragment type: " + file::class.java)
+                    else -> error("Unexpected code fragment type: ${file::class}")
                 }
             }
         }
@@ -2267,7 +2267,7 @@ open class PsiRawFirBuilder(
                         is KtEscapeStringTemplateEntry -> KtNodeTypes.ESCAPE_STRING_TEMPLATE_ENTRY
                         is KtSimpleNameStringTemplateEntry -> KtNodeTypes.SHORT_STRING_TEMPLATE_ENTRY
                         is KtBlockStringTemplateEntry -> KtNodeTypes.LONG_STRING_TEMPLATE_ENTRY
-                        else -> errorWithAttachment("invalid node type ${element::class.java}") {
+                        else -> errorWithAttachment("invalid node type ${element::class}") {
                             withPsiEntry("element", element)
                         }
                     }

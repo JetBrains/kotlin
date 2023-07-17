@@ -1283,7 +1283,7 @@ internal class KtFirCallResolver(
             action()
         } catch (e: Exception) {
             rethrowExceptionWithDetails(
-                "Error during resolving call ${element::class.java.name}",
+                "Error during resolving call ${element::class}",
                 exception = e,
             ) {
                 withPsiEntry("psi", element, analysisSession::getModule)

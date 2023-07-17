@@ -42,7 +42,7 @@ internal fun KtAnalysisSession.stringRepresentation(any: Any): String = with(any
                     is KtConstructorSymbol -> "<constructor>"
                     is KtPropertyGetterSymbol -> callableIdIfNonLocal ?: "<getter>"
                     is KtPropertySetterSymbol -> callableIdIfNonLocal ?: "<setter>"
-                    else -> error("unexpected symbol kind in KtCall: ${this@with::class.java}")
+                    else -> error("unexpected symbol kind in KtCall: ${this@with::class}")
                 }
             )
             append("(")

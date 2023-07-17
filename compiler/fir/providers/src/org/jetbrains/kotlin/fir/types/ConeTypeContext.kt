@@ -90,7 +90,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
             is ConeClassLikeType -> fullyExpandedType(session)
             is ConeSimpleKotlinType -> this
             is ConeFlexibleType -> null
-            else -> errorWithAttachment("Unknown simpleType: ${this::class.java}") {
+            else -> errorWithAttachment("Unknown simpleType: ${this::class}") {
                 withConeTypeEntry("type", this@asSimpleType as? ConeKotlinType)
             }
         }

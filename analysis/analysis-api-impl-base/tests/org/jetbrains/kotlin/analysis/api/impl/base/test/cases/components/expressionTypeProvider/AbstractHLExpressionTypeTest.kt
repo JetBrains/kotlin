@@ -31,7 +31,7 @@ abstract class AbstractHLExpressionTypeTest : AbstractAnalysisApiSingleFileTest(
             is KtExpression -> selected
             is KtValueArgument -> selected.getArgumentExpression()
             else -> null
-        } ?: error("expect an expression but got ${selected.text}, ${selected::class.java}")
+        } ?: error("expect an expression but got ${selected.text}, ${selected::class}")
         val type = executeOnPooledThreadInReadAction {
             analyseForTest(expression) { expression.getKtType()?.render(renderer, position = Variance.INVARIANT) }
         }

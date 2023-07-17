@@ -230,7 +230,7 @@ open class AbstractSymbolLightClassesParentingTestBase(
                             assertions.assertTrue(owner is SymbolLightMemberModifierList<*>)
 
                         else ->
-                            throw IllegalStateException("Unexpected annotation owner kind: ${lastDeclaration::class.java}")
+                            throw IllegalStateException("Unexpected annotation owner kind: ${lastDeclaration::class}")
                     }
                 }
 

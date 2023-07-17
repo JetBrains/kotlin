@@ -187,7 +187,7 @@ public class DebugSymbolRenderer(
             is KtClassLikeSymbol -> renderId(symbol.classIdIfNonLocal, symbol)
             is KtCallableSymbol -> renderId(symbol.callableIdIfNonLocal, symbol)
             is KtNamedSymbol -> renderValue(symbol.name, renderSymbolsFully = false)
-            else -> error("Unsupported symbol ${symbol::class.java.name}")
+            else -> error("Unsupported symbol ${symbol::class}")
         }
         append(")")
     }
