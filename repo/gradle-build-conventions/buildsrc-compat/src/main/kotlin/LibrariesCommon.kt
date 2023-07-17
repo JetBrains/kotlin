@@ -74,6 +74,7 @@ fun Project.configureFrontendIr() = tasks.withType<KotlinJvmCompile>().configure
             allWarningsAsErrors.set(false)
         } else {
             languageVersion.set(KotlinVersion.KOTLIN_1_9)
+            progressiveMode.set(false)
             if (project.kotlinBuildProperties.useFir) {
                 freeCompilerArgs.add("-Xskip-prerelease-check")
             }
