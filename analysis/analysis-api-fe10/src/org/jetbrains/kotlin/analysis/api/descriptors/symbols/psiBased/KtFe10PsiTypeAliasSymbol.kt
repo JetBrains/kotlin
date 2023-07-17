@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtTypeAlias
+import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
+import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.resolve.BindingContext
 
 internal class KtFe10PsiTypeAliasSymbol(
@@ -58,6 +60,9 @@ internal class KtFe10PsiTypeAliasSymbol(
 
     override val symbolKind: KtSymbolKind
         get() = withValidityAssertion { psi.ktSymbolKind }
+
+    override val isActual: Boolean get() = withValidityAssertion { descriptor?.isActual ?: psi.hasActualModifier() }
+    override val isExpect: Boolean get() = withValidityAssertion { descriptor?.isExpect ?: psi.hasExpectModifier() }
 
     context(KtAnalysisSession)
     override fun createPointer(): KtSymbolPointer<KtTypeAliasSymbol> = withValidityAssertion {

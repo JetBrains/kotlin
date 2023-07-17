@@ -50,6 +50,12 @@ internal class KtFe10DescNamedClassOrObjectSymbol(
     override val isExternal: Boolean
         get() = withValidityAssertion { descriptor.isExternal }
 
+    override val isActual: Boolean
+        get() = withValidityAssertion { descriptor.isActual }
+
+    override val isExpect: Boolean
+        get() = withValidityAssertion { descriptor.isExpect }
+
     override val companionObject: KtNamedClassOrObjectSymbol?
         get() {
             withValidityAssertion {

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiSing
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
-import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.model.Directive
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
@@ -344,6 +344,16 @@ enum class PrettyRendererOption(val transformation: (KtDeclarationRenderer) -> K
         }
     )
 }
+
+internal val KtDeclaration.isValidForSymbolCreation
+    get() = when (this) {
+        is KtBackingField -> false
+        is KtDestructuringDeclaration -> false
+        is KtPropertyAccessor -> false
+        is KtParameter -> !this.isFunctionTypeParameter && this.parent !is KtParameterList
+        is KtNamedFunction -> this.name != null
+        else -> true
+    }
 
 data class SymbolsData(
     val symbols: List<KtSymbol>,

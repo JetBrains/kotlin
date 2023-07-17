@@ -33,7 +33,7 @@ public abstract class KtTypeParameterSymbol : KtClassifierSymbol(), KtNamedSymbo
     public abstract val isReified: Boolean
 }
 
-public sealed class KtClassLikeSymbol : KtClassifierSymbol(), KtSymbolWithKind, KtPossibleMemberSymbol {
+public sealed class KtClassLikeSymbol : KtClassifierSymbol(), KtSymbolWithKind, KtPossibleMemberSymbol, KtPossibleMultiplatformSymbol {
     public abstract val classIdIfNonLocal: ClassId?
 
     context(KtAnalysisSession)
@@ -68,6 +68,8 @@ public abstract class KtAnonymousObjectSymbol : KtClassOrObjectSymbol() {
     final override val classIdIfNonLocal: ClassId? get() = withValidityAssertion { null }
     final override val symbolKind: KtSymbolKind get() = withValidityAssertion { KtSymbolKind.LOCAL }
     final override val name: Name? get() = withValidityAssertion { null }
+    final override val isActual: Boolean get() = withValidityAssertion { false }
+    final override val isExpect: Boolean get() = withValidityAssertion { false }
 
     final override val typeParameters: List<KtTypeParameterSymbol>
         get() = withValidityAssertion { emptyList() }

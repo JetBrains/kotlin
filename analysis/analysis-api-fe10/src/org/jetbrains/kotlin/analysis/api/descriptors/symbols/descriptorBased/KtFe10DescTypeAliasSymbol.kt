@@ -45,6 +45,9 @@ internal class KtFe10DescTypeAliasSymbol(
     override val classIdIfNonLocal: ClassId?
         get() = withValidityAssertion { descriptor.classId }
 
+    override val isActual: Boolean get() = withValidityAssertion { descriptor.isActual }
+    override val isExpect: Boolean get() = withValidityAssertion { descriptor.isExpect }
+
     context(KtAnalysisSession)
     override fun createPointer(): KtSymbolPointer<KtTypeAliasSymbol> = withValidityAssertion {
         KtPsiBasedSymbolPointer.createForSymbolFromSource<KtTypeAliasSymbol>(this) ?: KtFe10NeverRestoringSymbolPointer()

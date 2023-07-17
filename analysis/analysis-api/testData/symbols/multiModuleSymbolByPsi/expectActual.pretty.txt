@@ -1,0 +1,26 @@
+// FILE: Common.kt
+
+object A
+
+class B
+
+    class Nested
+
+class C
+
+    class Nested
+
+// FILE: JvmAndroid.kt
+
+object A
+
+class B
+
+    class Nested
+
+typealias C = sample.D
+
+class D
+
+    class Nested
+
