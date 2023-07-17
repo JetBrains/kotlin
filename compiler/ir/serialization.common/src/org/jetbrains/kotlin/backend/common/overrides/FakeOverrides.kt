@@ -289,5 +289,6 @@ class FakeOverrideBuilder(
             val candidate = entries.removeLast()
             provideFakeOverrides(candidate.key, candidate.value)
         }
+        fakeOverrideCandidates.clear()
     }
 }

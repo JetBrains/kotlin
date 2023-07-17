@@ -92,15 +92,18 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
 
         // Set inter-dependencies between module descriptors, add forwarding declarations module.
         val additionalDependencyModulesCopy = additionalDependencyModules.toSet()
+        val friendsForNonIncludedModule = additionalDependencyModulesCopy
+        val friendsForIncludedModule = buildSet<ModuleDescriptorImpl> {
+            this += friendsForNonIncludedModule
+            this += friendModuleDescriptors
+            this += refinesModuleDescriptors
+        }
         val allDependencies = moduleDescriptors + additionalDependencyModulesCopy + forwardDeclarationsModule
         for (module in moduleDescriptors) {
             val friends = if (module in includedLibraryDescriptors) {
-                additionalDependencyModulesCopy.toMutableSet().apply{
-                    addAll(friendModuleDescriptors)
-                    addAll(refinesModuleDescriptors)
-                }
+                friendsForIncludedModule
             } else {
-                additionalDependencyModulesCopy
+                friendsForNonIncludedModule
             }
 
             // Yes, just to all of them.

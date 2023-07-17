@@ -105,7 +105,7 @@ fun BaseKotlinLibrary.unresolvedDependencies(lenient: Boolean = false): List<Unr
     manifestProperties.propertyList(KLIB_PROPERTY_DEPENDS, escapeInQuotes = true)
         .map { UnresolvedLibrary(it, manifestProperties.getProperty("dependency_version_$it"), lenient = lenient) }
 
-val BaseKotlinLibrary.hasUnresolvedDependencies: Boolean
+val BaseKotlinLibrary.hasDependencies: Boolean
     get() = !manifestProperties.getProperty(KLIB_PROPERTY_DEPENDS).isNullOrBlank()
 
 interface KotlinLibrary : BaseKotlinLibrary, MetadataLibrary, IrLibrary
