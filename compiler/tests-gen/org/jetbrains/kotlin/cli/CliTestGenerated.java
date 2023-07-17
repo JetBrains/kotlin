@@ -410,9 +410,19 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/experimentalDeprecated.args");
         }
 
+        @TestMetadata("experimentalDeprecatedK1.args")
+        public void testExperimentalDeprecatedK1() throws Exception {
+            runTest("compiler/testData/cli/jvm/experimentalDeprecatedK1.args");
+        }
+
         @TestMetadata("experimentalDeprecatedWarning.args")
         public void testExperimentalDeprecatedWarning() throws Exception {
             runTest("compiler/testData/cli/jvm/experimentalDeprecatedWarning.args");
+        }
+
+        @TestMetadata("experimentalDeprecatedWarningK1.args")
+        public void testExperimentalDeprecatedWarningK1() throws Exception {
+            runTest("compiler/testData/cli/jvm/experimentalDeprecatedWarningK1.args");
         }
 
         @TestMetadata("experimentalIsNotAnnotation.args")
@@ -420,9 +430,19 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/experimentalIsNotAnnotation.args");
         }
 
+        @TestMetadata("experimentalIsNotAnnotationK1.args")
+        public void testExperimentalIsNotAnnotationK1() throws Exception {
+            runTest("compiler/testData/cli/jvm/experimentalIsNotAnnotationK1.args");
+        }
+
         @TestMetadata("experimentalIsNotMarker.args")
         public void testExperimentalIsNotMarker() throws Exception {
             runTest("compiler/testData/cli/jvm/experimentalIsNotMarker.args");
+        }
+
+        @TestMetadata("experimentalIsNotMarkerK1.args")
+        public void testExperimentalIsNotMarkerK1() throws Exception {
+            runTest("compiler/testData/cli/jvm/experimentalIsNotMarkerK1.args");
         }
 
         @TestMetadata("experimentalNested.args")
@@ -430,9 +450,19 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/experimentalNested.args");
         }
 
+        @TestMetadata("experimentalNestedK1.args")
+        public void testExperimentalNestedK1() throws Exception {
+            runTest("compiler/testData/cli/jvm/experimentalNestedK1.args");
+        }
+
         @TestMetadata("experimentalUnresolved.args")
         public void testExperimentalUnresolved() throws Exception {
             runTest("compiler/testData/cli/jvm/experimentalUnresolved.args");
+        }
+
+        @TestMetadata("experimentalUnresolvedK1.args")
+        public void testExperimentalUnresolvedK1() throws Exception {
+            runTest("compiler/testData/cli/jvm/experimentalUnresolvedK1.args");
         }
 
         @TestMetadata("explicitlyDisableSamConversionsWithOldFlag.args")

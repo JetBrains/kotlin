@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.CheckersComponentInternal
 import org.jetbrains.kotlin.fir.analysis.checkers.LanguageVersionSettingsCheckers
-import org.jetbrains.kotlin.fir.analysis.checkers.config.FirLanguageVersionSettingsChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkersComponent
 
@@ -21,13 +20,9 @@ class LanguageVersionSettingsDiagnosticComponent(
     private val checkers: LanguageVersionSettingsCheckers = session.checkersComponent.languageVersionSettingsCheckers,
 ) : AbstractDiagnosticCollectorComponent(session, reporter) {
     override fun checkSettings(data: CheckerContext) {
-        checkers.languageVersionSettingsCheckers.check(data)
-    }
-
-    private fun Collection<FirLanguageVersionSettingsChecker>.check(context: CheckerContext) {
         val rawReport = (reporter as? BaseDiagnosticsCollector)?.rawReport ?: return
-        for (checker in this) {
-            checker.check(context, rawReport)
+        for (checker in checkers.languageVersionSettingsCheckers) {
+            checker.check(data, rawReport)
         }
     }
 }

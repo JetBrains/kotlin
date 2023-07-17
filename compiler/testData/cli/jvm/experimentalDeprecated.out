@@ -1,3 +1,4 @@
-error: opt-in requirement marker org.test.Error is deprecated. Error
-error: opt-in requirement marker org.test.Hidden is deprecated. Hidden
+warning: language version 2.0 is experimental, there are no backwards compatibility guarantees for new language and library features
+error: opt-in requirement marker org.test.Error is deprecated
+error: opt-in requirement marker org.test.Hidden is deprecated
 COMPILATION_ERROR

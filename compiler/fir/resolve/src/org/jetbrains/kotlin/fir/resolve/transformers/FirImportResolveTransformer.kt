@@ -13,16 +13,12 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.builder.buildErrorImport
 import org.jetbrains.kotlin.fir.declarations.builder.buildResolvedImport
-import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.lookupTracker
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeImportFromSingleton
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedParentInImport
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.withFileAnalysisExceptionWrapping
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
 class FirImportResolveProcessor(session: FirSession, scopeSession: ScopeSession) : FirTransformerBasedResolveProcessor(
@@ -99,36 +95,4 @@ open class FirImportResolveTransformer protected constructor(
             this.relativeParentClassName = relativeClassFqName
         }
     }
-}
-
-fun resolveToPackageOrClass(symbolProvider: FirSymbolProvider, fqName: FqName): PackageResolutionResult {
-    var currentPackage = fqName
-
-    val pathSegments = fqName.pathSegments()
-    var prefixSize = pathSegments.size
-    while (!currentPackage.isRoot && prefixSize > 0) {
-        if (symbolProvider.getPackage(currentPackage) != null) {
-            break
-        }
-        currentPackage = currentPackage.parent()
-        prefixSize--
-    }
-
-    if (currentPackage == fqName) return PackageResolutionResult.PackageOrClass(currentPackage, null, null)
-    val relativeClassFqName = FqName.fromSegments((prefixSize until pathSegments.size).map { pathSegments[it].asString() })
-
-    val classId = ClassId(currentPackage, relativeClassFqName, false)
-    val symbol = symbolProvider.getClassLikeSymbolByClassId(classId) ?: return PackageResolutionResult.Error(
-        ConeUnresolvedParentInImport(classId)
-    )
-
-    return PackageResolutionResult.PackageOrClass(currentPackage, relativeClassFqName, symbol)
-}
-
-sealed class PackageResolutionResult {
-    data class PackageOrClass(
-        val packageFqName: FqName, val relativeClassFqName: FqName?, val classSymbol: FirClassLikeSymbol<*>?
-    ) : PackageResolutionResult()
-
-    class Error(val diagnostic: ConeDiagnostic) : PackageResolutionResult()
 }

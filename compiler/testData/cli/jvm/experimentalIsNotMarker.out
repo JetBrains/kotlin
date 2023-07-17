@@ -1,2 +1,3 @@
+warning: language version 2.0 is experimental, there are no backwards compatibility guarantees for new language and library features
 warning: class org.test.NotAMarker is not an opt-in requirement marker
 OK
