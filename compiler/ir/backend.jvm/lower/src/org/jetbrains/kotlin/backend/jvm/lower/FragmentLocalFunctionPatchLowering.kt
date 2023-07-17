@@ -61,7 +61,7 @@ internal class FragmentLocalFunctionPatchLowering(
                     is IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER -> context.mapping.defaultArgumentsOriginalFunction[expression.symbol.owner]
                     else -> expression.symbol.owner
                 }
-                val localsData = localDeclarationsData[localDeclarationsDataKey] ?: return super.visitCall(expression)
+                val localsData = localDeclarationsData[localDeclarationsDataKey] ?: return expression
                 val remappedTarget: LocalDeclarationsLowering.LocalFunctionContext = localsData.localContext
 
                 val irBuilder = context.createJvmIrBuilder(declaration.symbol)
