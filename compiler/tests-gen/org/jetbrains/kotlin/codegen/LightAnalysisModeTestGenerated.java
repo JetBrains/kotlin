@@ -24375,6 +24375,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             public void testKt58717() throws Exception {
                 runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/kt58717.kt");
             }
+
+            @TestMetadata("nullableEnumName.kt")
+            public void testNullableEnumName() throws Exception {
+                runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/nullableEnumName.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/involvesIrInterpreter/serialization")

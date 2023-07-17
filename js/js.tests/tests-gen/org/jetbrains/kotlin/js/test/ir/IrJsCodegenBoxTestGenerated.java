@@ -21397,6 +21397,12 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             public void testKt58717() throws Exception {
                 runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/kt58717.kt");
             }
+
+            @Test
+            @TestMetadata("nullableEnumName.kt")
+            public void testNullableEnumName() throws Exception {
+                runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/nullableEnumName.kt");
+            }
         }
 
         @Nested
