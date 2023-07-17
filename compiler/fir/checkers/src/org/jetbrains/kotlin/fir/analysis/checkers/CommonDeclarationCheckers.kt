@@ -161,6 +161,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirTopLevelTypeAliasChecker,
             FirActualTypeAliasChecker,
             FirActualTypealiasToSpecialAnnotationChecker,
+            FirTypeAliasExpandsToArrayOfNothingsChecker,
         )
 
     override val anonymousFunctionCheckers: Set<FirAnonymousFunctionChecker>

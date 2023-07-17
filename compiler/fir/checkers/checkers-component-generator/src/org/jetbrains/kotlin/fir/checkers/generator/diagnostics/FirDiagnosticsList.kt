@@ -853,6 +853,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FirValueParameterSymbol>("valueParameter")
         }
 
+        val TYPEALIAS_EXPANDS_TO_ARRAY_OF_NOTHINGS by error<KtElement> {
+            parameter<ConeKotlinType>("type")
+        }
+
         val OVERRIDING_FINAL_MEMBER by error<KtNamedDeclaration>(PositioningStrategy.OVERRIDE_MODIFIER) {
             parameter<FirCallableSymbol<*>>("overriddenDeclaration")
             parameter<Name>("containingClassName")
