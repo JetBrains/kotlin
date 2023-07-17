@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+
 plugins {
     kotlin("jvm")
     id("jps-compatible")
@@ -38,7 +40,9 @@ allprojects {
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile> {
     compilerOptions {
-        progressiveMode.set(true)
+        if (languageVersion.get() == KotlinVersion.DEFAULT) {
+            progressiveMode.set(true)
+        }
     }
 }
 
