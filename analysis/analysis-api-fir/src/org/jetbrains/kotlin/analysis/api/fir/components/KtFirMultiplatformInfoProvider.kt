@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.expectForActual
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -26,7 +25,13 @@ internal class KtFirMultiplatformInfoProvider(
     override fun getExpectForActual(actual: KtDeclarationSymbol): KtDeclarationSymbol? {
         require(actual is KtFirSymbol<*>)
         val firSymbol = actual.firSymbol
-        if (!isActual(actual)) return null
+        val status = when (firSymbol) {
+            is FirCallableSymbol -> firSymbol.rawStatus
+            is FirClassSymbol -> firSymbol.rawStatus
+            is FirTypeAliasSymbol -> firSymbol.rawStatus
+            else -> null
+        }
+        if (status?.isActual != true) return null
 
         val expectsForActual = firSymbol.expectForActual?.get(ExpectActualCompatibility.Compatible) ?: return null
         checkWithAttachment(expectsForActual.size <= 1, message = { "expected as maximum one `expect` for the actual" }) {
@@ -37,20 +42,5 @@ internal class KtFirMultiplatformInfoProvider(
             }
         }
         return expectsForActual.singleOrNull()?.let { analysisSession.firSymbolBuilder.buildSymbol(it) as? KtDeclarationSymbol }
-    }
-
-    override fun isActual(symbol: KtDeclarationSymbol): Boolean = getStatus(symbol)?.isActual == true
-
-    override fun isExpect(symbol: KtDeclarationSymbol): Boolean = getStatus(symbol)?.isExpect == true
-
-    private fun getStatus(symbol: KtDeclarationSymbol): FirDeclarationStatus? {
-        require(symbol is KtFirSymbol<*>)
-        val firSymbol = symbol.firSymbol
-        return when (firSymbol) {
-            is FirCallableSymbol -> firSymbol.rawStatus
-            is FirClassSymbol -> firSymbol.rawStatus
-            is FirTypeAliasSymbol -> firSymbol.rawStatus
-            else -> null
-        }
     }
 }

@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
-import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
 
@@ -24,7 +23,7 @@ internal class KtFe10MultiplatformInfoProvider(
     override val analysisSession: KtFe10AnalysisSession
 ) : KtMultiplatformInfoProvider(), Fe10KtAnalysisSessionComponent {
     override fun getExpectForActual(actual: KtDeclarationSymbol): KtDeclarationSymbol? {
-        if (!isActual(actual)) return null
+        if (actual.psiSafe<KtDeclaration>()?.hasActualModifier() != true) return null
         val memberDescriptor = (getSymbolDescriptor(actual) as? MemberDescriptor)?.takeIf { it.isActual } ?: return null
 
         val expectedCompatibilityMap =
@@ -42,8 +41,4 @@ internal class KtFe10MultiplatformInfoProvider(
         }
         return expectsForActual.singleOrNull()?.toKtSymbol(analysisContext) as? KtDeclarationSymbol
     }
-
-    override fun isActual(symbol: KtDeclarationSymbol): Boolean = symbol.psiSafe<KtDeclaration>()?.hasActualModifier() == true
-
-    override fun isExpect(symbol: KtDeclarationSymbol): Boolean = symbol.psiSafe<KtDeclaration>()?.hasExpectModifier() == true
 }
