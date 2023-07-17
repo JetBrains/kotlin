@@ -53,6 +53,7 @@ internal interface LenientFuture<T> : Future<T> {
 }
 
 internal interface CompletableFuture<T> : Future<T> {
+    val isCompleted: Boolean
     fun complete(value: T)
 }
 
@@ -111,6 +112,9 @@ private class FutureImpl<T>(
     private val lifecycle: KotlinPluginLifecycle? = null,
 ) : CompletableFuture<T>, Serializable {
     fun completeWith(result: Result<T>) = deferred.completeWith(result)
+
+    override val isCompleted: Boolean
+        get() = deferred.isCompleted
 
     override fun complete(value: T) {
         deferred.complete(value)

@@ -20,9 +20,7 @@ import org.jetbrains.kotlin.gradle.utils.*
 import org.junit.Test
 import org.junit.jupiter.api.assertThrows
 import java.util.concurrent.atomic.AtomicInteger
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertNull
+import kotlin.test.*
 
 class FutureTest {
 
@@ -163,5 +161,22 @@ class FutureTest {
         val future = project.future(CoroutineStart.Default) {}
         assertFailsWith<IllegalLifecycleException> { future.getOrThrow() }
         future.await()
+    }
+
+    @Test
+    fun `test - future isCompleted`() = project.runLifecycleAwareTest {
+        val future = CompletableFuture<Unit>()
+        assertFalse(future.isCompleted)
+
+        launchInStage(KotlinPluginLifecycle.Stage.AfterFinaliseDsl) {
+            assertFalse(future.isCompleted)
+            future.complete(Unit)
+            assertTrue(future.isCompleted)
+        }
+
+        launch {
+            future.await()
+            assertTrue(future.isCompleted)
+        }
     }
 }
