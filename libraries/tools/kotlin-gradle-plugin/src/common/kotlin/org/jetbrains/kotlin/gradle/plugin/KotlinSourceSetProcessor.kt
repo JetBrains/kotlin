@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.tasks.configuration.AbstractKotlinCompileConfig
 import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.utils.Future
+import org.jetbrains.kotlin.gradle.utils.future
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.concurrent.Callable
 
@@ -37,11 +39,11 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
 
     override val kotlinTask: TaskProvider<out T> = prepareKotlinCompileTask()
 
-    protected val javaSourceSet: SourceSet?
+    protected val javaSourceSet: Future<SourceSet?>
         get() = when (val compilation = compilationInfo.safeAs<KotlinCompilationInfo.TCS>()?.origin) {
-            is KotlinWithJavaCompilation<*, *> -> compilation.javaSourceSet
+            is KotlinWithJavaCompilation<*, *> -> project.future { compilation.javaSourceSet }
             is KotlinJvmCompilation -> compilation.javaSourceSet
-            else -> null
+            else -> project.future { null }
         }
 
     private fun prepareKotlinCompileTask(): TaskProvider<out T> =
@@ -90,32 +92,26 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
         }
 
     override fun run() {
-        addKotlinDirectoriesToJavaSourceSet()
         doTargetSpecificProcessing()
 
         if (compilationInfo.tcsOrNull?.compilation is KotlinWithJavaCompilation<*, *>) {
+            project.launch { addKotlinDirectoriesToJavaSourceSet() }
             createAdditionalClassesTaskForIdeRunner()
         }
     }
 
-    private fun addKotlinDirectoriesToJavaSourceSet() {
-        val java = javaSourceSet ?: return
+    private suspend fun addKotlinDirectoriesToJavaSourceSet() {
+        val java = javaSourceSet.await() ?: return
 
         // Try to avoid duplicate Java sources in allSource; run lazily to allow changing the directory set:
         val kotlinSrcDirsToAdd = Callable {
-            compilationInfo.sources.map { filterOutJavaSrcDirsIfPossible(it) }
+            compilationInfo.sources.map { it.sourceDirectories.minus(java.java.sourceDirectories) }
         }
 
         java.allJava.srcDirs(kotlinSrcDirsToAdd)
         java.allSource.srcDirs(kotlinSrcDirsToAdd)
     }
 
-    private fun filterOutJavaSrcDirsIfPossible(sourceDirectories: SourceDirectorySet): FileCollection {
-        val java = javaSourceSet ?: return sourceDirectories
-
-        // Build a lazily-resolved file collection that filters out Java sources from sources of this sourceDirectorySet
-        return sourceDirectories.sourceDirectories.minus(java.java.sourceDirectories)
-    }
 
     private fun createAdditionalClassesTaskForIdeRunner() {
         val kotlinCompilation = compilationInfo.tcsOrNull?.compilation ?: return

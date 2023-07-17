@@ -13,6 +13,7 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterEvaluateBuildscript
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinaliseDsl
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -53,14 +54,14 @@ internal class Kotlin2JvmSourceSetProcessor(
 
         ScriptingGradleSubplugin.configureForSourceSet(project, compilationInfo.compilationName)
 
-        project.whenEvaluated {
+        project.launchInStage(AfterEvaluateBuildscript) {
             val subpluginEnvironment = SubpluginEnvironment.loadSubplugins(project)
             /* Not supported in KPM yet */
             compilationInfo.tcsOrNull?.compilation?.let { compilation ->
                 subpluginEnvironment.addSubpluginOptions(project, compilation)
             }
 
-            javaSourceSet?.let { java ->
+            javaSourceSet.await()?.let { java ->
                 val javaTask = project.tasks.withType<AbstractCompile>().named(java.compileJavaTaskName)
                 javaTask.configure { javaCompile ->
                     javaCompile.classpath += project.files(kotlinTask.flatMap { it.destinationDirectory })
