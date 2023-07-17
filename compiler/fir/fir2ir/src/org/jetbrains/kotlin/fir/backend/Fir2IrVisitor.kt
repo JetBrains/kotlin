@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.impl.IrErrorClassImpl
 import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.defaultConstructor
@@ -1414,6 +1415,11 @@ class Fir2IrVisitor(
             }
             is FirClassReferenceExpression -> {
                 (argument.classTypeRef.coneType.lowerBoundIfFlexible() as? ConeClassLikeType)?.toIrClassSymbol()
+                // A null value means we have some unresolved code, possibly in a binary dependency that's missing a transitive dependency,
+                // see KT-60181.
+                // Returning null will lead to convertToIrExpression(argument) being called below which leads to a crash.
+                // Instead, we return an error symbol.
+                    ?: IrErrorClassImpl.symbol
             }
             else -> null
         }

@@ -120,4 +120,21 @@ class CustomK2Tests : KGPBaseTest() {
             }
         }
     }
+
+    @GradleTest
+    @DisplayName("Java binary dependency class contains unresolved annotation argument. KT-60181")
+    fun kt60181JavaDependencyAnnotatedWithUnresolved(gradleVersion: GradleVersion) {
+        with(
+            project(
+                "k2-java-dep-unresolved-annotation-argument",
+                gradleVersion,
+                buildOptions = defaultBuildOptions.copy(languageVersion = "2.0"),
+            )
+        ) {
+            val taskToExecute = ":compileKotlin"
+            build(taskToExecute) {
+                assertTasksExecuted(taskToExecute)
+            }
+        }
+    }
 }
