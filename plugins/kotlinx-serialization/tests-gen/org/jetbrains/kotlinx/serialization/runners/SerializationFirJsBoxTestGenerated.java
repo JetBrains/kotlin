@@ -50,6 +50,12 @@ public class SerializationFirJsBoxTestGenerated extends AbstractSerializationFir
     }
 
     @Test
+    @TestMetadata("interfaces.kt")
+    public void testInterfaces() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/interfaces.kt");
+    }
+
+    @Test
     @TestMetadata("serializerFactory.kt")
     public void testSerializerFactory() throws Exception {
         runTest("plugins/kotlinx-serialization/testData/boxIr/serializerFactory.kt");

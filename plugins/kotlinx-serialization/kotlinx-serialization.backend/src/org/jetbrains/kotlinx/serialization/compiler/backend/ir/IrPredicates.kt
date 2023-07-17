@@ -79,6 +79,9 @@ internal fun IrClass.findEnumLegacySerializer(): IrClass? {
 internal val IrClass.isSealedSerializableInterface: Boolean
     get() = kind == ClassKind.INTERFACE && modality == Modality.SEALED && hasSerializableOrMetaAnnotation()
 
+internal val IrClass.isSerializableInterfaceWithCustom: Boolean
+    get() = kind == ClassKind.INTERFACE && hasSerializableAnnotationWithArgs()
+
 internal fun IrClass.isInternallySerializableEnum(): Boolean =
     kind == ClassKind.ENUM_CLASS && hasSerializableOrMetaAnnotationWithoutArgs()
 
@@ -92,6 +95,11 @@ internal val IrClass.isSerializableObject: Boolean
 internal fun IrClass.hasSerializableOrMetaAnnotationWithoutArgs(): Boolean = checkSerializableOrMetaAnnotationArgs(mustDoNotHaveArgs = true)
 
 fun IrClass.hasSerializableOrMetaAnnotation() = checkSerializableOrMetaAnnotationArgs(mustDoNotHaveArgs = false)
+
+private fun IrClass.hasSerializableAnnotationWithArgs(): Boolean {
+    val annot = getAnnotation(SerializationAnnotations.serializableAnnotationFqName)
+    return annot?.getValueArgument(0) != null
+}
 
 private fun IrClass.checkSerializableOrMetaAnnotationArgs(mustDoNotHaveArgs: Boolean): Boolean {
     val annot = getAnnotation(SerializationAnnotations.serializableAnnotationFqName)
@@ -118,7 +126,7 @@ internal fun IrClass.shouldHaveGeneratedSerializer(): Boolean =
             || isEnumWithLegacyGeneratedSerializer()
 
 internal val IrClass.shouldHaveGeneratedMethodsInCompanion: Boolean
-    get() = this.isSerializableObject || this.isSerializableEnum() || (this.kind == ClassKind.CLASS && hasSerializableOrMetaAnnotation()) || this.isSealedSerializableInterface
+    get() = this.isSerializableObject || this.isSerializableEnum() || (this.kind == ClassKind.CLASS && hasSerializableOrMetaAnnotation()) || this.isSealedSerializableInterface || this.isSerializableInterfaceWithCustom
 
 internal fun IrClass.isSerializableEnum(): Boolean = kind == ClassKind.ENUM_CLASS && hasSerializableOrMetaAnnotation()
 
@@ -193,6 +201,7 @@ internal fun IrClass.needSerializerFactory(compilerContext: SerializationPluginC
     if (serializableClass.isSerializableEnum()) return true
     if (serializableClass.isAbstractOrSealedSerializableClass) return true
     if (serializableClass.isSealedSerializableInterface) return true
+    if (serializableClass.isSerializableInterfaceWithCustom) return true
     if (serializableClass.typeParameters.isEmpty()) return false
     return true
 }

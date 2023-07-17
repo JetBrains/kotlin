@@ -98,6 +98,15 @@ fun FirClassSymbol<*>.hasSerializableAnnotationWithoutArgs(session: FirSession):
         }
     } ?: false
 
+fun FirClassSymbol<*>.hasSerializableAnnotationWithArgs(session: FirSession): Boolean {
+    val annotation = serializableAnnotation(needArguments = false, session) ?: return false
+    return if (annotation is FirAnnotationCall) {
+        annotation.arguments.isNotEmpty()
+    } else {
+        annotation.argumentMapping.mapping.isNotEmpty()
+    }
+}
+
 internal fun FirBasedSymbol<*>.getSerializableWith(session: FirSession): ConeKotlinType? =
     serializableAnnotation(needArguments = true, session)?.getKClassArgument(AnnotationParameterNames.WITH)
 
@@ -133,6 +142,10 @@ internal val FirClassSymbol<*>.isSealedSerializableInterface: Boolean
     get() = classKind.isInterface && rawStatus.modality == Modality.SEALED && hasSerializableOrMetaAnnotation
 
 context(FirSession)
+internal val FirClassSymbol<*>.isSerializableInterfaceWithCustom: Boolean
+    get() = classKind.isInterface && hasSerializableAnnotationWithArgs(this@FirSession)
+
+context(FirSession)
 val FirClassSymbol<*>.hasSerializableOrMetaAnnotation: Boolean
     get() = hasSerializableAnnotation || hasMetaSerializableAnnotation
 
@@ -146,6 +159,7 @@ internal val FirClassSymbol<*>.shouldHaveGeneratedMethodsInCompanion: Boolean
             || isSerializableEnum
             || (classKind == ClassKind.CLASS && hasSerializableOrMetaAnnotation)
             || isSealedSerializableInterface
+            || isSerializableInterfaceWithCustom
 
 context(FirSession)
 internal val FirClassSymbol<*>.companionNeedsSerializerFactory: Boolean
@@ -155,6 +169,7 @@ internal val FirClassSymbol<*>.companionNeedsSerializerFactory: Boolean
         if (isSerializableEnum) return true
         if (isAbstractOrSealedSerializableClass) return true
         if (isSealedSerializableInterface) return true
+        if (isSerializableInterfaceWithCustom) return true
         if (typeParameterSymbols.isEmpty()) return false
         return true
     }

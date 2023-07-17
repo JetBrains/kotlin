@@ -140,6 +140,12 @@ public class SerializationIrBoxTestGenerated extends AbstractSerializationIrBoxT
     }
 
     @Test
+    @TestMetadata("interfaces.kt")
+    public void testInterfaces() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/interfaces.kt");
+    }
+
+    @Test
     @TestMetadata("intrinsicAnnotations.kt")
     public void testIntrinsicAnnotations() throws Exception {
         runTest("plugins/kotlinx-serialization/testData/boxIr/intrinsicAnnotations.kt");
