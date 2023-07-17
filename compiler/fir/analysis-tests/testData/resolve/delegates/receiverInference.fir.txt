@@ -29,9 +29,9 @@ FILE: receiverInference.kt
             super<R|kotlin/Any|>()
         }
 
-        public final val d: R|kotlin/String|by R|/mkProp|<R|MyEnt|, R|kotlin/String|>().R|SubstitutionOverride</Provider.provideDelegate: R|Prop<Stub (chain inference): TypeVariable(_R), Stub (chain inference): TypeVariable(_V)>|>|(this@R|/MyEnt|, ::R|/MyEnt.d|)
+        public final val d: R|kotlin/String|by R|/mkProp|<R|MyEnt|, R|kotlin/String|>().R|SubstitutionOverride</Provider.provideDelegate: R|Prop<MyEnt, kotlin/String>|>|(this@R|/MyEnt|, ::R|/MyEnt.d|)
             public get(): R|kotlin/String| {
-                ^ this@R|/MyEnt|.D|/MyEnt.d|.R|SubstitutionOverride</Prop.getValue: R|Stub (chain inference): TypeVariable(_V)|>|(this@R|/MyEnt|, ::R|/MyEnt.d|)
+                ^ this@R|/MyEnt|.D|/MyEnt.d|.R|SubstitutionOverride</Prop.getValue: R|kotlin/String|>|(this@R|/MyEnt|, ::R|/MyEnt.d|)
             }
 
     }
