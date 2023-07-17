@@ -9,8 +9,8 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.AndroidMainSourceSetConventionsChecker
 import org.jetbrains.kotlin.gradle.dsl.IosSourceSetConventionChecker
-import org.jetbrains.kotlin.gradle.dsl.PlatformSourceSetConventionsChecker
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.PlatformSourceSetConventionsChecker
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.*
@@ -114,6 +114,7 @@ internal interface KotlinGradleProjectChecker {
             PlatformSourceSetConventionsChecker,
             AndroidMainSourceSetConventionsChecker,
             IosSourceSetConventionChecker,
+            KotlinTargetAlreadyDeclaredChecker,
         )
     }
 }

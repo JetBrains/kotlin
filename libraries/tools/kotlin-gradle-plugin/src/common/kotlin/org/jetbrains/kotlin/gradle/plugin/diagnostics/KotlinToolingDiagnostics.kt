@@ -548,27 +548,15 @@ object KotlinToolingDiagnostics {
     }
 
     object KotlinTargetAlreadyDeclared : ToolingDiagnosticFactory(WARNING) {
-        operator fun invoke(targetDslFunctionName: String, targetName: String, trace: Throwable?) = build(
+        operator fun invoke(targetDslFunctionName: String) = build(
             """
                 Kotlin Target '$targetDslFunctionName()' is already declared.
-                Declaring multiple Kotlin Targets of the same type is deprecated.
+
+                Declaring multiple Kotlin Targets of the same type is not recommended
+                and will become an error in the upcoming Kotlin releases.
                 
-                i.e.
-                    kotlin {
-                        $targetDslFunctionName()                       
-                        $targetDslFunctionName("$targetName") /* <- second '$targetDslFunctionName' target in the project is deprecated */
-                    }
-                    
-                Please use different Gradle Projects or create Kotlin Compilations.
-                For example:
-                
-                    kotlin {
-                        $targetDslFunctionName() {
-                            val $targetName by compilations.creating                           
-                        }
-                    }
-            """.trimIndent(),
-            throwable = trace
+                Read https://kotl.in/04i2n7 for details.
+            """.trimIndent()
         )
     }
 }

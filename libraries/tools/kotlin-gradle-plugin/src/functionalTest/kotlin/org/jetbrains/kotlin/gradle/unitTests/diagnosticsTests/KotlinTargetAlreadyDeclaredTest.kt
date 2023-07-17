@@ -67,10 +67,7 @@ class KotlinTargetAlreadyDeclaredTest {
         }
 
         project.evaluate()
-        project.assertContainsDiagnostic(
-            KotlinTargetAlreadyDeclared("jvm", "jvm2", null),
-            ignoreThrowable = true
-        )
+        project.assertContainsDiagnostic(KotlinTargetAlreadyDeclared("jvm"))
     }
 
     @Test
@@ -83,10 +80,7 @@ class KotlinTargetAlreadyDeclaredTest {
         }
 
         project.evaluate()
-        project.assertContainsDiagnostic(
-            KotlinTargetAlreadyDeclared("linuxArm64", "linux", null),
-            ignoreThrowable = true
-        )
+        project.assertContainsDiagnostic(KotlinTargetAlreadyDeclared("linuxArm64"))
     }
 
     @Test
@@ -101,10 +95,7 @@ class KotlinTargetAlreadyDeclaredTest {
         }
 
         project.evaluate()
-        project.assertContainsDiagnostic(
-            KotlinTargetAlreadyDeclared("androidTarget", "android2", null),
-            ignoreThrowable = true
-        )
+        project.assertContainsDiagnostic(KotlinTargetAlreadyDeclared("androidTarget"))
     }
 
     @Test
@@ -117,9 +108,6 @@ class KotlinTargetAlreadyDeclaredTest {
         }
 
         project.evaluate()
-        project.assertContainsDiagnostic(
-            KotlinTargetAlreadyDeclared("js", "nodejs", null),
-            ignoreThrowable = true
-        )
+        project.assertContainsDiagnostic(KotlinTargetAlreadyDeclared("js"))
     }
 }
