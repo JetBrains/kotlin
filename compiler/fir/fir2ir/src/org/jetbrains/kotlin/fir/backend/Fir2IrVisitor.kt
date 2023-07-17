@@ -71,7 +71,7 @@ class Fir2IrVisitor(
     private val operatorGenerator = OperatorExpressionGenerator(components, this, conversionScope)
 
     private var _annotationMode: Boolean = false
-    public val annotationMode: Boolean
+    val annotationMode: Boolean
         get() = _annotationMode
 
     private fun FirTypeRef.toIrType(): IrType = with(typeConverter) { toIrType() }
