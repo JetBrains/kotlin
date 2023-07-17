@@ -65,6 +65,32 @@ class ConcurrentModificationTest {
         }
     }
 
+    private fun <C : MutableList<String>> testSubListThrowsCME(
+        withSubList: WithCollection<C>,
+        subListOps: List<CollectionOperation<C>>
+    ) {
+        var invoked = false
+        withSubList { subList ->
+            invoked = true
+
+            for (subListOp in subListOps) {
+                val message = "subListOp: ${subListOp.description}"
+                if (subListOp.throwsCME) {
+                    assertFailsWith<ConcurrentModificationException>(message) {
+                        subListOp.function.invoke(subList)
+                    }
+                } else {
+                    try {
+                        subListOp.function.invoke(subList)
+                    } catch (e: Throwable) {
+                        fail("$message. Expected no exception, but was $e")
+                    }
+                }
+            }
+        }
+        assertTrue(invoked)
+    }
+
     @Test
     fun mutableList() {
         if (TestPlatform.current == TestPlatform.Js) return
@@ -165,6 +191,65 @@ class ConcurrentModificationTest {
             ArrayList<String>(10).apply {
                 addAll(listOf("a", "b", "c", "d"))
                 action(this)
+            }
+        }
+    }
+
+    @Test
+    fun subList() {
+        if (TestPlatform.current == TestPlatform.Js) return
+
+        val operations = listOf<CollectionOperation<MutableList<String>>>(
+            CollectionOperation("isEmpty()") { isEmpty() },
+            CollectionOperation("size") { size },
+
+            CollectionOperation("equals()") { equals(listOf("x")) },
+            CollectionOperation("hashCode()") { hashCode() },
+            CollectionOperation("toString()") { toString() },
+
+            CollectionOperation("indexOf") { indexOf("d") },
+            CollectionOperation("lastIndexOf") { lastIndexOf("d") },
+            CollectionOperation("contains") { contains("d") },
+
+            CollectionOperation("get()") { get(2) },
+            CollectionOperation("set()") { set(2, "e") },
+
+            CollectionOperation("add()") { add("e") },
+            CollectionOperation("add(index)") { add(2, "e") },
+
+            CollectionOperation("remove()") { remove("d") },
+            CollectionOperation("removeAt()") { removeAt(2) },
+
+            CollectionOperation("addAll()") { addAll(listOf("e", "f")) },
+            CollectionOperation("addAll(index)") { addAll(2, listOf("e", "f")) },
+
+            CollectionOperation("removeAll()") { removeAll(listOf("d", "e")) },
+
+            CollectionOperation("retainAll()") { retainAll(listOf("d", "e")) },
+
+            CollectionOperation("clear()") { clear() },
+            CollectionOperation("iterator()") { iterator() },
+            CollectionOperation("listIterator()") { listIterator() },
+
+            CollectionOperation("subList()", throwsCME = false) { subList(0, 1) },
+        )
+
+        fun testThrowsCME(withMutableList: WithCollection<MutableList<String>>) {
+            testSubListThrowsCME(withMutableList, operations)
+        }
+
+        testThrowsCME { action ->
+            val arrayList = arrayListOf("a", "b", "c", "d")
+            val subList = arrayList.subList(0, arrayList.size)
+            arrayList.add("e")
+            action(subList)
+        }
+        testThrowsCME { action ->
+            buildList {
+                addAll(listOf("a", "b", "c", "d"))
+                val subList = subList(0, size)
+                add("e")
+                action(subList)
             }
         }
     }

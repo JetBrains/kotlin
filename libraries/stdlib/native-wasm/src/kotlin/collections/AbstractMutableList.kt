@@ -185,9 +185,11 @@ public actual abstract class AbstractMutableList<E> protected actual constructor
         init {
             AbstractList.checkRangeIndexes(fromIndex, toIndex, list.size)
             this._size = toIndex - fromIndex
+            this.modCount = list.modCount
         }
 
         override fun add(index: Int, element: E) {
+            checkForComodification()
             AbstractList.checkPositionIndex(index, _size)
 
             list.add(fromIndex + index, element)
@@ -196,12 +198,14 @@ public actual abstract class AbstractMutableList<E> protected actual constructor
         }
 
         override fun get(index: Int): E {
+            checkForComodification()
             AbstractList.checkElementIndex(index, _size)
 
             return list[fromIndex + index]
         }
 
         override fun removeAt(index: Int): E {
+            checkForComodification()
             AbstractList.checkElementIndex(index, _size)
 
             val result = list.removeAt(fromIndex + index)
@@ -211,12 +215,22 @@ public actual abstract class AbstractMutableList<E> protected actual constructor
         }
 
         override fun set(index: Int, element: E): E {
+            checkForComodification()
             AbstractList.checkElementIndex(index, _size)
 
             return list.set(fromIndex + index, element)
         }
 
-        override val size: Int get() = _size
+        override val size: Int
+            get() {
+                checkForComodification()
+                return _size
+            }
+
+        private fun checkForComodification() {
+            if (list.modCount != modCount)
+                throw ConcurrentModificationException()
+        }
     }
 
 }
