@@ -1788,6 +1788,11 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val valueParameter: KtSymbol
     }
 
+    interface TypealiasExpandsToArrayOfNothings : KtFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = TypealiasExpandsToArrayOfNothings::class
+        val type: KtType
+    }
+
     interface OverridingFinalMember : KtFirDiagnostic<KtNamedDeclaration> {
         override val diagnosticClass get() = OverridingFinalMember::class
         val overriddenDeclaration: KtCallableSymbol
