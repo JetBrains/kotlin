@@ -15,7 +15,9 @@ KtNamedClassOrObjectSymbol:
   classKind: CLASS
   companionObject: null
   contextReceivers: []
+  isActual: false
   isData: false
+  isExpect: false
   isExternal: false
   isFun: false
   isInline: false
@@ -60,6 +62,8 @@ KtTypeAliasSymbol:
         type: Z
     ]
     type: X<Z>
+  isActual: false
+  isExpect: false
   name: Y
   origin: SOURCE
   symbolKind: TOP_LEVEL

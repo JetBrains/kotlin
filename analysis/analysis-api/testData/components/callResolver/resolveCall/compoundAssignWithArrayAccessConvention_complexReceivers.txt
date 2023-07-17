@@ -52,7 +52,9 @@ KtSuccessCallInfo:
           classKind: INTERFACE
           companionObject: null
           contextReceivers: []
+          isActual: false
           isData: false
+          isExpect: false
           isExternal: false
           isFun: false
           isInline: false

@@ -61,7 +61,9 @@ KtNamedClassOrObjectSymbol:
         ownTypeArguments: []
         type: kotlin/String
   ]
+  isActual: false
   isData: false
+  isExpect: false
   isExternal: false
   isFun: false
   isInline: false

@@ -7,7 +7,9 @@ KtNamedClassOrObjectSymbol:
   classKind: ANNOTATION_CLASS
   companionObject: null
   contextReceivers: []
+  isActual: false
   isData: false
+  isExpect: false
   isExternal: false
   isFun: false
   isInline: false
@@ -37,7 +39,9 @@ KtNamedClassOrObjectSymbol:
   classKind: ANNOTATION_CLASS
   companionObject: null
   contextReceivers: []
+  isActual: false
   isData: false
+  isExpect: false
   isExternal: false
   isFun: false
   isInline: false
@@ -67,7 +71,9 @@ KtNamedClassOrObjectSymbol:
   classKind: ANNOTATION_CLASS
   companionObject: null
   contextReceivers: []
+  isActual: false
   isData: false
+  isExpect: false
   isExternal: false
   isFun: false
   isInline: false
@@ -97,7 +103,9 @@ KtNamedClassOrObjectSymbol:
   classKind: ANNOTATION_CLASS
   companionObject: null
   contextReceivers: []
+  isActual: false
   isData: false
+  isExpect: false
   isExternal: false
   isFun: false
   isInline: false
@@ -252,7 +260,9 @@ KtNamedClassOrObjectSymbol:
   classKind: ANNOTATION_CLASS
   companionObject: null
   contextReceivers: []
+  isActual: false
   isData: false
+  isExpect: false
   isExternal: false
   isFun: false
   isInline: false
@@ -279,7 +289,9 @@ KtNamedClassOrObjectSymbol:
   classKind: INTERFACE
   companionObject: null
   contextReceivers: []
+  isActual: false
   isData: false
+  isExpect: false
   isExternal: false
   isFun: false
   isInline: false
@@ -461,7 +473,9 @@ KtNamedClassOrObjectSymbol:
   classKind: CLASS
   companionObject: null
   contextReceivers: []
+  isActual: false
   isData: false
+  isExpect: false
   isExternal: false
   isFun: false
   isInline: false

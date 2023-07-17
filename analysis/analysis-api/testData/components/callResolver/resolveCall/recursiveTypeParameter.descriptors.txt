@@ -9,7 +9,9 @@ KtSuccessCallInfo:
           classKind: CLASS
           companionObject: null
           contextReceivers: []
+          isActual: false
           isData: false
+          isExpect: false
           isExternal: false
           isFun: false
           isInline: false

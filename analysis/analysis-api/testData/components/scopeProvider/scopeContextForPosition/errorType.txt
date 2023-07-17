@@ -287,7 +287,9 @@ scopes:
         classKind: INTERFACE
         companionObject: null
         contextReceivers: []
+        isActual: false
         isData: false
+        isExpect: false
         isExternal: false
         isFun: false
         isInline: false
@@ -416,4 +418,3 @@ scopes:
   DefaultSimpleImportingScope, index = 12
 
   DefaultStarImportingScope, index = 13
-

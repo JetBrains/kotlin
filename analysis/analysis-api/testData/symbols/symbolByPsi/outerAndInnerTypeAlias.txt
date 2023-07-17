@@ -15,7 +15,9 @@ KtNamedClassOrObjectSymbol:
   classKind: CLASS
   companionObject: null
   contextReceivers: []
+  isActual: false
   isData: false
+  isExpect: false
   isExternal: false
   isFun: false
   isInline: false
@@ -50,6 +52,8 @@ KtTypeAliasSymbol:
         type: kotlin/Int
     ]
     type: X<kotlin/Int>
+  isActual: false
+  isExpect: false
   name: TopLevelAlias
   origin: SOURCE
   symbolKind: TOP_LEVEL
@@ -70,6 +74,8 @@ KtTypeAliasSymbol:
         type: kotlin/String
     ]
     type: X<kotlin/String>
+  isActual: false
+  isExpect: false
   name: NestedLevelAlias
   origin: SOURCE
   symbolKind: CLASS_MEMBER
@@ -90,6 +96,8 @@ KtTypeAliasSymbol:
         type: kotlin/String
     ]
     type: X<kotlin/String>
+  isActual: false
+  isExpect: false
   name: LocalTypeAlias
   origin: SOURCE
   symbolKind: CLASS_MEMBER
@@ -110,6 +118,8 @@ KtTypeAliasSymbol:
         type: kotlin/String
     ]
     type: X<kotlin/String>
+  isActual: false
+  isExpect: false
   name: NestedLevelAliasInLocalClass
   origin: SOURCE
   symbolKind: CLASS_MEMBER
@@ -130,6 +140,8 @@ KtTypeAliasSymbol:
         type: kotlin/String
     ]
     type: X<kotlin/String>
+  isActual: false
+  isExpect: false
   name: LocalTypeAlias
   origin: SOURCE
   symbolKind: CLASS_MEMBER
@@ -150,6 +162,8 @@ KtTypeAliasSymbol:
         type: kotlin/String
     ]
     type: X<kotlin/String>
+  isActual: false
+  isExpect: false
   name: NestedLevelAliasInLocalClass
   origin: SOURCE
   symbolKind: CLASS_MEMBER
@@ -198,7 +212,9 @@ KtNamedClassOrObjectSymbol:
   classKind: CLASS
   companionObject: null
   contextReceivers: []
+  isActual: false
   isData: false
+  isExpect: false
   isExternal: false
   isFun: false
   isInline: false
@@ -259,7 +275,9 @@ KtNamedClassOrObjectSymbol:
   classKind: CLASS
   companionObject: null
   contextReceivers: []
+  isActual: false
   isData: false
+  isExpect: false
   isExternal: false
   isFun: false
   isInline: false
@@ -320,7 +338,9 @@ KtNamedClassOrObjectSymbol:
   classKind: CLASS
   companionObject: null
   contextReceivers: []
+  isActual: false
   isData: false
+  isExpect: false
   isExternal: false
   isFun: false
   isInline: false

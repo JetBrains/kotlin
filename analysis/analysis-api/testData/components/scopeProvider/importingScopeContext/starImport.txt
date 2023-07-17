@@ -13,7 +13,9 @@ scopes:
         classKind: CLASS
         companionObject: null
         contextReceivers: []
+        isActual: false
         isData: false
+        isExpect: false
         isExternal: false
         isFun: false
         isInline: false
@@ -71,4 +73,3 @@ scopes:
     classifiers: 0
     callables: 0
     constructors: 0
-

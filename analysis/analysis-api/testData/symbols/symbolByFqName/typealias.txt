@@ -21,6 +21,8 @@ KtTypeAliasSymbol:
         type: kotlin/Any?
     ]
     type: @ExtensionFunctionType kotlin/coroutines/SuspendFunction2<kotlin/DeepRecursiveScope<*, *>, kotlin/Any?, kotlin/Any?>
+  isActual: false
+  isExpect: false
   name: DeepRecursiveFunctionBlock
   origin: LIBRARY
   symbolKind: TOP_LEVEL
