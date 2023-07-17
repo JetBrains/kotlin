@@ -1,4 +1,5 @@
 import org.gradle.internal.deprecation.DeprecatableConfiguration
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
 
 // Contains common configuration that should be applied to all projects
@@ -176,6 +177,15 @@ fun Project.configureKotlinCompilationOptions() {
 
         val projectsWithEnabledContextReceivers: List<String> by rootProject.extra
         val projectsWithOptInToUnsafeCastFunctionsFromAddToStdLib: List<String> by rootProject.extra
+
+        tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile> {
+            compilerOptions {
+                if (project.path in projectsWithDisabledFirBootstrap && languageVersion.get() >= KotlinVersion.KOTLIN_2_0) {
+                    languageVersion.set(KotlinVersion.KOTLIN_1_9)
+                    progressiveMode.set(false)
+                }
+            }
+        }
 
         @Suppress("SuspiciousCollectionReassignment", "DEPRECATION")
         tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile>().configureEach {
