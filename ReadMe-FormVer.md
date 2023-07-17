@@ -1,5 +1,15 @@
 # Formal Verification
 
+## Running the plugin
+
+To execute the plugin, build the `dist` target and then
+specify the plugin `.jar` with `-Xcompiler-plugin=`:
+
+```sh
+./gradlew dist
+dist/kotlinc/bin/kotlinc -language-version 2.0 -Xcompiler-plugin=dist/kotlinc/lib/formver-compiler-plugin.jar myfile.kt
+```
+
 ## Viper dependency
 
 TODO: Viper may need to be available locally to build the
