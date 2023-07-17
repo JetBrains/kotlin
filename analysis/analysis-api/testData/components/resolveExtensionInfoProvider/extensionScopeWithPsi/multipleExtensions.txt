@@ -12,7 +12,9 @@ classifiers: 2
     classKind: INTERFACE
     companionObject: null
     contextReceivers: []
+    isActual: false
     isData: false
+    isExpect: false
     isExternal: false
     isFun: false
     isInline: false
@@ -39,7 +41,9 @@ classifiers: 2
     classKind: INTERFACE
     companionObject: null
     contextReceivers: []
+    isActual: false
     isData: false
+    isExpect: false
     isExternal: false
     isFun: false
     isInline: false

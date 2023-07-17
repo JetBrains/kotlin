@@ -2,6 +2,8 @@ KtAnonymousObjectSymbol:
   annotationsList: []
   classIdIfNonLocal: null
   classKind: ANONYMOUS_OBJECT
+  isActual: false
+  isExpect: false
   name: null
   origin: SOURCE
   superTypes: [

@@ -34,7 +34,9 @@ scopes:
         classKind: COMPANION_OBJECT
         companionObject: null
         contextReceivers: []
+        isActual: false
         isData: false
+        isExpect: false
         isExternal: false
         isFun: false
         isInline: false
@@ -654,7 +656,9 @@ scopes:
         classKind: COMPANION_OBJECT
         companionObject: null
         contextReceivers: []
+        isActual: false
         isData: false
+        isExpect: false
         isExternal: false
         isFun: false
         isInline: false
@@ -815,7 +819,9 @@ scopes:
         classKind: ENUM_CLASS
         companionObject: null
         contextReceivers: []
+        isActual: false
         isData: false
+        isExpect: false
         isExternal: false
         isFun: false
         isInline: false
@@ -853,4 +859,3 @@ scopes:
   DefaultSimpleImportingScope, index = 11
 
   DefaultStarImportingScope, index = 12
-

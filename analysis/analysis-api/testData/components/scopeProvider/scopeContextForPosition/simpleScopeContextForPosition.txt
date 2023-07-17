@@ -487,7 +487,9 @@ scopes:
         classKind: CLASS
         companionObject: null
         contextReceivers: []
+        isActual: false
         isData: false
+        isExpect: false
         isExternal: false
         isFun: false
         isInline: false
@@ -510,7 +512,9 @@ scopes:
         classKind: CLASS
         companionObject: null
         contextReceivers: []
+        isActual: false
         isData: false
+        isExpect: false
         isExternal: false
         isFun: false
         isInline: false
@@ -709,7 +713,9 @@ scopes:
         classKind: CLASS
         companionObject: null
         contextReceivers: []
+        isActual: false
         isData: false
+        isExpect: false
         isExternal: false
         isFun: false
         isInline: false
@@ -738,7 +744,9 @@ scopes:
         classKind: CLASS
         companionObject: null
         contextReceivers: []
+        isActual: false
         isData: false
+        isExpect: false
         isExternal: false
         isFun: false
         isInline: false
@@ -791,7 +799,9 @@ scopes:
         classKind: CLASS
         companionObject: null
         contextReceivers: []
+        isActual: false
         isData: false
+        isExpect: false
         isExternal: false
         isFun: false
         isInline: false
@@ -814,7 +824,9 @@ scopes:
         classKind: CLASS
         companionObject: null
         contextReceivers: []
+        isActual: false
         isData: false
+        isExpect: false
         isExternal: false
         isFun: false
         isInline: false
@@ -837,7 +849,9 @@ scopes:
         classKind: CLASS
         companionObject: null
         contextReceivers: []
+        isActual: false
         isData: false
+        isExpect: false
         isExternal: false
         isFun: false
         isInline: false
@@ -1068,4 +1082,3 @@ scopes:
   DefaultSimpleImportingScope, index = 18
 
   DefaultStarImportingScope, index = 19
-

@@ -232,7 +232,9 @@ KtNamedClassOrObjectSymbol:
   classKind: CLASS
   companionObject: null
   contextReceivers: []
+  isActual: false
   isData: true
+  isExpect: false
   isExternal: false
   isFun: false
   isInline: false

@@ -119,6 +119,8 @@ KtAnonymousObjectSymbol:
   annotationsList: []
   classIdIfNonLocal: null
   classKind: ANONYMOUS_OBJECT
+  isActual: false
+  isExpect: false
   name: null
   origin: SOURCE
   superTypes: [
@@ -222,7 +224,9 @@ KtNamedClassOrObjectSymbol:
   classKind: CLASS
   companionObject: null
   contextReceivers: []
+  isActual: false
   isData: false
+  isExpect: false
   isExternal: false
   isFun: false
   isInline: false
