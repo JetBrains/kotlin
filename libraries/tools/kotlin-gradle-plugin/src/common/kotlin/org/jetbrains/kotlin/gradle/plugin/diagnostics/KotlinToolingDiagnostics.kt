@@ -194,17 +194,6 @@ object KotlinToolingDiagnostics {
         )
     }
 
-    object TargetsNeedDisambiguation : ToolingDiagnosticFactory(WARNING) {
-        operator fun invoke(targetGroupsRendered: String) = build(
-            """
-            |The following targets are not distinguishable:
-            |$targetGroupsRendered
-            |Use an additional attribute to disambiguate them 
-            |See https://kotlinlang.org/docs/multiplatform-set-up-targets.html#distinguish-several-targets-for-one-platform for more details
-            """.trimMargin()
-        )
-    }
-
     object DeprecatedPropertyWithReplacement : ToolingDiagnosticFactory(WARNING) {
         operator fun invoke(deprecatedPropertyName: String, replacement: String) = build(
             "Project property '$deprecatedPropertyName' is deprecated. Please use '$replacement' instead."
