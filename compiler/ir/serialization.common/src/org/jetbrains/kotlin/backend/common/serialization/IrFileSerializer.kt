@@ -1359,6 +1359,7 @@ open class IrFileSerializer(
         .build()
 
     open fun backendSpecificExplicitRoot(node: IrAnnotationContainer): Boolean = false
+    open fun backendSpecificExplicitRootExclusion(node: IrAnnotationContainer): Boolean = false
     open fun keepOrderOfProperties(property: IrProperty): Boolean = !property.isConst
     open fun backendSpecificSerializeAllMembers(irClass: IrClass) = false
 
@@ -1376,6 +1377,7 @@ open class IrFileSerializer(
 
         if (backendSpecificExplicitRoot(file)) {
             for (declaration in file.declarations) {
+                if (backendSpecificExplicitRootExclusion(declaration)) continue
                 proto.addExplicitlyExportedToCompiler(serializeIrSymbol(declaration.symbol))
             }
         } else {

@@ -39,9 +39,14 @@ class JsIrFileSerializer(
 ) {
     companion object {
         private val JS_EXPORT_FQN = FqName("kotlin.js.JsExport")
+        private val JS_EXPORT_IGNORE_FQN = FqName("kotlin.js.JsExport.Ignore")
     }
 
     override fun backendSpecificExplicitRoot(node: IrAnnotationContainer): Boolean {
-        return node.annotations.hasAnnotation(JS_EXPORT_FQN)
+        return node.annotations.hasAnnotation(JS_EXPORT_FQN) && !backendSpecificExplicitRootExclusion(node)
+    }
+
+    override fun backendSpecificExplicitRootExclusion(node: IrAnnotationContainer): Boolean {
+        return node.annotations.hasAnnotation(JS_EXPORT_IGNORE_FQN)
     }
 }
