@@ -68,40 +68,46 @@ fun AbstractKtSourceElement?.startOffsetSkippingComments(): Int? {
     }
 }
 
-internal fun <T : IrElement> FirElement.convertWithOffsets(
-    f: (startOffset: Int, endOffset: Int) -> T
-): T {
+internal inline fun <T : IrElement> FirElement.convertWithOffsets(f: (startOffset: Int, endOffset: Int) -> T): T {
     return source.convertWithOffsets(f)
 }
 
-internal fun <T : IrElement> KtSourceElement?.convertWithOffsets(
-    f: (startOffset: Int, endOffset: Int) -> T
-): T {
-    if (psi is PsiCompiledElement) return f(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
-    val startOffset = this?.startOffsetSkippingComments() ?: this?.startOffset ?: UNDEFINED_OFFSET
-    val endOffset = this?.endOffset ?: UNDEFINED_OFFSET
+internal inline fun <T : IrElement> KtSourceElement?.convertWithOffsets(f: (startOffset: Int, endOffset: Int) -> T): T {
+    val startOffset: Int
+    val endOffset: Int
+
+    if (psi is PsiCompiledElement) {
+        startOffset = UNDEFINED_OFFSET
+        endOffset = UNDEFINED_OFFSET
+    } else {
+        startOffset = this?.startOffsetSkippingComments() ?: this?.startOffset ?: UNDEFINED_OFFSET
+        endOffset = this?.endOffset ?: UNDEFINED_OFFSET
+    }
+
     return f(startOffset, endOffset)
 }
 
-internal fun <T : IrElement> FirQualifiedAccessExpression.convertWithOffsets(
-    f: (startOffset: Int, endOffset: Int) -> T
-): T {
+internal inline fun <T : IrElement> FirQualifiedAccessExpression.convertWithOffsets(f: (startOffset: Int, endOffset: Int) -> T): T {
     return convertWithOffsets(this.calleeReference, f)
 }
 
-internal fun <T : IrElement> FirThisReceiverExpression.convertWithOffsets(
-    f: (startOffset: Int, endOffset: Int) -> T
-): T {
+internal inline fun <T : IrElement> FirThisReceiverExpression.convertWithOffsets(f: (startOffset: Int, endOffset: Int) -> T): T {
     return source.convertWithOffsets(f)
 }
 
-internal fun <T : IrElement> FirStatement.convertWithOffsets(
+internal inline fun <T : IrElement> FirStatement.convertWithOffsets(
     calleeReference: FirReference,
     f: (startOffset: Int, endOffset: Int) -> T
 ): T {
-    if (psi is PsiCompiledElement) return f(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
-    val startOffset = calleeReference.source?.startOffsetSkippingComments() ?: calleeReference.source?.startOffset ?: UNDEFINED_OFFSET
-    val endOffset = source?.endOffset ?: UNDEFINED_OFFSET
+    val startOffset: Int
+    val endOffset: Int
+    if (psi is PsiCompiledElement) {
+        startOffset = UNDEFINED_OFFSET
+        endOffset = UNDEFINED_OFFSET
+    } else {
+        startOffset = calleeReference.source?.startOffsetSkippingComments() ?: calleeReference.source?.startOffset ?: UNDEFINED_OFFSET
+        endOffset = source?.endOffset ?: UNDEFINED_OFFSET
+    }
     return f(startOffset, endOffset)
 }
 

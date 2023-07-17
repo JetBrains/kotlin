@@ -13,14 +13,23 @@ import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.isSetter
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
+import org.jetbrains.kotlin.util.PrivateForInline
 
+@OptIn(PrivateForInline::class)
 class Fir2IrConversionScope {
-    private val parentStack = mutableListOf<IrDeclarationParent>()
+    @PublishedApi
+    @PrivateForInline
+    internal val parentStack = mutableListOf<IrDeclarationParent>()
 
-    private val containingFirClassStack = mutableListOf<FirClass>()
-    private val currentlyGeneratedDelegatedConstructors = mutableMapOf<IrClass, IrConstructor>()
+    @PublishedApi
+    @PrivateForInline
+    internal val containingFirClassStack = mutableListOf<FirClass>()
 
-    fun <T : IrDeclarationParent, R> withParent(parent: T, f: T.() -> R): R {
+    @PublishedApi
+    @PrivateForInline
+    internal val currentlyGeneratedDelegatedConstructors = mutableMapOf<IrClass, IrConstructor>()
+
+    inline fun <T : IrDeclarationParent, R> withParent(parent: T, f: T.() -> R): R {
         parentStack += parent
         try {
             return parent.f()
@@ -29,11 +38,13 @@ class Fir2IrConversionScope {
         }
     }
 
-    fun <T> forDelegatingConstructorCall(constructor: IrConstructor, irClass: IrClass, f: () -> T): T {
+    internal fun <T> forDelegatingConstructorCall(constructor: IrConstructor, irClass: IrClass, f: () -> T): T {
         currentlyGeneratedDelegatedConstructors[irClass] = constructor
-        val result = f()
-        currentlyGeneratedDelegatedConstructors.remove(irClass)
-        return result
+        try {
+            return f()
+        } finally {
+            currentlyGeneratedDelegatedConstructors.remove(irClass)
+        }
     }
 
     fun getConstructorForCurrentlyGeneratedDelegatedConstructor(itClass: IrClass): IrConstructor? =
@@ -41,10 +52,13 @@ class Fir2IrConversionScope {
 
     fun containingFileIfAny(): IrFile? = parentStack.getOrNull(0) as? IrFile
 
-    fun withContainingFirClass(containingFirClass: FirClass, f: () -> Unit) {
+    inline fun withContainingFirClass(containingFirClass: FirClass, f: () -> Unit) {
         containingFirClassStack += containingFirClass
-        f()
-        containingFirClassStack.removeAt(containingFirClassStack.size - 1)
+        try {
+            f()
+        } finally {
+            containingFirClassStack.removeAt(containingFirClassStack.size - 1)
+        }
     }
 
     fun parentFromStack(): IrDeclarationParent = parentStack.last()
@@ -66,9 +80,11 @@ class Fir2IrConversionScope {
 
     fun containerFirClass(): FirClass? = containingFirClassStack.lastOrNull()
 
-    private val functionStack = mutableListOf<IrFunction>()
+    @PublishedApi
+    @PrivateForInline
+    internal val functionStack = mutableListOf<IrFunction>()
 
-    fun <T : IrFunction, R> withFunction(function: T, f: T.() -> R): R {
+    inline fun <T : IrFunction, R> withFunction(function: T, f: T.() -> R): R {
         functionStack += function
         try {
             return function.f()
@@ -77,9 +93,11 @@ class Fir2IrConversionScope {
         }
     }
 
-    private val propertyStack = mutableListOf<Pair<IrProperty, FirProperty?>>()
+    @PublishedApi
+    @PrivateForInline
+    internal val propertyStack = mutableListOf<Pair<IrProperty, FirProperty?>>()
 
-    fun <R> withProperty(property: IrProperty, firProperty: FirProperty? = null, f: IrProperty.() -> R): R {
+    inline fun <R> withProperty(property: IrProperty, firProperty: FirProperty? = null, f: IrProperty.() -> R): R {
         propertyStack += (property to firProperty)
         try {
             return property.f()
@@ -88,9 +106,11 @@ class Fir2IrConversionScope {
         }
     }
 
-    private val classStack = mutableListOf<IrClass>()
+    @PublishedApi
+    @PrivateForInline
+    internal val classStack = mutableListOf<IrClass>()
 
-    fun <R> withClass(klass: IrClass, f: IrClass.() -> R): R {
+    inline fun <R> withClass(klass: IrClass, f: IrClass.() -> R): R {
         classStack += klass
         return try {
             klass.f()
@@ -99,21 +119,30 @@ class Fir2IrConversionScope {
         }
     }
 
-    private val whenSubjectVariableStack = mutableListOf<IrVariable>()
-    private val safeCallSubjectVariableStack = mutableListOf<IrVariable>()
+    @PublishedApi
+    @PrivateForInline
+    internal val whenSubjectVariableStack = mutableListOf<IrVariable>()
 
-    fun <T> withWhenSubject(subject: IrVariable?, f: () -> T): T {
+    @PublishedApi
+    @PrivateForInline
+    internal val safeCallSubjectVariableStack = mutableListOf<IrVariable>()
+
+    inline fun <T> withWhenSubject(subject: IrVariable?, f: () -> T): T {
         if (subject != null) whenSubjectVariableStack += subject
-        val result = f()
-        if (subject != null) whenSubjectVariableStack.removeAt(whenSubjectVariableStack.size - 1)
-        return result
+        try {
+            return f()
+        } finally {
+            if (subject != null) whenSubjectVariableStack.removeAt(whenSubjectVariableStack.size - 1)
+        }
     }
 
-    fun <T> withSafeCallSubject(subject: IrVariable?, f: () -> T): T {
+    inline fun <T> withSafeCallSubject(subject: IrVariable?, f: () -> T): T {
         if (subject != null) safeCallSubjectVariableStack += subject
-        val result = f()
-        if (subject != null) safeCallSubjectVariableStack.removeAt(safeCallSubjectVariableStack.size - 1)
-        return result
+        try {
+            return f()
+        } finally {
+            if (subject != null) safeCallSubjectVariableStack.removeAt(safeCallSubjectVariableStack.size - 1)
+        }
     }
 
     fun returnTarget(expression: FirReturnExpression, declarationStorage: Fir2IrDeclarationStorage): IrFunction {
