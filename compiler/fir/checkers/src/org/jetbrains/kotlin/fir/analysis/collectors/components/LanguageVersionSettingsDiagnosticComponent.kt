@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.collectors.components
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.CheckersComponentInternal
 import org.jetbrains.kotlin.fir.analysis.checkers.LanguageVersionSettingsCheckers
@@ -24,8 +25,9 @@ class LanguageVersionSettingsDiagnosticComponent(
     }
 
     private fun Collection<FirLanguageVersionSettingsChecker>.check(context: CheckerContext) {
+        val rawReport = (reporter as? BaseDiagnosticsCollector)?.rawReport ?: return
         for (checker in this) {
-            checker.check(context, reporter)
+            checker.check(context, rawReport)
         }
     }
 }

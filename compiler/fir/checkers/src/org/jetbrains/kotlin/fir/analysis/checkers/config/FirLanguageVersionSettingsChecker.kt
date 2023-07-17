@@ -5,9 +5,8 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.config
 
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 
 abstract class FirLanguageVersionSettingsChecker {
-    abstract fun check(context: CheckerContext, reporter: DiagnosticReporter)
+    abstract fun check(context: CheckerContext, rawReport: (Boolean, String) -> Unit)
 }
