@@ -18,7 +18,7 @@ import kotlin.test.fail
 
 class ConcurrentModificationTest {
 
-    private fun <C, I : Iterator<*>> testThrowsCME(
+    private fun <C, I : Iterator<*>> testIteratorThrowsCME(
         withCollection: WithCollection<C>,
         createIterator: C.() -> I,
         collectionOp: CollectionOperation<C>,
@@ -50,17 +50,17 @@ class ConcurrentModificationTest {
         assertTrue(invoked)
     }
 
-    private fun <C : MutableList<String>> testThrowsCME(
+    private fun <C : MutableList<String>> testIteratorThrowsCME(
         withMutableList: WithCollection<C>,
         listOps: List<CollectionOperation<C>>
     ) {
         for (listOp in listOps) {
             for (iteratorOp in iteratorOperations<String>()) {
-                testThrowsCME(withMutableList, { iterator() }, listOp, iteratorOp)
+                testIteratorThrowsCME(withMutableList, { iterator() }, listOp, iteratorOp)
             }
             for (iteratorOp in listIteratorOperations) {
-                testThrowsCME(withMutableList, { listIterator() }, listOp, iteratorOp)
-                testThrowsCME(withMutableList, { listIterator(2) }, listOp, iteratorOp)
+                testIteratorThrowsCME(withMutableList, { listIterator() }, listOp, iteratorOp)
+                testIteratorThrowsCME(withMutableList, { listIterator(2) }, listOp, iteratorOp)
             }
         }
     }
@@ -102,7 +102,7 @@ class ConcurrentModificationTest {
         }
 
         fun testThrowsCME(withMutableList: WithCollection<MutableList<String>>) {
-            testThrowsCME(withMutableList, operations)
+            testIteratorThrowsCME(withMutableList, operations)
         }
 
         // size == capacity
@@ -146,7 +146,7 @@ class ConcurrentModificationTest {
         )
 
         fun testThrowsCME(withArrayList: WithCollection<ArrayList<String>>) {
-            testThrowsCME(withArrayList, operations)
+            testIteratorThrowsCME(withArrayList, operations)
         }
 
         // size == capacity
@@ -199,7 +199,7 @@ class ConcurrentModificationTest {
         fun testThrowsCME(withMutableSet: WithCollection<MutableSet<String>>) {
             for (setOp in operations) {
                 for (iteratorOp in iteratorOperations<String>()) {
-                    testThrowsCME(withMutableSet, { iterator() }, setOp, iteratorOp)
+                    testIteratorThrowsCME(withMutableSet, { iterator() }, setOp, iteratorOp)
                 }
             }
         }
@@ -268,11 +268,11 @@ class ConcurrentModificationTest {
         fun testThrowsCME(withMutableMap: WithCollection<MutableMap<String, String>>) {
             for (mapOp in operations) {
                 for (iteratorOp in iteratorOperations<String>()) {
-                    testThrowsCME(withMutableMap, { keys.iterator() }, mapOp, iteratorOp)
-                    testThrowsCME(withMutableMap, { values.iterator() }, mapOp, iteratorOp)
+                    testIteratorThrowsCME(withMutableMap, { keys.iterator() }, mapOp, iteratorOp)
+                    testIteratorThrowsCME(withMutableMap, { values.iterator() }, mapOp, iteratorOp)
                 }
                 for (iteratorOp in iteratorOperations<MutableMap.MutableEntry<String, String>>()) {
-                    testThrowsCME(withMutableMap, { entries.iterator() }, mapOp, iteratorOp)
+                    testIteratorThrowsCME(withMutableMap, { entries.iterator() }, mapOp, iteratorOp)
                 }
             }
         }
