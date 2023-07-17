@@ -216,7 +216,7 @@ abstract class AnnotationCodegen(
             else if (param.defaultValue != null)
                 continue // Default value will be supplied by JVM at runtime.
             else if (context.state.classBuilderMode.generateBodies) //skip error for KAPT
-                error("No value for annotation parameter $param")
+                error("No value for annotation parameter ${param.render()}")
         }
     }
 
