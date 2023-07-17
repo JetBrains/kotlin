@@ -9,7 +9,7 @@ repositories {
 }
 
 dependencies {
-    implementation("org.gradle.toolchains:foojay-resolver:0.4.0")
+    implementation(libs.gradle.toolchainsFoojayResolver.gradle.plugin)
 }
 
 kotlin.jvmToolchain(8)

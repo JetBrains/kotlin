@@ -17,7 +17,16 @@ buildscript {
 }
 
 plugins {
+    // Version here should be also synced with the version in 'libs.versions.toml'
     id("org.gradle.toolchains.foojay-resolver-convention") version "0.4.0"
+}
+
+dependencyResolutionManagement {
+    versionCatalogs {
+        create("libs") {
+            from(files("../../gradle/libs.versions.toml"))
+        }
+    }
 }
 
 include(":build-cache")
