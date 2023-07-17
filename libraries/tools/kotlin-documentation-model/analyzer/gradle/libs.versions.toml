@@ -67,11 +67,6 @@ gradlePlugin-shadow = { module = "gradle.plugin.com.github.johnrengelman:shadow"
 
 #### Kotlin analysis ####
 kotlin-compiler = { module = "org.jetbrains.kotlin:kotlin-compiler", version.ref = "kotlin-compiler" }
-kotlin-idePlugin-common = { module = "org.jetbrains.kotlin:common", version.ref = "kotlin-ide-plugin" }
-kotlin-idePlugin-idea = { module = "org.jetbrains.kotlin:idea", version.ref = "kotlin-ide-plugin" }
-kotlin-idePlugin-core = { module = "org.jetbrains.kotlin:core", version.ref = "kotlin-ide-plugin" }
-kotlin-idePlugin-native = { module = "org.jetbrains.kotlin:native", version.ref = "kotlin-ide-plugin" }
-kotlin-jps-common = { module = "org.jetbrains.kotlin:jps-common", version.ref = "kotlin-jps-common" }
 
 #### Java analysis ####
 intellij-java-psi-api = { module = "com.jetbrains.intellij.java:java-psi", version.ref = "intellij-platform" }
