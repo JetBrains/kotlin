@@ -23,8 +23,10 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.reportOnDeclaration
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.calls.util.isLowPriorityFromStdlibJre7Or8
 import org.jetbrains.kotlin.resolve.descriptorUtil.platform
 
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -35,7 +37,7 @@ class OverloadResolver(
     private val overloadFilter: OverloadFilter,
     private val overloadChecker: OverloadChecker,
     languageVersionSettings: LanguageVersionSettings,
-    mainFunctionDetectorFactory: MainFunctionDetector.Factory
+    mainFunctionDetectorFactory: MainFunctionDetector.Factory,
 ) {
 
     private val mainFunctionDetector = mainFunctionDetectorFactory.createMainFunctionDetector(trace, languageVersionSettings)
@@ -64,7 +66,8 @@ class OverloadResolver(
                 constructorsByOuterClass.putValues(containingDeclaration, klass.constructors)
             } else if (!(containingDeclaration is FunctionDescriptor ||
                         containingDeclaration is PropertyDescriptor ||
-                        containingDeclaration is PackageFragmentDescriptor)) {
+                        containingDeclaration is PackageFragmentDescriptor)
+            ) {
                 throw IllegalStateException("Illegal class container: " + containingDeclaration)
             }
         }
@@ -89,7 +92,7 @@ class OverloadResolver(
 
     private fun groupModulePackageMembersByFqName(
         c: BodiesResolveContext,
-        overloadFilter: OverloadFilter
+        overloadFilter: OverloadFilter,
     ): MultiMap<FqNameUnsafe, DeclarationDescriptorNonRoot> {
         val packageMembersByName = MultiMap<FqNameUnsafe, DeclarationDescriptorNonRoot>()
 
@@ -126,7 +129,7 @@ class OverloadResolver(
         packageMembersByName: MultiMap<FqNameUnsafe, DeclarationDescriptorNonRoot>,
         interestingDescriptors: Collection<DeclarationDescriptor>,
         overloadFilter: OverloadFilter,
-        getMembersByName: (MemberScope, Name) -> Collection<DeclarationDescriptorNonRoot>
+        getMembersByName: (MemberScope, Name) -> Collection<DeclarationDescriptorNonRoot>,
     ) {
         val observedFQNs = hashSetOf<FqNameUnsafe>()
         for (descriptor in interestingDescriptors) {
@@ -144,7 +147,7 @@ class OverloadResolver(
     private inline fun getModulePackageMembersWithSameName(
         descriptor: DeclarationDescriptor,
         overloadFilter: OverloadFilter,
-        getMembersByName: (MemberScope, Name) -> Collection<DeclarationDescriptorNonRoot>
+        getMembersByName: (MemberScope, Name) -> Collection<DeclarationDescriptorNonRoot>,
     ): Collection<DeclarationDescriptorNonRoot> {
         val containingPackage = descriptor.containingDeclaration
         if (containingPackage !is PackageFragmentDescriptor) {
@@ -169,7 +172,7 @@ class OverloadResolver(
 
     private fun checkOverloadsInClass(
         classDescriptor: ClassDescriptorWithResolutionScopes,
-        nestedClassConstructors: Collection<FunctionDescriptor>
+        nestedClassConstructors: Collection<FunctionDescriptor>,
     ) {
         val functionsByName = MultiMap.create<Name, CallableMemberDescriptor>()
 
@@ -254,6 +257,7 @@ class OverloadResolver(
                 if (isTopLevelMainInDifferentFiles(member1, member2)) continue
                 if (isDefinitionsForDifferentPlatforms(member1, member2)) continue
                 if (isExpectDeclarationAndDefinition(member1, member2) || isExpectDeclarationAndDefinition(member2, member1)) continue
+                if (isObjcOverrideWithDifferentParameterNames(member1, member2)) continue
 
                 if (!overloadChecker.isOverloadable(member1, member2)) {
                     redeclarations.add(member1)
@@ -295,17 +299,35 @@ class OverloadResolver(
                 member1.platform != member2.platform
     }
 
+    private fun isObjcOverrideWithDifferentParameterNames(member1: DeclarationDescriptor, member2: DeclarationDescriptor): Boolean {
+        if (member1 !is FunctionDescriptor) return false
+        if (member2 !is FunctionDescriptor) return false
+
+        if (member1.overriddenDescriptors.none { overridden -> overridden.isObjC() }) return false
+        if (member2.overriddenDescriptors.none { overridden -> overridden.isObjC() }) return false
+
+        return member1.valueParameters.map { it.name } != member2.valueParameters.map { it.name }
+    }
+
     private fun reportRedeclarations(redeclarations: Collection<DeclarationDescriptorNonRoot>) {
         if (redeclarations.isEmpty()) return
 
         for (memberDescriptor in redeclarations) {
             when (memberDescriptor) {
                 is PropertyDescriptor,
-                is ClassifierDescriptor ->
-                    reportOnDeclaration(trace, memberDescriptor) { Errors.REDECLARATION.on(it, redeclarations) }
+                is ClassifierDescriptor,
+                -> reportOnDeclaration(trace, memberDescriptor) { Errors.REDECLARATION.on(it, redeclarations) }
                 is FunctionDescriptor ->
                     reportOnDeclaration(trace, memberDescriptor) { Errors.CONFLICTING_OVERLOADS.on(it, redeclarations) }
             }
         }
+    }
+
+    private companion object {
+        val OBJC_CALLABLE_ANNOTATION_NAME = FqName("kotlin.commonizer.ObjCCallable")
+        val OBJC_METHOD_ANNOTATION_NAME = FqName("kotlinx.cinterop.ObjCMethod")
+
+        fun FunctionDescriptor.isObjC() = annotations.hasAnnotation(OBJC_CALLABLE_ANNOTATION_NAME) ||
+                annotations.hasAnnotation(OBJC_METHOD_ANNOTATION_NAME)
     }
 }
