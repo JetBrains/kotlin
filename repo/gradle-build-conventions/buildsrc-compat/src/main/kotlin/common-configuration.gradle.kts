@@ -178,15 +178,6 @@ fun Project.configureKotlinCompilationOptions() {
         val projectsWithEnabledContextReceivers: List<String> by rootProject.extra
         val projectsWithOptInToUnsafeCastFunctionsFromAddToStdLib: List<String> by rootProject.extra
 
-        tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile> {
-            compilerOptions {
-                if (project.path in projectsWithDisabledFirBootstrap && languageVersion.get() >= KotlinVersion.KOTLIN_2_0) {
-                    languageVersion.set(KotlinVersion.KOTLIN_1_9)
-                    progressiveMode.set(false)
-                }
-            }
-        }
-
         @Suppress("SuspiciousCollectionReassignment", "DEPRECATION")
         tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile>().configureEach {
             kotlinOptions {
@@ -205,6 +196,10 @@ fun Project.configureKotlinCompilationOptions() {
                     } else {
                         freeCompilerArgs += "-Xskip-prerelease-check"
                     }
+                }
+                if (project.path in projectsWithDisabledFirBootstrap) {
+                    languageVersion = "1.9"
+                    allWarningsAsErrors = false
                 }
                 if (renderDiagnosticNames) {
                     freeCompilerArgs += "-Xrender-internal-diagnostic-names"
