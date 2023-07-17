@@ -1,3 +1,3 @@
-error: opt-in requirement marker org.test.Error is deprecated. Error
-error: opt-in requirement marker org.test.Hidden is deprecated. Hidden
+error: opt-in requirement marker org.test.Error is deprecated
+error: opt-in requirement marker org.test.Hidden is deprecated
 COMPILATION_ERROR
