@@ -132,7 +132,7 @@ public final class B {
     }
 
     /**
-     * A property with a backing field and an expliciti setter
+     * A property with a backing field and an explicit setter
      */
     @org.jetbrains.annotations.NotNull()
     public final java.lang.String getG() {

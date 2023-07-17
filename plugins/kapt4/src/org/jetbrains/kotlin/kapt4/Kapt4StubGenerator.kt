@@ -480,7 +480,8 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
 
         lineMappings.registerField(containingClass, field)
         val skip = field.navigationElement is KtParameter && !dumpDefaultParameterValues
-        val initializer = explicitInitializer ?: convertPropertyInitializer(if (skip) null else field.initializer, field.type, field.isFinal)
+        val initializer =
+            explicitInitializer ?: convertPropertyInitializer(if (skip) null else field.initializer, field.type, field.isFinal)
         return treeMaker.VarDef(modifiers, treeMaker.name(name), typeExpression, initializer).keepKdocCommentsIfNecessary(field)
     }
 
