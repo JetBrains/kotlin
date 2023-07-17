@@ -61,6 +61,9 @@ class Candidate(
     override val errors: List<ConstraintSystemError>
         get() = system.errors
 
+    /**
+     * Substitutor from declared type parameters to type variables created for that candidate
+     */
     lateinit var substitutor: ConeSubstitutor
     lateinit var freshVariables: List<ConeTypeVariable>
     var resultingTypeForCallableReference: ConeKotlinType? = null
