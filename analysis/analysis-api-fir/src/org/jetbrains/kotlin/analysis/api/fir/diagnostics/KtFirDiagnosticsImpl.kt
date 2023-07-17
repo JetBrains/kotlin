@@ -2136,6 +2136,18 @@ internal class CannotChangeAccessPrivilegeImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtModifierListOwner>(firDiagnostic, token), KtFirDiagnostic.CannotChangeAccessPrivilege
 
+internal class MultipleDefaultsInheritedFromSupertypesImpl(
+    override val valueParameter: KtSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.MultipleDefaultsInheritedFromSupertypes
+
+internal class MultipleDefaultsInheritedFromSupertypesWhenNoExplicitOverrideImpl(
+    override val valueParameter: KtSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.MultipleDefaultsInheritedFromSupertypesWhenNoExplicitOverride
+
 internal class OverridingFinalMemberImpl(
     override val overriddenDeclaration: KtCallableSymbol,
     override val containingClassName: Name,
