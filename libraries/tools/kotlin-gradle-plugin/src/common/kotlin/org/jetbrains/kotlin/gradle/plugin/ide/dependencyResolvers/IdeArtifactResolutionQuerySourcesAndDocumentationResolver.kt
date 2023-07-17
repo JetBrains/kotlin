@@ -10,11 +10,9 @@ import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedArtifactResult
 import org.gradle.jvm.JvmLibrary
 import org.gradle.language.base.artifact.SourcesArtifact
-import org.gradle.language.java.artifact.JavadocArtifact
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryCoordinates
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
-import org.jetbrains.kotlin.gradle.idea.tcs.extras.documentationClasspath
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.sourcesClasspath
 import org.jetbrains.kotlin.gradle.idea.tcs.isKotlinCompileBinaryType
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
@@ -41,9 +39,10 @@ internal object IdeArtifactResolutionQuerySourcesAndDocumentationResolver : IdeA
 
         val project = sourceSet.project
         val configuration = selectConfiguration(sourceSet)
+
         val resolutionResult = project.dependencies.createArtifactResolutionQuery()
             .forComponents(configuration.incoming.resolutionResult.allComponents.map { it.id })
-            .withArtifacts(JvmLibrary::class.java, SourcesArtifact::class.java, JavadocArtifact::class.java)
+            .withArtifacts(JvmLibrary::class.java, SourcesArtifact::class.java)
             .execute()
 
         val sourcesArtifacts = resolutionResult.resolvedComponents.flatMap { resolved ->
@@ -53,16 +52,6 @@ internal object IdeArtifactResolutionQuerySourcesAndDocumentationResolver : IdeA
         sourcesArtifacts.forEach { artifact ->
             binaryDependencies[Coordinates(artifact)]?.forEach { dependency ->
                 dependency.sourcesClasspath.add(artifact.file)
-            }
-        }
-
-        val javadocArtifacts = resolutionResult.resolvedComponents.flatMap { resolved ->
-            resolved.getArtifacts(JavadocArtifact::class.java).filterIsInstance<ResolvedArtifactResult>()
-        }
-
-        javadocArtifacts.forEach { artifact ->
-            binaryDependencies[Coordinates(artifact)]?.forEach { dependency ->
-                dependency.documentationClasspath.add(artifact.file)
             }
         }
     }

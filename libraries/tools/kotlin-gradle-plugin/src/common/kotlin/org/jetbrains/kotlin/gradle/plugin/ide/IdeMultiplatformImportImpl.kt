@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.kpm.idea.IdeaSerializationContext
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver.Companion.resolvedBy
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.*
+import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.AdditionalArtifactResolutionPhase.SourcesAndDocumentationResolution
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.Companion.logger
 import org.jetbrains.kotlin.tooling.core.Extras
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
@@ -22,7 +23,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.measureTimeMillisWithResult
 import kotlin.system.measureTimeMillis
 
 internal class IdeMultiplatformImportImpl(
-    private val extension: KotlinProjectExtension
+    private val extension: KotlinProjectExtension,
 ) : IdeMultiplatformImport {
 
     override fun resolveDependencies(sourceSetName: String): Set<IdeaKotlinDependency> {
@@ -58,6 +59,14 @@ internal class IdeMultiplatformImportImpl(
     private val registeredDependencyEffects = mutableListOf<RegisteredDependencyEffect>()
     private val registeredExtrasSerializationExtensions = mutableListOf<IdeaKotlinExtrasSerializationExtension>()
 
+    /**
+     * System property passed down by the IDE, reflecting the users setting of 'Download sources during sync'
+     * This property is expected to be present in IDEs > 23.3
+     * If 'true' the import is instructed to download all sources.jar eagerly.
+     * If 'false' the import is instructed to not download any sources.jar
+     */
+    private val ideaGradleDownloadSourcesProperty = extension.project.providers.systemProperty("idea.gradle.download.sources")
+
     @OptIn(Idea222Api::class)
     override fun registerDependencyResolver(
         resolver: IdeDependencyResolver,
@@ -80,7 +89,7 @@ internal class IdeMultiplatformImportImpl(
     override fun registerDependencyTransformer(
         transformer: IdeDependencyTransformer,
         constraint: SourceSetConstraint,
-        phase: DependencyTransformationPhase
+        phase: DependencyTransformationPhase,
     ) {
         registeredDependencyTransformers.add(
             RegisteredDependencyTransformer(transformer, constraint, phase)
@@ -91,7 +100,7 @@ internal class IdeMultiplatformImportImpl(
         resolver: IdeAdditionalArtifactResolver,
         constraint: SourceSetConstraint,
         phase: AdditionalArtifactResolutionPhase,
-        priority: Priority
+        priority: Priority,
     ) {
         registeredAdditionalArtifactResolvers.add(
             RegisteredAdditionalArtifactResolver(
@@ -140,8 +149,15 @@ internal class IdeMultiplatformImportImpl(
     private fun createAdditionalArtifactsResolver() = IdeAdditionalArtifactResolver(
         AdditionalArtifactResolutionPhase.values().map { phase -> createAdditionalArtifactsResolver(phase) })
 
-    private fun createAdditionalArtifactsResolver(phase: AdditionalArtifactResolutionPhase) =
-        IdeAdditionalArtifactResolver resolve@{ sourceSet, dependencies ->
+    private fun createAdditionalArtifactsResolver(phase: AdditionalArtifactResolutionPhase): IdeAdditionalArtifactResolver {
+        /*
+        Skip resolving sources if IDE instructs us to (ideaGradleDownloadSourcesProperty is passed by the IDE, reflecting user settings)
+         */
+        if (phase == SourcesAndDocumentationResolution && ideaGradleDownloadSourcesProperty.orNull?.toBoolean() == false) {
+            return IdeAdditionalArtifactResolver.empty
+        }
+
+        return IdeAdditionalArtifactResolver resolve@{ sourceSet, dependencies ->
             val applicableResolvers = registeredAdditionalArtifactResolvers
                 .filter { it.phase == phase }
                 .filter { it.constraint(sourceSet) }
@@ -155,6 +171,7 @@ internal class IdeMultiplatformImportImpl(
                 }
             }
         }
+    }
 
     private fun createDependencyTransformer(): IdeDependencyTransformer {
         return IdeDependencyTransformer(DependencyTransformationPhase.values().map { phase ->
@@ -189,7 +206,7 @@ internal class IdeMultiplatformImportImpl(
     private data class RegisteredDependencyTransformer(
         val transformer: IdeDependencyTransformer,
         val constraint: SourceSetConstraint,
-        val phase: DependencyTransformationPhase
+        val phase: DependencyTransformationPhase,
     )
 
     private data class RegisteredDependencyEffect(
