@@ -1,4 +1,3 @@
-// FIR_BLOCKED: LC don't support DefaultImpls
 interface IntfWithoutDefaultImpls
 
 interface IntfWithDefaultImpls {

@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.light.classes.symbol
 
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiField
 import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForInterfaceDefaultImpls
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForObject
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightAccessorMethod
 
@@ -26,3 +28,6 @@ val PsiMethod.isPropertySetter: Boolean
 context(KtAnalysisSession)
 val PsiMethod.correspondingPropertyHasBackingField: Boolean
     get() = (this as? SymbolLightAccessorMethod)?.containingPropertySymbolPointer?.restoreSymbol()?.hasBackingField == true
+
+val PsiClass.isDefaultImplsClass: Boolean
+    get() = this is SymbolLightClassForInterfaceDefaultImpls

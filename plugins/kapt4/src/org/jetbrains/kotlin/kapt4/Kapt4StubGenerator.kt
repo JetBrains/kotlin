@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.kapt3.base.stubs.KaptStubLineInformation
 import org.jetbrains.kotlin.kapt3.base.stubs.KotlinPosition
 import org.jetbrains.kotlin.kapt3.base.util.TopLevelJava9Aware
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForNamedClassLike
+import org.jetbrains.kotlin.light.classes.symbol.isDefaultImplsClass
 import org.jetbrains.kotlin.light.classes.symbol.isPropertySetter
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
@@ -123,6 +124,7 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
         packageFqName: String,
         isTopLevel: Boolean
     ): JCClassDecl? {
+        if (lightClass.isDefaultImplsClass) return null
         if (!checkIfValidTypeName(lightClass, lightClass.defaultType)) return null
 
         val parentClass = lightClass.parent as? PsiClass

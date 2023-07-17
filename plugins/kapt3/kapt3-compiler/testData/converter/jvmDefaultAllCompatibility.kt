@@ -1,4 +1,4 @@
-// FIR_BLOCKED: LC don't support DefaultImpls
+// FIR_BLOCKED: KT-59287
 // !JVM_DEFAULT_MODE: all-compatibility
 // EXPECTED_ERROR: (kotlin:15:5) modifier private not allowed here
 
