@@ -291,12 +291,4 @@ internal class ScriptGenerator(declarationGenerator: DeclarationGenerator) : Dec
             }
         }
     }
-
-    private fun ParameterDescriptor.toIrValueParameter(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin) =
-        context.symbolTable.descriptorExtension.declareValueParameter(
-            startOffset, endOffset, origin,
-            this,
-            type.toIrType(),
-            varargElementType?.toIrType()
-        )
 }
