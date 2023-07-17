@@ -291,9 +291,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyProperty.kt
         public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val value: R|T| = R|<local>/value|
             public [ResolvedTo(STATUS)] [ContainingClassKey=LazyDelegate] get(): R|T|
 
-        public final operator [ResolvedTo(CONTRACTS)] fun getValue([ResolvedTo(CONTRACTS)] thisRef: R|kotlin/Any?|, [ResolvedTo(CONTRACTS)] property: R|kotlin/reflect/KProperty<*>|): R|T| {
-            ^getValue value#
-        }
+        public final operator [ResolvedTo(STATUS)] fun getValue([ResolvedTo(STATUS)] thisRef: R|kotlin/Any?|, [ResolvedTo(STATUS)] property: R|kotlin/reflect/KProperty<*>|): R|T| { LAZY_BLOCK }
 
     }
     public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> lazy([ResolvedTo(CONTRACTS)] block: R|() -> T|): R|LazyDelegate<T>| {
@@ -313,7 +311,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyProperty.kt
         }
         )
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Test] get(): R|kotlin/String| {
-                ^ this@R|/Test|.D|/Test.resolveMe|.R|SubstitutionOverride</LazyDelegate.getValue: R|Stub (chain inference): TypeVariable(+T)|>|(this@R|/Test|, ::R|/Test.resolveMe|)
+                ^ this@R|/Test|.D|/Test.resolveMe|.R|SubstitutionOverride</LazyDelegate.getValue: R|kotlin/String|>|(this@R|/Test|, ::R|/Test.resolveMe|)
             }
 
     }
@@ -328,9 +326,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyProperty.kt
         public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val value: R|T| = R|<local>/value|
             public [ResolvedTo(STATUS)] [ContainingClassKey=LazyDelegate] get(): R|T|
 
-        public final operator [ResolvedTo(CONTRACTS)] fun getValue([ResolvedTo(CONTRACTS)] thisRef: R|kotlin/Any?|, [ResolvedTo(CONTRACTS)] property: R|kotlin/reflect/KProperty<*>|): R|T| {
-            ^getValue value#
-        }
+        public final operator [ResolvedTo(STATUS)] fun getValue([ResolvedTo(STATUS)] thisRef: R|kotlin/Any?|, [ResolvedTo(STATUS)] property: R|kotlin/reflect/KProperty<*>|): R|T| { LAZY_BLOCK }
 
     }
     public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> lazy([ResolvedTo(CONTRACTS)] block: R|() -> T|): R|LazyDelegate<T>| {
@@ -350,7 +346,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyProperty.kt
         }
         )
             public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=Test] get(): R|kotlin/String| {
-                ^ this@R|/Test|.D|/Test.resolveMe|.R|SubstitutionOverride</LazyDelegate.getValue: R|Stub (chain inference): TypeVariable(+T)|>|(this@R|/Test|, ::R|/Test.resolveMe|)
+                ^ this@R|/Test|.D|/Test.resolveMe|.R|SubstitutionOverride</LazyDelegate.getValue: R|kotlin/String|>|(this@R|/Test|, ::R|/Test.resolveMe|)
             }
 
     }
@@ -365,9 +361,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyProperty.kt
         public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val value: R|T| = R|<local>/value|
             public [ResolvedTo(STATUS)] [ContainingClassKey=LazyDelegate] get(): R|T|
 
-        public final operator [ResolvedTo(CONTRACTS)] fun getValue([ResolvedTo(CONTRACTS)] thisRef: R|kotlin/Any?|, [ResolvedTo(CONTRACTS)] property: R|kotlin/reflect/KProperty<*>|): R|T| {
-            ^getValue value#
-        }
+        public final operator [ResolvedTo(STATUS)] fun getValue([ResolvedTo(STATUS)] thisRef: R|kotlin/Any?|, [ResolvedTo(STATUS)] property: R|kotlin/reflect/KProperty<*>|): R|T| { LAZY_BLOCK }
 
     }
     public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> lazy([ResolvedTo(CONTRACTS)] block: R|() -> T|): R|LazyDelegate<T>| {
@@ -387,7 +381,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyProperty.kt
         }
         )
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Test] get(): R|kotlin/String| {
-                ^ this@R|/Test|.D|/Test.resolveMe|.R|SubstitutionOverride</LazyDelegate.getValue: R|Stub (chain inference): TypeVariable(+T)|>|(this@R|/Test|, ::R|/Test.resolveMe|)
+                ^ this@R|/Test|.D|/Test.resolveMe|.R|SubstitutionOverride</LazyDelegate.getValue: R|kotlin/String|>|(this@R|/Test|, ::R|/Test.resolveMe|)
             }
 
     }
@@ -426,7 +420,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] lazyProperty.kt
         }
         )
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Test] get(): R|kotlin/String| {
-                ^ this@R|/Test|.D|/Test.resolveMe|.R|SubstitutionOverride</LazyDelegate.getValue: R|Stub (chain inference): TypeVariable(+T)|>|(this@R|/Test|, ::R|/Test.resolveMe|)
+                ^ this@R|/Test|.D|/Test.resolveMe|.R|SubstitutionOverride</LazyDelegate.getValue: R|kotlin/String|>|(this@R|/Test|, ::R|/Test.resolveMe|)
             }
 
     }
