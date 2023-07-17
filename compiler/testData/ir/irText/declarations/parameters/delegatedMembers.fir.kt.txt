@@ -15,6 +15,7 @@ class Test<TT : Any?> : IBase<TT> {
 
   }
 
+  private /* final field */ val $$delegate_0: IBase<TT> = impl
   override fun foo(x: Int) {
     <this>.#$$delegate_0.foo(x = x)
   }
@@ -28,6 +29,5 @@ class Test<TT : Any?> : IBase<TT> {
       return <this>.#$$delegate_0.<get-bar>()
     }
 
-  private /* final field */ val $$delegate_0: IBase<TT> = impl
-
 }
+

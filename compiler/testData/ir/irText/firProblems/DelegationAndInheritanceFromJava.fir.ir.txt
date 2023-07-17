@@ -6,6 +6,9 @@ FILE fqName:<root> fileName:/DelegationAndInheritanceFromJava.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Impl modality:FINAL visibility:public superTypes:[<root>.Foo.A; <root>.Foo.B]'
+    FIELD DELEGATE name:$$delegate_0 type:<root>.Foo.B visibility:private [final]
+      EXPRESSION_BODY
+        GET_VAR 'b: <root>.Foo.B declared in <root>.Impl.<init>' type=<root>.Foo.B origin=null
     FUN DELEGATED_MEMBER name:add visibility:public modality:OPEN <> ($this:<root>.Impl, element:@[FlexibleNullability] kotlin.String?) returnType:kotlin.Boolean
       overridden:
         public abstract fun add (element: @[FlexibleNullability] kotlin.String?): kotlin.Boolean declared in <root>.Foo.A
@@ -134,9 +137,6 @@ FILE fqName:<root> fileName:/DelegationAndInheritanceFromJava.kt
             CALL 'public abstract fun <get-size> (): kotlin.Int declared in kotlin.collections.Set' type=kotlin.Int origin=null
               $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Foo.B visibility:private [final]' type=<root>.Foo.B origin=null
                 receiver: GET_VAR '<this>: <root>.Impl declared in <root>.Impl.<get-size>' type=<root>.Impl origin=null
-    FIELD DELEGATE name:$$delegate_0 type:<root>.Foo.B visibility:private [final]
-      EXPRESSION_BODY
-        GET_VAR 'b: <root>.Foo.B declared in <root>.Impl.<init>' type=<root>.Foo.B origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Foo.A

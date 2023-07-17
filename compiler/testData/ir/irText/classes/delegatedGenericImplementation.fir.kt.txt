@@ -17,6 +17,7 @@ class Test1<E : Any?> : IBase<E> {
 
   }
 
+  private /* final field */ val $$delegate_0: IBase<E> = i
   override fun <B : Any?> foo(a: E, b: B) {
     <this>.#$$delegate_0.foo<B>(a = a, b = b)
   }
@@ -33,8 +34,6 @@ class Test1<E : Any?> : IBase<E> {
     override set(<set-?>: D?) {
       (<this>.#$$delegate_0, <this>).<set-x><D>(<set-?> = <set-?>)
     }
-
-  private /* final field */ val $$delegate_0: IBase<E> = i
 
 }
 
@@ -68,3 +67,4 @@ class Test2 : IBase<String> {
     set
 
 }
+

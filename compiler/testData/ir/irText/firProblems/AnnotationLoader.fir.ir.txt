@@ -108,6 +108,9 @@ FILE fqName:<root> fileName:/AnnotationLoader.kt
                           BLOCK_BODY
                             DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
                             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Visitor]'
+                        FIELD DELEGATE name:$$delegate_0 type:<root>.Visitor visibility:private [final]
+                          EXPRESSION_BODY
+                            GET_VAR 'val visitor: <root>.Visitor declared in <root>.AnnotationLoader.loadAnnotation.<no name provided>.visitAnnotation' type=<root>.Visitor origin=null
                         FUN DELEGATED_MEMBER name:visitArray visibility:public modality:OPEN <> ($this:<root>.AnnotationLoader.loadAnnotation.<no name provided>.visitAnnotation.<no name provided>) returnType:<root>.Visitor?
                           overridden:
                             public open fun visitArray (): <root>.Visitor? declared in <root>.Visitor
@@ -126,9 +129,6 @@ FILE fqName:<root> fileName:/AnnotationLoader.kt
                               CALL 'public open fun visitAnnotation (): <root>.Visitor? declared in <root>.Visitor' type=<root>.Visitor? origin=null
                                 $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Visitor visibility:private [final]' type=<root>.Visitor origin=null
                                   receiver: GET_VAR '<this>: <root>.AnnotationLoader.loadAnnotation.<no name provided>.visitAnnotation.<no name provided> declared in <root>.AnnotationLoader.loadAnnotation.<no name provided>.visitAnnotation.<no name provided>.visitAnnotation' type=<root>.AnnotationLoader.loadAnnotation.<no name provided>.visitAnnotation.<no name provided> origin=null
-                        FIELD DELEGATE name:$$delegate_0 type:<root>.Visitor visibility:private [final]
-                          EXPRESSION_BODY
-                            GET_VAR 'val visitor: <root>.Visitor declared in <root>.AnnotationLoader.loadAnnotation.<no name provided>.visitAnnotation' type=<root>.Visitor origin=null
                         FUN name:visit visibility:public modality:OPEN <> ($this:<root>.AnnotationLoader.loadAnnotation.<no name provided>.visitAnnotation.<no name provided>) returnType:kotlin.Unit
                           overridden:
                             public abstract fun visit (): kotlin.Unit declared in <root>.Visitor

@@ -84,6 +84,9 @@ FILE fqName:<root> fileName:/rawTypeInSignature.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:KRaw modality:FINAL visibility:public superTypes:[<root>.JRaw]'
+    FIELD DELEGATE name:$$delegate_0 type:<root>.JRaw visibility:private [final]
+      EXPRESSION_BODY
+        GET_VAR 'j: <root>.JRaw declared in <root>.KRaw.<init>' type=<root>.JRaw origin=null
     FUN DELEGATED_MEMBER name:takesRawList visibility:public modality:OPEN <> ($this:<root>.KRaw, list:@[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>) returnType:kotlin.Unit
       overridden:
         public abstract fun takesRawList (list: @[FlexibleNullability] @[FlexibleMutability] @[RawType] kotlin.collections.MutableList<kotlin.Any?>): kotlin.Unit declared in <root>.JRaw
@@ -164,9 +167,6 @@ FILE fqName:<root> fileName:/rawTypeInSignature.kt
             CALL 'public abstract fun returnsRawGenericOut (): @[FlexibleNullability] @[RawType] <root>.GenericOut<kotlin.Number> declared in <root>.JRaw' type=@[FlexibleNullability] @[RawType] <root>.GenericOut<kotlin.Number> origin=null
               $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.JRaw visibility:private [final]' type=<root>.JRaw origin=null
                 receiver: GET_VAR '<this>: <root>.KRaw declared in <root>.KRaw.returnsRawGenericOut' type=<root>.KRaw origin=null
-    FIELD DELEGATE name:$$delegate_0 type:<root>.JRaw visibility:private [final]
-      EXPRESSION_BODY
-        GET_VAR 'j: <root>.JRaw declared in <root>.KRaw.<init>' type=<root>.JRaw origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.JRaw
