@@ -56,11 +56,6 @@ internal class KtFirMetadataCalculator(
 
 
     override fun calculate(ktClass: KtClassOrObject): Metadata {
-        // TODO: support nested classes
-//        val firClasses = ktClass.parentsWithSelf
-//            .filterIsInstance<KtClassOrObject>()
-//            .map { it.getOrBuildFirOfType<FirRegularClass>(firResolveSession) }
-//            .toList()
         val firClass = ktClass.getOrBuildFirOfType<FirRegularClass>(firResolveSession)
         val bindings = JvmSerializationBindings()
         firClass.accept(bindingsCollector(bindings))
