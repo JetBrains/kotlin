@@ -1087,7 +1087,7 @@ class Fir2IrDeclarationStorage(
         return fieldStaticOverrideCache[FieldStaticOverrideKey(ownerLookupTag, field.name)]
     }
 
-    fun createIrFieldAndDelegatedMembers(field: FirField, owner: FirClass, irClass: IrClass): IrField? {
+    fun createAndAddIrFieldAndDelegatedMembers(field: FirField, owner: FirClass, irClass: IrClass) {
         // Either take a corresponding constructor property backing field,
         // or create a separate delegate field
         val irField = getOrCreateDelegateIrField(field, owner, irClass)
@@ -1101,8 +1101,6 @@ class Fir2IrDeclarationStorage(
         if (owner.isLocalClassOrAnonymousObject()) {
             delegatedMemberGenerator.generateBodies()
         }
-        // Returning null, so Fir2IrConverter would not add the `delegate ir field` to `irClass.declarations` for the second time.
-        return null
     }
 
     private fun getOrCreateDelegateIrField(field: FirField, owner: FirClass, irClass: IrClass): IrField {
