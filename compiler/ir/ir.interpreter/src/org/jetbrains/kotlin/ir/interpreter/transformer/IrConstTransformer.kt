@@ -14,7 +14,10 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
-import org.jetbrains.kotlin.ir.interpreter.checker.*
+import org.jetbrains.kotlin.ir.interpreter.checker.EvaluationMode
+import org.jetbrains.kotlin.ir.interpreter.checker.IrInterpreterChecker
+import org.jetbrains.kotlin.ir.interpreter.checker.IrInterpreterCheckerData
+import org.jetbrains.kotlin.ir.interpreter.checker.IrInterpreterCommonChecker
 import org.jetbrains.kotlin.ir.interpreter.preprocessor.IrInterpreterConstGetterPreprocessor
 import org.jetbrains.kotlin.ir.interpreter.preprocessor.IrInterpreterKCallableNamePreprocessor
 import org.jetbrains.kotlin.ir.interpreter.preprocessor.IrInterpreterPreprocessorData
@@ -58,13 +61,11 @@ fun IrFile.runConstOptimizations(
     mode: EvaluationMode,
     evaluatedConstTracker: EvaluatedConstTracker? = null,
     inlineConstTracker: InlineConstTracker? = null,
-    onWarning: (IrFile, IrElement, IrErrorExpression) -> Unit = { _, _, _ -> },
-    onError: (IrFile, IrElement, IrErrorExpression) -> Unit = { _, _, _ -> },
     suppressExceptions: Boolean = false,
 ) {
     val checker = IrInterpreterCommonChecker()
     val irConstExpressionTransformer = IrConstAllTransformer(
-        interpreter, this, mode, checker, evaluatedConstTracker, inlineConstTracker, onWarning, onError, suppressExceptions
+        interpreter, this, mode, checker, evaluatedConstTracker, inlineConstTracker, { _, _, _ -> }, { _, _, _ -> }, suppressExceptions
     )
     this.transform(irConstExpressionTransformer, IrConstTransformer.Data())
 }

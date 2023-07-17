@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
+import org.jetbrains.kotlin.test.directives.model.SimpleDirective
 import org.jetbrains.kotlin.test.directives.model.singleValue
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.TestFile
@@ -54,6 +55,31 @@ import org.jetbrains.kotlin.test.utils.AbstractTwoAttributesMetaInfoProcessor
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
+
+class FullDiagnosticsRenderer(private val directive: SimpleDirective) {
+    private val dumper: MultiModuleInfoDumper = MultiModuleInfoDumper(moduleHeaderTemplate = "// -- Module: <%s> --")
+
+    fun assertCollectedDiagnostics(testServices: TestServices, expectedExtension: String) {
+        if (dumper.isEmpty()) return
+        val resultDump = dumper.generateResultingDump()
+        val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
+        val expectedFile = testDataFile.parentFile.resolve("${testDataFile.nameWithoutExtension.removeSuffix(".fir")}$expectedExtension")
+        testServices.assertions.assertEqualsToFile(expectedFile, resultDump)
+    }
+
+    fun storeFullDiagnosticRender(module: TestModule, diagnostics: List<KtDiagnostic>, file: TestFile) {
+        if (directive !in module.directives) return
+        if (diagnostics.isEmpty()) return
+
+        val reportedDiagnostics = diagnostics.sortedBy { it.textRanges.first().startOffset }.map {
+            val severity = AnalyzerWithCompilerReport.convertSeverity(it.severity).toString().toLowerCaseAsciiOnly()
+            val message = RootDiagnosticRendererFactory(it).render(it)
+            "/${file.name}:${it.textRanges.first()}: $severity: $message"
+        }
+
+        dumper.builderForModule(module).appendLine(reportedDiagnostics.joinToString(separator = "\n\n"))
+    }
+}
 
 @OptIn(SymbolInternals::class)
 class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(testServices) {
@@ -69,14 +95,10 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
     override val additionalServices: List<ServiceRegistrationData> =
         listOf(service(::DiagnosticsService))
 
-    private val dumper: MultiModuleInfoDumper = MultiModuleInfoDumper(moduleHeaderTemplate = "// -- Module: <%s> --")
+    private val fullDiagnosticsRenderer = FullDiagnosticsRenderer(DiagnosticsDirectives.RENDER_DIAGNOSTICS_FULL_TEXT)
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
-        if (dumper.isEmpty()) return
-        val resultDump = dumper.generateResultingDump()
-        val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
-        val expectedFile = testDataFile.parentFile.resolve("${testDataFile.nameWithoutFirExtension}.fir.diag.txt")
-        assertions.assertEqualsToFile(expectedFile, resultDump)
+        fullDiagnosticsRenderer.assertCollectedDiagnostics(testServices, ".fir.diag.txt")
     }
 
     override fun processModule(module: TestModule, info: FirOutputArtifact) {
@@ -109,7 +131,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
                 globalMetadataInfoHandler.addMetadataInfosForFile(file, diagnosticsMetadataInfos)
                 collectSyntaxDiagnostics(currentModule, file, firFile, lightTreeEnabled, lightTreeComparingModeEnabled, forceRenderArguments)
                 collectDebugInfoDiagnostics(currentModule, file, firFile, lightTreeEnabled, lightTreeComparingModeEnabled)
-                checkFullDiagnosticRender(module, diagnostics, file)
+                fullDiagnosticsRenderer.storeFullDiagnosticRender(module, diagnostics, file)
             }
         }
     }
@@ -339,19 +361,6 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
         is FirClassLikeSymbol<*> -> classId.asSingleFqName().toUnsafe()
         is FirCallableSymbol<*> -> callableId.asFqNameForDebugInfo().toUnsafe()
         else -> null
-    }
-
-    private fun checkFullDiagnosticRender(module: TestModule, diagnostics: List<KtDiagnostic>, file: TestFile) {
-        if (DiagnosticsDirectives.RENDER_DIAGNOSTICS_FULL_TEXT !in module.directives) return
-        if (diagnostics.isEmpty()) return
-
-        val reportedDiagnostics = diagnostics.sortedBy { it.textRanges.first().startOffset }.map {
-            val severity = AnalyzerWithCompilerReport.convertSeverity(it.severity).toString().toLowerCaseAsciiOnly()
-            val message = RootDiagnosticRendererFactory(it).render(it)
-            "/${file.name}:${it.textRanges.first()}: $severity: $message"
-        }
-
-        dumper.builderForModule(module).appendLine(reportedDiagnostics.joinToString(separator = "\n\n"))
     }
 }
 

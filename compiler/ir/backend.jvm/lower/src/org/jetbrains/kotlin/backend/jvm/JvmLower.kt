@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.NameUtils
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmBackendErrors
 
 private var patchParentPhases = 0
 
@@ -328,19 +327,7 @@ private val apiVersionIsAtLeastEvaluationPhase = makeIrModulePhase(
 )
 
 private val constEvaluationPhase = makeIrModulePhase<JvmBackendContext>(
-    {
-        ConstEvaluationLowering(
-            it,
-            onWarning = { irFile, element, warning ->
-                it.ktDiagnosticReporter.at(element, irFile)
-                    .report(JvmBackendErrors.EXCEPTION_IN_CONST_EXPRESSION, warning.description)
-            },
-            onError = { irFile, element, error ->
-                it.ktDiagnosticReporter.at(element, irFile)
-                    .report(JvmBackendErrors.EXCEPTION_IN_CONST_VAL_INITIALIZER, error.description)
-            }
-        )
-    },
+    ::ConstEvaluationLowering,
     name = "ConstEvaluationLowering",
     description = "Evaluate functions that are marked as `IntrinsicConstEvaluation`"
 )
