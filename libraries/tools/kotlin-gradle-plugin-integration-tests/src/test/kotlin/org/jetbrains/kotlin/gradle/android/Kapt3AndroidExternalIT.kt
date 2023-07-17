@@ -11,10 +11,14 @@ import org.jetbrains.kotlin.gradle.Kapt3BaseIT
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import java.io.File
+import kotlin.io.path.appendText
 
 @DisplayName("android with kapt3 external dependencies tests")
 @AndroidGradlePluginTests
 class Kapt3AndroidExternalIT : Kapt3BaseIT() {
+
+    // Deprecated and doesn't work with Gradle 8 + AGP 8, so keeping max Gradle version as 7.6
+    // For example: https://github.com/JakeWharton/butterknife/issues/1686
     @DisplayName("kapt works with butterknife")
     @GradleTestVersions(maxVersion = TestVersions.Gradle.G_7_6)
     @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_74)
@@ -129,8 +133,6 @@ class Kapt3AndroidExternalIT : Kapt3BaseIT() {
     }
 
     @DisplayName("kapt works with databinding")
-    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_7_6)
-    @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_74)
     @GradleAndroidTest
     fun testDatabinding(
         gradleVersion: GradleVersion,
@@ -144,6 +146,13 @@ class Kapt3AndroidExternalIT : Kapt3BaseIT() {
             // TODO: remove the `if` when we drop support for [TestVersions.AGP.AGP_42]
             buildJdk = if (jdkVersion.version >= JavaVersion.VERSION_11) jdkVersion.location else File(System.getProperty("jdk11Home"))
         ) {
+            // Remove the once minimal supported AGP version will be 8.1.0: https://issuetracker.google.com/issues/260059413
+            gradleProperties.appendText(
+                """
+                |kotlin.jvm.target.validation.mode=warning
+                """.trimMargin()
+            )
+
             build(
                 "assembleDebug", "assembleAndroidTest",
             ) {

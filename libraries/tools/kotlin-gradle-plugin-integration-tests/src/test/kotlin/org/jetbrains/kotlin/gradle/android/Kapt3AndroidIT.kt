@@ -36,8 +36,6 @@ class Kapt3AndroidIT : Kapt3BaseIT() {
     }
 
     @DisplayName("KT-25374: kapt doesn't fail with anonymous classes with IC")
-    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_7_6)
-    @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_74)
     @GradleAndroidTest
     fun testICWithAnonymousClasses(
         gradleVersion: GradleVersion,
@@ -50,6 +48,12 @@ class Kapt3AndroidIT : Kapt3BaseIT() {
             buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
         ) {
+            gradleProperties.appendText(
+                """
+                |kotlin.jvm.target.validation.mode=warning
+                """.trimMargin()
+            )
+
             build("assembleDebug") {
                 assertKaptSuccessful()
             }
@@ -121,8 +125,6 @@ class Kapt3AndroidIT : Kapt3BaseIT() {
     }
 
     @DisplayName("KT-31127: kapt doesn't break JavaCompile when using Filer API")
-    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_7_6)
-    @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_74)
     @GradleAndroidTest
     fun testKotlinProcessorUsingFiler(
         gradleVersion: GradleVersion,
@@ -135,6 +137,7 @@ class Kapt3AndroidIT : Kapt3BaseIT() {
             buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
         ) {
+            // Remove the once minimal supported AGP version will be 8.1.0: https://issuetracker.google.com/issues/260059413
             //language=properties
             gradleProperties.append(
                 """
@@ -144,11 +147,13 @@ class Kapt3AndroidIT : Kapt3BaseIT() {
             )
 
             buildGradle.appendText(
+                //language=groovy
                 """
                 apply plugin: 'kotlin-kapt'
                 android {
-                    libraryVariants.all {
-                        it.getGenerateBuildConfigProvider().get().enabled = false
+                    libraryVariants.configureEach {
+                        def generateTaskProvider = it.getGenerateBuildConfigProvider()
+                        if (generateTaskProvider != null) generateTaskProvider.configure { enabled = false }
                     }
                 }
     
