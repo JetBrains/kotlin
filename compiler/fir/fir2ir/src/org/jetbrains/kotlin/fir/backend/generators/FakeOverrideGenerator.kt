@@ -35,12 +35,12 @@ class FakeOverrideGenerator(
     private val basePropertySymbols: MutableMap<IrProperty, List<FirPropertySymbol>> = mutableMapOf()
     private val baseStaticFieldSymbols: MutableMap<IrField, List<FirFieldSymbol>> = mutableMapOf()
 
-    private fun IrSimpleFunction.withFunction(f: IrSimpleFunction.() -> Unit): IrSimpleFunction {
-        return conversionScope.withFunction(this, f)
+    private fun IrSimpleFunction.withFunction(f: IrSimpleFunction.() -> Unit) {
+        conversionScope.withFunction(this, f)
     }
 
-    private fun IrProperty.withProperty(f: IrProperty.() -> Unit): IrProperty {
-        return conversionScope.withProperty(this, firProperty = null, f)
+    private fun IrProperty.withProperty(f: IrProperty.() -> Unit) {
+        conversionScope.withProperty(this, firProperty = null, f)
     }
 
     private fun IrType.containsErrorType(): Boolean {

@@ -20,12 +20,13 @@ class Fir2IrConversionScope {
     private val containingFirClassStack = mutableListOf<FirClass>()
     private val currentlyGeneratedDelegatedConstructors = mutableMapOf<IrClass, IrConstructor>()
 
-    fun <T : IrDeclarationParent?> withParent(parent: T, f: T.() -> Unit): T {
-        if (parent == null) return parent
+    fun <T : IrDeclarationParent, R> withParent(parent: T, f: T.() -> R): R {
         parentStack += parent
-        parent.f()
-        parentStack.removeAt(parentStack.size - 1)
-        return parent
+        try {
+            return parent.f()
+        } finally {
+            parentStack.removeAt(parentStack.size - 1)
+        }
     }
 
     fun <T> forDelegatingConstructorCall(constructor: IrConstructor, irClass: IrClass, f: () -> T): T {
@@ -67,29 +68,35 @@ class Fir2IrConversionScope {
 
     private val functionStack = mutableListOf<IrFunction>()
 
-    fun <T : IrFunction> withFunction(function: T, f: T.() -> Unit): T {
+    fun <T : IrFunction, R> withFunction(function: T, f: T.() -> R): R {
         functionStack += function
-        function.f()
-        functionStack.removeAt(functionStack.size - 1)
-        return function
+        try {
+            return function.f()
+        } finally {
+            functionStack.removeAt(functionStack.size - 1)
+        }
     }
 
     private val propertyStack = mutableListOf<Pair<IrProperty, FirProperty?>>()
 
-    fun withProperty(property: IrProperty, firProperty: FirProperty? = null, f: IrProperty.() -> Unit): IrProperty {
+    fun <R> withProperty(property: IrProperty, firProperty: FirProperty? = null, f: IrProperty.() -> R): R {
         propertyStack += (property to firProperty)
-        property.f()
-        propertyStack.removeAt(propertyStack.size - 1)
-        return property
+        try {
+            return property.f()
+        } finally {
+            propertyStack.removeAt(propertyStack.size - 1)
+        }
     }
 
     private val classStack = mutableListOf<IrClass>()
 
-    fun withClass(klass: IrClass, f: IrClass.() -> Unit): IrClass {
+    fun <R> withClass(klass: IrClass, f: IrClass.() -> R): R {
         classStack += klass
-        klass.f()
-        classStack.removeAt(classStack.size - 1)
-        return klass
+        return try {
+            klass.f()
+        } finally {
+            classStack.removeAt(classStack.size - 1)
+        }
     }
 
     private val whenSubjectVariableStack = mutableListOf<IrVariable>()

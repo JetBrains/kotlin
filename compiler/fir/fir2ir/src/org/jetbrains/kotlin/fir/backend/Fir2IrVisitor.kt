@@ -105,13 +105,15 @@ class Fir2IrVisitor(
     }
 
     override fun visitFile(file: FirFile, data: Any?): IrFile {
-        return conversionScope.withParent(declarationStorage.getIrFile(file)) {
+        val irFile = declarationStorage.getIrFile(file)
+        conversionScope.withParent(irFile) {
             file.declarations.forEach {
                 it.toIrDeclaration()
             }
             annotationGenerator.generate(this, file)
             metadata = FirMetadataSource.File(listOf(file))
         }
+        return irFile
     }
 
     private fun FirDeclaration.toIrDeclaration(): IrDeclaration =
@@ -188,9 +190,10 @@ class Fir2IrVisitor(
             // NB: for implicit types it is possible that local class is already cached
             val irClass = classifierStorage.getCachedIrClass(regularClass)?.apply { this.parent = irParent }
             if (irClass != null) {
-                return conversionScope.withParent(irClass) {
+                conversionScope.withParent(irClass) {
                     memberGenerator.convertClassContent(irClass, regularClass)
                 }
+                return irClass
             }
             converter.processLocalClassAndNestedClasses(regularClass, irParent)
         }
@@ -198,9 +201,10 @@ class Fir2IrVisitor(
         if (regularClass.isSealed) {
             irClass.sealedSubclasses = regularClass.getIrSymbolsForSealedSubclasses()
         }
-        return conversionScope.withParent(irClass) {
+        conversionScope.withParent(irClass) {
             memberGenerator.convertClassContent(irClass, regularClass)
         }
+        return irClass
     }
 
     override fun visitScript(script: FirScript, data: Any?): IrElement {
