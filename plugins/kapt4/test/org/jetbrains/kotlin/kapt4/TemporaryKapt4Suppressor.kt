@@ -5,12 +5,10 @@
 
 package org.jetbrains.kotlin.kapt4
 
-import org.jetbrains.kotlin.kapt4.Kapt4Directives.FIR_ALMOST_DONE
 import org.jetbrains.kotlin.kapt4.Kapt4Directives.FIR_BLOCKED
 import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.directives.model.Directive
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
-import org.jetbrains.kotlin.test.directives.model.SimpleDirective
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.services.TestServices
@@ -23,8 +21,7 @@ class TemporaryKapt4Suppressor(testServices: TestServices) : AfterAnalysisChecke
 
     override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
         val hasFailures = failedAssertions.isNotEmpty()
-        val suppressionDirectives = listOf(FIR_ALMOST_DONE, FIR_BLOCKED)
-        if (suppressionDirectives.any { suppressedByDirective(it, hasFailures) }) return emptyList()
+        if (suppressedByDirective(FIR_BLOCKED, hasFailures)) return emptyList()
         return failedAssertions
     }
 
@@ -38,6 +35,5 @@ class TemporaryKapt4Suppressor(testServices: TestServices) : AfterAnalysisChecke
 }
 
 object Kapt4Directives : SimpleDirectivesContainer() {
-    val FIR_ALMOST_DONE by directive("This tests is almost passes with KAPT4")
     val FIR_BLOCKED by stringDirective("Blocked by light classes")
 }
