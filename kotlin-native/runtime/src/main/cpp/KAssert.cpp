@@ -7,6 +7,7 @@
 
 #include <array>
 #include <cstdarg>
+#include <thread>
 
 #include "std_support/Span.hpp"
 #include "CallsChecker.hpp"
@@ -71,6 +72,7 @@ RUNTIME_NORETURN void internal::RuntimeAssertFailedPanic(bool allowStacktrace, c
     std::va_list args;
     va_start(args, format);
     PrintAssert(allowStacktrace, location, format, args);
+    std::this_thread::sleep_for(std::chrono::seconds(10));
     va_end(args);
     konan::abort();
 }

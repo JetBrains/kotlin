@@ -63,7 +63,7 @@ void gc::waitForThreadsToReachCheckpoint() {
 
 void gc::BarriersThreadData::onCheckpoint() noexcept {
     if (!visitedCheckpoint_.load(std::memory_order_relaxed)) {
-        RuntimeLogDebug({kTagGC}, "Checkpoint: weak = %p mark = %d", weakRefBarrier.load(std::memory_order_relaxed), markBarriersEnabled.load(std::memory_order_relaxed));
+        RuntimeLogDebug({"barriers"}, "Checkpoint: weak = %p mark = %d", weakRefBarrier.load(std::memory_order_relaxed), markBarriersEnabled.load(std::memory_order_relaxed));
     }
     visitedCheckpoint_.store(true, std::memory_order_release);
 }
@@ -112,7 +112,7 @@ void gc::DisableMarkBarriers() {
 }
 
 ALWAYS_INLINE void gc::SetRefInMark(ObjHeader** location, ObjHeader* value) noexcept {
-    RuntimeLogDebug({kTagGC}, "Write%s: %p overwritten by %p", (markBarriersEnabled.load(std::memory_order_relaxed) ? " [barrier]" : ""), *location, value);
+    RuntimeLogDebug({"barriers"}, "Write%s: %p overwritten by %p", (markBarriersEnabled.load(std::memory_order_relaxed) ? " [barrier]" : ""), *location, value);
     if (markBarriersEnabled.load(std::memory_order_relaxed)) {
         // TODO check if location is black!
         //      but be careful then
@@ -139,7 +139,7 @@ ALWAYS_INLINE void gc::SetRefInMark(ObjHeader** location, ObjHeader* value) noex
 }
 
 ALWAYS_INLINE void gc::NewObjInMark(ObjHeader* obj) noexcept {
-    RuntimeLogDebug({kTagGC}, "New object%s: %p", (markBarriersEnabled.load(std::memory_order_relaxed) ? " [barrier]" : ""), obj);
+    RuntimeLogDebug({"barriers"}, "New object%s: %p", (markBarriersEnabled.load(std::memory_order_relaxed) ? " [barrier]" : ""), obj);
     // FIXME do we need it??
     if (markBarriersEnabled.load(std::memory_order_relaxed)) {
         bool marked = gc::mark::ParallelMark::MarkTraits::tryMark(obj);

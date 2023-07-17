@@ -98,7 +98,7 @@ public:
             auto& objectData = ObjectFactory::NodeRef::From(object).ObjectData();
             bool marked = compiler::gcMarkSingleThreaded() ? queue.tryPushLocal(objectData) : queue.tryPush(objectData);
             if (marked) {
-                RuntimeLogDebug({ kTagGC }, "Mark %p", object);
+                RuntimeLogDebug({"mark"}, "Mark %p", object);
             }
             return marked;
         }
@@ -107,7 +107,7 @@ public:
             auto& objectData = ObjectFactory::NodeRef::From(object).ObjectData();
             bool marked = objectData.tryMark();
             if (marked) {
-                RuntimeLogDebug({ kTagGC }, "Mark %p", object);
+                RuntimeLogDebug({"mark"}, "Mark %p", object);
             }
             return marked;
         }

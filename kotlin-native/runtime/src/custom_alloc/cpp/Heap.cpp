@@ -88,7 +88,7 @@ NO_INLINE void Heap::graphviz(std::ostream& out) {
     out << "}" << std::endl;
 }
 
-NO_INLINE void Heap::graphviz() {
+__attribute__((used)) NO_INLINE void Heap::graphviz() {
     graphviz(std::cerr);
 }
 
