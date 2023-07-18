@@ -1,0 +1,117 @@
+From 46578c51b90f584992c699a3d7ef2a5e2a9bbf4a Mon Sep 17 00:00:00 2001
+From: Gabriele Pappalardo <gabriele.pappalardo@jetbrains.com>
+Date: Tue, 18 Jul 2023 11:16:52 +0200
+Subject: [PATCH] Re-structure silicon to bundle up required dependencies
+
+---
+ build.sbt                                          | 14 ++++++++------
+ .../common}/collections/immutable/MultiMap.scala   |  0
+ .../immutable/MyInsertionOrderedSet.scala.bak      |  0
+ .../common}/collections/immutable/package.scala    |  0
+ .../common}/collections/mutable/MultiMap.scala     |  0
+ .../main/scala/common}/collections/package.scala   |  0
+ .../main/scala/common}/concurrency/package.scala   |  0
+ .../main/scala/common}/config/package.scala        |  0
+ .../main/scala/common}/io/package.scala            |  0
+ .../scala => src/main/scala/common}/package.scala  |  0
+ 10 files changed, 8 insertions(+), 6 deletions(-)
+ rename {common/src/main/scala => src/main/scala/common}/collections/immutable/MultiMap.scala (100%)
+ rename {common/src/main/scala => src/main/scala/common}/collections/immutable/MyInsertionOrderedSet.scala.bak (100%)
+ rename {common/src/main/scala => src/main/scala/common}/collections/immutable/package.scala (100%)
+ rename {common/src/main/scala => src/main/scala/common}/collections/mutable/MultiMap.scala (100%)
+ rename {common/src/main/scala => src/main/scala/common}/collections/package.scala (100%)
+ rename {common/src/main/scala => src/main/scala/common}/concurrency/package.scala (100%)
+ rename {common/src/main/scala => src/main/scala/common}/config/package.scala (100%)
+ rename {common/src/main/scala => src/main/scala/common}/io/package.scala (100%)
+ rename {common/src/main/scala => src/main/scala/common}/package.scala (100%)
+
+diff --git a/build.sbt b/build.sbt
+index 8ba98c80..6f213f1c 100644
+--- a/build.sbt
++++ b/build.sbt
+@@ -4,23 +4,24 @@
+ //
+ // Copyright (c) 2011-2019 ETH Zurich.
+ 
++resolvers += MavenCache("local-maven", file(Path.userHome.absolutePath + "/.m2/repository"))
++
+ // Import general settings from Silver
+ lazy val silver = project in file("silver")
+ 
+-lazy val common = (project in file("common"))
+-  .dependsOn(silver)
+-
+ // Silicon specific project settings
+ lazy val silicon = (project in file("."))
+   .dependsOn(silver % "compile->compile;test->test")
+-  .dependsOn(common)
+-  .aggregate(common)
+   .settings(
+     // General settings
+     name := "Silicon",
+     organization := "viper",
+     version := "1.1-SNAPSHOT",
+ 
++    // Publish settings
++    publishArtifact := true,
++    publishTo := Some(MavenCache("local-maven", file(Path.userHome.absolutePath + "/.m2/repository"))),
++
+     // Compilation settings
+     // Remove elidable method calls such as in SymbExLogger during compilation
+     // scalacOptions ++= Seq("-Xelide-below", "1000"),
+@@ -30,7 +31,7 @@ lazy val silicon = (project in file("."))
+     libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2",
+     libraryDependencies += "org.apache.commons" % "commons-pool2" % "2.9.0",
+     libraryDependencies += "io.spray" %%  "spray-json" % "1.3.6",
+-    libraryDependencies += "com.microsoft.z3" % "z3" % "4.8.7" from "https://www.sosy-lab.org/ivy/org.sosy_lab/javasmt-solver-z3/com.microsoft.z3-4.8.7.jar",
++    libraryDependencies += "com.microsoft" % "z3" % "4.8.7",
+ 
+     // Only get a few compilation errors at once
+     maxErrors := 5,
+@@ -80,6 +81,7 @@ lazy val silicon = (project in file("."))
+     ),
+     buildInfoPackage := "viper.silicon")
+ 
++
+ // Pair of revision and branch information from Mercurial. Empty strings if an error occurred.
+ lazy val gitInfo: Def.Initialize[(String, String)] = Def.setting {
+   import scala.sys.process.{Process, ProcessLogger}
+diff --git a/common/src/main/scala/collections/immutable/MultiMap.scala b/src/main/scala/common/collections/immutable/MultiMap.scala
+similarity index 100%
+rename from common/src/main/scala/collections/immutable/MultiMap.scala
+rename to src/main/scala/common/collections/immutable/MultiMap.scala
+diff --git a/common/src/main/scala/collections/immutable/MyInsertionOrderedSet.scala.bak b/src/main/scala/common/collections/immutable/MyInsertionOrderedSet.scala.bak
+similarity index 100%
+rename from common/src/main/scala/collections/immutable/MyInsertionOrderedSet.scala.bak
+rename to src/main/scala/common/collections/immutable/MyInsertionOrderedSet.scala.bak
+diff --git a/common/src/main/scala/collections/immutable/package.scala b/src/main/scala/common/collections/immutable/package.scala
+similarity index 100%
+rename from common/src/main/scala/collections/immutable/package.scala
+rename to src/main/scala/common/collections/immutable/package.scala
+diff --git a/common/src/main/scala/collections/mutable/MultiMap.scala b/src/main/scala/common/collections/mutable/MultiMap.scala
+similarity index 100%
+rename from common/src/main/scala/collections/mutable/MultiMap.scala
+rename to src/main/scala/common/collections/mutable/MultiMap.scala
+diff --git a/common/src/main/scala/collections/package.scala b/src/main/scala/common/collections/package.scala
+similarity index 100%
+rename from common/src/main/scala/collections/package.scala
+rename to src/main/scala/common/collections/package.scala
+diff --git a/common/src/main/scala/concurrency/package.scala b/src/main/scala/common/concurrency/package.scala
+similarity index 100%
+rename from common/src/main/scala/concurrency/package.scala
+rename to src/main/scala/common/concurrency/package.scala
+diff --git a/common/src/main/scala/config/package.scala b/src/main/scala/common/config/package.scala
+similarity index 100%
+rename from common/src/main/scala/config/package.scala
+rename to src/main/scala/common/config/package.scala
+diff --git a/common/src/main/scala/io/package.scala b/src/main/scala/common/io/package.scala
+similarity index 100%
+rename from common/src/main/scala/io/package.scala
+rename to src/main/scala/common/io/package.scala
+diff --git a/common/src/main/scala/package.scala b/src/main/scala/common/package.scala
+similarity index 100%
+rename from common/src/main/scala/package.scala
+rename to src/main/scala/common/package.scala
+-- 
+2.39.2 (Apple Git-143)
+

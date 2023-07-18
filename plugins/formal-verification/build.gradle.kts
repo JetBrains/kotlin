@@ -5,7 +5,15 @@ plugins {
     id("jps-compatible")
 }
 
+repositories {
+    mavenLocal()
+}
+
+
 dependencies {
+
+    implementation("viper:silicon:1.1-SNAPSHOT")
+
     compileOnly(project(":compiler:fir:cones"))
     compileOnly(project(":compiler:fir:tree"))
     compileOnly(project(":compiler:fir:resolve"))
