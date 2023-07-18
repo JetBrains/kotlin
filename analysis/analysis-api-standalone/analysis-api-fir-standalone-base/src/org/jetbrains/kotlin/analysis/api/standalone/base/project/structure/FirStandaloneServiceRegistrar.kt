@@ -13,6 +13,8 @@ import com.intellij.psi.impl.PsiElementFinderImpl
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.api.fir.references.ReadWriteAccessCheckerFirImpl
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenProvider
+import org.jetbrains.kotlin.analysis.api.lifetime.KtReadActionConfinementLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
@@ -47,6 +49,7 @@ object FirStandaloneServiceRegistrar : AnalysisApiStandaloneServiceRegistrar {
 
     override fun registerProjectServices(project: MockProject) {
         project.apply {
+            registerService(KtLifetimeTokenProvider::class.java, KtReadActionConfinementLifetimeTokenProvider::class.java)
             registerService(KtAnalysisSessionProvider::class.java, KtFirAnalysisSessionProvider(this))
             registerService(LLFirResolveSessionService::class.java)
             registerService(LLFirSessionCache::class.java)
