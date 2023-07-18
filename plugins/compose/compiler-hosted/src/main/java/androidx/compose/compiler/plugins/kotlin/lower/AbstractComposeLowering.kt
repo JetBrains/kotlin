@@ -70,6 +70,7 @@ import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.expressions.IrVararg
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrBranchImpl
@@ -886,7 +887,8 @@ abstract class AbstractComposeLowering(
                     else -> false
                 }
             }
-            is IrFunctionExpression ->
+            is IrFunctionExpression,
+            is IrTypeOperatorCall ->
                 context.irTrace[ComposeWritableSlices.IS_STATIC_FUNCTION_EXPRESSION, this] ?: false
             is IrGetField ->
                 // K2 sometimes produces `IrGetField` for reads from constant properties
