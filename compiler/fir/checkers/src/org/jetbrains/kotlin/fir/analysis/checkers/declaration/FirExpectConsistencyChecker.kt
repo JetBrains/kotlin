@@ -19,8 +19,19 @@ import org.jetbrains.kotlin.fir.declarations.utils.visibility
 // See old FE's [DeclarationsChecker]
 object FirExpectConsistencyChecker : FirBasicDeclarationChecker() {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+        val source = declaration.source ?: return
+        if (source.kind is KtFakeSourceElementKind) return
+
         val isTopLevel = context.containingDeclarations.size == 1
-        val isInsideClass = context.containingDeclarations.lastOrNull() is FirClass
+        val lastClass = context.containingDeclarations.lastOrNull() as? FirClass
+        val isInsideClass = lastClass != null
+
+        if (declaration is FirAnonymousInitializer) {
+            if (lastClass?.isExpect == true) {
+                reporter.reportOn(source, FirErrors.EXPECTED_DECLARATION_WITH_BODY, context)
+            }
+            return
+        }
 
         if (
             declaration !is FirMemberDeclaration ||
@@ -30,9 +41,6 @@ object FirExpectConsistencyChecker : FirBasicDeclarationChecker() {
             return
         }
 
-        val source = declaration.source ?: return
-        if (source.kind is KtFakeSourceElementKind) return
-
         if (declaration is FirConstructor) {
             if (!declaration.isPrimary) {
                 val delegatedConstructorSource = declaration.delegatedConstructor?.source
@@ -40,14 +48,11 @@ object FirExpectConsistencyChecker : FirBasicDeclarationChecker() {
                     reporter.reportOn(delegatedConstructorSource, FirErrors.EXPECTED_CLASS_CONSTRUCTOR_DELEGATION_CALL, context)
                 }
             }
-            return
-        }
-
-        if (Visibilities.isPrivate(declaration.visibility)) {
+        } else if (Visibilities.isPrivate(declaration.visibility)) {
             reporter.reportOn(source, FirErrors.EXPECTED_PRIVATE_DECLARATION, context)
         }
 
-        if (declaration is FirSimpleFunction && declaration.hasBody) {
+        if (declaration is FirFunction && declaration.hasBody) {
             reporter.reportOn(source, FirErrors.EXPECTED_DECLARATION_WITH_BODY, context)
         }
     }

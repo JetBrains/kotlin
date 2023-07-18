@@ -5,11 +5,11 @@
         val constructorProperty: String,
         constructorParameter: String
 ) {
-    init {
+    <!EXPECTED_DECLARATION_WITH_BODY!>init<!> {
         "no"
     }
 
-    constructor(s: String) {
+    <!EXPECTED_DECLARATION_WITH_BODY!>constructor(s: String)<!> {
         "no"
     }
 
