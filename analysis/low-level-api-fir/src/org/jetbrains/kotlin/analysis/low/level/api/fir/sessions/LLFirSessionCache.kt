@@ -91,19 +91,20 @@ class LLFirSessionCache(private val project: Project) {
     }
 
     /**
-     * Removes all sessions after global invalidation. If [includeStableModules] is `false`, sessions of stable modules will not be removed.
+     * Removes all sessions after global invalidation. If [includeLibraryModules] is `false`, sessions of library modules will not be
+     * removed.
      *
      * [removeAllSessions] must be called in a write action.
      */
-    fun removeAllSessions(includeStableModules: Boolean) {
+    fun removeAllSessions(includeLibraryModules: Boolean) {
         ApplicationManager.getApplication().assertWriteAccessAllowed()
 
-        if (includeStableModules) {
+        if (includeLibraryModules) {
             removeAllSessionsFrom(sourceCache)
             removeAllSessionsFrom(binaryCache)
         } else {
-            // `binaryCache` can only contain binary and thus stable modules, so we only need to remove sessions from `sourceCache`.
-            removeAllMatchingSessionsFrom(sourceCache) { !it.isStableModule }
+            // `binaryCache` can only contain library modules, so we only need to remove sessions from `sourceCache`.
+            removeAllMatchingSessionsFrom(sourceCache) { it !is KtBinaryModule && it !is KtLibrarySourceModule }
         }
     }
 

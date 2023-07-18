@@ -41,15 +41,15 @@ class LLFirSessionInvalidationService(private val project: Project) : Disposable
         )
         busConnection.subscribe(
             KotlinTopics.GLOBAL_MODULE_STATE_MODIFICATION,
-            KotlinGlobalModuleStateModificationListener { invalidateAll(includeStableModules = true) }
+            KotlinGlobalModuleStateModificationListener { invalidateAll(includeLibraryModules = true) }
         )
         busConnection.subscribe(
             KotlinTopics.GLOBAL_SOURCE_MODULE_STATE_MODIFICATION,
-            KotlinGlobalSourceModuleStateModificationListener { invalidateAll(includeStableModules = false) },
+            KotlinGlobalSourceModuleStateModificationListener { invalidateAll(includeLibraryModules = false) },
         )
         busConnection.subscribe(
             KotlinTopics.GLOBAL_SOURCE_OUT_OF_BLOCK_MODIFICATION,
-            KotlinGlobalSourceOutOfBlockModificationListener { invalidateAll(includeStableModules = false) },
+            KotlinGlobalSourceOutOfBlockModificationListener { invalidateAll(includeLibraryModules = false) },
         )
     }
 
@@ -81,21 +81,21 @@ class LLFirSessionInvalidationService(private val project: Project) : Disposable
         }
     }
 
-    private fun invalidateAll(includeStableModules: Boolean) {
+    private fun invalidateAll(includeLibraryModules: Boolean) {
         ApplicationManager.getApplication().assertWriteAccessAllowed()
 
-        // When anchor modules are configured and `includeStableModules` is `false`, we get a situation where the anchor module session will
-        // be invalidated (because it is a source session), while its library dependents won't be invalidated (because they are sessions of
-        // stable modules). But such library sessions also need to be invalidated because they depend on the anchor module.
+        // When anchor modules are configured and `includeLibraryModules` is `false`, we get a situation where the anchor module session
+        // will be invalidated (because it is a source session), while its library dependents won't be invalidated. But such library
+        // sessions also need to be invalidated because they depend on the anchor module.
         //
         // Invalidating anchor modules before all source sessions has the advantage that `invalidate`'s session existence check will work,
         // so we do not have to invalidate dependent sessions if the anchor module does not exist in the first place.
-        if (!includeStableModules) {
+        if (!includeLibraryModules) {
             val anchorModules = KotlinAnchorModuleProvider.getInstance(project)?.getAllAnchorModules()
             anchorModules?.forEach(::invalidate)
         }
 
-        LLFirSessionCache.getInstance(project).removeAllSessions(includeStableModules)
+        LLFirSessionCache.getInstance(project).removeAllSessions(includeLibraryModules)
     }
 
     override fun dispose() {

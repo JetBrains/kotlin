@@ -20,14 +20,23 @@ import org.jetbrains.kotlin.analysis.providers.analysisMessageBus
  *  - [KotlinGlobalSourceModuleStateModificationListener]
  *  - [KotlinGlobalSourceOutOfBlockModificationListener]
  *
- * Modification events may be published before or after a modification, so subscribers should not assume that the modification has or hasn't
- * happened yet. The reason for this design decision is that the underlying events (such as PSI tree changes or workspace model events) are
- * sometimes published before and sometimes after a change, or even both. Modification events published before the modification should
- * however be published close to the modification.
- *
  * Care needs to be taken with the lack of interplay between different types of topics: Publishing a global modification event, for example,
  * does not imply the corresponding module-level event. Similarly, publishing a module state modification event does not imply out-of-block
  * modification.
+ *
+ * Global modification events are published when it's not feasible or desired to publish events for a single module, or a limited set of
+ * modules. For example, a change in the environment such as removing an SDK might affect all modules, so a global event is more
+ * appropriate.
+ *
+ * #### Timing Guarantees
+ *
+ * Most modification events may be published before or after a modification, so subscribers should not assume that the modification has or
+ * hasn't happened yet. The reason for this design decision is that some of the underlying events (such as PSI tree changes) may be
+ * published before and after a change, or even both. Modification events published before the modification should however be published
+ * close to the modification.
+ *
+ * Only [module state modification events][KotlinModuleStateModificationListener] guarantee that the event is published before the module is
+ * affected. This allows subscribers to access the module's properties and dependencies to invalidate or update caches.
  *
  * #### Implementation Notes
  *
