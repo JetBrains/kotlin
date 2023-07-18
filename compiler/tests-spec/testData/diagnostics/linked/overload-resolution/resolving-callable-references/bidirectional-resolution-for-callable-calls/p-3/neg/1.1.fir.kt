@@ -25,7 +25,7 @@ class Case1() {
     }
 
     fun case() {
-        <!INAPPLICABLE_CANDIDATE!>Companion<!>(::<!UNRESOLVED_REFERENCE!>x<!>)
+        Companion(::<!UNRESOLVED_REFERENCE!>x<!>)
     }
 
     val x = ""
@@ -41,7 +41,7 @@ class Case2() {
     }
 
     fun case() {
-        <!INAPPLICABLE_CANDIDATE!>Companion<!>(::<!UNRESOLVED_REFERENCE!>x<!>)
+        Companion(::<!UNRESOLVED_REFERENCE!>x<!>)
     }
 
     val x = C()

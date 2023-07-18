@@ -13,7 +13,7 @@ fun <T> Wrapper<T>.baz(transform: (T) -> Unit): T = TODO()
 
 fun test() {
     takeFun<String>(::foo)
-    <!INAPPLICABLE_CANDIDATE!>takeFun<!><String>(::<!UNRESOLVED_REFERENCE!>fooInt<!>)
+    takeFun<String>(::<!UNRESOLVED_REFERENCE!>fooInt<!>)
 
     callFun<String, Wrapper<String>>(::createWrapper)
     callFun<Int, Wrapper<Number>>(::createWrapper)

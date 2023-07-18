@@ -27,22 +27,22 @@ interface Foo {
     // CR on property with to receivers are forbidden
     fun <T: Foo> test() {
         // with LHS and property
-        <!INAPPLICABLE_CANDIDATE!>bar8<!><T>(Foo::<!UNRESOLVED_REFERENCE!>x1<!>)
-        <!INAPPLICABLE_CANDIDATE!>bar8<!><Foo>(Foo::<!UNRESOLVED_REFERENCE!>x1<!>)
-        <!INAPPLICABLE_CANDIDATE!>bar8<!>(Foo::<!UNRESOLVED_REFERENCE!>x1<!>)
+        bar8<T>(Foo::<!UNRESOLVED_REFERENCE!>x1<!>)
+        bar8<Foo>(Foo::<!UNRESOLVED_REFERENCE!>x1<!>)
+        bar8(Foo::<!UNRESOLVED_REFERENCE!>x1<!>)
 
         // with LHS and mutable property
-        <!INAPPLICABLE_CANDIDATE!>bar8<!><T>(Foo::<!UNRESOLVED_REFERENCE!>x2<!>)
-        <!INAPPLICABLE_CANDIDATE!>bar8<!><Foo>(Foo::<!UNRESOLVED_REFERENCE!>x2<!>)
-        <!INAPPLICABLE_CANDIDATE!>bar8<!>(Foo::<!UNRESOLVED_REFERENCE!>x2<!>)
+        bar8<T>(Foo::<!UNRESOLVED_REFERENCE!>x2<!>)
+        bar8<Foo>(Foo::<!UNRESOLVED_REFERENCE!>x2<!>)
+        bar8(Foo::<!UNRESOLVED_REFERENCE!>x2<!>)
 
         // with LHS and propery + mutable property (mixed)
-        <!INAPPLICABLE_CANDIDATE!>bar8<!><T>(Foo::<!UNRESOLVED_REFERENCE!>x3<!>)
-        <!INAPPLICABLE_CANDIDATE!>bar8<!><Foo>(Foo::<!UNRESOLVED_REFERENCE!>x3<!>)
-        <!INAPPLICABLE_CANDIDATE!>bar8<!>(Foo::<!UNRESOLVED_REFERENCE!>x3<!>)
-        <!INAPPLICABLE_CANDIDATE!>bar9<!><T>(Foo::<!UNRESOLVED_REFERENCE!>x3<!>)
-        <!INAPPLICABLE_CANDIDATE!>bar9<!><Foo>(Foo::<!UNRESOLVED_REFERENCE!>x3<!>)
-        <!INAPPLICABLE_CANDIDATE!>bar9<!>(Foo::<!UNRESOLVED_REFERENCE!>x3<!>)
+        bar8<T>(Foo::<!UNRESOLVED_REFERENCE!>x3<!>)
+        bar8<Foo>(Foo::<!UNRESOLVED_REFERENCE!>x3<!>)
+        bar8(Foo::<!UNRESOLVED_REFERENCE!>x3<!>)
+        bar9<T>(Foo::<!UNRESOLVED_REFERENCE!>x3<!>)
+        bar9<Foo>(Foo::<!UNRESOLVED_REFERENCE!>x3<!>)
+        bar9(Foo::<!UNRESOLVED_REFERENCE!>x3<!>)
     }
 }
 
@@ -114,14 +114,14 @@ fun <T : Foo, R: Number, D: Int> main() {
     bar7(Foo::resolve) // OK
 
     // with LHS and sentension function expected type
-    <!INAPPLICABLE_CANDIDATE!>bar10<!><D>(Int::<!UNRESOLVED_REFERENCE!>x1<!>) // ERROR before the fix in NI
+    bar10<D>(Int::<!UNRESOLVED_REFERENCE!>x1<!>) // ERROR before the fix in NI
     bar10<Int>(Int::x1) // OK
     bar10(Int::x1) // OK
 
     fun Int.ext() {
         // with LHS and sentension function expected type
-        <!INAPPLICABLE_CANDIDATE!>bar10<!><D>(::<!UNRESOLVED_REFERENCE!>x1<!>) // ERROR before the fix in NI
-        <!INAPPLICABLE_CANDIDATE!>bar10<!><Int>(::<!UNRESOLVED_REFERENCE!>x1<!>) // OK
-        <!INAPPLICABLE_CANDIDATE!>bar10<!>(::<!UNRESOLVED_REFERENCE!>x1<!>) // OK
+        bar10<D>(::<!UNRESOLVED_REFERENCE!>x1<!>) // ERROR before the fix in NI
+        bar10<Int>(::<!UNRESOLVED_REFERENCE!>x1<!>) // OK
+        bar10(::<!UNRESOLVED_REFERENCE!>x1<!>) // OK
     }
 }

@@ -18,7 +18,7 @@ public class Inv<T> {
 
 fun test(inv: Inv<String>) {
     val m: ((String) -> String) -> Inv<String> = inv::<!UNRESOLVED_REFERENCE!>map<!>
-    <!INAPPLICABLE_CANDIDATE!>take<!>(inv::<!UNRESOLVED_REFERENCE!>map<!>)
+    take(inv::<!UNRESOLVED_REFERENCE!>map<!>)
 }
 
 fun take(f: ((String) -> String) -> Inv<String>) {}

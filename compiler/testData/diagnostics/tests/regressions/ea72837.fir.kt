@@ -4,6 +4,6 @@ fun h(x: () -> Unit) = 1
 
 fun foo() {
     <!UNRESOLVED_REFERENCE!>f<!>(::<!SYNTAX!><!>)
-    <!INAPPLICABLE_CANDIDATE!>g<!>(::<!SYNTAX!><!>)
-    <!INAPPLICABLE_CANDIDATE!>h<!>(::<!SYNTAX!><!>)
+    g(::<!SYNTAX!><!>)
+    h(::<!SYNTAX!><!>)
 }

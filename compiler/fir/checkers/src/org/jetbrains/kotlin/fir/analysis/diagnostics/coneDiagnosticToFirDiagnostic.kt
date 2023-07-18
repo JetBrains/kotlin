@@ -255,6 +255,9 @@ private fun mapInapplicableCandidateError(
             // And the errors should be reported there
             is ErrorTypeInArguments -> null
 
+            // see EagerResolveOfCallableReferences
+            is UnsuccessfulCallableReferenceAtom -> null
+
             is MultipleContextReceiversApplicableForExtensionReceivers ->
                 FirErrors.AMBIGUOUS_CALL_WITH_IMPLICIT_CONTEXT_RECEIVER.createOn(qualifiedAccessSource ?: source)
 

@@ -3,7 +3,7 @@
 
 fun a() {
     val x = 10
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(::<!UNSUPPORTED!>x<!>)
+    foo(::<!UNSUPPORTED!>x<!>)
 }
 
 fun foo(a: Any) {}

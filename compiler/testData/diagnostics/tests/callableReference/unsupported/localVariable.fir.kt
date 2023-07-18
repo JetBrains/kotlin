@@ -11,5 +11,5 @@ fun test(param: String) {
     val lambda = { -> }
     val g = ::<!UNSUPPORTED!>lambda<!>
 
-    <!INAPPLICABLE_CANDIDATE!>eat<!>(::<!UNSUPPORTED!>param<!>)
+    eat(::<!UNSUPPORTED!>param<!>)
 }

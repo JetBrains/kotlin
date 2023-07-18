@@ -9,6 +9,6 @@ class Foo {
 fun main() {
     val f = Foo()
     val a: Int
-    <!VARIABLE_EXPECTED!><!UNRESOLVED_REFERENCE!>get<!>()<!> = f.<!INAPPLICABLE_CANDIDATE!>getValue<!>(null, ::<!UNSUPPORTED!>a<!>) // no exception after fix
+    <!VARIABLE_EXPECTED!><!UNRESOLVED_REFERENCE!>get<!>()<!> = f.getValue(null, ::<!UNSUPPORTED!>a<!>) // no exception after fix
     <!UNRESOLVED_REFERENCE!>print<!>(<!UNINITIALIZED_VARIABLE!>a<!>)
 }

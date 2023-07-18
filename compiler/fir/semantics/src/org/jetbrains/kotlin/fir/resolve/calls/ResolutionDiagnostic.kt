@@ -76,6 +76,8 @@ class NameForAmbiguousParameter(
 
 object InapplicableCandidate : ResolutionDiagnostic(INAPPLICABLE)
 
+object UnsuccessfulCallableReferenceAtom : ResolutionDiagnostic(INAPPLICABLE)
+
 object ErrorTypeInArguments : ResolutionDiagnostic(INAPPLICABLE)
 
 object HiddenCandidate : ResolutionDiagnostic(HIDDEN)

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
-import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirElement
@@ -42,6 +41,7 @@ import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.DYNAMIC_EXTENSION_FQ_NAME
 import org.jetbrains.kotlin.types.AbstractNullabilityChecker
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -514,7 +514,13 @@ internal object EagerResolveOfCallableReferences : CheckerStage() {
                 val (applicability, success) =
                     context.bodyResolveComponents.callResolver.resolveCallableReference(candidate.csBuilder, atom)
                 if (!success) {
-                    sink.yieldDiagnostic(InapplicableCandidate)
+                    // If the resolution was unsuccessful, we ensure that an error will be reported for the callable reference
+                    // during completion by using the `resultingReference` of the postponed atom.
+                    // We assert that the `resultingReference` is set to an error reference and the atom is in fact postponed.
+                    check(atom.resultingReference is FirErrorReferenceWithCandidate)
+                    if (AbstractTypeChecker.RUN_SLOW_ASSERTIONS) check(atom in candidate.postponedAtoms)
+
+                    sink.yieldDiagnostic(UnsuccessfulCallableReferenceAtom)
                 } else when (applicability) {
                     CandidateApplicability.RESOLVED_NEED_PRESERVE_COMPATIBILITY ->
                         sink.reportDiagnostic(LowerPriorityToPreserveCompatibilityDiagnostic)

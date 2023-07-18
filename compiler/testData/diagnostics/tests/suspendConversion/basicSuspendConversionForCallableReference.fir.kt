@@ -14,5 +14,5 @@ fun test() {
     foo2(42, ::bar2)
     foo2("str", ::bar2)
 
-    <!INAPPLICABLE_CANDIDATE!>foo2<!>(42, ::<!UNRESOLVED_REFERENCE!>bar1<!>)
+    foo2(42, ::<!UNRESOLVED_REFERENCE!>bar1<!>)
 }
