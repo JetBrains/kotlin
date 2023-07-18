@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
-import com.intellij.openapi.util.registry.Registry
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirSession
@@ -241,8 +240,6 @@ internal class StateKeeper<in Owner : Any, Context : Any>(val provider: (Owner, 
     }
 }
 
-internal val USE_STATE_KEEPER: Boolean = Registry.`is`("kotlin.analysis.use.state.keeper", true)
-
 /**
  * State preserved by a [StateKeeper].
  */
@@ -267,11 +264,6 @@ internal inline fun <Target : FirElementWithResolveState, Context : Any, Result>
     prepareTarget: (Target) -> Unit = {},
     action: () -> Result,
 ): Result {
-    if (!USE_STATE_KEEPER) {
-        prepareTarget(target)
-        return action()
-    }
-
     val onAirAnalysisTarget = target.moduleData.session.onAirAnalysisTarget
     if (onAirAnalysisTarget != null && target in onAirAnalysisTarget) {
         // Several arrangers reset declaration bodies to lazy ones, and then re-construct the FIR tree from the backing PSI.
