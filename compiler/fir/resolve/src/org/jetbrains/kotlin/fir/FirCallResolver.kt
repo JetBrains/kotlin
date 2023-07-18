@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedReifiedParameterReference
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.builder.buildBackingFieldReference
@@ -37,11 +38,14 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressions
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildStarProjection
 import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
+import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
@@ -520,24 +524,40 @@ class FirCallResolver(
 
     fun resolveAnnotationCall(annotation: FirAnnotationCall): FirAnnotationCall? {
         val reference = annotation.calleeReference as? FirSimpleNamedReference ?: return null
-        annotation.replaceArgumentList(annotation.argumentList.transform(transformer, ResolutionMode.ContextDependent))
-
-        val callInfo = CallInfo(
-            annotation,
-            CallKind.Function,
-            name = reference.name,
-            explicitReceiver = null,
-            annotation.argumentList,
-            isImplicitInvoke = false,
-            typeArguments = annotation.typeArguments,
-            session,
-            components.file,
-            components.containingDeclarations
-        )
-
         val annotationClassSymbol = annotation.getCorrespondingClassSymbolOrNull(session)
         val resolvedReference = if (annotationClassSymbol != null && annotationClassSymbol.fir.classKind == ClassKind.ANNOTATION_CLASS) {
-            val resolutionResult = createCandidateForAnnotationCall(annotationClassSymbol, callInfo)
+            val constructorSymbol = getConstructorSymbol(annotationClassSymbol)
+            constructorSymbol?.lazyResolveToPhase(FirResolvePhase.TYPES)
+
+            if (constructorSymbol != null && annotation.arguments.isNotEmpty()) {
+                // We want to "desugar" array literal arguments whose expected type is not a primitive or unsigned array to
+                // function calls to arrayOf so that we can properly complete them eventually.
+                // In order to find out what the expected type is, we need to run argument mapping.
+                // However, we don't want to resolve them with expectedType because we don't want to force completion before the whole
+                // call is completed so that type variables are preserved.
+                // We therefore use a special resolution mode that triggers array literal desugaring but doesn't force completion.
+                val mapping = transformer.resolutionContext.bodyResolveComponents.mapArguments(
+                    annotation.arguments, constructorSymbol.fir, originScope = null, callSiteIsOperatorCall = false,
+                )
+                val argumentsToParameters = mapping.toArgumentToParameterMapping()
+                annotation.replaceArgumentList(buildArgumentList {
+                    source = annotation.argumentList.source
+                    annotation.arguments.mapTo(arguments) {
+                        val isPrimitiveOrUnsignedArrayType =
+                            argumentsToParameters[it]?.returnTypeRef?.coneType?.isPrimitiveOrUnsignedArray == true
+                        val resolutionMode =
+                            if (!isPrimitiveOrUnsignedArrayType) ResolutionMode.ContextDependent.TransformingArrayLiterals else ResolutionMode.ContextDependent.Default
+                        it.transformSingle(transformer, resolutionMode)
+                    }
+                })
+            } else {
+                annotation.replaceArgumentList(annotation.argumentList.transform(transformer, ResolutionMode.ContextDependent.Default))
+            }
+
+            val callInfo = toCallInfo(annotation, reference)
+
+            val resolutionResult = constructorSymbol
+                ?.let { runResolutionForGivenSymbol(callInfo, it) }
                 ?: ResolutionResult(callInfo, CandidateApplicability.HIDDEN, emptyList())
             createResolvedNamedReference(
                 reference,
@@ -548,6 +568,10 @@ class FirCallResolver(
                 explicitReceiver = null
             )
         } else {
+            annotation.replaceArgumentList(annotation.argumentList.transform(transformer, ResolutionMode.ContextDependent.Default))
+
+            val callInfo = toCallInfo(annotation, reference)
+
             buildReferenceWithErrorCandidate(
                 callInfo,
                 if (annotationClassSymbol != null) ConeIllegalAnnotationError(reference.name)
@@ -562,10 +586,20 @@ class FirCallResolver(
         }
     }
 
-    private fun createCandidateForAnnotationCall(
-        annotationClassSymbol: FirRegularClassSymbol,
-        callInfo: CallInfo
-    ): ResolutionResult? {
+    private fun toCallInfo(annotation: FirAnnotationCall, reference: FirSimpleNamedReference): CallInfo = CallInfo(
+        annotation,
+        CallKind.Function,
+        name = reference.name,
+        explicitReceiver = null,
+        annotation.argumentList,
+        isImplicitInvoke = false,
+        typeArguments = annotation.typeArguments,
+        session,
+        components.file,
+        components.containingDeclarations
+    )
+
+    private fun getConstructorSymbol(annotationClassSymbol: FirRegularClassSymbol): FirConstructorSymbol? {
         var constructorSymbol: FirConstructorSymbol? = null
         annotationClassSymbol.fir.unsubstitutedScope(
             session,
@@ -577,11 +611,14 @@ class FirCallResolver(
                 constructorSymbol = it
             }
         }
-        if (constructorSymbol == null) return null
+        return constructorSymbol
+    }
+
+    private fun runResolutionForGivenSymbol(callInfo: CallInfo, symbol: FirBasedSymbol<*>): ResolutionResult {
         val candidateFactory = CandidateFactory(transformer.resolutionContext, callInfo)
         val candidate = candidateFactory.createCandidate(
             callInfo,
-            constructorSymbol!!,
+            symbol,
             ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
             scope = null
         )

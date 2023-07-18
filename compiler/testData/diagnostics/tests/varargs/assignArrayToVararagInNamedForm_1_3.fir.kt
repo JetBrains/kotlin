@@ -19,7 +19,7 @@ fun test_fun(s: String, arr: Array<String>) {
 }
 
 fun test_ann(s: String, arr: Array<String>) {
-    @Ann([""], x = 1)
+    @Ann(<!ARGUMENT_TYPE_MISMATCH!>[""]<!>, x = 1)
     foo()
     @Ann(*[""], x = 1)
     foo()

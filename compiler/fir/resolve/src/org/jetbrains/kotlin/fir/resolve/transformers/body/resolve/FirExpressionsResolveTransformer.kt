@@ -1637,14 +1637,20 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
     override fun transformArrayOfCall(arrayOfCall: FirArrayOfCall, data: ResolutionMode): FirStatement =
         whileAnalysing(session, arrayOfCall) {
             if (data is ResolutionMode.ContextDependent.Default) {
+                // Argument for primitive array parameter in annotation call or argument in non-annotation call (unsupported).
                 arrayOfCall.transformChildren(transformer, data)
                 arrayOfCall
-            } else if (data is ResolutionMode.WithExpectedType && !data.expectedTypeRef.coneType.isPrimitiveOrUnsignedArray) {
+            } else if (
+                data is ResolutionMode.WithExpectedType && !data.expectedTypeRef.coneType.isPrimitiveOrUnsignedArray ||
+                data is ResolutionMode.ContextDependent.TransformingArrayLiterals
+            ) {
+                // Default value of Array<T> parameter or argument for Array<T> parameter in annotation call.
                 arrayOfCall.transformChildren(transformer, ResolutionMode.ContextDependent)
                 val call = components.syntheticCallGenerator.generateSyntheticArrayOfCall(arrayOfCall, resolutionContext)
                 callCompleter.completeCall(call, data)
                 arrayOfCallTransformer.transformFunctionCall(call, session)
             } else {
+                // Default value of primitive array parameter or other unsupported usage.
                 val syntheticIdCall = components.syntheticCallGenerator.generateSyntheticIdCall(arrayOfCall, resolutionContext)
                 arrayOfCall.transformChildren(transformer, ResolutionMode.ContextDependent)
                 callCompleter.completeCall(syntheticIdCall, data)

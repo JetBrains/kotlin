@@ -10,6 +10,14 @@ public val two: kotlin.Int = 2
 @Foo(a = {1}, b = {}, c = {}) public fun test6(): kotlin.Unit
 @Foo(a = {3}, b = {}, c = {}) public fun test7(): kotlin.Unit
 @Foo(a = {2}, b = {}, c = {}) public fun test8(): kotlin.Unit
+@Test3(x = {Test2<T1, T2>(x = Test1<T>(x = 40))}) @Test3(x = {Test2<T1, T2>(x = Test1<T>(x = 40))}) @Test3(x = {Test2<T1, T2>(x = Test1<T>(x = 40))}) public fun test9(): kotlin.Unit
+
+public final class C</*0*/ T> : I<T> {
+    public constructor C</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
 
 public final annotation class Foo : kotlin.Annotation {
     public constructor Foo(/*0*/ a: kotlin.IntArray, /*1*/ b: kotlin.Array<kotlin.String>, /*2*/ c: kotlin.FloatArray)
@@ -20,3 +28,34 @@ public final annotation class Foo : kotlin.Annotation {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+
+public interface I</*0*/ T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final annotation class Test1</*0*/ T> : kotlin.Annotation {
+    public constructor Test1</*0*/ T>(/*0*/ x: kotlin.Int)
+    public final val x: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final annotation class Test2</*0*/ T1, /*1*/ T2 : I<T1>> : kotlin.Annotation {
+    public constructor Test2</*0*/ T1, /*1*/ T2 : I<T1>>(/*0*/ x: Test1<I<T2>>)
+    public final val x: Test1<I<T2>>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.annotation.Repeatable public final annotation class Test3 : kotlin.Annotation {
+    public constructor Test3(/*0*/ x: kotlin.Array<Test2<kotlin.Int, C<kotlin.Int>>>)
+    public final val x: kotlin.Array<Test2<kotlin.Int, C<kotlin.Int>>>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+

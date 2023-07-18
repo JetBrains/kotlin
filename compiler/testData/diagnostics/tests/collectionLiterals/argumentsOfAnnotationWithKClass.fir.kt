@@ -20,10 +20,10 @@ fun test3() {}
 @Foo([<!CLASS_LITERAL_LHS_NOT_A_CLASS!>Gen<Int>::class<!>])
 fun test4() {}
 
-@Foo([""])
+@Foo(<!ARGUMENT_TYPE_MISMATCH!>[""]<!>)
 fun test5() {}
 
-@Foo([Int::class, 1])
+@Foo(<!ARGUMENT_TYPE_MISMATCH!>[Int::class, 1]<!>)
 fun test6() {}
 
 @Bar
