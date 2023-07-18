@@ -1,0 +1,3 @@
+/simple.kt:(148,161): warning:
+
+/simple.kt:(148,161): info: with_contract

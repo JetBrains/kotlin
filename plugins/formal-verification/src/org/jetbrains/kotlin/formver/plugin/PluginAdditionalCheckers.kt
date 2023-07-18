@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtensi
 class PluginAdditionalCheckers(session: FirSession) : FirAdditionalCheckersExtension(session) {
     override val declarationCheckers: DeclarationCheckers = object : DeclarationCheckers() {
         override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker>
-            get() = setOf(ExampleDeclarationChecker)
+            get() = setOf(ViperPoweredDeclarationChecker)
     }
 }
 
