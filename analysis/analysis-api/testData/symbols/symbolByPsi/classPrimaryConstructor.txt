@@ -4,6 +4,8 @@ KtConstructorSymbol:
   containingClassIdIfNonLocal: A
   contextReceivers: []
   hasStableParameterNames: true
+  isActual: false
+  isExpect: false
   isExtension: false
   isPrimary: true
   origin: SOURCE
@@ -71,8 +73,10 @@ KtConstructorSymbol:
         hasGetter: true
         hasSetter: false
         initializer: KtNonConstantInitializerValue(val a: Int)
+        isActual: false
         isConst: false
         isDelegatedProperty: false
+        isExpect: false
         isExtension: false
         isFromPrimaryConstructor: true
         isLateInit: false

@@ -44,7 +44,9 @@ KtFunctionSymbol:
           isNegated: false
   ]
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false

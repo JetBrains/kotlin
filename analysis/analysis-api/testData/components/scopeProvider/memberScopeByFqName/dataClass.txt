@@ -50,8 +50,10 @@ KtKotlinPropertySymbol:
   hasGetter: true
   hasSetter: false
   initializer: KtNonConstantInitializerValue(val firstProperty: Int)
+  isActual: false
   isConst: false
   isDelegatedProperty: false
+  isExpect: false
   isExtension: false
   isFromPrimaryConstructor: true
   isLateInit: false
@@ -133,8 +135,10 @@ KtKotlinPropertySymbol:
   hasGetter: true
   hasSetter: false
   initializer: KtNonConstantInitializerValue(val secondProperty: Double)
+  isActual: false
   isConst: false
   isDelegatedProperty: false
+  isExpect: false
   isExtension: false
   isFromPrimaryConstructor: true
   isLateInit: false
@@ -216,8 +220,10 @@ KtKotlinPropertySymbol:
   hasGetter: true
   hasSetter: false
   initializer: KtNonConstantInitializerValue(val thirdProperty: String)
+  isActual: false
   isConst: false
   isDelegatedProperty: false
+  isExpect: false
   isExtension: false
   isFromPrimaryConstructor: true
   isLateInit: false
@@ -253,7 +259,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -338,8 +346,10 @@ KtKotlinPropertySymbol:
   hasGetter: true
   hasSetter: false
   initializer: null
+  isActual: false
   isConst: false
   isDelegatedProperty: false
+  isExpect: false
   isExtension: true
   isFromPrimaryConstructor: false
   isLateInit: false
@@ -384,7 +394,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -418,7 +430,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -452,7 +466,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -486,7 +502,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -587,7 +605,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -644,7 +664,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -678,7 +700,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -712,6 +736,8 @@ KtConstructorSymbol:
   containingClassIdIfNonLocal: Abc
   contextReceivers: []
   hasStableParameterNames: true
+  isActual: false
+  isExpect: false
   isExtension: false
   isPrimary: true
   origin: SOURCE
@@ -779,8 +805,10 @@ KtConstructorSymbol:
         hasGetter: true
         hasSetter: false
         initializer: KtNonConstantInitializerValue(val firstProperty: Int)
+        isActual: false
         isConst: false
         isDelegatedProperty: false
+        isExpect: false
         isExtension: false
         isFromPrimaryConstructor: true
         isLateInit: false
@@ -882,8 +910,10 @@ KtConstructorSymbol:
         hasGetter: true
         hasSetter: false
         initializer: KtNonConstantInitializerValue(val secondProperty: Double)
+        isActual: false
         isConst: false
         isDelegatedProperty: false
+        isExpect: false
         isExtension: false
         isFromPrimaryConstructor: true
         isLateInit: false
@@ -985,8 +1015,10 @@ KtConstructorSymbol:
         hasGetter: true
         hasSetter: false
         initializer: KtNonConstantInitializerValue(val thirdProperty: String)
+        isActual: false
         isConst: false
         isDelegatedProperty: false
+        isExpect: false
         isExtension: false
         isFromPrimaryConstructor: true
         isLateInit: false

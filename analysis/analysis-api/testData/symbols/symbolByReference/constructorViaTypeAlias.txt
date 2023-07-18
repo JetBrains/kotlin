@@ -4,6 +4,8 @@ KtConstructorSymbol:
   containingClassIdIfNonLocal: java/util/ArrayList
   contextReceivers: []
   hasStableParameterNames: false
+  isActual: false
+  isExpect: false
   isExtension: false
   isPrimary: false
   origin: JAVA

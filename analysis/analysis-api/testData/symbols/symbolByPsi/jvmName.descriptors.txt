@@ -53,8 +53,10 @@ KtKotlinPropertySymbol:
   hasGetter: true
   hasSetter: true
   initializer: null
+  isActual: false
   isConst: false
   isDelegatedProperty: false
+  isExpect: false
   isExtension: false
   isFromPrimaryConstructor: false
   isLateInit: false
@@ -210,8 +212,10 @@ KtKotlinPropertySymbol:
   hasGetter: true
   hasSetter: true
   initializer: null
+  isActual: false
   isConst: false
   isDelegatedProperty: false
+  isExpect: false
   isExtension: false
   isFromPrimaryConstructor: false
   isLateInit: false

@@ -8,8 +8,10 @@ KtKotlinPropertySymbol:
   hasGetter: false
   hasSetter: false
   initializer: null
+  isActual: false
   isConst: false
   isDelegatedProperty: false
+  isExpect: false
   isExtension: false
   isFromPrimaryConstructor: false
   isLateInit: false
