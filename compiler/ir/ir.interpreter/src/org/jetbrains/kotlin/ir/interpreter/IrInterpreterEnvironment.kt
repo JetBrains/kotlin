@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.isSubclassOf
 import org.jetbrains.kotlin.ir.util.properties
+import org.jetbrains.kotlin.ir.util.toIrConst
 import org.jetbrains.kotlin.platform.isJs
 
 class IrInterpreterEnvironment(
