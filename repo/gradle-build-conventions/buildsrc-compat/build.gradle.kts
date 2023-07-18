@@ -17,10 +17,6 @@ logger.info("buildSrcKotlinVersion: " + extra["bootstrapKotlinVersion"])
 logger.info("buildSrc kotlin compiler version: " + org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION)
 logger.info("buildSrc stdlib version: " + KotlinVersion.CURRENT)
 
-apply {
-    from("../../../gradle/checkCacheability.gradle.kts")
-}
-
 plugins {
     `kotlin-dsl`
     `java-gradle-plugin`
@@ -39,28 +35,6 @@ gradlePlugin {
         }
     }
 }
-
-fun Project.getBooleanProperty(name: String): Boolean? = this.findProperty(name)?.let {
-    val v = it.toString()
-    if (v.isBlank()) true
-    else v.toBoolean()
-}
-
-project.apply {
-    from(rootProject.file("../../gradle/versions.gradle.kts"))
-}
-
-val isTeamcityBuild = kotlinBuildProperties.isTeamcityBuild
-val intellijSeparateSdks by extra(project.getBooleanProperty("intellijSeparateSdks") ?: false)
-
-extra["intellijReleaseType"] = when {
-    extra["versions.intellijSdk"]?.toString()?.contains("-EAP-") == true -> "snapshots"
-    extra["versions.intellijSdk"]?.toString()?.endsWith("SNAPSHOT") == true -> "nightly"
-    else -> "releases"
-}
-
-extra["versions.androidDxSources"] = "5.0.0_r2"
-extra["customDepsOrg"] = "kotlin.build"
 
 repositories {
     mavenCentral()

@@ -13,15 +13,36 @@ import javax.xml.stream.XMLOutputFactory
 
 plugins {
     base
+    id("org.jetbrains.kotlin.jvm")
 }
 
-val intellijReleaseType: String by rootProject.extra
-val intellijVersion = rootProject.extra["versions.intellijSdk"] as String
+fun Project.getBooleanProperty(name: String): Boolean? = this.findProperty(name)?.let {
+    val v = it.toString()
+    if (v.isBlank()) true
+    else v.toBoolean()
+}
+
+project.apply {
+    from(rootProject.file("../../gradle/versions.gradle.kts"))
+}
+
+val isTeamcityBuild = kotlinBuildProperties.isTeamcityBuild
+
+val intellijSeparateSdks by extra(project.getBooleanProperty("intellijSeparateSdks") ?: false)
+val intellijReleaseType: String by extra {
+    when {
+        extra["versions.intellijSdk"]?.toString()?.contains("-EAP-") == true -> "snapshots"
+        extra["versions.intellijSdk"]?.toString()?.endsWith("SNAPSHOT") == true -> "nightly"
+        else -> "releases"
+    }
+}
+val customDepsOrg: String by extra("kotlin.build")
+
+val intellijVersion = project.extra["versions.intellijSdk"] as String
 val intellijVersionForIde = rootProject.intellijSdkVersionForIde()
-val asmVersion = rootProject.findProperty("versions.jar.asm-all") as String?
-val androidStudioRelease = rootProject.findProperty("versions.androidStudioRelease") as String?
-val androidStudioBuild = rootProject.findProperty("versions.androidStudioBuild") as String?
-val intellijSeparateSdks: Boolean by rootProject.extra
+val asmVersion = project.findProperty("versions.jar.asm-all") as String?
+val androidStudioRelease = project.findProperty("versions.androidStudioRelease") as String?
+val androidStudioBuild = project.findProperty("versions.androidStudioBuild") as String?
 
 fun checkIntellijVersion(intellijVersion: String) {
     val intellijVersionDelimiterIndex = intellijVersion.indexOfAny(charArrayOf('.', '-'))
@@ -92,7 +113,6 @@ val dependenciesDir = (findProperty("kotlin.build.dependencies.dir") as String?)
 
 val customDepsRepoDir = dependenciesDir.resolve("repo")
 
-val customDepsOrg: String by rootProject.extra
 val repoDir = File(customDepsRepoDir, customDepsOrg)
 
 dependencies {
