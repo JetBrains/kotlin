@@ -106,4 +106,15 @@ class MppDiagnosticsFunctionalTest {
             kotlin { }
         }
     }
+
+    @Test
+    fun testKotlinCompilationSourceDeprecation() {
+        checkDiagnosticsWithMppProject("kotlinCompilationSourceDeprecation") {
+            kotlin {
+                val customMain = sourceSets.create("customMain")
+                @Suppress("DEPRECATION_ERROR")
+                jvm().compilations.create("custom").source(customMain)
+            }
+        }
+    }
 }

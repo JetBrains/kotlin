@@ -548,6 +548,18 @@ object KotlinToolingDiagnostics {
             """.trimIndent()
         )
     }
+
+    object KotlinCompilationSourceDeprecation : ToolingDiagnosticFactory(ERROR) {
+        operator fun invoke(trace: Throwable?) = build(
+            """
+                `KotlinCompilation.source(KotlinSourceSet)` method is deprecated 
+                and will be removed in upcoming Kotlin releases.
+
+                See https://kotl.in/compilation-source-deprecation for details.
+            """.trimIndent(),
+            throwable = trace,
+        )
+    }
 }
 
 private fun String.indentLines(nSpaces: Int = 4, skipFirstLine: Boolean = true): String {
