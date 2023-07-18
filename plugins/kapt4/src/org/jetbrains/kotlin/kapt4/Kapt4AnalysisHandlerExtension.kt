@@ -10,7 +10,6 @@ import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.util.Context
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.lifetime.KtAlwaysAccessibleLifetimeTokenFactory
 import org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.JvmFirDeserializedSymbolProviderFactory
@@ -68,7 +67,7 @@ class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
         }
         (analysisSession.project as MockProject).registerService(JvmFirDeserializedSymbolProviderFactory::class.java)
         val ktAnalysisSession = KtAnalysisSessionProvider.getInstance(analysisSession.project)
-            .getAnalysisSessionByUseSiteKtModule(module, KtAlwaysAccessibleLifetimeTokenFactory)
+            .getAnalysisSessionByUseSiteKtModule(module)
         val ktFiles = module.ktFiles
 
         val lightClasses = mutableListOf<Pair<KtLightClass, KtFile>>().apply {

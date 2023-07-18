@@ -75,7 +75,7 @@ fun FirFunction.computeJvmName(typeConversion: (FirTypeRef) -> ConeKotlinType? =
         }
         else -> throw IllegalStateException()
     }
-    val visibility = when(this) {
+    val visibility = when (this) {
         is FirSimpleFunction -> symbol.visibility
         is FirPropertyAccessor -> if (!isGetter && propertySymbol.run {
                 isConst || annotations.any { StandardClassIds.Annotations.JvmField == typeConversion(it.typeRef)?.classId } || isLateInit
