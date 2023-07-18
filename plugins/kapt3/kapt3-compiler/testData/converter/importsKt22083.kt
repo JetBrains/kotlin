@@ -1,7 +1,7 @@
 // CORRECT_ERROR_TYPES
 
 // EXPECTED_ERROR: (kotlin:16:5) cannot find symbol
-
+// FIR_BLOCKED: KtInaccessibleLifetimeOwnerAccessException
 // FILE: a.kt
 package test
 

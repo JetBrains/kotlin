@@ -8,7 +8,8 @@ package org.jetbrains.kotlin.kapt4
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
-import org.jetbrains.kotlin.analysis.api.lifetime.KtAlwaysAccessibleLifetimeTokenFactory
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenProvider
+import org.jetbrains.kotlin.analysis.api.lifetime.KtReadActionConfinementLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.JvmFirDeserializedSymbolProviderFactory
@@ -40,9 +41,9 @@ class Kapt4Facade(private val testServices: TestServices) :
     override val additionalServices: List<ServiceRegistrationData>
         get() = listOf(service(::KaptMessageCollectorProvider))
 
+//    @OptIn(KtAnalysisApiInternals::class)
     override fun transform(module: TestModule, inputArtifact: ResultingArtifact.Source): Kapt4ContextBinaryArtifact {
         val configurationProvider = testServices.compilerConfigurationProvider
-//        val project = configurationProvider.getProject(module)
 
         val configuration = configurationProvider.getCompilerConfiguration(module)
         configuration.addKotlinSourceRoots(module.files.filter { it.isKtFile }.map { it.realFile().absolutePath })
@@ -79,6 +80,7 @@ private fun run(
         applicationDisposable,
         projectDisposable
     ) {
+        (project as MockProject).registerService(KtLifetimeTokenProvider::class.java, KtReadActionConfinementLifetimeTokenProvider::class.java)
         LLFirSessionConfigurator.registerExtensionPoint(project)
         LLFirSessionConfigurator.registerExtension(project, object : LLFirSessionConfigurator {
             override fun configure(session: LLFirSession) {}
@@ -90,7 +92,7 @@ private fun run(
 
     (analysisSession.project as MockProject).registerService(JvmFirDeserializedSymbolProviderFactory::class.java)
     val ktAnalysisSession = KtAnalysisSessionProvider.getInstance(analysisSession.project)
-        .getAnalysisSessionByUseSiteKtModule(module, KtAlwaysAccessibleLifetimeTokenFactory)
+        .getAnalysisSessionByUseSiteKtModule(module)
     val ktFiles = module.ktFiles
 
     val lightClasses = buildList {
