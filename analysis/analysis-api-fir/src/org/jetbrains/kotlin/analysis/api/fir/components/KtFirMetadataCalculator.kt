@@ -175,7 +175,7 @@ internal class KtFirMetadataCalculator(
 
         override fun visitFunction(function: FirFunction) {
             function.symbol.lazyResolveToPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
-            val descriptor = function.computeJvmDescriptor()
+            val descriptor = function.computeJvmDescriptor(useResolvedStatus = true)
             val pos = descriptor.indexOf('(')
             val name = descriptor.substring(0, pos)
             val signature = descriptor.substring(pos)

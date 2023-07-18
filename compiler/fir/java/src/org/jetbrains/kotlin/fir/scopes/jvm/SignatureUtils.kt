@@ -6,12 +6,11 @@
 package org.jetbrains.kotlin.fir.scopes.jvm
 
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
-import org.jetbrains.kotlin.fir.resolve.getContainingClass
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitAnyTypeRef
@@ -33,12 +32,13 @@ fun FirFunction.computeJvmSignature(typeConversion: (FirTypeRef) -> ConeKotlinTy
 fun FirFunction.computeJvmDescriptor(
     customName: String? = null,
     includeReturnType: Boolean = true,
+    useResolvedStatus: Boolean = false,
     typeConversion: (FirTypeRef) -> ConeKotlinType? = FirTypeRef::coneTypeSafe
 ): String = buildString {
     if (customName != null) {
         append(customName)
     } else {
-        append(computeJvmName(typeConversion))
+        append(computeJvmName(useResolvedStatus, typeConversion))
     }
 
     append("(")
@@ -56,7 +56,10 @@ fun FirFunction.computeJvmDescriptor(
     }
 }
 
-fun FirFunction.computeJvmName(typeConversion: (FirTypeRef) -> ConeKotlinType? = FirTypeRef::coneTypeSafe): String {
+private fun FirFunction.computeJvmName(useResolvedStatus: Boolean, typeConversion: (FirTypeRef) -> ConeKotlinType? = FirTypeRef::coneTypeSafe): String {
+    fun visibility(symbol: FirCallableSymbol<*>) =
+        (if (useResolvedStatus) symbol.resolvedStatus else symbol.rawStatus).visibility
+
     if (this is FirConstructor) return "<init>"
     annotations.firstOrNull {
         typeConversion(it.typeRef)?.classId == StandardClassIds.Annotations.JvmName
@@ -76,13 +79,13 @@ fun FirFunction.computeJvmName(typeConversion: (FirTypeRef) -> ConeKotlinType? =
         else -> throw IllegalStateException()
     }
     val visibility = when (this) {
-        is FirSimpleFunction -> symbol.rawStatus.visibility
+        is FirSimpleFunction -> visibility(symbol)
         is FirPropertyAccessor -> if (!isGetter && propertySymbol.run {
                 isConst || annotations.any { StandardClassIds.Annotations.JvmField == typeConversion(it.typeRef)?.classId } || isLateInit
             })
-            symbol.rawStatus.visibility
+            visibility(symbol)
         else
-            propertySymbol.rawStatus.visibility
+            visibility(propertySymbol)
         else -> throw IllegalStateException()
     }
     if (visibility != Visibilities.Internal) return defaultName
