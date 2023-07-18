@@ -13,7 +13,7 @@
         "no"
     }
 
-    constructor() : this("no")
+    constructor() : <!EXPECTED_CLASS_CONSTRUCTOR_DELEGATION_CALL!>this<!>("no")
 
     val prop: String = <!EXPECTED_PROPERTY_INITIALIZER!>"no"<!>
 

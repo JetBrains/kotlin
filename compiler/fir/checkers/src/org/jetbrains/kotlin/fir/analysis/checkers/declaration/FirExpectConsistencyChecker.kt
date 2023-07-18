@@ -25,14 +25,23 @@ object FirExpectConsistencyChecker : FirBasicDeclarationChecker() {
         if (
             declaration !is FirMemberDeclaration ||
             !isTopLevel && !isInsideClass ||
-            !declaration.isExpect ||
-            declaration is FirConstructor
+            !declaration.isExpect
         ) {
             return
         }
 
         val source = declaration.source ?: return
         if (source.kind is KtFakeSourceElementKind) return
+
+        if (declaration is FirConstructor) {
+            if (!declaration.isPrimary) {
+                val delegatedConstructorSource = declaration.delegatedConstructor?.source
+                if (delegatedConstructorSource?.kind !is KtFakeSourceElementKind) {
+                    reporter.reportOn(delegatedConstructorSource, FirErrors.EXPECTED_CLASS_CONSTRUCTOR_DELEGATION_CALL, context)
+                }
+            }
+            return
+        }
 
         if (Visibilities.isPrivate(declaration.visibility)) {
             reporter.reportOn(source, FirErrors.EXPECTED_PRIVATE_DECLARATION, context)
