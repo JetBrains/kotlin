@@ -32,6 +32,14 @@ data class LoginSuccessPacket {
     return LoginSuccessPacket(id = id)
   }
 
+  override fun toString(): String {
+    return "LoginSuccessPacket(" + "id=" + <this>.#id + ")"
+  }
+
+  override fun hashCode(): Int {
+    return <this>.#id.hashCode()
+  }
+
   override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
@@ -44,14 +52,6 @@ data class LoginSuccessPacket {
       EQEQ(arg0 = <this>.#id, arg1 = tmp0_other_with_cast.#id).not() -> return false
     }
     return true
-  }
-
-  override fun hashCode(): Int {
-    return <this>.#id.hashCode()
-  }
-
-  override fun toString(): String {
-    return "LoginSuccessPacket(" + "id=" + <this>.#id + ")"
   }
 
 }
@@ -85,3 +85,4 @@ fun foo(): @MySerializable(c = UuidSerializer::class) Uuid1 {
 fun bar(): @MySerializable(c = UuidSerializer::class) Uuid1 {
   return foo()
 }
+

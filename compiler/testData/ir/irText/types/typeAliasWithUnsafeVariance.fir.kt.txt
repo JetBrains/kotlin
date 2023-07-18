@@ -18,6 +18,14 @@ data class Tag<out RenderingT : Any?> {
     return Tag<RenderingT>(action = action)
   }
 
+  override fun toString(): String {
+    return "Tag(" + "action=" + <this>.#action + ")"
+  }
+
+  override fun hashCode(): Int {
+    return <this>.#action.hashCode()
+  }
+
   override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
@@ -32,14 +40,6 @@ data class Tag<out RenderingT : Any?> {
     return true
   }
 
-  override fun hashCode(): Int {
-    return <this>.#action.hashCode()
-  }
-
-  override fun toString(): String {
-    return "Tag(" + "action=" + <this>.#action + ")"
-  }
-
 }
 
 fun getTag(): Tag<*> {
@@ -49,3 +49,4 @@ fun getTag(): Tag<*> {
 fun doAction() {
   getTag().<get-action>() /*~> Unit */
 }
+

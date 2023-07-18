@@ -9,6 +9,14 @@ value class IT {
     field = x
     get
 
+  override fun toString(): String {
+    return "IT(" + "x=" + <this>.#x + ")"
+  }
+
+  override fun hashCode(): Int {
+    return <this>.#x.hashCode()
+  }
+
   override operator fun equals(other: Any?): Boolean {
     when {
       other !is IT -> return false
@@ -18,14 +26,6 @@ value class IT {
       EQEQ(arg0 = <this>.#x, arg1 = tmp0_other_with_cast.#x).not() -> return false
     }
     return true
-  }
-
-  override fun hashCode(): Int {
-    return <this>.#x.hashCode()
-  }
-
-  override fun toString(): String {
-    return "IT(" + "x=" + <this>.#x + ")"
   }
 
 }
@@ -86,6 +86,14 @@ value class InlineMutableSet : MutableSet<IT> {
     return <this>.<get-ms>().retainAll(elements = elements)
   }
 
+  override fun toString(): String {
+    return "InlineMutableSet(" + "ms=" + <this>.#ms + ")"
+  }
+
+  override fun hashCode(): Int {
+    return <this>.#ms.hashCode()
+  }
+
   override operator fun equals(other: Any?): Boolean {
     when {
       other !is InlineMutableSet -> return false
@@ -95,14 +103,6 @@ value class InlineMutableSet : MutableSet<IT> {
       EQEQ(arg0 = <this>.#ms, arg1 = tmp0_other_with_cast.#ms).not() -> return false
     }
     return true
-  }
-
-  override fun hashCode(): Int {
-    return <this>.#ms.hashCode()
-  }
-
-  override fun toString(): String {
-    return "InlineMutableSet(" + "ms=" + <this>.#ms + ")"
   }
 
 }

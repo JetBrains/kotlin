@@ -126,6 +126,27 @@ FILE fqName:<root> fileName:/SignatureClash.kt
         RETURN type=kotlin.Nothing from='public final fun copy (delegate: <root>.Delegate): <root>.DataClass declared in <root>.DataClass'
           CONSTRUCTOR_CALL 'public constructor <init> (delegate: <root>.Delegate) declared in <root>.DataClass' type=<root>.DataClass origin=null
             delegate: GET_VAR 'delegate: <root>.Delegate declared in <root>.DataClass.copy' type=<root>.Delegate origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.DataClass) returnType:kotlin.String
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:<root>.DataClass
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.DataClass'
+          STRING_CONCATENATION type=kotlin.String
+            CONST String type=kotlin.String value="DataClass("
+            CONST String type=kotlin.String value="delegate="
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:delegate type:<root>.Delegate visibility:private [final]' type=<root>.Delegate origin=null
+              receiver: GET_VAR '<this>: <root>.DataClass declared in <root>.DataClass.toString' type=<root>.DataClass origin=null
+            CONST String type=kotlin.String value=")"
+    FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.DataClass) returnType:kotlin.Int
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:<root>.DataClass
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.DataClass'
+          CALL 'public open fun hashCode (): kotlin.Int declared in <root>.Delegate' type=kotlin.Int origin=null
+            $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:delegate type:<root>.Delegate visibility:private [final]' type=<root>.Delegate origin=null
+              receiver: GET_VAR '<this>: <root>.DataClass declared in <root>.DataClass.hashCode' type=<root>.DataClass origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.DataClass, other:kotlin.Any?) returnType:kotlin.Boolean [operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -160,24 +181,3 @@ FILE fqName:<root> fileName:/SignatureClash.kt
               CONST Boolean type=kotlin.Boolean value=false
         RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.DataClass'
           CONST Boolean type=kotlin.Boolean value=true
-    FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.DataClass) returnType:kotlin.Int
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:<root>.DataClass
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.DataClass'
-          CALL 'public open fun hashCode (): kotlin.Int declared in <root>.Delegate' type=kotlin.Int origin=null
-            $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:delegate type:<root>.Delegate visibility:private [final]' type=<root>.Delegate origin=null
-              receiver: GET_VAR '<this>: <root>.DataClass declared in <root>.DataClass.hashCode' type=<root>.DataClass origin=null
-    FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.DataClass) returnType:kotlin.String
-      overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:<root>.DataClass
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.DataClass'
-          STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="DataClass("
-            CONST String type=kotlin.String value="delegate="
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:delegate type:<root>.Delegate visibility:private [final]' type=<root>.Delegate origin=null
-              receiver: GET_VAR '<this>: <root>.DataClass declared in <root>.DataClass.toString' type=<root>.DataClass origin=null
-            CONST String type=kotlin.String value=")"

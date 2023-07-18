@@ -82,6 +82,27 @@ FILE fqName:<root> fileName:/delegationInSealed.kt
           RETURN type=kotlin.Nothing from='public final fun copy (c: kotlin.CharSequence): <root>.A.B declared in <root>.A.B'
             CONSTRUCTOR_CALL 'public constructor <init> (c: kotlin.CharSequence) declared in <root>.A.B' type=<root>.A.B origin=null
               c: GET_VAR 'c: kotlin.CharSequence declared in <root>.A.B.copy' type=kotlin.CharSequence origin=null
+      FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.A.B) returnType:kotlin.String
+        overridden:
+          public open fun toString (): kotlin.String declared in kotlin.Any
+        $this: VALUE_PARAMETER name:<this> type:<root>.A.B
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.A.B'
+            STRING_CONCATENATION type=kotlin.String
+              CONST String type=kotlin.String value="B("
+              CONST String type=kotlin.String value="c="
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:c type:kotlin.CharSequence visibility:private [final]' type=kotlin.CharSequence origin=null
+                receiver: GET_VAR '<this>: <root>.A.B declared in <root>.A.B.toString' type=<root>.A.B origin=null
+              CONST String type=kotlin.String value=")"
+      FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.A.B) returnType:kotlin.Int
+        overridden:
+          public open fun hashCode (): kotlin.Int declared in kotlin.Any
+        $this: VALUE_PARAMETER name:<this> type:<root>.A.B
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.A.B'
+            CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.CharSequence' type=kotlin.Int origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:c type:kotlin.CharSequence visibility:private [final]' type=kotlin.CharSequence origin=null
+                receiver: GET_VAR '<this>: <root>.A.B declared in <root>.A.B.hashCode' type=<root>.A.B origin=null
       FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.A.B, other:kotlin.Any?) returnType:kotlin.Boolean [operator]
         overridden:
           public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -116,27 +137,6 @@ FILE fqName:<root> fileName:/delegationInSealed.kt
                 CONST Boolean type=kotlin.Boolean value=false
           RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.A.B'
             CONST Boolean type=kotlin.Boolean value=true
-      FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.A.B) returnType:kotlin.Int
-        overridden:
-          public open fun hashCode (): kotlin.Int declared in kotlin.Any
-        $this: VALUE_PARAMETER name:<this> type:<root>.A.B
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.A.B'
-            CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.CharSequence' type=kotlin.Int origin=null
-              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:c type:kotlin.CharSequence visibility:private [final]' type=kotlin.CharSequence origin=null
-                receiver: GET_VAR '<this>: <root>.A.B declared in <root>.A.B.hashCode' type=<root>.A.B origin=null
-      FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.A.B) returnType:kotlin.String
-        overridden:
-          public open fun toString (): kotlin.String declared in kotlin.Any
-        $this: VALUE_PARAMETER name:<this> type:<root>.A.B
-        BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.A.B'
-            STRING_CONCATENATION type=kotlin.String
-              CONST String type=kotlin.String value="B("
-              CONST String type=kotlin.String value="c="
-              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:c type:kotlin.CharSequence visibility:private [final]' type=kotlin.CharSequence origin=null
-                receiver: GET_VAR '<this>: <root>.A.B declared in <root>.A.B.toString' type=<root>.A.B origin=null
-              CONST String type=kotlin.String value=")"
     FUN FAKE_OVERRIDE name:get visibility:public modality:ABSTRACT <> ($this:kotlin.CharSequence, index:kotlin.Int) returnType:kotlin.Char [fake_override,operator]
       overridden:
         public abstract fun get (index: kotlin.Int): kotlin.Char declared in kotlin.CharSequence

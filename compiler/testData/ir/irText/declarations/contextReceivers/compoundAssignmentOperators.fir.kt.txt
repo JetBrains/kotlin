@@ -18,6 +18,14 @@ data class Result {
     return Result(i = i)
   }
 
+  override fun toString(): String {
+    return "Result(" + "i=" + <this>.#i + ")"
+  }
+
+  override fun hashCode(): Int {
+    return <this>.#i.hashCode()
+  }
+
   override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
@@ -30,14 +38,6 @@ data class Result {
       EQEQ(arg0 = <this>.#i, arg1 = tmp0_other_with_cast.#i).not() -> return false
     }
     return true
-  }
-
-  override fun hashCode(): Int {
-    return <this>.#i.hashCode()
-  }
-
-  override fun toString(): String {
-    return "Result(" + "i=" + <this>.#i + ")"
   }
 
 }
@@ -104,3 +104,4 @@ fun box(): String {
     else -> "fail"
   }
 }
+

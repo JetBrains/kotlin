@@ -25,6 +25,22 @@ data class Pair<A : Any?, B : Any?> {
     return Pair<A, B>(first = first, second = second)
   }
 
+  override fun toString(): String {
+    return "Pair(" + "first=" + <this>.#first + ", " + "second=" + <this>.#second + ")"
+  }
+
+  override fun hashCode(): Int {
+    var result: Int = when {
+      EQEQ(arg0 = <this>.#first, arg1 = null) -> 0
+      else -> <this>.#first.hashCode()
+    }
+    result = result.times(other = 31).plus(other = when {
+      EQEQ(arg0 = <this>.#second, arg1 = null) -> 0
+      else -> <this>.#second.hashCode()
+    })
+    return result
+  }
+
   override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
@@ -40,22 +56,6 @@ data class Pair<A : Any?, B : Any?> {
       EQEQ(arg0 = <this>.#second, arg1 = tmp0_other_with_cast.#second).not() -> return false
     }
     return true
-  }
-
-  override fun hashCode(): Int {
-    var result: Int = when {
-      EQEQ(arg0 = <this>.#first, arg1 = null) -> 0
-      else -> <this>.#first.hashCode()
-    }
-    result = result.times(other = 31).plus(other = when {
-      EQEQ(arg0 = <this>.#second, arg1 = null) -> 0
-      else -> <this>.#second.hashCode()
-    })
-    return result
-  }
-
-  override fun toString(): String {
-    return "Pair(" + "first=" + <this>.#first + ", " + "second=" + <this>.#second + ")"
   }
 
 }
@@ -88,3 +88,4 @@ fun box(): String {
   }
 )
 }
+

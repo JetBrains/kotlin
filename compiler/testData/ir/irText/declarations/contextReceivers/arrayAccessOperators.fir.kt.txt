@@ -18,6 +18,14 @@ data class MyContainer {
     return MyContainer(s = s)
   }
 
+  override fun toString(): String {
+    return "MyContainer(" + "s=" + <this>.#s + ")"
+  }
+
+  override fun hashCode(): Int {
+    return <this>.#s.hashCode()
+  }
+
   override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
@@ -30,14 +38,6 @@ data class MyContainer {
       EQEQ(arg0 = <this>.#s, arg1 = tmp0_other_with_cast.#s).not() -> return false
     }
     return true
-  }
-
-  override fun hashCode(): Int {
-    return <this>.#s.hashCode()
-  }
-
-  override fun toString(): String {
-    return "MyContainer(" + "s=" + <this>.#s + ")"
   }
 
 }
@@ -76,3 +76,4 @@ fun box(): String {
   }
 )
 }
+

@@ -10,6 +10,14 @@ value class Z {
     field = s
     get
 
+  override fun toString(): String {
+    return "Z(" + "s=" + <this>.#s + ")"
+  }
+
+  override fun hashCode(): Int {
+    return <this>.#s.hashCode()
+  }
+
   override operator fun equals(other: Any?): Boolean {
     when {
       other !is Z -> return false
@@ -19,14 +27,6 @@ value class Z {
       EQEQ(arg0 = <this>.#s, arg1 = tmp0_other_with_cast.#s).not() -> return false
     }
     return true
-  }
-
-  override fun hashCode(): Int {
-    return <this>.#s.hashCode()
-  }
-
-  override fun toString(): String {
-    return "Z(" + "s=" + <this>.#s + ")"
   }
 
 }

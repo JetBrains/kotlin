@@ -182,6 +182,41 @@ FILE fqName:<root> fileName:/enhancedNullabilityInForLoop.kt
           CONSTRUCTOR_CALL 'public constructor <init> (x: kotlin.Int, y: kotlin.Int) declared in <root>.P' type=<root>.P origin=null
             x: GET_VAR 'x: kotlin.Int declared in <root>.P.copy' type=kotlin.Int origin=null
             y: GET_VAR 'y: kotlin.Int declared in <root>.P.copy' type=kotlin.Int origin=null
+    FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.P) returnType:kotlin.String
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:<root>.P
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.P'
+          STRING_CONCATENATION type=kotlin.String
+            CONST String type=kotlin.String value="P("
+            CONST String type=kotlin.String value="x="
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.P declared in <root>.P.toString' type=<root>.P origin=null
+            CONST String type=kotlin.String value=", "
+            CONST String type=kotlin.String value="y="
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.P declared in <root>.P.toString' type=<root>.P origin=null
+            CONST String type=kotlin.String value=")"
+    FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.P) returnType:kotlin.Int
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:<root>.P
+      BLOCK_BODY
+        VAR name:result type:kotlin.Int [var]
+          CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+            $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.P declared in <root>.P.hashCode' type=<root>.P origin=null
+        SET_VAR 'var result: kotlin.Int declared in <root>.P.hashCode' type=kotlin.Unit origin=EQ
+          CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+            $this: CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+              $this: GET_VAR 'var result: kotlin.Int declared in <root>.P.hashCode' type=kotlin.Int origin=null
+              other: CONST Int type=kotlin.Int value=31
+            other: CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
+              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+                receiver: GET_VAR '<this>: <root>.P declared in <root>.P.hashCode' type=<root>.P origin=null
+        RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.P'
+          GET_VAR 'var result: kotlin.Int declared in <root>.P.hashCode' type=kotlin.Int origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.P, other:kotlin.Any?) returnType:kotlin.Boolean [operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -226,38 +261,3 @@ FILE fqName:<root> fileName:/enhancedNullabilityInForLoop.kt
               CONST Boolean type=kotlin.Boolean value=false
         RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.P'
           CONST Boolean type=kotlin.Boolean value=true
-    FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.P) returnType:kotlin.Int
-      overridden:
-        public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:<root>.P
-      BLOCK_BODY
-        VAR name:result type:kotlin.Int [var]
-          CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
-            $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
-              receiver: GET_VAR '<this>: <root>.P declared in <root>.P.hashCode' type=<root>.P origin=null
-        SET_VAR 'var result: kotlin.Int declared in <root>.P.hashCode' type=kotlin.Unit origin=EQ
-          CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
-            $this: CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
-              $this: GET_VAR 'var result: kotlin.Int declared in <root>.P.hashCode' type=kotlin.Int origin=null
-              other: CONST Int type=kotlin.Int value=31
-            other: CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
-              $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
-                receiver: GET_VAR '<this>: <root>.P declared in <root>.P.hashCode' type=<root>.P origin=null
-        RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.P'
-          GET_VAR 'var result: kotlin.Int declared in <root>.P.hashCode' type=kotlin.Int origin=null
-    FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.P) returnType:kotlin.String
-      overridden:
-        public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:<root>.P
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.P'
-          STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="P("
-            CONST String type=kotlin.String value="x="
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
-              receiver: GET_VAR '<this>: <root>.P declared in <root>.P.toString' type=<root>.P origin=null
-            CONST String type=kotlin.String value=", "
-            CONST String type=kotlin.String value="y="
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
-              receiver: GET_VAR '<this>: <root>.P declared in <root>.P.toString' type=<root>.P origin=null
-            CONST String type=kotlin.String value=")"

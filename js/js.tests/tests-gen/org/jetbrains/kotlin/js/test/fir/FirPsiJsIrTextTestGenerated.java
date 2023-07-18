@@ -308,6 +308,12 @@ public class FirPsiJsIrTextTestGenerated extends AbstractFirPsiJsIrTextTest {
             }
 
             @Test
+            @TestMetadata("dataObject.kt")
+            public void testDataObject() throws Exception {
+                runTest("compiler/testData/ir/irText/classes/dataClasses/dataObject.kt");
+            }
+
+            @Test
             @TestMetadata("delegationInSealed.kt")
             public void testDelegationInSealed() throws Exception {
                 runTest("compiler/testData/ir/irText/classes/dataClasses/delegationInSealed.kt");
@@ -2268,12 +2274,6 @@ public class FirPsiJsIrTextTestGenerated extends AbstractFirPsiJsIrTextTest {
         @TestMetadata("cannotCastToFunction.kt")
         public void testCannotCastToFunction() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/cannotCastToFunction.kt");
-        }
-
-        @Test
-        @TestMetadata("dataObject.kt")
-        public void testDataObject() throws Exception {
-            runTest("compiler/testData/ir/irText/firProblems/dataObject.kt");
         }
 
         @Test

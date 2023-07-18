@@ -171,18 +171,16 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
                     }
                 }
 
-            val equalsContributedFunction = contributedSyntheticFunctions[EQUALS]
-            if (equalsContributedFunction != null) {
-                result.add(equalsContributedFunction)
-                val equalsFunction = createSyntheticIrFunction(
-                    EQUALS,
-                    equalsContributedFunction,
-                    components.irBuiltIns.booleanType,
-                    otherParameterNeeded = true,
-                    isOperator = true
+            val toStringContributedFunction = contributedSyntheticFunctions[TO_STRING]
+            if (toStringContributedFunction != null) {
+                result.add(toStringContributedFunction)
+                val toStringFunction = createSyntheticIrFunction(
+                    TO_STRING,
+                    toStringContributedFunction,
+                    components.irBuiltIns.stringType,
                 )
-                irDataClassMembersGenerator.generateEqualsMethod(equalsFunction, properties)
-                irClass.declarations.add(equalsFunction)
+                irDataClassMembersGenerator.generateToStringMethod(toStringFunction, properties)
+                irClass.declarations.add(toStringFunction)
             }
 
             val hashcodeNameContributedFunction = contributedSyntheticFunctions[HASHCODE_NAME]
@@ -197,16 +195,18 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
                 irClass.declarations.add(hashCodeFunction)
             }
 
-            val toStringContributedFunction = contributedSyntheticFunctions[TO_STRING]
-            if (toStringContributedFunction != null) {
-                result.add(toStringContributedFunction)
-                val toStringFunction = createSyntheticIrFunction(
-                    TO_STRING,
-                    toStringContributedFunction,
-                    components.irBuiltIns.stringType,
+            val equalsContributedFunction = contributedSyntheticFunctions[EQUALS]
+            if (equalsContributedFunction != null) {
+                result.add(equalsContributedFunction)
+                val equalsFunction = createSyntheticIrFunction(
+                    EQUALS,
+                    equalsContributedFunction,
+                    components.irBuiltIns.booleanType,
+                    otherParameterNeeded = true,
+                    isOperator = true
                 )
-                irDataClassMembersGenerator.generateToStringMethod(toStringFunction, properties)
-                irClass.declarations.add(toStringFunction)
+                irDataClassMembersGenerator.generateEqualsMethod(equalsFunction, properties)
+                irClass.declarations.add(equalsFunction)
             }
 
             return result
