@@ -69,11 +69,14 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.expressions.IrValueAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -509,8 +512,70 @@ class ComposerLambdaMemoization(
         return result
     }
 
+    override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression {
+        // SAM conversions are handled by Kotlin compiler
+        // We only need to make sure that remember is handled correctly around type operator
+        if (
+            expression.operator != IrTypeOperator.SAM_CONVERSION ||
+                currentFunctionContext?.canRemember != true
+        ) {
+            return super.visitTypeOperator(expression)
+        }
+
+        // Unwrap function from type operator
+        val originalFunctionExpression =
+            expression.findSamFunctionExpr() ?: return super.visitTypeOperator(expression)
+
+        // Record capture variables for this scope
+        val collector = CaptureCollector()
+        startCollector(collector)
+        // Handle inside of the function expression
+        val result = super.visitFunctionExpression(originalFunctionExpression)
+        stopCollector(collector)
+
+        // If the ancestor converted this then return
+        val newFunctionExpression = result as? IrFunctionExpression ?: return result
+
+        // Construct new type operator call to wrap remember around.
+        val newArgument = when (val argument = expression.argument) {
+            is IrFunctionExpression -> newFunctionExpression
+            is IrTypeOperatorCall -> {
+                require(
+                    argument.operator == IrTypeOperator.IMPLICIT_CAST &&
+                        argument.argument == originalFunctionExpression
+                ) {
+                    "Only implicit cast is supported inside SAM conversion"
+                }
+                IrTypeOperatorCallImpl(
+                    argument.startOffset,
+                    argument.endOffset,
+                    argument.type,
+                    argument.operator,
+                    argument.typeOperand,
+                    newFunctionExpression
+                )
+            }
+            else -> error("Unknown ")
+        }
+
+        val expressionToRemember =
+            IrTypeOperatorCallImpl(
+                expression.startOffset,
+                expression.endOffset,
+                expression.type,
+                IrTypeOperator.SAM_CONVERSION,
+                expression.typeOperand,
+                newArgument
+            )
+        return rememberExpression(
+            currentFunctionContext!!,
+            expressionToRemember,
+            collector.captures.toList()
+        )
+    }
+
     private fun visitNonComposableFunctionExpression(
-        expression: IrFunctionExpression
+        expression: IrFunctionExpression,
     ): IrExpression {
         val functionContext = currentFunctionContext
             ?: return super.visitFunctionExpression(expression)
