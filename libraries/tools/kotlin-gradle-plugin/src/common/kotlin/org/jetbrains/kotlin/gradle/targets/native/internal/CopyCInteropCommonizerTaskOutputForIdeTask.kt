@@ -9,6 +9,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import java.io.File
 import javax.inject.Inject
 
@@ -25,7 +26,9 @@ internal open class CopyCommonizeCInteropForIdeTask @Inject constructor(
         commonizeCInteropTask.map { it.allOutputDirectories }
 
     @get:OutputDirectory
-    override val outputDirectory: File = project.rootDir.resolve(".gradle/kotlin/commonizer")
+    override val outputDirectory: File = project.rootDir
+        .resolve(project.kotlinPropertiesProvider.kotlinPersistentGradleDataDir)
+        .resolve("commonizer")
         .resolve(project.path.removePrefix(":").replace(":", "/"))
 
     override suspend fun findInteropsGroup(dependent: CInteropCommonizerDependent): CInteropCommonizerGroup? {

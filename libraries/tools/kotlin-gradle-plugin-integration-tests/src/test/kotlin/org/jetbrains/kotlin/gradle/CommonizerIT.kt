@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.incremental.testingUtils.assertEqualDirectories
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import org.junit.jupiter.api.DisplayName
-import kotlin.io.path.*
 import kotlin.test.assertTrue
 import kotlin.test.fail
 
@@ -142,7 +141,7 @@ open class CommonizerIT : KGPBaseTest() {
 
             configureCommonizerTargets()
 
-            val expectedOutputDirectoryForIde = projectPath.resolve(".gradle/kotlin/commonizer")
+            val expectedOutputDirectoryForIde = projectPath.resolve(".kotlin/commonizer")
             val expectedOutputDirectoryForBuild = projectPath.resolve("build/classes/kotlin/commonizer")
 
             build(":copyCommonizeCInteropForIde") {
@@ -498,6 +497,29 @@ open class CommonizerIT : KGPBaseTest() {
                 assertTasksExecuted(":consumer:compileCommonMainKotlinMetadata")
                 assertOutputDoesNotContain("Duplicated libraries:")
                 assertOutputDoesNotContain("w: duplicate library name")
+            }
+        }
+    }
+
+    @DisplayName("KT-58223 test commonized libraries for IDE can be stored in different data dir")
+    @GradleTest
+    fun testCommonizedLibrariesForIDECanBeStoredInDifferentDir(gradleVersion: GradleVersion) {
+        nativeProject("commonizeCurlInterop", gradleVersion) {
+            gradleProperties.append("kotlin.persistent.gradle.data.dir=.kotlin_custom")
+
+            configureCommonizerTargets()
+
+            val expectedOutputDirectoryForIde = projectPath.resolve(".kotlin_custom/commonizer")
+
+            build(":copyCommonizeCInteropForIde") {
+                assertTasksExecuted(":cinteropCurlTargetB")
+                assertTasksExecuted(":commonizeCInterop")
+
+                assertDirectoryExists(expectedOutputDirectoryForIde, "Missing output directory for IDE")
+            }
+
+            build(":clean") {
+                assertDirectoryExists(expectedOutputDirectoryForIde, "Expected ide output directory to survive cleaning")
             }
         }
     }

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
 import org.gradle.api.file.ProjectLayout
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.utils.compositeBuildRootProject
 import java.io.File
 
@@ -18,13 +19,19 @@ internal fun ProjectLayout.kotlinTransformedMetadataLibraryDirectoryForBuild(sou
     buildDirectory.get().asFile.resolve(kotlinTransformedMetadataLibraries).resolve(sourceSetName)
 
 internal val Project.kotlinTransformedMetadataLibraryDirectoryForIde: File
-    get() = compositeBuildRootProject.rootDir.resolve(".gradle").resolve("kotlin").resolve(kotlinTransformedMetadataLibraries)
+    get() = compositeBuildRootProject.rootDir
+        .resolve(project.kotlinPropertiesProvider.kotlinPersistentGradleDataDir)
+        .resolve(kotlinTransformedMetadataLibraries)
 
 internal fun ProjectLayout.kotlinTransformedCInteropMetadataLibraryDirectoryForBuild(sourceSetName: String): File =
     buildDirectory.get().asFile.resolve(kotlinTransformedCInteropMetadataLibraries).resolve(sourceSetName)
 
 internal val Project.kotlinCInteropLibraryDirectoryForIde: File
-    get() = compositeBuildRootProject.rootDir.resolve(".gradle").resolve("kotlin").resolve(kotlinCInteropLibraries)
+    get() = compositeBuildRootProject.rootDir
+        .resolve(project.kotlinPropertiesProvider.kotlinPersistentGradleDataDir)
+        .resolve(kotlinCInteropLibraries)
 
 internal val Project.kotlinTransformedCInteropMetadataLibraryDirectoryForIde: File
-    get() = compositeBuildRootProject.rootDir.resolve(".gradle").resolve("kotlin").resolve(kotlinTransformedCInteropMetadataLibraries)
+    get() = compositeBuildRootProject.rootDir
+        .resolve(project.kotlinPropertiesProvider.kotlinPersistentGradleDataDir)
+        .resolve(kotlinTransformedCInteropMetadataLibraries)

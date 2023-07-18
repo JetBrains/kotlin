@@ -543,6 +543,16 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = property(PropertyNames.KONAN_DATA_DIR)
 
     /**
+     * The directory where persistent data for Kotlin Gradle Plugin is stored.
+     * This data is not cleaned by gradle clean task. This dir can be used to store data
+     * for IDE import i.e. `./gradlew clean` will not break IDE import state.
+     *
+     * If the property is not set, the default value `$ROOT_DIR/.kotlin` is used.
+     */
+    val kotlinPersistentGradleDataDir: String
+        get() = property(PropertyNames.KOTLIN_PERSISTENT_GRADLE_DATA_DIR) ?: ".kotlin"
+
+    /**
      * Retrieves a comma-separated list of browsers to use when running karma tests for [target]
      * @see KOTLIN_JS_KARMA_BROWSERS
      */
@@ -640,6 +650,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         const val KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS = "kotlin.native.ignoreDisabledTargets"
         const val KOTLIN_NATIVE_SUPPRESS_EXPERIMENTAL_ARTIFACTS_DSL_WARNING = "kotlin.native.suppressExperimentalArtifactsDslWarning"
         const val KONAN_DATA_DIR = "konan.data.dir"
+        const val KOTLIN_PERSISTENT_GRADLE_DATA_DIR = "kotlin.persistent.gradle.data.dir"
     }
 
     companion object {
