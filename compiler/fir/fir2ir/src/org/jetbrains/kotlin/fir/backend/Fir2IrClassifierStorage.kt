@@ -17,10 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.toSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
-import org.jetbrains.kotlin.fir.symbols.Fir2IrClassSymbol
-import org.jetbrains.kotlin.fir.symbols.Fir2IrEnumEntrySymbol
-import org.jetbrains.kotlin.fir.symbols.Fir2IrTypeAliasSymbol
+import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -602,6 +599,8 @@ class Fir2IrClassifierStorage(
 
     fun getIrClassSymbol(firClassSymbol: FirClassSymbol<*>, forceTopLevelPrivate: Boolean = false): IrClassSymbol {
         val firClass = firClassSymbol.fir
+        firClass.lazyResolveToPhase(FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING)
+
         getCachedIrClass(firClass)?.let { return it.symbol }
         if (firClass is FirAnonymousObject || firClass is FirRegularClass && firClass.visibility == Visibilities.Local) {
             return createLocalIrClassOnTheFly(firClass).symbol

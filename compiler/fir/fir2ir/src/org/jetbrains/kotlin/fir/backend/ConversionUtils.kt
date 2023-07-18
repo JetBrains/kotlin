@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -139,6 +140,8 @@ fun FirClassifierSymbol<*>.toSymbol(
         }
 
         is FirTypeAliasSymbol -> {
+            fir.lazyResolveToPhase(FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING)
+
             handleAnnotations?.invoke(fir.expandedTypeRef.annotations)
             val coneClassLikeType = fir.expandedTypeRef.coneType as ConeClassLikeType
             coneClassLikeType.lookupTag.toSymbol(session)

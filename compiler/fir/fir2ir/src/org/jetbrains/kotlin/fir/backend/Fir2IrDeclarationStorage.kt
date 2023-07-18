@@ -1668,6 +1668,8 @@ class Fir2IrDeclarationStorage(
         forceTopLevelPrivate: Boolean = false,
     ): IrSymbol {
         val fir = firSymbol.fir as F
+        fir.lazyResolveToPhase(FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS)
+
         val irParent by lazy { findIrParent(fir) }
         val signature by lazy {
             signatureComposer.composeSignature(
@@ -1737,6 +1739,8 @@ class Fir2IrDeclarationStorage(
         fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag? = null
     ): IrFieldSymbol {
         val fir = firFieldSymbol.fir
+        fir.lazyResolveToPhase(FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS)
+
         val staticFakeOverrideKey = getFieldStaticFakeOverrideKey(fir, fakeOverrideOwnerLookupTag)
         if (staticFakeOverrideKey == null) {
             fieldCache[fir]?.let { return it.symbol }
