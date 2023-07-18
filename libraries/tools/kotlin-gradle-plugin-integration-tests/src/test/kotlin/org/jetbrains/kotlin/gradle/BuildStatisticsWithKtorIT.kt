@@ -251,7 +251,7 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
                         StatTag.ARTIFACT_TRANSFORM,
                         StatTag.NON_INCREMENTAL,
                         StatTag.CONFIGURATION_CACHE,
-                        StatTag.KOTLIN_1,
+                        StatTag.KOTLIN_2,
                     ), taskData.tags.sorted(),
                 )
                 assertEquals(
@@ -261,7 +261,7 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
             }
             validateTaskData(port) { taskData ->
                 assertEquals(":app:compileKotlin", taskData.taskName)
-                assertContentEquals(listOf(StatTag.ARTIFACT_TRANSFORM, StatTag.NON_INCREMENTAL, StatTag.CONFIGURATION_CACHE, StatTag.KOTLIN_1), taskData.tags.sorted())
+                assertContentEquals(listOf(StatTag.ARTIFACT_TRANSFORM, StatTag.NON_INCREMENTAL, StatTag.CONFIGURATION_CACHE, StatTag.KOTLIN_2), taskData.tags.sorted())
                 assertEquals(
                     defaultBuildOptions.kotlinVersion, taskData.kotlinVersion,
                     "Unexpected kotlinVersion: ${taskData.kotlinVersion} instead of ${defaultBuildOptions.kotlinVersion}"
@@ -273,11 +273,11 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
             //second build
             validateTaskData(port) { taskData ->
                 assertEquals(":lib:compileKotlin", taskData.taskName)
-                assertContentEquals(listOf(StatTag.ARTIFACT_TRANSFORM, StatTag.INCREMENTAL, StatTag.CONFIGURATION_CACHE, StatTag.KOTLIN_1), taskData.tags.sorted())
+                assertContentEquals(listOf(StatTag.ARTIFACT_TRANSFORM, StatTag.INCREMENTAL, StatTag.CONFIGURATION_CACHE, StatTag.KOTLIN_2), taskData.tags.sorted())
             }
             validateTaskData(port) { taskData ->
                 assertEquals(":app:compileKotlin", taskData.taskName)
-                assertContentEquals(listOf(StatTag.ARTIFACT_TRANSFORM, StatTag.INCREMENTAL, StatTag.CONFIGURATION_CACHE, StatTag.KOTLIN_1), taskData.tags.sorted())
+                assertContentEquals(listOf(StatTag.ARTIFACT_TRANSFORM, StatTag.INCREMENTAL, StatTag.CONFIGURATION_CACHE, StatTag.KOTLIN_2), taskData.tags.sorted())
             }
         }
     }
