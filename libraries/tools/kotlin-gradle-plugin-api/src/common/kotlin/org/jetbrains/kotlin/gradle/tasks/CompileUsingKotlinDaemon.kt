@@ -10,10 +10,12 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 
+/**
+ * The available Kotlin compilation execution strategies in Gradle.
+ *
+ * @property propertyValue value that should be passed for `kotlin.compiler.execution.strategy` Gradle property to choose the strategy
+ */
 enum class KotlinCompilerExecutionStrategy(
-    /**
-     * Value that should be passed for `kotlin.compiler.execution.strategy` Gradle property to choose the strategy
-     */
     val propertyValue: String
 ) {
     /**
@@ -38,7 +40,13 @@ enum class KotlinCompilerExecutionStrategy(
     OUT_OF_PROCESS("out-of-process"),
     ;
 
+    /**
+     * @suppress
+     */
     companion object {
+        /**
+         * @suppress
+         */
         fun fromProperty(value: String?) =
             if (value == null) {
                 DAEMON
@@ -50,25 +58,28 @@ enum class KotlinCompilerExecutionStrategy(
 }
 
 /**
- * Task is using Kotlin daemon to run compilation.
+ * Represents a Kotlin task that uses the Kotlin daemon to compile.
  */
 interface CompileUsingKotlinDaemon : Task {
     /**
-     * Provides JVM arguments to Kotlin daemon, default is `null` if "kotlin.daemon.jvmargs" property is not set.
+     * Provides JVM arguments to the Kotlin daemon. The default is `null` if the `kotlin.daemon.jvmargs` property is not set.
      */
     @get:Internal
     val kotlinDaemonJvmArguments: ListProperty<String>
 
     /**
-     * Defines compiler execution strategy, see docs for [KotlinCompilerExecutionStrategy] for more details
+     * Defines the compiler execution strategy, see docs for [KotlinCompilerExecutionStrategy] for more details.
+     *
+     * @see [KotlinCompilerExecutionStrategy]
      */
     @get:Internal
     val compilerExecutionStrategy: Property<KotlinCompilerExecutionStrategy>
 
     /**
      * Defines whether task execution should fail when [compilerExecutionStrategy] is set to [KotlinCompilerExecutionStrategy.DAEMON]
-     * and compilation via Kotlin daemon was not possible. If set to true then compilation in such case will be retried without the daemon.
-     * Default is `true`
+     * and compilation via the Kotlin daemon is not possible. If set to true, then compilation is retried without the daemon.
+     *
+     * Default: `true`
      */
     @get:Internal
     val useDaemonFallbackStrategy: Property<Boolean>
