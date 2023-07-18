@@ -32002,6 +32002,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("castInTryWithJump.kt")
+                public void testCastInTryWithJump() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/smartCasts/castchecks/castInTryWithJump.kt");
+                }
+
+                @Test
                 @TestMetadata("castInTryWithoutCatch.kt")
                 public void testCastInTryWithoutCatch() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/smartCasts/castchecks/castInTryWithoutCatch.kt");

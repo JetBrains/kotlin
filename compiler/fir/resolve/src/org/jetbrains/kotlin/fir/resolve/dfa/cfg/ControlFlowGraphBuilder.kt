@@ -981,19 +981,21 @@ class ControlFlowGraphBuilder {
             addEdge(exitNode, nextFinally, label = UncaughtExceptionPath, propagateDeadness = false)
         }
 
+        // Make sure only incoming edge labels are matched when exiting
+        val incomingEdges = enterNode.previousNodes.map { it.edgeTo(enterNode).label }.toSet()
         val nextFinallyOrExitLevel = nextFinally?.level ?: nextExitLevel
         //                   /-----------v
         // f@ { try { return@f } finally { b }; c }
         //                                   \-----^
-        exitNode.addReturnEdges(exitTargetsForReturn.values, nextFinallyOrExitLevel)
+        exitNode.addReturnEdges(exitTargetsForReturn.values.filter { it in incomingEdges }, nextFinallyOrExitLevel)
         //                               /-----------v
         // f@ while (x) { try { continue@f } finally { b }; c }
         //          ^------------------------------------/
-        exitNode.addReturnEdges(loopConditionEnterNodes.values, nextFinallyOrExitLevel)
+        exitNode.addReturnEdges(loopConditionEnterNodes.values.filter { it in incomingEdges }, nextFinallyOrExitLevel)
         //                            /-----------v
         // f@ while (x) { try { break@f } finally { b }; c }
         //                                            \-----^
-        exitNode.addReturnEdges(loopExitNodes.values, nextFinallyOrExitLevel)
+        exitNode.addReturnEdges(loopExitNodes.values.filter { it in incomingEdges }, nextFinallyOrExitLevel)
         return exitNode
     }
 
