@@ -340,6 +340,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("finalSupertype.kt")
+        public void testFinalSupertype() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/finalSupertype.kt");
+        }
+
+        @Test
         @TestMetadata("ForRangeConventions.kt")
         public void testForRangeConventions() throws Exception {
             runTest("compiler/testData/diagnostics/tests/ForRangeConventions.kt");
