@@ -68,6 +68,10 @@ object JsExportDeclarationChecker : DeclarationChecker {
             reportWrongExportedDeclaration("expect")
         }
 
+        if (descriptor.isExternal) {
+            reportWrongExportedDeclaration("external")
+        }
+
         validateDeclarationOnConsumableName(declaration, descriptor, trace)
 
         when (descriptor) {

@@ -58,6 +58,10 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker() {
             reportWrongExportedDeclaration("expect")
         }
 
+        if (declaration.isExternal) {
+            reportWrongExportedDeclaration("external")
+        }
+
         validateDeclarationOnConsumableName(declaration, context, reporter)
 
         when (declaration) {
