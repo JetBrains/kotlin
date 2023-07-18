@@ -28,12 +28,22 @@ package default
 
 @JsModule("./jsModule.mjs")
 external object jsModule {
-    val defaultX: Int
-    fun defaultF(): Int
-    class defaultC {
+    val x: Int
+    fun f(): Int
+    class C {
         constructor(x: String)
-
         val x: String
+    }
+
+    @JsName("default")
+    object Default {
+        val defaultX: Int
+        fun defaultF(): Int
+        class defaultC {
+            constructor(x: String)
+
+            val x: String
+        }
     }
 }
 
@@ -44,9 +54,13 @@ fun box(): String {
     if (named.f() != 10) return "Fail2"
     if (named.C("10").x != "10") return "Fail3"
 
-    if (default.jsModule.defaultX != 10) return "Fail4"
-    if (default.jsModule.defaultF() != 10) return "Fail5"
-    if (default.jsModule.defaultC("10").x != "10") return "Fail6"
+    if (default.jsModule.Default.defaultX != 10) return "Fail4"
+    if (default.jsModule.Default.defaultF() != 10) return "Fail5"
+    if (default.jsModule.Default.defaultC("10").x != "10") return "Fail6"
+
+    if (default.jsModule.x != 10) return "Fail7"
+    if (default.jsModule.f() != 10) return "Fail8"
+    if (default.jsModule.C("10").x != "10") return "Fail9"
 
     return "OK"
 }
