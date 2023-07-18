@@ -61,8 +61,7 @@ abstract class KotlinCompile @Inject constructor(
     objectFactory: ObjectFactory
 ) : AbstractKotlinCompile<K2JVMCompilerArguments>(objectFactory, workerExecutor),
     K2MultiplatformCompilationTask,
-    @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") KotlinJvmCompileDsl,
-    KotlinCompilationTask<KotlinJvmCompilerOptions> {
+    @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") KotlinJvmCompileDsl {
 
     final override val kotlinOptions: KotlinJvmOptions = KotlinJvmOptionsCompat(
         { this },
