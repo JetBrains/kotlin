@@ -4,15 +4,11 @@ buildscript {
     // workaround for KGP build metrics reports: https://github.com/gradle/gradle/issues/20001
     project.extensions.extraProperties["kotlin.build.report.output"] = null
 
-    val versionPropertiesFile = project.rootProject.projectDir.parentFile.resolve("../gradle/versions.properties")
-    val versionProperties = java.util.Properties()
-    versionPropertiesFile.inputStream().use { propInput ->
-        versionProperties.load(propInput)
-    }
+    val gsonVersion = libs.versions.gson.get()
     configurations.all {
         resolutionStrategy.eachDependency {
             if (requested.group == "com.google.code.gson" && requested.name == "gson") {
-                useVersion(versionProperties["versions.gson"] as String)
+                useVersion(gsonVersion)
                 because("Force using same gson version because of https://github.com/google/gson/pull/1991")
             }
         }
@@ -97,36 +93,32 @@ java {
 dependencies {
     implementation(kotlin("stdlib", embeddedKotlinVersion))
     implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion}")
-    implementation("com.gradle.publish:plugin-publish-plugin:1.0.0")
-    implementation("org.jetbrains.dokka:dokka-gradle-plugin:1.8.20")
+    implementation(libs.gradle.pluginPublish.gradlePlugin)
+    implementation(libs.dokka.gradlePlugin)
+    implementation(libs.spdx.gradlePlugin)
+    implementation(libs.dexMemberList)
 
-    implementation("org.spdx:spdx-gradle-plugin:0.1.0-dev-10")
-
-    implementation("com.jakewharton.dex:dex-member-list:4.1.1")
-
-    implementation("gradle.plugin.com.github.johnrengelman:shadow:${project.extra["versions.shadow"]}") {
+    implementation(libs.shadow.gradlePlugin) {
         // https://github.com/johnrengelman/shadow/issues/807
         exclude("org.ow2.asm")
     }
-    implementation("net.sf.proguard:proguard-gradle:6.2.2")
+    implementation(libs.proguard.gradlePlugin)
 
     // Version should be in sync with <root>/build.gradle.kts
     implementation("gradle.plugin.org.jetbrains.gradle.plugin.idea-ext:gradle-idea-ext:1.0.1")
 
-    implementation("io.ktor:ktor-client-core:${project.extra["versions.ktor-client-core"]}")
-    implementation("io.ktor:ktor-client-cio:${project.extra["versions.ktor-client-cio"]}")
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.cio)
 
-    compileOnly("com.gradle:gradle-enterprise-gradle-plugin:3.12.4")
+    compileOnly(libs.gradle.enterprise.gradlePlugin)
 
     compileOnly(gradleApi())
 
-    // See https://github.com/gradle/gradle/issues/22510
-    implementation("org.gradle.kotlin:gradle-kotlin-dsl-plugins:2.4.1")
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:${project.bootstrapKotlinVersion}")
     implementation("org.jetbrains.kotlin:kotlin-reflect:${project.bootstrapKotlinVersion}")
-    implementation("com.google.code.gson:gson:2.8.9") // Workaround for Gradle dependency resolution error
-    implementation("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.6.2")
+    implementation(libs.gson)
+    implementation(libs.kotlinx.metadataJvm)
 }
 
 samWithReceiver {

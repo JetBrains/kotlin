@@ -21,24 +21,10 @@ plugins {
     id("kotlin-daemon-config")
 }
 
-val versionPropertiesFile = File(rootProject.projectDir.parentFile, "../gradle/versions.properties")
-val versionProperties = Properties()
-versionPropertiesFile.bufferedReader().use {
-    versionProperties.load(it)
-}
 dependencyResolutionManagement {
-    components {
-        withModule("com.google.code.gson:gson") {
-            allVariants {
-                withDependencies {
-                    add("com.google.code.gson:gson") {
-                        version {
-                            require(versionProperties["versions.gson"] as String)
-                        }
-                        because("Force using same gson version because of https://github.com/google/gson/pull/1991")
-                    }
-                }
-            }
+    versionCatalogs {
+        create("libs") {
+            from(files("../../gradle/libs.versions.toml"))
         }
     }
 }

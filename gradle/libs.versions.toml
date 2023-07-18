@@ -1,12 +1,32 @@
 [versions]
+dexMemberList = "4.1.1"
+dokka = "1.8.20"
 gradle-custom-user-data = "1.9"
 gradle-enterprise = "3.12.4"
+gradle-plugin-publish = "1.0.0"
 # Version for foojay should be also synced with version in repo/gradle-settings-conventions/settings.gradle.kts
 gradle-toolchains-foojay-resolver = "0.4.0"
 kotlinx-serialization = "1.5.0"
+shadow = "7.1.2" # should be in sync with versions.properties
+spdx = "0.1.0-dev-10"
+proguard = "6.2.2"
+ktor = "2.0.2" # should be in sync with versions.properties
+kotlinx-metadataJvm = "0.6.2"
+# Forcing gson version because of https://github.com/google/gson/pull/1991
+gson = { strictly = "2.8.9" } # should be in sync with version.properties
 
 [libraries]
+dexMemberList = { module = "com.jakewharton.dex:dex-member-list", version.ref = "dexMemberList" }
+dokka-gradlePlugin = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "dokka" }
 gradle-customUserData-gradlePlugin = { module = "com.gradle:common-custom-user-data-gradle-plugin", version.ref = "gradle-custom-user-data" }
 gradle-enterprise-gradlePlugin = { module = "com.gradle:gradle-enterprise-gradle-plugin", version.ref = "gradle-enterprise" }
+gradle-pluginPublish-gradlePlugin = { module = "com.gradle.publish:plugin-publish-plugin", version.ref = "gradle-plugin-publish" }
 gradle-toolchainsFoojayResolver-gradlePlugin = { module = "org.gradle.toolchains:foojay-resolver", version.ref = "gradle-toolchains-foojay-resolver" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
+kotlinx-metadataJvm = { module = "org.jetbrains.kotlinx:kotlinx-metadata-jvm", version.ref = "kotlinx-metadataJvm" }
+shadow-gradlePlugin = { module = "gradle.plugin.com.github.johnrengelman:shadow", version.ref = "shadow" }
+spdx-gradlePlugin = { module = "org.spdx:spdx-gradle-plugin", version.ref = "spdx" }
+proguard-gradlePlugin = { module = "net.sf.proguard:proguard-gradle", version.ref = "proguard" }
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
