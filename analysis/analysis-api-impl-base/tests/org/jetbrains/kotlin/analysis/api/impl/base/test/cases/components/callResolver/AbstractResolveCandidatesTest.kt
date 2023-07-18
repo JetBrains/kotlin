@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.test.services.assertions
 abstract class AbstractResolveCandidatesTest : AbstractAnalysisApiBasedSingleModuleTest() {
     override fun doTestByFileStructure(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices) {
         val ktFile = ktFiles.first()
-        val expression = testServices.expressionMarkerProvider.getSelectedElement(ktFile)
+        val expression = testServices.expressionMarkerProvider.getSelectedElementOfType<KtElement>(ktFile)
 
         val actual = executeOnPooledThreadInReadAction {
             analyseForTest(expression) {

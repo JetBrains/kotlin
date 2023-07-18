@@ -124,14 +124,13 @@ class ExpressionMarkerProvider : TestService {
 
     }
 
-    fun getSelectedElement(file: KtFile): KtElement {
-        val range = selected[file.name]
-            ?: error("No selected expression found in file")
+    fun getSelectedElement(file: KtFile): PsiElement {
+        val range = selected[file.name] ?: error("No selected expression found in file")
         val elements = file.elementsInRange(range).trimWhitespaces()
         if (elements.size != 1) {
             error("Expected one element at rage but found ${elements.size} [${elements.joinToString { it::class.simpleName + ": " + it.text }}]")
         }
-        return elements.single() as KtElement
+        return elements.single()
     }
 
     fun getSelectedElementOfTypeByDirective(ktFile: KtFile, module: TestModule): PsiElement {
@@ -150,7 +149,7 @@ class ExpressionMarkerProvider : TestService {
     inline fun <reified E : KtElement> getSelectedElementOfType(file: KtFile): E {
         return when (val selected = getSelectedElement(file)) {
             is E -> selected
-            else -> generateSequence(selected as PsiElement) { current ->
+            else -> generateSequence(selected) { current ->
                 current.children.singleOrNull()?.takeIf { it.textRange == current.textRange }
             }.firstIsInstance()
         }

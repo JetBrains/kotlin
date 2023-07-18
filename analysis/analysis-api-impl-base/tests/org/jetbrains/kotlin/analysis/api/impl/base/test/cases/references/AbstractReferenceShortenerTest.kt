@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.Shorten
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedSingleModuleTest
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
@@ -22,7 +23,7 @@ import org.jetbrains.kotlin.test.services.assertions
  */
 abstract class AbstractReferenceShortenerTest : AbstractAnalysisApiBasedSingleModuleTest() {
     override fun doTestByFileStructure(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices) {
-        val element = testServices.expressionMarkerProvider.getSelectedElement(ktFiles.first())
+        val element = testServices.expressionMarkerProvider.getSelectedElementOfType<KtElement>(ktFiles.first())
 
         val shortenings = executeOnPooledThreadInReadAction {
             analyseForTest(element) {

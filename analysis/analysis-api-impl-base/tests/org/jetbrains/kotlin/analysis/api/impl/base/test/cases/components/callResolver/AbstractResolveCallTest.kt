@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.callResolver
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.calls.KtCallInfo
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.stringRepresentation
@@ -20,7 +19,7 @@ import org.jetbrains.kotlin.test.services.assertions
 abstract class AbstractResolveCallTest : AbstractAnalysisApiBasedSingleModuleTest() {
     override fun doTestByFileStructure(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices) {
         val ktFile = ktFiles.first()
-        val expression = testServices.expressionMarkerProvider.getSelectedElement(ktFile)
+        val expression = testServices.expressionMarkerProvider.getSelectedElementOfType<KtElement>(ktFile)
 
         val actual = executeOnPooledThreadInReadAction {
             analyseForTest(expression) {
