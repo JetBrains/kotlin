@@ -60,6 +60,12 @@ internal class KtFe10DescKotlinPropertySymbol(
     override val isOverride: Boolean
         get() = withValidityAssertion { descriptor.isExplicitOverride }
 
+    override val isActual: Boolean
+        get() = withValidityAssertion { descriptor.isActual }
+
+    override val isExpect: Boolean
+        get() = withValidityAssertion { descriptor.isExpect }
+
     override val hasGetter: Boolean
         get() = withValidityAssertion { true }
 

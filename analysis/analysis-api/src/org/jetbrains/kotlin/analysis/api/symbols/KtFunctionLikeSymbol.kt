@@ -49,6 +49,7 @@ public abstract class KtSamConstructorSymbol : KtFunctionLikeSymbol(), KtNamedSy
 public abstract class KtFunctionSymbol : KtFunctionLikeSymbol(),
     KtNamedSymbol,
     KtPossibleMemberSymbol,
+    KtPossibleMultiplatformSymbol,
     KtSymbolWithModality,
     KtSymbolWithVisibility {
 
@@ -72,6 +73,7 @@ public abstract class KtFunctionSymbol : KtFunctionLikeSymbol(),
 
 public abstract class KtConstructorSymbol : KtFunctionLikeSymbol(),
     KtPossibleMemberSymbol,
+    KtPossibleMultiplatformSymbol,
     KtSymbolWithVisibility {
 
     public abstract val isPrimary: Boolean

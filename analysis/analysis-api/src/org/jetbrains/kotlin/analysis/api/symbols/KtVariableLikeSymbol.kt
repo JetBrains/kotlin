@@ -138,7 +138,7 @@ public sealed class KtPropertySymbol : KtVariableSymbol(),
     abstract override fun createPointer(): KtSymbolPointer<KtPropertySymbol>
 }
 
-public abstract class KtKotlinPropertySymbol : KtPropertySymbol() {
+public abstract class KtKotlinPropertySymbol : KtPropertySymbol(), KtPossibleMultiplatformSymbol {
     public abstract val isLateInit: Boolean
 
     public abstract val isConst: Boolean

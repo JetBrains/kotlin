@@ -41,6 +41,12 @@ internal class KtFe10DescConstructorSymbol(
     override val returnType: KtType
         get() = withValidityAssertion { descriptor.returnType.toKtType(analysisContext) }
 
+    override val isActual: Boolean
+        get() = withValidityAssertion { descriptor.isActual }
+
+    override val isExpect: Boolean
+        get() = withValidityAssertion { descriptor.isExpect }
+
     override val typeParameters: List<KtTypeParameterSymbol>
         get() = withValidityAssertion {
             descriptor.typeParameters.mapNotNull {

@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.utils.hasStableParameterNames
+import org.jetbrains.kotlin.fir.declarations.utils.isActual
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.name.ClassId
@@ -58,6 +60,8 @@ internal class KtFirConstructorSymbol(
         get() = withValidityAssertion { firSymbol.containingClassLookupTag()?.classId?.takeUnless { it.isLocal } }
 
     override val isPrimary: Boolean get() = withValidityAssertion { firSymbol.isPrimary }
+    override val isActual: Boolean get() = withValidityAssertion { firSymbol.isActual }
+    override val isExpect: Boolean get() = withValidityAssertion { firSymbol.isExpect }
 
     override val typeParameters by cached { firSymbol.createKtTypeParameters(builder) }
 
