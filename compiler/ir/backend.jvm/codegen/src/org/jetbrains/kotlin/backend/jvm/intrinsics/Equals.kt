@@ -160,11 +160,11 @@ class Ieee754Equals(val operandType: Type) : IntrinsicMethod() {
         expression: IrFunctionAccessExpression,
         signature: JvmMethodSignature,
         classCodegen: ClassCodegen
-    ): IrIntrinsicFunction {
+    ): IntrinsicFunction {
         class Ieee754AreEqual(
             val left: Type,
             val right: Type
-        ) : IrIntrinsicFunction(expression, signature, classCodegen, listOf(left, right)) {
+        ) : IntrinsicFunction(expression, signature, classCodegen, listOf(left, right)) {
             override fun genInvokeInstruction(v: InstructionAdapter) {
                 v.invokestatic(
                     IntrinsicMethods.INTRINSICS_CLASS_NAME, "areEqual",
@@ -197,7 +197,7 @@ class Ieee754Equals(val operandType: Type) : IntrinsicMethod() {
                 Ieee754AreEqual(AsmTypes.OBJECT_TYPE, AsmTypes.OBJECT_TYPE)
 
             !arg0isNullable && !arg1isNullable ->
-                object : IrIntrinsicFunction(expression, signature, classCodegen, listOf(operandType, operandType)) {
+                object : IntrinsicFunction(expression, signature, classCodegen, listOf(operandType, operandType)) {
                     override fun genInvokeInstruction(v: InstructionAdapter) {
                         StackValue.cmp(KtTokens.EQEQ, operandType, StackValue.onStack(operandType), StackValue.onStack(operandType))
                             .put(Type.BOOLEAN_TYPE, v)

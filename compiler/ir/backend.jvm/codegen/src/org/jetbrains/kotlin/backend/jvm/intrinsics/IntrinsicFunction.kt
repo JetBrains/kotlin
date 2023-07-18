@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-abstract class IrIntrinsicFunction(
+abstract class IntrinsicFunction(
     val expression: IrFunctionAccessExpression,
     val signature: JvmMethodSignature,
     val classCodegen: ClassCodegen,
@@ -79,9 +79,9 @@ abstract class IrIntrinsicFunction(
             signature: JvmMethodSignature,
             classCodegen: ClassCodegen,
             argsTypes: List<Type> = expression.argTypes(classCodegen),
-            invokeInstruction: IrIntrinsicFunction.(InstructionAdapter) -> Unit,
-        ): IrIntrinsicFunction =
-            object : IrIntrinsicFunction(expression, signature, classCodegen, argsTypes) {
+            invokeInstruction: IntrinsicFunction.(InstructionAdapter) -> Unit,
+        ): IntrinsicFunction =
+            object : IntrinsicFunction(expression, signature, classCodegen, argsTypes) {
                 override fun genInvokeInstruction(v: InstructionAdapter) = invokeInstruction(v)
             }
     }

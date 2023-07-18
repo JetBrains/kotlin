@@ -17,9 +17,9 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 object RangeTo : IntrinsicMethod() {
     override fun toCallable(
         expression: IrFunctionAccessExpression, signature: JvmMethodSignature, classCodegen: ClassCodegen,
-    ): IrIntrinsicFunction {
+    ): IntrinsicFunction {
         val argType = mapRangeTypeToPrimitiveType(signature.returnType)
-        return object : IrIntrinsicFunction(
+        return object : IntrinsicFunction(
             expression, signature, classCodegen, listOf(argType) + signature.valueParameters.map { argType }
         ) {
             override fun genInvokeInstruction(v: InstructionAdapter) {

@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 object IrNoWhenBranchMatchedException : IntrinsicMethod() {
     override fun toCallable(
         expression: IrFunctionAccessExpression, signature: JvmMethodSignature, classCodegen: ClassCodegen,
-    ): IrIntrinsicFunction {
-        return IrIntrinsicFunction.create(expression, signature, classCodegen) {
+    ): IntrinsicFunction {
+        return IntrinsicFunction.create(expression, signature, classCodegen) {
             genThrow(it, "kotlin/NoWhenBranchMatchedException", null)
         }
     }

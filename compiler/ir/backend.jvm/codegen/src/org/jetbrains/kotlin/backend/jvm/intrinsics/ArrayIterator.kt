@@ -28,9 +28,9 @@ object ArrayIterator : IntrinsicMethod() {
         expression: IrFunctionAccessExpression,
         signature: JvmMethodSignature,
         classCodegen: ClassCodegen,
-    ): IrIntrinsicFunction {
+    ): IntrinsicFunction {
         val owner = classCodegen.typeMapper.mapClass(expression.symbol.owner.parentAsClass)
-        return IrIntrinsicFunction.create(expression, signature, classCodegen, listOf(owner)) {
+        return IntrinsicFunction.create(expression, signature, classCodegen, listOf(owner)) {
             val methodSignature = "(${owner.descriptor})${signature.returnType.descriptor}"
             val intrinsicOwner =
                 if (AsmUtil.isPrimitive(owner.elementType))

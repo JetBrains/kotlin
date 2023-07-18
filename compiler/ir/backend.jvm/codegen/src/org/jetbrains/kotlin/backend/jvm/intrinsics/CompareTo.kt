@@ -54,14 +54,14 @@ object CompareTo : IntrinsicMethod() {
         expression: IrFunctionAccessExpression,
         signature: JvmMethodSignature,
         classCodegen: ClassCodegen
-    ): IrIntrinsicFunction {
+    ): IntrinsicFunction {
         val callee = expression.symbol.owner
         val calleeParameter = callee.dispatchReceiverParameter ?: callee.extensionReceiverParameter!!
         val parameterType = comparisonOperandType(
             classCodegen.typeMapper.mapType(calleeParameter.type),
             signature.valueParameters.single().asmType,
         )
-        return IrIntrinsicFunction.create(expression, signature, classCodegen, listOf(parameterType, parameterType)) {
+        return IntrinsicFunction.create(expression, signature, classCodegen, listOf(parameterType, parameterType)) {
             genInvoke(parameterType, it)
         }
     }
