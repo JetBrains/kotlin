@@ -328,14 +328,10 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
             )
         } else { //nullable reference should not be checked
             val nullableValueAdapter = valueAdapter?.let(::NullOrAdapter)
-            if (isExternalType(notNullType)) {
-                val undefinedToNullAdapter = FunctionBasedAdapter(adapters.jsCheckIsNullOrUndefinedAdapter.owner)
-                nullableValueAdapter
-                    ?.let { CombineAdapter(it, undefinedToNullAdapter) }
-                    ?: undefinedToNullAdapter
-            } else {
-                nullableValueAdapter
-            }
+            val undefinedToNullAdapter = FunctionBasedAdapter(adapters.jsCheckIsNullOrUndefinedAdapter.owner)
+            nullableValueAdapter
+                ?.let { CombineAdapter(it, undefinedToNullAdapter) }
+                ?: undefinedToNullAdapter
         }
     }
 
