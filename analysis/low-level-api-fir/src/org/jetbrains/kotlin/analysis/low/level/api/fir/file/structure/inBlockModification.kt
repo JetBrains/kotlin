@@ -25,15 +25,16 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 
 /**
  * Must be called in a write action.
+ * @return **false** if it is not in-block modification
  */
 @LLFirInternals
-fun invalidateAfterInBlockModification(declaration: KtDeclaration) {
+fun invalidateAfterInBlockModification(declaration: KtDeclaration): Boolean {
     ApplicationManager.getApplication().assertIsWriteThread()
 
     val project = declaration.project
     val ktModule = ProjectStructureProvider.getModule(project, declaration, contextualModule = null)
     val resolveSession = ktModule.getFirResolveSession(project)
-    when (val firDeclaration = declaration.resolveToFirSymbol(resolveSession).fir) {
+    return when (val firDeclaration = declaration.resolveToFirSymbol(resolveSession).fir) {
         is FirSimpleFunction -> firDeclaration.inBodyInvalidation()
         is FirPropertyAccessor -> firDeclaration.inBodyInvalidation()
         is FirProperty -> firDeclaration.inBodyInvalidation()
@@ -54,14 +55,16 @@ fun invalidateAfterInBlockModification(declaration: KtDeclaration) {
  *
  * Also, we shouldn't update somehow value parameters because they have their own "bodies" (a default value) and
  * changes in them are OOBM, so it is not our case.
+ *
+ * @return **false** if it is an out-of-block change
  */
-private fun FirSimpleFunction.inBodyInvalidation() {
-    invalidateBody()
+private fun FirSimpleFunction.inBodyInvalidation(): Boolean {
+    val body = body ?: return false
+    invalidateBody(body)
+    return true
 }
 
-private fun FirFunction.invalidateBody(): FirResolvePhase? {
-    val body = body ?: return null
-
+private fun FirFunction.invalidateBody(body: FirBlock): FirResolvePhase? {
     // the body is not yet resolved, so there is nothing to invalidate
     if (body is FirLazyBlock) return null
     val newPhase = phaseWithoutBody
@@ -90,16 +93,25 @@ private fun FirFunction.invalidateBody(): FirResolvePhase? {
  *
  * Also, we shouldn't update the property accessors because they don't depend on the initializer or delegate.
  * So it is fine to leave the phase of setter/getter/backing field as it is.
+ *
+ * @return **false** if it is an out-of-block change
  */
-private fun FirProperty.inBodyInvalidation() {
-    val blockIsInvalidated = invalidateInitializer() || invalidateDelegate()
+private fun FirProperty.inBodyInvalidation(): Boolean {
+    val initializerState = invalidateInitializer()
+    val delegateState = invalidateDelegate()
+    when {
+        // initializer and delegate are absent, so it is out of block modification
+        initializerState == PropertyExpressionState.ABSENT && delegateState == PropertyExpressionState.ABSENT -> return false
 
-    // the block is not invalidated, so there is nothing to reanalyze
-    if (!blockIsInvalidated) return
+        // the block is not invalidated, so there is nothing to reanalyze
+        initializerState == PropertyExpressionState.LAZY || delegateState == PropertyExpressionState.LAZY -> return true
+    }
 
     decreasePhase(phaseWithoutBody)
     replaceControlFlowGraphReference(null)
     replaceBodyResolveState(FirPropertyBodyResolveState.NOTHING_RESOLVED)
+
+    return true
 }
 
 /**
@@ -113,9 +125,12 @@ private fun FirProperty.inBodyInvalidation() {
  * Depends on the body, but we shouldn't drop:
  * * implicit type, because the change mustn't change the resulting type
  * * contract, because a change inside a contract description is OOBM, so this function won't be called in this case
+ *
+ * @return **false** if it is an out-of-block change
  */
-private fun FirPropertyAccessor.inBodyInvalidation() {
-    val newPhase = invalidateBody() ?: return
+private fun FirPropertyAccessor.inBodyInvalidation(): Boolean {
+    val body = body ?: return false
+    val newPhase = invalidateBody(body) ?: return true
 
     val property = propertySymbol.fir
     property.decreasePhase(newPhase)
@@ -127,23 +142,30 @@ private fun FirPropertyAccessor.inBodyInvalidation() {
     }
 
     property.replaceBodyResolveState(minOf(property.bodyResolveState, newPropertyResolveState))
+    return true
 }
 
-private fun FirProperty.invalidateInitializer(): Boolean = replaceWithLazyExpressionIfNeeded(::initializer, ::replaceInitializer)
+private fun FirProperty.invalidateInitializer(): PropertyExpressionState = replaceWithLazyExpressionIfNeeded(::initializer, ::replaceInitializer)
 
-private fun FirProperty.invalidateDelegate(): Boolean = replaceWithLazyExpressionIfNeeded(::delegate, ::replaceDelegate)
+private fun FirProperty.invalidateDelegate(): PropertyExpressionState = replaceWithLazyExpressionIfNeeded(::delegate, ::replaceDelegate)
+
+private enum class PropertyExpressionState {
+    ABSENT,
+    LAZY,
+    CALCULATED,
+}
 
 private inline fun replaceWithLazyExpressionIfNeeded(
     expressionGetter: () -> FirExpression?,
     replaceExpression: (FirExpression) -> Unit,
-): Boolean {
-    val expression = expressionGetter() ?: return false
+): PropertyExpressionState {
+    val expression = expressionGetter() ?: return PropertyExpressionState.ABSENT
 
     // the expression is not yet resolved, so there is nothing to invalidate
-    if (expression is FirLazyExpression) return false
+    if (expression is FirLazyExpression) return PropertyExpressionState.LAZY
 
     replaceExpression(buildLazyExpression { source = expression.source })
-    return true
+    return PropertyExpressionState.CALCULATED
 }
 
 private val FirDeclaration.phaseWithoutBody: FirResolvePhase
