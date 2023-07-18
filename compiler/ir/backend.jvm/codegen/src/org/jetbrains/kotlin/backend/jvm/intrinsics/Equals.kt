@@ -19,12 +19,13 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isNullable
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.isEnumClass
+import org.jetbrains.kotlin.ir.util.isEnumEntry
+import org.jetbrains.kotlin.ir.util.isIntegerConst
+import org.jetbrains.kotlin.ir.util.isNullConst
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.isNullable
@@ -36,7 +37,7 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 class ExplicitEquals : IntrinsicMethod() {
-    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? {
+    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue {
         val (a, b) = expression.receiverAndArgs()
 
         // TODO use specialized boxed type - this might require types like 'java.lang.Integer' in IR
@@ -64,7 +65,7 @@ class Equals(val operator: IElementType) : IntrinsicMethod() {
         }
     }
 
-    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? {
+    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue {
         val (a, b) = expression.receiverAndArgs()
         if (a.isNullConst() || b.isNullConst()) {
             val irValue = if (a.isNullConst()) b else a
@@ -136,7 +137,7 @@ class Equals(val operator: IElementType) : IntrinsicMethod() {
         val operandType = if (!isPrimitive(leftType)) AsmTypes.OBJECT_TYPE else leftType
         return if (operandType == Type.INT_TYPE && (left.isIntegerConst(0) || right.isIntegerConst(0))) {
             val nonZero = if (left.isIntegerConst(0)) right else left
-            IntegerZeroComparison(operator, nonZero.accept(codegen, data).materializedAt(operandType, nonZero.type))
+            IntegerZeroComparison(nonZero.accept(codegen, data).materializedAt(operandType, nonZero.type))
         } else {
             val leftValue = left.accept(codegen, data).materializedAt(operandType, left.type)
             val rightValue = right.accept(codegen, data).materializedAt(operandType, right.type)

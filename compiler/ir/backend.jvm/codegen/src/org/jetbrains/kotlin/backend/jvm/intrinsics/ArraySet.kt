@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.types.getArrayElementType
 import org.jetbrains.org.objectweb.asm.Type
 
 object ArraySet : IntrinsicMethod() {
-    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? {
+    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue {
         val dispatchReceiver = expression.dispatchReceiver!!
         val receiver = dispatchReceiver.accept(codegen, data).materializedAt(dispatchReceiver.type)
         val elementType = AsmUtil.correctElementType(receiver.type)

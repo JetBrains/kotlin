@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.org.objectweb.asm.Label
 
 object AndAnd : IntrinsicMethod() {
-
     private class BooleanConjunction(val arg0: IrExpression, val arg1: IrExpression, codegen: ExpressionCodegen, val data: BlockInfo) :
         BooleanValue(codegen) {
 
@@ -36,7 +35,7 @@ object AndAnd : IntrinsicMethod() {
         }
     }
 
-    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? {
+    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue {
         val (left, right) = expression.receiverAndArgs()
         return BooleanConjunction(left, right, codegen, data)
     }

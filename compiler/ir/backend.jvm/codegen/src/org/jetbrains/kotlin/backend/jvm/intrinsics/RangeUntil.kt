@@ -15,7 +15,7 @@ object RangeUntil : IntrinsicMethod() {
     override fun toCallable(
         expression: IrFunctionAccessExpression, signature: JvmMethodSignature, classCodegen: ClassCodegen
     ): IrIntrinsicFunction {
-        return object : IrIntrinsicFunction(expression, signature, classCodegen) {
+        return object : IrIntrinsicFunction(expression, signature, classCodegen, expression.argTypes(classCodegen)) {
             override fun genInvokeInstruction(v: InstructionAdapter) {
                 v.invokestatic(
                     "kotlin/ranges/RangesKt", "until",

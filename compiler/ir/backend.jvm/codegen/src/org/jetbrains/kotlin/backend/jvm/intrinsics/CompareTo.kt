@@ -67,7 +67,7 @@ object CompareTo : IntrinsicMethod() {
     }
 }
 
-class IntegerZeroComparison(val op: IElementType, val a: MaterialValue) : BooleanValue(a.codegen) {
+class IntegerZeroComparison(val a: MaterialValue) : BooleanValue(a.codegen) {
     override fun jumpIfFalse(target: Label) {
         mv.visitJumpInsn(Opcodes.IFNE, target)
     }

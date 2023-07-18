@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen
 import org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.backend.jvm.mapping.mapClass
 import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.codegen.Callable
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
@@ -20,59 +19,27 @@ import org.jetbrains.kotlin.ir.util.isVararg
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.substitute
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-open class IrIntrinsicFunction(
+abstract class IrIntrinsicFunction(
     val expression: IrFunctionAccessExpression,
     val signature: JvmMethodSignature,
     val classCodegen: ClassCodegen,
-    val argsTypes: List<Type> = expression.argTypes(classCodegen)
-) : Callable {
-    override val owner: Type
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
-    override val dispatchReceiverType: Type?
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
-    override val dispatchReceiverKotlinType: KotlinType?
-        get() = null
-    override val extensionReceiverType: Type?
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
-    override val extensionReceiverKotlinType: KotlinType?
-        get() = null
-    override val generateCalleeType: Type?
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
-    override val valueParameterTypes: List<Type>
-        get() = signature.valueParameters.map { it.asmType }
-    override val parameterTypes: Array<Type>
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
-    override val returnType: Type
-        get() = signature.returnType
-    override val returnKotlinType: KotlinType?
-        get() = null
-
-    override fun isStaticCall(): Boolean {
-        return false
-    }
-
-    override fun genInvokeInstruction(v: InstructionAdapter) {
-        TODO("not implemented for $this")
-    }
-
-    open fun genInvokeInstructionWithResult(v: InstructionAdapter): Type {
-        genInvokeInstruction(v)
-        return returnType
-    }
+    val argsTypes: List<Type>,
+) {
+    abstract fun genInvokeInstruction(v: InstructionAdapter)
 
     open fun invoke(
         v: InstructionAdapter,
         codegen: ExpressionCodegen,
         data: BlockInfo,
-        expression: IrFunctionAccessExpression
+        expression: IrFunctionAccessExpression,
     ): StackValue {
         loadArguments(codegen, data)
         with(codegen) { expression.markLineNumber(startOffset = true) }
-        return StackValue.onStack(genInvokeInstructionWithResult(v))
+        genInvokeInstruction(v)
+        return StackValue.onStack(signature.returnType)
     }
 
     private fun loadArguments(codegen: ExpressionCodegen, data: BlockInfo) {
@@ -112,39 +79,15 @@ open class IrIntrinsicFunction(
             signature: JvmMethodSignature,
             classCodegen: ClassCodegen,
             argsTypes: List<Type> = expression.argTypes(classCodegen),
-            invokeInstruction: IrIntrinsicFunction.(InstructionAdapter) -> Unit
-        ): IrIntrinsicFunction {
-            return object : IrIntrinsicFunction(expression, signature, classCodegen, argsTypes) {
-
+            invokeInstruction: IrIntrinsicFunction.(InstructionAdapter) -> Unit,
+        ): IrIntrinsicFunction =
+            object : IrIntrinsicFunction(expression, signature, classCodegen, argsTypes) {
                 override fun genInvokeInstruction(v: InstructionAdapter) = invokeInstruction(v)
             }
-        }
-
-        fun createWithResult(
-            expression: IrFunctionAccessExpression, signature: JvmMethodSignature,
-            classCodegen: ClassCodegen,
-            argsTypes: List<Type> = expression.argTypes(classCodegen ),
-            invokeInstruction: IrIntrinsicFunction.(InstructionAdapter) -> Type
-        ): IrIntrinsicFunction {
-            return object : IrIntrinsicFunction(expression, signature, classCodegen, argsTypes) {
-
-                override fun genInvokeInstructionWithResult(v: InstructionAdapter) = invokeInstruction(v)
-            }
-        }
-
-        fun create(
-            expression: IrFunctionAccessExpression,
-            signature: JvmMethodSignature,
-            classCodegen: ClassCodegen,
-            type: Type,
-            invokeInstruction: IrIntrinsicFunction.(InstructionAdapter) -> Unit
-        ): IrIntrinsicFunction {
-            return create(expression, signature, classCodegen, listOf(type), invokeInstruction)
-        }
     }
 }
 
-fun IrFunctionAccessExpression.argTypes(classCodegen: ClassCodegen): ArrayList<Type> {
+internal fun IrFunctionAccessExpression.argTypes(classCodegen: ClassCodegen): List<Type> {
     val callee = symbol.owner
     val signature = classCodegen.methodSignatureMapper.mapSignatureSkipGeneric(callee)
     return arrayListOf<Type>().apply {

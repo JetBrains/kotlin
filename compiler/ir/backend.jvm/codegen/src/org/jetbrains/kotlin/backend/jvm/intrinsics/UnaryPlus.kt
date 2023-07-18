@@ -21,9 +21,11 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 
 object UnaryPlus : IntrinsicMethod() {
-    override fun toCallable(expression: IrFunctionAccessExpression, signature: JvmMethodSignature, classCodegen: ClassCodegen): IrIntrinsicFunction {
+    override fun toCallable(
+        expression: IrFunctionAccessExpression, signature: JvmMethodSignature, classCodegen: ClassCodegen,
+    ): IrIntrinsicFunction {
         return IrIntrinsicFunction.create(expression, signature, classCodegen) {
-
+            // Do nothing.
         }
     }
 }
