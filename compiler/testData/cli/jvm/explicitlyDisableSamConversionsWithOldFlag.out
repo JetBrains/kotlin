@@ -7,6 +7,4 @@ This mode is not recommended for production use,
 as no stability/compatibility guarantees are given on
 compiler or generated code. Use it at your own risk!
 
-error: the following features cannot be disabled manually, because the version they first appeared in is no longer supported:
-SamConversionForKotlinFunctions
-COMPILATION_ERROR
+OK
