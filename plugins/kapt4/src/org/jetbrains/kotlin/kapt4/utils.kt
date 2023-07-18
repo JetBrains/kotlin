@@ -22,7 +22,6 @@ val PsiModifierListOwner.isFinal: Boolean get() = hasModifier(JvmModifier.FINAL)
 val PsiModifierListOwner.isAbstract: Boolean get() = hasModifier(JvmModifier.ABSTRACT)
 
 val PsiModifierListOwner.isStatic: Boolean get() = hasModifier(JvmModifier.STATIC)
-val PsiModifierListOwner.isSynthetic: Boolean get() = false //TODO()
 val PsiModifierListOwner.isVolatile: Boolean get() = hasModifier(JvmModifier.VOLATILE)
 val PsiModifierListOwner.isSynchronized: Boolean get() = hasModifier(JvmModifier.SYNCHRONIZED)
 val PsiModifierListOwner.isNative: Boolean get() = hasModifier(JvmModifier.NATIVE)
@@ -256,5 +255,3 @@ val PsiClass.qualifiedNameWithDollars: String?
         return "$packageName.$classNameWithDollars"
     }
 
-val PsiMethod.properName: String
-    get() = if (isConstructor) "<init>" else name

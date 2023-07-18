@@ -103,32 +103,6 @@ class Kapt4TreeMaker(
         if ('$' !in nameWithDots) return nameWithDots
 
         return nameWithDots.replace('$', '.')
-//        TODO()
-//        // Maybe it's in our sources?
-//        val classFromSources = kaptContext.compiledClasses.firstOrNull { it.name == internalName }
-//        if (classFromSources != null) {
-//            // Get inner class node pointing to the outer class
-//            val innerClassNode = classFromSources.innerClasses.firstOrNull { it.name == classFromSources.name }
-//            return innerClassNode?.let { getQualifiedName(it.outerName) + "." + it.innerName } ?: nameWithDots
-//        }
-//
-//        // Search in the classpath
-//        val javaPsiFacade = JavaPsiFacade.getInstance(kaptContext.project)
-//        val scope = GlobalSearchScope.allScope(javaPsiFacade.project)
-//
-//        val fqNameFromClassWithPreciseName = javaPsiFacade.findClass(nameWithDots, scope)?.qualifiedName
-//        if (fqNameFromClassWithPreciseName != null) {
-//            return fqNameFromClassWithPreciseName
-//        }
-//
-//        nameWithDots.iterateDollars { outerName, innerName ->
-//            if (innerName.isEmpty()) return@iterateDollars // We already checked an exact match
-//
-//            val outerClass = javaPsiFacade.findClass(outerName, scope) ?: return@iterateDollars
-//            return tryToFindNestedClass(outerClass, innerName)?.qualifiedName ?: return@iterateDollars
-//        }
-//
-//        return nameWithDots
     }
 
     private fun tryToFindNestedClass(outerClass: PsiClass, innerClassName: String): PsiClass? {

@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.kapt3.base.util.TopLevelJava9Aware
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForNamedClassLike
 import org.jetbrains.kotlin.light.classes.symbol.isDefaultImplsClass
 import org.jetbrains.kotlin.light.classes.symbol.isPropertySetter
-import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isOneSegmentFQN
 import org.jetbrains.kotlin.psi.KtFile
@@ -99,7 +98,7 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
 
         val unresolvedQualifiersRecorder = UnresolvedQualifiersRecorder(ktFile)
         val classDeclaration = with(unresolvedQualifiersRecorder) {
-            convertClass(lightClass, lineMappings, packageName, true) ?: return null
+            convertClass(lightClass, lineMappings, packageName) ?: return null
         }
 
         classDeclaration.mods.annotations = classDeclaration.mods.annotations
@@ -121,8 +120,7 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
     private fun convertClass(
         lightClass: PsiClass,
         lineMappings: Kapt4LineMappingCollector,
-        packageFqName: String,
-        isTopLevel: Boolean
+        packageFqName: String
     ): JCClassDecl? {
         if (lightClass.isDefaultImplsClass) return null
         if (!checkIfValidTypeName(lightClass, lightClass.defaultType)) return null
@@ -159,16 +157,7 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
             metadata,
         )
 
-        // TODO: check
-        val isDefaultImpls = lightClass.name!!.endsWith("\$DefaultImpls")
-                && lightClass.isPublic && lightClass.isFinal && lightClass.isInterface
-
-        // DefaultImpls without any contents don't have INNERCLASS'es inside it (and inside the parent interface)
-        if (isDefaultImpls && (isTopLevel || (lightClass.fields.isEmpty() && lightClass.methods.isEmpty()))) {
-            return null
-        }
-
-        val simpleName = getClassName(lightClass, isDefaultImpls, packageFqName)
+        val simpleName = lightClass.name!!
         if (!isValidIdentifier(simpleName)) return null
 
         val classSignature = parseClassSignature(lightClass)
@@ -209,7 +198,7 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
         }
 
         val nestedClasses = mapJList(lightClass.innerClasses) { innerClass ->
-            convertClass(innerClass, lineMappings, packageFqName, false)
+            convertClass(innerClass, lineMappings, packageFqName)
         }
 
         lineMappings.registerClass(lightClass)
@@ -370,7 +359,6 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
     }
 
     context(UnresolvedQualifiersRecorder)
-    @Suppress("IncorrectFormatting") // KTIJ-22227
     private fun convertModifiers(
         containingClass: PsiClass,
         access: Int,
@@ -383,7 +371,6 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
     }
 
     context(UnresolvedQualifiersRecorder)
-    @Suppress("IncorrectFormatting") // KTIJ-22227
     private fun convertModifiers(
         containingClass: PsiClass,
         access: Long,
@@ -391,18 +378,14 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
         packageFqName: String,
         allAnnotations: List<PsiAnnotation>,
         metadata: Metadata?,
-        excludeNullabilityAnnotations: Boolean = false
+        excludeNullabilityAnnotations: Boolean = false,
     ): JCModifiers {
-        var seenOverride = false
         var seenDeprecated = false
         fun convertAndAdd(list: JavacList<JCAnnotation>, annotation: PsiAnnotation): JavacList<JCAnnotation> {
-            if (annotation.hasQualifiedName("java.lang.Override")) {
-                if (seenOverride) return list  // KT-34569: skip duplicate @Override annotations
-                seenOverride = true
-            }
             seenDeprecated = seenDeprecated or annotation.hasQualifiedName("java.lang.Deprecated")
             if (excludeNullabilityAnnotations &&
-                (annotation.hasQualifiedName("org.jetbrains.annotations.NotNull") || annotation.hasQualifiedName("org.jetbrains.annotations.Nullable"))) return list
+                (annotation.hasQualifiedName("org.jetbrains.annotations.NotNull") || annotation.hasQualifiedName("org.jetbrains.annotations.Nullable"))
+            ) return list
             val annotationTree = convertAnnotation(containingClass, annotation, packageFqName) ?: return list
             return list.prepend(annotationTree)
         }
@@ -564,12 +547,6 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
 
             is List<*> -> treeMaker.NewArray(null, JavacList.nil(), mapJList(value, ::convertDeeper))
 
-//            is Type -> {
-//                checkIfValidTypeName(containingClass, value)
-//                treeMaker.Select(treeMaker.Type(value), treeMaker.name("class"))
-//            }
-//
-//            is AnnotationNode -> convertAnnotation(containingClass, value, packageFqName = null, filtered = false)!!
             else -> throw IllegalArgumentException("Illegal literal expression value: $value (${value::class.java.canonicalName})")
         }
     }
@@ -623,15 +600,10 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
     ): JCMethodDecl? {
         if (isIgnored(method.annotations.asList())) return null
 
-        val isAnnotationHolderForProperty =
-            method.isSynthetic && method.isStatic && method.name.endsWith(JvmAbi.ANNOTATED_PROPERTY_METHOD_NAME_SUFFIX)
-
-        if (method.isSynthetic && !isAnnotationHolderForProperty) return null
-
         val isConstructor = method.isConstructor
 
-        val name = method.properName
-        if (!isValidIdentifier(name, canBeConstructor = isConstructor)) return null
+        val name = method.name
+        if (!isConstructor && !isValidIdentifier(name)) return null
         val returnType = method.returnType?.takeIf { it.qualifiedNameOrNull != "kotlin.Unit" } ?: PsiType.VOID
         val modifiers = convertModifiers(
             containingClass,
@@ -836,20 +808,9 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
         }
     }
 
-    // TODO
-
-    @Suppress("UNUSED_PARAMETER")
-    private fun getClassName(lightClass: PsiClass, isDefaultImpls: Boolean, packageFqName: String): String {
-        return lightClass.name!!
-    }
-
     private fun isValidQualifiedName(name: FqName) = name.pathSegments().all { isValidIdentifier(it.asString()) }
 
-    private fun isValidIdentifier(name: String, canBeConstructor: Boolean = false): Boolean {
-        if (canBeConstructor && name == "<init>") {
-            return true
-        }
-
+    private fun isValidIdentifier(name: String): Boolean {
         if (name in JAVA_KEYWORDS) return false
 
         return !(name.isEmpty()

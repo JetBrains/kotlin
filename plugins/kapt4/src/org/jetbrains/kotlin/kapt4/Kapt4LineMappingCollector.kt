@@ -18,7 +18,7 @@ class Kapt4LineMappingCollector: KaptLineMappingCollectorBase() {
     }
 
     fun registerMethod(lightClass: PsiClass, method: PsiMethod) {
-        register(method, lightClass.qualifiedNameWithSlashes + "#" + method.properName + method.signature)
+        register(method, lightClass.qualifiedNameWithSlashes + "#" + method.name + method.signature)
     }
 
     fun registerField(lightClass: PsiClass, field: PsiField) {
@@ -26,7 +26,7 @@ class Kapt4LineMappingCollector: KaptLineMappingCollectorBase() {
     }
 
     fun registerSignature(declaration: JCTree.JCMethodDecl, method: PsiMethod) {
-        signatureInfo[declaration.getJavacSignature()] = method.properName + method.signature
+        signatureInfo[declaration.getJavacSignature()] = method.name + method.signature
     }
 
     fun getPosition(lightClass: PsiClass): KotlinPosition? {
@@ -34,7 +34,7 @@ class Kapt4LineMappingCollector: KaptLineMappingCollectorBase() {
     }
 
     fun getPosition(lightClass: PsiClass, method: PsiMethod): KotlinPosition? =
-        lineInfo[lightClass.qualifiedNameWithSlashes + "#" + method.properName + method.signature]
+        lineInfo[lightClass.qualifiedNameWithSlashes + "#" + method.name + method.signature]
 
     fun getPosition(lightClass: PsiClass, field: PsiField): KotlinPosition? {
         return lineInfo[lightClass.qualifiedNameWithSlashes + "#" + field.name]
