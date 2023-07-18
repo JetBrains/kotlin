@@ -11,8 +11,6 @@ import org.gradle.api.Project
 import org.gradle.api.internal.TaskInternal
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
-import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.targets.native.internal.locateOrRegisterCInteropMetadataDependencyTransformationTask
 import org.jetbrains.kotlin.gradle.targets.native.internal.locateOrRegisterCInteropMetadataDependencyTransformationTaskForIde
@@ -144,7 +142,7 @@ class CInteropMetadataDependencyTransformationTaskTest : MultiplatformExtensionT
                 .map { it.relativeTo(projectRootDir) }
                 .toSet()
                 // common root directory where all transformations stored
-                .minus(File(".gradle/kotlin/kotlinTransformedCInteropMetadataLibraries"))
+                .minus(File(".kotlin/kotlinTransformedCInteropMetadataLibraries"))
         }
 
         suspend fun assertTasksOutputsDoesntIntersect(a: Project, b: Project) {
