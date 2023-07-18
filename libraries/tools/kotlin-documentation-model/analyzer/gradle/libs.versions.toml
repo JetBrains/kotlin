@@ -8,9 +8,7 @@ kotlinx-coroutines = "1.6.3"
 kotlinx-bcv = "0.12.1"
 
 ## Analysis
-kotlin-compiler = "1.8.10"
-kotlin-ide-plugin = "213-1.8.10-release-430-IJ6777.52"
-kotlin-jps-common = "213-1.6.21-release-334-IJ6777.52" # TODO [beresnev] not sure which version should be used exactly
+kotlin-compiler = "1.8.20"
 
 # MUST match the version of the intellij platform used in the kotlin compiler,
 # otherwise this will lead to different versions of psi API and implementations
