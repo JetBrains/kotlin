@@ -19,6 +19,7 @@ dependencies {
     api(project(":kotlin-build-common"))
     api(project(":daemon-common"))
     api(project(":compiler:build-tools:kotlin-build-statistics"))
+    api(project(":compiler:build-tools:kotlin-build-tools-api"))
     compileOnly(intellijCore())
 
     testApi(commonDependency("junit:junit"))

@@ -17,7 +17,7 @@ package org.jetbrains.kotlin.buildtools.api.jvm
  * Therefore, [CLASS_LEVEL] is typically suitable for classes that are infrequently changed (e.g., external libraries), whereas
  * [CLASS_MEMBER_LEVEL] is suitable for classes that are frequently changed (e.g., classes produced by the current project).
  */
-enum class ClassSnapshotGranularity {
+public enum class ClassSnapshotGranularity {
 
     /**
      * Snapshotting level that allows tracking whether a .class file has changed without tracking what specific parts of the .class file

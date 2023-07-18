@@ -85,6 +85,13 @@ public final class org/jetbrains/kotlin/buildtools/api/SourcesChanges$Unknown : 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/ClassSnapshot {
 }
 
+public final class org/jetbrains/kotlin/buildtools/api/jvm/ClassSnapshotGranularity : java/lang/Enum {
+	public static final field CLASS_LEVEL Lorg/jetbrains/kotlin/buildtools/api/jvm/ClassSnapshotGranularity;
+	public static final field CLASS_MEMBER_LEVEL Lorg/jetbrains/kotlin/buildtools/api/jvm/ClassSnapshotGranularity;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/jvm/ClassSnapshotGranularity;
+	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/jvm/ClassSnapshotGranularity;
+}
+
 public abstract interface class org/jetbrains/kotlin/buildtools/api/jvm/ClasspathEntrySnapshot {
 	public abstract fun getClassSnapshots ()Ljava/util/LinkedHashMap;
 	public abstract fun saveSnapshot (Ljava/io/File;)V
