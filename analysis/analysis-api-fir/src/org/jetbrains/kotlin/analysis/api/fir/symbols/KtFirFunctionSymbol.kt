@@ -84,6 +84,9 @@ internal class KtFirFunctionSymbol(
     override val isExternal: Boolean get() = withValidityAssertion { firSymbol.isExternal }
     override val isInline: Boolean get() = withValidityAssertion { firSymbol.isInline }
     override val isExtension: Boolean get() = withValidityAssertion { firSymbol.isExtension }
+    override val isActual: Boolean get() = withValidityAssertion { firSymbol.isActual }
+    override val isExpect: Boolean get() = withValidityAssertion { firSymbol.isExpect }
+
     override val callableIdIfNonLocal: CallableId? get() = withValidityAssertion { firSymbol.getCallableIdIfNonLocal() }
 
     override val symbolKind: KtSymbolKind

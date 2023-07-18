@@ -2,25 +2,49 @@
 
 object A
 
-class B
+class B(s: kotlin.String)
+
+    constructor(s: kotlin.String)
+
+    constructor(n: kotlin.Int)
 
     class Nested
+
+    fun bar()
+
+    val n: kotlin.Int
 
 class C
 
     class Nested
 
+fun baz()
+
+var m: kotlin.Int
+
 // FILE: JvmAndroid.kt
 
 object A
 
-class B
+class B(s: kotlin.String)
+
+    constructor(s: kotlin.String)
+
+    constructor(n: kotlin.Int)
 
     class Nested
+
+    fun bar()
+
+    val n: kotlin.Int
 
 typealias C = sample.D
 
 class D
 
     class Nested
+
+fun baz()
+
+var m: kotlin.Int
 

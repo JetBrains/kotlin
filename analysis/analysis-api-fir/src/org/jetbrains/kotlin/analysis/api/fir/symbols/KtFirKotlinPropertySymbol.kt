@@ -117,6 +117,8 @@ internal class KtFirKotlinPropertySymbol(
     override val isOverride: Boolean get() = withValidityAssertion { firSymbol.isOverride }
     override val isConst: Boolean get() = withValidityAssertion { firSymbol.isConst }
     override val isStatic: Boolean get() = withValidityAssertion { firSymbol.isStatic }
+    override val isActual: Boolean get() = withValidityAssertion { firSymbol.isActual }
+    override val isExpect: Boolean get() = withValidityAssertion { firSymbol.isExpect }
 
     override val hasGetter: Boolean get() = withValidityAssertion { firSymbol.getterSymbol != null }
     override val hasSetter: Boolean get() = withValidityAssertion { firSymbol.setterSymbol != null }

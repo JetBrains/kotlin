@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtConstructor
 import org.jetbrains.kotlin.psi.KtPrimaryConstructor
+import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
+import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.resolve.BindingContext
 
 internal class KtFe10PsiConstructorSymbol(
@@ -60,6 +62,12 @@ internal class KtFe10PsiConstructorSymbol(
 
     override val visibility: Visibility
         get() = withValidityAssertion { psi.ktVisibility ?: descriptor?.ktVisibility ?: Visibilities.Public }
+
+    override val isActual: Boolean
+        get() = withValidityAssertion { descriptor?.isActual ?: psi.hasActualModifier() }
+
+    override val isExpect: Boolean
+        get() = withValidityAssertion { descriptor?.isExpect ?: psi.hasExpectModifier() }
 
     override val typeParameters: List<KtTypeParameterSymbol>
         get() = withValidityAssertion { psi.typeParameters.map { KtFe10PsiTypeParameterSymbol(it, analysisContext) } }
