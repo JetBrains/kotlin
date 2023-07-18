@@ -15,10 +15,11 @@ import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION_ERROR")
 internal class JvmMetadataExtensions : MetadataExtensions {
     override fun readClassExtensions(v: KmClassVisitor, proto: ProtoBuf.Class, c: ReadContext) {
         val ext = v.visitExtensions(JvmClassExtensionVisitor.TYPE) as? JvmClassExtensionVisitor ?: return
+        ext as JvmClassExtension
 
         val anonymousObjectOriginName = proto.getExtensionOrNull(JvmProtoBuf.anonymousObjectOriginName)
         if (anonymousObjectOriginName != null) {
@@ -26,9 +27,7 @@ internal class JvmMetadataExtensions : MetadataExtensions {
         }
 
         for (property in proto.getExtension(JvmProtoBuf.classLocalVariable)) {
-            ext.visitLocalDelegatedProperty(
-                property.flags, c[property.name], property.getPropertyGetterFlags(), property.getPropertySetterFlags()
-            )?.let { property.accept(it, c) }
+            ext.localDelegatedProperties.add(property.toKmProperty(c))
         }
 
         ext.visitModuleName(proto.getExtensionOrNull(JvmProtoBuf.classModuleName)?.let(c::get) ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME)
@@ -40,11 +39,10 @@ internal class JvmMetadataExtensions : MetadataExtensions {
 
     override fun readPackageExtensions(v: KmPackageVisitor, proto: ProtoBuf.Package, c: ReadContext) {
         val ext = v.visitExtensions(JvmPackageExtensionVisitor.TYPE) as? JvmPackageExtensionVisitor ?: return
+        ext as JvmPackageExtension
 
         for (property in proto.getExtension(JvmProtoBuf.packageLocalVariable)) {
-            ext.visitLocalDelegatedProperty(
-                property.flags, c[property.name], property.getPropertyGetterFlags(), property.getPropertySetterFlags()
-            )?.let { property.accept(it, c) }
+            ext.localDelegatedProperties.add(property.toKmProperty(c))
         }
 
         ext.visitModuleName(proto.getExtensionOrNull(JvmProtoBuf.packageModuleName)?.let(c::get) ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME)
@@ -119,50 +117,34 @@ internal class JvmMetadataExtensions : MetadataExtensions {
 
     override fun readValueParameterExtensions(v: KmValueParameterVisitor, proto: ProtoBuf.ValueParameter, c: ReadContext) {}
 
-    override fun writeClassExtensions(type: KmExtensionType, proto: ProtoBuf.Class.Builder, c: WriteContext): KmClassExtensionVisitor? {
-        if (type != JvmClassExtensionVisitor.TYPE) return null
-        return object : JvmClassExtensionVisitor() {
-            override fun visitAnonymousObjectOriginName(internalName: String) {
-                proto.setExtension(JvmProtoBuf.anonymousObjectOriginName, c[internalName])
-            }
-
-            override fun visitLocalDelegatedProperty(
-                flags: Int, name: String, getterFlags: Int, setterFlags: Int
-            ): KmPropertyVisitor = writeProperty(c, flags, name, getterFlags, setterFlags) {
-                proto.addExtension(JvmProtoBuf.classLocalVariable, it.build())
-            }
-
-            override fun visitModuleName(name: String) {
-                if (name != JvmProtoBufUtil.DEFAULT_MODULE_NAME) {
-                    proto.setExtension(JvmProtoBuf.classModuleName, c[name])
-                }
-            }
-
-            override fun visitJvmFlags(flags: Int) {
-                if (flags != 0) {
-                    proto.setExtension(JvmProtoBuf.jvmClassFlags, flags)
-                }
-            }
+    override fun writeClassExtensions(extension: KmClassExtension, proto: ProtoBuf.Class.Builder, c: WriteContext): Boolean {
+        if (extension.type != JvmClassExtensionVisitor.TYPE) return false
+        extension as JvmClassExtension
+        extension.anonymousObjectOriginName?.let { proto.setExtension(JvmProtoBuf.anonymousObjectOriginName, c[it]) }
+        extension.localDelegatedProperties.forEach {
+            proto.addExtension(JvmProtoBuf.classLocalVariable, c.writeProperty(it).build())
         }
+        extension.moduleName?.let { moduleName ->
+            if (moduleName != JvmProtoBufUtil.DEFAULT_MODULE_NAME) proto.setExtension(JvmProtoBuf.classModuleName, c[moduleName])
+        }
+        if (extension.jvmFlags != 0) proto.setExtension(JvmProtoBuf.jvmClassFlags, extension.jvmFlags)
+        return true
     }
 
     override fun writePackageExtensions(
-        type: KmExtensionType, proto: ProtoBuf.Package.Builder, c: WriteContext
-    ): KmPackageExtensionVisitor? {
-        if (type != JvmPackageExtensionVisitor.TYPE) return null
-        return object : JvmPackageExtensionVisitor() {
-            override fun visitLocalDelegatedProperty(
-                flags: Int, name: String, getterFlags: Int, setterFlags: Int
-            ): KmPropertyVisitor = writeProperty(c, flags, name, getterFlags, setterFlags) {
-                proto.addExtension(JvmProtoBuf.packageLocalVariable, it.build())
-            }
-
-            override fun visitModuleName(name: String) {
-                if (name != JvmProtoBufUtil.DEFAULT_MODULE_NAME) {
-                    proto.setExtension(JvmProtoBuf.packageModuleName, c[name])
-                }
+        extension: KmPackageExtension, proto: ProtoBuf.Package.Builder, c: WriteContext
+    ): Boolean {
+        if (extension.type != JvmPackageExtensionVisitor.TYPE) return false
+        extension as JvmPackageExtension
+        extension.localDelegatedProperties.forEach {
+            proto.addExtension(JvmProtoBuf.packageLocalVariable, c.writeProperty(it).build())
+        }
+        extension.moduleName?.let { name ->
+            if (name != JvmProtoBufUtil.DEFAULT_MODULE_NAME) {
+                proto.setExtension(JvmProtoBuf.packageModuleName, c[name])
             }
         }
+        return true
     }
 
     // PackageFragment is not used by JVM backend.

@@ -1584,11 +1584,8 @@ public final class kotlinx/metadata/jvm/KotlinModuleMetadata$Companion {
 	public static synthetic fun write$default (Lkotlinx/metadata/jvm/KotlinModuleMetadata$Companion;Lkotlinx/metadata/jvm/KmModule;[IILjava/lang/Object;)[B
 }
 
-public final class kotlinx/metadata/jvm/KotlinModuleMetadata$Writer : kotlinx/metadata/jvm/KmModuleVisitor {
+public final class kotlinx/metadata/jvm/KotlinModuleMetadata$Writer {
 	public fun <init> ()V
-	public fun visitAnnotation (Lkotlinx/metadata/KmAnnotation;)V
-	public fun visitOptionalAnnotationClass ()Lkotlinx/metadata/KmClassVisitor;
-	public fun visitPackageParts (Ljava/lang/String;Ljava/util/List;Ljava/util/Map;)V
 	public final fun write ([I)[B
 	public static synthetic fun write$default (Lkotlinx/metadata/jvm/KotlinModuleMetadata$Writer;[IILjava/lang/Object;)[B
 }

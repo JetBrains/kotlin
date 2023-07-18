@@ -183,7 +183,7 @@ private fun printType(type: KmType): String {
     val abbreviatedType = type.abbreviatedType?.let(::printType)
     val outerType = type.outerType?.let(::printType)
     val platformTypeUpperBound = type.flexibleTypeUpperBound?.let {
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         (if (it.typeFlexibilityId == JvmTypeExtensionVisitor.PLATFORM_TYPE_ID) {
             printType(it.type)
         } else null)

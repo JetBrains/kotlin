@@ -151,9 +151,9 @@ internal class KlibMetadataExtensions : MetadataExtensions {
         }
     }
 
-    override fun writeClassExtensions(type: KmExtensionType, proto: ProtoBuf.Class.Builder, c: WriteContext): KmClassExtensionVisitor? {
-        if (type != KlibClassExtensionVisitor.TYPE) return null
-        return object : KlibClassExtensionVisitor() {
+    override fun writeClassExtensions(extension: KmClassExtension, proto: ProtoBuf.Class.Builder, c: WriteContext): Boolean {
+        if (extension.type != KlibClassExtensionVisitor.TYPE) return false
+        extension.accept(object : KlibClassExtensionVisitor() {
             override fun visitAnnotation(annotation: KmAnnotation) {
                 proto.addExtension(
                     KlibMetadataProtoBuf.classAnnotation,
@@ -191,21 +191,23 @@ internal class KlibMetadataExtensions : MetadataExtensions {
                     proto.setEnumEntry(entryIndex, entryProto.build())
                 }
             }
-        }
+        })
+        return true
     }
 
     override fun writePackageExtensions(
-        type: KmExtensionType,
+        extension: KmPackageExtension,
         proto: ProtoBuf.Package.Builder,
         c: WriteContext
-    ): KmPackageExtensionVisitor? {
-        if (type != KlibPackageExtensionVisitor.TYPE) return null
-        return object : KlibPackageExtensionVisitor() {
+    ): Boolean {
+        if (extension.type != KlibPackageExtensionVisitor.TYPE) return false
+        extension.accept(object : KlibPackageExtensionVisitor() {
             override fun visitFqName(name: String) {
                 val nameIdx = (c.strings as StringTableImpl).getPackageFqNameIndex(FqName(name))
                 proto.setExtension(KlibMetadataProtoBuf.packageFqName, nameIdx)
             }
-        }
+        })
+        return true
     }
 
     override fun writeModuleFragmentExtensions(

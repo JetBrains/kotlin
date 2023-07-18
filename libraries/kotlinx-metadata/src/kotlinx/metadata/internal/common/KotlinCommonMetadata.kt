@@ -2,13 +2,14 @@
  * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-@file:Suppress("DEPRECATION")
+@file:Suppress("DEPRECATION_ERROR")
 
 package kotlinx.metadata.internal.common
 
 import kotlinx.metadata.*
 import kotlinx.metadata.VISITOR_API_MESSAGE
-import kotlinx.metadata.internal.accept
+import kotlinx.metadata.internal.toKmPackage
+import kotlinx.metadata.internal.toKmClass
 import kotlinx.metadata.internal.extensions.KmModuleFragmentExtension
 import kotlinx.metadata.internal.extensions.MetadataExtensions
 import kotlinx.metadata.internal.extensions.singleOfType
@@ -23,23 +24,33 @@ import java.io.ByteArrayInputStream
  * distribution can also be read with this reader.
  */
 public class KotlinCommonMetadata private constructor(private val proto: ProtoBuf.PackageFragment) {
+
+    public val kmModuleFragment: KmModuleFragment = readImpl()
+
+    @Deprecated(
+        "To avoid excessive copying, use .kmModuleFragment property instead. Note that it returns a view and not a copy.",
+        ReplaceWith("kmModuleFragment"),
+        DeprecationLevel.WARNING
+    )
     public fun toKmModuleFragment(): KmModuleFragment =
-        KmModuleFragment().apply(this::accept)
+        KmModuleFragment().apply { kmModuleFragment.accept(this) }
 
     // private because there are no use-cases and it is not finished
     private class Writer : KmModuleFragmentVisitor() {
         // TODO
     }
 
-    public fun accept(v: KmModuleFragmentVisitor) {
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
+    public fun accept(v: KmModuleFragmentVisitor): Unit = kmModuleFragment.accept(v)
+
+    private fun readImpl(): KmModuleFragment {
+        val v = KmModuleFragment()
         val strings = NameResolverImpl(proto.strings, proto.qualifiedNames)
         if (proto.hasPackage()) {
-            v.visitPackage()?.let { proto.`package`.accept(it, strings) }
+           v.pkg = proto.`package`.toKmPackage(strings)
         }
-        for (klass in proto.class_List) {
-            v.visitClass()?.let { klass.accept(it, strings) }
-        }
-        v.visitEnd()
+        proto.class_List.mapTo(v.classes) { it.toKmClass(strings) }
+        return v
     }
 
     public companion object {
@@ -62,7 +73,6 @@ public class KotlinCommonMetadata private constructor(private val proto: ProtoBu
  *
  * Can be read with [KotlinCommonMetadata.read].
  */
-@Suppress("DEPRECATION")
 public class KmModuleFragment : KmModuleFragmentVisitor() {
 
     /**
@@ -75,18 +85,18 @@ public class KmModuleFragment : KmModuleFragmentVisitor() {
      */
     public val classes: MutableList<KmClass> = ArrayList()
 
-    private val extensions: List<KmModuleFragmentExtension> =
+    internal val extensions: List<KmModuleFragmentExtension> =
         MetadataExtensions.INSTANCES.map(MetadataExtensions::createModuleFragmentExtensions)
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitPackage(): KmPackageVisitor? =
         KmPackage().also { pkg = it }
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitExtensions(type: KmExtensionType): KmModuleFragmentExtensionVisitor? =
         extensions.singleOfType(type)
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitClass(): KmClassVisitor? =
         KmClass().addTo(classes)
 
@@ -95,7 +105,7 @@ public class KmModuleFragment : KmModuleFragmentVisitor() {
      *
      * @param visitor the visitor which will visit data in the module fragment.
      */
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     public fun accept(visitor: KmModuleFragmentVisitor) {
         pkg?.let { visitor.visitPackage()?.let(it::accept) }
         classes.forEach { visitor.visitClass()?.let(it::accept) }
@@ -110,8 +120,7 @@ public class KmModuleFragment : KmModuleFragmentVisitor() {
  *
  * When using this class, [visitEnd] must be called exactly once and after calls to all other visit* methods.
  */
-@Deprecated(VISITOR_API_MESSAGE)
-@Suppress("DEPRECATION")
+@Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
 public abstract class KmModuleFragmentVisitor @JvmOverloads constructor(private val delegate: KmModuleFragmentVisitor? = null) {
 
     /**
@@ -145,5 +154,5 @@ public abstract class KmModuleFragmentVisitor @JvmOverloads constructor(private 
 /**
  * A visitor to visit platform-specific extensions for a module fragment.
  */
-@Deprecated(VISITOR_API_MESSAGE)
+@Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
 public interface KmModuleFragmentExtensionVisitor : KmExtensionVisitor

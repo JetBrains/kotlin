@@ -11,7 +11,7 @@ import kotlinx.metadata.internal.common.*
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import java.util.*
 
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION_ERROR")
 public interface MetadataExtensions {
     public fun readClassExtensions(v: KmClassVisitor, proto: ProtoBuf.Class, c: ReadContext)
 
@@ -33,9 +33,9 @@ public interface MetadataExtensions {
 
     public fun readValueParameterExtensions(v: KmValueParameterVisitor, proto: ProtoBuf.ValueParameter, c: ReadContext)
 
-    public fun writeClassExtensions(type: KmExtensionType, proto: ProtoBuf.Class.Builder, c: WriteContext): KmClassExtensionVisitor?
+    public fun writeClassExtensions(extension: KmClassExtension, proto: ProtoBuf.Class.Builder, c: WriteContext): Boolean
 
-    public fun writePackageExtensions(type: KmExtensionType, proto: ProtoBuf.Package.Builder, c: WriteContext): KmPackageExtensionVisitor?
+    public fun writePackageExtensions(extension: KmPackageExtension, proto: ProtoBuf.Package.Builder, c: WriteContext): Boolean
 
     public fun writeModuleFragmentExtensions(
         type: KmExtensionType, proto: ProtoBuf.PackageFragment.Builder, c: WriteContext

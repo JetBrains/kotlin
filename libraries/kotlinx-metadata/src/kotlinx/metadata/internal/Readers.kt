@@ -2,13 +2,13 @@
  * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-@file:Suppress("DEPRECATION")
+@file:Suppress("DEPRECATION") // flags
 
 package kotlinx.metadata.internal
 
 import kotlinx.metadata.*
+import kotlinx.metadata.internal.common.KmModuleFragment
 import kotlinx.metadata.internal.extensions.MetadataExtensions
-import kotlinx.metadata.internal.common.KmModuleFragmentVisitor
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
 import kotlin.contracts.ExperimentalContracts
@@ -49,11 +49,11 @@ public class ReadContext(
 }
 
 @OptIn(ExperimentalContextReceivers::class)
-public fun ProtoBuf.Class.accept(
-    v: KmClassVisitor,
+public fun ProtoBuf.Class.toKmClass(
     strings: NameResolver,
-    contextExtensions: List<ReadContextExtension> = emptyList()
-) {
+    contextExtensions: List<ReadContextExtension> = emptyList(),
+): KmClass {
+    val v = KmClass()
     val c = ReadContext(
         strings,
         TypeTable(typeTable),
@@ -61,61 +61,36 @@ public fun ProtoBuf.Class.accept(
         contextExtensions = contextExtensions
     ).withTypeParameters(typeParameterList)
 
-    v.visit(flags, c.className(fqName))
+    v.flags = flags
+    v.name = c.className(fqName)
 
-    for (typeParameter in typeParameterList) {
-        typeParameter.accept(v::visitTypeParameter, c)
-    }
-
-    for (supertype in supertypes(c.types)) {
-        v.visitSupertype(supertype.typeFlags)?.let { supertype.accept(it, c) }
-    }
-
-    for (constructor in constructorList) {
-        v.visitConstructor(constructor.flags)?.let { constructor.accept(it, c) }
-    }
-
+    typeParameterList.mapTo(v.typeParameters) { it.toKmTypeParameter(c) }
+    supertypes(c.types).mapTo(v.supertypes) { it.toKmType(c) }
+    constructorList.mapTo(v.constructors) { it.toKmConstructor(c) }
     v.visitDeclarations(functionList, propertyList, typeAliasList, c)
-
     if (hasCompanionObjectName()) {
-        v.visitCompanionObject(c[companionObjectName])
+        v.companionObject = c[companionObjectName]
     }
 
-    for (nestedClassName in nestedClassNameList) {
-        v.visitNestedClass(c[nestedClassName])
-    }
-
+    nestedClassNameList.mapTo(v.nestedClasses) { c[it] }
     for (enumEntry in enumEntryList) {
-        if (!enumEntry.hasName()) {
-            throw InconsistentKotlinMetadataException("No name for EnumEntry")
-        }
-        v.visitEnumEntry(c[enumEntry.name])
+        if (!enumEntry.hasName()) throw InconsistentKotlinMetadataException("No name for EnumEntry")
+        v.enumEntries.add(c[enumEntry.name])
     }
-
-    for (sealedSubclassFqName in sealedSubclassFqNameList) {
-        v.visitSealedSubclass(c.className(sealedSubclassFqName))
-    }
-
+    sealedSubclassFqNameList.mapTo(v.sealedSubclasses) { c.className(it) }
     if (hasInlineClassUnderlyingPropertyName()) {
-        v.visitInlineClassUnderlyingPropertyName(c[inlineClassUnderlyingPropertyName])
+        v.inlineClassUnderlyingPropertyName = c[inlineClassUnderlyingPropertyName]
     }
-    loadInlineClassUnderlyingType(c)?.let { underlyingType ->
-        v.visitInlineClassUnderlyingType(underlyingType.typeFlags)?.let { underlyingType.accept(it, c) }
-    }
+    v.inlineClassUnderlyingType = loadInlineClassUnderlyingType(c)?.toKmType(c)
 
-    for (contextReceiverType in contextReceiverTypes(c.types)) {
-        v.visitContextReceiverType(contextReceiverType.typeFlags)?.let { contextReceiverType.accept(it, c) }
-    }
-
-    for (versionRequirement in versionRequirementList) {
-        v.visitVersionRequirement()?.let { acceptVersionRequirementVisitor(versionRequirement, it, c) }
-    }
+    contextReceiverTypes(c.types).mapTo(v.contextReceiverTypes) { it.toKmType(c) }
+    versionRequirementList.mapTo(v.versionRequirements) { readVersionRequirement(it, c) }
 
     for (extension in c.extensions) {
         extension.readClassExtensions(v, this, c)
     }
 
-    v.visitEnd()
+    return v
 }
 
 private fun ProtoBuf.Class.loadInlineClassUnderlyingType(c: ReadContext): ProtoBuf.Type? {
@@ -130,11 +105,11 @@ private fun ProtoBuf.Class.loadInlineClassUnderlyingType(c: ReadContext): ProtoB
         ?.returnType(c.types)
 }
 
-public fun ProtoBuf.Package.accept(
-    v: KmPackageVisitor,
+public fun ProtoBuf.Package.toKmPackage(
     strings: NameResolver,
-    contextExtensions: List<ReadContextExtension> = emptyList()
-) {
+    contextExtensions: List<ReadContextExtension> = emptyList(),
+): KmPackage {
+    val v = KmPackage()
     val c = ReadContext(
         strings,
         TypeTable(typeTable),
@@ -148,14 +123,14 @@ public fun ProtoBuf.Package.accept(
         extension.readPackageExtensions(v, this, c)
     }
 
-    v.visitEnd()
+    return v
 }
 
-public fun ProtoBuf.PackageFragment.accept(
-    v: KmModuleFragmentVisitor,
+public fun ProtoBuf.PackageFragment.toKmModuleFragment(
     strings: NameResolver,
-    contextExtensions: List<ReadContextExtension> = emptyList()
-) {
+    contextExtensions: List<ReadContextExtension> = emptyList(),
+): KmModuleFragment {
+    val v = KmModuleFragment()
     val c = ReadContext(
         strings,
         TypeTable(ProtoBuf.TypeTable.newBuilder().build()),
@@ -163,223 +138,155 @@ public fun ProtoBuf.PackageFragment.accept(
         contextExtensions = contextExtensions
     )
 
-    v.visitPackage()?.let { `package`.accept(it, strings, contextExtensions) }
-
-    class_List.forEach { clazz ->
-        v.visitClass()?.let { clazz.accept(it, strings, contextExtensions) }
-    }
+    v.pkg = `package`.toKmPackage(strings, contextExtensions)
+    class_List.mapTo(v.classes) { it.toKmClass(strings, contextExtensions) }
 
     for (extension in c.extensions) {
         extension.readModuleFragmentExtensions(v, this, c)
     }
 
-    v.visitEnd()
+    return v
 }
 
-private fun KmDeclarationContainerVisitor.visitDeclarations(
-    functions: List<ProtoBuf.Function>,
-    properties: List<ProtoBuf.Property>,
-    typeAliases: List<ProtoBuf.TypeAlias>,
-    c: ReadContext
+private fun KmDeclarationContainer.visitDeclarations(
+    protoFunctions: List<ProtoBuf.Function>,
+    protoProperties: List<ProtoBuf.Property>,
+    protoTypeAliases: List<ProtoBuf.TypeAlias>,
+    c: ReadContext,
 ) {
-    for (function in functions) {
-        visitFunction(function.flags, c[function.name])?.let { function.accept(it, c) }
-    }
-
-    for (property in properties) {
-        visitProperty(
-            property.flags, c[property.name], property.getPropertyGetterFlags(), property.getPropertySetterFlags()
-        )?.let { property.accept(it, c) }
-    }
-
-    for (typeAlias in typeAliases) {
-        visitTypeAlias(typeAlias.flags, c[typeAlias.name])?.let { typeAlias.accept(it, c) }
-    }
+    protoFunctions.mapTo(functions) { it.toKmFunction(c) }
+    protoProperties.mapTo(properties) { it.toKmProperty(c) }
+    protoTypeAliases.mapTo(typeAliases) { it.toKmTypeAlias(c) }
 }
 
-public fun ProtoBuf.Function.accept(v: KmLambdaVisitor, strings: NameResolver) {
+public fun ProtoBuf.Function.toKmLambda(strings: NameResolver): KmLambda {
+    val v = KmLambda()
     val c = ReadContext(strings, TypeTable(typeTable), VersionRequirementTable.EMPTY)
-
-    v.visitFunction(flags, c[name])?.let { accept(it, c) }
-
-    v.visitEnd()
+    v.function = this.toKmFunction(c)
+    return v
 }
 
-private fun ProtoBuf.Constructor.accept(v: KmConstructorVisitor, c: ReadContext) {
-    for (parameter in valueParameterList) {
-        v.visitValueParameter(parameter.flags, c[parameter.name])?.let { parameter.accept(it, c) }
-    }
-
-    for (versionRequirement in versionRequirementList) {
-        v.visitVersionRequirement()?.let { acceptVersionRequirementVisitor(versionRequirement, it, c) }
-    }
+private fun ProtoBuf.Constructor.toKmConstructor(c: ReadContext): KmConstructor {
+    val v = KmConstructor(flags)
+    valueParameterList.mapTo(v.valueParameters) { it.toKmValueParameter(c) }
+    versionRequirementList.mapTo(v.versionRequirements) { readVersionRequirement(it, c) }
 
     for (extension in c.extensions) {
         extension.readConstructorExtensions(v, this, c)
     }
 
-    v.visitEnd()
+    return v
 }
 
 @OptIn(ExperimentalContextReceivers::class)
-private fun ProtoBuf.Function.accept(v: KmFunctionVisitor, outer: ReadContext) {
+private fun ProtoBuf.Function.toKmFunction(outer: ReadContext): KmFunction {
+    val v = KmFunction(flags, outer[name])
     val c = outer.withTypeParameters(typeParameterList)
 
-    for (typeParameter in typeParameterList) {
-        typeParameter.accept(v::visitTypeParameter, c)
-    }
+    typeParameterList.mapTo(v.typeParameters) { it.toKmTypeParameter(c) }
+    v.receiverParameterType = receiverType(c.types)?.toKmType(c)
+    contextReceiverTypes(c.types).mapTo(v.contextReceiverTypes) { it.toKmType(c) }
+    valueParameterList.mapTo(v.valueParameters) { it.toKmValueParameter(c) }
+    v.returnType = returnType(c.types).toKmType(c)
 
-    receiverType(c.types)?.let { receiverType ->
-        v.visitReceiverParameterType(receiverType.typeFlags)?.let { receiverType.accept(it, c) }
-    }
-
-    for (contextReceiverType in contextReceiverTypes(c.types)) {
-        v.visitContextReceiverType(contextReceiverType.typeFlags)?.let { contextReceiverType.accept(it, c) }
-    }
-
-    for (parameter in valueParameterList) {
-        v.visitValueParameter(parameter.flags, c[parameter.name])?.let { parameter.accept(it, c) }
-    }
-
-    returnType(c.types).let { returnType ->
-        v.visitReturnType(returnType.typeFlags)?.let { returnType.accept(it, c) }
-    }
-
+    @OptIn(ExperimentalContracts::class)
     if (hasContract()) {
-        @OptIn(ExperimentalContracts::class) v.visitContract()?.let { contract.accept(it, c) }
+        v.contract = contract.toKmContract(c)
     }
 
-    for (versionRequirement in versionRequirementList) {
-        v.visitVersionRequirement()?.let { acceptVersionRequirementVisitor(versionRequirement, it, c) }
-    }
+    versionRequirementList.mapTo(v.versionRequirements) { readVersionRequirement(it, c) }
 
     for (extension in c.extensions) {
         extension.readFunctionExtensions(v, this, c)
     }
 
-    v.visitEnd()
+    return v
 }
 
 @OptIn(ExperimentalContextReceivers::class)
-public fun ProtoBuf.Property.accept(v: KmPropertyVisitor, outer: ReadContext) {
+public fun ProtoBuf.Property.toKmProperty(outer: ReadContext): KmProperty {
+    val v = KmProperty(flags, outer[name], getPropertyGetterFlags(), getPropertySetterFlags())
     val c = outer.withTypeParameters(typeParameterList)
 
-    for (typeParameter in typeParameterList) {
-        typeParameter.accept(v::visitTypeParameter, c)
-    }
-
-    receiverType(c.types)?.let { receiverType ->
-        v.visitReceiverParameterType(receiverType.typeFlags)?.let { receiverType.accept(it, c) }
-    }
-
-    for (contextReceiverType in contextReceiverTypes(c.types)) {
-        v.visitContextReceiverType(contextReceiverType.typeFlags)?.let { contextReceiverType.accept(it, c) }
-    }
-
+    typeParameterList.mapTo(v.typeParameters) { it.toKmTypeParameter(c) }
+    v.receiverParameterType = receiverType(c.types)?.toKmType(c)
+    contextReceiverTypes(c.types).mapTo(v.contextReceiverTypes) { it.toKmType(c) }
     if (hasSetterValueParameter()) {
-        val parameter = setterValueParameter
-        v.visitSetterParameter(parameter.flags, c[parameter.name])?.let { parameter.accept(it, c) }
+        v.setterParameter = setterValueParameter.toKmValueParameter(c)
     }
-
-    returnType(c.types).let { returnType ->
-        v.visitReturnType(returnType.typeFlags)?.let { returnType.accept(it, c) }
-    }
-
-    for (versionRequirement in versionRequirementList) {
-        v.visitVersionRequirement()?.let { acceptVersionRequirementVisitor(versionRequirement, it, c) }
-    }
+    v.returnType = returnType(c.types).toKmType(c)
+    versionRequirementList.mapTo(v.versionRequirements) { readVersionRequirement(it, c) }
 
     for (extension in c.extensions) {
         extension.readPropertyExtensions(v, this, c)
     }
 
-    v.visitEnd()
+    return v
 }
 
-private fun ProtoBuf.TypeAlias.accept(v: KmTypeAliasVisitor, outer: ReadContext) {
+private fun ProtoBuf.TypeAlias.toKmTypeAlias(outer: ReadContext): KmTypeAlias {
+    val v = KmTypeAlias(flags, outer[name])
+
     val c = outer.withTypeParameters(typeParameterList)
 
-    for (typeParameter in typeParameterList) {
-        typeParameter.accept(v::visitTypeParameter, c)
-    }
+    typeParameterList.mapTo(v.typeParameters) { it.toKmTypeParameter(c) }
+    v.underlyingType = underlyingType(c.types).toKmType(c)
+    v.expandedType = expandedType(c.types).toKmType(c)
+    annotationList.mapTo(v.annotations) { it.readAnnotation(c.strings) }
 
-    underlyingType(c.types).let { underlyingType ->
-        v.visitUnderlyingType(underlyingType.typeFlags)?.let { underlyingType.accept(it, c) }
-    }
-
-    expandedType(c.types).let { expandedType ->
-        v.visitExpandedType(expandedType.typeFlags)?.let { expandedType.accept(it, c) }
-    }
-
-    for (annotation in annotationList) {
-        v.visitAnnotation(annotation.readAnnotation(c.strings))
-    }
-
-    for (versionRequirement in versionRequirementList) {
-        v.visitVersionRequirement()?.let { acceptVersionRequirementVisitor(versionRequirement, it, c) }
-    }
+    versionRequirementList.mapTo(v.versionRequirements) { readVersionRequirement(it, c) }
 
     for (extension in c.extensions) {
         extension.readTypeAliasExtensions(v, this, c)
     }
 
-    v.visitEnd()
+    return v
 }
 
-private fun ProtoBuf.ValueParameter.accept(v: KmValueParameterVisitor, c: ReadContext) {
-    type(c.types).let { type ->
-        v.visitType(type.typeFlags)?.let { type.accept(it, c) }
-    }
+private fun ProtoBuf.ValueParameter.toKmValueParameter(c: ReadContext): KmValueParameter {
+    val v = KmValueParameter(flags, c[name])
+    v.type = type(c.types).toKmType(c)
 
-    varargElementType(c.types)?.let { varargElementType ->
-        v.visitVarargElementType(varargElementType.typeFlags)?.let { varargElementType.accept(it, c) }
-    }
+    v.varargElementType = varargElementType(c.types)?.toKmType(c)
 
     for (extension in c.extensions) {
         extension.readValueParameterExtensions(v, this, c)
     }
 
-    v.visitEnd()
+    return v
 }
 
-private inline fun ProtoBuf.TypeParameter.accept(
-    visit: (flags: Int, name: String, id: Int, variance: KmVariance) -> KmTypeParameterVisitor?,
-    c: ReadContext
-) {
+private fun ProtoBuf.TypeParameter.toKmTypeParameter(
+    c: ReadContext,
+): KmTypeParameter {
     val variance = when (requireNotNull(variance)) {
         ProtoBuf.TypeParameter.Variance.IN -> KmVariance.IN
         ProtoBuf.TypeParameter.Variance.OUT -> KmVariance.OUT
         ProtoBuf.TypeParameter.Variance.INV -> KmVariance.INVARIANT
     }
+    val ktp = KmTypeParameter(typeParameterFlags, c[name], id, variance)
 
-    visit(typeParameterFlags, c[name], id, variance)?.let { accept(it, c) }
-}
-
-private fun ProtoBuf.TypeParameter.accept(v: KmTypeParameterVisitor, c: ReadContext) {
-    for (upperBound in upperBounds(c.types)) {
-        v.visitUpperBound(upperBound.typeFlags)?.let { upperBound.accept(it, c) }
-    }
+    upperBounds(c.types).mapTo(ktp.upperBounds) { it.toKmType(c) }
 
     for (extension in c.extensions) {
-        extension.readTypeParameterExtensions(v, this, c)
+        extension.readTypeParameterExtensions(ktp, this, c)
     }
 
-    v.visitEnd()
+    return ktp
 }
 
-private fun ProtoBuf.Type.accept(v: KmTypeVisitor, c: ReadContext) {
-    when {
-        hasClassName() -> v.visitClass(c.className(className))
-        hasTypeAliasName() -> v.visitTypeAlias(c.className(typeAliasName))
-        hasTypeParameter() -> v.visitTypeParameter(typeParameter)
+private fun ProtoBuf.Type.toKmType(c: ReadContext): KmType {
+    val v = KmType(typeFlags)
+    v.classifier = when {
+        hasClassName() -> KmClassifier.Class(c.className(className))
+        hasTypeAliasName() -> KmClassifier.TypeAlias(c.className(typeAliasName))
+        hasTypeParameter() -> KmClassifier.TypeParameter(typeParameter)
         hasTypeParameterName() -> {
             val id = c.getTypeParameterId(typeParameterName)
                 ?: throw InconsistentKotlinMetadataException("No type parameter id for ${c[typeParameterName]}")
-            v.visitTypeParameter(id)
+            KmClassifier.TypeParameter(id)
         }
-        else -> {
-            throw InconsistentKotlinMetadataException("No classifier (class, type alias or type parameter) recorded for Type")
-        }
+        else -> throw InconsistentKotlinMetadataException("No classifier (class, type alias or type parameter) recorded for Type")
     }
 
     for (argument in argumentList) {
@@ -393,35 +300,28 @@ private fun ProtoBuf.Type.accept(v: KmTypeVisitor, c: ReadContext) {
         if (variance != null) {
             val argumentType = argument.type(c.types)
                 ?: throw InconsistentKotlinMetadataException("No type argument for non-STAR projection in Type")
-            v.visitArgument(argumentType.typeFlags, variance)?.let { argumentType.accept(it, c) }
+            v.arguments.add(KmTypeProjection(variance, argumentType.toKmType(c)))
         } else {
-            v.visitStarProjection()
+            v.arguments.add(KmTypeProjection.STAR)
         }
     }
 
-    abbreviatedType(c.types)?.let { abbreviatedType ->
-        v.visitAbbreviatedType(abbreviatedType.typeFlags)?.let { abbreviatedType.accept(it, c) }
-    }
+    v.abbreviatedType = abbreviatedType(c.types)?.toKmType(c)
+    v.outerType = outerType(c.types)?.toKmType(c)
 
-    outerType(c.types)?.let { outerType ->
-        v.visitOuterType(outerType.typeFlags)?.let { outerType.accept(it, c) }
-    }
-
-    flexibleUpperBound(c.types)?.let { upperBound ->
-        v.visitFlexibleTypeUpperBound(
-            upperBound.typeFlags,
-            if (hasFlexibleTypeCapabilitiesId()) c[flexibleTypeCapabilitiesId] else null
-        )?.let { upperBound.accept(it, c) }
+    v.flexibleTypeUpperBound = flexibleUpperBound(c.types)?.toKmType(c)?.let {
+        KmFlexibleTypeUpperBound(it, if (hasFlexibleTypeCapabilitiesId()) c[flexibleTypeCapabilitiesId] else null)
     }
 
     for (extension in c.extensions) {
         extension.readTypeExtensions(v, this, c)
     }
 
-    v.visitEnd()
+    return v
 }
 
-private fun acceptVersionRequirementVisitor(id: Int, v: KmVersionRequirementVisitor, c: ReadContext) {
+private fun readVersionRequirement(id: Int, c: ReadContext): KmVersionRequirement {
+    val v = KmVersionRequirement()
     val message = VersionRequirement.create(id, c.strings, c.versionRequirements)
         ?: throw InconsistentKotlinMetadataException("No VersionRequirement with the given id in the table")
 
@@ -437,16 +337,19 @@ private fun acceptVersionRequirementVisitor(id: Int, v: KmVersionRequirementVisi
         DeprecationLevel.HIDDEN -> KmVersionRequirementLevel.HIDDEN
     }
 
-    v.visit(kind, level, message.errorCode, message.message)
+    v.kind = kind
+    v.level = level
+    v.errorCode = message.errorCode
+    v.message = message.message
 
     val (major, minor, patch) = message.version
-    v.visitVersion(major, minor, patch)
-
-    v.visitEnd()
+    v.version = KmVersion(major, minor, patch)
+    return v
 }
 
 @ExperimentalContracts
-private fun ProtoBuf.Contract.accept(v: KmContractVisitor, c: ReadContext) {
+private fun ProtoBuf.Contract.toKmContract(c: ReadContext): KmContract {
+    val v = KmContract()
     for (effect in effectList) {
         if (!effect.hasEffectType()) continue
 
@@ -462,34 +365,32 @@ private fun ProtoBuf.Contract.accept(v: KmContractVisitor, c: ReadContext) {
             ProtoBuf.Effect.InvocationKind.AT_LEAST_ONCE -> KmEffectInvocationKind.AT_LEAST_ONCE
         }
 
-        v.visitEffect(effectType, effectKind)?.let { effect.accept(it, c) }
+        v.effects.add(effect.toKmEffect(effectType, effectKind, c))
     }
 
-    v.visitEnd()
+    return v
 }
 
 @ExperimentalContracts
-private fun ProtoBuf.Effect.accept(v: KmEffectVisitor, c: ReadContext) {
-    for (constructorArgument in effectConstructorArgumentList) {
-        v.visitConstructorArgument()?.let { constructorArgument.accept(it, c) }
-    }
+private fun ProtoBuf.Effect.toKmEffect(type: KmEffectType, kind: KmEffectInvocationKind?, c: ReadContext): KmEffect {
+    val v = KmEffect(type, kind)
+    effectConstructorArgumentList.mapTo(v.constructorArguments) { it.toKmEffectExpression(c) }
 
     if (hasConclusionOfConditionalEffect()) {
-        v.visitConclusionOfConditionalEffect()?.let { conclusionOfConditionalEffect.accept(it, c) }
+        v.conclusion = conclusionOfConditionalEffect.toKmEffectExpression(c)
     }
 
-    v.visitEnd()
+    return v
 }
 
 @ExperimentalContracts
-private fun ProtoBuf.Expression.accept(v: KmEffectExpressionVisitor, c: ReadContext) {
-    v.visit(
-        flags,
-        if (hasValueParameterReference()) valueParameterReference else null
-    )
+private fun ProtoBuf.Expression.toKmEffectExpression(c: ReadContext): KmEffectExpression {
+    val v = KmEffectExpression()
+    v.flags = flags
+    v.parameterIndex = if (hasValueParameterReference()) valueParameterReference else null
 
     if (hasConstantValue()) {
-        v.visitConstantValue(
+        v.constantValue = KmConstantValue(
             when (requireNotNull(constantValue)) {
                 ProtoBuf.Expression.ConstantValue.TRUE -> true
                 ProtoBuf.Expression.ConstantValue.FALSE -> false
@@ -498,19 +399,12 @@ private fun ProtoBuf.Expression.accept(v: KmEffectExpressionVisitor, c: ReadCont
         )
     }
 
-    isInstanceType(c.types)?.let { type ->
-        v.visitIsInstanceType(type.typeFlags)?.let { type.accept(it, c) }
-    }
+    v.isInstanceType = isInstanceType(c.types)?.toKmType(c)
 
-    for (andArgument in andArgumentList) {
-        v.visitAndArgument()?.let { andArgument.accept(it, c) }
-    }
+    andArgumentList.mapTo(v.andArguments) { it.toKmEffectExpression(c) }
+    orArgumentList.mapTo(v.orArguments) { it.toKmEffectExpression(c) }
 
-    for (orArgument in orArgumentList) {
-        v.visitOrArgument()?.let { orArgument.accept(it, c) }
-    }
-
-    v.visitEnd()
+    return v
 }
 
 private val ProtoBuf.Type.typeFlags: Int

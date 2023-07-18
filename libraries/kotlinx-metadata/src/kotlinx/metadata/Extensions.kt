@@ -2,7 +2,7 @@
  * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-@file:Suppress("DEPRECATION")
+@file:Suppress("DEPRECATION_ERROR")
 
 package kotlinx.metadata
 
@@ -29,7 +29,7 @@ import kotlin.reflect.KClass
  * ```
  * In case an extension visitor of an unrelated type is returned, the code using the visitor API must ignore that visitor.
  */
-@Deprecated(VISITOR_API_MESSAGE)
+@Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
 public class KmExtensionType(private val klass: KClass<out KmExtensionVisitor>) {
     override fun equals(other: Any?): Boolean =
         other is KmExtensionType && klass == other.klass
@@ -44,7 +44,7 @@ public class KmExtensionType(private val klass: KClass<out KmExtensionVisitor>) 
 /**
  * A base interface for all extension visitors.
  */
-@Deprecated(VISITOR_API_MESSAGE)
+@Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
 public interface KmExtensionVisitor {
     /**
      * Type of this extension visitor.
@@ -55,59 +55,59 @@ public interface KmExtensionVisitor {
 /**
  * A visitor to visit platform-specific extensions for a declaration container, such as a class or a package fragment.
  */
-@Deprecated(VISITOR_API_MESSAGE)
+@Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
 public interface KmDeclarationContainerExtensionVisitor : KmExtensionVisitor
 
 /**
  * A visitor to visit platform-specific extensions for a class.
  */
-@Deprecated(VISITOR_API_MESSAGE)
+@Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
 public interface KmClassExtensionVisitor : KmDeclarationContainerExtensionVisitor
 
 /**
  * A visitor to visit platform-specific extensions for a package fragment.
  */
-@Deprecated(VISITOR_API_MESSAGE)
+@Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
 public interface KmPackageExtensionVisitor : KmDeclarationContainerExtensionVisitor
 
 /**
  * A visitor to visit platform-specific extensions for a function.
  */
-@Deprecated(VISITOR_API_MESSAGE)
+@Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
 public interface KmFunctionExtensionVisitor : KmExtensionVisitor
 
 /**
  * A visitor to visit platform-specific extensions for a property.
  */
-@Deprecated(VISITOR_API_MESSAGE)
+@Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
 public interface KmPropertyExtensionVisitor : KmExtensionVisitor
 
 /**
  * A visitor to visit platform-specific extensions for a constructor.
  */
-@Deprecated(VISITOR_API_MESSAGE)
+@Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
 public interface KmConstructorExtensionVisitor : KmExtensionVisitor
 
 /**
  * A visitor to visit platform-specific extensions for a type parameter.
  */
-@Deprecated(VISITOR_API_MESSAGE)
+@Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
 public interface KmTypeParameterExtensionVisitor : KmExtensionVisitor
 
 /**
  * A visitor to visit platform-specific extensions for a type.
  */
-@Deprecated(VISITOR_API_MESSAGE)
+@Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
 public interface KmTypeExtensionVisitor : KmExtensionVisitor
 
 /**
  * A visitor to visit platform-specific extensions for a type alias.
  */
-@Deprecated(VISITOR_API_MESSAGE)
+@Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
 public interface KmTypeAliasExtensionVisitor : KmExtensionVisitor
 
 /**
  * A visitor to visit platform-specific extensions for a value parameter.
  */
-@Deprecated(VISITOR_API_MESSAGE)
+@Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
 public interface KmValueParameterExtensionVisitor : KmExtensionVisitor

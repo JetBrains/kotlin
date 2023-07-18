@@ -60,7 +60,6 @@ private fun compileAndPrintAllFiles(
     useK2: Boolean,
 ) {
     val main = StringBuilder()
-    val afterVisitors = StringBuilder()
     val afterNodes = StringBuilder()
 
     val kotlinp = Kotlinp(KotlinpSettings(isVerbose = true, sortDeclarations = true))
@@ -70,11 +69,10 @@ private fun compileAndPrintAllFiles(
         when (outputFile.extension) {
             "kotlin_module" -> {
                 val moduleFile = kotlinp.readModuleFile(outputFile)!!
-                val transformedWithVisitors = KotlinModuleMetadata.read(transformModuleFileWithReadWriteVisitors(moduleFile))
                 val transformedWithNodes = KotlinModuleMetadata.read(transformModuleFileWithNodes(moduleFile))
 
                 for ((sb, moduleFileToRender) in listOf(
-                    main to moduleFile, afterVisitors to transformedWithVisitors, afterNodes to transformedWithNodes
+                    main to moduleFile, afterNodes to transformedWithNodes
                 )) {
                     sb.appendFileName(outputFile.relativeTo(tmpdir))
                     sb.append(kotlinp.renderModuleFile(moduleFileToRender))
@@ -83,11 +81,10 @@ private fun compileAndPrintAllFiles(
             "class" -> {
                 val metadata = kotlinp.readClassFile(outputFile)
                 val classFile = kotlinp.readMetadata(metadata)
-                val classFile2 = transformClassFileWithReadWriteVisitors(classFile)
                 val classFile3 = KotlinClassMetadata.read(transformClassFileWithNodes(metadata, classFile))
 
                 for ((sb, classFileToRender) in listOf(
-                    main to classFile, afterVisitors to classFile2, afterNodes to classFile3
+                    main to classFile, afterNodes to classFile3
                 )) {
                     sb.appendFileName(outputFile.relativeTo(tmpdir))
                     sb.append(kotlinp.renderClassFile(classFileToRender))
@@ -102,7 +99,6 @@ private fun compileAndPrintAllFiles(
     }
 
     if (readWriteAndCompare && InTextDirectivesUtils.findStringWithPrefixes(file.readText(), "// NO_READ_WRITE_COMPARE") == null) {
-        assertEquals("Metadata is different after transformation with visitors.", main.toString(), afterVisitors.toString())
         assertEquals("Metadata is different after transformation with nodes.", main.toString(), afterNodes.toString())
     }
 }
@@ -130,27 +126,6 @@ private fun StringBuilder.appendFileName(file: File) {
     appendLine("// ------------------------------------------")
 }
 
-// Reads the class file and writes it back with *Writer visitors.
-// The resulting class file should be the same from the point of view of any metadata reader, including kotlinp
-// (the exact bytes may differ though, because there are multiple ways to encode the same metadata)
-@Suppress("DEPRECATION")
-private fun transformClassFileWithReadWriteVisitors(classFile: KotlinClassMetadata): KotlinClassMetadata =
-    when (classFile) {
-        is KotlinClassMetadata.Class -> KotlinClassMetadata.Class.Writer().apply(classFile::accept).write()
-        is KotlinClassMetadata.FileFacade -> KotlinClassMetadata.FileFacade.Writer().apply(classFile::accept).write()
-        is KotlinClassMetadata.SyntheticClass -> {
-            val writer = KotlinClassMetadata.SyntheticClass.Writer()
-            if (classFile.isLambda) {
-                classFile.accept(writer)
-            }
-            writer.write()
-        }
-        is KotlinClassMetadata.MultiFileClassFacade -> KotlinClassMetadata.MultiFileClassFacade.Writer().write(classFile.partClassNames)
-        is KotlinClassMetadata.MultiFileClassPart ->
-            KotlinClassMetadata.MultiFileClassPart.Writer().apply(classFile::accept).write(classFile.facadeClassName)
-        else -> classFile
-    }
-
 // Reads the class file and writes it back with KmClass/KmFunction/... elements.
 private fun transformClassFileWithNodes(metadata: Metadata, classFile: KotlinClassMetadata): Metadata =
     when (classFile) {
@@ -165,11 +140,6 @@ private fun transformClassFileWithNodes(metadata: Metadata, classFile: KotlinCla
         is KotlinClassMetadata.MultiFileClassFacade -> KotlinClassMetadata.writeMultiFileClassFacade(classFile.partClassNames)
         is KotlinClassMetadata.Unknown -> metadata
     }
-
-@Suppress("DEPRECATION") // We're testing that reading/writing with KmNodes is identical to direct
-@OptIn(UnstableMetadataApi::class)
-private fun transformModuleFileWithReadWriteVisitors(moduleFile: KotlinModuleMetadata): ByteArray =
-    KotlinModuleMetadata.Writer().apply(moduleFile::accept).write()
 
 @OptIn(UnstableMetadataApi::class)
 private fun transformModuleFileWithNodes(moduleFile: KotlinModuleMetadata): ByteArray =

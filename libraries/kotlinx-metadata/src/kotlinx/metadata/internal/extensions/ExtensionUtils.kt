@@ -2,7 +2,7 @@
  * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-@file:Suppress("DEPRECATION")
+@file:Suppress("DEPRECATION_ERROR")
 package kotlinx.metadata.internal.extensions
 
 import kotlinx.metadata.KmExtensionType
@@ -18,6 +18,17 @@ internal fun <T : KmExtensionVisitor> applySingleExtension(type: KmExtensionType
         result = current
     }
     return result
+}
+
+internal fun <E : KmExtension<*>> List<E>.matchExtensions(block: MetadataExtensions.(E) -> Boolean) {
+    forEach { ext ->
+        var processed = false
+        for (extesion in MetadataExtensions.INSTANCES) {
+            val current = extesion.block(ext)
+            if (processed && current) throw IllegalStateException("Multiple extensions handle the same extension type: ${ext.type}")
+            processed = current
+        }
+    }
 }
 
 internal fun <N : KmExtension<*>> Collection<N>.singleOfType(type: KmExtensionType): N {

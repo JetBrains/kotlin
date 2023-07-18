@@ -13,8 +13,8 @@ internal const val VISITOR_API_MESSAGE =
 /**
  * A visitor containing the common code to visit Kotlin declaration containers, such as classes and package fragments.
  */
-@Deprecated(VISITOR_API_MESSAGE)
-@Suppress("DEPRECATION")
+@Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
+@Suppress("DEPRECATION_ERROR")
 public abstract class KmDeclarationContainerVisitor @JvmOverloads constructor(protected open val delegate: KmDeclarationContainerVisitor? = null) {
     /**
      * Visits a function in the container.
@@ -61,8 +61,8 @@ public abstract class KmDeclarationContainerVisitor @JvmOverloads constructor(pr
  * When using this class, [visit] must be called first, followed by zero or more [visitTypeParameter] calls, followed by zero or more calls
  * to other visit* methods, followed by [visitEnd].
  */
-@Deprecated(VISITOR_API_MESSAGE)
-@Suppress("DEPRECATION")
+@Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
+@Suppress("DEPRECATION_ERROR")
 public abstract class KmClassVisitor @JvmOverloads constructor(delegate: KmClassVisitor? = null) : KmDeclarationContainerVisitor(delegate) {
     override val delegate: KmClassVisitor?
         get() = super.delegate as KmClassVisitor?
@@ -194,8 +194,8 @@ public abstract class KmClassVisitor @JvmOverloads constructor(delegate: KmClass
  *
  * When using this class, [visitEnd] must be called exactly once and after calls to all other visit* methods.
  */
-@Deprecated(VISITOR_API_MESSAGE)
-@Suppress("DEPRECATION")
+@Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
+@Suppress("DEPRECATION_ERROR")
 public abstract class KmPackageVisitor @JvmOverloads constructor(delegate: KmPackageVisitor? = null) :
     KmDeclarationContainerVisitor(delegate) {
     override val delegate: KmPackageVisitor?
@@ -222,8 +222,8 @@ public abstract class KmPackageVisitor @JvmOverloads constructor(delegate: KmPac
  *
  * When using this class, [visitFunction] must be called first, followed by [visitEnd].
  */
-@Deprecated(VISITOR_API_MESSAGE)
-@Suppress("DEPRECATION")
+@Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
+@Suppress("DEPRECATION_ERROR")
 public abstract class KmLambdaVisitor @JvmOverloads constructor(private val delegate: KmLambdaVisitor? = null) {
     /**
      * Visits the signature of a synthetic anonymous function, representing the lambda.
@@ -247,8 +247,8 @@ public abstract class KmLambdaVisitor @JvmOverloads constructor(private val dele
  *
  * When using this class, [visitEnd] must be called exactly once and after calls to all other visit* methods.
  */
-@Deprecated(VISITOR_API_MESSAGE)
-@Suppress("DEPRECATION")
+@Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
+@Suppress("DEPRECATION_ERROR")
 public abstract class KmConstructorVisitor @JvmOverloads constructor(private val delegate: KmConstructorVisitor? = null) {
     /**
      * Visits a value parameter of the constructor.
@@ -287,8 +287,8 @@ public abstract class KmConstructorVisitor @JvmOverloads constructor(private val
  * When using this class, zero or more calls to [visitTypeParameter] must be done first, followed by zero or more calls
  * to other visit* methods, followed by [visitEnd].
  */
-@Deprecated(VISITOR_API_MESSAGE)
-@Suppress("DEPRECATION")
+@Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
+@Suppress("DEPRECATION_ERROR")
 public abstract class KmFunctionVisitor @JvmOverloads constructor(private val delegate: KmFunctionVisitor? = null) {
     /**
      * Visits a type parameter of the function.
@@ -371,8 +371,8 @@ public abstract class KmFunctionVisitor @JvmOverloads constructor(private val de
  * When using this class, zero or more calls to [visitTypeParameter] must be done first, followed by zero or more calls
  * to other visit* methods, followed by [visitEnd].
  */
-@Deprecated(VISITOR_API_MESSAGE)
-@Suppress("DEPRECATION")
+@Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
+@Suppress("DEPRECATION_ERROR")
 public abstract class KmPropertyVisitor @JvmOverloads constructor(private val delegate: KmPropertyVisitor? = null) {
     /**
      * Visits a type parameter of the property.
@@ -448,8 +448,8 @@ public abstract class KmPropertyVisitor @JvmOverloads constructor(private val de
  * When using this class, zero or more calls to [visitTypeParameter] must be done first, followed by zero or more calls
  * to other visit* methods, followed by [visitEnd].
  */
-@Deprecated(VISITOR_API_MESSAGE)
-@Suppress("DEPRECATION")
+@Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
+@Suppress("DEPRECATION_ERROR")
 public abstract class KmTypeAliasVisitor @JvmOverloads constructor(private val delegate: KmTypeAliasVisitor? = null) {
     /**
      * Visits a type parameter of the type alias.
@@ -517,8 +517,8 @@ public abstract class KmTypeAliasVisitor @JvmOverloads constructor(private val d
  * When using this class, either [visitType] or [visitVarargElementType] must be called first (depending on whether the value parameter
  * is `vararg` or not), followed by [visitEnd].
  */
-@Deprecated(VISITOR_API_MESSAGE)
-@Suppress("DEPRECATION")
+@Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
+@Suppress("DEPRECATION_ERROR")
 public abstract class KmValueParameterVisitor @JvmOverloads constructor(private val delegate: KmValueParameterVisitor? = null) {
     /**
      * Visits the type of the value parameter, if this is **not** a `vararg` parameter.
@@ -557,8 +557,8 @@ public abstract class KmValueParameterVisitor @JvmOverloads constructor(private 
  *
  * When using this class, zero or more [visitUpperBound] calls must be done first, followed by [visitEnd].
  */
-@Deprecated(VISITOR_API_MESSAGE)
-@Suppress("DEPRECATION")
+@Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
+@Suppress("DEPRECATION_ERROR")
 public abstract class KmTypeParameterVisitor @JvmOverloads constructor(private val delegate: KmTypeParameterVisitor? = null) {
     /**
      * Visits the upper bound of the type parameter.
@@ -595,8 +595,8 @@ public abstract class KmTypeParameterVisitor @JvmOverloads constructor(private v
  *
  * When using this class, [visitEnd] must be called exactly once and after calls to all other visit* methods.
  */
-@Deprecated(VISITOR_API_MESSAGE)
-@Suppress("DEPRECATION")
+@Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
+@Suppress("DEPRECATION_ERROR")
 public abstract class KmTypeVisitor @JvmOverloads constructor(private val delegate: KmTypeVisitor? = null) {
     /**
      * Visits the name of the class, if this type's classifier is a class.
@@ -708,8 +708,8 @@ public abstract class KmTypeVisitor @JvmOverloads constructor(private val delega
  *
  * When using this class, [visit] must be called first, followed by [visitVersion], followed by [visitEnd].
  */
-@Deprecated(VISITOR_API_MESSAGE)
-public abstract class KmVersionRequirementVisitor @JvmOverloads constructor(@Suppress("DEPRECATION") private val delegate: KmVersionRequirementVisitor? = null) {
+@Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
+public abstract class KmVersionRequirementVisitor @JvmOverloads constructor(@Suppress("DEPRECATION_ERROR") private val delegate: KmVersionRequirementVisitor? = null) {
     /**
      * Visits the description of this version requirement.
      *
@@ -750,8 +750,8 @@ public abstract class KmVersionRequirementVisitor @JvmOverloads constructor(@Sup
  *
  * When using this class, zero or more calls to [visitEffect] must be done first, followed by [visitEnd].
  */
-@Deprecated(VISITOR_API_MESSAGE)
-@Suppress("DEPRECATION")
+@Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
+@Suppress("DEPRECATION_ERROR")
 @ExperimentalContracts
 public abstract class KmContractVisitor @JvmOverloads constructor(private val delegate: KmContractVisitor? = null) {
     /**
@@ -781,8 +781,8 @@ public abstract class KmContractVisitor @JvmOverloads constructor(private val de
  * When using this class, zero or more calls to [visitConstructorArgument] or [visitConclusionOfConditionalEffect] must be done first,
  * followed by [visitEnd].
  */
-@Deprecated(VISITOR_API_MESSAGE)
-@Suppress("DEPRECATION")
+@Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
+@Suppress("DEPRECATION_ERROR")
 @ExperimentalContracts
 public abstract class KmEffectVisitor @JvmOverloads constructor(private val delegate: KmEffectVisitor? = null) {
     /**
@@ -815,8 +815,8 @@ public abstract class KmEffectVisitor @JvmOverloads constructor(private val dele
  *
  * When using this class, [visit] must be called first, followed by zero or more calls to other visit* methods, followed by [visitEnd].
  */
-@Deprecated(VISITOR_API_MESSAGE)
-@Suppress("DEPRECATION")
+@Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
+@Suppress("DEPRECATION_ERROR")
 @ExperimentalContracts
 public abstract class KmEffectExpressionVisitor @JvmOverloads constructor(private val delegate: KmEffectExpressionVisitor? = null) {
     /**

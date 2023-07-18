@@ -38,7 +38,7 @@ public interface KmDeclarationContainer {
  * Precise kind of the class can be obtained via [KmClass.kind].
  * Various class attributes can be read and manipulated via extension properties, such as [KmClass.visibility] or [KmClass.isData].
  */
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION", "DEPRECATION_ERROR")
 public class KmClass : KmClassVisitor(), KmDeclarationContainer {
     /**
      * Class flags, consisting of [Flag.HAS_ANNOTATIONS], visibility flag, modality flag and [Flag.Class] flags.
@@ -122,78 +122,78 @@ public class KmClass : KmClassVisitor(), KmDeclarationContainer {
      */
     public val versionRequirements: MutableList<KmVersionRequirement> = ArrayList(0)
 
-    private val extensions: List<KmClassExtension> =
+    internal val extensions: List<KmClassExtension> =
         MetadataExtensions.INSTANCES.map(MetadataExtensions::createClassExtension)
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visit(flags: Int, name: ClassName) {
         this.flags = flags
         this.name = name
     }
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitTypeParameter(flags: Int, name: String, id: Int, variance: KmVariance): KmTypeParameterVisitor =
         KmTypeParameter(flags, name, id, variance).addTo(typeParameters)
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitSupertype(flags: Int): KmTypeVisitor =
         KmType(flags).addTo(supertypes)
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitFunction(flags: Int, name: String): KmFunctionVisitor =
         KmFunction(flags, name).addTo(functions)
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitProperty(flags: Int, name: String, getterFlags: Int, setterFlags: Int): KmPropertyVisitor =
         KmProperty(flags, name, getterFlags, setterFlags).addTo(properties)
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitTypeAlias(flags: Int, name: String): KmTypeAliasVisitor =
         KmTypeAlias(flags, name).addTo(typeAliases)
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitConstructor(flags: Int): KmConstructorVisitor =
         KmConstructor(flags).addTo(constructors)
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitCompanionObject(name: String) {
         this.companionObject = name
     }
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitNestedClass(name: String) {
         nestedClasses.add(name)
     }
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitEnumEntry(name: String) {
         enumEntries.add(name)
     }
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitSealedSubclass(name: ClassName) {
         sealedSubclasses.add(name)
     }
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitInlineClassUnderlyingPropertyName(name: String) {
         inlineClassUnderlyingPropertyName = name
     }
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitInlineClassUnderlyingType(flags: Int): KmTypeVisitor =
         KmType(flags).also { inlineClassUnderlyingType = it }
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     @ExperimentalContextReceivers
     override fun visitContextReceiverType(flags: Int): KmTypeVisitor =
         KmType(flags).addTo(contextReceiverTypes)
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitVersionRequirement(): KmVersionRequirementVisitor =
         KmVersionRequirement().addTo(versionRequirements)
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitExtensions(type: KmExtensionType): KmClassExtensionVisitor =
         extensions.singleOfType(type)
 
@@ -202,7 +202,7 @@ public class KmClass : KmClassVisitor(), KmDeclarationContainer {
      *
      * @param visitor the visitor which will visit data in this class
      */
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     @OptIn(ExperimentalContextReceivers::class)
     public fun accept(visitor: KmClassVisitor) {
         visitor.visit(flags, name)
@@ -230,7 +230,7 @@ public class KmClass : KmClassVisitor(), KmDeclarationContainer {
  * Package fragments are produced from single file facades and multi-file class parts.
  * Note that a package fragment does not contain any classes, as classes are not a part of file facades and have their own metadata.
  */
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION", "DEPRECATION_ERROR")
 public class KmPackage : KmPackageVisitor(), KmDeclarationContainer {
     /**
      * Functions in the package fragment.
@@ -247,22 +247,22 @@ public class KmPackage : KmPackageVisitor(), KmDeclarationContainer {
      */
     override val typeAliases: MutableList<KmTypeAlias> = ArrayList(0)
 
-    private val extensions: List<KmPackageExtension> =
+    internal val extensions: List<KmPackageExtension> =
         MetadataExtensions.INSTANCES.map(MetadataExtensions::createPackageExtension)
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitFunction(flags: Int, name: String): KmFunctionVisitor =
         KmFunction(flags, name).addTo(functions)
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitProperty(flags: Int, name: String, getterFlags: Int, setterFlags: Int): KmPropertyVisitor =
         KmProperty(flags, name, getterFlags, setterFlags).addTo(properties)
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitTypeAlias(flags: Int, name: String): KmTypeAliasVisitor =
         KmTypeAlias(flags, name).addTo(typeAliases)
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitExtensions(type: KmExtensionType): KmPackageExtensionVisitor =
         extensions.singleOfType(type)
 
@@ -271,7 +271,7 @@ public class KmPackage : KmPackageVisitor(), KmDeclarationContainer {
      *
      * @param visitor the visitor which will visit data in this package fragment
      */
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     public fun accept(visitor: KmPackageVisitor) {
         functions.forEach { visitor.visitFunction(it.flags, it.name)?.let(it::accept) }
         properties.forEach { visitor.visitProperty(it.flags, it.name, it.getter.flags, it.setterFlags)?.let(it::accept) }
@@ -284,14 +284,14 @@ public class KmPackage : KmPackageVisitor(), KmDeclarationContainer {
 /**
  * Represents a synthetic class generated for a Kotlin lambda.
  */
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION", "DEPRECATION_ERROR")
 public class KmLambda : KmLambdaVisitor() {
     /**
      * Signature of the synthetic anonymous function, representing the lambda.
      */
     public lateinit var function: KmFunction
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitFunction(flags: Int, name: String): KmFunctionVisitor =
         KmFunction(flags, name).also { function = it }
 
@@ -300,7 +300,7 @@ public class KmLambda : KmLambdaVisitor() {
      *
      * @param visitor the visitor which will visit data in this lambda
      */
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     public fun accept(visitor: KmLambdaVisitor) {
         visitor.visitFunction(function.flags, function.name)?.let(function::accept)
         visitor.visitEnd()
@@ -313,7 +313,7 @@ public class KmLambda : KmLambdaVisitor() {
  * Various constructor attributes can be read and manipulated via extension properties,
  * such as [KmConstructor.visibility] or [KmConstructor.isSecondary].
  */
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION", "DEPRECATION_ERROR")
 public class KmConstructor @Deprecated(flagsCtorDeprecated) constructor(
     @Deprecated("$flagAccessPrefix KmConstructor, such as KmConstructor.visibility") public var flags: Int,
 ) :
@@ -330,18 +330,18 @@ public class KmConstructor @Deprecated(flagsCtorDeprecated) constructor(
      */
     public val versionRequirements: MutableList<KmVersionRequirement> = ArrayList(0)
 
-    private val extensions: List<KmConstructorExtension> =
+    internal val extensions: List<KmConstructorExtension> =
         MetadataExtensions.INSTANCES.map(MetadataExtensions::createConstructorExtension)
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitValueParameter(flags: Int, name: String): KmValueParameterVisitor =
         KmValueParameter(flags, name).addTo(valueParameters)
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitVersionRequirement(): KmVersionRequirementVisitor =
         KmVersionRequirement().addTo(versionRequirements)
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitExtensions(type: KmExtensionType): KmConstructorExtensionVisitor =
         extensions.singleOfType(type)
 
@@ -350,7 +350,7 @@ public class KmConstructor @Deprecated(flagsCtorDeprecated) constructor(
      *
      * @param visitor the visitor which will visit data in this class
      */
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     public fun accept(visitor: KmConstructorVisitor) {
         valueParameters.forEach { visitor.visitValueParameter(it.flags, it.name)?.let(it::accept) }
         versionRequirements.forEach { visitor.visitVersionRequirement()?.let(it::accept) }
@@ -367,7 +367,7 @@ public class KmConstructor @Deprecated(flagsCtorDeprecated) constructor(
  *
  * @property name the name of the function
  */
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION", "DEPRECATION_ERROR")
 public class KmFunction @Deprecated(flagsCtorDeprecated) constructor(
     @Deprecated("$flagAccessPrefix KmFunction, such as KmFunction.visibility") public var flags: Int,
     public var name: String,
@@ -412,40 +412,40 @@ public class KmFunction @Deprecated(flagsCtorDeprecated) constructor(
     @ExperimentalContracts
     public var contract: KmContract? = null
 
-    private val extensions: List<KmFunctionExtension> =
+    internal val extensions: List<KmFunctionExtension> =
         MetadataExtensions.INSTANCES.map(MetadataExtensions::createFunctionExtension)
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitTypeParameter(flags: Int, name: String, id: Int, variance: KmVariance): KmTypeParameterVisitor =
         KmTypeParameter(flags, name, id, variance).addTo(typeParameters)
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitReceiverParameterType(flags: Int): KmTypeVisitor =
         KmType(flags).also { receiverParameterType = it }
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     @ExperimentalContextReceivers
     override fun visitContextReceiverType(flags: Int): KmTypeVisitor =
         KmType(flags).addTo(contextReceiverTypes)
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitValueParameter(flags: Int, name: String): KmValueParameterVisitor =
         KmValueParameter(flags, name).addTo(valueParameters)
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitReturnType(flags: Int): KmTypeVisitor =
         KmType(flags).also { returnType = it }
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitVersionRequirement(): KmVersionRequirementVisitor =
         KmVersionRequirement().addTo(versionRequirements)
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     @ExperimentalContracts
     override fun visitContract(): KmContractVisitor =
         KmContract().also { contract = it }
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitExtensions(type: KmExtensionType): KmFunctionExtensionVisitor =
         extensions.singleOfType(type)
 
@@ -455,7 +455,7 @@ public class KmFunction @Deprecated(flagsCtorDeprecated) constructor(
      * @param visitor the visitor which will visit data in this function
      */
     @OptIn(ExperimentalContextReceivers::class)
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     public fun accept(visitor: KmFunctionVisitor) {
         typeParameters.forEach { visitor.visitTypeParameter(it.flags, it.name, it.id, it.variance)?.let(it::accept) }
         receiverParameterType?.let { visitor.visitReceiverParameterType(it.flags)?.let(it::accept) }
@@ -489,7 +489,7 @@ public class KmPropertyAccessorAttributes internal constructor(internal var flag
  *
  * @property name the name of the property
  */
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION", "DEPRECATION_ERROR")
 public class KmProperty @Deprecated(flagsCtorDeprecated) constructor(
     @Deprecated("$flagAccessPrefix KmProperty, such as KmProperty.visibility") public var flags: Int,
     public var name: String,
@@ -593,35 +593,35 @@ public class KmProperty @Deprecated(flagsCtorDeprecated) constructor(
      */
     public val versionRequirements: MutableList<KmVersionRequirement> = ArrayList(0)
 
-    private val extensions: List<KmPropertyExtension> =
+    internal val extensions: List<KmPropertyExtension> =
         MetadataExtensions.INSTANCES.map(MetadataExtensions::createPropertyExtension)
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitTypeParameter(flags: Int, name: String, id: Int, variance: KmVariance): KmTypeParameterVisitor =
         KmTypeParameter(flags, name, id, variance).addTo(typeParameters)
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitReceiverParameterType(flags: Int): KmTypeVisitor =
         KmType(flags).also { receiverParameterType = it }
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     @ExperimentalContextReceivers
     override fun visitContextReceiverType(flags: Int): KmTypeVisitor =
         KmType(flags).addTo(contextReceiverTypes)
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitSetterParameter(flags: Int, name: String): KmValueParameterVisitor =
         KmValueParameter(flags, name).also { setterParameter = it }
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitReturnType(flags: Int): KmTypeVisitor =
         KmType(flags).also { returnType = it }
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitVersionRequirement(): KmVersionRequirementVisitor =
         KmVersionRequirement().addTo(versionRequirements)
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitExtensions(type: KmExtensionType): KmPropertyExtensionVisitor =
         extensions.singleOfType(type)
 
@@ -631,7 +631,7 @@ public class KmProperty @Deprecated(flagsCtorDeprecated) constructor(
      * @param visitor the visitor which will visit data in this property
      */
     @OptIn(ExperimentalContextReceivers::class)
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     public fun accept(visitor: KmPropertyVisitor) {
         typeParameters.forEach { visitor.visitTypeParameter(it.flags, it.name, it.id, it.variance)?.let(it::accept) }
         receiverParameterType?.let { visitor.visitReceiverParameterType(it.flags)?.let(it::accept) }
@@ -652,7 +652,7 @@ public class KmProperty @Deprecated(flagsCtorDeprecated) constructor(
  *
  * @property name the name of the type alias
  */
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION", "DEPRECATION_ERROR")
 public class KmTypeAlias @Deprecated(flagsCtorDeprecated) constructor(
     @Deprecated("$flagAccessPrefix KmTypeAlias, such as KmTypeAlias.visibility") public var flags: Int,
     public var name: String,
@@ -686,31 +686,31 @@ public class KmTypeAlias @Deprecated(flagsCtorDeprecated) constructor(
      */
     public val versionRequirements: MutableList<KmVersionRequirement> = ArrayList(0)
 
-    private val extensions: List<KmTypeAliasExtension> =
+    internal val extensions: List<KmTypeAliasExtension> =
         MetadataExtensions.INSTANCES.mapNotNull(MetadataExtensions::createTypeAliasExtension)
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitTypeParameter(flags: Int, name: String, id: Int, variance: KmVariance): KmTypeParameterVisitor =
         KmTypeParameter(flags, name, id, variance).addTo(typeParameters)
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitUnderlyingType(flags: Int): KmTypeVisitor =
         KmType(flags).also { underlyingType = it }
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitExpandedType(flags: Int): KmTypeVisitor =
         KmType(flags).also { expandedType = it }
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitAnnotation(annotation: KmAnnotation) {
         annotations.add(annotation)
     }
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitExtensions(type: KmExtensionType): KmTypeAliasExtensionVisitor? =
         extensions.singleOfType(type)
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitVersionRequirement(): KmVersionRequirementVisitor =
         KmVersionRequirement().addTo(versionRequirements)
 
@@ -719,7 +719,7 @@ public class KmTypeAlias @Deprecated(flagsCtorDeprecated) constructor(
      *
      * @param visitor the visitor which will visit data in this type alias
      */
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     public fun accept(visitor: KmTypeAliasVisitor) {
         typeParameters.forEach { visitor.visitTypeParameter(it.flags, it.name, it.id, it.variance)?.let(it::accept) }
         visitor.visitUnderlyingType(underlyingType.flags)?.let(underlyingType::accept)
@@ -739,7 +739,7 @@ public class KmTypeAlias @Deprecated(flagsCtorDeprecated) constructor(
  *
  * @property name the name of the value parameter
  */
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION", "DEPRECATION_ERROR")
 public class KmValueParameter @Deprecated(flagsCtorDeprecated) constructor(
     @Deprecated("$flagAccessPrefix KmValueParameter, such as KmValueParameter.declaresDefaultValue") public var flags: Int,
     public var name: String,
@@ -758,18 +758,18 @@ public class KmValueParameter @Deprecated(flagsCtorDeprecated) constructor(
      */
     public var varargElementType: KmType? = null
 
-    private val extensions: List<KmValueParameterExtension> =
+    internal val extensions: List<KmValueParameterExtension> =
         MetadataExtensions.INSTANCES.mapNotNull(MetadataExtensions::createValueParameterExtension)
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitType(flags: Int): KmTypeVisitor =
         KmType(flags).also { type = it }
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitVarargElementType(flags: Int): KmTypeVisitor =
         KmType(flags).also { varargElementType = it }
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitExtensions(type: KmExtensionType): KmValueParameterExtensionVisitor? =
         extensions.singleOfType(type)
 
@@ -778,7 +778,7 @@ public class KmValueParameter @Deprecated(flagsCtorDeprecated) constructor(
      *
      * @param visitor the visitor which will visit data in this value parameter
      */
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     public fun accept(visitor: KmValueParameterVisitor) {
         visitor.visitType(type.flags)?.let(type::accept)
         varargElementType?.let { visitor.visitVarargElementType(it.flags)?.let(it::accept) }
@@ -798,7 +798,7 @@ public class KmValueParameter @Deprecated(flagsCtorDeprecated) constructor(
  *           the name is not enough (e.g. `class A<T> { fun <T> foo(t: T) }`)
  * @property variance the declaration-site variance of the type parameter
  */
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION", "DEPRECATION_ERROR")
 public class KmTypeParameter @Deprecated(flagsCtorDeprecated) constructor(
     @Deprecated("$flagAccessPrefix KmTypeParameter, such as KmTypeParameter.isReified") public var flags: Int,
     public var name: String,
@@ -813,14 +813,14 @@ public class KmTypeParameter @Deprecated(flagsCtorDeprecated) constructor(
      */
     public val upperBounds: MutableList<KmType> = ArrayList(1)
 
-    private val extensions: List<KmTypeParameterExtension> =
+    internal val extensions: List<KmTypeParameterExtension> =
         MetadataExtensions.INSTANCES.map(MetadataExtensions::createTypeParameterExtension)
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitUpperBound(flags: Int): KmTypeVisitor =
         KmType(flags).addTo(upperBounds)
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitExtensions(type: KmExtensionType): KmTypeParameterExtensionVisitor? =
         extensions.singleOfType(type)
 
@@ -829,7 +829,7 @@ public class KmTypeParameter @Deprecated(flagsCtorDeprecated) constructor(
      *
      * @param visitor the visitor which will visit data in this type parameter
      */
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     public fun accept(visitor: KmTypeParameterVisitor) {
         upperBounds.forEach { visitor.visitUpperBound(it.flags)?.let(it::accept) }
         extensions.forEach { visitor.visitExtensions(it.type)?.let(it::accept) }
@@ -843,7 +843,7 @@ public class KmTypeParameter @Deprecated(flagsCtorDeprecated) constructor(
  * Various type attributes can be read and manipulated via extension properties,
  * such as [KmType.isNullable].
  */
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION", "DEPRECATION_ERROR")
 public class KmType @Deprecated(flagsCtorDeprecated) constructor(
     @Deprecated("$flagAccessPrefix KmType, such as KmType.isNullable") public var flags: Int
 ) : KmTypeVisitor() {
@@ -890,46 +890,46 @@ public class KmType @Deprecated(flagsCtorDeprecated) constructor(
      */
     public var flexibleTypeUpperBound: KmFlexibleTypeUpperBound? = null
 
-    private val extensions: List<KmTypeExtension> =
+    internal val extensions: List<KmTypeExtension> =
         MetadataExtensions.INSTANCES.map(MetadataExtensions::createTypeExtension)
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitClass(name: ClassName) {
         classifier = KmClassifier.Class(name)
     }
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitTypeAlias(name: ClassName) {
         classifier = KmClassifier.TypeAlias(name)
     }
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitTypeParameter(id: Int) {
         classifier = KmClassifier.TypeParameter(id)
     }
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitArgument(flags: Int, variance: KmVariance): KmTypeVisitor =
         KmType(flags).also { arguments.add(KmTypeProjection(variance, it)) }
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitStarProjection() {
         arguments.add(KmTypeProjection.STAR)
     }
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitAbbreviatedType(flags: Int): KmTypeVisitor =
         KmType(flags).also { abbreviatedType = it }
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitOuterType(flags: Int): KmTypeVisitor =
         KmType(flags).also { outerType = it }
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitFlexibleTypeUpperBound(flags: Int, typeFlexibilityId: String?): KmTypeVisitor =
         KmType(flags).also { flexibleTypeUpperBound = KmFlexibleTypeUpperBound(it, typeFlexibilityId) }
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitExtensions(type: KmExtensionType): KmTypeExtensionVisitor =
         extensions.singleOfType(type)
 
@@ -939,7 +939,7 @@ public class KmType @Deprecated(flagsCtorDeprecated) constructor(
      * @param visitor the visitor which will visit data in this type
      * @throws IllegalArgumentException if type metadata is inconsistent
      */
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     public fun accept(visitor: KmTypeVisitor) {
         when (val classifier = classifier) {
             is KmClassifier.Class -> visitor.visitClass(classifier.name)
@@ -969,7 +969,7 @@ public class KmType @Deprecated(flagsCtorDeprecated) constructor(
  * Version requirement is an internal feature of the Kotlin compiler and the standard Kotlin library,
  * enabled, for example, with the internal [kotlin.internal.RequireKotlin] annotation.
  */
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION", "DEPRECATION_ERROR")
 public class KmVersionRequirement : KmVersionRequirementVisitor() {
     /**
      * Kind of the version that this declaration requires.
@@ -996,7 +996,7 @@ public class KmVersionRequirement : KmVersionRequirementVisitor() {
      */
     public lateinit var version: KmVersion
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visit(kind: KmVersionRequirementVersionKind, level: KmVersionRequirementLevel, errorCode: Int?, message: String?) {
         this.kind = kind
         this.level = level
@@ -1004,7 +1004,7 @@ public class KmVersionRequirement : KmVersionRequirementVisitor() {
         this.message = message
     }
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitVersion(major: Int, minor: Int, patch: Int) {
         this.version = KmVersion(major, minor, patch)
     }
@@ -1014,7 +1014,7 @@ public class KmVersionRequirement : KmVersionRequirementVisitor() {
      *
      * @param visitor the visitor which will visit data in this version requirement
      */
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     public fun accept(visitor: KmVersionRequirementVisitor) {
         visitor.visit(kind, level, errorCode, message)
         visitor.visitVersion(version.major, version.minor, version.patch)
@@ -1029,14 +1029,14 @@ public class KmVersionRequirement : KmVersionRequirementVisitor() {
  * may change in a subsequent release.
  */
 @ExperimentalContracts
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION", "DEPRECATION_ERROR")
 public class KmContract : KmContractVisitor() {
     /**
      * Effects of this contract.
      */
     public val effects: MutableList<KmEffect> = ArrayList(1)
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitEffect(type: KmEffectType, invocationKind: KmEffectInvocationKind?): KmEffectVisitor =
         KmEffect(type, invocationKind).addTo(effects)
 
@@ -1045,7 +1045,7 @@ public class KmContract : KmContractVisitor() {
      *
      * @param visitor the visitor which will visit data in this contract
      */
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     public fun accept(visitor: KmContractVisitor) {
         effects.forEach { visitor.visitEffect(it.type, it.invocationKind)?.let(it::accept) }
         visitor.visitEnd()
@@ -1063,7 +1063,7 @@ public class KmContract : KmContractVisitor() {
  *   specified further in the effect expression
  */
 @ExperimentalContracts
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION", "DEPRECATION_ERROR")
 public class KmEffect(
     public var type: KmEffectType,
     public var invocationKind: KmEffectInvocationKind?
@@ -1079,11 +1079,11 @@ public class KmEffect(
      */
     public var conclusion: KmEffectExpression? = null
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitConstructorArgument(): KmEffectExpressionVisitor =
         KmEffectExpression().addTo(constructorArguments)
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitConclusionOfConditionalEffect(): KmEffectExpressionVisitor =
         KmEffectExpression().also { conclusion = it }
 
@@ -1092,7 +1092,7 @@ public class KmEffect(
      *
      * @param visitor the visitor which will visit data in this effect
      */
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     public fun accept(visitor: KmEffectVisitor) {
         constructorArguments.forEach { visitor.visitConstructorArgument()?.let(it::accept) }
         conclusion?.let { visitor.visitConclusionOfConditionalEffect()?.let(it::accept) }
@@ -1110,7 +1110,7 @@ public class KmEffect(
  * such as [KmEffectExpression.isNegated].
  */
 @ExperimentalContracts
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION", "DEPRECATION_ERROR")
 public class KmEffectExpression : KmEffectExpressionVisitor() {
     /**
      * Effect expression flags, consisting of [Flag.EffectExpression] flags.
@@ -1146,26 +1146,26 @@ public class KmEffectExpression : KmEffectExpressionVisitor() {
      */
     public val orArguments: MutableList<KmEffectExpression> = ArrayList(0)
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visit(flags: Int, parameterIndex: Int?) {
         this.flags = flags
         this.parameterIndex = parameterIndex
     }
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitConstantValue(value: Any?) {
         constantValue = KmConstantValue(value)
     }
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitIsInstanceType(flags: Int): KmTypeVisitor =
         KmType(flags).also { isInstanceType = it }
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitAndArgument(): KmEffectExpressionVisitor =
         KmEffectExpression().addTo(andArguments)
 
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     override fun visitOrArgument(): KmEffectExpressionVisitor =
         KmEffectExpression().addTo(orArguments)
 
@@ -1174,7 +1174,7 @@ public class KmEffectExpression : KmEffectExpressionVisitor() {
      *
      * @param visitor the visitor which will visit data in this effect expression
      */
-    @Deprecated(VISITOR_API_MESSAGE)
+    @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     public fun accept(visitor: KmEffectExpressionVisitor) {
         visitor.visit(flags, parameterIndex)
         constantValue?.let { visitor.visitConstantValue(it.value) }
