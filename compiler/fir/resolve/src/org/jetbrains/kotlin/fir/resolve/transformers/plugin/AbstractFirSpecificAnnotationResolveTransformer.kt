@@ -276,7 +276,10 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
     }
 
     private fun ConeKotlinType.markedWithMetaAnnotation(session: FirSession, metaAnnotations: Set<AnnotationFqn>): Boolean {
-        return toRegularClassSymbol(session).markedWithMetaAnnotationImpl(session, metaAnnotations, includeItself = true, mutableSetOf())
+        return toRegularClassSymbol(session).markedWithMetaAnnotationImpl(session, metaAnnotations, includeItself = true, mutableSetOf()) {
+            computationSession.resolveAnnotationsOnAnnotationIfNeeded(it, scopeSession)
+            it.annotations
+        }
     }
 
 
