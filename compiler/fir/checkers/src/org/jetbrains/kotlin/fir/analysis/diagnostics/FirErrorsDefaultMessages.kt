@@ -194,6 +194,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DYNAMIC_UPPER_BOU
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ELSE_MISPLACED_IN_WHEN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EMPTY_CHARACTER_LITERAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EMPTY_RANGE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ENUM_CLASS_CONSTRUCTOR_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ENUM_ENTRY_AS_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EQUALITY_NOT_APPLICABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EQUALITY_NOT_APPLICABLE_WARNING
@@ -878,6 +879,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(INVALID_TYPE_OF_ANNOTATION_MEMBER, "Invalid type of annotation member")
         map.put(VAR_ANNOTATION_PARAMETER, "An annotation parameter cannot be 'var'")
         map.put(ANNOTATION_CLASS_CONSTRUCTOR_CALL, "Annotation class cannot be instantiated")
+        map.put(ENUM_CLASS_CONSTRUCTOR_CALL, "Enum types cannot be instantiated")
         map.put(NOT_AN_ANNOTATION_CLASS, "Illegal annotation class: {0}", NULLABLE_STRING)
         map.put(SUPERTYPES_FOR_ANNOTATION_CLASS, "Annotation class cannot have supertypes")
         map.put(

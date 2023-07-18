@@ -756,6 +756,11 @@ internal class AnnotationClassConstructorCallImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtCallExpression>(firDiagnostic, token), KtFirDiagnostic.AnnotationClassConstructorCall
 
+internal class EnumClassConstructorCallImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtCallExpression>(firDiagnostic, token), KtFirDiagnostic.EnumClassConstructorCall
+
 internal class NotAnAnnotationClassImpl(
     override val annotationName: String,
     firDiagnostic: KtPsiDiagnostic,

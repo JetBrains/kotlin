@@ -6,5 +6,5 @@ enum class A(val c: Int) {
 
 fun createA(): A {
     // Error should be here!
-    return <!INVISIBLE_REFERENCE!>A<!>(10)
+    return <!ENUM_CLASS_CONSTRUCTOR_CALL!><!INVISIBLE_REFERENCE!>A<!>(10)<!>
 }

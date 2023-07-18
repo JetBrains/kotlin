@@ -635,6 +635,10 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = AnnotationClassConstructorCall::class
     }
 
+    interface EnumClassConstructorCall : KtFirDiagnostic<KtCallExpression> {
+        override val diagnosticClass get() = EnumClassConstructorCall::class
+    }
+
     interface NotAnAnnotationClass : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = NotAnAnnotationClass::class
         val annotationName: String

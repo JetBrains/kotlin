@@ -12,8 +12,8 @@ val test2a = AnnotationClass()
 
 enum class EnumClass { VALUE1, VALUE2 }
 typealias Test3 = EnumClass
-val test3 = <!INVISIBLE_REFERENCE!>Test3<!>()
-val test3a = <!INVISIBLE_REFERENCE!>EnumClass<!>()
+val test3 = <!ENUM_CLASS_CONSTRUCTOR_CALL!><!INVISIBLE_REFERENCE!>Test3<!>()<!>
+val test3a = <!ENUM_CLASS_CONSTRUCTOR_CALL!><!INVISIBLE_REFERENCE!>EnumClass<!>()<!>
 
 sealed class SealedClass
 typealias Test4 = SealedClass

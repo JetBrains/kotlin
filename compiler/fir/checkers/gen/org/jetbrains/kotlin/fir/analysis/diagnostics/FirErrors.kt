@@ -248,6 +248,7 @@ object FirErrors {
     val NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION by error0<KtExpression>()
     val CYCLE_IN_ANNOTATION_PARAMETER by deprecationError0<KtParameter>(ProhibitCyclesInAnnotations)
     val ANNOTATION_CLASS_CONSTRUCTOR_CALL by error0<KtCallExpression>()
+    val ENUM_CLASS_CONSTRUCTOR_CALL by error0<KtCallExpression>()
     val NOT_AN_ANNOTATION_CLASS by error1<PsiElement, String>()
     val NULLABLE_TYPE_OF_ANNOTATION_MEMBER by error0<KtTypeReference>()
     val VAR_ANNOTATION_PARAMETER by error0<KtParameter>(SourceElementPositioningStrategies.VAL_OR_VAR_NODE)
