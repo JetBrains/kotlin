@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 buildscript {
     // workaround for KGP build metrics reports: https://github.com/gradle/gradle/issues/20001
     project.extensions.extraProperties["kotlin.build.report.output"] = null
@@ -76,9 +74,13 @@ repositories {
     }
 }
 
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(8))
+kotlin {
+    jvmToolchain(8)
+
+    compilerOptions {
+        allWarningsAsErrors.set(true)
+        optIn.add("kotlin.ExperimentalStdlibApi")
+        freeCompilerArgs.add("-Xsuppress-version-warnings")
     }
 }
 
@@ -121,21 +123,4 @@ dependencies {
     implementation(libs.kotlinx.metadataJvm)
 }
 
-samWithReceiver {
-    annotation("org.gradle.api.HasImplicitReceiver")
-}
-
-fun Project.samWithReceiver(configure: org.jetbrains.kotlin.samWithReceiver.gradle.SamWithReceiverExtension.() -> Unit): Unit =
-    extensions.configure("samWithReceiver", configure)
-
-tasks.withType<KotlinCompile>().configureEach {
-    compilerOptions {
-        allWarningsAsErrors.set(true)
-        optIn.add("kotlin.ExperimentalStdlibApi")
-        freeCompilerArgs.add("-Xsuppress-version-warnings")
-    }
-}
-
-allprojects {
-    tasks.register("checkBuild")
-}
+tasks.register("checkBuild")
