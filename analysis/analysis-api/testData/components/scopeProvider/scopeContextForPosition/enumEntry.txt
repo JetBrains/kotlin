@@ -98,8 +98,10 @@ scopes:
         hasGetter: true
         hasSetter: false
         initializer: KtConstantInitializerValue("")
+        isActual: false
         isConst: false
         isDelegatedProperty: false
+        isExpect: false
         isExtension: false
         isFromPrimaryConstructor: false
         isLateInit: false
@@ -124,7 +126,9 @@ scopes:
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
+        isActual: false
         isBuiltinFunctionInvoke: false
+        isExpect: false
         isExtension: false
         isExternal: false
         isInfix: false
@@ -151,7 +155,9 @@ scopes:
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
+        isActual: false
         isBuiltinFunctionInvoke: false
+        isExpect: false
         isExtension: false
         isExternal: false
         isInfix: false
@@ -178,7 +184,9 @@ scopes:
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
+        isActual: false
         isBuiltinFunctionInvoke: false
+        isExpect: false
         isExtension: false
         isExternal: false
         isInfix: false
@@ -226,7 +234,9 @@ scopes:
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
+        isActual: false
         isBuiltinFunctionInvoke: false
+        isExpect: false
         isExtension: false
         isExternal: false
         isInfix: false
@@ -274,7 +284,9 @@ scopes:
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
+        isActual: false
         isBuiltinFunctionInvoke: false
+        isExpect: false
         isExtension: false
         isExternal: false
         isInfix: false
@@ -301,7 +313,9 @@ scopes:
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
+        isActual: false
         isBuiltinFunctionInvoke: false
+        isExpect: false
         isExtension: false
         isExternal: false
         isInfix: false
@@ -349,8 +363,10 @@ scopes:
         hasGetter: false
         hasSetter: false
         initializer: null
+        isActual: false
         isConst: false
         isDelegatedProperty: false
+        isExpect: false
         isExtension: false
         isFromPrimaryConstructor: false
         isLateInit: false
@@ -393,8 +409,10 @@ scopes:
         hasGetter: false
         hasSetter: false
         initializer: null
+        isActual: false
         isConst: false
         isDelegatedProperty: false
+        isExpect: false
         isExtension: false
         isFromPrimaryConstructor: false
         isLateInit: false
@@ -419,7 +437,9 @@ scopes:
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: false
+        isActual: false
         isBuiltinFunctionInvoke: false
+        isExpect: false
         isExtension: false
         isExternal: false
         isInfix: false
@@ -445,7 +465,9 @@ scopes:
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: false
+        isActual: false
         isBuiltinFunctionInvoke: false
+        isExpect: false
         isExtension: false
         isExternal: false
         isInfix: false
@@ -473,6 +495,8 @@ scopes:
         containingClassIdIfNonLocal: null
         contextReceivers: []
         hasStableParameterNames: true
+        isActual: false
+        isExpect: false
         isExtension: false
         isPrimary: true
         origin: SOURCE_MEMBER_GENERATED
@@ -511,7 +535,9 @@ scopes:
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
+        isActual: false
         isBuiltinFunctionInvoke: false
+        isExpect: false
         isExtension: false
         isExternal: false
         isInfix: false
@@ -543,7 +569,9 @@ scopes:
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
+        isActual: false
         isBuiltinFunctionInvoke: false
+        isExpect: false
         isExtension: false
         isExternal: false
         isInfix: false
@@ -620,8 +648,10 @@ scopes:
         hasGetter: true
         hasSetter: false
         initializer: null
+        isActual: false
         isConst: false
         isDelegatedProperty: false
+        isExpect: false
         isExtension: false
         isFromPrimaryConstructor: false
         isLateInit: false
@@ -688,7 +718,9 @@ scopes:
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
+        isActual: false
         isBuiltinFunctionInvoke: false
+        isExpect: false
         isExtension: false
         isExternal: false
         isInfix: false
@@ -736,7 +768,9 @@ scopes:
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
+        isActual: false
         isBuiltinFunctionInvoke: false
+        isExpect: false
         isExtension: false
         isExternal: false
         isInfix: false
@@ -763,7 +797,9 @@ scopes:
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
+        isActual: false
         isBuiltinFunctionInvoke: false
+        isExpect: false
         isExtension: false
         isExternal: false
         isInfix: false

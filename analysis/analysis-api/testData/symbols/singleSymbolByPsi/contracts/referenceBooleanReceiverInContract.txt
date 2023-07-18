@@ -24,7 +24,9 @@ KtFunctionSymbol:
               deprecationStatus: null
   ]
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: true
   isExternal: false
   isInfix: false

@@ -4,7 +4,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -38,7 +40,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false

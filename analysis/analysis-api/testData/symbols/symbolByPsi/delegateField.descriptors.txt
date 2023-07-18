@@ -4,6 +4,8 @@ KtConstructorSymbol:
   containingClassIdIfNonLocal: MyColor
   contextReceivers: []
   hasStableParameterNames: true
+  isActual: false
+  isExpect: false
   isExtension: false
   isPrimary: true
   origin: SOURCE
@@ -71,8 +73,10 @@ KtConstructorSymbol:
         hasGetter: true
         hasSetter: false
         initializer: null
+        isActual: false
         isConst: false
         isDelegatedProperty: false
+        isExpect: false
         isExtension: false
         isFromPrimaryConstructor: false
         isLateInit: false
@@ -174,8 +178,10 @@ KtConstructorSymbol:
         hasGetter: true
         hasSetter: false
         initializer: null
+        isActual: false
         isConst: false
         isDelegatedProperty: false
+        isExpect: false
         isExtension: false
         isFromPrimaryConstructor: false
         isLateInit: false
@@ -277,8 +283,10 @@ KtConstructorSymbol:
         hasGetter: true
         hasSetter: false
         initializer: null
+        isActual: false
         isConst: false
         isDelegatedProperty: false
+        isExpect: false
         isExtension: false
         isFromPrimaryConstructor: false
         isLateInit: false
@@ -428,8 +436,10 @@ KtKotlinPropertySymbol:
   hasGetter: true
   hasSetter: false
   initializer: null
+  isActual: false
   isConst: false
   isDelegatedProperty: true
+  isExpect: false
   isExtension: false
   isFromPrimaryConstructor: false
   isLateInit: false
@@ -539,8 +549,10 @@ KtKotlinPropertySymbol:
   hasGetter: true
   hasSetter: false
   initializer: KtNonConstantInitializerValue(lazy { MyColor(1, 2, 3) })
+  isActual: false
   isConst: false
   isDelegatedProperty: false
+  isExpect: false
   isExtension: false
   isFromPrimaryConstructor: false
   isLateInit: false
@@ -627,8 +639,10 @@ KtKotlinPropertySymbol:
   hasGetter: true
   hasSetter: false
   initializer: KtNonConstantInitializerValue(MyColor(1, 2, 3))
+  isActual: false
   isConst: false
   isDelegatedProperty: false
+  isExpect: false
   isExtension: false
   isFromPrimaryConstructor: false
   isLateInit: false

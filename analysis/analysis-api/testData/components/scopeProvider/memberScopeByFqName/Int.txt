@@ -7,7 +7,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: true
@@ -67,7 +69,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -127,7 +131,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -187,7 +193,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -247,7 +255,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -307,7 +317,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -367,7 +379,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -424,7 +438,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -461,7 +477,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -521,7 +539,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -581,7 +601,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -641,7 +663,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -701,7 +725,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -761,7 +787,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -821,7 +849,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -878,7 +908,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -915,7 +947,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -952,7 +986,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1012,7 +1048,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1072,7 +1110,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1132,7 +1172,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1192,7 +1234,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1252,7 +1296,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1312,7 +1358,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: true
@@ -1372,7 +1420,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1432,7 +1482,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1492,7 +1544,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1552,7 +1606,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1612,7 +1668,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1672,7 +1730,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1729,7 +1789,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1786,7 +1848,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1843,7 +1907,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1900,7 +1966,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -1962,7 +2030,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -2024,7 +2094,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -2086,7 +2158,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -2148,7 +2222,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -2210,7 +2286,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -2272,7 +2350,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -2334,7 +2414,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -2396,7 +2478,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -2458,7 +2542,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -2520,7 +2606,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -2580,7 +2668,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: true
@@ -2640,7 +2730,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: true
@@ -2700,7 +2792,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -2760,7 +2854,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -2820,7 +2916,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -2880,7 +2978,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -2940,7 +3040,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -3000,7 +3102,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -3060,7 +3164,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -3097,7 +3203,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -3134,7 +3242,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -3171,7 +3281,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -3208,7 +3320,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -3245,7 +3359,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -3282,7 +3398,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -3319,7 +3437,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -3356,7 +3476,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -3393,7 +3515,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -3430,7 +3554,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: true
@@ -3490,7 +3616,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: true
@@ -3547,7 +3675,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -3610,6 +3740,8 @@ KtConstructorSymbol:
   containingClassIdIfNonLocal: kotlin/Int
   contextReceivers: []
   hasStableParameterNames: true
+  isActual: false
+  isExpect: false
   isExtension: false
   isPrimary: true
   origin: LIBRARY

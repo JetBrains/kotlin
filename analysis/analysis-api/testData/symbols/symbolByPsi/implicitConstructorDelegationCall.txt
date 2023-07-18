@@ -4,6 +4,8 @@ KtConstructorSymbol:
   containingClassIdIfNonLocal: A
   contextReceivers: []
   hasStableParameterNames: true
+  isActual: false
+  isExpect: false
   isExtension: false
   isPrimary: false
   origin: SOURCE

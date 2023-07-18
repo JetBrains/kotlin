@@ -50,8 +50,10 @@ KtKotlinPropertySymbol:
   hasGetter: true
   hasSetter: false
   initializer: KtConstantInitializerValue(0)
+  isActual: false
   isConst: false
   isDelegatedProperty: false
+  isExpect: false
   isExtension: false
   isFromPrimaryConstructor: false
   isLateInit: false
@@ -133,8 +135,10 @@ KtKotlinPropertySymbol:
   hasGetter: true
   hasSetter: false
   initializer: KtConstantInitializerValue(1)
+  isActual: false
   isConst: true
   isDelegatedProperty: false
+  isExpect: false
   isExtension: false
   isFromPrimaryConstructor: false
   isLateInit: false
@@ -219,8 +223,10 @@ KtKotlinPropertySymbol:
   hasGetter: true
   hasSetter: false
   initializer: KtConstantInitializerValue(2)
+  isActual: false
   isConst: false
   isDelegatedProperty: false
+  isExpect: false
   isExtension: false
   isFromPrimaryConstructor: false
   isLateInit: false
@@ -305,8 +311,10 @@ KtKotlinPropertySymbol:
   hasGetter: true
   hasSetter: false
   initializer: KtConstantInitializerValue(3)
+  isActual: false
   isConst: false
   isDelegatedProperty: false
+  isExpect: false
   isExtension: false
   isFromPrimaryConstructor: false
   isLateInit: false
@@ -388,8 +396,10 @@ KtKotlinPropertySymbol:
   hasGetter: true
   hasSetter: true
   initializer: KtConstantInitializerValue(4)
+  isActual: false
   isConst: false
   isDelegatedProperty: false
+  isExpect: false
   isExtension: false
   isFromPrimaryConstructor: false
   isLateInit: false
@@ -545,8 +555,10 @@ KtKotlinPropertySymbol:
   hasGetter: true
   hasSetter: true
   initializer: KtConstantInitializerValue(5)
+  isActual: false
   isConst: false
   isDelegatedProperty: false
+  isExpect: false
   isExtension: false
   isFromPrimaryConstructor: false
   isLateInit: false
@@ -702,8 +714,10 @@ KtKotlinPropertySymbol:
   hasGetter: true
   hasSetter: true
   initializer: KtConstantInitializerValue(0)
+  isActual: false
   isConst: false
   isDelegatedProperty: false
+  isExpect: false
   isExtension: false
   isFromPrimaryConstructor: false
   isLateInit: false

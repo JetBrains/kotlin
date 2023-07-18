@@ -40,7 +40,9 @@ KtFunctionSymbol:
       occurrencesRange: UNKNOWN
   ]
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false

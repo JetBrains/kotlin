@@ -53,7 +53,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: false
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -86,6 +88,8 @@ KtConstructorSymbol:
   containingClassIdIfNonLocal: JavaClass
   contextReceivers: []
   hasStableParameterNames: false
+  isActual: false
+  isExpect: false
   isExtension: false
   isPrimary: true
   origin: JAVA

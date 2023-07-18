@@ -4,7 +4,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -38,7 +40,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -90,7 +94,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -166,8 +172,10 @@ KtKotlinPropertySymbol:
   hasGetter: true
   hasSetter: false
   initializer: null
+  isActual: false
   isConst: false
   isDelegatedProperty: false
+  isExpect: false
   isExtension: false
   isFromPrimaryConstructor: false
   isLateInit: false
@@ -221,7 +229,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -255,7 +265,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -330,7 +342,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -364,7 +378,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -467,8 +483,10 @@ KtKotlinPropertySymbol:
   hasGetter: true
   hasSetter: false
   initializer: KtConstantInitializerValue(1)
+  isActual: false
   isConst: false
   isDelegatedProperty: false
+  isExpect: false
   isExtension: false
   isFromPrimaryConstructor: false
   isLateInit: false

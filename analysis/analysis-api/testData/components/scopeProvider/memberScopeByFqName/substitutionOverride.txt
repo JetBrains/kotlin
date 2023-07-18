@@ -4,7 +4,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -42,7 +44,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -80,7 +84,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -137,7 +143,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -194,7 +202,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -256,7 +266,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -318,7 +330,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -398,7 +412,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -478,7 +494,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -535,7 +553,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -569,7 +589,9 @@ KtFunctionSymbol:
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
+  isActual: false
   isBuiltinFunctionInvoke: false
+  isExpect: false
   isExtension: false
   isExternal: false
   isInfix: false
@@ -603,6 +625,8 @@ KtConstructorSymbol:
   containingClassIdIfNonLocal: test/ClassWithGenericBase
   contextReceivers: []
   hasStableParameterNames: true
+  isActual: false
+  isExpect: false
   isExtension: false
   isPrimary: true
   origin: SOURCE_MEMBER_GENERATED

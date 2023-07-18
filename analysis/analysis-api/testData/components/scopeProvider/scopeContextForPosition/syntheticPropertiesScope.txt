@@ -23,7 +23,9 @@ scopes:
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: false
+        isActual: false
         isBuiltinFunctionInvoke: false
+        isExpect: false
         isExtension: false
         isExternal: false
         isInfix: false
@@ -49,7 +51,9 @@ scopes:
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
+        isActual: false
         isBuiltinFunctionInvoke: false
+        isExpect: false
         isExtension: false
         isExternal: false
         isInfix: false
@@ -97,7 +101,9 @@ scopes:
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
+        isActual: false
         isBuiltinFunctionInvoke: false
+        isExpect: false
         isExtension: false
         isExternal: false
         isInfix: false
@@ -124,7 +130,9 @@ scopes:
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
+        isActual: false
         isBuiltinFunctionInvoke: false
+        isExpect: false
         isExtension: false
         isExternal: false
         isInfix: false
@@ -200,6 +208,8 @@ scopes:
         containingClassIdIfNonLocal: JavaClass
         contextReceivers: []
         hasStableParameterNames: false
+        isActual: false
+        isExpect: false
         isExtension: false
         isPrimary: true
         origin: JAVA
@@ -253,7 +263,9 @@ scopes:
         contextReceivers: []
         contractEffects: []
         hasStableParameterNames: true
+        isActual: false
         isBuiltinFunctionInvoke: false
+        isExpect: false
         isExtension: true
         isExternal: false
         isInfix: false
@@ -296,4 +308,3 @@ scopes:
   DefaultSimpleImportingScope, index = 8
 
   DefaultStarImportingScope, index = 9
-
