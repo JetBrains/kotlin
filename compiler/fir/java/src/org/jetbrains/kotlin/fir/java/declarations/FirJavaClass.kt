@@ -75,7 +75,7 @@ class FirJavaClass @FirImplementationDetail internal constructor(
 
     // TODO: the lazy annotations is a workaround for KT-55387, some non-lazy solution should probably be used instead
     override val annotations: List<FirAnnotation> by lazy {
-        unEnhancedAnnotations.convertAnnotationsToFir(moduleData.session, javaTypeParameterStack)
+        unEnhancedAnnotations.convertAnnotationsToFir(moduleData.session)
     }
 
     // TODO: the lazy deprecationsProvider is a workaround for KT-55387, some non-lazy solution should probably be used instead

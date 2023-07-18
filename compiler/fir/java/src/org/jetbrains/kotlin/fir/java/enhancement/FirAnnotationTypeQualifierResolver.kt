@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.convertAnnotationsToFir
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.references.FirFromMissingDependenciesNamedReference
@@ -71,9 +70,9 @@ class FirAnnotationTypeQualifierResolver(
                 ?.let { extractDefaultQualifiers(it) }
         } else {
             val forModule = javaModuleAnnotationsProvider.getAnnotationsForModuleOwnerOfClass(classId)
-                ?.let { extractAndMergeDefaultQualifiers(null, it.convertAnnotationsToFir(session, JavaTypeParameterStack.EMPTY)) }
+                ?.let { extractAndMergeDefaultQualifiers(null, it.convertAnnotationsToFir(session)) }
             val forPackage = (firClass as? FirJavaClass)?.javaPackage
-                ?.let { extractAndMergeDefaultQualifiers(forModule, it.convertAnnotationsToFir(session, JavaTypeParameterStack.EMPTY)) }
+                ?.let { extractAndMergeDefaultQualifiers(forModule, it.convertAnnotationsToFir(session)) }
             forPackage ?: forModule
         }
         return extractAndMergeDefaultQualifiers(parentQualifiers, firClass.annotations)

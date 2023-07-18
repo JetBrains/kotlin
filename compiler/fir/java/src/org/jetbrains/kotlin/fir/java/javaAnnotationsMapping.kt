@@ -52,20 +52,19 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import java.util.*
 
 internal fun Iterable<JavaAnnotation>.convertAnnotationsToFir(
-    session: FirSession, javaTypeParameterStack: JavaTypeParameterStack
-): List<FirAnnotation> = map { it.toFirAnnotationCall(session, javaTypeParameterStack) }
+    session: FirSession,
+): List<FirAnnotation> = map { it.toFirAnnotationCall(session) }
 
 internal fun JavaAnnotationOwner.convertAnnotationsToFir(
-    session: FirSession, javaTypeParameterStack: JavaTypeParameterStack
-): List<FirAnnotation> = annotations.convertAnnotationsToFir(session, javaTypeParameterStack)
+    session: FirSession,
+): List<FirAnnotation> = annotations.convertAnnotationsToFir(session)
 
 internal fun FirAnnotationContainer.setAnnotationsFromJava(
     session: FirSession,
     javaAnnotationOwner: JavaAnnotationOwner,
-    javaTypeParameterStack: JavaTypeParameterStack
 ) {
     val annotations = mutableListOf<FirAnnotation>()
-    javaAnnotationOwner.annotations.mapTo(annotations) { it.toFirAnnotationCall(session, javaTypeParameterStack) }
+    javaAnnotationOwner.annotations.mapTo(annotations) { it.toFirAnnotationCall(session) }
     replaceAnnotations(annotations)
 }
 
@@ -74,18 +73,15 @@ internal fun JavaValueParameter.toFirValueParameter(
     functionSymbol: FirFunctionSymbol<*>,
     moduleData: FirModuleData,
     index: Int,
-    javaTypeParameterStack: JavaTypeParameterStack,
-): FirValueParameter {
-    return buildJavaValueParameter {
-        source = (this@toFirValueParameter as? JavaElementImpl<*>)?.psi?.toKtPsiSourceElement()
-        isFromSource = this@toFirValueParameter.isFromSource
-        this.moduleData = moduleData
-        containingFunctionSymbol = functionSymbol
-        name = this@toFirValueParameter.name ?: Name.identifier("p$index")
-        returnTypeRef = type.toFirJavaTypeRef(session, javaTypeParameterStack)
-        isVararg = this@toFirValueParameter.isVararg
-        annotationBuilder = { convertAnnotationsToFir(session, javaTypeParameterStack) }
-    }
+): FirValueParameter = buildJavaValueParameter {
+    source = (this@toFirValueParameter as? JavaElementImpl<*>)?.psi?.toKtPsiSourceElement()
+    isFromSource = this@toFirValueParameter.isFromSource
+    this.moduleData = moduleData
+    containingFunctionSymbol = functionSymbol
+    name = this@toFirValueParameter.name ?: Name.identifier("p$index")
+    returnTypeRef = type.toFirJavaTypeRef(session)
+    isVararg = this@toFirValueParameter.isVararg
+    annotationBuilder = { convertAnnotationsToFir(session) }
 }
 
 internal fun JavaAnnotationArgument.toFirExpression(
@@ -121,7 +117,7 @@ internal fun JavaAnnotationArgument.toFirExpression(
             )
             typeRef = resolvedTypeRef
         }
-        is JavaAnnotationAsAnnotationArgument -> getAnnotation().toFirAnnotationCall(session, javaTypeParameterStack)
+        is JavaAnnotationAsAnnotationArgument -> getAnnotation().toFirAnnotationCall(session)
         else -> buildErrorExpression {
             diagnostic = ConeSimpleDiagnostic("Unknown JavaAnnotationArgument: ${this::class.java}", DiagnosticKind.Java)
         }
@@ -235,9 +231,7 @@ private fun fillAnnotationArgumentMapping(
     }
 }
 
-private fun JavaAnnotation.toFirAnnotationCall(
-    session: FirSession, javaTypeParameterStack: JavaTypeParameterStack
-): FirAnnotation = buildAnnotation {
+private fun JavaAnnotation.toFirAnnotationCall(session: FirSession): FirAnnotation = buildAnnotation {
     val lookupTag = when (classId) {
         StandardClassIds.Annotations.Java.Target -> StandardClassIds.Annotations.Target
         StandardClassIds.Annotations.Java.Retention -> StandardClassIds.Annotations.Retention

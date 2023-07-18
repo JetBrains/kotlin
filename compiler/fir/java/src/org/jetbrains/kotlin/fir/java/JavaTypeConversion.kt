@@ -56,11 +56,9 @@ internal fun FirTypeRef.toConeKotlinTypeProbablyFlexible(
     (resolveIfJavaType(session, javaTypeParameterStack, mode) as? FirResolvedTypeRef)?.type
         ?: ConeErrorType(ConeSimpleDiagnostic("Type reference in Java not resolved: ${this::class.java}", DiagnosticKind.Java))
 
-internal fun JavaType.toFirJavaTypeRef(session: FirSession, javaTypeParameterStack: JavaTypeParameterStack): FirJavaTypeRef {
-    return buildJavaTypeRef {
-        annotationBuilder = { convertAnnotationsToFir(session, javaTypeParameterStack) }
-        type = this@toFirJavaTypeRef
-    }
+internal fun JavaType.toFirJavaTypeRef(session: FirSession): FirJavaTypeRef = buildJavaTypeRef {
+    annotationBuilder = { convertAnnotationsToFir(session) }
+    type = this@toFirJavaTypeRef
 }
 
 internal fun JavaType?.toFirResolvedTypeRef(
@@ -90,10 +88,11 @@ private fun JavaType?.toConeTypeProjection(
     val attributes = if (this != null && (annotations.isNotEmpty() || additionalAnnotations != null)) {
         val convertedAnnotations = buildList {
             if (annotations.isNotEmpty()) {
-                addAll(this@toConeTypeProjection.convertAnnotationsToFir(session, javaTypeParameterStack))
+                addAll(this@toConeTypeProjection.convertAnnotationsToFir(session))
             }
+
             if (additionalAnnotations != null) {
-                addAll(additionalAnnotations.convertAnnotationsToFir(session, javaTypeParameterStack))
+                addAll(additionalAnnotations.convertAnnotationsToFir(session))
             }
         }
 

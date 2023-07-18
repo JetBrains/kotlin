@@ -113,7 +113,7 @@ abstract class FirJavaFacade(
             javaTypeParameterStack.addParameter(this@toFirTypeParameter, symbol)
             this.containingDeclarationSymbol = containingDeclarationSymbol
             for (upperBound in this@toFirTypeParameter.upperBounds) {
-                bounds += upperBound.toFirJavaTypeRef(session, javaTypeParameterStack)
+                bounds += upperBound.toFirJavaTypeRef(session)
             }
             if (bounds.isEmpty()) {
                 bounds += buildResolvedTypeRef {
@@ -122,7 +122,7 @@ abstract class FirJavaFacade(
             }
         }.apply {
             // TODO: should be lazy (in case annotations refer to the containing class)
-            setAnnotationsFromJava(session, this@toFirTypeParameter, javaTypeParameterStack)
+            setAnnotationsFromJava(session, this@toFirTypeParameter)
         }
     }
 
@@ -269,7 +269,7 @@ abstract class FirJavaFacade(
                     buildOuterClassTypeParameterRef { symbol = it.symbol }
                 }
             }
-            javaClass.supertypes.mapTo(superTypeRefs) { it.toFirJavaTypeRef(session, javaTypeParameterStack) }
+            javaClass.supertypes.mapTo(superTypeRefs) { it.toFirJavaTypeRef(session) }
             if (superTypeRefs.isEmpty()) {
                 superTypeRefs.add(
                     buildResolvedTypeRef {
@@ -375,7 +375,6 @@ abstract class FirJavaFacade(
                     javaClass,
                     classId,
                     moduleData,
-                    javaTypeParameterStack,
                     dispatchReceiver,
                     classTypeParameters,
                     declarations
@@ -412,7 +411,6 @@ abstract class FirJavaFacade(
         javaClass: JavaClass,
         classId: ClassId,
         moduleData: FirModuleData,
-        javaTypeParameterStack: JavaTypeParameterStack,
         classType: ConeClassLikeType,
         classTypeParameters: List<FirTypeParameter>,
         destination: MutableList<FirDeclaration>
@@ -430,7 +428,7 @@ abstract class FirJavaFacade(
                 symbol = FirNamedFunctionSymbol(componentId)
                 this.name = name
                 isFromSource = recordComponent.isFromSource
-                returnTypeRef = recordComponent.type.toFirJavaTypeRef(session, javaTypeParameterStack)
+                returnTypeRef = recordComponent.type.toFirJavaTypeRef(session)
                 annotationBuilder = { emptyList() }
                 status = FirResolvedDeclarationStatusImpl(
                     Visibilities.Public,
@@ -474,7 +472,7 @@ abstract class FirJavaFacade(
                         source = component.toSourceElement(KtFakeSourceElementKind.ImplicitRecordConstructorParameter)
                         this.moduleData = moduleData
                         isFromSource = component.isFromSource
-                        returnTypeRef = component.type.toFirJavaTypeRef(session, javaTypeParameterStack)
+                        returnTypeRef = component.type.toFirJavaTypeRef(session)
                         name = component.name
                         isVararg = component.isVararg
                         annotationBuilder = { emptyList() }
@@ -509,14 +507,14 @@ abstract class FirJavaFacade(
                 ).apply {
                     isStatic = javaField.isStatic
                 }
-                returnTypeRef = returnType.toFirJavaTypeRef(session, javaTypeParameterStack)
+                returnTypeRef = returnType.toFirJavaTypeRef(session)
                     .resolveIfJavaType(session, javaTypeParameterStack, mode = FirJavaTypeConversionMode.ANNOTATION_MEMBER)
                 resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                 origin = javaOrigin(javaField.isFromSource)
             }.apply {
                 containingClassForStaticMemberAttr = classId.toLookupTag()
                 // TODO: check if this works properly with annotations that take the enum class as an argument
-                setAnnotationsFromJava(session, javaField, javaTypeParameterStack)
+                setAnnotationsFromJava(session, javaField)
             }
             else -> buildJavaField {
                 source = javaField.toSourceElement()
@@ -533,10 +531,10 @@ abstract class FirJavaFacade(
                 }
                 visibility = javaField.visibility
                 modality = javaField.modality
-                returnTypeRef = returnType.toFirJavaTypeRef(session, javaTypeParameterStack)
+                returnTypeRef = returnType.toFirJavaTypeRef(session)
                 isVar = !javaField.isFinal
                 isStatic = javaField.isStatic
-                annotationBuilder = { javaField.convertAnnotationsToFir(session, javaTypeParameterStack) }
+                annotationBuilder = { javaField.convertAnnotationsToFir(session) }
 
                 lazyInitializer = lazy {
                     // NB: null should be converted to null
@@ -572,13 +570,13 @@ abstract class FirJavaFacade(
             symbol = methodSymbol
             name = methodName
             isFromSource = javaMethod.isFromSource
-            returnTypeRef = returnType.toFirJavaTypeRef(session, javaTypeParameterStack)
+            returnTypeRef = returnType.toFirJavaTypeRef(session)
             isStatic = javaMethod.isStatic
             typeParameters += javaMethod.typeParameters.convertTypeParameters(javaTypeParameterStack, methodSymbol, moduleData)
             for ((index, valueParameter) in javaMethod.valueParameters.withIndex()) {
-                valueParameters += valueParameter.toFirValueParameter(session, methodSymbol, moduleData, index, javaTypeParameterStack)
+                valueParameters += valueParameter.toFirValueParameter(session, methodSymbol, moduleData, index)
             }
-            annotationBuilder = { javaMethod.convertAnnotationsToFir(session, javaTypeParameterStack) }
+            annotationBuilder = { javaMethod.convertAnnotationsToFir(session) }
             status = FirResolvedDeclarationStatusImpl(
                 javaMethod.visibility,
                 javaMethod.modality,
@@ -654,9 +652,9 @@ abstract class FirJavaFacade(
 
             if (javaConstructor != null) {
                 this.typeParameters += javaConstructor.typeParameters.convertTypeParameters(javaTypeParameterStack, constructorSymbol, moduleData)
-                annotationBuilder = { javaConstructor.convertAnnotationsToFir(session, javaTypeParameterStack) }
+                annotationBuilder = { javaConstructor.convertAnnotationsToFir(session) }
                 for ((index, valueParameter) in javaConstructor.valueParameters.withIndex()) {
-                    valueParameters += valueParameter.toFirValueParameter(session, constructorSymbol, moduleData, index, javaTypeParameterStack)
+                    valueParameters += valueParameter.toFirValueParameter(session, constructorSymbol, moduleData, index)
                 }
             } else {
                 annotationBuilder = { emptyList() }
