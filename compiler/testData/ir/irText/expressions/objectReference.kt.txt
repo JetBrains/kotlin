@@ -43,6 +43,16 @@ object Z {
 
   }
 
+  fun aFun() {
+    withLambda(f = local fun <anonymous>() {
+      Z.<set-counter>(<set-?> = 1)
+      Z.foo()
+      Z.<set-counter>(<set-?> = 1)
+      Z.foo()
+    }
+)
+  }
+
   val aLambda: Function0<Unit>
     field = local fun <anonymous>() {
       Z.<set-counter>(<set-?> = 1)
@@ -90,3 +100,7 @@ fun Z.test() {
   Z.<set-counter>(<set-?> = 1)
   Z.foo()
 }
+
+fun withLambda(f: Function0<Unit>) {
+}
+

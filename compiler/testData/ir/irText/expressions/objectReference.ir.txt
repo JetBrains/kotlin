@@ -84,6 +84,23 @@ FILE fqName:<root> fileName:/objectReference.kt
         overridden:
           public open fun toString (): kotlin.String declared in kotlin.Any
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN name:aFun visibility:public modality:FINAL <> ($this:<root>.Z) returnType:kotlin.Unit
+      $this: VALUE_PARAMETER name:<this> type:<root>.Z
+      BLOCK_BODY
+        CALL 'public final fun withLambda (f: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+          f: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
+              BLOCK_BODY
+                CALL 'public final fun <set-counter> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.Z' type=kotlin.Unit origin=EQ
+                  $this: GET_OBJECT 'CLASS OBJECT name:Z modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.Z
+                  <set-?>: CONST Int type=kotlin.Int value=1
+                CALL 'public final fun foo (): kotlin.Unit declared in <root>.Z' type=kotlin.Unit origin=null
+                  $this: GET_OBJECT 'CLASS OBJECT name:Z modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.Z
+                CALL 'public final fun <set-counter> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.Z' type=kotlin.Unit origin=EQ
+                  $this: GET_OBJECT 'CLASS OBJECT name:Z modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.Z
+                  <set-?>: CONST Int type=kotlin.Int value=1
+                CALL 'public final fun foo (): kotlin.Unit declared in <root>.Z' type=kotlin.Unit origin=null
+                  $this: GET_OBJECT 'CLASS OBJECT name:Z modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.Z
     PROPERTY name:aLambda visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:aLambda type:kotlin.Function0<kotlin.Unit> visibility:private [final]
         EXPRESSION_BODY
@@ -189,3 +206,6 @@ FILE fqName:<root> fileName:/objectReference.kt
         <set-?>: CONST Int type=kotlin.Int value=1
       CALL 'public final fun foo (): kotlin.Unit declared in <root>.Z' type=kotlin.Unit origin=null
         $this: GET_OBJECT 'CLASS OBJECT name:Z modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.Z
+  FUN name:withLambda visibility:public modality:FINAL <> (f:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit
+    VALUE_PARAMETER name:f index:0 type:kotlin.Function0<kotlin.Unit>
+    BLOCK_BODY

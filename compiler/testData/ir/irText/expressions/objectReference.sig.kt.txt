@@ -77,6 +77,12 @@ object Z {
   private constructor() /* primary */
 
   // CHECK:
+  //   Mangled name: Z#aFun(){}
+  //   Public signature: /Z.aFun|-596272525427331003[0]
+  //   Public signature debug description: aFun(){}
+  fun aFun(): Unit
+
+  // CHECK:
   //   Mangled name: Z#bar(){}
   //   Public signature: /Z.bar|496682602797471549[0]
   //   Public signature debug description: bar(){}
@@ -95,4 +101,10 @@ object Z {
 //   Public signature: /test|2491484829934192138[0]
 //   Public signature debug description: test@Z(){}
 fun Z.test(): Unit
+
+// CHECK:
+//   Mangled name: #withLambda(kotlin.Function0<kotlin.Unit>){}
+//   Public signature: /withLambda|-1561447572468305971[0]
+//   Public signature debug description: withLambda(kotlin.Function0<kotlin.Unit>){}
+fun withLambda(f: Function0<Unit>): Unit
 

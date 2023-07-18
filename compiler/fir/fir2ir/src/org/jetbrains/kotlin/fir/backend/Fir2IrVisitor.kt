@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.contracts.description.LogicOperationKind
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.findChildByType
@@ -48,7 +47,7 @@ import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.defaultConstructor
 import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.parentClassOrNull
+import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -595,15 +594,12 @@ class Fir2IrVisitor(
         )
     }
 
-    // Note that this mimics psi2ir [StatementGenerator#isThisForClassPhysicallyAvailable].
-    private fun isThisForClassPhysicallyAvailable(irClass: IrClass): Boolean {
-        var lastClass = conversionScope.lastClass()
-        while (lastClass != null) {
-            if (irClass == lastClass) return true
-            if (!lastClass.isInner) return false
-            lastClass = lastClass.parentClassOrNull
-        }
-        return false
+    // Note that this mimics psi2ir [StatementGenerator#shouldGenerateReceiverAsSingletonReference].
+    private fun shouldGenerateReceiverAsSingletonReference(irClass: IrClass): Boolean {
+        val scopeOwner = conversionScope.parent()
+        return irClass.isObject &&
+                scopeOwner != irClass && // For anonymous initializers
+                !((scopeOwner is IrFunction || scopeOwner is IrProperty || scopeOwner is IrField) && (scopeOwner as IrDeclaration).parent == irClass) // Members of object
     }
 
     override fun visitThisReceiverExpression(
@@ -624,8 +620,8 @@ class Fir2IrVisitor(
                 } else {
                     classifierStorage.getIrClassSymbol(boundSymbol).owner
                 }
-                // NB: IR generates anonymous objects as classes, not singleton objects
-                if (firClass is FirRegularClass && firClass.classKind == ClassKind.OBJECT && !isThisForClassPhysicallyAvailable(irClass)) {
+
+                if (shouldGenerateReceiverAsSingletonReference(irClass)) {
                     return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
                         IrGetObjectValueImpl(startOffset, endOffset, irClass.defaultType, irClass.symbol)
                     }
