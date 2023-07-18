@@ -389,10 +389,8 @@
 
 # Singular files
 /.gitattributes "Kotlin Build Infrastructure"
-/.space.kts "Kotlin Build Infrastructure"
 /ChangeLog.md "Kotlin Release"
 /CODE_OF_CONDUCT.md "Kotlin Build Infrastructure"
-/dev-env-warmup.sh "Kotlin Build Infrastructure"
 /ReadMe.md "Kotlin Build Infrastructure"
 /SECURITY.md "Kotlin Build Infrastructure"
 
