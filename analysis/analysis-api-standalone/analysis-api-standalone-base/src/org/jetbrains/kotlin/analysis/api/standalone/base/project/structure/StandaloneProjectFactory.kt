@@ -108,7 +108,7 @@ object StandaloneProjectFactory {
             }
             application.apply {
                 registerService(KotlinFakeClsStubsCache::class.java, KotlinFakeClsStubsCache::class.java)
-                registerService(ClsKotlinBinaryClassCache::class.java)
+                registerService(ClsKotlinBinaryClassCache::class.java, ClsKotlinBinaryClassCache::class.java)
                 registerService(FileAttributeService::class.java, DummyFileAttributeService::class.java)
             }
         }
