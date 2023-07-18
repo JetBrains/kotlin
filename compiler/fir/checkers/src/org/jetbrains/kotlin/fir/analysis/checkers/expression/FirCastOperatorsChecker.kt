@@ -28,34 +28,27 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker() {
         val conversionTypeRef = expression.conversionTypeRef
         val targetType = conversionTypeRef.coneType.fullyExpandedType(session)
 
+        if (expression.operation in FirOperation.TYPES && targetType is ConeDynamicType) {
+            reporter.reportOn(conversionTypeRef.source, FirErrors.DYNAMIC_NOT_ALLOWED, context)
+        }
+
         val isSafeAs = expression.operation == FirOperation.SAFE_AS
         if (expression.operation == FirOperation.AS || isSafeAs) {
-            if (targetType is ConeDynamicType) {
-                reporter.reportOn(conversionTypeRef.source, FirErrors.DYNAMIC_NOT_ALLOWED, context)
-            } else {
-                val castType = checkCasting(actualType, targetType, isSafeAs, context)
-                if (castType == CastingType.Impossible) {
-                    if (context.languageVersionSettings.supportsFeature(LanguageFeature.EnableDfaWarningsInK2)) {
-                        reporter.reportOn(expression.source, FirErrors.CAST_NEVER_SUCCEEDS, context)
-                    }
-                } else if (castType == CastingType.Always) {
-                    if (context.languageVersionSettings.supportsFeature(LanguageFeature.EnableDfaWarningsInK2)) {
-                        reporter.reportOn(expression.source, FirErrors.USELESS_CAST, context)
-                    }
-                } else if (isCastErased(actualType, targetType, context)) {
-                    reporter.reportOn(expression.source, FirErrors.UNCHECKED_CAST, actualType, targetType, context)
+            val castType = checkCasting(actualType, targetType, isSafeAs, context)
+            if (castType == CastingType.Impossible) {
+                if (context.languageVersionSettings.supportsFeature(LanguageFeature.EnableDfaWarningsInK2)) {
+                    reporter.reportOn(expression.source, FirErrors.CAST_NEVER_SUCCEEDS, context)
                 }
+            } else if (castType == CastingType.Always) {
+                if (context.languageVersionSettings.supportsFeature(LanguageFeature.EnableDfaWarningsInK2)) {
+                    reporter.reportOn(expression.source, FirErrors.USELESS_CAST, context)
+                }
+            } else if (isCastErased(actualType, targetType, context)) {
+                reporter.reportOn(expression.source, FirErrors.UNCHECKED_CAST, actualType, targetType, context)
             }
         } else if (expression.operation == FirOperation.IS) {
-            if (targetType is ConeDynamicType) {
-                reporter.reportOn(conversionTypeRef.source, FirErrors.DYNAMIC_NOT_ALLOWED, context)
-            }
             if (!context.isContractBody && isCastErased(actualType, targetType, context)) {
                 reporter.reportOn(conversionTypeRef.source, FirErrors.CANNOT_CHECK_FOR_ERASED, targetType, context)
-            }
-        } else if (expression.operation == FirOperation.NOT_IS) {
-            if (targetType is ConeDynamicType) {
-                reporter.reportOn(conversionTypeRef.source, FirErrors.DYNAMIC_NOT_ALLOWED, context)
             }
         }
     }

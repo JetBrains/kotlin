@@ -12,28 +12,21 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChec
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
 import org.jetbrains.kotlin.fir.analysis.js.checkers.isNativeInterface
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.references.toResolvedFunctionSymbol
-import org.jetbrains.kotlin.fir.types.FirTypeProjectionWithVariance
-import org.jetbrains.kotlin.fir.types.coneTypeOrNull
+import org.jetbrains.kotlin.fir.expressions.forAllReifiedTypeParameters
 import org.jetbrains.kotlin.fir.types.toSymbol
 
 object FirJsReifiedExternalChecker : FirFunctionCallChecker() {
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
-        val functionSymbol = expression.calleeReference.toResolvedFunctionSymbol() ?: return
-        for ((typeParameterSymbol, typeArgument) in functionSymbol.typeParameterSymbols.zip(expression.typeArguments)) {
-            if (typeParameterSymbol.isReified) {
-                val type = (typeArgument as? FirTypeProjectionWithVariance)?.typeRef?.coneTypeOrNull ?: continue
-                val typeSymbol = type.toSymbol(context.session) ?: continue
-                if (typeSymbol.isNativeInterface(context)) {
-                    reporter.reportOn(
-                        typeArgument.source ?: expression.source,
-                        FirJsErrors.EXTERNAL_INTERFACE_AS_REIFIED_TYPE_ARGUMENT,
-                        type,
-                        context
-                    )
-                }
+        expression.forAllReifiedTypeParameters { type, typeArgument ->
+            val typeSymbol = type.toSymbol(context.session)
+            if (typeSymbol?.isNativeInterface(context) == true) {
+                reporter.reportOn(
+                    typeArgument.source ?: expression.source,
+                    FirJsErrors.EXTERNAL_INTERFACE_AS_REIFIED_TYPE_ARGUMENT,
+                    type,
+                    context
+                )
             }
         }
     }
-
 }

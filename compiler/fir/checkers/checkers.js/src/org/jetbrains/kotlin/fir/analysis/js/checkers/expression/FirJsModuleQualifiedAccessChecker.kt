@@ -9,15 +9,12 @@ import org.jetbrains.kotlin.AbstractKtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirQualifiedAccessExpressionChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.js.checkers.checkJsModuleUsage
-import org.jetbrains.kotlin.fir.analysis.js.checkers.isTopLevelSymbol
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.toResolvedBaseSymbol
-import org.jetbrains.kotlin.fir.references.toResolvedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.types.FirTypeProjectionWithVariance
-import org.jetbrains.kotlin.fir.types.coneTypeOrNull
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 
 object FirJsModuleQualifiedAccessChecker : FirQualifiedAccessExpressionChecker() {
@@ -34,7 +31,7 @@ object FirJsModuleQualifiedAccessChecker : FirQualifiedAccessExpressionChecker()
         expression: FirQualifiedAccessExpression
     ): List<Pair<FirBasedSymbol<*>, AbstractKtSourceElement?>> {
         val calleeSymbol = expression.calleeReference.toResolvedBaseSymbol()
-        if (calleeSymbol != null && isTopLevelSymbol(calleeSymbol, calleeSymbol.moduleData.session)) {
+        if (calleeSymbol != null && calleeSymbol.getContainingClassSymbol(calleeSymbol.moduleData.session) == null) {
             return listOf(calleeSymbol to expression.calleeReference.source)
         }
 
@@ -53,14 +50,10 @@ object FirJsModuleQualifiedAccessChecker : FirQualifiedAccessExpressionChecker()
     }
 
     private fun checkReifiedTypeParameters(expr: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
-        val functionSymbol = (expr as? FirFunctionCall)?.calleeReference?.toResolvedFunctionSymbol() ?: return
-        for ((typeParameterSymbol, typeArgument) in functionSymbol.typeParameterSymbols.zip(expr.typeArguments)) {
-            if (typeParameterSymbol.isReified) {
-                val type = (typeArgument as? FirTypeProjectionWithVariance)?.typeRef?.coneTypeOrNull ?: continue
-                val typeArgumentClass = type.toRegularClassSymbol(context.session) ?: continue
-                val source = typeArgument.source ?: expr.calleeReference.source ?: expr.source
-                checkJsModuleUsage(typeArgumentClass, context, reporter, source)
-            }
+        (expr as? FirFunctionCall)?.forAllReifiedTypeParameters { type, typeArgument ->
+            val typeArgumentClass = type.toRegularClassSymbol(context.session) ?: return@forAllReifiedTypeParameters
+            val source = typeArgument.source ?: expr.calleeReference.source ?: expr.source
+            checkJsModuleUsage(typeArgumentClass, context, reporter, source)
         }
     }
 }

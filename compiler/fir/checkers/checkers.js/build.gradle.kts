@@ -11,7 +11,7 @@ dependencies {
     api(project(":compiler:fir:checkers"))
 
     // FE checks for modules use ModuleKind
-    // This dependency can be removed when we stop supporting PLANE and UMD module systems
+    // This dependency can be removed when we stop supporting PLAIN and UMD module systems
     implementation(project(":js:js.serializer"))
 
     /*

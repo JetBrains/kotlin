@@ -157,10 +157,7 @@ internal fun FirClass.superClassNotAny(session: FirSession) = superConeTypes
     .filterNot { it.isAny || it.isNullableAny }
     .find { it.toSymbol(session)?.classKind == ClassKind.CLASS }
 
-internal fun getRootDeclarationSymbol(symbol: FirBasedSymbol<*>, session: FirSession): FirBasedSymbol<*> {
-    return generateSequence(symbol) { it.getContainingClassSymbol(session) }.last()
+internal fun getRootClassLikeSymbolOrSelf(symbol: FirBasedSymbol<*>, session: FirSession): FirBasedSymbol<*> {
+    return symbol.getContainingClassSymbol(session)?.let { getRootClassLikeSymbolOrSelf(it, session) } ?: symbol
 }
 
-internal fun isTopLevelSymbol(symbol: FirBasedSymbol<*>, session: FirSession): Boolean {
-    return symbol.getContainingClassSymbol(session) == null
-}

@@ -20,8 +20,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.TransformData
@@ -177,3 +176,14 @@ val FirQualifiedAccessExpression.allReceiverExpressions: List<FirExpression>
         addIfNotNull(extensionReceiver)
         addAll(contextReceiverArguments)
     }
+
+inline fun FirFunctionCall.forAllReifiedTypeParameters(block: (ConeKotlinType, FirTypeProjectionWithVariance) -> Unit) {
+    val functionSymbol = calleeReference.toResolvedFunctionSymbol() ?: return
+
+    for ((typeParameterSymbol, typeArgument) in functionSymbol.typeParameterSymbols.zip(typeArguments)) {
+        if (typeParameterSymbol.isReified && typeArgument is FirTypeProjectionWithVariance) {
+            val type = typeArgument.typeRef.coneTypeOrNull ?: continue
+            block(type, typeArgument)
+        }
+    }
+}
