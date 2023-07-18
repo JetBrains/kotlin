@@ -9,9 +9,13 @@ import org.jetbrains.kotlin.analysis.project.structure.KtModule
 
 public fun interface KotlinGlobalModuleStateModificationListener {
     /**
-     * [onModification] is invoked in a write action before or after global modification of the module state of all [KtModule]s.
+     * [onModification] is invoked in a write action before or after global module state modification.
      *
-     * This event is published after SDK removal and to invalidate caches during/between tests.
+     * The module structure, source code, and binary content of all [KtModule]s in the project should be considered modified when this event
+     * is received. This includes source files being moved or removed, binary content being added, removed, or changed, and modules possibly
+     * being removed. Thus, all caches related to module structure, source code, and binaries should be invalidated.
+     *
+     * @see KotlinTopics
      */
     public fun onModification()
 }

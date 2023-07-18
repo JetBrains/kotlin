@@ -17,6 +17,8 @@ public fun interface KotlinModuleOutOfBlockModificationListener {
      *
      * This event may be published for any and all source code changes, not just out-of-block modifications, to simplify the implementation
      * of modification detection.
+     *
+     * @see KotlinTopics
      */
     public fun onModification(module: KtModule)
 }
