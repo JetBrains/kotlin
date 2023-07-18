@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.analyzer
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.ModificationTracker
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
@@ -114,10 +113,6 @@ fun ModuleInfo.flatten(): List<ModuleInfo> = when (this) {
 }
 
 fun ModuleInfo.unwrapPlatform(): ModuleInfo = if (this is CombinedModuleInfo) platformModule else this
-
-interface TrackableModuleInfo : ModuleInfo {
-    fun createModificationTracker(): ModificationTracker
-}
 
 interface LibraryModuleSourceInfoBase : ModuleInfo
 interface NonSourceModuleInfoBase : ModuleInfo
