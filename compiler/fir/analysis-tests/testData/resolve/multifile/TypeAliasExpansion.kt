@@ -12,4 +12,4 @@ package a
 
 import b.TA
 
-class MyClass : TA()
+class MyClass : <!FINAL_SUPERTYPE!>TA<!>()

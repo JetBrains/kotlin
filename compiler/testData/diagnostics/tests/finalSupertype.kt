@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-59830
 
 class OOO
