@@ -112,7 +112,7 @@ class FirCallCompleter(
                 runCompletionForCall(candidate, completionMode, call, initialType, analyzer)
 
                 // Add top-level delegate call as partially resolved to inference session
-                if (resolutionMode is ResolutionMode.ContextDependentDelegate) {
+                if (resolutionMode is ResolutionMode.ContextDependent.Delegate) {
                     require(inferenceSession is FirDelegatedPropertyInferenceSession)
                     inferenceSession.addPartiallyResolvedCall(call)
                 }

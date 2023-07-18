@@ -685,7 +685,7 @@ class BodyResolveContext(
         mode: ResolutionMode,
         f: () -> T
     ): T {
-        require(mode !is ResolutionMode.ContextDependent && mode !is ResolutionMode.ContextDependentDelegate)
+        require(mode !is ResolutionMode.ContextDependent)
         if (mode !is ResolutionMode.LambdaResolution) {
             storeContextForAnonymousFunction(anonymousFunction)
         }

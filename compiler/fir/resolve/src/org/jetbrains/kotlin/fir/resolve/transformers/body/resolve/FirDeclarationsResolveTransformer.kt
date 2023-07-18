@@ -271,10 +271,10 @@ open class FirDeclarationsResolveTransformer(
             dataFlowAnalyzer.enterDelegateExpression()
             // Resolve delegate expression, after that, delegate will contain either expr.provideDelegate or expr
             if (property.isLocal) {
-                property.transformDelegate(transformer, ResolutionMode.ContextDependentDelegate)
+                property.transformDelegate(transformer, ResolutionMode.ContextDependent.Delegate)
             } else {
                 context.forPropertyInitializer {
-                    property.transformDelegate(transformer, ResolutionMode.ContextDependentDelegate)
+                    property.transformDelegate(transformer, ResolutionMode.ContextDependent.Delegate)
                 }
             }
 
@@ -326,8 +326,8 @@ open class FirDeclarationsResolveTransformer(
         data: ResolutionMode,
     ): FirStatement {
         // First, resolve delegate expression in dependent context, and add potentially partially resolved call to inference session
-        // (that is why we use ContextDependentDelegate instead of plain ContextDependent)
-        val delegateExpression = wrappedDelegateExpression.expression.transformSingle(transformer, ResolutionMode.ContextDependentDelegate)
+        // (that is why we use ContextDependent.Delegate instead of plain ContextDependent)
+        val delegateExpression = wrappedDelegateExpression.expression.transformSingle(transformer, ResolutionMode.ContextDependent.Delegate)
             .transformSingle(components.integerLiteralAndOperatorApproximationTransformer, null)
 
         // Second, replace result type of delegate expression with stub type if delegate not yet resolved
@@ -773,7 +773,7 @@ open class FirDeclarationsResolveTransformer(
         }
 
         return when (data) {
-            is ResolutionMode.ContextDependent, is ResolutionMode.ContextDependentDelegate -> {
+            is ResolutionMode.ContextDependent -> {
                 context.storeContextForAnonymousFunction(anonymousFunction)
                 anonymousFunction
             }
