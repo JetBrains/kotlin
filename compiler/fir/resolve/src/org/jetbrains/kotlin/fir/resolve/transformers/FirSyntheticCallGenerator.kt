@@ -50,7 +50,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.ArrayFqNames
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
-import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
+import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.Variance
 
 class FirSyntheticCallGenerator(
@@ -259,17 +259,18 @@ class FirSyntheticCallGenerator(
         val callInfo = generateCallInfo(callSite, name, argumentList, callKind)
         val candidate = generateCandidate(callInfo, function, context)
         val applicability = components.resolutionStageRunner.processCandidate(candidate, context)
-        if (applicability <= CandidateApplicability.INAPPLICABLE) {
+        val source = callSite.source?.fakeElement(KtFakeSourceElementKind.SyntheticCall)
+        if (!applicability.isSuccess) {
             return createErrorReferenceWithExistingCandidate(
                 candidate,
                 ConeInapplicableCandidateError(applicability, candidate),
-                source = null,
+                source,
                 context,
                 components.resolutionStageRunner
             )
         }
 
-        return FirNamedReferenceWithCandidate(callSite.source?.fakeElement(KtFakeSourceElementKind.SyntheticCall), name, candidate)
+        return FirNamedReferenceWithCandidate(source, name, candidate)
     }
 
     private fun generateCandidate(callInfo: CallInfo, function: FirSimpleFunction, context: ResolutionContext): Candidate {

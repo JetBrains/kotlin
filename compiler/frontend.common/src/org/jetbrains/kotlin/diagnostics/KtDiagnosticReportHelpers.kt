@@ -15,7 +15,7 @@ fun DiagnosticReporter.reportOn(
     context: DiagnosticContext,
     positioningStrategy: AbstractSourceElementPositioningStrategy? = null
 ) {
-    report(factory.on(requireSourceNotNull(source), positioningStrategy), context)
+    report(factory.on(source.requireNotNull(), positioningStrategy), context)
 }
 
 fun <A : Any> DiagnosticReporter.reportOn(
@@ -25,7 +25,7 @@ fun <A : Any> DiagnosticReporter.reportOn(
     context: DiagnosticContext,
     positioningStrategy: AbstractSourceElementPositioningStrategy? = null
 ) {
-    report(factory.on(requireSourceNotNull(source), a, positioningStrategy), context)
+    report(factory.on(source.requireNotNull(), a, positioningStrategy), context)
 }
 
 fun <A : Any, B : Any> DiagnosticReporter.reportOn(
@@ -36,7 +36,7 @@ fun <A : Any, B : Any> DiagnosticReporter.reportOn(
     context: DiagnosticContext,
     positioningStrategy: AbstractSourceElementPositioningStrategy? = null
 ) {
-    report(factory.on(requireSourceNotNull(source), a, b, positioningStrategy), context)
+    report(factory.on(source.requireNotNull(), a, b, positioningStrategy), context)
 }
 
 fun <A : Any, B : Any, C : Any> DiagnosticReporter.reportOn(
@@ -48,7 +48,7 @@ fun <A : Any, B : Any, C : Any> DiagnosticReporter.reportOn(
     context: DiagnosticContext,
     positioningStrategy: AbstractSourceElementPositioningStrategy? = null
 ) {
-    report(factory.on(requireSourceNotNull(source), a, b, c, positioningStrategy), context)
+    report(factory.on(source.requireNotNull(), a, b, c, positioningStrategy), context)
 }
 
 fun <A : Any, B : Any, C : Any, D : Any> DiagnosticReporter.reportOn(
@@ -61,11 +61,11 @@ fun <A : Any, B : Any, C : Any, D : Any> DiagnosticReporter.reportOn(
     context: DiagnosticContext,
     positioningStrategy: AbstractSourceElementPositioningStrategy? = null
 ) {
-    report(factory.on(requireSourceNotNull(source), a, b, c, d, positioningStrategy), context)
+    report(factory.on(source.requireNotNull(), a, b, c, d, positioningStrategy), context)
 }
 
-private fun requireSourceNotNull(source: AbstractKtSourceElement?): AbstractKtSourceElement =
-    requireNotNull(source) { "source must not be null" }
+fun AbstractKtSourceElement?.requireNotNull(): AbstractKtSourceElement =
+    requireNotNull(this) { "source must not be null" }
 
 fun DiagnosticReporter.reportOn(
     source: AbstractKtSourceElement?,

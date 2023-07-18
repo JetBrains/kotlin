@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 private fun ConeDiagnostic.toKtDiagnostic(
-    source: KtSourceElement,
+    source: KtSourceElement?,
     callOrAssignmentSource: KtSourceElement?
 ): KtDiagnostic? = when (this) {
     is ConeUnresolvedReferenceError -> FirErrors.UNRESOLVED_REFERENCE.createOn(
@@ -118,7 +118,7 @@ private fun ConeDiagnostic.toKtDiagnostic(
     is ConeSyntaxDiagnostic -> FirSyntaxErrors.SYNTAX.createOn(callOrAssignmentSource ?: source, reason)
 
     is ConeSimpleDiagnostic -> when {
-        source.kind is KtFakeSourceElementKind && source.kind != KtFakeSourceElementKind.ReferenceInAtomicQualifiedAccess -> null
+        source?.kind is KtFakeSourceElementKind && source.kind != KtFakeSourceElementKind.ReferenceInAtomicQualifiedAccess -> null
         else -> this.getFactory(source).createOn(callOrAssignmentSource ?: source)
     }
 
@@ -162,7 +162,7 @@ fun FirBasedSymbol<*>.toInvisibleReferenceDiagnostic(source: KtSourceElement?): 
 
 fun ConeDiagnostic.toFirDiagnostics(
     session: FirSession,
-    source: KtSourceElement,
+    source: KtSourceElement?,
     callOrAssignmentSource: KtSourceElement?
 ): List<KtDiagnostic> {
     return when (this) {
@@ -175,9 +175,9 @@ fun ConeDiagnostic.toFirDiagnostics(
 private fun mapUnsafeCallError(
     candidate: AbstractCandidate,
     rootCause: UnsafeCall,
-    source: KtSourceElement,
+    source: KtSourceElement?,
     qualifiedAccessSource: KtSourceElement?,
-): KtDiagnostic? {
+): KtDiagnostic {
     if (candidate.callInfo.isImplicitInvoke) {
         return FirErrors.UNSAFE_IMPLICIT_INVOKE_CALL.createOn(source, rootCause.actualType)
     }
@@ -187,14 +187,14 @@ private fun mapUnsafeCallError(
     val receiverExpression = candidate.callInfo.explicitReceiver
     val singleArgument = candidate.callInfo.argumentList.arguments.singleOrNull()
     if (receiverExpression != null && singleArgument != null &&
-        (source.elementType == KtNodeTypes.OPERATION_REFERENCE || source.elementType == KtNodeTypes.BINARY_EXPRESSION) &&
+        (source?.elementType == KtNodeTypes.OPERATION_REFERENCE || source?.elementType == KtNodeTypes.BINARY_EXPRESSION) &&
         (candidateFunctionSymbol?.isOperator == true || candidateFunctionSymbol?.isInfix == true)
     ) {
         // For augmented assignment operations (e.g., `a += b`), the source is the entire binary expression (BINARY_EXPRESSION).
         // TODO, KT-59809: No need to check for source.elementType == BINARY_EXPRESSION if we use operator as callee reference source
         //  (see FirExpressionsResolveTransformer.transformAssignmentOperatorStatement)
-        val operationSource = if (source.elementType == KtNodeTypes.BINARY_EXPRESSION) {
-            source.getChild(KtNodeTypes.OPERATION_REFERENCE)
+        val operationSource = if (source?.elementType == KtNodeTypes.BINARY_EXPRESSION) {
+            source?.getChild(KtNodeTypes.OPERATION_REFERENCE)
         } else {
             source
         }
@@ -216,7 +216,7 @@ private fun mapUnsafeCallError(
             )
         }
     }
-    return if (source.kind == KtFakeSourceElementKind.ArrayAccessNameReference) {
+    return if (source?.kind == KtFakeSourceElementKind.ArrayAccessNameReference) {
         FirErrors.UNSAFE_CALL.createOn(source, rootCause.actualType, receiverExpression)
     } else {
         FirErrors.UNSAFE_CALL.createOn(qualifiedAccessSource ?: source, rootCause.actualType, receiverExpression)
@@ -226,7 +226,7 @@ private fun mapUnsafeCallError(
 private fun mapInapplicableCandidateError(
     session: FirSession,
     diagnostic: ConeInapplicableCandidateError,
-    source: KtSourceElement,
+    source: KtSourceElement?,
     qualifiedAccessSource: KtSourceElement?,
 ): List<KtDiagnostic> {
     val typeContext = session.typeContext
@@ -341,7 +341,7 @@ private fun mapInapplicableCandidateError(
 private fun mapSystemHasContradictionError(
     session: FirSession,
     diagnostic: ConeConstraintSystemHasContradiction,
-    source: KtSourceElement,
+    source: KtSourceElement?,
     qualifiedAccessSource: KtSourceElement?,
 ): List<KtDiagnostic> {
     return buildList {
@@ -380,7 +380,7 @@ private fun mapSystemHasContradictionError(
 }
 
 private fun ConstraintSystemError.toDiagnostic(
-    source: KtSourceElement,
+    source: KtSourceElement?,
     qualifiedAccessSource: KtSourceElement?,
     typeContext: ConeTypeContext,
     candidate: AbstractCandidate,
@@ -507,7 +507,7 @@ private fun findInferredEmptyIntersectionNarrowedSource(
 }
 
 private fun reportInferredIntoEmptyIntersection(
-    source: KtSourceElement,
+    source: KtSourceElement?,
     typeVariable: ConeTypeVariable,
     incompatibleTypes: Collection<ConeKotlinType>,
     causingTypes: Collection<ConeKotlinType>,
@@ -531,7 +531,7 @@ private fun reportInferredIntoEmptyIntersection(
 private val NewConstraintError.lowerConeType: ConeKotlinType get() = lowerType as ConeKotlinType
 private val NewConstraintError.upperConeType: ConeKotlinType get() = upperType as ConeKotlinType
 
-private fun ConeSimpleDiagnostic.getFactory(source: KtSourceElement): KtDiagnosticFactory0 {
+private fun ConeSimpleDiagnostic.getFactory(source: KtSourceElement?): KtDiagnosticFactory0 {
     return when (kind) {
         DiagnosticKind.ReturnNotAllowed -> FirErrors.RETURN_NOT_ALLOWED
         DiagnosticKind.NotAFunctionLabel -> FirErrors.NOT_A_FUNCTION_LABEL
@@ -544,7 +544,7 @@ private fun ConeSimpleDiagnostic.getFactory(source: KtSourceElement): KtDiagnost
         DiagnosticKind.RecursionInImplicitTypes -> FirErrors.RECURSION_IN_IMPLICIT_TYPES
         DiagnosticKind.Java -> FirErrors.ERROR_FROM_JAVA_RESOLUTION
         DiagnosticKind.SuperNotAllowed -> FirErrors.SUPER_IS_NOT_AN_EXPRESSION
-        DiagnosticKind.ExpressionExpected -> when (source.elementType) {
+        DiagnosticKind.ExpressionExpected -> when (source?.elementType) {
             KtNodeTypes.BINARY_EXPRESSION -> FirErrors.ASSIGNMENT_IN_EXPRESSION_CONTEXT
             KtNodeTypes.FUN -> FirErrors.ANONYMOUS_FUNCTION_WITH_NAME
             KtNodeTypes.WHEN_CONDITION_IN_RANGE, KtNodeTypes.WHEN_CONDITION_IS_PATTERN, KtNodeTypes.WHEN_CONDITION_EXPRESSION ->
@@ -586,16 +586,16 @@ private fun ConeSimpleDiagnostic.getFactory(source: KtSourceElement): KtDiagnost
 @OptIn(InternalDiagnosticFactoryMethod::class)
 private fun KtDiagnosticFactory0.createOn(
     element: KtSourceElement?
-): KtSimpleDiagnostic? {
-    return element?.let { on(it, positioningStrategy = null) }
+): KtSimpleDiagnostic {
+    return on(element.requireNotNull(), positioningStrategy = null)
 }
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
 private fun <A> KtDiagnosticFactory1<A>.createOn(
     element: KtSourceElement?,
     a: A
-): KtDiagnosticWithParameters1<A>? {
-    return element?.let { on(it, a, positioningStrategy = null) }
+): KtDiagnosticWithParameters1<A> {
+    return on(element.requireNotNull(), a, positioningStrategy = null)
 }
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
@@ -603,8 +603,8 @@ private fun <A, B> KtDiagnosticFactory2<A, B>.createOn(
     element: KtSourceElement?,
     a: A,
     b: B
-): KtDiagnosticWithParameters2<A, B>? {
-    return element?.let { on(it, a, b, positioningStrategy = null) }
+): KtDiagnosticWithParameters2<A, B> {
+    return on(element.requireNotNull(), a, b, positioningStrategy = null)
 }
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
@@ -613,8 +613,8 @@ private fun <A, B, C> KtDiagnosticFactory3<A, B, C>.createOn(
     a: A,
     b: B,
     c: C
-): KtDiagnosticWithParameters3<A, B, C>? {
-    return element?.let { on(it, a, b, c, positioningStrategy = null) }
+): KtDiagnosticWithParameters3<A, B, C> {
+    return on(element.requireNotNull(), a, b, c, positioningStrategy = null)
 }
 
 @OptIn(InternalDiagnosticFactoryMethod::class)
@@ -624,6 +624,6 @@ private fun <A, B, C, D> KtDiagnosticFactory4<A, B, C, D>.createOn(
     b: B,
     c: C,
     d: D
-): KtDiagnosticWithParameters4<A, B, C, D>? {
-    return element?.let { on(it, a, b, c, d, positioningStrategy = null) }
+): KtDiagnosticWithParameters4<A, B, C, D> {
+    return on(element.requireNotNull(), a, b, c, d, positioningStrategy = null)
 }

@@ -66,7 +66,8 @@ class LightTreeRawFirExpressionBuilder(
         return converted as? R
             ?: buildErrorExpression(
                 expression?.toFirSourceElement(),
-                ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionExpected),
+                if (expression == null) ConeSyntaxDiagnostic(errorReason)
+                else ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionExpected),
                 converted,
             ) as R
     }
@@ -116,7 +117,7 @@ class LightTreeRawFirExpressionBuilder(
             OBJECT_LITERAL -> declarationBuilder.convertObjectLiteral(expression)
             FUN -> declarationBuilder.convertFunctionDeclaration(expression)
             DESTRUCTURING_DECLARATION -> declarationBuilder.convertDestructingDeclaration(expression).toFirDestructingDeclaration(baseModuleData)
-            else -> buildErrorExpression(null, ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionExpected))
+            else -> buildErrorExpression(expression.toFirSourceElement(KtFakeSourceElementKind.ErrorTypeRef), ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionExpected))
         }
     }
 
