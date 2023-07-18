@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowAnalyzerContext
 import org.jetbrains.kotlin.fir.resolve.inference.FirBuilderInferenceSession
 import org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleter
-import org.jetbrains.kotlin.fir.resolve.inference.FirDelegatedPropertyInferenceSession
+import org.jetbrains.kotlin.fir.resolve.inference.FirDelegatedPropertyInferenceSession2
 import org.jetbrains.kotlin.fir.resolve.inference.FirInferenceSession
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.withScopeCleanup
@@ -818,9 +818,9 @@ class BodyResolveContext(
         property: FirProperty,
         resolutionContext: ResolutionContext,
         callCompleter: FirCallCompleter,
-        f: FirDelegatedPropertyInferenceSession.() -> T
+        f: FirDelegatedPropertyInferenceSession2.() -> T
     ) {
-        val inferenceSession = FirDelegatedPropertyInferenceSession(
+        val inferenceSession = FirDelegatedPropertyInferenceSession2(
             property,
             resolutionContext,
             callCompleter.createPostponedArgumentsAnalyzer(resolutionContext)

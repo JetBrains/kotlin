@@ -44,7 +44,14 @@ class NewConstraintSystemImpl(
     private val intersectionTypesCache: MutableMap<Collection<KotlinTypeMarker>, EmptyIntersectionTypeInfo?> = mutableMapOf()
     private var couldBeResolvedWithUnrestrictedBuilderInference: Boolean = false
 
+    var innerTypes: MutableSet<TypeConstructorMarker>? = null
+
     override var atCompletionState: Boolean = false
+
+    fun clearCaches() {
+        properTypesCache.clear()
+        notProperTypesCache.clear()
+    }
 
     private enum class State {
         BUILDING,
@@ -317,6 +324,9 @@ class NewConstraintSystemImpl(
                 it
 
             if (typeToCheck == null) return@contains false
+            if (innerTypes != null) {
+                return@contains innerTypes!!.contains(typeToCheck.typeConstructor())
+            }
 
             storage.allTypeVariables.containsKey(typeToCheck.typeConstructor())
         }

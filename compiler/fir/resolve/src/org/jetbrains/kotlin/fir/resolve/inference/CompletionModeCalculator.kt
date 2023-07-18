@@ -24,6 +24,7 @@ fun Candidate.computeCompletionMode(
     currentReturnType: ConeKotlinType?
 ): ConstraintSystemCompletionMode {
     return when {
+        resolutionMode == ResolutionMode.ContextDependentDelegate && !isSuccessful -> ConstraintSystemCompletionMode.FULL
         // Expected type is present or call is being resolved in independent context
         resolutionMode.forceFullCompletion -> ConstraintSystemCompletionMode.FULL
 

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.inference
 
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeStubType
@@ -26,6 +27,11 @@ abstract class FirInferenceSession {
     }
 
     abstract fun <T> shouldRunCompletion(call: T): Boolean where T : FirResolvable, T : FirStatement
+    open fun <T> skipCompletion(
+        call: T,
+        resolutionMode: ResolutionMode,
+        completionMode: ConstraintSystemCompletionMode
+    ): Boolean where T : FirResolvable, T : FirStatement = false
     abstract val currentConstraintStorage: ConstraintStorage
 
     abstract fun <T> addPartiallyResolvedCall(call: T) where T : FirResolvable, T : FirStatement
