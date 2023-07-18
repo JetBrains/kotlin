@@ -1,6 +1,6 @@
 class A {
-    fun <caret>() {
-        val a = doSmth("str")
+    fun () {
+        val <expr>a</expr> = doSmth("str")
     }
 }
 

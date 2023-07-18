@@ -1,4 +1,4 @@
-val x<caret> by lazy {
+val x by lazy {
     fun doSmth(i: String) = 4
-    doSmth("str")
+    <expr>doSmth</expr>("str")
 }

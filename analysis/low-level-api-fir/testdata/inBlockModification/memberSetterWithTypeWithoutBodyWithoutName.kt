@@ -1,6 +1,6 @@
 class A {
   var : Int = 1
-    se<caret>t(value) = doSmth(value)
+    set(value) = <expr>doSmth</expr>(value)
 }
 
 fun doSmth(i: String) = 4

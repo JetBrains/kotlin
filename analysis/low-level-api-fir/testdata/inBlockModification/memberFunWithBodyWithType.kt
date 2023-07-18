@@ -1,6 +1,6 @@
 class A {
-    fun <caret>x(): Int {
-        return doSmth("str")
+    fun x(): Int {
+        return <expr>doSmth</expr>("str")
     }
 }
 

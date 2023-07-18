@@ -1,6 +1,6 @@
 class A {
-    val x<caret>: Int = run {
+    val x: Int = run {
         fun doSmth(i: String) = 4
-        doSmth("str")
+        <expr>doSmth</expr>("str")
     }
 }

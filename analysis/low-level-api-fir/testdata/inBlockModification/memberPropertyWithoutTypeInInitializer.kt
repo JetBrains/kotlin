@@ -1,5 +1,5 @@
 class A {
-    val x<caret> = run {
-        doSmth("str")
+    val x = run {
+        <expr>doSmth</expr>("str")
     }
 }

@@ -1,8 +1,9 @@
 import kotlin.contracts.*
 
 class A {
-    fun passLa<caret>mbdaValue(l: ContractBuilder.() -> Unit) {
+    fun passLambdaValue(l: ContractBuilder.() -> Unit) {
         contract(l)
+        <expr>42</expr>
     }
 }
 

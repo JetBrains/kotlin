@@ -1,3 +1,3 @@
-val <caret>: Int = doSmth("str")
+val : Int = <expr>doSmth</expr>("str")
 
 fun doSmth(i: String) = 4

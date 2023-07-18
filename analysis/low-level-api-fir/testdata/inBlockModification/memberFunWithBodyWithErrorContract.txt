@@ -8,6 +8,7 @@ public final [ResolvedTo(BODY_RESOLVE)] fun passLambdaValue([ResolvedTo(BODY_RES
         R|kotlin/contracts/contract|(R|<local>/l|)
     }
 
+    Int(42)
 }
 
 AFTER MODIFICATION:

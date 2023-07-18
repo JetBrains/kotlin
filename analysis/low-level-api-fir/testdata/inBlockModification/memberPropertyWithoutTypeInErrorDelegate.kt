@@ -1,3 +1,3 @@
 class A {
-    val <caret>x by ErrorDelegate()
+    val x by <expr>ErrorDelegate</expr>()
 }

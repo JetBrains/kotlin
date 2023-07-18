@@ -1,6 +1,6 @@
 class A {
-    val <caret>x by lazy {
+    val x by lazy {
         fun doSmth(i: String) = 4
-        doSmth("str")
+        <expr>doSmth</expr>("str")
     }
 }

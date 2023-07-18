@@ -1,7 +1,7 @@
 class A {
   val x: Int
-    ge<caret>t() {
-      fun doSmth(i: String) = 4
+    get() {
+      fun doSmth(i: String) = <expr>4</expr>
       return doSmth("str")
     }
 }

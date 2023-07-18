@@ -1,3 +1,3 @@
-val x: Int g<caret>et() = doSmth("str")
+val x: Int get() = <expr>doSmth</expr>("str")
 
 fun doSmth(i: String) = 4

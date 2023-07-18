@@ -1,12 +1,12 @@
 import kotlin.contracts.contract
 
 class A {
-    fun <caret>x() {
+    fun x() {
         contract {
             req
         }
 
-        val a = doSmth("str")
+        val a = <expr>doSmth("str")</expr>
     }
 }
 

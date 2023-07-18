@@ -1,1 +1,1 @@
-val x<caret> by ErrorDelegate()
+val x by <expr>ErrorDelegate</expr>()

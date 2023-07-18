@@ -1,9 +1,9 @@
 import kotlin.contracts.InvocationKind
 
-inline fun f<caret>oo(block: () -> Unit) {
+inline fun foo(block: () -> Unit) {
     kotlin.contracts.contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }
 
-    block()
+    <expr>block()</expr>
 }

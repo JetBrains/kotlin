@@ -1,10 +1,10 @@
 class A {
-    fun <caret>x() {
+    fun x() {
         contract {
             req
         }
 
-        val a = doSmth("str")
+        val <expr>a</expr> = doSmth("str")
     }
 }
 

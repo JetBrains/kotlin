@@ -1,3 +1,3 @@
-fun f<caret>oo(): Int = doSmth("str")
+fun foo(): Int = <expr>doSmth</expr>("str")
 
 fun doSmth(i: String) = 4

@@ -1,5 +1,5 @@
-fun fo<caret>o(): Int {
-    return doSmth("str")
+fun foo(): Int {
+    return <expr>doSmth</expr>("str")
 }
 
 fun doSmth(i: String) = 4

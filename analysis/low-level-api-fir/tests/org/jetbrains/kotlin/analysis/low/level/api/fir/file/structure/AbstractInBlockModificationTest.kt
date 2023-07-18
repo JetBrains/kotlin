@@ -24,9 +24,13 @@ import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractInBlockModificationTest : AbstractLowLevelApiSingleFileTest() {
     override fun doTestByFileStructure(ktFile: KtFile, moduleStructure: TestModuleStructure, testServices: TestServices) {
-        val declaration = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtDeclaration>(ktFile)
-        val isSupposedToBeModified = declaration.isReanalyzableContainer()
-        val actual = if (isSupposedToBeModified) {
+        val selectedElement = testServices.expressionMarkerProvider.getSelectedElementOfTypeByDirective(
+            ktFile = ktFile,
+            module = moduleStructure.modules.last(),
+        )
+
+        val declaration = selectedElement.getNonLocalReanalyzableContainingDeclaration()
+        val actual = if (declaration != null) {
             resolveWithCaches(ktFile) { firSession ->
                 val firDeclarationBefore = declaration.getOrBuildFirOfType<FirDeclaration>(firSession)
                 val declarationTextBefore = firDeclarationBefore.render()
@@ -52,7 +56,7 @@ abstract class AbstractInBlockModificationTest : AbstractLowLevelApiSingleFileTe
                 "BEFORE MODIFICATION:\n$declarationTextBefore\nAFTER MODIFICATION:\n$declarationTextAfterModification"
             }
         } else {
-            "IN-BLOCK MODIFICATION IS NOT APPLICABLE FOR THIS ${declaration::class.simpleName} DECLARATION"
+            "IN-BLOCK MODIFICATION IS NOT APPLICABLE FOR THIS PLACE"
         }
 
         testServices.assertions.assertEqualsToTestDataFileSibling(actual)

@@ -1,7 +1,7 @@
 class A {
   var x: Int = 1
-    se<caret>t(value) {
-      doSmth(value)
+    set(value) {
+      <expr>doSmth</expr>(value)
     }
 }
 

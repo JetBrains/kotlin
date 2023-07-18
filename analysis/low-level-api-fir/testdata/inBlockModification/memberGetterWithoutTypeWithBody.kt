@@ -1,7 +1,7 @@
 class A {
   val x
-    g<caret>et() {
-      return doSmth("str")
+    get() {
+      return <expr>doSmth</expr>("str")
     }
 }
 

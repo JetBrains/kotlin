@@ -1,5 +1,5 @@
-fun <caret>() {
-    val a = doSmth("str")
+fun () {
+    val a = <expr>doSmth</expr>("str")
 }
 
 fun doSmth(i: String) = 4

@@ -2,6 +2,6 @@ class MyProducer {
     fun produce(): Int = 4
 }
 
-fun MyProducer.test<caret>Fun(param1: Int = produce()) {
-
+fun MyProducer.testFun(param1: Int = produce()) {
+    <expr>42</expr>
 }

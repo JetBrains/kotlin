@@ -1,5 +1,5 @@
 class A {
-    fun <caret>x() = doSmth("str")
+    fun x() = <expr>doSmth</expr>("str")
 }
 
 fun doSmth(i: String) = 4

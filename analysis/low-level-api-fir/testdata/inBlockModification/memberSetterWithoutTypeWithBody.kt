@@ -1,8 +1,8 @@
 class A {
   var x
     get() = 1
-    s<caret>et(value) {
-      doSmth(value)
+    set(value) {
+      <expr>doSmth</expr>(value)
     }
 }
 

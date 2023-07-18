@@ -1,5 +1,5 @@
   val : Int
-    ge<caret>t() {
+    get() {
       fun doSmth(i: String) = 4
-      return doSmth("str")
+      return <expr>doSmth</expr>("str")
     }
