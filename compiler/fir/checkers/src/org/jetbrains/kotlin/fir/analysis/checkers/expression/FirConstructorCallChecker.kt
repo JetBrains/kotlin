@@ -22,22 +22,29 @@ object FirConstructorCallChecker : FirFunctionCallChecker() {
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
         val constructorSymbol = expression.calleeReference.toResolvedConstructorSymbol() ?: return
         val declarationClass = constructorSymbol.resolvedReturnTypeRef.coneType.toRegularClassSymbol(context.session)
+            ?: return
 
-        if (declarationClass != null) {
-            if (declarationClass.classKind == ClassKind.ANNOTATION_CLASS &&
-                context.callsOrAssignments.all { call ->
-                    call !is FirAnnotation
-                } &&
-                context.containingDeclarations.all { klass ->
-                    klass !is FirRegularClass || klass.classKind != ClassKind.ANNOTATION_CLASS
-                }
-            ) {
-                if (!context.languageVersionSettings.supportsFeature(LanguageFeature.InstantiationOfAnnotationClasses)) reporter.reportOn(
-                    expression.source,
-                    FirErrors.ANNOTATION_CLASS_CONSTRUCTOR_CALL,
-                    context
-                )
+        if (declarationClass.classKind == ClassKind.ANNOTATION_CLASS &&
+            context.callsOrAssignments.all { call ->
+                call !is FirAnnotation
+            } &&
+            context.containingDeclarations.all { klass ->
+                klass !is FirRegularClass || klass.classKind != ClassKind.ANNOTATION_CLASS
             }
+        ) {
+            if (!context.languageVersionSettings.supportsFeature(LanguageFeature.InstantiationOfAnnotationClasses)) reporter.reportOn(
+                expression.source,
+                FirErrors.ANNOTATION_CLASS_CONSTRUCTOR_CALL,
+                context
+            )
+        }
+
+        if (declarationClass.classKind == ClassKind.ENUM_CLASS) {
+            reporter.reportOn(
+                expression.source,
+                FirErrors.ENUM_CLASS_CONSTRUCTOR_CALL,
+                context
+            )
         }
     }
 }

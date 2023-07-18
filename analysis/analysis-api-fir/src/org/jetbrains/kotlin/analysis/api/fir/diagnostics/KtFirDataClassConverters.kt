@@ -863,6 +863,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.ENUM_CLASS_CONSTRUCTOR_CALL) { firDiagnostic ->
+        EnumClassConstructorCallImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.NOT_AN_ANNOTATION_CLASS) { firDiagnostic ->
         NotAnAnnotationClassImpl(
             firDiagnostic.a,
