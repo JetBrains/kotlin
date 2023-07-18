@@ -45,7 +45,7 @@ class ReportDataTest {
         assertNotNull(statisticData)
         assertTrue(statisticData.getTags().contains(StatTag.KOTLIN_DEBUG))
         assertTrue(statisticData.getTags().contains(StatTag.NON_INCREMENTAL))
-        assertTrue(statisticData.getTags().contains(StatTag.KOTLIN_1))
+        assertTrue(statisticData.getTags().contains(StatTag.KOTLIN_2))
     }
 
     private fun taskRecord(buildMetrics: BuildMetrics<GradleBuildTime, GradleBuildPerformanceMetric>) = TaskRecord(
