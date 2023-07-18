@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.incremental.classpathDiff
 
 import com.google.gson.GsonBuilder
+import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.cli.common.isWindows
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.ClassFileUtil.snapshot
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.CompileUtil.compile

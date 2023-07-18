@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.incremental.classpathDiff
 
 import org.jetbrains.kotlin.build.report.metrics.*
+import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.incremental.ClassNodeSnapshotter.snapshotClass
 import org.jetbrains.kotlin.incremental.ClassNodeSnapshotter.snapshotClassExcludingMembers
 import org.jetbrains.kotlin.incremental.ClassNodeSnapshotter.snapshotField
@@ -15,7 +16,7 @@ import org.jetbrains.kotlin.incremental.DifferenceCalculatorForPackageFacade.Com
 import org.jetbrains.kotlin.incremental.KotlinClassInfo
 import org.jetbrains.kotlin.incremental.PackagePartProtoData
 import org.jetbrains.kotlin.incremental.SelectiveClassVisitor
-import org.jetbrains.kotlin.incremental.classpathDiff.ClassSnapshotGranularity.CLASS_MEMBER_LEVEL
+import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity.CLASS_MEMBER_LEVEL
 import org.jetbrains.kotlin.incremental.hashToLong
 import org.jetbrains.kotlin.incremental.storage.toByteArray
 import org.jetbrains.kotlin.konan.file.use

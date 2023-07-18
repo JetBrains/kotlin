@@ -14,9 +14,9 @@ import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.Internal
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.gradle.report.BuildMetricsService
-import org.jetbrains.kotlin.incremental.classpathDiff.ClassSnapshotGranularity
-import org.jetbrains.kotlin.incremental.classpathDiff.ClassSnapshotGranularity.CLASS_LEVEL
-import org.jetbrains.kotlin.incremental.classpathDiff.ClassSnapshotGranularity.CLASS_MEMBER_LEVEL
+import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
+import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity.CLASS_LEVEL
+import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity.CLASS_MEMBER_LEVEL
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathEntrySnapshotExternalizer
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathEntrySnapshotter
 import org.jetbrains.kotlin.incremental.storage.saveToFile
