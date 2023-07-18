@@ -14,6 +14,7 @@ ktor = "2.0.2" # should be in sync with versions.properties
 kotlinx-metadataJvm = "0.6.2"
 # Forcing gson version because of https://github.com/google/gson/pull/1991
 gson = { strictly = "2.8.9" } # should be in sync with version.properties
+jetbrains-ideaExt = "1.0.1"
 
 [libraries]
 dexMemberList = { module = "com.jakewharton.dex:dex-member-list", version.ref = "dexMemberList" }
@@ -30,3 +31,7 @@ proguard-gradlePlugin = { module = "net.sf.proguard:proguard-gradle", version.re
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+jetbrains-ideaExt-gradlePlugin = { module = "gradle.plugin.org.jetbrains.gradle.plugin.idea-ext:gradle-idea-ext", version.ref = "jetbrains-ideaExt" }
+
+[plugins]
+jetbrains-ideaExt = { id = "org.jetbrains.gradle.plugin.idea-ext", version.ref = "jetbrains-ideaExt" }

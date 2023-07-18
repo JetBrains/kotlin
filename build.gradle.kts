@@ -14,15 +14,11 @@ buildscript {
         classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion}")
     }
 
-    val versionPropertiesFile = project.rootProject.projectDir.resolve("gradle/versions.properties")
-    val versionProperties = java.util.Properties()
-    versionPropertiesFile.inputStream().use { propInput ->
-        versionProperties.load(propInput)
-    }
+    val gsonVersion = libs.versions.gson.get()
     configurations.all {
         resolutionStrategy.eachDependency {
             if (requested.group == "com.google.code.gson" && requested.name == "gson") {
-                useVersion(versionProperties["versions.gson"] as String)
+                useVersion(gsonVersion)
                 because("Force using same gson version because of https://github.com/google/gson/pull/1991")
             }
         }

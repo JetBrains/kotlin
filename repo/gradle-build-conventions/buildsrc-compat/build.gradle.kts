@@ -80,8 +80,7 @@ dependencies {
     }
     implementation(libs.proguard.gradlePlugin)
 
-    // Version should be in sync with <root>/build.gradle.kts
-    implementation("gradle.plugin.org.jetbrains.gradle.plugin.idea-ext:gradle-idea-ext:1.0.1")
+    implementation(libs.jetbrains.ideaExt.gradlePlugin)
 
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.cio)
