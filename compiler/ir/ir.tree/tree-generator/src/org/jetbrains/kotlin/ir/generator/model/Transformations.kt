@@ -20,56 +20,16 @@ fun config2model(config: Config): Model {
     val ec2el = mutableMapOf<ElementConfig, Element>()
 
     val elements = config.elements.map { ec ->
-        val fields = ec.fields.mapTo(mutableListOf()) { fc ->
-            val field = when (fc) {
-                is SimpleFieldConfig -> SingleField(
-                    fc,
-                    fc.name,
-                    fc.type ?: InferredOverriddenType,
-                    fc.nullable,
-                    fc.mutable,
-                    fc.isChild,
-                    fc.baseDefaultValue,
-                    fc.baseGetter
-                )
-                is ListFieldConfig -> {
-                    val listType = when (fc.mutability) {
-                        ListFieldConfig.Mutability.List -> type(
-                            "kotlin.collections",
-                            "MutableList"
-                        )
-                        ListFieldConfig.Mutability.Array -> type(
-                            "kotlin.",
-                            "Array"
-                        )
-                        else -> type("kotlin.collections", "List")
-                    }
-                    ListField(
-                        fc,
-                        fc.name,
-                        fc.elementType ?: InferredOverriddenType,
-                        listType,
-                        fc.nullable,
-                        fc.mutability == ListFieldConfig.Mutability.Var,
-                        fc.isChild,
-                        fc.mutability != ListFieldConfig.Mutability.Immutable,
-                        fc.baseDefaultValue,
-                        fc.baseGetter
-                    )
-                }
-            }
-            field
+        Element(
+            config = ec,
+            name = ec.name,
+            packageName = ec.category.packageName,
+            params = ec.params,
+            fields = ec.fields.mapTo(mutableListOf(), ::transformFieldConfig),
+            additionalFactoryMethodParameters = ec.additionalIrFactoryMethodParameters.mapTo(mutableListOf(), ::transformFieldConfig)
+        ).also {
+            ec2el[ec.element] = it
         }
-
-        val element = Element(
-            ec,
-            ec.name,
-            ec.category.packageName,
-            ec.params,
-            fields
-        )
-        ec2el[ec.element] = element
-        element
     }
 
     val rootElement = replaceElementRefs(config, ec2el)
@@ -81,6 +41,44 @@ fun config2model(config: Config): Model {
     addWalkableChildren(elements)
 
     return Model(elements, rootElement)
+}
+
+private fun transformFieldConfig(fc: FieldConfig): Field = when (fc) {
+    is SimpleFieldConfig -> SingleField(
+        fc,
+        fc.name,
+        fc.type ?: InferredOverriddenType,
+        fc.nullable,
+        fc.mutable,
+        fc.isChild,
+        fc.baseDefaultValue,
+        fc.baseGetter,
+    )
+    is ListFieldConfig -> {
+        val listType = when (fc.mutability) {
+            ListFieldConfig.Mutability.List -> type(
+                "kotlin.collections",
+                "MutableList",
+            )
+            ListFieldConfig.Mutability.Array -> type(
+                "kotlin.",
+                "Array",
+            )
+            else -> type("kotlin.collections", "List")
+        }
+        ListField(
+            fc,
+            fc.name,
+            fc.elementType ?: InferredOverriddenType,
+            listType,
+            fc.nullable,
+            fc.mutability == ListFieldConfig.Mutability.Var,
+            fc.isChild,
+            fc.mutability != ListFieldConfig.Mutability.Immutable,
+            fc.baseDefaultValue,
+            fc.baseGetter,
+        )
+    }
 }
 
 @OptIn(UnsafeCastFunction::class)

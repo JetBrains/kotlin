@@ -9,6 +9,7 @@ import com.squareup.kotlinpoet.CodeBlock
 import org.jetbrains.kotlin.ir.generator.config.ElementConfig
 import org.jetbrains.kotlin.ir.generator.config.FieldConfig
 import org.jetbrains.kotlin.ir.generator.util.*
+import org.jetbrains.kotlin.utils.topologicalSort
 
 class Element(
     config: ElementConfig,
@@ -16,6 +17,7 @@ class Element(
     val packageName: String,
     val params: List<TypeVariable>,
     val fields: MutableList<Field>,
+    val additionalFactoryMethodParameters: MutableList<Field>,
 ) {
     var elementParents: List<ElementRef> = emptyList()
     var otherParents: List<ClassRef<*>> = emptyList()
@@ -38,6 +40,8 @@ class Element(
     val transform = config.transform
     val transformByChildren = config.transformByChildren
     val ownsChildren = config.ownsChildren
+    val generateIrFactoryMethod = config.generateIrFactoryMethod
+    val fieldsToSkipInIrFactoryMethod = config.fieldsToSkipInIrFactoryMethod
 
     val generationCallback = config.generationCallback
     val suppressPrint = config.suppressPrint
@@ -59,6 +63,29 @@ class Element(
     companion object {
         fun elementName2typeName(name: String) = "Ir" + name.replaceFirstChar(Char::uppercaseChar)
     }
+
+    fun elementParentsRecursively(): List<ElementRef> {
+        val linkedSet = buildSet {
+            fun recurse(element: Element) {
+                addAll(element.elementParents)
+                element.elementParents.forEach { recurse(it.element) }
+            }
+            recurse(this@Element)
+        }
+        return topologicalSort(linkedSet) {
+            element.elementParents
+        }
+    }
+
+    fun allFieldsRecursively(): List<Field> {
+        val parentFields = elementParentsRecursively()
+            .reversed()
+            .flatMap { it.element.fields }
+        return (parentFields + fields)
+            .asReversed()
+            .distinctBy { it.name }
+            .asReversed()
+    }
 }
 
 data class ElementRef(
@@ -72,7 +99,7 @@ data class ElementRef(
 }
 
 sealed class Field(
-    config: FieldConfig?,
+    config: FieldConfig,
     val name: String,
     val nullable: Boolean,
     val mutable: Boolean,
@@ -85,16 +112,17 @@ sealed class Field(
     var needsDescriptorApiAnnotation = false
     abstract val transformable: Boolean
 
-    val kdoc = config?.kdoc
+    val useInIrFactoryStrategy = config.useFieldInIrFactoryStrategy
+    val kdoc = config.kdoc
 
-    val printProperty = config?.printProperty ?: true
-    val generationCallback = config?.generationCallback
+    val printProperty = config.printProperty
+    val generationCallback = config.generationCallback
 
     override fun toString() = "$name: $type"
 }
 
 class SingleField(
-    config: FieldConfig?,
+    config: FieldConfig,
     name: String,
     override var type: TypeRef,
     nullable: Boolean,
@@ -108,7 +136,7 @@ class SingleField(
 }
 
 class ListField(
-    config: FieldConfig?,
+    config: FieldConfig,
     name: String,
     var elementType: TypeRef,
     private val listType: ClassRef<PositionTypeParameterRef>,
