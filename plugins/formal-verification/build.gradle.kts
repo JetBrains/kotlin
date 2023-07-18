@@ -9,9 +9,7 @@ repositories {
     mavenLocal()
 }
 
-
 dependencies {
-
     implementation("viper:silicon:1.1-SNAPSHOT")
 
     compileOnly(project(":compiler:fir:cones"))
