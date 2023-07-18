@@ -41,7 +41,6 @@ class Kapt4Facade(private val testServices: TestServices) :
     override val additionalServices: List<ServiceRegistrationData>
         get() = listOf(service(::KaptMessageCollectorProvider))
 
-//    @OptIn(KtAnalysisApiInternals::class)
     override fun transform(module: TestModule, inputArtifact: ResultingArtifact.Source): Kapt4ContextBinaryArtifact {
         val configurationProvider = testServices.compilerConfigurationProvider
 
