@@ -38,7 +38,7 @@ fun main(args: Array<String>) {
             }
 
             // IR
-            testClass<AbstractIncrementalJvmJpsTest> {
+            testClass<AbstractIncrementalK1JvmJpsTest> {
                 model("incremental/multiModule/common", extension = null, excludeParentDirs = true, targetBackend = TargetBackend.JVM_IR)
                 model("incremental/multiModule/jvm", extension = null, excludeParentDirs = true, targetBackend = TargetBackend.JVM_IR)
                 model(
