@@ -31,6 +31,36 @@ public class SourceInBlockModificationTestGenerated extends AbstractSourceInBloc
     }
 
     @Test
+    @TestMetadata("entireContract.kt")
+    public void testEntireContract() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/inBlockModification/entireContract.kt");
+    }
+
+    @Test
+    @TestMetadata("entireFunctionBody.kt")
+    public void testEntireFunctionBody() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/inBlockModification/entireFunctionBody.kt");
+    }
+
+    @Test
+    @TestMetadata("entireGetterBody.kt")
+    public void testEntireGetterBody() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/inBlockModification/entireGetterBody.kt");
+    }
+
+    @Test
+    @TestMetadata("entireInitializer.kt")
+    public void testEntireInitializer() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/inBlockModification/entireInitializer.kt");
+    }
+
+    @Test
+    @TestMetadata("entireSetterBody.kt")
+    public void testEntireSetterBody() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/inBlockModification/entireSetterBody.kt");
+    }
+
+    @Test
     @TestMetadata("extensionWithDefaultParameters.kt")
     public void testExtensionWithDefaultParameters() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/inBlockModification/extensionWithDefaultParameters.kt");
@@ -40,6 +70,18 @@ public class SourceInBlockModificationTestGenerated extends AbstractSourceInBloc
     @TestMetadata("functionWithDefaultParameters.kt")
     public void testFunctionWithDefaultParameters() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/inBlockModification/functionWithDefaultParameters.kt");
+    }
+
+    @Test
+    @TestMetadata("insideContract.kt")
+    public void testInsideContract() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/inBlockModification/insideContract.kt");
+    }
+
+    @Test
+    @TestMetadata("insideDefaultParameter.kt")
+    public void testInsideDefaultParameter() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/inBlockModification/insideDefaultParameter.kt");
     }
 
     @Test

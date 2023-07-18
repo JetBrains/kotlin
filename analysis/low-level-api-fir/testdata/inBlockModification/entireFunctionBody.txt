@@ -1,0 +1,6 @@
+BEFORE MODIFICATION:
+public final [ResolvedTo(BODY_RESOLVE)] fun doo(): R|kotlin/Unit| {
+}
+
+AFTER MODIFICATION:
+public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun doo(): R|kotlin/Unit| { LAZY_BLOCK }
