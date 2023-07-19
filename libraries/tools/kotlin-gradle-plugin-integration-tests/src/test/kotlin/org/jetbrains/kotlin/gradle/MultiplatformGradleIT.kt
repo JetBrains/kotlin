@@ -44,10 +44,23 @@ class MultiplatformGradleIT : BaseGradleIT() {
         val project = Project("multiplatformProject")
 
         project.build("build") {
-            assertSuccessful()
+            assertFailed()
 
             assertHasDiagnostic(KotlinToolingDiagnostics.Kotlin12XMppDeprecation)
 
+            assertTasksNotExecuted(
+                ":lib:compileKotlinCommon",
+                ":lib:compileTestKotlinCommon",
+                ":libJvm:compileKotlin",
+                ":libJvm:compileTestKotlin",
+            )
+        }
+
+        project.projectDir.resolve("gradle.properties").appendText("\nkotlin.internal.mpp12x.deprecation.suppress=true")
+        project.build("build") {
+            assertSuccessful()
+
+            assertNoDiagnostic(KotlinToolingDiagnostics.Kotlin12XMppDeprecation)
             assertTasksExecuted(
                 ":lib:compileKotlinCommon",
                 ":lib:compileTestKotlinCommon",
@@ -58,13 +71,6 @@ class MultiplatformGradleIT : BaseGradleIT() {
             assertFileExists("lib/build/classes/kotlin/test/foo/PlatformTest.kotlin_metadata")
             assertFileExists("libJvm/build/classes/kotlin/main/foo/PlatformClass.class")
             assertFileExists("libJvm/build/classes/kotlin/test/foo/PlatformTest.class")
-        }
-
-        project.projectDir.resolve("gradle.properties").appendText("\nkotlin.internal.mpp12x.deprecation.suppress=true")
-        project.build {
-            assertSuccessful()
-
-            assertNoDiagnostic(KotlinToolingDiagnostics.Kotlin12XMppDeprecation)
         }
     }
 
