@@ -53,6 +53,12 @@ public class Fe10IdeNormalAnalysisSourceModuleAnalysisApiImportOptimizerTestGene
     }
 
     @Test
+    @TestMetadata("unusedAliasedImportFromSamePackage.kt")
+    public void testUnusedAliasedImportFromSamePackage() throws Exception {
+        runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/unusedAliasedImportFromSamePackage.kt");
+    }
+
+    @Test
     @TestMetadata("unusedAliasedTypeImport.kt")
     public void testUnusedAliasedTypeImport() throws Exception {
         runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/unusedAliasedTypeImport.kt");
@@ -95,6 +101,12 @@ public class Fe10IdeNormalAnalysisSourceModuleAnalysisApiImportOptimizerTestGene
     }
 
     @Test
+    @TestMetadata("unusedImportsFromSamePackage.kt")
+    public void testUnusedImportsFromSamePackage() throws Exception {
+        runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/unusedImportsFromSamePackage.kt");
+    }
+
+    @Test
     @TestMetadata("unusedInvokeOperatorImport.kt")
     public void testUnusedInvokeOperatorImport() throws Exception {
         runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/unusedInvokeOperatorImport.kt");
@@ -107,9 +119,21 @@ public class Fe10IdeNormalAnalysisSourceModuleAnalysisApiImportOptimizerTestGene
     }
 
     @Test
+    @TestMetadata("usedAliasedAndRegularImportsFromSamePackage.kt")
+    public void testUsedAliasedAndRegularImportsFromSamePackage() throws Exception {
+        runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedAliasedAndRegularImportsFromSamePackage.kt");
+    }
+
+    @Test
     @TestMetadata("usedAliasedFunctionReference.kt")
     public void testUsedAliasedFunctionReference() throws Exception {
         runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedAliasedFunctionReference.kt");
+    }
+
+    @Test
+    @TestMetadata("usedAliasedImportsFromSamePackage.kt")
+    public void testUsedAliasedImportsFromSamePackage() throws Exception {
+        runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedAliasedImportsFromSamePackage.kt");
     }
 
     @Test

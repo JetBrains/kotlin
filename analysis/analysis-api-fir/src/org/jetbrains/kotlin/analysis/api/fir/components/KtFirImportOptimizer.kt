@@ -67,8 +67,10 @@ internal class KtFirImportOptimizer(
 
         val referencesEntities = usedImports
             .filterNot { (fqName, referencedByNames) ->
-                // when referenced by more than one name, we need to keep the imports with same package
-                fqName.parentOrNull() == file.packageFqName && referencedByNames.size == 1
+                val fromCurrentPackage = fqName.parentOrNull() == file.packageFqName
+                val noAliasedImports = referencedByNames.singleOrNull() == fqName.shortName()
+
+                fromCurrentPackage && noAliasedImports
             }
 
         val requiredStarImports = referencesEntities.keys
