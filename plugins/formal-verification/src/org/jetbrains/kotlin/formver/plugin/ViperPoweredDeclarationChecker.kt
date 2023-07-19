@@ -13,16 +13,14 @@ import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import scala.collection.immutable.Seq
-import scala.collection.immutable.Nil
-import viper.silicon.Config
+import scala.Option
 import scala.jdk.javaapi.CollectionConverters.asScala
+import viper.silicon.Config
 import viper.silicon.logger.MemberSymbExLogger
-import viper.silicon.logger.NoopSymbExLog
+import viper.silicon.logger.`NoopSymbExLog$`
 import viper.silicon.logger.SymbExLogger
 import viper.silicon.verifier.DefaultMainVerifier
 import viper.silver.cfg.silver.SilverCfg
-import viper.silver.reporter.NoopReporter
 import viper.silver.reporter.StdIOReporter
 
 object ViperPoweredDeclarationChecker : FirFunctionChecker() {
@@ -32,9 +30,12 @@ object ViperPoweredDeclarationChecker : FirFunctionChecker() {
 
         val converter = Converter()
         val config = Config(asScala(emptyList<String>()).toSeq())
-        val verifier = DefaultMainVerifier(config, StdIOReporter("stdout_reporter", true), NoopSymbExLog() as SymbExLogger<out MemberSymbExLogger>)
 
-        verifier.verify(converter.program, asScala(emptyList<SilverCfg>()).toSeq(), scala.None() as scala.Option<String>)
+        @Suppress("UNCHECKED_CAST")
+        val verifier = DefaultMainVerifier(config, StdIOReporter("stdout_reporter", true), `NoopSymbExLog$`.`MODULE$` as SymbExLogger<out MemberSymbExLogger>)
+
+        @Suppress("UNCHECKED_CAST")
+        verifier.verify(converter.program, asScala(emptyList<SilverCfg>()).toSeq(), scala.`None$`.`MODULE$` as Option<String>)
 
         if (contractDescription.effects.isNotEmpty()) {
             reporter.reportOn(declaration.source, PluginErrors.FUNCTION_WITH_UNVERIFIED_CONTRACT, context)
