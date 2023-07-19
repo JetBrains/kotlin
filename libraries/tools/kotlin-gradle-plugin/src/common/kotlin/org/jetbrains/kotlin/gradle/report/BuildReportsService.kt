@@ -13,12 +13,12 @@ import org.jetbrains.kotlin.build.report.statistics.HttpReportService
 import org.jetbrains.kotlin.build.report.statistics.file.FileReportService
 import org.jetbrains.kotlin.build.report.statistics.formatSize
 import org.jetbrains.kotlin.build.report.statistics.BuildFinishStatisticsData
-import org.jetbrains.kotlin.build.report.statistics.CompileStatisticsData
 import org.jetbrains.kotlin.build.report.statistics.BuildStartParameters
 import org.jetbrains.kotlin.build.report.statistics.StatTag
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.report.data.BuildExecutionData
 import org.jetbrains.kotlin.gradle.report.data.BuildOperationRecord
+import org.jetbrains.kotlin.gradle.report.data.GradleCompileStatisticsData
 import org.jetbrains.kotlin.utils.addToStdlib.measureTimeMillisWithResult
 import java.io.File
 import java.net.InetAddress
@@ -230,9 +230,9 @@ class BuildReportsService {
         }
     }
 
-    private fun addBuildScanReport(data: CompileStatisticsData, customValuesLimit: Int, buildScan: BuildScanExtensionHolder) {
+    private fun addBuildScanReport(data: GradleCompileStatisticsData, customValuesLimit: Int, buildScan: BuildScanExtensionHolder) {
         val elapsedTime = measureTimeMillis {
-            tags.addAll(data.tags)
+            tags.addAll(data.getTags())
             if (customValues < customValuesLimit) {
                 readableString(data).forEach {
                     if (customValues < customValuesLimit) {
@@ -240,7 +240,7 @@ class BuildReportsService {
                     } else {
                         log.debug(
                             "Can't add any more custom values into build scan." +
-                                    " Statistic data for ${data.taskName} was cut due to custom values limit."
+                                    " Statistic data for ${data.getTaskName()} was cut due to custom values limit."
                         )
                     }
                 }
@@ -254,10 +254,10 @@ class BuildReportsService {
 
     private fun addBuildScanValue(
         buildScan: BuildScanExtensionHolder,
-        data: CompileStatisticsData,
+        data: GradleCompileStatisticsData,
         customValue: String
     ) {
-        buildScan.buildScan.value(data.taskName, customValue)
+        buildScan.buildScan.value(data.getTaskName(), customValue)
         customValues++
     }
 
@@ -289,30 +289,30 @@ class BuildReportsService {
         }
     }
 
-    private fun readableString(data: CompileStatisticsData): List<String> {
+    private fun readableString(data: GradleCompileStatisticsData): List<String> {
         val readableString = StringBuilder()
-        if (data.nonIncrementalAttributes.isEmpty()) {
+        if (data.getNonIncrementalAttributes().isEmpty()) {
             readableString.append("Incremental build; ")
-            data.changes.joinTo(readableString, prefix = "Changes: [", postfix = "]; ") { it.substringAfterLast(File.separator) }
+            data.getChanges().joinTo(readableString, prefix = "Changes: [", postfix = "]; ") { it.substringAfterLast(File.separator) }
         } else {
-            data.nonIncrementalAttributes.joinTo(
+            data.getNonIncrementalAttributes().joinTo(
                 readableString,
                 prefix = "Non incremental build because: [",
                 postfix = "]; "
             ) { it.readableString }
         }
 
-        data.kotlinLanguageVersion?.also {
+        data.getKotlinLanguageVersion()?.also {
             readableString.append("Kotlin language version: $it; ")
         }
 
         val timeData =
-            data.buildTimesMetrics.map { (key, value) -> "${key.readableString}: ${value}ms" } //sometimes it is better to have separate variable to be able debug
-        val perfData = data.performanceMetrics.map { (key, value) ->
-            when (key.type) {
-                ValueType.BYTES -> "${key.readableString}: ${formatSize(value)}"
+            data.getBuildTimesMetrics().map { (key, value) -> "${key.getReadableString()}: ${value}ms" } //sometimes it is better to have separate variable to be able debug
+        val perfData = data.getPerformanceMetrics().map { (key, value) ->
+            when (key.getType()) {
+                ValueType.BYTES -> "${key.getReadableString()}: ${formatSize(value)}"
                 ValueType.MILLISECONDS -> DATE_FORMATTER.format(value)
-                else -> "${key.readableString}: $value"
+                else -> "${key.getReadableString()}: $value"
             }
         }
         timeData.union(perfData).joinTo(readableString, ",", "Performance: [", "]")

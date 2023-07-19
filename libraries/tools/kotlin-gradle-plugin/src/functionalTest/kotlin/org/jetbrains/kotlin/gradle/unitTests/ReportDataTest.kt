@@ -43,12 +43,12 @@ class ReportDataTest {
         )
 
         assertNotNull(statisticData)
-        assertTrue(statisticData.tags.contains(StatTag.KOTLIN_DEBUG))
-        assertTrue(statisticData.tags.contains(StatTag.NON_INCREMENTAL))
-        assertTrue(statisticData.tags.contains(StatTag.KOTLIN_1))
+        assertTrue(statisticData.getTags().contains(StatTag.KOTLIN_DEBUG))
+        assertTrue(statisticData.getTags().contains(StatTag.NON_INCREMENTAL))
+        assertTrue(statisticData.getTags().contains(StatTag.KOTLIN_1))
     }
 
-    private fun taskRecord(buildMetrics: BuildMetrics) = TaskRecord(
+    private fun taskRecord(buildMetrics: BuildMetrics<GradleBuildTime, GradleBuildPerformanceMetric>) = TaskRecord(
         path = kotlinTaskPath,
         classFqName = "org.jetbrains.kotlin.TestTask",
         startTimeMs = 10,
@@ -67,17 +67,17 @@ class ReportDataTest {
     fun testMetricFilter() {
         val buildOperationRecord = taskRecord(
             BuildMetrics(
-                buildPerformanceMetrics = BuildPerformanceMetrics().also {
-                    it.add(BuildPerformanceMetric.COMPILE_ITERATION)
-                    it.add(BuildPerformanceMetric.CLASSPATH_ENTRY_COUNT)
-                    it.add(BuildPerformanceMetric.BUNDLE_SIZE)
-                    it.add(BuildPerformanceMetric.CACHE_DIRECTORY_SIZE)
+                buildPerformanceMetrics = BuildPerformanceMetrics<GradleBuildPerformanceMetric>().also {
+                    it.add(GradleBuildPerformanceMetric.COMPILE_ITERATION)
+                    it.add(GradleBuildPerformanceMetric.CLASSPATH_ENTRY_COUNT)
+                    it.add(GradleBuildPerformanceMetric.BUNDLE_SIZE)
+                    it.add(GradleBuildPerformanceMetric.CACHE_DIRECTORY_SIZE)
                 },
-                buildTimes = BuildTimes().also {
-                    it.addTimeMs(BuildTime.STORE_BUILD_INFO, 20)
-                    it.addTimeMs(BuildTime.GRADLE_TASK_ACTION, 100)
-                    it.addTimeMs(BuildTime.RESTORE_OUTPUT_FROM_BACKUP, 10)
-                    it.addTimeMs(BuildTime.IC_ANALYZE_JAR_FILES, 10)
+                buildTimes = BuildTimes<GradleBuildTime>().also {
+                    it.addTimeMs(GradleBuildTime.STORE_BUILD_INFO, 20)
+                    it.addTimeMs(GradleBuildTime.GRADLE_TASK_ACTION, 100)
+                    it.addTimeMs(GradleBuildTime.RESTORE_OUTPUT_FROM_BACKUP, 10)
+                    it.addTimeMs(GradleBuildTime.IC_ANALYZE_JAR_FILES, 10)
                 }
             )
         )
@@ -92,22 +92,22 @@ class ReportDataTest {
             onlyKotlinTask = true,
             additionalTags = setOf(StatTag.KOTLIN_DEBUG),
             metricsToShow = setOf(
-                BuildPerformanceMetric.BUNDLE_SIZE.name,// from TaskExecutionResult
-                BuildTime.GRADLE_TASK_ACTION.name,// from buildOperationRecord
-                BuildPerformanceMetric.COMPILE_ITERATION.name, //from buildOperationRecord
-                BuildTime.IC_CALCULATE_INITIAL_DIRTY_SET.name, //not set
-                BuildPerformanceMetric.START_WORKER_EXECUTION.name, //not set
-                BuildTime.RESTORE_OUTPUT_FROM_BACKUP.name, //from TaskExecutionResult
+                GradleBuildPerformanceMetric.BUNDLE_SIZE.name,// from TaskExecutionResult
+                GradleBuildTime.GRADLE_TASK_ACTION.name,// from buildOperationRecord
+                GradleBuildPerformanceMetric.COMPILE_ITERATION.name, //from buildOperationRecord
+                GradleBuildTime.IC_CALCULATE_INITIAL_DIRTY_SET.name, //not set
+                GradleBuildPerformanceMetric.START_WORKER_EXECUTION.name, //not set
+                GradleBuildTime.RESTORE_OUTPUT_FROM_BACKUP.name, //from TaskExecutionResult
             )
         )
 
         assertNotNull(statisticData)
-        assertEquals(2, statisticData.performanceMetrics.size)
-        assertTrue(statisticData.performanceMetrics.containsKey(BuildPerformanceMetric.BUNDLE_SIZE))
-        assertTrue(statisticData.performanceMetrics.containsKey(BuildPerformanceMetric.COMPILE_ITERATION))
-        assertEquals(2, statisticData.buildTimesMetrics.size)
-        assertTrue(statisticData.buildTimesMetrics.containsKey(BuildTime.GRADLE_TASK_ACTION))
-        assertTrue(statisticData.buildTimesMetrics.containsKey(BuildTime.RESTORE_OUTPUT_FROM_BACKUP))
+        assertEquals(2, statisticData.getPerformanceMetrics().size)
+        assertTrue(statisticData.getPerformanceMetrics().containsKey(GradleBuildPerformanceMetric.BUNDLE_SIZE))
+        assertTrue(statisticData.getPerformanceMetrics().containsKey(GradleBuildPerformanceMetric.COMPILE_ITERATION))
+        assertEquals(2, statisticData.getBuildTimesMetrics().size)
+        assertTrue(statisticData.getBuildTimesMetrics().containsKey(GradleBuildTime.GRADLE_TASK_ACTION))
+        assertTrue(statisticData.getBuildTimesMetrics().containsKey(GradleBuildTime.RESTORE_OUTPUT_FROM_BACKUP))
     }
 
     @Ignore //temporary ignore flaky test
@@ -120,12 +120,12 @@ class ReportDataTest {
         val finishGradleTask = System.nanoTime()
 
         val buildOperationRecord = taskRecord(
-            BuildMetrics(
-                buildPerformanceMetrics = BuildPerformanceMetrics().also {
-                    it.add(BuildPerformanceMetric.FINISH_KOTLIN_DAEMON_EXECUTION, System.currentTimeMillis())
-                    it.add(BuildPerformanceMetric.START_WORKER_EXECUTION, TimeUnit.MILLISECONDS.toNanos(startWorker))
-                    it.add(BuildPerformanceMetric.START_TASK_ACTION_EXECUTION, startTaskAction)
-                    it.add(BuildPerformanceMetric.CALL_WORKER, TimeUnit.MILLISECONDS.toNanos(callWorker))
+            BuildMetrics<GradleBuildTime, GradleBuildPerformanceMetric>(
+                buildPerformanceMetrics = BuildPerformanceMetrics<GradleBuildPerformanceMetric>().also {
+                    it.add(GradleBuildPerformanceMetric.FINISH_KOTLIN_DAEMON_EXECUTION, System.currentTimeMillis())
+                    it.add(GradleBuildPerformanceMetric.START_WORKER_EXECUTION, TimeUnit.MILLISECONDS.toNanos(startWorker))
+                    it.add(GradleBuildPerformanceMetric.START_TASK_ACTION_EXECUTION, startTaskAction)
+                    it.add(GradleBuildPerformanceMetric.CALL_WORKER, TimeUnit.MILLISECONDS.toNanos(callWorker))
                 }
             )
         )
@@ -141,9 +141,9 @@ class ReportDataTest {
             additionalTags = setOf(StatTag.KOTLIN_DEBUG),
         )
         assertNotNull(statisticData)
-        assertEquals(startTaskAction - startGradleTask, statisticData.buildTimesMetrics[BuildTime.GRADLE_TASK_PREPARATION])
-        assertEquals(1, statisticData.buildTimesMetrics[BuildTime.TASK_FINISH_LISTENER_NOTIFICATION]?.sign)
-        assertEquals(startWorker - callWorker, statisticData.buildTimesMetrics[BuildTime.RUN_WORKER_DELAY])
+        assertEquals(startTaskAction - startGradleTask, statisticData.getBuildTimesMetrics()[GradleBuildTime.GRADLE_TASK_PREPARATION])
+        assertEquals(1, statisticData.getBuildTimesMetrics()[GradleBuildTime.TASK_FINISH_LISTENER_NOTIFICATION]?.sign)
+        assertEquals(startWorker - callWorker, statisticData.getBuildTimesMetrics()[GradleBuildTime.RUN_WORKER_DELAY])
     }
 
     private fun taskFinishEvent(startTime: Long = 1L, endTime: Long =10L) = object : TaskFinishEvent {

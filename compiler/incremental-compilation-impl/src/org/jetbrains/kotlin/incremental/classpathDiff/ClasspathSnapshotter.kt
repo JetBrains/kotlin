@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.incremental.classpathDiff
 
-import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
-import org.jetbrains.kotlin.build.report.metrics.BuildTime
-import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
-import org.jetbrains.kotlin.build.report.metrics.measure
+import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.incremental.ClassNodeSnapshotter.snapshotClass
 import org.jetbrains.kotlin.incremental.ClassNodeSnapshotter.snapshotClassExcludingMembers
 import org.jetbrains.kotlin.incremental.ClassNodeSnapshotter.snapshotField
@@ -44,10 +41,10 @@ object ClasspathEntrySnapshotter {
     fun snapshot(
         classpathEntry: File,
         granularity: ClassSnapshotGranularity,
-        metrics: BuildMetricsReporter = DoNothingBuildMetricsReporter
+        metrics: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric> = DoNothingBuildMetricsReporter
     ): ClasspathEntrySnapshot {
         DirectoryOrJarReader.create(classpathEntry).use { directoryOrJarReader ->
-            val classes = metrics.measure(BuildTime.LOAD_CLASSES_PATHS_ONLY) {
+            val classes = metrics.measure(GradleBuildTime.LOAD_CLASSES_PATHS_ONLY) {
                 directoryOrJarReader.getUnixStyleRelativePaths(DEFAULT_CLASS_FILTER).map { unixStyleRelativePath ->
                     ClassFileWithContentsProvider(
                         classFile = ClassFile(classpathEntry, unixStyleRelativePath),
@@ -55,7 +52,7 @@ object ClasspathEntrySnapshotter {
                     )
                 }
             }
-            val snapshots = metrics.measure(BuildTime.SNAPSHOT_CLASSES) {
+            val snapshots = metrics.measure(GradleBuildTime.SNAPSHOT_CLASSES) {
                 ClassSnapshotter.snapshot(classes, granularity, metrics)
             }
             return ClasspathEntrySnapshot(
@@ -71,7 +68,7 @@ object ClassSnapshotter {
     fun snapshot(
         classes: List<ClassFileWithContentsProvider>,
         granularity: ClassSnapshotGranularity,
-        metrics: BuildMetricsReporter = DoNothingBuildMetricsReporter
+        metrics: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric> = DoNothingBuildMetricsReporter
     ): List<ClassSnapshot> {
         fun ClassFile.getClassName(): JvmClassName {
             check(unixStyleRelativePath.endsWith(".class", ignoreCase = true))
@@ -83,7 +80,7 @@ object ClassSnapshotter {
 
         fun snapshotClass(classFile: ClassFileWithContentsProvider): ClassSnapshot {
             return classFileToSnapshotMap.getOrPut(classFile) {
-                val clazz = metrics.measure(BuildTime.LOAD_CONTENTS_OF_CLASSES) {
+                val clazz = metrics.measure(GradleBuildTime.LOAD_CONTENTS_OF_CLASSES) {
                     classFile.loadContents()
                 }
                 // Snapshot outer class first as we need this info to determine whether a class is transitively inaccessible (see below)
@@ -98,10 +95,10 @@ object ClassSnapshotter {
                     clazz.classInfo.isInaccessible() || outerClassSnapshot is InaccessibleClassSnapshot -> {
                         InaccessibleClassSnapshot
                     }
-                    clazz.classInfo.isKotlinClass -> metrics.measure(BuildTime.SNAPSHOT_KOTLIN_CLASSES) {
+                    clazz.classInfo.isKotlinClass -> metrics.measure(GradleBuildTime.SNAPSHOT_KOTLIN_CLASSES) {
                         snapshotKotlinClass(clazz, granularity)
                     }
-                    else -> metrics.measure(BuildTime.SNAPSHOT_JAVA_CLASSES) {
+                    else -> metrics.measure(GradleBuildTime.SNAPSHOT_JAVA_CLASSES) {
                         snapshotJavaClass(clazz, granularity)
                     }
                 }
