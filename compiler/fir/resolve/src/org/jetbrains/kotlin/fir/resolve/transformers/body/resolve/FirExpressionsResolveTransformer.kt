@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
@@ -31,7 +30,6 @@ import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.inference.FirStubInferenceSession
-import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.replaceLambdaArgumentInvocationKinds
 import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperator
@@ -47,7 +45,6 @@ import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.resolve.ArrayFqNames
 import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.ConstantValueKind
@@ -437,7 +434,11 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             } else {
                 functionCall
             }
-            val resultExpression = callResolver.resolveCallAndSelectCandidate(withTransformedArguments)
+
+            val resultExpression = context.inferenceSession.onCandidatesResolution(withTransformedArguments) {
+                callResolver.resolveCallAndSelectCandidate(withTransformedArguments)
+            }
+
             val resultExplicitReceiver = resultExpression.explicitReceiver?.unwrapSmartcastExpression()
             if (initialExplicitReceiver !== resultExplicitReceiver && resultExplicitReceiver is FirQualifiedAccessExpression) {
                 // name.invoke() case

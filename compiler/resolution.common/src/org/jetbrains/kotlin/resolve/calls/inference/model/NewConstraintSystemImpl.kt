@@ -42,9 +42,30 @@ class NewConstraintSystemImpl(
     private val properTypesCache: MutableSet<KotlinTypeMarker> = SmartSet.create()
     private val notProperTypesCache: MutableSet<KotlinTypeMarker> = SmartSet.create()
     private val intersectionTypesCache: MutableMap<Collection<KotlinTypeMarker>, EmptyIntersectionTypeInfo?> = mutableMapOf()
+    override var typeVariablesAreDisallowedForProperTypes: Set<TypeConstructorMarker>? = null
+
     private var couldBeResolvedWithUnrestrictedBuilderInference: Boolean = false
 
     override var atCompletionState: Boolean = false
+
+    fun withDisallowingOnlyThisTypeVariablesForProperTypes(typeVariables: Set<TypeConstructorMarker>, block: () -> Unit) {
+        properTypesCache.clear()
+        notProperTypesCache.clear()
+
+        require(typeVariablesAreDisallowedForProperTypes == null) {
+            "Currently there should be no nested withDisallowingOnlyThisTypeVariablesForProperTypes calls"
+        }
+
+        typeVariablesAreDisallowedForProperTypes = typeVariables
+
+        storage.typeVariablesThatMightNeedResultsRefinement.addAll(typeVariables)
+
+        block()
+
+        typeVariablesAreDisallowedForProperTypes = null
+        properTypesCache.clear()
+        notProperTypesCache.clear()
+    }
 
     private enum class State {
         BUILDING,
@@ -294,6 +315,7 @@ class NewConstraintSystemImpl(
         storage.fixedTypeVariables.putAll(otherSystem.fixedTypeVariables)
         storage.postponedTypeVariables.addAll(otherSystem.postponedTypeVariables)
         storage.constraintsFromAllForkPoints.addAll(otherSystem.constraintsFromAllForkPoints)
+        storage.typeVariablesThatMightNeedResultsRefinement.addAll(otherSystem.typeVariablesThatMightNeedResultsRefinement)
     }
 
     // ResultTypeResolver.Context, ConstraintSystemBuilder
@@ -317,6 +339,9 @@ class NewConstraintSystemImpl(
                 it
 
             if (typeToCheck == null) return@contains false
+            if (typeVariablesAreDisallowedForProperTypes != null) {
+                return@contains typeVariablesAreDisallowedForProperTypes!!.contains(typeToCheck.typeConstructor())
+            }
 
             storage.allTypeVariables.containsKey(typeToCheck.typeConstructor())
         }
@@ -485,6 +510,14 @@ class NewConstraintSystemImpl(
         }
 
         storage.fixedTypeVariables[freshTypeConstructor] = resultType
+
+        val substitutorForFixedVariables = typeSubstitutorByTypeConstructor(mapOf(freshTypeConstructor to resultType))
+
+        storage.typeVariablesThatMightNeedResultsRefinement.forEach { otherVariable ->
+            storage.fixedTypeVariables[otherVariable]?.let {
+                storage.fixedTypeVariables[otherVariable] = substitutorForFixedVariables.safeSubstitute(it)
+            }
+        }
 
         // Substitute freshly fixed type variable into missed constraints
         substituteMissedConstraints()
