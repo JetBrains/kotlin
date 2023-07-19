@@ -58,7 +58,7 @@ fun invalidateAfterInBlockModification(declaration: KtDeclaration): Boolean {
  *
  * @return **false** if it is an out-of-block change
  */
-private fun FirSimpleFunction.inBodyInvalidation(): Boolean {
+internal fun FirSimpleFunction.inBodyInvalidation(): Boolean {
     val body = body ?: return false
     invalidateBody(body)
     return true
@@ -96,7 +96,7 @@ private fun FirFunction.invalidateBody(body: FirBlock): FirResolvePhase? {
  *
  * @return **false** if it is an out-of-block change
  */
-private fun FirProperty.inBodyInvalidation(): Boolean {
+internal fun FirProperty.inBodyInvalidation(): Boolean {
     val initializerState = invalidateInitializer()
     val delegateState = invalidateDelegate()
     when {
@@ -128,7 +128,7 @@ private fun FirProperty.inBodyInvalidation(): Boolean {
  *
  * @return **false** if it is an out-of-block change
  */
-private fun FirPropertyAccessor.inBodyInvalidation(): Boolean {
+internal fun FirPropertyAccessor.inBodyInvalidation(): Boolean {
     val body = body ?: return false
     val newPhase = invalidateBody(body) ?: return true
 

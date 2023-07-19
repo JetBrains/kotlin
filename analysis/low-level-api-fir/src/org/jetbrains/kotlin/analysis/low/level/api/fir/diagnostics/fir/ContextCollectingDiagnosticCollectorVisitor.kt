@@ -77,6 +77,7 @@ internal object PersistenceContextCollector {
             firClass.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
         }
 
+        declaration.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
         return ContextCollectingDiagnosticCollectorVisitor.collect(sessionHolder, designation)
     }
 }

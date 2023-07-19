@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
@@ -84,6 +85,12 @@ internal class ReanalyzableFunctionStructureElement(
     override val mappings = KtToFirMapping(firSymbol.fir, recorder)
 
     override fun reanalyze(): ReanalyzableFunctionStructureElement {
+        val function = firSymbol.fir
+        if (function.resolvePhase == FirResolvePhase.BODY_RESOLVE) {
+            ApplicationManager.getApplication().assertIsWriteThread()
+            (firSymbol.fir as FirSimpleFunction).inBodyInvalidation()
+        }
+
         firSymbol.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
 
         return ReanalyzableFunctionStructureElement(
@@ -106,6 +113,14 @@ internal class ReanalyzablePropertyStructureElement(
     override val mappings = KtToFirMapping(firSymbol.fir, recorder)
 
     override fun reanalyze(): ReanalyzablePropertyStructureElement {
+        val property = firSymbol.fir
+        if (property.resolvePhase == FirResolvePhase.BODY_RESOLVE) {
+            ApplicationManager.getApplication().assertIsWriteThread()
+            property.setter?.inBodyInvalidation()
+            property.getter?.inBodyInvalidation()
+            property.inBodyInvalidation()
+        }
+
         firSymbol.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
 
         return ReanalyzablePropertyStructureElement(
