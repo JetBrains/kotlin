@@ -148,7 +148,7 @@ object FirDiagnosticRenderers {
     private const val WHEN_MISSING_LIMIT = 7
 
     val WHEN_MISSING_CASES = Renderer { missingCases: List<WhenMissingCase> ->
-        if (missingCases.firstOrNull() == WhenMissingCase.Unknown) {
+        if (missingCases.singleOrNull() == WhenMissingCase.Unknown) {
             "'else' branch"
         } else {
             val list = missingCases.joinToString(", ", limit = WHEN_MISSING_LIMIT) { "'$it'" }
