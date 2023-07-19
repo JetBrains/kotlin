@@ -1,0 +1,6 @@
+
+package dependency {
+    @CCall(id = "knifunptr_dependency1_bar") @ExperimentalForeignApi external fun bar()
+    @CCall(id = "knifunptr_dependency0_foo") @ExperimentalForeignApi external fun foo()
+}
+

@@ -43,6 +43,18 @@ abstract class AbstractNativeCInteropIncludeCategoriesTest : AbstractNativeCInte
         get() = "dependency.def"
 }
 
+// This test checks that cinterop-generated declarations have an experimental annotation.
+abstract class AbstractNativeCInteropExperimentalTest : AbstractNativeCInteropTest() {
+    override val fmodules: Boolean
+        get() = false
+
+    override val defFileName: String
+        get() = "dependency.def"
+
+    override val ignoreExperimentalForeignApi: Boolean
+        get() = false
+}
+
 @Tag("cinterop")
 abstract class AbstractNativeCInteropTest : AbstractNativeCInteropBaseTest() {
     abstract val fmodules: Boolean

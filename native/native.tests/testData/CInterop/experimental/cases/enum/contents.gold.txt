@@ -1,0 +1,29 @@
+
+package dependency {
+
+    @ExperimentalForeignApi enum class E1 private constructor(value: UInt) : Enum<E1>, CEnum {
+        @ConstantValue.UInt(value = 0.toUInt()) enum entry ONE
+        @ConstantValue.UInt(value = 1.toUInt()) enum entry TWO
+        @ConstantValue.UInt(value = 2.toUInt()) enum entry THREE
+        override val value: UInt
+
+        class Var constructor(rawPtr: NativePtr /* = NativePtr */) : CEnumVar {
+            var value: E1
+            @CEnumVarTypeSize(size = 4) @Deprecated(level = DeprecationLevel.WARNING, message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = ReplaceWith(expression = "", imports = {})) companion object : CPrimitiveVar.Type
+        }
+
+        companion object {
+            @Deprecated(level = DeprecationLevel.WARNING, message = "Will be removed.", replaceWith = ReplaceWith(expression = "", imports = {})) fun byValue(value: UInt): E1
+        }
+
+    }
+
+}
+
+package dependency {
+    @ExperimentalForeignApi typealias E2 = UInt
+    @ExperimentalForeignApi typealias E2Var = UIntVarOf<E2 /* = UInt */>
+    @ExperimentalForeignApi const val EIGHT: E2 /* = UInt */ = 8.toUInt()
+    @ExperimentalForeignApi const val FOUR: E2 /* = UInt */ = 4.toUInt()
+}
+

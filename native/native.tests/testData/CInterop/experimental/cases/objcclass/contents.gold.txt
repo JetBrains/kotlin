@@ -1,0 +1,27 @@
+
+package dependency {
+
+    @ExternalObjCClass @ExperimentalForeignApi open class MyClass : ObjCObjectBase {
+        @ObjCConstructor(designated = true, initSelector = "init") constructor()
+        var instanceProperty: Int
+            @ObjCMethod(encoding = "i16@0:8", isStret = false, selector = "instanceProperty") get
+            @ObjCMethod(encoding = "v20@0:8i16", isStret = false, selector = "setInstanceProperty:") set
+        @Deprecated(level = DeprecationLevel.ERROR, message = "Use constructor instead", replaceWith = ReplaceWith(expression = "MyClass()", imports = {})) @ObjCMethod(encoding = "@16@0:8", isStret = false, selector = "init") @CCall.ConsumesReceiver @CCall.ReturnsRetained open external fun init(): MyClass?
+        @ObjCMethod(encoding = "v16@0:8", isStret = false, selector = "instanceMethod") open external fun instanceMethod()
+        @ObjCMethod(encoding = "i16@0:8", isStret = false, selector = "instanceProperty") open external fun instanceProperty(): Int
+        @ObjCMethod(encoding = "v20@0:8i16", isStret = false, selector = "setInstanceProperty:") open external fun setInstanceProperty(instanceProperty: Int)
+        companion object : MyClassMeta, ObjCClassOf<MyClass>
+    }
+
+    @ExternalObjCClass @ExperimentalForeignApi open class MyClassMeta : ObjCObjectBaseMeta {
+        protected constructor()
+        var classProperty: Any?
+            @ObjCMethod(encoding = "@16@0:8", isStret = false, selector = "classProperty") get
+            @ObjCMethod(encoding = "v24@0:8@16", isStret = false, selector = "setClassProperty:") set
+        @ObjCMethod(encoding = "v16@0:8", isStret = false, selector = "classMethod") open external fun classMethod()
+        @ObjCMethod(encoding = "@16@0:8", isStret = false, selector = "classProperty") open external fun classProperty(): Any?
+        @ObjCMethod(encoding = "v24@0:8@16", isStret = false, selector = "setClassProperty:") open external fun setClassProperty(classProperty: Any?)
+    }
+
+}
+

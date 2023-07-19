@@ -1,0 +1,31 @@
+
+package dependency {
+
+    @ExternalObjCClass @ExperimentalForeignApi open class MyClass : ObjCObjectBase {
+        protected constructor()
+        companion object : MyClassMeta, ObjCClassOf<MyClass>
+    }
+
+    @ExternalObjCClass @ExperimentalForeignApi open class MyClassMeta : ObjCObjectBaseMeta {
+        protected constructor()
+    }
+
+}
+
+package dependency {
+    @ObjCMethod(encoding = "v16@0:8", isStret = false, selector = "classMethod") @ExperimentalForeignApi external fun MyClassMeta.classMethod()
+    @ExperimentalForeignApi var MyClassMeta.classProperty: Any?
+        @ObjCMethod(encoding = "@16@0:8", isStret = false, selector = "classProperty") get
+        @ObjCMethod(encoding = "v24@0:8@16", isStret = false, selector = "setClassProperty:") set
+    @ObjCMethod(encoding = "@16@0:8", isStret = false, selector = "classProperty") @ExperimentalForeignApi external fun MyClassMeta.classProperty(): Any?
+    @ObjCFactory(encoding = "@16@0:8", isStret = false, selector = "init") @CCall.ConsumesReceiver @CCall.ReturnsRetained @ExperimentalForeignApi external fun <T : MyClass> ObjCClassOf<T>.create(): T?
+    @Deprecated(level = DeprecationLevel.ERROR, message = "Use factory method instead", replaceWith = ReplaceWith(expression = "MyClass.create()", imports = {})) @ObjCMethod(encoding = "@16@0:8", isStret = false, selector = "init") @CCall.ConsumesReceiver @CCall.ReturnsRetained @ExperimentalForeignApi external fun MyClass.init(): MyClass?
+    @ObjCMethod(encoding = "v16@0:8", isStret = false, selector = "instanceMethod") @ExperimentalForeignApi external fun MyClass.instanceMethod()
+    @ExperimentalForeignApi var MyClass.instanceProperty: Int
+        @ObjCMethod(encoding = "i16@0:8", isStret = false, selector = "instanceProperty") get
+        @ObjCMethod(encoding = "v20@0:8i16", isStret = false, selector = "setInstanceProperty:") set
+    @ObjCMethod(encoding = "i16@0:8", isStret = false, selector = "instanceProperty") @ExperimentalForeignApi external fun MyClass.instanceProperty(): Int
+    @ObjCMethod(encoding = "v24@0:8@16", isStret = false, selector = "setClassProperty:") @ExperimentalForeignApi external fun MyClassMeta.setClassProperty(classProperty: Any?)
+    @ObjCMethod(encoding = "v20@0:8i16", isStret = false, selector = "setInstanceProperty:") @ExperimentalForeignApi external fun MyClass.setInstanceProperty(instanceProperty: Int)
+}
+

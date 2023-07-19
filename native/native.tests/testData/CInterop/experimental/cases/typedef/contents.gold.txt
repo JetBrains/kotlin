@@ -1,0 +1,18 @@
+
+package dependency {
+
+    @CStruct(spelling = "struct  { }") @ExperimentalForeignApi class T constructor(rawPtr: NativePtr /* = NativePtr */) : CStructVar {
+        @CStruct.VarType(align = 1, size = 0.toLong()) @Deprecated(level = DeprecationLevel.WARNING, message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = ReplaceWith(expression = "", imports = {})) companion object : CStructVar.Type
+    }
+
+}
+
+package dependency {
+    @ExperimentalForeignApi typealias MyInt = Int
+    @ExperimentalForeignApi typealias MyIntVar = IntVarOf<MyInt /* = Int */>
+    @ExperimentalForeignApi typealias MyPointer = COpaquePointer
+    @ExperimentalForeignApi typealias MyPointerVar = CPointerVarOf<MyPointer /* = CPointer<out CPointed> */>
+    @ExperimentalForeignApi typealias MyS = S
+    @ExperimentalForeignApi typealias MyT = T
+}
+
