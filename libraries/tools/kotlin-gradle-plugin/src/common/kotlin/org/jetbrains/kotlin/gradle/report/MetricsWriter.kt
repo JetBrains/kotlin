@@ -28,7 +28,7 @@ internal class MetricsWriter(
 
             val buildMetricsData = GradleBuildMetricsData()
             for (metric in GradleBuildTime.values()) {
-                buildMetricsData.parentMetric[metric.name] = metric.getParent()?.toString()
+                buildMetricsData.parentMetric[metric.name] = metric.getParent()?.getName()
             }
             for (attr in BuildAttribute.values()) {
                 buildMetricsData.buildAttributeKind[attr.name] = attr.kind.name
