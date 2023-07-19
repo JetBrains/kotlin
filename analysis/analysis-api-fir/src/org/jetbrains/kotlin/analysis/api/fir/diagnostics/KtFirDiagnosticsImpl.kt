@@ -3217,6 +3217,7 @@ internal class ExpectedConditionImpl(
 
 internal class NoElseInWhenImpl(
     override val missingWhenCases: List<WhenMissingCase>,
+    override val description: String,
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtWhenExpression>(firDiagnostic, token), KtFirDiagnostic.NoElseInWhen

@@ -5,16 +5,18 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
-import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.diagnostics.WhenMissingCase
-import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.ExhaustivenessStatus
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
@@ -22,6 +24,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.isExhaustive
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isBooleanOrNullableBoolean
 import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
@@ -38,16 +41,18 @@ object FirExhaustiveWhenChecker : FirWhenExpressionChecker() {
 
         val source = whenExpression.source ?: return
 
+        val subjectType = whenExpression.subject?.typeRef?.coneType?.lowerBoundIfFlexible()
+        val subjectClassSymbol = subjectType?.fullyExpandedType(context.session)?.toRegularClassSymbol(context.session)
+
         if (whenExpression.usedAsExpression) {
             if (source.isIfExpression) {
                 reporter.reportOn(source, FirErrors.INVALID_IF_AS_EXPRESSION, context)
                 return
             } else if (source.isWhenExpression) {
-                reporter.reportOn(source, FirErrors.NO_ELSE_IN_WHEN, whenExpression.missingCases, context)
+                reportNoElseInWhen(reporter, source, whenExpression, subjectClassSymbol, context)
             }
         } else {
-            val subjectType = whenExpression.subject?.typeRef?.coneType?.lowerBoundIfFlexible() ?: return
-            val subjectClassSymbol = subjectType.fullyExpandedType(context.session).toRegularClassSymbol(context.session) ?: return
+            if (subjectClassSymbol == null) return
             val kind = when {
                 subjectClassSymbol.modality == Modality.SEALED -> AlgebraicTypeKind.Sealed
                 subjectClassSymbol.classKind == ClassKind.ENUM_CLASS -> AlgebraicTypeKind.Enum
@@ -56,11 +61,28 @@ object FirExhaustiveWhenChecker : FirWhenExpressionChecker() {
             }
 
             if (context.session.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitNonExhaustiveWhenOnAlgebraicTypes)) {
-                reporter.reportOn(source, FirErrors.NO_ELSE_IN_WHEN, whenExpression.missingCases, context)
+                reportNoElseInWhen(reporter, source, whenExpression, subjectClassSymbol, context)
             } else {
                 reporter.reportOn(source, FirErrors.NON_EXHAUSTIVE_WHEN_STATEMENT, kind.displayName, whenExpression.missingCases, context)
             }
         }
+    }
+
+    private fun reportNoElseInWhen(
+        reporter: DiagnosticReporter,
+        source: KtSourceElement,
+        whenExpression: FirWhenExpression,
+        subjectClassSymbol: FirRegularClassSymbol?,
+        context: CheckerContext,
+    ) {
+        val description = when (subjectClassSymbol?.isExpect) {
+            true -> {
+                val declarationType = if (subjectClassSymbol.isEnumClass) "enum" else "sealed"
+                " ('when' with expect $declarationType subject cannot be exhaustive without else branch)"
+            }
+            else -> ""
+        }
+        reporter.reportOn(source, FirErrors.NO_ELSE_IN_WHEN, whenExpression.missingCases, description, context)
     }
 
     private val FirWhenExpression.missingCases: List<WhenMissingCase>

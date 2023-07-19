@@ -3822,6 +3822,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             firDiagnostic.a.map { whenMissingCase ->
                 whenMissingCase
             },
+            firDiagnostic.b,
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

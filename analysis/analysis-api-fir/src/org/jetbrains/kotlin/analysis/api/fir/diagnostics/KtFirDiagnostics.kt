@@ -2670,6 +2670,7 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
     interface NoElseInWhen : KtFirDiagnostic<KtWhenExpression> {
         override val diagnosticClass get() = NoElseInWhen::class
         val missingWhenCases: List<WhenMissingCase>
+        val description: String
     }
 
     interface NonExhaustiveWhenStatement : KtFirDiagnostic<KtWhenExpression> {
