@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.resolve.dfa.FlowPath
 import org.jetbrains.kotlin.fir.resolve.dfa.PersistentFlow
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -113,6 +114,10 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
     var isDead: Boolean = false
         protected set
 
+    /**
+     * [Flow][org.jetbrains.kotlin.fir.resolve.dfa.Flow] representing the [default path][FlowPath.Default] for this node. This flow should
+     * be used for all type resolutions at this node.
+     */
     private var _flow: PersistentFlow? = null
     open var flow: PersistentFlow
         get() = _flow ?: throw IllegalStateException("flow for $this not initialized - traversing nodes in wrong order?")
@@ -121,6 +126,32 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
             assert(_flow == null) { "reassigning flow for $this" }
             _flow = value
         }
+
+    /**
+     * All other [flows][org.jetbrains.kotlin.fir.resolve.dfa.Flow] through this node which are not the [default][FlowPath.Default]. These
+     * flows should only be used by following nodes when the path through this node diverges (ex., following a `finally` code block).
+     */
+    private var _alternateFlows: MutableMap<FlowPath, PersistentFlow>? = null
+    open val alternateFlowPaths: Set<FlowPath>
+        get() = _alternateFlows?.keys ?: emptySet()
+
+    open fun getAlternateFlow(path: FlowPath): PersistentFlow? {
+        return _alternateFlows?.get(path)
+    }
+
+    @CfgInternals
+    open fun addAlternateFlow(path: FlowPath, flow: PersistentFlow) {
+        assert(path !== FlowPath.Default) { "cannot add default flow path as alternate for $this" }
+        assert(_alternateFlows?.get(path) == null) { "reassigning $path flow for $this" }
+
+        var alternateFlows = _alternateFlows
+        if (alternateFlows == null) {
+            alternateFlows = mutableMapOf()
+            _alternateFlows = alternateFlows
+        }
+
+        alternateFlows[path] = flow
+    }
 
     @CfgInternals
     fun updateDeadStatus() {
@@ -745,6 +776,18 @@ class StubNode(owner: ControlFlowGraph, level: Int) : CFGNode<FirStub>(owner, le
         get() = firstPreviousNode.flow
         @CfgInternals
         set(_) = throw IllegalStateException("can't set flow for stub node")
+
+    override val alternateFlowPaths: Set<FlowPath>
+        get() = firstPreviousNode.alternateFlowPaths
+
+    override fun getAlternateFlow(path: FlowPath): PersistentFlow? {
+        return firstPreviousNode.getAlternateFlow(path)
+    }
+
+    @CfgInternals
+    override fun addAlternateFlow(path: FlowPath, flow: PersistentFlow) {
+        firstPreviousNode.addAlternateFlow(path, flow)
+    }
 
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitStubNode(this, data)
