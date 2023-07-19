@@ -11,15 +11,6 @@ KotlinStub$CLASS[classId=test/PropertyInitializer, fqName=test.PropertyInitializ
     KotlinStub$OBJECT_DECLARATION[classId=test/PropertyInitializer.Companion, fqName=test.PropertyInitializer.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
       KotlinStub$MODIFIER_LIST[public companion]
       KotlinStub$CLASS_BODY
-        KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Companion.MAX_HIGH_SURROGATE, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=MAX_HIGH_SURROGATE]
-          initializer: 56319
-          KotlinStub$MODIFIER_LIST[public final const]
-          KotlinStub$TYPE_REFERENCE
-            KotlinStub$USER_TYPE
-              KotlinStub$USER_TYPE
-                KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
-              KotlinStub$REFERENCE_EXPRESSION[referencedName=Char]
-          KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
         KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Companion.b, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=b]
           initializer: 100
           KotlinStub$MODIFIER_LIST[public final const]
@@ -38,41 +29,23 @@ KotlinStub$CLASS[classId=test/PropertyInitializer, fqName=test.PropertyInitializ
                 KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
               KotlinStub$REFERENCE_EXPRESSION[referencedName=Byte]
           KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
-        KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Companion.bb, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=bb]
+        KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Companion.s, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=s]
+          initializer: 20000
+          KotlinStub$MODIFIER_LIST[public final const]
+          KotlinStub$TYPE_REFERENCE
+            KotlinStub$USER_TYPE
+              KotlinStub$USER_TYPE
+                KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+              KotlinStub$REFERENCE_EXPRESSION[referencedName=Short]
+          KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+        KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Companion.s1, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=s1]
           initializer: 1
           KotlinStub$MODIFIER_LIST[public final const]
           KotlinStub$TYPE_REFERENCE
             KotlinStub$USER_TYPE
               KotlinStub$USER_TYPE
                 KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
-              KotlinStub$REFERENCE_EXPRESSION[referencedName=Boolean]
-          KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
-        KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Companion.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
-          initializer: 960
-          KotlinStub$MODIFIER_LIST[public final const]
-          KotlinStub$TYPE_REFERENCE
-            KotlinStub$USER_TYPE
-              KotlinStub$USER_TYPE
-                KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
-              KotlinStub$REFERENCE_EXPRESSION[referencedName=Char]
-          KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
-        KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Companion.d, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=d]
-          initializer: 3.14
-          KotlinStub$MODIFIER_LIST[public final const]
-          KotlinStub$TYPE_REFERENCE
-            KotlinStub$USER_TYPE
-              KotlinStub$USER_TYPE
-                KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
-              KotlinStub$REFERENCE_EXPRESSION[referencedName=Double]
-          KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
-        KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Companion.f, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=f]
-          initializer: 3.14
-          KotlinStub$MODIFIER_LIST[public final const]
-          KotlinStub$TYPE_REFERENCE
-            KotlinStub$USER_TYPE
-              KotlinStub$USER_TYPE
-                KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
-              KotlinStub$REFERENCE_EXPRESSION[referencedName=Float]
+              KotlinStub$REFERENCE_EXPRESSION[referencedName=Short]
           KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
         KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Companion.i, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=i]
           initializer: 2000000
@@ -110,6 +83,51 @@ KotlinStub$CLASS[classId=test/PropertyInitializer, fqName=test.PropertyInitializ
                 KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
               KotlinStub$REFERENCE_EXPRESSION[referencedName=Long]
           KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+        KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Companion.f, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=f]
+          initializer: 3.14
+          KotlinStub$MODIFIER_LIST[public final const]
+          KotlinStub$TYPE_REFERENCE
+            KotlinStub$USER_TYPE
+              KotlinStub$USER_TYPE
+                KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+              KotlinStub$REFERENCE_EXPRESSION[referencedName=Float]
+          KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+        KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Companion.d, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=d]
+          initializer: 3.14
+          KotlinStub$MODIFIER_LIST[public final const]
+          KotlinStub$TYPE_REFERENCE
+            KotlinStub$USER_TYPE
+              KotlinStub$USER_TYPE
+                KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+              KotlinStub$REFERENCE_EXPRESSION[referencedName=Double]
+          KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+        KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Companion.bb, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=bb]
+          initializer: 1
+          KotlinStub$MODIFIER_LIST[public final const]
+          KotlinStub$TYPE_REFERENCE
+            KotlinStub$USER_TYPE
+              KotlinStub$USER_TYPE
+                KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+              KotlinStub$REFERENCE_EXPRESSION[referencedName=Boolean]
+          KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+        KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Companion.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
+          initializer: 960
+          KotlinStub$MODIFIER_LIST[public final const]
+          KotlinStub$TYPE_REFERENCE
+            KotlinStub$USER_TYPE
+              KotlinStub$USER_TYPE
+                KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+              KotlinStub$REFERENCE_EXPRESSION[referencedName=Char]
+          KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+        KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Companion.MAX_HIGH_SURROGATE, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=MAX_HIGH_SURROGATE]
+          initializer: 56319
+          KotlinStub$MODIFIER_LIST[public final const]
+          KotlinStub$TYPE_REFERENCE
+            KotlinStub$USER_TYPE
+              KotlinStub$USER_TYPE
+                KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+              KotlinStub$REFERENCE_EXPRESSION[referencedName=Char]
+          KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
         KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Companion.nl, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nl]
           initializer: 10
           KotlinStub$MODIFIER_LIST[public final const]
@@ -118,24 +136,6 @@ KotlinStub$CLASS[classId=test/PropertyInitializer, fqName=test.PropertyInitializ
               KotlinStub$USER_TYPE
                 KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
               KotlinStub$REFERENCE_EXPRESSION[referencedName=Char]
-          KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
-        KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Companion.s, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=s]
-          initializer: 20000
-          KotlinStub$MODIFIER_LIST[public final const]
-          KotlinStub$TYPE_REFERENCE
-            KotlinStub$USER_TYPE
-              KotlinStub$USER_TYPE
-                KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
-              KotlinStub$REFERENCE_EXPRESSION[referencedName=Short]
-          KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
-        KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Companion.s1, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=s1]
-          initializer: 1
-          KotlinStub$MODIFIER_LIST[public final const]
-          KotlinStub$TYPE_REFERENCE
-            KotlinStub$USER_TYPE
-              KotlinStub$USER_TYPE
-                KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
-              KotlinStub$REFERENCE_EXPRESSION[referencedName=Short]
           KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
         KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Companion.str, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=str]
           initializer: :)
@@ -286,31 +286,6 @@ KotlinStub$CLASS[classId=test/PropertyInitializer, fqName=test.PropertyInitializ
                 KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
               KotlinStub$REFERENCE_EXPRESSION[referencedName=Annotation]
       KotlinStub$CLASS_BODY
-        KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Anno.annotationArrayWithDefault, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=annotationArrayWithDefault]
-          initializer: [Value(type=KotlinClassTypeBean(classId=test/A1, arguments=[], nullable=false), argumentsMapping={e=E.A, e1=E.B}), Value(type=KotlinClassTypeBean(classId=test/A1, arguments=[], nullable=false), argumentsMapping={e=E.B, e1=E.A})]
-          KotlinStub$MODIFIER_LIST[public final]
-          KotlinStub$TYPE_REFERENCE
-            KotlinStub$USER_TYPE
-              KotlinStub$USER_TYPE
-                KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
-              KotlinStub$REFERENCE_EXPRESSION[referencedName=Array]
-              KotlinStub$TYPE_ARGUMENT_LIST
-                KotlinStub$TYPE_PROJECTION[projectionKind=NONE]
-                  KotlinStub$TYPE_REFERENCE
-                    KotlinStub$USER_TYPE
-                      KotlinStub$USER_TYPE
-                        KotlinStub$REFERENCE_EXPRESSION[referencedName=test]
-                      KotlinStub$REFERENCE_EXPRESSION[referencedName=A1]
-          KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
-        KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Anno.annotationWithDefault, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=annotationWithDefault]
-          initializer: Value(type=KotlinClassTypeBean(classId=test/A1, arguments=[], nullable=false), argumentsMapping={e=E.A, e1=E.B})
-          KotlinStub$MODIFIER_LIST[public final]
-          KotlinStub$TYPE_REFERENCE
-            KotlinStub$USER_TYPE
-              KotlinStub$USER_TYPE
-                KotlinStub$REFERENCE_EXPRESSION[referencedName=test]
-              KotlinStub$REFERENCE_EXPRESSION[referencedName=A1]
-          KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
         KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Anno.arrayWithDefault, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=arrayWithDefault]
           initializer: ["a", "b", "c"]
           KotlinStub$MODIFIER_LIST[public final]
@@ -327,50 +302,6 @@ KotlinStub$CLASS[classId=test/PropertyInitializer, fqName=test.PropertyInitializ
                         KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
                       KotlinStub$REFERENCE_EXPRESSION[referencedName=String]
           KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
-        KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Anno.bool, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=bool]
-          initializer: true
-          KotlinStub$MODIFIER_LIST[public final]
-          KotlinStub$TYPE_REFERENCE
-            KotlinStub$USER_TYPE
-              KotlinStub$USER_TYPE
-                KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
-              KotlinStub$REFERENCE_EXPRESSION[referencedName=Boolean]
-          KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
-        KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Anno.boolArray, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=boolArray]
-          KotlinStub$MODIFIER_LIST[public final]
-          KotlinStub$TYPE_REFERENCE
-            KotlinStub$USER_TYPE
-              KotlinStub$USER_TYPE
-                KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
-              KotlinStub$REFERENCE_EXPRESSION[referencedName=BooleanArray]
-        KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Anno.byte, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=byte]
-          initializer: 1
-          KotlinStub$MODIFIER_LIST[public final]
-          KotlinStub$TYPE_REFERENCE
-            KotlinStub$USER_TYPE
-              KotlinStub$USER_TYPE
-                KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
-              KotlinStub$REFERENCE_EXPRESSION[referencedName=Byte]
-          KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
-        KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Anno.char, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=char]
-          initializer: 
-
-          KotlinStub$MODIFIER_LIST[public final]
-          KotlinStub$TYPE_REFERENCE
-            KotlinStub$USER_TYPE
-              KotlinStub$USER_TYPE
-                KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
-              KotlinStub$REFERENCE_EXPRESSION[referencedName=Char]
-          KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
-        KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Anno.dbl, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=dbl]
-          initializer: 6.0
-          KotlinStub$MODIFIER_LIST[public final]
-          KotlinStub$TYPE_REFERENCE
-            KotlinStub$USER_TYPE
-              KotlinStub$USER_TYPE
-                KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
-              KotlinStub$REFERENCE_EXPRESSION[referencedName=Double]
-          KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
         KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Anno.enumWithDefault, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=enumWithDefault]
           initializer: (test/E, B)
           KotlinStub$MODIFIER_LIST[public final]
@@ -379,24 +310,6 @@ KotlinStub$CLASS[classId=test/PropertyInitializer, fqName=test.PropertyInitializ
               KotlinStub$USER_TYPE
                 KotlinStub$REFERENCE_EXPRESSION[referencedName=test]
               KotlinStub$REFERENCE_EXPRESSION[referencedName=E]
-          KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
-        KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Anno.float, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=float]
-          initializer: 5.0
-          KotlinStub$MODIFIER_LIST[public final]
-          KotlinStub$TYPE_REFERENCE
-            KotlinStub$USER_TYPE
-              KotlinStub$USER_TYPE
-                KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
-              KotlinStub$REFERENCE_EXPRESSION[referencedName=Float]
-          KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
-        KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Anno.int, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=int]
-          initializer: 3
-          KotlinStub$MODIFIER_LIST[public final]
-          KotlinStub$TYPE_REFERENCE
-            KotlinStub$USER_TYPE
-              KotlinStub$USER_TYPE
-                KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
-              KotlinStub$REFERENCE_EXPRESSION[referencedName=Int]
           KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
         KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Anno.klassWithDefault, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=klassWithDefault]
           initializer: NormalClass(value=test/E)
@@ -416,14 +329,48 @@ KotlinStub$CLASS[classId=test/PropertyInitializer, fqName=test.PropertyInitializ
                         KotlinStub$REFERENCE_EXPRESSION[referencedName=test]
                       KotlinStub$REFERENCE_EXPRESSION[referencedName=E]
           KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
-        KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Anno.long, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=long]
-          initializer: 4
+        KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Anno.annotationWithDefault, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=annotationWithDefault]
+          initializer: Value(type=KotlinClassTypeBean(classId=test/A1, arguments=[], nullable=false), argumentsMapping={e=E.A, e1=E.B})
+          KotlinStub$MODIFIER_LIST[public final]
+          KotlinStub$TYPE_REFERENCE
+            KotlinStub$USER_TYPE
+              KotlinStub$USER_TYPE
+                KotlinStub$REFERENCE_EXPRESSION[referencedName=test]
+              KotlinStub$REFERENCE_EXPRESSION[referencedName=A1]
+          KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+        KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Anno.annotationArrayWithDefault, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=annotationArrayWithDefault]
+          initializer: [Value(type=KotlinClassTypeBean(classId=test/A1, arguments=[], nullable=false), argumentsMapping={e=E.A, e1=E.B}), Value(type=KotlinClassTypeBean(classId=test/A1, arguments=[], nullable=false), argumentsMapping={e=E.B, e1=E.A})]
           KotlinStub$MODIFIER_LIST[public final]
           KotlinStub$TYPE_REFERENCE
             KotlinStub$USER_TYPE
               KotlinStub$USER_TYPE
                 KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
-              KotlinStub$REFERENCE_EXPRESSION[referencedName=Long]
+              KotlinStub$REFERENCE_EXPRESSION[referencedName=Array]
+              KotlinStub$TYPE_ARGUMENT_LIST
+                KotlinStub$TYPE_PROJECTION[projectionKind=NONE]
+                  KotlinStub$TYPE_REFERENCE
+                    KotlinStub$USER_TYPE
+                      KotlinStub$USER_TYPE
+                        KotlinStub$REFERENCE_EXPRESSION[referencedName=test]
+                      KotlinStub$REFERENCE_EXPRESSION[referencedName=A1]
+          KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+        KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Anno.bool, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=bool]
+          initializer: true
+          KotlinStub$MODIFIER_LIST[public final]
+          KotlinStub$TYPE_REFERENCE
+            KotlinStub$USER_TYPE
+              KotlinStub$USER_TYPE
+                KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+              KotlinStub$REFERENCE_EXPRESSION[referencedName=Boolean]
+          KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+        KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Anno.byte, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=byte]
+          initializer: 1
+          KotlinStub$MODIFIER_LIST[public final]
+          KotlinStub$TYPE_REFERENCE
+            KotlinStub$USER_TYPE
+              KotlinStub$USER_TYPE
+                KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+              KotlinStub$REFERENCE_EXPRESSION[referencedName=Byte]
           KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
         KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Anno.short, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=short]
           initializer: 2
@@ -434,6 +381,52 @@ KotlinStub$CLASS[classId=test/PropertyInitializer, fqName=test.PropertyInitializ
                 KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
               KotlinStub$REFERENCE_EXPRESSION[referencedName=Short]
           KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+        KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Anno.int, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=int]
+          initializer: 3
+          KotlinStub$MODIFIER_LIST[public final]
+          KotlinStub$TYPE_REFERENCE
+            KotlinStub$USER_TYPE
+              KotlinStub$USER_TYPE
+                KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+              KotlinStub$REFERENCE_EXPRESSION[referencedName=Int]
+          KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+        KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Anno.long, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=long]
+          initializer: 4
+          KotlinStub$MODIFIER_LIST[public final]
+          KotlinStub$TYPE_REFERENCE
+            KotlinStub$USER_TYPE
+              KotlinStub$USER_TYPE
+                KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+              KotlinStub$REFERENCE_EXPRESSION[referencedName=Long]
+          KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+        KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Anno.float, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=float]
+          initializer: 5.0
+          KotlinStub$MODIFIER_LIST[public final]
+          KotlinStub$TYPE_REFERENCE
+            KotlinStub$USER_TYPE
+              KotlinStub$USER_TYPE
+                KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+              KotlinStub$REFERENCE_EXPRESSION[referencedName=Float]
+          KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+        KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Anno.dbl, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=dbl]
+          initializer: 6.0
+          KotlinStub$MODIFIER_LIST[public final]
+          KotlinStub$TYPE_REFERENCE
+            KotlinStub$USER_TYPE
+              KotlinStub$USER_TYPE
+                KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+              KotlinStub$REFERENCE_EXPRESSION[referencedName=Double]
+          KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+        KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Anno.char, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=char]
+          initializer:
+
+          KotlinStub$MODIFIER_LIST[public final]
+          KotlinStub$TYPE_REFERENCE
+            KotlinStub$USER_TYPE
+              KotlinStub$USER_TYPE
+                KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+              KotlinStub$REFERENCE_EXPRESSION[referencedName=Char]
+          KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
         KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Anno.str, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=str]
           initializer: str
           KotlinStub$MODIFIER_LIST[public final]
@@ -443,3 +436,10 @@ KotlinStub$CLASS[classId=test/PropertyInitializer, fqName=test.PropertyInitializ
                 KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
               KotlinStub$REFERENCE_EXPRESSION[referencedName=String]
           KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+        KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Anno.boolArray, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=boolArray]
+          KotlinStub$MODIFIER_LIST[public final]
+          KotlinStub$TYPE_REFERENCE
+            KotlinStub$USER_TYPE
+              KotlinStub$USER_TYPE
+                KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+              KotlinStub$REFERENCE_EXPRESSION[referencedName=BooleanArray]
