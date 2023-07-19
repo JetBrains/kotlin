@@ -50,6 +50,7 @@ object FirJsErrors {
     val JS_NAME_ON_PRIMARY_CONSTRUCTOR_PROHIBITED by error0<KtElement>()
     val JS_NAME_ON_ACCESSOR_AND_PROPERTY by error0<KtElement>()
     val JS_NAME_PROHIBITED_FOR_EXTENSION_PROPERTY by error0<KtElement>()
+    val JS_BUILTIN_NAME_CLASH by error1<KtElement, String>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
 
     // Supertypes
     val WRONG_MULTIPLE_INHERITANCE by error1<KtElement, FirCallableSymbol<*>>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)

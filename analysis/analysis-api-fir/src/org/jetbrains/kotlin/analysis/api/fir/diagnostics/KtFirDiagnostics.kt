@@ -881,6 +881,11 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = JsNameProhibitedForExtensionProperty::class
     }
 
+    interface JsBuiltinNameClash : KtFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = JsBuiltinNameClash::class
+        val name: String
+    }
+
     interface OptInUsage : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = OptInUsage::class
         val optInMarkerFqName: FqName
