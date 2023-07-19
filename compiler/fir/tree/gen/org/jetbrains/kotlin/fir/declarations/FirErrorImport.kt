@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
 import org.jetbrains.kotlin.name.FqName
@@ -19,7 +18,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirErrorImport : FirPureAbstractElement(), FirImport, FirDiagnosticHolder {
+abstract class FirErrorImport : FirImport(), FirDiagnosticHolder {
     abstract override val source: KtSourceElement?
     abstract override val importedFqName: FqName?
     abstract override val isAllUnder: Boolean

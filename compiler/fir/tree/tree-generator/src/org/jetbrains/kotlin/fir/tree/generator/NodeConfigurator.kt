@@ -509,6 +509,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +booleanField("isAllUnder")
             +field("aliasName", nameType, nullable = true)
             +field("aliasSource", sourceElementType, nullable = true)
+            shouldBeAbstractClass()
         }
 
         resolvedImport.configure {

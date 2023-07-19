@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.fir.visitors.*
@@ -16,12 +17,12 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirImport : FirElement {
-    override val source: KtSourceElement?
-    val importedFqName: FqName?
-    val isAllUnder: Boolean
-    val aliasName: Name?
-    val aliasSource: KtSourceElement?
+abstract class FirImport : FirPureAbstractElement(), FirElement {
+    abstract override val source: KtSourceElement?
+    abstract val importedFqName: FqName?
+    abstract val isAllUnder: Boolean
+    abstract val aliasName: Name?
+    abstract val aliasSource: KtSourceElement?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitImport(this, data)
 
