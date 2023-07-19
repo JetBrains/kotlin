@@ -190,8 +190,7 @@ class IncrementalJavaChangePreciseIT : IncrementalCompilationJavaChangesBase(
     }
 }
 
-@DisplayName("Default incremental compilation with disabled precise java tracking")
-open class IncrementalJavaChangeDisablePreciseIT : IncrementalCompilationJavaChangesBase(
+abstract class IncrementalJavaChangeDisablePreciseIT : IncrementalCompilationJavaChangesBase(
     usePreciseJavaTracking = false
 ) {
     @DisplayName("Lib: tracked method signature ABI change")
@@ -237,9 +236,16 @@ open class IncrementalJavaChangeDisablePreciseIT : IncrementalCompilationJavaCha
     }
 }
 
-@DisplayName("Default incremental compilation with disabled precise java tracking and enabled FIR")
-class IncrementalFirJavaChangeDisablePreciseIT : IncrementalJavaChangeDisablePreciseIT() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copy(languageVersion = "2.0")
+@DisplayName("Default incremental compilation with disabled precise java tracking and enabled K2")
+class IncrementalK2JavaChangeDisablePreciseIT : IncrementalJavaChangeDisablePreciseIT() {
+    override val defaultBuildOptions: BuildOptions
+        get() = super.defaultBuildOptions.copyEnsuringK2()
+}
+
+@DisplayName("Default incremental compilation with disabled precise java tracking and enabled K1")
+class IncrementalK1JavaChangeDisablePreciseIT : IncrementalJavaChangeDisablePreciseIT() {
+    override val defaultBuildOptions: BuildOptions
+        get() = super.defaultBuildOptions.copyEnsuringK1()
 }
 
 @JvmGradlePluginTests
