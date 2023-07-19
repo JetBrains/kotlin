@@ -9,6 +9,7 @@
 
 #include "GCScheduler.hpp"
 #include "KAssert.h"
+#include "Logging.hpp"
 #include "ThreadData.hpp"
 #include "ThreadState.hpp"
 
@@ -51,6 +52,7 @@ void incrementActiveCount() noexcept {
     ++activeCount;
     RuntimeAssert(activeCount >= 1, "Unexpected activeCount: %" PRId64, activeCount);
     if (activeCount == 1) {
+        RuntimeLogDebug({kTagMM}, "Enabling safe points");
         auto prev = safePointAction.exchange(safePointActionImpl, std::memory_order_seq_cst);
         RuntimeAssert(prev == nullptr, "Action cannot have been set. Was %p", prev);
     }
@@ -63,6 +65,7 @@ void decrementActiveCount() noexcept {
     if (activeCount == 0) {
         auto prev = safePointAction.exchange(nullptr, std::memory_order_seq_cst);
         RuntimeAssert(prev == safePointActionImpl, "Action must have been %p. Was %p", safePointActionImpl, prev);
+        RuntimeLogDebug({kTagMM}, "Disabled safe points");
     }
 }
 
@@ -92,4 +95,12 @@ ALWAYS_INLINE void mm::safePoint(mm::ThreadData& threadData) noexcept {
     if (__builtin_expect(action != nullptr, false)) {
         slowPath(threadData);
     }
+}
+
+bool mm::test_support::safePointsAreActive() noexcept {
+    return safePointAction.load(std::memory_order_relaxed) != nullptr;
+}
+
+void mm::test_support::setSafePointAction(void (*action)(mm::ThreadData&)) noexcept {
+    safePointAction.store(action, std::memory_order_seq_cst);
 }

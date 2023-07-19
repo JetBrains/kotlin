@@ -35,4 +35,11 @@ private:
 void safePoint() noexcept;
 void safePoint(ThreadData& threadData) noexcept;
 
+namespace test_support {
+
+bool safePointsAreActive() noexcept;
+void setSafePointAction(void (*action)(mm::ThreadData&)) noexcept;
+
+} // namespace test_support
+
 } // namespace kotlin::mm
