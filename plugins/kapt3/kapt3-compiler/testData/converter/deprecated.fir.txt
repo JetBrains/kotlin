@@ -1,0 +1,49 @@
+package deprecated;
+
+@kotlin.Metadata()
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@kotlin.Deprecated(message = "Deprecated annotation")
+@java.lang.Deprecated()
+public abstract @interface Anno {
+}
+
+////////////////////
+
+package deprecated;
+
+@kotlin.Metadata()
+@Anno()
+@kotlin.Deprecated(message = "Deprecated class")
+@java.lang.Deprecated()
+public final class Foo {
+    private final int prop = 0;
+
+    public Foo() {
+        super();
+    }
+
+    @kotlin.Deprecated(message = "Deprecated function")
+    @java.lang.Deprecated()
+    public final void foo(int a) {
+    }
+
+    public final int getProp() {
+        return 0;
+    }
+
+    @java.lang.Deprecated()
+    @kotlin.Deprecated(message = "Deprecated property")
+    public static void getProp$annotations() {
+    }
+
+    @kotlin.Deprecated(message = "Deprecated getter")
+    @java.lang.Deprecated()
+    public final int getFoo() {
+        return 0;
+    }
+
+    @kotlin.Deprecated(message = "Deprecated setter")
+    @java.lang.Deprecated()
+    public final void setFoo(int value) {
+    }
+}

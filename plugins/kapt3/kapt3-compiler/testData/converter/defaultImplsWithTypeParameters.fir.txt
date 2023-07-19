@@ -1,0 +1,10 @@
+@kotlin.Metadata()
+public abstract interface Foo<X extends java.lang.Object, Y extends java.lang.Object> {
+
+    public default <Z extends java.lang.Object>void foo(X x, Y y, Z z) {
+    }
+
+    public default int getX() {
+        return 0;
+    }
+}

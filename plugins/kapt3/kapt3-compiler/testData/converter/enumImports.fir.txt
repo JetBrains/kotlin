@@ -1,0 +1,16 @@
+package kapt;
+
+@kotlin.Metadata()
+public enum Options {
+    /*public static final*/ A /* = new Options() */,
+    /*public static final*/ B /* = new Options() */,
+    /*public static final*/ C /* = new Options() */;
+
+    Options() {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public static kotlin.enums.EnumEntries<kapt.Options> getEntries() {
+        return null;
+    }
+}

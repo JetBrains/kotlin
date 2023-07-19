@@ -959,6 +959,7 @@ class LightTreeRawFirDeclarationBuilder(
             isInner = classWrapper.isInner()
             isFromSealedClass = classWrapper.isSealed() && explicitVisibility !== Visibilities.Private
             isFromEnumClass = classWrapper.isEnum()
+            isFromAnnotationClass = classWrapper.isAnnotation()
         }
 
         val builder = if (isErrorConstructor) FirErrorConstructorBuilder() else FirPrimaryConstructorBuilder()
@@ -1036,6 +1037,7 @@ class LightTreeRawFirDeclarationBuilder(
             isInner = classWrapper.isInner()
             isFromSealedClass = classWrapper.isSealed() && explicitVisibility !== Visibilities.Private
             isFromEnumClass = classWrapper.isEnum()
+            isFromAnnotationClass = classWrapper.isAnnotation()
         }
 
         val target = FirFunctionTarget(labelName = null, isLambda = false)

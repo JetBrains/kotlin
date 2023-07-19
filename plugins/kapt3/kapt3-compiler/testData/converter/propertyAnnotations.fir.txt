@@ -1,0 +1,38 @@
+@kotlin.Metadata()
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+public abstract @interface Anno {
+}
+
+////////////////////
+
+
+@kotlin.Metadata()
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE})
+@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.PROPERTY, kotlin.annotation.AnnotationTarget.CLASS})
+public abstract @interface Anno2 {
+}
+
+////////////////////
+
+
+@kotlin.Metadata()
+public final class Test {
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String prop = "A";
+
+    public Test() {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getProp() {
+        return null;
+    }
+
+    @java.lang.Deprecated()
+    @Anno2()
+    @Anno()
+    public static void getProp$annotations() {
+    }
+}

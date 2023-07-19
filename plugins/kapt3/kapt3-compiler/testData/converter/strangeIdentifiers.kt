@@ -1,3 +1,4 @@
+// FIR_BLOCKED: KT-56868
 class `:)` {
     lateinit val f: String
 }

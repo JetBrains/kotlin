@@ -106,6 +106,8 @@ public interface KtSourceModule : KtModule {
      * A set of Kotlin settings, like API version, supported features and flags.
      */
     public val languageVersionSettings: LanguageVersionSettings
+
+    public val ktFiles: List<KtFile>
 }
 
 /**

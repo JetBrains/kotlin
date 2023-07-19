@@ -1,0 +1,75 @@
+@kotlin.Metadata()
+@kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
+public final class B implements NonExisting {
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String a$delegate = null;
+
+    public B() {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getA() {
+        return null;
+    }
+
+    @java.lang.Deprecated()
+    @kotlin.Suppress(names = {"UNRESOLVED_REFERENCE_WRONG_RECEIVER"})
+    public static void getA$annotations() {
+    }
+}
+
+////////////////////
+
+
+@kotlin.Metadata()
+public class C {
+
+    public C() {
+        super();
+    }
+}
+
+////////////////////
+
+
+@kotlin.Metadata()
+@kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
+public final class D implements I {
+
+    public D() {
+        super();
+    }
+}
+
+////////////////////
+
+
+@kotlin.Metadata()
+@kotlin.Suppress(names = {"UNRESOLVED_REFERENCE", "DELEGATION_NOT_TO_INTERFACE"})
+public final class E implements NonExisting {
+
+    public E() {
+        super();
+    }
+}
+
+////////////////////
+
+
+@kotlin.Metadata()
+public abstract interface I {
+}
+
+////////////////////
+
+
+@kotlin.Metadata()
+public final class UnresolvedDelegateExpressionKt {
+
+    @org.jetbrains.annotations.NotNull()
+    public static final java.lang.String flaf(@org.jetbrains.annotations.NotNull()
+    C $this$flaf) {
+        return null;
+    }
+}

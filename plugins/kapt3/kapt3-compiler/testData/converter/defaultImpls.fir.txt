@@ -1,0 +1,41 @@
+@kotlin.Metadata()
+public abstract interface Intf {
+    @org.jetbrains.annotations.NotNull()
+    public static final Intf.Companion Companion = null;
+    public static final int WHITE = 2;
+
+    public default int getColor() {
+        return 0;
+    }
+
+    @kotlin.Metadata()
+    public static final class Companion {
+        private static final int BLACK = 1;
+        public static final int WHITE = 2;
+
+        private Companion() {
+            super();
+        }
+
+        public final int getBLACK() {
+            return 0;
+        }
+    }
+}
+
+////////////////////
+
+
+@kotlin.Metadata()
+public abstract interface IntfWithDefaultImpls {
+
+    public default void a() {
+    }
+}
+
+////////////////////
+
+
+@kotlin.Metadata()
+public abstract interface IntfWithoutDefaultImpls {
+}

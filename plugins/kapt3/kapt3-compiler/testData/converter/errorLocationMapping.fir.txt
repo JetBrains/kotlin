@@ -1,0 +1,140 @@
+@kotlin.Metadata()
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+public abstract @interface Anno {
+
+    public abstract java.lang.Class<java.lang.Object> a();
+}
+
+////////////////////
+
+
+@kotlin.Metadata()
+@Anno(a = ABC.class)
+public final class ErrorInAnnotation {
+
+    public ErrorInAnnotation() {
+        super();
+    }
+}
+
+////////////////////
+
+
+@kotlin.Metadata()
+public final class ErrorInConstructorParameter {
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String a = null;
+    @org.jetbrains.annotations.NotNull()
+    private final ABC b = null;
+    @org.jetbrains.annotations.NotNull()
+    private final java.util.List<ABC> c = null;
+
+    public ErrorInConstructorParameter(@org.jetbrains.annotations.NotNull()
+    java.lang.String a, @org.jetbrains.annotations.NotNull()
+    ABC b, @org.jetbrains.annotations.NotNull()
+    java.util.List<? extends ABC> c) {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getA() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final ABC getB() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.List<ABC> getC() {
+        return null;
+    }
+}
+
+////////////////////
+
+
+@kotlin.Metadata()
+public final class ErrorInDeclarations {
+    public java.lang.String p1;
+    public ABC p2;
+    public BCD<java.lang.String> p3;
+
+    public ErrorInDeclarations() {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getP1() {
+        return null;
+    }
+
+    public final void setP1(@org.jetbrains.annotations.NotNull()
+    java.lang.String p0) {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final ABC getP2() {
+        return null;
+    }
+
+    public final void setP2(@org.jetbrains.annotations.NotNull()
+    ABC p0) {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final BCD<java.lang.String> getP3() {
+        return null;
+    }
+
+    public final void setP3(@org.jetbrains.annotations.NotNull()
+    BCD<java.lang.String> p0) {
+    }
+
+    public final void overloads(@org.jetbrains.annotations.NotNull()
+    java.lang.String a) {
+    }
+
+    public final void overloads(@org.jetbrains.annotations.NotNull()
+    ABC a) {
+    }
+
+    public final void f1(@org.jetbrains.annotations.NotNull()
+    java.lang.String a, @org.jetbrains.annotations.NotNull()
+    ABC<java.util.List<java.lang.String>> b) {
+    }
+
+    public final <T extends java.lang.String>void f2() {
+    }
+
+    public final <T extends java.lang.Object>void f3() {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final ABC f4() {
+        return null;
+    }
+}
+
+////////////////////
+
+
+@kotlin.Metadata()
+public final class ErrorInSupertype implements ABC {
+
+    public ErrorInSupertype() {
+        super();
+    }
+}
+
+////////////////////
+
+
+@kotlin.Metadata()
+public final class ErrorInSupertype2 extends ABC<java.lang.String> {
+
+    public ErrorInSupertype2() {
+        super();
+    }
+}
