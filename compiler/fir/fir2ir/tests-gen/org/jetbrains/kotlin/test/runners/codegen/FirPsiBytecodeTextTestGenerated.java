@@ -2231,6 +2231,18 @@ public class FirPsiBytecodeTextTestGenerated extends AbstractFirPsiBytecodeTextT
         }
 
         @Test
+        @TestMetadata("enumEntriesIntrinsic.kt")
+        public void testEnumEntriesIntrinsic() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/enum/enumEntriesIntrinsic.kt");
+        }
+
+        @Test
+        @TestMetadata("enumEntriesIntrinsicForJava.kt")
+        public void testEnumEntriesIntrinsicForJava() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/enum/enumEntriesIntrinsicForJava.kt");
+        }
+
+        @Test
         @TestMetadata("enumEntriesMapping.kt")
         public void testEnumEntriesMapping() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/enum/enumEntriesMapping.kt");

@@ -1,0 +1,22 @@
+// TARGET_BACKEND: JVM_IR
+// WITH_STDLIB
+// !OPT_IN: kotlin.ExperimentalStdlibApi
+// FILE: MyEnum.java
+
+enum MyEnum {
+    E
+}
+
+// FILE: 1.kt
+
+@file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE") // TODO: remove once KT-53154 is fixed.
+import kotlin.enums.*
+
+inline fun <reified T : Enum<T>> enumEntries2(): EnumEntries<T> = enumEntries<T>()
+
+fun foo() {
+    enumEntries<MyEnum>()
+    enumEntries2<MyEnum>()
+}
+
+// 0 INVOKESTATIC kotlin/enums/EnumEntriesKt.enumEntries

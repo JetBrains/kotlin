@@ -359,6 +359,16 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
             val desc = getSpecialEnumFunDescriptor(parameter, false)
             instructions.insert(insn, MethodInsnNode(Opcodes.INVOKESTATIC, parameter.internalName, "values", desc, false))
             return true
+        } else if (next1.opcode == Opcodes.ACONST_NULL && next2.opcode == Opcodes.CHECKCAST) {
+            instructions.remove(next1)
+            instructions.remove(next2)
+            // TODO: support enumEntries for Java enums.
+            instructions.insert(
+                insn, MethodInsnNode(
+                    Opcodes.INVOKESTATIC, parameter.internalName, "getEntries", Type.getMethodDescriptor(AsmTypes.ENUM_ENTRIES), false
+                )
+            )
+            return true
         }
 
         return false

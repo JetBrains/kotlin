@@ -2401,6 +2401,30 @@ public class FirLightTreeBlackBoxInlineCodegenWithIrInlinerTestGenerated extends
         }
 
         @Test
+        @TestMetadata("enumEntries.kt")
+        public void testEnumEntries() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/enum/enumEntries.kt");
+        }
+
+        @Test
+        @TestMetadata("enumEntriesChainCapturedType.kt")
+        public void testEnumEntriesChainCapturedType() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/enum/enumEntriesChainCapturedType.kt");
+        }
+
+        @Test
+        @TestMetadata("javaEnumEntries.kt")
+        public void testJavaEnumEntries() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/enum/javaEnumEntries.kt");
+        }
+
+        @Test
+        @TestMetadata("javaEnumEntriesChainCapturedType.kt")
+        public void testJavaEnumEntriesChainCapturedType() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/enum/javaEnumEntriesChainCapturedType.kt");
+        }
+
+        @Test
         @TestMetadata("kt10569.kt")
         public void testKt10569() throws Exception {
             runTest("compiler/testData/codegen/boxInline/enum/kt10569.kt");
