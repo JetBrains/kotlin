@@ -20,7 +20,7 @@ import kotlin.test.assertTrue
 @TestDataPath("\$PROJECT_ROOT")
 @EnforcedProperty(ClassLevelProperty.COMPILER_OUTPUT_INTERCEPTOR, "NONE")
 class LinkerOutputTestKT55578 : AbstractNativeLinkerOutputTest() {
-    private val defaultCompilerArguments = listOf("-opt-in=kotlinx.cinterop.ExperimentalInterop")
+    private val defaultCompilerArguments = listOf("-opt-in=kotlinx.cinterop.ExperimentalForeignApi")
 
     private val testDir = File("native/native.tests/testData/CInterop/KT-55578/")
 
