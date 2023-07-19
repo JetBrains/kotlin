@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.visitors.transformSingle
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.addEqualityConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
@@ -83,6 +82,18 @@ class FirCallCompleter(
             call.replaceLambdaArgumentInvocationKinds(session)
         }
 
+        if (inferenceSession.customCompletionHandling(call, resolutionMode, completionMode) { chosenCompletionMode ->
+                runCompletionForCall(
+                    candidate,
+                    chosenCompletionMode,
+                    call,
+                    initialType
+                )
+            }
+        ) {
+            return call
+        }
+
         return when (completionMode) {
             ConstraintSystemCompletionMode.FULL -> {
                 if (inferenceSession.shouldRunCompletion(call)) {
@@ -91,7 +102,7 @@ class FirCallCompleter(
                         .buildAbstractResultingSubstitutor(session.typeContext) as ConeSubstitutor
                     val completedCall = call.transformSingle(
                         FirCallCompletionResultsWriterTransformer(
-                            session, finalSubstitutor,
+                            session, components.scopeSession, finalSubstitutor,
                             components.returnTypeCalculator,
                             session.typeApproximator,
                             components.dataFlowAnalyzer,
@@ -110,13 +121,6 @@ class FirCallCompleter(
 
             ConstraintSystemCompletionMode.PARTIAL -> {
                 runCompletionForCall(candidate, completionMode, call, initialType, analyzer)
-
-                // Add top-level delegate call as partially resolved to inference session
-                if (resolutionMode is ResolutionMode.ContextDependentDelegate) {
-                    require(inferenceSession is FirDelegatedPropertyInferenceSession)
-                    inferenceSession.addPartiallyResolvedCall(call)
-                }
-
                 call
             }
 
@@ -210,7 +214,7 @@ class FirCallCompleter(
         mode: FirCallCompletionResultsWriterTransformer.Mode = FirCallCompletionResultsWriterTransformer.Mode.Normal
     ): FirCallCompletionResultsWriterTransformer {
         return FirCallCompletionResultsWriterTransformer(
-            session, substitutor, components.returnTypeCalculator,
+            session, components.scopeSession, substitutor, components.returnTypeCalculator,
             session.typeApproximator,
             components.dataFlowAnalyzer,
             components.integerLiteralAndOperatorApproximationTransformer,

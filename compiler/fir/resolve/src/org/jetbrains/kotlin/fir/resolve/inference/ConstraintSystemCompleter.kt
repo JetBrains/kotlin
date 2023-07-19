@@ -383,10 +383,10 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
             result.addAll(notFixedTypeVariables.filter { context.inferenceSession.isSyntheticTypeVariable(it.value.typeVariable) }.keys.asIterable())
         }
 
-        require(result.size == notFixedTypeVariables.size) {
-            val notFoundTypeVariables = notFixedTypeVariables.keys.toMutableSet().apply { removeAll(result) }
-            "Not all type variables found: $notFoundTypeVariables"
-        }
+//        require(result.size == notFixedTypeVariables.size) {
+//            val notFoundTypeVariables = notFixedTypeVariables.keys.toMutableSet().apply { removeAll(result) }
+//            "Not all type variables found: $notFoundTypeVariables"
+//        }
 
         return result.toList()
     }

@@ -434,7 +434,11 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             } else {
                 functionCall
             }
-            val resultExpression = callResolver.resolveCallAndSelectCandidate(withTransformedArguments)
+
+            val resultExpression = context.inferenceSession.onCandidatesResolution(withTransformedArguments) {
+                callResolver.resolveCallAndSelectCandidate(withTransformedArguments)
+            }
+
             val resultExplicitReceiver = resultExpression.explicitReceiver?.unwrapSmartcastExpression()
             if (initialExplicitReceiver !== resultExplicitReceiver && resultExplicitReceiver is FirQualifiedAccessExpression) {
                 // name.invoke() case

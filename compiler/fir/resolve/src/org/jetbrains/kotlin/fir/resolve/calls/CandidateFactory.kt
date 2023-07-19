@@ -39,7 +39,7 @@ class CandidateFactory private constructor(
             callInfo.arguments.forEach {
                 system.addSubsystemFromExpression(it)
             }
-            system.addOtherSystem(context.bodyResolveContext.inferenceSession.currentConstraintStorage)
+            system.addOtherSystem(context.bodyResolveContext.outerConstraintStorage)
             return system.asReadOnlyStorage()
         }
     }

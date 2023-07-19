@@ -235,6 +235,7 @@ internal class MutableConstraintStorage : ConstraintStorage {
     override val hasContradiction: Boolean get() = errors.any { !it.applicability.isSuccess }
     override val fixedTypeVariables: MutableMap<TypeConstructorMarker, KotlinTypeMarker> = LinkedHashMap()
     override val postponedTypeVariables: MutableList<TypeVariableMarker> = SmartList()
+    override val typeVariablesThatMightNeedResultsRefinement: MutableSet<TypeConstructorMarker> = mutableSetOf()
     override val builtFunctionalTypesForPostponedArgumentsByTopLevelTypeVariables: MutableMap<Pair<TypeConstructorMarker, List<Pair<TypeConstructorMarker, Int>>>, KotlinTypeMarker> =
         LinkedHashMap()
     override val builtFunctionalTypesForPostponedArgumentsByExpectedTypeVariables: MutableMap<TypeConstructorMarker, KotlinTypeMarker> =
