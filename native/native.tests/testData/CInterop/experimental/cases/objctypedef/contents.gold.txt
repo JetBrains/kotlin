@@ -1,0 +1,21 @@
+
+package dependency {
+
+    @ExternalObjCClass @ExperimentalForeignApi open class MyClass : ObjCObjectBase {
+        protected constructor()
+        companion object : MyClassMeta, ObjCClassOf<MyClass>
+    }
+
+    @ExternalObjCClass @ExperimentalForeignApi open class MyClassMeta : ObjCObjectBaseMeta {
+        protected constructor()
+    }
+
+}
+
+package dependency {
+    @ExperimentalForeignApi typealias MyClassRef = MyClass?
+    @ExperimentalForeignApi typealias MyClassRefVar = ObjCObjectVar<MyClassRef? /* = MyClass? */>
+    @ExperimentalForeignApi typealias MyId = Any?
+    @ExperimentalForeignApi typealias MyIdVar = ObjCObjectVar<MyId? /* = Any? */>
+}
+

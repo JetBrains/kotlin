@@ -168,6 +168,12 @@ fun main() {
             ) {
                 model("CInterop/frameworkIncludeCategories/cases", pattern = "^([^_](.+))$", recursive = false)
             }
+
+            testClass<AbstractNativeCInteropExperimentalTest>(
+                suiteTestClassName = "CInteropExperimentalTestGenerated"
+            ) {
+                model("CInterop/experimental/cases", pattern = "^([^_](.+))$", recursive = false)
+            }
         }
 
         // ObjCExport tests.

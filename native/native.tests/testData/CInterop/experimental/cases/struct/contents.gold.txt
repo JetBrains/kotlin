@@ -1,0 +1,12 @@
+
+package dependency {
+
+    @CStruct(spelling = "struct  { int x; }") @ExperimentalForeignApi class Foo constructor(rawPtr: NativePtr /* = NativePtr */) : CStructVar {
+        var x: Int
+            @CStruct.MemberAt(offset = 0.toLong()) get
+            @CStruct.MemberAt(offset = 0.toLong()) set
+        @CStruct.VarType(align = 4, size = 4.toLong()) @Deprecated(level = DeprecationLevel.WARNING, message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = ReplaceWith(expression = "", imports = {})) companion object : CStructVar.Type
+    }
+
+}
+

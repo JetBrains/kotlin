@@ -1,0 +1,11 @@
+
+package dependency {
+    @ExperimentalForeignApi const val MACRO_CONST_GLOBAL: Int = 1
+    @ExperimentalForeignApi val MACRO_GLOBAL: Int
+        @CCall(id = "knifunptr_dependency3_MACRO_GLOBAL_getter") get
+    @CCall(id = "knifunptr_dependency0_getValue") @ExperimentalForeignApi external fun getValue(): Int
+    @ExperimentalForeignApi var global: Int
+        @CCall(id = "knifunptr_dependency1_global_getter") get
+        @CCall(id = "knifunptr_dependency2_global_setter") set
+}
+

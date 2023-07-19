@@ -1,0 +1,23 @@
+
+package dependency {
+
+    @ExternalObjCClass(protocolGetter = "kniprot_dependency0_MyProtocol") @ExperimentalForeignApi interface MyProtocolProtocol : ObjCObject {
+        var instanceProperty: Any?
+            @ObjCMethod(encoding = "@16@0:8", isStret = false, selector = "instanceProperty") get
+            @ObjCMethod(encoding = "v24@0:8@16", isStret = false, selector = "setInstanceProperty:") set
+        @ObjCMethod(encoding = "@16@0:8", isStret = false, selector = "instanceMethod") fun instanceMethod(): Any?
+        @ObjCMethod(encoding = "@16@0:8", isStret = false, selector = "instanceProperty") fun instanceProperty(): Any?
+        @ObjCMethod(encoding = "v24@0:8@16", isStret = false, selector = "setInstanceProperty:") fun setInstanceProperty(instanceProperty: Any?)
+    }
+
+    @ExternalObjCClass(protocolGetter = "kniprot_dependency0_MyProtocol") @ExperimentalForeignApi interface MyProtocolProtocolMeta : ObjCObjectMeta /* = ObjCClass */ {
+        var classProperty: Int
+            @ObjCMethod(encoding = "i16@0:8", isStret = false, selector = "classProperty") get
+            @ObjCMethod(encoding = "v20@0:8i16", isStret = false, selector = "setClassProperty:") set
+        @ObjCMethod(encoding = "i16@0:8", isStret = false, selector = "classMethod") fun classMethod(): Int
+        @ObjCMethod(encoding = "i16@0:8", isStret = false, selector = "classProperty") fun classProperty(): Int
+        @ObjCMethod(encoding = "v20@0:8i16", isStret = false, selector = "setClassProperty:") fun setClassProperty(classProperty: Int)
+    }
+
+}
+
