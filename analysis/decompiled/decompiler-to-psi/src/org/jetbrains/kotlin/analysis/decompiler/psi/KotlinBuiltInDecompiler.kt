@@ -58,17 +58,17 @@ class BuiltInDefinitionFile(
             }
 
             val proto = ProtoBuf.PackageFragment.parseFrom(stream, BuiltInSerializerProtocol.extensionRegistry)
-            val result =
-                BuiltInDefinitionFile(proto, version, file.parent, file.extension == MetadataPackageFragment.METADATA_FILE_EXTENSION)
+            val isMetadata = file.extension == MetadataPackageFragment.METADATA_FILE_EXTENSION
+            val result = BuiltInDefinitionFile(proto, version, file.parent, isMetadata)
             val packageProto = result.proto.`package`
-            if (result.classesToDecompile.isEmpty() &&
-                packageProto.typeAliasCount == 0 && packageProto.functionCount == 0 && packageProto.propertyCount == 0
-            ) {
-                // No declarations to decompile: should skip this file
-                return null
-            }
 
-            return result
+            val isEmpty = result.classesToDecompile.isEmpty()
+                    && packageProto.typeAliasCount == 0
+                    && packageProto.functionCount == 0
+                    && packageProto.propertyCount == 0
+
+            // Skip the file is there are no declarations to decompile
+            return if (isEmpty) null else result
         }
     }
 }
