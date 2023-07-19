@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.plugin.diagnostics
 
-import org.gradle.api.InvalidUserCodeException
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
@@ -63,8 +62,10 @@ internal abstract class KotlinToolingDiagnosticsCollector : BuildService<BuildSe
     }
 
     private fun saveDiagnostic(project: Project, diagnostic: ToolingDiagnostic) {
+        val isVerbose = project.kotlinPropertiesProvider.internalVerboseDiagnostics
+
         if (isTransparent) {
-            renderReportedDiagnostic(diagnostic, project.logger, project.kotlinPropertiesProvider.internalVerboseDiagnostics)
+            renderReportedDiagnostic(diagnostic, project.logger, isVerbose)
             return
         }
 
@@ -73,9 +74,7 @@ internal abstract class KotlinToolingDiagnosticsCollector : BuildService<BuildSe
         }
 
         if (diagnostic.severity == ToolingDiagnostic.Severity.FATAL) {
-            if (diagnostic.throwable != null)
-                throw InvalidUserCodeException(diagnostic.message, diagnostic.throwable)
-            else throw InvalidUserCodeException(diagnostic.message)
+            throw diagnostic.createAnExceptionForFatalDiagnostic(isVerbose)
         }
     }
 }
