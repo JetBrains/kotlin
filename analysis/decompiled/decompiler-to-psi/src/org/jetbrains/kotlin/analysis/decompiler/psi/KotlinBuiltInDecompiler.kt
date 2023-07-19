@@ -6,6 +6,7 @@ import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.KotlinMetadataStubBuilder
+import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsPackageFragmentProvider
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
 import org.jetbrains.kotlin.name.ClassId
@@ -49,7 +50,17 @@ class BuiltInDefinitionFile(
         var FILTER_OUT_CLASSES_EXISTING_AS_JVM_CLASS_FILES = true
             @TestOnly set
 
+        private val ALLOWED_METADATA_EXTENSIONS = listOf(
+            JvmBuiltInsPackageFragmentProvider.DOT_BUILTINS_METADATA_FILE_EXTENSION,
+            MetadataPackageFragment.DOT_METADATA_FILE_EXTENSION
+        )
+
         fun read(contents: ByteArray, file: VirtualFile): KotlinMetadataStubBuilder.FileWithMetadata? {
+            val fileName = file.name
+            if (ALLOWED_METADATA_EXTENSIONS.none { fileName.endsWith(it) }) {
+                return null
+            }
+
             val stream = ByteArrayInputStream(contents)
 
             val version = BuiltInsBinaryVersion.readFrom(stream)
@@ -67,8 +78,25 @@ class BuiltInDefinitionFile(
                     && packageProto.functionCount == 0
                     && packageProto.propertyCount == 0
 
-            // Skip the file is there are no declarations to decompile
-            return if (isEmpty) null else result
+            if (isEmpty) {
+                // Skip the file is there are no declarations to decompile
+                return null
+            }
+
+            // '.kotlin_builtins' files sometimes appear shaded in libraries.
+            // Here is an additional check that the file is likely to be an actual part of built-ins.
+            val nestingLevel = result.packageFqName.pathSegments().size
+            val rootPackageDirectory = generateSequence(file) { it.parent }.drop(nestingLevel + 1).firstOrNull() ?: return null
+            val metaInfDirectory = rootPackageDirectory.findChild("META-INF") ?: return null
+
+            if (metaInfDirectory.children.none { it.extension == "kotlin_module" }) {
+                // Here can be a more strict check.
+                // For instance, we can check if the manifest file has a 'Kotlin-Runtime-Component' attribute.
+                // It's unclear if it would break use-cases when the standard library is embedded, though.
+                return null
+            }
+
+            return result
         }
     }
 }
