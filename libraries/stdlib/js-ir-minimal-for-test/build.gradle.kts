@@ -84,7 +84,7 @@ val jsMainSources by task<Sync> {
                 "libraries/stdlib/js/src/kotlin/console.kt",
                 "libraries/stdlib/js/src/kotlin/coreDeprecated.kt",
                 "libraries/stdlib/js/src/kotlin/date.kt",
-                "libraries/stdlib/js/src/kotlin/grouping.kt",
+                "libraries/stdlib/js/src/kotlin/GroupingJs.kt",
                 "libraries/stdlib/js/src/kotlin/ItemArrayLike.kt",
                 "libraries/stdlib/js/src/kotlin/io/**",
                 "libraries/stdlib/js/src/kotlin/json.kt",

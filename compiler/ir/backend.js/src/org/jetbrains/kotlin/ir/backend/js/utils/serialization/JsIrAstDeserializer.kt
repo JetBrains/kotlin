@@ -81,7 +81,7 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
     }
 
     fun readFragment(): JsIrProgramFragment {
-        return JsIrProgramFragment(readString()).apply {
+        return JsIrProgramFragment(readString(), readString()).apply {
             readRepeated {
                 importedModules += JsImportedModule(
                     externalName = stringTable[readInt()],

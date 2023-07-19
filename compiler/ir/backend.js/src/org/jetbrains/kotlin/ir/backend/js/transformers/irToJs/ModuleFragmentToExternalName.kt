@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsName
+import org.jetbrains.kotlin.ir.backend.js.utils.nameWithoutExtension
 import org.jetbrains.kotlin.ir.backend.js.utils.sanitizeName
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.name
 import org.jetbrains.kotlin.ir.declarations.path
 
 private const val EXPORTER_FILE_POSTFIX = ".export"
@@ -17,9 +17,8 @@ private const val EXPORTER_FILE_POSTFIX = ".export"
 class ModuleFragmentToExternalName(private val jsOutputNamesMapping: Map<IrModuleFragment, String>) {
     private val externalNameToItsFile = hashMapOf<String, IrFile>()
 
-    fun getExternalNameFor(file: IrFile, granularity: JsGenerationGranularity): String {
-        assert(granularity == JsGenerationGranularity.PER_FILE) { "This method should be used only for PER_FILE granularity" }
-        return file.module.getJsOutputName().getExternalModuleNameForPerFile(file).also {
+    fun getExternalNameFor(file: IrFile): String {
+        return getExternalNameFor(file.outputName, file.packageFqName.asString(), file.module.getJsOutputName()).also {
             val alreadyReservedBy = externalNameToItsFile.putIfAbsent(it.lowercase(), file)
 
             if (alreadyReservedBy != null && alreadyReservedBy != file) {
@@ -35,8 +34,16 @@ class ModuleFragmentToExternalName(private val jsOutputNamesMapping: Map<IrModul
         }
     }
 
-    fun getExternalNameForExporterFile(file: IrFile, granularity: JsGenerationGranularity): String {
-        return "${getExternalNameFor(file, granularity)}$EXPORTER_FILE_POSTFIX"
+    fun getExternalNameFor(fileName: String, packageFqn: String, moduleName: String): String {
+        return "$moduleName/${getFileStableName(fileName, packageFqn)}"
+    }
+
+    fun getExternalNameForExporterFile(file: IrFile): String {
+        return getExternalNameForExporterFile(file.outputName, file.packageFqName.asString(), file.module.getJsOutputName())
+    }
+
+    fun getExternalNameForExporterFile(fileName: String, packageFqn: String, moduleName: String): String {
+        return "${getExternalNameFor(fileName, packageFqn, moduleName)}$EXPORTER_FILE_POSTFIX"
     }
 
     fun getSafeNameFor(file: IrFile): String {
@@ -55,12 +62,11 @@ class ModuleFragmentToExternalName(private val jsOutputNamesMapping: Map<IrModul
         return jsOutputNamesMapping[this] ?: sanitizeName(safeName)
     }
 
-    private fun String.getExternalModuleNameForPerFile(file: IrFile) = "$this/${file.stableFileName}"
+    private fun getFileStableName(fileName: String, packageFqn: String): String {
+        val prefix = packageFqn.replace('.', '/')
+        return "$prefix${if (prefix.isNotEmpty()) "/" else ""}$fileName"
+    }
 
-    private val IrFile.stableFileName: String
-        get() {
-            val prefix = packageFqName.asString().replace('.', '/')
-            val fileName = getJsName() ?: name.substringBefore(".kt")
-            return "$prefix${if (prefix.isNotEmpty()) "/" else ""}$fileName"
-        }
+    private val IrFile.outputName: String get() = getJsName() ?: nameWithoutExtension
+    private val IrFile.stableFileName: String get() = getFileStableName(outputName, packageFqName.asString())
 }

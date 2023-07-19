@@ -5,13 +5,14 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
+import org.jetbrains.kotlin.backend.common.serialization.cityHash64String
 import org.jetbrains.kotlin.ir.backend.js.export.TypeScriptFragment
 import org.jetbrains.kotlin.ir.backend.js.utils.toJsIdentifier
 import org.jetbrains.kotlin.js.backend.ast.*
 import java.io.File
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 
-class JsIrProgramFragment(val packageFqn: String) {
+class JsIrProgramFragment(val name: String, val packageFqn: String) {
     val nameBindings = mutableMapOf<String, JsName>()
     val optionalCrossModuleImports = hashSetOf<String>()
     val declarations = JsCompositeBlock()
@@ -150,7 +151,14 @@ private class JsIrModuleCrossModuleReferenceBuilder(
 
     fun buildExportNames(startIndex: Int = 0) {
         var index = startIndex
-        exportNames = exports.sorted().associateWith { index++.toJsIdentifier() }
+        exportNames = exports.sorted().associateWith { tag ->
+            // Bundlers should minimize the names by ourselves. Ex, webpack has `optimization.mangleExports` property
+            if (moduleKind == ModuleKind.ES) {
+                "${header.nameBindings[tag]}${tag.cityHash64String()}"
+            } else {
+                index++.toJsIdentifier()
+            }
+        }
     }
 
     fun buildCrossModuleRefs(): CrossModuleReferences {
@@ -268,3 +276,6 @@ fun JsStatement.renameImportedSymbolInternalName(newName: JsName): JsStatement {
         else -> error("Unexpected cross-module import statement ${this::class.qualifiedName}")
     }
 }
+
+val List<JsIrProgramFragment>.mainFragment: JsIrProgramFragment get() = first()
+val List<JsIrProgramFragment>.exportFragment: JsIrProgramFragment? get() = getOrNull(1)

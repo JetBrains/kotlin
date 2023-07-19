@@ -14,18 +14,23 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsGenerationGranularity
 import org.jetbrains.kotlin.test.TargetBackend
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
 import java.nio.charset.Charset
 
-abstract class AbstractJsFirInvalidationTest : FirAbstractInvalidationTest(TargetBackend.JS_IR, "incrementalOut/invalidationFir")
+abstract class AbstractJsFirInvalidationPerFileTest :
+    FirAbstractInvalidationTest(TargetBackend.JS_IR, JsGenerationGranularity.PER_FILE, "incrementalOut/invalidationFir/perFile")
+abstract class AbstractJsFirInvalidationPerModuleTest :
+    FirAbstractInvalidationTest(TargetBackend.JS_IR, JsGenerationGranularity.PER_MODULE, "incrementalOut/invalidationFir/perModule")
 
 abstract class FirAbstractInvalidationTest(
     targetBackend: TargetBackend,
+    granularity: JsGenerationGranularity,
     workingDirPath: String
-) : AbstractInvalidationTest(targetBackend, workingDirPath) {
+) : AbstractInvalidationTest(targetBackend, granularity, workingDirPath) {
     private fun getFirInfoFile(defaultInfoFile: File): File {
         val firInfoFileName = "${defaultInfoFile.nameWithoutExtension}.fir.${defaultInfoFile.extension}"
         val firInfoFile = defaultInfoFile.parentFile.resolve(firInfoFileName)

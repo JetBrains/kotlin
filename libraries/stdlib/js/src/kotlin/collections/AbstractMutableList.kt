@@ -8,6 +8,7 @@
  * Copyright 2007 Google Inc.
 */
 
+@file:JsName("AbstractMutableListJs")
 
 package kotlin.collections
 

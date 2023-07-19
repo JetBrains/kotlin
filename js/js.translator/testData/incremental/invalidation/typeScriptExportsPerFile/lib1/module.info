@@ -1,0 +1,20 @@
+STEP 0:
+    modifications:
+        U : l1.0.4.kt -> l1.kt
+    added file: l1.kt
+STEP 1:
+    modifications:
+        U : l1.1.kt -> l1.kt
+    modified ir: l1.kt
+    expected dts: l1.1.d.ts
+STEP 2:
+    modifications:
+        U : l1.2.kt -> l1.kt
+    modified ir: l1.kt
+    expected dts: l1.2.d.ts
+STEP 3:
+STEP 4:
+    modifications:
+        U : l1.0.4.kt -> l1.kt
+    modified ir: l1.kt
+STEP 5..6:

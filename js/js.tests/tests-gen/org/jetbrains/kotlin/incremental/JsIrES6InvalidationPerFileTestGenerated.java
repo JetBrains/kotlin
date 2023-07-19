@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("js/js.translator/testData/incremental/invalidation")
 @TestDataPath("$PROJECT_ROOT")
-public class JsIrInvalidationTestGenerated extends AbstractJsIrInvalidationTest {
+public class JsIrES6InvalidationPerFileTestGenerated extends AbstractJsIrES6InvalidationPerFileTest {
     @Test
     @TestMetadata("addUpdateRemoveDependentFile")
     public void testAddUpdateRemoveDependentFile() throws Exception {
@@ -34,7 +34,7 @@ public class JsIrInvalidationTestGenerated extends AbstractJsIrInvalidationTest 
 
     @Test
     public void testAllFilesPresentInInvalidation() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/incremental/invalidation"), Pattern.compile("^([^_](.+))$"), null, TargetBackend.JS_IR, false);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/incremental/invalidation"), Pattern.compile("^([^_](.+))$"), null, TargetBackend.JS_IR_ES6, false);
     }
 
     @Test
@@ -344,6 +344,12 @@ public class JsIrInvalidationTestGenerated extends AbstractJsIrInvalidationTest 
     }
 
     @Test
+    @TestMetadata("moveExternalDeclarationsBetweenFiles")
+    public void testMoveExternalDeclarationsBetweenFiles() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/moveExternalDeclarationsBetweenFiles/");
+    }
+
+    @Test
     @TestMetadata("moveExternalDeclarationsBetweenJsModules")
     public void testMoveExternalDeclarationsBetweenJsModules() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/moveExternalDeclarationsBetweenJsModules/");
@@ -458,9 +464,15 @@ public class JsIrInvalidationTestGenerated extends AbstractJsIrInvalidationTest 
     }
 
     @Test
-    @TestMetadata("typeScriptExports")
-    public void testTypeScriptExports() throws Exception {
-        runTest("js/js.translator/testData/incremental/invalidation/typeScriptExports/");
+    @TestMetadata("typeScriptExportsPerFile")
+    public void testTypeScriptExportsPerFile() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/typeScriptExportsPerFile/");
+    }
+
+    @Test
+    @TestMetadata("typeScriptExportsPerModule")
+    public void testTypeScriptExportsPerModule() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/typeScriptExportsPerModule/");
     }
 
     @Test

@@ -41,7 +41,7 @@ class Merger(
                         error("Missing name for declaration '${declaration}'")
                     }
 
-                    importStatements.putIfAbsent(declaration, rename(importStatement).importStatementWithName(importName))
+                    importStatements.putIfAbsent(declaration, rename(importStatement.importStatementWithName(importName)))
                 }
 
                 val classModels = (mutableMapOf<JsName, JsIrIcClassModel>() + f.classes)

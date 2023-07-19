@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.ir.backend.js.ic
 
-import org.jetbrains.kotlin.backend.common.serialization.cityHash64
 import org.jetbrains.kotlin.backend.common.serialization.FingerprintHash
+import org.jetbrains.kotlin.backend.common.serialization.cityHash64String
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -85,7 +85,7 @@ internal class IncrementalCache(private val library: KotlinLibraryHeader, val ca
     ) : KotlinSourceFileMetadata()
 
     private fun KotlinSourceFile.getCacheFile(suffix: String): File {
-        val pathHash = path.cityHash64().toULong().toString(Character.MAX_RADIX)
+        val pathHash = path.cityHash64String()
         return File(cacheDir, "${File(path).name}.$pathHash.$suffix")
     }
 

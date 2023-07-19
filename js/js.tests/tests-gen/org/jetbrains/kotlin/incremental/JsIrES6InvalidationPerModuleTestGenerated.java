@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("js/js.translator/testData/incremental/invalidation")
 @TestDataPath("$PROJECT_ROOT")
-public class JsIrES6InvalidationTestGenerated extends AbstractJsIrES6InvalidationTest {
+public class JsIrES6InvalidationPerModuleTestGenerated extends AbstractJsIrES6InvalidationPerModuleTest {
     @Test
     @TestMetadata("addUpdateRemoveDependentFile")
     public void testAddUpdateRemoveDependentFile() throws Exception {
@@ -344,6 +344,12 @@ public class JsIrES6InvalidationTestGenerated extends AbstractJsIrES6Invalidatio
     }
 
     @Test
+    @TestMetadata("moveExternalDeclarationsBetweenFiles")
+    public void testMoveExternalDeclarationsBetweenFiles() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/moveExternalDeclarationsBetweenFiles/");
+    }
+
+    @Test
     @TestMetadata("moveExternalDeclarationsBetweenJsModules")
     public void testMoveExternalDeclarationsBetweenJsModules() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/moveExternalDeclarationsBetweenJsModules/");
@@ -458,9 +464,15 @@ public class JsIrES6InvalidationTestGenerated extends AbstractJsIrES6Invalidatio
     }
 
     @Test
-    @TestMetadata("typeScriptExports")
-    public void testTypeScriptExports() throws Exception {
-        runTest("js/js.translator/testData/incremental/invalidation/typeScriptExports/");
+    @TestMetadata("typeScriptExportsPerFile")
+    public void testTypeScriptExportsPerFile() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/typeScriptExportsPerFile/");
+    }
+
+    @Test
+    @TestMetadata("typeScriptExportsPerModule")
+    public void testTypeScriptExportsPerModule() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/typeScriptExportsPerModule/");
     }
 
     @Test

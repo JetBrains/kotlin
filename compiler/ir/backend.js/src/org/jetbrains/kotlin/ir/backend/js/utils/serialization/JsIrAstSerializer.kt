@@ -114,6 +114,7 @@ private class JsIrAstSerializer {
     }
 
     private fun DataWriter.writeFragment(fragment: JsIrProgramFragment) {
+        writeString(fragment.name)
         writeString(fragment.packageFqn)
 
         writeCollection(fragment.importedModules) {

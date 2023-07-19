@@ -216,6 +216,9 @@ public fun cityHash64(s: ByteArray, pos: Int = 0, len: Int = s.size): ULong {
 fun String.cityHash64(): Long =
     cityHash64(this.toByteArray()).toLong()
 
+fun String.cityHash64String(): String =
+    cityHash64(this.toByteArray()).toString(Character.MAX_RADIX)
+
 data class Hash128Bits(val lowBytes: ULong = k0, val highBytes: ULong = k1) {
     private infix fun ULong.combineHash(other: ULong) = other xor (this + kGoldenRatio + (other shl 12) + (other shr 4))
 

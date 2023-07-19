@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("js/js.translator/testData/incremental/invalidationWithPL")
 @TestDataPath("$PROJECT_ROOT")
-public class JsIrInvalidationWithPLTestGenerated extends AbstractJsIrInvalidationWithPLTest {
+public class JsIrInvalidationPerModuleWithPLTestGenerated extends AbstractJsIrInvalidationPerModuleWithPLTest {
     @Test
     public void testAllFilesPresentInInvalidationWithPL() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/incremental/invalidationWithPL"), Pattern.compile("^([^_](.+))$"), null, TargetBackend.JS_IR, false);
