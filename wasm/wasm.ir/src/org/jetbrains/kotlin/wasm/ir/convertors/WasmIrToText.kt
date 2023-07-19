@@ -306,7 +306,7 @@ class WasmIrToText : SExpressionBuilder() {
         newLineList("type") {
             appendModuleFieldReference(type)
             sameLineList("array") {
-                appendStructField(type.field)
+                appendFieldType(type.field)
             }
         }
     }
@@ -511,11 +511,15 @@ class WasmIrToText : SExpressionBuilder() {
 
     private fun appendStructField(field: WasmStructFieldDeclaration) {
         sameLineList("field") {
-            if (field.isMutable) {
-                sameLineList("mut") { appendType(field.type) }
-            } else {
-                appendType(field.type)
-            }
+            appendFieldType(field)
+        }
+    }
+
+    private fun appendFieldType(field: WasmStructFieldDeclaration) {
+        if (field.isMutable) {
+            sameLineList("mut") { appendType(field.type) }
+        } else {
+            appendType(field.type)
         }
     }
 
