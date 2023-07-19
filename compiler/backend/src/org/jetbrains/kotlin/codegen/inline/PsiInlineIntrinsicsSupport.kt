@@ -24,6 +24,7 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.Type.INT_TYPE
 import org.jetbrains.org.objectweb.asm.Type.VOID_TYPE
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
+import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode
 
 class PsiInlineIntrinsicsSupport(
     override val state: GenerationState,
@@ -71,6 +72,10 @@ class PsiInlineIntrinsicsSupport(
     }
 
     override fun toKotlinType(type: KotlinType): KotlinType = type
+
+    override fun generateExternalEntriesForEnumTypeIfNeeded(type: KotlinType): FieldInsnNode? {
+        error("Not supported in the old JVM backend")
+    }
 
     override fun reportSuspendTypeUnsupported() {
         state.diagnostics.report(TYPEOF_SUSPEND_TYPE.on(reportErrorsOn))

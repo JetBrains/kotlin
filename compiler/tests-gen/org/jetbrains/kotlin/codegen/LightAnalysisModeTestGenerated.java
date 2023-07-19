@@ -13786,6 +13786,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/enum/enumEntriesInCompanion.kt");
         }
 
+        @TestMetadata("enumEntriesIntrinsicForJava.kt")
+        public void testEnumEntriesIntrinsicForJava() throws Exception {
+            runTest("compiler/testData/codegen/box/enum/enumEntriesIntrinsicForJava.kt");
+        }
+
+        @TestMetadata("enumEntriesIntrinsicMultipleEnums.kt")
+        public void testEnumEntriesIntrinsicMultipleEnums() throws Exception {
+            runTest("compiler/testData/codegen/box/enum/enumEntriesIntrinsicMultipleEnums.kt");
+        }
+
         @TestMetadata("enumEntriesMultimodule.kt")
         public void testEnumEntriesMultimodule() throws Exception {
             runTest("compiler/testData/codegen/box/enum/enumEntriesMultimodule.kt");

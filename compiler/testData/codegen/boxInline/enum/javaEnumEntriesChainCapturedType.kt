@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
-
 // TARGET_BACKEND: JVM_IR
 // WITH_STDLIB
 // !OPT_IN: kotlin.ExperimentalStdlibApi

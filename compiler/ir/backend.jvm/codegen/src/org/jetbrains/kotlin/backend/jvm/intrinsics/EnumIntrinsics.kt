@@ -80,8 +80,12 @@ object EnumEntries : IntrinsicMethod() {
             mv.checkcast(AsmTypes.ENUM_ENTRIES)
             MaterialValue(codegen, AsmTypes.ENUM_ENTRIES, expression.type)
         } else {
-            // TODO: support enumEntries for Java enums.
-            mv.invokestatic(typeMapper.mapType(type).internalName, "getEntries", Type.getMethodDescriptor(AsmTypes.ENUM_ENTRIES), false)
+            val getField = generateExternalEntriesForEnumTypeIfNeeded(type, codegen.classCodegen)
+            if (getField != null) {
+                mv.visitFieldInsn(getField.opcode, getField.owner, getField.name, getField.desc)
+            } else {
+                mv.invokestatic(typeMapper.mapType(type).internalName, "getEntries", Type.getMethodDescriptor(AsmTypes.ENUM_ENTRIES), false)
+            }
             MaterialValue(codegen, AsmTypes.ENUM_ENTRIES, expression.type)
         }
     }

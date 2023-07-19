@@ -16694,6 +16694,18 @@ public class FirLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTr
         }
 
         @Test
+        @TestMetadata("enumEntriesIntrinsicForJava.kt")
+        public void testEnumEntriesIntrinsicForJava() throws Exception {
+            runTest("compiler/testData/codegen/box/enum/enumEntriesIntrinsicForJava.kt");
+        }
+
+        @Test
+        @TestMetadata("enumEntriesIntrinsicMultipleEnums.kt")
+        public void testEnumEntriesIntrinsicMultipleEnums() throws Exception {
+            runTest("compiler/testData/codegen/box/enum/enumEntriesIntrinsicMultipleEnums.kt");
+        }
+
+        @Test
         @TestMetadata("enumEntriesMultimodule.kt")
         public void testEnumEntriesMultimodule() throws Exception {
             runTest("compiler/testData/codegen/box/enum/enumEntriesMultimodule.kt");

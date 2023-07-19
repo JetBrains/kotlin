@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.phaser.SameTypeNamedCompilerPhase
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
-import org.jetbrains.kotlin.backend.common.phaser.performByIrFile
-import org.jetbrains.kotlin.backend.common.phaser.then
+import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -47,6 +44,22 @@ private class FileCodegen(private val context: JvmBackendContext, private val ge
     }
 }
 
+private val generateAdditionalClassesPhase = SameTypeNamedCompilerPhase(
+    "GenerateAdditionalClasses",
+    "Generate additional classes that were requested during codegen",
+    lower = object : SameTypeCompilerPhase<JvmBackendContext, IrModuleFragment> {
+        override fun invoke(
+            phaseConfig: PhaseConfigurationService,
+            phaserState: PhaserState<IrModuleFragment>,
+            context: JvmBackendContext,
+            input: IrModuleFragment,
+        ): IrModuleFragment {
+            context.enumEntriesIntrinsicMappingsCache.generateMappingsClasses()
+            return input
+        }
+    }
+)
+
 // Generate multifile facades first, to compute and store JVM signatures of const properties which are later used
 // when serializing metadata in the multifile parts.
 // TODO: consider dividing codegen itself into separate phases (bytecode generation, metadata serialization) to avoid this
@@ -55,7 +68,8 @@ internal val jvmCodegenPhases = SameTypeNamedCompilerPhase(
     description = "Code generation",
     nlevels = 1,
     lower = codegenPhase(generateMultifileFacade = true) then
-            codegenPhase(generateMultifileFacade = false)
+            codegenPhase(generateMultifileFacade = false) then
+            generateAdditionalClassesPhase
 )
 
 // This property is needed to avoid dependencies from "leaf" modules (cli, tests-common-new) on backend.jvm:lower.

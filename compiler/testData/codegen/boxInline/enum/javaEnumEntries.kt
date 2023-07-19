@@ -1,6 +1,5 @@
-// IGNORE_BACKEND: JVM_IR
-
 // TARGET_BACKEND: JVM_IR
+// NO_CHECK_LAMBDA_INLINING
 // !OPT_IN: kotlin.ExperimentalStdlibApi
 // WITH_STDLIB
 // FILE: test/Z.java

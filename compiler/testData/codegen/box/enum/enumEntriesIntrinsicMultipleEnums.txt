@@ -1,0 +1,32 @@
+Module: lib
+@kotlin.Metadata
+public final enum class X {
+    // source: 'X.kt'
+    private synthetic final static field $ENTRIES: kotlin.enums.EnumEntries
+    private synthetic final static field $VALUES: X[]
+    public final enum static field X1: X
+    public final enum static field X2: X
+    private synthetic final static method $values(): X[]
+    static method <clinit>(): void
+    private method <init>(p0: java.lang.String, p1: int): void
+    public static @org.jetbrains.annotations.NotNull method getEntries(): kotlin.enums.EnumEntries
+    public static method valueOf(p0: java.lang.String): X
+    public static method values(): X[]
+}
+Module: box
+@kotlin.Metadata
+public synthetic final class BoxKt$EntriesIntrinsicMappings {
+    // source: 'box.kt'
+    public synthetic final static field entries$0: kotlin.enums.EnumEntries
+    public synthetic final static field entries$1: kotlin.enums.EnumEntries
+    public synthetic final static field entries$2: kotlin.enums.EnumEntries
+    static method <clinit>(): void
+    public synthetic inner class BoxKt$EntriesIntrinsicMappings
+}
+
+@kotlin.Metadata
+public final class BoxKt {
+    // source: 'box.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public synthetic inner class BoxKt$EntriesIntrinsicMappings
+}

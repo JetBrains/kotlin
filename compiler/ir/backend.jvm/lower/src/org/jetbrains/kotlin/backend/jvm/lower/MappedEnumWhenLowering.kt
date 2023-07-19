@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.lower.irCatch
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.ir.findEnumValuesFunction
 import org.jetbrains.kotlin.backend.jvm.ir.isInPublicInlineScope
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -23,7 +24,8 @@ import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetEnumValueImpl
-import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -166,13 +168,4 @@ private class MappedEnumWhenLowering(override val context: JvmBackendContext) : 
         state = oldState
         return declaration
     }
-}
-
-internal fun IrClass.findEnumValuesFunction(context: JvmBackendContext) = functions.single {
-    it.name.toString() == "values"
-            && it.dispatchReceiverParameter == null
-            && it.extensionReceiverParameter == null
-            && it.valueParameters.isEmpty()
-            && it.returnType.isBoxedArray
-            && it.returnType.getArrayElementType(context.irBuiltIns).classOrNull == this.symbol
 }

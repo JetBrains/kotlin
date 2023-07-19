@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmClassSignature
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode
 import kotlin.collections.set
 
 class IrFrameMap : FrameMapBase<IrSymbol>() {
@@ -349,3 +350,15 @@ val IrClass.reifiedTypeParameters: ReifiedTypeParametersUsages
 
         return tempReifiedTypeParametersUsages
     }
+
+internal fun generateExternalEntriesForEnumTypeIfNeeded(type: IrType, containingCodegen: ClassCodegen): FieldInsnNode? {
+    val irClass = type.getClass()
+    if (irClass == null || !irClass.isEnumClassWhichRequiresExternalEntries()) return null
+
+    val mappingsCache = containingCodegen.context.enumEntriesIntrinsicMappingsCache
+    val field = mappingsCache.getEnumEntriesIntrinsicMappings(containingCodegen.irClass, irClass)
+    return FieldInsnNode(
+        Opcodes.GETSTATIC, containingCodegen.typeMapper.mapClass(field.parentAsClass).internalName,
+        field.name.asString(), AsmTypes.ENUM_ENTRIES.descriptor
+    )
+}

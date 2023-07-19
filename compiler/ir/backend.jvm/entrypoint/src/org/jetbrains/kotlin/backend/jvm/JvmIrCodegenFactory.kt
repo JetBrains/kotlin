@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.common.phaser.CompilerPhase
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignatureFinderImpl
+import org.jetbrains.kotlin.backend.jvm.codegen.EnumEntriesIntrinsicMappingsCacheImpl
 import org.jetbrains.kotlin.backend.jvm.codegen.JvmIrIntrinsicExtension
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
 import org.jetbrains.kotlin.backend.jvm.ir.getIoFile
@@ -343,6 +344,9 @@ open class JvmIrCodegenFactory(
         context.getIntrinsic = { symbol: IrFunctionSymbol ->
             intrinsics.getIntrinsic(symbol) ?: generationExtensions.firstNotNullOfOrNull { it.getIntrinsic(symbol) }
         }
+
+        context.enumEntriesIntrinsicMappingsCache = EnumEntriesIntrinsicMappingsCacheImpl(context)
+
         /* JvmBackendContext creates new unbound symbols, have to resolve them. */
         ExternalDependenciesGenerator(symbolTable, irProviders).generateUnboundSymbolsAsDependencies()
 

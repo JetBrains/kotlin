@@ -518,3 +518,30 @@ fun IrFunction.extensionReceiverName(state: GenerationState): String {
 
 fun IrFunction.isBridge(): Boolean =
     origin == IrDeclarationOrigin.BRIDGE || origin == IrDeclarationOrigin.BRIDGE_SPECIAL
+
+// Enum requires external implementation of entries if it's either a Java enum, or a Kotlin enum compiled with pre-1.8 LV/AV.
+fun IrClass.isEnumClassWhichRequiresExternalEntries(): Boolean =
+    isEnumClass && (isFromJava() || !hasEnumEntriesFunction())
+
+private fun IrClass.hasEnumEntriesFunction(): Boolean {
+    // Enums from other modules are always loaded with a property `entries` which has a getter `<get-entries>`.
+    // Enums from the current module will have a property `entries` if they are unlowered yet (i.e. enum is declared in another file
+    // which will be lowered after the file with the call site), or a function `<get-entries>` if they are already lowered.
+    return functions.any { it.isGetEntries() }
+            || (properties.any { it.getter?.isGetEntries() == true } && isInCurrentModule())
+}
+
+private fun IrSimpleFunction.isGetEntries(): Boolean =
+    name.toString() == "<get-entries>"
+            && dispatchReceiverParameter == null
+            && extensionReceiverParameter == null
+            && valueParameters.isEmpty()
+
+fun IrClass.findEnumValuesFunction(context: JvmBackendContext): IrSimpleFunction = functions.single {
+    it.name.toString() == "values"
+            && it.dispatchReceiverParameter == null
+            && it.extensionReceiverParameter == null
+            && it.valueParameters.isEmpty()
+            && it.returnType.isBoxedArray
+            && it.returnType.getArrayElementType(context.irBuiltIns).classOrNull == this.symbol
+}

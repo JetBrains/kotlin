@@ -33,6 +33,7 @@ import org.jetbrains.org.objectweb.asm.Type.INT_TYPE
 import org.jetbrains.org.objectweb.asm.Type.VOID_TYPE
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
+import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode
 import org.jetbrains.org.objectweb.asm.tree.InsnList
 
 class IrInlineIntrinsicsSupport(
@@ -118,6 +119,9 @@ class IrInlineIntrinsicsSupport(
     }
 
     override fun toKotlinType(type: IrType): KotlinType = type.toIrBasedKotlinType()
+
+    override fun generateExternalEntriesForEnumTypeIfNeeded(type: IrType): FieldInsnNode? =
+        generateExternalEntriesForEnumTypeIfNeeded(type, classCodegen)
 
     override fun reportSuspendTypeUnsupported() {
         classCodegen.context.ktDiagnosticReporter.at(reportErrorsOn, containingFile).report(JvmBackendErrors.TYPEOF_SUSPEND_TYPE)

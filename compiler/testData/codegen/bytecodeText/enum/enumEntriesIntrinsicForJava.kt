@@ -19,4 +19,6 @@ fun foo() {
     enumEntries2<MyEnum>()
 }
 
-// 0 INVOKESTATIC kotlin/enums/EnumEntriesKt.enumEntries
+// There should be one call to enumEntries in _1Kt$EntriesIntrinsicMappings.<clinit>.
+// 2 GETSTATIC _1Kt\$EntriesIntrinsicMappings.entries\$0
+// 1 INVOKESTATIC kotlin/enums/EnumEntriesKt.enumEntries
