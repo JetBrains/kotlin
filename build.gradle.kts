@@ -1,7 +1,7 @@
 import org.gradle.crypto.checksum.Checksum
 import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockMismatchReport
-this change should fail the build
+//this change should not fail the build
 buildscript {
     // a workaround for kotlin compiler classpath in kotlin project: sometimes gradle substitutes
     // kotlin-stdlib external dependency with local project :kotlin-stdlib in kotlinCompilerClasspath configuration.
