@@ -44,15 +44,11 @@ void waitForThreadsToReachCheckpoint() {
 
     mm::SafePointActivator safePointActivator;
 
-    // Disable new threads coming and going.
-    auto threads = mm::ThreadRegistry::Instance().LockForIter();
-    // And wait for all threads to either have passed safepoint or to be in the native state.
+    // Wait for all threads to either have passed safepoint or to be in the native state.
     // Either of these mean that none of them are inside a weak reference accessing code.
-    while (!std::all_of(threads.begin(), threads.end(), [](mm::ThreadData& thread) noexcept {
+    mm::ThreadRegistry::Instance().waitAllThreads([](mm::ThreadData& thread) noexcept {
         return thread.gc().impl().gc().barriers().visitedCheckpoint() || thread.suspensionData().suspendedOrNative();
-    })) {
-        std::this_thread::yield();
-    }
+    });
 }
 
 } // namespace

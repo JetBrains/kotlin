@@ -50,6 +50,15 @@ public:
 
     static void ClearCurrentThreadData() { currentThreadDataNode_ = nullptr; }
 
+    template <typename F>
+    void waitAllThreads(F&& f) noexcept {
+        // Disable new threads coming and going.
+        auto iter = LockForIter();
+        while (!std::all_of(iter.begin(), iter.end(), std::forward<F>(f))) {
+            std::this_thread::yield();
+        }
+    }
+
 private:
     friend class GlobalData;
 

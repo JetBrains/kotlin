@@ -162,7 +162,6 @@ void gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
     RuntimeAssert(didSuspend, "Only GC thread can request suspension");
     gcHandle.suspensionRequested();
 
-    RuntimeAssert(!kotlin::mm::IsCurrentThreadRegistered(), "GC must run on unregistered thread");
     WaitForThreadsReadyToMark();
     gcHandle.threadsAreSuspended();
 
@@ -236,41 +235,16 @@ void gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
     finalizerProcessor_.ScheduleTasks(std::move(finalizerQueue), epoch);
 }
 
-namespace {
-    bool isSuspendedOrNative(kotlin::mm::ThreadData& thread) noexcept {
-        auto& suspensionData = thread.suspensionData();
-        return suspensionData.suspended() || suspensionData.state() == kotlin::ThreadState::kNative;
-    }
-
-    template <typename F>
-    bool allThreads(F predicate) noexcept {
-        auto& threadRegistry = kotlin::mm::ThreadRegistry::Instance();
-        auto* currentThread = (threadRegistry.IsCurrentThreadRegistered()) ? threadRegistry.CurrentThreadData() : nullptr;
-        kotlin::mm::ThreadRegistry::Iterable threads = kotlin::mm::ThreadRegistry::Instance().LockForIter();
-        for (auto& thread : threads) {
-            // Handle if suspension was initiated by the mutator thread.
-            if (&thread == currentThread) continue;
-            if (!predicate(thread)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    void yield() noexcept {
-        std::this_thread::yield();
-    }
-} // namespace
-
 void gc::ConcurrentMarkAndSweep::SetMarkingRequested(uint64_t epoch) noexcept {
     markingRequested = markingBehavior_ == MarkingBehavior::kMarkOwnStack;
     markingEpoch = epoch;
 }
 
 void gc::ConcurrentMarkAndSweep::WaitForThreadsReadyToMark() noexcept {
-    while(!allThreads([](kotlin::mm::ThreadData& thread) { return isSuspendedOrNative(thread) || thread.gc().impl().gc().marking_.load(); })) {
-        yield();
-    }
+    RuntimeAssert(!kotlin::mm::IsCurrentThreadRegistered(), "GC must run on unregistered thread");
+    mm::ThreadRegistry::Instance().waitAllThreads([](mm::ThreadData& thread) noexcept {
+        return thread.suspensionData().suspendedOrNative() || thread.gc().impl().gc().marking_.load();
+    });
 }
 
 void gc::ConcurrentMarkAndSweep::CollectRootSetAndStartMarking(GCHandle gcHandle) noexcept {

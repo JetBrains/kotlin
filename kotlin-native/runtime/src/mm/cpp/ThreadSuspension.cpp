@@ -19,26 +19,6 @@ using namespace kotlin;
 
 namespace {
 
-template<typename F>
-bool allThreads(F predicate) noexcept {
-    auto& threadRegistry = kotlin::mm::ThreadRegistry::Instance();
-    auto* currentThread = (threadRegistry.IsCurrentThreadRegistered()) ? threadRegistry.CurrentThreadData() : nullptr;
-    kotlin::mm::ThreadRegistry::Iterable threads = kotlin::mm::ThreadRegistry::Instance().LockForIter();
-    for (auto& thread : threads) {
-        // Handle if suspension was initiated by the mutator thread.
-        if (&thread == currentThread)
-            continue;
-        if (!predicate(thread)) {
-            return false;
-        }
-    }
-    return true;
-}
-
-void yield() noexcept {
-    std::this_thread::yield();
-}
-
 [[clang::no_destroy]] thread_local std::optional<mm::SafePointActivator> gSafePointActivator = std::nullopt;
 [[clang::no_destroy]] std::mutex gSuspensionMutex;
 [[clang::no_destroy]] std::condition_variable gSuspensionCondVar;
@@ -89,10 +69,12 @@ bool kotlin::mm::RequestThreadsSuspension() noexcept {
 }
 
 void kotlin::mm::WaitForThreadsSuspension() noexcept {
+    auto& threadRegistry = kotlin::mm::ThreadRegistry::Instance();
+    auto* currentThread = (threadRegistry.IsCurrentThreadRegistered()) ? threadRegistry.CurrentThreadData() : nullptr;
     // Spin waiting for threads to suspend. Ignore Native threads.
-    while (!allThreads([](mm::ThreadData& thread) { return thread.suspensionData().suspendedOrNative(); })) {
-        yield();
-    }
+    threadRegistry.waitAllThreads([currentThread](mm::ThreadData& thread) noexcept {
+        return &thread == currentThread || thread.suspensionData().suspendedOrNative();
+    });
 }
 
 void kotlin::mm::ResumeThreads() noexcept {
