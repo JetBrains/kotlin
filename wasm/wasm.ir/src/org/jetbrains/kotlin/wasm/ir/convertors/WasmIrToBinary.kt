@@ -28,6 +28,27 @@ private object WasmBinary {
     const val SUB_TYPE: Byte = -0x30 // 0x50
     const val SUB_FINAL_TYPE: Byte = -0x32 // 0x4E
     const val REC_GROUP: Byte = -0x31 // 0x4F
+
+    @JvmInline
+    value class Section private constructor(val id: UShort) {
+        companion object {
+            // https://webassembly.github.io/spec/core/binary/modules.html#sections
+            val CUSTOM = Section(0u)
+            val TYPE = Section(1u)
+            val IMPORT = Section(2u)
+            val FUNCTION = Section(3u)
+            val TABLE = Section(4u)
+            val MEMORY = Section(5u)
+            val GLOBAL = Section(6u)
+            val EXPORT = Section(7u)
+            val START = Section(8u)
+            val ELEMENT = Section(9u)
+            val CODE = Section(10u)
+            val DATA = Section(11u)
+            val DATA_COUNT = Section(12u)
+            val TAG = Section(13u)
+        }
+    }
 }
 
 class WasmIrToBinary(
@@ -51,7 +72,7 @@ class WasmIrToBinary(
 
         with(module) {
             // type section
-            appendSection(1u) {
+            appendSection(WasmBinary.Section.TYPE) {
                 val numRecGroups = if (recGroupTypes.isEmpty()) 0 else 1
                 appendVectorSize(functionTypes.size + numRecGroups)
                 functionTypes.forEach { appendFunctionTypeDeclaration(it) }
@@ -69,7 +90,7 @@ class WasmIrToBinary(
             }
 
             // import section
-            appendSection(2u) {
+            appendSection(WasmBinary.Section.IMPORT) {
                 appendVectorSize(importsInOrder.size)
                 importsInOrder.forEach {
                     when (it) {
@@ -84,64 +105,64 @@ class WasmIrToBinary(
             }
 
             // function section
-            appendSection(3u) {
+            appendSection(WasmBinary.Section.FUNCTION) {
                 appendVectorSize(definedFunctions.size)
                 definedFunctions.forEach { appendDefinedFunction(it) }
             }
 
             // table section
-            appendSection(4u) {
+            appendSection(WasmBinary.Section.TABLE) {
                 appendVectorSize(tables.size)
                 tables.forEach { appendTable(it) }
             }
 
             // memory section
-            appendSection(5u) {
+            appendSection(WasmBinary.Section.MEMORY) {
                 appendVectorSize(memories.size)
                 memories.forEach { appendMemory(it) }
             }
 
             // tag section
-            appendSection(13u) {
+            appendSection(WasmBinary.Section.TAG) {
                 appendVectorSize(tags.size)
                 tags.forEach { appendTag(it) }
             }
 
-            appendSection(6u) {
+            appendSection(WasmBinary.Section.GLOBAL) {
                 appendVectorSize(globals.size)
                 globals.forEach { appendGlobal(it) }
             }
 
-            appendSection(7u) {
+            appendSection(WasmBinary.Section.EXPORT) {
                 appendVectorSize(exports.size)
                 exports.forEach { appendExport(it) }
             }
 
             if (startFunction != null) {
-                appendSection(8u) {
+                appendSection(WasmBinary.Section.START) {
                     appendStartFunction(startFunction)
                 }
             }
 
             // element section
-            appendSection(9u) {
+            appendSection(WasmBinary.Section.ELEMENT) {
                 appendVectorSize(elements.size)
                 elements.forEach { appendElement(it) }
             }
 
             if (dataCount) {
-                appendSection(12u) {
+                appendSection(WasmBinary.Section.DATA_COUNT) {
                     b.writeVarUInt32(data.size.toUInt())
                 }
             }
 
             // code section
-            appendSection(10u) {
+            appendSection(WasmBinary.Section.CODE) {
                 appendVectorSize(definedFunctions.size)
                 definedFunctions.forEach { appendCode(it) }
             }
 
-            appendSection(11u) {
+            appendSection(WasmBinary.Section.DATA) {
                 appendVectorSize(data.size)
                 data.forEach { appendData(it) }
             }
@@ -153,7 +174,7 @@ class WasmIrToBinary(
 
             if (sourceMapFileName != null) {
                 // Custom section with URL to sourcemap
-                appendSection(0u) {
+                appendSection(WasmBinary.Section.CUSTOM) {
                     b.writeString("sourceMappingURL")
                     b.writeString(sourceMapFileName)
                 }
@@ -162,19 +183,19 @@ class WasmIrToBinary(
     }
 
     private fun appendTextSection(definedFunctions: List<WasmFunction.Defined>) {
-        appendSection(0u) {
+        appendSection(WasmBinary.Section.CUSTOM) {
             b.writeString("name")
-            appendSection(0u) {
+            appendSection(WasmBinary.Section.CUSTOM) {
                 b.writeString(moduleName)
             }
-            appendSection(1u) {
+            appendSection(WasmBinary.Section.TYPE) {
                 appendVectorSize(definedFunctions.size)
                 definedFunctions.forEach {
                     appendModuleFieldReference(it)
                     b.writeString(it.name)
                 }
             }
-            appendSection(2u) {
+            appendSection(WasmBinary.Section.IMPORT) {
                 appendVectorSize(definedFunctions.size)
                 definedFunctions.forEach {
                     appendModuleFieldReference(it)
@@ -189,7 +210,7 @@ class WasmIrToBinary(
             // Extended Name Section
             // https://github.com/WebAssembly/extended-name-section/blob/main/document/core/appendix/custom.rst
 
-            appendSection(4u) {
+            appendSection(WasmBinary.Section.TABLE) {
                 appendVectorSize(module.recGroupTypes.size)
                 module.recGroupTypes.forEach {
                     appendModuleFieldReference(it)
@@ -197,7 +218,7 @@ class WasmIrToBinary(
                 }
             }
 
-            appendSection(7u) {
+            appendSection(WasmBinary.Section.EXPORT) {
                 appendVectorSize(module.globals.size)
                 module.globals.forEach { global ->
                     appendModuleFieldReference(global)
@@ -207,7 +228,7 @@ class WasmIrToBinary(
 
             // Experimental fields name section
             // https://github.com/WebAssembly/gc/issues/193
-            appendSection(10u) {
+            appendSection(WasmBinary.Section.CODE) {
                 val structDeclarations = module.recGroupTypes.filterIsInstance<WasmStructDeclaration>()
                 appendVectorSize(structDeclarations.size)
                 structDeclarations.forEach {
@@ -286,8 +307,8 @@ class WasmIrToBinary(
         }
     }
 
-    private fun appendSection(id: UShort, content: () -> Unit) {
-        b.writeVarUInt7(id)
+    private fun appendSection(section: WasmBinary.Section, content: () -> Unit) {
+        b.writeVarUInt7(section.id)
         withVarUInt32PayloadSizePrepended { content() }
     }
 
