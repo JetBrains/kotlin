@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerToolOptions
 /**
  * Represents a Kotlin task performing further processing of compiled code via additional Kotlin tools using configurable [toolOptions].
  *
- * Check [KotlinCommonCompilerToolOptions] inheritors (excluding [KotlinCommonCompilerToolOptions]) for possible available for configuration
- * tool options.
+ * Check [KotlinCommonCompilerToolOptions] inheritors (excluding [KotlinCommonCompilerToolOptions]) for the possible configuration
+ * options.
  *
  * @see [KotlinCommonCompilerToolOptions]
  */
