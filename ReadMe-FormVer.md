@@ -13,7 +13,7 @@ dist/kotlinc/bin/kotlinc -language-version 2.0 -Xcompiler-plugin=dist/kotlinc/li
 ## Viper dependency
 
 To build the plugin, two main Viper dependencies are needed: 
-[silver](https://github.com/viperproject/silicon) (the API for
+[silver](https://github.com/viperproject/silver) (the API for
 generation the intermediate representation) and 
 [silicon](https://github.com/viperproject/silicon) (the symbolic engine for
 performing the verification of Viper code).
