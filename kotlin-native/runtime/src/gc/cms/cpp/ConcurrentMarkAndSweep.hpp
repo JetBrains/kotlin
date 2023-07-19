@@ -68,7 +68,6 @@ public:
 
         BarriersThreadData& barriers() noexcept { return barriers_; }
 
-        bool tryLockRootSet();
         void beginCooperation();
         bool cooperative() const;
         void publish();
@@ -85,13 +84,11 @@ public:
         BarriersThreadData barriers_;
 
     public: // FIXME
-        std::atomic<bool> rootSetLocked_ = false;
         std::atomic<bool> published_ = false;
         std::atomic<bool> cooperative_ = false;
 
     public: // FIXME
         std::mutex rootSetMutex_;
-        std::atomic<bool> markQueueReady_ = false;
         ManuallyScoped<mark::ParallelMark::ParallelProcessor::WorkSource> markQueue_;
         std::atomic<bool> rootSetCollected_ = false;
 

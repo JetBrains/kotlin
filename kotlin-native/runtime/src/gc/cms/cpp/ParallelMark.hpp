@@ -170,8 +170,9 @@ public: // FIXME
 
     void completeRootSetAndMark(ParallelProcessor::Worker& parallelWorker);
     void completeMutatorsRootSet(MarkTraits::MarkQueue& workerMarkQueue);
-    void tryCreateMarkQueueAndCollectRS(mm::ThreadData& thread);
-    void tryCollectRootSet(mm::ThreadData& thread, ParallelProcessor::WorkSource& markQueue);
+    void tryCollectRootSet(mm::ThreadData& thread,
+                           ParallelProcessor::WorkSource& markQueue,
+                           bool block);
     void parallelMark(ParallelProcessor::Worker& worker);
 
     std::optional<ParallelProcessor::Worker> createWorker();

@@ -120,7 +120,6 @@ ALWAYS_INLINE void gc::SetRefInMark(ObjHeader** location, ObjHeader* value) noex
         if (prev != nullptr) {
             if (!gc::isMarked(prev)) {
                 auto threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
-                RuntimeAssert(threadData->gc().impl().gc().markQueueReady_, "Mark queue must be initialized");
                 auto& queue = *threadData->gc().impl().gc().markQueue_;
 
                 bool markIdle = threadData->gc().impl().gc().gc_.markDispatcher_.pacer_.is(mark::MarkPacer::Phase::kIdle);

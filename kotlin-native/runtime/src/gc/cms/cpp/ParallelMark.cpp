@@ -143,8 +143,44 @@ void gc::mark::ParallelMark::runMainInSTW() {
 
         for (auto& thread : *lockedMutatorsList_) {
             thread.gc().impl().gc().markQueue_.construct(*parallelProcessor_);
-            thread.gc().impl().gc().markQueueReady_ = true; // TODO remove
         }
+
+/////////
+//        // wait for threads to confirm mark queue creation
+//        // NOTE at this point they can already start marking (=enqueueing) something
+//        waitForThreadsToReachCheckpoint();
+//
+//        // FIXME
+//        //     at this point a mutator can already be black
+//        //     but write barriers are not yet active
+//
+//        // FIXME serial RS collection :c
+//        EnableMarkBarriers();
+//        {
+//            for (auto& mut : *lockedMutatorsList_) {
+//                mut.gc().impl().gc().barriers().resetCheckpoint();
+//            }
+//            mm::SafePointActivator safePointActivator;
+//
+//            spinWait([this, &mainWorker] {
+//                return allMutators([this, &mainWorker](mm::ThreadData& mut) {
+//                    auto& gcData = mut.gc().impl().gc();
+//                    if (gcData.barriers().visitedCheckpoint()) return true;
+//
+//                    if (mut.suspensionData().suspendedOrNative()) {
+//                        tryCollectRootSet(mut, mainWorker, false);
+//                        return true;
+//                    }
+//                    return false;
+//                });
+//            });
+//        }
+//
+//        spinWait([this] {
+//            return allMutators([](mm::ThreadData& mut) { return mut.gc().impl().gc().rootSetCollected_.load(std::memory_order_acquire); });
+//        });
+//
+/////////
 
         {
             bool didSuspend = mm::RequestThreadsSuspension();
@@ -176,6 +212,8 @@ void gc::mark::ParallelMark::runMainInSTW() {
                 return allMutators([](mm::ThreadData& mut) { return mut.gc().impl().gc().rootSetCollected_.load(std::memory_order_acquire); });
             });
         }
+
+/////////
 
         // global root set must be collected after all the mutator's global data have been published
         // FIXME lock special refs registry for iteration!!!
@@ -243,14 +281,12 @@ void gc::mark::ParallelMark::runMainInSTW() {
 void gc::mark::ParallelMark::onSafePoint(mm::ThreadData& mutatorThread) {
     auto& gcData = mutatorThread.gc().impl().gc();
     if (pacer_.is(MarkPacer::Phase::kReady) || pacer_.is(MarkPacer::Phase::kRootSet)) {
-        RuntimeAssert(gcData.markQueueReady_, "The queue must be ready");
-        tryCollectRootSet(mutatorThread, *gcData.markQueue_);
+        tryCollectRootSet(mutatorThread, *gcData.markQueue_, true);
         RuntimeAssert(gcData.rootSetCollected_, "The root set must be collected");
         // this is the release?
         flushLocalQueue(mutatorThread);
     }
     if (pacer_.is(MarkPacer::Phase::kParallelMark)) {
-        RuntimeAssert(gcData.markQueueReady_, "The queue must be ready");
         RuntimeAssert(gcData.rootSetCollected_, "The root set must be collected");
         flushLocalQueue(mutatorThread);
     }
@@ -272,7 +308,7 @@ void gc::mark::ParallelMark::runOnMutator(mm::ThreadData& mutatorThread) {
         gcData.beginCooperation();
         GCLogDebug(epoch, "Mutator thread cooperates in marking");
 
-        tryCollectRootSet(mutatorThread, *parallelWorker);
+        tryCollectRootSet(mutatorThread, *parallelWorker, false);
 
         completeRootSetAndMark(*parallelWorker);
     }
@@ -326,19 +362,22 @@ void gc::mark::ParallelMark::completeRootSetAndMark(ParallelProcessor::Worker& p
 void gc::mark::ParallelMark::completeMutatorsRootSet(MarkTraits::MarkQueue& workerMarkQueue) {
     // workers compete for mutators to collect their root set
     for (auto& mutator: *lockedMutatorsList_) {
-        tryCollectRootSet(mutator, workerMarkQueue);
+        tryCollectRootSet(mutator, workerMarkQueue, false);
     }
 }
 
-void gc::mark::ParallelMark::tryCreateMarkQueueAndCollectRS(mm::ThreadData& thread) {
-    // TODO remove
-}
-
-void gc::mark::ParallelMark::tryCollectRootSet(mm::ThreadData& thread, ParallelProcessor::WorkSource& markQueue) {
+void gc::mark::ParallelMark::tryCollectRootSet(mm::ThreadData& thread, ParallelProcessor::WorkSource& markQueue, bool block) {
     auto& gcData = thread.gc().impl().gc();
-    std::unique_lock lock(gcData.rootSetMutex_);
-    if (!gcData.tryLockRootSet()) return;
-    RuntimeAssert(gcData.markQueueReady_.load(std::memory_order_relaxed), "Mark queue must be ready");
+    std::unique_lock lock(gcData.rootSetMutex_, std::defer_lock);
+    if (block) {
+        lock.lock();
+    } else {
+        bool locked = lock.try_lock();
+        if (!locked) return;
+    }
+    RuntimeAssert(lock, "Must be locked");
+    // TODO maybe replace orders by relaxed? (and write a comment about mutex etc.)
+    if (gcData.rootSetCollected_.load(std::memory_order_acquire)) return;
 
     GCLogDebug(gcHandle().getEpoch(), "Root set collection on thread %d for thread %d",
                konan::currentThreadId(), thread.threadId());
@@ -352,7 +391,8 @@ void gc::mark::ParallelMark::parallelMark(ParallelProcessor::Worker& worker) {
     while (pacer_.is(MarkPacer::Phase::kParallelMark)) {
         GCLogDebug(gcHandle().getEpoch(), "Mark loop %zu has begun", iter);
         Mark<MarkTraits>(gcHandle(), worker);
-        // TODO rest a bit
+        std::this_thread::yield();
+        // TODO rest a little bit more?
         ++iter;
     }
 
@@ -380,7 +420,6 @@ void gc::mark::ParallelMark::resetMutatorFlags() {
             // TODO mutex?
             std::unique_lock lock(gcData.rootSetMutex_);
             gcData.markQueue_.destroy();
-            gcData.markQueueReady_ = false;
         }
         gcData.clearMarkFlags();
     }

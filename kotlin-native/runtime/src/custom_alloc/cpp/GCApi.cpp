@@ -127,7 +127,7 @@ void graphvizObj(std::ostream& out, HeapObjHeader* objHeader) {
     auto typeName = CreateCStringFromString(typeInfo->relativeName_);
     ScopeGuard freeTypeName([=]() { std_support::free(typeName); });
     out << "obj_" << std::hex << obj
-        << " [label=\"" << typeName << "@0x" << std::hex << obj;
+        << " [label=\"" << typeName << "@" << std::hex << obj;
     if (marked) {
         out << " [marked]";
     }

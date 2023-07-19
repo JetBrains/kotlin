@@ -7,6 +7,8 @@
 #define RUNTIME_UTILS_H
 
 #include <cstddef>
+#include <array>
+#include <variant>
 
 #include <type_traits>
 

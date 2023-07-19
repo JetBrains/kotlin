@@ -143,15 +143,6 @@ void gc::ConcurrentMarkAndSweep::ThreadData::OnSuspendForGC() noexcept {
     //gc_.markDispatcher_.runOnMutator(commonThreadData());
 }
 
-bool gc::ConcurrentMarkAndSweep::ThreadData::tryLockRootSet() {
-    bool expected = false;
-    bool locked = rootSetLocked_.compare_exchange_strong(expected, true, std::memory_order_acq_rel);
-    if (locked) {
-        RuntimeLogDebug({kTagGC}, "Thread %d have exclusively acquired thread %d's root set", konan::currentThreadId(), threadData_.threadId());
-    }
-    return locked;
-}
-
 void gc::ConcurrentMarkAndSweep::ThreadData::beginCooperation() {
     cooperative_.store(true, std::memory_order_release);
 }
@@ -172,7 +163,6 @@ bool gc::ConcurrentMarkAndSweep::ThreadData::published() const {
 void gc::ConcurrentMarkAndSweep::ThreadData::clearMarkFlags() {
     published_.store(false, std::memory_order_relaxed);
     cooperative_.store(false, std::memory_order_relaxed);
-    rootSetLocked_.store(false, std::memory_order_release);
     rootSetCollected_.store(false, std::memory_order_release);
 }
 

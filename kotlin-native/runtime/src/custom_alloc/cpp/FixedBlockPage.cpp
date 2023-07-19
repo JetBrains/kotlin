@@ -89,7 +89,7 @@ bool FixedBlockPage::Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQ
 void FixedBlockPage::graphviz(std::ostream& out, std::string_view stackName) {
     out << "subgraph cluster_" << std::hex << this << " {" << std::endl;
     out << "label = \"FixedBlockPage(" << std::dec << blockSize_ << ")"
-        << "@0x" << std::hex << this
+        << "@" << std::hex << this
         << " " << stackName
         << "\"" << std:: endl;
 

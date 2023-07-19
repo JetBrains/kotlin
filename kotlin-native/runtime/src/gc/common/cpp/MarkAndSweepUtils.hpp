@@ -173,6 +173,7 @@ void collectRootSetForThread(GCHandle gcHandle, typename Traits::MarkQueue& mark
     // TODO: Remove useless mm::ThreadRootSet abstraction.
     for (auto value : mm::ThreadRootSet(thread)) {
         if (internal::collectRoot<Traits>(markQueue, value.object)) {
+            RuntimeLogDebug({"mark", "rootset"}, "Found thread root %p", value.object);
             switch (value.source) {
                 case mm::ThreadRootSet::Source::kStack:
                     handle.addStackRoot();
