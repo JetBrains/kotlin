@@ -15,5 +15,5 @@ class A<Q : Any?> {
 
 fun bar() {
   val b: A<Int> = A<Int>(q = 2)
-  val b2: A<A<Int>> = A<Int>(q = b)
+  val b2: A<A<Int>> = A<A<Int>>(q = b)
 }

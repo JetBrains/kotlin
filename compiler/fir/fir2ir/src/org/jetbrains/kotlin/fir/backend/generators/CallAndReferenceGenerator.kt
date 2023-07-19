@@ -25,11 +25,15 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.approximateDeclarationType
+import org.jetbrains.kotlin.fir.resolve.typeAliasForConstructor
 import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
@@ -43,6 +47,7 @@ import org.jetbrains.kotlin.ir.util.isFunctionTypeOrSubtype
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator.commonSuperType
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class CallAndReferenceGenerator(
@@ -1054,10 +1059,49 @@ class CallAndReferenceGenerator(
     }
 
     internal fun IrExpression.applyTypeArguments(access: FirQualifiedAccessExpression): IrExpression {
+        val calleeReference = access.calleeReference
+        val originalTypeArguments = access.typeArguments
+        val callableFir = calleeReference.toResolvedCallableSymbol()?.fir
+
+        // If we have a constructor call through a type alias, we can't apply the type arguments as is.
+        // The type arguments in FIR correspond to the original type arguments as passed to the type alias.
+        // However, the type alias can map the type arguments arbitrarily (change order, change count by mapping K,V -> Map<K,V> or by
+        // having an unused argument).
+        // We need to map the type arguments using the expansion of the type alias.
+
+        val typeArguments = (callableFir as? FirConstructor)
+            ?.typeAliasForConstructor
+            ?.let { originalTypeArguments.toExpandedTypeArguments(it) }
+            ?: originalTypeArguments
+
+
         return applyTypeArguments(
-            access.typeArguments,
-            (access.calleeReference.toResolvedCallableSymbol()?.fir as? FirTypeParametersOwner)?.typeParameters
+            typeArguments,
+            (callableFir as? FirTypeParametersOwner)?.typeParameters
         )
+    }
+
+    /**
+     * Applies the list of type arguments to the given type alias, expands it fully and returns the list of type arguments for the
+     * resulting type.
+     */
+    private fun List<FirTypeProjection>.toExpandedTypeArguments(typeAliasSymbol: FirTypeAliasSymbol): List<FirTypeProjection> {
+        return typeAliasSymbol
+            .constructType(map { it.toConeTypeProjection() }.toTypedArray(), false)
+            .fullyExpandedType(session)
+            .typeArguments
+            .map { typeProjection ->
+                buildTypeProjectionWithVariance {
+                    variance = when (typeProjection) {
+                        is ConeKotlinTypeProjectionIn -> Variance.IN_VARIANCE
+                        is ConeKotlinTypeProjectionOut -> Variance.OUT_VARIANCE
+                        else -> Variance.INVARIANT
+                    }
+                    typeRef = (typeProjection as? ConeKotlinType)?.let {
+                        buildResolvedTypeRef { type = it }
+                    } ?: buildErrorTypeRef { }
+                }
+            }
     }
 
     private fun IrExpression.applyTypeArguments(

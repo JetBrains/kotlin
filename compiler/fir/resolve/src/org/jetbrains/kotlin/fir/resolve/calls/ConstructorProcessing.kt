@@ -13,10 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildConstructorCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.languageVersionSettings
-import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.originalConstructorIfTypeAlias
-import org.jetbrains.kotlin.fir.resolve.scope
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.FirScope
@@ -264,6 +261,7 @@ private class TypeAliasConstructorsSubstitutingScope(
 
                 }.apply {
                     originalConstructorIfTypeAlias = originalConstructorSymbol.fir
+                    typeAliasForConstructor = typeAliasSymbol
                 }.symbol
             )
         }

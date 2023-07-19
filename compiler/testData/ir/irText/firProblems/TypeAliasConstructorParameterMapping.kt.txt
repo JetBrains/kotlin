@@ -1,0 +1,57 @@
+class Box1<T : Any?> {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+class Box2<T : Any?, R : Any?> {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+typealias OneToOne<A : Any?> = Box1<A>
+typealias OneToTwo<A : Any?> = Box2<A, A>
+typealias TwoToTwo<A : Any?, B : Any?> = Box2<A, B>
+typealias TwoToTwoReversed<A : Any?, B : Any?> = Box2<B, A>
+typealias TwoToOne<A : Any?, B : Any?> = Box1<A>
+typealias OneToOneTransitive<A : Any?> = Box1<A>
+typealias TwoToTwoTransitive<A : Any?, B : Any?> = Box2<A, A>
+typealias TwoToTwoTransitive2<A : Any?, B : Any?> = Box2<B, B>
+val test1: Box1<Int>
+  field = Box1<Int>()
+  get
+
+val test2: Box2<Int, Int>
+  field = Box2<Int, Int>()
+  get
+
+val test3: Box2<Int, String>
+  field = Box2<Int, String>()
+  get
+
+val test4: Box2<String, Int>
+  field = Box2<String, Int>()
+  get
+
+val test5: Box1<Int>
+  field = Box1<Int>()
+  get
+
+val test6: Box1<Int>
+  field = Box1<Int>()
+  get
+
+val test7: Box2<Int, Int>
+  field = Box2<Int, Int>()
+  get
+
+val test8: Box2<String, String>
+  field = Box2<String, String>()
+  get

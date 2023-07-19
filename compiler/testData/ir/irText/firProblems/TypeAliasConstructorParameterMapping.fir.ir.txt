@@ -1,0 +1,148 @@
+FILE fqName:<root> fileName:/TypeAliasConstructorParameterMapping.kt
+  TYPEALIAS name:OneToOne visibility:public expandedType:<root>.Box1<A of <root>.OneToOne>
+    TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Any?] reified:false
+  TYPEALIAS name:OneToTwo visibility:public expandedType:<root>.Box2<A of <root>.OneToTwo, A of <root>.OneToTwo>
+    TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Any?] reified:false
+  TYPEALIAS name:TwoToTwo visibility:public expandedType:<root>.Box2<A of <root>.TwoToTwo, B of <root>.TwoToTwo>
+    TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Any?] reified:false
+    TYPE_PARAMETER name:B index:1 variance: superTypes:[kotlin.Any?] reified:false
+  TYPEALIAS name:TwoToTwoReversed visibility:public expandedType:<root>.Box2<B of <root>.TwoToTwoReversed, A of <root>.TwoToTwoReversed>
+    TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Any?] reified:false
+    TYPE_PARAMETER name:B index:1 variance: superTypes:[kotlin.Any?] reified:false
+  TYPEALIAS name:TwoToOne visibility:public expandedType:<root>.Box1<A of <root>.TwoToOne>
+    TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Any?] reified:false
+    TYPE_PARAMETER name:B index:1 variance: superTypes:[kotlin.Any?] reified:false
+  TYPEALIAS name:OneToOneTransitive visibility:public expandedType:<root>.Box1<A of <root>.OneToOneTransitive>
+    TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Any?] reified:false
+  TYPEALIAS name:TwoToTwoTransitive visibility:public expandedType:<root>.Box2<A of <root>.TwoToTwoTransitive, A of <root>.TwoToTwoTransitive>
+    TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Any?] reified:false
+    TYPE_PARAMETER name:B index:1 variance: superTypes:[kotlin.Any?] reified:false
+  TYPEALIAS name:TwoToTwoTransitive2 visibility:public expandedType:<root>.Box2<B of <root>.TwoToTwoTransitive2, B of <root>.TwoToTwoTransitive2>
+    TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Any?] reified:false
+    TYPE_PARAMETER name:B index:1 variance: superTypes:[kotlin.Any?] reified:false
+  CLASS CLASS name:Box1 modality:FINAL visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Box1<T of <root>.Box1>
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    CONSTRUCTOR visibility:public <> () returnType:<root>.Box1<T of <root>.Box1> [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Box1 modality:FINAL visibility:public superTypes:[kotlin.Any]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS CLASS name:Box2 modality:FINAL visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Box2<T of <root>.Box2, R of <root>.Box2>
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+    TYPE_PARAMETER name:R index:1 variance: superTypes:[kotlin.Any?] reified:false
+    CONSTRUCTOR visibility:public <> () returnType:<root>.Box2<T of <root>.Box2, R of <root>.Box2> [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Box2 modality:FINAL visibility:public superTypes:[kotlin.Any]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  PROPERTY name:test1 visibility:public modality:FINAL [val]
+    FIELD PROPERTY_BACKING_FIELD name:test1 type:<root>.Box1<kotlin.Int> visibility:private [final,static]
+      EXPRESSION_BODY
+        CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Box1' type=<root>.Box1<kotlin.Int> origin=null
+          <class: T>: kotlin.Int
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:<root>.Box1<kotlin.Int>
+      correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-test1> (): <root>.Box1<kotlin.Int> declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test1 type:<root>.Box1<kotlin.Int> visibility:private [final,static]' type=<root>.Box1<kotlin.Int> origin=null
+  PROPERTY name:test2 visibility:public modality:FINAL [val]
+    FIELD PROPERTY_BACKING_FIELD name:test2 type:<root>.Box2<kotlin.Int, kotlin.Int> visibility:private [final,static]
+      EXPRESSION_BODY
+        CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Box2' type=<root>.Box2<kotlin.Int, kotlin.Int> origin=null
+          <class: T>: kotlin.Int
+          <class: R>: kotlin.Int
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:<root>.Box2<kotlin.Int, kotlin.Int>
+      correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-test2> (): <root>.Box2<kotlin.Int, kotlin.Int> declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test2 type:<root>.Box2<kotlin.Int, kotlin.Int> visibility:private [final,static]' type=<root>.Box2<kotlin.Int, kotlin.Int> origin=null
+  PROPERTY name:test3 visibility:public modality:FINAL [val]
+    FIELD PROPERTY_BACKING_FIELD name:test3 type:<root>.Box2<kotlin.Int, kotlin.String> visibility:private [final,static]
+      EXPRESSION_BODY
+        CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Box2' type=<root>.Box2<kotlin.Int, kotlin.String> origin=null
+          <class: T>: kotlin.Int
+          <class: R>: kotlin.String
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> () returnType:<root>.Box2<kotlin.Int, kotlin.String>
+      correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-test3> (): <root>.Box2<kotlin.Int, kotlin.String> declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test3 type:<root>.Box2<kotlin.Int, kotlin.String> visibility:private [final,static]' type=<root>.Box2<kotlin.Int, kotlin.String> origin=null
+  PROPERTY name:test4 visibility:public modality:FINAL [val]
+    FIELD PROPERTY_BACKING_FIELD name:test4 type:<root>.Box2<kotlin.String, kotlin.Int> visibility:private [final,static]
+      EXPRESSION_BODY
+        CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Box2' type=<root>.Box2<kotlin.String, kotlin.Int> origin=null
+          <class: T>: kotlin.String
+          <class: R>: kotlin.Int
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test4> visibility:public modality:FINAL <> () returnType:<root>.Box2<kotlin.String, kotlin.Int>
+      correspondingProperty: PROPERTY name:test4 visibility:public modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-test4> (): <root>.Box2<kotlin.String, kotlin.Int> declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test4 type:<root>.Box2<kotlin.String, kotlin.Int> visibility:private [final,static]' type=<root>.Box2<kotlin.String, kotlin.Int> origin=null
+  PROPERTY name:test5 visibility:public modality:FINAL [val]
+    FIELD PROPERTY_BACKING_FIELD name:test5 type:<root>.Box1<kotlin.Int> visibility:private [final,static]
+      EXPRESSION_BODY
+        CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Box1' type=<root>.Box1<kotlin.Int> origin=null
+          <class: T>: kotlin.Int
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test5> visibility:public modality:FINAL <> () returnType:<root>.Box1<kotlin.Int>
+      correspondingProperty: PROPERTY name:test5 visibility:public modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-test5> (): <root>.Box1<kotlin.Int> declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test5 type:<root>.Box1<kotlin.Int> visibility:private [final,static]' type=<root>.Box1<kotlin.Int> origin=null
+  PROPERTY name:test6 visibility:public modality:FINAL [val]
+    FIELD PROPERTY_BACKING_FIELD name:test6 type:<root>.Box1<kotlin.Int> visibility:private [final,static]
+      EXPRESSION_BODY
+        CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Box1' type=<root>.Box1<kotlin.Int> origin=null
+          <class: T>: kotlin.Int
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test6> visibility:public modality:FINAL <> () returnType:<root>.Box1<kotlin.Int>
+      correspondingProperty: PROPERTY name:test6 visibility:public modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-test6> (): <root>.Box1<kotlin.Int> declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test6 type:<root>.Box1<kotlin.Int> visibility:private [final,static]' type=<root>.Box1<kotlin.Int> origin=null
+  PROPERTY name:test7 visibility:public modality:FINAL [val]
+    FIELD PROPERTY_BACKING_FIELD name:test7 type:<root>.Box2<kotlin.Int, kotlin.Int> visibility:private [final,static]
+      EXPRESSION_BODY
+        CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Box2' type=<root>.Box2<kotlin.Int, kotlin.Int> origin=null
+          <class: T>: kotlin.Int
+          <class: R>: kotlin.Int
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test7> visibility:public modality:FINAL <> () returnType:<root>.Box2<kotlin.Int, kotlin.Int>
+      correspondingProperty: PROPERTY name:test7 visibility:public modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-test7> (): <root>.Box2<kotlin.Int, kotlin.Int> declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test7 type:<root>.Box2<kotlin.Int, kotlin.Int> visibility:private [final,static]' type=<root>.Box2<kotlin.Int, kotlin.Int> origin=null
+  PROPERTY name:test8 visibility:public modality:FINAL [val]
+    FIELD PROPERTY_BACKING_FIELD name:test8 type:<root>.Box2<kotlin.String, kotlin.String> visibility:private [final,static]
+      EXPRESSION_BODY
+        CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.Box2' type=<root>.Box2<kotlin.String, kotlin.String> origin=null
+          <class: T>: kotlin.String
+          <class: R>: kotlin.String
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test8> visibility:public modality:FINAL <> () returnType:<root>.Box2<kotlin.String, kotlin.String>
+      correspondingProperty: PROPERTY name:test8 visibility:public modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-test8> (): <root>.Box2<kotlin.String, kotlin.String> declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test8 type:<root>.Box2<kotlin.String, kotlin.String> visibility:private [final,static]' type=<root>.Box2<kotlin.String, kotlin.String> origin=null

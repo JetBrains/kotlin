@@ -2905,6 +2905,12 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
         }
 
         @Test
+        @TestMetadata("TypeAliasConstructorParameterMapping.kt")
+        public void testTypeAliasConstructorParameterMapping() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/TypeAliasConstructorParameterMapping.kt");
+        }
+
+        @Test
         @TestMetadata("TypeParameterBounds.kt")
         public void testTypeParameterBounds() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/TypeParameterBounds.kt");

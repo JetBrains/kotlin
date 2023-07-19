@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.LookupTagInternals
 import org.jetbrains.kotlin.fir.types.*
@@ -87,6 +88,10 @@ var FirConstructor.originalConstructorIfTypeAlias: FirConstructor? by FirDeclara
 
 val FirConstructorSymbol.isTypeAliasedConstructor: Boolean
     get() = fir.originalConstructorIfTypeAlias != null
+
+private object TypeAliasForConstructorKey : FirDeclarationDataKey()
+
+var FirConstructor.typeAliasForConstructor: FirTypeAliasSymbol? by FirDeclarationDataRegistry.data(TypeAliasForConstructorKey)
 
 interface FirCodeFragmentContext {
     val towerDataContext: FirTowerDataContext

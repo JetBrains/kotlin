@@ -13,5 +13,5 @@ class Cell<T : Any?> {
 }
 
 fun test(): Cell<Int> {
-  return Cell</* null */>(value = 42)
+  return Cell<Int>(value = 42)
 }
