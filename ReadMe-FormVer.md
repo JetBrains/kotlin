@@ -68,12 +68,16 @@ ThisBuild / publishArtifact := true
 publishTo := Some(MavenCache("local-maven", file(Path.userHome.absolutePath + "/.m2/repository")))
 ```
 
-Once done with all the modifications, from the `silicon` root directory we can compile and publish the project
+Once done with all the modifications, from the `silicon` root directory we can compile and publish the projects
 running `sbt`:
 
 ```bash
-sbt compile
-sbt publish
+# Compile and publish silver first
+cd silver
+sbt compile && sbt publish
+# Compile and publish silicon
+cd ..
+sbt compile && sbt publish
 ```
 
 If everything went good, you should see the following new directories in the local Maven repository: 
