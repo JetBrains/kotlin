@@ -228,14 +228,16 @@ class WasmIrToText : SExpressionBuilder() {
         with(module) {
             newLineList("module") {
                 functionTypes.forEach { appendFunctionTypeDeclaration(it) }
-                recGroupTypes.forEach {
-                    when (it) {
-                        is WasmStructDeclaration ->
-                            appendStructTypeDeclaration(it)
-                        is WasmArrayDeclaration ->
-                            appendArrayTypeDeclaration(it)
-                        is WasmFunctionType ->
-                            appendFunctionTypeDeclaration(it)
+                newLineList("rec") {
+                    recGroupTypes.forEach {
+                        when (it) {
+                            is WasmStructDeclaration ->
+                                appendStructTypeDeclaration(it)
+                            is WasmArrayDeclaration ->
+                                appendArrayTypeDeclaration(it)
+                            is WasmFunctionType ->
+                                appendFunctionTypeDeclaration(it)
+                        }
                     }
                 }
                 importsInOrder.forEach {
