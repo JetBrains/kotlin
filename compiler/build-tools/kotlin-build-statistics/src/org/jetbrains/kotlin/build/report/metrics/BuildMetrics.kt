@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.build.report.metrics
 
 import java.io.Serializable
 
-data class BuildMetrics(
-    val buildTimes: BuildTimes = BuildTimes(),
-    val buildPerformanceMetrics: BuildPerformanceMetrics = BuildPerformanceMetrics(),
+data class BuildMetrics<B : BuildTime, P : BuildPerformanceMetric>(
+    val buildTimes: BuildTimes<B> = BuildTimes(),
+    val buildPerformanceMetrics: BuildPerformanceMetrics<P> = BuildPerformanceMetrics(),
     val buildAttributes: BuildAttributes = BuildAttributes(),
     val gcMetrics: GcMetrics = GcMetrics()
 ) : Serializable {
-    fun addAll(other: BuildMetrics) {
+    fun addAll(other: BuildMetrics<B, P>) {
         buildTimes.addAll(other.buildTimes)
         buildPerformanceMetrics.addAll(other.buildPerformanceMetrics)
         buildAttributes.addAll(other.buildAttributes)

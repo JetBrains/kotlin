@@ -14,10 +14,7 @@ import org.gradle.api.tasks.bundling.Zip
 import org.gradle.jvm.tasks.Jar
 import org.gradle.workers.WorkQueue
 import org.gradle.workers.WorkerExecutor
-import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
-import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.BuildTime
-import org.jetbrains.kotlin.build.report.metrics.measure
+import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.compilerRunner.btapi.GradleBuildToolsApiCompilerRunner
@@ -60,7 +57,7 @@ internal fun createGradleCompilerRunner(
     taskProvider: GradleCompileTaskProvider,
     toolsJar: File?,
     compilerExecutionSettings: CompilerExecutionSettings,
-    buildMetricsReporter: BuildMetricsReporter,
+    buildMetricsReporter: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
     workerExecutor: WorkerExecutor,
     runViaBuildToolsApi: Boolean,
     cachedClassLoadersService: Property<ClassLoadersCachingBuildService>
@@ -94,7 +91,7 @@ internal open class GradleCompilerRunner(
     protected val taskProvider: GradleCompileTaskProvider,
     protected val jdkToolsJar: File?,
     protected val compilerExecutionSettings: CompilerExecutionSettings,
-    protected val buildMetrics: BuildMetricsReporter,
+    protected val buildMetrics: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
 ) {
 
     internal val pathProvider = taskProvider.path.get()
@@ -250,13 +247,13 @@ internal open class GradleCompilerRunner(
         taskOutputsBackup: TaskOutputsBackup?
     ): WorkQueue? {
         try {
-            buildMetrics.addTimeMetric(BuildPerformanceMetric.CALL_WORKER)
+            buildMetrics.addTimeMetric(GradleBuildPerformanceMetric.CALL_WORKER)
             val kotlinCompilerRunnable = GradleKotlinCompilerWork(workArgs)
             kotlinCompilerRunnable.run()
         } catch (e: FailedCompilationException) {
             // Restore outputs only for CompilationErrorException or OOMErrorException (see GradleKotlinCompilerWorkAction.execute)
             if (taskOutputsBackup != null && (e is CompilationErrorException || e is OOMErrorException)) {
-                buildMetrics.measure(BuildTime.RESTORE_OUTPUT_FROM_BACKUP) {
+                buildMetrics.measure(GradleBuildTime.RESTORE_OUTPUT_FROM_BACKUP) {
                     taskOutputsBackup.restoreOutputs()
                 }
             }

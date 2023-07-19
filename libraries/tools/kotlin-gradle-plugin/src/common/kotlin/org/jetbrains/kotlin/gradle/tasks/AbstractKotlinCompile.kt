@@ -17,9 +17,7 @@ import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.*
 import org.gradle.work.*
 import org.gradle.workers.WorkerExecutor
-import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.BuildTime
-import org.jetbrains.kotlin.build.report.metrics.measure
+import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.CompilerExecutionSettings
@@ -234,8 +232,8 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     fun execute(inputChanges: InputChanges) {
         notifyUserAboutExperimentalICOptimizations()
         val buildMetrics = metrics.get()
-        buildMetrics.addTimeMetric(BuildPerformanceMetric.START_TASK_ACTION_EXECUTION)
-        buildMetrics.measure(BuildTime.OUT_OF_WORKER_TASK_ACTION) {
+        buildMetrics.addTimeMetric(GradleBuildPerformanceMetric.START_TASK_ACTION_EXECUTION)
+        buildMetrics.measure(GradleBuildTime.OUT_OF_WORKER_TASK_ACTION) {
             KotlinBuildStatsService.applyIfInitialised {
                 if (name.contains("Test"))
                     it.report(BooleanMetrics.TESTS_EXECUTED, true)
@@ -252,7 +250,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
             // To prevent this, we backup outputs before incremental build and restore when exception is thrown
             val outputsBackup: TaskOutputsBackup? =
                 if (isIncrementalCompilationEnabled() && inputChanges.isIncremental)
-                    buildMetrics.measure(BuildTime.BACKUP_OUTPUT) {
+                    buildMetrics.measure(GradleBuildTime.BACKUP_OUTPUT) {
                         TaskOutputsBackup(
                             fileSystemOperations,
                             layout.buildDirectory,

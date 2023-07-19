@@ -24,10 +24,7 @@ import org.gradle.tooling.events.task.TaskFailureResult
 import org.gradle.tooling.events.task.TaskFinishEvent
 import org.gradle.tooling.events.task.TaskSkippedResult
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
-import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
-import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.BuildTime
+import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.statistics.HttpReportService
 import org.jetbrains.kotlin.gradle.plugin.BuildEventsListenerRegistryHolder
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
@@ -76,10 +73,10 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
     private val failureMessages = ConcurrentLinkedQueue<String>()
 
     // Info for tasks only
-    private val taskPathToMetricsReporter = ConcurrentHashMap<String, BuildMetricsReporter>()
+    private val taskPathToMetricsReporter = ConcurrentHashMap<String, BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>>()
     private val taskPathToTaskClass = ConcurrentHashMap<String, String>()
 
-    open fun addTask(taskPath: String, taskClass: Class<*>, metricsReporter: BuildMetricsReporter) {
+    open fun addTask(taskPath: String, taskClass: Class<*>, metricsReporter: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>) {
         taskPathToMetricsReporter.put(taskPath, metricsReporter).also {
             if (it != null) log.warn("Duplicate task path: $taskPath") // Should never happen but log it just in case
         }
@@ -94,7 +91,7 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
         isKotlinTransform: Boolean,
         startTimeMs: Long,
         totalTimeMs: Long,
-        buildMetrics: BuildMetrics,
+        buildMetrics: BuildMetrics<GradleBuildTime, GradleBuildPerformanceMetric>,
         failureMessage: String?
     ) {
         buildOperationRecords.add(
@@ -108,8 +105,8 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
         val taskPath = event.descriptor.taskPath
         val totalTimeMs = result.endTime - result.startTime
 
-        val buildMetrics = BuildMetrics()
-        buildMetrics.buildTimes.addTimeMs(BuildTime.GRADLE_TASK, totalTimeMs)
+        val buildMetrics = BuildMetrics<GradleBuildTime, GradleBuildPerformanceMetric>()
+        buildMetrics.buildTimes.addTimeMs(GradleBuildTime.GRADLE_TASK, totalTimeMs)
         taskPathToMetricsReporter[taskPath]?.let {
             buildMetrics.addAll(it.getMetrics())
         }
@@ -122,14 +119,14 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
                 collector.report(BooleanMetrics.KOTLIN_COMPILATION_FAILED, event.result is FailureResult)
                 val metricsMap = buildMetrics.buildPerformanceMetrics.asMap()
 
-                val linesOfCode = metricsMap[BuildPerformanceMetric.ANALYZED_LINES_NUMBER]
+                val linesOfCode = metricsMap[GradleBuildPerformanceMetric.ANALYZED_LINES_NUMBER]
                 if (linesOfCode != null && linesOfCode > 0 && totalTimeMs > 0) {
                     collector.report(NumericalMetrics.COMPILED_LINES_OF_CODE, linesOfCode)
                     collector.report(NumericalMetrics.COMPILATION_LINES_PER_SECOND, linesOfCode * 1000 / totalTimeMs, null, linesOfCode)
-                    metricsMap[BuildPerformanceMetric.ANALYSIS_LPS]?.also { value ->
+                    metricsMap[GradleBuildPerformanceMetric.ANALYSIS_LPS]?.also { value ->
                         collector.report(NumericalMetrics.ANALYSIS_LINES_PER_SECOND, value, null, linesOfCode)
                     }
-                    metricsMap[BuildPerformanceMetric.CODE_GENERATION_LPS]?.also { value ->
+                    metricsMap[GradleBuildPerformanceMetric.CODE_GENERATION_LPS]?.also { value ->
                         collector.report(NumericalMetrics.CODE_GENERATION_LINES_PER_SECOND, value, null, linesOfCode)
                     }
                 }
@@ -326,7 +323,7 @@ internal class TaskRecord(
     override val classFqName: String,
     override val startTimeMs: Long,
     override val totalTimeMs: Long,
-    override val buildMetrics: BuildMetrics,
+    override val buildMetrics: BuildMetrics<GradleBuildTime, GradleBuildPerformanceMetric>,
     override val didWork: Boolean,
     override val skipMessage: String?,
     override val icLogLines: List<String>,
@@ -344,7 +341,7 @@ private class TransformRecord(
     override val isFromKotlinPlugin: Boolean,
     override val startTimeMs: Long,
     override val totalTimeMs: Long,
-    override val buildMetrics: BuildMetrics
+    override val buildMetrics: BuildMetrics<GradleBuildTime, GradleBuildPerformanceMetric>
 ) : BuildOperationRecord {
     override val didWork: Boolean = true
     override val skipMessage: String? = null

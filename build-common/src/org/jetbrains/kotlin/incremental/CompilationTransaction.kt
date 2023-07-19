@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.debug
-import org.jetbrains.kotlin.build.report.metrics.BuildTime
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.build.report.metrics.measure
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollector
 import org.jetbrains.kotlin.incremental.storage.InMemoryStorageWrapper
@@ -163,7 +164,7 @@ class NonRecoverableCompilationTransaction : CompilationTransaction, BaseCompila
  * In the case of an unsuccessful compilation [stashDir] is also removed, but the backed-up files restored to their origin location.
  */
 class RecoverableCompilationTransaction(
-    private val reporter: BuildReporter,
+    private val reporter: BuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
     private val stashDir: Path,
 ) : CompilationTransaction, BaseCompilationTransaction() {
     private val fileRelocationRegistry = hashMapOf<Path, Path?>()
@@ -175,7 +176,7 @@ class RecoverableCompilationTransaction(
      */
     override fun registerAddedOrChangedFile(outputFile: Path) {
         if (isFileRelocationIsAlreadyRegisteredFor(outputFile)) return
-        reporter.measure(BuildTime.PRECISE_BACKUP_OUTPUT) {
+        reporter.measure(GradleBuildTime.PRECISE_BACKUP_OUTPUT) {
             if (Files.exists(outputFile)) {
                 stashFile(outputFile)
             } else {
@@ -197,7 +198,7 @@ class RecoverableCompilationTransaction(
             Files.delete(outputFile)
             return
         }
-        reporter.measure(BuildTime.PRECISE_BACKUP_OUTPUT) {
+        reporter.measure(GradleBuildTime.PRECISE_BACKUP_OUTPUT) {
             stashFile(outputFile)
         }
     }
@@ -219,7 +220,7 @@ class RecoverableCompilationTransaction(
      */
     private fun revertChanges() {
         reporter.debug { "Reverting changes" }
-        reporter.measure(BuildTime.RESTORE_OUTPUT_FROM_BACKUP) {
+        reporter.measure(GradleBuildTime.RESTORE_OUTPUT_FROM_BACKUP) {
             for ((originPath, relocatedPath) in fileRelocationRegistry) {
                 if (relocatedPath == null) {
                     if (Files.exists(originPath)) {
@@ -237,7 +238,7 @@ class RecoverableCompilationTransaction(
      */
     private fun cleanupStash() {
         reporter.debug { "Cleaning up stash" }
-        reporter.measure(BuildTime.CLEAN_BACKUP_STASH) {
+        reporter.measure(GradleBuildTime.CLEAN_BACKUP_STASH) {
             Files.walk(stashDir).use {
                 it.sorted(Comparator.reverseOrder())
                     .forEach(Files::delete)

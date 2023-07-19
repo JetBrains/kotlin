@@ -11,6 +11,8 @@ import org.gradle.api.provider.Property
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.buildtools.api.CompilationService
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.SharedApiClassesClassLoader
@@ -27,7 +29,7 @@ internal abstract class BuildToolsApiCompilationWork : WorkAction<BuildToolsApiC
         val taskOutputsToRestore: ListProperty<File>
         val snapshotsDir: DirectoryProperty
         val buildDir: DirectoryProperty
-        val metricsReporter: Property<BuildMetricsReporter>
+        val metricsReporter: Property<BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>>
     }
 
     private val workArguments

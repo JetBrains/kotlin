@@ -17,13 +17,13 @@ import java.io.File
 import java.util.*
 import java.net.InetAddress
 
-interface JpsBuilderMetricReporter : BuildMetricsReporter {
+interface JpsBuilderMetricReporter : BuildMetricsReporter<JpsBuildTime, JpsBuildPerformanceMetric> {
     fun flush(context: CompileContext): CompileStatisticsData
 }
 
 private const val jpsBuildTaskName = "JPS build"
 
-class JpsBuilderMetricReporterImpl(private val reporter: BuildMetricsReporterImpl) : JpsBuilderMetricReporter, BuildMetricsReporter by reporter {
+class JpsBuilderMetricReporterImpl(private val reporter: BuildMetricsReporterImpl<JpsBuildTime, JpsBuildPerformanceMetric>) : JpsBuilderMetricReporter, BuildMetricsReporter<JpsBuildTime, JpsBuildPerformanceMetric> by reporter {
 
     companion object {
         private val hostName: String? = try {
@@ -37,6 +37,7 @@ class JpsBuilderMetricReporterImpl(private val reporter: BuildMetricsReporterImp
     private val uuid = UUID.randomUUID()
     private val startTime = System.currentTimeMillis()
 
+    @Suppress("UNCHECKED_CAST")
     override fun flush(context: CompileContext): CompileStatisticsData {
         val buildMetrics = reporter.getMetrics()
         return CompileStatisticsData(
@@ -52,8 +53,8 @@ class JpsBuilderMetricReporterImpl(private val reporter: BuildMetricsReporterImp
             kotlinVersion = "kotlin_version", //TODO will be updated in KT-58026
             hostName = hostName,
             finishTime = System.currentTimeMillis(),
-            buildTimesMetrics = buildMetrics.buildTimes.asMapMs(),
-            performanceMetrics = buildMetrics.buildPerformanceMetrics.asMap(),
+            buildTimesMetrics = buildMetrics.buildTimes.asMapMs() as Map<BuildTime, Long>,
+            performanceMetrics = buildMetrics.buildPerformanceMetrics.asMap() as Map<BuildPerformanceMetric, Long>,
             compilerArguments = emptyList(), //TODO will be updated in KT-58026
             nonIncrementalAttributes = emptySet(),
             type = BuildDataType.JPS_DATA.name,
@@ -98,7 +99,7 @@ class JpsStatisticsReportService {
         if (contextMetrics[context] != null) {
             log.error("Service already initialized for context")
         }
-        contextMetrics[context] = JpsBuilderMetricReporterImpl(BuildMetricsReporterImpl())
+        contextMetrics[context] = JpsBuilderMetricReporterImpl(BuildMetricsReporterImpl<JpsBuildTime, JpsBuildPerformanceMetric>())
     }
 
     fun buildFinished(context: CompileContext) {
@@ -116,6 +117,16 @@ class JpsStatisticsReportService {
                          BuildStartParameters(tasks = listOf(jpsBuildTaskName)))
         }
     }
+
+    fun <T> reportMetrics(context: CompileContext, metric: JpsBuildTime, action: () -> T): T {
+        val metrics = contextMetrics.remove(context)
+        if (metrics == null) {
+            log.error("Service hasn't initialized for context")
+            return action.invoke()
+        }
+        return metrics.measure(metric, action)
+    }
+
 }
 
 
