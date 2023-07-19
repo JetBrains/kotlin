@@ -15004,6 +15004,12 @@ public class FirLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTr
         }
 
         @Test
+        @TestMetadata("noTypeVariablesLeft.kt")
+        public void testNoTypeVariablesLeft() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/noTypeVariablesLeft.kt");
+        }
+
+        @Test
         @TestMetadata("privateInSubClass.kt")
         public void testPrivateInSubClass() throws Exception {
             runTest("compiler/testData/codegen/box/delegatedProperty/privateInSubClass.kt");
