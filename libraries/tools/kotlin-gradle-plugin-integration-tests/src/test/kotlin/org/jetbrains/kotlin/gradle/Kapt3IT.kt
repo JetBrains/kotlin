@@ -160,14 +160,13 @@ open class Kapt3IT : Kapt3BaseIT() {
         project(
             "simple".withPrefix,
             gradleVersion,
-            buildJdk = jdk.location
         ) {
             //language=Groovy
             buildGradle.appendText(
                 """
                 |
                 |kotlin {
-                |    jvmToolchain(8)
+                |    jvmToolchain(${jdk.version.majorVersion})
                 |}
                 """.trimMargin()
             )

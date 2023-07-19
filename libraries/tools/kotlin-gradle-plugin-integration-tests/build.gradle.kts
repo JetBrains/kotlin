@@ -358,6 +358,7 @@ tasks.withType<Test> {
     val mavenLocalRepo = project.providers.systemProperty("maven.repo.local").orNull
 
     // Query required JDKs paths only on execution phase to avoid triggering auto-download on project configuration phase
+    // names should follow "jdk\\d+Home" regex where number is a major JDK version
     doFirst {
         systemProperty("jdk8Home", jdk8Provider.get())
         systemProperty("jdk9Home", jdk9Provider.get())

@@ -417,9 +417,16 @@ private fun commonBuildSetup(
     gradleVersion: GradleVersion,
     kotlinDaemonDebugPort: Int? = null,
 ): List<String> {
+    // Following jdk system properties are provided via sub-project build.gradle.kts
+    val jdkPropNameRegex = Regex("jdk\\d+Home")
+    val jdkLocations = System.getProperties()
+        .filterKeys { it.toString().matches(jdkPropNameRegex) }
+        .values
+        .joinToString(separator = ",")
     return buildOptions.toArguments(gradleVersion) + buildArguments + listOfNotNull(
         // Required toolchains should be pre-installed via repo. Tests should not download any JDKs
         "-Porg.gradle.java.installations.auto-download=false",
+        "-Porg.gradle.java.installations.paths=$jdkLocations",
         "--full-stacktrace",
         if (enableBuildCacheDebug) "-Dorg.gradle.caching.debug=true" else null,
         if (enableBuildScan) "--scan" else null,
