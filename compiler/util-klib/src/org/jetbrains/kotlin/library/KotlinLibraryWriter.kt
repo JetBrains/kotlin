@@ -39,6 +39,7 @@ class SerializedDeclaration(val id: Int, val declarationName: String, val bytes:
 class SerializedIrFile(
     val fileData: ByteArray,
     val fqName: String,
+    val fileName: String?,
     val path: String,
     val types: ByteArray,
     val signatures: ByteArray,

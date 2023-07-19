@@ -363,18 +363,11 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
     @GradleTest
     fun testPerFileProjectWithResultFilesClash(gradleVersion: GradleVersion) {
         project("kotlin-js-invalid-per-file-project", gradleVersion) {
-            buildAndFail("compileDevelopmentExecutableKotlinJs") {
-                assertTasksFailed(":compileDevelopmentExecutableKotlinJs")
+            buildAndFail("compileKotlinJs") {
+                assertTasksFailed(":compileKotlinJs")
                 assertOutputContains("""
-                   |There are two files in module '<kotlin-js-invalid-per-file-project>' that have the similar package and file names.
-                   |  - Package "com.example" and
-                """.trimMargin())
-            }
-            buildAndFail("compileProductionExecutableKotlinJs") {
-                assertTasksFailed(":compileProductionExecutableKotlinJs")
-                assertOutputContains("""
-                   |There are two files in module '<kotlin-js-invalid-per-file-project>' that have the similar package and file names.
-                   |  - Package "com.example" and path
+                   |There are clashes of file names and their package names in module 'kotlin-js-invalid-per-file-project'.
+                   |  * Next files have package "com.example" and name "base":
                 """.trimMargin())
             }
         }

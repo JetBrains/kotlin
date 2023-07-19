@@ -11,8 +11,12 @@ import org.jetbrains.kotlin.backend.common.serialization.IrFileSerializer
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.expressions.IrConst
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
+import org.jetbrains.kotlin.ir.util.getAnnotation
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.name.FqName
 
@@ -38,8 +42,13 @@ class JsIrFileSerializer(
     sourceBaseDirs = sourceBaseDirs
 ) {
     companion object {
+        private val JS_NAME_FQN = FqName("kotlin.js.JsName")
         private val JS_EXPORT_FQN = FqName("kotlin.js.JsExport")
         private val JS_EXPORT_IGNORE_FQN = FqName("kotlin.js.JsExport.Ignore")
+    }
+
+    override fun backendSpecificRedefinedFileName(irFile: IrFile): String? {
+        return irFile.getAnnotation(JS_NAME_FQN)?.getSingleConstStringArgument()
     }
 
     override fun backendSpecificExplicitRoot(node: IrAnnotationContainer): Boolean {
@@ -49,4 +58,8 @@ class JsIrFileSerializer(
     override fun backendSpecificExplicitRootExclusion(node: IrAnnotationContainer): Boolean {
         return node.annotations.hasAnnotation(JS_EXPORT_IGNORE_FQN)
     }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun IrConstructorCall.getSingleConstStringArgument() =
+        (getValueArgument(0) as IrConst<String>).value
 }

@@ -627,6 +627,37 @@ private fun String.parseSerializedIrFileFingerprints(): List<SerializedIrFileFin
     return split(FILE_FINGERPRINTS_SEPARATOR).mapNotNull(SerializedIrFileFingerprint::fromString)
 }
 
+private data class FileId(val fqName: String, val fileName: String)
+
+private val KotlinFileSerializedData.fileName: String
+    get() = irData.fileName ?: irData.path.substringAfterLast('/').substringBeforeLast(".kt")
+
+private fun CompilerConfiguration.assertUniqueFileNameAndPackage(moduleName: String, files: List<KotlinFileSerializedData>) {
+    val allNameClashes = files
+        .groupBy { FileId(it.irData.fqName.lowercase(), it.fileName.lowercase()) }
+        .filterValues { it.size > 1 }
+
+    if (allNameClashes.isNotEmpty()) {
+        val nameClashesString = buildString {
+            for ((fileId, clashedFiles) in allNameClashes) {
+                appendLine("  * Next files have package \"${fileId.fqName}\" and name \"${fileId.fileName}\":")
+                clashedFiles.forEach { appendLine("     - ${it.irData.path}") }
+                appendLine()
+                appendLine()
+            }
+        }
+
+        val message = """
+              |There are clashes of file names and their package names in module '$moduleName'.
+              |${nameClashesString}
+              |Note, that if the difference is only in letter cases, it also could lead to a clash of the compiled artifacts
+        """.trimMargin()
+
+        irMessageLogger.report(IrMessageLogger.Severity.ERROR, message, null)
+        throw CompilationErrorException(message)
+    }
+}
+
 fun serializeModuleIntoKlib(
     moduleName: String,
     configuration: CompilerConfiguration,
@@ -674,7 +705,7 @@ fun serializeModuleIntoKlib(
         incrementalResultsConsumer?.run {
             processPackagePart(ioFile, compiledFile.metadata, empty, empty)
             with(compiledFile.irData) {
-                processIrFile(ioFile, fileData, types, signatures, strings, declarations, bodies, fqName.toByteArray(), debugInfo)
+                processIrFile(ioFile, fileData, types, signatures, strings, declarations, bodies, fqName.toByteArray(), fileName?.toByteArray(), debugInfo)
             }
         }
     }
@@ -699,7 +730,9 @@ fun serializeModuleIntoKlib(
         processCompiledFileData(ioFile!!, compiledKotlinFile)
     }
 
-    val compiledKotlinFiles = (cleanFiles + additionalFiles)
+    val compiledKotlinFiles = (cleanFiles + additionalFiles).also {
+        configuration.assertUniqueFileNameAndPackage(moduleName, it)
+    }
 
     val header = serializeKlibHeader(
         configuration.languageVersionSettings, moduleDescriptor,
@@ -839,6 +872,7 @@ fun IncrementalDataProvider.getSerializedData(newSources: List<KtSourceFile>): L
             SerializedIrFile(
                 fileData,
                 String(fqn),
+                irData.fileName?.let(::String),
                 f.path.replace('\\', '/'),
                 types,
                 signatures,

@@ -1353,6 +1353,7 @@ open class IrFileSerializer(
     open fun backendSpecificExplicitRootExclusion(node: IrAnnotationContainer): Boolean = false
     open fun keepOrderOfProperties(property: IrProperty): Boolean = !property.isConst
     open fun backendSpecificSerializeAllMembers(irClass: IrClass) = false
+    open fun backendSpecificRedefinedFileName(irFile: IrFile): String? = null
 
     open fun memberNeedsSerialization(member: IrDeclaration): Boolean {
         val parent = member.parent
@@ -1456,6 +1457,7 @@ open class IrFileSerializer(
         return SerializedIrFile(
             proto.build().toByteArray(),
             file.packageFqName.asString(),
+            backendSpecificRedefinedFileName(file),
             file.path,
             IrMemoryArrayWriter(protoTypeArray.map { it.toByteArray() }).writeIntoMemory(),
             IrMemoryArrayWriter(protoIdSignatureArray.map { it.toByteArray() }).writeIntoMemory(),

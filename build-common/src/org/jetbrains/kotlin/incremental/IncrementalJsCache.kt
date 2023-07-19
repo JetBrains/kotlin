@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.serialization.js.JsSerializerProtocol
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.DataInput
 import java.io.DataOutput
 import java.io.File
@@ -136,8 +137,8 @@ open class IncrementalJsCache(
         }
 
         for ((srcFile, irData) in incrementalResults.irFileData) {
-            val (fileData, types, signatures, strings, declarations, bodies, fqn, debugInfos) = irData
-            irTranslationResults.put(srcFile, fileData, types, signatures, strings, declarations, bodies, fqn, debugInfos)
+            val (fileData, types, signatures, strings, declarations, bodies, fqn, fileName, debugInfos) = irData
+            irTranslationResults.put(srcFile, fileData, types, signatures, strings, declarations, bodies, fqn, fileName, debugInfos)
         }
     }
 
@@ -268,12 +269,23 @@ private object IrTranslationResultValueExternalizer : DataExternalizer<IrTransla
         output.writeArray(value.declarations)
         output.writeArray(value.bodies)
         output.writeArray(value.fqn)
-        value.debugInfo?.let { output.writeArray(it) }
+        output.writeArrayOrNull(value.fileName)
+        output.writeArrayOrNull(value.debugInfo)
     }
 
     private fun DataOutput.writeArray(array: ByteArray) {
         writeInt(array.size)
         write(array)
+    }
+
+    private fun DataOutput.writeArrayOrNull(array: ByteArray?) {
+        if (array == null) {
+            writeBoolean(false)
+        } else {
+            writeBoolean(true)
+            writeInt(array.size)
+            write(array)
+        }
     }
 
     private fun DataInput.readArray(): ByteArray {
@@ -283,16 +295,7 @@ private object IrTranslationResultValueExternalizer : DataExternalizer<IrTransla
         return filedata
     }
 
-    private fun DataInput.readArrayOrNull(): ByteArray? {
-        try {
-            val dataSize = readInt()
-            val filedata = ByteArray(dataSize)
-            readFully(filedata)
-            return filedata
-        } catch (e: Throwable) {
-            return null
-        }
-    }
+    private fun DataInput.readArrayOrNull(): ByteArray? = runIf(readBoolean()) { readArray() }
 
     override fun read(input: DataInput): IrTranslationResultValue {
         val fileData = input.readArray()
@@ -302,9 +305,10 @@ private object IrTranslationResultValueExternalizer : DataExternalizer<IrTransla
         val declarations = input.readArray()
         val bodies = input.readArray()
         val fqn = input.readArray()
+        val fileName = input.readArrayOrNull()
         val debugInfos = input.readArrayOrNull()
 
-        return IrTranslationResultValue(fileData, types, signatures, strings, declarations, bodies, fqn, debugInfos)
+        return IrTranslationResultValue(fileData, types, signatures, strings, declarations, bodies, fqn, fileName, debugInfos)
     }
 }
 
@@ -330,10 +334,11 @@ private class IrTranslationResultMap(
         newDeclarations: ByteArray,
         newBodies: ByteArray,
         fqn: ByteArray,
+        fileName: ByteArray?,
         debugInfos: ByteArray?
     ) {
         storage[pathConverter.toPath(sourceFile)] =
-            IrTranslationResultValue(newFiledata, newTypes, newSignatures, newStrings, newDeclarations, newBodies, fqn, debugInfos)
+            IrTranslationResultValue(newFiledata, newTypes, newSignatures, newStrings, newDeclarations, newBodies, fqn, fileName, debugInfos)
     }
 
     operator fun get(sourceFile: File): IrTranslationResultValue? =

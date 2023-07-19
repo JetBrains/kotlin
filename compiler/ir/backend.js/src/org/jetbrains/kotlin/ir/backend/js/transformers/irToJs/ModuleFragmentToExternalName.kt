@@ -10,28 +10,13 @@ import org.jetbrains.kotlin.ir.backend.js.utils.nameWithoutExtension
 import org.jetbrains.kotlin.ir.backend.js.utils.sanitizeName
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.path
 
 private const val EXPORTER_FILE_POSTFIX = ".export"
 
 class ModuleFragmentToExternalName(private val jsOutputNamesMapping: Map<IrModuleFragment, String>) {
-    private val externalNameToItsFile = hashMapOf<String, IrFile>()
-
-    fun getExternalNameFor(file: IrFile): String {
-        return getExternalNameFor(file.outputName, file.packageFqName.asString(), file.module.getJsOutputName()).also {
-            val alreadyReservedBy = externalNameToItsFile.putIfAbsent(it.lowercase(), file)
-
-            if (alreadyReservedBy != null && alreadyReservedBy != file) {
-                error(
-                    """
-                      |There are two files in module '${file.module.name}' that have the similar package and file names.
-                      |  - Package "${file.packageFqName.asString()}" and path "${file.path}"
-                      |  - Package "${alreadyReservedBy.packageFqName.asString()}" and path "${alreadyReservedBy.path}"
-                      |Note, that if the difference is only in letter cases, it also could lead to a clash of the compiled artifacts
-                   """.trimMargin()
-                )
-            }
-        }
+    fun getExternalNameFor(file: IrFile, granularity: JsGenerationGranularity): String {
+        assert(granularity == JsGenerationGranularity.PER_FILE) { "This method should be used only for PER_FILE granularity" }
+        return getExternalNameFor(file.outputName, file.packageFqName.asString(), file.module.getJsOutputName())
     }
 
     fun getExternalNameFor(fileName: String, packageFqn: String, moduleName: String): String {
