@@ -4,18 +4,18 @@ plugins {
 }
 
 dependencies {
-    api(project(":compiler:util"))
-    api(project(":compiler:cli-common"))
-    api(project(":compiler:cli"))
-    api(project(":compiler:frontend"))
-    api(project(":compiler:backend-common"))
-    api(project(":compiler:fir:fir-serialization"))
-    api(project(":compiler:ir.backend.common"))
-    api(project(":compiler:ir.serialization.js"))
-    api(project(":compiler:ir.tree"))
-    api(project(":compiler:backend.wasm"))
-    api(project(":wasm:wasm.frontend"))
-    api(project(":wasm:wasm.config"))
+    implementation(project(":compiler:util"))
+    implementation(project(":compiler:cli-common"))
+    implementation(project(":compiler:cli"))
+    implementation(project(":compiler:frontend"))
+    implementation(project(":compiler:backend-common"))
+    implementation(project(":compiler:fir:fir-serialization"))
+    implementation(project(":compiler:ir.backend.common"))
+    implementation(project(":compiler:ir.serialization.js"))
+    implementation(project(":compiler:ir.tree"))
+    implementation(project(":compiler:backend.wasm"))
+    implementation(project(":wasm:wasm.frontend"))
+    implementation(project(":wasm:wasm.config"))
 
     compileOnly(intellijCore())
 }
