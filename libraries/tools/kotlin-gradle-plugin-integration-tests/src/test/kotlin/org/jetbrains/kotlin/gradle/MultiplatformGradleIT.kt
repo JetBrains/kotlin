@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.gradle.testbase.assertNoDiagnostic
 import org.jetbrains.kotlin.gradle.util.AGPVersion
 import org.jetbrains.kotlin.gradle.util.getFileByName
 import org.jetbrains.kotlin.gradle.util.modify
+import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.Test
 import java.io.File
@@ -43,11 +44,29 @@ class MultiplatformGradleIT : BaseGradleIT() {
     fun testMultiplatformCompile() {
         val project = Project("multiplatformProject")
 
+        project.setupWorkingDir()
+
+        // remove the default suppression that was added for all other tests
+        project.projectDir.resolve("gradle.properties").replaceText("kotlin.internal.mpp12x.deprecation.suppress=true", "")
+
         project.build("build") {
-            assertSuccessful()
+            assertFailed()
 
             assertHasDiagnostic(KotlinToolingDiagnostics.Kotlin12XMppDeprecation)
 
+            assertTasksNotExecuted(
+                ":lib:compileKotlinCommon",
+                ":lib:compileTestKotlinCommon",
+                ":libJvm:compileKotlin",
+                ":libJvm:compileTestKotlin",
+            )
+        }
+
+        project.projectDir.resolve("gradle.properties").appendText("\nkotlin.internal.mpp12x.deprecation.suppress=true")
+        project.build("build") {
+            assertSuccessful()
+
+            assertNoDiagnostic(KotlinToolingDiagnostics.Kotlin12XMppDeprecation)
             assertTasksExecuted(
                 ":lib:compileKotlinCommon",
                 ":lib:compileTestKotlinCommon",
@@ -58,13 +77,6 @@ class MultiplatformGradleIT : BaseGradleIT() {
             assertFileExists("lib/build/classes/kotlin/test/foo/PlatformTest.kotlin_metadata")
             assertFileExists("libJvm/build/classes/kotlin/main/foo/PlatformClass.class")
             assertFileExists("libJvm/build/classes/kotlin/test/foo/PlatformTest.class")
-        }
-
-        project.projectDir.resolve("gradle.properties").appendText("\nkotlin.internal.mpp12x.deprecation.suppress=true")
-        project.build {
-            assertSuccessful()
-
-            assertNoDiagnostic(KotlinToolingDiagnostics.Kotlin12XMppDeprecation)
         }
     }
 

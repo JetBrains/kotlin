@@ -207,10 +207,10 @@ object KotlinToolingDiagnostics {
         )
     }
 
-    object Kotlin12XMppDeprecation : ToolingDiagnosticFactory(WARNING) {
+    object Kotlin12XMppDeprecation : ToolingDiagnosticFactory(FATAL) {
         operator fun invoke() = build(
             """
-            The 'org.jetbrains.kotlin.platform.*' plugins are deprecated and are no longer available since Kotlin 1.4.
+            The 'org.jetbrains.kotlin.platform.*' plugins are no longer available.
             Please migrate the project to the 'org.jetbrains.kotlin.multiplatform' plugin.
             See: https://kotlinlang.org/docs/reference/building-mpp-with-gradle.html
             """.trimIndent()
