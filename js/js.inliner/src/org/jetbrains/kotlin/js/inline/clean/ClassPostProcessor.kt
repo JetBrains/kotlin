@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.js.backend.ast.JsClass
 
 class ClassPostProcessor(val root: JsClass) {
     val optimizations = listOf(
-        { EmptyConstructorRemoval(root).apply() }
+        { TrivialConstructorRemoval(root).apply() }
     )
 
     fun apply() {
