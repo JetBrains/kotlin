@@ -25,18 +25,17 @@ Therefore, to install the dependencies, be sure to have installed locally:
 * The Java Development Kit
 * [Maven](https://maven.apache.org/index.html)
 * [SBT](https://www.scala-sbt.org/)
-* [Z3](https://github.com/Z3Prover/z3) v4.8.7
+* [Z3](https://github.com/Z3Prover/z3) v4.8.7: the best way of installing Z3 with all the necessary would be to
+download it from its _Releases page_ [here](https://github.com/Z3Prover/z3/releases/tag/z3-4.8.7).
 
-The installing of `Z3` is not necessary enough, it is important to have the JAR dependency required by `silicon`.
-Thus, open your terminal emulator and download the file (you can use `curl`/`wget`):
+Within the downloaded archive of `Z3` an important JAR dependency comes into play. This JAR file contains the necessary 
+bindings for Java to Z3. To install the file in the local Maven repository, you can use the command above:
 
 ```bash
-cd /tmp
-# Download the Z3 jar file from the following provider (used by silicon)
-wget https://www.sosy-lab.org/ivy/org.sosy_lab/javasmt-solver-z3/com.microsoft.z3-4.8.7.jar
+cd /path/to/z3-4.8.7-*/bin
 # Install the Z3 jar file into the local Maven repository
 mvn install:install-file \
-   -Dfile=./com.microsoft.z3-4.8.7.jar \
+   -Dfile=./com.microsoft.z3.jar \
    -DgroupId=com.microsoft \
    -DartifactId=z3 \
    -Dversion=4.8.7 \
