@@ -119,11 +119,7 @@ class ExportModelToJsStatements(
             is ExportedObject -> {
                 require(namespace != null || esModules) { "Only namespaced properties are allowed" }
                 val (name, objectClassInitialization) = declaration.getNameAndInitialization()
-                val newNameSpace = when {
-                    namespace != null -> jsElementAccess(declaration.name, namespace)
-                    else ->
-                        jsElementAccess(Namer.PROTOTYPE_NAME, name.makeRef())
-                }
+                val newNameSpace = jsElementAccess(Namer.PROTOTYPE_NAME, name.makeRef())
                 val staticsExport =
                     declaration.nestedClasses.flatMap { generateDeclarationExport(it, newNameSpace, esModules, declaration.ir) }
 
@@ -256,11 +252,11 @@ class ExportModelToJsStatements(
 
     private fun ExportedClass.getNameAndInitialization(): Pair<JsName, JsStatement?> {
         return when (val classRef = ir.getClassRef(staticContext)) {
-            !is JsNameRef -> {
+            is JsNameRef -> classRef.name!! to null
+            else -> {
                 val stableName = JsName(name, true)
                 stableName to JsVars(JsVars.JsVar(stableName, classRef))
             }
-            else -> classRef.name!! to null
         }
     }
 
