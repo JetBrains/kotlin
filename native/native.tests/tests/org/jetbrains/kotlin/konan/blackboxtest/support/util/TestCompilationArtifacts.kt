@@ -27,7 +27,6 @@ internal fun TestCompilationArtifact.KLIB.getContents(kotlinNativeClassLoader: C
 internal fun TestCompilationArtifact.KLIB.getIr(
     kotlinNativeClassLoader: ClassLoader,
     printSignatures: Boolean = false,
-    partialLinkage: Boolean = false
 ): String {
-    return invokeKlibTool(kotlinNativeClassLoader, klibFile, "ir", printSignatures, partialLinkage)
+    return invokeKlibTool(kotlinNativeClassLoader, klibFile, "ir", printSignatures)
 }

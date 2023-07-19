@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilati
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.KotlinNativeClassLoader
+import org.jetbrains.kotlin.konan.blackboxtest.support.settings.PipelineType
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.getAbsoluteFile
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.getIr
@@ -41,7 +42,7 @@ abstract class AbstractNativeKlibIrTest : AbstractNativeSimpleTest() {
         val testPathNoExtension = testPathFull.canonicalPath.substringBeforeLast(".")
 
         val firSpecificExt =
-            if (this::class.java.simpleName.startsWith("Fir") && !firIdentical(testPathFull))
+            if (testRunSettings.get<PipelineType>() == PipelineType.K2 && !firIdentical(testPathFull))
                 ".fir"
             else ""
 
