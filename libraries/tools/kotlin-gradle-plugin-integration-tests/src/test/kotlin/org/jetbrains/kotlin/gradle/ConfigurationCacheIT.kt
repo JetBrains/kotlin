@@ -66,7 +66,6 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @GradleTestVersions(
         minVersion = TestVersions.Gradle.G_7_4,
         additionalVersions = [TestVersions.Gradle.G_7_6],
-        maxVersion = TestVersions.Gradle.G_8_1
     )
     @GradleTest
     fun testMppWithMavenPublish(gradleVersion: GradleVersion) {
@@ -85,7 +84,6 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @GradleTestVersions(
         minVersion = TestVersions.Gradle.G_7_4,
         additionalVersions = [TestVersions.Gradle.G_7_6],
-        maxVersion = TestVersions.Gradle.G_8_1
     )
     @GradleTest
     fun testCommonizer(gradleVersion: GradleVersion, @TempDir konanHome: Path) {
@@ -185,7 +183,6 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @GradleTestVersions(
         minVersion = TestVersions.Gradle.MIN_SUPPORTED,
         additionalVersions = [TestVersions.Gradle.G_7_6, TestVersions.Gradle.G_8_0],
-        maxVersion = TestVersions.Gradle.G_8_1
     )
     @GradleTest
     fun testBuildReportSmokeTestForConfigurationCache(gradleVersion: GradleVersion) {
@@ -209,7 +206,6 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @GradleTestVersions(
         minVersion = TestVersions.Gradle.MIN_SUPPORTED,
         additionalVersions = [TestVersions.Gradle.G_7_6], //build scan reports doesn't work properly for Gradle 8.0
-        maxVersion = TestVersions.Gradle.G_8_1
     )
     @GradleTest
     fun testBuildScanReportSmokeTestForConfigurationCache(gradleVersion: GradleVersion) {

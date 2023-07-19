@@ -822,7 +822,7 @@ class CocoaPodsIT : KGPBaseTest() {
     }
 
     @DisplayName("Configuration cache works in a complex scenario")
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_6, maxVersion = TestVersions.Gradle.G_8_1)
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_6)
     @GradleTest
     fun testConfigurationCacheWorksInAComplexScenario(gradleVersion: GradleVersion) {
         val buildOptions = defaultBuildOptions.copy(

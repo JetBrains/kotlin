@@ -364,7 +364,8 @@ class MultiplatformGradleIT : BaseGradleIT() {
     fun testKtKt35942InternalsFromMainInTestViaTransitiveDepsAndroid() = with(
         Project(
             projectName = "kt-35942-android",
-            gradleVersionRequirement = GradleVersionRequired.AtLeast(TestVersions.Gradle.G_7_0)
+            // Should be checked with the latest AGP /Gradle once will be migrated to the new test DSL
+            gradleVersionRequirement = GradleVersionRequired.Until(TestVersions.Gradle.G_7_6)
         )
     ) {
         val currentGradleVersion = chooseWrapperVersionOrFinishTest()

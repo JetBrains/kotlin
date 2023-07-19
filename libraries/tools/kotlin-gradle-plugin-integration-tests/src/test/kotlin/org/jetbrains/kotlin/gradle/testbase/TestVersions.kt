@@ -28,7 +28,7 @@ interface TestVersions {
         const val G_8_2 = "8.2"
         const val MIN_SUPPORTED = minSupportedGradleVersion
         const val MIN_SUPPORTED_KPM = G_7_0
-        const val MAX_SUPPORTED = G_8_0
+        const val MAX_SUPPORTED = G_8_1
     }
 
     object Kotlin {
@@ -51,7 +51,7 @@ interface TestVersions {
         const val AGP_82 = "8.2.0-alpha09" // -alpha10 fails ExternalAndroidTargetIT test
 
         const val MIN_SUPPORTED = AGP_42 // KotlinAndroidPlugin.minimalSupportedAgpVersion
-        const val MAX_SUPPORTED = AGP_80 // Update once Gradle MAX_SUPPORTED version will be bumped
+        const val MAX_SUPPORTED = AGP_81 // Update once Gradle MAX_SUPPORTED version will be bumped
     }
 
     enum class AgpCompatibilityMatrix(

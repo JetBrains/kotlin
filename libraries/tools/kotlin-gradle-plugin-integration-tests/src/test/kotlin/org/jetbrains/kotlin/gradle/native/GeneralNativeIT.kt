@@ -670,8 +670,14 @@ class GeneralNativeIT : BaseGradleIT() {
             assertTasksExecuted(*testsToExecute.toTypedArray())
             assertTasksSkipped(*testsToSkip.toTypedArray())
 
-            assertContainsRegex("org\\.foo\\.test\\.TestKt\\.fooTest\\s+PASSED".toRegex())
-            assertContainsRegex("org\\.foo\\.test\\.TestKt\\.barTest\\s+PASSED".toRegex())
+            val currentGradleVersion = GradleVersion.version(chooseWrapperVersionOrFinishTest())
+            if (currentGradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_0)) {
+                assertContainsRegex("org\\.foo\\.test\\.TestKt\\.fooTest\\s+PASSED".toRegex())
+                assertContainsRegex("org\\.foo\\.test\\.TestKt\\.barTest\\s+PASSED".toRegex())
+            } else {
+                assertContainsRegex("org\\.foo\\.test\\.TestKt\\.fooTest\\[host]\\s+PASSED".toRegex())
+                assertContainsRegex("org\\.foo\\.test\\.TestKt\\.barTest\\[host]\\s+PASSED".toRegex())
+            }
 
             assertFileExists(defaultOutputFile)
         }
@@ -734,7 +740,12 @@ class GeneralNativeIT : BaseGradleIT() {
             assertTasksExecuted(*testsToExecute.toTypedArray())
             assertTasksSkipped(*testsToSkip.toTypedArray())
 
-            assertContainsRegex("org\\.foo\\.test\\.TestKt\\.fail\\s+FAILED".toRegex())
+            val currentGradleVersion = GradleVersion.version(chooseWrapperVersionOrFinishTest())
+            if (currentGradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_0)) {
+                assertContainsRegex("org\\.foo\\.test\\.TestKt\\.fail\\s+FAILED".toRegex())
+            } else {
+                assertContainsRegex("org\\.foo\\.test\\.TestKt\\.fail\\[host]\\s+FAILED".toRegex())
+            }
         }
 
         // Check that individual test reports are created correctly.

@@ -28,9 +28,7 @@ class FusStatisticsIT : KGPDaemonsBaseTest() {
     @DisplayName("for dokka")
     @GradleTest
     @GradleTestVersions(
-        minVersion = TestVersions.Gradle.MIN_SUPPORTED,
         additionalVersions = [TestVersions.Gradle.G_7_6, TestVersions.Gradle.G_8_0],
-        maxVersion = TestVersions.Gradle.G_8_1
     )
     fun testDokka(gradleVersion: GradleVersion) {
         project(
@@ -64,9 +62,7 @@ class FusStatisticsIT : KGPDaemonsBaseTest() {
     @DisplayName("general fields")
     @GradleTest
     @GradleTestVersions(
-        minVersion = TestVersions.Gradle.MIN_SUPPORTED,
         additionalVersions = [TestVersions.Gradle.G_7_6, TestVersions.Gradle.G_8_0],
-        maxVersion = TestVersions.Gradle.G_8_1
     )
     fun testFusStatistics(gradleVersion: GradleVersion) {
         project(
@@ -91,9 +87,7 @@ class FusStatisticsIT : KGPDaemonsBaseTest() {
     @DisplayName("for project with buildSrc")
     @GradleTest
     @GradleTestVersions(
-        minVersion = TestVersions.Gradle.MIN_SUPPORTED,
         additionalVersions = [TestVersions.Gradle.G_7_6, TestVersions.Gradle.G_8_0],
-        maxVersion = TestVersions.Gradle.G_8_1
     )
     fun testProjectWithBuildSrc(gradleVersion: GradleVersion) {
         project(
@@ -143,9 +137,7 @@ class FusStatisticsIT : KGPDaemonsBaseTest() {
     @DisplayName("for failed build")
     @GradleTest
     @GradleTestVersions(
-        minVersion = TestVersions.Gradle.MIN_SUPPORTED,
         additionalVersions = [TestVersions.Gradle.G_7_6, TestVersions.Gradle.G_8_0],
-        maxVersion = TestVersions.Gradle.G_8_1
     )
     fun testFusStatisticsForFailedBuild(gradleVersion: GradleVersion) {
         project(
@@ -173,10 +165,8 @@ class FusStatisticsIT : KGPDaemonsBaseTest() {
     @DisplayName("general fields with configuration cache")
     @GradleTest
     @GradleTestVersions(
-        minVersion = TestVersions.Gradle.MIN_SUPPORTED,
         additionalVersions = [TestVersions.Gradle.G_7_6, TestVersions.Gradle.G_8_0],
-        maxVersion = TestVersions.Gradle.G_8_1
-    )
+     )
     fun testFusStatisticsWithConfigurationCache(gradleVersion: GradleVersion) {
         project(
             "simpleProject",

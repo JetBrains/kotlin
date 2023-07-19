@@ -22,7 +22,6 @@ class MacosCapableConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @GradleTestVersions(
         minVersion = TestVersions.Gradle.G_7_4,
         additionalVersions = [TestVersions.Gradle.G_7_6],
-        maxVersion = TestVersions.Gradle.G_8_1
     )
     @GradleTest
     fun testNativeTasks(gradleVersion: GradleVersion) {
@@ -70,7 +69,6 @@ class MacosCapableConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @GradleTestVersions(
         minVersion = TestVersions.Gradle.G_7_4,
         additionalVersions = [TestVersions.Gradle.G_7_6],
-        maxVersion = TestVersions.Gradle.G_8_1,
     )
     @GradleTest
     fun testAppleFrameworkTasks(gradleVersion: GradleVersion, @TempDir targetBuildDir: Path) {
