@@ -28516,6 +28516,12 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
         }
 
         @Test
+        @TestMetadata("inJavaPackage.kt")
+        public void testInJavaPackage() throws Exception {
+            runTest("compiler/testData/codegen/box/involvesIrInterpreter/inJavaPackage.kt");
+        }
+
+        @Test
         @TestMetadata("intOperations.kt")
         public void testIntOperations() throws Exception {
             runTest("compiler/testData/codegen/box/involvesIrInterpreter/intOperations.kt");

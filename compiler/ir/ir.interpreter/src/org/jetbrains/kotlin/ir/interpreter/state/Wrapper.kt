@@ -20,8 +20,6 @@ import java.lang.invoke.MethodHandle
 import java.lang.invoke.MethodHandles
 import java.lang.invoke.MethodType
 import java.util.*
-import kotlin.collections.HashMap
-import kotlin.collections.LinkedHashMap
 
 internal class Wrapper(val value: Any, override val irClass: IrClass, environment: IrInterpreterEnvironment) : Complex {
     override val fields: Fields = mutableMapOf()
@@ -100,6 +98,13 @@ internal class Wrapper(val value: Any, override val irClass: IrClass, environmen
             "kotlin.text.RegexOption", "kotlin.text.Regex", "kotlin.text.Regex.Companion", "kotlin.text.MatchGroup",
         )
 
+        private val intrinsicJavaClasses = setOf(
+            "java.lang.StringBuilder", "java.util.ArrayList",
+            "java.util.LinkedHashMap", "java.util.LinkedHashSet",
+            "java.lang.Exception", "java.util.NoSuchElementException", "java.lang.NullPointerException",
+            "java.lang.IllegalArgumentException", "java.lang.ArithmeticException", "java.lang.UnsupportedOperationException",
+        )
+
         private val intrinsicFunctionToHandler = mapOf(
             "Array.kotlin.collections.asList()" to "kotlin.collections.ArraysKt",
             "kotlin.collections.mutableListOf(Array)" to "kotlin.collections.CollectionsKt",
@@ -111,8 +116,7 @@ internal class Wrapper(val value: Any, override val irClass: IrClass, environmen
 
         private val ranges = setOf("kotlin.ranges.CharRange", "kotlin.ranges.IntRange", "kotlin.ranges.LongRange")
 
-        private fun IrFunction.getSignature(): String {
-            val fqName = this.fqName
+        private fun IrFunction.getSignature(fqName: String = this.fqName): String {
             val receiver = (dispatchReceiverParameter ?: extensionReceiverParameter)?.type?.getOnlyName()?.let { "$it." } ?: ""
             return this.valueParameters.joinToString(prefix = "$receiver$fqName(", postfix = ")") { it.type.getOnlyName() }
         }
@@ -122,11 +126,11 @@ internal class Wrapper(val value: Any, override val irClass: IrClass, environmen
         }
 
         fun mustBeHandledWithWrapper(declaration: IrDeclarationWithName): Boolean {
-            if (declaration is IrFunction) return declaration.getSignature() in intrinsicFunctionToHandler
             val fqName = declaration.fqName
             return when {
-                fqName in ranges && (declaration as IrClass).primaryConstructor!!.body == null -> true
-                else -> fqName in intrinsicClasses || fqName.startsWith("java")
+                declaration is IrFunction -> declaration.getSignature(fqName) in intrinsicFunctionToHandler
+                fqName in ranges && (declaration as IrClass).primaryConstructor?.body == null -> true
+                else -> fqName in intrinsicClasses || fqName in intrinsicJavaClasses
             }
         }
 

@@ -24054,6 +24054,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/involvesIrInterpreter/floatOperations.kt");
         }
 
+        @TestMetadata("inJavaPackage.kt")
+        public void testInJavaPackage() throws Exception {
+            runTest("compiler/testData/codegen/box/involvesIrInterpreter/inJavaPackage.kt");
+        }
+
         @TestMetadata("intOperations.kt")
         public void testIntOperations() throws Exception {
             runTest("compiler/testData/codegen/box/involvesIrInterpreter/intOperations.kt");

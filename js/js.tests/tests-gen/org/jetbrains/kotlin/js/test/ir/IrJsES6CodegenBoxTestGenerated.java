@@ -21094,6 +21094,18 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
         }
 
         @Test
+        @TestMetadata("inJavaLangPackage.kt")
+        public void testInJavaLangPackage() throws Exception {
+            runTest("compiler/testData/codegen/box/involvesIrInterpreter/inJavaLangPackage.kt");
+        }
+
+        @Test
+        @TestMetadata("inJavaPackage.kt")
+        public void testInJavaPackage() throws Exception {
+            runTest("compiler/testData/codegen/box/involvesIrInterpreter/inJavaPackage.kt");
+        }
+
+        @Test
         @TestMetadata("intOperations.kt")
         public void testIntOperations() throws Exception {
             runTest("compiler/testData/codegen/box/involvesIrInterpreter/intOperations.kt");
