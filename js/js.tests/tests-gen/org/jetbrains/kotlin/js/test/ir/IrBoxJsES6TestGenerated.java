@@ -2396,6 +2396,12 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
             }
 
             @Test
+            @TestMetadata("exportInterfaceWithoutClases.kt")
+            public void testExportInterfaceWithoutClases() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/export/exportInterfaceWithoutClases.kt");
+            }
+
+            @Test
             @TestMetadata("exportNestedClass.kt")
             public void testExportNestedClass() throws Exception {
                 runTest("js/js.translator/testData/box/esModules/export/exportNestedClass.kt");
@@ -2958,6 +2964,12 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
         @TestMetadata("exportInterface.kt")
         public void testExportInterface() throws Exception {
             runTest("js/js.translator/testData/box/export/exportInterface.kt");
+        }
+
+        @Test
+        @TestMetadata("exportInterfaceWithoutClases.kt")
+        public void testExportInterfaceWithoutClases() throws Exception {
+            runTest("js/js.translator/testData/box/export/exportInterfaceWithoutClases.kt");
         }
 
         @Test

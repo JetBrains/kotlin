@@ -245,7 +245,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                             }
                         )
                     } else {
-                        classBlock.statements += JsExpressionStatement(
+                        classModel.postDeclarationBlock.statements += JsExpressionStatement(
                             defineProperty(classPrototypeRef, propertyName.ident, getterForwarder, setterForwarder, context.staticContext)
                         )
                     }
