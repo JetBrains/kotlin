@@ -987,6 +987,7 @@ class FirElementSerializer private constructor(
             builder.addArgument(typeArgument(typeArguments[argumentIndex++]))
         }
 
+        if (!symbol.isInner) return
         val outerClassId = symbol.classId.outerClassId
         if (outerClassId == null || outerClassId.isLocal) return
         val outerSymbol = outerClassId.toLookupTag().toSymbol(session)
