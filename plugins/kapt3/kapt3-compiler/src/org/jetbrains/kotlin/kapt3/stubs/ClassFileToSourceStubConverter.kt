@@ -136,7 +136,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
 
     private val signatureParser = SignatureParser(treeMaker)
 
-    private val kdocCommentKeeper = if (keepKdocComments) KDocCommentKeeper(kaptContext) else null
+    private val kdocCommentKeeper = if (keepKdocComments) Kapt3DocCommentKeeper(kaptContext) else null
 
     private val importsFromRoot by lazy(::collectImportsFromRootPackage)
 

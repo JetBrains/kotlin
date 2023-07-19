@@ -38,3 +38,15 @@ interface MessageCollector {
         }
     }
 }
+
+fun MessageCollector.reportError(message: String, location: CompilerMessageSourceLocation? = null) {
+    report(CompilerMessageSeverity.ERROR, message, location)
+}
+
+fun MessageCollector.reportWarning(message: String, location: CompilerMessageSourceLocation? = null) {
+    report(CompilerMessageSeverity.WARNING, message, location)
+}
+
+fun MessageCollector.reportInfo(message: String, location: CompilerMessageSourceLocation? = null) {
+    report(CompilerMessageSeverity.INFO, message, location)
+}

@@ -1,0 +1,14 @@
+@kotlin.Metadata()
+public final class Cl {
+
+    public Cl() {
+        super();
+    }
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String a = null;
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getA() {
+        return null;
+    }
+}

@@ -1,0 +1,59 @@
+@kotlin.Metadata()
+public final class Outer {
+
+    public Outer() {
+        super();
+    }
+
+    public final void nonAbstract(@org.jetbrains.annotations.NotNull()
+    java.lang.String s, int i) {
+    }
+
+    @kotlin.Metadata()
+    private final class Inner {
+        @org.jetbrains.annotations.NotNull()
+        private final java.lang.String foo = null;
+        @org.jetbrains.annotations.NotNull()
+        private final java.lang.String bar = null;
+
+        public Inner(@org.jetbrains.annotations.NotNull()
+        java.lang.String foo, @org.jetbrains.annotations.NotNull()
+        java.lang.String bar) {
+            super();
+        }
+
+        @org.jetbrains.annotations.NotNull()
+        public final java.lang.String getFoo() {
+            return null;
+        }
+
+        @org.jetbrains.annotations.NotNull()
+        public final java.lang.String getBar() {
+            return null;
+        }
+    }
+
+    @kotlin.Metadata()
+    private static final class Nested {
+        @org.jetbrains.annotations.NotNull()
+        private final java.lang.String foo = null;
+        @org.jetbrains.annotations.NotNull()
+        private final java.lang.String bar = null;
+
+        public Nested(@org.jetbrains.annotations.NotNull()
+        java.lang.String foo, @org.jetbrains.annotations.NotNull()
+        java.lang.String bar) {
+            super();
+        }
+
+        @org.jetbrains.annotations.NotNull()
+        public final java.lang.String getFoo() {
+            return null;
+        }
+
+        @org.jetbrains.annotations.NotNull()
+        public final java.lang.String getBar() {
+            return null;
+        }
+    }
+}

@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.cli.jvm.compiler
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensions
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.messages.reportError
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -30,6 +32,7 @@ import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.jvm.*
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.session.*
@@ -90,6 +93,13 @@ object FirKotlinToJvmBytecodeCompiler {
 
         // TODO: run lowerings for all modules in the chunk, then run codegen for all modules.
         val project = (projectEnvironment as? VfsBasedProjectEnvironment)?.project
+        if (project != null) {
+            val extensions = FirAnalysisHandlerExtension.getInstances(project).filter { it.isApplicable(projectConfiguration) }
+            if (extensions.isNotEmpty()) {
+                return extensions.all { it.doAnalysis(projectConfiguration) }
+            }
+        }
+
         for (module in chunk) {
             val moduleConfiguration = projectConfiguration.applyModuleProperties(module, buildFile)
             val context = CompilationContext(
@@ -294,6 +304,16 @@ object FirKotlinToJvmBytecodeCompiler {
         val extensionRegistrars: List<FirExtensionRegistrar>,
         val irGenerationExtensions: Collection<IrGenerationExtension>
     )
+
+    inline fun CompilerConfiguration.update(block: CompilerConfiguration.() -> Unit) {
+        val oldReadOnlyValue = isReadOnly
+        isReadOnly = false
+        try {
+            block()
+        } finally {
+            isReadOnly = oldReadOnlyValue
+        }
+    }
 }
 
 fun findMainClass(fir: List<FirFile>): FqName? {

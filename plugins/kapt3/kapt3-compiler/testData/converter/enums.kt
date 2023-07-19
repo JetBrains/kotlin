@@ -1,3 +1,4 @@
+// !LANGUAGE: +EnumEntries
 enum class Enum1 {
     BLACK, WHITE
 }

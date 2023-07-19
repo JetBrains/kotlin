@@ -53,6 +53,18 @@ public final class B {
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String d = "";
 
+    /**
+     * A mutable property
+     */
+    @org.jetbrains.annotations.NotNull()
+    private java.lang.String e = "";
+
+    /**
+     * A property with a backing field and an explicit setter
+     */
+    @org.jetbrains.annotations.NotNull()
+    private java.lang.String g;
+
     public B() {
         super();
     }
@@ -93,5 +105,53 @@ public final class B {
     @org.jetbrains.annotations.NotNull()
     public final java.lang.String getD() {
         return null;
+    }
+
+    /**
+     * A mutable property
+     */
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getE() {
+        return null;
+    }
+
+    /**
+     * A mutable property
+     */
+    public final void setE(@org.jetbrains.annotations.NotNull()
+    java.lang.String p0) {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getF() {
+        return null;
+    }
+
+    public final void setF(@org.jetbrains.annotations.NotNull()
+    java.lang.String value) {
+    }
+
+    /**
+     * A property with a backing field and an explicit setter
+     */
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getG() {
+        return null;
+    }
+
+    public final void setG(@org.jetbrains.annotations.NotNull()
+    java.lang.String value) {
+    }
+
+    /**
+     * It's a getter
+     */
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getH() {
+        return null;
+    }
+
+    public final void setH(@org.jetbrains.annotations.NotNull()
+    java.lang.String value) {
     }
 }

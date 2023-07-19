@@ -48,6 +48,10 @@ class KaptJavaLog(
         setWriter(WriterKind.ERROR, errWriter)
         setWriter(WriterKind.WARNING, warnWriter)
         setWriter(WriterKind.NOTICE, noticeWriter)
+
+        // Fixes a very weird ClassNotFoundException
+        // TODO: Find the root cause
+        KaptJavaLog::class.java.declaredClasses
     }
 
     override val reportedDiagnostics: List<JCDiagnostic>

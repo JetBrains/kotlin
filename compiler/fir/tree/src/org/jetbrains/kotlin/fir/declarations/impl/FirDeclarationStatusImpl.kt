@@ -150,6 +150,12 @@ open class FirDeclarationStatusImpl(
             this[HAS_STABLE_PARAMETER_NAMES] = value
         }
 
+    override var isFromAnnotationClass: Boolean
+        get() = this[FROM_ANNOTATION]
+        set(value) {
+            this[FROM_ANNOTATION] = value
+        }
+
     enum class Modifier(val mask: Int) {
         EXPECT(0x1),
         ACTUAL(0x2),
@@ -170,6 +176,7 @@ open class FirDeclarationStatusImpl(
         FROM_ENUM(0x10000),
         FUN(0x20000),
         HAS_STABLE_PARAMETER_NAMES(0x40000),
+        FROM_ANNOTATION(0x80000)
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}

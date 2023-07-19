@@ -15,7 +15,7 @@ dependencies {
     api(project(":compiler:ir.serialization.jvm"))
     api(project(":js:js.translator"))
     api(project(":native:frontend.native"))
-    api(project(":wasm:wasm.frontend"))
+//    api(project(":wasm:wasm.frontend"))
     api(project(":kotlin-util-klib"))
     api(project(":kotlin-util-klib-metadata"))
 

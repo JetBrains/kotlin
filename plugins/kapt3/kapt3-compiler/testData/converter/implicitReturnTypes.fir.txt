@@ -15,8 +15,6 @@ public abstract class Prop<T> {
 
 package test;
 
-import java.lang.System;
-
 @kotlin.Metadata()
 public final class Cl {
     @org.jetbrains.annotations.NotNull()
@@ -40,8 +38,6 @@ public final class Cl {
 ////////////////////
 
 package test;
-
-import java.lang.System;
 
 @kotlin.Metadata()
 public final class TestKt {

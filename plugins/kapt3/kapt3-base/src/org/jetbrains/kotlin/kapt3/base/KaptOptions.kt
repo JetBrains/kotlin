@@ -191,7 +191,7 @@ fun collectAggregatedTypes(sourcesToReprocess: SourcesToReprocess = SourcesToRep
 
 fun KaptOptions.logString(additionalInfo: String = "") = buildString {
     val additionalInfoRendered = if (additionalInfo.isEmpty()) "" else " ($additionalInfo)"
-    appendLine("Kapt3 is enabled$additionalInfoRendered.")
+    appendLine("Kapt is enabled$additionalInfoRendered.")
 
     appendLine("Annotation processing mode: ${mode.stringValue}")
     appendLine("Memory leak detection mode: ${detectMemoryLeaks.stringValue}")
