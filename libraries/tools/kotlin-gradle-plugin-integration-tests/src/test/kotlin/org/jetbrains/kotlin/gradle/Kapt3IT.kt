@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.JavaVersion
 import org.gradle.api.logging.LogLevel
-import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.tasks.USING_JVM_INCREMENTAL_COMPILATION_MESSAGE
@@ -37,7 +36,7 @@ import kotlin.io.path.deleteExisting
 import kotlin.io.path.outputStream
 import kotlin.test.assertEquals
 
-abstract class Kapt3BaseIT(val kotlinVersion: String = "1.9") : KGPBaseTest() {
+abstract class Kapt3BaseIT(val languageVersion: String = "1.9") : KGPBaseTest() {
     companion object {
         private const val KAPT_SUCCESSFUL_MESSAGE = "Annotation processing complete, errors: 0"
     }
@@ -45,7 +44,7 @@ abstract class Kapt3BaseIT(val kotlinVersion: String = "1.9") : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions
         .copy(
             kaptOptions = this.kaptOptions(),
-            kotlinVersion = kotlinVersion,
+            languageVersion = languageVersion,
         )
 
     protected open fun kaptOptions(): BuildOptions.KaptOptions = BuildOptions.KaptOptions(
