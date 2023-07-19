@@ -929,9 +929,16 @@ class ComposableFunctionBodyTransformer(
                 returnVar?.let { irReturn(declaration.symbol, irGet(it)) }
             )
         )
-        if (elideGroups && !hasExplicitGroups && collectSourceInformation) {
+        if (elideGroups && !hasExplicitGroups) {
             scope.realizeEndCalls {
-                irSourceInformationMarkerEnd(body, scope)
+                irComposite(
+                    statements = listOfNotNull(
+                        if (emitTraceMarkers) irTraceEventEnd() else null,
+                        if (collectSourceInformation)
+                            irSourceInformationMarkerEnd(body, scope)
+                        else null
+                    )
+                )
             }
         }
 

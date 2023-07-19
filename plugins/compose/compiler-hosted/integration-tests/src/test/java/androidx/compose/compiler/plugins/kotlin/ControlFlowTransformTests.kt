@@ -1032,16 +1032,25 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               }
               if (condition) {
                 val tmp0_return = false
+                if (isTraceInProgress()) {
+                  traceEventEnd()
+                }
                 sourceInformationMarkerEnd(%composer)
                 return tmp0_return
               }
               with(obj) {
                 if (condition) {
                   val tmp0_return = false
+                  if (isTraceInProgress()) {
+                    traceEventEnd()
+                  }
                   sourceInformationMarkerEnd(%composer)
                   return tmp0_return
                 }
                 val tmp1_return = %composer.inserting
+                if (isTraceInProgress()) {
+                  traceEventEnd()
+                }
                 sourceInformationMarkerEnd(%composer)
                 return tmp1_return
               }
@@ -5661,6 +5670,9 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               }
               if (a < 100) {
                 val tmp1_return = 0
+                if (isTraceInProgress()) {
+                  traceEventEnd()
+                }
                 sourceInformationMarkerEnd(%composer)
                 return tmp1_return
               }
