@@ -7,5 +7,4 @@ package org.jetbrains.kotlin.build.report.metrics
 
 import org.jetbrains.kotlin.build.report.RemoteReporter
 
-interface RemoteBuildMetricsReporter : BuildMetricsReporter,
-    RemoteReporter
+interface RemoteBuildMetricsReporter<B : BuildTime, P : BuildPerformanceMetric> : BuildMetricsReporter<B, P>, RemoteReporter

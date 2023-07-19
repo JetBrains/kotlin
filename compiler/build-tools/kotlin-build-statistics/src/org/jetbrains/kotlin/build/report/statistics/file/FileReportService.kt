@@ -114,8 +114,8 @@ class FileReportService(
     }
 
     private fun printMetrics(
-        buildTimesMetrics: Map<BuildTime, Long>,
-        performanceMetrics: Map<BuildPerformanceMetric, Long>,
+        buildTimesMetrics: Map<out BuildTime, Long>,
+        performanceMetrics: Map<out BuildPerformanceMetric, Long>,
         nonIncrementalAttributes: Collection<BuildAttribute>,
         gcTimeMetrics: Map<String, Long>? = emptyMap(),
         gcCountMetrics: Map<String, Long>? = emptyMap(),
@@ -155,7 +155,7 @@ class FileReportService(
         }
     }
 
-    private fun printBuildTimes(buildTimes: Map<BuildTime, Long>) {
+    private fun printBuildTimes(buildTimes: Map<out BuildTime, Long>) {
         if (buildTimes.isEmpty()) return
 
         p.println("Time metrics:")
@@ -166,29 +166,29 @@ class FileReportService(
 
                 val timeMs = buildTimes[buildTime]
                 if (timeMs != null) {
-                    p.println("${buildTime.readableString}: ${formatTime(timeMs)}")
+                    p.println("${buildTime.getReadableString()}: ${formatTime(timeMs)}")
                     p.withIndent {
-                        BuildTime.children[buildTime]?.forEach { printBuildTime(it) }
+                        buildTime.children()?.forEach { printBuildTime(it) }
                     }
                 } else {
                     //Skip formatting if parent metric does not set
-                    BuildTime.children[buildTime]?.forEach { printBuildTime(it) }
+                    buildTime.children()?.forEach { printBuildTime(it) }
                 }
             }
 
-            for (buildTime in BuildTime.values()) {
-                if (buildTime.parent != null) continue
+            for (buildTime in buildTimes.keys.first().values()) {
+                if (buildTime.getParent() != null) continue
 
                 printBuildTime(buildTime)
             }
         }
     }
 
-    private fun printBuildPerformanceMetrics(buildMetrics: Map<BuildPerformanceMetric, Long>) {
+    private fun printBuildPerformanceMetrics(buildMetrics: Map<out BuildPerformanceMetric, Long>) {
         if (buildMetrics.isEmpty()) return
 
         p.withIndent("Size metrics:") {
-            for (metric in BuildPerformanceMetric.values()) {
+            for (metric in buildMetrics.keys.first().values()) {
                 buildMetrics[metric]?.let { printSizeMetric(metric, it) }
             }
         }
@@ -197,10 +197,10 @@ class FileReportService(
     private fun printSizeMetric(sizeMetric: BuildPerformanceMetric, value: Long) {
         fun BuildPerformanceMetric.numberOfAncestors(): Int {
             var count = 0
-            var parent: BuildPerformanceMetric? = parent
+            var parent: BuildPerformanceMetric? = getParent()
             while (parent != null) {
                 count++
-                parent = parent.parent
+                parent = parent.getParent()
             }
             return count
         }
@@ -208,12 +208,12 @@ class FileReportService(
         val indentLevel = sizeMetric.numberOfAncestors()
 
         repeat(indentLevel) { p.pushIndent() }
-        when (sizeMetric.type) {
-            ValueType.BYTES -> p.println("${sizeMetric.readableString}: ${formatSize(value)}")
-            ValueType.NUMBER -> p.println("${sizeMetric.readableString}: $value")
-            ValueType.NANOSECONDS -> p.println("${sizeMetric.readableString}: $value")
-            ValueType.MILLISECONDS -> p.println("${sizeMetric.readableString}: ${formatTime(value)}")
-            ValueType.TIME -> p.println("${sizeMetric.readableString}: ${formatter.format(value)}")
+        when (sizeMetric.getType()) {
+            ValueType.BYTES -> p.println("${sizeMetric.getReadableString()}: ${formatSize(value)}")
+            ValueType.NUMBER -> p.println("${sizeMetric.getReadableString()}: $value")
+            ValueType.NANOSECONDS -> p.println("${sizeMetric.getReadableString()}: $value")
+            ValueType.MILLISECONDS -> p.println("${sizeMetric.getReadableString()}: ${formatTime(value)}")
+            ValueType.TIME -> p.println("${sizeMetric.getReadableString()}: ${formatter.format(value)}")
         }
         repeat(indentLevel) { p.popIndent() }
     }

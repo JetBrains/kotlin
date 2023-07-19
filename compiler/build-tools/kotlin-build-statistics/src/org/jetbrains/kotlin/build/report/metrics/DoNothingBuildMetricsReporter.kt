@@ -5,20 +5,20 @@
 
 package org.jetbrains.kotlin.build.report.metrics
 
-object DoNothingBuildMetricsReporter : BuildMetricsReporter {
-    override fun startMeasure(time: BuildTime) {
+object DoNothingBuildMetricsReporter : BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric> {
+    override fun startMeasure(time: GradleBuildTime) {
     }
 
-    override fun endMeasure(time: BuildTime) {
+    override fun endMeasure(time: GradleBuildTime) {
     }
 
-    override fun addTimeMetricNs(time: BuildTime, durationNs: Long) {
+    override fun addTimeMetricNs(time: GradleBuildTime, durationNs: Long) {
     }
 
-    override fun addMetric(metric: BuildPerformanceMetric, value: Long) {
+    override fun addMetric(metric: GradleBuildPerformanceMetric, value: Long) {
     }
 
-    override fun addTimeMetric(metric: BuildPerformanceMetric) {
+    override fun addTimeMetric(metric: GradleBuildPerformanceMetric) {
     }
 
     override fun addAttribute(attribute: BuildAttribute) {
@@ -33,12 +33,12 @@ object DoNothingBuildMetricsReporter : BuildMetricsReporter {
     override fun endGcMetric(name: String, value: GcMetric) {
     }
 
-    override fun getMetrics(): BuildMetrics =
+    override fun getMetrics(): BuildMetrics<GradleBuildTime, GradleBuildPerformanceMetric> =
         BuildMetrics(
             BuildTimes(),
             BuildPerformanceMetrics(),
             BuildAttributes()
         )
 
-    override fun addMetrics(metrics: BuildMetrics) {}
+    override fun addMetrics(metrics: BuildMetrics<GradleBuildTime, GradleBuildPerformanceMetric>) {}
 }
