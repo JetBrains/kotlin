@@ -25,11 +25,15 @@ internal fun renderReportedDiagnostic(
 
         ERROR -> logger.error("e: ${diagnostic.render(isVerbose)}\n")
 
-        FATAL -> if (diagnostic.throwable != null)
-            throw InvalidUserCodeException(diagnostic.render(isVerbose), diagnostic.throwable)
-        else throw InvalidUserCodeException(diagnostic.render(isVerbose))
+        FATAL -> throw diagnostic.createAnExceptionForFatalDiagnostic(isVerbose)
     }
 }
+
+internal fun ToolingDiagnostic.createAnExceptionForFatalDiagnostic(isVerbose: Boolean): InvalidUserCodeException =
+    if (throwable != null)
+        InvalidUserCodeException(render(isVerbose), throwable)
+    else
+        InvalidUserCodeException(render(isVerbose))
 
 private fun ToolingDiagnostic.render(isVerbose: Boolean): String = buildString {
     if (isVerbose) {
