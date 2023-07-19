@@ -82,7 +82,7 @@ class WasmTypeTransformer(
                 WasmF64
 
             builtIns.nothingNType ->
-                WasmRefNullNoneType
+                WasmRefNullrefType
 
             // Value will not be created. Just using a random Wasm type.
             builtIns.nothingType ->

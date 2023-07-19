@@ -297,7 +297,7 @@ class BodyGenerator(
             return
         }
 
-        body.buildRefNull(WasmHeapType.Simple.NullNone, location) // this = null
+        body.buildRefNull(WasmHeapType.Simple.None, location) // this = null
         generateCall(expression)
     }
 
@@ -738,7 +738,7 @@ class BodyGenerator(
         if (actualType.isNullableNothing() && expectedType.isNullable()) {
             if (expectedType.getClass()?.isExternal == true) {
                 body.buildDrop(location)
-                body.buildRefNull(WasmHeapType.Simple.NullNoExtern, location)
+                body.buildRefNull(WasmHeapType.Simple.NoExtern, location)
             }
             return
         }

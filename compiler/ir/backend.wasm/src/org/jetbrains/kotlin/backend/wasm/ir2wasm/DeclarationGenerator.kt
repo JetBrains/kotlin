@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.parentOrNull
 import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
@@ -491,8 +490,8 @@ fun generateDefaultInitializerForType(type: WasmType, g: WasmExpressionBuilder) 
             WasmF32 -> g.buildConstF32(0f, location)
             WasmF64 -> g.buildConstF64(0.0, location)
             is WasmRefNullType -> g.buildRefNull(type.heapType, location)
-            is WasmRefNullNoneType -> g.buildRefNull(WasmHeapType.Simple.NullNone, location)
-            is WasmRefNullExternrefType -> g.buildRefNull(WasmHeapType.Simple.NullNoExtern, location)
+            is WasmRefNullrefType -> g.buildRefNull(WasmHeapType.Simple.None, location)
+            is WasmRefNullExternrefType -> g.buildRefNull(WasmHeapType.Simple.NoExtern, location)
             is WasmAnyRef -> g.buildRefNull(WasmHeapType.Simple.Any, location)
             is WasmExternRef -> g.buildRefNull(WasmHeapType.Simple.Extern, location)
             WasmUnreachableType -> error("Unreachable type can't be initialized")
@@ -517,7 +516,7 @@ fun generateConstExpression(
     when (val kind = expression.kind) {
         is IrConstKind.Null -> {
             val isExternal = expression.type.getClass()?.isExternal ?: expression.type.erasedUpperBound?.isExternal
-            val bottomType = if (isExternal == true) WasmRefNullExternrefType else WasmRefNullNoneType
+            val bottomType = if (isExternal == true) WasmRefNullExternrefType else WasmRefNullrefType
             body.buildInstr(WasmOp.REF_NULL, location, WasmImmediate.HeapType(bottomType))
         }
         is IrConstKind.Boolean -> body.buildConstI32(if (kind.valueOf(expression)) 1 else 0, location)
