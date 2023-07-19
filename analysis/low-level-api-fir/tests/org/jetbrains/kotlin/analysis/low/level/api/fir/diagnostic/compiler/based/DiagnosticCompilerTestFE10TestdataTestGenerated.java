@@ -9296,6 +9296,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
                 }
 
                 @Test
+                @TestMetadata("fullyCompleteDelegateWhenPossible.kt")
+                public void testFullyCompleteDelegateWhenPossible() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/fullyCompleteDelegateWhenPossible.kt");
+                }
+
+                @Test
                 @TestMetadata("genericMethodInGenericClass.kt")
                 public void testGenericMethodInGenericClass() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/genericMethodInGenericClass.kt");
@@ -9323,6 +9329,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
                 @TestMetadata("labeledDelegatedExpression.kt")
                 public void testLabeledDelegatedExpression() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/labeledDelegatedExpression.kt");
+                }
+
+                @Test
+                @TestMetadata("lambdaWithMultipleReturns.kt")
+                public void testLambdaWithMultipleReturns() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/lambdaWithMultipleReturns.kt");
                 }
 
                 @Test
@@ -9377,6 +9389,18 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
                 @TestMetadata("typeOfLazyDelegatedPropertyWithObject.kt")
                 public void testTypeOfLazyDelegatedPropertyWithObject() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/typeOfLazyDelegatedPropertyWithObject.kt");
+                }
+
+                @Test
+                @TestMetadata("typeVariablesFlow.kt")
+                public void testTypeVariablesFlow() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/typeVariablesFlow.kt");
+                }
+
+                @Test
+                @TestMetadata("typeVariablesFlowComplex.kt")
+                public void testTypeVariablesFlowComplex() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/typeVariablesFlowComplex.kt");
                 }
 
                 @Test
@@ -9501,6 +9525,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
                 @TestMetadata("provideDelegateResolutionWithStubTypes.kt")
                 public void testProvideDelegateResolutionWithStubTypes() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/delegatedProperty/provideDelegate/provideDelegateResolutionWithStubTypes.kt");
+                }
+
+                @Test
+                @TestMetadata("provideDelegateResolutionWithStubTypesAndExtensionGetValue.kt")
+                public void testProvideDelegateResolutionWithStubTypesAndExtensionGetValue() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/delegatedProperty/provideDelegate/provideDelegateResolutionWithStubTypesAndExtensionGetValue.kt");
                 }
 
                 @Test
