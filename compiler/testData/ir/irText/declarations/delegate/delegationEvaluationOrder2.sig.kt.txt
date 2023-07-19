@@ -1,0 +1,319 @@
+package foo
+
+// CHECK:
+//   Mangled name: foo{}global
+//   Public signature: foo/global|4288684431328455501[0]
+//   Public signature debug description: {}global
+var global: String
+  // CHECK JVM_IR:
+  //   Mangled name: foo#<get-global>(){}kotlin.String
+  //   Public signature: foo/global.<get-global>|-6997244913903542523[0]
+  //   Public signature debug description: <get-global>(){}kotlin.String
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: foo#<get-global>(){}
+  //   Public signature: foo/global.<get-global>|7627852862574367240[0]
+  //   Public signature debug description: <get-global>(){}
+  get
+  // CHECK:
+  //   Mangled name: foo#<set-global>(kotlin.String){}
+  //   Public signature: foo/global.<set-global>|5315586845372819266[0]
+  //   Public signature debug description: <set-global>(kotlin.String){}
+  set
+
+// CHECK:
+//   Mangled name: foo.Base2Impl
+//   Public signature: foo/Base2Impl|null[0]
+class Base2Impl : Base2 {
+  // CHECK:
+  //   Mangled name: foo.Base2Impl{}s
+  //   Public signature: foo/Base2Impl.s|7217541905509134881[0]
+  //   Public signature debug description: {}s
+  val s: String
+    // CHECK JVM_IR:
+    //   Mangled name: foo.Base2Impl#<get-s>(){}kotlin.String
+    //   Public signature: foo/Base2Impl.s.<get-s>|4142379646177092803[0]
+    //   Public signature debug description: <get-s>(){}kotlin.String
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: foo.Base2Impl#<get-s>(){}
+    //   Public signature: foo/Base2Impl.s.<get-s>|-1662172381559511151[0]
+    //   Public signature debug description: <get-s>(){}
+    get
+
+  // CHECK:
+  //   Mangled name: foo.Base2Impl#<init>(kotlin.String){}
+  //   Public signature: foo/Base2Impl.<init>|1280618353163213788[0]
+  //   Public signature debug description: <init>(kotlin.String){}
+  constructor(s: String) /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: foo.Base2Impl#bar(kotlin.String){}kotlin.String
+  //   Public signature: foo/Base2Impl.bar|2000415168157940991[0]
+  //   Public signature debug description: bar(kotlin.String){}kotlin.String
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: foo.Base2Impl#bar(kotlin.String){}
+  //   Public signature: foo/Base2Impl.bar|5132770888056479978[0]
+  //   Public signature debug description: bar(kotlin.String){}
+  override fun bar(x: String): String
+
+}
+
+// CHECK:
+//   Mangled name: foo.BaseImpl
+//   Public signature: foo/BaseImpl|null[0]
+class BaseImpl : Base {
+  // CHECK:
+  //   Mangled name: foo.BaseImpl{}s
+  //   Public signature: foo/BaseImpl.s|7217541905509134881[0]
+  //   Public signature debug description: {}s
+  val s: String
+    // CHECK JVM_IR:
+    //   Mangled name: foo.BaseImpl#<get-s>(){}kotlin.String
+    //   Public signature: foo/BaseImpl.s.<get-s>|4142379646177092803[0]
+    //   Public signature debug description: <get-s>(){}kotlin.String
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: foo.BaseImpl#<get-s>(){}
+    //   Public signature: foo/BaseImpl.s.<get-s>|-1662172381559511151[0]
+    //   Public signature debug description: <get-s>(){}
+    get
+
+  // CHECK:
+  //   Mangled name: foo.BaseImpl#<init>(kotlin.String){}
+  //   Public signature: foo/BaseImpl.<init>|1280618353163213788[0]
+  //   Public signature debug description: <init>(kotlin.String){}
+  constructor(s: String) /* primary */
+
+  // CHECK JVM_IR:
+  //   Mangled name: foo.BaseImpl#foo(kotlin.String){}kotlin.String
+  //   Public signature: foo/BaseImpl.foo|-5534735991146511619[0]
+  //   Public signature debug description: foo(kotlin.String){}kotlin.String
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: foo.BaseImpl#foo(kotlin.String){}
+  //   Public signature: foo/BaseImpl.foo|1351044947738582195[0]
+  //   Public signature debug description: foo(kotlin.String){}
+  override fun foo(x: String): String
+
+}
+
+// CHECK:
+//   Mangled name: foo.Derived
+//   Public signature: foo/Derived|null[0]
+class Derived : DerivedBase, Base, Base2 {
+  // CHECK:
+  //   Mangled name: foo.Derived#<init>(){}
+  //   Public signature: foo/Derived.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+  // CHECK JVM_IR:
+  //   Mangled name: foo.Derived.$$delegate_0
+  //   Public signature: foo/Derived.$$delegate_0|-7286425919675154353[0]
+  //   Public signature debug description:
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: foo.Derived.$$delegate_0
+  //   Public signature: foo/Derived.$$delegate_0|-7286425919675154353[0]
+  //   Public signature debug description:
+  private /* final field */ val $$delegate_0: Base
+  // CHECK JVM_IR:
+  //   Mangled name: foo.Derived.$$delegate_1
+  //   Public signature: foo/Derived.$$delegate_1|-7286425919675154353[0]
+  //   Public signature debug description:
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: foo.Derived.$$delegate_1
+  //   Public signature: foo/Derived.$$delegate_1|-7286425919675154353[0]
+  //   Public signature debug description:
+  private /* final field */ val $$delegate_1: Base2
+  // CHECK JVM_IR:
+  //   Mangled name: foo.Derived#bar(kotlin.String){}kotlin.String
+  //   Public signature: foo/Derived.bar|2000415168157940991[0]
+  //   Public signature debug description: bar(kotlin.String){}kotlin.String
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: foo.Derived#bar(kotlin.String){}
+  //   Public signature: foo/Derived.bar|5132770888056479978[0]
+  //   Public signature debug description: bar(kotlin.String){}
+  override fun bar(x: String): String
+
+  // CHECK JVM_IR:
+  //   Mangled name: foo.Derived#foo(kotlin.String){}kotlin.String
+  //   Public signature: foo/Derived.foo|-5534735991146511619[0]
+  //   Public signature debug description: foo(kotlin.String){}kotlin.String
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: foo.Derived#foo(kotlin.String){}
+  //   Public signature: foo/Derived.foo|1351044947738582195[0]
+  //   Public signature debug description: foo(kotlin.String){}
+  override fun foo(x: String): String
+
+}
+
+// CHECK:
+//   Mangled name: foo.Derived1
+//   Public signature: foo/Derived1|null[0]
+class Derived1 : DerivedBase, Base, Base2 {
+  // CHECK:
+  //   Mangled name: foo.Derived1#<init>(){}
+  //   Public signature: foo/Derived1.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+  // CHECK JVM_IR:
+  //   Mangled name: foo.Derived1.$$delegate_0
+  //   Public signature: foo/Derived1.$$delegate_0|-7286425919675154353[0]
+  //   Public signature debug description:
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: foo.Derived1.$$delegate_0
+  //   Public signature: foo/Derived1.$$delegate_0|-7286425919675154353[0]
+  //   Public signature debug description:
+  private /* final field */ val $$delegate_0: Base
+  // CHECK JVM_IR:
+  //   Mangled name: foo.Derived1.$$delegate_1
+  //   Public signature: foo/Derived1.$$delegate_1|-7286425919675154353[0]
+  //   Public signature debug description:
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: foo.Derived1.$$delegate_1
+  //   Public signature: foo/Derived1.$$delegate_1|-7286425919675154353[0]
+  //   Public signature debug description:
+  private /* final field */ val $$delegate_1: Base2
+  // CHECK JVM_IR:
+  //   Mangled name: foo.Derived1#bar(kotlin.String){}kotlin.String
+  //   Public signature: foo/Derived1.bar|2000415168157940991[0]
+  //   Public signature debug description: bar(kotlin.String){}kotlin.String
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: foo.Derived1#bar(kotlin.String){}
+  //   Public signature: foo/Derived1.bar|5132770888056479978[0]
+  //   Public signature debug description: bar(kotlin.String){}
+  override fun bar(x: String): String
+
+  // CHECK JVM_IR:
+  //   Mangled name: foo.Derived1#foo(kotlin.String){}kotlin.String
+  //   Public signature: foo/Derived1.foo|-5534735991146511619[0]
+  //   Public signature debug description: foo(kotlin.String){}kotlin.String
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: foo.Derived1#foo(kotlin.String){}
+  //   Public signature: foo/Derived1.foo|1351044947738582195[0]
+  //   Public signature debug description: foo(kotlin.String){}
+  override fun foo(x: String): String
+
+}
+
+// CHECK:
+//   Mangled name: foo.Derived2
+//   Public signature: foo/Derived2|null[0]
+class Derived2 : DerivedBase, Base, Base2 {
+  // CHECK:
+  //   Mangled name: foo.Derived2#<init>(){}
+  //   Public signature: foo/Derived2.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+  // CHECK JVM_IR:
+  //   Mangled name: foo.Derived2.$$delegate_0
+  //   Public signature: foo/Derived2.$$delegate_0|-7286425919675154353[0]
+  //   Public signature debug description:
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: foo.Derived2.$$delegate_0
+  //   Public signature: foo/Derived2.$$delegate_0|-7286425919675154353[0]
+  //   Public signature debug description:
+  private /* final field */ val $$delegate_0: Base
+  // CHECK JVM_IR:
+  //   Mangled name: foo.Derived2.$$delegate_1
+  //   Public signature: foo/Derived2.$$delegate_1|-7286425919675154353[0]
+  //   Public signature debug description:
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: foo.Derived2.$$delegate_1
+  //   Public signature: foo/Derived2.$$delegate_1|-7286425919675154353[0]
+  //   Public signature debug description:
+  private /* final field */ val $$delegate_1: Base2
+  // CHECK JVM_IR:
+  //   Mangled name: foo.Derived2#bar(kotlin.String){}kotlin.String
+  //   Public signature: foo/Derived2.bar|2000415168157940991[0]
+  //   Public signature debug description: bar(kotlin.String){}kotlin.String
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: foo.Derived2#bar(kotlin.String){}
+  //   Public signature: foo/Derived2.bar|5132770888056479978[0]
+  //   Public signature debug description: bar(kotlin.String){}
+  override fun bar(x: String): String
+
+  // CHECK JVM_IR:
+  //   Mangled name: foo.Derived2#foo(kotlin.String){}kotlin.String
+  //   Public signature: foo/Derived2.foo|-5534735991146511619[0]
+  //   Public signature debug description: foo(kotlin.String){}kotlin.String
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: foo.Derived2#foo(kotlin.String){}
+  //   Public signature: foo/Derived2.foo|1351044947738582195[0]
+  //   Public signature debug description: foo(kotlin.String){}
+  override fun foo(x: String): String
+
+}
+
+// CHECK:
+//   Mangled name: foo.DerivedBase
+//   Public signature: foo/DerivedBase|null[0]
+open class DerivedBase {
+  // CHECK:
+  //   Mangled name: foo.DerivedBase#<init>(){}
+  //   Public signature: foo/DerivedBase.<init>|-5645683436151566731[0]
+  //   Public signature debug description: <init>(){}
+  constructor() /* primary */
+
+}
+
+// CHECK:
+//   Mangled name: foo.Base
+//   Public signature: foo/Base|null[0]
+interface Base {
+
+  // CHECK JVM_IR:
+  //   Mangled name: foo.Base#foo(kotlin.String){}kotlin.String
+  //   Public signature: foo/Base.foo|-5534735991146511619[0]
+  //   Public signature debug description: foo(kotlin.String){}kotlin.String
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: foo.Base#foo(kotlin.String){}
+  //   Public signature: foo/Base.foo|1351044947738582195[0]
+  //   Public signature debug description: foo(kotlin.String){}
+  abstract fun foo(x: String): String
+
+}
+
+// CHECK:
+//   Mangled name: foo.Base2
+//   Public signature: foo/Base2|null[0]
+interface Base2 {
+
+  // CHECK JVM_IR:
+  //   Mangled name: foo.Base2#bar(kotlin.String){}kotlin.String
+  //   Public signature: foo/Base2.bar|2000415168157940991[0]
+  //   Public signature debug description: bar(kotlin.String){}kotlin.String
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: foo.Base2#bar(kotlin.String){}
+  //   Public signature: foo/Base2.bar|5132770888056479978[0]
+  //   Public signature debug description: bar(kotlin.String){}
+  abstract fun bar(x: String): String
+
+}
+
+// CHECK JVM_IR:
+//   Mangled name: foo#box(){}kotlin.String
+//   Public signature: foo/box|-9347091776561469[0]
+//   Public signature debug description: box(){}kotlin.String
+// CHECK JS_IR NATIVE:
+//   Mangled name: foo#box(){}
+//   Public signature: foo/box|2173511048851971368[0]
+//   Public signature debug description: box(){}
+fun box(): String
+
+// CHECK JVM_IR:
+//   Mangled name: foo#newBase(){}foo.Base
+//   Public signature: foo/newBase|4074800280318487147[0]
+//   Public signature debug description: newBase(){}foo.Base
+// CHECK JS_IR NATIVE:
+//   Mangled name: foo#newBase(){}
+//   Public signature: foo/newBase|-6094796879594303932[0]
+//   Public signature debug description: newBase(){}
+fun newBase(): Base
+
+// CHECK JVM_IR:
+//   Mangled name: foo#newBase2(){}foo.Base2
+//   Public signature: foo/newBase2|2155458060891401186[0]
+//   Public signature debug description: newBase2(){}foo.Base2
+// CHECK JS_IR NATIVE:
+//   Mangled name: foo#newBase2(){}
+//   Public signature: foo/newBase2|-3649949204944094884[0]
+//   Public signature debug description: newBase2(){}
+fun newBase2(): Base2
+

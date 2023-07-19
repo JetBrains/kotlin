@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.backend
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtPsiSourceFileLinesMapping
 import org.jetbrains.kotlin.KtSourceFileLinesMappingFromLineStartOffsets
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
@@ -250,11 +251,17 @@ class Fir2IrConverter(
         }
     }
 
-    // Sort declarations so that all non-synthetic declarations are before synthetic ones.
+    // Sort declarations so that all non-synthetic declarations and `synthetic class delegation fields` are before other synthetic ones.
     // This is needed because converting synthetic fields for implementation delegation needs to know
     // existing declarations in the class to avoid adding redundant delegated members.
     private fun syntheticPropertiesLast(declarations: Iterable<FirDeclaration>): Iterable<FirDeclaration> {
-        return declarations.sortedBy { it !is FirField && it.isSynthetic }
+        return declarations.sortedBy {
+            when {
+                !it.isSynthetic -> false
+                it.source?.kind is KtFakeSourceElementKind.ClassDelegationField -> false
+                else -> true
+            }
+        }
     }
 
     private fun registerClassAndNestedClasses(klass: FirClass, parent: IrDeclarationParent): IrClass {

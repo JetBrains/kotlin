@@ -782,6 +782,29 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
             }
         }
 
+        @TestMetadata("compiler/testData/ir/irText/declarations/delegate")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Delegate extends AbstractKlibIrTextTestCase {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JS_IR, testDataFilePath, "// IGNORE_BACKEND_KLIB: ");
+            }
+
+            public void testAllFilesPresentInDelegate() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations/delegate"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            }
+
+            @TestMetadata("delegationEvaluationOrder1.kt")
+            public void testDelegationEvaluationOrder1() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/delegate/delegationEvaluationOrder1.kt");
+            }
+
+            @TestMetadata("delegationEvaluationOrder2.kt")
+            public void testDelegationEvaluationOrder2() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/delegate/delegationEvaluationOrder2.kt");
+            }
+        }
+
         @TestMetadata("compiler/testData/ir/irText/declarations/jvmRecord")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

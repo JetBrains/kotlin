@@ -973,6 +973,28 @@ public class ClassicJvmIrTextTestGenerated extends AbstractClassicJvmIrTextTest 
         }
 
         @Nested
+        @TestMetadata("compiler/testData/ir/irText/declarations/delegate")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Delegate {
+            @Test
+            public void testAllFilesPresentInDelegate() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations/delegate"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @Test
+            @TestMetadata("delegationEvaluationOrder1.kt")
+            public void testDelegationEvaluationOrder1() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/delegate/delegationEvaluationOrder1.kt");
+            }
+
+            @Test
+            @TestMetadata("delegationEvaluationOrder2.kt")
+            public void testDelegationEvaluationOrder2() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/delegate/delegationEvaluationOrder2.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/ir/irText/declarations/jvmRecord")
         @TestDataPath("$PROJECT_ROOT")
         public class JvmRecord {
