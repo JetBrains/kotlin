@@ -12147,6 +12147,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
             }
 
             @Test
+            @TestMetadata("noTypeVariablesLeft.kt")
+            public void testNoTypeVariablesLeft() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/noTypeVariablesLeft.kt");
+            }
+
+            @Test
             @TestMetadata("privateVar.kt")
             public void testPrivateVar() throws Exception {
                 runTest("compiler/testData/codegen/box/delegatedProperty/privateVar.kt");
