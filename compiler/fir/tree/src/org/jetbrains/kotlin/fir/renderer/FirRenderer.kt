@@ -245,6 +245,14 @@ class FirRenderer(
             typeParameterRef.symbol.fir.accept(this)
         }
 
+        override fun visitOuterClassTypeParameterRef(outerClassTypeParameterRef: FirOuterClassTypeParameterRef) {
+            visitTypeParameterRef(outerClassTypeParameterRef)
+        }
+
+        override fun visitConstructedClassTypeParameterRef(constructedClassTypeParameterRef: FirConstructedClassTypeParameterRef) {
+            visitTypeParameterRef(constructedClassTypeParameterRef)
+        }
+
         override fun visitMemberDeclaration(memberDeclaration: FirMemberDeclaration) {
             modifierRenderer?.renderModifiers(memberDeclaration)
             declarationRenderer?.render(memberDeclaration)

@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.fir.visitors
 
+import org.jetbrains.kotlin.fir.declarations.FirConstructedClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
+import org.jetbrains.kotlin.fir.declarations.FirOuterClassTypeParameterRef
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirReference
@@ -105,6 +108,14 @@ abstract class FirDefaultTransformer<D> : FirTransformer<D>() {
 
     override fun transformImplicitInvokeCall(implicitInvokeCall: FirImplicitInvokeCall, data: D): FirStatement {
         return transformFunctionCall(implicitInvokeCall, data)
+    }
+
+    override fun transformConstructedClassTypeParameterRef(constructedClassTypeParameterRef: FirConstructedClassTypeParameterRef, data: D): FirTypeParameterRef {
+        return transformTypeParameterRef(constructedClassTypeParameterRef, data)
+    }
+
+    override fun transformOuterClassTypeParameterRef(outerClassTypeParameterRef: FirOuterClassTypeParameterRef, data: D): FirTypeParameterRef {
+        return transformTypeParameterRef(outerClassTypeParameterRef, data)
     }
 }
 

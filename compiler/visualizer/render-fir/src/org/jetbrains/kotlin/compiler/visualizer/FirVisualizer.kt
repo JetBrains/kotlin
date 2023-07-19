@@ -613,6 +613,15 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             visitTypeParameter(typeParameterRef.symbol.fir, data)
         }
 
+        override fun visitOuterClassTypeParameterRef(outerClassTypeParameterRef: FirOuterClassTypeParameterRef, data: StringBuilder) {
+            visitTypeParameterRef(outerClassTypeParameterRef, data)
+        }
+
+        override fun visitConstructedClassTypeParameterRef(constructedClassTypeParameterRef: FirConstructedClassTypeParameterRef, data: StringBuilder
+        ) {
+            visitTypeParameterRef(constructedClassTypeParameterRef, data)
+        }
+
         override fun visitTypeParameter(typeParameter: FirTypeParameter, data: StringBuilder) {
             data.append(typeParameter.name)
             val bounds = typeParameter.bounds.filterNot { it.render() == "kotlin/Any?" }

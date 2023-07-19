@@ -29,6 +29,8 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.fir.declarations.FirConstructedClassTypeParameterRef
+import org.jetbrains.kotlin.fir.declarations.FirOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
@@ -212,6 +214,10 @@ abstract class FirVisitor<out R, in D> {
     open fun visitTypeParameterRef(typeParameterRef: FirTypeParameterRef, data: D): R  = visitElement(typeParameterRef, data)
 
     open fun visitTypeParameter(typeParameter: FirTypeParameter, data: D): R  = visitElement(typeParameter, data)
+
+    open fun visitConstructedClassTypeParameterRef(constructedClassTypeParameterRef: FirConstructedClassTypeParameterRef, data: D): R  = visitElement(constructedClassTypeParameterRef, data)
+
+    open fun visitOuterClassTypeParameterRef(outerClassTypeParameterRef: FirOuterClassTypeParameterRef, data: D): R  = visitElement(outerClassTypeParameterRef, data)
 
     open fun visitVariable(variable: FirVariable, data: D): R  = visitElement(variable, data)
 

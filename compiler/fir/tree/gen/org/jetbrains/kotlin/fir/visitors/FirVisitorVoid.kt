@@ -29,6 +29,8 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.fir.declarations.FirConstructedClassTypeParameterRef
+import org.jetbrains.kotlin.fir.declarations.FirOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
@@ -257,6 +259,14 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitTypeParameter(typeParameter: FirTypeParameter) {
         visitElement(typeParameter)
+    }
+
+    open fun visitConstructedClassTypeParameterRef(constructedClassTypeParameterRef: FirConstructedClassTypeParameterRef) {
+        visitElement(constructedClassTypeParameterRef)
+    }
+
+    open fun visitOuterClassTypeParameterRef(outerClassTypeParameterRef: FirOuterClassTypeParameterRef) {
+        visitElement(outerClassTypeParameterRef)
     }
 
     open fun visitVariable(variable: FirVariable) {
@@ -869,6 +879,14 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitTypeParameter(typeParameter: FirTypeParameter, data: Nothing?) {
         visitTypeParameter(typeParameter)
+    }
+
+    final override fun visitConstructedClassTypeParameterRef(constructedClassTypeParameterRef: FirConstructedClassTypeParameterRef, data: Nothing?) {
+        visitConstructedClassTypeParameterRef(constructedClassTypeParameterRef)
+    }
+
+    final override fun visitOuterClassTypeParameterRef(outerClassTypeParameterRef: FirOuterClassTypeParameterRef, data: Nothing?) {
+        visitOuterClassTypeParameterRef(outerClassTypeParameterRef)
     }
 
     final override fun visitVariable(variable: FirVariable, data: Nothing?) {

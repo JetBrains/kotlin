@@ -31,10 +31,10 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             defaultFalse("isPrimary", withGetter = true)
         }
 
-        impl(typeParameterRef, "FirOuterClassTypeParameterRef") {
+        impl(outerClassTypeParameterRef) {
             publicImplementation()
         }
-        impl(typeParameterRef, "FirConstructedClassTypeParameterRef")
+        impl(constructedClassTypeParameterRef)
 
         noImpl(declarationStatus)
         noImpl(resolvedDeclarationStatus)
