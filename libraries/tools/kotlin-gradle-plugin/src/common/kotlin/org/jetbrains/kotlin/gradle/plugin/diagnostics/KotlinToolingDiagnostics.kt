@@ -544,7 +544,7 @@ object KotlinToolingDiagnostics {
                 Declaring multiple Kotlin Targets of the same type is not recommended
                 and will become an error in the upcoming Kotlin releases.
                 
-                Read https://kotl.in/04i2n7 for details.
+                Read https://kotl.in/declaring-multiple-targets for details.
             """.trimIndent()
         )
     }
