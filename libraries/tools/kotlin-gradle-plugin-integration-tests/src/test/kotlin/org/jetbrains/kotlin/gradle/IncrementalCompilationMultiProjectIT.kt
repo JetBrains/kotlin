@@ -12,8 +12,7 @@ import org.junit.jupiter.api.DisplayName
 import java.nio.file.Path
 import kotlin.io.path.*
 
-@JsGradlePluginTests
-open class IncrementalCompilationJsMultiProjectIT : BaseIncrementalCompilationMultiProjectIT() {
+abstract class IncrementalCompilationJsMultiProjectIT : BaseIncrementalCompilationMultiProjectIT() {
     override val defaultProjectName: String = "incrementalMultiproject"
 
     override fun defaultProject(
@@ -151,24 +150,40 @@ open class IncrementalCompilationJsMultiProjectIT : BaseIncrementalCompilationMu
     }
 }
 
-open class IncrementalCompilationJsMultiProjectWithPreciseBackupIT : IncrementalCompilationJsMultiProjectIT() {
+abstract class IncrementalCompilationJsMultiProjectWithPreciseBackupIT : IncrementalCompilationJsMultiProjectIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = true, keepIncrementalCompilationCachesInMemory = true)
 }
 
-class IncrementalCompilationFirJsMultiProject : IncrementalCompilationJsMultiProjectIT() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copy(
-        languageVersion = "2.0"
-    )
+@JsGradlePluginTests
+class IncrementalCompilationK1JsMultiProject : IncrementalCompilationJsMultiProjectIT() {
+    override val defaultBuildOptions: BuildOptions
+        get() =
+            if (KotlinVersion.CURRENT.major >= 2) super.defaultBuildOptions.copy(languageVersion = "1.9")
+            else super.defaultBuildOptions
 }
 
-class IncrementalCompilationFirJsMultiProjectWithPreciseBackupIT : IncrementalCompilationJsMultiProjectWithPreciseBackupIT() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copy(
-        languageVersion = "2.0"
-    )
+class IncrementalCompilationK1JsMultiProjectWithPreciseBackupIT : IncrementalCompilationJsMultiProjectWithPreciseBackupIT() {
+    override val defaultBuildOptions: BuildOptions
+        get() =
+            if (KotlinVersion.CURRENT.major >= 2) super.defaultBuildOptions.copy(languageVersion = "1.9")
+            else super.defaultBuildOptions
 }
 
-@JvmGradlePluginTests
-open class IncrementalCompilationJvmMultiProjectIT : BaseIncrementalCompilationMultiProjectIT() {
+class IncrementalCompilationK2JsMultiProject : IncrementalCompilationJsMultiProjectIT() {
+    override val defaultBuildOptions: BuildOptions
+        get() =
+            if (KotlinVersion.CURRENT.major < 2) super.defaultBuildOptions.copy(languageVersion = "2.0")
+            else super.defaultBuildOptions
+}
+
+class IncrementalCompilationK2JsMultiProjectWithPreciseBackupIT : IncrementalCompilationJsMultiProjectWithPreciseBackupIT() {
+    override val defaultBuildOptions: BuildOptions
+        get() =
+            if (KotlinVersion.CURRENT.major < 2) super.defaultBuildOptions.copy(languageVersion = "2.0")
+            else super.defaultBuildOptions
+}
+
+abstract class IncrementalCompilationJvmMultiProjectIT : BaseIncrementalCompilationMultiProjectIT() {
     override val additionalLibDependencies: String =
         "implementation \"org.jetbrains.kotlin:kotlin-test:${'$'}kotlin_version\""
 
@@ -328,8 +343,19 @@ class IncrementalCompilationJvmMultiProjectWithPreciseBackupIT : IncrementalComp
     override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = true, keepIncrementalCompilationCachesInMemory = true)
 }
 
-class IncrementalCompilationFirJvmMultiProjectIT : IncrementalCompilationJvmMultiProjectIT() {
-    override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions.copy(languageVersion = "2.0")
+@JvmGradlePluginTests
+class IncrementalCompilationK1JvmMultiProjectIT : IncrementalCompilationJvmMultiProjectIT() {
+    override val defaultBuildOptions: BuildOptions
+        get() =
+            if (KotlinVersion.CURRENT.major >= 2) super.defaultBuildOptions.copy(languageVersion = "1.9")
+            else super.defaultBuildOptions
+}
+
+class IncrementalCompilationK2JvmMultiProjectIT : IncrementalCompilationJvmMultiProjectIT() {
+    override val defaultBuildOptions: BuildOptions
+        get() =
+            if (KotlinVersion.CURRENT.major < 2) super.defaultBuildOptions.copy(languageVersion = "2.0")
+            else super.defaultBuildOptions
 }
 
 open class IncrementalCompilationOldICJvmMultiProjectIT : IncrementalCompilationJvmMultiProjectIT() {

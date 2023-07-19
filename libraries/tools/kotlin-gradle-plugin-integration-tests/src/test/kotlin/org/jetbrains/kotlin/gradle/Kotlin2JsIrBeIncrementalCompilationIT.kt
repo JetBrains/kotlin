@@ -19,13 +19,22 @@ import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
-@DisplayName("Incremental compilation tests for Kotlin JS IR backend with 2.0")
+@DisplayName("Incremental compilation tests for Kotlin JS IR backend with K1")
 @JsGradlePluginTests
-class Kotlin2FirJsIrBeIncrementalCompilationIT : Kotlin2JsIrBeIncrementalCompilationIT() {
+class Kotlin2JsK1IrBeIncrementalCompilationIT : Kotlin2JsIrBeIncrementalCompilationIT() {
     override val defaultBuildOptions: BuildOptions
-        get() = super.defaultBuildOptions.copy(
-            languageVersion = "2.0"
-        )
+        get() =
+            if (KotlinVersion.CURRENT.major >= 2) super.defaultBuildOptions.copy(languageVersion = "1.9")
+            else super.defaultBuildOptions
+}
+
+@DisplayName("Incremental compilation tests for Kotlin JS IR backend with K2")
+@JsGradlePluginTests
+class Kotlin2JsK2IrBeIncrementalCompilationIT : Kotlin2JsIrBeIncrementalCompilationIT() {
+    override val defaultBuildOptions: BuildOptions
+        get() =
+            if (KotlinVersion.CURRENT.major < 2) super.defaultBuildOptions.copy(languageVersion = "2.0")
+            else super.defaultBuildOptions
 
     @Disabled("Not found way to fail BE compilation with successful FE 2.0 compilation")
     override fun testRebuildAfterError(gradleVersion: GradleVersion) {
@@ -33,9 +42,7 @@ class Kotlin2FirJsIrBeIncrementalCompilationIT : Kotlin2JsIrBeIncrementalCompila
     }
 }
 
-@DisplayName("Incremental compilation tests for Kotlin JS IR backend")
-@JsGradlePluginTests
-open class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
+abstract class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
     override val defaultBuildOptions = BuildOptions(
         jsOptions = BuildOptions.JsOptions(
             jsCompilerType = KotlinJsCompilerType.IR,

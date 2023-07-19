@@ -17,16 +17,19 @@ import kotlin.io.path.*
 import kotlin.test.*
 
 @JsGradlePluginTests
-open class KotlinJsIr10IncrementalGradlePluginIT : AbstractKotlinJsIncrementalGradlePluginIT(
-    irBackend = true
-)
+open class KotlinJsK1IncrementalGradlePluginIT : AbstractKotlinJsIncrementalGradlePluginIT(irBackend = true) {
+    override val defaultBuildOptions: BuildOptions
+        get() =
+            if (KotlinVersion.CURRENT.major >= 2) super.defaultBuildOptions.copy(languageVersion = "1.9")
+            else super.defaultBuildOptions
+}
 
 @JsGradlePluginTests
-class KotlinJsFirIncrementalGradlePluginIT : KotlinJsIr10IncrementalGradlePluginIT() {
+class KotlinJsK2IncrementalGradlePluginIT : AbstractKotlinJsIncrementalGradlePluginIT(irBackend = true) {
     override val defaultBuildOptions: BuildOptions
-        get() = super.defaultBuildOptions.copy(
-            languageVersion = "2.0"
-        )
+        get() =
+            if (KotlinVersion.CURRENT.major < 2) super.defaultBuildOptions.copy(languageVersion = "2.0")
+            else super.defaultBuildOptions
 }
 
 @JsGradlePluginTests
