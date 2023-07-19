@@ -29,11 +29,16 @@ object ViperPoweredDeclarationChecker : FirFunctionChecker() {
         val contractDescription = declaration.contractDescription as? FirResolvedContractDescription ?: return
 
         val converter = Converter()
-        val config = Config(asScala(emptyList<String>()).toSeq())
+        val config = Config(asScala(listOf<String>()).toSeq())
 
         @Suppress("UNCHECKED_CAST")
-        val verifier = DefaultMainVerifier(config, StdIOReporter("stdout_reporter", true), `NoopSymbExLog$`.`MODULE$` as SymbExLogger<out MemberSymbExLogger>)
+        val verifier = DefaultMainVerifier(
+            config,
+            StdIOReporter("stdout_reporter", true),
+            `NoopSymbExLog$`.`MODULE$` as SymbExLogger<out MemberSymbExLogger>
+        )
 
+        verifier.start()
         @Suppress("UNCHECKED_CAST")
         verifier.verify(converter.program, asScala(emptyList<SilverCfg>()).toSeq(), scala.`None$`.`MODULE$` as Option<String>)
 

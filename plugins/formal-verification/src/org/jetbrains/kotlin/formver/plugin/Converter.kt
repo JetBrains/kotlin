@@ -5,9 +5,25 @@
 
 package org.jetbrains.kotlin.formver.plugin
 
+import scala.jdk.javaapi.CollectionConverters
+import viper.silver.ast.`NoInfo$`
+import viper.silver.ast.`NoPosition$`
+import viper.silver.ast.`NoTrafos$`
 import viper.silver.ast.Program
+
+private fun<T> emptySeq() = CollectionConverters.asScala(emptyList<T>()).toSeq()
 
 class Converter {
     val program: Program
-        get() = throw NotImplementedError()
+        get() = Program(
+            emptySeq(),
+            emptySeq(),
+            emptySeq(),
+            emptySeq(),
+            emptySeq(),
+            emptySeq(),
+            `NoPosition$`.`MODULE$`,
+            `NoInfo$`.`MODULE$`,
+            `NoTrafos$`.`MODULE$`
+        )
 }
