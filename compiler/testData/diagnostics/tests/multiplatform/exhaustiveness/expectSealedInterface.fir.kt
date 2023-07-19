@@ -9,7 +9,7 @@ class A : Base
 object B : Base
 
 fun testCommon(base: Base) {
-    val x = when (base) { // must be an error
+    val x = <!NO_ELSE_IN_WHEN!>when<!> (base) { // must be an error
         is A -> 1
         B -> 2
     }

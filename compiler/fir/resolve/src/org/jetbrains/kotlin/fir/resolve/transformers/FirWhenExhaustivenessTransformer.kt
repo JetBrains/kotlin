@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
@@ -120,19 +121,21 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
             return
         }
 
-        val unwrappedIntersectionTypes = subjectType.unwrapIntersectionType()
-
         var status: ExhaustivenessStatus = ExhaustivenessStatus.NotExhaustive.NO_ELSE_BRANCH
 
-        for (unwrappedSubjectType in unwrappedIntersectionTypes) {
-            val localStatus = computeStatusForNonIntersectionType(unwrappedSubjectType, session, whenExpression)
-            when {
-                localStatus === ExhaustivenessStatus.ProperlyExhaustive -> {
-                    status = localStatus
-                    break
-                }
-                localStatus !== ExhaustivenessStatus.NotExhaustive.NO_ELSE_BRANCH && status === ExhaustivenessStatus.NotExhaustive.NO_ELSE_BRANCH -> {
-                    status = localStatus
+        if (subjectType.toRegularClassSymbol(session)?.isExpect != true) {
+            val unwrappedIntersectionTypes = subjectType.unwrapIntersectionType()
+
+            for (unwrappedSubjectType in unwrappedIntersectionTypes) {
+                val localStatus = computeStatusForNonIntersectionType(unwrappedSubjectType, session, whenExpression)
+                when {
+                    localStatus === ExhaustivenessStatus.ProperlyExhaustive -> {
+                        status = localStatus
+                        break
+                    }
+                    localStatus !== ExhaustivenessStatus.NotExhaustive.NO_ELSE_BRANCH && status === ExhaustivenessStatus.NotExhaustive.NO_ELSE_BRANCH -> {
+                        status = localStatus
+                    }
                 }
             }
         }
