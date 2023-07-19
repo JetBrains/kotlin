@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.containingClassForLocalAttr
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
@@ -18,8 +19,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.toSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.*
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.toLookupTag
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -583,16 +583,23 @@ class Fir2IrClassifierStorage(
         )
     }
 
-    fun findIrClass(lookupTag: ConeClassLikeLookupTag): IrClass? {
+    fun findContainingIrClass(lookupTag: ConeClassLikeLookupTag): IrClass? {
         return if (lookupTag.classId.isLocal) {
             getCachedLocalClass(lookupTag)
         } else {
             val firSymbol = lookupTag.toSymbol(session)
             if (firSymbol is FirClassSymbol) {
-                getIrClassSymbol(firSymbol).owner
-            } else {
-                null
+                return getIrClassSymbol(firSymbol).owner
             }
+
+            if (firSymbol is FirTypeAliasSymbol) {
+                val expandedClassSymbol = firSymbol.resolvedExpandedTypeRef.toRegularClassSymbol(session)
+                if (expandedClassSymbol != null) {
+                    return getIrClassSymbol(expandedClassSymbol).owner
+                }
+            }
+
+            return null
         }
     }
 
