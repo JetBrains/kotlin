@@ -64,6 +64,7 @@ dependencies {
     testApi(commonDependency("junit:junit"))
     testApi(projectTests(":compiler:tests-common"))
     testApi(projectTests(":compiler:tests-common-new"))
+    testImplementation(project(":compiler:backend.wasm"))
     testApi(intellijCore())
 
     jsShell("org.mozilla:jsshell:$jsShellVersion:$jsShellSuffix@zip")
