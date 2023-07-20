@@ -9,6 +9,7 @@ import org.gradle.testkit.runner.BuildResult
 import org.jetbrains.kotlin.gradle.BaseGradleIT
 import org.jetbrains.kotlin.gradle.internals.VERBOSE_DIAGNOSTIC_SEPARATOR
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticFactory
+import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
@@ -26,6 +27,17 @@ fun BuildResult.assertHasDiagnostic(diagnosticFactory: ToolingDiagnosticFactory,
 
 fun BuildResult.assertNoDiagnostic(diagnosticFactory: ToolingDiagnosticFactory, withSubstring: String? = null) {
     output.assertNoDiagnostic(diagnosticFactory, withSubstring)
+}
+
+fun BuildResult.assertVerboseDiagnosticsEqual(diagnosticFactory: ToolingDiagnosticFactory, messages: List<String>) {
+    output.assertVerboseDiagnosticsEqual(diagnosticFactory, messages)
+}
+
+fun String.assertVerboseDiagnosticsEqual(diagnosticFactory: ToolingDiagnosticFactory, messages: List<String>) {
+    assertEquals(
+        extractVerboselyRenderedDiagnostics(diagnosticFactory, this),
+        messages,
+    )
 }
 
 fun String.assertHasDiagnostic(diagnosticFactory: ToolingDiagnosticFactory, withSubstring: String? = null) {
