@@ -16,8 +16,8 @@ object PillImporter {
     )
 
     @JvmStatic
-    fun run(rootProject: Project, taskName: String, platformDir: File, resourcesDir: File, isIdePluginAttached: Boolean) {
-        val tasks = JpsCompatiblePluginTasks(rootProject, platformDir, resourcesDir, isIdePluginAttached)
+    fun run(rootProject: Project, taskName: String, platformDir: File, resourcesDir: File) {
+        val tasks = JpsCompatiblePluginTasks(rootProject, platformDir, resourcesDir)
         val task = TASKS[taskName] ?: error("Unknown task $taskName, available tasks: " + TASKS.keys.joinToString())
         task(tasks)
     }
