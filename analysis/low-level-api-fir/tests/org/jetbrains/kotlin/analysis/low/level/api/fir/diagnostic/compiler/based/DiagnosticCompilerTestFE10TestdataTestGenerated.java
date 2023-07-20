@@ -25967,39 +25967,15 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
             }
 
             @Test
-            @TestMetadata("RedeclarationMainInMultiFile.kt")
-            public void testRedeclarationMainInMultiFile() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/redeclarations/RedeclarationMainInMultiFile.kt");
+            @TestMetadata("RedeclarationOfMain.kt")
+            public void testRedeclarationOfMain() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/redeclarations/RedeclarationOfMain.kt");
             }
 
             @Test
-            @TestMetadata("RedeclarationParameterlessMain.kt")
-            public void testRedeclarationParameterlessMain() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/redeclarations/RedeclarationParameterlessMain.kt");
-            }
-
-            @Test
-            @TestMetadata("RedeclarationParameterlessMainInvalid.kt")
-            public void testRedeclarationParameterlessMainInvalid() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/redeclarations/RedeclarationParameterlessMainInvalid.kt");
-            }
-
-            @Test
-            @TestMetadata("RedeclarationParameterlessMain_before.kt")
-            public void testRedeclarationParameterlessMain_before() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/redeclarations/RedeclarationParameterlessMain_before.kt");
-            }
-
-            @Test
-            @TestMetadata("RedeclarationSuspendMainInMultiFile.kt")
-            public void testRedeclarationSuspendMainInMultiFile() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/redeclarations/RedeclarationSuspendMainInMultiFile.kt");
-            }
-
-            @Test
-            @TestMetadata("RedeclarationSuspendMainInMultiFile_before.kt")
-            public void testRedeclarationSuspendMainInMultiFile_before() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/redeclarations/RedeclarationSuspendMainInMultiFile_before.kt");
+            @TestMetadata("RedeclarationOfMain_before.kt")
+            public void testRedeclarationOfMain_before() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/redeclarations/RedeclarationOfMain_before.kt");
             }
 
             @Test

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.FirDeclarationPresenter
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
@@ -17,20 +16,9 @@ import org.jetbrains.kotlin.fir.declarations.isEquals
 import org.jetbrains.kotlin.fir.declarations.utils.hasBody
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
-import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.util.OperatorNameConventions.TO_STRING
 
-object FirMethodOfAnyImplementedInInterfaceChecker : FirRegularClassChecker(), FirDeclarationPresenter {
-    // We need representations that look like JVM signatures. Thus, just function names, not fully qualified ones.
-    override fun StringBuilder.appendRepresentation(it: CallableId) {
-        append(it.callableName)
-    }
-
-    // We need representations that look like JVM signatures. Hence, no need to represent operator.
-    override fun StringBuilder.appendOperatorTag(it: FirSimpleFunction) {
-        // Intentionally empty
-    }
-
+object FirMethodOfAnyImplementedInInterfaceChecker : FirRegularClassChecker() {
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!declaration.isInterface) {
             return

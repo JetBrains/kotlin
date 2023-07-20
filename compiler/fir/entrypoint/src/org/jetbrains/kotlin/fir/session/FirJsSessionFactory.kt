@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.FirPlatformDiagnosticSuppresso
 import org.jetbrains.kotlin.fir.analysis.js.checkers.FirJsModuleKind
 import org.jetbrains.kotlin.fir.analysis.js.checkers.FirJsPlatformDiagnosticSuppressor
 import org.jetbrains.kotlin.fir.checkers.registerJsCheckers
+import org.jetbrains.kotlin.fir.declarations.FirTypeSpecificityComparatorProvider
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
@@ -25,8 +26,10 @@ import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFunctionInterfaceProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.scopes.FirPlatformClassMapper
+import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.js.resolve.JsTypeSpecificityComparatorWithoutDelegate
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.js.ModuleKind
@@ -106,6 +109,10 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
     fun FirSession.registerJsSpecificComponents(compilerConfiguration: CompilerConfiguration) {
         register(FirVisibilityChecker::class, FirVisibilityChecker.Default)
         register(ConeCallConflictResolverFactory::class, JsCallConflictResolverFactory)
+        register(
+            FirTypeSpecificityComparatorProvider::class,
+            FirTypeSpecificityComparatorProvider(JsTypeSpecificityComparatorWithoutDelegate(typeContext))
+        )
         register(FirPlatformClassMapper::class, FirPlatformClassMapper.Default)
         register(FirOverridesBackwardCompatibilityHelper::class, FirEmptyOverridesBackwardCompatibilityHelper)
         register(FirPlatformDiagnosticSuppressor::class, FirJsPlatformDiagnosticSuppressor())

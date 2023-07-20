@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.fir.analysis.jvm.FirJvmOverridesBackwardCompatibilit
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.FirJvmInlineCheckerComponent
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.caches.FirThreadUnsafeCachesFactory
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOverloadabilityHelper
+import org.jetbrains.kotlin.fir.declarations.FirTypeSpecificityComparatorProvider
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProvider
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProviderImpl
 import org.jetbrains.kotlin.fir.deserialization.DeserializedClassConfigurator
@@ -32,6 +34,7 @@ import org.jetbrains.kotlin.fir.java.enhancement.JavaCompilerRequiredAnnotationE
 import org.jetbrains.kotlin.fir.java.scopes.JavaOverridabilityRules
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
+import org.jetbrains.kotlin.fir.resolve.calls.FirDeclarationOverloadabilityHelperImpl
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticNamesProvider
 import org.jetbrains.kotlin.fir.resolve.calls.jvm.JvmCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
@@ -48,12 +51,10 @@ import org.jetbrains.kotlin.fir.scopes.PlatformSpecificOverridabilityRules
 import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.serialization.FirProvidedDeclarationsForMetadataService
 import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
-import org.jetbrains.kotlin.fir.types.FirCorrespondingSupertypesCache
-import org.jetbrains.kotlin.fir.types.FirFunctionTypeKindService
-import org.jetbrains.kotlin.fir.types.FirFunctionTypeKindServiceImpl
-import org.jetbrains.kotlin.fir.types.TypeComponents
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.resolve.jvm.JvmTypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 
 // -------------------------- Required components --------------------------
@@ -79,6 +80,7 @@ fun FirSession.registerCommonComponents(languageVersionSettings: LanguageVersion
     register(FirDynamicMembersStorage::class, FirDynamicMembersStorage(this))
     register(FirEnumEntriesSupport::class, FirEnumEntriesSupport(this))
     register(FirOverrideChecker::class, FirStandardOverrideChecker(this))
+    register(FirDeclarationOverloadabilityHelper::class, FirDeclarationOverloadabilityHelperImpl(this))
 }
 
 @OptIn(SessionConfiguration::class)
@@ -153,6 +155,10 @@ fun FirSession.registerResolveComponents(lookupTracker: LookupTracker? = null, e
 fun FirSession.registerJavaSpecificResolveComponents() {
     register(FirVisibilityChecker::class, FirJavaVisibilityChecker)
     register(ConeCallConflictResolverFactory::class, JvmCallConflictResolverFactory)
+    register(
+        FirTypeSpecificityComparatorProvider::class,
+        FirTypeSpecificityComparatorProvider(JvmTypeSpecificityComparator(typeContext))
+    )
     register(FirPlatformClassMapper::class, FirJavaClassMapper(this))
     register(FirSyntheticNamesProvider::class, FirJavaSyntheticNamesProvider)
     register(FirOverridesBackwardCompatibilityHelper::class, FirJvmOverridesBackwardCompatibilityHelper)

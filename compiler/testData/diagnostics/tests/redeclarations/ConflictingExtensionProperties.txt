@@ -1,6 +1,0 @@
-package
-
-package foo {
-    public val kotlin.Int.foo: kotlin.Int
-    public val kotlin.Int.foo: kotlin.Int
-}

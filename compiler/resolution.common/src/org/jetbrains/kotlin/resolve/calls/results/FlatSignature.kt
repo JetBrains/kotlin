@@ -12,6 +12,11 @@ interface SpecificityComparisonCallbacks {
     fun isNonSubtypeNotLessSpecific(specific: KotlinTypeMarker, general: KotlinTypeMarker): Boolean
 }
 
+object OverloadabilitySpecificityCallbacks : SpecificityComparisonCallbacks {
+    override fun isNonSubtypeNotLessSpecific(specific: KotlinTypeMarker, general: KotlinTypeMarker): Boolean =
+        false
+}
+
 class TypeWithConversion(val resultType: KotlinTypeMarker?, val originalTypeIfWasConverted: KotlinTypeMarker? = null)
 
 class FlatSignature<out T> constructor(
@@ -136,4 +141,3 @@ fun <T> SimpleConstraintSystem.isSignatureNotLessSpecific(
 
     return !hasContradiction()
 }
-

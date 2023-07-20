@@ -19,11 +19,14 @@ import org.jetbrains.kotlin.fir.analysis.FirOverridesBackwardCompatibilityHelper
 import org.jetbrains.kotlin.fir.analysis.checkers.FirPlatformDiagnosticSuppressor
 import org.jetbrains.kotlin.fir.analysis.js.checkers.FirJsPlatformDiagnosticSuppressor
 import org.jetbrains.kotlin.fir.analysis.jvm.FirJvmOverridesBackwardCompatibilityHelper
+import org.jetbrains.kotlin.fir.declarations.FirTypeSpecificityComparatorProvider
 import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.scopes.FirPlatformClassMapper
 import org.jetbrains.kotlin.fir.session.JsCallConflictResolverFactory
+import org.jetbrains.kotlin.fir.types.typeContext
+import org.jetbrains.kotlin.js.resolve.JsTypeSpecificityComparatorWithoutDelegate
 
 @OptIn(SessionConfiguration::class)
 internal class LLFirJsSessionFactory(project: Project) : LLFirAbstractSessionFactory(project) {
@@ -83,6 +86,10 @@ internal class LLFirJsSessionFactory(project: Project) : LLFirAbstractSessionFac
     private fun LLFirSession.registerModuleIndependentJsComponents() {
         register(FirVisibilityChecker::class, FirVisibilityChecker.Default)
         register(ConeCallConflictResolverFactory::class, JsCallConflictResolverFactory)
+        register(
+            FirTypeSpecificityComparatorProvider::class,
+            FirTypeSpecificityComparatorProvider(JsTypeSpecificityComparatorWithoutDelegate(typeContext))
+        )
         register(FirPlatformClassMapper::class, FirPlatformClassMapper.Default)
         register(FirOverridesBackwardCompatibilityHelper::class, FirJvmOverridesBackwardCompatibilityHelper)
         register(FirPlatformDiagnosticSuppressor::class, FirJsPlatformDiagnosticSuppressor())
