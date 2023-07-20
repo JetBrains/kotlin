@@ -10,14 +10,12 @@ import com.sun.tools.javac.util.List
 import org.jetbrains.kotlin.kapt3.KaptContextForStubGeneration
 import org.jetbrains.kotlin.kapt3.base.parseJavaFiles
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
-import org.jetbrains.kotlin.kapt3.prettyPrint
+import org.jetbrains.kotlin.kapt3.util.prettyPrint
 import org.jetbrains.kotlin.kapt3.stubs.ClassFileToSourceStubConverter
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.getRealJavaFiles
 import org.jetbrains.kotlin.test.services.sourceFileProvider
-import org.jetbrains.kotlin.test.utils.withExtension
-import org.jetbrains.kotlin.test.utils.withSuffixAndExtension
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import java.io.File
 
