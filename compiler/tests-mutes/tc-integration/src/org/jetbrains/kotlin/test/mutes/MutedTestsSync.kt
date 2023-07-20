@@ -5,9 +5,10 @@
 
 package org.jetbrains.kotlin.test.mutes
 
+import kotlinx.coroutines.runBlocking
 import java.io.File
 
-fun main() {
+suspend fun main() {
     syncMutedTestsOnTeamCityWithDatabase()
 }
 
@@ -16,16 +17,16 @@ fun main() {
  *
  * Purpose: possibility to run flaky tests on teamcity that will not affect on build status
  */
-fun syncMutedTestsOnTeamCityWithDatabase() {
+suspend fun syncMutedTestsOnTeamCityWithDatabase() {
     val remotelyMutedTests = RemotelyMutedTests()
     val locallyMutedTests = LocallyMutedTests()
 
     syncMutedTests(remotelyMutedTests.projectTests, locallyMutedTests.projectTests)
 }
 
-private fun syncMutedTests(
+private suspend fun syncMutedTests(
     remotelyMutedTests: Map<String, MuteTestJson>,
-    locallyMutedTests: Map<String, MuteTestJson>
+    locallyMutedTests: Map<String, MuteTestJson>,
 ) {
     val deleteList = remotelyMutedTests - locallyMutedTests.keys
     val uploadList = locallyMutedTests - remotelyMutedTests.keys
@@ -40,7 +41,7 @@ private const val MUTES_PACKAGE_NAME = "org.jetbrains.kotlin.test.mutes"
 internal val projectId = getMandatoryProperty("$MUTES_PACKAGE_NAME.tests.project.id")
 
 class RemotelyMutedTests {
-    private val tests = getMutedTestsOnTeamcityForRootProject(projectId)
+    private val tests = runBlocking { getMutedTestsOnTeamcityForRootProject(projectId) }
     val projectTests = getTestsJson(projectId)
     private fun getTestsJson(scopeId: String): Map<String, MuteTestJson> {
         return filterMutedTestsByScope(tests, scopeId)

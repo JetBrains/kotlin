@@ -2,19 +2,37 @@ package org.jetbrains.kotlin.test.mutes
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.module.kotlin.treeToValue
-import khttp.responses.Response
-import khttp.structures.authorization.Authorization
+import io.ktor.client.*
+import io.ktor.client.plugins.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
+import io.ktor.serialization.jackson.*
+import kotlin.time.DurationUnit
+import kotlin.time.toDuration
 
 internal const val TAG = "[MUTED-BY-CSVFILE]"
 private val buildServerUrl = getMandatoryProperty("org.jetbrains.kotlin.test.mutes.teamcity.server.url")
-private val headers = mapOf("Content-type" to "application/json", "Accept" to "application/json")
-private val authUser = object : Authorization {
-    override val header = "Authorization" to "Bearer ${getMandatoryProperty("org.jetbrains.kotlin.test.mutes.teamcity.server.token")}"
+private val token = getMandatoryProperty("org.jetbrains.kotlin.test.mutes.teamcity.server.token")
+private val REQUEST_TIMEOUT = 120.toDuration(DurationUnit.SECONDS)
+
+private val httpClient = HttpClient {
+    install(HttpTimeout)
+    install(ContentNegotiation) {
+        jackson()
+    }
 }
-private const val REQUEST_TIMEOUT_SEC = 120.0
 
+private fun HttpRequestBuilder.applyCommonProperties() {
+    headers {
+        bearerAuth(token)
+        append(HttpHeaders.Accept, "application/json")
+    }
+    timeout { requestTimeoutMillis = REQUEST_TIMEOUT.inWholeMilliseconds }
+}
 
-internal fun getMutedTestsOnTeamcityForRootProject(rootScopeId: String): List<MuteTestJson> {
+internal suspend fun getMutedTestsOnTeamcityForRootProject(rootScopeId: String): List<MuteTestJson> {
     val requestHref = "/app/rest/mutes"
     val requestParams = mapOf(
         "locator" to "project:(id:$rootScopeId)",
@@ -29,16 +47,23 @@ internal fun getMutedTestsOnTeamcityForRootProject(rootScopeId: String): List<Mu
     return alreadyMutedTestsOnTeamCity.mapNotNull { jsonObjectMapper.treeToValue<MuteTestJson>(it) }
 }
 
-private fun traverseAll(
+private suspend fun traverseAll(
     @Suppress("SameParameterValue") requestHref: String,
-    requestParams: Map<String, String>
+    requestParams: Map<String, String>,
 ): List<JsonNode> {
     val jsonResponses = mutableListOf<JsonNode>()
 
-    fun request(url: String, params: Map<String, String>): String {
-        val currentResponse = khttp.get(url, headers, params, auth = authUser, timeout = REQUEST_TIMEOUT_SEC)
+    suspend fun request(url: String, params: Map<String, String>): String {
+        val currentResponse = httpClient.get(url) {
+            applyCommonProperties()
+            url {
+                for (entry in params) {
+                    parameters.append(entry.key, entry.value)
+                }
+            }
+        }
         checkResponseAndLog(currentResponse)
-        val currentJsonResponse = jsonObjectMapper.readTree(currentResponse.text)
+        val currentJsonResponse = jsonObjectMapper.readTree(currentResponse.bodyAsText())
         jsonResponses.add(currentJsonResponse)
         return currentJsonResponse.get("nextHref")?.textValue() ?: ""
     }
@@ -51,27 +76,22 @@ private fun traverseAll(
     return jsonResponses
 }
 
-internal fun uploadMutedTests(uploadMap: Map<String, MuteTestJson>) {
+internal suspend fun uploadMutedTests(uploadMap: Map<String, MuteTestJson>) {
     for ((_, muteTestJson) in uploadMap) {
-        val response = khttp.post(
-            "$buildServerUrl/app/rest/mutes",
-            headers = headers,
-            data = jsonObjectMapper.writeValueAsString(muteTestJson),
-            auth = authUser,
-            timeout = REQUEST_TIMEOUT_SEC
-        )
+        val response = httpClient.post("$buildServerUrl/app/rest/mutes") {
+            applyCommonProperties()
+            contentType(ContentType.Application.Json)
+            setBody(muteTestJson)
+        }
         checkResponseAndLog(response)
     }
 }
 
-internal fun deleteMutedTests(deleteMap: Map<String, MuteTestJson>) {
+internal suspend fun deleteMutedTests(deleteMap: Map<String, MuteTestJson>) {
     for ((_, muteTestJson) in deleteMap) {
-        val response = khttp.delete(
-            "$buildServerUrl/app/rest/mutes/id:${muteTestJson.id}",
-            headers = headers,
-            auth = authUser,
-            timeout = REQUEST_TIMEOUT_SEC
-        )
+        val response = httpClient.delete("$buildServerUrl/app/rest/mutes/id:${muteTestJson.id}") {
+            applyCommonProperties()
+        }
         try {
             checkResponseAndLog(response)
         } catch (e: Exception) {
@@ -80,13 +100,13 @@ internal fun deleteMutedTests(deleteMap: Map<String, MuteTestJson>) {
     }
 }
 
-private fun checkResponseAndLog(response: Response) {
-    val isResponseBad = response.connection.responseCode !in 200..299
+private suspend fun checkResponseAndLog(response: HttpResponse) {
+    val isResponseBad = response.status.value !in 200..299
     if (isResponseBad) {
         throw Exception(
             "${response.request.method}-request to ${response.request.url} failed:\n" +
-                    "${response.text}\n" +
-                    "${response.request.data ?: ""}"
+                    "${response.bodyAsText()}\n" +
+                    "${response.request.content}"
         )
     }
 }
