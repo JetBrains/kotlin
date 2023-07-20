@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 internal fun StorageComponentContainer.initContainer(config: KonanConfig) {
     useImpl<FrontendServices>()
 
-    if (config.configuration.get(KonanConfigKeys.EMIT_LAZY_OBJC_HEADER_FILE) != null) {
+    if (!config.configuration.get(KonanConfigKeys.EMIT_LAZY_OBJC_HEADER_FILE).isNullOrEmpty()) {
         useImpl<ObjCExportLazyImpl>()
         useInstance(object : ObjCExportProblemCollector {
             override fun reportWarning(text: String) {}
@@ -55,7 +55,7 @@ internal fun StorageComponentContainer.initContainer(config: KonanConfig) {
 internal fun ComponentProvider.postprocessComponents(context: FrontendContext, files: Collection<KtFile>) {
     context.frontendServices = this.get<FrontendServices>()
 
-    context.config.configuration.get(KonanConfigKeys.EMIT_LAZY_OBJC_HEADER_FILE)?.let {
+    context.config.configuration.get(KonanConfigKeys.EMIT_LAZY_OBJC_HEADER_FILE)?.takeIf { it.isNotEmpty() }?.let {
         this.get<ObjCExportLazy>().dumpObjCHeader(files, it, context.shouldExportKDoc())
     }
 }

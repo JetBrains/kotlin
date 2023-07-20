@@ -162,6 +162,9 @@ class KonanDriver(
             put(KonanConfigKeys.REPOSITORIES, configuration.getNotNull(KonanConfigKeys.REPOSITORIES))
             configuration.get(KonanConfigKeys.FRIEND_MODULES)?.let { put(KonanConfigKeys.FRIEND_MODULES, it) }
             configuration.get(KonanConfigKeys.REFINES_MODULES)?.let { put(KonanConfigKeys.REFINES_MODULES, it) }
+            configuration.get(KonanConfigKeys.EMIT_LAZY_OBJC_HEADER_FILE)?.let { put(KonanConfigKeys.EMIT_LAZY_OBJC_HEADER_FILE, it)}
+            configuration.get(KonanConfigKeys.FULL_EXPORTED_NAME_PREFIX)?.let { put(KonanConfigKeys.FULL_EXPORTED_NAME_PREFIX, it)}
+            configuration.get(KonanConfigKeys.EXPORT_KDOC)?.let { put(KonanConfigKeys.EXPORT_KDOC, it)}
         }
 
         // For the second stage, remove already compiled source files from the configuration.
@@ -170,6 +173,9 @@ class KonanDriver(
         configuration.put(CommonConfigurationKeys.USE_FIR, false)
         // For the second stage, provide just compiled intermediate KLib as "-Xinclude=" param.
         require(intermediateKLib.exists) { "Intermediate KLib $intermediateKLib must have been created by successful first compilation stage" }
+        // We need to remove this flag, as it would otherwise override header written previously.
+        // Unfortunately, there is no way to remove the flag, so empty string is put instead
+        configuration.get(KonanConfigKeys.EMIT_LAZY_OBJC_HEADER_FILE)?.let { configuration.put(KonanConfigKeys.EMIT_LAZY_OBJC_HEADER_FILE, "") }
         configuration.put(KonanConfigKeys.INCLUDED_LIBRARIES,
                 configuration.get(KonanConfigKeys.INCLUDED_LIBRARIES).orEmpty() + listOf(intermediateKLib.absolutePath))
         compilationSpawner.spawn(configuration) // Need to spawn a new compilation to create fresh environment (without sources).

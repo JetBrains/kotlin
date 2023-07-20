@@ -5350,7 +5350,8 @@ Task objcExportTest(
             opts += [
                     "-Xexport-kdoc",
                     "-Xbinary=bundleId=foo.bar",
-                    "-Xexport-library=test-no-enum-entries-${libraryName}.klib"
+                    "-Xexport-library=test-no-enum-entries-${libraryName}.klib",
+                    "-module-name", "Kt"
             ]
             opts += frameworkOpts
         }
