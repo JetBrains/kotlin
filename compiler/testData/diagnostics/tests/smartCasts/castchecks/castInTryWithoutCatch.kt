@@ -4,7 +4,7 @@ fun castInTry(s: Any) {
     } finally {
         s.<!UNRESOLVED_REFERENCE!>length<!> // Shouldn't be resolved
     }
-    s.<!UNRESOLVED_REFERENCE!>length<!> // Shouldn't be resolved
+    s.<!UNRESOLVED_REFERENCE!>length<!> // Should be smartcast
 }
 
 fun castInTryAndFinally(s: Any) {

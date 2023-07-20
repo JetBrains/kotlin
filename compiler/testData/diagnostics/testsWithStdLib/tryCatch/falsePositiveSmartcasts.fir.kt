@@ -82,7 +82,7 @@ fun test5() {
         s2<!UNSAFE_CALL!>.<!>length
     }
     s1.length
-    s2<!UNSAFE_CALL!>.<!>length
+    s2.length
 }
 
 fun test6(s1: String?, s2: String?) {
@@ -100,6 +100,6 @@ fun test6(s1: String?, s2: String?) {
         requireNotNull(s2)
     }
     s<!UNSAFE_CALL!>.<!>length
-    s1<!UNSAFE_CALL!>.<!>length
+    s1.length
     s2.length
 }

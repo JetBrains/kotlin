@@ -170,11 +170,22 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
 
 val CFGNode<*>.firstPreviousNode: CFGNode<*> get() = previousNodes[0]
 val CFGNode<*>.lastPreviousNode: CFGNode<*> get() = previousNodes.last()
+val CFGNode<*>.previousDfaNodes: Sequence<Pair<Edge, CFGNode<*>>>
+    get() = previousNodes.asSequence()
+        .map { edgeFrom(it) to it }
+        .filter { (edge, _) -> if (isDead) edge.kind.usedInDeadDfa else edge.kind.usedInDfa }
+val CFGNode<*>.previousLiveNodes: Sequence<CFGNode<*>>
+    get() = when  {
+        this.isDead -> previousNodes.asSequence()
+        else -> previousNodes.asSequence().mapNotNull { it.takeIf { !it.isDead } }
+    }
 
 interface EnterNodeMarker
 interface ExitNodeMarker
 interface GraphEnterNodeMarker : EnterNodeMarker
 interface GraphExitNodeMarker : ExitNodeMarker
+interface AlternateFlowStartMarker
+interface AlternateFlowEndMarker
 
 // ----------------------------------- EnterNode for declaration with CFG -----------------------------------
 
@@ -260,6 +271,17 @@ class PostponedLambdaExitNode(owner: ControlFlowGraph, override val fir: FirAnon
 }
 
 class MergePostponedLambdaExitsNode(owner: ControlFlowGraph, override val fir: FirElement, level: Int) : CFGNode<FirElement>(owner, level) {
+
+    private var _flowInitialized = false
+    val flowInitialized: Boolean get() = _flowInitialized
+    override var flow: PersistentFlow
+        get() = super.flow
+        @CfgInternals
+        set(value) {
+            super.flow = value
+            _flowInitialized = true
+        }
+
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitMergePostponedLambdaExitsNode(this, data)
     }
@@ -543,13 +565,13 @@ class CatchClauseExitNode(owner: ControlFlowGraph, override val fir: FirCatch, l
     }
 }
 class FinallyBlockEnterNode(owner: ControlFlowGraph, override val fir: FirTryExpression, level: Int) : CFGNode<FirTryExpression>(owner, level),
-    EnterNodeMarker {
+    EnterNodeMarker, AlternateFlowStartMarker {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitFinallyBlockEnterNode(this, data)
     }
 }
 class FinallyBlockExitNode(owner: ControlFlowGraph, override val fir: FirTryExpression, level: Int) : CFGNode<FirTryExpression>(owner, level),
-    ExitNodeMarker {
+    ExitNodeMarker, AlternateFlowEndMarker {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitFinallyBlockExitNode(this, data)
     }

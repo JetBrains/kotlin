@@ -7,7 +7,7 @@ fun testBreak(b: Boolean, s: String?) {
             x = s ?: break
         } finally {
         }
-        x!!.length
+        x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.length
     }
 }
 
@@ -18,6 +18,6 @@ fun testContinue(b: Boolean, s: String?) {
             x = s ?: continue
         } finally {
         }
-        x!!.length
+        x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.length
     }
 }

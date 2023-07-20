@@ -72,7 +72,7 @@ fun conditionalThrowInTry_rethrow_smartcastAfterTryCatchFinally(a: A) {
     } catch (e: Throwable) {
         throw e
     } finally {}
-    takeB(<!ARGUMENT_TYPE_MISMATCH!>a<!>)
+    takeB(a)
 }
 
 fun conditionalThrowInTry_rethrow_noSmartcastInFinally(a: A) {

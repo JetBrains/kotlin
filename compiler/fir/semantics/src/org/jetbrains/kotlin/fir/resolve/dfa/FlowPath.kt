@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.EdgeLabel
 
 /**
- * Sealed interface representing a type of path through a [Control Flow Graph (CFG) Node][org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode]
- * used for data flow analysis. Most CFG nodes only have a single data flow path through them, but there are times when a node may require
+ * Sealed class representing a type of path through a [Control Flow Graph (CFG) Node][org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode] used
+ * for data flow analysis. Most CFG nodes only have a single data flow path through them, but there are times when a node may require
  * multiple paths to be calculated. The most common use case is for `finally` code blocks, where multiple code paths may enter, but these
  * paths diverge after exiting the code block. Consider the following (very) contrived example:
  *
@@ -56,11 +56,11 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.EdgeLabel
  * 3. A flow which will be used when the entire `try` expression exits without exception or jumping. This data flow is a continuation of the
  * data flow leading into the `finally` block from the main `try` block.
  */
-sealed interface FlowPath {
+sealed class FlowPath {
     /**
      * The [FlowPath] which represents the combination of all flows leading into a CFG Node.
      */
-    data object Default : FlowPath
+    data object Default : FlowPath()
 
     /**
      * The [FlowPath] which represents the combination of all flows leading into a CFG Node that follow an edge with the specified
@@ -68,5 +68,5 @@ sealed interface FlowPath {
      * multiple flows. For example, a `finally` block within another `finally` block will require multiple
      * [normal paths][org.jetbrains.kotlin.fir.resolve.dfa.cfg.NormalPath] through each that diverge at different nodes.
      */
-    data class CfgEdge(val label: EdgeLabel, val fir: FirElement) : FlowPath
+    data class CfgEdge(val label: EdgeLabel, val fir: FirElement) : FlowPath()
 }

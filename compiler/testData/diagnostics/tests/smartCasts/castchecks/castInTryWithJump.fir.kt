@@ -26,13 +26,13 @@ fun breakInTry_withNestedFinally() {
                 x.<!UNRESOLVED_REFERENCE!>bbb<!>() // should be error
             }
             x.<!UNRESOLVED_REFERENCE!>aaa<!>() // should be error
-            x.<!UNRESOLVED_REFERENCE!>bbb<!>() // should be ok
+            x.bbb() // should be ok
         }
         x.<!UNRESOLVED_REFERENCE!>aaa<!>() // should be error
-        x.<!UNRESOLVED_REFERENCE!>bbb<!>() // should be ok
+        x.bbb() // should be ok
     }
-    x.<!UNRESOLVED_REFERENCE!>aaa<!>() // should be ok
-    x.<!UNRESOLVED_REFERENCE!>bbb<!>() // should be ok
+    x.aaa() // should be ok
+    x.bbb() // should be ok
 }
 
 fun returnInCatch() {
@@ -46,7 +46,7 @@ fun returnInCatch() {
         x.<!UNRESOLVED_REFERENCE!>aaa<!>() // should be error
         x.<!UNRESOLVED_REFERENCE!>bbb<!>() // should be error
     }
-    x.<!UNRESOLVED_REFERENCE!>aaa<!>() // should be ok
+    x.aaa() // should be ok
     x.<!UNRESOLVED_REFERENCE!>bbb<!>() // should be error
 }
 
@@ -65,13 +65,13 @@ fun returnInCatch_insideFinally() {
             x.<!UNRESOLVED_REFERENCE!>bbb<!>() // should be error
             x.<!UNRESOLVED_REFERENCE!>ccc<!>() // should be error
         }
-        x.<!UNRESOLVED_REFERENCE!>aaa<!>() // should be ok
+        x.aaa() // should be ok
         x.<!UNRESOLVED_REFERENCE!>bbb<!>() // should be error
         x.<!UNRESOLVED_REFERENCE!>ccc<!>() // should be error
     }
-    x.<!UNRESOLVED_REFERENCE!>aaa<!>() // should be ok
+    x.aaa() // should be ok
     x.<!UNRESOLVED_REFERENCE!>bbb<!>() // should be error
-    x.<!UNRESOLVED_REFERENCE!>ccc<!>() // should be ok
+    x.ccc() // should be ok
 }
 
 fun breakInCatch() {
@@ -86,11 +86,11 @@ fun breakInCatch() {
             x.<!UNRESOLVED_REFERENCE!>aaa<!>() // should be error
             x.<!UNRESOLVED_REFERENCE!>bbb<!>() // should be error
         }
-        x.<!UNRESOLVED_REFERENCE!>aaa<!>() // should be ok
+        x.aaa() // should be ok
         x.<!UNRESOLVED_REFERENCE!>bbb<!>() // should be error
     }
     x.<!UNRESOLVED_REFERENCE!>aaa<!>() // should be error
-    x.<!UNRESOLVED_REFERENCE!>bbb<!>() // should be ok
+    x.bbb() // should be ok
 }
 
 fun returnInFinally_insideTry_nonLocal() {

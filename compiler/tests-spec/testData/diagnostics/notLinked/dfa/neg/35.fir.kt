@@ -32,8 +32,8 @@ fun case_2() {
     var x: String?
     x = "Test"
     println("${try { x = null } finally { }}")
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!><!UNSAFE_CALL!>.<!>length
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.Nothing?")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.Nothing?")!>x<!><!UNSAFE_CALL!>.<!>length
 }
 
 /*
