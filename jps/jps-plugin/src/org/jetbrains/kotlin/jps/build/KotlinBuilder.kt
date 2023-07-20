@@ -322,18 +322,16 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val fsOperations = FSOperationsHelper(context, chunk, kotlinDirtyFilesHolder, LOG)
 
         try {
-            return reportService.reportMetrics(context, JpsBuildTime.JPS_ITERATION) {
-                val proposedExitCode =
-                    doBuild(chunk, kotlinTarget, context, kotlinDirtyFilesHolder, messageCollector, outputConsumer, fsOperations)
+            val proposedExitCode =
+                doBuild(chunk, kotlinTarget, context, kotlinDirtyFilesHolder, messageCollector, outputConsumer, fsOperations)
 
-                val actualExitCode =
-                    if (proposedExitCode == OK && fsOperations.hasMarkedDirty) ADDITIONAL_PASS_REQUIRED else proposedExitCode
+            val actualExitCode =
+                if (proposedExitCode == OK && fsOperations.hasMarkedDirty) ADDITIONAL_PASS_REQUIRED else proposedExitCode
 
-                LOG.debug("Build result: $actualExitCode")
+            LOG.debug("Build result: $actualExitCode")
 
-                context.testingContext?.buildLogger?.buildFinished(actualExitCode)
-                actualExitCode
-            }
+            context.testingContext?.buildLogger?.buildFinished(actualExitCode)
+            return actualExitCode
         } catch (e: StopBuildException) {
             LOG.info("Caught exception: $e")
             throw e
