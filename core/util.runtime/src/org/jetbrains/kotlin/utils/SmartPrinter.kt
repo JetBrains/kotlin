@@ -42,6 +42,8 @@ class SmartPrinter(appendable: Appendable, indent: String = DEFAULT_INDENT) {
 
     fun getCurrentIndentInUnits() = printer.currentIndentLengthInUnits
     fun getIndentUnit() = printer.indentUnitLength
+
+    override fun toString(): String = printer.toString()
 }
 
 inline fun SmartPrinter.withIndent(block: () -> Unit) {
