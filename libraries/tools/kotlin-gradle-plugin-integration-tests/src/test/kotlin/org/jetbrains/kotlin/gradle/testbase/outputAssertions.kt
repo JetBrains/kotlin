@@ -324,3 +324,41 @@ fun CommandLineArguments.assertCommandLineArgumentsContain(
         }
     }
 }
+
+fun BuildResult.assertOutputContainsSequence(
+    expectedSubStringsSequence: List<String>
+) {
+    var matchedToIndex = 0
+    var offset = 0
+    for (subsequence in expectedSubStringsSequence) {
+        val subsequenceIndex = output.indexOf(subsequence, startIndex = offset)
+        if (subsequenceIndex == -1) {
+            assert(false) {
+                printBuildOutput()
+                if (matchedToIndex == 0) {
+                    "Output doesn't contain any elements from the expected sequence of substrings:\n" + expectedSubStringsSequence.mapIndexed { index, substring ->
+                        "   $index: $substring"
+                    }.joinToString("\n") + "\n"
+                } else {
+                    "Output is missing some elements in the sequence of substrings:\n" + (expectedSubStringsSequence.subList(
+                        0,
+                        matchedToIndex
+                    ).mapIndexed { index, substring ->
+                        " ✓ ${index}: $substring"
+                    } + expectedSubStringsSequence.subList(
+                        matchedToIndex,
+                        expectedSubStringsSequence.lastIndex + 1,
+                    ).mapIndexed { index, substring ->
+                        if (index == 0) {
+                            " x ${index + matchedToIndex}: $substring"
+                        } else {
+                            "   ${index + matchedToIndex}: $substring"
+                        }
+                    }).joinToString("\n") + "\n"
+                }
+            }
+        }
+        offset = subsequenceIndex
+        matchedToIndex += 1
+    }
+}
