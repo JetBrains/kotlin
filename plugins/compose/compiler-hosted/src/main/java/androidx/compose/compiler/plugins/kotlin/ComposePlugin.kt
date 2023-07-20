@@ -16,6 +16,7 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
+import androidx.compose.compiler.plugins.kotlin.analysis.StabilityConfigParser
 import androidx.compose.compiler.plugins.kotlin.k1.ComposableCallChecker
 import androidx.compose.compiler.plugins.kotlin.k1.ComposableDeclarationChecker
 import androidx.compose.compiler.plugins.kotlin.k1.ComposableTargetChecker
@@ -69,9 +70,9 @@ object ComposeConfiguration {
         CompilerConfigurationKey<Boolean>("Generate decoy methods in IR transform")
     val STRONG_SKIPPING_ENABLED_KEY =
         CompilerConfigurationKey<Boolean>("Enable strong skipping mode")
-    val STABLE_TYPES_KEY =
-        CompilerConfigurationKey<List<String>>(
-            "Fully qualified name of external types known to be stable"
+    val STABILITY_CONFIG_PATH_KEY =
+        CompilerConfigurationKey<String>(
+            "Path to stability configuration file"
         )
 }
 
@@ -150,10 +151,10 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
             required = false,
             allowMultipleOccurrences = false
         )
-        val STABLE_TYPES_OPTION = CliOption(
-            "stableType",
-            "<fqName>",
-            "Fully qualified name of external types known to be stable",
+        val STABLE_CONFIG_PATH_OPTION = CliOption(
+            "stabilityConfigurationPath",
+            "<path>",
+            "Path to stability configuration file",
             required = false,
             allowMultipleOccurrences = true
         )
@@ -218,8 +219,8 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
             ComposeConfiguration.STRONG_SKIPPING_ENABLED_KEY,
             value == "true"
         )
-        STABLE_TYPES_OPTION -> configuration.appendList(
-            ComposeConfiguration.STABLE_TYPES_KEY,
+        STABLE_CONFIG_PATH_OPTION -> configuration.put(
+            ComposeConfiguration.STABILITY_CONFIG_PATH_KEY,
             value
         )
         else -> throw CliOptionProcessingException("Unknown option: ${option.optionName}")
@@ -391,9 +392,21 @@ class ComposePluginRegistrar : org.jetbrains.kotlin.compiler.plugin.ComponentReg
                 false
             )
 
-            val knownStableTypes = configuration.getList(
-                ComposeConfiguration.STABLE_TYPES_KEY,
+            val stabilityConfigPath = configuration.get(
+                ComposeConfiguration.STABILITY_CONFIG_PATH_KEY,
+                ""
             )
+
+            val msgCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+            val stableTypeMatchers = try {
+                StabilityConfigParser.fromFile(stabilityConfigPath).stableTypeMatchers
+            } catch (e: Exception) {
+                msgCollector?.report(
+                    CompilerMessageSeverity.ERROR,
+                    e.message ?: "Error parsing stability configuration"
+                )
+                emptySet()
+            }
 
             return ComposeIrGenerationExtension(
                 liveLiteralsEnabled = liveLiteralsEnabled,
@@ -407,7 +420,7 @@ class ComposePluginRegistrar : org.jetbrains.kotlin.compiler.plugin.ComponentReg
                 validateIr = validateIr,
                 useK2 = useK2,
                 strongSkippingEnabled = strongSkippingEnabled,
-                knownStableTypes = knownStableTypes.toSet()
+                stableTypeMatchers = stableTypeMatchers
             )
         }
     }

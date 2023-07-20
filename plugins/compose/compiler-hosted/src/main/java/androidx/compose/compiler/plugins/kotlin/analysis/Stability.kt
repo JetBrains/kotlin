@@ -44,7 +44,6 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeAbbreviation
 import org.jetbrains.kotlin.ir.types.IrTypeArgument
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
-import org.jetbrains.kotlin.ir.types.classFqName
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.classifierOrNull
@@ -163,6 +162,7 @@ fun Stability.normalize(): Stability {
         is Stability.Parameter,
         is Stability.Runtime,
         is Stability.Unknown -> return this
+
         is Stability.Combined -> {
             // if combined, we perform the more expensive normalization process
         }
@@ -175,6 +175,7 @@ fun Stability.normalize(): Stability {
             is Stability.Combined -> {
                 stack.addAll(stability.elements)
             }
+
             is Stability.Certain -> {
                 if (!stability.stable)
                     return Stability.Unstable
@@ -186,6 +187,7 @@ fun Stability.normalize(): Stability {
                     parts.add(stability)
                 }
             }
+
             is Stability.Runtime -> parts.add(stability)
             is Stability.Unknown -> {
                 /* do nothing */
@@ -222,8 +224,9 @@ private fun IrAnnotationContainer.stabilityParamBitmask(): Int? =
         )?.value as? Int
 
 class StabilityInferencer(
-    private val externalStableTypes: Set<String>
+    externalStableTypeMatchers: Set<FqNameMatcher>
 ) {
+    private val externalTypeMatcherCollection = FqNameMatcherCollection(externalStableTypeMatchers)
 
     fun stabilityOf(irType: IrType): Stability =
         stabilityOf(irType, emptyMap(), emptySet())
@@ -239,7 +242,6 @@ class StabilityInferencer(
         if (declaration.isEnumClass || declaration.isEnumEntry) return Stability.Stable
         if (declaration.defaultType.isPrimitiveType()) return Stability.Stable
         if (declaration.isProtobufType()) return Stability.Stable
-        if (declaration.isExternalStableType()) return Stability.Stable
 
         if (declaration.origin == IrDeclarationOrigin.IR_BUILTINS_STUB) {
             error("Builtins Stub: ${declaration.name}")
@@ -247,21 +249,26 @@ class StabilityInferencer(
 
         val analyzing = currentlyAnalyzing + symbol
 
-        if (canInferStability(declaration)) {
+        if (canInferStability(declaration) || declaration.isExternalStableType()) {
             val fqName = declaration.fqNameWhenAvailable?.toString() ?: ""
+            val typeParameters = declaration.typeParameters
             val stability: Stability
             val mask: Int
             if (KnownStableConstructs.stableTypes.contains(fqName)) {
                 mask = KnownStableConstructs.stableTypes[fqName] ?: 0
                 stability = Stability.Stable
+            } else if (declaration.isExternalStableType()) {
+                mask = externalTypeMatcherCollection
+                    .maskForName(declaration.fqNameWhenAvailable) ?: 0
+                stability = Stability.Stable
             } else {
                 mask = declaration.stabilityParamBitmask() ?: return Stability.Unstable
                 stability = Stability.Runtime(declaration)
             }
-            return when (mask) {
-                0 -> stability
+            return when {
+                mask == 0 || typeParameters.isEmpty() -> stability
                 else -> stability + Stability.Combined(
-                    declaration.typeParameters.mapIndexedNotNull { index, irTypeParameter ->
+                    typeParameters.mapIndexedNotNull { index, irTypeParameter ->
                         if (mask and (0b1 shl index) != 0) {
                             val sub = substitutions[irTypeParameter.symbol]
                             if (sub != null)
@@ -311,10 +318,7 @@ class StabilityInferencer(
     }
 
     private fun IrClass.isExternalStableType(): Boolean {
-        if (externalStableTypes.isEmpty()) return false
-
-        return fqNameWhenAvailable?.asString() in externalStableTypes ||
-            superTypes.any { it.classFqName?.asString() in externalStableTypes }
+        return externalTypeMatcherCollection.matches(fqNameWhenAvailable, superTypes)
     }
 
     private fun canInferStability(declaration: IrClass): Boolean {
@@ -361,6 +365,7 @@ class StabilityInferencer(
             type.isUnit() ||
                 type.isPrimitiveType() ||
                 type.isFunctionOrKFunction() ||
+                type.isSyntheticComposableFunction() ||
                 type.isString() -> Stability.Stable
 
             type.isTypeParameter() -> {
@@ -458,6 +463,8 @@ class StabilityInferencer(
                     stability
                 }
             }
+
+            is IrLocalDelegatedPropertyReference -> Stability.Stable
             // some default parameters and consts can be wrapped in composite
             is IrComposite -> {
                 if (expr.statements.all { it is IrExpression && stabilityOf(it).knownStable() }) {
