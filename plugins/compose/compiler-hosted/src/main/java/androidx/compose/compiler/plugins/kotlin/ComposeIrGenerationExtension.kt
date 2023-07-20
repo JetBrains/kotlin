@@ -16,6 +16,7 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
+import androidx.compose.compiler.plugins.kotlin.analysis.FqNameMatcher
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
 import androidx.compose.compiler.plugins.kotlin.lower.ClassStabilityTransformer
 import androidx.compose.compiler.plugins.kotlin.lower.ComposableFunInterfaceLowering
@@ -59,7 +60,7 @@ class ComposeIrGenerationExtension(
     private val validateIr: Boolean = false,
     private val useK2: Boolean = false,
     private val strongSkippingEnabled: Boolean = false,
-    private val knownStableTypes: Set<String> = emptySet()
+    private val stableTypeMatchers: Set<FqNameMatcher> = emptySet()
 ) : IrGenerationExtension {
     var metrics: ModuleMetrics = EmptyModuleMetrics
 
@@ -70,7 +71,7 @@ class ComposeIrGenerationExtension(
         val isKlibTarget = !pluginContext.platform.isJvm()
         VersionChecker(pluginContext).check()
 
-        val stabilityInferencer = StabilityInferencer(knownStableTypes)
+        val stabilityInferencer = StabilityInferencer(stableTypeMatchers)
 
         // Input check.  This should always pass, else something is horribly wrong upstream.
         // Necessary because oftentimes the issue is upstream (compiler bug, prior plugin, etc)
