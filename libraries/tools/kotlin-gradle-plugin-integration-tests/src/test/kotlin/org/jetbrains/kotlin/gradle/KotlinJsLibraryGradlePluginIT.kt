@@ -78,9 +78,7 @@ abstract class KotlinJsIrLibraryGradlePluginITBase : KGPBaseTest() {
 @JsGradlePluginTests
 class KotlinK1JsIrLibraryGradlePluginIT : KotlinJsIrLibraryGradlePluginITBase() {
     override val defaultBuildOptions: BuildOptions
-        get() =
-            if (KotlinVersion.CURRENT.major >= 2) super.defaultBuildOptions.copy(languageVersion = "1.9")
-            else super.defaultBuildOptions
+        get() = super.defaultBuildOptions.copyEnsuringK1()
 }
 
 @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0)
@@ -88,7 +86,5 @@ class KotlinK1JsIrLibraryGradlePluginIT : KotlinJsIrLibraryGradlePluginITBase() 
 @JsGradlePluginTests
 class KotlinK2JsIrLibraryGradlePluginIT : KotlinJsIrLibraryGradlePluginITBase() {
     override val defaultBuildOptions: BuildOptions
-        get() =
-            if (KotlinVersion.CURRENT.major < 2) super.defaultBuildOptions.copy(languageVersion = "2.0")
-            else super.defaultBuildOptions
+        get() = super.defaultBuildOptions.copyEnsuringK2()
 }
