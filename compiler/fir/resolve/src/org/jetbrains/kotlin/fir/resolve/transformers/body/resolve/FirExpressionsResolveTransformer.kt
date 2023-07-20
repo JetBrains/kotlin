@@ -393,12 +393,14 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
     }
 
     override fun transformFunctionCall(functionCall: FirFunctionCall, data: ResolutionMode): FirStatement =
-        transformFunctionCallInternal(functionCall, data, provideDelegate = false)
+        transformFunctionCallInternal(functionCall, data, skipExplicitReceiverTransformation = false)
 
     internal fun transformFunctionCallInternal(
         functionCall: FirFunctionCall,
         data: ResolutionMode,
-        provideDelegate: Boolean,
+        // Currently, it's only `true` for provideDelegate calls, because delegateExpression is already resolved as that stage.
+        // See also FirDeclarationsResolveTransformer.transformWrappedDelegateExpression
+        skipExplicitReceiverTransformation: Boolean,
     ): FirStatement =
         whileAnalysing(session, functionCall) {
             val calleeReference = functionCall.calleeReference
@@ -420,16 +422,12 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             functionCall.transformAnnotations(transformer, data)
             functionCall.replaceLambdaArgumentInvocationKinds(session)
             functionCall.transformTypeArguments(transformer, ResolutionMode.ContextIndependent)
+
             val initialExplicitReceiver = functionCall.explicitReceiver
             val withTransformedArguments = if (!resolvingAugmentedAssignment) {
                 dataFlowAnalyzer.enterCallArguments(functionCall, functionCall.arguments)
-                // In provideDelegate mode the explicitReceiver is already resolved
-                // E.g. we have val some by someDelegate
-                // At 1st stage of delegate inference we resolve someDelegate itself,
-                // at 2nd stage in provideDelegate mode we are trying to resolve someDelegate.provideDelegate(),
-                // and 'someDelegate' explicit receiver is resolved at 1st stage
-                // See also FirDeclarationsResolveTransformer.transformWrappedDelegateExpression
-                val withResolvedExplicitReceiver = if (provideDelegate) functionCall else transformExplicitReceiver(functionCall)
+                val withResolvedExplicitReceiver =
+                    if (skipExplicitReceiverTransformation) functionCall else transformExplicitReceiver(functionCall)
                 withResolvedExplicitReceiver.also {
                     it.replaceArgumentList(it.argumentList.transform(this, ResolutionMode.ContextDependent))
                     dataFlowAnalyzer.exitCallArguments()
@@ -437,7 +435,12 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             } else {
                 functionCall
             }
-            val resultExpression = callResolver.resolveCallAndSelectCandidate(withTransformedArguments)
+
+
+
+            val resultExpression = context.inferenceSession.onCandidatesResolution(withTransformedArguments) {
+                callResolver.resolveCallAndSelectCandidate(withTransformedArguments)
+            }
             val resultExplicitReceiver = resultExpression.explicitReceiver?.unwrapSmartcastExpression()
             if (initialExplicitReceiver !== resultExplicitReceiver && resultExplicitReceiver is FirQualifiedAccessExpression) {
                 // name.invoke() case
