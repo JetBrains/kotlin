@@ -940,7 +940,9 @@ fun IrFunction.copyValueParametersToStatic(
 
     var shift = 0
     source.dispatchReceiverParameter?.let { originalDispatchReceiver ->
-        assert(dispatchReceiverType!!.isSubtypeOfClass(originalDispatchReceiver.type.classOrNull!!))
+        assert(dispatchReceiverType!!.isSubtypeOfClass(originalDispatchReceiver.type.classOrNull!!)) {
+            "Dispatch receiver type ${dispatchReceiverType.render()} is not a subtype of ${originalDispatchReceiver.type.render()}"
+        }
         val type = dispatchReceiverType.remapTypeParameters(
             (originalDispatchReceiver.parent as IrTypeParametersContainer).classIfConstructor,
             target.classIfConstructor
