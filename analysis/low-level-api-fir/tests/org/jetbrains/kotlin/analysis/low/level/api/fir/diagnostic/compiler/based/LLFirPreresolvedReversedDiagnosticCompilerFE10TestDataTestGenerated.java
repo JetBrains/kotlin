@@ -1234,6 +1234,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
         }
 
         @Test
+        @TestMetadata("unexpectedSafeCall.kt")
+        public void testUnexpectedSafeCall() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/unexpectedSafeCall.kt");
+        }
+
+        @Test
         @TestMetadata("UnitByDefaultForFunctionTypes.kt")
         public void testUnitByDefaultForFunctionTypes() throws Exception {
             runTest("compiler/testData/diagnostics/tests/UnitByDefaultForFunctionTypes.kt");
