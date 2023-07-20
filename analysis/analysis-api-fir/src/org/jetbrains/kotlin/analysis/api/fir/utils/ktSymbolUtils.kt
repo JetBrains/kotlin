@@ -10,6 +10,9 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
+import org.jetbrains.kotlin.fir.FirAnnotationContainer
+import org.jetbrains.kotlin.fir.analysis.checkers.getActualTargetList
 import org.jetbrains.kotlin.fir.dispatchReceiverClassLookupTagOrNull
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -48,4 +51,9 @@ fun KtSymbol.getContainingKtModule(firResolveSession: LLFirResolveSession): KtMo
     is KtFirSymbol<*> -> firSymbol.getContainingKtModule(firResolveSession)
     is KtReceiverParameterSymbol -> owningCallableSymbol.getContainingKtModule(firResolveSession)
     else -> TODO("${this::class}")
+}
+
+fun KtSymbol.getActualAnnotationTargets(): List<KotlinTarget>? {
+    val firSymbol = this.firSymbol.fir as? FirAnnotationContainer ?: return null
+    return getActualTargetList(firSymbol).defaultTargets
 }
