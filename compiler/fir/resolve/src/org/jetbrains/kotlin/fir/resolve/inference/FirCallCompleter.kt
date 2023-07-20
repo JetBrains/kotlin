@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExpectedTypeConstrai
 import org.jetbrains.kotlin.fir.resolve.initialTypeOfCandidate
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.FirCallCompletionResultsWriterTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformerDispatcher
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
@@ -33,15 +34,16 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.visitors.transformSingle
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.addEqualityConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.model.StubTypeMarker
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 import org.jetbrains.kotlin.types.model.safeSubstitute
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class FirCallCompleter(
@@ -83,6 +85,30 @@ class FirCallCompleter(
             call.replaceLambdaArgumentInvocationKinds(session)
         }
 
+        if (inferenceSession.skipCompletion(call, resolutionMode, completionMode)) {
+            if (candidate.callInfo.name == OperatorNameConventions.PROVIDE_DELEGATE && resolutionMode != ResolutionMode.ContextDependentDelegate) {
+                val inferenceSession = inferenceSession as FirDelegatedPropertyInferenceSession
+
+                inferenceSession.currentConstraintSystem.clearCaches()
+                val innerSet = candidate.freshVariables.mapTo(mutableSetOf()) { it.typeConstructor }
+                @Suppress("UNCHECKED_CAST")
+                inferenceSession.currentConstraintSystem.relevantTypeVariables = innerSet as MutableSet<TypeConstructorMarker>
+
+                runCompletionForCall(candidate, ConstraintSystemCompletionMode.FULL, call, initialType, analyzer)
+
+                inferenceSession.currentConstraintSystem.clearCaches()
+                inferenceSession.currentConstraintSystem.relevantTypeVariables = null
+            } else {
+                runCompletionForCall(candidate, ConstraintSystemCompletionMode.PARTIAL, call, initialType, analyzer)
+            }
+            // Running completion at least partially is required to filter out some of the candidates of subsequent calls,
+            // thus avoiding resolution ambiguity for them.
+            // Can't use `completionCall` in case it's FULL, because we can't force getValue() completion until BI lambdas in delegate expression are completed
+            // But those lambdas cannot be found at getValeu() calls as they don't belong there
+
+            return call
+        }
+
         return when (completionMode) {
             ConstraintSystemCompletionMode.FULL -> {
                 if (inferenceSession.shouldRunCompletion(call)) {
@@ -91,7 +117,7 @@ class FirCallCompleter(
                         .buildAbstractResultingSubstitutor(session.typeContext) as ConeSubstitutor
                     val completedCall = call.transformSingle(
                         FirCallCompletionResultsWriterTransformer(
-                            session, finalSubstitutor,
+                            session, components.scopeSession, finalSubstitutor,
                             components.returnTypeCalculator,
                             session.typeApproximator,
                             components.dataFlowAnalyzer,
@@ -110,12 +136,6 @@ class FirCallCompleter(
 
             ConstraintSystemCompletionMode.PARTIAL -> {
                 runCompletionForCall(candidate, completionMode, call, initialType, analyzer)
-
-                // Add top-level delegate call as partially resolved to inference session
-                if (resolutionMode is ResolutionMode.ContextDependentDelegate) {
-                    require(inferenceSession is FirDelegatedPropertyInferenceSession)
-                    inferenceSession.addPartiallyResolvedCall(call)
-                }
 
                 call
             }
@@ -210,7 +230,7 @@ class FirCallCompleter(
         mode: FirCallCompletionResultsWriterTransformer.Mode = FirCallCompletionResultsWriterTransformer.Mode.Normal
     ): FirCallCompletionResultsWriterTransformer {
         return FirCallCompletionResultsWriterTransformer(
-            session, substitutor, components.returnTypeCalculator,
+            session, components.scopeSession, substitutor, components.returnTypeCalculator,
             session.typeApproximator,
             components.dataFlowAnalyzer,
             components.integerLiteralAndOperatorApproximationTransformer,
@@ -325,16 +345,23 @@ class FirCallCompleter(
                 )
             }
 
-            transformer.context.withAnonymousFunctionTowerDataContext(lambdaArgument.symbol) {
+            val context: BodyResolveContext = transformer.context
+            context.withAnonymousFunctionTowerDataContext(lambdaArgument.symbol) {
                 if (builderInferenceSession != null) {
-                    transformer.context.withInferenceSession(builderInferenceSession) {
+                    context.withInferenceSession(builderInferenceSession) {
                         lambdaArgument.transformSingle(transformer, ResolutionMode.LambdaResolution(expectedReturnTypeRef))
                     }
                 } else {
-                    lambdaArgument.transformSingle(transformer, ResolutionMode.LambdaResolution(expectedReturnTypeRef))
+                    context.withInferenceSession(
+                        if (context.inferenceSession is FirDelegatedPropertyInferenceSession) {
+                            FirInferenceSession.DEFAULT
+                        } else context.inferenceSession
+                    ) {
+                        lambdaArgument.transformSingle(transformer, ResolutionMode.LambdaResolution(expectedReturnTypeRef))
+                    }
                 }
             }
-            transformer.context.dropContextForAnonymousFunction(lambdaArgument)
+            context.dropContextForAnonymousFunction(lambdaArgument)
 
             val returnArguments = components.dataFlowAnalyzer.returnExpressionsOfAnonymousFunction(lambdaArgument)
 

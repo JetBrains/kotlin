@@ -27,6 +27,7 @@ class VariableFixationFinder(
         val fixedTypeVariables: Map<TypeConstructorMarker, KotlinTypeMarker>
         val postponedTypeVariables: List<TypeVariableMarker>
         val constraintsFromAllForkPoints: MutableList<Pair<IncorporationConstraintPosition, ForkPointData>>
+        val relevantTypeVariables: Set<TypeConstructorMarker>?
 
         fun isReified(variable: TypeVariableMarker): Boolean
     }
@@ -182,7 +183,10 @@ class VariableFixationFinder(
                 && !c.isNullabilityConstraint
 
     private fun Context.isProperType(type: KotlinTypeMarker): Boolean =
-        isProperTypeForFixation(type) { t -> !t.contains { notFixedTypeVariables.containsKey(it.typeConstructor()) } }
+        isProperTypeForFixation(type) { t -> !t.contains { isNotFixedRelevantVariable(it) } }
+
+    private fun Context.isNotFixedRelevantVariable(it: KotlinTypeMarker) =
+        (relevantTypeVariables == null || relevantTypeVariables!!.contains(it.typeConstructor())) && notFixedTypeVariables.containsKey(it.typeConstructor())
 
     private fun Context.isReified(variable: TypeConstructorMarker): Boolean =
         notFixedTypeVariables[variable]?.typeVariable?.let { isReified(it) } ?: false

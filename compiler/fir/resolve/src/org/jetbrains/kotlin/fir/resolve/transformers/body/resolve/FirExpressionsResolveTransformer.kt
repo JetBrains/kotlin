@@ -29,6 +29,8 @@ import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
+import org.jetbrains.kotlin.fir.resolve.inference.FirDelegatedPropertyInferenceSession
+import org.jetbrains.kotlin.fir.resolve.inference.FirInferenceSession
 import org.jetbrains.kotlin.fir.resolve.inference.FirStubInferenceSession
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.replaceLambdaArgumentInvocationKinds
@@ -393,12 +395,14 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
     }
 
     override fun transformFunctionCall(functionCall: FirFunctionCall, data: ResolutionMode): FirStatement =
-        transformFunctionCallInternal(functionCall, data, provideDelegate = false)
+        transformFunctionCallInternal(functionCall, data, skipExplicitReceiverTransformation = false)
 
     internal fun transformFunctionCallInternal(
         functionCall: FirFunctionCall,
         data: ResolutionMode,
-        provideDelegate: Boolean,
+        // Currently, it's only `true` for provideDelegate calls, because delegateExpression is already resolved as that stage.
+        // See also FirDeclarationsResolveTransformer.transformWrappedDelegateExpression
+        skipExplicitReceiverTransformation: Boolean,
     ): FirStatement =
         whileAnalysing(session, functionCall) {
             val calleeReference = functionCall.calleeReference
@@ -420,19 +424,21 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             functionCall.transformAnnotations(transformer, data)
             functionCall.replaceLambdaArgumentInvocationKinds(session)
             functionCall.transformTypeArguments(transformer, ResolutionMode.ContextIndependent)
-            val initialExplicitReceiver = functionCall.explicitReceiver
-            val withTransformedArguments = if (!resolvingAugmentedAssignment) {
-                dataFlowAnalyzer.enterCallArguments(functionCall, functionCall.arguments)
-                // In provideDelegate mode the explicitReceiver is already resolved
-                // E.g. we have val some by someDelegate
-                // At 1st stage of delegate inference we resolve someDelegate itself,
-                // at 2nd stage in provideDelegate mode we are trying to resolve someDelegate.provideDelegate(),
-                // and 'someDelegate' explicit receiver is resolved at 1st stage
-                // See also FirDeclarationsResolveTransformer.transformWrappedDelegateExpression
-                val withResolvedExplicitReceiver = if (provideDelegate) functionCall else transformExplicitReceiver(functionCall)
+
+                    val initialExplicitReceiver = functionCall.explicitReceiver
+                    val withTransformedArguments = if (!resolvingAugmentedAssignment) {
+                        dataFlowAnalyzer.enterCallArguments(functionCall, functionCall.arguments)
+                        val withResolvedExplicitReceiver =
+                            if (skipExplicitReceiverTransformation) functionCall else transformExplicitReceiver(functionCall)
                 withResolvedExplicitReceiver.also {
-                    it.replaceArgumentList(it.argumentList.transform(this, ResolutionMode.ContextDependent))
-                    dataFlowAnalyzer.exitCallArguments()
+                    context.withInferenceSession(
+                                if (context.inferenceSession is FirDelegatedPropertyInferenceSession) {
+                                    FirInferenceSession.DEFAULT
+                                } else context.inferenceSession
+                            ) {
+                                it.replaceArgumentList(it.argumentList.transform(this, ResolutionMode.ContextDependent))
+                                dataFlowAnalyzer.exitCallArguments()
+                            }
                 }
             } else {
                 functionCall
@@ -1235,18 +1241,20 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         annotationCall: FirAnnotationCall,
         data: ResolutionMode
     ): FirStatement = whileAnalysing(session, annotationCall) {
-        if (annotationCall.resolved) return annotationCall
-        annotationCall.transformAnnotationTypeRef(transformer, ResolutionMode.ContextIndependent)
-        annotationCall.replaceAnnotationResolvePhase(FirAnnotationResolvePhase.Types)
-        return context.forAnnotation {
-            withFirArrayOfCallTransformer {
-                dataFlowAnalyzer.enterAnnotation()
-                val result = callResolver.resolveAnnotationCall(annotationCall)
-                dataFlowAnalyzer.exitAnnotation()
-                if (result == null) return annotationCall
-                callCompleter.completeCall(result, ResolutionMode.ContextIndependent)
-                (result.argumentList as FirResolvedArgumentList).let { annotationCall.replaceArgumentMapping((it).toAnnotationArgumentMapping()) }
-                annotationCall
+        context.withInferenceSession(FirInferenceSession.DEFAULT) {
+            if (annotationCall.resolved) return annotationCall
+            annotationCall.transformAnnotationTypeRef(transformer, ResolutionMode.ContextIndependent)
+            annotationCall.replaceAnnotationResolvePhase(FirAnnotationResolvePhase.Types)
+            context.forAnnotation {
+                withFirArrayOfCallTransformer {
+                    dataFlowAnalyzer.enterAnnotation()
+                    val result = callResolver.resolveAnnotationCall(annotationCall)
+                    dataFlowAnalyzer.exitAnnotation()
+                    if (result == null) return annotationCall
+                    callCompleter.completeCall(result, ResolutionMode.ContextIndependent)
+                    (result.argumentList as FirResolvedArgumentList).let { annotationCall.replaceArgumentMapping((it).toAnnotationArgumentMapping()) }
+                    annotationCall
+                }
             }
         }
     }

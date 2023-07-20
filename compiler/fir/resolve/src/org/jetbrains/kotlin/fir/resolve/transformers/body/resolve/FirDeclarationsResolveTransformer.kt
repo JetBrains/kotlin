@@ -35,7 +35,8 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeLocalVariableNoTypeOrIni
 import org.jetbrains.kotlin.fir.resolve.inference.FirStubTypeTransformer
 import org.jetbrains.kotlin.fir.resolve.inference.ResolvedLambdaAtom
 import org.jetbrains.kotlin.fir.resolve.inference.extractLambdaInfoFromFunctionType
-import org.jetbrains.kotlin.fir.resolve.substitution.createTypeSubstitutorByTypeConstructor
+import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.FirCallCompletionResultsWriterTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.FirStatusResolver
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.runContractResolveForFunction
@@ -47,6 +48,7 @@ import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.resolve.calls.inference.buildCurrentSubstitutor
 
 open class FirDeclarationsResolveTransformer(
     transformer: FirAbstractBodyResolveTransformerDispatcher
@@ -288,6 +290,7 @@ open class FirDeclarationsResolveTransformer(
 
             val finalSubstitutor = createFinalSubstitutor()
 
+            // TODO: Replace just property/accessors return types instead
             val stubTypeCompletionResultsWriter = FirStubTypeTransformer(finalSubstitutor)
             property.transformSingle(stubTypeCompletionResultsWriter, null)
             property.replaceReturnTypeRef(
@@ -334,18 +337,10 @@ open class FirDeclarationsResolveTransformer(
         if (delegateExpression is FirResolvable) {
             val calleeReference = delegateExpression.calleeReference
             if (calleeReference is FirNamedReferenceWithCandidate) {
-                val system = calleeReference.candidate.system
-                system.notFixedTypeVariables.forEach {
-                    system.markPostponedVariable(it.value.typeVariable)
-                }
-                val typeVariableTypeToStubType = context.inferenceSession.createSyntheticStubTypes(system)
-
-                val substitutor = createTypeSubstitutorByTypeConstructor(
-                    typeVariableTypeToStubType, session.typeContext, approximateIntegerLiterals = true
-                )
                 val delegateExpressionTypeRef = delegateExpression.typeRef
-                val stubTypeSubstituted = substitutor.substituteOrNull(delegateExpressionTypeRef.coneType)
-                delegateExpression.replaceTypeRef(delegateExpressionTypeRef.withReplacedConeType(stubTypeSubstituted))
+                val returnTypeSubstitutedWithTypeVariables =
+                    calleeReference.candidate.substitutor.substituteOrNull(delegateExpressionTypeRef.coneType)
+                delegateExpression.replaceTypeRef(delegateExpressionTypeRef.withReplacedConeType(returnTypeSubstitutedWithTypeVariables))
             }
         }
 
@@ -356,28 +351,23 @@ open class FirDeclarationsResolveTransformer(
         // TODO: this generates some nodes in the control flow graph which we don't want if we
         //  end up not selecting this option, KT-59684
         transformer.expressionsTransformer.transformFunctionCallInternal(
-            provideDelegateCall, ResolutionMode.ContextIndependent, provideDelegate = true
+            provideDelegateCall, ResolutionMode.ContextIndependent, skipExplicitReceiverTransformation = true
         )
 
         // If we got successful candidate for provideDelegate, let's select it
         val provideDelegateCandidate = provideDelegateCall.candidate()
         if (provideDelegateCandidate != null && provideDelegateCandidate.isSuccessful) {
-            val system = provideDelegateCandidate.system
-            system.notFixedTypeVariables.forEach {
-                system.markPostponedVariable(it.value.typeVariable)
-            }
-            val typeVariableTypeToStubType = context.inferenceSession.createSyntheticStubTypes(system)
-            val substitutor = createTypeSubstitutorByTypeConstructor(
-                typeVariableTypeToStubType, session.typeContext, approximateIntegerLiterals = true
+            val substitutor = ChainedSubstitutor(
+                provideDelegateCandidate.substitutor,
+                context.inferenceSession.currentConstraintStorage.buildCurrentSubstitutor(
+                    session.typeContext, emptyMap()
+                ) as ConeSubstitutor
             )
 
-            val stubTypeSubstituted = substitutor.substituteOrSelf(
-                provideDelegateCandidate.substitutor.substituteOrSelf(
-                    components.typeFromCallee(provideDelegateCall).type
-                )
-            )
+            val toTypeVariableSubstituted =
+                substitutor.substituteOrSelf(components.typeFromCallee(provideDelegateCall).type)
 
-            provideDelegateCall.replaceTypeRef(provideDelegateCall.typeRef.resolvedTypeFromPrototype(stubTypeSubstituted))
+            provideDelegateCall.replaceTypeRef(provideDelegateCall.typeRef.resolvedTypeFromPrototype(toTypeVariableSubstituted))
             return provideDelegateCall
         }
 
