@@ -1,0 +1,26 @@
+@kotlin.Metadata
+final class AAA {
+    // source: 'InitializationOrderTest.kt'
+    private synthetic final static field _counter$volatile$FU: java.util.concurrent.atomic.AtomicLongFieldUpdater
+    private synthetic volatile field _counter$volatile: long
+    private synthetic final field intArr: java.util.concurrent.atomic.AtomicIntegerArray
+    private synthetic final static field lateInitInt$volatile$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic volatile field lateInitInt$volatile: int
+    static method <clinit>(): void
+    public method <init>(): void
+    public final method getCounterValue(): long
+    public final method getDelegateCounterValue(): long
+    public synthetic final method getIntArr(): java.util.concurrent.atomic.AtomicIntegerArray
+    private synthetic final static method getLateInitInt$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic final method getLateInitInt$volatile(): int
+    private synthetic final static method get_counter$volatile$FU(): java.util.concurrent.atomic.AtomicLongFieldUpdater
+    private synthetic final method get_counter$volatile(): long
+    private synthetic final method setLateInitInt$volatile(p0: int): void
+    private synthetic final method set_counter$volatile(p0: long): void
+}
+
+@kotlin.Metadata
+public final class InitializationOrderTestKt {
+    // source: 'InitializationOrderTest.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

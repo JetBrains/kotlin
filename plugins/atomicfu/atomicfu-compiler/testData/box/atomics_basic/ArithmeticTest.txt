@@ -1,0 +1,83 @@
+@kotlin.Metadata
+public final class ArithmeticTestKt {
+    // source: 'ArithmeticTest.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class BooleanArithmetic {
+    // source: 'ArithmeticTest.kt'
+    private synthetic final static field _x$volatile$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic volatile field _x$volatile: int
+    static method <clinit>(): void
+    public method <init>(): void
+    public final method getX(): boolean
+    private synthetic final static method get_x$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic final method get_x$volatile(): int
+    private synthetic final method set_x$volatile(p0: int): void
+    public final method testBoolean(): void
+}
+
+@kotlin.Metadata
+public final class IntArithmetic {
+    // source: 'ArithmeticTest.kt'
+    private synthetic final static field _x$volatile$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic volatile field _x$volatile: int
+    private synthetic final static field local$volatile$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic volatile field local$volatile: int
+    static method <clinit>(): void
+    public method <init>(): void
+    private synthetic final static method getLocal$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic final method getLocal$volatile(): int
+    public final method getX(): int
+    private synthetic final static method get_x$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic final method get_x$volatile(): int
+    private synthetic final method setLocal$volatile(p0: int): void
+    private synthetic final method set_x$volatile(p0: int): void
+    public final method test(): void
+    private final method testAtomicCallPlaces(): void
+    private final method testGetValue(): void
+    private final method testInt(): void
+}
+
+@kotlin.Metadata
+public final class LongArithmetic {
+    // source: 'ArithmeticTest.kt'
+    private synthetic final static field _x$volatile$FU: java.util.concurrent.atomic.AtomicLongFieldUpdater
+    private synthetic volatile field _x$volatile: long
+    private synthetic final static field max$volatile$FU: java.util.concurrent.atomic.AtomicLongFieldUpdater
+    private synthetic volatile field max$volatile: long
+    private synthetic final static field y$volatile$FU: java.util.concurrent.atomic.AtomicLongFieldUpdater
+    private synthetic volatile field y$volatile: long
+    private synthetic final static field z$volatile$FU: java.util.concurrent.atomic.AtomicLongFieldUpdater
+    private synthetic volatile field z$volatile: long
+    static method <clinit>(): void
+    public method <init>(): void
+    private synthetic final static method getMax$volatile$FU(): java.util.concurrent.atomic.AtomicLongFieldUpdater
+    private synthetic final method getMax$volatile(): long
+    public final method getX(): long
+    private synthetic final static method getY$volatile$FU(): java.util.concurrent.atomic.AtomicLongFieldUpdater
+    private synthetic final method getY$volatile(): long
+    private synthetic final static method getZ$volatile$FU(): java.util.concurrent.atomic.AtomicLongFieldUpdater
+    private synthetic final method getZ$volatile(): long
+    private synthetic final static method get_x$volatile$FU(): java.util.concurrent.atomic.AtomicLongFieldUpdater
+    private synthetic final method get_x$volatile(): long
+    private synthetic final method setMax$volatile(p0: long): void
+    private synthetic final method setY$volatile(p0: long): void
+    private synthetic final method setZ$volatile(p0: long): void
+    private synthetic final method set_x$volatile(p0: long): void
+    public final method testLong(): void
+}
+
+@kotlin.Metadata
+public final class ReferenceArithmetic {
+    // source: 'ArithmeticTest.kt'
+    private synthetic final static field _x$volatile$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private synthetic volatile field _x$volatile: java.lang.Object
+    static method <clinit>(): void
+    public method <init>(): void
+    private synthetic final static method get_x$volatile$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private synthetic final method get_x$volatile(): java.lang.Object
+    private synthetic final method set_x$volatile(p0: java.lang.Object): void
+    public final method testReference(): void
+}

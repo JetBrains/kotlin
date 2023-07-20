@@ -1,0 +1,44 @@
+@kotlin.Metadata
+final class LockFreeLongCounter$Inner {
+    // source: 'LockFreeLongCounterTest.kt'
+    synthetic final field this$0: LockFreeLongCounter
+    public method <init>(p0: LockFreeLongCounter): void
+    public final method getFromOuter(): long
+    private final inner class LockFreeLongCounter$Inner
+}
+
+@kotlin.Metadata
+public final class LockFreeLongCounter {
+    // source: 'LockFreeLongCounterTest.kt'
+    private synthetic final static field counter$volatile$FU: java.util.concurrent.atomic.AtomicLongFieldUpdater
+    private synthetic volatile field counter$volatile: long
+    static method <clinit>(): void
+    public method <init>(): void
+    public synthetic final static method access$getCounter$volatile$FU(): java.util.concurrent.atomic.AtomicLongFieldUpdater
+    public final method add2(): long
+    public final method get(): long
+    private synthetic final static method getCounter$volatile$FU(): java.util.concurrent.atomic.AtomicLongFieldUpdater
+    private synthetic final method getCounter$volatile(): long
+    public final method getInner(): long
+    public final method increment(): long
+    private synthetic final method setCounter$volatile(p0: long): void
+    public final method setM2(): void
+    private final inner class LockFreeLongCounter$Inner
+}
+
+@kotlin.Metadata
+public final class LockFreeLongCounterTest {
+    // source: 'LockFreeLongCounterTest.kt'
+    public method <init>(): void
+    public final method testAdd2(): void
+    public final method testBasic(): void
+    public final method testGetInner(): void
+    public final method testSetM2(): void
+    private final method testWith(p0: kotlin.jvm.functions.Function1): void
+}
+
+@kotlin.Metadata
+public final class LockFreeLongCounterTestKt {
+    // source: 'LockFreeLongCounterTest.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

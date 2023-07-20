@@ -139,6 +139,17 @@ inline fun IrProperty.addGetter(builder: IrFunctionBuilder.() -> Unit = {}): IrS
         }
     }
 
+inline fun IrProperty.addSetter(builder: IrFunctionBuilder.() -> Unit = {}): IrSimpleFunction =
+    IrFunctionBuilder().run {
+        name = Name.special("<set-${this@addSetter.name}>")
+        builder()
+        factory.buildFunction(this).also { setter ->
+            this@addSetter.setter = setter
+            setter.correspondingPropertySymbol = this@addSetter.symbol
+            setter.parent = this@addSetter.parent
+        }
+    }
+
 fun IrProperty.addDefaultGetter(parentClass: IrClass, builtIns: IrBuiltIns) {
     val field = backingField!!
     addGetter {

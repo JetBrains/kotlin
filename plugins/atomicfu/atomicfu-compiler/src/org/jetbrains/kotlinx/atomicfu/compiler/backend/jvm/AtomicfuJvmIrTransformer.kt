@@ -6,464 +6,233 @@
 package org.jetbrains.kotlinx.atomicfu.compiler.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.extensions.*
-import org.jetbrains.kotlin.backend.common.lower.parents
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.ir.*
+import org.jetbrains.kotlin.ir.backend.js.utils.valueArguments
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.*
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.*
-import org.jetbrains.kotlinx.atomicfu.compiler.backend.*
+import org.jetbrains.kotlinx.atomicfu.compiler.backend.common.AbstractAtomicSymbols
+import org.jetbrains.kotlinx.atomicfu.compiler.backend.common.AbstractAtomicfuTransformer
 import kotlin.collections.set
 
-private const val AFU_PKG = "kotlinx.atomicfu"
-private const val TRACE_BASE_TYPE = "TraceBase"
-private const val ATOMIC_VALUE_FACTORY = "atomic"
-private const val INVOKE = "invoke"
-private const val APPEND = "append"
-private const val GET = "get"
 private const val ATOMICFU = "atomicfu"
-private const val ATOMIC_ARRAY_RECEIVER_SUFFIX = "\$array"
-private const val DISPATCH_RECEIVER = "${ATOMICFU}\$dispatchReceiver"
-private const val ATOMIC_HANDLER = "${ATOMICFU}\$handler"
-private const val ACTION = "${ATOMICFU}\$action"
-private const val INDEX = "${ATOMICFU}\$index"
-private const val VOLATILE_WRAPPER_SUFFIX = "\$VolatileWrapper"
+private const val DISPATCH_RECEIVER = "dispatchReceiver\$$ATOMICFU"
+private const val ATOMIC_HANDLER = "handler\$$ATOMICFU"
+private const val ACTION = "action\$$ATOMICFU"
+private const val INDEX = "index\$$ATOMICFU"
 private const val LOOP = "loop"
 private const val UPDATE = "update"
 
 class AtomicfuJvmIrTransformer(
-    private val context: IrPluginContext,
-    private val atomicSymbols: AtomicSymbols
-) {
-    private val irBuiltIns = context.irBuiltIns
+    pluginContext: IrPluginContext,
+    override val atomicSymbols: JvmAtomicSymbols
+) : AbstractAtomicfuTransformer(pluginContext) {
 
-    private val AFU_VALUE_TYPES: Map<String, IrType> = mapOf(
-        "AtomicInt" to irBuiltIns.intType,
-        "AtomicLong" to irBuiltIns.longType,
-        "AtomicBoolean" to irBuiltIns.booleanType,
-        "AtomicRef" to irBuiltIns.anyNType
-    )
+    override val atomicPropertiesTransformer: AtomicPropertiesTransformer
+        get() = JvmAtomicPropertiesTransformer()
 
-    private val ATOMICFU_INLINE_FUNCTIONS = setOf("loop", "update", "getAndUpdate", "updateAndGet")
-    protected val ATOMIC_VALUE_TYPES = setOf("AtomicInt", "AtomicLong", "AtomicBoolean", "AtomicRef")
-    protected val ATOMIC_ARRAY_TYPES = setOf("AtomicIntArray", "AtomicLongArray", "AtomicBooleanArray", "AtomicArray")
+    override val atomicExtensionsTransformer: AtomicExtensionTransformer
+        get() = JvmAtomicExtensionTransformer()
 
-    fun transform(moduleFragment: IrModuleFragment) {
-        transformAtomicFields(moduleFragment)
-        transformAtomicExtensions(moduleFragment)
-        transformAtomicfuDeclarations(moduleFragment)
-        for (irFile in moduleFragment.files) {
-            irFile.patchDeclarationParents()
-        }
-    }
+    override val atomicFunctionsTransformer: AtomicFunctionCallTransformer
+        get() = JvmAtomicFunctionCallTransformer()
 
-    private fun transformAtomicFields(moduleFragment: IrModuleFragment) {
-        for (irFile in moduleFragment.files) {
-            irFile.transform(AtomicHandlerTransformer(), null)
-        }
-    }
+    private inner class JvmAtomicPropertiesTransformer : AtomicPropertiesTransformer() {
 
-    private fun transformAtomicExtensions(moduleFragment: IrModuleFragment) {
-        for (irFile in moduleFragment.files) {
-            irFile.transform(AtomicExtensionTransformer(), null)
-        }
-    }
-
-    private fun transformAtomicfuDeclarations(moduleFragment: IrModuleFragment) {
-        for (irFile in moduleFragment.files) {
-            irFile.transform(AtomicfuTransformer(), null)
-        }
-    }
-
-    private val propertyToAtomicHandler = mutableMapOf<IrProperty, IrProperty>()
-
-    private inner class AtomicHandlerTransformer : IrElementTransformer<IrFunction?> {
-        override fun visitClass(declaration: IrClass, data: IrFunction?): IrStatement {
-            declaration.declarations.filter(::fromKotlinxAtomicfu).forEach {
-                (it as IrProperty).transformAtomicfuProperty(declaration)
-            }
-            return super.visitClass(declaration, data)
+        override fun IrClass.addTransformedInClassAtomic(atomicProperty: IrProperty, index: Int): IrProperty {
+            /**
+             * Atomic property is replaced with the private volatile field that is atomically updated via
+             * java.util.concurrent.Atomic*FieldUpdater class.
+             * Volatile field is private and the atomic updater has the minimal visibility level
+             * among the visibility of the atomic property and the visibility of the containing class.
+             *
+             * private val a = atomic(0)  --> private @Volatile var a: Int = 0
+             *                                private static val a$FU = AtomicIntegerFieldUpdater.newUpdater(parentClass, "a")
+             */
+            return addVolatilePropertyWithAtomicUpdater(atomicProperty, index)
         }
 
-        override fun visitFile(declaration: IrFile, data: IrFunction?): IrFile {
-            declaration.declarations.filter(::fromKotlinxAtomicfu).forEach {
-                (it as IrProperty).transformAtomicfuProperty(declaration)
-            }
-            return super.visitFile(declaration, data)
+        override fun IrDeclarationContainer.addTransformedStaticAtomic(atomicProperty: IrProperty, index: Int): IrProperty {
+            /**
+             * Atomic property is replaced with the private volatile field that is atomically updated via
+             * java.util.concurrent.Atomic*FieldUpdater class. Atomic*FieldUpdater can only update a field that is a member of a class.
+             * For this reason, all volatile fields are placed inside the generated `VolatileWrapper` class.
+             * VolatileWrapper class and it's instance have the minimal visibility level
+             * among the visibility of the atomic property and the visibility of the containing object (if the atomic property is member of the object).
+             *
+             * One wrapper class contains all properties of the same visibility, e.g.:
+             *
+             * internal class AVolatileWrapper$internal {
+             *   private @Volatile var a: Int = 0
+             *
+             *   companion object {
+             *     internal static val a$FU = AtomicIntegerFieldUpdater.newUpdater(AVolatileWrapper::class, "a")
+             *   }
+             * }
+             * internal val wrapperClassInstance = AVolatileWrapper$internal()
+             */
+            val wrapperClass = getOrBuildVolatileWrapper(atomicProperty)
+            return wrapperClass.addVolatilePropertyWithAtomicUpdater(atomicProperty, index)
         }
 
-        private fun IrProperty.transformAtomicfuProperty(parent: IrDeclarationContainer) {
-            val atomicfuProperty = this
-            val isTopLevel = parent is IrFile || (parent is IrClass && parent.kind == ClassKind.OBJECT)
-            when {
-                isAtomic() -> {
-                    if (isTopLevel) {
-                        val wrapperClass = buildWrapperClass(atomicfuProperty, parent).also {
-                            // add a static instance of the generated wrapper class to the parent container
-                            context.buildClassInstance(it, parent, atomicfuProperty.visibility, true)
-                        }
-                        transformAtomicProperty(wrapperClass)
-                        moveFromFileToClass(parent, wrapperClass)
-                    } else {
-                        transformAtomicProperty(parent as IrClass)
-                    }
-                }
-                isDelegatedToAtomic() -> transformDelegatedProperty(parent)
-                isAtomicArray() -> transformAtomicArrayProperty(parent)
-                isTrace() -> parent.declarations.remove(atomicfuProperty)
-                else -> {}
-            }
-        }
-
-        private fun IrProperty.moveFromFileToClass(
-            parentFile: IrDeclarationContainer,
-            parentClass: IrClass
-        ) {
-            parentFile.declarations.remove(this)
-            parentClass.declarations.add(this)
-            parent = parentClass
-        }
-
-        private fun IrProperty.transformAtomicProperty(parentClass: IrClass) {
-            // Atomic property transformation:
-            // 1. replace it's backingField with a volatile property of atomic value type
-            // 2. create j.u.c.a.Atomic*FieldUpdater for this volatile property to handle it's value atomically
-            // val a = atomic(0) ->
-            // volatile var a: Int = 0
-            // val a$FU = AtomicIntegerFieldUpdater.newUpdater(parentClass, "a")
-            //
-            // Top-level atomic properties transformation:
-            // 1. replace it's backingField with a volatile property of atomic value type
-            // 2. wrap this volatile property into the generated class
-            // 3. create j.u.c.a.Atomic*FieldUpdater for the volatile property to handle it's value atomically
-            // val a = atomic(0) ->
-            // class A$ParentFile$VolatileWrapper { volatile var a: Int = 0 }
-            // val a$FU = AtomicIntegerFieldUpdater.newUpdater(A$ParentFile$VolatileWrapper::class, "a")
-            backingField = buildVolatileRawField(this, parentClass)
-            // update property accessors
-            context.addDefaultGetter(this, parentClass)
-            val fieldUpdater = addJucaAFUProperty(this, parentClass)
-            registerAtomicHandler(fieldUpdater)
-        }
-
-        private fun IrProperty.transformAtomicArrayProperty(parent: IrDeclarationContainer) {
-            // Replace atomicfu array classes with the corresponding atomic arrays from j.u.c.a.:
-            // val intArr = atomicArrayOfNulls<Any?>(5) ->
-            // val intArr = AtomicReferenceArray(5)
-            backingField = buildJucaArrayField(this, parent)
-            // update property accessors
-            context.addDefaultGetter(this, parent)
-            registerAtomicHandler(this)
-        }
-
-        private fun IrProperty.transformDelegatedProperty(parent: IrDeclarationContainer) {
-            backingField?.let {
-                it.initializer?.let {
-                    val initializer = it.expression as IrCall
-                    if (initializer.isAtomicFactory()) {
-                        // Property delegated to atomic factory invocation:
-                        // 1. replace it's backingField with a volatile property of value type
-                        // 2. transform getter/setter
-                        // var a by atomic(0) ->
-                        // volatile var a: Int = 0
-                        val volatileField = buildVolatileRawField(this, parent).also {
-                            parent.declarations.add(it)
-                        }
-                        backingField = null
-                        getter?.transformAccessor(volatileField, getter?.dispatchReceiverParameter?.capture())
-                        setter?.transformAccessor(volatileField, setter?.dispatchReceiverParameter?.capture())
-                    } else {
-                        // Property delegated to the atomic property:
-                        // 1. delegate it's accessors to get/set of the backingField of the atomic delegate
-                        // (that is already transformed to a volatile field of value type)
-                        // val _a = atomic(0)
-                        // var a by _a ->
-                        // volatile var _a: Int = 0
-                        // var a by _a
-                        val atomicProperty = initializer.getCorrespondingProperty()
-                        val volatileField = atomicProperty.backingField!!
-                        backingField = null
-                        if (atomicProperty.isTopLevel()) {
-                            with(atomicSymbols.createBuilder(symbol)) {
-                                val wrapper = getStaticVolatileWrapperInstance(atomicProperty)
-                                getter?.transformAccessor(volatileField, getProperty(wrapper, null))
-                                setter?.transformAccessor(volatileField, getProperty(wrapper, null))
-                            }
-                        } else {
-                            if (this.parent == atomicProperty.parent) {
-                                //class A {
-                                //    val _a = atomic()
-                                //    var a by _a
-                                //}
-                                getter?.transformAccessor(volatileField, getter?.dispatchReceiverParameter?.capture())
-                                setter?.transformAccessor(volatileField, setter?.dispatchReceiverParameter?.capture())
-                            } else {
-                                //class A {
-                                //    val _a = atomic()
-                                //    inner class B {
-                                //        var a by _a
-                                //    }
-                                //}
-                                val thisReceiver = atomicProperty.parentAsClass.thisReceiver
-                                getter?.transformAccessor(volatileField, thisReceiver?.capture())
-                                setter?.transformAccessor(volatileField, thisReceiver?.capture())
-                            }
-                        }
-                    }
+        override fun IrDeclarationContainer.addTransformedAtomicArray(atomicProperty: IrProperty, index: Int): IrProperty {
+            /**
+             * Atomic arrays are replaced with corresponding java.util.concurrent.Atomic*Array:
+             *
+             * val intArr = kotlinx.atomicfu.AtomicIntArray(45)  -->   val intArr = java.util.concurrent.AtomicIntegerArray(45)
+             */
+            val parentContainer = this
+            with(atomicSymbols.createBuilder(atomicProperty.symbol)) {
+                val javaAtomicArrayField = buildJavaAtomicArrayField(atomicProperty, parentContainer)
+                return parentContainer.replacePropertyAtIndex(
+                    javaAtomicArrayField,
+                    atomicProperty.visibility,
+                    isVar = false,
+                    isStatic = parentContainer is IrFile,
+                    index
+                ).also {
+                    propertyToAtomicHandler[atomicProperty] = it
                 }
             }
         }
 
-        private fun IrFunction.transformAccessor(volatileField: IrField, parent: IrExpression?) {
-            val accessor = this
-            with(atomicSymbols.createBuilder(symbol)) {
-                body = irExprBody(
-                    irReturn(
-                        if (accessor.isGetter) {
-                            irGetField(parent, volatileField)
-                        } else {
-                            irSetField(parent, volatileField, accessor.valueParameters[0].capture())
-                        }
-                    )
+        private fun IrClass.addVolatilePropertyWithAtomicUpdater(from: IrProperty, index: Int): IrProperty {
+            /**
+             * Generates a volatile property and an atomic updater for this property,
+             * adds both to the parent class and returns the volatile property.
+             */
+            val parentClass = this
+            with(atomicSymbols.createBuilder(from.symbol)) {
+                /**
+                 * Property initialization order matters,
+                 * the new volatile property should be inserted in parent declarations in place of the original property.
+                 * Consider the case when the transformed property is added to the end of parent.declarations:
+                 *
+                 * class A {                           class A {
+                 *   private val _a = atomic(5)          // _a is removed
+                 *   init {                       --->   init {
+                 *     assertEquals(5, _a.value)           assertEquals(5, _a$volatile$FU.get(this)) // FAILS, _a$volatile$FU.get(this) == 0
+                 *   }                                   }
+                 *                                       // transformed volatile property + updater are added to the end of class declarations ->
+                 *                                       // wrong order of initialization
+                 *                                       @Volatile var _a$volatile = 5
+                 *                                       companion object {
+                 *                                         val _a$volatile$FU = AtomicIntegerFieldUpdater.newUpdater(A::class.java, "_a$volatile")
+                 *                                       }
+                 * }                                   }
+                 */
+                val volatileField = buildVolatileBackingField(from, parentClass, true)
+                val volatileProperty = if (volatileField.parent == from.parent) {
+                    // The index is relevant only if the property belongs to the same class as the original atomic property (not the generated wrapper).
+                    parentClass.replacePropertyAtIndex(volatileField, DescriptorVisibilities.PRIVATE, isVar = true, isStatic = false, index)
+                } else {
+                    parentClass.addProperty(volatileField, DescriptorVisibilities.PRIVATE, isVar = true, isStatic = false)
+                }
+                atomicPropertyToVolatile[from] = volatileProperty
+                val atomicUpdaterField = irJavaAtomicFieldUpdater(volatileField, parentClass)
+                parentClass.addProperty(atomicUpdaterField, from.getMinVisibility(), isVar = false, isStatic = true).also {
+                    propertyToAtomicHandler[from] = it
+                }
+                return volatileProperty
+            }
+        }
+
+        private fun JvmAtomicfuIrBuilder.buildJavaAtomicArrayField(
+            atomicProperty: IrProperty,
+            parentContainer: IrDeclarationContainer
+        ): IrField {
+            val atomicArrayField =
+                requireNotNull(atomicProperty.backingField) { "BackingField of atomic array $atomicProperty should not be null" }
+            val initializer = atomicArrayField.initializer?.expression
+            if (initializer == null) {
+                // replace field initialization in the init block
+                val initBlock = atomicArrayField.getInitBlockForField(parentContainer)
+                // property initialization order in the init block matters -> transformed initializer should be placed at the same position
+                val initExprWithIndex = initBlock.getInitExprWithIndexFromInitBlock(atomicArrayField.symbol)
+                    ?: error("Expected atomic array ${atomicProperty.render()} initialization in init block ${initBlock.render()}" + CONSTRAINTS_MESSAGE)
+                val atomicFactoryCall = initExprWithIndex.value.value
+                val initExprIndex = initExprWithIndex.index
+                val arraySize = atomicFactoryCall.getArraySizeArgument()
+                return irJavaAtomicArrayField(
+                    atomicArrayField.name,
+                    atomicSymbols.getAtomicArrayClassByAtomicfuArrayType(atomicArrayField.type),
+                    atomicArrayField.isStatic,
+                    atomicArrayField.annotations,
+                    arraySize,
+                    (atomicFactoryCall as IrFunctionAccessExpression).dispatchReceiver,
+                    parentContainer
+                ).also {
+                    val initExpr = it.initializer?.expression ?: error("Initializer of the generated field ${it.render()} can not be null" + CONSTRAINTS_MESSAGE)
+                    it.initializer = null
+                    initBlock.updateFieldInitialization(atomicArrayField.symbol, it.symbol, initExpr, initExprIndex)
+                }
+            } else {
+                val arraySize = initializer.getArraySizeArgument()
+                return irJavaAtomicArrayField(
+                    atomicArrayField.name,
+                    atomicSymbols.getAtomicArrayClassByAtomicfuArrayType(atomicArrayField.type),
+                    atomicArrayField.isStatic,
+                    atomicArrayField.annotations,
+                    arraySize,
+                    (initializer as IrFunctionAccessExpression).dispatchReceiver,
+                    parentContainer
                 )
             }
         }
 
-        private fun IrProperty.registerAtomicHandler(atomicHandlerProperty: IrProperty) {
-            propertyToAtomicHandler[this] = atomicHandlerProperty
-        }
-
-        private fun buildVolatileRawField(property: IrProperty, parent: IrDeclarationContainer): IrField =
-            // Generate a new backing field for the given property:
-            // a volatile variable of the atomic value type
-            // val a = atomic(0)
-            // volatile var a: Int = 0
-            property.backingField?.let { backingField ->
-                val init = backingField.initializer?.expression
-                val valueType = backingField.type.atomicToValueType()
-                context.irFactory.buildField {
-                    name = property.name
-                    type = if (valueType.isBoolean()) irBuiltIns.intType else valueType
-                    isFinal = false
-                    isStatic = parent is IrFile
-                    visibility = DescriptorVisibilities.PRIVATE
-                }.apply {
-                    if (init != null) {
-                        val value = (init as IrCall).getAtomicFactoryValueArgument()
-                        initializer = IrExpressionBodyImpl(value)
-                    } else {
-                        // if lateinit field -> initialize it in IrAnonymousInitializer
-                        transformLateInitializer(backingField, parent) { init ->
-                            val value = (init as IrCall).getAtomicFactoryValueArgument()
-                            with(atomicSymbols.createBuilder(this.symbol)) {
-                                irSetField((parent as? IrClass)?.thisReceiver?.capture(), this@apply, value)
-                            }
-                        }
-                    }
-                    annotations = backingField.annotations + atomicSymbols.volatileAnnotationConstructorCall
-                    this.parent = parent
-                }
-            } ?: error("Backing field of the atomic property ${property.render()} is null")
-
-        private fun addJucaAFUProperty(atomicProperty: IrProperty, parentClass: IrClass): IrProperty =
-            // Generate an atomic field updater for the volatile backing field of the given property:
-            // val a = atomic(0)
-            // volatile var a: Int = 0
-            // val a$FU = AtomicIntegerFieldUpdater.newUpdater(parentClass, "a")
-            atomicProperty.backingField?.let { volatileField ->
-                val fuClass = atomicSymbols.getJucaAFUClass(volatileField.type)
-                val fieldName = volatileField.name.asString()
-                val fuField = context.irFactory.buildField {
-                    name = Name.identifier(mangleFUName(fieldName))
-                    type = fuClass.defaultType
-                    isFinal = true
-                    isStatic = true
-                    visibility = DescriptorVisibilities.PRIVATE
-                }.apply {
-                    initializer = IrExpressionBodyImpl(
-                        with(atomicSymbols.createBuilder(symbol)) {
-                            newUpdater(fuClass, parentClass, irBuiltIns.anyNType, fieldName)
-                        }
-                    )
-                    parent = parentClass
-                }
-                return context.buildPropertyForBackingField(fuField, parentClass, atomicProperty.visibility, true)
-            } ?: error("Atomic property ${atomicProperty.render()} should have a non-null generated volatile backingField")
-
-        private fun buildJucaArrayField(atomicfuArrayProperty: IrProperty, parent: IrDeclarationContainer) =
-            atomicfuArrayProperty.backingField?.let { atomicfuArray ->
-                val init = atomicfuArray.initializer?.expression as? IrFunctionAccessExpression
-                val atomicArrayClass = atomicSymbols.getAtomicArrayClassByAtomicfuArrayType(atomicfuArray.type)
-                context.irFactory.buildField {
-                    name = atomicfuArray.name
-                    type = atomicArrayClass.defaultType
-                    isFinal = atomicfuArray.isFinal
-                    isStatic = atomicfuArray.isStatic
-                    visibility = DescriptorVisibilities.PRIVATE
-                }.apply {
-                    if (init != null) {
-                        this.initializer = IrExpressionBodyImpl(
-                            with(atomicSymbols.createBuilder(symbol)) {
-                                val size = init.getArraySizeArgument()
-                                newJucaAtomicArray(atomicArrayClass, size, init.dispatchReceiver)
-                            }
-                        )
-                    } else {
-                        // if lateinit field -> initialize it in IrAnonymousInitializer
-                        transformLateInitializer(atomicfuArray, parent) { init ->
-                            init as IrFunctionAccessExpression
-                            val size = init.getArraySizeArgument()
-                            with(atomicSymbols.createBuilder(this.symbol)) {
-                                irSetField(
-                                    (parent as? IrClass)?.thisReceiver?.capture(),
-                                    this@apply,
-                                    newJucaAtomicArray(atomicArrayClass, size, init.dispatchReceiver)
-                                )
-                            }
-                        }
-                    }
-                    annotations = atomicfuArray.annotations
-                    this.parent = parent
-                }
-            } ?: error("Atomic property does not have backingField")
-
-        private fun buildWrapperClass(atomicProperty: IrProperty, parentContainer: IrDeclarationContainer): IrClass =
-            atomicSymbols.buildClass(
-                FqName(getVolatileWrapperClassName(atomicProperty)),
-                ClassKind.CLASS,
-                parentContainer
-            ).apply {
-                val irClass = this
-                irClass.visibility = atomicProperty.visibility
-                addConstructor {
-                    isPrimary = true
-                }.apply {
-                    body = atomicSymbols.createBuilder(symbol).irBlockBody(startOffset, endOffset) {
-                        +irDelegatingConstructorCall(context.irBuiltIns.anyClass.owner.constructors.single())
-                        +IrInstanceInitializerCallImpl(startOffset, endOffset, irClass.symbol, context.irBuiltIns.unitType)
-                    }
-                    this.visibility = DescriptorVisibilities.PRIVATE // constructor of the wrapper class should be private
-                }
-            }
-
-        private fun transformLateInitializer(
-            field: IrField,
-            parent: IrDeclarationContainer,
-            generateIrSetField: (init: IrExpression) -> IrExpression
-        ) {
-            for (declaration in parent.declarations) {
-                if (declaration is IrAnonymousInitializer) {
-                    declaration.body.statements.singleOrNull {
-                        it is IrSetField && it.symbol == field.symbol
-                    }?.let {
-                        declaration.body.statements.remove(it)
-                        val init = (it as IrSetField).value
-                        declaration.body.statements.add(
-                            generateIrSetField(init)
-                        )
-                    }
+        private fun IrDeclarationContainer.getOrBuildVolatileWrapper(atomicProperty: IrProperty): IrClass {
+            val visibility = atomicProperty.getMinVisibility()
+            findDeclaration<IrClass> { it.isVolatileWrapper(visibility) && it.visibility == visibility }?.let { return it }
+            val parentContainer = this
+            return with(atomicSymbols.createBuilder((this as IrSymbolOwner).symbol)) {
+                irClassWithPrivateConstructor(
+                    mangleVolatileWrapperClassName(parentContainer) + "\$${visibility.name}",
+                    visibility,
+                    parentContainer
+                ).also {
+                    val wrapperInstance = buildClassInstance(it, parentContainer, true)
+                    addProperty(wrapperInstance, atomicProperty.getMinVisibility(), isVar = false, isStatic = true)
                 }
             }
         }
-
-        private fun IrCall.getAtomicFactoryValueArgument() =
-            getValueArgument(0)?.deepCopyWithSymbols()
-                ?: error("Atomic factory should take at least one argument: ${this.render()}")
-
-        private fun IrFunctionAccessExpression.getArraySizeArgument() =
-            getValueArgument(0)?.deepCopyWithSymbols()
-                ?: error("Atomic array constructor should take at least one argument: ${this.render()}")
-
-        private fun fromKotlinxAtomicfu(declaration: IrDeclaration): Boolean =
-            declaration is IrProperty &&
-                    declaration.backingField?.type?.isKotlinxAtomicfuPackage() ?: false
-
-        private fun IrProperty.isAtomic(): Boolean =
-            !isDelegated && backingField?.type?.isAtomicValueType() ?: false
-
-        private fun IrProperty.isDelegatedToAtomic(): Boolean =
-            isDelegated && backingField?.type?.isAtomicValueType() ?: false
-
-        private fun IrProperty.isAtomicArray(): Boolean =
-            backingField?.type?.isAtomicArrayType() ?: false
-
-        private fun IrProperty.isTrace(): Boolean =
-            backingField?.type?.isTraceBaseType() ?: false
-
-        private fun IrProperty.isTopLevel(): Boolean =
-            parent is IrClass && (parent as IrClass).name.asString().endsWith(VOLATILE_WRAPPER_SUFFIX)
-
-        private fun mangleFUName(fieldName: String) = "$fieldName\$FU"
     }
 
-    private inner class AtomicExtensionTransformer : IrElementTransformerVoid() {
-        override fun visitFile(declaration: IrFile): IrFile {
-            declaration.transformAllAtomicExtensions()
-            return super.visitFile(declaration)
-        }
+    private inner class JvmAtomicExtensionTransformer : AtomicExtensionTransformer() {
 
-        override fun visitClass(declaration: IrClass): IrStatement {
-            declaration.transformAllAtomicExtensions()
-            return super.visitClass(declaration)
-        }
-
-        private fun IrDeclarationContainer.transformAllAtomicExtensions() {
-            // Transform the signature of kotlinx.atomicfu.Atomic* class extension functions:
-            // inline fun AtomicInt.foo(arg: T)
-            // For every signature there are 2 new declarations generated (because of different types of atomic handlers):
-            // 1. for the case of atomic value receiver at the invocation:
-            // inline fun foo$atomicfu(dispatchReceiver: Any?, handler: j.u.c.a.AtomicIntegerFieldUpdater, arg': T)
-            // 2. for the case of atomic array element receiver at the invocation:
-            // inline fun foo$atomicfu$array(dispatchReceiver: Any?, handler: j.u.c.a.AtomicIntegerArray, index: Int, arg': T)
+        override fun IrDeclarationContainer.transformAllAtomicExtensions() {
             declarations.filter { it is IrFunction && it.isAtomicExtension() }.forEach { atomicExtension ->
                 atomicExtension as IrFunction
-                declarations.add(generateAtomicExtension(atomicExtension, this, false))
-                declarations.add(generateAtomicExtension(atomicExtension, this, true))
+                declarations.add(transformAtomicExtension(atomicExtension, this, false))
+                declarations.add(transformAtomicExtension(atomicExtension, this, true))
+                // the original atomic extension is removed
                 declarations.remove(atomicExtension)
             }
         }
 
-        private fun generateAtomicExtension(
-            atomicExtension: IrFunction,
-            parent: IrDeclarationParent,
-            isArrayReceiver: Boolean
-        ): IrFunction {
-            val mangledName = mangleFunctionName(atomicExtension.name.asString(), isArrayReceiver)
-            val valueType = atomicExtension.extensionReceiverParameter!!.type.atomicToValueType()
-            return context.irFactory.buildFun {
-                name = Name.identifier(mangledName)
-                isInline = true
-                visibility = atomicExtension.visibility
-            }.apply {
-                val newDeclaration = this
-                extensionReceiverParameter = null
-                dispatchReceiverParameter = atomicExtension.dispatchReceiverParameter?.deepCopyWithSymbols(this)
-                if (isArrayReceiver) {
-                    addValueParameter(DISPATCH_RECEIVER, irBuiltIns.anyNType)
-                    addValueParameter(ATOMIC_HANDLER, atomicSymbols.getAtomicArrayClassByValueType(valueType).defaultType)
-                    addValueParameter(INDEX, irBuiltIns.intType)
-                } else {
-                    addValueParameter(DISPATCH_RECEIVER, irBuiltIns.anyNType)
-                    addValueParameter(ATOMIC_HANDLER, atomicSymbols.getFieldUpdaterType(valueType))
-                }
-                atomicExtension.valueParameters.forEach { addValueParameter(it.name, it.type) }
+        private fun transformAtomicExtension(atomicExtension: IrFunction, parent: IrDeclarationContainer, isArrayReceiver: Boolean): IrFunction {
+            /**
+             * At this step, only signature of the atomic extension is changed,
+             * the body is just copied and will be transformed at the next step by JvmAtomicFunctionCallTransformer.
+             *
+             * Two different signatures are generated for the case of atomic property receiver
+             * and for the case of atomic array element receiver, due to different atomic updaters.
+             *
+             * inline fun AtomicInt.foo(arg: Int) --> inline fun foo$atomicfu(dispatchReceiver: Any?, atomicHandler: AtomicIntegerFieldUpdater, arg': Int)
+             *                                        inline fun foo$atomicfu$array(dispatchReceiver: Any?, atomicHandler: AtomicIntegerArray, index: Int, arg': Int)
+             */
+            return buildTransformedAtomicExtensionDeclaration(atomicExtension, isArrayReceiver).apply {
                 // the body will be transformed later by `AtomicFUTransformer`
                 body = atomicExtension.body?.deepCopyWithSymbols(this)
                 body?.transform(
                     object : IrElementTransformerVoid() {
                         override fun visitReturn(expression: IrReturn): IrExpression = super.visitReturn(
                             if (expression.returnTargetSymbol == atomicExtension.symbol) {
-                                with(atomicSymbols.createBuilder(newDeclaration.symbol)) {
+                                with(atomicSymbols.createBuilder(this@apply.symbol)) {
                                     irReturn(expression.value)
                                 }
                             } else {
@@ -472,257 +241,290 @@ class AtomicfuJvmIrTransformer(
                         )
                     }, null
                 )
-                returnType = atomicExtension.returnType
                 this.parent = parent
             }
         }
     }
 
-    private data class AtomicFieldInfo(val dispatchReceiver: IrExpression?, val atomicHandler: IrExpression)
+    private inner class JvmAtomicFunctionCallTransformer : AtomicFunctionCallTransformer() {
 
-    private inner class AtomicfuTransformer : IrElementTransformer<IrFunction?> {
-        override fun visitFunction(declaration: IrFunction, data: IrFunction?): IrStatement {
-            return super.visitFunction(declaration, declaration)
-        }
-
-        override fun visitCall(expression: IrCall, data: IrFunction?): IrElement {
-            (expression.extensionReceiver ?: expression.dispatchReceiver)?.transform(this, data)?.let {
-                with(atomicSymbols.createBuilder(expression.symbol)) {
-                    val receiver = if (it is IrTypeOperatorCallImpl) it.argument else it
-                    if (receiver.type.isAtomicValueType()) {
-                        val valueType = if (it is IrTypeOperatorCallImpl) {
-                            // If receiverExpression is a cast `s as AtomicRef<String>`
-                            // then valueType is the type argument of Atomic* class `String`
-                            (it.type as IrSimpleType).arguments[0] as IrSimpleType
-                        } else {
-                            receiver.type.atomicToValueType()
-                        }
-                        getAtomicFieldInfo(receiver, data)?.let { (dispatchReceiver, atomicHandler) ->
-                            val isArrayReceiver = atomicSymbols.isAtomicArrayHandlerType(atomicHandler.type)
-                            if (expression.symbol.isKotlinxAtomicfuPackage()) {
-                                // Transform invocations of atomic functions, delegating them to the atomicHandler.
-                                // 1. For atomic properties (j.u.c.a.Atomic*FieldUpdater):
-                                // a.compareAndSet(expect, update) -> a$FU.compareAndSet(dispatchReceiver, expect, update)
-                                // 2. For atomic array elements (j.u.c.a.Atomic*Array):
-                                // intArr[0].compareAndSet(expect, update) -> intArr.compareAndSet(index, expect, update)
-                                val functionName = expression.symbol.owner.name.asString()
-                                if (functionName in ATOMICFU_INLINE_FUNCTIONS) {
-                                    // If the inline atomicfu loop function was invoked
-                                    // a.loop { value -> a.compareAndSet(value, 777) }
-                                    // then loop function is generated to replace this declaration.
-                                    // `AtomicInt.loop(action: (Int) -> Unit)` for example will be replaced with
-                                    // inline fun <T> atomicfu$loop(atomicHandler: AtomicIntegerFieldUpdater, action: (Int) -> Unit) {
-                                    //     while (true) {
-                                    //         val cur = atomicfu$handler.get()
-                                    //         atomicfu$action(cur)
-                                    //     }
-                                    // }
-                                    // And the invocation in place will be transformed:
-                                    // a.atomicfu$loop(atomicHandler, action)
-                                    require(data != null) { "Function containing loop invocation ${expression.render()} is null" }
-                                    val loopFunc = data.parentDeclarationContainer.getOrBuildInlineLoopFunction(
-                                        functionName = functionName,
-                                        valueType = if (valueType.isBoolean()) irBuiltIns.intType else valueType,
-                                        isArrayReceiver = isArrayReceiver
-                                    )
-                                    val action = (expression.getValueArgument(0) as IrFunctionExpression).apply {
-                                        function.body?.transform(this@AtomicfuTransformer, data)
-                                        if (function.valueParameters[0].type.isBoolean()) {
-                                            function.valueParameters[0].type = irBuiltIns.intType
-                                            function.returnType = irBuiltIns.intType
-                                        }
-                                    }
-                                    val loopCall = irCallWithArgs(
-                                        symbol = loopFunc.symbol,
-                                        dispatchReceiver = data.containingFunction.dispatchReceiverParameter?.capture(),
-                                        valueArguments = if (isArrayReceiver) {
-                                            val index = receiver.getArrayElementIndex(data)
-                                            listOf(atomicHandler, index, action)
-                                        } else {
-                                            listOf(atomicHandler, action, dispatchReceiver)
-                                        }
-                                    )
-                                    return super.visitCall(loopCall, data)
-                                }
-                                val irCall = if (isArrayReceiver) {
-                                    callAtomicArray(
-                                        arrayClassSymbol = atomicHandler.type.classOrNull!!,
-                                        functionName = functionName,
-                                        dispatchReceiver = atomicHandler,
-                                        index = receiver.getArrayElementIndex(data),
-                                        valueArguments = expression.getValueArguments(),
-                                        isBooleanReceiver = valueType.isBoolean()
-                                    )
-                                } else {
-                                    callFieldUpdater(
-                                        fieldUpdaterSymbol = atomicSymbols.getJucaAFUClass(valueType),
-                                        functionName = functionName,
-                                        dispatchReceiver = atomicHandler,
-                                        obj = dispatchReceiver,
-                                        valueArguments = expression.getValueArguments(),
-                                        castType = if (it is IrTypeOperatorCall) valueType else null,
-                                        isBooleanReceiver = valueType.isBoolean()
-                                    )
-                                }
-                                return super.visitExpression(irCall, data)
-                            }
-                            if (expression.symbol.owner.isInline && expression.extensionReceiver != null) {
-                                // Transform invocation of the kotlinx.atomicfu.Atomic* class extension functions,
-                                // delegating them to the corresponding transformed atomic extensions:
-                                // for atomic property recevers:
-                                // inline fun foo$atomicfu(dispatchReceiver: Any?, handler: j.u.c.a.AtomicIntegerFieldUpdater, arg': Int) { ... }
-                                // for atomic array element receivers:
-                                // inline fun foo$atomicfu$array(dispatchReceiver: Any?, handler: j.u.c.a.AtomicIntegerArray, index: Int, arg': Int) { ... }
-
-                                // The invocation on the atomic property will be transformed:
-                                // a.foo(arg) -> a.foo$atomicfu(dispatchReceiver, atomicHandler, arg)
-                                // The invocation on the atomic array element will be transformed:
-                                // a.foo(arg) -> a.foo$atomicfu$array(dispatchReceiver, atomicHandler, index, arg)
-                                val declaration = expression.symbol.owner
-                                val parent = declaration.parent as IrDeclarationContainer
-                                val transformedAtomicExtension = parent.getTransformedAtomicExtension(declaration, isArrayReceiver)
-                                require(data != null) { "Function containing invocation of the extension function ${expression.render()} is null" }
-                                val irCall = callAtomicExtension(
-                                    symbol = transformedAtomicExtension.symbol,
-                                    dispatchReceiver = expression.dispatchReceiver,
-                                    syntheticValueArguments = if (isArrayReceiver) {
-                                        listOf(dispatchReceiver, atomicHandler, receiver.getArrayElementIndex(data))
-                                    } else {
-                                        listOf(dispatchReceiver, atomicHandler)
-                                    },
-                                    valueArguments = expression.getValueArguments()
-                                )
-                                return super.visitCall(irCall, data)
-                            }
-                        } ?: return expression
-                    }
-                }
-            }
-            return super.visitCall(expression, data)
-        }
-
-        override fun visitGetValue(expression: IrGetValue, data: IrFunction?): IrExpression {
-            // For transformed atomic extension functions
-            // replace old value parameters with the new parameters of the transformed declaration:
-            // inline fun foo$atomicfu(dispatchReceiver: Any?, handler: j.u.c.a.AtomicIntegerFieldUpdater, arg': Int) {
-            //     arg -> arg`
-            //}
-            if (expression.symbol is IrValueParameterSymbol) {
-                val valueParameter = expression.symbol.owner as IrValueParameter
-                val parent = valueParameter.parent
-                if (data != null && data.isTransformedAtomicExtension() &&
-                    parent is IrFunctionImpl && !parent.isTransformedAtomicExtension() &&
-                    parent.origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
-                ) {
-                    val index = valueParameter.index
-                    if (index < 0 && !valueParameter.type.isAtomicValueType()) {
-                        // index == -1 for `this` parameter
-                        return data.dispatchReceiverParameter?.capture() ?: error { "Dispatchreceiver of ${data.render()} is null" }
-                    }
-                    if (index >= 0) {
-                        val shift = if (data.name.asString().endsWith(ATOMIC_ARRAY_RECEIVER_SUFFIX)) 3 else 2
-                        val transformedValueParameter = data.valueParameters[index + shift]
-                        return buildGetValue(
-                            expression.startOffset,
-                            expression.endOffset,
-                            transformedValueParameter.symbol
-                        )
-                    }
-                }
-            }
-            return super.visitGetValue(expression, data)
-        }
-
-        override fun visitBlockBody(body: IrBlockBody, data: IrFunction?): IrBody {
-            // Erase messages added by the Trace object from the function body:
-            // val trace = Trace(size)
-            // Messages may be added via trace invocation:
-            // trace { "Doing something" }
-            // or via multi-append of arguments:
-            // trace.append(index, "CAS", value)
-            body.statements.removeIf {
-                it.isTraceCall()
-            }
-            return super.visitBlockBody(body, data)
-        }
-
-        override fun visitContainerExpression(expression: IrContainerExpression, data: IrFunction?): IrExpression {
-            // Erase messages added by the Trace object from blocks.
-            expression.statements.removeIf {
-                it.isTraceCall()
-            }
-            return super.visitContainerExpression(expression, data)
-        }
-
-        private fun AtomicfuIrBuilder.getAtomicFieldInfo(
-            receiver: IrExpression,
+        override fun transformAtomicUpdateCallOnProperty(
+            expression: IrCall,
+            functionName: String,
+            valueType: IrType,
+            castType: IrType?,
+            getPropertyReceiver: IrExpression,
             parentFunction: IrFunction?
-        ): AtomicFieldInfo? {
-            // For the given function call receiver of atomic type returns:
-            // the dispatchReceiver and the atomic handler of the corresponding property
-            when {
-                receiver is IrCall -> {
-                    // Receiver is a property getter call
-                    val isArrayReceiver = receiver.isArrayElementGetter()
-                    val getAtomicProperty = if (isArrayReceiver) receiver.dispatchReceiver as IrCall else receiver
-                    val atomicProperty = getAtomicProperty.getCorrespondingProperty()
-                    val dispatchReceiver = getAtomicProperty.dispatchReceiver.let {
-                        val isObjectReceiver = it?.type?.classOrNull?.owner?.kind == ClassKind.OBJECT
-                        if (it == null || isObjectReceiver) {
-                            if (getAtomicProperty.symbol.owner.returnType.isAtomicValueType()) {
-                                // for top-level atomic properties get wrapper class instance as a parent
-                                getProperty(getStaticVolatileWrapperInstance(atomicProperty), null)
-                            } else if (isObjectReceiver && getAtomicProperty.symbol.owner.returnType.isAtomicArrayType()) {
-                                it
-                            }
-                            else null
-                        } else it
+        ): IrExpression {
+            with(atomicSymbols.createBuilder(expression.symbol)) {
+                /**
+                 * Atomic update call on the atomic property is replaced
+                 * with the call on the AtomicFieldUpdater field:
+                 *
+                 * 1. Function call receiver is atomic property getter call.
+                 *
+                 * The call is replaced with the call on the corresponding field updater:
+                 *
+                 * val a = atomic(0)                    @Volatile var a$volatile = 0
+                 * <get-a>().compareAndSet(0, 5)  --->  a$volatile$FU.compareAndSetField(dispatchReceiver, 0, 5)
+                 *
+                 *
+                 * 2. Function is called in the body of the transformed atomic extension,
+                 * the call receiver is the old <this> receiver of the extension:
+                 *
+                 * inline fun AtomicInt.foo(new: Int) {          inline fun foo$atomicfu(dispatchReceiver: Any?, atomicHandler: AtomicIntegerFieldUpdater, new: Int) {
+                 *   this.compareAndSet(value, new)       --->     atomicHandler.compareAndSet(dispatchReceiver, atomicHandler.get(dispatchReceiver), new)
+                 * }                                             }
+                 */
+                return callFieldUpdater(
+                    fieldUpdaterSymbol = atomicSymbols.getJucaAFUClass(valueType),
+                    functionName = functionName,
+                    getAtomicHandler = getAtomicHandler(getPropertyReceiver, parentFunction),
+                    classInstanceContainingField = getDispatchReceiver(getPropertyReceiver, parentFunction),
+                    valueArguments = expression.valueArguments,
+                    castType = castType,
+                    isBooleanReceiver = valueType.isBoolean()
+                )
+            }
+        }
+
+        override fun transformAtomicUpdateCallOnArrayElement(
+            expression: IrCall,
+            functionName: String,
+            valueType: IrType,
+            getPropertyReceiver: IrExpression,
+            parentFunction: IrFunction?
+        ): IrCall {
+            with(atomicSymbols.createBuilder(expression.symbol)) {
+                /**
+                 * Atomic update call on the atomic array element is replaced
+                 * with the call on the j.u.c.a.Atomic*Array field:
+                 *
+                 * 1. Function call receiver is atomic property getter call.
+                 *
+                 * The call is replaced with the call on the corresponding field updater:
+                 *
+                 * val intArr = AtomicIntArray(10)              val intArr = AtomicIntegerArray(10)
+                 * <get-intArr>()[5].compareAndSet(0, 5)  --->  intArr.compareAndSet(5, 0, 5)
+                 *
+                 *
+                 * 2. Function is called in the body of the transformed atomic extension,
+                 * the call receiver is the old <this> receiver of the extension:
+                 *
+                 * inline fun AtomicInt.foo(new: Int) {          inline fun foo$atomicfu$array(dispatchReceiver: Any?, atomicHandler: AtomicIntegerArray, index: Int, arg': Int)
+                 *   this.getAndSet(value, new)            --->    atomicHandler.getAndSet(index, new)
+                 * }                                             }
+                 */
+                val getJavaAtomicArray = getAtomicHandler(getPropertyReceiver, parentFunction)
+                return callAtomicArray(
+                    arrayClassSymbol = getJavaAtomicArray.type.classOrNull!!,
+                    functionName = functionName,
+                    dispatchReceiver = getJavaAtomicArray,
+                    index = getPropertyReceiver.getArrayElementIndex(parentFunction),
+                    valueArguments = expression.valueArguments,
+                    isBooleanReceiver = valueType.isBoolean()
+                )
+            }
+        }
+
+        override fun transformedAtomicfuInlineFunctionCall(
+            expression: IrCall,
+            functionName: String,
+            valueType: IrType,
+            getPropertyReceiver: IrExpression,
+            isArrayReceiver: Boolean,
+            parentFunction: IrFunction?
+        ): IrCall {
+            with(atomicSymbols.createBuilder(expression.symbol)) {
+                val dispatchReceiver = getDispatchReceiver(getPropertyReceiver, parentFunction)
+                val getAtomicHandler = getAtomicHandler(getPropertyReceiver, parentFunction)
+                /**
+                 * a.loop { value -> a.compareAndSet(value, 777) } -->
+                 *
+                 * inline fun <T> atomicfu$loop(atomicfu$handler: AtomicIntegerFieldUpdater, atomicfu$action: (Int) -> Unit, dispatchReceiver: Any?) {
+                 *  while (true) {
+                 *    val cur = atomicfu$handler.get()
+                 *    atomicfu$action(cur)
+                 *   }
+                 * }
+                 *
+                 * a.atomicfu$loop(dispatchReceiver, atomicHandler) { ... }
+                 */
+                requireNotNull(parentFunction) { "Parent function of this call ${expression.render()} is null" + CONSTRAINTS_MESSAGE }
+                val loopFunc = parentFunction.parentDeclarationContainer.getOrBuildInlineLoopFunction(
+                    functionName = functionName,
+                    valueType = if (valueType.isBoolean()) irBuiltIns.intType else valueType,
+                    isArrayReceiver = isArrayReceiver
+                )
+                val action = (expression.getValueArgument(0) as IrFunctionExpression).apply {
+                    function.body?.transform(this@JvmAtomicFunctionCallTransformer, parentFunction)
+                    if (function.valueParameters[0].type.isBoolean()) {
+                        function.valueParameters[0].type = irBuiltIns.intType
+                        function.returnType = irBuiltIns.intType
                     }
-                    // atomic property is handled by the Atomic*FieldUpdater instance
-                    // atomic array elements handled by the Atomic*Array instance
-                    val atomicHandler = propertyToAtomicHandler[atomicProperty]
-                        ?: error("No atomic handler found for the atomic property ${atomicProperty.render()}")
-                    return AtomicFieldInfo(
-                        dispatchReceiver = dispatchReceiver,
-                        atomicHandler = getProperty(
-                            atomicHandler,
-                            if (isArrayReceiver && dispatchReceiver?.type?.classOrNull?.owner?.kind != ClassKind.OBJECT) dispatchReceiver else null
-                        )
-                    )
+                }
+                return irCallWithArgs(
+                    symbol = loopFunc.symbol,
+                    dispatchReceiver = parentFunction.containingFunction.dispatchReceiverParameter?.capture(),
+                    extensionReceiver = null,
+                    valueArguments = if (isArrayReceiver) {
+                        val index = getPropertyReceiver.getArrayElementIndex(parentFunction)
+                        listOf(getAtomicHandler, index, action)
+                    } else {
+                        listOf(getAtomicHandler, action, dispatchReceiver)
+                    }
+                )
+            }
+        }
+
+        override fun transformAtomicExtensionCall(
+            expression: IrCall,
+            originalAtomicExtension: IrSimpleFunction,
+            getPropertyReceiver: IrExpression,
+            isArrayReceiver: Boolean,
+            parentFunction: IrFunction?
+        ): IrCall {
+            with(atomicSymbols.createBuilder(expression.symbol)) {
+                /**
+                 * Atomic extension call is replaced with the call to transformed atomic extension:
+                 *
+                 * 1. Function call receiver is atomic property getter call.
+                 * Transformation variant of the atomic extension is chosen accorfin to the type of receiver
+                 * (atomic property -> foo$atomicfu, atomic array element -> foo$atomicfu$array)
+                 *
+                 * inline fun AtomicInt.foo(atg: Int) {..}
+                 * aClass._a.foo(arg)                              --> foo$atomicfu(aClass, _a$volatile$FU, arg)
+                 *
+                 *
+                 * 2. Function is called in the body of the transformed atomic extension,
+                 * the call receiver is the old <this> receiver of the extension.
+                 * In this case value parameters captured from the parent function are passed as arguments.
+                 *
+                 * inline fun AtomicInt.bar(new: Int)            inline fun bar$atomicfu(dispatchReceiver: Any?, handler: j.u.c.a.AtomicIntegerFieldUpdater, arg': Int)
+                 * inline fun AtomicInt.foo(new: Int) {          inline fun foo$atomicfu(dispatchReceiver: Any?, handler: j.u.c.a.AtomicIntegerFieldUpdater, arg': Int)
+                 *   bar(new)                              --->    bar$atomicfu(dispatchReceiver, handler, new)
+                 * }                                             }
+                 */
+                val parent = originalAtomicExtension.parent as IrDeclarationContainer
+                val transformedAtomicExtension = parent.getTransformedAtomicExtension(originalAtomicExtension, isArrayReceiver)
+                val dispatchReceiver = getDispatchReceiver(getPropertyReceiver, parentFunction)
+                val getAtomicHandler = getAtomicHandler(getPropertyReceiver, parentFunction)
+                return callAtomicExtension(
+                    symbol = transformedAtomicExtension.symbol,
+                    dispatchReceiver = expression.dispatchReceiver,
+                    syntheticValueArguments = if (isArrayReceiver) {
+                        listOf(dispatchReceiver, getAtomicHandler, getPropertyReceiver.getArrayElementIndex(parentFunction))
+                    } else {
+                        listOf(dispatchReceiver, getAtomicHandler)
+                    },
+                    valueArguments = expression.valueArguments
+                )
+            }
+        }
+
+        override fun IrDeclarationContainer.getTransformedAtomicExtension(
+            declaration: IrSimpleFunction,
+            isArrayReceiver: Boolean
+        ): IrSimpleFunction {
+            // Try find the transformed atomic extension in the parent container
+            findDeclaration<IrSimpleFunction> {
+                it.name.asString() == mangleAtomicExtensionName(declaration.name.asString(), isArrayReceiver) &&
+                        it.isTransformedAtomicExtension()
+            }?.let { return it }
+            /**
+             * If the transformed declaration is not found then the call may be performed from another module
+             * which depends on the module where declarations are generated from untransformed metadata (real transformed declarations are not there).
+             * This happens if the call is performed from the test module or in case of incremental compilation.
+             *
+             * We build a fake declaration here: it's signature equals the one of the real transformed declaration,
+             * it doesn't have body and won't be generated. It is placed in the call site and
+             * during compilation this fake declaration will be resolved to the real transformed declaration.
+             */
+            return buildTransformedAtomicExtensionDeclaration(declaration, isArrayReceiver)
+        }
+
+        override fun IrFunction.isTransformedAtomicExtension(): Boolean {
+            val isArrayReceiver = name.asString().isMangledAtomicArrayExtension()
+            return if (isArrayReceiver) checkSyntheticArrayElementExtensionParameter() else checkSyntheticAtomicExtensionParameters()
+        }
+
+        override fun IrValueParameter.remapValueParameter(transformedExtension: IrFunction): IrValueParameter? {
+            if (index < 0 && !type.isAtomicValueType()) {
+                // data is a transformed function
+                // index == -1 for `this` parameter
+                return transformedExtension.dispatchReceiverParameter ?: error("Dispatch receiver of ${transformedExtension.render()} is null" + CONSTRAINTS_MESSAGE)
+            }
+            if (index >= 0) {
+                val shift = if (transformedExtension.name.asString().isMangledAtomicArrayExtension()) 3 else 2
+                return transformedExtension.valueParameters[index + shift]
+            }
+            return null
+        }
+
+        override fun IrExpression.isArrayElementReceiver(parentFunction: IrFunction?): Boolean {
+            val receiver = this
+            return when {
+                receiver is IrCall -> {
+                    receiver.isArrayElementGetter()
                 }
                 receiver.isThisReceiver() -> {
-                    // Receiver is <this> extension receiver of transformed atomic extesnion declaration.
-                    // The old function before `AtomicExtensionTransformer` application:
-                    // inline fun foo(dispatchReceiver: Any?, handler: j.u.c.a.AtomicIntegerFieldUpdater, arg': Int) {
-                    //    this().lazySet(arg)
-                    //}
-                    // By this moment the atomic extension has it's signature transformed,
-                    // but still has the untransformed body copied from the old declaration:
-                    // inline fun foo$atomicfu(dispatchReceiver: Any?, handler: j.u.c.a.AtomicIntegerFieldUpdater, arg': Int) {
-                    //    this().lazySet(arg) <----
-                    //}
-                    // The dispatchReceiver and the atomic handler for this receiver are the corresponding arguments
-                    // passed to the transformed declaration/
-                    return if (parentFunction != null && parentFunction.isTransformedAtomicExtension()) {
-                        val params = parentFunction.valueParameters.take(2).map { it.capture() }
-                        AtomicFieldInfo(params[0], params[1])
-                    } else null
+                    if (parentFunction != null && parentFunction.isTransformedAtomicExtension()) {
+                        val atomicHandler = parentFunction.valueParameters[1].capture()
+                        atomicSymbols.isAtomicArrayHandlerType(atomicHandler.type)
+                    } else false
                 }
-                else -> error("Unsupported type of atomic receiver expression: ${receiver.render()}")
+                else -> false
             }
         }
 
-        private val IrDeclaration.parentDeclarationContainer: IrDeclarationContainer
-            get() = parents.filterIsInstance<IrDeclarationContainer>().firstOrNull()
-                ?: error("In the sequence of parents for ${this.render()} no IrDeclarationContainer was found")
-
-        private val IrFunction.containingFunction: IrFunction
-            get() {
-                if (this.origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA) return this
-                return parents.filterIsInstance<IrFunction>().firstOrNull {
-                    it.origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
-                } ?: error("In the sequence of parents for the local function ${this.render()} no containing function was found")
+        private fun getDispatchReceiver(atomicCallReceiver: IrExpression, parentFunction: IrFunction?) =
+            when {
+                atomicCallReceiver is IrCall -> atomicCallReceiver.getDispatchReceiver()
+                atomicCallReceiver.isThisReceiver() -> {
+                    if (parentFunction != null && parentFunction.isTransformedAtomicExtension()) {
+                        parentFunction.valueParameters[0].capture()
+                    } else null
+                }
+                else -> error("Unexpected type of atomic function call receiver: ${atomicCallReceiver.render()}" + CONSTRAINTS_MESSAGE)
             }
+
+        private fun getAtomicHandler(atomicCallReceiver: IrExpression, parentFunction: IrFunction?): IrExpression =
+            when {
+                atomicCallReceiver is IrCall -> {
+                    val isArrayReceiver = atomicCallReceiver.isArrayElementGetter()
+                    val getAtomicProperty = if (isArrayReceiver) atomicCallReceiver.dispatchReceiver as IrCall else atomicCallReceiver
+                    val atomicProperty = getAtomicProperty.getCorrespondingProperty()
+                    val atomicHandlerProperty = propertyToAtomicHandler[atomicProperty]
+                        ?: error("No atomic handler found for the atomic property ${atomicProperty.render()}, \n" +
+                                         "these properties were registered: ${
+                                             propertyToAtomicHandler.keys.toList().joinToString("\n") { it.render() }
+                                         }" + CONSTRAINTS_MESSAGE)
+                    with(atomicSymbols.createBuilder(atomicCallReceiver.symbol)) {
+                        // dispatchReceiver for get-a$FU() is null, because a$FU is a static property
+                        // dispatchReceiver for get-arr'() is equal to the dispatchReceiver of the original getter
+                        irGetProperty(atomicHandlerProperty, if (isArrayReceiver) getAtomicProperty.dispatchReceiver else null)
+                    }
+                }
+                atomicCallReceiver.isThisReceiver() -> {
+                    requireNotNull(parentFunction) { "Containing function of the atomic call with <this> receiver should not be null" + CONSTRAINTS_MESSAGE}
+                    require(parentFunction.isTransformedAtomicExtension())
+                    parentFunction.valueParameters[1].capture()
+                }
+                else -> error("Unexpected type of atomic function call receiver: ${atomicCallReceiver.render()} \n" + CONSTRAINTS_MESSAGE)
+            }
+
+        private fun IrCall.getDispatchReceiver(): IrExpression? {
+            val isArrayReceiver = isArrayElementGetter()
+            val getAtomicProperty = if (isArrayReceiver) dispatchReceiver as IrCall else this
+            val atomicProperty = getAtomicProperty.getCorrespondingProperty()
+            val dispatchReceiver = getAtomicProperty.dispatchReceiver
+            // top-level atomics
+            if (!isArrayReceiver && (dispatchReceiver == null || dispatchReceiver.type.isObject())) {
+                val volatileProperty = atomicPropertyToVolatile[atomicProperty]!!
+                return getStaticVolatileWrapperInstance(volatileProperty.parentAsClass)
+            }
+            return dispatchReceiver
+        }
 
         private fun IrExpression.getArrayElementIndex(parentFunction: IrFunction?): IrExpression =
             when {
@@ -731,16 +533,8 @@ class AtomicfuJvmIrTransformer(
                     require(parentFunction != null)
                     parentFunction.valueParameters[2].capture()
                 }
-                else -> error("Unsupported type of atomic receiver expression: ${this.render()}")
+                else -> error("Unexpected type of atomic receiver expression: ${this.render()} \n" + CONSTRAINTS_MESSAGE)
             }
-
-        private fun IrExpression.isThisReceiver() =
-            this is IrGetValue && symbol.owner.name.asString() == "<this>"
-
-        private fun IrFunction.isTransformedAtomicExtension(): Boolean {
-            val isArrayReceiver = name.asString().endsWith(ATOMIC_ARRAY_RECEIVER_SUFFIX)
-            return if (isArrayReceiver) checkSyntheticArrayElementExtensionParameter() else checkSyntheticAtomicExtensionParameters()
-        }
 
         private fun IrFunction.checkSyntheticArrayElementExtensionParameter(): Boolean {
             if (valueParameters.size < 3) return false
@@ -761,38 +555,28 @@ class AtomicfuJvmIrTransformer(
             isArrayReceiver: Boolean
         ): IrSimpleFunction {
             val parent = this
-            val mangledName = mangleFunctionName(functionName, isArrayReceiver)
+            val mangledName = mangleAtomicExtensionName(functionName, isArrayReceiver)
             val updaterType =
                 if (isArrayReceiver) atomicSymbols.getAtomicArrayType(valueType) else atomicSymbols.getFieldUpdaterType(valueType)
             findDeclaration<IrSimpleFunction> {
                 it.name.asString() == mangledName && it.valueParameters[0].type == updaterType
             }?.let { return it }
-            return context.irFactory.buildFun {
+            return pluginContext.irFactory.buildFun {
                 name = Name.identifier(mangledName)
                 isInline = true
                 visibility = DescriptorVisibilities.PRIVATE
+                origin = AbstractAtomicSymbols.ATOMICFU_GENERATED_FUNCTION
             }.apply {
                 dispatchReceiverParameter = (parent as? IrClass)?.thisReceiver?.deepCopyWithSymbols(this)
                 if (functionName == LOOP) {
                     if (isArrayReceiver) generateAtomicfuArrayLoop(valueType) else generateAtomicfuLoop(valueType)
                 } else {
-                    if (isArrayReceiver) generateAtomicfuArrayUpdate(functionName, valueType) else generateAtomicfuUpdate(
-                        functionName,
-                        valueType
-                    )
+                    if (isArrayReceiver) generateAtomicfuArrayUpdate(functionName, valueType) else generateAtomicfuUpdate(functionName, valueType)
                 }
                 this.parent = parent
                 parent.declarations.add(this)
             }
         }
-
-        private fun IrDeclarationContainer.getTransformedAtomicExtension(
-            declaration: IrSimpleFunction,
-            isArrayReceiver: Boolean
-        ): IrSimpleFunction = findDeclaration {
-            it.name.asString() == mangleFunctionName(declaration.name.asString(), isArrayReceiver) &&
-                    it.isTransformedAtomicExtension()
-        } ?: error("Could not find corresponding transformed declaration for the atomic extension ${declaration.render()}")
 
         private fun IrSimpleFunction.generateAtomicfuLoop(valueType: IrType) {
             addValueParameter(ATOMIC_HANDLER, atomicSymbols.getFieldUpdaterType(valueType))
@@ -837,72 +621,28 @@ class AtomicfuJvmIrTransformer(
         }
     }
 
-    private fun getStaticVolatileWrapperInstance(atomicProperty: IrProperty): IrProperty {
-        val volatileWrapperClass = atomicProperty.parent as IrClass
-        return (volatileWrapperClass.parent as IrDeclarationContainer).declarations.singleOrNull {
-            it is IrProperty && it.backingField != null &&
-                    it.backingField!!.type.classOrNull == volatileWrapperClass.symbol
-        } as? IrProperty
-            ?: error("Static instance of ${volatileWrapperClass.name.asString()} is missing in ${volatileWrapperClass.parent}")
+    private fun buildTransformedAtomicExtensionDeclaration(atomicExtension: IrFunction, isArrayReceiver: Boolean): IrSimpleFunction {
+        val mangledName = mangleAtomicExtensionName(atomicExtension.name.asString(), isArrayReceiver)
+        val valueType = atomicExtension.extensionReceiverParameter!!.type.atomicToPrimitiveType()
+        return pluginContext.irFactory.buildFun {
+            name = Name.identifier(mangledName)
+            isInline = true
+            visibility = atomicExtension.visibility
+            origin = AbstractAtomicSymbols.ATOMICFU_GENERATED_FUNCTION
+        }.apply {
+            extensionReceiverParameter = null
+            dispatchReceiverParameter = atomicExtension.dispatchReceiverParameter?.deepCopyWithSymbols(this)
+            if (isArrayReceiver) {
+                addValueParameter(DISPATCH_RECEIVER, irBuiltIns.anyNType)
+                addValueParameter(ATOMIC_HANDLER, atomicSymbols.getAtomicArrayClassByValueType(valueType).defaultType)
+                addValueParameter(INDEX, irBuiltIns.intType)
+            } else {
+                addValueParameter(DISPATCH_RECEIVER, irBuiltIns.anyNType)
+                addValueParameter(ATOMIC_HANDLER, atomicSymbols.getFieldUpdaterType(valueType))
+            }
+            atomicExtension.valueParameters.forEach { addValueParameter(it.name, it.type) }
+            returnType = atomicExtension.returnType
+            this.parent = atomicExtension.parent
+        }
     }
-
-    private fun IrType.isKotlinxAtomicfuPackage() =
-        classFqName?.let { it.parent().asString() == AFU_PKG } ?: false
-
-    private fun IrSimpleFunctionSymbol.isKotlinxAtomicfuPackage(): Boolean =
-        owner.parentClassOrNull?.classId?.let {
-            it.packageFqName.asString() == AFU_PKG
-        } ?: false
-
-    private fun IrType.isAtomicValueType() =
-        classFqName?.let {
-            it.parent().asString() == AFU_PKG && it.shortName().asString() in ATOMIC_VALUE_TYPES
-        } ?: false
-
-    private fun IrType.isAtomicArrayType() =
-        classFqName?.let {
-            it.parent().asString() == AFU_PKG && it.shortName().asString() in ATOMIC_ARRAY_TYPES
-        } ?: false
-
-    private fun IrType.isTraceBaseType() =
-        classFqName?.let {
-            it.parent().asString() == AFU_PKG && it.shortName().asString() == TRACE_BASE_TYPE
-        } ?: false
-
-    private fun IrCall.isArrayElementGetter(): Boolean =
-        dispatchReceiver?.let {
-            it.type.isAtomicArrayType() && symbol.owner.name.asString() == GET
-        } ?: false
-
-    private fun IrType.atomicToValueType(): IrType =
-        classFqName?.let {
-            AFU_VALUE_TYPES[it.shortName().asString()]
-        } ?: error("No corresponding value type was found for this atomic type: ${this.render()}")
-
-    private fun IrCall.isAtomicFactory(): Boolean =
-        symbol.isKotlinxAtomicfuPackage() && symbol.owner.name.asString() == ATOMIC_VALUE_FACTORY &&
-                type.isAtomicValueType()
-
-    private fun IrFunction.isAtomicExtension(): Boolean =
-        extensionReceiverParameter?.let { it.type.isAtomicValueType() && this.isInline } ?: false
-
-    private fun IrStatement.isTraceCall() = this is IrCall && (isTraceInvoke() || isTraceAppend())
-
-    private fun IrCall.isTraceInvoke(): Boolean =
-        symbol.isKotlinxAtomicfuPackage() &&
-                symbol.owner.name.asString() == INVOKE &&
-                symbol.owner.dispatchReceiverParameter?.type?.isTraceBaseType() == true
-
-    private fun IrCall.isTraceAppend(): Boolean =
-        symbol.isKotlinxAtomicfuPackage() &&
-                symbol.owner.name.asString() == APPEND &&
-                symbol.owner.dispatchReceiverParameter?.type?.isTraceBaseType() == true
-
-    private fun getVolatileWrapperClassName(property: IrProperty) =
-        property.name.asString().capitalizeAsciiOnly() + '$' +
-                (if (property.parent is IrFile) (property.parent as IrFile).name else property.parent.kotlinFqName.asString()).substringBefore('.') +
-                VOLATILE_WRAPPER_SUFFIX
-
-    private fun mangleFunctionName(name: String, isArrayReceiver: Boolean) =
-        if (isArrayReceiver) "$name$$ATOMICFU$ATOMIC_ARRAY_RECEIVER_SUFFIX" else "$name$$ATOMICFU"
 }

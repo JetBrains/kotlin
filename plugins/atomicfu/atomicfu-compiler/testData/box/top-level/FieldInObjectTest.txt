@@ -1,0 +1,97 @@
+@kotlin.Metadata
+synthetic final class DelegatedProvider$DelegatedProvider$VolatileWrapper$atomicfu$private {
+    // source: 'FieldInObjectTest.kt'
+    private synthetic final static field _a$volatile$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic volatile field _a$volatile: int
+    static method <clinit>(): void
+    private method <init>(): void
+    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public synthetic final static method access$get_a$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    public synthetic final static method access$get_a$volatile$p(p0: DelegatedProvider$DelegatedProvider$VolatileWrapper$atomicfu$private): int
+    public synthetic final static method access$set_a$volatile$p(p0: DelegatedProvider$DelegatedProvider$VolatileWrapper$atomicfu$private, p1: int): void
+    private synthetic final static method get_a$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic final method get_a$volatile(): int
+    private synthetic final method set_a$volatile(p0: int): void
+    private synthetic inner class DelegatedProvider$DelegatedProvider$VolatileWrapper$atomicfu$private
+}
+
+@kotlin.Metadata
+final class DelegatedProvider {
+    // source: 'FieldInObjectTest.kt'
+    public final static @org.jetbrains.annotations.NotNull field INSTANCE: DelegatedProvider
+    private synthetic final static field delegatedProvider$VolatileWrapper$atomicfu$private: DelegatedProvider$DelegatedProvider$VolatileWrapper$atomicfu$private
+    private synthetic volatile field vInt$volatile: int
+    static method <clinit>(): void
+    private method <init>(): void
+    public synthetic final static method access$getDelegatedProvider$VolatileWrapper$atomicfu$private(): DelegatedProvider$DelegatedProvider$VolatileWrapper$atomicfu$private
+    public final method getA(): int
+    private synthetic final static method getDelegatedProvider$VolatileWrapper$atomicfu$private(): DelegatedProvider$DelegatedProvider$VolatileWrapper$atomicfu$private
+    public final method getVInt(): int
+    public final method setA(p0: int): void
+    public final method setVInt(p0: int): void
+    private synthetic inner class DelegatedProvider$DelegatedProvider$VolatileWrapper$atomicfu$private
+}
+
+@kotlin.Metadata
+public final class FieldInObjectTestKt {
+    // source: 'FieldInObjectTest.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    private final static method testDelegatedPropertiesInObject(): void
+    private final static method testFieldInObject(): void
+    private synthetic inner class DelegatedProvider$DelegatedProvider$VolatileWrapper$atomicfu$private
+    private synthetic inner class Provider$Provider$VolatileWrapper$atomicfu$private
+}
+
+@kotlin.Metadata
+synthetic final class Provider$Provider$VolatileWrapper$atomicfu$private {
+    // source: 'FieldInObjectTest.kt'
+    private synthetic final static field _l$volatile$FU: java.util.concurrent.atomic.AtomicLongFieldUpdater
+    private synthetic volatile field _l$volatile: long
+    private synthetic final static field _ref$volatile$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private synthetic volatile field _ref$volatile: java.lang.Object
+    private synthetic final static field _x$volatile$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic volatile field _x$volatile: int
+    private synthetic final static field port$volatile$FU: java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic volatile field port$volatile: int
+    static method <clinit>(): void
+    private method <init>(): void
+    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public synthetic final static method access$getPort$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    public synthetic final static method access$get_l$volatile$FU(): java.util.concurrent.atomic.AtomicLongFieldUpdater
+    public synthetic final static method access$get_ref$volatile$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    public synthetic final static method access$get_x$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic final static method getPort$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic final method getPort$volatile(): int
+    private synthetic final static method get_l$volatile$FU(): java.util.concurrent.atomic.AtomicLongFieldUpdater
+    private synthetic final method get_l$volatile(): long
+    private synthetic final static method get_ref$volatile$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
+    private synthetic final method get_ref$volatile(): java.lang.Object
+    private synthetic final static method get_x$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
+    private synthetic final method get_x$volatile(): int
+    private synthetic final method setPort$volatile(p0: int): void
+    private synthetic final method set_l$volatile(p0: long): void
+    private synthetic final method set_ref$volatile(p0: java.lang.Object): void
+    private synthetic final method set_x$volatile(p0: int): void
+    private synthetic inner class Provider$Provider$VolatileWrapper$atomicfu$private
+    public final inner class kotlin/random/Random$Default
+}
+
+@kotlin.Metadata
+final class Provider {
+    // source: 'FieldInObjectTest.kt'
+    public final static @org.jetbrains.annotations.NotNull field INSTANCE: Provider
+    private synthetic final static field intArr: java.util.concurrent.atomic.AtomicIntegerArray
+    private synthetic final static field longArr: java.util.concurrent.atomic.AtomicLongArray
+    private synthetic final static field provider$VolatileWrapper$atomicfu$private: Provider$Provider$VolatileWrapper$atomicfu$private
+    private synthetic final static field refArr: java.util.concurrent.atomic.AtomicReferenceArray
+    static method <clinit>(): void
+    private method <init>(): void
+    public synthetic final static method access$getProvider$VolatileWrapper$atomicfu$private(): Provider$Provider$VolatileWrapper$atomicfu$private
+    public synthetic final method getIntArr(): java.util.concurrent.atomic.AtomicIntegerArray
+    public final method getL(): long
+    public synthetic final method getLongArr(): java.util.concurrent.atomic.AtomicLongArray
+    private synthetic final static method getProvider$VolatileWrapper$atomicfu$private(): Provider$Provider$VolatileWrapper$atomicfu$private
+    public synthetic final method getRefArr(): java.util.concurrent.atomic.AtomicReferenceArray
+    public final method next(): int
+    private synthetic inner class Provider$Provider$VolatileWrapper$atomicfu$private
+}

@@ -19,11 +19,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.platform.isJs
-import org.jetbrains.kotlinx.atomicfu.compiler.backend.*
-import org.jetbrains.kotlinx.atomicfu.compiler.backend.buildCall
-import org.jetbrains.kotlinx.atomicfu.compiler.backend.buildGetterType
-import org.jetbrains.kotlinx.atomicfu.compiler.backend.buildSetterType
-import org.jetbrains.kotlinx.atomicfu.compiler.backend.getBackingField
 
 private const val AFU_PKG = "kotlinx.atomicfu"
 private const val LOCKS = "locks"

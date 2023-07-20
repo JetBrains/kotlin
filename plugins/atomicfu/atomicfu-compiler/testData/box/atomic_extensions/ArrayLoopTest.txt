@@ -1,0 +1,40 @@
+@kotlin.Metadata
+final class ArrayInlineFunctionTest$Box {
+    // source: 'ArrayLoopTest.kt'
+    private final field n: int
+    public method <init>(p0: int): void
+    public final method component1(): int
+    public synthetic static method copy$default(p0: ArrayInlineFunctionTest$Box, p1: int, p2: int, p3: java.lang.Object): ArrayInlineFunctionTest$Box
+    public final @org.jetbrains.annotations.NotNull method copy(p0: int): ArrayInlineFunctionTest$Box
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final method getN(): int
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+    private final inner class ArrayInlineFunctionTest$Box
+}
+
+@kotlin.Metadata
+public final class ArrayInlineFunctionTest {
+    // source: 'ArrayLoopTest.kt'
+    private synthetic final field anyArr: java.util.concurrent.atomic.AtomicReferenceArray
+    private synthetic final field refArr: java.util.concurrent.atomic.AtomicReferenceArray
+    public method <init>(): void
+    private final method action(p0: ArrayInlineFunctionTest$Box): ArrayInlineFunctionTest$Box
+    private synthetic final method getAndUpdate$atomicfu$array(p0: java.util.concurrent.atomic.AtomicReferenceArray, p1: int, p2: kotlin.jvm.functions.Function1): java.lang.Object
+    private synthetic final method getAnyArr(): java.util.concurrent.atomic.AtomicReferenceArray
+    private synthetic final method getRefArr(): java.util.concurrent.atomic.AtomicReferenceArray
+    private synthetic final method loop$atomicfu$array(p0: java.util.concurrent.atomic.AtomicReferenceArray, p1: int, p2: kotlin.jvm.functions.Function1): void
+    public final method testArrayElementGetAndUpdate(): void
+    public final method testArrayElementUpdate(): void
+    public final method testArrayElementUpdateAndGet(): void
+    public final method testSetArrayElementValueInLoop(): void
+    private synthetic final method update$atomicfu$array(p0: java.util.concurrent.atomic.AtomicReferenceArray, p1: int, p2: kotlin.jvm.functions.Function1): void
+    private synthetic final method updateAndGet$atomicfu$array(p0: java.util.concurrent.atomic.AtomicReferenceArray, p1: int, p2: kotlin.jvm.functions.Function1): java.lang.Object
+    private final inner class ArrayInlineFunctionTest$Box
+}
+
+@kotlin.Metadata
+public final class ArrayLoopTestKt {
+    // source: 'ArrayLoopTest.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
