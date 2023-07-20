@@ -266,6 +266,33 @@ class ScriptingHostTest : TestCase() {
         Assert.assertEquals(greeting, output)
     }
 
+    fun testScriptWithImplicitReceiversWithSameShortName() {
+        val result = listOf("42")
+        val script = "println(v1 + v2)"
+        val definition = createJvmScriptDefinitionFromTemplate<SimpleScriptTemplate>(
+            compilation = {
+                updateClasspath(classpathFromClass<kotlin.script.experimental.jvmhost.test.forScript.p1.TestClass>())
+                implicitReceivers(
+                    kotlin.script.experimental.jvmhost.test.forScript.p1.TestClass::class,
+                    kotlin.script.experimental.jvmhost.test.forScript.p2.TestClass::class
+                )
+            },
+            evaluation = {
+                implicitReceivers(
+                    kotlin.script.experimental.jvmhost.test.forScript.p1.TestClass("4"),
+                    kotlin.script.experimental.jvmhost.test.forScript.p2.TestClass("2")
+                )
+            }
+        )
+        val output = captureOut {
+            val retVal = BasicJvmScriptingHost().eval(
+                script.toScriptSource(), definition.compilationConfiguration, definition.evaluationConfiguration
+            ).valueOrThrow().returnValue
+            if (retVal is ResultValue.Error) throw retVal.error
+        }.lines()
+        Assert.assertEquals(result, output)
+    }
+
     @Test
     fun testProvidedPropertiesNullability() {
         val stringType = KotlinType(String::class)
