@@ -6,11 +6,10 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.KotlinTargetPreset
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.plugin.*
 
+@TargetPresetsDeprecation
 abstract class KotlinOnlyTargetPreset<R : KotlinOnlyTarget<T>, T : KotlinCompilation<*>>(
     protected val project: Project,
 ) : KotlinTargetPreset<R> {
@@ -28,7 +27,7 @@ abstract class KotlinOnlyTargetPreset<R : KotlinOnlyTarget<T>, T : KotlinCompila
 
     abstract protected fun instantiateTarget(name: String): R
 
-    override fun createTarget(name: String): R {
+    override fun createTargetInternal(name: String): R {
         val result = instantiateTarget(name).apply {
             targetName = name
             disambiguationClassifier = provideTargetDisambiguationClassifier(this@apply)

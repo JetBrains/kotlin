@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_SUPPRESS_EXPERIMENTAL_ARTIFACTS_DSL_WARNING
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.*
+import org.jetbrains.kotlin.gradle.plugin.apiIsDeprecatedMessage
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV1
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV2
 
@@ -544,6 +545,22 @@ object KotlinToolingDiagnostics {
                   }
             """.trimIndent(),
             throwable = trace
+        )
+    }
+
+    object TargetPresets : ToolingDiagnosticFactory(WARNING) {
+        const val targetFromPresetDeprecationMessage = "targetFromPreset() $apiIsDeprecatedMessage"
+        const val fromPresetDeprecationMessage = "fromPreset() $apiIsDeprecatedMessage"
+        const val createTargetDeprecationMessage = "KotlinTargetPreset.createTarget() $apiIsDeprecatedMessage"
+
+        enum class API(val message: String) {
+            TargetFromPreset(targetFromPresetDeprecationMessage),
+            FromPreset(fromPresetDeprecationMessage),
+            CreateTarget(createTargetDeprecationMessage)
+        }
+
+        operator fun invoke(api: API) = build(
+            api.message
         )
     }
 }

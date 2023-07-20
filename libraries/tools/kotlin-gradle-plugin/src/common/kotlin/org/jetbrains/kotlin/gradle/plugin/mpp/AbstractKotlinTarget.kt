@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext.MavenScope.*
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -179,8 +181,21 @@ abstract class AbstractKotlinTarget(
         publicationConfigureActions.all { action -> action.execute(publication) }
     }
 
+    @OptIn(TargetPresetsDeprecation::class)
+    @Deprecated(
+        presetsApiIsDeprecatedMessage,
+        level = DeprecationLevel.WARNING,
+    )
     override var preset: KotlinTargetPreset<out KotlinTarget>? = null
         internal set
+
+    override fun warnAboutCreationOfTargetFromPreset() {
+        project.reportDiagnostic(
+            KotlinToolingDiagnostics.TargetPresets(
+                KotlinToolingDiagnostics.TargetPresets.API.CreateTarget
+            )
+        )
+    }
 }
 
 private val publishedConfigurationNameSuffix = "-published"

@@ -9,9 +9,11 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.TargetPresetsDeprecation
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTargetConfigurator
 
+@TargetPresetsDeprecation
 class KotlinJvmTargetPreset(
     project: Project
 ) : KotlinOnlyTargetPreset<KotlinJvmTarget, KotlinJvmCompilation>(

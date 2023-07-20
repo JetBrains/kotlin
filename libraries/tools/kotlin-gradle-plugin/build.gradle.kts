@@ -30,6 +30,7 @@ kotlin {
                 "org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi",
                 "org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi",
                 "org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi",
+                "org.jetbrains.kotlin.gradle.plugin.TargetPresetsDeprecation",
             )
         )
     }

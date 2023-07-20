@@ -48,6 +48,8 @@ internal class ExternalKotlinTargetImpl internal constructor(
 
     override val preset: Nothing? = null
 
+    override fun warnAboutCreationOfTargetFromPreset() {}
+
     internal val logger: Logger = Logging.getLogger("${ExternalKotlinTargetImpl::class.qualifiedName}: $name")
 
     override val useDisambiguationClassifierAsSourceSetNamePrefix: Boolean = true

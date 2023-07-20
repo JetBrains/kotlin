@@ -13,7 +13,12 @@ interface KotlinTargetsContainer {
     val targets: NamedDomainObjectCollection<KotlinTarget>
 }
 
+@TargetPresetsDeprecation
 interface KotlinTargetsContainerWithPresets : KotlinTargetsContainer {
+    @Deprecated(
+        presetsApiIsDeprecatedMessage,
+        level = DeprecationLevel.WARNING,
+    )
     val presets: NamedDomainObjectCollection<KotlinTargetPreset<*>>
 }
 
