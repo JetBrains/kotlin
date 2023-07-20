@@ -708,6 +708,7 @@ tasks {
         dependsOn(":kotlin-scripting-jsr223-test:embeddableTest")
         dependsOn(":kotlin-scripting-ide-services-test:test")
         dependsOn(":kotlin-scripting-ide-services-test:embeddableTest")
+        dependsOn(":kotlin-main-kts-test:test")
     }
 
     register("scriptingK2Test") {
