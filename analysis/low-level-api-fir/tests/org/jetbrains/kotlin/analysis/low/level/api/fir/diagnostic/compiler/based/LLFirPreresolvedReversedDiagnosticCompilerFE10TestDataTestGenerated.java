@@ -20157,6 +20157,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
             }
 
             @Test
+            @TestMetadata("kt60580.kt")
+            public void testKt60580() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/j+k/kt60580.kt");
+            }
+
+            @Test
             @TestMetadata("kt6720_abstractProperty.kt")
             public void testKt6720_abstractProperty() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/j+k/kt6720_abstractProperty.kt");

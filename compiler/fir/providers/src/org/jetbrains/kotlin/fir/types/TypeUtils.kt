@@ -136,7 +136,22 @@ fun ConeDynamicType.Companion.create(session: FirSession): ConeDynamicType =
  *
  * @see CustomAnnotationTypeAttribute.independentInstance
  */
-fun ConeKotlinType.independentInstance(): ConeKotlinType = instanceWithIndependentArguments().instanceWithIndependentAnnotations()
+@OptIn(DynamicTypeConstructor::class)
+fun ConeKotlinType.independentInstance(): ConeKotlinType = if (this is ConeFlexibleType) {
+    val newLowerBound = lowerBound.independentInstance() as ConeSimpleKotlinType
+    val newUpperBound = upperBound.independentInstance() as ConeSimpleKotlinType
+    if (newLowerBound !== lowerBound || newUpperBound !== upperBound) {
+        when (this) {
+            is ConeRawType -> ConeRawType.create(newLowerBound, newUpperBound)
+            is ConeDynamicType -> ConeDynamicType(newLowerBound, newUpperBound)
+            else -> ConeFlexibleType(newLowerBound, newUpperBound)
+        }
+    } else {
+        this
+    }
+} else {
+    instanceWithIndependentArguments().instanceWithIndependentAnnotations()
+}
 
 private fun ConeKotlinType.instanceWithIndependentArguments(): ConeKotlinType {
     val typeProjections = typeArguments
