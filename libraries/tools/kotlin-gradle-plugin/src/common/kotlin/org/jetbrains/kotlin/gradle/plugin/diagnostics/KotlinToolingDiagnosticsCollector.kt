@@ -29,6 +29,8 @@ internal abstract class KotlinToolingDiagnosticsCollector : BuildService<BuildSe
     private val rawDiagnosticsFromProject: MutableMap<GradleProjectPath, MutableList<ToolingDiagnostic>> = ConcurrentHashMap()
     private val reportedIds: MutableSet<ToolingDiagnosticId> = Collections.newSetFromMap(ConcurrentHashMap())
 
+    fun getAllDiagnostics(): Map<GradleProjectPath, Collection<ToolingDiagnostic>> = rawDiagnosticsFromProject
+
     fun getDiagnosticsForProject(project: Project): Collection<ToolingDiagnostic> {
         return rawDiagnosticsFromProject[project.path] ?: return emptyList()
     }

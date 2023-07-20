@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.testbase
 
 import org.gradle.testkit.runner.BuildResult
 import org.jetbrains.kotlin.gradle.BaseGradleIT
+import org.jetbrains.kotlin.gradle.internals.PROJECT_HEADER_IN_ERROR_DIAGNOSTICS_REPORT
 import org.jetbrains.kotlin.gradle.internals.VERBOSE_DIAGNOSTIC_SEPARATOR
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticFactory
 import kotlin.test.assertNull
@@ -110,7 +111,7 @@ fun BuildResult.extractProjectsAndTheirVerboseDiagnostics(): String = buildStrin
 
             diagnosticStarted -> continueDiagnostic(line)
 
-            line.startsWith(CONFIGURE_PROJECT_PREFIX) -> {
+            line.startsWith(CONFIGURE_PROJECT_PREFIX) || line.startsWith(PROJECT_HEADER_IN_ERROR_DIAGNOSTICS_REPORT)-> {
                 appendLine() // additional empty line between projects
                 appendLine(line)
             }

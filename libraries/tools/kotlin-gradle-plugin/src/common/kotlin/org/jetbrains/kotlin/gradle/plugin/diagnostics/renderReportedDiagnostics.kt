@@ -9,6 +9,17 @@ import org.gradle.api.InvalidUserCodeException
 import org.gradle.api.logging.Logger
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.*
 
+internal fun renderAggregateReport(
+    projectNamesToDiagnostics: Map<String, Collection<ToolingDiagnostic>>,
+    logger: Logger,
+    isVerbose: Boolean,
+) {
+    for ((projectName, diagnostics) in projectNamesToDiagnostics) {
+        logger.lifecycle("$PROJECT_HEADER_IN_ERROR_DIAGNOSTICS_REPORT '$projectName'")
+        renderReportedDiagnostics(diagnostics, logger, isVerbose)
+    }
+}
+
 internal fun renderReportedDiagnostics(diagnostics: Collection<ToolingDiagnostic>, logger: Logger, isVerbose: Boolean) {
     for (diagnostic in diagnostics) {
         renderReportedDiagnostic(diagnostic, logger, isVerbose)
@@ -46,3 +57,4 @@ private fun ToolingDiagnostic.render(isVerbose: Boolean): String = buildString {
 }
 
 internal const val DIAGNOSTIC_SEPARATOR = "#diagnostic-end"
+internal const val PROJECT_HEADER_IN_ERROR_DIAGNOSTICS_REPORT = "> Project"

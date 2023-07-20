@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.internals
 
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.DIAGNOSTIC_SEPARATOR
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.PROJECT_HEADER_IN_ERROR_DIAGNOSTICS_REPORT
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinProjectStructureMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME
 import org.jetbrains.kotlin.gradle.plugin.mpp.parseKotlinSourceSetMetadataFromJson
@@ -18,3 +19,4 @@ const val MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME = MULTIPLATFORM_PROJECT_
 const val KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS_PROPERTY = KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS
 
 const val VERBOSE_DIAGNOSTIC_SEPARATOR = DIAGNOSTIC_SEPARATOR
+const val PROJECT_HEADER_IN_ERROR_DIAGNOSTICS_REPORT = PROJECT_HEADER_IN_ERROR_DIAGNOSTICS_REPORT

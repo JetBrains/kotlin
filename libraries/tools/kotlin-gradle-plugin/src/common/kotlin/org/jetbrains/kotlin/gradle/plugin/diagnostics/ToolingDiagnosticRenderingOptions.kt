@@ -7,12 +7,13 @@ package org.jetbrains.kotlin.gradle.plugin.diagnostics
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import java.io.Serializable
 
 internal class ToolingDiagnosticRenderingOptions(
     val isVerbose: Boolean,
     val suppressedWarningIds: List<String>,
     val suppressedErrorIds: List<String>
-) {
+) : Serializable {
     companion object {
         fun forProject(project: Project): ToolingDiagnosticRenderingOptions = with(project.kotlinPropertiesProvider) {
             ToolingDiagnosticRenderingOptions(
@@ -24,9 +25,13 @@ internal class ToolingDiagnosticRenderingOptions(
     }
 }
 
-internal fun Collection<ToolingDiagnostic>.withoutSuppressed(options: ToolingDiagnosticRenderingOptions): Collection<ToolingDiagnostic> =
-    filter { !it.isSuppressed(options) }
+internal fun ToolingDiagnostic.isSuppressed(options: ToolingDiagnosticRenderingOptions): Boolean {
+    return when {
+        severity == ToolingDiagnostic.Severity.WARNING -> id in options.suppressedWarningIds
 
-internal fun ToolingDiagnostic.isSuppressed(options: ToolingDiagnosticRenderingOptions): Boolean =
-    severity == ToolingDiagnostic.Severity.WARNING && id in options.suppressedWarningIds
-            || severity == ToolingDiagnostic.Severity.ERROR && id in options.suppressedErrorIds
+        severity == ToolingDiagnostic.Severity.ERROR -> id in options.suppressedErrorIds
+
+        // NB: FATALs can not be suppressed
+        else -> false
+    }
+}
