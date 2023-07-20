@@ -63,6 +63,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             ?: target.family.isAppleFamily // Default is true for Apple targets.
     val generateDebugTrampoline = debug && configuration.get(KonanConfigKeys.GENERATE_DEBUG_TRAMPOLINE) ?: false
     val optimizationsEnabled = configuration.getBoolean(KonanConfigKeys.OPTIMIZATION)
+    val assertsEnabled = configuration.getBoolean(KonanConfigKeys.ENABLE_ASSERTIONS)
     val sanitizer = configuration.get(BinaryOptions.sanitizer)?.takeIf {
         when {
             it != SanitizerKind.THREAD -> "${it.name} sanitizer is not supported yet"

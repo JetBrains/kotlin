@@ -487,6 +487,12 @@ private val objectClassesPhase = createFileLoweringPhase(
         description = "Object classes lowering"
 )
 
+private val assertsRemovalPhase = createFileLoweringPhase(
+        lowering = ::AssertRemovalLowering,
+        name = "AssertsRemoval",
+        description = "Asserts removal"
+)
+
 private val constEvaluationPhase = createFileLoweringPhase(
         lowering = { context: Context ->
             val configuration = IrInterpreterConfiguration(printOnlyExceptionMessage = true)
@@ -509,6 +515,7 @@ private fun PhaseEngine<NativeGenerationState>.getAllLowerings() = listOfNotNull
         inlinePhase,
         removeExpectDeclarationsPhase,
         stripTypeAliasDeclarationsPhase,
+        assertsRemovalPhase.takeUnless { context.config.assertsEnabled },
         constEvaluationPhase,
         provisionalFunctionExpressionPhase,
         postInlinePhase,
