@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.testbase
 
 import org.gradle.testkit.runner.BuildResult
 import org.jetbrains.kotlin.gradle.BaseGradleIT
+import org.jetbrains.kotlin.gradle.internals.ENSURE_NO_KOTLIN_GRADLE_PLUGIN_ERRORS_TASK_NAME
 import org.jetbrains.kotlin.gradle.internals.VERBOSE_DIAGNOSTIC_SEPARATOR
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticFactory
@@ -117,11 +118,12 @@ fun BuildResult.extractProjectsAndTheirVerboseDiagnostics(): String = buildStrin
         when {
             line.trim() == VERBOSE_DIAGNOSTIC_SEPARATOR -> endDiagnostic(line, index)
 
-            DIAGNOSTIC_START_REGEX.matches(line) -> startDiagnostic(line, index)
+            DIAGNOSTIC_START_REGEX.containsMatchIn(line) -> startDiagnostic(line, index)
 
             diagnosticStarted -> continueDiagnostic(line)
 
-            line.startsWith(CONFIGURE_PROJECT_PREFIX) -> {
+            line.startsWith(CONFIGURE_PROJECT_PREFIX)
+                    || (line.contains(ENSURE_NO_KOTLIN_GRADLE_PLUGIN_ERRORS_TASK_NAME) && line.startsWith(TASK_EXECUTION_PREFIX)) -> {
                 appendLine() // additional empty line between projects
                 appendLine(line)
             }
@@ -132,9 +134,10 @@ fun BuildResult.extractProjectsAndTheirVerboseDiagnostics(): String = buildStrin
 /*
 Expected format
       w: [DIAGNOSTIC_ID | WARNING] first line of diagnostic's text
+or (fatals don't have 'w:' or 'e:' prefix):
+      [DIAGNOSTIC_ID | FATAL] Fatal diagnostic
  */
-private val DIAGNOSTIC_START_REGEX = """\s*[we]:\s*\[[^\[]*].*""".toRegex()
-
+private val DIAGNOSTIC_START_REGEX = """\s*([we]:)?\s*\[\w+ \| \w+].*""".toRegex()
 
 /*
  Expected format:
@@ -186,3 +189,4 @@ private fun extractNextVerboselyRenderedDiagnosticAndIndex(
 }
 
 private const val CONFIGURE_PROJECT_PREFIX = "> Configure project"
+private const val TASK_EXECUTION_PREFIX = "> Task"
