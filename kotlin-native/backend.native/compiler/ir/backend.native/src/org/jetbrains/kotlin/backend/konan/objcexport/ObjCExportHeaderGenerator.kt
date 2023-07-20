@@ -112,10 +112,10 @@ internal class ObjCExportTranslatorImpl(
 
     private fun StubBuilder<ObjCTopLevel<*>>.genKotlinNumbers() {
         val members = buildMembers {
-            NSNumberKind.values().forEach {
+            NSNumberKind.entries.forEach {
                 add { nsNumberFactory(it, listOf("unavailable")) }
             }
-            NSNumberKind.values().forEach {
+            NSNumberKind.entries.forEach {
                 add { nsNumberInit(it, listOf("unavailable")) }
             }
         }
@@ -127,7 +127,7 @@ internal class ObjCExportTranslatorImpl(
             )
         }
 
-        NSNumberKind.values().forEach {
+        NSNumberKind.entries.forEach {
             if (it.mappedKotlinClassId != null) add {
                 genKotlinNumber(it.mappedKotlinClassId, it)
             }
@@ -487,7 +487,7 @@ internal class ObjCExportTranslatorImpl(
                 enumEntries,
                 type = mapReferenceType(enumEntries.type, genericExportScope),
                 propertyAttributes = listOf("class", "readonly"),
-                declarationAttributes = listOf(swiftNameAttribute("$selector"))
+                declarationAttributes = listOf(swiftNameAttribute(selector))
         )
     }
 
@@ -1243,11 +1243,11 @@ abstract class ObjCExportHeaderGenerator internal constructor(
             packageFragment.getMemberScope().translateClasses()
         }
 
-        extensions.forEach { classDescriptor, declarations ->
+        extensions.forEach { (classDescriptor, declarations) ->
             generateExtensions(classDescriptor, declarations)
         }
 
-        topLevel.forEach { sourceFile, declarations ->
+        topLevel.forEach { (sourceFile, declarations) ->
             generateFile(sourceFile, declarations)
         }
     }
