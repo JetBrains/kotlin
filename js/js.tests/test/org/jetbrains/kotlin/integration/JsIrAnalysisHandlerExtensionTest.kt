@@ -71,6 +71,7 @@ class JsIrAnalysisHandlerExtensionTest : TestCaseWithTmpdir() {
             "-libraries", libs,
             "-ir-output-dir", outputFile.parentFile.path,
             "-ir-output-name", outputFile.nameWithoutExtension,
+            "-language-version", "1.9",
             mainKt.absolutePath
         )
         CompilerTestUtil.executeCompilerAssertSuccessful(compiler, args + extras)
