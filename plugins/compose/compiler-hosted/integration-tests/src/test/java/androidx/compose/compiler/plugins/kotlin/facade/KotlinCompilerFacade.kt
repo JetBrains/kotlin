@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
@@ -126,7 +127,7 @@ abstract class KotlinCompilerFacade(val environment: KotlinCoreEnvironment) {
 
             environment.project.registerExtensions(configuration)
 
-            return if (configuration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
+            return if (configuration.languageVersionSettings.languageVersion.usesK2) {
                 K2CompilerFacade(environment)
             } else {
                 K1CompilerFacade(environment)
