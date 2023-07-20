@@ -2690,6 +2690,9 @@ class ComposableFunctionBodyTransformer(
                     }
                 }
             }
+            arg is IrVararg -> {
+                meta.stability = stabilityOf(arg.varargElementType)
+            }
         }
     }
 
