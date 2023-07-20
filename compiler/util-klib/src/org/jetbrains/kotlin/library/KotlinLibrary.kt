@@ -11,6 +11,11 @@ const val KLIB_PROPERTY_ABI_VERSION = "abi_version"
 const val KLIB_PROPERTY_COMPILER_VERSION = "compiler_version"
 
 /**
+ * A set of values of [org.jetbrains.kotlin.library.KotlinIrSignatureVersion].
+ */
+const val KLIB_PROPERTY_IR_SIGNATURE_VERSIONS = "ir_signature_versions"
+
+/**
  * [org.jetbrains.kotlin.library.metadata.KlibMetadataVersion]
  */
 const val KLIB_PROPERTY_METADATA_VERSION = "metadata_version"
