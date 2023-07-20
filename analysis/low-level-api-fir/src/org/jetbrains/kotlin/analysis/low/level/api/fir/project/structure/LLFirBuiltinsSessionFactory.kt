@@ -15,7 +15,7 @@ import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirBuiltinsAndCloneableSessionProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirBuiltinsAndCloneableSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.StubBasedFirDeserializedSymbolProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.createStubBasedFirSymbolProviderForBuiltins
 import org.jetbrains.kotlin.analysis.project.structure.KtBuiltinsModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
@@ -98,28 +98,7 @@ class LLFirBuiltinsSessionFactory(private val project: Project) {
             register(FirKotlinScopeProvider::class, kotlinScopeProvider)
 
             val symbolProvider = createCompositeSymbolProvider(this) {
-                val moduleDataProvider = SingleModuleDataProvider(moduleData)
-                add(
-                    object : StubBasedFirDeserializedSymbolProvider(
-                        session,
-                        moduleDataProvider,
-                        kotlinScopeProvider,
-                        project,
-                        BuiltinsGlobalSearchScope(project),
-                        FirDeclarationOrigin.BuiltIns
-                    ) {
-                        private val syntheticFunctionInterfaceProvider = FirBuiltinSyntheticFunctionInterfaceProvider(
-                            session,
-                            moduleData,
-                            kotlinScopeProvider
-                        )
-
-                        override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
-                            return super.getClassLikeSymbolByClassId(classId)
-                                ?: syntheticFunctionInterfaceProvider.getClassLikeSymbolByClassId(classId)
-                        }
-                    }
-                )
+                add(createStubBasedFirSymbolProviderForBuiltins(project, session, moduleData, kotlinScopeProvider))
                 add(FirExtensionSyntheticFunctionInterfaceProvider(session, moduleData, kotlinScopeProvider))
                 add(FirCloneableSymbolProvider(session, moduleData, kotlinScopeProvider))
             }
@@ -133,15 +112,6 @@ class LLFirBuiltinsSessionFactory(private val project: Project) {
     companion object {
         fun getInstance(project: Project): LLFirBuiltinsSessionFactory =
             project.getService(LLFirBuiltinsSessionFactory::class.java)
-    }
-}
-
-internal class BuiltinsGlobalSearchScope(project: Project) : DelegatingGlobalSearchScope(project, allScope(project)) {
-    override fun contains(file: VirtualFile): Boolean {
-        if (file.extension != BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION) {
-            return false
-        }
-        return super.contains(file)
     }
 }
 
