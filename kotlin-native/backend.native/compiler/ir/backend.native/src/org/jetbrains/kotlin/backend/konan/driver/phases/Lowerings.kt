@@ -498,8 +498,6 @@ private val constEvaluationPhase = createFileLoweringPhase(
 )
 
 private fun PhaseEngine<NativeGenerationState>.getAllLowerings() = listOfNotNull<AbstractNamedCompilerPhase<NativeGenerationState, IrFile, IrFile>>(
-        removeExpectDeclarationsPhase,
-        stripTypeAliasDeclarationsPhase,
         lowerBeforeInlinePhase,
         arrayConstructorPhase,
         lateinitPhase,
@@ -509,6 +507,8 @@ private fun PhaseEngine<NativeGenerationState>.getAllLowerings() = listOfNotNull
         extractLocalClassesFromInlineBodies,
         wrapInlineDeclarationsWithReifiedTypeParametersLowering,
         inlinePhase,
+        removeExpectDeclarationsPhase,
+        stripTypeAliasDeclarationsPhase,
         constEvaluationPhase,
         provisionalFunctionExpressionPhase,
         postInlinePhase,
