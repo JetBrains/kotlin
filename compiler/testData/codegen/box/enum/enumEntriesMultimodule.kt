@@ -3,6 +3,7 @@
 // WITH_STDLIB
 
 // MODULE: lib
+// !LANGUAGE: -EnumEntries
 // FILE: MyEnum.kt
 enum class MyEnum {
     Nope, OK
