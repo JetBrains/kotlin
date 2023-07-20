@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirField
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.languageVersionSettings
@@ -55,14 +56,17 @@ object FirSupertypesChecker : FirClassChecker() {
                 reporter.reportOn(superTypeRef.source, FirErrors.SUPERTYPE_IS_EXTENSION_FUNCTION_TYPE, context)
                 extensionFunctionSupertypeReported = true
             }
-            val lookupTag = (coneType as? ConeClassLikeType)?.lookupTag ?: continue
-            val superTypeSymbol = lookupTag.toSymbol(context.session)
 
-            if (superTypeSymbol is FirRegularClassSymbol) {
-                if (!superClassSymbols.add(superTypeSymbol)) {
+            checkAnnotationOnSuperclass(superTypeRef, context, reporter)
+
+            val fullyExpandedType = coneType.fullyExpandedType(context.session)
+            val symbol = fullyExpandedType.toSymbol(context.session)
+
+            if (symbol is FirRegularClassSymbol) {
+                if (!superClassSymbols.add(symbol)) {
                     reporter.reportOn(superTypeRef.source, FirErrors.SUPERTYPE_APPEARS_TWICE, context)
                 }
-                if (superTypeSymbol.classKind != ClassKind.INTERFACE) {
+                if (symbol.classKind != ClassKind.INTERFACE) {
                     if (classAppeared) {
                         reporter.reportOn(superTypeRef.source, FirErrors.MANY_CLASSES_IN_SUPERTYPE_LIST, context)
                     } else {
@@ -73,8 +77,8 @@ object FirSupertypesChecker : FirClassChecker() {
                         interfaceWithSuperclassReported = true
                     }
                 }
-                val isObject = superTypeSymbol.classKind == ClassKind.OBJECT
-                if (!finalSupertypeReported && !isObject && superTypeSymbol.modality == Modality.FINAL) {
+                val isObject = symbol.classKind == ClassKind.OBJECT
+                if (!finalSupertypeReported && !isObject && symbol.modality == Modality.FINAL) {
                     reporter.reportOn(superTypeRef.source, FirErrors.FINAL_SUPERTYPE, context)
                     finalSupertypeReported = true
                 }
@@ -83,11 +87,6 @@ object FirSupertypesChecker : FirClassChecker() {
                     singletonInSupertypeReported = true
                 }
             }
-
-            checkAnnotationOnSuperclass(superTypeRef, context, reporter)
-
-            val fullyExpandedType = coneType.fullyExpandedType(context.session)
-            val symbol = fullyExpandedType.toSymbol(context.session)
 
             checkClassCannotBeExtendedDirectly(symbol, reporter, superTypeRef, context)
 

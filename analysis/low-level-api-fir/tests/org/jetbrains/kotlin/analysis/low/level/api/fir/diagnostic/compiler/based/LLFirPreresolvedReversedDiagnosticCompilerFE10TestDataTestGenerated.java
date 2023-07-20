@@ -340,6 +340,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
         }
 
         @Test
+        @TestMetadata("finalSupertype.kt")
+        public void testFinalSupertype() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/finalSupertype.kt");
+        }
+
+        @Test
         @TestMetadata("ForRangeConventions.kt")
         public void testForRangeConventions() throws Exception {
             runTest("compiler/testData/diagnostics/tests/ForRangeConventions.kt");
