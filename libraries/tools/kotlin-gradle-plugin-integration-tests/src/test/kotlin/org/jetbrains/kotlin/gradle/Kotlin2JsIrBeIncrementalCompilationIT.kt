@@ -23,18 +23,14 @@ import kotlin.test.assertTrue
 @JsGradlePluginTests
 class Kotlin2JsK1IrBeIncrementalCompilationIT : Kotlin2JsIrBeIncrementalCompilationIT() {
     override val defaultBuildOptions: BuildOptions
-        get() =
-            if (KotlinVersion.CURRENT.major >= 2) super.defaultBuildOptions.copy(languageVersion = "1.9")
-            else super.defaultBuildOptions
+        get() = super.defaultBuildOptions.copyEnsuringK1()
 }
 
 @DisplayName("Incremental compilation tests for Kotlin JS IR backend with K2")
 @JsGradlePluginTests
 class Kotlin2JsK2IrBeIncrementalCompilationIT : Kotlin2JsIrBeIncrementalCompilationIT() {
     override val defaultBuildOptions: BuildOptions
-        get() =
-            if (KotlinVersion.CURRENT.major < 2) super.defaultBuildOptions.copy(languageVersion = "2.0")
-            else super.defaultBuildOptions
+        get() = super.defaultBuildOptions.copyEnsuringK2()
 
     @Disabled("Not found way to fail BE compilation with successful FE 2.0 compilation")
     override fun testRebuildAfterError(gradleVersion: GradleVersion) {

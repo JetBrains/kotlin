@@ -46,6 +46,15 @@ data class BuildOptions(
     val verboseDiagnostics: Boolean = true,
     val nativeOptions: NativeOptions = NativeOptions(),
 ) {
+    val isK2ByDefault: Boolean
+        get() = kotlinVersion.startsWith("2")
+
+    fun copyEnsuringK1(): BuildOptions =
+        copy(languageVersion = if (isK2ByDefault) "1.9" else null)
+
+    fun copyEnsuringK2(): BuildOptions =
+        copy(languageVersion = if (isK2ByDefault) null else "2.0")
+
     val safeAndroidVersion: String
         get() = androidVersion ?: error("AGP version is expected to be set")
 

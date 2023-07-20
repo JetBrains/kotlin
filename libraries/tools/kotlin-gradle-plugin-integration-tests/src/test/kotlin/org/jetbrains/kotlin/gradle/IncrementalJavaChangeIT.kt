@@ -239,17 +239,13 @@ abstract class IncrementalJavaChangeDisablePreciseIT : IncrementalCompilationJav
 @DisplayName("Default incremental compilation with disabled precise java tracking and enabled K2")
 class IncrementalK2JavaChangeDisablePreciseIT : IncrementalJavaChangeDisablePreciseIT() {
     override val defaultBuildOptions: BuildOptions
-        get() =
-            if (KotlinVersion.CURRENT.major < 2) super.defaultBuildOptions.copy(languageVersion = "2.0")
-            else super.defaultBuildOptions
+        get() = super.defaultBuildOptions.copyEnsuringK2()
 }
 
 @DisplayName("Default incremental compilation with disabled precise java tracking and enabled K1")
 class IncrementalK1JavaChangeDisablePreciseIT : IncrementalJavaChangeDisablePreciseIT() {
     override val defaultBuildOptions: BuildOptions
-        get() =
-            if (KotlinVersion.CURRENT.major >= 2) super.defaultBuildOptions.copy(languageVersion = "1.9")
-            else super.defaultBuildOptions
+        get() = super.defaultBuildOptions.copyEnsuringK1()
 }
 
 @JvmGradlePluginTests
