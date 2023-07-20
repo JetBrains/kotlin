@@ -120,7 +120,6 @@ open class IrFileSerializer(
     private val languageVersionSettings: LanguageVersionSettings,
     private val bodiesOnlyForInlines: Boolean = false,
     private val skipExpects: Boolean = false,
-    private val addDebugInfo: Boolean = true,
     private val normalizeAbsolutePaths: Boolean = false,
     private val sourceBaseDirs: Collection<String>
 ) {
@@ -215,9 +214,7 @@ open class IrFileSerializer(
             proto.flags = signature.mask
         }
 
-        if (addDebugInfo) {
-            signature.description?.let { proto.debugInfo = serializeDebugInfo(it) }
-        }
+        signature.description?.let { proto.debugInfo = serializeDebugInfo(it) }
 
         return proto.build()
     }
@@ -232,9 +229,7 @@ open class IrFileSerializer(
             if (mask != 0L) {
                 proto.flags = mask
             }
-            if (addDebugInfo) {
-                description?.let { proto.debugInfo = serializeDebugInfo(it) }
-            }
+            description?.let { proto.debugInfo = serializeDebugInfo(it) }
         }
 
         return proto.build()
@@ -245,9 +240,7 @@ open class IrFileSerializer(
 
         proto.container = protoIdSignature(signature.container)
         proto.localId = signature.id
-        if (addDebugInfo) {
-            signature.description?.let { proto.debugInfo = serializeDebugInfo(it) }
-        }
+        signature.description?.let { proto.debugInfo = serializeDebugInfo(it) }
 
         return proto.build()
     }
@@ -271,9 +264,7 @@ open class IrFileSerializer(
 
         proto.addAllLocalFqName(serializeFqName(signature.localFqn))
         signature.hashSig?.let { proto.localHash = it }
-        if (addDebugInfo) {
-            signature.description?.let { proto.debugInfo = serializeDebugInfo(it) }
-        }
+        signature.description?.let { proto.debugInfo = serializeDebugInfo(it) }
 
         return proto.build()
     }
@@ -1471,7 +1462,7 @@ open class IrFileSerializer(
             IrMemoryStringWriter(protoStringArray).writeIntoMemory(),
             IrMemoryArrayWriter(protoBodyArray.map { it.toByteArray() }).writeIntoMemory(),
             IrMemoryDeclarationWriter(topLevelDeclarations).writeIntoMemory(),
-            if (addDebugInfo) IrMemoryStringWriter(protoDebugInfoArray).writeIntoMemory() else null
+            IrMemoryStringWriter(protoDebugInfoArray).writeIntoMemory()
         )
     }
 
