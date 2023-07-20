@@ -52,6 +52,7 @@ abstract class AbstractJsProtoComparisonTest : AbstractProtoComparisonTest<Proto
             main = K2JsArgumentConstants.NO_CALL
             freeArgs = ktFiles
             forceDeprecatedLegacyCompilerUsage = true
+            languageVersion = "1.9"
         }
 
         val env = createTestingCompilerEnvironment(messageCollector, outputItemsCollector, services)
