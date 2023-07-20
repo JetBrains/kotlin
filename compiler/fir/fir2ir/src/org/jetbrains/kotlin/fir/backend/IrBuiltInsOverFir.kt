@@ -95,7 +95,10 @@ class IrBuiltInsOverFir(
     override val nothingType: IrType get() = nothing.type
     override val nothingNType: IrType by lazy { nothingType.makeNullable() }
 
-    private val unit by createClass(kotlinIrPackage, IdSignatureValues.unit, build = { kind = ClassKind.OBJECT; modality = Modality.FINAL })
+    private val unit by createClass(kotlinIrPackage, IdSignatureValues.unit, build = { kind = ClassKind.OBJECT; modality = Modality.FINAL }) {
+        configureSuperTypes()
+        finalizeClassDefinition()
+    }
     override val unitClass: IrClassSymbol get() = unit.klass
     override val unitType: IrType get() = unit.type
 
