@@ -29,13 +29,11 @@ internal abstract class KotlinToolingDiagnosticsCollector : BuildService<BuildSe
     private val reportedIds: MutableSet<ToolingDiagnosticId> = Collections.newSetFromMap(ConcurrentHashMap())
 
     fun getDiagnosticsForProject(project: Project): Collection<ToolingDiagnostic> {
-        val rawDiagnostics = rawDiagnosticsFromProject[project.path] ?: return emptyList()
-        val options = ToolingDiagnosticRenderingOptions.forProject(project)
-        return rawDiagnostics.withoutSuppressed(options)
+        return rawDiagnosticsFromProject[project.path] ?: return emptyList()
     }
 
     fun report(project: Project, diagnostic: ToolingDiagnostic) {
-        saveDiagnostic(project, diagnostic)
+        handleDiagnostic(project, diagnostic)
     }
 
     fun report(task: UsesKotlinToolingDiagnostics, diagnostic: ToolingDiagnostic) {
@@ -47,13 +45,13 @@ internal abstract class KotlinToolingDiagnosticsCollector : BuildService<BuildSe
 
     fun reportOncePerGradleProject(fromProject: Project, diagnostic: ToolingDiagnostic, key: ToolingDiagnosticId = diagnostic.id) {
         if (reportedIds.add("${fromProject.path}#$key")) {
-            saveDiagnostic(fromProject, diagnostic)
+            handleDiagnostic(fromProject, diagnostic)
         }
     }
 
     fun reportOncePerGradleBuild(fromProject: Project, diagnostic: ToolingDiagnostic, key: ToolingDiagnosticId = diagnostic.id) {
         if (reportedIds.add(":#$key")) {
-            saveDiagnostic(fromProject, diagnostic)
+            handleDiagnostic(fromProject, diagnostic)
         }
     }
 
@@ -61,7 +59,9 @@ internal abstract class KotlinToolingDiagnosticsCollector : BuildService<BuildSe
         isTransparent = true
     }
 
-    private fun saveDiagnostic(project: Project, diagnostic: ToolingDiagnostic) {
+    private fun handleDiagnostic(project: Project, diagnostic: ToolingDiagnostic) {
+        if (diagnostic.isSuppressed(ToolingDiagnosticRenderingOptions.forProject(project))) return
+
         val isVerbose = project.kotlinPropertiesProvider.internalVerboseDiagnostics
 
         if (isTransparent) {
