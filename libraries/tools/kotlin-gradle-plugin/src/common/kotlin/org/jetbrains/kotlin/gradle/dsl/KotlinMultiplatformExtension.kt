@@ -169,6 +169,7 @@ abstract class KotlinMultiplatformExtension
     }
 }
 
+@KotlinGradlePluginDsl
 interface TargetsFromPresetExtension : NamedDomainObjectCollection<KotlinTarget> {
 
     fun <T : KotlinTarget> fromPreset(
