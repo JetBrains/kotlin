@@ -59,14 +59,14 @@ swiftLauncher.addBase(
 )
 
 runner.runBenchmarks(args: args, run: { (arguments: BenchmarkArguments) -> [BenchmarkResult] in
-    if arguments is BaseBenchmarkArguments {
-        let argumentsList: BaseBenchmarkArguments = arguments as! BaseBenchmarkArguments
-        return swiftLauncher.launch(numWarmIterations: argumentsList.warmup,
-            numberOfAttempts: argumentsList.repeat,
-            prefix: argumentsList.prefix, filters: argumentsList.filter,
-            filterRegexes: argumentsList.filterRegex,
-            verbose: argumentsList.verbose)
-    }
+//     if arguments is BaseBenchmarkArguments {
+//         let argumentsList: BaseBenchmarkArguments = arguments as! BaseBenchmarkArguments
+//         return swiftLauncher.launch(numWarmIterations: argumentsList.warmup,
+//             numberOfAttempts: argumentsList.repeat,
+//             prefix: argumentsList.prefix, filters: argumentsList.filter,
+//             filterRegexes: argumentsList.filterRegex,
+//             verbose: argumentsList.verbose)
+//     }
     return [BenchmarkResult]()
 }, parseArgs: { (args: KotlinArray,  benchmarksListAction: ((KotlinBoolean) -> KotlinUnit)) -> BenchmarkArguments? in
     return runner.parse(args: args, benchmarksListAction: { (baseOnly: KotlinBoolean) in swiftLauncher.benchmarksListAction(baseOnly: baseOnly.boolValue) }) },

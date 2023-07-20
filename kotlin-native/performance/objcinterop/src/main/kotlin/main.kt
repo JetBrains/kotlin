@@ -27,7 +27,7 @@ class ObjCInteropLauncher: Launcher() {
 fun main(args: Array<String>) {
     val launcher = ObjCInteropLauncher()
     BenchmarksRunner.runBenchmarks(args, { arguments: BenchmarkArguments ->
-        if (arguments is BaseBenchmarkArguments) {
+        if (false /*arguments is BaseBenchmarkArguments*/) {
             launcher.launch(arguments.warmup, arguments.repeat, arguments.prefix,
                     arguments.filter, arguments.filterRegex, arguments.verbose)
         } else emptyList()
