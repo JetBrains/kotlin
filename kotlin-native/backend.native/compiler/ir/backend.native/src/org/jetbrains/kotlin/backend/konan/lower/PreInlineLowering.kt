@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
@@ -19,8 +18,6 @@ import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
-import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 
@@ -30,12 +27,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
  *     - First phase of typeOf intrinsic lowering.
  */
 internal class PreInlineLowering(val context: Context) : BodyLoweringPass {
-
-    private val symbols get() = context.ir.symbols
-
-    private val asserts = symbols.asserts.toSet()
-    private val enableAssertions = context.config.configuration.getBoolean(KonanConfigKeys.ENABLE_ASSERTIONS)
-
     override fun lower(irBody: IrBody, container: IrDeclaration) = lower(irBody, container, container.file)
 
     fun lower(irBody: IrBody, container: IrDeclaration, irFile: IrFile) {
@@ -50,11 +41,6 @@ internal class PreInlineLowering(val context: Context) : BodyLoweringPass {
                 expression.transformChildren(this, data)
 
                 return when {
-                    !enableAssertions && expression.symbol in asserts -> {
-                        // Replace assert() call with an empty composite if assertions are not enabled.
-                        require(expression.type.isUnit())
-                        IrCompositeImpl(expression.startOffset, expression.endOffset, expression.type)
-                    }
                     Symbols.isTypeOfIntrinsic(expression.symbol) -> {
                         with (KTypeGenerator(context, irFile, expression, needExactTypeParameters = true)) {
                             data.at(expression).irKType(expression.getTypeArgument(0)!!, leaveReifiedForLater = true)
