@@ -386,6 +386,12 @@ if (!buildProperties.inJpsBuildIdeaSync) {
 include ":compiler:build-tools:kotlin-build-tools-api",
         ":compiler:build-tools:kotlin-build-tools-impl"
 
+// Experimental modules, should be placed into plugins/compose-compiler-plugin folder
+include ":plugins:compose-compiler-plugin:compiler",
+        ":plugins:compose-compiler-plugin:compiler-hosted",
+        ":plugins:compose-compiler-plugin:compiler-daemon",
+        ":plugins:compose-compiler-plugin:compiler-daemon:integration-tests"
+
 void intellij(String imlPath) {
     File imlFile = new File("${rootDir}/intellij/community/plugins/kotlin/${imlPath}")
     imlFile = imlFile.exists() ? imlFile : new File("${rootDir}/intellij/plugins/kotlin/${imlPath}")
