@@ -227,7 +227,14 @@ internal class StubBasedFirTypeDeserializer(
         if (typeElement is KtFunctionType) {
             val arity = (if (typeElement.receiver != null) 1 else 0) + typeElement.parameters.size
             val isSuspend = typeReference.getAllModifierLists().any { it.hasSuspendModifier() }
-            val functionClassId = if (isSuspend) StandardNames.getSuspendFunctionClassId(arity) else StandardNames.getFunctionClassId(arity)
+            val functionClassId = if (isSuspend) {
+                StandardNames.getSuspendFunctionClassId(arity)
+            } else {
+                moduleData.session.functionTypeService.extractSingleExtensionKindForDeserializedConeType(
+                    StandardNames.getFunctionClassId(arity),
+                    annotationDeserializer.loadAnnotations(typeReference)
+                )?.numberedClassId(arity) ?: StandardNames.getFunctionClassId(arity)
+            }
             return computeClassifier(functionClassId)
         }
         if (typeElement is KtIntersectionType) {
