@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.Stand
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirBuiltinsSessionFactory
 import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.analysisContext
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 
@@ -43,8 +45,11 @@ internal class KtModuleProviderImpl(
             ?: return ktNotUnderContentRootModuleWithoutPsiFile
         // If an [element] is created on the fly, e.g., via [KtPsiFactory],
         // its containing [PsiFile] may not have [VirtualFile].
-        // That also means the [element] is not bound to any [KtModule] either.
+        // We can attempt to use an associated [analysisContext] (from [KtPsiFactory]) if any.
+        // If both fail, the [element] is not bound to any [KtModule], and we bail out early
+        // by returning a [KtNotUnderContentRootModule] (for that specific unbound file).
         val containingFileAsVirtualFile = containingFileAsPsiFile.virtualFile
+            ?: (containingFileAsPsiFile as? KtFile)?.analysisContext?.containingFile?.virtualFile
             ?: return notUnderContentRootModuleCache.getOrPut(containingFileAsPsiFile) {
                 KtNotUnderContentRootModuleImpl(
                     name = containingFileAsPsiFile.name,
