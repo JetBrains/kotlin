@@ -86,8 +86,8 @@ internal class ReanalyzableFunctionStructureElement(
 
     override fun reanalyze(): ReanalyzableFunctionStructureElement {
         val function = firSymbol.fir
-        if (function.resolvePhase == FirResolvePhase.BODY_RESOLVE) {
-            ApplicationManager.getApplication().assertIsWriteThread()
+        if (function.resolvePhase == FirResolvePhase.BODY_RESOLVE &&
+            ApplicationManager.getApplication().isWriteAccessAllowed) {
             (firSymbol.fir as FirSimpleFunction).inBodyInvalidation()
         }
 
@@ -114,8 +114,8 @@ internal class ReanalyzablePropertyStructureElement(
 
     override fun reanalyze(): ReanalyzablePropertyStructureElement {
         val property = firSymbol.fir
-        if (property.resolvePhase == FirResolvePhase.BODY_RESOLVE) {
-            ApplicationManager.getApplication().assertIsWriteThread()
+        if (property.resolvePhase == FirResolvePhase.BODY_RESOLVE &&
+            ApplicationManager.getApplication().isWriteAccessAllowed) {
             property.setter?.inBodyInvalidation()
             property.getter?.inBodyInvalidation()
             property.inBodyInvalidation()
