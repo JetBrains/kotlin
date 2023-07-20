@@ -30,8 +30,7 @@ class NewConstraintSystemImpl(
     ConstraintSystemBuilder,
     ConstraintInjector.Context,
     ResultTypeResolver.Context,
-    PostponedArgumentsAnalyzerContext
-{
+    PostponedArgumentsAnalyzerContext {
     private val utilContext = constraintInjector.constraintIncorporator.utilContext
 
     private val postponedComputationsAfterAllVariablesAreFixed = mutableListOf<() -> Unit>()
@@ -42,9 +41,28 @@ class NewConstraintSystemImpl(
     private val properTypesCache: MutableSet<KotlinTypeMarker> = SmartSet.create()
     private val notProperTypesCache: MutableSet<KotlinTypeMarker> = SmartSet.create()
     private val intersectionTypesCache: MutableMap<Collection<KotlinTypeMarker>, EmptyIntersectionTypeInfo?> = mutableMapOf()
+    override var typeVariablesAreDisallowedForProperTypes: Set<TypeConstructorMarker>? = null
+
     private var couldBeResolvedWithUnrestrictedBuilderInference: Boolean = false
 
     override var atCompletionState: Boolean = false
+
+    fun withDisallowingOnlyThisTypeVariablesForProperTypes(typeVariables: Set<TypeConstructorMarker>, block: () -> Unit) {
+        properTypesCache.clear()
+        notProperTypesCache.clear()
+
+        require(typeVariablesAreDisallowedForProperTypes == null) {
+            "Currently there should be no nested withDisallowingOnlyThisTypeVariablesForProperTypes calls"
+        }
+
+        typeVariablesAreDisallowedForProperTypes = typeVariables
+
+        block()
+
+        typeVariablesAreDisallowedForProperTypes = null
+        properTypesCache.clear()
+        notProperTypesCache.clear()
+    }
 
     private enum class State {
         BUILDING,
@@ -149,7 +167,8 @@ class NewConstraintSystemImpl(
         pathToExpectedType: List<Pair<TypeConstructorMarker, Int>>,
         builtFunctionalType: KotlinTypeMarker
     ) {
-        storage.builtFunctionalTypesForPostponedArgumentsByTopLevelTypeVariables[topLevelVariable to pathToExpectedType] = builtFunctionalType
+        storage.builtFunctionalTypesForPostponedArgumentsByTopLevelTypeVariables[topLevelVariable to pathToExpectedType] =
+            builtFunctionalType
     }
 
     override fun putBuiltFunctionalExpectedTypeForPostponedArgument(
@@ -317,6 +336,9 @@ class NewConstraintSystemImpl(
                 it
 
             if (typeToCheck == null) return@contains false
+            if (typeVariablesAreDisallowedForProperTypes != null) {
+                return@contains typeVariablesAreDisallowedForProperTypes!!.contains(typeToCheck.typeConstructor())
+            }
 
             storage.allTypeVariables.containsKey(typeToCheck.typeConstructor())
         }
