@@ -556,6 +556,19 @@ object KotlinToolingDiagnostics {
             """.trimIndent()
         )
     }
+
+    object InternalKotlinGradlePluginPropertiesUsed : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke(propertiesUsed: Collection<String>) = build(
+            """
+                |ATTENTION! This build uses the following Kotlin Gradle Plugin properties:
+                |
+                |${propertiesUsed.joinToString(separator = "\n")}
+                |
+                |kotlin.internal-properties are not recommended for production use. 
+                |Stability and future compatibility of the build is not guaranteed.
+            """.trimMargin()
+        )
+    }
 }
 
 private fun String.indentLines(nSpaces: Int = 4, skipFirstLine: Boolean = true): String {

@@ -9,6 +9,7 @@ import org.gradle.testkit.runner.BuildResult
 import org.jetbrains.kotlin.gradle.BaseGradleIT
 import org.jetbrains.kotlin.gradle.internals.PROJECT_HEADER_IN_ERROR_DIAGNOSTICS_REPORT
 import org.jetbrains.kotlin.gradle.internals.VERBOSE_DIAGNOSTIC_SEPARATOR
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticFactory
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
@@ -69,10 +70,13 @@ fun String.assertNoDiagnostic(diagnosticFactory: ToolingDiagnosticFactory, withS
 
 /**
  * NB: Needs verbose mode of diagnostics, see [org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.internalVerboseDiagnostics]
+ * Because this mode is enabled by the 'kotlin.internal'-property, actual output will always contain
+ * [org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.InternalKotlinGradlePluginPropertiesUsed].
+ * For the sake of clarity, this diagnostic is filtered by default.
  */
 fun BuildResult.extractProjectsAndTheirVerboseDiagnostics(): String = buildString {
     var diagnosticStarted = false
-    val currentDiagnostic = StringBuilder()
+    val currentDiagnostic = mutableListOf<String>()
 
     fun startDiagnostic(line: String, lineIndex: Int) {
         require(!diagnosticStarted) {
@@ -80,12 +84,12 @@ fun BuildResult.extractProjectsAndTheirVerboseDiagnostics(): String = buildStrin
             "Unexpected start of diagnostic $line on line ${lineIndex + 1}. The end of the previous diagnostic wasn't found yet"
         }
 
-        currentDiagnostic.appendLine(line)
+        currentDiagnostic += line
         diagnosticStarted = true
     }
 
     fun continueDiagnostic(line: String) {
-        currentDiagnostic.appendLine(line)
+        currentDiagnostic += line
     }
 
     fun endDiagnostic(line: String, lineIndex: Int) {
@@ -94,9 +98,16 @@ fun BuildResult.extractProjectsAndTheirVerboseDiagnostics(): String = buildStrin
             "Unexpected end of diagnostic $line on line ${lineIndex + 1}"
         }
 
-        currentDiagnostic.appendLine(line)
-        currentDiagnostic.appendLine()
-        append(currentDiagnostic.toString())
+        currentDiagnostic += line
+
+        // Suppress InternalKotlinGradlePluginProperties, but only if the single property it complains about is
+        // 'kotlin.internal.verboseDiagnostics'
+        val offendingProperties = currentDiagnostic.asSequence().filter { it.startsWith("kotlin.internal.") }
+        if (KotlinToolingDiagnostics.InternalKotlinGradlePluginPropertiesUsed.id !in currentDiagnostic.first() ||
+            offendingProperties.singleOrNull() != "kotlin.internal.verboseDiagnostics"
+        ) {
+            appendLine(currentDiagnostic.joinToString(separator = "\n", postfix = "\n"))
+        }
 
         currentDiagnostic.clear()
         diagnosticStarted = false

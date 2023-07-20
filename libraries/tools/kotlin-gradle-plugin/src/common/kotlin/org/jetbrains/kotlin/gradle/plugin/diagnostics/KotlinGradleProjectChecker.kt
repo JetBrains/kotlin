@@ -114,6 +114,7 @@ internal interface KotlinGradleProjectChecker {
             AndroidMainSourceSetConventionsChecker,
             IosSourceSetConventionChecker,
             KotlinTargetAlreadyDeclaredChecker,
+            InternalGradlePropertiesUsageChecker,
         )
     }
 }
