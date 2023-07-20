@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSourcesSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirExceptionHandler
 import org.jetbrains.kotlin.analysis.project.structure.KtCompilerPluginsProvider
+import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.analysis.project.structure.moduleScopeProvider
 import org.jetbrains.kotlin.analysis.providers.createAnnotationResolver
@@ -63,7 +64,7 @@ internal inline fun createCompositeSymbolProvider(
     FirCompositeSymbolProvider(session, buildList(createSubProviders))
 
 @SessionConfiguration
-internal fun FirSession.registerCompilerPluginExtensions(project: Project, module: KtSourceModule) {
+internal fun FirSession.registerCompilerPluginExtensions(project: Project, module: KtModule) {
     val extensionProvider = project.getService<KtCompilerPluginsProvider>(KtCompilerPluginsProvider::class.java) ?: return
     FirSessionConfigurator(this).apply {
         val registrars = FirExtensionRegistrarAdapter.getInstances(project) +

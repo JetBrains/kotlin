@@ -21,10 +21,10 @@ public abstract class KtCompilerPluginsProvider {
      *
      * These extensions are used in addition to those provided by the extension descriptor's [ProjectExtensionDescriptor.getInstances].
      */
-    public abstract fun <T : Any> getRegisteredExtensions(module: KtSourceModule, extensionType: ProjectExtensionDescriptor<T>): List<T>
+    public abstract fun <T : Any> getRegisteredExtensions(module: KtModule, extensionType: ProjectExtensionDescriptor<T>): List<T>
 
     /**
      * Returns `true` if at least one plugin with requested `pluginType` is registered, `false` otherwise
      */
-    public abstract fun isPluginOfTypeRegistered(module: KtSourceModule, pluginType: CompilerPluginType): Boolean
+    public abstract fun isPluginOfTypeRegistered(module: KtModule, pluginType: CompilerPluginType): Boolean
 }

@@ -6,12 +6,12 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.services
 
 import org.jetbrains.kotlin.analysis.project.structure.KtCompilerPluginsProvider
-import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
+import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 
 internal object NoOpKtCompilerPluginsProvider : KtCompilerPluginsProvider() {
-    override fun <T : Any> getRegisteredExtensions(module: KtSourceModule, extensionType: ProjectExtensionDescriptor<T>): List<T> =
+    override fun <T : Any> getRegisteredExtensions(module: KtModule, extensionType: ProjectExtensionDescriptor<T>): List<T> =
         emptyList()
 
-    override fun isPluginOfTypeRegistered(module: KtSourceModule, pluginType: CompilerPluginType): Boolean = false
+    override fun isPluginOfTypeRegistered(module: KtModule, pluginType: CompilerPluginType): Boolean = false
 }
