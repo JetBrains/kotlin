@@ -1,0 +1,8 @@
+> Configure project :
+e: [DeprecatedKotlinNativeTargetsDiagnostic | ERROR] The following removed Kotlin/Native targets were used in the project: linuxMips32
+#diagnostic-end
+
+
+> Project ':'
+e: [DeprecatedKotlinNativeTargetsDiagnostic | ERROR] The following removed Kotlin/Native targets were used in the project: linuxMips32
+#diagnostic-end

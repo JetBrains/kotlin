@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.gradle.mpp
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
+import java.io.File
 import kotlin.io.path.appendText
 import kotlin.io.path.writeText
 
@@ -16,9 +18,8 @@ class MppDiagnosticsIt : KGPBaseTest() {
     @GradleTest
     fun testDiagnosticsRenderingSmoke(gradleVersion: GradleVersion) {
         project("diagnosticsRenderingSmoke", gradleVersion) {
-            val expectedOutputFile = projectPath.resolve("expectedOutput.txt").toFile()
             build {
-                assertEqualsToFile(expectedOutputFile, extractProjectsAndTheirVerboseDiagnostics())
+                assertEqualsToFile(expectedOutputFile(), extractProjectsAndTheirVerboseDiagnostics())
             }
         }
     }
@@ -44,6 +45,94 @@ class MppDiagnosticsIt : KGPBaseTest() {
             this.gradleProperties.appendText("kotlin.mpp.deprecatedProperties.nowarn=true${System.lineSeparator()}")
             checkDeprecatedProperties(isDeprecationExpected = false)
         }
+    }
+
+    @GradleTest
+    fun testErrorDiagnosticBuildFails(gradleVersion: GradleVersion) {
+        project("errorDiagnosticBuildFails", gradleVersion) {
+            // 'assemble' (triggers compileKotlin-tasks indirectly): fail
+            buildAndFail("assemble") {
+                assertEqualsToFile(expectedOutputFile("assemble"), extractProjectsAndTheirVerboseDiagnostics())
+            }
+
+            // 'clean', not directly relevant to Kotlin tasks: build is OK
+            build("clean") {
+                assertEqualsToFile(expectedOutputFile("clean"), extractProjectsAndTheirVerboseDiagnostics())
+            }
+
+            // Custom task, irrelevant to Kotlin tasks: build is OK
+            build("myTask", "--rerun-tasks") {
+                assertEqualsToFile(expectedOutputFile("customTask"), extractProjectsAndTheirVerboseDiagnostics())
+            }
+
+            // commonizer task: build is OK (otherwise IDE will be bricked)
+            build("commonize") {
+                assertEqualsToFile(expectedOutputFile("commonize"), extractProjectsAndTheirVerboseDiagnostics())
+            }
+        }
+    }
+
+    @GradleTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_6)
+    @TestMetadata("errorDiagnosticBuildFails")
+    fun testErrorDiagnosticBuildFailsWithConfigurationCache(gradleVersion: GradleVersion) {
+        project("errorDiagnosticBuildFails", gradleVersion) {
+            buildAndFail("assemble", buildOptions = buildOptions.copy(configurationCache = true)) {
+                assertConfigurationCacheStored()
+                assertEqualsToFile(expectedOutputFile("assemble"), extractProjectsAndTheirVerboseDiagnostics())
+            }
+
+            // fails again
+            buildAndFail("assemble", buildOptions = buildOptions.copy(configurationCache = true)) {
+                assertConfigurationCacheReused()
+                assertEqualsToFile(expectedOutputFile("assemble-cache-reused"), extractProjectsAndTheirVerboseDiagnostics())
+            }
+        }
+    }
+
+    @GradleTest
+    fun testErrorDiagnosticBuildSucceeds(gradleVersion: GradleVersion) {
+        project("errorDiagnosticBuildSucceeds", gradleVersion) {
+            build("assemble") {
+                assertEqualsToFile(expectedOutputFile("assemble"), extractProjectsAndTheirVerboseDiagnostics())
+            }
+            build("myTask", "--rerun-tasks") {
+                assertEqualsToFile(expectedOutputFile("customTask"), extractProjectsAndTheirVerboseDiagnostics())
+            }
+        }
+    }
+
+    @GradleTest
+    fun testSuppressGradlePluginErrors(gradleVersion: GradleVersion) {
+        project("suppressGradlePluginErrors", gradleVersion) {
+            // build succeeds
+            build("assemble") {
+                assertEqualsToFile(expectedOutputFile(), extractProjectsAndTheirVerboseDiagnostics())
+            }
+        }
+    }
+
+    @GradleTest
+    fun testSuppressGradlePluginWarnings(gradleVersion: GradleVersion) {
+        project("suppressGradlePluginWarnings", gradleVersion) {
+            build("assemble") {
+                assertEqualsToFile(expectedOutputFile(), extractProjectsAndTheirVerboseDiagnostics())
+            }
+        }
+    }
+
+    @GradleTest
+    fun testSuppressGradlePluginFatals(gradleVersion: GradleVersion) {
+        project("suppressGradlePluginFatals", gradleVersion) {
+            buildAndFail("assemble") {
+                assertEqualsToFile(expectedOutputFile(), extractProjectsAndTheirVerboseDiagnostics())
+            }
+        }
+    }
+
+    private fun TestProject.expectedOutputFile(suffix: String? = null): File {
+        val suffixIfAny = if (suffix != null) "-$suffix" else ""
+        return projectPath.resolve("expectedOutput$suffixIfAny.txt").toFile()
     }
 
     private fun TestProject.checkDeprecatedProperties(isDeprecationExpected: Boolean) {
