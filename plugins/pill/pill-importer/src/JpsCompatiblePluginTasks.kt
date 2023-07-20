@@ -341,6 +341,7 @@ class JpsCompatiblePluginTasks(
                 val module = project.modules.find { it.path == path }
                 if (module != null) {
                     result += PDependency.Module(module.name)
+                    result += module.embeddedDependencies.flatMap { invoke(project, it) }
                     continue
                 }
 
