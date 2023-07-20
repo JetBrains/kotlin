@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_STDLIB_DEFAULT_DEPENDENCY
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_STDLIB_JDK_VARIANTS_VERSION_ALIGNMENT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_SUPPRESS_EXPERIMENTAL_IC_OPTIMIZATIONS_WARNING
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.MPP_13X_FLAGS_SET_BY_PLUGIN
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerBuild
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
@@ -213,9 +214,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = booleanProperty(KOTLIN_NATIVE_DEPENDENCY_PROPAGATION)
 
     var mpp13XFlagsSetByPlugin: Boolean
-        get() = booleanProperty("kotlin.internal.mpp.13X.flags.setByPlugin") ?: false
+        get() = booleanProperty(MPP_13X_FLAGS_SET_BY_PLUGIN) ?: false
         set(value) {
-            project.extensions.extraProperties.set("kotlin.internal.mpp.13X.flags.setByPlugin", "$value")
+            project.extensions.extraProperties.set(MPP_13X_FLAGS_SET_BY_PLUGIN, "$value")
         }
 
     val mppHierarchicalStructureByDefault: Boolean
@@ -581,7 +582,8 @@ internal class PropertiesProvider private constructor(private val project: Proje
             localProperties.getProperty(propName)
         }
 
-    private fun propertiesWithPrefix(prefix: String): Map<String, String> {
+    @UnsafeApi
+    internal fun propertiesWithPrefix(prefix: String): Map<String, String> {
         val result: MutableMap<String, String> = mutableMapOf()
         project.properties.forEach { (name, value) ->
             if (name.startsWith(prefix) && value is String) {
@@ -604,7 +606,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
         const val KOTLIN_MPP_ENABLE_GRANULAR_SOURCE_SETS_METADATA = "kotlin.mpp.enableGranularSourceSetsMetadata"
         const val KOTLIN_MPP_ENABLE_COMPATIBILITY_METADATA_VARIANT = "kotlin.mpp.enableCompatibilityMetadataVariant"
         const val KOTLIN_MPP_ENABLE_CINTEROP_COMMONIZATION = "kotlin.mpp.enableCInteropCommonization"
-        const val KOTLIN_MPP_HIERARCHICAL_STRUCTURE_BY_DEFAULT = "kotlin.internal.mpp.hierarchicalStructureByDefault"
         const val KOTLIN_MPP_HIERARCHICAL_STRUCTURE_SUPPORT = "kotlin.mpp.hierarchicalStructureSupport"
         const val KOTLIN_MPP_DEPRECATED_PROPERTIES_NO_WARN = "kotlin.mpp.deprecatedProperties.nowarn"
         const val KOTLIN_MPP_ANDROID_GRADLE_PLUGIN_COMPATIBILITY_NO_WARN = "kotlin.mpp.androidGradlePluginCompatibility.nowarn"
@@ -629,17 +630,24 @@ internal class PropertiesProvider private constructor(private val project: Proje
         const val KOTLIN_COMPILER_USE_PRECISE_COMPILATION_RESULTS_BACKUP = "kotlin.compiler.preciseCompilationResultsBackup"
         const val KOTLIN_COMPILER_KEEP_INCREMENTAL_COMPILATION_CACHES_IN_MEMORY = "kotlin.compiler.keepIncrementalCompilationCachesInMemory"
         const val KOTLIN_SUPPRESS_EXPERIMENTAL_IC_OPTIMIZATIONS_WARNING = "kotlin.compiler.suppressExperimentalICOptimizationsWarning"
-        const val KOTLIN_CREATE_DEFAULT_MULTIPLATFORM_PUBLICATIONS = "kotlin.internal.mpp.createDefaultMultiplatformPublications"
         const val KOTLIN_RUN_COMPILER_VIA_BUILD_TOOLS_API = "kotlin.compiler.runViaBuildToolsApi"
         const val KOTLIN_MPP_ALLOW_LEGACY_DEPENDENCIES = "kotlin.mpp.allow.legacy.dependencies"
         const val KOTLIN_PUBLISH_JVM_ENVIRONMENT_ATTRIBUTE = "kotlin.publishJvmEnvironmentAttribute"
         const val KOTLIN_EXPERIMENTAL_TRY_K2 = "kotlin.experimental.tryK2"
-        const val KOTLIN_INTERNAL_VERBOSE_DIAGNOSTICS = "kotlin.internal.verboseDiagnostics"
         const val KOTLIN_SUPPRESS_GRADLE_PLUGIN_WARNINGS = "kotlin.suppressGradlePluginWarnings"
-        const val KOTLIN_SUPPRESS_GRADLE_PLUGIN_ERRORS = "kotlin.internal.suppressGradlePluginErrors"
         const val KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS = "kotlin.native.ignoreDisabledTargets"
         const val KOTLIN_NATIVE_SUPPRESS_EXPERIMENTAL_ARTIFACTS_DSL_WARNING = "kotlin.native.suppressExperimentalArtifactsDslWarning"
         const val KONAN_DATA_DIR = "konan.data.dir"
+
+        /**
+         * Internal properties: builds get big non-suppressible warning when such properties are used
+         * See [org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.InternalGradlePropertiesUsageChecker]
+         **/
+        const val KOTLIN_MPP_HIERARCHICAL_STRUCTURE_BY_DEFAULT = "$KOTLIN_INTERNAL_NAMESPACE.mpp.hierarchicalStructureByDefault"
+        const val KOTLIN_CREATE_DEFAULT_MULTIPLATFORM_PUBLICATIONS = "$KOTLIN_INTERNAL_NAMESPACE.mpp.createDefaultMultiplatformPublications"
+        const val KOTLIN_INTERNAL_VERBOSE_DIAGNOSTICS = "$KOTLIN_INTERNAL_NAMESPACE.verboseDiagnostics"
+        const val KOTLIN_SUPPRESS_GRADLE_PLUGIN_ERRORS = "$KOTLIN_INTERNAL_NAMESPACE.suppressGradlePluginErrors"
+        const val MPP_13X_FLAGS_SET_BY_PLUGIN = "$KOTLIN_INTERNAL_NAMESPACE.mpp.13X.flags.setByPlugin"
     }
 
     companion object {
@@ -650,6 +658,8 @@ internal class PropertiesProvider private constructor(private val project: Proje
         internal const val KOTLIN_NATIVE_IGNORE_INCORRECT_DEPENDENCIES = "kotlin.native.ignoreIncorrectDependencies"
 
         private const val KOTLIN_NATIVE_BINARY_OPTION_PREFIX = "kotlin.native.binary."
+
+        internal const val KOTLIN_INTERNAL_NAMESPACE = "kotlin.internal"
 
         operator fun invoke(project: Project): PropertiesProvider =
             with(project.extensions.extraProperties) {
