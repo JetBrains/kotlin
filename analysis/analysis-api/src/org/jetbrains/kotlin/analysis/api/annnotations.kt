@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,4 +10,7 @@ public annotation class KtAnalysisApiInternals
 
 @RequiresOptIn("Analysis should not be allowed to be ran from EDT thread, otherwise it may cause IDE freezes")
 public annotation class KtAllowAnalysisOnEdt
+
+@RequiresOptIn("Analysis should not be allowed to be ran from write action, otherwise it may cause IDE freezes and incorrect behavior in some cases")
+public annotation class KtAllowAnalysisFromWriteAction
 

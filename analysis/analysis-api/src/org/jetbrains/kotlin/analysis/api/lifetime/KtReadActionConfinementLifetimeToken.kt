@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(KtAnalysisApiInternals::class)
+@file:OptIn(KtAnalysisApiInternals::class, KtAllowProhibitedAnalyzeFromWriteAction::class)
 
 package org.jetbrains.kotlin.analysis.api.lifetime
 
@@ -31,6 +31,7 @@ public class KtReadActionConfinementLifetimeToken(project: Project) : KtLifetime
     override fun isAccessible(): Boolean {
         val application = ApplicationManager.getApplication()
         if (application.isDispatchThread && !allowOnEdt.get()) return false
+        if (application.isWriteAccessAllowed && !allowFromWriteAction.get()) return false
         if (KtAnalysisAllowanceManager.resolveIsForbiddenInActionWithName.get() != null) return false
         if (!application.isReadAccessAllowed) return false
         if (!KtReadActionConfinementLifetimeTokenFactory.isInsideAnalysisContext()) return false
@@ -41,6 +42,7 @@ public class KtReadActionConfinementLifetimeToken(project: Project) : KtLifetime
     override fun getInaccessibilityReason(): String {
         val application = ApplicationManager.getApplication()
         if (application.isDispatchThread && !allowOnEdt.get()) return "Called in EDT thread"
+        if (application.isWriteAccessAllowed && !allowFromWriteAction.get()) return "Called from write action"
         if (!application.isReadAccessAllowed) return "Called outside read action"
         KtAnalysisAllowanceManager.resolveIsForbiddenInActionWithName.get()?.let { actionName ->
             return "Resolve is forbidden in $actionName"
@@ -55,6 +57,10 @@ public class KtReadActionConfinementLifetimeToken(project: Project) : KtLifetime
     public companion object {
         @KtAnalysisApiInternals
         public val allowOnEdt: ThreadLocal<Boolean> = ThreadLocal.withInitial { false }
+
+        @KtAnalysisApiInternals
+        @KtAllowProhibitedAnalyzeFromWriteAction
+        public val allowFromWriteAction: ThreadLocal<Boolean> = ThreadLocal.withInitial { false }
     }
 
     public override val factory: KtLifetimeTokenFactory = KtReadActionConfinementLifetimeTokenFactory
@@ -78,13 +84,15 @@ public object KtReadActionConfinementLifetimeTokenFactory : KtLifetimeTokenFacto
 
     private val lifetimeOwnersStack = ThreadLocal.withInitial<PersistentList<KtLifetimeToken>> { persistentListOf() }
 
-    internal fun isInsideAnalysisContext() = lifetimeOwnersStack.get().size > 0
+    internal fun isInsideAnalysisContext() = lifetimeOwnersStack.get().isNotEmpty()
 
     internal fun currentToken() = lifetimeOwnersStack.get().last()
 }
 
+@RequiresOptIn("Analysis should be prohibited to be ran from write action, otherwise it may cause IDE freezes and incorrect behavior in some cases")
+private annotation class KtAllowProhibitedAnalyzeFromWriteAction
+
 /**
- *
  * @see KtAnalysisSession
  * @see KtReadActionConfinementLifetimeToken
  */
@@ -96,5 +104,24 @@ public inline fun <T> allowAnalysisOnEdt(action: () -> T): T {
         return action()
     } finally {
         KtReadActionConfinementLifetimeToken.allowOnEdt.set(false)
+    }
+}
+
+/**
+ * Analysis is not supposed to be called from write action.
+ * Such actions can lead to IDE freezes and incorrect behavior in some cases.
+ *
+ * @see KtAnalysisSession
+ * @see KtReadActionConfinementLifetimeToken
+ */
+@KtAllowAnalysisFromWriteAction
+@KtAllowProhibitedAnalyzeFromWriteAction
+public inline fun <T> allowAnalysisFromWriteAction(action: () -> T): T {
+    if (KtReadActionConfinementLifetimeToken.allowFromWriteAction.get()) return action()
+    KtReadActionConfinementLifetimeToken.allowFromWriteAction.set(true)
+    try {
+        return action()
+    } finally {
+        KtReadActionConfinementLifetimeToken.allowFromWriteAction.set(false)
     }
 }
