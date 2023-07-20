@@ -13,7 +13,7 @@ kotlin {
     linuxX64()
     linuxArm64()
 
-    androidExperimental {
+    androidLibrary {
         compileSdk = 33
         namespace = "org.jetbrains.sample"
 

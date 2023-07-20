@@ -75,15 +75,8 @@ class ExternalAndroidTargetIT : KGPBaseTest() {
                     dependsOnDependency(":/commonTest"),
                     binaryCoordinates("junit:junit:4.13.2"),
                     binaryCoordinates("org.hamcrest:hamcrest-core:1.3"),
-
-                    /*
-                    Actually the idiomatic expectation would be two friendSourceDependencies being sent instead of the
-                    projectArtifactDependency below.
-
                     friendSourceDependency(":/commonMain"),
                     friendSourceDependency(":/androidMain"),
-                     */
-                    projectArtifactDependency(Regular, ":", FilePathRegex(".*/androidMain/full.jar"))
                 )
             }
         }
