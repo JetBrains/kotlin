@@ -3,8 +3,9 @@ plugins {
 }
 
 dependencies {
-    implementation("io.ktor:ktor-client-cio:1.4.0")
-    implementation(commonDependency("com.google.code.gson:gson"))
+    implementation(kotlinStdlib("jdk8"))
+    implementation(libs.ktor.client.cio)
+    implementation(libs.gson)
     implementation("org.apache.velocity:velocity:1.7")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.0.0")
 }

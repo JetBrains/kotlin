@@ -82,9 +82,9 @@ dependencies {
     testRuntimeOnly("org.junit.vintage:junit-vintage-engine:${commonDependencyVersion("org.junit", "junit-bom")}")
 
     testImplementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-serialization-json"))
-    testImplementation(commonDependency("io.ktor", "ktor-client-core"))
-    testImplementation(commonDependency("io.ktor", "ktor-client-cio"))
-    testImplementation(commonDependency("io.ktor", "ktor-client-websockets"))
+    testImplementation(libs.ktor.client.cio)
+    testImplementation(libs.ktor.client.core)
+    testImplementation(libs.ktor.client.websockets)
 }
 
 val generationRoot = projectDir.resolve("tests-gen")

@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.android.tests;
 
-import com.google.common.io.Files;
+import com.google.common.base.StandardSystemProperty;
 import com.intellij.openapi.util.io.FileUtil;
 import junit.framework.TestSuite;
 import org.jetbrains.annotations.NotNull;
@@ -24,6 +24,10 @@ import org.junit.runner.RunWith;
 import org.junit.runners.AllTests;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Objects;
 
 @RunWith(AllTests.class)
 public class AndroidRunner {
@@ -31,9 +35,11 @@ public class AndroidRunner {
     private static PathManager pathManager;
 
     @NotNull
-    public static PathManager getPathManager() {
+    public static PathManager getPathManager() throws IOException {
         if (pathManager == null) {
-            File tmpFolder = Files.createTempDir();
+            File tmpFolder =
+                    Files.createTempDirectory(Paths.get(Objects.requireNonNull(StandardSystemProperty.JAVA_IO_TMPDIR.value())), null)
+                            .toFile();
             System.out.println("Created temporary folder for running android tests: " + tmpFolder.getAbsolutePath());
             File rootFolder = new File("");
             pathManager = new PathManager(rootFolder.getAbsolutePath(), tmpFolder.getAbsolutePath());
@@ -54,5 +60,4 @@ public class AndroidRunner {
         // Clear tmp folder where we run android tests
         FileUtil.delete(new File(pathManager.getTmpFolder()));
     }
-
 }

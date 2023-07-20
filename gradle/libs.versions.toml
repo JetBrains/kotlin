@@ -11,7 +11,7 @@ kotlinx-serialization = "1.5.0"
 shadow = "8.1.1" # Should be in sync with version in kotlin-native/
 spdx = "0.1.0-dev-10"
 proguard = "6.2.2"
-ktor = "2.0.2" # should be in sync with versions.properties
+ktor = "2.3.3"
 kotlinx-metadataJvm = "0.6.2"
 # Forcing gson version because of https://github.com/google/gson/pull/1991
 gson = { strictly = "2.8.9" } # should be in sync with version.properties
@@ -30,10 +30,18 @@ kotlinx-metadataJvm = { module = "org.jetbrains.kotlinx:kotlinx-metadata-jvm", v
 shadow-gradlePlugin = { module = "com.github.johnrengelman:shadow", version.ref = "shadow" }
 spdx-gradlePlugin = { module = "org.spdx:spdx-gradle-plugin", version.ref = "spdx" }
 proguard-gradlePlugin = { module = "net.sf.proguard:proguard-gradle", version.ref = "proguard" }
+
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-client-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
+ktor-client-websockets = { module = "io.ktor:ktor-client-websockets", version.ref = "ktor" }
+ktor-server-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
+ktor-server-netty = { module = "io.ktor:ktor-server-netty", version.ref = "ktor" }
+ktor-server-test-host = { module = "io.ktor:ktor-server-test-host", version.ref = "ktor" }
+
 ktor-serialization-jackson = { module = "io.ktor:ktor-serialization-jackson", version.ref = "ktor" }
+jackson-dataformat-xml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-xml", version.ref = "jackson" }
 jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 jetbrains-ideaExt-gradlePlugin = { module = "gradle.plugin.org.jetbrains.gradle.plugin.idea-ext:gradle-idea-ext", version.ref = "jetbrains-ideaExt" }
