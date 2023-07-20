@@ -1,0 +1,188 @@
+@kotlin.Metadata()
+@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.PROPERTY})
+@java.lang.annotation.Target(value = {})
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+public abstract @interface Anno {
+}
+
+////////////////////
+
+
+@kotlin.Metadata()
+public enum EnumError {
+    /*public static final*/ One /* = new EnumError() */,
+    /*public static final*/ Two /* = new EnumError() */;
+
+    EnumError() {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public abstract java.lang.String doIt();
+
+    @org.jetbrains.annotations.NotNull()
+    public static kotlin.enums.EnumEntries<EnumError> getEntries() {
+        return null;
+    }
+}
+
+////////////////////
+
+
+/**
+ * Obj.
+ */
+@kotlin.Metadata()
+public final class Obj {
+    @org.jetbrains.annotations.NotNull()
+    public static final Obj INSTANCE = null;
+
+    private Obj() {
+        super();
+    }
+}
+
+////////////////////
+
+
+/**
+ * Test.
+ */
+@kotlin.Metadata()
+public final class Test {
+
+    /**
+     * prop.
+     */
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String prop = "";
+
+    /**
+     * prop2.
+     */
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String prop2 = "";
+
+    public Test() {
+        super();
+    }
+
+    /**
+     * method().
+     */
+    public final void method() {
+    }
+
+    /**
+     * method(int).
+     */
+    public final void method(int a) {
+    }
+
+    /**
+     * method(String).
+     */
+    public final void method(@org.jetbrains.annotations.NotNull()
+    java.lang.String a) {
+    }
+
+    /**
+     * prop2.
+     */
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getProp2() {
+        return null;
+    }
+
+    /**
+     * prop2.
+     */
+    @Anno()
+    @java.lang.Deprecated()
+    public static void getProp2$annotations() {
+    }
+
+    /**
+     * get.
+     */
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getProp3() {
+        return null;
+    }
+
+    /**
+     * set.
+     */
+    public final void setProp3(@org.jetbrains.annotations.NotNull()
+    java.lang.String v) {
+    }
+}
+
+////////////////////
+
+
+/**
+ * Test2
+ * Multiline
+ * documentation.
+ */
+@kotlin.Metadata()
+public final class Test2 {
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String a = null;
+
+    public Test2(@org.jetbrains.annotations.NotNull()
+    java.lang.String a) {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getA() {
+        return null;
+    }
+}
+
+////////////////////
+
+
+/**
+ * constructor.
+ */
+@kotlin.Metadata()
+public final class Test3 {
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String a = null;
+
+    protected Test3(@org.jetbrains.annotations.NotNull()
+    java.lang.String a) {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getA() {
+        return null;
+    }
+}
+
+////////////////////
+
+
+@kotlin.Metadata()
+public final class Test4 {
+
+    public Test4() {
+        super();
+    }
+
+    public final void method() {
+    }
+}
+
+////////////////////
+
+
+/**
+ * `/ * Failure * /`
+ */
+@kotlin.Metadata()
+public abstract interface TestComponent {
+}

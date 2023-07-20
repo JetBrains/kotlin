@@ -1,0 +1,20 @@
+package test;
+
+@kotlin.Metadata()
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+public abstract @interface Anno {
+}
+
+////////////////////
+
+package test;
+
+@kotlin.Metadata()
+@Anno()
+@kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
+public final class ClassWithParent extends Foo implements Bar, Baz, java.lang.CharSequence {
+
+    public ClassWithParent() {
+        super();
+    }
+}

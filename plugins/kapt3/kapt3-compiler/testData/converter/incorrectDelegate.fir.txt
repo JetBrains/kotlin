@@ -1,0 +1,50 @@
+@kotlin.Metadata()
+public final class GroupedNewsListDelegateAdapter {
+
+    public GroupedNewsListDelegateAdapter(@org.jetbrains.annotations.NotNull()
+    kotlin.jvm.functions.Function0<kotlin.Unit> onWiFiClickListener) {
+        super();
+    }
+}
+
+////////////////////
+
+
+@kotlin.Metadata()
+public final class HomeFragment {
+    @org.jetbrains.annotations.NotNull()
+    private final kotlin.Unit categoryNewsListPresenter$delegate = null;
+    @org.jetbrains.annotations.NotNull()
+    private final kotlin.Lazy<GroupedNewsListDelegateAdapter> groupedNewsListAdapter$delegate = null;
+
+    public HomeFragment() {
+        super();
+    }
+
+    private final error.NonExistentClass getCategoryNewsListPresenter() {
+        return null;
+    }
+
+    @kotlin.Suppress(names = {"TOO_MANY_ARGUMENTS", "DELEGATE_SPECIAL_FUNCTION_MISSING"})
+    @java.lang.Deprecated()
+    private static void getCategoryNewsListPresenter$annotations() {
+    }
+
+    private final GroupedNewsListDelegateAdapter getGroupedNewsListAdapter() {
+        return null;
+    }
+}
+
+////////////////////
+
+
+@kotlin.Metadata()
+public final class IncorrectDelegateKt {
+
+    public IncorrectDelegateKt() {
+        super();
+    }
+
+    public static final void moxyPresenter() {
+    }
+}

@@ -1,0 +1,189 @@
+package modifiers;
+
+@kotlin.Metadata()
+public final class InternalClass {
+
+    public InternalClass() {
+        super();
+    }
+}
+
+////////////////////
+
+package modifiers;
+
+@kotlin.Metadata()
+public abstract interface InternalInterface {
+}
+
+////////////////////
+
+package modifiers;
+
+@kotlin.Metadata()
+public final class Modifiers {
+    @kotlin.jvm.Transient()
+    @org.jetbrains.annotations.NotNull()
+    private final transient java.lang.String transientField = "";
+    @kotlin.jvm.Volatile()
+    @org.jetbrains.annotations.NotNull()
+    private volatile java.lang.String volatileField = "";
+
+    public Modifiers() {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getTransientField() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getVolatileField() {
+        return null;
+    }
+
+    public final void setVolatileField(@org.jetbrains.annotations.NotNull()
+    java.lang.String p0) {
+    }
+
+    @kotlin.jvm.Strictfp()
+    public final strictfp void strictFp() {
+    }
+
+    @kotlin.jvm.JvmOverloads()
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String overloads() {
+        return null;
+    }
+
+    @kotlin.jvm.JvmOverloads()
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String overloads(@org.jetbrains.annotations.NotNull()
+    java.lang.String a) {
+        return null;
+    }
+
+    @kotlin.jvm.JvmOverloads()
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String overloads(@org.jetbrains.annotations.NotNull()
+    java.lang.String a, int n) {
+        return null;
+    }
+}
+
+////////////////////
+
+package modifiers;
+
+@kotlin.Metadata()
+final class PrivateClass {
+
+    public PrivateClass() {
+        super();
+    }
+}
+
+////////////////////
+
+package modifiers;
+
+@kotlin.Metadata()
+abstract interface PrivateInterface {
+}
+
+////////////////////
+
+package modifiers;
+
+@kotlin.Metadata()
+public final class PublicClass {
+
+    public PublicClass() {
+        super();
+    }
+}
+
+////////////////////
+
+package modifiers;
+
+@kotlin.Metadata()
+public abstract class PublicClassPrivateConstructor {
+
+    private PublicClassPrivateConstructor() {
+        super();
+    }
+}
+
+////////////////////
+
+package modifiers;
+
+@kotlin.Metadata()
+public class PublicClassProtectedConstructor {
+
+    protected PublicClassProtectedConstructor() {
+        super();
+    }
+
+    @kotlin.Metadata()
+    protected static abstract interface ProtectedInterface {
+    }
+
+    @kotlin.Metadata()
+    private static abstract interface PrivateInterface {
+    }
+}
+
+////////////////////
+
+package modifiers;
+
+@kotlin.Metadata()
+public abstract interface PublicInterface {
+}
+
+////////////////////
+
+package modifiers;
+
+@kotlin.Metadata()
+public abstract class SealedClass {
+
+    protected SealedClass() {
+        super();
+    }
+
+    @kotlin.Metadata()
+    public static final class One extends modifiers.SealedClass {
+
+        public One() {
+            super();
+        }
+    }
+
+    @kotlin.Metadata()
+    public static class Two extends modifiers.SealedClass {
+
+        public Two() {
+            super();
+        }
+    }
+
+    @kotlin.Metadata()
+    public static abstract class Three extends modifiers.SealedClass.Two {
+
+        public Three() {
+            super();
+        }
+    }
+
+    @kotlin.Metadata()
+    public static final class Four extends modifiers.SealedClass.Three {
+
+        public Four() {
+            super();
+        }
+    }
+}

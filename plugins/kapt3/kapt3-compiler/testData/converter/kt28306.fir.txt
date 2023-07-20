@@ -1,0 +1,16 @@
+package foo;
+
+@kotlin.Metadata()
+public abstract interface InterfaceWithDefaults<T extends java.lang.Object> {
+
+    public default void foo() {
+    }
+}
+
+////////////////////
+
+package foo;
+
+@kotlin.Metadata()
+public abstract interface SubInterface<T extends java.lang.Object> extends foo.InterfaceWithDefaults<T> {
+}

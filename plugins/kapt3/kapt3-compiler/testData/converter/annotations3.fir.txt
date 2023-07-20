@@ -1,0 +1,88 @@
+@kotlin.Metadata()
+public final class B {
+
+    public B() {
+        super();
+    }
+}
+
+////////////////////
+
+
+@kotlin.Metadata()
+public final class BParceler implements Parceler<B> {
+    @org.jetbrains.annotations.NotNull()
+    public static final BParceler INSTANCE = null;
+
+    private BParceler() {
+        super();
+    }
+}
+
+////////////////////
+
+
+@kotlin.Metadata()
+public final class C {
+
+    public C() {
+        super();
+    }
+}
+
+////////////////////
+
+
+@kotlin.Metadata()
+public final class CParceler implements Parceler<C> {
+    @org.jetbrains.annotations.NotNull()
+    public static final CParceler INSTANCE = null;
+
+    private CParceler() {
+        super();
+    }
+}
+
+////////////////////
+
+
+@kotlin.Metadata()
+public abstract interface Parceler<T extends java.lang.Object> {
+}
+
+////////////////////
+
+
+@kotlin.Metadata()
+@TypeParceler()
+@TypeParceler()
+public final class Test {
+
+    public Test() {
+        super();
+    }
+}
+
+////////////////////
+
+
+@kotlin.Metadata()
+@kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.SOURCE)
+@kotlin.annotation.Repeatable()
+@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.PROPERTY})
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.SOURCE)
+@java.lang.annotation.Repeatable(value = TypeParceler.Container.class)
+@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE})
+public abstract @interface TypeParceler<T extends java.lang.Object, P extends Parceler<? super T>> {
+
+    @kotlin.Metadata()
+    @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.SOURCE)
+    @kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.PROPERTY})
+    @kotlin.jvm.internal.RepeatableContainer()
+    @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.SOURCE)
+    @java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE})
+    public static abstract @interface Container {
+
+        public abstract TypeParceler[] value();
+    }
+}

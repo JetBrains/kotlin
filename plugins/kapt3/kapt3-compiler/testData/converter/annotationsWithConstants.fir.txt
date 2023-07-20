@@ -1,0 +1,367 @@
+package app;
+
+@kotlin.Metadata()
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+public abstract @interface Anno {
+
+    public abstract boolean a1();
+
+    public abstract byte a2();
+
+    public abstract int a3();
+
+    public abstract short a4();
+
+    public abstract long a5();
+
+    public abstract char a6();
+
+    public abstract float a7();
+
+    public abstract double a8();
+
+    public abstract java.lang.String a9();
+}
+
+////////////////////
+
+package app;
+
+public class B {
+
+    public B() {
+        super();
+    }
+
+    public static class id {
+
+        public id() {
+            super();
+        }
+        public static final int textView = 200;
+    }
+    public static final boolean a1 = false;
+    public static final byte a2 = 1;
+    public static final int a3 = 2;
+    public static final short a4 = 3;
+    public static final long a5 = 4L;
+    public static final char a6 = '5';
+    public static final float a7 = 6.0F;
+    public static final double a8 = 7.0;
+    public static final String a9 = "A";
+}
+
+////////////////////
+
+package app;
+
+@kotlin.Metadata()
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+public abstract @interface Bind {
+
+    public abstract int id();
+}
+
+////////////////////
+
+package app;
+
+@kotlin.Metadata()
+@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.FIELD})
+@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.FIELD})
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+public abstract @interface BindField {
+
+    public abstract int id();
+}
+
+////////////////////
+
+package app;
+
+@kotlin.Metadata()
+public final class JJ {
+    @org.jetbrains.annotations.NotNull()
+    public static final app.JJ INSTANCE = null;
+    @org.jetbrains.annotations.NotNull()
+    private static final java.lang.String b = null;
+
+    private JJ() {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getB() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String c() {
+        return null;
+    }
+}
+
+////////////////////
+
+package app;
+
+@kotlin.Metadata()
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+public abstract @interface MultiValue {
+
+    public abstract int[] ids();
+}
+
+////////////////////
+
+package app;
+
+@kotlin.Metadata()
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+public abstract @interface MultiValueByte {
+
+    public abstract byte[] ids();
+}
+
+////////////////////
+
+package app;
+
+@kotlin.Metadata()
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+public abstract @interface MultiValueString {
+
+    public abstract java.lang.String[] ids();
+}
+
+////////////////////
+
+package app;
+
+@kotlin.Metadata()
+public final class MyActivity {
+    @BindField(id = 100)
+    private final int a = 0;
+    @BindField(id = 100)
+    private final int b = 0;
+    @BindField(id = 100)
+    private final int c = 0;
+    @BindField(id = 100)
+    private final int d = 0;
+    @BindField(id = 100)
+    private final int e = 0;
+    @BindField(id = 200)
+    private final int f = 0;
+    public final int propA = 200;
+    private final int propB = 200;
+    private int propC = 200;
+    @kotlin.jvm.JvmField()
+    public final int propD = 200;
+    @kotlin.jvm.JvmField()
+    public int propE = 200;
+    private final int propF = 0;
+
+    public MyActivity() {
+        super();
+    }
+
+    public final int getA() {
+        return 0;
+    }
+
+    @Bind(id = 100)
+    @java.lang.Deprecated()
+    public static void getA$annotations() {
+    }
+
+    public final int getB() {
+        return 0;
+    }
+
+    @Bind(id = 100)
+    @java.lang.Deprecated()
+    public static void getB$annotations() {
+    }
+
+    public final int getC() {
+        return 0;
+    }
+
+    @Bind(id = 100)
+    @java.lang.Deprecated()
+    public static void getC$annotations() {
+    }
+
+    public final int getD() {
+        return 0;
+    }
+
+    @Bind(id = 100)
+    @java.lang.Deprecated()
+    public static void getD$annotations() {
+    }
+
+    public final int getE() {
+        return 0;
+    }
+
+    @Bind(id = 100)
+    @Anno(a1 = false, a2 = 1, a3 = 2, a4 = 3, a5 = 4L, a6 = '5', a7 = 6.0F, a8 = 7.0, a9 = "A")
+    @java.lang.Deprecated()
+    public static void getE$annotations() {
+    }
+
+    public final int getF() {
+        return 0;
+    }
+
+    @Bind(id = 200)
+    @java.lang.Deprecated()
+    public static void getF$annotations() {
+    }
+
+    @Bind(id = 100)
+    public final void foo() {
+    }
+
+    @Bind(id = 100)
+    public final void foo2() {
+    }
+
+    @Bind(id = 100)
+    public final void foo3() {
+    }
+
+    @Bind(id = 100)
+    public final void foo4() {
+    }
+
+    @Bind(id = 100)
+    @Anno(a1 = false, a2 = 1, a3 = 2, a4 = 3, a5 = 4L, a6 = '5', a7 = 6.0F, a8 = 7.0, a9 = "A")
+    public final void foo5() {
+    }
+
+    @Bind(id = 200)
+    public final void plainIntConstant() {
+    }
+
+    @MultiValue(ids = {})
+    public final void multi0() {
+    }
+
+    @MultiValue(ids = {200})
+    public final void multi1() {
+    }
+
+    @MultiValue(ids = {200, 2})
+    public final void multi2() {
+    }
+
+    @MultiValue(ids = {200, 2})
+    public final void multi3() {
+    }
+
+    @MultiValueString(ids = {"A"})
+    public final void multi4() {
+    }
+
+    @MultiValueByte(ids = {1})
+    public final void multi5() {
+    }
+
+    @lib.OnClick(value = {200})
+    public final void multiJava1() {
+    }
+
+    @lib.OnClick(value = {200, 100})
+    public final void multiJava2() {
+    }
+
+    public final int getPropB() {
+        return 0;
+    }
+
+    public final int getPropC() {
+        return 0;
+    }
+
+    public final void setPropC(int p0) {
+    }
+
+    public final int getPropF() {
+        return 0;
+    }
+}
+
+////////////////////
+
+package app;
+
+public class R {
+
+    public R() {
+        super();
+    }
+
+    public static class layout {
+
+        public layout() {
+            super();
+        }
+        public static final int mainActivity = 100;
+    }
+}
+
+////////////////////
+
+package app;
+
+public class R2 {
+
+    public R2() {
+        super();
+    }
+
+    public static class layout {
+
+        public layout() {
+            super();
+        }
+        public static final int mainActivity = 100;
+    }
+}
+
+////////////////////
+
+package lib;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Target(value = ElementType.METHOD)
+@Retention(value = RetentionPolicy.RUNTIME)
+public @interface OnClick {
+
+    int[] value() default {};
+}
+
+////////////////////
+
+package lib;
+
+public class R {
+
+    public R() {
+        super();
+    }
+
+    public static class id {
+
+        public id() {
+            super();
+        }
+        public static final int textView = 100;
+    }
+}

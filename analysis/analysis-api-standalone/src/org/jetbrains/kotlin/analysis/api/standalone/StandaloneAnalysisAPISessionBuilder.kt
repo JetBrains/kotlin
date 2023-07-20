@@ -11,12 +11,14 @@ import com.intellij.openapi.application.Application
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
+import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.FirStandaloneServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtStaticProjectStructureProvider
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.FirSealedClassInheritorsProcessorFactory
+import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.JvmFirDeserializedSymbolProviderFactory
 import org.jetbrains.kotlin.analysis.project.structure.KtModuleScopeProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtModuleScopeProviderImpl
 import org.jetbrains.kotlin.analysis.project.structure.builder.KtModuleProviderBuilder
@@ -150,6 +152,8 @@ public class StandaloneAnalysisAPISessionBuilder(
                 PackagePartProviderFactory::class.java,
                 KotlinStaticPackagePartProviderFactory(packagePartProvider)
             )
+
+            registerService(JvmFirDeserializedSymbolProviderFactory::class.java, JvmFirDeserializedSymbolProviderFactory::class.java)
         }
     }
 
@@ -208,7 +212,12 @@ public class StandaloneAnalysisAPISessionBuilder(
         return StandaloneAnalysisAPISession(
             kotlinCoreProjectEnvironment,
             createPackagePartProvider,
-        )
+        ) {
+            projectStructureProvider.allSourceFiles
+                .asSequence()
+                .filterIsInstance<PsiFile>()
+                .groupBy { projectStructureProvider.getModule(it.originalElement, null) }
+        }
     }
 }
 

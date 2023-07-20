@@ -9,13 +9,16 @@ import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.mock.MockProject
 import com.intellij.openapi.application.Application
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 
 public class StandaloneAnalysisAPISession internal constructor(
     kotlinCoreProjectEnvironment: KotlinCoreProjectEnvironment,
     public val createPackagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
+    modulesWithFilesProvider: () -> Map<KtModule, List<PsiFile>>
 ) {
     // TODO: better to limit exposure? Current usages are: addExtension, jarFileSystem
     public val coreApplicationEnvironment: CoreApplicationEnvironment = kotlinCoreProjectEnvironment.environment
@@ -29,4 +32,6 @@ public class StandaloneAnalysisAPISession internal constructor(
         ReplaceWith("project")
     )
     public val mockProject: MockProject = kotlinCoreProjectEnvironment.project
+
+    public val modulesWithFiles: Map<KtModule, List<PsiFile>> by lazy(modulesWithFilesProvider)
 }

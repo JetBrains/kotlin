@@ -13,6 +13,17 @@ dependencies {
 
     implementation(project(":kotlin-annotation-processing-compiler"))
     embedded(project(":kotlin-annotation-processing-compiler")) { isTransitive = false }
+    implementation(project(":analysis:analysis-api-standalone"))
+    embedded(project(":analysis:analysis-api-standalone")) {
+        exclude("org.jetbrains.kotlin", "kotlin-stdlib")
+        exclude("org.jetbrains.kotlin", "kotlin-stdlib-common")
+    }
+    compileOnly(toolsJarApi())
+    testApiJUnit5()
+    testApi(projectTests(":kotlin-annotation-processing-compiler"))
+    testRuntimeOnly(toolsJar())
+    testRuntimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))
+    testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
 }
 
 optInToExperimentalCompilerApi()

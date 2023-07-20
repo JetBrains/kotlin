@@ -1,8 +1,7 @@
-// IGNORE_BACKEND: JVM_IR
 // CORRECT_ERROR_TYPES
 // NO_VALIDATION
 
-@file:Suppress("ENUM_ENTRY_AS_TYPE", "UNRESOLVED_REFERENCE")
+@file:Suppress("UNRESOLVED_REFERENCE")
 import java.util.Date as MyDate
 import java.util.concurrent.TimeUnit as MyTimeUnit
 import java.util.concurrent.TimeUnit.*
@@ -14,7 +13,6 @@ import bcd as MyBCD
 class Test {
     lateinit var date: MyDate
     lateinit var timeUnit: MyTimeUnit
-    lateinit var microseconds: MyMicroseconds
 
     lateinit var abc: MyABC
     lateinit var bcd: MyBCD

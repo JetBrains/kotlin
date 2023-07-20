@@ -1,0 +1,45 @@
+import kotlin.io.encoding.*;
+
+@kotlin.Metadata()
+public final class ResolvedKt {
+
+    public ResolvedKt() {
+        super();
+    }
+    @org.jetbrains.annotations.Nullable()
+    private static kotlin.io.encoding.Base64 base64;
+
+    @org.jetbrains.annotations.Nullable()
+    public static final kotlin.io.encoding.Base64 getBase64() {
+        return null;
+    }
+
+    public static final void setBase64(@org.jetbrains.annotations.Nullable()
+    kotlin.io.encoding.Base64 p0) {
+    }
+}
+
+////////////////////
+
+
+import kotlin.io.encoding.*;
+
+@kotlin.Metadata()
+@kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
+public final class UnresolvedKt {
+
+    public UnresolvedKt() {
+        super();
+    }
+    @org.jetbrains.annotations.Nullable()
+    private static Base65 base65;
+
+    @org.jetbrains.annotations.Nullable()
+    public static final Base65 getBase65() {
+        return null;
+    }
+
+    public static final void setBase65(@org.jetbrains.annotations.Nullable()
+    Base65 p0) {
+    }
+}

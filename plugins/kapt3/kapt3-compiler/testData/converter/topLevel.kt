@@ -1,3 +1,5 @@
+// WITH_STDLIB
+// FULL_JDK
 package test.another
 
 annotation class Anno(val value: String)

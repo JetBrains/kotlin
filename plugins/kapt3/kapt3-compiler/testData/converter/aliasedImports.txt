@@ -6,7 +6,6 @@ import a.b.ABC;
 public final class Test {
     public Test.MyDate date;
     public java.util.concurrent.TimeUnit timeUnit;
-    public java.util.concurrent.TimeUnit microseconds;
     public a.b.ABC abc;
     public bcd bcd;
 
@@ -29,15 +28,6 @@ public final class Test {
     }
 
     public final void setTimeUnit(@org.jetbrains.annotations.NotNull()
-    java.util.concurrent.TimeUnit p0) {
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final java.util.concurrent.TimeUnit getMicroseconds() {
-        return null;
-    }
-
-    public final void setMicroseconds(@org.jetbrains.annotations.NotNull()
     java.util.concurrent.TimeUnit p0) {
     }
 

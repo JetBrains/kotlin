@@ -1,0 +1,30 @@
+@kotlin.Metadata()
+public abstract class Cls {
+
+    public Cls() {
+        super();
+    }
+
+    public abstract void foo(@org.jetbrains.annotations.NotNull()
+    java.lang.String abc);
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String bar(int bcd) {
+        return null;
+    }
+}
+
+////////////////////
+
+
+@kotlin.Metadata()
+public abstract interface Intf {
+
+    public abstract void foo(@org.jetbrains.annotations.NotNull()
+    java.lang.String abc);
+
+    @org.jetbrains.annotations.NotNull()
+    public default java.lang.String bar(int bcd) {
+        return null;
+    }
+}

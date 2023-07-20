@@ -1,0 +1,76 @@
+package lib;
+
+public class File {
+
+    public File() {
+        super();
+    }
+}
+
+////////////////////
+
+package lib;
+
+public class IOException {
+
+    public IOException() {
+        super();
+    }
+}
+
+////////////////////
+
+package test;
+
+@kotlin.Metadata()
+public final class TestA {
+
+    public TestA() {
+        super();
+    }
+}
+
+////////////////////
+
+package test;
+
+@kotlin.Metadata()
+public abstract interface TestB {
+
+    @org.jetbrains.annotations.NotNull()
+    public abstract java.io.File a();
+
+    @org.jetbrains.annotations.NotNull()
+    public abstract lib.File b();
+
+    @org.jetbrains.annotations.NotNull()
+    public abstract java.io.IOException c();
+
+    @org.jetbrains.annotations.NotNull()
+    public abstract lib.IOException d();
+}
+
+////////////////////
+
+package test;
+
+import lib.FooBar;
+
+@kotlin.Metadata()
+public abstract interface TestC {
+
+    @org.jetbrains.annotations.NotNull()
+    public abstract java.io.File a();
+
+    @org.jetbrains.annotations.NotNull()
+    public abstract lib.File b();
+
+    @org.jetbrains.annotations.NotNull()
+    public abstract java.io.IOException c();
+
+    @org.jetbrains.annotations.NotNull()
+    public abstract lib.IOException d();
+
+    @org.jetbrains.annotations.NotNull()
+    public abstract lib.FooBar e();
+}
