@@ -87,26 +87,32 @@ internal class FileStructure private constructor(
     }
 
     private fun getStructureElementForDeclaration(declaration: KtElement): FileStructureElement {
-        val structureElement = structureElements.compute(declaration) { _, structureElement ->
-            when {
-                structureElement == null -> createStructureElement(declaration)
-                structureElement is ReanalyzableStructureElement<*, *> && !structureElement.isUpToDate() -> {
-                    structureElement.reanalyze()
-                }
-
-                else -> structureElement
-            }
+        val elementFromCache = structureElements[declaration]
+        if (elementFromCache == null) {
+            val newElement = createStructureElement(declaration)
+            return structureElements.putIfAbsent(declaration, newElement) ?: newElement
         }
 
-        return structureElement ?: errorWithFirSpecificEntries(
-            "FileStructureElement for was not defined for ${declaration::class.simpleName}",
+        if (elementFromCache !is ReanalyzableStructureElement<*, *> || elementFromCache.isUpToDate()) {
+            return elementFromCache
+        }
+
+        val reanalyzedElement = elementFromCache.reanalyze()
+        return structureElements.merge(declaration, reanalyzedElement) { _, oldElement ->
+            if (oldElement === elementFromCache) {
+                reanalyzedElement
+            } else {
+                // Another thread already reanalyzed the declaration
+                oldElement
+            }
+        } ?: errorWithFirSpecificEntries(
+            "${reanalyzedElement::class.simpleName} for ${declaration::class.simpleName} is gone",
             psi = declaration,
         )
     }
 
     fun getAllDiagnosticsForFile(diagnosticCheckerFilter: DiagnosticCheckerFilter): Collection<KtPsiDiagnostic> {
         val structureElements = getAllStructureElements()
-
         return buildList {
             collectDiagnosticsFromStructureElements(structureElements, diagnosticCheckerFilter)
         }
