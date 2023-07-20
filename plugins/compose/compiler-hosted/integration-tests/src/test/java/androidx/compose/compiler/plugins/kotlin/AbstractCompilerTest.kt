@@ -29,9 +29,12 @@ import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
 import org.jetbrains.kotlin.codegen.GeneratedClassLoader
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.jetbrains.kotlin.compiler.plugin.registerExtensionsForTest
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.junit.After
 import org.junit.BeforeClass
@@ -112,8 +115,13 @@ abstract class AbstractCompilerTest(val useFir: Boolean) {
     ) = KotlinCompilerFacade.create(
         testRootDisposable,
         updateConfiguration = {
+            val languageVersion =
+                if (useFir) LanguageVersion.KOTLIN_2_0 else LanguageVersion.KOTLIN_1_9
+            languageVersionSettings = LanguageVersionSettingsImpl(
+                languageVersion,
+                ApiVersion.createByLanguageVersion(languageVersion),
+            )
             updateConfiguration()
-            put(CommonConfigurationKeys.USE_FIR, useFir)
             addJvmClasspathRoots(additionalPaths)
             addJvmClasspathRoots(defaultClassPathRoots)
             if (!getBoolean(JVMConfigurationKeys.NO_JDK) &&

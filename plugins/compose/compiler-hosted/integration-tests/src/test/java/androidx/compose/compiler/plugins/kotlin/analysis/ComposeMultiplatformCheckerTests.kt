@@ -17,17 +17,21 @@
 package androidx.compose.compiler.plugins.kotlin.analysis
 
 import androidx.compose.compiler.plugins.kotlin.AbstractComposeDiagnosticsTest
-import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.cli.common.setupLanguageVersionSettings
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.junit.Test
 
 class ComposeMultiplatformCheckerTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(useFir) {
     override fun CompilerConfiguration.updateConfiguration() {
-        setupLanguageVersionSettings(K2JVMCompilerArguments().apply {
-            // enabling multiPlatform to use expect/actual declarations
-            multiPlatform = true
-        })
+        languageVersionSettings = LanguageVersionSettingsImpl(
+            languageVersionSettings.languageVersion,
+            languageVersionSettings.apiVersion,
+            specificFeatures = hashMapOf(
+                LanguageFeature.MultiPlatformProjects to LanguageFeature.State.ENABLED
+            )
+        )
     }
 
     @Test
