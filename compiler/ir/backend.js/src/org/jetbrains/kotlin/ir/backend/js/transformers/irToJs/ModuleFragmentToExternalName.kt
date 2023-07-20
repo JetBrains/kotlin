@@ -14,8 +14,7 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 private const val EXPORTER_FILE_POSTFIX = ".export"
 
 class ModuleFragmentToExternalName(private val jsOutputNamesMapping: Map<IrModuleFragment, String>) {
-    fun getExternalNameFor(file: IrFile, granularity: JsGenerationGranularity): String {
-        assert(granularity == JsGenerationGranularity.PER_FILE) { "This method should be used only for PER_FILE granularity" }
+    fun getExternalNameFor(file: IrFile): String {
         return getExternalNameFor(file.outputName, file.packageFqName.asString(), file.module.getJsOutputName())
     }
 

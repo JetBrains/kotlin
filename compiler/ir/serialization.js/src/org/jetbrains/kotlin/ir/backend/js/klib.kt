@@ -633,29 +633,28 @@ private val KotlinFileSerializedData.fileName: String
     get() = irData.fileName ?: irData.path.substringAfterLast('/').substringBeforeLast(".kt")
 
 private fun CompilerConfiguration.assertUniqueFileNameAndPackage(moduleName: String, files: List<KotlinFileSerializedData>) {
-    val allNameClashes = files
+    val allFileNameAndPackagesClashes = files
         .groupBy { FileId(it.irData.fqName.lowercase(), it.fileName.lowercase()) }
         .filterValues { it.size > 1 }
 
-    if (allNameClashes.isNotEmpty()) {
-        val nameClashesString = buildString {
-            for ((fileId, clashedFiles) in allNameClashes) {
-                appendLine("  * Next files have package \"${fileId.fqName}\" and name \"${fileId.fileName}\":")
-                clashedFiles.forEach { appendLine("     - ${it.irData.path}") }
-                appendLine()
-                appendLine()
-            }
+    if (allFileNameAndPackagesClashes.isEmpty()) return
+
+    val nameClashesString = buildString {
+        allFileNameAndPackagesClashes.forEach { (fileId, clashedFiles) ->
+            appendLine("  * Next files have package \"${fileId.fqName}\" and name \"${fileId.fileName}\":")
+            clashedFiles.forEach { appendLine("     - ${it.irData.path}") }
+            appendLine()
         }
-
-        val message = """
-              |There are clashes of file names and their package names in module '$moduleName'.
-              |${nameClashesString}
-              |Note, that if the difference is only in letter cases, it also could lead to a clash of the compiled artifacts
-        """.trimMargin()
-
-        irMessageLogger.report(IrMessageLogger.Severity.ERROR, message, null)
-        throw CompilationErrorException(message)
     }
+
+    val message = """
+          |There are clashes of file names and their package names in module '$moduleName'.
+          |${nameClashesString}
+          |Note, that if the difference is only in letter cases, it also could lead to a clash of the compiled artifacts
+    """.trimMargin()
+
+    irMessageLogger.report(IrMessageLogger.Severity.ERROR, message, null)
+    throw CompilationErrorException(message)
 }
 
 fun serializeModuleIntoKlib(
