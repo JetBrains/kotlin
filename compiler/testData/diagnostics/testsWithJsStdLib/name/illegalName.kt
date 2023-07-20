@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 private fun ` .private `(): String = TODO("")
 
 <!NAME_CONTAINS_ILLEGAL_CHARS!>fun ` .public `(): String<!> = TODO("")

@@ -886,6 +886,10 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val name: String
     }
 
+    interface NameContainsIllegalChars : KtFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = NameContainsIllegalChars::class
+    }
+
     interface OptInUsage : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = OptInUsage::class
         val optInMarkerFqName: FqName

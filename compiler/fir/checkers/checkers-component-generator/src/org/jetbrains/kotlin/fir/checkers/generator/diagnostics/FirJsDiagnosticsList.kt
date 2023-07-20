@@ -57,6 +57,7 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
         val JS_BUILTIN_NAME_CLASH by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
             parameter<String>("name")
         }
+        val NAME_CONTAINS_ILLEGAL_CHARS by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
     }
 
     val SUPERTYPES by object : DiagnosticGroup("Supertypes") {
