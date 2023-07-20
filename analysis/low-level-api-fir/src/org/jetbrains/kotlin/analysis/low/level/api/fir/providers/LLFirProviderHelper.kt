@@ -34,6 +34,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassLikeDeclaration
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.withVirtualFileEntry
 
 internal class LLFirProviderHelper(
     firSession: LLFirSession,
@@ -78,7 +80,10 @@ internal class LLFirProviderHelper(
             if (ktClass.getClassId() == null) return@createCache null
             val firFile = firFileBuilder.buildRawFirFileWithCaching(ktClass.containingKtFile)
             FirElementFinder.findClassifierWithClassId(firFile, classId)
-                ?: error("Classifier $classId was found in file ${ktClass.containingKtFile.virtualFilePath} but was not found in FirFile")
+                ?: errorWithAttachment("Classifier was found in KtFile but was not found in FirFile") {
+                    withEntry("classifierClassId", classId) { it.asString() }
+                    withVirtualFileEntry("virtualFile", ktClass.containingKtFile.virtualFile)
+                }
         }
 
     private val callablesByCallableId =

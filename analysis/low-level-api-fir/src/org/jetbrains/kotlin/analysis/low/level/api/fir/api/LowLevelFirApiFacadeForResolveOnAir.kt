@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalDeclaration
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
-import org.jetbrains.kotlin.analysis.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
 import org.jetbrains.kotlin.fir.FirElement
@@ -38,11 +37,13 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
 import org.jetbrains.kotlin.fir.scopes.createImportingScopes
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 object LowLevelFirApiFacadeForResolveOnAir {
     private fun KtDeclaration.isApplicableForOnAirResolve(): Boolean = when (this) {
@@ -92,8 +93,8 @@ object LowLevelFirApiFacadeForResolveOnAir {
 
         declaration.accept(expressionLocator)
         return expressionLocator.result ?: errorWithFirSpecificEntries("Resolved on-air element was not found in containing declaration") {
-            withPsiEntry("place", place, firResolveSession::getModule)
-            withPsiEntry("elementToResolve", elementToResolve, firResolveSession::getModule)
+            withPsiEntry("place", place)
+            withPsiEntry("elementToResolve", elementToResolve)
         }
     }
 
@@ -188,8 +189,8 @@ object LowLevelFirApiFacadeForResolveOnAir {
 
         val originalNonLocalDeclaration = PsiTreeUtil.findSameElementInCopy(copiedNonLocalDeclaration, originalKtFile)
             ?: errorWithAttachment("Cannot find original function matching") {
-                withPsiEntry("matchingPsi", elementToAnalyze, originalFirResolveSession::getModule)
-                withPsiEntry("originalFile", originalKtFile, originalFirResolveSession::getModule)
+                withPsiEntry("matchingPsi", elementToAnalyze)
+                withPsiEntry("originalFile", originalKtFile)
             }
 
         recordOriginalDeclaration(targetDeclaration = copiedNonLocalDeclaration, originalDeclaration = originalNonLocalDeclaration)
@@ -289,7 +290,10 @@ object LowLevelFirApiFacadeForResolveOnAir {
             ?: errorWithFirSpecificEntries(message = "Impossible to collect designation", fir = originalFirFile, psi = originalDeclaration)
 
         val originalFirDeclaration = originalDesignationPath.target
-        val session = originalFirDeclaration.llFirResolvableSession ?: error("Expected resolvable session")
+        val session = originalFirDeclaration.llFirResolvableSession
+            ?: errorWithAttachment("Expected resolvable session, found ${originalFirDeclaration.llFirSession::class}") {
+                withFirEntry("sessionOwner", originalFirDeclaration)
+            }
 
         /**
          * Special case for [getOnAirGetTowerContextProvider]. Can be dropped after KT-59498
@@ -371,7 +375,9 @@ object LowLevelFirApiFacadeForResolveOnAir {
             is KtClassOrObject -> check(ktDeclaration.body)
             is KtScript -> check(ktDeclaration.blockExpression)
             is KtTypeAlias -> false
-            else -> error("Not supported type ${ktDeclaration::class.simpleName}")
+            else -> errorWithAttachment("Not supported type ${ktDeclaration::class}") {
+                withPsiEntry("declaration", ktDeclaration)
+            }
         }
     }
 }

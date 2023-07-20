@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
+import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -36,6 +37,8 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 internal class StubBasedFirTypeDeserializer(
     private val moduleData: FirModuleData,
@@ -141,7 +144,10 @@ internal class StubBasedFirTypeDeserializer(
                         return@map ConeStarProjection
                     }
                     val argBean = typeArgumentBean.type!!
-                    val lowerBound = type(argBean) ?: error("Broken type argument ${typeArgumentBean.type}")
+                    val lowerBound = type(argBean)
+                        ?: errorWithAttachment("Broken type argument ${typeArgumentBean.type?.let { it::class }}") {
+                            withEntry("type", typeArgumentBean.type) { it.toString() }
+                        }
                     typeArgument(lowerBound, kind)
                 }
                 return ConeClassLikeTypeImpl(
@@ -155,8 +161,14 @@ internal class StubBasedFirTypeDeserializer(
                 val lowerBound = type(type.lowerBound)
                 val upperBound = type(type.upperBound)
                 return ConeFlexibleType(
-                    lowerBound as? ConeSimpleKotlinType ?: error("Unexpected lower bound $lowerBound"),
-                    upperBound as? ConeSimpleKotlinType ?: error("Unexpected upper bound $upperBound")
+                    lowerBound as? ConeSimpleKotlinType
+                        ?: errorWithAttachment("Unexpected lower bound ${lowerBound?.let { it::class }}") {
+                            withConeTypeEntry("lowerBound", lowerBound)
+                        },
+                    upperBound as? ConeSimpleKotlinType
+                        ?: errorWithAttachment("Unexpected lower bound ${upperBound?.let { it::class }}") {
+                            withConeTypeEntry("upperBound", upperBound)
+                        },
                 )
             }
         }
@@ -208,7 +220,9 @@ internal class StubBasedFirTypeDeserializer(
                 addAll(typeElement.parameters.map { type(it.typeReference!!).toTypeProjection(Variance.INVARIANT) })
                 add(type(typeElement.returnTypeReference!!).toTypeProjection(Variance.INVARIANT))
             }.toTypedArray()
-            else -> error("not supported $typeElement")
+            else -> errorWithAttachment("not supported ${typeElement?.let { it::class }}") {
+                withPsiEntry("typeElement", typeElement)
+            }
         }
 
         return ConeClassLikeTypeImpl(

@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.classId
 import org.jetbrains.kotlin.load.java.structure.impl.VirtualFileBoundJavaClass
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.withVirtualFileEntry
 import java.nio.file.Path
 import java.nio.file.Paths
 
@@ -34,7 +36,9 @@ internal class LLFirJavaFacadeForBinaries(
 
     private fun getBinaryPath(javaClass: VirtualFileBoundJavaClass): Path {
         val virtualFile = javaClass.virtualFile
-            ?: error("no virtual file for ${javaClass.classId}")
+            ?: errorWithAttachment("no virtual file") {
+                withEntry("javaClass", javaClass) { it.toString() }
+            }
         val path = virtualFile.path
         return when {
             JAR_DELIMITER in path ->

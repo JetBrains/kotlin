@@ -35,6 +35,8 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinAnnotationEntryStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinClassTypeBean
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyStubImpl
 import org.jetbrains.kotlin.types.ConstantValueKind
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 class StubBasedAnnotationDeserializer(
     private val session: FirSession,
@@ -151,7 +153,9 @@ class StubBasedAnnotationDeserializer(
             is IntValue -> const(ConstantValueKind.Int, value.value, session.builtinTypes.intType, sourceElement)
             NullValue -> const(ConstantValueKind.Null, null, session.builtinTypes.nullableAnyType, sourceElement)
             is StringValue -> const(ConstantValueKind.String, value.value, session.builtinTypes.stringType, sourceElement)
-            else -> error("Unexpected value $value")
+            else -> errorWithAttachment("Unexpected value ${value::class}") {
+                withEntry("value", value.toString())
+            }
         }
     }
 

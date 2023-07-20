@@ -36,6 +36,8 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 @ThreadSafe
 internal class FirElementBuilder(
@@ -51,7 +53,9 @@ internal class FirElementBuilder(
                      KtQualifiedExpression with KtCallExpression in selector transformed in FIR to FirFunctionCall expression
                      Which will have a receiver as qualifier
                      */
-                    deparenthesized.selectorExpression ?: error("Incomplete code:\n${element.getElementTextWithContext()}")
+                    deparenthesized.selectorExpression ?: errorWithAttachment("Incomplete code") {
+                        withPsiEntry("psi", deparenthesized)
+                    }
                 }
                 deparenthesized is KtValueArgument -> {
                     // null will be return in case of invalid KtValueArgument

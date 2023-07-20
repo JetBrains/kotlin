@@ -25,7 +25,9 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveCont
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal object LLFirTypeLazyResolver : LLFirLazyResolver(FirResolvePhase.TYPES) {
     override fun resolve(
@@ -128,7 +130,9 @@ private class LLFirTypeTargetResolver(
                 resolveClassTypes(target)
             }
             is FirAnonymousInitializer -> {}
-            else -> error("Unknown declaration ${target::class.java}")
+            else -> errorWithAttachment("Unknown declaration ${target::class}") {
+                withFirEntry("declaration", target)
+            }
         }
     }
 

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.resolve.providers.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtClassLikeDeclaration
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 @ThreadSafeMutableState
 internal class LLFirProvider(
@@ -62,7 +64,9 @@ internal class LLFirProvider(
 
     override fun getFirClassifierContainerFile(fqName: ClassId): FirFile {
         return getFirClassifierContainerFileIfAny(fqName)
-            ?: error("Couldn't find container for $fqName")
+            ?: errorWithAttachment("Couldn't find container") {
+                withEntry("classId", fqName.asString())
+            }
     }
 
     override fun getFirClassifierContainerFileIfAny(fqName: ClassId): FirFile? {
@@ -72,7 +76,9 @@ internal class LLFirProvider(
 
     override fun getFirClassifierContainerFile(symbol: FirClassLikeSymbol<*>): FirFile {
         return getFirClassifierContainerFileIfAny(symbol)
-            ?: error("Couldn't find container for ${symbol.classId}")
+            ?: errorWithAttachment("Couldn't find container") {
+                withFirSymbolEntry("symbol", symbol)
+            }
     }
 
     override fun getFirClassifierContainerFileIfAny(symbol: FirClassLikeSymbol<*>): FirFile? {

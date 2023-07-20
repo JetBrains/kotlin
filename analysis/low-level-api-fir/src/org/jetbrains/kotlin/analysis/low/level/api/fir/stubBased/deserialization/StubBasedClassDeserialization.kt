@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 import java.lang.ref.WeakReference
 
 internal val KtModifierListOwner.visibility: Visibility
@@ -98,7 +100,9 @@ internal fun deserializeClassToSymbol(
             classOrObject.isAnnotation() -> ClassKind.ANNOTATION_CLASS
             else -> ClassKind.CLASS
         }
-        else -> throw AssertionError("Unexpected class or object: ${classOrObject.text}")
+        else -> errorWithAttachment("Unexpected class or object: ${classOrObject::class}") {
+            withPsiEntry("class", classOrObject)
+        }
     }
     val modality = classOrObject.modality
     val visibility = classOrObject.visibility
@@ -155,9 +159,12 @@ internal fun deserializeClassToSymbol(
 
         val superTypeList = classOrObject.getSuperTypeList()
         if (superTypeList != null) {
-            superTypeRefs.addAll(superTypeList.entries.map {
+            superTypeRefs.addAll(superTypeList.entries.map { superTypeReference ->
                 typeDeserializer.typeRef(
-                    it.typeReference ?: error("Super entry doesn't have type reference $it")
+                    superTypeReference.typeReference
+                        ?: errorWithAttachment("Super entry doesn't have type reference") {
+                            withPsiEntry("superTypeReference", superTypeReference)
+                        }
                 )
             })
         } else if (StandardClassIds.Any != classId && StandardClassIds.Nothing != classId) {
@@ -176,8 +183,12 @@ internal fun deserializeClassToSymbol(
                 is KtProperty -> addDeclaration(memberDeserializer.loadProperty(declaration, symbol))
                 is KtEnumEntry -> addDeclaration(memberDeserializer.loadEnumEntry(declaration, symbol, classId))
                 is KtClassOrObject -> {
+                    val name = declaration.name
+                        ?: errorWithAttachment("Class doesn't have name $declaration") {
+                            withPsiEntry("class", declaration)
+                        }
                     val nestedClassId =
-                        classId.createNestedClassId(Name.identifier(declaration.name ?: error("Class doesn't have name $declaration")))
+                        classId.createNestedClassId(Name.identifier(name))
                     deserializeNestedClass(nestedClassId, context)?.fir?.let { addDeclaration(it) }
                 }
                 is KtTypeAlias -> addDeclaration(

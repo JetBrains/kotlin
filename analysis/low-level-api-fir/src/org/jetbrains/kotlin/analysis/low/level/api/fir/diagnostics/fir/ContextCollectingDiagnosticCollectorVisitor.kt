@@ -19,6 +19,9 @@ import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.SessionHolder
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
 private class ContextCollectingDiagnosticCollectorVisitor private constructor(
     sessionHolder: SessionHolder,
@@ -65,11 +68,16 @@ internal object PersistenceContextCollector {
             is FirDanglingModifierList -> declaration.containingClass()?.classId?.isLocal == true
             is FirAnonymousInitializer -> declaration.containingClass().classId.isLocal
             is FirScript -> false
-            else -> error("Unsupported declaration ${declaration.renderWithType()}")
+            else -> errorWithAttachment("Unsupported declaration ${declaration::class}") {
+                withFirEntry("declaration", declaration)
+            }
         }
 
-        require(!isLocal) {
-            "Cannot collect context for local declaration ${declaration.renderWithType()}"
+        requireWithAttachment(
+            !isLocal,
+            { "Cannot collect context for local declaration ${declaration::class}" }
+        ) {
+            withFirEntry("declaration", declaration)
         }
 
         val designation = declaration.collectDesignation(firFile)

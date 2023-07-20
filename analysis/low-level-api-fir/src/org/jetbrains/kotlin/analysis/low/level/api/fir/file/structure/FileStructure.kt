@@ -26,6 +26,8 @@ import java.util.concurrent.ConcurrentHashMap
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.canBePartOfParentDeclaration
 import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 internal class FileStructure private constructor(
     private val ktFile: KtFile,
@@ -203,6 +205,8 @@ internal class FileStructure private constructor(
         }
         container is KtDeclaration -> createDeclarationStructure(container)
         container is KtModifierList && container.nextSibling is PsiErrorElement -> createDanglingModifierListStructure(container)
-        else -> error("Invalid container $container")
+        else -> errorWithAttachment("Invalid container ${container::class}") {
+            withPsiEntry("container", container)
+        }
     }
 }
