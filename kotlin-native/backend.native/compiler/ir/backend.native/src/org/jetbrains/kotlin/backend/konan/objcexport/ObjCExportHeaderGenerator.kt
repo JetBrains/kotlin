@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan.objcexport
 import org.jetbrains.kotlin.backend.common.serialization.findSourceFile
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.*
+import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
 import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.isAny
 import org.jetbrains.kotlin.descriptors.*
@@ -313,6 +314,7 @@ internal class ObjCExportTranslatorImpl(
             val presentConstructors = mutableSetOf<String>()
 
             descriptor.constructors
+                    .makeMethodsOrderStable()
                     .asSequence()
                     .filter { mapper.shouldBeExposed(it) }
                     .forEach {
@@ -336,6 +338,7 @@ internal class ObjCExportTranslatorImpl(
 
             // Hide "unimplemented" super constructors:
             superClass?.constructors
+                    ?.makeMethodsOrderStable()
                     ?.asSequence()
                     ?.filter { mapper.shouldBeExposed(it) }
                     ?.forEach {
@@ -540,15 +543,17 @@ internal class ObjCExportTranslatorImpl(
         methods.retainAll { it.kind.isReal }
         properties.retainAll { it.kind.isReal }
 
-        methods.forEach { method ->
+        methods.makeMethodsOrderStable().forEach { method ->
             mapper.getBaseMethods(method)
+                    .makeMethodsOrderStable()
                     .asSequence()
                     .distinctBy { namer.getSelector(it) }
                     .forEach { base -> add { buildMethod(method, base, objCExportScope) } }
         }
 
-        properties.forEach { property ->
+        properties.makePropertiesOrderStable().forEach { property ->
             mapper.getBaseProperties(property)
+                    .makePropertiesOrderStable()
                     .asSequence()
                     .distinctBy { namer.getPropertyName(it) }
                     .forEach { base -> add { buildProperty(property, base, objCExportScope) } }
@@ -591,8 +596,8 @@ internal class ObjCExportTranslatorImpl(
     }
 
     private fun StubBuilder<Stub<*>>.translatePlainMembers(methods: List<FunctionDescriptor>, properties: List<PropertyDescriptor>, objCExportScope: ObjCExportScope) {
-        methods.forEach { add { buildMethod(it, it, objCExportScope) } }
-        properties.forEach { add { buildProperty(it, it, objCExportScope) } }
+        methods.makeMethodsOrderStable().forEach { add { buildMethod(it, it, objCExportScope) } }
+        properties.makePropertiesOrderStable().forEach { add { buildProperty(it, it, objCExportScope) } }
     }
     // TODO: consider checking that signatures for bases with same selector/name are equal.
 
@@ -1193,8 +1198,43 @@ abstract class ObjCExportHeaderGenerator internal constructor(
         translateExtraClasses()
     }
 
+    private fun translateClass(descriptor: ClassDescriptor) {
+        if (mapper.shouldBeExposed(descriptor)) {
+            if (descriptor.isInterface) {
+                generateInterface(descriptor)
+            } else {
+                generateClass(descriptor)
+            }
+        } else if (mapper.shouldBeVisible(descriptor)) {
+            stubs += if (descriptor.isInterface) {
+                translator.translateUnexposedInterfaceAsUnavailableStub(descriptor)
+            } else {
+                translator.translateUnexposedClassAsUnavailableStub(descriptor)
+            }
+        }
+    }
+
+    /**
+     * Recursively collect classes into [collector].
+     * We need to do so because we want to make the order of declarations stable.
+     */
+    private fun MemberScope.collectClasses(collector: MutableCollection<ClassDescriptor>) {
+        getContributedDescriptors()
+                .asSequence()
+                .filterIsInstance<ClassDescriptor>()
+                .forEach {
+                    collector += it
+                    // Avoid collecting nested declarations from unexposed classes.
+                    if (mapper.shouldBeExposed(it)) {
+                        it.unsubstitutedMemberScope.collectClasses(collector)
+                    }
+                }
+    }
+
     private fun translatePackageFragments() {
-        val packageFragments = moduleDescriptors.flatMap { it.getPackageFragments() }
+        val packageFragments = moduleDescriptors
+                .flatMap { it.getPackageFragments() }
+                .makePackagesOrderStable()
 
         packageFragments.forEach { packageFragment ->
             packageFragment.getMemberScope().getContributedDescriptors()
@@ -1213,41 +1253,21 @@ abstract class ObjCExportHeaderGenerator internal constructor(
                             topLevel.getOrPut(it.findSourceFile(), { mutableListOf() }) += it
                         }
                     }
-
         }
 
-        fun MemberScope.translateClasses() {
-            getContributedDescriptors()
-                    .asSequence()
-                    .filterIsInstance<ClassDescriptor>()
-                    .forEach {
-                        if (mapper.shouldBeExposed(it)) {
-                            if (it.isInterface) {
-                                generateInterface(it)
-                            } else {
-                                generateClass(it)
-                            }
-
-                            it.unsubstitutedMemberScope.translateClasses()
-                        } else if (mapper.shouldBeVisible(it)) {
-                            stubs += if (it.isInterface) {
-                                translator.translateUnexposedInterfaceAsUnavailableStub(it)
-                            } else {
-                                translator.translateUnexposedClassAsUnavailableStub(it)
-                            }
-                        }
-                    }
-        }
+        val classesToTranslate = mutableListOf<ClassDescriptor>()
 
         packageFragments.forEach { packageFragment ->
-            packageFragment.getMemberScope().translateClasses()
+            packageFragment.getMemberScope().collectClasses(classesToTranslate)
         }
 
-        extensions.forEach { (classDescriptor, declarations) ->
+        classesToTranslate.makeClassesOrderStable().forEach { translateClass(it) }
+
+        extensions.makeCategoriesOrderStable().forEach { (classDescriptor, declarations) ->
             generateExtensions(classDescriptor, declarations)
         }
 
-        topLevel.forEach { (sourceFile, declarations) ->
+        topLevel.makeFilesOrderStable().forEach { (sourceFile, declarations) ->
             generateFile(sourceFile, declarations)
         }
     }
@@ -1457,3 +1477,39 @@ private fun quoteAsCStringLiteral(str: String): String = buildString {
     }
     append('"')
 }
+
+// This family of `make*OrderStable` functions helps ObjCExport generate declarations in a stable order.
+// See KT-58863.
+private fun List<PropertyDescriptor>.makePropertiesOrderStable() =
+        this.sortedBy { it.name }
+
+private fun Collection<FunctionDescriptor>.makeMethodsOrderStable() =
+        // The crucial part here is that we sort methods here by their signatures, which means
+        // that we should be extra careful with signature evolution as it might affect method order.
+        // Comparison of method names and number of parameters reduces the influence of signatures on the order of methods.
+        // Also, it acts as an optimization.
+        this.sortedWith(
+                compareBy(
+                        { it.name },
+                        { it.valueParameters.size },
+                        { KonanManglerDesc.run { it.signatureString(false) } }
+                )
+        )
+
+private fun List<PackageFragmentDescriptor>.makePackagesOrderStable() =
+        this.sortedBy { it.fqName.asString() }
+
+/**
+ * Sort order of files. Order of declarations will be stabilized in the corresponding functions later.
+ */
+private fun Map<SourceFile, MutableList<CallableMemberDescriptor>>.makeFilesOrderStable() =
+        this.entries.sortedBy { it.key.name }
+
+/**
+ * Sort order of categories. Order of extensions will be stabilized in the corresponding functions later.
+ */
+private fun Map<ClassDescriptor, MutableList<CallableMemberDescriptor>>.makeCategoriesOrderStable() =
+        this.entries.sortedBy { it.key.classId.toString() }
+
+private fun List<ClassDescriptor>.makeClassesOrderStable() =
+        this.sortedBy { it.classId.toString() }
