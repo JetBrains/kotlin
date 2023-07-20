@@ -580,7 +580,7 @@ class Fir2IrDeclarationStorage(
             return createIrLazyFunction(function as FirSimpleFunction, signature, irParent, updatedOrigin)
         }
         val name = simpleFunction?.name
-            ?: if (isLambda) SpecialNames.ANONYMOUS else Name.special("<no name provided>")
+            ?: if (isLambda) SpecialNames.ANONYMOUS else SpecialNames.NO_NAME_PROVIDED
         val visibility = simpleFunction?.visibility ?: Visibilities.Local
         val isSuspend =
             if (isLambda) ((function as FirAnonymousFunction).typeRef as? FirResolvedTypeRef)?.type?.isSuspendOrKSuspendFunctionType(session) == true

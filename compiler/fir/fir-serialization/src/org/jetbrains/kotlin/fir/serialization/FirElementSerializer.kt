@@ -527,7 +527,7 @@ class FirElementSerializer private constructor(
                 function.name
             }
             is FirAnonymousFunction -> {
-                if (function.isLambda) SpecialNames.ANONYMOUS else Name.special("<no name provided>")
+                if (function.isLambda) SpecialNames.ANONYMOUS else SpecialNames.NO_NAME_PROVIDED
             }
             else -> throw AssertionError("Unsupported function: ${function.render()}")
         }

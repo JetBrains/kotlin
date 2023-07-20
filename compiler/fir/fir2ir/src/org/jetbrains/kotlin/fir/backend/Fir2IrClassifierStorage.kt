@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
@@ -382,7 +383,7 @@ class Fir2IrClassifierStorage(
     fun registerIrAnonymousObject(
         anonymousObject: FirAnonymousObject,
         visibility: Visibility = Visibilities.Local,
-        name: Name = Name.special("<no name provided>"),
+        name: Name = SpecialNames.NO_NAME_PROVIDED,
         irParent: IrDeclarationParent? = null
     ): IrClass {
         val origin = IrDeclarationOrigin.DEFINED

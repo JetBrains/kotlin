@@ -33,11 +33,10 @@ import org.jetbrains.kotlin.fir.util.ListMultimap
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.utils.SmartSet
 
 internal class FirDefaultDeclarationPresenter : FirDeclarationPresenter
-
-private val NO_NAME_PROVIDED = Name.special("<no name provided>")
 
 private val MAIN_FUNCTION_SHAPES = setOf(
     "<>[]():kotlin/Unit",
@@ -74,9 +73,9 @@ private val FirSimpleFunction.representsMainFunctionAllowingConflictingOverloads
 // - see tests with `fun () {}`.
 // you can't redeclare something that has no name.
 private fun FirDeclaration.isCollectable() = when (this) {
-    is FirSimpleFunction -> source?.kind !is KtFakeSourceElementKind && name != NO_NAME_PROVIDED
+    is FirSimpleFunction -> source?.kind !is KtFakeSourceElementKind && name != SpecialNames.NO_NAME_PROVIDED
     is FirProperty -> source?.kind !is KtFakeSourceElementKind.EnumGeneratedDeclaration
-    is FirRegularClass -> name != NO_NAME_PROVIDED
+    is FirRegularClass -> name != SpecialNames.NO_NAME_PROVIDED
     else -> true
 }
 
