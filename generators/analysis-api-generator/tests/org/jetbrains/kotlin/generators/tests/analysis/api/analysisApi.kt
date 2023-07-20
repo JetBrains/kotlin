@@ -103,6 +103,10 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
             model("symbolByPsi")
         }
 
+        test(AbstractSymbolByJavaPsiTest::class, filter = frontendIs(FrontendKind.Fir)) {
+            model("symbolByJavaPsi")
+        }
+
         test(AbstractSingleSymbolByPsi::class) {
             model("singleSymbolByPsi")
         }

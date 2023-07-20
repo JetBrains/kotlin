@@ -1,0 +1,19 @@
+KtJavaFieldSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: /JavaClass.count
+  contextReceivers: []
+  isExtension: false
+  isStatic: true
+  isVal: false
+  modality: OPEN
+  name: count
+  origin: JAVA
+  receiverParameter: null
+  returnType: KtFlexibleType:
+    annotationsList: []
+    type: kotlin/Int!
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null
