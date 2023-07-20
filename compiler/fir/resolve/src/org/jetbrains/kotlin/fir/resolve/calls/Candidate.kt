@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 
 class Candidate(
-    override val symbol: FirBasedSymbol<*>,
+    override var symbol: FirBasedSymbol<*>,
     // Here we may have an ExpressionReceiverValue
     // - in case a use-site receiver is explicit
     // - in some cases with static entities, no matter is a use-site receiver explicit or not
