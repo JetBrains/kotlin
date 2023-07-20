@@ -23,8 +23,10 @@ internal data class ObjCExportMetaAnnotations(
     val refinesInSwiftAnnotation: AnnotationDescriptor?,
 )
 
-internal fun DeclarationDescriptor.findObjCExportMetaAnnotations(): ObjCExportMetaAnnotations {
-    require(this is ClassDescriptor && this.kind == ClassKind.ANNOTATION_CLASS)
+internal fun DeclarationDescriptor.findObjCExportMetaAnnotations(): ObjCExportMetaAnnotations? {
+    if (this !is ClassDescriptor || this.kind != ClassKind.ANNOTATION_CLASS) {
+        return null
+    }
     var objCAnnotation: AnnotationDescriptor? = null
     var swiftAnnotation: AnnotationDescriptor? = null
     for (annotation in annotations) {
@@ -44,7 +46,7 @@ object NativeObjCRefinementAnnotationChecker : DeclarationChecker {
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (descriptor !is ClassDescriptor || descriptor.kind != ClassKind.ANNOTATION_CLASS) return
-        val (objCAnnotation, swiftAnnotation) = descriptor.findObjCExportMetaAnnotations()
+        val (objCAnnotation, swiftAnnotation) = descriptor.findObjCExportMetaAnnotations() ?: return
         if (objCAnnotation == null && swiftAnnotation == null) return
         if (objCAnnotation != null && swiftAnnotation != null) {
             val reportLocation = DescriptorToSourceUtils.getSourceFromAnnotation(swiftAnnotation) ?: declaration
