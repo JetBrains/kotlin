@@ -1,0 +1,25 @@
+> Configure project :
+
+> Configure project :brokenProjectA
+e: [DeprecatedKotlinNativeTargetsDiagnostic | ERROR] The following removed Kotlin/Native targets were used in the project: linuxMips32
+#diagnostic-end
+
+
+> Configure project :brokenProjectB
+e: [CommonMainWithDependsOnDiagnostic | ERROR] commonMain can't declare dependsOn on other source sets
+#diagnostic-end
+
+
+> Configure project :healthyProject
+
+> Task :brokenProjectA:ensureNoKotlinGradlePluginErrors FAILED
+e: [DeprecatedKotlinNativeTargetsDiagnostic | ERROR] The following removed Kotlin/Native targets were used in the project: linuxMips32
+#diagnostic-end
+
+
+> Task :brokenProjectB:ensureNoKotlinGradlePluginErrors FAILED
+e: [CommonMainWithDependsOnDiagnostic | ERROR] commonMain can't declare dependsOn on other source sets
+#diagnostic-end
+
+
+> Task :healthyProject:ensureNoKotlinGradlePluginErrors

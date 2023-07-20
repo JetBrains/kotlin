@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.testbase
 
 import org.gradle.testkit.runner.BuildResult
 import org.jetbrains.kotlin.gradle.BaseGradleIT
+import org.jetbrains.kotlin.gradle.internals.ENSURE_NO_KOTLIN_GRADLE_PLUGIN_ERRORS_TASK_NAME
 import org.jetbrains.kotlin.gradle.internals.VERBOSE_DIAGNOSTIC_SEPARATOR
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticFactory
@@ -121,7 +122,8 @@ fun BuildResult.extractProjectsAndTheirVerboseDiagnostics(): String = buildStrin
 
             diagnosticStarted -> continueDiagnostic(line)
 
-            line.startsWith(CONFIGURE_PROJECT_PREFIX) -> {
+            line.startsWith(CONFIGURE_PROJECT_PREFIX)
+                    || (line.contains(ENSURE_NO_KOTLIN_GRADLE_PLUGIN_ERRORS_TASK_NAME) && line.startsWith(TASK_EXECUTION_PREFIX)) -> {
                 appendLine() // additional empty line between projects
                 appendLine(line)
             }
@@ -186,3 +188,4 @@ private fun extractNextVerboselyRenderedDiagnosticAndIndex(
 }
 
 private const val CONFIGURE_PROJECT_PREFIX = "> Configure project"
+private const val TASK_EXECUTION_PREFIX = "> Task"
