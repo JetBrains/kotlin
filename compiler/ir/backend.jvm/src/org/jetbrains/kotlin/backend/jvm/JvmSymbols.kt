@@ -937,14 +937,14 @@ class JvmSymbols(
             throw AssertionError("Array type expected: ${arrayType.render()}")
     }
 
-    private val javaLangInteger: IrClassSymbol = createJavaPrimitiveClass(FqName("java.lang.Integer"), irBuiltIns.intType)
+    val javaLangInteger: IrClassSymbol = createJavaPrimitiveClass(FqName("java.lang.Integer"), irBuiltIns.intType)
 
     val compareUnsignedInt: IrSimpleFunctionSymbol = javaLangInteger.functionByName("compareUnsigned")
     val divideUnsignedInt: IrSimpleFunctionSymbol = javaLangInteger.functionByName("divideUnsigned")
     val remainderUnsignedInt: IrSimpleFunctionSymbol = javaLangInteger.functionByName("remainderUnsigned")
     val toUnsignedStringInt: IrSimpleFunctionSymbol = javaLangInteger.functionByName("toUnsignedString")
 
-    private val javaLangLong: IrClassSymbol = createJavaPrimitiveClass(FqName("java.lang.Long"), irBuiltIns.longType)
+    val javaLangLong: IrClassSymbol = createJavaPrimitiveClass(FqName("java.lang.Long"), irBuiltIns.longType)
 
     val compareUnsignedLong: IrSimpleFunctionSymbol = javaLangLong.functionByName("compareUnsigned")
     val divideUnsignedLong: IrSimpleFunctionSymbol = javaLangLong.functionByName("divideUnsigned")
