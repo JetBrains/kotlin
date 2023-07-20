@@ -13,7 +13,6 @@ public final [ResolvedTo(BODY_RESOLVE)] val propertyToResolve: R|kotlin/String|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] usage.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(BODY_RESOLVE)] val propertyToResolve: R|kotlin/String|
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String| {
             ^ <Unresolved name: JavaClass>#.<Unresolved name: function>#()?.{ $subj$.<Unresolved name: let>#(<L> = [ResolvedTo(BODY_RESOLVE)] let@fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {

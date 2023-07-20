@@ -13,7 +13,6 @@ public final [ResolvedTo(BODY_RESOLVE)] val propertyToResolve: R|kotlin/String|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] usage.kt
-    [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(BODY_RESOLVE)] val propertyToResolve: R|kotlin/String|
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String| {
             ^ Q|JavaClass|.R|/JavaClass.function|()?.{ $subj$.R|kotlin/let|<R|@R|Anno|(value = String(outer))  List|, R|kotlin/String|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function1<T, R>] let@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|@R|Anno|(value = String(outer))  List|): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
