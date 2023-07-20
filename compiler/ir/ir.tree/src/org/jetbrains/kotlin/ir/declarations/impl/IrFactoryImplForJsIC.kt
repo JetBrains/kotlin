@@ -302,8 +302,9 @@ class IrFactoryImplForJsIC(override val stageController: StageController) : Abst
         isLateinit: Boolean,
         isDelegated: Boolean,
         isExternal: Boolean,
-        isExpect: Boolean
-    ): IrProperty {
+        isExpect: Boolean,
+        isFakeOverride: Boolean,
+    ): IrPropertyWithLateBinding {
         return super.createPropertyWithLateBinding(
             startOffset,
             endOffset,
@@ -317,6 +318,7 @@ class IrFactoryImplForJsIC(override val stageController: StageController) : Abst
             isDelegated,
             isExternal,
             isExpect,
+            isFakeOverride,
         ).register()
     }
 

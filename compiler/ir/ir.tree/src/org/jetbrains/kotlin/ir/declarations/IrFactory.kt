@@ -164,9 +164,10 @@ interface IrFactory {
         isConst: Boolean,
         isLateinit: Boolean,
         isDelegated: Boolean,
-        isExternal: Boolean,
-        isExpect: Boolean,
-    ): IrProperty
+        isExternal: Boolean = false,
+        isExpect: Boolean = false,
+        isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+    ): IrPropertyWithLateBinding
 
     fun createTypeAlias(
         startOffset: Int,
