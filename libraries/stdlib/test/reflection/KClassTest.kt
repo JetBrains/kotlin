@@ -42,4 +42,24 @@ class KClassTest {
         checkIsInstance(numberClass, null, false)
         checkIsInstance(numberClass, "42", false)
     }
+
+    @Test
+    fun testKClassEquals() {
+        assertFalse(Nothing::class == KClassTest::class)
+        assertFalse(KClassTest::class == Nothing::class)
+
+        assertFalse(String::class == Nothing::class)
+        assertFalse(Nothing::class == String::class)
+
+        assertFalse(Unit::class == Nothing::class)
+        assertFalse(Nothing::class == Unit::class)
+
+        assertFalse(KClassTest::class == String::class)
+        assertFalse(String::class == KClassTest::class)
+
+        assertTrue(Nothing::class == Nothing::class)
+        assertTrue(Unit::class == Unit::class)
+        assertTrue(String::class == String::class)
+        assertTrue(KClassTest::class == KClassTest::class)
+    }
 }

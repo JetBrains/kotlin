@@ -811,4 +811,73 @@ class MapTest {
         assertEquals(0, LinkedHashMap<String, String>(/*initialCapacity = */0, /*loadFactor = */0.5f).size)
         assertEquals(0, LinkedHashMap<String, String>(/*initialCapacity = */10, /*loadFactor = */1.5f).size)
     }
+
+    @OptIn(ExperimentalUnsignedTypes::class)
+    @Test
+    fun kClassAsMapKey() {
+        class A
+        class B
+
+        val kclasses = mapOf(
+            String::class to 1,
+            Char::class to 2,
+            CharArray::class to 3,
+            Double::class to 4,
+            DoubleArray::class to 5,
+            Float::class to 6,
+            FloatArray::class to 7,
+            Long::class to 8,
+            LongArray::class to 9,
+            ULong::class to 10,
+            ULongArray::class to 11,
+            Int::class to 12,
+            IntArray::class to 13,
+            UInt::class to 14,
+            UIntArray::class to 15,
+            Short::class to 16,
+            ShortArray::class to 17,
+            UShort::class to 18,
+            UShortArray::class to 19,
+            Byte::class to 20,
+            ByteArray::class to 21,
+            UByte::class to 22,
+            UByteArray::class to 23,
+            Boolean::class to 24,
+            BooleanArray::class to 25,
+            Unit::class to 26,
+            Nothing::class to 27,
+            A::class to 28,
+            B::class to 29
+        )
+
+        assertEquals(kclasses[String::class], 1)
+        assertEquals(kclasses[Char::class], 2)
+        assertEquals(kclasses[CharArray::class], 3)
+        assertEquals(kclasses[Double::class], 4)
+        assertEquals(kclasses[DoubleArray::class], 5)
+        assertEquals(kclasses[Float::class], 6)
+        assertEquals(kclasses[FloatArray::class], 7)
+        assertEquals(kclasses[Long::class], 8)
+        assertEquals(kclasses[LongArray::class], 9)
+        assertEquals(kclasses[ULong::class], 10)
+        assertEquals(kclasses[ULongArray::class], 11)
+        assertEquals(kclasses[Int::class], 12)
+        assertEquals(kclasses[IntArray::class], 13)
+        assertEquals(kclasses[UInt::class], 14)
+        assertEquals(kclasses[UIntArray::class], 15)
+        assertEquals(kclasses[Short::class], 16)
+        assertEquals(kclasses[ShortArray::class], 17)
+        assertEquals(kclasses[UShort::class], 18)
+        assertEquals(kclasses[UShortArray::class], 19)
+        assertEquals(kclasses[Byte::class], 20)
+        assertEquals(kclasses[ByteArray::class], 21)
+        assertEquals(kclasses[UByte::class], 22)
+        assertEquals(kclasses[UByteArray::class], 23)
+        assertEquals(kclasses[Boolean::class], 24)
+        assertEquals(kclasses[BooleanArray::class], 25)
+        assertEquals(kclasses[Unit::class], 26)
+        assertEquals(kclasses[Nothing::class], 27)
+        assertEquals(kclasses[A::class], 28)
+        assertEquals(kclasses[B::class], 29)
+    }
 }
