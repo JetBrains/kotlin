@@ -14,10 +14,12 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.util.isAnonymousObject
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 import kotlin.collections.set
 
@@ -67,7 +69,8 @@ abstract class InventNamesForLocalClasses(
         }
 
         override fun visitClass(declaration: IrClass, data: Data) {
-            if (!data.isLocal) {
+            val isATopLevelAnonymousObject = declaration.parent is IrFile && declaration.isAnonymousObject
+            if (!data.isLocal && !isATopLevelAnonymousObject) {
                 // This is not a local class, so we need not invent a name for it, the type mapper will correctly compute it
                 // by navigating through its containers.
                 val enclosingName = data.enclosingName
@@ -80,7 +83,10 @@ abstract class InventNamesForLocalClasses(
                 return
             }
 
-            val internalName = inventName(declaration.name, data)
+            val oldData = if (isATopLevelAnonymousObject)
+                data.copy(enclosingName = (declaration.parent as IrFile).name.replace(".kt", "Kt").capitalizeAsciiOnly())
+            else data
+            val internalName = inventName(declaration.name, oldData)
             putLocalClassName(declaration, internalName)
 
             val newData = data.copy(enclosingName = internalName)
@@ -88,7 +94,7 @@ abstract class InventNamesForLocalClasses(
             // Old backend doesn't add the anonymous object name to the stack when traversing its super constructor arguments.
             // E.g. a lambda in the super call of an object literal "foo$1" will get the name "foo$2", not "foo$1$1".
             val newDataForConstructor =
-                if (declaration.isAnonymousObject) data else newData
+                if (declaration.isAnonymousObject) oldData else newData
 
             for (child in declaration.declarations) {
                 child.accept(this, if (child is IrConstructor) newDataForConstructor else newData)

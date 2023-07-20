@@ -147,7 +147,7 @@ private fun checkLocalClasses(args: Array<String>) {
                 clazz = Local::class,
                 expectedQualifiedName = null,
                 expectedSimpleName = "Local",
-                expectedToStringName = "class codegen.kclass.kclass0.checkLocalClasses\$3\$Local",
+                expectedToStringName = "class codegen.kclass.kclass0.checkLocalClasses\$Local",
                 expectedInstance = Local(),
                 expectedNotInstance = Any()
         )
@@ -155,7 +155,7 @@ private fun checkLocalClasses(args: Array<String>) {
                 clazz = Local.Inner::class,
                 expectedQualifiedName = null,
                 expectedSimpleName = "Inner",
-                expectedToStringName = "class codegen.kclass.kclass0.checkLocalClasses\$3\$Local\$Inner",
+                expectedToStringName = "class codegen.kclass.kclass0.checkLocalClasses\$Local\$Inner",
                 expectedInstance = Local().Inner(),
                 expectedNotInstance = Any()
         )
@@ -171,7 +171,7 @@ private fun checkLocalClasses(args: Array<String>) {
                 clazz = Local::class,
                 expectedQualifiedName = null,
                 expectedSimpleName = "Local",
-                expectedToStringName = "class codegen.kclass.kclass0.checkLocalClasses\$4\$Local",
+                expectedToStringName = "class codegen.kclass.kclass0.checkLocalClasses\$3\$Local",
                 expectedInstance = Local(),
                 expectedNotInstance = Any()
         )
@@ -179,7 +179,7 @@ private fun checkLocalClasses(args: Array<String>) {
                 clazz = Local.Inner::class,
                 expectedQualifiedName = null,
                 expectedSimpleName = "Inner",
-                expectedToStringName = "class codegen.kclass.kclass0.checkLocalClasses\$4\$Local\$Inner",
+                expectedToStringName = "class codegen.kclass.kclass0.checkLocalClasses\$3\$Local\$Inner",
                 expectedInstance = Local().Inner(),
                 expectedNotInstance = Any()
         )
@@ -209,6 +209,14 @@ private fun checkLocalClasses(args: Array<String>) {
         )
     }
     ::suspendFunWithLocalClass.runCoroutine()
+}
+
+interface HasFoo {
+    fun foo(): String
+}
+
+private inline fun getHasFoo(s: String) = object : HasFoo {
+    override fun foo(): String = s
 }
 
 private fun checkAnonymousObjects(args: Array<String>) {
@@ -249,7 +257,7 @@ private fun checkAnonymousObjects(args: Array<String>) {
                     clazz = this::class,
                     expectedQualifiedName = null,
                     expectedSimpleName = null,
-                    expectedToStringName = "class codegen.kclass.kclass0.checkAnonymousObjects\$3\$1",
+                    expectedToStringName = "class codegen.kclass.kclass0.checkAnonymousObjects\$2\$1",
                     expectedInstance = this,
                     expectedNotInstance = Any()
             )
@@ -257,7 +265,7 @@ private fun checkAnonymousObjects(args: Array<String>) {
                     clazz = this.innerKClass,
                     expectedQualifiedName = null,
                     expectedSimpleName = "Inner",
-                    expectedToStringName = "class codegen.kclass.kclass0.checkAnonymousObjects\$3\$1\$Inner",
+                    expectedToStringName = "class codegen.kclass.kclass0.checkAnonymousObjects\$2\$1\$Inner",
                     expectedInstance = this.Inner(),
                     expectedNotInstance = Any()
             )
@@ -275,7 +283,7 @@ private fun checkAnonymousObjects(args: Array<String>) {
                     clazz = this::class,
                     expectedQualifiedName = null,
                     expectedSimpleName = null,
-                    expectedToStringName = "class codegen.kclass.kclass0.checkAnonymousObjects\$4\$1",
+                    expectedToStringName = "class codegen.kclass.kclass0.checkAnonymousObjects\$3\$1",
                     expectedInstance = this,
                     expectedNotInstance = Any()
             )
@@ -283,7 +291,7 @@ private fun checkAnonymousObjects(args: Array<String>) {
                     clazz = this.innerKClass,
                     expectedQualifiedName = null,
                     expectedSimpleName = "Inner",
-                    expectedToStringName = "class codegen.kclass.kclass0.checkAnonymousObjects\$4\$1\$Inner",
+                    expectedToStringName = "class codegen.kclass.kclass0.checkAnonymousObjects\$3\$1\$Inner",
                     expectedInstance = this.Inner(),
                     expectedNotInstance = Any()
             )
@@ -292,6 +300,32 @@ private fun checkAnonymousObjects(args: Array<String>) {
 
     // Anonymous object inside of inlined lambda.
     run {
+        with(object : Any() {
+            val captured = args
+            inner class Inner
+            val innerKClass = Inner::class
+        }) {
+            checkClass(
+                    clazz = this::class,
+                    expectedQualifiedName = null,
+                    expectedSimpleName = null,
+                    expectedToStringName = "class codegen.kclass.kclass0.checkAnonymousObjects\$4",
+                    expectedInstance = this,
+                    expectedNotInstance = Any()
+            )
+            checkClass(
+                    clazz = this.innerKClass,
+                    expectedQualifiedName = null,
+                    expectedSimpleName = "Inner",
+                    expectedToStringName = "class codegen.kclass.kclass0.checkAnonymousObjects\$4\$Inner",
+                    expectedInstance = this.Inner(),
+                    expectedNotInstance = Any()
+            )
+        }
+    }
+
+    // Anonymous object inside of suspend lambda.
+    suspend {
         with(object : Any() {
             val captured = args
             inner class Inner
@@ -310,32 +344,6 @@ private fun checkAnonymousObjects(args: Array<String>) {
                     expectedQualifiedName = null,
                     expectedSimpleName = "Inner",
                     expectedToStringName = "class codegen.kclass.kclass0.checkAnonymousObjects\$5\$1\$Inner",
-                    expectedInstance = this.Inner(),
-                    expectedNotInstance = Any()
-            )
-        }
-    }
-
-    // Anonymous object inside of suspend lambda.
-    suspend {
-        with(object : Any() {
-            val captured = args
-            inner class Inner
-            val innerKClass = Inner::class
-        }) {
-            checkClass(
-                    clazz = this::class,
-                    expectedQualifiedName = null,
-                    expectedSimpleName = null,
-                    expectedToStringName = "class codegen.kclass.kclass0.checkAnonymousObjects\$6\$1",
-                    expectedInstance = this,
-                    expectedNotInstance = Any()
-            )
-            checkClass(
-                    clazz = this.innerKClass,
-                    expectedQualifiedName = null,
-                    expectedSimpleName = "Inner",
-                    expectedToStringName = "class codegen.kclass.kclass0.checkAnonymousObjects\$6\$1\$Inner",
                     expectedInstance = this.Inner(),
                     expectedNotInstance = Any()
             )
@@ -370,6 +378,16 @@ private fun checkAnonymousObjects(args: Array<String>) {
         }
     }
     ::suspendFunWithAnonymousObject.runCoroutine()
+
+    val hasFoo = getHasFoo("zzz")
+    checkClass(
+            hasFoo::class,
+            expectedQualifiedName = null,
+            expectedSimpleName = null,
+            expectedToStringName = "class codegen.kclass.kclass0.Kclass0Kt$1",
+            expectedInstance = hasFoo,
+            expectedNotInstance = Any()
+    )
 }
 
 private fun checkAnonymousObjectsAssignedToProperty(args: Array<String>) {
@@ -383,7 +401,7 @@ private fun checkAnonymousObjectsAssignedToProperty(args: Array<String>) {
             clazz = obj::class,
             expectedQualifiedName = null,
             expectedSimpleName = null,
-            expectedToStringName = "class codegen.kclass.kclass0.checkAnonymousObjectsAssignedToProperty\$obj\$1",
+            expectedToStringName = "class codegen.kclass.kclass0.checkAnonymousObjectsAssignedToProperty\$1",
             expectedInstance = obj,
             expectedNotInstance = Any()
     )
@@ -391,7 +409,7 @@ private fun checkAnonymousObjectsAssignedToProperty(args: Array<String>) {
             clazz = obj.innerKClass,
             expectedQualifiedName = null,
             expectedSimpleName = "Inner",
-            expectedToStringName = "class codegen.kclass.kclass0.checkAnonymousObjectsAssignedToProperty\$obj\$1\$Inner",
+            expectedToStringName = "class codegen.kclass.kclass0.checkAnonymousObjectsAssignedToProperty\$1\$Inner",
             expectedInstance = obj.Inner(),
             expectedNotInstance = Any()
     )
@@ -407,7 +425,7 @@ private fun checkAnonymousObjectsAssignedToProperty(args: Array<String>) {
                 clazz = obj::class,
                 expectedQualifiedName = null,
                 expectedSimpleName = null,
-                expectedToStringName = "class codegen.kclass.kclass0.checkAnonymousObjectsAssignedToProperty\$1\$obj\$1",
+                expectedToStringName = "class codegen.kclass.kclass0.checkAnonymousObjectsAssignedToProperty\$2\$1",
                 expectedInstance = obj,
                 expectedNotInstance = Any()
         )
@@ -415,7 +433,7 @@ private fun checkAnonymousObjectsAssignedToProperty(args: Array<String>) {
                 clazz = obj.innerKClass,
                 expectedQualifiedName = null,
                 expectedSimpleName = "Inner",
-                expectedToStringName = "class codegen.kclass.kclass0.checkAnonymousObjectsAssignedToProperty\$1\$obj\$1\$Inner",
+                expectedToStringName = "class codegen.kclass.kclass0.checkAnonymousObjectsAssignedToProperty\$2\$1\$Inner",
                 expectedInstance = obj.Inner(),
                 expectedNotInstance = Any()
         )
@@ -432,7 +450,7 @@ private fun checkAnonymousObjectsAssignedToProperty(args: Array<String>) {
                 clazz = obj::class,
                 expectedQualifiedName = null,
                 expectedSimpleName = null,
-                expectedToStringName = "class codegen.kclass.kclass0.checkAnonymousObjectsAssignedToProperty\$2\$obj\$1",
+                expectedToStringName = "class codegen.kclass.kclass0.checkAnonymousObjectsAssignedToProperty\$3\$1",
                 expectedInstance = obj,
                 expectedNotInstance = Any()
         )
@@ -440,7 +458,7 @@ private fun checkAnonymousObjectsAssignedToProperty(args: Array<String>) {
                 clazz = obj.innerKClass,
                 expectedQualifiedName = null,
                 expectedSimpleName = "Inner",
-                expectedToStringName = "class codegen.kclass.kclass0.checkAnonymousObjectsAssignedToProperty\$2\$obj\$1\$Inner",
+                expectedToStringName = "class codegen.kclass.kclass0.checkAnonymousObjectsAssignedToProperty\$3\$1\$Inner",
                 expectedInstance = obj.Inner(),
                 expectedNotInstance = Any()
         )
@@ -457,7 +475,7 @@ private fun checkAnonymousObjectsAssignedToProperty(args: Array<String>) {
                 clazz = obj::class,
                 expectedQualifiedName = null,
                 expectedSimpleName = null,
-                expectedToStringName = "class codegen.kclass.kclass0.checkAnonymousObjectsAssignedToProperty\$3\$obj\$1",
+                expectedToStringName = "class codegen.kclass.kclass0.checkAnonymousObjectsAssignedToProperty\$4",
                 expectedInstance = obj,
                 expectedNotInstance = Any()
         )
@@ -465,7 +483,7 @@ private fun checkAnonymousObjectsAssignedToProperty(args: Array<String>) {
                 clazz = obj.innerKClass,
                 expectedQualifiedName = null,
                 expectedSimpleName = "Inner",
-                expectedToStringName = "class codegen.kclass.kclass0.checkAnonymousObjectsAssignedToProperty\$3\$obj\$1\$Inner",
+                expectedToStringName = "class codegen.kclass.kclass0.checkAnonymousObjectsAssignedToProperty\$4\$Inner",
                 expectedInstance = obj.Inner(),
                 expectedNotInstance = Any()
         )
@@ -482,7 +500,7 @@ private fun checkAnonymousObjectsAssignedToProperty(args: Array<String>) {
                 clazz = obj::class,
                 expectedQualifiedName = null,
                 expectedSimpleName = null,
-                expectedToStringName = "class codegen.kclass.kclass0.checkAnonymousObjectsAssignedToProperty\$4\$obj\$1",
+                expectedToStringName = "class codegen.kclass.kclass0.checkAnonymousObjectsAssignedToProperty\$5\$1",
                 expectedInstance = obj,
                 expectedNotInstance = Any()
         )
@@ -490,7 +508,7 @@ private fun checkAnonymousObjectsAssignedToProperty(args: Array<String>) {
                 clazz = obj.innerKClass,
                 expectedQualifiedName = null,
                 expectedSimpleName = "Inner",
-                expectedToStringName = "class codegen.kclass.kclass0.checkAnonymousObjectsAssignedToProperty\$4\$obj\$1\$Inner",
+                expectedToStringName = "class codegen.kclass.kclass0.checkAnonymousObjectsAssignedToProperty\$5\$1\$Inner",
                 expectedInstance = obj.Inner(),
                 expectedNotInstance = Any()
         )
@@ -509,7 +527,7 @@ private fun checkAnonymousObjectsAssignedToProperty(args: Array<String>) {
                 clazz = obj::class,
                 expectedQualifiedName = null,
                 expectedSimpleName = null,
-                expectedToStringName = "class codegen.kclass.kclass0.checkAnonymousObjectsAssignedToProperty\$suspendFunWithAnonymousObject\$obj\$1",
+                expectedToStringName = "class codegen.kclass.kclass0.checkAnonymousObjectsAssignedToProperty\$suspendFunWithAnonymousObject\$2",
                 expectedInstance = obj,
                 expectedNotInstance = Any()
         )
@@ -517,7 +535,7 @@ private fun checkAnonymousObjectsAssignedToProperty(args: Array<String>) {
                 clazz = obj.innerKClass,
                 expectedQualifiedName = null,
                 expectedSimpleName = "Inner",
-                expectedToStringName = "class codegen.kclass.kclass0.checkAnonymousObjectsAssignedToProperty\$suspendFunWithAnonymousObject\$obj\$1\$Inner",
+                expectedToStringName = "class codegen.kclass.kclass0.checkAnonymousObjectsAssignedToProperty\$suspendFunWithAnonymousObject\$2\$Inner",
                 expectedInstance = obj.Inner(),
                 expectedNotInstance = Any()
         )
@@ -533,7 +551,7 @@ private fun checkFunctionReferences() {
             clazz = ref::class,
             expectedQualifiedName = null,
             expectedSimpleName = null,
-            expectedToStringName = "class codegen.kclass.kclass0.checkFunctionReferences\$ref\$1",
+            expectedToStringName = "class codegen.kclass.kclass0.checkFunctionReferences\$1",
             expectedInstance = ref,
             expectedNotInstance = Any()
     )
@@ -589,20 +607,20 @@ private fun checkClass(
         expectedQualifiedName: String?, expectedSimpleName: String?, expectedToStringName: String,
         expectedInstance: Any, expectedNotInstance: Any?
 ) {
-    assertEquals(clazz.qualifiedName, expectedQualifiedName)
-    assertEquals(clazz.simpleName, expectedSimpleName)
-    assertEquals(clazz.toString(), expectedToStringName)
+    assertEquals(expectedQualifiedName, clazz.qualifiedName)
+    assertEquals(expectedSimpleName, clazz.simpleName)
+    assertEquals(expectedToStringName, clazz.toString())
 
     assertTrue(clazz.isInstance(expectedInstance))
     if (expectedNotInstance != null) assertTrue(!clazz.isInstance(expectedNotInstance))
 }
 
 private fun checkInstanceClass(instance: Any, clazz: KClass<*>) {
-    assertEquals(instance::class, clazz)
+    assertEquals(clazz, instance::class)
 }
 
 private inline fun <reified T> checkReifiedClass(expectedClass: KClass<*>) {
-    assertEquals(T::class, expectedClass)
+    assertEquals(expectedClass, T::class)
 }
 
 private inline fun <reified T> checkReifiedClass2(expectedClass: KClass<*>) {

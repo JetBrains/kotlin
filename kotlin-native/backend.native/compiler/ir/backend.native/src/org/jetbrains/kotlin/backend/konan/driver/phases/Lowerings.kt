@@ -101,7 +101,7 @@ private val sharedVariablesPhase = createFileLoweringPhase(
         ::SharedVariablesLowering,
         name = "SharedVariables",
         description = "Shared variable lowering",
-        prerequisite = setOf(lateinitPhase)
+//        prerequisite = setOf(lateinitPhase)
 )
 
 private val lowerOuterThisInInlineFunctionsPhase = createFileLoweringPhase(
@@ -133,7 +133,7 @@ private val extractLocalClassesFromInlineBodies = createFileLoweringPhase(
         },
         name = "ExtractLocalClassesFromInlineBodies",
         description = "Extraction of local classes from inline bodies",
-        prerequisite = setOf(sharedVariablesPhase), // TODO: add "soft" dependency on inventNamesForLocalClasses
+//        prerequisite = setOf(sharedVariablesPhase), // TODO: add "soft" dependency on inventNamesForLocalClasses
 )
 
 private val wrapInlineDeclarationsWithReifiedTypeParametersLowering = createFileLoweringPhase(
@@ -509,7 +509,6 @@ private fun PhaseEngine<NativeGenerationState>.getAllLowerings() = listOfNotNull
         lateinitPhase,
         sharedVariablesPhase,
         lowerOuterThisInInlineFunctionsPhase,
-        inventNamesForLocalClasses,
         extractLocalClassesFromInlineBodies,
         wrapInlineDeclarationsWithReifiedTypeParametersLowering,
         inlinePhase,
@@ -528,6 +527,7 @@ private fun PhaseEngine<NativeGenerationState>.getAllLowerings() = listOfNotNull
         stringConcatenationTypeNarrowingPhase.takeIf { context.config.optimizationsEnabled },
         enumConstructorsPhase,
         initializersPhase,
+        inventNamesForLocalClasses,
         localFunctionsPhase,
         volatilePhase,
         tailrecPhase,
