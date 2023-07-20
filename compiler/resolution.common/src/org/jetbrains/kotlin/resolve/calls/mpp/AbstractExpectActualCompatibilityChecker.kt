@@ -86,7 +86,7 @@ object AbstractExpectActualCompatibilityChecker {
             else -> error("Incorrect actual classifier for $expectClassSymbol: $actualClassLikeSymbol")
         }
 
-        if (expectClassSymbol.classKind != actualClass.classKind) return Incompatible.ClassKind
+        if (!areCompatibleClassKinds(expectClassSymbol, actualClass)) return Incompatible.ClassKind
 
         if (!equalBy(expectClassSymbol, actualClass) { listOf(it.isCompanion, it.isInner, it.isInline || it.isValue) }) {
             return Incompatible.ClassModifiers
@@ -440,6 +440,20 @@ object AbstractExpectActualCompatibilityChecker {
         return true
     }
 
+    context(ExpectActualMatchingContext<*>)
+    private fun areCompatibleClassKinds(
+        expectClass: RegularClassSymbolMarker,
+        actualClass: RegularClassSymbolMarker,
+    ): Boolean {
+        if (expectClass.classKind == actualClass.classKind) return true
+
+        if (expectClass.classKind == ClassKind.CLASS && expectClass.isFinal && expectClass.isCtorless) {
+            if (actualClass.classKind == ClassKind.OBJECT) return true
+        }
+
+        return false
+    }
+
     private fun areCompatibleModalities(
         expectModality: Modality?,
         actualModality: Modality?,
@@ -606,4 +620,12 @@ object AbstractExpectActualCompatibilityChecker {
             is TypeParameterSymbolMarker -> parameterName
             else -> error("Unsupported declaration: $this")
         }
+
+    context(ExpectActualMatchingContext<*>)
+    private val RegularClassSymbolMarker.isCtorless: Boolean
+        get() = getMembersForExpectClass(SpecialNames.INIT).isEmpty()
+
+    context(ExpectActualMatchingContext<*>)
+    private val RegularClassSymbolMarker.isFinal: Boolean
+        get() = modality == Modality.FINAL
 }
