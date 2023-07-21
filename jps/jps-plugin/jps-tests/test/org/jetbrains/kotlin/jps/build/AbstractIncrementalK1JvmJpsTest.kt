@@ -12,7 +12,8 @@ abstract class AbstractIncrementalK1JvmJpsTest(
 ) : AbstractIncrementalJvmJpsTest(allowNoFilesWithSuffixInTestData = allowNoFilesWithSuffixInTestData) {
     override fun updateCommandLineArguments(arguments: CommonCompilerArguments) {
         if (KotlinVersion.CURRENT.major >= 2) {
-            arguments.languageVersion = "1.9"
+//            arguments.languageVersion = "1.9"
+            additionalCommandLineArguments = additionalCommandLineArguments + listOf("-language-version=1.9")
         }
         super.updateCommandLineArguments(arguments)
     }
