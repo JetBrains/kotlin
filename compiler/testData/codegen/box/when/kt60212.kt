@@ -30,3 +30,5 @@ fun test(b0: Int) = when {
     b0 and 0xf8 == 0xf0 -> 3
     else -> -1
 }
+
+fun fail(message: String): Nothing = throw Exception(message)
