@@ -44,6 +44,17 @@ internal fun BodyGenerator.tryGenerateOptimisedWhen(expression: IrWhen, symbols:
     if (extractedBranches.isEmpty()) return false
     val subject = extractedBranches[0].conditions[0].condition.getValueArgument(0) ?: return false
 
+    // Do the optimization only if all conditions read and compare the same var or val
+    // TODO: consider supporting other cases
+    if (subject !is IrGetValue) return false
+    val subjectValue = subject.symbol
+    val allConditionsReadsSameValue = !extractedBranches.all { branch ->
+        branch.conditions.all { whenCondition ->
+            (whenCondition.condition.getValueArgument(0) as? IrGetValue)?.symbol == subjectValue
+        }
+    }
+    if (allConditionsReadsSameValue) return false
+
     // Check all kinds are the same
     for (branch in extractedBranches) {
         //TODO: Support all primitive types
