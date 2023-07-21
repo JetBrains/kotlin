@@ -1471,15 +1471,7 @@ class ComposerParamSignatureTests(useFir: Boolean) : AbstractCodegenSignatureTes
             public final class TestKt {
               public final static Example(LA;)V
               public final static Usage()V
-              final static INNERCLASS TestKt%Usage%1 null null
-            }
-            final class TestKt%Usage%1 implements A {
-              <init>()V
-              public final compute(I)V
-              static <clinit>()V
-              public final static LTestKt%Usage%1; INSTANCE
-              OUTERCLASS TestKt Usage ()V
-              final static INNERCLASS TestKt%Usage%1 null null
+              private final static Usage%lambda%0(I)V
             }
         """
     )
@@ -1520,6 +1512,93 @@ class ComposerParamSignatureTests(useFir: Boolean) : AbstractCodegenSignatureTes
               OUTERCLASS TestKt%Example%1 compute (ILandroidx/compose/runtime/Composer;I)V
               final static INNERCLASS TestKt%Example%1 null null
               final static INNERCLASS TestKt%Example%1%compute%1 null null
+            }
+        """
+    )
+
+    @Test
+    fun testFunInterfacesInComposableCall() = checkApi(
+        """
+            fun interface MeasurePolicy {
+                fun compute(value: Int): Unit
+            }
+
+            @NonRestartableComposable
+            @Composable fun Text() {
+                Layout { value ->
+                    println(value)
+                }
+            }
+
+            @Composable inline fun Layout(policy: MeasurePolicy) {
+                policy.compute(0)
+            }
+        """,
+        """
+            public abstract interface MeasurePolicy {
+              public abstract compute(I)V
+            }
+            public final class TestKt {
+              public final static Text(Landroidx/compose/runtime/Composer;I)V
+              public final static Layout(LMeasurePolicy;Landroidx/compose/runtime/Composer;I)V
+              private final static Text%lambda%0(I)V
+            }
+        """,
+    )
+
+    @Test
+        fun testComposableFunInterfacesInVariance() = checkApi(
+        """
+           import androidx.compose.runtime.*
+
+            fun interface Consumer<T> {
+                @Composable fun consume(t: T)
+            }
+
+            class Repro<T : Any>() {
+                fun test(consumer: Consumer<in T>) {}
+            }
+
+            fun test() {
+                Repro<String>().test { string ->
+                    println(string)
+                }
+            }
+        """,
+        """
+            public abstract interface Consumer {
+              public abstract consume(Ljava/lang/Object;Landroidx/compose/runtime/Composer;I)V
+            }
+            public final class Repro {
+              public <init>()V
+              public final test(LConsumer;)V
+              static <clinit>()V
+              public final static I %stable
+            }
+            public final class TestKt {
+              public final static test()V
+              final static INNERCLASS TestKt%test%1 null null
+            }
+            final class TestKt%test%1 implements Consumer {
+              <init>()V
+              public final consume(Ljava/lang/String;Landroidx/compose/runtime/Composer;I)V
+              public synthetic bridge consume(Ljava/lang/Object;Landroidx/compose/runtime/Composer;I)V
+              static <clinit>()V
+              public final static LTestKt%test%1; INSTANCE
+              OUTERCLASS TestKt test ()V
+              final static INNERCLASS TestKt%test%1 null null
+              final static INNERCLASS TestKt%test%1%consume%1 null null
+            }
+            final class TestKt%test%1%consume%1 extends kotlin/jvm/internal/Lambda implements kotlin/jvm/functions/Function2 {
+              <init>(LTestKt%test%1;Ljava/lang/String;I)V
+              public final invoke(Landroidx/compose/runtime/Composer;I)V
+              public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+              final synthetic LTestKt%test%1; %tmp0_rcvr
+              final synthetic Ljava/lang/String; %string
+              final synthetic I %%changed
+              OUTERCLASS TestKt%test%1 consume (Ljava/lang/String;Landroidx/compose/runtime/Composer;I)V
+              final static INNERCLASS TestKt%test%1 null null
+              final static INNERCLASS TestKt%test%1%consume%1 null null
             }
         """
     )
