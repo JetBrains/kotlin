@@ -1,3 +1,5 @@
+// IGNORE_BACKEND: JVM
+
 fun constant(): String {
     return """
         |Hello,
