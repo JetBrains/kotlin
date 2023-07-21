@@ -18,11 +18,6 @@ sealed class ResolutionMode(val forceFullCompletion: Boolean) {
         }
 
         data object Delegate : ContextDependent()
-
-        /**
-         * Forces array literals to be transformed to arrayOf calls.
-         */
-        data object TransformingArrayLiterals : ContextDependent()
     }
 
     data object ContextIndependent : ResolutionMode(forceFullCompletion = true)

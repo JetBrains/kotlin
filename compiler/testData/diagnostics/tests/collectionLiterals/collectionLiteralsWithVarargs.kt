@@ -31,6 +31,9 @@ fun test5() {}
 @Ann6(*[])
 fun test6() {}
 
+@Ann7(1, 2)
+fun test7() {}
+
 annotation class AnnArray(val a: Array<String>)
 
 @AnnArray(<!NON_VARARG_SPREAD_ERROR!>*<!>["/"])

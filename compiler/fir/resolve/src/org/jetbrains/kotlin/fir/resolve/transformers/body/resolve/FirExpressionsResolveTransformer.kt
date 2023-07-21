@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
@@ -31,7 +30,6 @@ import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.inference.FirStubInferenceSession
-import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.replaceLambdaArgumentInvocationKinds
 import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperator
@@ -47,7 +45,6 @@ import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.resolve.ArrayFqNames
 import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.ConstantValueKind
@@ -1634,27 +1631,29 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         )
     }
 
-    override fun transformArrayOfCall(arrayOfCall: FirArrayOfCall, data: ResolutionMode): FirStatement =
+    override fun transformArrayLiteral(arrayOfCall: FirArrayOfCall, data: ResolutionMode): FirStatement =
         whileAnalysing(session, arrayOfCall) {
-            if (data is ResolutionMode.ContextDependent.Default) {
-                // Argument for primitive array parameter in annotation call or argument in non-annotation call (unsupported).
-                arrayOfCall.transformChildren(transformer, data)
-                arrayOfCall
-            } else if (
-                data is ResolutionMode.WithExpectedType && !data.expectedTypeRef.coneType.isPrimitiveOrUnsignedArray ||
-                data is ResolutionMode.ContextDependent.TransformingArrayLiterals
-            ) {
-                // Default value of Array<T> parameter or argument for Array<T> parameter in annotation call.
-                arrayOfCall.transformChildren(transformer, ResolutionMode.ContextDependent)
-                val call = components.syntheticCallGenerator.generateSyntheticArrayOfCall(arrayOfCall, resolutionContext)
-                callCompleter.completeCall(call, data)
-                arrayOfCallTransformer.transformFunctionCall(call, session)
-            } else {
-                // Default value of primitive array parameter or other unsupported usage.
-                val syntheticIdCall = components.syntheticCallGenerator.generateSyntheticIdCall(arrayOfCall, resolutionContext)
-                arrayOfCall.transformChildren(transformer, ResolutionMode.ContextDependent)
-                callCompleter.completeCall(syntheticIdCall, data)
-                arrayOfCall
+            when (data) {
+                is ResolutionMode.ContextDependent.Default -> {
+                    // Argument in non-annotation call (unsupported) or if type of array parameter is unresolved.
+                    arrayOfCall.transformChildren(transformer, data)
+                    arrayOfCall
+                }
+                is ResolutionMode.WithExpectedType -> {
+                    // Default value of array parameter (Array<T> or primitive array such as IntArray, FloatArray, ...)
+                    // or argument for array parameter in annotation call.
+                    arrayOfCall.transformChildren(transformer, ResolutionMode.ContextDependent)
+                    val call = components.syntheticCallGenerator.generateSyntheticArrayOfCall(arrayOfCall, data.expectedTypeRef, resolutionContext)
+                    callCompleter.completeCall(call, data)
+                    arrayOfCallTransformer.transformFunctionCall(call, session)
+                }
+                else -> {
+                    // Other unsupported usage.
+                    val syntheticIdCall = components.syntheticCallGenerator.generateSyntheticIdCall(arrayOfCall, resolutionContext)
+                    arrayOfCall.transformChildren(transformer, ResolutionMode.ContextDependent)
+                    callCompleter.completeCall(syntheticIdCall, data)
+                    arrayOfCall
+                }
             }
         }
 

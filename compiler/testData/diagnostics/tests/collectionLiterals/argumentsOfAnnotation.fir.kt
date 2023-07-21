@@ -6,7 +6,7 @@ fun test1() {}
 @Foo([], [], [])
 fun test2() {}
 
-@Foo([1f], <!ARGUMENT_TYPE_MISMATCH!>[' ']<!>, [1])
+@Foo([<!ARGUMENT_TYPE_MISMATCH!>1f<!>], <!ARGUMENT_TYPE_MISMATCH!>[' ']<!>, [<!ARGUMENT_TYPE_MISMATCH!>1<!>])
 fun test3() {}
 
 @Foo(c = [1f], b = [""], a = [1])

@@ -8,7 +8,7 @@ annotation class Ann4(vararg val a: String = ["/"])
 annotation class Ann5(vararg val a: Ann4 = [])
 annotation class Ann6(vararg val a: Ann4 = [Ann4(*["a", "b"])])
 
-annotation class Ann7(vararg val a: Long = <!INITIALIZER_TYPE_MISMATCH!>[1L, null, ""]<!>)
+annotation class Ann7(vararg val a: Long = [1L, <!NULL_FOR_NONNULL_TYPE!>null<!>, <!ARGUMENT_TYPE_MISMATCH!>""<!>])
 
 @Ann1(*[])
 fun test1_0() {}
@@ -30,6 +30,9 @@ fun test5() {}
 
 @Ann6(*[])
 fun test6() {}
+
+@Ann7(1, 2)
+fun test7() {}
 
 annotation class AnnArray(val a: Array<String>)
 

@@ -21,6 +21,6 @@ annotation class Base(
 )
 
 annotation class Err(
-        val a: IntArray = <!INITIALIZER_TYPE_MISMATCH!>[1L]<!>,
+        val a: IntArray = [<!ARGUMENT_TYPE_MISMATCH!>1L<!>],
         val b: Array<String> = <!TYPE_MISMATCH, TYPE_MISMATCH!>[1]<!>
 )

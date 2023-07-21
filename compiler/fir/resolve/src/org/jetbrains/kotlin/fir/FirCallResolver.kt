@@ -530,24 +530,34 @@ class FirCallResolver(
             constructorSymbol?.lazyResolveToPhase(FirResolvePhase.TYPES)
 
             if (constructorSymbol != null && annotation.arguments.isNotEmpty()) {
-                // We want to "desugar" array literal arguments whose expected type is not a primitive or unsigned array to
-                // function calls to arrayOf so that we can properly complete them eventually.
+                // We want to "desugar" array literal arguments to arrayOf, intArrayOf, floatArrayOf and other *arrayOf* calls
+                // so that we can properly complete them eventually.
                 // In order to find out what the expected type is, we need to run argument mapping.
-                // However, we don't want to resolve them with expectedType because we don't want to force completion before the whole
-                // call is completed so that type variables are preserved.
-                // We therefore use a special resolution mode that triggers array literal desugaring but doesn't force completion.
+                // We don't want to force full completion before the whole call is completed so that type variables are preserved.
+                // But we need to pass expectType to figure out the correct *arrayOf* function (because Array<T> and primitive arrays can't be matched).
                 val mapping = transformer.resolutionContext.bodyResolveComponents.mapArguments(
                     annotation.arguments, constructorSymbol.fir, originScope = null, callSiteIsOperatorCall = false,
                 )
                 val argumentsToParameters = mapping.toArgumentToParameterMapping()
                 annotation.replaceArgumentList(buildArgumentList {
                     source = annotation.argumentList.source
-                    annotation.arguments.mapTo(arguments) {
-                        val isPrimitiveOrUnsignedArrayType =
-                            argumentsToParameters[it]?.returnTypeRef?.coneType?.isPrimitiveOrUnsignedArray == true
-                        val resolutionMode =
-                            if (!isPrimitiveOrUnsignedArrayType) ResolutionMode.ContextDependent.TransformingArrayLiterals else ResolutionMode.ContextDependent.Default
-                        it.transformSingle(transformer, resolutionMode)
+                    annotation.arguments.mapTo(arguments) { arg ->
+                        val resolutionMode = if (arg.unwrapArgument() is FirArrayOfCall) {
+                            (argumentsToParameters[arg]?.returnTypeRef as? FirResolvedTypeRef)?.let {
+                                // Enabling expectedTypeMismatchIsReportedInChecker clarifies error messages:
+                                // It will be reported single ARGUMENT_TYPE_MISMATCH on the array literal in checkApplicabilityForArgumentType
+                                // instead of several TYPE_MISMATCH for every mismatched argument.
+                                ResolutionMode.WithExpectedType(
+                                    it,
+                                    forceFullCompletion = false,
+                                    expectedTypeMismatchIsReportedInChecker = true
+                                )
+                            } ?: ResolutionMode.ContextDependent.Default
+                        } else {
+                            ResolutionMode.ContextDependent
+                        }
+
+                        arg.transformSingle(transformer, resolutionMode)
                     }
                 })
             } else {
