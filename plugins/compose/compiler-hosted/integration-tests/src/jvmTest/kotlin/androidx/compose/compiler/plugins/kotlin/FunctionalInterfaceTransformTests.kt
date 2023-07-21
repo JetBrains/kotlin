@@ -309,7 +309,7 @@ class FunctionalInterfaceTransformTests(
             @Composable
             fun Test(int: Int, %composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>)
-              sourceInformation(%composer, "C(Test)<{>,<Exampl...>:Test.kt")
+              sourceInformation(%composer, "C(Test)<Exampl...>:Test.kt")
               val %dirty = %changed
               if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(int)) 0b0100 else 0b0010
@@ -318,11 +318,16 @@ class FunctionalInterfaceTransformTests(
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
-                Example(remember(int, {
-                  Consumer { it: Int ->
-                    println(int)
+                Example(<block>{
+                  %composer.startReplaceableGroup(<>)
+                  val tmpCache = %composer.cache(%composer.changed(int)) {
+                    Consumer { it: Int ->
+                      println(int)
+                    }
                   }
-                }, %composer, 0b1110 and %dirty), %composer, 0)
+                  %composer.endReplaceableGroup()
+                  tmpCache
+                }, %composer, 0)
                 if (isTraceInProgress()) {
                   traceEventEnd()
                 }

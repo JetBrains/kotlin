@@ -1249,14 +1249,13 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
                 }
                 used(<block>{
                   %composer.startReplaceableGroup(<>)
-                  sourceInformation(%composer, "C(Test):Test.kt")
-                  val tmp0_group = %composer.cache(%dirty and 0b1110 === 0b0100) {
+                  val tmpCache = %composer.cache(%composer.changed(a)) {
                     {
                       a
                     }
                   }
                   %composer.endReplaceableGroup()
-                  tmp0_group
+                  tmpCache
                 })
                 if (isTraceInProgress()) {
                   traceEventEnd()
@@ -1646,7 +1645,7 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
             @Composable
             fun Test(a: Boolean, visible: Boolean, onDismiss: Function0<Unit>, %composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>)
-              sourceInformation(%composer, "C(Test)P(!1,2):Test.kt")
+              sourceInformation(%composer, "C(Test)P(!1,2)<someCo...>:Test.kt")
               val %dirty = %changed
               if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
@@ -1665,25 +1664,21 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
                   val a = someComposableValue(%composer, 0)
                   used(a)
                   val m = Modifier()
-                  val dismissModifier = <block>{
-                    val tmp1_group = if (visible) {
-                      m.pointerInput(Unit, <block>{
-                        %composer.startReplaceableGroup(<>)
-                        sourceInformation(%composer, "C(Test)P(!1,2)<someCo...>:Test.kt")
-                        val tmp0_group = %composer.cache(%dirty and 0b001110000000 === 0b000100000000) {
-                          {
-                            detectTapGestures {
-                              onDismiss()
-                            }
+                  val dismissModifier = if (visible) {
+                    m.pointerInput(Unit, <block>{
+                      %composer.startReplaceableGroup(<>)
+                      val tmpCache = %composer.cache(%composer.changedInstance(onDismiss)) {
+                        {
+                          detectTapGestures {
+                            onDismiss()
                           }
                         }
-                        %composer.endReplaceableGroup()
-                        tmp0_group
-                      })
-                    } else {
-                      m
-                    }
-                    tmp1_group
+                      }
+                      %composer.endReplaceableGroup()
+                      tmpCache
+                    })
+                  } else {
+                    m
                   }
                   used(dismissModifier)
                 }

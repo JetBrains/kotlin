@@ -105,6 +105,8 @@ object ComposeFqNames {
     val ReadOnlyComposable = ComposeClassIds.ReadOnlyComposable.asSingleFqName()
     val ExplicitGroupsComposable = fqNameFor("ExplicitGroupsComposable")
     val NonRestartableComposable = fqNameFor("NonRestartableComposable")
+    val NonSkippableComposable = fqNameFor("NonSkippableComposable")
+    val DontMemoize = fqNameFor("DontMemoize")
     val composableLambdaType = ComposeClassIds.ComposableLambda.asSingleFqName()
     val composableLambda = ComposeCallableIds.composableLambda.asSingleFqName()
     val composableLambdaFullName =
