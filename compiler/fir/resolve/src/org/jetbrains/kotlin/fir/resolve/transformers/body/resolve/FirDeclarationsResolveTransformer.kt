@@ -185,8 +185,8 @@ open class FirDeclarationsResolveTransformer(
                     } else {
                         // Even though we're not going to resolve accessors themselves (so as to avoid resolve cycle, like KT-48634),
                         // we still need to resolve types in accessors (as per IMPLICIT_TYPES_BODY_RESOLVE contract).
-                        property.getter?.transformTypeWithPropertyType(propertyTypeRefAfterResolve)
-                        property.setter?.transformTypeWithPropertyType(propertyTypeRefAfterResolve)
+                        property.getter?.transformTypeWithPropertyType(propertyTypeRefAfterResolve, transformOnlyImplicitTypes = true)
+                        property.setter?.transformTypeWithPropertyType(propertyTypeRefAfterResolve, transformOnlyImplicitTypes = true)
                         property.setter?.transformReturnTypeRef(transformer, withExpectedType(session.builtinTypes.unitType.type))
                     }
                 }
@@ -437,7 +437,7 @@ open class FirDeclarationsResolveTransformer(
         if (returnTypeRef is FirImplicitTypeRef) {
             storeVariableReturnType(this) // Here, we expect `this.returnTypeRef` is updated from the getter's return type
             // We need update type of getter for case when its type was approximated
-            getter?.transformTypeWithPropertyType(returnTypeRef, forceUpdateForNonImplicitTypes = true)
+            getter?.transformTypeWithPropertyType(returnTypeRef)
         }
 
         if (setterResolutionMode != SetterResolutionMode.SKIP) {
@@ -449,7 +449,7 @@ open class FirDeclarationsResolveTransformer(
         mayResolveSetterBody: Boolean,
     ) {
         setter?.let {
-            it.transformTypeWithPropertyType(returnTypeRef)
+            it.transformTypeWithPropertyType(returnTypeRef, transformOnlyImplicitTypes = true)
 
             if (mayResolveSetterBody) {
                 transformAccessor(it, this)
@@ -459,17 +459,17 @@ open class FirDeclarationsResolveTransformer(
 
     private fun FirPropertyAccessor.transformTypeWithPropertyType(
         propertyTypeRef: FirTypeRef,
-        forceUpdateForNonImplicitTypes: Boolean = false
+        transformOnlyImplicitTypes: Boolean = false
     ) {
         when {
             isGetter -> {
-                if (returnTypeRef is FirImplicitTypeRef || forceUpdateForNonImplicitTypes) {
+                if (!transformOnlyImplicitTypes || returnTypeRef is FirImplicitTypeRef) {
                     replaceReturnTypeRef(propertyTypeRef.copyWithNewSource(returnTypeRef.source))
                 }
             }
             isSetter -> {
                 val valueParameter = valueParameters.firstOrNull() ?: return
-                if (valueParameter.returnTypeRef is FirImplicitTypeRef) {
+                if (!transformOnlyImplicitTypes || valueParameter.returnTypeRef is FirImplicitTypeRef) {
                     valueParameter.replaceReturnTypeRef(propertyTypeRef.copyWithNewSource(returnTypeRef.source))
                 }
             }
