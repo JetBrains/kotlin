@@ -149,9 +149,7 @@ abstract class FirAbstractSessionFactory {
         // dependsOnDependencies can actualize declarations from their dependencies. Because actual declarations can be more specific
         // (e.g. have additional supertypes), the modules must be ordered from most specific (i.e. actual) to most generic (i.e. expect)
         // to prevent false positive resolution errors (see KT-57369 for an example).
-        val dependsOnDependencies = topologicalSort(moduleData.dependsOnDependencies) { it.dependsOnDependencies }
-
-        return (moduleData.dependencies + moduleData.friendDependencies + dependsOnDependencies)
+        return (moduleData.dependencies + moduleData.friendDependencies + moduleData.allDependsOnDependencies)
             .mapNotNull { sessionProvider?.getSession(it) }
             .map { it.symbolProvider }
             .flatMap { it.flatten(visited, collectSourceProviders = it.session.kind == FirSession.Kind.Source) }

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.container.topologicalSort
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.*
@@ -34,18 +35,22 @@ abstract class FirModuleVisibilityChecker : FirSessionComponent {
     abstract fun isInFriendModule(declaration: FirMemberDeclaration): Boolean
 
     class Standard(val session: FirSession) : FirModuleVisibilityChecker() {
+        private val useSiteModuleData = session.moduleData
+        private val allDependsOnDependencies = useSiteModuleData.allDependsOnDependencies
+
         override fun isInFriendModule(declaration: FirMemberDeclaration): Boolean {
-            val useSiteModuleData = session.moduleData
             return when (declaration.moduleData) {
                 useSiteModuleData,
                 in useSiteModuleData.friendDependencies,
-                in useSiteModuleData.dependsOnDependencies -> true
+                in allDependsOnDependencies -> true
 
                 else -> false
             }
         }
     }
 }
+
+val FirModuleData.allDependsOnDependencies: List<FirModuleData> get() = topologicalSort(dependsOnDependencies) { it.dependsOnDependencies }
 
 abstract class FirVisibilityChecker : FirSessionComponent {
     @NoMutableState

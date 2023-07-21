@@ -22185,6 +22185,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
             }
 
             @Test
+            @TestMetadata("dependsOnModule.kt")
+            public void testDependsOnModule() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/multimodule/dependsOnModule.kt");
+            }
+
+            @Test
             @TestMetadata("friendModule.kt")
             public void testFriendModule() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/multimodule/friendModule.kt");
