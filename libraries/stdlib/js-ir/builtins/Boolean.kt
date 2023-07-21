@@ -1,20 +1,20 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+
+// Auto-generated file. DO NOT EDIT!
 
 @file:Suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY", "UNUSED_PARAMETER")
 
 package kotlin
 
-/**
- * Represents a value which is either `true` or `false`. On the JVM, non-nullable values of this type are
- * represented as values of the primitive type `boolean`.
- */
+/** Represents a value which is either `true` or `false`. */
 public class Boolean private constructor() : Comparable<Boolean> {
-    /**
-     * Returns the inverse of this boolean.
-     */
+    @SinceKotlin("1.3")
+    companion object {}
+
+    /** Returns the inverse of this boolean. */
     @kotlin.internal.IntrinsicConstEvaluation
     public operator fun not(): Boolean
 
@@ -32,24 +32,18 @@ public class Boolean private constructor() : Comparable<Boolean> {
     @kotlin.internal.IntrinsicConstEvaluation
     public infix fun or(other: Boolean): Boolean
 
-    /**
-     * Performs a logical `xor` operation between this Boolean and the [other] one.
-     */
+    /** Performs a logical `xor` operation between this Boolean and the [other] one. */
     @kotlin.internal.IntrinsicConstEvaluation
     public infix fun xor(other: Boolean): Boolean
 
     @kotlin.internal.IntrinsicConstEvaluation
     public override fun compareTo(other: Boolean): Int
 
+    @kotlin.internal.IntrinsicConstEvaluation
+    public override fun toString(): String
 
     @kotlin.internal.IntrinsicConstEvaluation
     public override fun equals(other: Any?): Boolean
 
     public override fun hashCode(): Int
-
-    @kotlin.internal.IntrinsicConstEvaluation
-    public override fun toString(): String
-
-    @SinceKotlin("1.3")
-    companion object {}
 }

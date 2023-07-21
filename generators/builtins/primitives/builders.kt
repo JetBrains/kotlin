@@ -122,12 +122,17 @@ internal class ClassBuilder : AnnotatedAndDocumented(), PrimitiveBuilder {
     var isFinal: Boolean = false
     var name: String = ""
     private var constructorParam: MethodParameterBuilder? = null
+    private var superTypes: List<String> = emptyList()
     private var companionObject: CompanionObjectBuilder? = null
     private val methods: MutableList<MethodBuilder> = mutableListOf()
 
     fun constructorParam(init: MethodParameterBuilder.() -> Unit) {
         throwIfAlreadyInitialized(constructorParam, "constructorParam", "ClassBuilder")
         constructorParam = MethodParameterBuilder().apply(init)
+    }
+
+    fun superType(type: String) {
+        superTypes += type
     }
 
     fun companionObject(init: CompanionObjectBuilder.() -> Unit): CompanionObjectBuilder {
@@ -149,7 +154,7 @@ internal class ClassBuilder : AnnotatedAndDocumented(), PrimitiveBuilder {
 
             append("public ")
             if (isFinal) append("final ")
-            appendLine("class $name private constructor(${constructorParam?.build() ?: ""}) : Number(), Comparable<$name> {")
+            appendLine("class $name private constructor(${constructorParam?.build() ?: ""}) : ${superTypes.joinToString()} {")
 
             companionObject?.let { appendLine(it.build().shift()) }
             appendLine(methods.joinToString(separator = END_LINE + END_LINE) { it.build().shift() })
@@ -172,16 +177,20 @@ internal class CompanionObjectBuilder : AnnotatedAndDocumented(), PrimitiveBuild
         return buildString {
             printDocumentationAndAnnotations()
             if (isPublic) append("public ")
-            appendLine("companion object {")
-            appendLine(properties.joinToString(separator = END_LINE + END_LINE) { it.build().shift() })
-            appendLine("}")
+            if (properties.isEmpty()) {
+                appendLine("companion object {}")
+            } else {
+                appendLine("companion object {")
+                appendLine(properties.joinToString(separator = END_LINE + END_LINE) { it.build().shift() })
+                appendLine("}")
+            }
         }
     }
 }
 
 internal class MethodSignatureBuilder : PrimitiveBuilder {
     var isExternal: Boolean = false
-    var visibility: MethodVisibility = MethodVisibility.PUBLIC
+    var visibility: MethodVisibility? = MethodVisibility.PUBLIC
     var isOverride: Boolean = false
     var isInline: Boolean = false
     var isInfix: Boolean = false
@@ -210,7 +219,7 @@ internal class MethodSignatureBuilder : PrimitiveBuilder {
 
         return buildString {
             if (isExternal) append("external ")
-            append("${visibility.name.lowercase()} ")
+            visibility?.let { append("${it.name.lowercase()} ") }
             if (isOverride) append("override ")
             if (isInline) append("inline ")
             if (isInfix) append("infix ")

@@ -241,7 +241,7 @@ class NativePrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(w
             return this.uppercase(Locale.getDefault())
         }
 
-        private fun MethodBuilder.setAsExternal() {
+        internal fun MethodBuilder.setAsExternal() {
             annotations += "TypedIntrinsic(IntrinsicType.${methodName.toNativeOperator()})"
             modifySignature { isExternal = true }
         }

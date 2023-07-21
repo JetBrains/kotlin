@@ -279,11 +279,13 @@ class WasmPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(wri
                 methodName = "reinterpretAs${otherKind.capitalized}"
                 returnType = otherKind.capitalized
             }
-            "implementedAsIntrinsic".addAsSingleLineBody(bodyOnNewLine = true)
+            implementedAsIntrinsic.addAsSingleLineBody(bodyOnNewLine = true)
         }
     }
 
     companion object {
+        internal const val implementedAsIntrinsic = "implementedAsIntrinsic"
+
         private fun String.toWasmOperator(): String {
             return when (this) {
                 "plus" -> "ADD"
@@ -294,19 +296,20 @@ class WasmPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(wri
                 "shr" -> "SHR_S"
                 "ushr" -> "SHR_U"
                 "equals" -> "EQ"
+                "not" -> "EQZ"
                 else -> this.uppercase()
             }
         }
 
-        private fun MethodBuilder.implementAsIntrinsic(thisKind: PrimitiveType, methodName: String) {
+        internal fun MethodBuilder.implementAsIntrinsic(thisKind: PrimitiveType, methodName: String) {
             modifySignature { isInline = false }
             annotations += "WasmOp(WasmOp.${thisKind.prefixUppercase}_${methodName.toWasmOperator()})"
-            "implementedAsIntrinsic".addAsSingleLineBody(bodyOnNewLine = true)
+            implementedAsIntrinsic.addAsSingleLineBody(bodyOnNewLine = true)
         }
 
         private val PrimitiveType.prefixUppercase: String
             get() = when (this) {
-                PrimitiveType.BYTE, PrimitiveType.SHORT, PrimitiveType.INT -> "I32"
+                PrimitiveType.BYTE, PrimitiveType.SHORT, PrimitiveType.INT, PrimitiveType.BOOLEAN -> "I32"
                 PrimitiveType.LONG -> "I64"
                 PrimitiveType.FLOAT -> "F32"
                 PrimitiveType.DOUBLE -> "F64"

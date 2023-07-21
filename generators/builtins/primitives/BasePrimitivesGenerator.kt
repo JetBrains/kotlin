@@ -244,6 +244,8 @@ abstract class BasePrimitivesGenerator(private val writer: PrintWriter) : BuiltI
             klass {
                 appendDoc("Represents a ${typeDescriptions[thisKind]}.")
                 name = className
+                superType("Number()")
+                superType("Comparable<$name>")
                 generateCompanionObject(thisKind)
 
                 generateCompareTo(thisKind)
