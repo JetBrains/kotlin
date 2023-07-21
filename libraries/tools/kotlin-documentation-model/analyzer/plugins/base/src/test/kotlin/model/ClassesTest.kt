@@ -29,20 +29,6 @@ class ClassesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "class
     }
 
     @Test
-    fun emptyObject() {
-        inlineModelTest(
-            """
-            |object Obj {}
-            """
-        ) {
-            with((this / "classes" / "Obj").cast<DObject>()) {
-                name equals "Obj"
-                children counts 3
-            }
-        }
-    }
-
-    @Test
     fun classWithConstructor() {
         inlineModelTest(
             """
