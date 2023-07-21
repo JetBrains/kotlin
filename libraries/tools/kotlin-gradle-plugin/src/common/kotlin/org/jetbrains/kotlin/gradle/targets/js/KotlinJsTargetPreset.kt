@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.gradle.utils.runProjectConfigurationHealthCheckWhenE
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeAsciiOnly
 
+@TargetPresetsDeprecation
 open class KotlinJsTargetPreset(
     project: Project
 ) : KotlinOnlyTargetPreset<KotlinJsTarget, KotlinJsCompilation>(
@@ -46,7 +48,7 @@ open class KotlinJsTargetPreset(
             project,
             platformType
         ).apply {
-            this.irTarget = irPreset?.createTarget(
+            this.irTarget = irPreset?.createTargetInternal(
                 lowerCamelCaseName(
                     name.removeJsCompilerSuffix(KotlinJsCompilerType.LEGACY),
                     KotlinJsCompilerType.IR.lowerName
@@ -87,6 +89,7 @@ open class KotlinJsTargetPreset(
     }
 }
 
+@TargetPresetsDeprecation
 class KotlinJsSingleTargetPreset(
     project: Project
 ) : KotlinJsTargetPreset(

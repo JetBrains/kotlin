@@ -38,7 +38,8 @@ class MppDiagnosticsFunctionalTest {
     fun testDeprecatedJvmWithJavaPreset() {
         checkDiagnosticsWithMppProject("deprecatedJvmWithJavaPreset") {
             kotlin {
-                targetFromPreset(presets.getByName(KotlinJvmWithJavaTargetPreset.PRESET_NAME))
+                @Suppress("DEPRECATION")
+                targetFromPresetInternal(presets.getByName(KotlinJvmWithJavaTargetPreset.PRESET_NAME))
             }
         }
     }

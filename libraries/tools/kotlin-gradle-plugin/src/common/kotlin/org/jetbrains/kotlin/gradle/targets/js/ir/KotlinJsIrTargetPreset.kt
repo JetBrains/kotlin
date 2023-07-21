@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.utils.runProjectConfigurationHealthCheckWhenE
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeAsciiOnly
 
+@TargetPresetsDeprecation
 open class KotlinJsIrTargetPreset(
     project: Project
 ) : KotlinOnlyTargetPreset<KotlinJsIrTarget, KotlinJsIrCompilation>(
@@ -65,6 +66,7 @@ open class KotlinJsIrTargetPreset(
     }
 }
 
+@TargetPresetsDeprecation
 class KotlinJsIrSingleTargetPreset(
     project: Project
 ) : KotlinJsIrTargetPreset(

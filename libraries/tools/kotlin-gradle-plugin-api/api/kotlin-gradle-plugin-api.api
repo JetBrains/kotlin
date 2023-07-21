@@ -1160,6 +1160,15 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargetP
 	public abstract fun createTarget (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
 }
 
+public final class org/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset$DefaultImpls {
+	public static fun createTarget (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/KotlinTargetPresetKt {
+	public static final field apiIsDeprecatedMessage Ljava/lang/String;
+	public static final field presetsApiIsDeprecatedMessage Ljava/lang/String;
+}
+
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargetTestRun : org/jetbrains/kotlin/gradle/plugin/KotlinTargetExecution, org/jetbrains/kotlin/gradle/plugin/KotlinTestRun {
 }
 
@@ -1222,6 +1231,9 @@ public class org/jetbrains/kotlin/gradle/plugin/SubpluginOption {
 	public fun <init> (Ljava/lang/String;Lkotlin/Lazy;)V
 	public final fun getKey ()Ljava/lang/String;
 	public final fun getValue ()Ljava/lang/String;
+}
+
+public abstract interface annotation class org/jetbrains/kotlin/gradle/plugin/TargetPresetsDeprecation : java/lang/annotation/Annotation {
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode : java/lang/Enum {
