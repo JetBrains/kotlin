@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.driver
 
+import io.outfoxx.swiftpoet.FileSpec
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.usingJvmCInteropCallbacks
 import llvm.LLVMContextCreate
@@ -25,8 +26,13 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.konan.file.use
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.util.usingNativeMemoryAllocator
+import java.io.FileWriter
+import java.io.OutputStreamWriter
+import java.nio.charset.StandardCharsets
+import java.nio.file.Files
 
 /**
  * Dynamic driver does not "know" upfront which phases will be executed.
@@ -60,9 +66,19 @@ internal class DynamicCompilerDriver : CompilerDriver() {
         val moduleName = module.name.asStringStripSpecialMarkers()
         val swiftGenerator = IrBasedSwiftGenerator(moduleName)
         swiftGenerator.visitModuleFragment(module)
-        val fileSpec = swiftGenerator.build()
+
         val outputDirectory = java.io.File(config.outputPath).absoluteFile.parentFile
-        fileSpec.writeTo(outputDirectory)
+        outputDirectory.mkdirs()
+
+        java.io.File(outputDirectory.path, "${moduleName}.swift").let {
+            it.createNewFile()
+            FileWriter(it).use { it.write(swiftGenerator.buildSwiftShimFile()) }
+        }
+
+        java.io.File(outputDirectory.path, "${moduleName}.h").let {
+            it.createNewFile()
+            FileWriter(it).use { it.write(swiftGenerator.buildSwiftBridgingHeader()) }
+        }
     }
 
     private fun produceSwiftArtifacts(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {

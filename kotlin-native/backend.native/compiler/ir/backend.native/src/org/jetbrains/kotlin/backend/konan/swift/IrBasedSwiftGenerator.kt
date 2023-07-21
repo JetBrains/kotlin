@@ -5,14 +5,12 @@
 
 package org.jetbrains.kotlin.backend.konan.swift
 
-import io.outfoxx.swiftpoet.*
 import org.jetbrains.kotlin.backend.konan.llvm.KonanBinaryInterface
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.allParameters
 import org.jetbrains.kotlin.ir.util.explicitParameters
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -26,21 +24,21 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
  *
  */
 class IrBasedSwiftGenerator(private val moduleName: String) : IrElementVisitorVoid {
+    val swiftImports = mutableListOf<Swift.Import>(Swift.Import.Module("Foundation"))
+    val swiftDeclarations = mutableListOf<Swift.Declaration>()
+    val cDeclarations = mutableListOf<C>() // FIXME: we shouldn't manually generate c headers for our existing code, but here we are.
 
-    private val initRuntimeIfNeededSpec = FunctionSpec.abstractBuilder("initRuntimeIfNeeded")
-            // FIXME: _silgen_name only work for as long as swiftcc matches ccc. Switch to c brindging instead.
-            .addAttribute("_silgen_name", "\"Kotlin_initRuntimeIfNeeded\"")
-            .addModifiers(Modifier.PRIVATE)
-            .build()
+    private val initRuntimeIfNeededSpec = swiftDeclarations.add {
+        function(
+                "initRuntimeIfNeeded",
+                attributes = listOf(attribute("_silgen_name", "Kotlin_initRuntimeIfNeeded".literal)),
+                visibility = Swift.Declaration.Visibility.PRIVATE,
+        ).build()
+    }
 
-    val functions = mutableListOf<FunctionSpec>(initRuntimeIfNeededSpec)
+    fun buildSwiftShimFile(): String = Swift.File(swiftImports, swiftDeclarations).render()
 
-    fun build(): FileSpec =
-        FileSpec.builder(moduleName, moduleName).apply {
-            functions.forEach { topLevelFunction ->
-                addFunction(topLevelFunction)
-            }
-        }.build()
+    fun buildSwiftBridgingHeader(): String = C.File(cDeclarations).render()
 
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
@@ -52,39 +50,33 @@ class IrBasedSwiftGenerator(private val moduleName: String) : IrElementVisitorVo
         }
 
         val name = declaration.name.identifier
-        val symbolName = with(KonanBinaryInterface) { declaration.symbolName }
+        val cName = "__kn_${name}"
+        val symbolName = "_" + with(KonanBinaryInterface) { declaration.symbolName }
 
-        val returnTypeSpec = mapType(declaration.returnType) ?: return
-        val parametersSpec = declaration.explicitParameters.map {
-            ParameterSpec.builder(it.name.asString(), mapType(it.type) ?: return).build()
+        cDeclarations.add {
+            build(function(
+                    returnType = mapTypeToC(declaration.returnType) ?: return,
+                    name = cName,
+                    arguments = declaration.explicitParameters.map {
+                        variable(mapTypeToC(it.type) ?: return, it.name.asString())
+                    },
+                    attributes = listOf(rawAttribute("asm".variable.call(symbolName.literal)))
+            )).build()
         }
 
-        val forwardDeclarationSpec = FunctionSpec.abstractBuilder("${name}_bridge")
-                // FIXME: _silgen_name only work for as long as swiftcc matches ccc. Switch to c brindging instead.
-                .addAttribute("_silgen_name", "\"${symbolName}\"")
-                .addModifiers(Modifier.PRIVATE)
-                .returns(returnTypeSpec)
-                .apply {
-                    for (parameter in parametersSpec) {
-                        addParameter(parameter)
-                    }
-                }
-                .build()
-
-        val shimFunctionSpec = FunctionSpec.builder(name)
-                .addModifiers(Modifier.PUBLIC)
-                .returns(returnTypeSpec)
-                .apply {
-                    for (parameter in parametersSpec) {
-                        addParameter(parameter)
-                    }
-                }
-                .addStatement("${initRuntimeIfNeededSpec.name}()")
-                .addStatement("return ${forwardDeclarationSpec.name}(${parametersSpec.map { "${it.parameterName}: ${it.parameterName}" }.joinToString()})")
-                .build()
-
-        functions += forwardDeclarationSpec
-        functions += shimFunctionSpec
+        swiftDeclarations.add {
+            function(
+                    name,
+                    parameters = declaration.explicitParameters.map {
+                        parameter(it.name.asString(), type = mapTypeToSwift(it.type) ?: return)
+                    },
+                    type = mapTypeToSwift(declaration.returnType) ?: return,
+                    visibility = Swift.Declaration.Visibility.PUBLIC
+            ) {
+                initRuntimeIfNeededSpec.name.variable.call().build()
+                `return`(cName.variable.call(declaration.explicitParameters.map { it.name.asString().variable })).build()
+            }.build()
+        }
     }
 
     private fun isSupported(declaration: IrFunction): Boolean {
@@ -97,9 +89,34 @@ class IrBasedSwiftGenerator(private val moduleName: String) : IrElementVisitorVo
                 && !declaration.isInline
     }
 
-    private fun mapType(declaration: IrType): TypeName? {
-        val swiftPrimitiveTypeName: String? = declaration.getPrimitiveType().takeUnless { declaration.isNullable() }?.let {
-            when (it) {
+    private fun mapTypeToC(declaration: IrType): C.Type? {
+        return C.new {
+            when {
+                declaration.isPrimitiveType() -> if (declaration.isNullable()) null else when(declaration.getPrimitiveType()!!) {
+                    PrimitiveType.BYTE -> char.signed
+                    PrimitiveType.BOOLEAN -> bool
+                    PrimitiveType.CHAR -> null
+                    PrimitiveType.SHORT -> short
+                    PrimitiveType.INT -> int
+                    PrimitiveType.LONG -> long
+                    PrimitiveType.FLOAT -> float
+                    PrimitiveType.DOUBLE -> double
+                }
+                declaration.isUnsignedType() -> if (declaration.isNullable()) null else when(declaration.getUnsignedType()!!) {
+                    UnsignedType.UBYTE -> char.unsigned
+                    UnsignedType.USHORT -> short.unsigned
+                    UnsignedType.UINT -> int.unsigned
+                    UnsignedType.ULONG -> long.unsigned
+                }
+                declaration.isUnit() -> if (declaration.isNullable()) null else void
+                else -> null
+            }
+        }
+    }
+
+    private fun mapTypeToSwift(declaration: IrType): Swift.Type? {
+        return when {
+            declaration.isPrimitiveType() -> if (declaration.isNullable()) null else when(declaration.getPrimitiveType()!!) {
                 PrimitiveType.BYTE -> "Int8"
                 PrimitiveType.BOOLEAN -> "Bool"
                 PrimitiveType.CHAR -> null
@@ -109,19 +126,14 @@ class IrBasedSwiftGenerator(private val moduleName: String) : IrElementVisitorVo
                 PrimitiveType.FLOAT -> "Float"
                 PrimitiveType.DOUBLE -> "Double"
             }
-        } ?: declaration.getUnsignedType().takeUnless { declaration.isNullable() }?.let {
-            when (it) {
+            declaration.isUnsignedType() -> if (declaration.isNullable()) null else when(declaration.getUnsignedType()!!) {
                 UnsignedType.UBYTE -> "UInt8"
                 UnsignedType.USHORT -> "UInt16"
                 UnsignedType.UINT -> "UInt32"
                 UnsignedType.ULONG -> "UInt64"
             }
-        } ?: if (declaration.isUnit()) "Void" else null
-
-        if (swiftPrimitiveTypeName == null) {
-            println("Failed to bridge ${declaration.classFqName}")
-        }
-
-        return swiftPrimitiveTypeName?.let { DeclaredTypeName.typeName("Swift.$it") }
+            declaration.isUnit() -> if (declaration.isNullable()) null else "Void"
+            else -> null
+        }?.let { Swift.Type.Nominal("Swift.$it") }
     }
 }
