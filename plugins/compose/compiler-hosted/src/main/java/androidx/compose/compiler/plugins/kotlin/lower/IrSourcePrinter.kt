@@ -616,10 +616,12 @@ class IrSourcePrinterVisitor(
             IrTypeOperator.NOT_INSTANCEOF -> {
                 expression.argument.print()
             }
-            IrTypeOperator.CAST, IrTypeOperator.IMPLICIT_CAST, IrTypeOperator.SAFE_CAST -> {
+            IrTypeOperator.CAST, IrTypeOperator.SAFE_CAST, IrTypeOperator.IMPLICIT_CAST -> {
                 expression.argument.print()
             }
             IrTypeOperator.SAM_CONVERSION -> {
+                print(expression.type.renderSrc())
+                print(" ")
                 expression.argument.print()
             }
             IrTypeOperator.IMPLICIT_NOTNULL -> {

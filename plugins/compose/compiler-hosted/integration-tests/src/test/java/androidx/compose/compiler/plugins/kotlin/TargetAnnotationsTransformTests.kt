@@ -890,16 +890,13 @@ class TargetAnnotationsTransformTests(useFir: Boolean) : AbstractIrTransformTest
           }
           static val %stable: Int = 0
         }
-        val localBoxMeasurePolicy: MeasurePolicy = class <no name provided> : MeasurePolicy {
-          override fun measure(%this%MeasurePolicy: MeasureScope, <unused var>: List<Measurable>, constraints: Constraints): MeasureResult {
-            return %this%MeasurePolicy.layout(
-              width = constraints.minWidth,
-              height = constraints.minHeight
-            ) {
-            }
+        val localBoxMeasurePolicy: MeasurePolicy = MeasurePolicy { <unused var>: List<Measurable>, constraints: Constraints ->
+          %this%MeasurePolicy.layout(
+            width = constraints.minWidth,
+            height = constraints.minHeight
+          ) {
           }
         }
-        <no name provided>()
         @Composable
         @ComposableInferredTarget(scheme = "[androidx.compose.ui.UiComposable[androidx.compose.ui.UiComposable]]")
         fun LocalBox(modifier: Modifier?, content: @[ExtensionFunctionType] Function3<LocalBoxScope, Composer, Int, Unit>, %composer: Composer?, %changed: Int, %default: Int) {
@@ -983,12 +980,9 @@ class TargetAnnotationsTransformTests(useFir: Boolean) : AbstractIrTransformTest
               sourceInformationMarkerStart(%composer, <>, "C:Test.kt")
               Unit
               sourceInformationMarkerEnd(%composer)
-            }, null, class <no name provided> : MeasurePolicy {
-              override fun measure(%this%Layout: MeasureScope, <unused var>: List<Measurable>, <unused var>: Constraints): MeasureResult {
-                ${if (!useFir) "return " else ""}error("")
-              }
-            }
-            <no name provided>(), %composer, 0, 0b0010)
+            }, null, MeasurePolicy { <unused var>: List<Measurable>, <unused var>: Constraints ->
+              error("")
+            }, %composer, 0b000110000000, 0b0010)
             if (isTraceInProgress()) {
               traceEventEnd()
             }
@@ -1012,12 +1006,9 @@ class TargetAnnotationsTransformTests(useFir: Boolean) : AbstractIrTransformTest
             if (isTraceInProgress()) {
               traceEventStart(<>, %dirty, -1, <>)
             }
-            Layout(content, null, class <no name provided> : MeasurePolicy {
-              override fun measure(%this%Layout: MeasureScope, <unused var>: List<Measurable>, <unused var>: Constraints): MeasureResult {
-                ${if (!useFir) "return " else ""}error("")
-              }
-            }
-            <no name provided>(), %composer, 0b1110 and %dirty, 0b0010)
+            Layout(content, null, MeasurePolicy { <unused var>: List<Measurable>, <unused var>: Constraints ->
+              error("")
+            }, %composer, 0b000110000000 or 0b1110 and %dirty, 0b0010)
             if (isTraceInProgress()) {
               traceEventEnd()
             }
