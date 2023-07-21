@@ -730,7 +730,9 @@ fun serializeModuleIntoKlib(
     }
 
     val compiledKotlinFiles = (cleanFiles + additionalFiles).also {
-        configuration.assertUniqueFileNameAndPackage(moduleName, it)
+        if (builtInsPlatform == BuiltInsPlatform.JS) {
+            configuration.assertUniqueFileNameAndPackage(moduleName, it)
+        }
     }
 
     val header = serializeKlibHeader(
