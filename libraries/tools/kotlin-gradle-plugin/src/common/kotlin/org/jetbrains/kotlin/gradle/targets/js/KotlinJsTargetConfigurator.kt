@@ -62,6 +62,7 @@ open class KotlinJsTargetConfigurator :
         val project = target.project
 
         target.compilations.all { compilation ->
+            @Suppress("DEPRECATION")
             compilation.addSourceSet(compilation.defaultSourceSet)
 
             configureResourceProcessing(

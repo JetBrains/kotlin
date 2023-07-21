@@ -59,7 +59,7 @@ internal class KotlinCompilationImpl constructor(
 
     override val extras: MutableExtras = mutableExtrasOf()
 
-    override val sourceSets get() = params.sourceSets
+    val sourceSets get() = params.sourceSets
 
     override val configurations: KotlinCompilationConfigurationsContainer
         get() = params.dependencyConfigurations
