@@ -84,7 +84,7 @@ public inline fun <T> measureTimedValue(block: () -> T): TimedValue<T> {
 }
 
 /**
- * Executes the given [block] and returns an instance of [TimedValue] class, containing both
+ * Executes the given function [block] and returns an instance of [TimedValue] class, containing both
  * the result of function execution and the duration of elapsed time interval.
  *
  * The elapsed time is measured with the specified `this` [TimeSource] instance.
@@ -102,7 +102,7 @@ public inline fun <T> TimeSource.measureTimedValue(block: () -> T): TimedValue<T
 }
 
 /**
- * Executes the given [block] and returns an instance of [TimedValue] class, containing both
+ * Executes the given function [block] and returns an instance of [TimedValue] class, containing both
  * the result of function execution and the duration of elapsed time interval.
  *
  * The elapsed time is measured with the specified `this` [TimeSource.Monotonic] instance.
