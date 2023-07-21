@@ -612,6 +612,55 @@ interface IrFactory {
     )
 
     @Deprecated(
+        message = "The method's parameters were reordered." +
+                " This variant of the method will be removed when the 2024.2 IntelliJ platform is shipped (see KTIJ-26314).",
+        replaceWith = ReplaceWith(
+            """createPropertyWithLateBinding(
+                startOffset = startOffset,
+                endOffset = endOffset,
+                origin = origin,
+                name = name,
+                visibility = visibility,
+                modality = modality,
+                isVar = isVar,
+                isConst = isConst,
+                isLateinit = isLateinit,
+                isDelegated = isDelegated,
+                isExternal = isExternal,
+                isExpect = isExpect,
+            )""",
+        ),
+        level = DeprecationLevel.HIDDEN,
+    )
+    fun createPropertyWithLateBinding(
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        name: Name,
+        visibility: DescriptorVisibility,
+        modality: Modality,
+        isVar: Boolean,
+        isConst: Boolean,
+        isLateinit: Boolean,
+        isDelegated: Boolean,
+        isExternal: Boolean,
+        isExpect: Boolean,
+    ): IrProperty = createPropertyWithLateBinding(
+        startOffset,
+        endOffset,
+        origin,
+        name,
+        visibility,
+        modality,
+        isVar,
+        isConst,
+        isLateinit,
+        isDelegated,
+        isExternal,
+        isExpect,
+    )
+
+    @Deprecated(
         message = "The method has been renamed, and its parameters were reordered." +
                 " This variant of the method will be removed when the 2024.2 IntelliJ platform is shipped (see KTIJ-26314).",
         replaceWith = ReplaceWith(
