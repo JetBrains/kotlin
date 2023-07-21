@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinaliseCompilations
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.utils.markResolvable
 import org.jetbrains.kotlin.gradle.targets.metadata.*
 import org.jetbrains.kotlin.gradle.targets.metadata.COMMON_MAIN_ELEMENTS_CONFIGURATION_NAME
@@ -35,7 +36,7 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 abstract class KotlinSoftwareComponent(
     private val project: Project,
     private val name: String,
-    protected val kotlinTargets: Iterable<KotlinTarget>
+    protected val kotlinTargets: Iterable<KotlinTarget>,
 ) : SoftwareComponentInternal, ComponentWithVariants {
 
     override fun getName(): String = name
@@ -220,6 +221,8 @@ class DefaultKotlinUsageContext(
 
     override fun getGlobalExcludes(): Set<ExcludeRule> = emptySet()
 
+    private val publishJvmEnvironmentAttribute get() = project.kotlinPropertiesProvider.publishJvmEnvironmentAttribute
+
     private fun filterOutNonPublishableAttributes(attributes: Set<Attribute<*>>): Set<Attribute<*>> =
         attributes.filterTo(mutableSetOf()) {
             it != ProjectLocalConfigurations.ATTRIBUTE &&
@@ -234,9 +237,17 @@ class DefaultKotlinUsageContext(
                      * 2. If this attribute is published, but not present on all the variants in a multiplatform library, and is also
                      * missing on the consumer side (like Gradle < 7.0, Kotlin 1.6.0), then there is a
                      * case when Gradle fails to choose a variant in a completely reasonable setup.
+                     *
+                     * UPD: 1.9.20:
+                     * We should now be ready to publish the 'jvm environment' attribute.
+                     * It will however be rolled out as 'opt-in' first (as safety measure).
+                     * We expect that the 'external Android target' will opt-into publishing this attribute,
+                     * as it will switch to KotlinPlatformType.jvm and requires this additional attribute to disambiguate
+                     * Android from the JVM
                      */
-                    it.name != "org.gradle.jvm.environment"
+                    (it.name != "org.gradle.jvm.environment" || publishJvmEnvironmentAttribute)
         }
+
 }
 
 internal fun Iterable<DefaultKotlinUsageContext>.publishableUsages() = this

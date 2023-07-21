@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_HIERARCHICAL_STRUCTURE_SUPPORT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_IMPORT_ENABLE_KGP_DEPENDENCY_RESOLUTION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_IMPORT_ENABLE_SLOW_SOURCES_JAR_RESOLVER
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_PUBLISH_JVM_ENVIRONMENT_ATTRIBUTE
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_DEPENDENCY_PROPAGATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_SUPPRESS_EXPERIMENTAL_ARTIFACTS_DSL_WARNING
@@ -270,6 +271,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
 
     val ignoreHmppDeprecationWarnings: Boolean?
         get() = booleanProperty(KOTLIN_MPP_DEPRECATED_PROPERTIES_NO_WARN)
+
+    val publishJvmEnvironmentAttribute: Boolean
+        get() = booleanProperty(KOTLIN_PUBLISH_JVM_ENVIRONMENT_ATTRIBUTE) ?: false
 
     /**
      * Enables individual test task reporting for aggregated test tasks.
@@ -633,6 +637,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         const val KOTLIN_CREATE_DEFAULT_MULTIPLATFORM_PUBLICATIONS = "kotlin.internal.mpp.createDefaultMultiplatformPublications"
         const val KOTLIN_RUN_COMPILER_VIA_BUILD_TOOLS_API = "kotlin.compiler.runViaBuildToolsApi"
         const val KOTLIN_MPP_ALLOW_LEGACY_DEPENDENCIES = "kotlin.mpp.allow.legacy.dependencies"
+        const val KOTLIN_PUBLISH_JVM_ENVIRONMENT_ATTRIBUTE = "kotlin.publishJvmEnvironmentAttribute"
         const val KOTLIN_EXPERIMENTAL_TRY_K2 = "kotlin.experimental.tryK2"
         const val KOTLIN_INTERNAL_VERBOSE_DIAGNOSTICS = "kotlin.internal.verboseDiagnostics"
         const val KOTLIN_SUPPRESS_GRADLE_PLUGIN_WARNINGS = "kotlin.suppressGradlePluginWarnings"
