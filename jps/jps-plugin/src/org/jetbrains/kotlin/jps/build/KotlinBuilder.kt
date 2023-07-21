@@ -442,6 +442,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         }
 
         val start = System.nanoTime()
+        if(kotlinChunk.compilerArguments.languageVersion != "1.9") throw Exception(kotlinChunk.compilerArguments.languageVersion)
         val outputItemCollector = doCompileModuleChunk(
             kotlinChunk,
             representativeTarget,
