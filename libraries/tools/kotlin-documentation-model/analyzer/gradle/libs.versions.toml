@@ -1,20 +1,21 @@
 [versions]
 
-gradlePlugin-kotlin = "1.8.20"
-gradlePlugin-android = "4.1.3"
+gradlePlugin-kotlin = "1.9.0"
+# See: https://kotlinlang.org/docs/gradle-configure-project.html#apply-the-plugin
+gradlePlugin-android = "4.2.2"
 gradlePlugin-dokka = "1.8.20"
 
 kotlinx-coroutines = "1.6.3"
 kotlinx-bcv = "0.12.1"
 
 ## Analysis
-kotlin-compiler = "1.8.20"
+kotlin-compiler = "1.9.0"
 
 # MUST match the version of the intellij platform used in the kotlin compiler,
 # otherwise this will lead to different versions of psi API and implementations
 # on the classpath and will fail with hard to debug problems in runtime.
 # See: https://github.com/JetBrains/kotlin/blob/e6633d3d9214402fcf3585ae8c24213a4761cc8b/gradle/versions.properties#L1
-intellij-platform = "203.8084.24"
+intellij-platform = "213.7172.25"
 
 ## HTML
 jsoup = "1.15.3"
@@ -62,6 +63,7 @@ gradlePlugin-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", ve
 gradlePlugin-android = { module = "com.android.tools.build:gradle", version.ref = "gradlePlugin-android" }
 gradlePlugin-dokka = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "gradlePlugin-dokka" }
 gradlePlugin-shadow = { module = "gradle.plugin.com.github.johnrengelman:shadow", version.ref = "gradlePlugin-shadow" }
+gradlePlugin-gradlePublish= { module = "com.gradle.publish:plugin-publish-plugin", version.ref = "gradlePlugin-gradlePluginPublish" }
 
 #### Kotlin analysis ####
 kotlin-compiler = { module = "org.jetbrains.kotlin:kotlin-compiler", version.ref = "kotlin-compiler" }
@@ -109,7 +111,5 @@ junit-jupiter = { module = "org.junit.jupiter:junit-jupiter" }
 # and define the Maven coordinates above to be used in build-logic/build.gradle.kts)
 
 kotlinx-binaryCompatibilityValidator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "kotlinx-bcv" }
-shadow = { id = "com.github.johnrengelman.shadow", version.ref = "gradlePlugin-shadow" }
-gradlePublish = { id = "com.gradle.plugin-publish", version.ref = "gradlePlugin-gradlePluginPublish" }
 nexusPublish = { id = "io.github.gradle-nexus.publish-plugin", version.ref = "gradlePlugin-nexusPublish" }
 gradleNode = { id = "com.github.node-gradle.node", version.ref = "gradlePlugin-gradleNode" }
