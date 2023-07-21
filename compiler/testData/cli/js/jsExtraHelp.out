@@ -58,6 +58,7 @@ where advanced options include:
                              Turn on range checks for the array access functions
   -Xwasm-enable-asserts      Turn on asserts
   -Xwasm-generate-wat        Generate wat file
+  -Xwasm-generate-wat-sourcemap Generate source map for wat file
   -Xwasm-kclass-fqn          Enable support for FQ names in KClass
   -Xwasm-target              Set up Wasm target (wasm-js or wasm-wasi)
   -Xwasm-use-traps-instead-of-exceptions

@@ -622,6 +622,12 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
             checkFrozen()
             field = value
         }
+    @Argument(value = "-Xwasm-generate-wat-sourcemap", description = "Generate source map for wat file")
+    var wasmGenerateWatSourceMap = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(value = "-Xwasm-target", description = "Set up Wasm target (wasm-js or wasm-wasi)")
     var wasmTarget: String? = null

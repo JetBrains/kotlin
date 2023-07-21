@@ -6,10 +6,17 @@
 package org.jetbrains.kotlin.wasm.ir.convertors
 
 import org.jetbrains.kotlin.wasm.ir.*
+import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 
 open class SExpressionBuilder {
     protected val stringBuilder = StringBuilder()
     protected var indent = 0
+    private var _lines = 0
+    private var lastLineBegin = 0
+    protected val lineNumber
+        get() = _lines
+    protected val columnNumber
+        get() = stringBuilder.length - lastLineBegin
 
     protected inline fun indented(body: () -> Unit) {
         indent++
@@ -19,6 +26,8 @@ open class SExpressionBuilder {
 
     protected fun newLine() {
         stringBuilder.appendLine()
+        _lines++
+        lastLineBegin = stringBuilder.length
         repeat(indent) { stringBuilder.append("    ") }
     }
 
@@ -44,8 +53,10 @@ open class SExpressionBuilder {
         stringBuilder.toString()
 }
 
-
-class WasmIrToText : SExpressionBuilder() {
+class WasmIrToText(
+    private val sourceLocationMappings: MutableMap<WasmInstr, SourceLocation>? = null,
+    private val watFileName: String
+) : SExpressionBuilder() {
     fun appendOffset(value: UInt) {
         if (value != 0u)
             appendElement("offset=$value")
@@ -59,6 +70,7 @@ class WasmIrToText : SExpressionBuilder() {
     }
 
     private fun appendInstr(wasmInstr: WasmInstr) {
+        sourceLocationMappings?.put(wasmInstr, SourceLocation.Location(watFileName, lineNumber, columnNumber))
         val op = wasmInstr.operator
 
         if (op.opcode == WASM_OP_PSEUDO_OPCODE) {

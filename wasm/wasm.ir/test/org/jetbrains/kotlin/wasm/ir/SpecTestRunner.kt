@@ -233,7 +233,7 @@ fun WasmModule.toBinaryFormat(): ByteArray {
 }
 
 fun WasmModule.toTextFormat(): String {
-    val builder = WasmIrToText()
+    val builder = WasmIrToText(watFileName = "<Test Wasm Tester>")
     builder.appendWasmModule(this)
     return builder.toString()
 }

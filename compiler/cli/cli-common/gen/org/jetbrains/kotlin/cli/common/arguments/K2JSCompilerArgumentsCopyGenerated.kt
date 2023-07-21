@@ -71,6 +71,7 @@ fun copyK2JSCompilerArguments(from: K2JSCompilerArguments, to: K2JSCompilerArgum
     to.wasmEnableArrayRangeChecks = from.wasmEnableArrayRangeChecks
     to.wasmEnableAsserts = from.wasmEnableAsserts
     to.wasmGenerateWat = from.wasmGenerateWat
+    to.wasmGenerateWatSourceMap = from.wasmGenerateWatSourceMap
     to.wasmKClassFqn = from.wasmKClassFqn
     to.wasmTarget = from.wasmTarget
     to.wasmUseTrapsInsteadOfExceptions = from.wasmUseTrapsInsteadOfExceptions

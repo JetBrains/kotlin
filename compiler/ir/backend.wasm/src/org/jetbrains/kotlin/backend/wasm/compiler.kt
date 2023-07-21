@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.js.config.WasmTarget
 import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver
 import org.jetbrains.kotlin.js.sourceMap.SourceMap3Builder
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.wasm.ir.WasmInstr
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToBinary
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToText
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
@@ -39,7 +40,8 @@ class WasmCompilerResult(
     val jsUninstantiatedWrapper: String?,
     val jsWrapper: String,
     val wasm: ByteArray,
-    val sourceMap: String?
+    val sourceMap: String?,
+    val watSourceMap: String?,
 )
 
 fun compileToLoweredIr(
@@ -96,6 +98,7 @@ fun compileWasm(
     allowIncompleteImplementations: Boolean = false,
     generateWat: Boolean = false,
     generateSourceMaps: Boolean = false,
+    generateWatSourceMap: Boolean = false,
 ): WasmCompilerResult {
     val compiledWasmModule = WasmCompiledModuleFragment(
         backendContext.irBuiltIns,
@@ -106,8 +109,11 @@ fun compileWasm(
     allModules.forEach { codeGenerator.generateModule(it) }
 
     val linkedModule = compiledWasmModule.linkWasmCompiledFragments()
+
+    val watWasmInstructionLocation =
+        if (generateWatSourceMap) hashMapOf<WasmInstr, SourceLocation>() else null
     val wat = if (generateWat) {
-        val watGenerator = WasmIrToText()
+        val watGenerator = WasmIrToText(watWasmInstructionLocation, "$baseFileName.wat")
         watGenerator.appendWasmModule(linkedModule)
         watGenerator.toString()
     } else {
@@ -119,6 +125,8 @@ fun compileWasm(
     val sourceMapFileName = "$baseFileName.map".takeIf { generateSourceMaps }
     val sourceLocationMappings =
         if (generateSourceMaps) mutableListOf<SourceLocationMapping>() else null
+    val watSourceLocationMappings =
+        if (generateWatSourceMap) mutableListOf<SourceLocationMapping>() else null
 
     val wasmIrToBinary =
         WasmIrToBinary(
@@ -127,7 +135,9 @@ fun compileWasm(
             allModules.last().descriptor.name.asString(),
             emitNameSection,
             sourceMapFileName,
-            sourceLocationMappings
+            sourceLocationMappings,
+            watWasmInstructionLocation,
+            watSourceLocationMappings
         )
 
     wasmIrToBinary.appendWasmModule()
@@ -151,7 +161,8 @@ fun compileWasm(
         jsUninstantiatedWrapper = jsUninstantiatedWrapper,
         jsWrapper = jsWrapper,
         wasm = byteArray,
-        sourceMap = generateSourceMap(backendContext.configuration, sourceLocationMappings)
+        sourceMap = generateSourceMap(backendContext.configuration, sourceLocationMappings),
+        watSourceMap = generateSourceMap(backendContext.configuration, watSourceLocationMappings),
     )
 }
 
@@ -381,5 +392,8 @@ fun writeCompilationResult(
 
     if (result.sourceMap != null) {
         File(dir, "$fileNameBase.map").writeText(result.sourceMap)
+    }
+    if (result.watSourceMap != null) {
+        File(dir, "$fileNameBase.wat.map").writeText(result.watSourceMap)
     }
 }

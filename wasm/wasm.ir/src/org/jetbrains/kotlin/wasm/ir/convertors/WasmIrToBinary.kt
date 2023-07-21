@@ -5,13 +5,14 @@
 
 package org.jetbrains.kotlin.wasm.ir.convertors
 
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.plus
 import org.jetbrains.kotlin.wasm.ir.*
-import java.io.ByteArrayOutputStream
-import java.io.OutputStream
-import kotlinx.collections.immutable.*
 import org.jetbrains.kotlin.wasm.ir.source.location.Box
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocationMapping
+import java.io.ByteArrayOutputStream
+import java.io.OutputStream
 
 private object WasmBinary {
     const val MAGIC = 0x6d736100u
@@ -57,7 +58,9 @@ class WasmIrToBinary(
     val moduleName: String,
     val emitNameSection: Boolean,
     private val sourceMapFileName: String? = null,
-    private val sourceLocationMappings: MutableList<SourceLocationMapping>? = null
+    private val sourceLocationMappings: MutableList<SourceLocationMapping>? = null,
+    private val watInstructionLocations: Map<WasmInstr, SourceLocation>? = null,
+    private val watSourceLocationMappings: MutableList<SourceLocationMapping>? = null,
 ) {
     private var b: ByteWriter = ByteWriter.OutputStream(outputStream)
 
@@ -246,8 +249,12 @@ class WasmIrToBinary(
     }
 
     private fun appendInstr(instr: WasmInstr) {
+        val offset = offsets + Box(b.written)
         instr.location?.let {
-            sourceLocationMappings?.add(SourceLocationMapping(offsets + Box(b.written), it))
+            sourceLocationMappings?.add(SourceLocationMapping(offset, it))
+        }
+        watInstructionLocations?.get(instr)?.let {
+            watSourceLocationMappings?.add(SourceLocationMapping(offset, it))
         }
 
         val opcode = instr.operator.opcode
