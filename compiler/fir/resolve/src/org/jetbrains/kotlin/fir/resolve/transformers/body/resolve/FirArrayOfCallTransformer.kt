@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
-import org.jetbrains.kotlin.fir.expressions.builder.buildArrayOfCall
+import org.jetbrains.kotlin.fir.expressions.builder.buildArrayLiteral
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.isError
@@ -26,15 +26,15 @@ import org.jetbrains.kotlin.fir.types.isArrayType
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 
 /**
- * A transformer that converts resolved arrayOf() call to [FirArrayOfCall].
+ * A transformer that converts resolved arrayOf() call to [FirArrayLiteral].
  *
  * Note that arrayOf() calls only in [FirAnnotation] or the default value of annotation constructor are transformed.
  */
 class FirArrayOfCallTransformer : FirDefaultTransformer<FirSession>() {
-    private fun toArrayOfCall(functionCall: FirFunctionCall, session: FirSession): FirExpression? {
+    private fun toArrayLiteral(functionCall: FirFunctionCall, session: FirSession): FirExpression? {
         if (!functionCall.isArrayOfCall(session)) return null
         if (functionCall.calleeReference !is FirResolvedNamedReference) return null
-        val arrayOfCall = buildArrayOfCall {
+        val arrayLiteral = buildArrayLiteral {
             source = functionCall.source
             annotations += functionCall.annotations
             // Note that the signature is: arrayOf(vararg element). Hence, unwrapping the original argument list here.
@@ -54,16 +54,16 @@ class FirArrayOfCallTransformer : FirDefaultTransformer<FirSession>() {
             buildErrorExpression(
                 functionCall.source?.fakeElement(KtFakeSourceElementKind.ErrorTypeRef),
                 calleeReference.diagnostic,
-                arrayOfCall
+                arrayLiteral
             )
         } else {
-            arrayOfCall
+            arrayLiteral
         }
     }
 
     override fun transformFunctionCall(functionCall: FirFunctionCall, data: FirSession): FirStatement {
         functionCall.transformChildren(this, data)
-        return toArrayOfCall(functionCall, data) ?: functionCall
+        return toArrayLiteral(functionCall, data) ?: functionCall
     }
 
     override fun <E : FirElement> transformElement(element: E, data: FirSession): E {

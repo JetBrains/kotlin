@@ -5,12 +5,9 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirTargetElement
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
@@ -21,7 +18,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFull
 import org.jetbrains.kotlin.fir.resolve.transformers.ScopeClassDeclaration
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
-import org.jetbrains.kotlin.fir.withFileAnalysisExceptionWrapping
 
 abstract class FirAbstractBodyResolveTransformerDispatcher(
     session: FirSession,
@@ -281,8 +277,8 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
         return expressionsTransformer.transformCheckedSafeCallSubject(checkedSafeCallSubject, data)
     }
 
-    override fun transformArrayOfCall(arrayOfCall: FirArrayOfCall, data: ResolutionMode): FirStatement {
-        return expressionsTransformer.transformArrayOfCall(arrayOfCall, data)
+    override fun transformArrayLiteral(arrayLiteral: FirArrayLiteral, data: ResolutionMode): FirStatement {
+        return expressionsTransformer.transformArrayLiteral(arrayLiteral, data)
     }
 
     override fun transformSmartCastExpression(smartCastExpression: FirSmartCastExpression, data: ResolutionMode): FirStatement {

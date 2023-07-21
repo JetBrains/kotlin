@@ -2953,7 +2953,7 @@ open class PsiRawFirBuilder(
         }
 
         override fun visitCollectionLiteralExpression(expression: KtCollectionLiteralExpression, data: FirElement?): FirElement {
-            return buildArrayOfCall {
+            return buildArrayLiteral {
                 source = expression.toFirSourceElement()
                 argumentList = buildArgumentList {
                     for (innerExpression in expression.getInnerExpressions()) {

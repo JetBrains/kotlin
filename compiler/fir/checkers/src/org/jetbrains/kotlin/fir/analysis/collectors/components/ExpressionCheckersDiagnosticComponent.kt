@@ -118,8 +118,8 @@ class ExpressionCheckersDiagnosticComponent(
         checkers.allLogicExpressionCheckers.check(binaryLogicExpression, data)
     }
 
-    override fun visitArrayOfCall(arrayOfCall: FirArrayOfCall, data: CheckerContext) {
-        checkers.allArrayOfCallCheckers.check(arrayOfCall, data)
+    override fun visitArrayLiteral(arrayLiteral: FirArrayLiteral, data: CheckerContext) {
+        checkers.allArrayLiteralCheckers.check(arrayLiteral, data)
     }
 
     override fun visitStringConcatenationCall(stringConcatenationCall: FirStringConcatenationCall, data: CheckerContext) {

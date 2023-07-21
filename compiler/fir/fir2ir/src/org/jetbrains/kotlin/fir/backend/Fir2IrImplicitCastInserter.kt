@@ -83,7 +83,7 @@ class Fir2IrImplicitCastInserter(
     override fun visitStringConcatenationCall(stringConcatenationCall: FirStringConcatenationCall, data: IrElement): IrElement = data
 
     // TODO: element-wise cast?
-    override fun visitArrayOfCall(arrayOfCall: FirArrayOfCall, data: IrElement): IrElement = data
+    override fun visitArrayLiteral(arrayLiteral: FirArrayLiteral, data: IrElement): IrElement = data
 
     // TODO: something to do w.r.t. SAM?
     override fun visitLambdaArgumentExpression(lambdaArgumentExpression: FirLambdaArgumentExpression, data: IrElement): IrElement = data

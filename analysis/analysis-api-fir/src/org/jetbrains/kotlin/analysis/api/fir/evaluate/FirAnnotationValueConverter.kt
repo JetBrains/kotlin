@@ -115,7 +115,7 @@ internal object FirAnnotationValueConverter {
                 KtArrayAnnotationValue(annotationValues, representativePsi ?: sourcePsi)
             }
 
-            is FirArrayOfCall -> {
+            is FirArrayLiteral -> {
                 // Desugared collection literals.
                 KtArrayAnnotationValue(argumentList.arguments.convertVarargsExpression(session).first, sourcePsi)
             }

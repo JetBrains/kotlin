@@ -94,7 +94,7 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
                 }
 
                 override fun visitEnd() {
-                    visitExpression(name, buildArrayOfCall {
+                    visitExpression(name, buildArrayLiteral {
                         guessArrayTypeIfNeeded(name, elements)?.let {
                             typeRef = it
                         } ?: elements.firstOrNull()?.typeRef?.coneType?.createOutArrayType()?.let {

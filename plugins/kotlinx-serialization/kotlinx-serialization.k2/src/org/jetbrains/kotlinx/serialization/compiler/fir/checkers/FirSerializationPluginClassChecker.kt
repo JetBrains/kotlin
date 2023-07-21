@@ -185,12 +185,12 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
             else -> {
                 val argumentsIfArray1 = when (this) {
                     is FirVarargArgumentsExpression -> arguments
-                    is FirArrayOfCall -> arguments
+                    is FirArrayLiteral -> arguments
                     else -> return false
                 }
                 val argumentsIfArray2 = when (other) {
                     is FirVarargArgumentsExpression -> other.arguments
-                    is FirArrayOfCall -> other.arguments
+                    is FirArrayLiteral -> other.arguments
                     else -> return false
                 }
                 argumentsIfArray1.size == argumentsIfArray2.size && argumentsIfArray1.zip(argumentsIfArray2)

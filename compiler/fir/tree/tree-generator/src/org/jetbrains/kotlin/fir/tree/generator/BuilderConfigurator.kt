@@ -151,7 +151,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             useTypes(emptyArgumentListType, emptyAnnotationArgumentMappingType, firImplicitTypeWithoutSourceType)
         }
 
-        builder(arrayOfCall) {
+        builder(arrayLiteral) {
             parents += callBuilder
         }
 
@@ -418,7 +418,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             varargArgumentsExpression,
             checkedSafeCallSubject,
             safeCallExpression,
-            arrayOfCall,
+            arrayLiteral,
             classReferenceExpression,
             getClassCall
         )

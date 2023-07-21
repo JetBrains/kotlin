@@ -1469,10 +1469,10 @@ class Fir2IrVisitor(
             classifierStorage.getIrClassSymbol(it)
         }
 
-    private fun convertToArrayOfCall(arrayOfCall: FirArrayOfCall): IrVararg {
-        return arrayOfCall.convertWithOffsets { startOffset, endOffset ->
-            val arrayType = arrayOfCall.typeRef.toIrType()
-            val elementType = if (arrayOfCall.typeRef is FirResolvedTypeRef) {
+    private fun convertToArrayLiteral(arrayLiteral: FirArrayLiteral): IrVararg {
+        return arrayLiteral.convertWithOffsets { startOffset, endOffset ->
+            val arrayType = arrayLiteral.typeRef.toIrType()
+            val elementType = if (arrayLiteral.typeRef is FirResolvedTypeRef) {
                 arrayType.getArrayElementType(irBuiltIns)
             } else {
                 createErrorType()
@@ -1481,13 +1481,13 @@ class Fir2IrVisitor(
                 startOffset, endOffset,
                 type = arrayType,
                 varargElementType = elementType,
-                elements = arrayOfCall.arguments.map { it.convertToIrVarargElement() }
+                elements = arrayLiteral.arguments.map { it.convertToIrVarargElement() }
             )
         }
     }
 
-    override fun visitArrayOfCall(arrayOfCall: FirArrayOfCall, data: Any?): IrElement = whileAnalysing(session, arrayOfCall) {
-        return convertToArrayOfCall(arrayOfCall)
+    override fun visitArrayLiteral(arrayLiteral: FirArrayLiteral, data: Any?): IrElement = whileAnalysing(session, arrayLiteral) {
+        return convertToArrayLiteral(arrayLiteral)
     }
 
     override fun visitAugmentedArraySetCall(

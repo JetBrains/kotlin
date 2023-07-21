@@ -562,7 +562,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         } ?: return null
         val argument = when (val argument = annotationCall.argumentMapping.mapping.values.firstOrNull() ?: return null) {
             is FirVarargArgumentsExpression -> argument.arguments.firstOrNull()
-            is FirArrayOfCall -> argument.arguments.firstOrNull()
+            is FirArrayLiteral -> argument.arguments.firstOrNull()
             is FirNamedArgumentExpression -> argument.expression
             else -> argument
         } ?: return null

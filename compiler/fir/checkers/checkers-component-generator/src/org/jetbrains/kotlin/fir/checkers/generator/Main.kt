@@ -60,7 +60,7 @@ fun main(args: Array<String>) {
         alias<FirWhileLoop>("WhileLoopChecker")
         alias<FirThrowExpression>("ThrowExpressionChecker")
         alias<FirDoWhileLoop>("DoWhileLoopChecker")
-        alias<FirArrayOfCall>("ArrayOfCallChecker")
+        alias<FirArrayLiteral>("ArrayLiteralChecker")
         alias<FirClassReferenceExpression>("ClassReferenceExpressionChecker")
         alias<FirInaccessibleReceiverExpression>("InaccessibleReceiverChecker")
     }

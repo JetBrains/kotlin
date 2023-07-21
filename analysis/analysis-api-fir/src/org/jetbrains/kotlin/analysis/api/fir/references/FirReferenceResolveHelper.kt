@@ -227,7 +227,7 @@ internal object FirReferenceResolveHelper {
             is FirResolvedImport -> getSymbolsByResolvedImport(expression, symbolBuilder, fir, session)
             is FirPackageDirective -> getSymbolsForPackageDirective(expression, symbolBuilder)
             is FirFile -> getSymbolsByFirFile(symbolBuilder, fir)
-            is FirArrayOfCall -> {
+            is FirArrayLiteral -> {
                 // We can't yet find PsiElement for arrayOf, intArrayOf, etc.
                 emptyList()
             }

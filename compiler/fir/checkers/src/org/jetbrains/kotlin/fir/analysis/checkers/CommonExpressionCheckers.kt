@@ -165,7 +165,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
             FirEqualityCompatibilityChecker,
         )
 
-    override val arrayOfCallCheckers: Set<FirArrayOfCallChecker>
+    override val arrayLiteralCheckers: Set<FirArrayLiteralChecker>
         get() = setOf(
             FirUnsupportedArrayLiteralChecker
         )

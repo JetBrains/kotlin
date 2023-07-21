@@ -67,7 +67,7 @@ class ContextualSerializersProvider(session: FirSession) : FirExtensionSessionCo
             annotationClassId, session
         ) ?: return emptyList()
         val arguments = when (val argument = annotation.argumentMapping.mapping.values.firstOrNull()) {
-            is FirArrayOfCall -> argument.arguments
+            is FirArrayLiteral -> argument.arguments
             is FirVarargArgumentsExpression -> argument.arguments
             else -> return emptyList()
         }

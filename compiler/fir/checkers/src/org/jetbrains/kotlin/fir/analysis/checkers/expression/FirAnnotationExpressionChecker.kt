@@ -81,7 +81,7 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker() {
         }
 
         when (expression) {
-            is FirArrayOfCall -> return checkArgumentList(expression.argumentList)
+            is FirArrayLiteral -> return checkArgumentList(expression.argumentList)
             is FirVarargArgumentsExpression -> {
                 for (arg in expression.arguments) {
                     val unwrappedArg = arg.unwrapArgument()

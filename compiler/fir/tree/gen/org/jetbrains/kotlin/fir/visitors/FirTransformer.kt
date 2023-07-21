@@ -94,7 +94,7 @@ import org.jetbrains.kotlin.fir.expressions.FirWhenBranch
 import org.jetbrains.kotlin.fir.expressions.FirContextReceiverArgumentListOwner
 import org.jetbrains.kotlin.fir.expressions.FirCheckNotNullCall
 import org.jetbrains.kotlin.fir.expressions.FirElvisExpression
-import org.jetbrains.kotlin.fir.expressions.FirArrayOfCall
+import org.jetbrains.kotlin.fir.expressions.FirArrayLiteral
 import org.jetbrains.kotlin.fir.expressions.FirAugmentedArraySetCall
 import org.jetbrains.kotlin.fir.expressions.FirClassReferenceExpression
 import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
@@ -522,8 +522,8 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformElement(elvisExpression, data)
     }
 
-    open fun transformArrayOfCall(arrayOfCall: FirArrayOfCall, data: D): FirStatement {
-        return transformElement(arrayOfCall, data)
+    open fun transformArrayLiteral(arrayLiteral: FirArrayLiteral, data: D): FirStatement {
+        return transformElement(arrayLiteral, data)
     }
 
     open fun transformAugmentedArraySetCall(augmentedArraySetCall: FirAugmentedArraySetCall, data: D): FirStatement {
@@ -1142,8 +1142,8 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformElvisExpression(elvisExpression, data)
     }
 
-    final override fun visitArrayOfCall(arrayOfCall: FirArrayOfCall, data: D): FirStatement {
-        return transformArrayOfCall(arrayOfCall, data)
+    final override fun visitArrayLiteral(arrayLiteral: FirArrayLiteral, data: D): FirStatement {
+        return transformArrayLiteral(arrayLiteral, data)
     }
 
     final override fun visitAugmentedArraySetCall(augmentedArraySetCall: FirAugmentedArraySetCall, data: D): FirStatement {

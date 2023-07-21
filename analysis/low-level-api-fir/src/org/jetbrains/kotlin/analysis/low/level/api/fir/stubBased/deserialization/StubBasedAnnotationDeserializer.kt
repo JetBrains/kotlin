@@ -120,7 +120,7 @@ class StubBasedAnnotationDeserializer(
                 )
             }
             is ArrayValue -> {
-                buildArrayOfCall {
+                buildArrayLiteral {
                     source = KtRealPsiSourceElement(sourceElement)
                     typeRef = buildResolvedTypeRef {
                         // Not quite precise, yet doesn't require annotation resolution

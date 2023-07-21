@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.expressions.*
 
-object FirUnsupportedArrayLiteralChecker : FirArrayOfCallChecker() {
-    override fun check(expression: FirArrayOfCall, context: CheckerContext, reporter: DiagnosticReporter) {
+object FirUnsupportedArrayLiteralChecker : FirArrayLiteralChecker() {
+    override fun check(expression: FirArrayLiteral, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!isInsideAnnotationCall(expression, context) &&
             (context.callsOrAssignments.isNotEmpty() || !isInsideAnnotationClass(context))
         ) {
@@ -31,7 +31,7 @@ object FirUnsupportedArrayLiteralChecker : FirArrayOfCallChecker() {
         }
     }
 
-    private fun isInsideAnnotationCall(expression: FirArrayOfCall, context: CheckerContext): Boolean {
+    private fun isInsideAnnotationCall(expression: FirArrayLiteral, context: CheckerContext): Boolean {
         context.callsOrAssignments.lastOrNull()?.let {
             val arguments = when (it) {
                 is FirFunctionCall ->
@@ -55,8 +55,8 @@ object FirUnsupportedArrayLiteralChecker : FirArrayOfCallChecker() {
                 for (unwrapped in unwrappedArguments) {
                     if (unwrapped == expression ||
                         (unwrapped is FirErrorExpression && unwrapped.expression == expression) ||
-                        unwrapped is FirArrayOfCall &&
-                        unwrapped.arguments.any { arrayOfCallElement -> arrayOfCallElement.unwrapArgument() == expression }
+                        unwrapped is FirArrayLiteral &&
+                        unwrapped.arguments.any { arrayLiteralElement -> arrayLiteralElement.unwrapArgument() == expression }
                     ) {
                         return@any true
                     }

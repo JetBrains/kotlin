@@ -988,7 +988,7 @@ class LightTreeRawFirExpressionBuilder(
             if (it.isExpression()) firExpressionList += getAsFirExpression<FirExpression>(it, "Incorrect collection literal argument")
         }
 
-        return buildArrayOfCall {
+        return buildArrayLiteral {
             source = expression.toFirSourceElement()
             argumentList = buildArgumentList {
                 arguments += firExpressionList

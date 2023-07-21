@@ -94,7 +94,7 @@ import org.jetbrains.kotlin.fir.expressions.FirWhenBranch
 import org.jetbrains.kotlin.fir.expressions.FirContextReceiverArgumentListOwner
 import org.jetbrains.kotlin.fir.expressions.FirCheckNotNullCall
 import org.jetbrains.kotlin.fir.expressions.FirElvisExpression
-import org.jetbrains.kotlin.fir.expressions.FirArrayOfCall
+import org.jetbrains.kotlin.fir.expressions.FirArrayLiteral
 import org.jetbrains.kotlin.fir.expressions.FirAugmentedArraySetCall
 import org.jetbrains.kotlin.fir.expressions.FirClassReferenceExpression
 import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
@@ -345,7 +345,7 @@ abstract class FirVisitor<out R, in D> {
 
     open fun visitElvisExpression(elvisExpression: FirElvisExpression, data: D): R  = visitElement(elvisExpression, data)
 
-    open fun visitArrayOfCall(arrayOfCall: FirArrayOfCall, data: D): R  = visitElement(arrayOfCall, data)
+    open fun visitArrayLiteral(arrayLiteral: FirArrayLiteral, data: D): R  = visitElement(arrayLiteral, data)
 
     open fun visitAugmentedArraySetCall(augmentedArraySetCall: FirAugmentedArraySetCall, data: D): R  = visitElement(augmentedArraySetCall, data)
 

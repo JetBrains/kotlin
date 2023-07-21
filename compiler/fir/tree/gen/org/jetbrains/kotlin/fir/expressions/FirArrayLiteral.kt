@@ -15,17 +15,17 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirArrayOfCall : FirExpression(), FirCall {
+abstract class FirArrayLiteral : FirExpression(), FirCall {
     abstract override val source: KtSourceElement?
     abstract override val typeRef: FirTypeRef
     abstract override val annotations: List<FirAnnotation>
     abstract override val argumentList: FirArgumentList
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitArrayOfCall(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitArrayLiteral(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
-        transformer.transformArrayOfCall(this, data) as E
+        transformer.transformArrayLiteral(this, data) as E
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
@@ -33,5 +33,5 @@ abstract class FirArrayOfCall : FirExpression(), FirCall {
 
     abstract override fun replaceArgumentList(newArgumentList: FirArgumentList)
 
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirArrayOfCall
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirArrayLiteral
 }

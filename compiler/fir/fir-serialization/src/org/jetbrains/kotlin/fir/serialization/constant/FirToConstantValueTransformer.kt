@@ -92,11 +92,11 @@ internal object FirToConstantValueTransformer : FirDefaultVisitor<ConstantValue<
         return StringValue(strings.joinToString(separator = "") { (it as StringValue).value })
     }
 
-    override fun visitArrayOfCall(
-        arrayOfCall: FirArrayOfCall,
+    override fun visitArrayLiteral(
+        arrayLiteral: FirArrayLiteral,
         data: FirToConstantValueTransformerData
     ): ConstantValue<*> {
-        return ArrayValue(arrayOfCall.argumentList.arguments.mapNotNull { it.toConstantValue(data) })
+        return ArrayValue(arrayLiteral.argumentList.arguments.mapNotNull { it.toConstantValue(data) })
     }
 
     override fun visitAnnotation(
@@ -207,9 +207,9 @@ internal object FirToConstantValueTransformer : FirDefaultVisitor<ConstantValue<
         data: FirToConstantValueTransformerData,
     ): ConstantValue<*> {
         val arguments = varargArgumentsExpression.arguments.let {
-            // Named, spread or array literal arguments for vararg parameters have the form Vararg(Named/Spread?(ArrayOfCall(..))).
-            // We need to extract the ArrayOfCall, otherwise we will get two nested ArrayValue as a result.
-            (it.singleOrNull()?.unwrapArgument() as? FirArrayOfCall)?.arguments ?: it
+            // Named, spread or array literal arguments for vararg parameters have the form Vararg(Named/Spread?(ArrayLiteral(..))).
+            // We need to extract the ArrayLiteral, otherwise we will get two nested ArrayValue as a result.
+            (it.singleOrNull()?.unwrapArgument() as? FirArrayLiteral)?.arguments ?: it
         }
 
         return ArrayValue(arguments.mapNotNull { it.toConstantValue(data) })
@@ -246,8 +246,8 @@ internal object FirToConstantValueChecker : FirDefaultVisitor<Boolean, FirSessio
         return stringConcatenationCall.argumentList.arguments.all { it.accept(this, data) }
     }
 
-    override fun visitArrayOfCall(arrayOfCall: FirArrayOfCall, data: FirSession): Boolean {
-        return arrayOfCall.arguments.all { it.accept(this, data) }
+    override fun visitArrayLiteral(arrayLiteral: FirArrayLiteral, data: FirSession): Boolean {
+        return arrayLiteral.arguments.all { it.accept(this, data) }
     }
 
     override fun visitAnnotation(annotation: FirAnnotation, data: FirSession): Boolean = true

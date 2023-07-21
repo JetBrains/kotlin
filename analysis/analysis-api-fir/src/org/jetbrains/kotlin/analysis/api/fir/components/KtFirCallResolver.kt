@@ -29,8 +29,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfTypeSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.AllCandidatesResolver
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
-import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
-import org.jetbrains.kotlin.utils.exceptions.rethrowExceptionWithDetails
 import org.jetbrains.kotlin.analysis.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.fir.FirElement
@@ -59,6 +57,7 @@ import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -72,6 +71,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions.EQUALS
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.rethrowExceptionWithDetails
 
 internal class KtFirCallResolver(
     override val analysisSession: KtFirAnalysisSession,
@@ -245,7 +245,7 @@ internal class KtFirCallResolver(
                     else -> null
                 }
             }
-            is FirArrayOfCall -> toKtCallInfo()
+            is FirArrayLiteral -> toKtCallInfo()
             is FirComparisonExpression -> compareToCall.toKtCallInfo(
                 psi,
                 resolveCalleeExpressionOfFunctionCall,
@@ -872,7 +872,7 @@ internal class KtFirCallResolver(
         return result
     }
 
-    private fun FirArrayOfCall.toTypeArgumentsMapping(
+    private fun FirArrayLiteral.toTypeArgumentsMapping(
         partiallyAppliedSymbol: KtPartiallyAppliedSymbol<*, *>
     ): Map<KtTypeParameterSymbol, KtType> {
         val elementType = typeRef.coneTypeSafe<ConeClassLikeType>()?.arrayElementType()?.asKtType() ?: return emptyMap()
@@ -929,7 +929,7 @@ internal class KtFirCallResolver(
                 resolveCalleeExpressionOfFunctionCall,
                 resolveFragmentOfCall
             )
-            is FirArrayOfCall, is FirEqualityOperatorCall -> {
+            is FirArrayLiteral, is FirEqualityOperatorCall -> {
                 toKtCallInfo(psi, resolveCalleeExpressionOfFunctionCall, resolveFragmentOfCall).toKtCallCandidateInfos()
             }
             is FirComparisonExpression -> compareToCall.toKtCallInfo(
@@ -1107,7 +1107,7 @@ internal class KtFirCallResolver(
             }
         }
 
-    private fun FirArrayOfCall.toKtCallInfo(): KtCallInfo? {
+    private fun FirArrayLiteral.toKtCallInfo(): KtCallInfo? {
         val arrayOfSymbol = with(analysisSession) {
             val type = typeRef.coneTypeSafe<ConeClassLikeType>()
                 ?: return run {
@@ -1150,7 +1150,7 @@ internal class KtFirCallResolver(
         )
     }
 
-    private fun FirArrayOfCall.createSubstitutorFromTypeArguments(arrayOfSymbol: KtFirFunctionSymbol): KtSubstitutor {
+    private fun FirArrayLiteral.createSubstitutorFromTypeArguments(arrayOfSymbol: KtFirFunctionSymbol): KtSubstitutor {
         val firSymbol = arrayOfSymbol.firSymbol
         // No type parameter means this is an arrayOf call of primitives, in which case there is no type arguments
         val typeParameter = firSymbol.fir.typeParameters.singleOrNull() ?: return KtSubstitutor.Empty(token)
@@ -1239,12 +1239,12 @@ internal class KtFirCallResolver(
         return ktArgumentMapping
     }
 
-    private fun FirArrayOfCall.createArgumentMapping(
-        arrayOfCallSymbol: KtFirFunctionSymbol,
+    private fun FirArrayLiteral.createArgumentMapping(
+        arrayOfSymbol: KtFirFunctionSymbol,
         substitutor: KtSubstitutor,
     ): LinkedHashMap<KtExpression, KtVariableLikeSignature<KtValueParameterSymbol>> {
         val ktArgumentMapping = LinkedHashMap<KtExpression, KtVariableLikeSignature<KtValueParameterSymbol>>()
-        val parameterSymbol = arrayOfCallSymbol.valueParameters.single()
+        val parameterSymbol = arrayOfSymbol.valueParameters.single()
 
         for (firExpression in argumentList.arguments) {
             mapArgumentExpressionToParameter(

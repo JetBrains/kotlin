@@ -118,7 +118,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val checkNotNullCall by element(Expression, expression, call, resolvable)
     val elvisExpression by element(Expression, expression, resolvable)
 
-    val arrayOfCall by element(Expression, expression, call)
+    val arrayLiteral by element(Expression, expression, call)
     val augmentedArraySetCall by element(Expression, statement)
     val classReferenceExpression by element(Expression, expression)
     val errorExpression by element(Expression, expression, diagnosticHolder)

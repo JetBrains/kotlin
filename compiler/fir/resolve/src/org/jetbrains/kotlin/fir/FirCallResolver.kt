@@ -542,7 +542,7 @@ class FirCallResolver(
                 annotation.replaceArgumentList(buildArgumentList {
                     source = annotation.argumentList.source
                     annotation.arguments.mapTo(arguments) { arg ->
-                        val resolutionMode = if (arg.unwrapArgument() is FirArrayOfCall) {
+                        val resolutionMode = if (arg.unwrapArgument() is FirArrayLiteral) {
                             (argumentsToParameters[arg]?.returnTypeRef as? FirResolvedTypeRef)?.let {
                                 // Enabling expectedTypeMismatchIsReportedInChecker clarifies error messages:
                                 // It will be reported single ARGUMENT_TYPE_MISMATCH on the array literal in checkApplicabilityForArgumentType

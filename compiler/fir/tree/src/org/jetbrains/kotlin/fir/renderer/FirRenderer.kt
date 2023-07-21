@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.renderer
 
-import org.jetbrains.kotlin.builtins.functions.FunctionTypeKindExtractor
 import org.jetbrains.kotlin.builtins.functions.AllowedToUsedOnlyInK1
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKindExtractor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
@@ -1110,10 +1110,10 @@ class FirRenderer(
             print(")")
         }
 
-        override fun visitArrayOfCall(arrayOfCall: FirArrayOfCall) {
-            annotationRenderer?.render(arrayOfCall)
+        override fun visitArrayLiteral(arrayLiteral: FirArrayLiteral) {
+            annotationRenderer?.render(arrayLiteral)
             print("<implicitArrayOf>")
-            visitCall(arrayOfCall)
+            visitCall(arrayLiteral)
         }
 
         override fun visitThrowExpression(throwExpression: FirThrowExpression) {

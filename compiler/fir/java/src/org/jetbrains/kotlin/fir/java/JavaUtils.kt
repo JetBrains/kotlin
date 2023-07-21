@@ -10,11 +10,10 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
-import org.jetbrains.kotlin.fir.expressions.FirArrayOfCall
-import org.jetbrains.kotlin.fir.expressions.FirConstExpression
+import org.jetbrains.kotlin.fir.expressions.FirArrayLiteral
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
-import org.jetbrains.kotlin.fir.expressions.builder.buildArrayOfCall
+import org.jetbrains.kotlin.fir.expressions.builder.buildArrayLiteral
 import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildErrorExpression
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.expectedConeType
@@ -90,14 +89,14 @@ internal fun Any?.createConstantIfAny(session: FirSession, unsigned: Boolean = f
         is String -> buildConstExpression(
             null, ConstantValueKind.String, this, setType = true
         )
-        is ByteArray -> toList().createArrayOfCall(session, ConstantValueKind.Byte)
-        is ShortArray -> toList().createArrayOfCall(session, ConstantValueKind.Short)
-        is IntArray -> toList().createArrayOfCall(session, ConstantValueKind.Int)
-        is LongArray -> toList().createArrayOfCall(session, ConstantValueKind.Long)
-        is CharArray -> toList().createArrayOfCall(session, ConstantValueKind.Char)
-        is FloatArray -> toList().createArrayOfCall(session, ConstantValueKind.Float)
-        is DoubleArray -> toList().createArrayOfCall(session, ConstantValueKind.Double)
-        is BooleanArray -> toList().createArrayOfCall(session, ConstantValueKind.Boolean)
+        is ByteArray -> toList().createArrayLiteral(session, ConstantValueKind.Byte)
+        is ShortArray -> toList().createArrayLiteral(session, ConstantValueKind.Short)
+        is IntArray -> toList().createArrayLiteral(session, ConstantValueKind.Int)
+        is LongArray -> toList().createArrayLiteral(session, ConstantValueKind.Long)
+        is CharArray -> toList().createArrayLiteral(session, ConstantValueKind.Char)
+        is FloatArray -> toList().createArrayLiteral(session, ConstantValueKind.Float)
+        is DoubleArray -> toList().createArrayLiteral(session, ConstantValueKind.Double)
+        is BooleanArray -> toList().createArrayLiteral(session, ConstantValueKind.Boolean)
         null -> buildConstExpression(
             null, ConstantValueKind.Null, null, setType = true
         )
@@ -106,10 +105,10 @@ internal fun Any?.createConstantIfAny(session: FirSession, unsigned: Boolean = f
     }
 }
 
-private fun <T> List<T>.createArrayOfCall(session: FirSession, kind: ConstantValueKind<T>): FirArrayOfCall {
-    return buildArrayOfCall {
+private fun <T> List<T>.createArrayLiteral(session: FirSession, kind: ConstantValueKind<T>): FirArrayLiteral {
+    return buildArrayLiteral {
         argumentList = buildArgumentList {
-            for (element in this@createArrayOfCall) {
+            for (element in this@createArrayLiteral) {
                 arguments += element.createConstantOrError(session)
             }
         }

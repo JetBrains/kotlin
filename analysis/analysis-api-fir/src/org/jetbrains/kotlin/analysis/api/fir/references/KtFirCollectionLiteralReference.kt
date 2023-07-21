@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirArrayOfSymbolProvider.
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirArrayOfSymbolProvider.arrayTypeToArrayOfCall
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
-import org.jetbrains.kotlin.fir.expressions.FirArrayOfCall
+import org.jetbrains.kotlin.fir.expressions.FirArrayLiteral
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 
@@ -23,7 +23,7 @@ class KtFirCollectionLiteralReference(
 ) : KtCollectionLiteralReference(expression), KtFirReference {
     override fun KtAnalysisSession.resolveToSymbols(): Collection<KtSymbol> {
         check(this is KtFirAnalysisSession)
-        val fir = element.getOrBuildFirSafe<FirArrayOfCall>(firResolveSession) ?: return emptyList()
+        val fir = element.getOrBuildFirSafe<FirArrayLiteral>(firResolveSession) ?: return emptyList()
         val type = fir.typeRef.coneTypeSafe<ConeClassLikeType>() ?: return listOfNotNull(arrayOfSymbol(arrayOf))
         val call = arrayTypeToArrayOfCall[type.lookupTag.classId] ?: arrayOf
         return listOfNotNull(arrayOfSymbol(call))

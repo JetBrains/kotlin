@@ -148,14 +148,14 @@ class FirSyntheticCallGenerator(
         return elvisExpression.transformCalleeReference(UpdateReference, reference)
     }
 
-    fun generateSyntheticIdCall(arrayOfCall: FirExpression, context: ResolutionContext): FirFunctionCall {
+    fun generateSyntheticIdCall(arrayLiteral: FirExpression, context: ResolutionContext): FirFunctionCall {
         val argumentList = buildArgumentList {
-            arguments += arrayOfCall
+            arguments += arrayLiteral
         }
         return buildFunctionCall {
             this.argumentList = argumentList
             calleeReference = generateCalleeReferenceWithCandidate(
-                arrayOfCall,
+                arrayLiteral,
                 idFunction,
                 argumentList,
                 SyntheticCallableId.ID.callableName,
@@ -165,22 +165,22 @@ class FirSyntheticCallGenerator(
     }
 
     fun generateSyntheticArrayOfCall(
-        arrayOfCall: FirArrayOfCall,
+        arrayLiteral: FirArrayLiteral,
         expectedTypeRef: FirTypeRef,
         context: ResolutionContext
     ): FirFunctionCall {
-        val argumentList = arrayOfCall.argumentList
+        val argumentList = arrayLiteral.argumentList
         return buildFunctionCall {
             this.argumentList = argumentList
             calleeReference = generateCalleeReferenceWithCandidate(
-                arrayOfCall,
+                arrayLiteral,
                 calculateArrayOfSymbol(expectedTypeRef).fir,
                 argumentList,
                 ArrayFqNames.ARRAY_OF_FUNCTION,
                 callKind = CallKind.Function,
                 context = context,
             )
-            source = arrayOfCall.source
+            source = arrayLiteral.source
         }
     }
 

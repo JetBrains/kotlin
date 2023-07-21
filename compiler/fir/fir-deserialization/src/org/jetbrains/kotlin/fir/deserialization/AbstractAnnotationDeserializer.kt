@@ -305,7 +305,7 @@ abstract class AbstractAnnotationDeserializer(
             }
             ARRAY -> {
                 val expectedArrayElementType = expectedType()?.arrayElementType() ?: session.builtinTypes.anyType.type
-                buildArrayOfCall {
+                buildArrayLiteral {
                     argumentList = buildArgumentList {
                         value.arrayElementList.mapTo(arguments) { resolveValue(it, nameResolver) { expectedArrayElementType } }
                     }

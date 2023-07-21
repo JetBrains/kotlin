@@ -774,20 +774,20 @@ class FirCallCompletionResultsWriterTransformer(
         return integerLiteralOperatorCall.transformSingle(integerOperatorApproximator, expectedType)
     }
 
-    override fun transformArrayOfCall(arrayOfCall: FirArrayOfCall, data: ExpectedArgumentType?): FirStatement {
-        if (arrayOfCall.typeRef !is FirImplicitTypeRef) return arrayOfCall
-        val expectedArrayType = data?.getExpectedType(arrayOfCall)
+    override fun transformArrayLiteral(arrayLiteral: FirArrayLiteral, data: ExpectedArgumentType?): FirStatement {
+        if (arrayLiteral.typeRef !is FirImplicitTypeRef) return arrayLiteral
+        val expectedArrayType = data?.getExpectedType(arrayLiteral)
         val expectedArrayElementType = expectedArrayType?.arrayElementType()
-        arrayOfCall.transformChildren(this, expectedArrayElementType?.toExpectedType())
+        arrayLiteral.transformChildren(this, expectedArrayElementType?.toExpectedType())
         val arrayElementType =
-            session.typeContext.commonSuperTypeOrNull(arrayOfCall.arguments.map { it.typeRef.coneType })?.let {
+            session.typeContext.commonSuperTypeOrNull(arrayLiteral.arguments.map { it.typeRef.coneType })?.let {
                 typeApproximator.approximateToSuperType(it, TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference)
                     ?: it
             } ?: expectedArrayElementType ?: session.builtinTypes.nullableAnyType.type
-        arrayOfCall.resultType = arrayOfCall.typeRef.resolvedTypeFromPrototype(
+        arrayLiteral.resultType = arrayLiteral.typeRef.resolvedTypeFromPrototype(
             arrayElementType.createArrayType(createPrimitiveArrayTypeIfPossible = expectedArrayType?.isPrimitiveArray == true)
         )
-        return arrayOfCall
+        return arrayLiteral
     }
 
     override fun transformVarargArgumentsExpression(

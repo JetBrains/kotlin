@@ -48,7 +48,7 @@ class FirAnnotationTypeQualifierResolver(
 
     private fun FirExpression.toEnumNames(): List<String> =
         when (this) {
-            is FirArrayOfCall -> arguments.flatMap { it.toEnumNames() }
+            is FirArrayLiteral -> arguments.flatMap { it.toEnumNames() }
             is FirVarargArgumentsExpression -> arguments.flatMap { it.toEnumNames() }
             else -> {
                 val name = when (val reference = toReference()) {

@@ -11,10 +11,10 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
@@ -25,7 +25,7 @@ object FirNamedVarargChecker : FirCallChecker() {
         if (expression !is FirFunctionCall &&
             expression !is FirAnnotation &&
             expression !is FirDelegatedConstructorCall &&
-            expression !is FirArrayOfCall) return
+            expression !is FirArrayLiteral) return
         val isAnnotation = expression is FirAnnotation
         val redundantSpreadWarningFactory =
             if (isAnnotation) FirErrors.REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_ANNOTATION
@@ -46,7 +46,7 @@ object FirNamedVarargChecker : FirCallChecker() {
             }
             val typeRef = argument.expression.typeRef
             if (typeRef is FirErrorTypeRef) return
-            if (argument.expression is FirArrayOfCall) return
+            if (argument.expression is FirArrayLiteral) return
 
             @OptIn(UnexpandedTypeCheck::class)
             if (allowAssignArray && typeRef.isArrayType) return
@@ -68,8 +68,8 @@ object FirNamedVarargChecker : FirCallChecker() {
             }
         }
 
-        if (expression is FirArrayOfCall) {
-            // FirArrayOfCall has the `vararg` argument expression pre-flattened and doesn't have an argument mapping.
+        if (expression is FirArrayLiteral) {
+            // FirArrayLiteral has the `vararg` argument expression pre-flattened and doesn't have an argument mapping.
             expression.arguments.forEach { checkArgument(it, it is FirNamedArgumentExpression, expression.typeRef.coneTypeOrNull) }
         } else {
             val argumentMap = expression.resolvedArgumentMapping ?: return
