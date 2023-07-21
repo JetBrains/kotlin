@@ -4413,6 +4413,13 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.NOT_SUPPORTED_INLINE_PARAMETER_IN_INLINE_PARAMETER_DEFAULT_VALUE) { firDiagnostic ->
+        NotSupportedInlineParameterInInlineParameterDefaultValueImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.REIFIED_TYPE_PARAMETER_IN_OVERRIDE) { firDiagnostic ->
         ReifiedTypeParameterInOverrideImpl(
             firDiagnostic as KtPsiDiagnostic,

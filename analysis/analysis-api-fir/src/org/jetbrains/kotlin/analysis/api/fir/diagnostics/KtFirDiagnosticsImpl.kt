@@ -3713,6 +3713,12 @@ internal class InvalidDefaultFunctionalParameterForInlineImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.InvalidDefaultFunctionalParameterForInline
 
+internal class NotSupportedInlineParameterInInlineParameterDefaultValueImpl(
+    override val parameter: KtSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.NotSupportedInlineParameterInInlineParameterDefaultValue
+
 internal class ReifiedTypeParameterInOverrideImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,

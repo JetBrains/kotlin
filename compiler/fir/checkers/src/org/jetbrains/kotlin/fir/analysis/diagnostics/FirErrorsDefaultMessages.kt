@@ -394,6 +394,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NOT_A_MULTIPLATFO
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NOT_A_SUPERTYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NOT_NULL_ASSERTION_ON_LAMBDA_EXPRESSION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NOT_SUPPORTED_INLINE_PARAMETER_IN_INLINE_PARAMETER_DEFAULT_VALUE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NOT_YET_SUPPORTED_IN_INLINE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_ACTUAL_FOR_EXPECT
@@ -1378,6 +1379,11 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             INVALID_DEFAULT_FUNCTIONAL_PARAMETER_FOR_INLINE,
             "Invalid default value for inline function parameter. Only lambdas, anonymous functions, and callable references are supported",
+            DECLARATION_NAME
+        )
+        map.put(
+            NOT_SUPPORTED_INLINE_PARAMETER_IN_INLINE_PARAMETER_DEFAULT_VALUE,
+            "Usage of inline parameter ''{0}'' in default value of inline parameter is not supported.",
             DECLARATION_NAME
         )
         map.put(

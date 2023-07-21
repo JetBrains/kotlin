@@ -1544,6 +1544,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FirValueParameterSymbol>("parameter")
         }
 
+        val NOT_SUPPORTED_INLINE_PARAMETER_IN_INLINE_PARAMETER_DEFAULT_VALUE by error<KtElement> {
+            parameter<FirValueParameterSymbol>("parameter")
+        }
+
         val REIFIED_TYPE_PARAMETER_IN_OVERRIDE by error<KtElement>(PositioningStrategy.REIFIED_MODIFIER)
 
         val INLINE_PROPERTY_WITH_BACKING_FIELD by error<KtDeclaration>(PositioningStrategy.DECLARATION_SIGNATURE)

@@ -6,21 +6,21 @@ inline fun inlineFun(lambda: () -> String) = lambda()
 fun noInlineFun(lambda: () -> String) = lambda()
 
 
-inline fun default0_1(lambda: () -> String, dlambda: () -> String = { <!USAGE_IS_NOT_INLINABLE!>lambda<!>; "OK" }) {
+inline fun default0_1(lambda: () -> String, dlambda: () -> String = { <!NOT_SUPPORTED_INLINE_PARAMETER_IN_INLINE_PARAMETER_DEFAULT_VALUE, USAGE_IS_NOT_INLINABLE!>lambda<!>; "OK" }) {
     lambda() + dlambda()
 }
 
-inline fun default0_2(lambda: () -> String, dlambda: () -> String = { noInlineFun (<!USAGE_IS_NOT_INLINABLE!>lambda<!>) }) {
+inline fun default0_2(lambda: () -> String, dlambda: () -> String = { noInlineFun (<!NOT_SUPPORTED_INLINE_PARAMETER_IN_INLINE_PARAMETER_DEFAULT_VALUE, USAGE_IS_NOT_INLINABLE!>lambda<!>) }) {
     lambda() + dlambda()
 }
 
 
 
-inline fun default0(lambda: () -> String, dlambda: () -> String = { noInlineFun (<!USAGE_IS_NOT_INLINABLE!>lambda<!>) }) {
+inline fun default0(lambda: () -> String, dlambda: () -> String = { noInlineFun (<!NOT_SUPPORTED_INLINE_PARAMETER_IN_INLINE_PARAMETER_DEFAULT_VALUE, USAGE_IS_NOT_INLINABLE!>lambda<!>) }) {
     lambda() + dlambda()
 }
 
-inline fun default1_0(lambda: () -> String, dlambda: () -> String = { lambda() }) {
+inline fun default1_0(lambda: () -> String, dlambda: () -> String = { <!NOT_SUPPORTED_INLINE_PARAMETER_IN_INLINE_PARAMETER_DEFAULT_VALUE!>lambda<!>() }) {
     lambda() + dlambda()
 }
 

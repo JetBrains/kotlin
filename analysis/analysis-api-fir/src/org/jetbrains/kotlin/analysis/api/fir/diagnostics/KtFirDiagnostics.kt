@@ -3079,6 +3079,11 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val parameter: KtSymbol
     }
 
+    interface NotSupportedInlineParameterInInlineParameterDefaultValue : KtFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = NotSupportedInlineParameterInInlineParameterDefaultValue::class
+        val parameter: KtSymbol
+    }
+
     interface ReifiedTypeParameterInOverride : KtFirDiagnostic<KtElement> {
         override val diagnosticClass get() = ReifiedTypeParameterInOverride::class
     }

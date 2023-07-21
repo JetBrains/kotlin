@@ -52,7 +52,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
     class InlineFunctionBodyContext(
         val inlineFunction: FirFunction,
         private val inlineFunEffectiveVisibility: EffectiveVisibility,
-        private val inalienableParameters: List<FirValueParameterSymbol>,
+        private val inlinableParameters: List<FirValueParameterSymbol>,
         val session: FirSession,
     ) : FirDefaultVisitor<Unit, CheckerContext>() {
         private val isEffectivelyPrivateApiFunction: Boolean = inlineFunEffectiveVisibility.privateApi
@@ -137,7 +137,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
                 val argument = wrappedArgument.unwrapArgument()
                 val resolvedArgumentSymbol = argument.toResolvedCallableSymbol() as? FirVariableSymbol<*> ?: continue
 
-                val valueParameterOfOriginalInlineFunction = inalienableParameters.firstOrNull { it == resolvedArgumentSymbol }
+                val valueParameterOfOriginalInlineFunction = inlinableParameters.firstOrNull { it == resolvedArgumentSymbol }
                 if (valueParameterOfOriginalInlineFunction != null) {
                     val factory = when {
                         calledFunctionSymbol.isInline -> when {
@@ -163,7 +163,7 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
             reporter: DiagnosticReporter,
         ) {
             val receiverSymbol = receiverExpression.toResolvedCallableSymbol() ?: return
-            if (receiverSymbol in inalienableParameters) {
+            if (receiverSymbol in inlinableParameters) {
                 if (!isInvokeOrInlineExtension(targetSymbol)) {
                     reporter.reportOn(
                         receiverExpression.source ?: qualifiedAccessExpression.source,
@@ -192,9 +192,12 @@ object FirInlineDeclarationChecker : FirFunctionChecker() {
             val source = qualifiedAccess.source ?: return
             if (targetSymbol !is FirCallableSymbol<*>) return
 
-            if (targetSymbol in inalienableParameters) {
+            if (targetSymbol in inlinableParameters) {
                 if (!qualifiedAccess.partOfCall(context)) {
                     reporter.reportOn(source, FirErrors.USAGE_IS_NOT_INLINABLE, targetSymbol, context)
+                }
+                if (context.containingDeclarations.any { it.symbol in inlinableParameters }) {
+                    reporter.reportOn(source, FirErrors.NOT_SUPPORTED_INLINE_PARAMETER_IN_INLINE_PARAMETER_DEFAULT_VALUE, targetSymbol as FirValueParameterSymbol, context)
                 }
             }
             checkVisibilityAndAccess(qualifiedAccess, targetSymbol, source, context, reporter)
