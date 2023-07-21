@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCompilationFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.gradle.utils.runProjectConfigurationHealthCheckWhenE
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeAsciiOnly
 
+@DeprecatedTargetPresetApi
 open class KotlinJsIrTargetPreset(
     project: Project
 ) : KotlinOnlyTargetPreset<KotlinJsIrTarget, KotlinJsIrCompilation>(
@@ -65,6 +67,7 @@ open class KotlinJsIrTargetPreset(
     }
 }
 
+@DeprecatedTargetPresetApi
 class KotlinJsIrSingleTargetPreset(
     project: Project
 ) : KotlinJsIrTargetPreset(

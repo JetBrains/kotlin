@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.diagnostics
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.PRESETS_DEPRECATION_MESSAGE_SUFFIX
 import org.jetbrains.kotlin.gradle.dsl.KotlinSourceSetConvention.isRegisteredByKotlinSourceSetConventionAt
 import org.jetbrains.kotlin.gradle.dsl.NativeTargetShortcutTrace
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
@@ -534,6 +535,23 @@ object KotlinToolingDiagnostics {
                 To suppress this warning add '$KOTLIN_NATIVE_SUPPRESS_EXPERIMENTAL_ARTIFACTS_DSL_WARNING=true' to your gradle.properties
             """.trimIndent()
         )
+    }
+
+    private val presetsDeprecationSeverity = ToolingDiagnostic.Severity.WARNING
+
+    object TargetFromPreset : ToolingDiagnosticFactory(presetsDeprecationSeverity) {
+        const val DEPRECATION_MESSAGE = "The targetFromPreset() $PRESETS_DEPRECATION_MESSAGE_SUFFIX"
+        operator fun invoke() = build(DEPRECATION_MESSAGE)
+    }
+
+    object FromPreset : ToolingDiagnosticFactory(presetsDeprecationSeverity) {
+        const val DEPRECATION_MESSAGE = "The fromPreset() $PRESETS_DEPRECATION_MESSAGE_SUFFIX"
+        operator fun invoke() = build(DEPRECATION_MESSAGE)
+    }
+
+    object CreateTarget : ToolingDiagnosticFactory(presetsDeprecationSeverity) {
+        const val DEPRECATION_MESSAGE = "The KotlinTargetPreset.createTarget() $PRESETS_DEPRECATION_MESSAGE_SUFFIX"
+        operator fun invoke() = build(DEPRECATION_MESSAGE)
     }
 
     object JvmWithJavaIsIncompatibleWithAndroid : ToolingDiagnosticFactory(FATAL) {

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.unitTests.diagnosticsTests
 
+import org.jetbrains.kotlin.gradle.dsl.targetFromPresetInternal
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmWithJavaTargetPreset
 import org.jetbrains.kotlin.gradle.util.androidLibrary
 import org.jetbrains.kotlin.gradle.util.checkDiagnosticsWithMppProject
@@ -45,7 +46,8 @@ class MppDiagnosticsFunctionalTest {
     fun testDeprecatedJvmWithJavaPreset() {
         checkDiagnosticsWithMppProject("deprecatedJvmWithJavaPreset") {
             kotlin {
-                targetFromPreset(presets.getByName(KotlinJvmWithJavaTargetPreset.PRESET_NAME))
+                @Suppress("DEPRECATION")
+                targetFromPresetInternal(presets.getByName(KotlinJvmWithJavaTargetPreset.PRESET_NAME))
             }
         }
     }

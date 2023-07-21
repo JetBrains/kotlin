@@ -7,11 +7,13 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.sources.applyLanguageSettingsToCompilerOptions
 import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetConfigurator
 
+@DeprecatedTargetPresetApi
 class KotlinMetadataTargetPreset(
     project: Project
 ) : KotlinOnlyTargetPreset<KotlinMetadataTarget, KotlinCompilation<*>>(project) {
@@ -49,8 +51,8 @@ class KotlinMetadataTargetPreset(
         return project.objects.newInstance(KotlinMetadataTarget::class.java, project)
     }
 
-    override fun createTarget(name: String): KotlinMetadataTarget =
-        super.createTarget(name).apply {
+    override fun createTargetInternal(name: String): KotlinMetadataTarget =
+        super.createTargetInternal(name).apply {
             val mainCompilation = compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
             val commonMainSourceSet = project.kotlinExtension.sourceSets.getByName(KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME)
 

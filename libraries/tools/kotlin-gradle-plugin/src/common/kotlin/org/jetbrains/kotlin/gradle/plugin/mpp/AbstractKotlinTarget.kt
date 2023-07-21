@@ -18,6 +18,8 @@ import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.publish.maven.MavenPublication
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.PRESETS_API_IS_DEPRECATED_MESSAGE
+import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -179,8 +181,17 @@ abstract class AbstractKotlinTarget(
         publicationConfigureActions.all { action -> action.execute(publication) }
     }
 
+    @OptIn(DeprecatedTargetPresetApi::class)
+    @Deprecated(
+        PRESETS_API_IS_DEPRECATED_MESSAGE,
+        level = DeprecationLevel.WARNING,
+    )
     override var preset: KotlinTargetPreset<out KotlinTarget>? = null
         internal set
+
+    override fun warnAboutCreationOfTargetFromPreset() {
+        project.reportDiagnostic(KotlinToolingDiagnostics.CreateTarget())
+    }
 }
 
 private val publishedConfigurationNameSuffix = "-published"

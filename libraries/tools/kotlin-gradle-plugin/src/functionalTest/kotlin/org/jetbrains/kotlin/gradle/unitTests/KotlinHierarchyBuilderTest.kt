@@ -24,6 +24,7 @@ class KotlinHierarchyBuilderTest {
     fun `test - interface offers functions for known presets`() {
         val kotlinTargetHierarchyBuilderInterface = KotlinHierarchyBuilder::class.java
 
+        @Suppress("DEPRECATION")
         buildProjectWithMPP().multiplatformExtension.presets
 
             // JS targets are special and therefore are only handled manually using `withJs()`

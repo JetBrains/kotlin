@@ -9,9 +9,8 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.explicitApiModeAsCompilerArg
-import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.customizeKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -33,7 +32,6 @@ import org.jetbrains.kotlin.gradle.targets.native.createFatFrameworks
 import org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.registerKotlinArtifactsExtension
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompileTool
 import org.jetbrains.kotlin.gradle.utils.checkGradleCompatibility
-import org.jetbrains.kotlin.gradle.utils.runProjectConfigurationHealthCheck
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import org.jetbrains.kotlin.konan.target.presetName
@@ -55,7 +53,7 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
         setupTargetsBuildStatsReport(project)
 
         // set up metadata publishing
-        kotlinMultiplatformExtension.targetFromPreset(
+        kotlinMultiplatformExtension.targetFromPresetInternal(
             KotlinMetadataTargetPreset(project),
             METADATA_TARGET_NAME
         )
@@ -128,6 +126,7 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
     }
 
     fun setupDefaultPresets(project: Project) {
+        @Suppress("DEPRECATION")
         with(project.multiplatformExtension.presets) {
             add(KotlinJvmTargetPreset(project))
             add(KotlinJsTargetPreset(project).apply { irPreset = null })

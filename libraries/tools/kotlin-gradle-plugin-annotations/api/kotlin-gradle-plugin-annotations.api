@@ -1,3 +1,8 @@
+public final class org/jetbrains/kotlin/gradle/DeprecatedTargetPresetApiKt {
+	public static final field PRESETS_API_IS_DEPRECATED_MESSAGE Ljava/lang/String;
+	public static final field PRESETS_DEPRECATION_MESSAGE_SUFFIX Ljava/lang/String;
+}
+
 public abstract interface annotation class org/jetbrains/kotlin/gradle/ExperimentalKotlinGradlePluginApi : java/lang/annotation/Annotation {
 }
 

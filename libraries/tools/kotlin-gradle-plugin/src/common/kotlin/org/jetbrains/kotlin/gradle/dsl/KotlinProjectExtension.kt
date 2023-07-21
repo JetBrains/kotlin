@@ -318,20 +318,20 @@ abstract class KotlinJsProjectExtension(project: Project) :
                     .also {
                         it.irPreset = null
                     }
-                    .createTarget("js")
+                    .createTargetInternal("js")
 
                 KotlinJsCompilerType.IR -> irPreset
                     .also {
                         it.mixedMode = false
                     }
-                    .createTarget("js")
+                    .createTargetInternal("js")
 
                 KotlinJsCompilerType.BOTH -> legacyPreset
                     .also {
                         irPreset.mixedMode = true
                         it.irPreset = irPreset
                     }
-                    .createTarget(
+                    .createTargetInternal(
                         lowerCamelCaseName(
                             "js",
                             LEGACY.lowerName

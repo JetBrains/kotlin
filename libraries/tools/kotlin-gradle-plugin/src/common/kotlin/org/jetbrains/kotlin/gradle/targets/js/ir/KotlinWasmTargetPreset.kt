@@ -6,14 +6,13 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCompilationFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTargetPreset
-import org.jetbrains.kotlin.gradle.utils.runProjectConfigurationHealthCheckWhenEvaluated
 
+@DeprecatedTargetPresetApi
 class KotlinWasmTargetPreset(
     project: Project,
 ) : KotlinOnlyTargetPreset<KotlinJsIrTarget, KotlinJsIrCompilation>(project) {

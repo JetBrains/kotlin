@@ -519,6 +519,7 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
                     extensions.asMap.keys,
                     kotlin.sourceSets.names,
                     kotlin.targets.names,
+                    @Suppress("DEPRECATION")
                     kotlin.presets.names,
                 ).flatten()
             }

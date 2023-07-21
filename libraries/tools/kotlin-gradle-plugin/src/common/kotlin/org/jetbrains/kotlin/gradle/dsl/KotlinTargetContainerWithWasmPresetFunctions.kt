@@ -20,6 +20,7 @@ interface KotlinTargetContainerWithWasmPresetFunctions : KotlinTargetContainerWi
     ): KotlinJsTargetDsl =
         configureOrCreate(
             name,
+            @Suppress("DEPRECATION")
             presets.getByName("wasm") as KotlinWasmTargetPreset,
             configure
         )

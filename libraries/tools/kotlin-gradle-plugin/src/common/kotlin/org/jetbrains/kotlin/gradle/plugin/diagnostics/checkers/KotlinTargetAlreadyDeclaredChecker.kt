@@ -20,7 +20,10 @@ internal object KotlinTargetAlreadyDeclaredChecker : KotlinGradleProjectChecker 
         val targets = multiplatformExtension?.awaitTargets() ?: return
         val duplicatedTargets = targets
             .filter { it !is KotlinMetadataTarget }
-            .groupBy { it.preset?.name }
+            .groupBy {
+                @Suppress("DEPRECATION")
+                it.preset?.name
+            }
             .filterValues { it.size > 1 }
 
         for (targetsGroup in duplicatedTargets.values) {
@@ -36,6 +39,7 @@ internal object KotlinTargetAlreadyDeclaredChecker : KotlinGradleProjectChecker 
     /**
      * DSL names are taken from [org.jetbrains.kotlin.gradle.dsl.KotlinTargetContainerWithPresetFunctions]
      */
+    @Suppress("DEPRECATION")
     private val KotlinTarget.targetDslFunctionName
         get() = when (preset) {
             is KotlinJsIrTargetPreset -> "js"

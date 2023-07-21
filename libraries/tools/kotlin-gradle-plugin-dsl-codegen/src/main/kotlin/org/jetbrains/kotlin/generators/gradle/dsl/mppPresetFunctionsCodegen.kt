@@ -3,10 +3,15 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(DeprecatedTargetPresetApi::class, InternalKotlinGradlePluginApi::class)
+@file:Suppress("DEPRECATION")
+
 package org.jetbrains.kotlin.generators.gradle.dsl
 
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.gradle.api.Action
-import org.jetbrains.kotlin.gradle.plugin.KotlinTargetsContainerWithPresets
+import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import java.io.File
 
 fun main() {
@@ -89,6 +94,9 @@ private fun generatePresetFunctions(
         ""
     }
 
+    // Suppress presets deprecation to prevent warnings inside kotlin-gradle-plugin
+    val suppressPresetsDeprecation = "@Suppress(\"DEPRECATION\")"
+
     val alsoBlockAfterConfiguration = if (presetEntry.alsoBlockAfterConfiguration != null) {
         """
             .also {
@@ -109,6 +117,7 @@ private fun generatePresetFunctions(
     ): ${presetEntry.targetType.renderShort()} =
         $configureOrCreateFunctionName(
             name,
+            ${suppressPresetsDeprecation}
             $getPresetsExpression.getByName("$entityName") as ${presetEntry.presetType.renderShort()},
             configure
         )$alsoBlockAfterConfiguration
