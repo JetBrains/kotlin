@@ -77,7 +77,7 @@ public class PackagePartCodegen extends MemberCodegen<KtFile> {
             }
         }
 
-        v.defineClass(element, state.getClassFileVersion(),
+        v.defineClass(element, state.getConfig().getClassFileVersion(),
                       ACC_PUBLIC | ACC_FINAL | ACC_SUPER | (isSynthetic ? ACC_SYNTHETIC : 0),
                       packagePartType.getInternalName(),
                       null,

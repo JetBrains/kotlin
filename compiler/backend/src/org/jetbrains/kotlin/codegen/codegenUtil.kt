@@ -593,7 +593,7 @@ private fun generateLambdaForRunSuspend(
     )
 
     lambdaBuilder.defineClass(
-        originElement, state.classFileVersion,
+        originElement, state.config.classFileVersion,
         ACC_FINAL or ACC_SUPER or ACC_SYNTHETIC,
         internalName, null,
         AsmTypes.LAMBDA.internalName,
@@ -676,7 +676,7 @@ private fun generateLambdaForRunSuspend(
 
     writeSyntheticClassMetadata(lambdaBuilder, state, false)
 
-    lambdaBuilder.done(state.generateSmapCopyToAnnotation)
+    lambdaBuilder.done(state.config.generateSmapCopyToAnnotation)
     return lambdaBuilder.thisName
 }
 

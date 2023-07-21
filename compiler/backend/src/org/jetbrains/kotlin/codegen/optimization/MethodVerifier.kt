@@ -23,7 +23,7 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.BasicVerifier
 
 class MethodVerifier(private val checkPoint: String, private val generationState: GenerationState) : MethodTransformer() {
     override fun transform(internalClassName: String, methodNode: MethodNode) {
-        if (!generationState.shouldValidateBytecode) return
+        if (!generationState.config.shouldValidateBytecode) return
         try {
             analyze(internalClassName, methodNode, BasicVerifier())
         } catch (e: Throwable) {

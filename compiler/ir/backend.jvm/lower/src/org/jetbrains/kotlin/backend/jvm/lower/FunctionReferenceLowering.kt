@@ -69,10 +69,10 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
     }
 
     private val shouldGenerateIndySamConversions =
-        context.state.samConversionsScheme == JvmClosureGenerationScheme.INDY
+        context.config.samConversionsScheme == JvmClosureGenerationScheme.INDY
 
     private val shouldGenerateIndyLambdas =
-        context.state.lambdasScheme == JvmClosureGenerationScheme.INDY
+        context.config.lambdasScheme == JvmClosureGenerationScheme.INDY
 
     private val shouldGenerateLightweightLambdas =
         shouldGenerateIndyLambdas && context.state.languageVersionSettings.supportsFeature(LanguageFeature.LightweightLambdas)
@@ -461,7 +461,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 ?: throw AssertionError("Not a SAM class: ${functionSuperClass.owner.render()}")
 
         private val useOptimizedSuperClass =
-            context.state.generateOptimizedCallableReferenceSuperClasses
+            context.config.generateOptimizedCallableReferenceSuperClasses
 
         // This code is partially duplicated in IrUtils getAdapteeFromAdaptedForReferenceFunction
         // The difference is utils version supports ReturnableBlock, but returns called function instead of call node.

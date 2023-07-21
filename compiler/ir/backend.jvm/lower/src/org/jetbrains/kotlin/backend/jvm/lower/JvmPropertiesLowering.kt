@@ -223,7 +223,7 @@ class JvmPropertiesLowering(private val backendContext: JvmBackendContext) : IrE
                     if (getter != null) {
                         val needsMangling =
                             getter.extensionReceiverParameter?.type?.getRequiresMangling(includeInline = true, includeMFVC = false) == true ||
-                                    (state.functionsWithInlineClassReturnTypesMangled && getter.hasMangledReturnType)
+                                    (config.functionsWithInlineClassReturnTypesMangled && getter.hasMangledReturnType)
                         val mangled = if (needsMangling) inlineClassReplacements.getReplacementFunction(getter) else null
                         defaultMethodSignatureMapper.mapFunctionName(mangled ?: getter)
                     } else JvmAbi.getterName(property.name.asString())

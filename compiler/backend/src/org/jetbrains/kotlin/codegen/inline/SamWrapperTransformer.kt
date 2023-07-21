@@ -61,11 +61,13 @@ class SamWrapperTransformer(transformationInfo: SamWrapperTransformationInfo, pr
 
         classReader.accept(object : ClassVisitor(Opcodes.API_VERSION, classBuilder.visitor) {
             override fun visit(version: Int, access: Int, name: String, signature: String?, superName: String, interfaces: Array<String>) {
-                classBuilder.defineClass(null, maxOf(version, state.classFileVersion), access, name, signature, superName, interfaces)
+                classBuilder.defineClass(
+                    null, maxOf(version, state.config.classFileVersion), access, name, signature, superName, interfaces
+                )
             }
 
         }, ClassReader.SKIP_FRAMES)
-        classBuilder.done(inliningContext.state.generateSmapCopyToAnnotation)
+        classBuilder.done(inliningContext.state.config.generateSmapCopyToAnnotation)
 
         return transformationResult
     }

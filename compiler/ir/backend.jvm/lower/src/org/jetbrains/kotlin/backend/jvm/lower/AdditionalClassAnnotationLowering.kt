@@ -38,7 +38,7 @@ internal val additionalClassAnnotationPhase = makeIrFilePhase(
 private class AdditionalClassAnnotationLowering(private val context: JvmBackendContext) : ClassLoweringPass {
     private val symbols = context.ir.symbols.javaAnnotations
     private val noNewJavaAnnotationTargets =
-        context.state.noNewJavaAnnotationTargets || !context.isCompilingAgainstJdk8OrLater
+        context.config.noNewJavaAnnotationTargets || !context.isCompilingAgainstJdk8OrLater
 
     override fun lower(irClass: IrClass) {
         if (!irClass.isAnnotationClass) return

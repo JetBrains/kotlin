@@ -60,7 +60,7 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
     }
 
     private fun handleInterface(irClass: IrClass) {
-        val jvmDefaultMode = context.state.jvmDefaultMode
+        val jvmDefaultMode = context.config.jvmDefaultMode
         val isCompatibilityMode =
             (jvmDefaultMode.isCompatibility && !irClass.hasJvmDefaultNoCompatibilityAnnotation()) ||
                     (jvmDefaultMode == JvmDefaultMode.ALL_INCOMPATIBLE && irClass.hasJvmDefaultWithCompatibilityAnnotation())

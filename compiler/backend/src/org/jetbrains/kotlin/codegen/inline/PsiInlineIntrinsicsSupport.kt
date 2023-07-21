@@ -46,7 +46,7 @@ class PsiInlineIntrinsicsSupport(
     }
 
     private fun generateFunctionReference(v: InstructionAdapter, descriptor: FunctionDescriptor) {
-        check(state.generateOptimizedCallableReferenceSuperClasses) {
+        check(state.config.generateOptimizedCallableReferenceSuperClasses) {
             "typeOf() of a non-reified type parameter is only allowed if optimized callable references are enabled.\n" +
                     "Please make sure API version is set to 1.4, and -Xno-optimized-callable-references is NOT used.\n" +
                     "Container: $descriptor"

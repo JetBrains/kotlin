@@ -86,7 +86,7 @@ class ClassCodegen private constructor(
 
     private val innerClasses = mutableSetOf<IrClass>()
     val typeMapper =
-        if (context.state.oldInnerClassesLogic)
+        if (context.config.oldInnerClassesLogic)
             context.defaultTypeMapper
         else object : IrTypeMapper(context) {
             override fun mapType(type: IrType, mode: TypeMappingMode, sw: JvmSignatureWriter?, materialized: Boolean): Type {
@@ -118,7 +118,7 @@ class ClassCodegen private constructor(
         }
         defineClass(
             irClass.psiElement,
-            state.classFileVersion,
+            state.config.classFileVersion,
             irClass.getFlags(context.state.languageVersionSettings),
             signature.name,
             signature.javaGenericSignature,
@@ -151,7 +151,7 @@ class ClassCodegen private constructor(
         // Generate PermittedSubclasses attribute for sealed class.
         if (state.languageVersionSettings.supportsFeature(LanguageFeature.JvmPermittedSubclassesAttributeForSealed) &&
             irClass.modality == Modality.SEALED &&
-            state.target >= JvmTarget.JVM_17
+            state.config.target >= JvmTarget.JVM_17
         ) {
             generatePermittedSubclasses()
         }
@@ -213,7 +213,7 @@ class ClassCodegen private constructor(
 
         generateInnerAndOuterClasses()
 
-        visitor.done(state.generateSmapCopyToAnnotation)
+        visitor.done(state.config.generateSmapCopyToAnnotation)
         jvmSignatureClashDetector.reportErrors()
     }
 
@@ -281,7 +281,7 @@ class ClassCodegen private constructor(
 
         val isMultifileClassOrPart = kind == KotlinClassHeader.Kind.MULTIFILE_CLASS || kind == KotlinClassHeader.Kind.MULTIFILE_CLASS_PART
 
-        var extraFlags = context.backendExtension.generateMetadataExtraFlags(state.abiStability)
+        var extraFlags = context.backendExtension.generateMetadataExtraFlags(state.config.abiStability)
         if (isMultifileClassOrPart && state.languageVersionSettings.getFlag(JvmAnalysisFlags.inheritMultifileParts)) {
             extraFlags = extraFlags or JvmAnnotationNames.METADATA_MULTIFILE_PARTS_INHERIT_FLAG
         }

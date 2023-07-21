@@ -232,7 +232,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         v.defineClass(
                 myClass.getPsiOrParent(),
-                state.getClassFileVersion(),
+                state.getConfig().getClassFileVersion(),
                 access,
                 signature.getName(),
                 signature.getJavaGenericSignature(),
@@ -538,7 +538,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     ) {
         iv.load(index, classAsmType);
         if (couldUseDirectAccessToProperty(propertyDescriptor, /* forGetter = */ true,
-                                               /* isDelegated = */ false, context, state.getShouldInlineConstVals())) {
+                                               /* isDelegated = */ false, context, state.getConfig().getShouldInlineConstVals())) {
             KotlinType kotlinType = propertyDescriptor.getType();
             Type type = state.getTypeMapper().mapType(kotlinType);
             String fieldName = ((FieldOwnerContext) context.getParentContext()).getFieldName(propertyDescriptor, false);

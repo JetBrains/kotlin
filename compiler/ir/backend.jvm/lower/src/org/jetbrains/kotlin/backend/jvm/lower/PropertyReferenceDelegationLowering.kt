@@ -35,7 +35,7 @@ internal val propertyReferenceDelegationPhase = makeIrFilePhase(
 
 private class PropertyReferenceDelegationLowering(val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        if (!context.state.generateOptimizedCallableReferenceSuperClasses) return
+        if (!context.config.generateOptimizedCallableReferenceSuperClasses) return
         irFile.transform(PropertyReferenceDelegationTransformer(context), null)
     }
 }

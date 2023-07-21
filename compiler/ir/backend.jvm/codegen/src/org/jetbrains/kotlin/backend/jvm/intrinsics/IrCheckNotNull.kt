@@ -31,7 +31,7 @@ object IrCheckNotNull : IntrinsicMethod() {
 
     private fun ExpressionCodegen.checkTopValueForNull() {
         mv.dup()
-        if (state.unifiedNullChecks) {
+        if (state.config.unifiedNullChecks) {
             mv.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "checkNotNull", "(Ljava/lang/Object;)V", false)
         } else {
             val ifNonNullLabel = Label()

@@ -144,7 +144,7 @@ public class ClassFileFactory implements OutputFileCollection {
                 if (state.getLanguageVersionSettings().getFlag(JvmAnalysisFlags.getStrictMetadataVersionSemantics())) {
                     flags |= ModuleMapping.STRICT_METADATA_VERSION_SEMANTICS_FLAG;
                 }
-                return ModuleMappingKt.serializeToByteArray(moduleProto, state.getMetadataVersion(), flags);
+                return ModuleMappingKt.serializeToByteArray(moduleProto, state.getConfig().getMetadataVersion(), flags);
             }
 
             @Override

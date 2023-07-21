@@ -44,7 +44,7 @@ class PsiInlineCodegen(
     codegen, state, signature, typeParameterMappings, sourceCompiler,
     ReifiedTypeInliner(
         typeParameterMappings, PsiInlineIntrinsicsSupport(state, reportErrorsOn), codegen.typeSystem,
-        state.languageVersionSettings, state.unifiedNullChecks
+        state.languageVersionSettings, state.config.unifiedNullChecks
     ),
 ), CallGenerator {
     override fun generateAssertField() =

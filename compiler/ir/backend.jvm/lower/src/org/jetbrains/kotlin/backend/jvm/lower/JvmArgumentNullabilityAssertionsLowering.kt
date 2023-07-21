@@ -33,9 +33,9 @@ private enum class AssertionScope {
 private class JvmArgumentNullabilityAssertionsLowering(context: JvmBackendContext) : FileLoweringPass,
     IrElementTransformer<AssertionScope> {
 
-    private val isWithUnifiedNullChecks = context.state.unifiedNullChecks
-    private val isCallAssertionsDisabled = context.state.isCallAssertionsDisabled
-    private val isReceiverAssertionsDisabled = context.state.isReceiverAssertionsDisabled
+    private val isWithUnifiedNullChecks = context.config.unifiedNullChecks
+    private val isCallAssertionsDisabled = context.config.isCallAssertionsDisabled
+    private val isReceiverAssertionsDisabled = context.config.isReceiverAssertionsDisabled
 
     private val specialBridgeMethods = SpecialBridgeMethods(context)
 

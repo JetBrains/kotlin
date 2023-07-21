@@ -129,7 +129,7 @@ public class SamWrapperCodegen {
                                    : new String[] {samAsmType.getInternalName()};
         cv.defineClass(
                 file,
-                state.getClassFileVersion(),
+                state.getConfig().getClassFileVersion(),
                 classFlags,
                 asmType.getInternalName(),
                 null,
@@ -166,7 +166,7 @@ public class SamWrapperCodegen {
             generateDelegatesToDefaultImpl(asmType, classDescriptor, samType.getClassDescriptor(), functionCodegen, state);
         }
 
-        cv.done(state.getGenerateSmapCopyToAnnotation());
+        cv.done(state.getConfig().getGenerateSmapCopyToAnnotation());
 
         return asmType;
     }

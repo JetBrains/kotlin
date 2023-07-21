@@ -47,9 +47,9 @@ class InterfaceImplBodyCodegen(
         val codegenFlags = ACC_PUBLIC or ACC_FINAL or ACC_SUPER
         val flags = if (state.classBuilderMode == ClassBuilderMode.LIGHT_CLASSES) codegenFlags or ACC_STATIC else codegenFlags
         v.defineClass(
-                myClass.psiOrParent, state.classFileVersion, flags,
-                defaultImplType.internalName,
-                null, "java/lang/Object", ArrayUtil.EMPTY_STRING_ARRAY
+            myClass.psiOrParent, state.config.classFileVersion, flags,
+            defaultImplType.internalName,
+            null, "java/lang/Object", ArrayUtil.EMPTY_STRING_ARRAY
         )
         v.visitSource(myClass.containingKtFile.name, null)
     }

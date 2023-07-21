@@ -10,6 +10,6 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 
 fun validateIr(context: JvmBackendContext, module: IrModuleFragment) {
-    if (!context.state.shouldValidateIr) return
+    if (!context.config.shouldValidateIr) return
     validationCallback(context, module, checkProperties = true)
 }

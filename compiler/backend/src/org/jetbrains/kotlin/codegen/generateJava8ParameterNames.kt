@@ -30,7 +30,7 @@ fun generateParameterNames(
         state: GenerationState,
         isSynthetic: Boolean
 ) {
-    if (!state.generateParametersMetadata || isSynthetic) {
+    if (!state.config.generateParametersMetadata || isSynthetic) {
         return
     }
 

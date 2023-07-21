@@ -220,7 +220,7 @@ class MemoizedInlineClassReplacements(
         noFakeOverride: Boolean = false,
         body: IrFunction.() -> Unit
     ): IrSimpleFunction {
-        val useOldManglingScheme = context.state.useOldManglingSchemeForFunctionsWithInlineClassesInSignatures
+        val useOldManglingScheme = context.config.useOldManglingSchemeForFunctionsWithInlineClassesInSignatures
         val replacement = buildReplacementInner(function, replacementOrigin, noFakeOverride, useOldManglingScheme, body)
         // When using the new mangling scheme we might run into dependencies using the old scheme
         // for which we will fall back to the old mangling scheme as well.

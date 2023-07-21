@@ -90,8 +90,8 @@ internal abstract class JvmValueClassAbstractLowering(
 
     private fun IrFunction.hashSuffix(): String? = InlineClassAbi.hashSuffix(
         this,
-        context.state.functionsWithInlineClassReturnTypesMangled,
-        context.state.useOldManglingSchemeForFunctionsWithInlineClassesInSignatures
+        context.config.functionsWithInlineClassReturnTypesMangled,
+        context.config.useOldManglingSchemeForFunctionsWithInlineClassesInSignatures
     )
 
     protected abstract fun transformSecondaryConstructorFlat(constructor: IrConstructor, replacement: IrSimpleFunction): List<IrDeclaration>
@@ -192,7 +192,7 @@ internal abstract class JvmValueClassAbstractLowering(
                     useOldMangleRules = false
                 )
                 // If the original function has signature which need mangling we still need to replace it with a mangled version.
-                (!function.isFakeOverride || function.findInterfaceImplementation(context.state.jvmDefaultMode) != null) && when (specificMangle) {
+                (!function.isFakeOverride || function.findInterfaceImplementation(context.config.jvmDefaultMode) != null) && when (specificMangle) {
                     SpecificMangle.Inline -> function.signatureRequiresMangling(includeInline = true, includeMFVC = false)
                     SpecificMangle.MultiField -> function.signatureRequiresMangling(includeInline = false, includeMFVC = true)
                 } -> replacement.name
@@ -224,7 +224,7 @@ internal abstract class JvmValueClassAbstractLowering(
 
     private fun IrSimpleFunction.signatureRequiresMangling(includeInline: Boolean = true, includeMFVC: Boolean = true) =
         fullValueParameterList.any { it.type.getRequiresMangling(includeInline, includeMFVC) } ||
-                context.state.functionsWithInlineClassReturnTypesMangled &&
+                context.config.functionsWithInlineClassReturnTypesMangled &&
                 returnType.getRequiresMangling(includeInline = includeInline, includeMFVC = false)
 
     protected fun typedArgumentList(function: IrFunction, expression: IrMemberAccessExpression<*>) = listOfNotNull(

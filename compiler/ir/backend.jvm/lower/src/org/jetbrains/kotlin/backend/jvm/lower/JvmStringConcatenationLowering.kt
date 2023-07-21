@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 internal val jvmStringConcatenationLowering = makeIrFilePhase(
     { context: JvmBackendContext ->
-        if (!context.state.runtimeStringConcat.isDynamic)
+        if (!context.config.runtimeStringConcat.isDynamic)
             JvmStringConcatenationLowering(context)
         else
             JvmDynamicStringConcatenationLowering(context)

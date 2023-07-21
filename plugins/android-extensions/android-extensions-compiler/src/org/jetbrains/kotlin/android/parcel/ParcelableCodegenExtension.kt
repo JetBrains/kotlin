@@ -316,7 +316,7 @@ open class ParcelableCodegenExtension : ParcelableExtensionBase, ExpressionCodeg
         writeNewArrayMethod(codegenForCreator, parcelableClass, parcelableCreatorClassType, creatorClass, parcelerObject)
         writeCreateFromParcel(codegenForCreator, parcelableClass, parcelableCreatorClassType, creatorClass, parcelClassType, parcelAsmType, parcelerObject, properties)
 
-        classBuilderForCreator.done(codegen.state.generateSmapCopyToAnnotation)
+        classBuilderForCreator.done(codegen.state.config.generateSmapCopyToAnnotation)
     }
 
     private fun writeCreatorConstructor(codegen: ImplementationBodyCodegen, creatorClass: ClassDescriptor, creatorAsmType: Type) {

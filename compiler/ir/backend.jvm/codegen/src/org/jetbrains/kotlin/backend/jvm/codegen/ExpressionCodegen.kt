@@ -279,7 +279,7 @@ class ExpressionCodegen(
     }
 
     private fun generateNonNullAssertions() {
-        if (state.isParamAssertionsDisabled)
+        if (state.config.isParamAssertionsDisabled)
             return
 
         if ((DescriptorVisibilities.isPrivate(irFunction.visibility) && !shouldGenerateNonNullAssertionsForPrivateFun(irFunction)) ||
@@ -339,7 +339,7 @@ class ExpressionCodegen(
         if (!expandedType.isNullable() && !isPrimitive(asmType)) {
             mv.load(findLocalIndex(param.symbol), asmType)
             mv.aconst(param.name.asString())
-            val methodName = if (state.unifiedNullChecks) "checkNotNullParameter" else "checkParameterIsNotNull"
+            val methodName = if (state.config.unifiedNullChecks) "checkNotNullParameter" else "checkParameterIsNotNull"
             mv.invokestatic(JvmSymbols.INTRINSICS_CLASS_NAME, methodName, "(Ljava/lang/Object;Ljava/lang/String;)V", false)
         }
     }
@@ -823,7 +823,7 @@ class ExpressionCodegen(
 
     override fun visitFieldAccess(expression: IrFieldAccessExpression, data: BlockInfo): PromisedValue {
         val callee = expression.symbol.owner
-        if (context.state.shouldInlineConstVals) {
+        if (context.config.shouldInlineConstVals) {
             // Const fields should only have reads, and those should have been transformed by ConstLowering.
             assert(callee.constantValue() == null) { "access of const val: ${expression.dump()}" }
         }
@@ -983,7 +983,7 @@ class ExpressionCodegen(
     }
 
     private fun generateGlobalReturnFlagIfPossible(expression: IrExpression, label: String) {
-        if (state.isInlineDisabled) {
+        if (state.config.isInlineDisabled) {
             context.ktDiagnosticReporter.at(expression, irFunction).report(BackendErrors.NON_LOCAL_RETURN_IN_DISABLED_INLINE)
             genThrow(mv, "java/lang/UnsupportedOperationException", "Non-local returns are not allowed with inlining disabled")
         } else {
@@ -1476,10 +1476,10 @@ class ExpressionCodegen(
     }
 
     override fun visitStringConcatenation(expression: IrStringConcatenation, data: BlockInfo): PromisedValue {
-        assert(context.state.runtimeStringConcat.isDynamic) {
+        assert(context.config.runtimeStringConcat.isDynamic) {
             "IrStringConcatenation expression should be presented only with dynamic concatenation: ${expression.dump()}"
         }
-        val generator = StringConcatGenerator(context.state.runtimeStringConcat, mv)
+        val generator = StringConcatGenerator(context.config.runtimeStringConcat, mv)
         expression.arguments.forEach { arg ->
             if (arg is IrConst<*>) {
                 val type = when (arg.kind) {
@@ -1580,7 +1580,7 @@ class ExpressionCodegen(
             IrInlineIntrinsicsSupport(classCodegen, element, irFunction.fileParent),
             context.typeSystem,
             state.languageVersionSettings,
-            state.unifiedNullChecks,
+            state.config.unifiedNullChecks,
         )
 
         return IrInlineCodegen(this, state, callee, signature, mappings, sourceCompiler, reifiedTypeInliner)

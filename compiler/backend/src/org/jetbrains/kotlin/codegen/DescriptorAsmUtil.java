@@ -676,7 +676,7 @@ public class DescriptorAsmUtil {
             @NotNull FunctionDescriptor descriptor,
             @NotNull FrameMap frameMap
     ) {
-        if (state.isParamAssertionsDisabled()) return;
+        if (state.getConfig().isParamAssertionsDisabled()) return;
         // currently when resuming a suspend function we pass default values instead of real arguments (i.e. nulls for references)
         if (descriptor.isSuspend()) return;
 
@@ -688,7 +688,7 @@ public class DescriptorAsmUtil {
             // Such functions can be invoked in operator conventions desugaring,
             // which is currently done on ad hoc basis in ExpressionCodegen.
 
-            if (state.isReceiverAssertionsDisabled()) return;
+            if (state.getConfig().isReceiverAssertionsDisabled()) return;
             if (descriptor.isOperator()) {
                 ReceiverParameterDescriptor receiverParameter = descriptor.getExtensionReceiverParameter();
                 if (receiverParameter != null) {
@@ -737,7 +737,7 @@ public class DescriptorAsmUtil {
             }
             value.put(asmType, v);
             v.visitLdcInsn(name);
-            String methodName = state.getUnifiedNullChecks() ? "checkNotNullParameter" : "checkParameterIsNotNull";
+            String methodName = state.getConfig().getUnifiedNullChecks() ? "checkNotNullParameter" : "checkParameterIsNotNull";
             v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, methodName, "(Ljava/lang/Object;Ljava/lang/String;)V", false);
         }
     }
@@ -748,7 +748,7 @@ public class DescriptorAsmUtil {
             @NotNull StackValue stackValue,
             @Nullable RuntimeAssertionInfo runtimeAssertionInfo
     ) {
-        if (state.isCallAssertionsDisabled()) return stackValue;
+        if (state.getConfig().isCallAssertionsDisabled()) return stackValue;
         if (runtimeAssertionInfo == null || !runtimeAssertionInfo.getNeedNotNullAssertion()) return stackValue;
 
         return new StackValue(stackValue.type, stackValue.kotlinType) {
@@ -760,7 +760,8 @@ public class DescriptorAsmUtil {
                 if (innerType.getSort() == Type.OBJECT || innerType.getSort() == Type.ARRAY) {
                     v.dup();
                     v.visitLdcInsn(runtimeAssertionInfo.getMessage());
-                    String methodName = state.getUnifiedNullChecks() ? "checkNotNullExpressionValue" : "checkExpressionValueIsNotNull";
+                    String methodName =
+                            state.getConfig().getUnifiedNullChecks() ? "checkNotNullExpressionValue" : "checkExpressionValueIsNotNull";
                     v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, methodName, "(Ljava/lang/Object;Ljava/lang/String;)V", false);
                 }
                 StackValue.coerce(innerType, innerKotlinType, type, kotlinType, v);

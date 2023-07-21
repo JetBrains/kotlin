@@ -658,7 +658,7 @@ internal fun createSingletonLambda(
     )
     lambdaCodegen.v.defineClass(
         null,
-        outerClassCodegen.state.classFileVersion,
+        outerClassCodegen.state.config.classFileVersion,
         Opcodes.ACC_FINAL or Opcodes.ACC_SUPER or Opcodes.ACC_SYNTHETIC,
         lambdaType.internalName,
         "L${jvmLambdaType.internalName};L${function0Type.internalName}<L${kSerializerType.internalName}<*>;>;",
@@ -773,7 +773,7 @@ internal fun createSingletonLambda(
     }
 
     writeSyntheticClassMetadata(lambdaClassBuilder, lambdaCodegen.state, false)
-    lambdaClassBuilder.done(lambdaCodegen.state.generateSmapCopyToAnnotation)
+    lambdaClassBuilder.done(lambdaCodegen.state.config.generateSmapCopyToAnnotation)
 
     return lambdaType
 }

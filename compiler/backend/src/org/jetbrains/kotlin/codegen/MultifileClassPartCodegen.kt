@@ -73,7 +73,7 @@ class MultifileClassPartCodegen(
         val access = if (shouldGeneratePartHierarchy) 0 else Opcodes.ACC_SYNTHETIC or Opcodes.ACC_FINAL
 
         v.defineClass(
-            element, state.classFileVersion, access or Opcodes.ACC_SUPER, partType.internalName, null, superClassInternalName,
+            element, state.config.classFileVersion, access or Opcodes.ACC_SUPER, partType.internalName, null, superClassInternalName,
             ArrayUtil.EMPTY_STRING_ARRAY
         )
         v.visitSource(element.name, null)

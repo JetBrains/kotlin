@@ -33,7 +33,7 @@ object HashCode : IntrinsicMethod() {
         val receiverJvmType = typeMapper.mapType(receiverIrType)
         val receiverValue = receiver.accept(this, data).materialized()
         val receiverType = receiverValue.type
-        val target = context.state.target
+        val target = context.config.target
         when {
             irFunction.origin == JvmLoweredDeclarationOrigin.INLINE_CLASS_GENERATED_IMPL_METHOD ||
                     irFunction.origin == JvmLoweredDeclarationOrigin.MULTI_FIELD_VALUE_CLASS_GENERATED_IMPL_METHOD ||

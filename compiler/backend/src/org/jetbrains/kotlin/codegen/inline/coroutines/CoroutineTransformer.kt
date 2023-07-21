@@ -142,7 +142,7 @@ class CoroutineTransformer(
     }
 
     fun replaceFakesWithReals(node: MethodNode) {
-        findFakeContinuationConstructorClassName(node)?.let(::unregisterClassBuilder)?.done(state.generateSmapCopyToAnnotation)
+        findFakeContinuationConstructorClassName(node)?.let(::unregisterClassBuilder)?.done(state.config.generateSmapCopyToAnnotation)
         replaceFakeContinuationsWithRealOnes(
             node, if (!inliningContext.isContinuation) getLastParameterIndex(node.desc, node.access) else 0
         )

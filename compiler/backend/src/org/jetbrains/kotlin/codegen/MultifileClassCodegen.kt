@@ -140,7 +140,7 @@ class MultifileClassCodegenImpl(
             }
 
             defineClass(
-                singleSourceFile, state.classFileVersion, attributes,
+                singleSourceFile, state.config.classFileVersion, attributes,
                 facadeClassType.internalName, null, superClassForFacade, emptyArray()
             )
             if (singleSourceFile != null) {
@@ -344,7 +344,7 @@ class MultifileClassCodegenImpl(
         }
 
     private fun done() {
-        classBuilder.done(state.generateSmapCopyToAnnotation)
+        classBuilder.done(state.config.generateSmapCopyToAnnotation)
         if (classBuilder.isComputed) {
             state.afterIndependentPart()
         }

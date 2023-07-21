@@ -444,7 +444,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
         mapAsmMethod(findSuperDeclaration(function, isSuperCall))
 
     private fun findSuperDeclaration(function: IrSimpleFunction, isSuperCall: Boolean): IrSimpleFunction =
-        findSuperDeclaration(function, isSuperCall, context.state.jvmDefaultMode)
+        findSuperDeclaration(function, isSuperCall, context.config.jvmDefaultMode)
 
     private fun getJvmMethodNameIfSpecial(irFunction: IrSimpleFunction): String? {
         if (
@@ -522,7 +522,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
             is IrConstructor ->
                 irFun
             is IrSimpleFunction ->
-                findSuperDeclaration(irFun, false, context.state.jvmDefaultMode)
+                findSuperDeclaration(irFun, false, context.config.jvmDefaultMode)
             else ->
                 throw AssertionError("Simple function or constructor expected: ${irFun.render()}")
         }

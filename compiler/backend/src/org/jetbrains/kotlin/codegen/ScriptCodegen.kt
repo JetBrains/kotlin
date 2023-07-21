@@ -43,7 +43,7 @@ class ScriptCodegen private constructor(
     override fun generateDeclaration() {
         v.defineClass(
                 scriptDeclaration,
-                state.classFileVersion,
+                state.config.classFileVersion,
                 ACC_PUBLIC or ACC_SUPER,
                 classAsmType.internalName,
                 null,

@@ -92,7 +92,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
         context.ir.symbols.array.createType(false, listOf(makeTypeProjection(kPropertyStarType, Variance.OUT_VARIANCE)))
 
     private val useOptimizedSuperClass =
-        context.state.generateOptimizedCallableReferenceSuperClasses
+        context.config.generateOptimizedCallableReferenceSuperClasses
 
     private val IrClass.isSynthetic
         get() = metadata !is MetadataSource.File && metadata !is MetadataSource.Class && metadata !is MetadataSource.Script
@@ -227,7 +227,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
             isFinal = true
             isStatic = true
             visibility =
-                if (irClass.isInterface && context.state.jvmDefaultMode.forAllMethodsWithBody) DescriptorVisibilities.PUBLIC else JavaDescriptorVisibilities.PACKAGE_VISIBILITY
+                if (irClass.isInterface && context.config.jvmDefaultMode.forAllMethodsWithBody) DescriptorVisibilities.PUBLIC else JavaDescriptorVisibilities.PACKAGE_VISIBILITY
         }
 
         val localProperties = mutableListOf<IrLocalDelegatedPropertySymbol>()

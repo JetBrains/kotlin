@@ -172,7 +172,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
             return false
 
         // We don't produce bridges for abstract functions in interfaces.
-        if (isJvmAbstract(context.state.jvmDefaultMode)) {
+        if (isJvmAbstract(context.config.jvmDefaultMode)) {
             if (parentAsClass.isJvmInterface) {
                 // If function requires a special bridge, we should record it for generic signatures generation.
                 if (specialBridgeOrNull != null) {
@@ -226,7 +226,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
                     // If irFunction is a fake override, we replace it with a stub and redirect all calls to irFunction with calls to the stub
                     // instead. Otherwise, we'll end up calling the special method itself and get into an infinite loop.
                     bridgeTarget = when {
-                        irFunction.isJvmAbstract(context.state.jvmDefaultMode) -> {
+                        irFunction.isJvmAbstract(context.config.jvmDefaultMode) -> {
                             // If the method is abstract, then we simply generate a concrete abstract method
                             // to avoid generating a call to a method which does not exist in the current class.
                             irClass.declarations.remove(irFunction)
@@ -312,7 +312,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
                     }
                 }
             }
-        } else if (irFunction.isJvmAbstract(context.state.jvmDefaultMode)) {
+        } else if (irFunction.isJvmAbstract(context.config.jvmDefaultMode)) {
             // Do not generate bridge methods for abstract methods which do not override a special bridge method.
             // This matches the behavior of the JVM backend, but it does mean that we generate superfluous bridges
             // for abstract methods overriding a special bridge for which we do not create a bridge due to,
@@ -328,7 +328,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
         if (irFunction.isFakeOverride) {
             for (overriddenSymbol in irFunction.overriddenSymbols) {
                 val override = overriddenSymbol.owner
-                if (override.isJvmAbstract(context.state.jvmDefaultMode)) continue
+                if (override.isJvmAbstract(context.config.jvmDefaultMode)) continue
                 override.allOverridden()
                     .filter { !it.isFakeOverride }
                     .mapTo(blacklist) { it.jvmMethod }

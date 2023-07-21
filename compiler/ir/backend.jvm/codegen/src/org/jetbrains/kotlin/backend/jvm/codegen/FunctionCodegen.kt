@@ -70,7 +70,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
         )
         val methodVisitor: MethodVisitor = wrapWithMaxLocalCalc(methodNode)
 
-        if (context.state.generateParametersMetadata && !isSynthetic) {
+        if (context.config.generateParametersMetadata && !isSynthetic) {
             generateParameterNames(irFunction, methodVisitor, context.state)
         }
 

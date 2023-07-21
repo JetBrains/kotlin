@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.unboxInlineClass
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -97,7 +96,7 @@ private class TypeOperatorLowering(private val backendContext: JvmBackendContext
                 with(builder) {
                     irLetS(argument, irType = context.irBuiltIns.anyNType) { tmp ->
                         val message = irString("null cannot be cast to non-null type ${type.render()}")
-                        if (backendContext.state.unifiedNullChecks) {
+                        if (backendContext.config.unifiedNullChecks) {
                             // Avoid branching to improve code coverage (KT-27427).
                             // We have to generate a null check here, because even if argument is of non-null type,
                             // it can be uninitialized value, which is 'null' for reference types in JMM.
@@ -764,7 +763,7 @@ private class TypeOperatorLowering(private val backendContext: JvmBackendContext
     }
 
     private fun IrBuilderWithScope.computeNotNullAssertionText(typeOperatorCall: IrTypeOperatorCall): String? {
-        if (backendContext.state.noSourceCodeInNotNullAssertionExceptions) {
+        if (backendContext.config.noSourceCodeInNotNullAssertionExceptions) {
             return when (val argument = typeOperatorCall.argument) {
                 is IrCall -> "${argument.symbol.owner.name.asString()}(...)"
                 is IrGetField -> argument.symbol.owner.name.asString()
@@ -818,7 +817,7 @@ private class TypeOperatorLowering(private val backendContext: JvmBackendContext
         backendContext.ir.symbols.throwTypeCastException
 
     private val checkExpressionValueIsNotNull: IrSimpleFunctionSymbol =
-        if (backendContext.state.unifiedNullChecks)
+        if (backendContext.config.unifiedNullChecks)
             backendContext.ir.symbols.checkNotNullExpressionValue
         else
             backendContext.ir.symbols.checkExpressionValueIsNotNull

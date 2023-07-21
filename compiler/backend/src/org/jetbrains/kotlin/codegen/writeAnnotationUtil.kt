@@ -32,8 +32,8 @@ fun writeKotlinMetadata(
     action: (AnnotationVisitor) -> Unit
 ) {
     val av = cb.newAnnotation(JvmAnnotationNames.METADATA_DESC, true)
-    av.visit(JvmAnnotationNames.METADATA_VERSION_FIELD_NAME, state.metadataVersion.toArray())
-    if (!state.metadataVersion.isAtLeast(1, 5, 0)) {
+    av.visit(JvmAnnotationNames.METADATA_VERSION_FIELD_NAME, state.config.metadataVersion.toArray())
+    if (!state.config.metadataVersion.isAtLeast(1, 5, 0)) {
         av.visit("bv", JvmBytecodeBinaryVersion.INSTANCE.toArray())
     }
     av.visit(JvmAnnotationNames.KIND_FIELD_NAME, kind.id)

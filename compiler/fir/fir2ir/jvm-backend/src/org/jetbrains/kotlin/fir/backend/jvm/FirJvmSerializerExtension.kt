@@ -77,8 +77,8 @@ class FirJvmSerializerExtension(
         components: Fir2IrComponents
     ) : this(
         session, bindings, metadata, localDelegatedProperties, approximator, components.scopeSession,
-        state.globalSerializationBindings, state.useTypeTableInSerializer, state.moduleName, state.classBuilderMode,
-        state.isParamAssertionsDisabled, state.unifiedNullChecks, state.metadataVersion, state.jvmDefaultMode,
+        state.globalSerializationBindings, state.config.useTypeTableInSerializer, state.moduleName, state.classBuilderMode,
+        state.config.isParamAssertionsDisabled, state.config.unifiedNullChecks, state.config.metadataVersion, state.jvmDefaultMode,
         FirJvmElementAwareStringTable(typeMapper, components), ConstValueProviderImpl(components),
         components.annotationsFromPluginRegistrar.createMetadataAnnotationsProvider()
     )

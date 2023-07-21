@@ -59,7 +59,7 @@ class DescriptorMetadataSerializer(
             context.state.bindingTrace.record(
                 CodegenBinding.DELEGATED_PROPERTIES_WITH_METADATA,
                 // key for local delegated properties metadata in interfaces depends on jvmDefaultMode
-                if (irClass.isInterface && !context.state.jvmDefaultMode.forAllMethodsWithBody) context.defaultTypeMapper.mapClass(
+                if (irClass.isInterface && !context.config.jvmDefaultMode.forAllMethodsWithBody) context.defaultTypeMapper.mapClass(
                     context.cachedDeclarations.getDefaultImplsClass(
                         irClass
                     )

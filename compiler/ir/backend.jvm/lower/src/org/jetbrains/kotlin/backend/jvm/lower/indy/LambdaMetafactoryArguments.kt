@@ -153,7 +153,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
         // In this case the corresponding method might be inaccessible in the context where it's referenced (see KT-48954).
         // For now, just prohibit referencing methods from package-private Java classes through indy (without precise accessibility check).
         if (implFun is IrSimpleFunction) {
-            val baseFun = findSuperDeclaration(implFun, false, context.state.jvmDefaultMode)
+            val baseFun = findSuperDeclaration(implFun, false, context.config.jvmDefaultMode)
             val baseFunClass = baseFun.parent as? IrClass
             if (baseFunClass != null && baseFunClass.visibility == JavaDescriptorVisibilities.PACKAGE_VISIBILITY) {
                 functionHazard = true
@@ -234,13 +234,13 @@ internal class LambdaMetafactoryArgumentsBuilder(
                 continue
             val irImplFun =
                 if (irMemberFun.isFakeOverride)
-                    irMemberFun.findInterfaceImplementation(context.state.jvmDefaultMode)
+                    irMemberFun.findInterfaceImplementation(context.config.jvmDefaultMode)
                         ?: continue
                 else
                     irMemberFun
             if (irImplFun.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB)
                 continue
-            if (!irImplFun.isCompiledToJvmDefault(context.state.jvmDefaultMode))
+            if (!irImplFun.isCompiledToJvmDefault(context.config.jvmDefaultMode))
                 return true
         }
         return false

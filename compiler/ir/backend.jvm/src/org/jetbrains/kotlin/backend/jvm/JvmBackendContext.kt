@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.backend.jvm.mapping.IrTypeMapper
 import org.jetbrains.kotlin.backend.jvm.mapping.MethodSignatureMapper
 import org.jetbrains.kotlin.codegen.inline.SMAP
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -79,6 +80,8 @@ class JvmBackendContext(
         val newParameterToOld: Map<IrValueParameter, IrValueParameter>,
         val newParameterToCaptured: Map<IrValueParameter, IrValueSymbol>,
     )
+
+    val config: JvmBackendConfig = state.config
 
     // If not-null, this is populated by LocalDeclarationsLowering with the intermediate data
     // allowing mapping from local function captures to parameters and accurate transformation
@@ -176,7 +179,7 @@ class JvmBackendContext(
 
     val staticDefaultStubs = ConcurrentHashMap<IrSimpleFunctionSymbol, IrSimpleFunction>()
 
-    val inlineClassReplacements = MemoizedInlineClassReplacements(state.functionsWithInlineClassReturnTypesMangled, irFactory, this)
+    val inlineClassReplacements = MemoizedInlineClassReplacements(config.functionsWithInlineClassReturnTypesMangled, irFactory, this)
 
     val multiFieldValueClassReplacements = MemoizedMultiFieldValueClassReplacements(irFactory, this)
 

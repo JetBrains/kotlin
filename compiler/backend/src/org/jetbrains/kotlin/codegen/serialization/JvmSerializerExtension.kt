@@ -49,17 +49,17 @@ class JvmSerializerExtension @JvmOverloads constructor(
     private val globalBindings = state.globalSerializationBindings
     private val codegenBinding = state.bindingContext
     override val stringTable = JvmCodegenStringTable(typeMapper)
-    private val useTypeTable = state.useTypeTableInSerializer
+    private val useTypeTable = state.config.useTypeTableInSerializer
     private val moduleName = state.moduleName
     private val classBuilderMode = state.classBuilderMode
     private val languageVersionSettings = state.languageVersionSettings
-    private val isParamAssertionsDisabled = state.isParamAssertionsDisabled
-    private val unifiedNullChecks = state.unifiedNullChecks
-    private val functionsWithInlineClassReturnTypesMangled = state.functionsWithInlineClassReturnTypesMangled
-    override val metadataVersion = state.metadataVersion
+    private val isParamAssertionsDisabled = state.config.isParamAssertionsDisabled
+    private val unifiedNullChecks = state.config.unifiedNullChecks
+    private val functionsWithInlineClassReturnTypesMangled = state.config.functionsWithInlineClassReturnTypesMangled
+    override val metadataVersion = state.config.metadataVersion
     private val jvmDefaultMode = state.jvmDefaultMode
     private val approximator = state.typeApproximator
-    private val useOldManglingScheme = state.useOldManglingSchemeForFunctionsWithInlineClassesInSignatures
+    private val useOldManglingScheme = state.config.useOldManglingSchemeForFunctionsWithInlineClassesInSignatures
     private val signatureSerializer = JvmSignatureSerializerImpl(stringTable)
 
     override fun shouldUseTypeTable(): Boolean = useTypeTable

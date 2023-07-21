@@ -91,7 +91,7 @@ class PropertyReferenceCodegen(
     override fun generateDeclaration() {
         v.defineClass(
             element,
-            state.classFileVersion,
+            state.config.classFileVersion,
             ACC_FINAL or ACC_SUPER or
                     DescriptorAsmUtil.getVisibilityAccessFlagForClass(classDescriptor) or
                     DescriptorAsmUtil.getSyntheticAccessFlagForLambdaClass(classDescriptor),

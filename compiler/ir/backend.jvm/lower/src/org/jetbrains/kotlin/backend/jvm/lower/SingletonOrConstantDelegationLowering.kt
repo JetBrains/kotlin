@@ -31,7 +31,7 @@ internal val singletonOrConstantDelegationPhase = makeIrFilePhase(
 
 private class SingletonOrConstantDelegationLowering(val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        if (!context.state.generateOptimizedCallableReferenceSuperClasses) return
+        if (!context.config.generateOptimizedCallableReferenceSuperClasses) return
         irFile.transform(SingletonOrConstantDelegationTransformer(context), null)
     }
 }

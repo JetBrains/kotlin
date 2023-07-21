@@ -69,7 +69,7 @@ class OptimizationMethodVisitor(
         normalizationMethodTransformer.transform("fake", methodNode)
         UninitializedStoresProcessor(methodNode).run()
 
-        if (!mandatoryTransformationsOnly && canBeOptimized(methodNode) && !generationState.disableOptimization) {
+        if (!mandatoryTransformationsOnly && canBeOptimized(methodNode) && !generationState.config.disableOptimization) {
             optimizationTransformer.transform("fake", methodNode)
         }
 

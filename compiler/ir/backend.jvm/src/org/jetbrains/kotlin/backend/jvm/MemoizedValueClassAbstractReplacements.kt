@@ -53,7 +53,7 @@ abstract class MemoizedValueClassAbstractReplacements(
         // It is a JVM default interface method if one of the following conditions are true:
         // - it is a Java method,
         // - it is a Kotlin function compiled to JVM default interface method.
-        return overridden.isFromJava() || overridden.isCompiledToJvmDefault(context.state.jvmDefaultMode)
+        return overridden.isFromJava() || overridden.isCompiledToJvmDefault(context.config.jvmDefaultMode)
     }
 
     protected abstract fun createStaticReplacement(function: IrFunction): IrSimpleFunction

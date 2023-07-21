@@ -74,7 +74,7 @@ class JvmSymbols(
     // (they are expected to be provided at run-time by the corresponding bootstrap method).
     val kotlinJvmInternalInvokeDynamicPackage: IrPackageFragment = createPackage(FqName("kotlin.jvm.internal.invokeDynamic"))
 
-    private val generateOptimizedCallableReferenceSuperClasses = context.state.generateOptimizedCallableReferenceSuperClasses
+    private val generateOptimizedCallableReferenceSuperClasses = context.config.generateOptimizedCallableReferenceSuperClasses
 
     private fun createPackage(fqName: FqName): IrPackageFragment =
         IrExternalPackageFragmentImpl.createEmptyExternalPackageFragment(context.state.module, fqName)
