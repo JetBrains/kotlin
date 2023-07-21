@@ -356,7 +356,7 @@ open class FirDeclarationsResolveTransformer(
         // TODO: this generates some nodes in the control flow graph which we don't want if we
         //  end up not selecting this option, KT-59684
         transformer.expressionsTransformer?.transformFunctionCallInternal(
-            provideDelegateCall, ResolutionMode.ContextIndependent, provideDelegate = true
+            provideDelegateCall, ResolutionMode.ContextIndependent, skipExplicitReceiverTransformation = true
         )
 
         // If we got successful candidate for provideDelegate, let's select it
