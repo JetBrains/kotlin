@@ -217,6 +217,19 @@ object FirOverrideChecker : FirClassChecker() {
         return null
     }
 
+    @OptIn(SymbolInternals::class)
+    private fun FirFunctionSymbol<*>.checkDefaultValues(
+        reporter: DiagnosticReporter,
+        context: CheckerContext,
+    ) {
+        for (valueParameterSymbol in valueParameterSymbols) {
+            val defaultValue = valueParameterSymbol.fir.defaultValue
+            if (defaultValue != null) {
+                reporter.reportOn(defaultValue.source, FirErrors.DEFAULT_VALUE_NOT_ALLOWED_IN_OVERRIDE, context)
+            }
+        }
+    }
+
     private fun checkMember(
         member: FirCallableSymbol<*>,
         containingClass: FirClass,
@@ -298,6 +311,10 @@ object FirOverrideChecker : FirClassChecker() {
         member.checkVisibility(containingClass, reporter, overriddenMemberSymbols, context)
 
         member.checkDeprecation(reporter, overriddenMemberSymbols, context)
+
+        if (member is FirFunctionSymbol) {
+            member.checkDefaultValues(reporter, context)
+        }
 
         val restriction = member.checkReturnType(
             overriddenSymbols = overriddenMemberSymbols,

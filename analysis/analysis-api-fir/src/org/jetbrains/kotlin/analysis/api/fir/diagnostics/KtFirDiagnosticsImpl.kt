@@ -2439,6 +2439,11 @@ internal class DataObjectCustomEqualsOrHashCodeImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtNamedFunction>(firDiagnostic, token), KtFirDiagnostic.DataObjectCustomEqualsOrHashCode
 
+internal class DefaultValueNotAllowedInOverrideImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.DefaultValueNotAllowedInOverride
+
 internal class FunInterfaceConstructorReferenceImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,

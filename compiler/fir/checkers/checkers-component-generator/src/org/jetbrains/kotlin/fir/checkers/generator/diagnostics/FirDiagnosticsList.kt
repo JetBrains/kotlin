@@ -1009,6 +1009,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val DATA_OBJECT_CUSTOM_EQUALS_OR_HASH_CODE by error<KtNamedFunction>(PositioningStrategy.OVERRIDE_MODIFIER)
     }
 
+    val PARAMETER_DEFAULT_VALUES by object : DiagnosticGroup("Parameter default values") {
+        val DEFAULT_VALUE_NOT_ALLOWED_IN_OVERRIDE by error<KtElement>()
+    }
+
     val FUN_INTERFACES by object : DiagnosticGroup("Fun interfaces") {
         val FUN_INTERFACE_CONSTRUCTOR_REFERENCE by error<KtExpression>(PositioningStrategy.REFERENCE_BY_QUALIFIED)
         val FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS by error<KtClass>(PositioningStrategy.FUN_MODIFIER)

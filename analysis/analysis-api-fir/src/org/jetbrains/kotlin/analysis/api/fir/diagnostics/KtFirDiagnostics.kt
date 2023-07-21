@@ -2032,6 +2032,10 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = DataObjectCustomEqualsOrHashCode::class
     }
 
+    interface DefaultValueNotAllowedInOverride : KtFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = DefaultValueNotAllowedInOverride::class
+    }
+
     interface FunInterfaceConstructorReference : KtFirDiagnostic<KtExpression> {
         override val diagnosticClass get() = FunInterfaceConstructorReference::class
     }
