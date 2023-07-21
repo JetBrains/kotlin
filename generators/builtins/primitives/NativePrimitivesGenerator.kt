@@ -213,7 +213,7 @@ class NativePrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(w
     private fun ClassBuilder.generateCustomEquals(thisKind: PrimitiveType) {
         method {
             annotations += "Deprecated(\"Provided for binary compatibility\", level = DeprecationLevel.HIDDEN)"
-            annotations += "kotlin.internal.IntrinsicConstEvaluation"
+            annotations += intrinsicConstEvaluationAnnotation
             signature {
                 methodName = "equals"
                 parameter {
