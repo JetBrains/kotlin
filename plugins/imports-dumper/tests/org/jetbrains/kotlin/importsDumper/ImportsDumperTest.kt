@@ -57,6 +57,8 @@ class ImportsDumperTest : TestCaseWithTmpdir() {
                 testDataDir.absolutePath,
                 "-d",
                 tmpDir.path,
+                "-language-version",
+                "1.9",
                 "-Xplugin=${importsDumperJarInDist.path}",
                 "-P",
                 "plugin:${ImportsDumperCommandLineProcessor.PLUGIN_ID}:" +
