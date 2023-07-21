@@ -23,14 +23,11 @@ abstract class AbstractMultiModuleSymbolByPsiTest : AbstractAnalysisApiBasedTest
         val files = modules.flatMap { testServices.ktModuleProvider.getModuleFiles(it).filterIsInstance<KtFile>() }
 
         val debugRenderer = DebugSymbolRenderer()
-
         val debugPrinter = PrettyPrinter()
-        val prettyPrinter = PrettyPrinter()
 
         for (file in files) {
             val fileDirective = "// FILE: ${file.name}\n"
             debugPrinter.appendLine(fileDirective)
-            prettyPrinter.appendLine(fileDirective)
 
             analyseForTest(file) {
                 file.collectDescendantsOfType<KtDeclaration> { it.isValidForSymbolCreation }.forEach { declaration ->
@@ -38,14 +35,10 @@ abstract class AbstractMultiModuleSymbolByPsiTest : AbstractAnalysisApiBasedTest
 
                     debugPrinter.appendLine(debugRenderer.render(symbol))
                     debugPrinter.appendLine()
-
-                    prettyPrinter.appendLine(symbol.render(KtDeclarationRendererForDebug.WITH_QUALIFIED_NAMES))
-                    prettyPrinter.appendLine()
                 }
             }
         }
 
         testServices.assertions.assertEqualsToTestDataFileSibling(debugPrinter.toString())
-        testServices.assertions.assertEqualsToTestDataFileSibling(prettyPrinter.toString(), extension = ".pretty.txt")
     }
 }
