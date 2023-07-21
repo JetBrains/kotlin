@@ -1227,8 +1227,8 @@ public final class Char : kotlin.Comparable<kotlin.Char> {
     @kotlin.internal.IntrinsicConstEvaluation
     public final fun toShort(): kotlin.Short
 
-    @kotlin.js.JsName(name = "toString")
     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.js.JsName(name = "toString")
     public open override fun toString(): kotlin.String
 
     public companion object of Char {

@@ -58,7 +58,7 @@ class NativePrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(w
                     return thisBits.compareTo(otherBits)
                 """.trimIndent().addAsMultiLineBody()
             } else {
-                setAsExternal()
+                setAsExternal(thisKind)
             }
             return
         }
@@ -77,7 +77,7 @@ class NativePrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(w
         val sign = operatorSign(this.methodName)
 
         if (thisKind != PrimitiveType.BYTE && thisKind != PrimitiveType.SHORT && thisKind == otherKind) {
-            return setAsExternal()
+            return setAsExternal(thisKind)
         }
 
         modifySignature { isInline = true }
@@ -91,7 +91,7 @@ class NativePrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(w
         if (methodName in setOf("inc", "dec") || thisKind == PrimitiveType.INT ||
             thisKind in PrimitiveType.floatingPoint || (methodName == "unaryMinus" && thisKind == PrimitiveType.LONG)
         ) {
-            return setAsExternal()
+            return setAsExternal(thisKind)
         }
 
         modifySignature { isInline = true }
@@ -102,11 +102,11 @@ class NativePrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(w
     }
 
     override fun MethodBuilder.modifyGeneratedBitShiftOperators(thisKind: PrimitiveType) {
-        setAsExternal()
+        setAsExternal(thisKind)
     }
 
     override fun MethodBuilder.modifyGeneratedBitwiseOperators(thisKind: PrimitiveType) {
-        setAsExternal()
+        setAsExternal(thisKind)
     }
 
     override fun MethodBuilder.modifyGeneratedConversions(thisKind: PrimitiveType) {
@@ -234,15 +234,23 @@ class NativePrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(w
     }
 
     companion object {
-        private fun String.toNativeOperator(): String {
-            if (this == "div" || this == "rem") return "SIGNED_${this.uppercase(Locale.getDefault())}"
-            if (this == "compareTo") return "SIGNED_COMPARE_TO"
-            if (this.startsWith("unary")) return "UNARY_${this.replace("unary", "").uppercase(Locale.getDefault())}"
-            return this.uppercase(Locale.getDefault())
+        private fun String.toNativeOperator(thisKind: PrimitiveType): String {
+            return when {
+                this == "div" || this == "rem" -> {
+                    val prefix = if (thisKind == PrimitiveType.BOOLEAN || thisKind == PrimitiveType.CHAR) "UNSIGNED" else "SIGNED"
+                    "${prefix}_${this.uppercase()}"
+                }
+                this == "compareTo" -> {
+                    val prefix = if (thisKind == PrimitiveType.BOOLEAN || thisKind == PrimitiveType.CHAR) "UNSIGNED" else "SIGNED"
+                    "${prefix}_COMPARE_TO"
+                }
+                this.startsWith("unary") -> "UNARY_${this.replace("unary", "").uppercase()}"
+                else -> this.uppercase()
+            }
         }
 
-        internal fun MethodBuilder.setAsExternal() {
-            annotations += "TypedIntrinsic(IntrinsicType.${methodName.toNativeOperator()})"
+        internal fun MethodBuilder.setAsExternal(thisKind: PrimitiveType) {
+            annotations += "TypedIntrinsic(IntrinsicType.${methodName.toNativeOperator(thisKind)})"
             modifySignature { isExternal = true }
         }
     }

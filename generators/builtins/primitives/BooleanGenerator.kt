@@ -183,9 +183,11 @@ class WasmBooleanGenerator(writer: PrintWriter) : BooleanGenerator(writer) {
 
     override fun ClassBuilder.modifyGeneratedClass() {
         annotations += "WasmAutoboxed"
-        constructorParam {
-            name = "private val value"
-            type = PrimitiveType.BOOLEAN.capitalized
+        primaryConstructor {
+            parameter {
+                name = "private val value"
+                type = PrimitiveType.BOOLEAN.capitalized
+            }
         }
     }
 
@@ -254,24 +256,23 @@ class NativeBooleanGenerator(writer: PrintWriter) : BooleanGenerator(writer) {
     }
 
     override fun MethodBuilder.modifyGeneratedNot() {
-        setAsExternal()
+        setAsExternal(PrimitiveType.BOOLEAN)
     }
 
     override fun MethodBuilder.modifyGeneratedAnd() {
-        setAsExternal()
+        setAsExternal(PrimitiveType.BOOLEAN)
     }
 
     override fun MethodBuilder.modifyGeneratedOr() {
-        setAsExternal()
+        setAsExternal(PrimitiveType.BOOLEAN)
     }
 
     override fun MethodBuilder.modifyGeneratedXor() {
-        setAsExternal()
+        setAsExternal(PrimitiveType.BOOLEAN)
     }
 
     override fun MethodBuilder.modifyGeneratedCompareTo() {
-        annotations += "TypedIntrinsic(IntrinsicType.UNSIGNED_COMPARE_TO)"
-        modifySignature { isExternal = true }
+        setAsExternal(PrimitiveType.BOOLEAN)
     }
 
     override fun MethodBuilder.modifyGeneratedToString() {

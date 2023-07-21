@@ -77,6 +77,7 @@ internal abstract class AnnotatedAndDocumented {
 internal class FileBuilder : PrimitiveBuilder {
     private val suppresses: MutableList<String> = mutableListOf()
     private val imports: MutableList<String> = mutableListOf()
+    private val fileComments: MutableList<String> = mutableListOf()
     private val classes: MutableList<ClassBuilder> = mutableListOf()
 
     fun suppress(suppress: String) {
@@ -85,6 +86,10 @@ internal class FileBuilder : PrimitiveBuilder {
 
     fun import(newImport: String) {
         imports += newImport
+    }
+
+    fun appendFileComment(doc: String) {
+        fileComments += doc
     }
 
     fun klass(init: ClassBuilder.() -> Unit): ClassBuilder {
@@ -113,6 +118,11 @@ internal class FileBuilder : PrimitiveBuilder {
                 appendLine()
             }
 
+            if (fileComments.isNotEmpty()) {
+                appendLine(fileComments.joinToString(separator = END_LINE) { "// $it" })
+                appendLine()
+            }
+
             append(classes.joinToString(separator = END_LINE) { it.build() })
         }
     }
@@ -121,14 +131,21 @@ internal class FileBuilder : PrimitiveBuilder {
 internal class ClassBuilder : AnnotatedAndDocumented(), PrimitiveBuilder {
     var isFinal: Boolean = false
     var name: String = ""
-    private var constructorParam: MethodParameterBuilder? = null
+    private var primaryConstructor: PrimaryConstructorBuilder = PrimaryConstructorBuilder()
+    private var secondaryConstructor: SecondaryConstructorBuilder? = null
     private var superTypes: List<String> = emptyList()
     private var companionObject: CompanionObjectBuilder? = null
-    private val methods: MutableList<MethodBuilder> = mutableListOf()
 
-    fun constructorParam(init: MethodParameterBuilder.() -> Unit) {
-        throwIfAlreadyInitialized(constructorParam, "constructorParam", "ClassBuilder")
-        constructorParam = MethodParameterBuilder().apply(init)
+    private var builders: MutableList<PrimitiveBuilder> = mutableListOf()
+
+    fun primaryConstructor(init: PrimaryConstructorBuilder.() -> Unit) {
+        primaryConstructor = PrimaryConstructorBuilder().apply(init)
+    }
+
+    fun secondaryConstructor(init: SecondaryConstructorBuilder.() -> Unit): SecondaryConstructorBuilder {
+        val secondaryConstructorBuilder = SecondaryConstructorBuilder()
+        secondaryConstructor = secondaryConstructorBuilder.apply(init)
+        return secondaryConstructorBuilder
     }
 
     fun superType(type: String) {
@@ -139,12 +156,13 @@ internal class ClassBuilder : AnnotatedAndDocumented(), PrimitiveBuilder {
         throwIfAlreadyInitialized(companionObject, "companionObject", "ClassBuilder")
         val companionObjectBuilder = CompanionObjectBuilder()
         companionObject = companionObjectBuilder.apply(init)
+        builders.add(companionObjectBuilder)
         return companionObjectBuilder
     }
 
     fun method(init: MethodBuilder.() -> Unit): MethodBuilder {
         val methodBuilder = MethodBuilder()
-        methods += methodBuilder.apply(init)
+        builders.add(methodBuilder.apply(init))
         return methodBuilder
     }
 
@@ -154,10 +172,14 @@ internal class ClassBuilder : AnnotatedAndDocumented(), PrimitiveBuilder {
 
             append("public ")
             if (isFinal) append("final ")
-            appendLine("class $name private constructor(${constructorParam?.build() ?: ""}) : ${superTypes.joinToString()} {")
+            appendLine("class $name ${primaryConstructor.build()}: ${superTypes.joinToString()} {")
 
-            companionObject?.let { appendLine(it.build().shift()) }
-            appendLine(methods.joinToString(separator = END_LINE + END_LINE) { it.build().shift() })
+            secondaryConstructor?.let {
+                appendLine(it.build().shift())
+                appendLine()
+            }
+
+            appendLine(builders.joinToString(separator = END_LINE + END_LINE) { it.build().shift() })
             appendLine("}")
         }
     }
@@ -178,12 +200,61 @@ internal class CompanionObjectBuilder : AnnotatedAndDocumented(), PrimitiveBuild
             printDocumentationAndAnnotations()
             if (isPublic) append("public ")
             if (properties.isEmpty()) {
-                appendLine("companion object {}")
+                append("companion object {}")
             } else {
                 appendLine("companion object {")
                 appendLine(properties.joinToString(separator = END_LINE + END_LINE) { it.build().shift() })
-                appendLine("}")
+                append("}")
             }
+        }
+    }
+}
+
+internal class PrimaryConstructorBuilder : AnnotatedAndDocumented(), PrimitiveBuilder {
+    var visibility: MethodVisibility? = MethodVisibility.PRIVATE
+    private var parameters: MutableList<MethodParameterBuilder> = mutableListOf()
+
+    fun parameter(init: MethodParameterBuilder.() -> Unit): MethodParameterBuilder {
+        val argBuilder = MethodParameterBuilder()
+        parameters.add(argBuilder.apply(init))
+        return argBuilder
+    }
+
+    override fun build(): String {
+        return buildString {
+            if (annotations.isNotEmpty()) appendLine()
+            printDocumentationAndAnnotations()
+
+            visibility?.let { append("${it.name.lowercase()} ") }
+            append("constructor")
+            append(parameters.joinToString(prefix = "(", postfix = ") ") { it.build() })
+        }
+    }
+}
+
+internal class SecondaryConstructorBuilder : AnnotatedAndDocumented(), PrimitiveBuilder {
+    var visibility: MethodVisibility? = MethodVisibility.PRIVATE
+    private var parameters: MutableList<MethodParameterBuilder> = mutableListOf()
+    private var argumentsToPrimaryContructor: MutableList<String> = mutableListOf()
+
+    fun parameter(init: MethodParameterBuilder.() -> Unit): MethodParameterBuilder {
+        val argBuilder = MethodParameterBuilder()
+        parameters.add(argBuilder.apply(init))
+        return argBuilder
+    }
+
+    fun argument(arg: String) {
+         argumentsToPrimaryContructor += arg
+    }
+
+    override fun build(): String {
+        return buildString {
+            printDocumentationAndAnnotations()
+
+            visibility?.let { append("${it.name.lowercase()} ") }
+            append("constructor")
+            append(parameters.joinToString(prefix = "(", postfix = ") : ") { it.build() })
+            append(argumentsToPrimaryContructor.joinToString(prefix = "this(", postfix = ")"))
         }
     }
 }
@@ -295,6 +366,7 @@ internal class MethodBuilder : AnnotatedAndDocumented(), PrimitiveBuilder {
 }
 
 internal class PropertyBuilder : AnnotatedAndDocumented(), PrimitiveBuilder {
+    var visibility: MethodVisibility? = MethodVisibility.PUBLIC
     var name: String? = null
     var type: String? = null
     var value: String? = null
@@ -306,7 +378,8 @@ internal class PropertyBuilder : AnnotatedAndDocumented(), PrimitiveBuilder {
 
         return buildString {
             printDocumentationAndAnnotations(forceMultiLineDoc = true)
-            append("public const val $name: $type = $value")
+            visibility?.let { append("${it.name.lowercase()} ") }
+            append("const val $name: $type = $value")
         }
     }
 }

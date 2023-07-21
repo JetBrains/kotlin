@@ -18,10 +18,7 @@ import org.jetbrains.kotlin.generators.builtins.progressionIterators.GeneratePro
 import org.jetbrains.kotlin.generators.builtins.progressions.GenerateProgressions
 import org.jetbrains.kotlin.generators.builtins.ranges.GenerateRanges
 import org.jetbrains.kotlin.generators.builtins.unsigned.generateUnsignedTypes
-import primitives.JsBooleanGenerator
-import primitives.JvmBooleanGenerator
-import primitives.NativeBooleanGenerator
-import primitives.WasmBooleanGenerator
+import primitives.*
 import java.io.File
 import java.io.PrintWriter
 
@@ -86,6 +83,11 @@ fun generateBuiltIns(generate: (File, (PrintWriter) -> BuiltInsGenerator) -> Uni
     generate(File(BUILT_INS_NATIVE_DIR_JS, "Boolean.kt")) { JsBooleanGenerator(it) }
     generate(File(BUILT_INS_NATIVE_DIR_WASM, "kotlin/Boolean.kt")) { WasmBooleanGenerator(it) }
     generate(File(BUILT_INS_NATIVE_DIR_NATIVE, "kotlin/Boolean.kt")) { NativeBooleanGenerator(it) }
+
+    generate(File(BUILT_INS_NATIVE_DIR_JVM, "kotlin/Char.kt")) { JvmCharGenerator(it) }
+    generate(File(BUILT_INS_NATIVE_DIR_JS, "Char.kt")) { JsCharGenerator(it) }
+    generate(File(BUILT_INS_NATIVE_DIR_WASM, "kotlin/Char.kt")) { WasmCharGenerator(it) }
+    generate(File(BUILT_INS_NATIVE_DIR_NATIVE, "kotlin/Char.kt")) { NativeCharGenerator(it) }
 
     generate(File(RUNTIME_JVM_DIR, "kotlin/jvm/functions/Functions.kt")) { GenerateFunctions(it) }
     generate(File(BUILT_INS_NATIVE_DIR_JVM, "kotlin/Arrays.kt")) { GenerateArrays(it) }

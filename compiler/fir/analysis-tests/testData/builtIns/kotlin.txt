@@ -263,6 +263,8 @@ public final class Char : R|kotlin/Comparable<kotlin/Char>|, R|java/io/Serializa
 
     @R|kotlin/internal/IntrinsicConstEvaluation|() public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
+    public open fun hashCode(): R|kotlin/Int|
+
     public final operator fun inc(): R|kotlin/Char|
 
     @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun minus(other: R|kotlin/Char|): R|kotlin/Int|

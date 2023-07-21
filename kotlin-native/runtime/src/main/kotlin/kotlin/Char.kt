@@ -1,7 +1,10 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+
+// Auto-generated file. DO NOT EDIT!
+
 @file:Suppress("NOTHING_TO_INLINE")
 
 package kotlin
@@ -11,9 +14,7 @@ import kotlin.native.internal.GCUnsafeCall
 import kotlin.native.internal.TypedIntrinsic
 import kotlin.native.internal.IntrinsicType
 
-/**
- * Represents a 16-bit Unicode character.
- */
+/** Represents a 16-bit Unicode character. */
 public class Char private constructor() : Comparable<Char> {
     /**
      * Compares this value with the specified value for order.
@@ -21,22 +22,24 @@ public class Char private constructor() : Comparable<Char> {
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    @TypedIntrinsic(IntrinsicType.UNSIGNED_COMPARE_TO)
     @kotlin.internal.IntrinsicConstEvaluation
+    @TypedIntrinsic(IntrinsicType.UNSIGNED_COMPARE_TO)
     external public override fun compareTo(other: Char): Int
 
     /** Adds the other Int value to this value resulting a Char. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun plus(other: Int): Char =
-            (this.code + other).toChar()
+        (this.code + other).toChar()
+
     /** Subtracts the other Char value from this value resulting an Int. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun minus(other: Char): Int =
-            this.code - other.code
+        this.code - other.code
+
     /** Subtracts the other Int value from this value resulting a Char. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun minus(other: Int): Char =
-            (this.code - other).toChar()
+        (this.code - other).toChar()
 
     /**
      * Returns this value incremented by one.
@@ -45,6 +48,7 @@ public class Char private constructor() : Comparable<Char> {
      */
     @TypedIntrinsic(IntrinsicType.INC)
     external public operator fun inc(): Char
+
     /**
      * Returns this value decremented by one.
      *
@@ -54,9 +58,8 @@ public class Char private constructor() : Comparable<Char> {
     external public operator fun dec(): Char
 
     /** Creates a range from this value to the specified [other] value. */
-    public operator fun rangeTo(other: Char): CharRange {
-        return CharRange(this, other)
-    }
+    public operator fun rangeTo(other: Char): CharRange =
+        CharRange(this, other)
 
     /**
      * Creates a range from this value up to but excluding the specified [other] value.
@@ -65,47 +68,71 @@ public class Char private constructor() : Comparable<Char> {
      */
     @SinceKotlin("1.9")
     @WasExperimental(ExperimentalStdlibApi::class)
-    public operator fun rangeUntil(other: Char): CharRange = this until other
+    public operator fun rangeUntil(other: Char): CharRange =
+        this until other
 
     /** Returns the value of this character as a `Byte`. */
     @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code.toByte()"))
     @DeprecatedSinceKotlin(warningSince = "1.5")
-    @TypedIntrinsic(IntrinsicType.INT_TRUNCATE)
     @kotlin.internal.IntrinsicConstEvaluation
+    @TypedIntrinsic(IntrinsicType.INT_TRUNCATE)
     external public fun toByte(): Byte
+
     /** Returns the value of this character as a `Char`. */
     @kotlin.internal.IntrinsicConstEvaluation
-    public inline fun toChar(): Char = this
+    public inline fun toChar(): Char =
+        this
+
     /** Returns the value of this character as a `Short`. */
     @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code.toShort()"))
     @DeprecatedSinceKotlin(warningSince = "1.5")
-    @TypedIntrinsic(IntrinsicType.ZERO_EXTEND)
     @kotlin.internal.IntrinsicConstEvaluation
+    @TypedIntrinsic(IntrinsicType.ZERO_EXTEND)
     external public fun toShort(): Short
+
     /** Returns the value of this character as a `Int`. */
     @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code"))
     @DeprecatedSinceKotlin(warningSince = "1.5")
-    @TypedIntrinsic(IntrinsicType.ZERO_EXTEND)
     @kotlin.internal.IntrinsicConstEvaluation
+    @TypedIntrinsic(IntrinsicType.ZERO_EXTEND)
     external public fun toInt(): Int
+
     /** Returns the value of this character as a `Long`. */
     @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code.toLong()"))
     @DeprecatedSinceKotlin(warningSince = "1.5")
-    @TypedIntrinsic(IntrinsicType.ZERO_EXTEND)
     @kotlin.internal.IntrinsicConstEvaluation
+    @TypedIntrinsic(IntrinsicType.ZERO_EXTEND)
     external public fun toLong(): Long
+
     /** Returns the value of this character as a `Float`. */
     @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code.toFloat()"))
     @DeprecatedSinceKotlin(warningSince = "1.5")
-    @TypedIntrinsic(IntrinsicType.UNSIGNED_TO_FLOAT)
     @kotlin.internal.IntrinsicConstEvaluation
+    @TypedIntrinsic(IntrinsicType.UNSIGNED_TO_FLOAT)
     external public fun toFloat(): Float
+
     /** Returns the value of this character as a `Double`. */
     @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code.toDouble()"))
     @DeprecatedSinceKotlin(warningSince = "1.5")
-    @TypedIntrinsic(IntrinsicType.UNSIGNED_TO_FLOAT)
     @kotlin.internal.IntrinsicConstEvaluation
+    @TypedIntrinsic(IntrinsicType.UNSIGNED_TO_FLOAT)
     external public fun toDouble(): Double
+
+    @kotlin.internal.IntrinsicConstEvaluation
+    @GCUnsafeCall("Kotlin_Char_toString")
+    external public override fun toString(): String
+
+    @kotlin.internal.IntrinsicConstEvaluation
+    public override fun equals(other: Any?): Boolean =
+        other is Char && this.code == other.code
+
+    public override fun hashCode(): Int {
+        return this.code
+    }
+
+    @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+    @kotlin.internal.IntrinsicConstEvaluation
+    public fun equals(other: Char): Boolean = this == other
 
     @kotlin.native.internal.CanBePrecreated
     companion object {
@@ -120,17 +147,6 @@ public class Char private constructor() : Comparable<Char> {
          */
         @SinceKotlin("1.3")
         public const val MAX_VALUE: Char = '\uFFFF'
-
-        /**
-         * The number of bytes used to represent a Char in a binary form.
-         */
-        @SinceKotlin("1.3")
-        public const val SIZE_BYTES: Int = 2
-        /**
-         * The number of bits used to represent a Char in a binary form.
-         */
-        @SinceKotlin("1.3")
-        public const val SIZE_BITS: Int = 16
 
         /**
          * The minimum value of a Unicode high-surrogate code unit.
@@ -163,6 +179,18 @@ public class Char private constructor() : Comparable<Char> {
         public const val MAX_SURROGATE: Char = MAX_LOW_SURROGATE
 
         /**
+         * The number of bytes used to represent a Char in a binary form.
+         */
+        @SinceKotlin("1.3")
+        public const val SIZE_BYTES: Int = 2
+
+        /**
+         * The number of bits used to represent a Char in a binary form.
+         */
+        @SinceKotlin("1.3")
+        public const val SIZE_BITS: Int = 16
+
+        /**
          * The minimum value of a supplementary code point, `\u0x10000`.
          *
          * Note that this constant is experimental.
@@ -178,7 +206,7 @@ public class Char private constructor() : Comparable<Char> {
          * In the future it could be deprecated in favour of another constant of a `CodePoint` type.
          */
         @ExperimentalNativeApi
-        public const val MIN_CODE_POINT = 0x000000
+        public const val MIN_CODE_POINT: Int = 0x000000
 
         /**
          * The maximum value of a Unicode code point.
@@ -187,7 +215,7 @@ public class Char private constructor() : Comparable<Char> {
          * In the future it could be deprecated in favour of another constant of a `CodePoint` type.
          */
         @ExperimentalNativeApi
-        public const val MAX_CODE_POINT = 0X10FFFF
+        public const val MAX_CODE_POINT: Int = 0X10FFFF
 
         /**
          * The minimum radix available for conversion to and from strings.
@@ -203,21 +231,4 @@ public class Char private constructor() : Comparable<Char> {
         @DeprecatedSinceKotlin(warningSince = "1.9")
         public const val MAX_RADIX: Int = 36
     }
-
-    @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-    @kotlin.internal.IntrinsicConstEvaluation
-    public fun equals(other: Char): Boolean = this == other
-
-    @kotlin.internal.IntrinsicConstEvaluation
-    public override fun equals(other: Any?): Boolean =
-            other is Char && this.code == other.code
-
-    @GCUnsafeCall("Kotlin_Char_toString")
-    @kotlin.internal.IntrinsicConstEvaluation
-    external public override fun toString(): String
-
-    public override fun hashCode(): Int {
-        return this.code
-    }
 }
-
