@@ -89,17 +89,16 @@ class ExpectActualTable(val expectDescriptorToSymbol: MutableMap<DeclarationDesc
     }
 
     fun findExpectsForActuals(declaration: IrDeclaration) {
-        if (declaration.descriptor !is MemberDescriptor) return
-
-        val descriptor = declaration.symbol.descriptor
+        if (declaration is IrField) return
+        val descriptor = declaration.descriptor as? MemberDescriptor ?: return
 
         if (declaration is IrTypeAlias && declaration.isActual) {
             val rightHandSide = declaration.expandedType.classOrNull?.owner?.recordRightHandSide()
-                ?: error("Unexpected right hand side of actual typealias: ${declaration.descriptor}")
+                ?: error("Unexpected right hand side of actual typealias: $descriptor")
 
 
-            declaration.descriptor.findExpects().forEach {
-                expectDescriptorToSymbol[it]?.owner?.recordActuals(rightHandSide, declaration.descriptor.module)
+            descriptor.findExpects().forEach {
+                expectDescriptorToSymbol[it]?.owner?.recordActuals(rightHandSide, descriptor.module)
             }
             return
         }
@@ -113,7 +112,7 @@ class ExpectActualTable(val expectDescriptorToSymbol: MutableMap<DeclarationDesc
         }
 
         expects.forEach { expect ->
-            table.put(expect, declaration.symbol)
+            table[expect] = declaration.symbol
         }
     }
 }
