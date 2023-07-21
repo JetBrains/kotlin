@@ -1044,6 +1044,14 @@ standaloneTest("atomic1") {
     source = "runtime/atomics/atomic1.kt"
 }
 
+tasks.register("atomicArraySmokeTest", KonanLocalTest) {
+    source = "runtime/atomics/atomic_array_smoke.kt"
+}
+
+tasks.register("atomicArrayStressTest", KonanLocalTest) {
+    source = "runtime/atomics/atomic_array_stress.kt"
+}
+
 tasks.register("lazy0", KonanLocalTest) {
     useGoldenData = true
     source = "runtime/workers/lazy0.kt"
