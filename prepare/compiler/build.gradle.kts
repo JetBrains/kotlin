@@ -203,6 +203,9 @@ dependencies {
     if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
         sources(kotlinStdlib(classifier = "sources"))
         sources("org.jetbrains.kotlin:kotlin-reflect:$bootstrapKotlinVersion:sources")
+        // TODO: Enable after bootstrap
+        // distCommonContents(kotlinStdlib(classifier = "all"))
+        // distCommonContents(kotlinStdlib(classifier = "common-sources"))
     } else {
         sources(project(":kotlin-stdlib", configuration = "distSources"))
         sources(project(":kotlin-stdlib", configuration = "distJsSourcesJar"))
@@ -213,10 +216,10 @@ dependencies {
 
         distJSContents(project(":kotlin-stdlib", configuration = "distJsContent"))
         distJSContents(project(":kotlin-test:kotlin-test-js", configuration = "distJs"))
-    }
 
-    distCommonContents(kotlinStdlib(suffix = "common"))
-    distCommonContents(kotlinStdlib(suffix = "common", classifier = "sources"))
+        distCommonContents(project(":kotlin-stdlib", configuration = "metadataApiElements"))
+        distCommonContents(project(":kotlin-stdlib", configuration = "metadataSourcesElements"))
+    }
 
     distMavenContents(kotlinStdlib(classifier = "sources"))
 
@@ -425,7 +428,14 @@ val distKotlinc = distTask<Sync>("distKotlinc") {
 
 val distCommon = distTask<Sync>("distCommon") {
     destinationDir = File("$distDir/common")
-    from(distCommonContents)
+    from(distCommonContents) {
+        rename { name ->
+            name
+                .replace("-metadata-all.jar", "-common.jar")
+                .replace("-metadata-sources.jar", "-common-sources.jar")
+                .replace("-all.jar", "-common.jar")
+        }
+    }
 }
 
 val distMaven = distTask<Sync>("distMaven") {
