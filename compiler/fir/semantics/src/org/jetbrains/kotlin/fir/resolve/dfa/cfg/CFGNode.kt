@@ -32,8 +32,6 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
     @OptIn(CfgInternals::class)
     val id = owner.nodeCount++
 
-    open val canThrow: Boolean get() = false
-
     //   a ---> b ---> d
     //      \-> c -/
     // Normal CFG semantics: a, then either b or c, then d
@@ -653,27 +651,18 @@ class BinaryOrExitNode(owner: ControlFlowGraph, override val fir: FirBinaryLogic
 // ----------------------------------- Operator call -----------------------------------
 
 class TypeOperatorCallNode(owner: ControlFlowGraph, override val fir: FirTypeOperatorCall, level: Int) : CFGNode<FirTypeOperatorCall>(owner, level) {
-    override val canThrow: Boolean
-        get() = fir.operation == FirOperation.AS
-
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitTypeOperatorCallNode(this, data)
     }
 }
 
 class ComparisonExpressionNode(owner: ControlFlowGraph, override val fir: FirComparisonExpression, level: Int) : CFGNode<FirComparisonExpression>(owner, level) {
-    override val canThrow: Boolean
-        get() = true // TODO? only overridden compareTo
-
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitComparisonExpressionNode(this, data)
     }
 }
 
 class EqualityOperatorCallNode(owner: ControlFlowGraph, override val fir: FirEqualityOperatorCall, level: Int) : AbstractBinaryExitNode<FirEqualityOperatorCall>(owner, level) {
-    override val canThrow: Boolean
-        get() = true // TODO? only overridden equals
-
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitEqualityOperatorCallNode(this, data)
     }
@@ -696,9 +685,6 @@ class ConstExpressionNode(owner: ControlFlowGraph, override val fir: FirConstExp
 
 class CheckNotNullCallNode(owner: ControlFlowGraph, override val fir: FirCheckNotNullCall, level: Int)
     : CFGNode<FirCheckNotNullCall>(owner, level) {
-    override val canThrow: Boolean
-        get() = true
-
     override val isUnion: Boolean
         get() = true
 
@@ -714,9 +700,6 @@ class QualifiedAccessNode(
     override val fir: FirQualifiedAccessExpression,
     level: Int
 ) : CFGNode<FirQualifiedAccessExpression>(owner, level) {
-    override val canThrow: Boolean
-        get() = fir.toResolvedCallableSymbol() is FirPropertySymbol
-
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitQualifiedAccessNode(this, data)
     }
@@ -734,10 +717,6 @@ class ResolvedQualifierNode(
 
 class FunctionCallNode(owner: ControlFlowGraph, override val fir: FirFunctionCall, level: Int)
     : CFGNode<FirFunctionCall>(owner, level) {
-
-    override val canThrow: Boolean
-        get() = true
-
     override val isUnion: Boolean
         get() = true
 
@@ -768,9 +747,6 @@ class DelegatedConstructorCallNode(owner: ControlFlowGraph, override val fir: Fi
     override val isUnion: Boolean
         get() = true
 
-    override val canThrow: Boolean
-        get() = true // shouldn't matter since delegated constructor calls aren't wrapped in try-finally, but still
-
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitDelegatedConstructorCallNode(this, data)
     }
@@ -792,9 +768,6 @@ class ThrowExceptionNode(
     override val fir: FirThrowExpression,
     level: Int
 ) : CFGNode<FirThrowExpression>(owner, level) {
-    override val canThrow: Boolean
-        get() = true
-
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitThrowExceptionNode(this, data)
     }
@@ -910,9 +883,6 @@ class FakeExpressionEnterNode(owner: ControlFlowGraph, level: Int) : CFGNode<Fir
 // ----------------------------------- Smart-cast node -----------------------------------
 
 class SmartCastExpressionExitNode(owner: ControlFlowGraph, override val fir: FirSmartCastExpression, level: Int) : CFGNode<FirSmartCastExpression>(owner, level) {
-    override val canThrow: Boolean
-        get() = fir.resolvedType.isNothing
-
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitSmartCastExpressionExitNode(this, data)
     }

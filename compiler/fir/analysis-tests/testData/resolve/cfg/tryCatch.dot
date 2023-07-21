@@ -228,11 +228,11 @@ digraph tryCatch_kt {
                             subgraph cluster_32 {
                                 color=blue
                                 86 [label="Catch enter"];
-                                87 [label="Variable declaration: e: R|kotlin/RuntimeException|"];
+                                87 [label="Variable declaration: e: R|kotlin/Exception|"];
                                 subgraph cluster_33 {
                                     color=blue
                                     88 [label="Enter block"];
-                                    89 [label="Jump: break@@@[Boolean(true)] "];
+                                    89 [label="Jump: continue@@@[Boolean(true)] "];
                                     90 [label="Stub" style="filled" fillcolor=gray];
                                     91 [label="Exit block" style="filled" fillcolor=gray];
                                 }
@@ -241,11 +241,11 @@ digraph tryCatch_kt {
                             subgraph cluster_34 {
                                 color=blue
                                 93 [label="Catch enter"];
-                                94 [label="Variable declaration: e: R|kotlin/Exception|"];
+                                94 [label="Variable declaration: e: R|kotlin/RuntimeException|"];
                                 subgraph cluster_35 {
                                     color=blue
                                     95 [label="Enter block"];
-                                    96 [label="Jump: continue@@@[Boolean(true)] "];
+                                    96 [label="Jump: break@@@[Boolean(true)] "];
                                     97 [label="Stub" style="filled" fillcolor=gray];
                                     98 [label="Exit block" style="filled" fillcolor=gray];
                                 }
@@ -297,7 +297,7 @@ digraph tryCatch_kt {
     71 -> {72};
     72 -> {73};
     73 -> {74};
-    74 -> {75 86 93};
+    74 -> {75};
     75 -> {76 77};
     76 -> {83};
     77 -> {78};
@@ -313,7 +313,7 @@ digraph tryCatch_kt {
     86 -> {87};
     87 -> {88};
     88 -> {89};
-    89 -> {105};
+    89 -> {49} [color=green style=dashed];
     89 -> {90} [style=dotted];
     90 -> {91} [style=dotted];
     91 -> {92} [style=dotted];
@@ -321,7 +321,7 @@ digraph tryCatch_kt {
     93 -> {94};
     94 -> {95};
     95 -> {96};
-    96 -> {49} [color=green style=dashed];
+    96 -> {105};
     96 -> {97} [style=dotted];
     97 -> {98} [style=dotted];
     98 -> {99} [style=dotted];

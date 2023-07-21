@@ -123,7 +123,6 @@ finally {
     25 -> {26} [color=green];
     25 -> {33} [color=red];
     26 -> {27};
-    26 -> {29} [label="onUncaughtException"];
     27 -> {28};
     28 -> {29};
     29 -> {30};
@@ -212,7 +211,6 @@ finally {
     50 -> {51} [color=green];
     50 -> {58} [color=red];
     51 -> {52};
-    51 -> {54} [label="onUncaughtException"];
     52 -> {53};
     53 -> {54};
     54 -> {55};

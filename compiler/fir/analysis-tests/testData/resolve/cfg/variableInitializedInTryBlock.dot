@@ -70,7 +70,6 @@ digraph variableInitializedInTryBlock_kt {
     6 -> {7};
     7 -> {8};
     8 -> {9};
-    8 -> {23} [label="onUncaughtException"];
     9 -> {10 13};
     10 -> {11};
     11 -> {23} [label="return@/test"];
@@ -80,13 +79,11 @@ digraph variableInitializedInTryBlock_kt {
     14 -> {15};
     15 -> {16};
     16 -> {17};
-    16 -> {23} [label="onUncaughtException"];
     17 -> {18};
-    17 -> {23} [label="onUncaughtException"];
     18 -> {19};
     19 -> {20};
-    19 -> {23} [label="onUncaughtException"];
     20 -> {21};
+    20 -> {23} [label="onUncaughtException"];
     21 -> {22};
     22 -> {23};
     23 -> {24};

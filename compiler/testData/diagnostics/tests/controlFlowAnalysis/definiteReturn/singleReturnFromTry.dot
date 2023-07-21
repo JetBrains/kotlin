@@ -206,7 +206,6 @@ digraph singleReturnFromTry_kt {
     54 -> {55} [color=green];
     54 -> {63} [style=dotted];
     55 -> {56} [style=dotted];
-    56 -> {59} [style=dotted label="onUncaughtException"];
     56 -> {57} [style=dotted];
     57 -> {58} [style=dotted];
     58 -> {59} [style=dotted];
@@ -384,8 +383,7 @@ digraph singleReturnFromTry_kt {
     104 -> {105} [color=green];
     104 -> {119} [color=red];
     105 -> {106} [style=dotted];
-    106 -> {115} [style=dotted label="onUncaughtException"];
-    106 -> {107 109} [style=dotted];
+    106 -> {107} [style=dotted];
     107 -> {108} [style=dotted];
     108 -> {109 115} [style=dotted];
     109 -> {110};
