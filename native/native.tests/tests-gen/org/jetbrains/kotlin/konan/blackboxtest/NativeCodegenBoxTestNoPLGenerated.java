@@ -40358,6 +40358,12 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
             }
 
             @Test
+            @TestMetadata("kt60212.kt")
+            public void testKt60212() throws Exception {
+                runTest("compiler/testData/codegen/box/when/kt60212.kt");
+            }
+
+            @Test
             @TestMetadata("longInRange.kt")
             public void testLongInRange() throws Exception {
                 runTest("compiler/testData/codegen/box/when/longInRange.kt");

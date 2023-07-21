@@ -53210,6 +53210,12 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
         }
 
         @Test
+        @TestMetadata("kt60212.kt")
+        public void testKt60212() throws Exception {
+            runTest("compiler/testData/codegen/box/when/kt60212.kt");
+        }
+
+        @Test
         @TestMetadata("longCondition.kt")
         public void testLongCondition() throws Exception {
             runTest("compiler/testData/codegen/box/when/longCondition.kt");
