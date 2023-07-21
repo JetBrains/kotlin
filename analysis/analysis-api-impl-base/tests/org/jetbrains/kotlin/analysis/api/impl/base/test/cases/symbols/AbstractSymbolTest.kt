@@ -345,7 +345,7 @@ enum class PrettyRendererOption(val transformation: (KtDeclarationRenderer) -> K
     )
 }
 
-val KtDeclaration.isValidForSymbolCreation
+internal val KtDeclaration.isValidForSymbolCreation
     get() = when (this) {
         is KtBackingField -> false
         is KtDestructuringDeclaration -> false
