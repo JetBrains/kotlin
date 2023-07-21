@@ -25,7 +25,7 @@ interface FirTowerContextProvider {
 
 internal class FileTowerProvider(
     private val file: KtFile,
-    private val context: FirTowerDataContext
+    private val context: FirTowerDataContext,
 ) : FirTowerContextProvider {
     override fun getClosestAvailableParentContext(ktElement: KtElement): FirTowerDataContext? =
         if (file == ktElement.containingKtFile) context else null
@@ -48,9 +48,9 @@ internal class FirTowerDataContextAllElementsCollector : FirResolveContextCollec
     }
 
     override fun addStatementContext(statement: FirStatement, context: BodyResolveContext) {
-        val closestStatementInBlock = statement.psi?.closestBlockLevelOrInitializerExpression() ?: return
+        val closestParentExpression = statement.psi?.closestParentExpressionWithSameContextOrSelf() ?: return
         // FIR body transform may alter the context if there are implicit receivers with smartcast
-        elementsToContext[closestStatementInBlock] = context.towerDataContext.createSnapshot()
+        elementsToContext[closestParentExpression] = context.towerDataContext.createSnapshot()
     }
 
     override fun addDeclarationContext(declaration: FirDeclaration, context: BodyResolveContext) {
@@ -110,11 +110,22 @@ internal class FirTowerDataContextAllElementsCollector : FirResolveContextCollec
     }
 }
 
-private tailrec fun PsiElement.closestBlockLevelOrInitializerExpression(): KtExpression? =
+/**
+ * Returns [this] in case [this] is:
+ * - a statement in a block
+ * - an initializer of a declaration
+ * - an expression in when entry
+ *
+ * Otherwise, invokes this function recursively on the parent.
+ */
+private tailrec fun PsiElement.closestParentExpressionWithSameContextOrSelf(): KtExpression? =
     when {
-        this is KtExpression && (parent is KtBlockExpression || parent is KtDeclarationWithInitializer) -> this
-        else -> parent?.closestBlockLevelOrInitializerExpression()
+        this is KtExpression && (parent is KtBlockExpression || parent is KtDeclarationWithInitializer || isExpressionInWhenEntry) -> this
+        else -> parent?.closestParentExpressionWithSameContextOrSelf()
     }
+
+private val KtExpression.isExpressionInWhenEntry: Boolean
+    get() = this == (parent as? KtWhenEntry)?.expression
 
 /**
  * Returns true if [element] is considered to be a part of [this] class header.
