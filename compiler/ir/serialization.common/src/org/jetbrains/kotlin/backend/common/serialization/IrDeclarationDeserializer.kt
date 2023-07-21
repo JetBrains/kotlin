@@ -776,17 +776,19 @@ class IrDeclarationDeserializer(
                 withExternalValue(isExternal) {
                     if (proto.hasGetter()) {
                         getter = deserializeIrFunction(proto.getter).also {
-                            it.correspondingPropertySymbol = propertySymbol
+                            // IMPORTANT: Use here a symbol directly from the property, i.e. `prop.symbol`. This symbol
+                            // unlike `propertySymbol` is always a non-delegate symbol (even for `expect` properties).
+                            it.correspondingPropertySymbol = prop.symbol
                         }
                     }
                     if (proto.hasSetter()) {
                         setter = deserializeIrFunction(proto.setter).also {
-                            it.correspondingPropertySymbol = propertySymbol
+                            it.correspondingPropertySymbol = prop.symbol
                         }
                     }
                     if (proto.hasBackingField()) {
                         backingField = deserializeIrField(proto.backingField, prop.isConst).also {
-                            it.correspondingPropertySymbol = propertySymbol
+                            it.correspondingPropertySymbol = prop.symbol
                         }
                     }
                 }
