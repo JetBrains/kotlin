@@ -121,7 +121,7 @@ internal class KtFirSymbolInfoProvider(
 
     override fun getAnnotationApplicableTargets(symbol: KtClassOrObjectSymbol): Set<KotlinTarget>? {
         requireIsInstance<KtFirSymbol<*>>(symbol)
-        if (symbol !is KtFirNamedClassOrObjectSymbol) return null
+        if (symbol !is KtFirNamedClassOrObjectSymbolBase) return null
         if (symbol.firSymbol.classKind != ClassKind.ANNOTATION_CLASS) return null
         return symbol.firSymbol.getAllowedAnnotationTargets(analysisSession.useSiteSession)
     }
