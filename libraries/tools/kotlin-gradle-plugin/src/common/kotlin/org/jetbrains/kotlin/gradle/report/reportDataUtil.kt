@@ -10,12 +10,12 @@ import org.gradle.tooling.events.task.TaskFinishEvent
 import org.gradle.tooling.events.task.TaskSkippedResult
 import org.gradle.tooling.events.task.TaskSuccessResult
 import org.jetbrains.kotlin.build.report.metrics.*
-import org.jetbrains.kotlin.build.report.statistics.CompileStatisticsData
 import org.jetbrains.kotlin.build.report.statistics.StatTag
 import org.jetbrains.kotlin.gradle.report.data.BuildOperationRecord
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import java.util.concurrent.TimeUnit
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.report.data.GradleCompileStatisticsData
 
 
 internal fun getTaskResult(event: TaskFinishEvent) = when (val result = event.result) {
@@ -40,7 +40,7 @@ internal fun prepareData(
     onlyKotlinTask: Boolean = true,
     additionalTags: Set<StatTag> = emptySet(),
     metricsToShow: Set<String>? = null
-): CompileStatisticsData? {
+): GradleCompileStatisticsData? {
     val result = event.result
     val taskPath = event.descriptor.taskPath
     return prepareData(getTaskResult(event), taskPath, result.startTime, result.endTime - result.startTime, projectName, uuid,
@@ -60,7 +60,7 @@ internal fun prepareData(
     onlyKotlinTask: Boolean = true,
     additionalTags: Set<StatTag> = emptySet(),
     metricsToShow: Set<String>? = null
-): CompileStatisticsData? {
+): GradleCompileStatisticsData? {
     if (onlyKotlinTask && !(buildOperationRecord is TaskRecord && buildOperationRecord.isFromKotlinPlugin)) {
         return null
     }
@@ -78,11 +78,11 @@ internal fun prepareData(
     }
     val kotlinLanguageVersion = if (buildOperationRecord is TaskRecord) buildOperationRecord.kotlinLanguageVersion else null
 
-    return CompileStatisticsData(
+    return GradleCompileStatisticsData(
         durationMs = buildOperationRecord.totalTimeMs,
         taskResult = taskResult?.name,
         label = label,
-        buildTimesMetrics = filterMetrics(metricsToShow, buildTimesMetrics) ,
+        buildTimesMetrics = filterMetrics(metricsToShow, buildTimesMetrics),
         performanceMetrics = filterMetrics(metricsToShow, performanceMetrics),
         projectName = projectName,
         taskName = taskPath,

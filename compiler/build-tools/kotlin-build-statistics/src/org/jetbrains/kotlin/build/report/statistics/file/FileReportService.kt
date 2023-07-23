@@ -15,26 +15,26 @@ import java.io.Serializable
 import java.text.SimpleDateFormat
 import java.util.*
 
-class FileReportService(
+class FileReportService<B : BuildTime, P : BuildPerformanceMetric>(
     private val outputFile: File,
     private val printMetrics: Boolean,
-    private val logger: KotlinLogger
+    private val logger: KotlinLogger,
 ) : Serializable {
     companion object {
-        private val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").also { it.timeZone = TimeZone.getTimeZone("UTC")}
-        fun reportBuildStatInFile(
+        private val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").also { it.timeZone = TimeZone.getTimeZone("UTC") }
+        fun <B : BuildTime, P : BuildPerformanceMetric> reportBuildStatInFile(
             buildReportDir: File,
             projectName: String,
             includeMetricsInReport: Boolean,
-            buildData: List<CompileStatisticsData>,
+            buildData: List<CompileStatisticsData<B, P>>,
             startParameters: BuildStartParameters,
             failureMessages: List<String>,
-            logger: KotlinLogger
+            logger: KotlinLogger,
         ) {
             val ts = SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(Calendar.getInstance().time)
             val reportFile = buildReportDir.resolve("$projectName-build-$ts.txt")
 
-            FileReportService(
+            FileReportService<B, P>(
                 outputFile = reportFile,
                 printMetrics = includeMetricsInReport,
                 logger = logger
@@ -45,9 +45,9 @@ class FileReportService(
     private lateinit var p: Printer
 
     fun process(
-        statisticsData: List<CompileStatisticsData>,
+        statisticsData: List<CompileStatisticsData<B, P>>,
         startParameters: BuildStartParameters,
-        failureMessages: List<String> = emptyList()
+        failureMessages: List<String> = emptyList(),
     ) {
         val buildReportPath = outputFile.toPath().toUri().toString()
         try {
@@ -69,9 +69,9 @@ class FileReportService(
     }
 
     private fun printBuildReport(
-        statisticsData: List<CompileStatisticsData>,
+        statisticsData: List<CompileStatisticsData<B, P>>,
         startParameters: BuildStartParameters,
-        failureMessages: List<String>
+        failureMessages: List<String>,
     ) {
         // NOTE: BuildExecutionData / BuildOperationRecord contains data for both tasks and transforms.
         // Where possible, we still use the term "tasks" because saying "tasks/transforms" is a bit verbose and "build operations" may sound
@@ -80,13 +80,13 @@ class FileReportService(
         printBuildInfo(startParameters, failureMessages)
         if (printMetrics && statisticsData.isNotEmpty()) {
             printMetrics(
-                statisticsData.map { it.buildTimesMetrics }.reduce { agg, value ->
+                statisticsData.map { it.getBuildTimesMetrics() }.reduce { agg, value ->
                     (agg.keys + value.keys).associateWith { (agg[it] ?: 0) + (value[it] ?: 0) }
                 },
-                statisticsData.map { it.performanceMetrics }.reduce { agg, value ->
+                statisticsData.map { it.getPerformanceMetrics() }.reduce { agg, value ->
                     (agg.keys + value.keys).associateWith { (agg[it] ?: 0) + (value[it] ?: 0) }
                 },
-                statisticsData.map { it.nonIncrementalAttributes.asSequence() }.reduce { agg, value -> agg + value }.toList(),
+                statisticsData.map { it.getNonIncrementalAttributes().asSequence() }.reduce { agg, value -> agg + value }.toList(),
                 aggregatedMetric = true
             )
             p.println()
@@ -119,7 +119,7 @@ class FileReportService(
         nonIncrementalAttributes: Collection<BuildAttribute>,
         gcTimeMetrics: Map<String, Long>? = emptyMap(),
         gcCountMetrics: Map<String, Long>? = emptyMap(),
-        aggregatedMetric: Boolean = false
+        aggregatedMetric: Boolean = false,
     ) {
         printBuildTimes(buildTimesMetrics)
         if (aggregatedMetric) p.println()
@@ -129,7 +129,7 @@ class FileReportService(
 
         printBuildAttributes(nonIncrementalAttributes)
 
-         //TODO: KT-57310 Implement build GC metric in
+        //TODO: KT-57310 Implement build GC metric in
         if (!aggregatedMetric) {
             printGcMetrics(gcTimeMetrics, gcCountMetrics)
         }
@@ -137,7 +137,7 @@ class FileReportService(
 
     private fun printGcMetrics(
         gcTimeMetrics: Map<String, Long>?,
-        gcCountMetrics: Map<String, Long>?
+        gcCountMetrics: Map<String, Long>?,
     ) {
         val keys = HashSet<String>()
         gcCountMetrics?.keys?.also { keys.addAll(it) }
@@ -230,16 +230,16 @@ class FileReportService(
         }
     }
 
-    private fun printTaskOverview(statisticsData: Collection<CompileStatisticsData>) {
+    private fun printTaskOverview(statisticsData: Collection<CompileStatisticsData<B, P>>) {
         var allTasksTimeMs = 0L
         var kotlinTotalTimeMs = 0L
-        val kotlinTasks = ArrayList<CompileStatisticsData>()
+        val kotlinTasks = ArrayList<CompileStatisticsData<B, P>>()
 
         for (task in statisticsData) {
-            val taskTimeMs = task.durationMs
+            val taskTimeMs = task.getDurationMs()
             allTasksTimeMs += taskTimeMs
 
-            if (task.fromKotlinPlugin == true) {
+            if (task.getFromKotlinPlugin() == true) {
                 kotlinTotalTimeMs += taskTimeMs
                 kotlinTasks.add(task)
             }
@@ -254,45 +254,47 @@ class FileReportService(
         p.println("Total time for Kotlin tasks: ${formatTime(kotlinTotalTimeMs)} ($ktTaskPercent % of all tasks time)")
 
         val table = TextTable("Time", "% of Kotlin time", "Task")
-        for (task in kotlinTasks.sortedWith(compareBy({ -it.durationMs }, { it.startTimeMs }))) {
-            val timeMs = task.durationMs
+        for (task in kotlinTasks.sortedWith(compareBy({ -it.getDurationMs() }, { it.getStartTimeMs() }))) {
+            val timeMs = task.getDurationMs()
             val percent = (timeMs.toDouble() / kotlinTotalTimeMs * 100).asString(1)
-            table.addRow(formatTime(timeMs), "$percent %", task.taskName)
+            table.addRow(formatTime(timeMs), "$percent %", task.getTaskName())
         }
         table.printTo(p)
         p.println()
     }
 
-    private fun printTasksLog(statisticsData: List<CompileStatisticsData>) {
-        for (task in statisticsData.sortedWith(compareBy({ -it.durationMs }, { it.startTimeMs }))) {
+    private fun printTasksLog(statisticsData: List<CompileStatisticsData<B, P>>) {
+        for (task in statisticsData.sortedWith(compareBy({ -it.getDurationMs() }, { it.getStartTimeMs() }))) {
             printTaskLog(task)
             p.println()
         }
     }
 
-    private fun printTaskLog(statisticsData: CompileStatisticsData) {
-        val skipMessage = statisticsData.skipMessage
+    private fun <B : BuildTime, P : BuildPerformanceMetric> printTaskLog(statisticsData: CompileStatisticsData<B, P>) {
+        val skipMessage = statisticsData.getSkipMessage()
         if (skipMessage != null) {
-            p.println("Task '${statisticsData.taskName}' was skipped: $skipMessage")
+            p.println("Task '${statisticsData.getTaskName()}' was skipped: $skipMessage")
         } else {
-            p.println("Task '${statisticsData.taskName}' finished in ${formatTime(statisticsData.durationMs)}")
+            p.println("Task '${statisticsData.getTaskName()}' finished in ${formatTime(statisticsData.getDurationMs())}")
         }
 
-        statisticsData.kotlinLanguageVersion?.also {
+        statisticsData.getKotlinLanguageVersion()?.also {
             p.withIndent("Task info:") {
                 p.println("Kotlin language version: $it")
             }
         }
 
-        if (statisticsData.icLogLines.isNotEmpty()) {
-            p.withIndent("Compilation log for task '${statisticsData.taskName}':") {
-                statisticsData.icLogLines.forEach { p.println(it) }
+        if (statisticsData.getIcLogLines().isNotEmpty()) {
+            p.withIndent("Compilation log for task '${statisticsData.getTaskName()}':") {
+                statisticsData.getIcLogLines().forEach { p.println(it) }
             }
         }
 
         if (printMetrics) {
-            printMetrics(statisticsData.buildTimesMetrics, statisticsData.performanceMetrics, statisticsData.nonIncrementalAttributes,
-                         statisticsData.gcTimeMetrics, statisticsData.gcCountMetrics)
+            printMetrics(
+                statisticsData.getBuildTimesMetrics(), statisticsData.getPerformanceMetrics(), statisticsData.getNonIncrementalAttributes(),
+                statisticsData.getGcTimeMetrics(), statisticsData.getGcCountMetrics()
+            )
         }
     }
 }

@@ -43,9 +43,9 @@ class ReportDataTest {
         )
 
         assertNotNull(statisticData)
-        assertTrue(statisticData.tags.contains(StatTag.KOTLIN_DEBUG))
-        assertTrue(statisticData.tags.contains(StatTag.NON_INCREMENTAL))
-        assertTrue(statisticData.tags.contains(StatTag.KOTLIN_1))
+        assertTrue(statisticData.getTags().contains(StatTag.KOTLIN_DEBUG))
+        assertTrue(statisticData.getTags().contains(StatTag.NON_INCREMENTAL))
+        assertTrue(statisticData.getTags().contains(StatTag.KOTLIN_1))
     }
 
     private fun taskRecord(buildMetrics: BuildMetrics<GradleBuildTime, GradleBuildPerformanceMetric>) = TaskRecord(
@@ -102,12 +102,12 @@ class ReportDataTest {
         )
 
         assertNotNull(statisticData)
-        assertEquals(2, statisticData.performanceMetrics.size)
-        assertTrue(statisticData.performanceMetrics.containsKey(GradleBuildPerformanceMetric.BUNDLE_SIZE))
-        assertTrue(statisticData.performanceMetrics.containsKey(GradleBuildPerformanceMetric.COMPILE_ITERATION))
-        assertEquals(2, statisticData.buildTimesMetrics.size)
-        assertTrue(statisticData.buildTimesMetrics.containsKey(GradleBuildTime.GRADLE_TASK_ACTION))
-        assertTrue(statisticData.buildTimesMetrics.containsKey(GradleBuildTime.RESTORE_OUTPUT_FROM_BACKUP))
+        assertEquals(2, statisticData.getPerformanceMetrics().size)
+        assertTrue(statisticData.getPerformanceMetrics().containsKey(GradleBuildPerformanceMetric.BUNDLE_SIZE))
+        assertTrue(statisticData.getPerformanceMetrics().containsKey(GradleBuildPerformanceMetric.COMPILE_ITERATION))
+        assertEquals(2, statisticData.getBuildTimesMetrics().size)
+        assertTrue(statisticData.getBuildTimesMetrics().containsKey(GradleBuildTime.GRADLE_TASK_ACTION))
+        assertTrue(statisticData.getBuildTimesMetrics().containsKey(GradleBuildTime.RESTORE_OUTPUT_FROM_BACKUP))
     }
 
     @Ignore //temporary ignore flaky test
@@ -141,9 +141,9 @@ class ReportDataTest {
             additionalTags = setOf(StatTag.KOTLIN_DEBUG),
         )
         assertNotNull(statisticData)
-        assertEquals(startTaskAction - startGradleTask, statisticData.buildTimesMetrics[GradleBuildTime.GRADLE_TASK_PREPARATION])
-        assertEquals(1, statisticData.buildTimesMetrics[GradleBuildTime.TASK_FINISH_LISTENER_NOTIFICATION]?.sign)
-        assertEquals(startWorker - callWorker, statisticData.buildTimesMetrics[GradleBuildTime.RUN_WORKER_DELAY])
+        assertEquals(startTaskAction - startGradleTask, statisticData.getBuildTimesMetrics()[GradleBuildTime.GRADLE_TASK_PREPARATION])
+        assertEquals(1, statisticData.getBuildTimesMetrics()[GradleBuildTime.TASK_FINISH_LISTENER_NOTIFICATION]?.sign)
+        assertEquals(startWorker - callWorker, statisticData.getBuildTimesMetrics()[GradleBuildTime.RUN_WORKER_DELAY])
     }
 
     private fun taskFinishEvent(startTime: Long = 1L, endTime: Long =10L) = object : TaskFinishEvent {

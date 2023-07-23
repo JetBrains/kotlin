@@ -18,7 +18,7 @@ import java.util.*
 import java.net.InetAddress
 
 interface JpsBuilderMetricReporter : BuildMetricsReporter<JpsBuildTime, JpsBuildPerformanceMetric> {
-    fun flush(context: CompileContext): CompileStatisticsData
+    fun flush(context: CompileContext): JpsCompileStatisticsData
 }
 
 private const val jpsBuildTaskName = "JPS build"
@@ -38,9 +38,9 @@ class JpsBuilderMetricReporterImpl(private val reporter: BuildMetricsReporterImp
     private val startTime = System.currentTimeMillis()
 
     @Suppress("UNCHECKED_CAST")
-    override fun flush(context: CompileContext): CompileStatisticsData {
+    override fun flush(context: CompileContext): JpsCompileStatisticsData {
         val buildMetrics = reporter.getMetrics()
-        return CompileStatisticsData(
+        return JpsCompileStatisticsData(
             projectName = context.projectDescriptor.project.name,
             label = "JPS build", //TODO will be updated in KT-58026
             taskName = jpsBuildTaskName,
@@ -53,8 +53,8 @@ class JpsBuilderMetricReporterImpl(private val reporter: BuildMetricsReporterImp
             kotlinVersion = "kotlin_version", //TODO will be updated in KT-58026
             hostName = hostName,
             finishTime = System.currentTimeMillis(),
-            buildTimesMetrics = buildMetrics.buildTimes.asMapMs() as Map<BuildTime, Long>,
-            performanceMetrics = buildMetrics.buildPerformanceMetrics.asMap() as Map<BuildPerformanceMetric, Long>,
+            buildTimesMetrics = buildMetrics.buildTimes.asMapMs(),
+            performanceMetrics = buildMetrics.buildPerformanceMetrics.asMap(),
             compilerArguments = emptyList(), //TODO will be updated in KT-58026
             nonIncrementalAttributes = emptySet(),
             type = BuildDataType.JPS_DATA.name,
@@ -112,9 +112,11 @@ class JpsStatisticsReportService {
         val compileStatisticsData = metrics.flush(context)
         httpService?.sendData(compileStatisticsData, loggerAdapter)
         fileReportSettings?.also {
-            FileReportService(it.buildReportDir, true, loggerAdapter)
-                .process(listOf(compileStatisticsData),
-                         BuildStartParameters(tasks = listOf(jpsBuildTaskName)))
+            FileReportService<JpsBuildTime, JpsBuildPerformanceMetric>(it.buildReportDir, true, loggerAdapter)
+                .process(
+                    listOf(compileStatisticsData),
+                    BuildStartParameters(tasks = listOf(jpsBuildTaskName))
+                )
         }
     }
 
