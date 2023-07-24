@@ -3,7 +3,7 @@
 // - Show manifest properties: false
 // - Show declarations: true
 
-// Library unique name: <testWith_non_public_markers_5>
+// Library unique name: <with_non_public_markers_library>
 final object non_public_markers.test/Another { // non_public_markers.test/Another|null[0]
     open annotation class Bar : kotlin/Annotation { // non_public_markers.test/Another.Bar|null[0]
         constructor <init>() // non_public_markers.test/Another.Bar.<init>|-5645683436151566731[0]

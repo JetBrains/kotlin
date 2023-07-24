@@ -3,7 +3,7 @@
 // - Show manifest properties: false
 // - Show declarations: true
 
-// Library unique name: <testValue_parameters>
+// Library unique name: <value_parameters_library>
 final fun value_parameters.test/funWithDefaultArgs(kotlin/Int =..., kotlin/Long, kotlin/String =...): kotlin/String // value_parameters.test/funWithDefaultArgs|-2013334893880470152[0]
 final fun context(kotlin/Int, kotlin/Long) value_parameters.test/funWithDefaultArgs(kotlin/Int =..., kotlin/Long, kotlin/String =...): kotlin/String // value_parameters.test/funWithDefaultArgs|-1283395221811731897[0]
 final inline fun value_parameters.test/funWithInlineParameters1(kotlin/Function1<kotlin/Int, kotlin/String>, noinline kotlin/Function1<kotlin/Int, kotlin/String>, crossinline kotlin/Function1<kotlin/Int, kotlin/String>): kotlin/String // value_parameters.test/funWithInlineParameters1|8789385144825475619[0]

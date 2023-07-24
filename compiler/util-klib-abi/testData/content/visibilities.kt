@@ -1,3 +1,5 @@
+// MODULE: visibilities_library
+
 package visibilities.test
 
 public fun publicFun(): String = ""

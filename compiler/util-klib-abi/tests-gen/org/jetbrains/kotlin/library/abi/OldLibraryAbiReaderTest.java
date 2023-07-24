@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/util-klib-abi/testData/content")
 @TestDataPath("$PROJECT_ROOT")
-public class LibraryAbiReaderTest extends AbstractLibraryAbiReaderTest {
+public class OldLibraryAbiReaderTest extends AbstractOldLibraryAbiReaderTest {
     @Test
     public void testAllFilesPresentInContent() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/util-klib-abi/testData/content"), Pattern.compile("^(.+)\\.kt$"), null, true);
@@ -55,12 +55,6 @@ public class LibraryAbiReaderTest extends AbstractLibraryAbiReaderTest {
     }
 
     @Test
-    @TestMetadata("excluded_classes_unspecified.kt")
-    public void testExcluded_classes_unspecified() throws Exception {
-        runTest("compiler/util-klib-abi/testData/content/excluded_classes_unspecified.kt");
-    }
-
-    @Test
     @TestMetadata("excluded_packages_non_root_1.kt")
     public void testExcluded_packages_non_root_1() throws Exception {
         runTest("compiler/util-klib-abi/testData/content/excluded_packages_non_root_1.kt");
@@ -94,12 +88,6 @@ public class LibraryAbiReaderTest extends AbstractLibraryAbiReaderTest {
     @TestMetadata("excluded_packages_root_2.kt")
     public void testExcluded_packages_root_2() throws Exception {
         runTest("compiler/util-klib-abi/testData/content/excluded_packages_root_2.kt");
-    }
-
-    @Test
-    @TestMetadata("excluded_packages_unspecified.kt")
-    public void testExcluded_packages_unspecified() throws Exception {
-        runTest("compiler/util-klib-abi/testData/content/excluded_packages_unspecified.kt");
     }
 
     @Test
@@ -166,11 +154,5 @@ public class LibraryAbiReaderTest extends AbstractLibraryAbiReaderTest {
     @TestMetadata("with_non_public_markers_private_annotations.kt")
     public void testWith_non_public_markers_private_annotations() throws Exception {
         runTest("compiler/util-klib-abi/testData/content/with_non_public_markers_private_annotations.kt");
-    }
-
-    @Test
-    @TestMetadata("with_non_public_markers_unspecified.kt")
-    public void testWith_non_public_markers_unspecified() throws Exception {
-        runTest("compiler/util-klib-abi/testData/content/with_non_public_markers_unspecified.kt");
     }
 }

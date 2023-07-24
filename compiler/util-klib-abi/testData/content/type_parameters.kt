@@ -1,3 +1,6 @@
+// !LANGUAGE: +ContextReceivers
+// MODULE: type_parameters_library
+
 package type_parameters.test
 
 interface Interface<A, B, C>

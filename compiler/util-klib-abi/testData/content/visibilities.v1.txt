@@ -3,7 +3,7 @@
 // - Show manifest properties: false
 // - Show declarations: true
 
-// Library unique name: <testVisibilities>
+// Library unique name: <visibilities_library>
 final class visibilities.test/InternalPAClass { // visibilities.test/InternalPAClass|null[0]
     final val property // visibilities.test/InternalPAClass.property|4634558160746314112[0]
         final fun <get-property>(): kotlin/String // visibilities.test/InternalPAClass.property.<get-property>|4838831487146901942[0]

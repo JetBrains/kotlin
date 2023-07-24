@@ -3,7 +3,7 @@
 // - Show manifest properties: false
 // - Show declarations: true
 
-// Library unique name: <testExcluded_classes_1>
+// Library unique name: <excluded_classes_library>
 final class excluded_classes.test/Bar { // excluded_classes.test/Bar|null[0]
     constructor <init>() // excluded_classes.test/Bar.<init>|<init>(){}[0]
     final class Nested { // excluded_classes.test/Bar.Nested|null[0]

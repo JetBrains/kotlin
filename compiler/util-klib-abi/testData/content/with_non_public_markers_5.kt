@@ -1,4 +1,5 @@
 // NON_PUBLIC_MARKERS: one.two/Three.Four five.six/Seven.Eight non_public_markers.test/Foo non_public_markers.test/Another.Bar nine.ten/Eleven.Twelve
+// MODULE: with_non_public_markers_library
 
 package non_public_markers.test
 

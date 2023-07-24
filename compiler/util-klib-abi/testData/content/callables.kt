@@ -1,3 +1,6 @@
+// !LANGUAGE: +ContextReceivers
+// MODULE: callables_library
+
 package callables.test
 
 fun regularFun(): String = ""

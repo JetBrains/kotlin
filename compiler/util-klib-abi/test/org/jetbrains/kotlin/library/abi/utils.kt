@@ -80,30 +80,36 @@ internal fun computeTestFiles(
 }
 
 @OptIn(ExperimentalLibraryAbiReader::class)
-internal fun computeFiltersFromTestDirectives(sourceFile: File): List<AbiReadingFilter> {
+internal fun computeModuleNameAndFiltersFromTestDirectives(sourceFile: File): Pair<String, List<AbiReadingFilter>> {
     fun String.parseQualifiedName() = AbiQualifiedName(
         packageName = AbiCompoundName(substringBefore('/', missingDelimiterValue = "")),
         relativeName = AbiCompoundName(substringAfter('/'))
     )
 
+    var moduleName: String? = null
     val excludedPackages = mutableListOf<AbiCompoundName>()
     val excludedClasses = mutableListOf<AbiQualifiedName>()
     val nonPublicMarkers = mutableListOf<AbiQualifiedName>()
 
-    sourceFile.bufferedReader().lineSequence().forEach { line ->
+    for (line in sourceFile.bufferedReader().lineSequence()) {
         if (!line.parseTestDirective(DIRECTIVE_EXCLUDED_PACKAGES, ::AbiCompoundName, excludedPackages::add)
             && !line.parseTestDirective(DIRECTIVE_EXCLUDED_CLASSES, String::parseQualifiedName, excludedClasses::add)
             && !line.parseTestDirective(DIRECTIVE_NON_PUBLIC_MARKERS, String::parseQualifiedName, nonPublicMarkers::add)
+            && !line.parseTestDirective(DIRECTIVE_MODULE, { it }, { moduleName = it })
+            && !line.startsWith("//")
+            && line.isNotBlank()
         ) {
-            return listOfNotNull(
-                excludedPackages.ifNotEmpty(AbiReadingFilter::ExcludedPackages),
-                excludedClasses.ifNotEmpty(AbiReadingFilter::ExcludedClasses),
-                nonPublicMarkers.ifNotEmpty(AbiReadingFilter::NonPublicMarkerAnnotations)
-            )
+            break
         }
     }
 
-    return emptyList()
+    assert(moduleName != null) { "No module name specified with MODULE test directive" }
+
+    return moduleName!! to listOfNotNull(
+        excludedPackages.ifNotEmpty(AbiReadingFilter::ExcludedPackages),
+        excludedClasses.ifNotEmpty(AbiReadingFilter::ExcludedClasses),
+        nonPublicMarkers.ifNotEmpty(AbiReadingFilter::NonPublicMarkerAnnotations)
+    )
 }
 
 private inline fun <T> String.parseTestDirective(
@@ -124,6 +130,7 @@ private inline fun <T> String.parseTestDirective(
     }
 }
 
+private const val DIRECTIVE_MODULE = "// MODULE:"
 private const val DIRECTIVE_EXCLUDED_PACKAGES = "// EXCLUDED_PACKAGES:"
 private const val DIRECTIVE_EXCLUDED_CLASSES = "// EXCLUDED_CLASSES:"
 private const val DIRECTIVE_NON_PUBLIC_MARKERS = "// NON_PUBLIC_MARKERS:"

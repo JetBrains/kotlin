@@ -3,7 +3,7 @@
 // - Show manifest properties: false
 // - Show declarations: true
 
-// Library unique name: <testClassifiers>
+// Library unique name: <classifiers_library>
 open annotation class classifiers.test/AnnotationClass : kotlin/Annotation { // classifiers.test/AnnotationClass|null[0]
     final val property // classifiers.test/AnnotationClass.property|4634558160746314112[0]
         final fun <get-property>(): kotlin/String // classifiers.test/AnnotationClass.property.<get-property>|4838831487146901942[0]

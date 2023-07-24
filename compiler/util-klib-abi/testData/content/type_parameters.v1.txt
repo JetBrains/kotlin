@@ -3,7 +3,7 @@
 // - Show manifest properties: false
 // - Show declarations: true
 
-// Library unique name: <testType_parameters>
+// Library unique name: <type_parameters_library>
 abstract interface <#A: kotlin/Any?, #B: kotlin/Any?, #C: kotlin/Any?> type_parameters.test/Interface // type_parameters.test/Interface|null[0]
 final class <#A: kotlin.text/Appendable> type_parameters.test/Outer { // type_parameters.test/Outer|null[0]
     final var property // type_parameters.test/Outer.property|4489440291872326119[0]
