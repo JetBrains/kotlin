@@ -13,9 +13,7 @@ import org.jetbrains.kotlin.ir.interpreter.stack.Field
 import org.jetbrains.kotlin.ir.interpreter.stack.Fields
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.types.isNullableAny
-import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.resolveFakeOverride
+import org.jetbrains.kotlin.ir.util.*
 
 internal class Common private constructor(override val irClass: IrClass, override val fields: Fields) : Complex, StateWithClosure {
     override val upValues: MutableMap<IrSymbol, Variable> = mutableMapOf()
@@ -47,24 +45,15 @@ internal class Common private constructor(override val irClass: IrClass, overrid
     }
 
     fun getEqualsFunction(): IrSimpleFunction {
-        return irClass.functions
-            .single {
-                it.name.asString() == "equals" && it.dispatchReceiverParameter != null && it.extensionReceiverParameter == null
-                        && it.valueParameters.size == 1 && it.valueParameters[0].type.isNullableAny()
-            }
-            .let { it.resolveFakeOverride() as IrSimpleFunction }
+        return irClass.functions.single { it.isEquals() }.target
     }
 
     fun getHashCodeFunction(): IrSimpleFunction {
-        return irClass.functions
-            .single { it.name.asString() == "hashCode" && it.valueParameters.isEmpty() && it.extensionReceiverParameter == null }
-            .let { it.resolveFakeOverride() as IrSimpleFunction }
+        return irClass.functions.single { it.isHashCode() }.target
     }
 
     fun getToStringFunction(): IrSimpleFunction {
-        return irClass.functions
-            .single { it.name.asString() == "toString" && it.valueParameters.isEmpty() && it.extensionReceiverParameter == null }
-            .let { it.resolveFakeOverride() as IrSimpleFunction }
+        return irClass.functions.single { it.isToString() }.target
     }
 
     fun createToStringIrCall(): IrCall {
