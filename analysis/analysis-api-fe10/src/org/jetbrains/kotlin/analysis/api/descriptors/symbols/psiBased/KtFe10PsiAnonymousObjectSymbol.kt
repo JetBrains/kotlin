@@ -21,8 +21,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
-import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
-import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.resolve.BindingContext
 
 internal class KtFe10PsiAnonymousObjectSymbol(
@@ -38,9 +36,6 @@ internal class KtFe10PsiAnonymousObjectSymbol(
         get() = withValidityAssertion {
             descriptor?.typeConstructor?.supertypes?.map { it.toKtType(analysisContext) } ?: emptyList()
         }
-
-    override val isActual: Boolean get() = withValidityAssertion { descriptor?.isActual ?: psi.hasActualModifier() }
-    override val isExpect: Boolean get() = withValidityAssertion { descriptor?.isExpect ?: psi.hasExpectModifier() }
 
     context(KtAnalysisSession)
     override fun createPointer(): KtSymbolPointer<KtAnonymousObjectSymbol> = withValidityAssertion {
