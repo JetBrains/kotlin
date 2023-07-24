@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.mpp
 
-import org.jetbrains.kotlin.mpp.DeclarationSymbolMarker
-import org.jetbrains.kotlin.mpp.TypeAliasSymbolMarker
+import org.jetbrains.kotlin.mpp.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
@@ -41,13 +40,59 @@ object AbstractExpectActualAnnotationMatchChecker {
         expectSymbol: DeclarationSymbolMarker,
         actualSymbol: DeclarationSymbolMarker,
     ): Incompatibility? {
+        return when (expectSymbol) {
+            is CallableSymbolMarker -> {
+                areCallableAnnotationsCompatible(expectSymbol, actualSymbol as CallableSymbolMarker)
+            }
+            is RegularClassSymbolMarker -> {
+                areClassAnnotationsCompatible(expectSymbol, actualSymbol as ClassLikeSymbolMarker)
+            }
+            else -> error("Incorrect types: $expectSymbol $actualSymbol")
+        }
+    }
+
+    context (ExpectActualMatchingContext<*>)
+    private fun areCallableAnnotationsCompatible(
+        expectSymbol: CallableSymbolMarker,
+        actualSymbol: CallableSymbolMarker,
+    ): Incompatibility? {
+        commonForClassAndCallableChecks(expectSymbol, actualSymbol)?.let { return it }
+
+        return null
+    }
+
+    context (ExpectActualMatchingContext<*>)
+    private fun areClassAnnotationsCompatible(
+        expectSymbol: RegularClassSymbolMarker,
+        actualSymbol: ClassLikeSymbolMarker,
+    ): Incompatibility? {
         if (actualSymbol is TypeAliasSymbolMarker) {
             val expanded = actualSymbol.expandToRegularClass() ?: return null
-            return areAnnotationsCompatible(expectSymbol, expanded)
+            return areClassAnnotationsCompatible(expectSymbol, expanded)
         }
-        // TODO(Roman.Efremov, KT-58551): check other annotation targets (constructors, types, value parameters, etc)
+        commonForClassAndCallableChecks(expectSymbol, actualSymbol)?.let { return it }
         // TODO(Roman.Efremov, KT-58551): fix actual typealias class members not checked in FE checkers
         // TODO(Roman.Efremov, KT-58551): check annotations on fake overrides in case of implicit actualization
+
+        return null
+    }
+
+    context (ExpectActualMatchingContext<*>)
+    private fun commonForClassAndCallableChecks(
+        expectSymbol: DeclarationSymbolMarker,
+        actualSymbol: DeclarationSymbolMarker,
+    ): Incompatibility? {
+        areAnnotationsSetOnDeclarationsCompatible(expectSymbol, actualSymbol)?.let { return it }
+
+        return null
+    }
+
+    context (ExpectActualMatchingContext<*>)
+    private fun areAnnotationsSetOnDeclarationsCompatible(
+        expectSymbol: DeclarationSymbolMarker,
+        actualSymbol: DeclarationSymbolMarker,
+    ): Incompatibility? {
+        // TODO(Roman.Efremov, KT-58551): check other annotation targets (constructors, types, value parameters, etc)
 
         val skipSourceAnnotations = actualSymbol.hasSourceAnnotationsErased
         val actualAnnotationsByName = actualSymbol.annotations.groupBy { it.classId }

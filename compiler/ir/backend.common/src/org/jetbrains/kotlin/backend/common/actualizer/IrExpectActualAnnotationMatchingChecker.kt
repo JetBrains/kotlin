@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.util.classIdOrFail
 import org.jetbrains.kotlin.ir.util.isFakeOverride
@@ -36,6 +37,9 @@ internal class IrExpectActualAnnotationMatchingChecker(
 
     fun check() {
         for ((expectSymbol, actualSymbol) in matchedExpectToActual.entries) {
+            if (expectSymbol is IrTypeParameterSymbol) {
+                continue
+            }
             if (expectSymbol.isFakeOverride || actualSymbol.isFakeOverride) {
                 continue
             }
