@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.impl.createKonanLibrary
@@ -153,18 +154,24 @@ class KonanDriver(
             it.deleteOnExit()
         }
         compilationSpawner.spawn(emptyList()) {
+            fun <T> copy(key: CompilerConfigurationKey<T>) = putIfNotNull(key, configuration.get(key))
+            fun <T> copyNotNull(key: CompilerConfigurationKey<T>) = put(key, configuration.getNotNull(key))
             // For the first stage, use "-p library" produce mode.
             put(KonanConfigKeys.PRODUCE, CompilerOutputKind.LIBRARY)
-            configuration.get(KonanConfigKeys.TARGET)?.let { put(KonanConfigKeys.TARGET, it) }
+            copy(KonanConfigKeys.TARGET)
             put(KonanConfigKeys.OUTPUT, intermediateKLib.absolutePath)
-            put(CLIConfigurationKeys.CONTENT_ROOTS, configuration.getNotNull(CLIConfigurationKeys.CONTENT_ROOTS))
-            put(KonanConfigKeys.LIBRARY_FILES, configuration.getNotNull(KonanConfigKeys.LIBRARY_FILES))
-            put(KonanConfigKeys.REPOSITORIES, configuration.getNotNull(KonanConfigKeys.REPOSITORIES))
-            configuration.get(KonanConfigKeys.FRIEND_MODULES)?.let { put(KonanConfigKeys.FRIEND_MODULES, it) }
-            configuration.get(KonanConfigKeys.REFINES_MODULES)?.let { put(KonanConfigKeys.REFINES_MODULES, it) }
-            configuration.get(KonanConfigKeys.EMIT_LAZY_OBJC_HEADER_FILE)?.let { put(KonanConfigKeys.EMIT_LAZY_OBJC_HEADER_FILE, it)}
-            configuration.get(KonanConfigKeys.FULL_EXPORTED_NAME_PREFIX)?.let { put(KonanConfigKeys.FULL_EXPORTED_NAME_PREFIX, it)}
-            configuration.get(KonanConfigKeys.EXPORT_KDOC)?.let { put(KonanConfigKeys.EXPORT_KDOC, it)}
+            copyNotNull(CLIConfigurationKeys.CONTENT_ROOTS)
+            copyNotNull(KonanConfigKeys.LIBRARY_FILES)
+            copyNotNull(KonanConfigKeys.REPOSITORIES)
+            copy(KonanConfigKeys.FRIEND_MODULES)
+            copy(KonanConfigKeys.REFINES_MODULES)
+            copy(KonanConfigKeys.EMIT_LAZY_OBJC_HEADER_FILE)
+            copy(KonanConfigKeys.FULL_EXPORTED_NAME_PREFIX)
+            copy(KonanConfigKeys.EXPORT_KDOC)
+            copy(BinaryOptions.unitSuspendFunctionObjCExport)
+            copy(BinaryOptions.objcExportDisableSwiftMemberNameMangling)
+            copy(BinaryOptions.objcExportIgnoreInterfaceMethodCollisions)
+            copy(KonanConfigKeys.OBJC_GENERICS)
         }
 
         // For the second stage, remove already compiled source files from the configuration.
