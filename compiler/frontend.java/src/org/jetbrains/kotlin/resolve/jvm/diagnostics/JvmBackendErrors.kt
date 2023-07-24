@@ -37,6 +37,8 @@ object JvmBackendErrors {
 
     val INLINE_CALL_CYCLE by error1<PsiElement, Name>()
 
+    val NOT_ALL_MULTIFILE_CLASS_PARTS_ARE_JVM_SYNTHETIC by error0<PsiElement>()
+
     init {
         RootDiagnosticRendererFactory.registerFactory(KtDefaultJvmErrorMessages)
     }
@@ -72,5 +74,9 @@ object KtDefaultJvmErrorMessages : BaseDiagnosticRendererFactory() {
         map.put(JvmBackendErrors.SCRIPT_CAPTURING_ENUM_ENTRY, "Enum entry {0} captures the script class instance. Try to use class or anonymous object instead", STRING)
 
         map.put(JvmBackendErrors.INLINE_CALL_CYCLE, "The ''{0}'' invocation is a part of inline cycle", NAME)
+        map.put(
+            JvmBackendErrors.NOT_ALL_MULTIFILE_CLASS_PARTS_ARE_JVM_SYNTHETIC,
+            "All of multi-file class parts should be annotated with @JvmSynthetic if at least one of them is"
+        )
     }
 }
