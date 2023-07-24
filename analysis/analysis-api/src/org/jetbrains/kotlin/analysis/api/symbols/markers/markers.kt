@@ -22,13 +22,18 @@ public interface KtSymbolWithTypeParameters : KtSymbol {
 }
 
 /**
- * A marker interface for symbols which could potentially be `expect` or `actual`.
+ * A marker interface for symbols which could potentially be `expect` or `actual`. For more details about `expect` and `actual`
+ * declarations, see [documentation](https://kotlinlang.org/docs/multiplatform-connect-to-apis.html).
  */
 public interface KtPossibleMultiplatformSymbol : KtSymbol {
+    /**
+     * Returns true if the declaration is a platform-specific implementation in a multiplatform project.
+     */
     public val isActual: Boolean
 
     /**
-     * Returns the effective value. So in the following example:
+     * Returns true if the declaration is platform-specific declaration in a multiplatform project. An implementation
+     * in platform modules is expected. Note, that in the following example:
      * ```
      * expect class A {
      *     class Nested
