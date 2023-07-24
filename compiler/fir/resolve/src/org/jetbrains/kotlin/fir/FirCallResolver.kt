@@ -717,7 +717,9 @@ class FirCallResolver(
                                     coneType != null && !coneType.isUnit -> {
                                         ConeFunctionExpectedError(
                                             name.asString(),
-                                            (fir as? FirCallableDeclaration)?.returnTypeRef?.coneType ?: coneType
+                                            (fir as? FirCallableDeclaration)?.let {
+                                                components.returnTypeCalculator.tryCalculateReturnType(it)
+                                            }?.coneType ?: coneType
                                         )
                                     }
                                     singleExpectedCandidate != null && !singleExpectedCandidate.currentApplicability.isSuccess -> {

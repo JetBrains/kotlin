@@ -24,6 +24,12 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/getOrBuildFir"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
+    @Test
+    @TestMetadata("kt60638.kt")
+    public void testKt60638() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/kt60638.kt");
+    }
+
     @Nested
     @TestMetadata("analysis/low-level-api-fir/testdata/getOrBuildFir/annotations")
     @TestDataPath("$PROJECT_ROOT")
