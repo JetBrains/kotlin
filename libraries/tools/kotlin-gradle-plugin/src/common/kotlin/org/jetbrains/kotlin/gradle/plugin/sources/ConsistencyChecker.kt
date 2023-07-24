@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.sources
 
 import org.gradle.api.InvalidUserDataException
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.project.model.LanguageSettings
 
 internal class ConsistencyCheck<T, S>(
@@ -21,15 +21,15 @@ internal class FragmentConsistencyChecks<T>(
     unitName: String, // "fragment" or "source set"
     private val languageSettings: T.() -> LanguageSettings
 ) {
-    private val defaultLanguageVersion = LanguageVersion.LATEST_STABLE
+    private val defaultLanguageVersion = KotlinVersion.DEFAULT
 
     private val languageVersionCheckHint =
         "The language version of the dependent $unitName must be greater than or equal to that of its dependency."
 
-    val languageVersionCheck = ConsistencyCheck<T, LanguageVersion>(
+    private val languageVersionCheck = ConsistencyCheck<T, KotlinVersion>(
         name = "language version",
         getValue = { unit ->
-            unit.languageSettings().languageVersion?.let { parseLanguageVersionSetting(it) } ?: defaultLanguageVersion
+            unit.languageSettings().languageVersion?.let { KotlinVersion.fromVersion(it) } ?: defaultLanguageVersion
         },
         leftExtendsRightConsistently = { left, right -> left >= right },
         consistencyConditionHint = languageVersionCheckHint
@@ -37,7 +37,7 @@ internal class FragmentConsistencyChecks<T>(
 
     private val unstableFeaturesHint = "The dependent $unitName must enable all unstable language features that its dependency has."
 
-    val unstableFeaturesCheck = ConsistencyCheck<T, Set<LanguageFeature>>(
+    private val unstableFeaturesCheck = ConsistencyCheck<T, Set<LanguageFeature>>(
         name = "unstable language feature set",
         getValue = { unit ->
             unit.languageSettings().enabledLanguageFeatures
@@ -50,7 +50,7 @@ internal class FragmentConsistencyChecks<T>(
 
     private val optInAnnotationsInUseHint = "The dependent $unitName must use all opt-in annotations that its dependency uses."
 
-    val optInAnnotationsCheck = ConsistencyCheck<T, Set<String>>(
+    private val optInAnnotationsCheck = ConsistencyCheck<T, Set<String>>(
         name = "set of opt-in annotations in use",
         getValue = { unit -> unit.languageSettings().optInAnnotationsInUse },
         leftExtendsRightConsistently = { left, right -> left.containsAll(right) },
@@ -59,6 +59,8 @@ internal class FragmentConsistencyChecks<T>(
 
     val allChecks = listOf(languageVersionCheck, unstableFeaturesCheck, optInAnnotationsCheck)
 }
+
+internal fun parseLanguageFeature(featureName: String) = LanguageFeature.fromString(featureName)
 
 internal class FragmentConsistencyChecker<T>(
     private val unitsName: String,

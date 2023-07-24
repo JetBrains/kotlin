@@ -330,15 +330,6 @@ class KotlinMetadataTargetConfigurator :
                     compileDependencyFiles = project.files()
                 }
             }
-
-            target.project.runOnceAfterEvaluated("Sync common compilation language settings to compiler options") {
-                target.compilations.all { compilation ->
-                    applyLanguageSettingsToCompilerOptions(
-                        compilation.defaultSourceSet.languageSettings,
-                        compilation.compilerOptions.options
-                    )
-                }
-            }
         }
     }
 

@@ -209,11 +209,11 @@ internal class CompilerOptionsIT : KGPBaseTest() {
                 """.trimMargin()
             )
 
-            build("compileKotlinJvm6", forceOutput = true) {
+            build("compileKotlinJvm6", enableGradleDebug = true) {
                 assertTasksExecuted(":compileKotlinJvm6")
-                assert(output.contains("-opt-in another.custom.UnderOptIn,my.custom.OptInAnnotation")) {
+                assert(output.contains("-opt-in my.custom.OptInAnnotation,another.custom.UnderOptIn")) {
                     printBuildOutput()
-                    "Output does not contain '-opt-in another.custom.UnderOptIn,my.custom.OptInAnnotation'!"
+                    "Output does not contain '-opt-in my.custom.OptInAnnotation,another.custom.UnderOptIn'!"
                 }
             }
         }

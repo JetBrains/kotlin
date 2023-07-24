@@ -205,9 +205,10 @@ internal fun Project.setupGeneralKotlinExtensionParameters() {
                 .awaitPlatformCompilations()
                 .any { KotlinSourceSetTree.orNull(it) == KotlinSourceSetTree.main }
 
-            languageSettings.explicitApi = project.providers.provider {
-                val explicitApiFlag = project.kotlinExtension.explicitApiModeAsCompilerArg()
-                explicitApiFlag.takeIf { isMainSourceSet }
+            if (isMainSourceSet) {
+                languageSettings.explicitApi = project.providers.provider {
+                    project.kotlinExtension.explicitApiModeAsCompilerArg()
+                }
             }
 
             languageSettings.freeCompilerArgsProvider = project.provider {
