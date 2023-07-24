@@ -67,5 +67,6 @@ sealed class KonanTarget(override val name: String, val family: Family, val arch
         }
 
         val deprecatedTargets = setOf(WATCHOS_X86, IOS_ARM32, LINUX_ARM32_HFP, MINGW_X86, LINUX_MIPS32, LINUX_MIPSEL32, WASM32)
+        val toleratedDeprecatedTargets = setOf(LINUX_ARM32_HFP)
     }
 }

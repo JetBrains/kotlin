@@ -16,7 +16,8 @@ internal object DeprecatedKotlinNativeTargetsChecker : KotlinGradleProjectChecke
     override suspend fun KotlinGradleProjectCheckerContext.runChecks(collector: KotlinToolingDiagnosticsCollector) {
         val targets = multiplatformExtension?.awaitTargets() ?: return
         val usedDeprecatedTargets = targets
-            .filter { it is KotlinNativeTarget && it.konanTarget in KonanTarget.deprecatedTargets }
+            .filterIsInstance<KotlinNativeTarget>()
+            .filter { it.konanTarget in KonanTarget.deprecatedTargets && it.konanTarget !in KonanTarget.toleratedDeprecatedTargets }
             .map { it.name }
         if (usedDeprecatedTargets.isEmpty()) return
 
