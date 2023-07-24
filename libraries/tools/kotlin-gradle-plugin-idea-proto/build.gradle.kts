@@ -87,6 +87,11 @@ run {
                 }
             }
         }
+
+        implicitDependencies("com.google.protobuf:protoc:3.21.9:linux-x86_64@exe")
+        implicitDependencies("com.google.protobuf:protoc:3.21.9:osx-aarch_64@exe")
+        implicitDependencies("com.google.protobuf:protoc:3.21.9:osx-x86_64@exe")
+        implicitDependencies("com.google.protobuf:protoc:3.21.9:windows-x86_64@exe")
     }
 
     val protocExecutable = buildDir.resolve("protoc/bin")
