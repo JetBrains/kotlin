@@ -153,8 +153,7 @@ internal fun isNullish(ref: ExternalInterfaceType?): Boolean =
 * block (result anyref) {
 *     local.get 0
 *     extern.internalize
-*     br_on_non_data_fail 0
-*     br_on_cast_fail 0 (type $kotlin.Any)
+*     br_on_cast_fail 0000_0011b 0 (type any) (type $kotlin.Any)
 *     return
 * }
 * ```

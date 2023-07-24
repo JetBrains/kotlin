@@ -95,10 +95,30 @@ abstract class WasmExpressionBuilder {
         buildInstr(brOp, location, WasmImmediate.LabelIdx(relativeLevel))
     }
 
-    fun buildBrInstr(brOp: WasmOp, absoluteBlockLevel: Int, symbol: WasmSymbolReadOnly<WasmTypeDeclaration>, location: SourceLocation) {
+    fun buildBrOnCastInstr(
+        brOp: WasmOp,
+        absoluteBlockLevel: Int,
+        fromIsNullable: Boolean,
+        toIsNullable: Boolean,
+        from: WasmHeapType,
+        to: WasmHeapType,
+        location: SourceLocation,
+    ) {
         val relativeLevel = numberOfNestedBlocks - absoluteBlockLevel
         assert(relativeLevel >= 0) { "Negative relative block index" }
-        buildInstr(brOp, location, WasmImmediate.LabelIdx(relativeLevel), WasmImmediate.HeapType(WasmHeapType.Type(symbol)))
+
+        val fromTypeFlag = if (fromIsNullable) 0b01 else 0
+        val toTypeFlag = if (toIsNullable) 0b10 else 0
+        val flags = fromTypeFlag or toTypeFlag
+
+        buildInstr(
+            brOp,
+            location,
+            WasmImmediate.ConstU8(flags.toUByte()),
+            WasmImmediate.LabelIdx(relativeLevel),
+            WasmImmediate.HeapType(from),
+            WasmImmediate.HeapType(to)
+        )
     }
 
     fun buildBr(absoluteBlockLevel: Int, location: SourceLocation) {

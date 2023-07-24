@@ -267,6 +267,7 @@ class WasmIrToBinary(
 
     private fun appendImmediate(x: WasmImmediate) {
         when (x) {
+            is WasmImmediate.ConstU8 -> b.writeUByte(x.value)
             is WasmImmediate.ConstI32 -> b.writeVarInt32(x.value)
             is WasmImmediate.ConstI64 -> b.writeVarInt64(x.value)
             is WasmImmediate.ConstF32 -> b.writeUInt32(x.rawBits)
@@ -603,6 +604,10 @@ abstract class ByteWriter {
     abstract fun writeBytes(v: ByteArray)
     abstract fun createTemp(): ByteWriter
 
+    fun writeUByte(v: UByte) {
+        writeByte(v.toByte())
+    }
+    
     fun writeUInt32(v: UInt) {
         writeByte(v.toByte())
         writeByte((v shr 8).toByte())

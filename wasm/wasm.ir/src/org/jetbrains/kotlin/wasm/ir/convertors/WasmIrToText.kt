@@ -110,6 +110,7 @@ class WasmIrToText : SExpressionBuilder() {
 
     private fun appendImmediate(x: WasmImmediate) {
         when (x) {
+            is WasmImmediate.ConstU8 -> appendElement(x.value.toString().lowercase())
             is WasmImmediate.ConstI32 -> appendElement(x.value.toString().lowercase())
             is WasmImmediate.ConstI64 -> appendElement(x.value.toString().lowercase())
             is WasmImmediate.ConstF32 -> appendElement(f32Str(x).lowercase())

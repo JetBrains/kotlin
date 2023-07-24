@@ -536,10 +536,13 @@ class BodyGenerator(
                             body.buildGetLocal(parameterLocal, location)
                             body.buildStructGet(context.referenceGcType(irBuiltIns.anyClass), WasmSymbol(1), location)
 
-                            body.buildBrInstr(
+                            body.buildBrOnCastInstr(
                                 WasmOp.BR_ON_CAST_FAIL,
                                 innerLabel,
-                                classITable,
+                                fromIsNullable = true,
+                                toIsNullable = false,
+                                from = WasmHeapType.Simple.Struct,
+                                to = WasmHeapType.Type(classITable),
                                 location,
                             )
 
@@ -599,10 +602,13 @@ class BodyGenerator(
                     body.buildGetLocal(functionContext.referenceLocal(0), location)
                     body.buildInstr(WasmOp.EXTERN_INTERNALIZE, location)
 
-                    body.buildBrInstr(
+                    body.buildBrOnCastInstr(
                         WasmOp.BR_ON_CAST_FAIL,
                         innerLabel,
-                        context.referenceGcType(backendContext.irBuiltIns.anyClass),
+                        fromIsNullable = true,
+                        toIsNullable = true,
+                        from = WasmHeapType.Simple.Any,
+                        to = WasmHeapType.Type(context.referenceGcType(backendContext.irBuiltIns.anyClass)),
                         location,
                     )
 
