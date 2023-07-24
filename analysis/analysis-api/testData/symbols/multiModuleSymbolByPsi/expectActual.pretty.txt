@@ -2,21 +2,21 @@
 
 object A
 
-constructor(s: kotlin.String)
-
-constructor(n: kotlin.Int)
-
-class Nested
-
-fun bar()
-
-val n: kotlin.Int
-
 class B(s: kotlin.String)
 
-class Nested
+    constructor(s: kotlin.String)
+
+    constructor(n: kotlin.Int)
+
+    class Nested
+
+    fun bar()
+
+    val n: kotlin.Int
 
 class C
+
+    class Nested
 
 fun baz()
 
@@ -26,23 +26,23 @@ var m: kotlin.Int
 
 object A
 
-constructor(s: kotlin.String)
-
-constructor(n: kotlin.Int)
-
-class Nested
-
-fun bar()
-
-val n: kotlin.Int
-
 class B(s: kotlin.String)
+
+    constructor(s: kotlin.String)
+
+    constructor(n: kotlin.Int)
+
+    class Nested
+
+    fun bar()
+
+    val n: kotlin.Int
 
 typealias C = sample.D
 
-class Nested
-
 class D
+
+    class Nested
 
 fun baz()
 

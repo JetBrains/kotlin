@@ -26,6 +26,32 @@ KtNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Public
 
+KtNamedClassOrObjectSymbol:
+  annotationsList: []
+  classIdIfNonLocal: sample/B
+  classKind: CLASS
+  companionObject: null
+  contextReceivers: []
+  isActual: false
+  isData: false
+  isExpect: true
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: false
+  modality: FINAL
+  name: B
+  origin: SOURCE
+  superTypes: [
+    KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Any
+  ]
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  visibility: Public
+
 KtConstructorSymbol:
   annotationsList: []
   callableIdIfNonLocal: null
@@ -235,7 +261,7 @@ KtKotlinPropertySymbol:
 
 KtNamedClassOrObjectSymbol:
   annotationsList: []
-  classIdIfNonLocal: sample/B
+  classIdIfNonLocal: sample/C
   classKind: CLASS
   companionObject: null
   contextReceivers: []
@@ -247,7 +273,7 @@ KtNamedClassOrObjectSymbol:
   isInline: false
   isInner: false
   modality: FINAL
-  name: B
+  name: C
   origin: SOURCE
   superTypes: [
     KtUsualClassType:
@@ -282,32 +308,6 @@ KtNamedClassOrObjectSymbol:
       type: kotlin/Any
   ]
   symbolKind: CLASS_MEMBER
-  typeParameters: []
-  visibility: Public
-
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: sample/C
-  classKind: CLASS
-  companionObject: null
-  contextReceivers: []
-  isActual: false
-  isData: false
-  isExpect: true
-  isExternal: false
-  isFun: false
-  isInline: false
-  isInner: false
-  modality: FINAL
-  name: C
-  origin: SOURCE
-  superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
-      type: kotlin/Any
-  ]
-  symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
 
@@ -486,6 +486,32 @@ KtNamedClassOrObjectSymbol:
   isInner: false
   modality: FINAL
   name: A
+  origin: SOURCE
+  superTypes: [
+    KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Any
+  ]
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  visibility: Public
+
+KtNamedClassOrObjectSymbol:
+  annotationsList: []
+  classIdIfNonLocal: sample/B
+  classKind: CLASS
+  companionObject: null
+  contextReceivers: []
+  isActual: true
+  isData: false
+  isExpect: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: false
+  modality: FINAL
+  name: B
   origin: SOURCE
   superTypes: [
     KtUsualClassType:
@@ -704,32 +730,6 @@ KtKotlinPropertySymbol:
   typeParameters: []
   visibility: Public
 
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: sample/B
-  classKind: CLASS
-  companionObject: null
-  contextReceivers: []
-  isActual: true
-  isData: false
-  isExpect: false
-  isExternal: false
-  isFun: false
-  isInline: false
-  isInner: false
-  modality: FINAL
-  name: B
-  origin: SOURCE
-  superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
-      type: kotlin/Any
-  ]
-  symbolKind: TOP_LEVEL
-  typeParameters: []
-  visibility: Public
-
 KtTypeAliasSymbol:
   annotationsList: []
   classIdIfNonLocal: sample/C
@@ -741,6 +741,32 @@ KtTypeAliasSymbol:
   isExpect: false
   name: C
   origin: SOURCE
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  visibility: Public
+
+KtNamedClassOrObjectSymbol:
+  annotationsList: []
+  classIdIfNonLocal: sample/D
+  classKind: CLASS
+  companionObject: null
+  contextReceivers: []
+  isActual: false
+  isData: false
+  isExpect: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: false
+  modality: FINAL
+  name: D
+  origin: SOURCE
+  superTypes: [
+    KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Any
+  ]
   symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
@@ -768,32 +794,6 @@ KtNamedClassOrObjectSymbol:
       type: kotlin/Any
   ]
   symbolKind: CLASS_MEMBER
-  typeParameters: []
-  visibility: Public
-
-KtNamedClassOrObjectSymbol:
-  annotationsList: []
-  classIdIfNonLocal: sample/D
-  classKind: CLASS
-  companionObject: null
-  contextReceivers: []
-  isActual: false
-  isData: false
-  isExpect: false
-  isExternal: false
-  isFun: false
-  isInline: false
-  isInner: false
-  modality: FINAL
-  name: D
-  origin: SOURCE
-  superTypes: [
-    KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
-      type: kotlin/Any
-  ]
-  symbolKind: TOP_LEVEL
   typeParameters: []
   visibility: Public
 

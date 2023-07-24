@@ -5,14 +5,16 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols
 
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiRecursiveElementVisitor
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KtDeclarationRendererForDebug
 import org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModuleProvider
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
+import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
@@ -25,7 +27,7 @@ abstract class AbstractMultiModuleSymbolByPsiTest : AbstractAnalysisApiBasedTest
         val debugRenderer = DebugSymbolRenderer()
 
         val debugPrinter = PrettyPrinter()
-        val prettyPrinter = PrettyPrinter()
+        val prettyPrinter = PrettyPrinter(indentSize = 4)
 
         for (file in files) {
             val fileDirective = "// FILE: ${file.name}\n"
@@ -33,14 +35,16 @@ abstract class AbstractMultiModuleSymbolByPsiTest : AbstractAnalysisApiBasedTest
             prettyPrinter.appendLine(fileDirective)
 
             analyseForTest(file) {
-                file.collectDescendantsOfType<KtDeclaration> { it.isValidForSymbolCreation }.forEach { declaration ->
+                file.forEachDescendantOfType<KtDeclaration>(predicate = { it.isValidForSymbolCreation }) { declaration ->
                     val symbol = declaration.getSymbol()
 
                     debugPrinter.appendLine(debugRenderer.render(symbol))
                     debugPrinter.appendLine()
 
-                    prettyPrinter.appendLine(symbol.render(KtDeclarationRendererForDebug.WITH_QUALIFIED_NAMES))
-                    prettyPrinter.appendLine()
+                    prettyPrinter.withIndents(indentCount = declaration.parentsOfType<KtDeclaration>(withSelf = false).count()) {
+                        prettyPrinter.appendLine(symbol.render(KtDeclarationRendererForDebug.WITH_QUALIFIED_NAMES))
+                        prettyPrinter.appendLine()
+                    }
                 }
             }
         }
@@ -48,4 +52,19 @@ abstract class AbstractMultiModuleSymbolByPsiTest : AbstractAnalysisApiBasedTest
         testServices.assertions.assertEqualsToTestDataFileSibling(debugPrinter.toString())
         testServices.assertions.assertEqualsToTestDataFileSibling(prettyPrinter.toString(), extension = ".pretty.txt")
     }
+
+    /**
+     * Processes the descendants of the element using the preorder implementation of tree traversal.
+     */
+    private inline fun <reified T : PsiElement> PsiElement.forEachDescendantOfType(
+        noinline predicate: (T) -> Boolean = { true },
+        noinline action: (T) -> Unit,
+    ) = this.accept(object : PsiRecursiveElementVisitor() {
+        override fun visitElement(element: PsiElement) {
+            if (element is T && predicate(element)) {
+                action(element)
+            }
+            super.visitElement(element)
+        }
+    })
 }
