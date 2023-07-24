@@ -5,6 +5,7 @@ plugins {
 repositories {
     mavenLocal()
     maven("<localRepo>")
+    mavenCentral()
 }
 
 kotlin {

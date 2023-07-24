@@ -8,13 +8,21 @@ repositories {
 }
 
 kotlin {
-    jvm()
+    jvm() {
+        testRuns.named("test") {
+            executionTask.configure {
+                useJUnitPlatform()
+            }
+        }
+    }
     linuxX64()
 
     sourceSets.getByName("commonMain").dependencies {
         implementation(kotlin("stdlib"))
-        implementation(kotlin("kotlin-test"))
-
         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+    }
+
+    sourceSets.getByName("commonTest").dependencies {
+        implementation(kotlin("test"))
     }
 }
