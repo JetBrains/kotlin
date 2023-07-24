@@ -3,30 +3,30 @@
 // FILE: common.kt
 annotation class Ann
 
-interface I {
+abstract class A {
     @Ann
+    open fun noAnnotationOnActual() {}
+}
+
+expect class FakeOverrideExpect : A
+
+interface I {
     fun noAnnotationOnActual()
 }
 
-expect class FakeOverrideExpect : I
-
-interface I2 {
-    fun noAnnotationOnActual()
-}
-
-expect class FakeOverrideActual : I2 {
+expect class FakeOverrideActual : I {
     @Ann
     override fun noAnnotationOnActual()
 }
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
-actual class FakeOverrideExpect : I {
+actual class FakeOverrideExpect : A() {
     override fun noAnnotationOnActual() {}
 }
 
-abstract class Intermediate : I2 {
+abstract class Intermediate : I {
     override fun noAnnotationOnActual() {}
 }
 
-actual class FakeOverrideActual : Intermediate(), I2
+actual class FakeOverrideActual : Intermediate(), I
