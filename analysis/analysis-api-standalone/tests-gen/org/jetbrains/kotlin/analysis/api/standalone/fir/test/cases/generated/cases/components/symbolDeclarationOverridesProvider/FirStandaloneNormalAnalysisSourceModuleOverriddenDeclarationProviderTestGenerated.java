@@ -107,6 +107,12 @@ public class FirStandaloneNormalAnalysisSourceModuleOverriddenDeclarationProvide
     }
 
     @Test
+    @TestMetadata("parameterWithGeneratedProperty.kt")
+    public void testParameterWithGeneratedProperty() throws Exception {
+        runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/parameterWithGeneratedProperty.kt");
+    }
+
+    @Test
     @TestMetadata("sequenceOfOverrides.kt")
     public void testSequenceOfOverrides() throws Exception {
         runTest("analysis/analysis-api/testData/components/symbolDeclarationOverridesProvider/overriddenSymbols/sequenceOfOverrides.kt");

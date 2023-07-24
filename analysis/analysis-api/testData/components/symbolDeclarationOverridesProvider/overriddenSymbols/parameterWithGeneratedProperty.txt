@@ -1,0 +1,4 @@
+ALL:
+  B.B.p: String
+DIRECT:
+  B.B.p: String

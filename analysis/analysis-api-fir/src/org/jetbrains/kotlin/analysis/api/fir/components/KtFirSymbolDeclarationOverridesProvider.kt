@@ -5,17 +5,18 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
-import org.jetbrains.kotlin.analysis.api.components.KtSymbolDeclarationOverridesProvider
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirAnonymousObjectSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirBackingFieldSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSymbol
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KtSymbolDeclarationOverridesProviderBase
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
+import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
 import org.jetbrains.kotlin.fir.scopes.*
@@ -30,12 +31,15 @@ import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 internal class KtFirSymbolDeclarationOverridesProvider(
     override val analysisSession: KtFirAnalysisSession,
     override val token: KtLifetimeToken
-) : KtSymbolDeclarationOverridesProvider(), KtFirAnalysisSessionComponent {
+) : KtSymbolDeclarationOverridesProviderBase(), KtFirAnalysisSessionComponent {
 
     override fun <T : KtSymbol> getAllOverriddenSymbols(
         callableSymbol: T,
     ): List<KtCallableSymbol> {
         if (callableSymbol is KtFirBackingFieldSymbol) return emptyList()
+        if (callableSymbol is KtValueParameterSymbol) {
+            return callableSymbol.getAllOverriddenSymbols()
+        }
         val overriddenElement = mutableSetOf<FirCallableSymbol<*>>()
         processOverrides(callableSymbol) { firTypeScope, firCallableDeclaration ->
             firTypeScope.processAllOverriddenDeclarations(firCallableDeclaration) { overriddenDeclaration ->
@@ -47,6 +51,9 @@ internal class KtFirSymbolDeclarationOverridesProvider(
 
     override fun <T : KtSymbol> getDirectlyOverriddenSymbols(callableSymbol: T): List<KtCallableSymbol> {
         if (callableSymbol is KtFirBackingFieldSymbol) return emptyList()
+        if (callableSymbol is KtValueParameterSymbol) {
+            return callableSymbol.getDirectlyOverriddenSymbols()
+        }
         val overriddenElement = mutableSetOf<FirCallableSymbol<*>>()
         processOverrides(callableSymbol) { firTypeScope, firCallableDeclaration ->
             firTypeScope.processDirectOverriddenDeclarations(firCallableDeclaration) { overriddenDeclaration ->
