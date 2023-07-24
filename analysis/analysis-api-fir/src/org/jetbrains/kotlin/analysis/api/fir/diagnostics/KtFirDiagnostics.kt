@@ -1747,6 +1747,12 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val baseMember: KtCallableSymbol
     }
 
+    interface DataClassOverrideDefaultValues : KtFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = DataClassOverrideDefaultValues::class
+        val overridingMember: KtCallableSymbol
+        val baseType: KtClassLikeSymbol
+    }
+
     interface CannotWeakenAccessPrivilege : KtFirDiagnostic<KtModifierListOwner> {
         override val diagnosticClass get() = CannotWeakenAccessPrivilege::class
         val overridingVisibility: Visibility

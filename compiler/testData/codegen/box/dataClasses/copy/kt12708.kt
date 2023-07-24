@@ -1,4 +1,6 @@
 // !LANGUAGE: -ProhibitDataClassesOverridingCopy
+// IGNORE_BACKEND_K2: ANY
+// FIR status: Disabling ProhibitDataClassesOverridingCopy is not supported
 
 fun box(): String {
     val a: A = B(1)

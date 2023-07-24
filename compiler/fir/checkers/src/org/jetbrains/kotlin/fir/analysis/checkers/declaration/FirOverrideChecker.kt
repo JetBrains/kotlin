@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealSourceElementKind
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirOptInUsageBaseChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirOptInUsageBaseChecker.Experimentality
+import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.overridesBackwardCompatibilityHelper
@@ -230,6 +232,17 @@ object FirOverrideChecker : FirClassChecker() {
         }
     }
 
+    private fun FirCallableSymbol<*>.checkDataClassCopy(
+        reporter: DiagnosticReporter,
+        overriddenMemberSymbols: List<FirCallableSymbol<*>>,
+        containingClass: FirClass,
+        context: CheckerContext,
+    ) {
+        val overridden = overriddenMemberSymbols.firstOrNull() ?: return
+        val overriddenClass = overridden.getContainingClassSymbol(context.session) as? FirClassSymbol<*> ?: return
+        reporter.reportOn(containingClass.source, FirErrors.DATA_CLASS_OVERRIDE_DEFAULT_VALUES, this, overriddenClass, context)
+    }
+
     private fun checkMember(
         member: FirCallableSymbol<*>,
         containingClass: FirClass,
@@ -258,6 +271,9 @@ object FirOverrideChecker : FirClassChecker() {
                         base,
                         context
                     )
+                }
+                if (member.name == StandardNames.DATA_CLASS_COPY) {
+                    member.checkDataClassCopy(reporter, overriddenMemberSymbols, containingClass, context)
                 }
                 return
             }

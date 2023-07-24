@@ -2100,6 +2100,13 @@ internal class DataClassOverrideConflictImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtClassOrObject>(firDiagnostic, token), KtFirDiagnostic.DataClassOverrideConflict
 
+internal class DataClassOverrideDefaultValuesImpl(
+    override val overridingMember: KtCallableSymbol,
+    override val baseType: KtClassLikeSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.DataClassOverrideDefaultValues
+
 internal class CannotWeakenAccessPrivilegeImpl(
     override val overridingVisibility: Visibility,
     override val overridden: KtCallableSymbol,

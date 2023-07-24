@@ -823,6 +823,11 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FirCallableSymbol<*>>("baseMember")
         }
 
+        val DATA_CLASS_OVERRIDE_DEFAULT_VALUES by error<KtElement>(PositioningStrategy.DATA_MODIFIER) {
+            parameter<FirCallableSymbol<*>>("overridingMember")
+            parameter<FirClassSymbol<*>>("baseType")
+        }
+
         val CANNOT_WEAKEN_ACCESS_PRIVILEGE by error<KtModifierListOwner>(PositioningStrategy.VISIBILITY_MODIFIER) {
             parameter<Visibility>("overridingVisibility")
             parameter<FirCallableSymbol<*>>("overridden")

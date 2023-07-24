@@ -148,6 +148,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CYCLIC_INHERITANC
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DANGEROUS_CHARACTERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_NOT_PROPERTY_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_OVERRIDE_CONFLICT
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_OVERRIDE_DEFAULT_VALUES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_VARARG_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_WITHOUT_PARAMETERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_OBJECT_CUSTOM_EQUALS_OR_HASH_CODE
@@ -1520,6 +1521,12 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Function ''{0}'' generated for the data class conflicts with member of supertype ''{1}''",
             FQ_NAMES_IN_TYPES,
             FQ_NAMES_IN_TYPES
+        )
+        map.put(
+            DATA_CLASS_OVERRIDE_DEFAULT_VALUES,
+            "Generated function ''{0}'' of the data class has default values for parameters which conflicts with the overriden member of supertype ''{1}''.",
+            DECLARATION_NAME,
+            DECLARATION_NAME
         )
 
         map.put(
