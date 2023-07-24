@@ -48,13 +48,14 @@ internal abstract class EnsureNoKotlinGradlePluginErrors : DefaultTask() {
         ) {
             tasks.register(TASK_NAME, EnsureNoKotlinGradlePluginErrors::class.java) { task ->
                 task.errorDiagnostics.set(
-                    kotlinToolingDiagnosticsCollector.get()
-                        .getAllDiagnostics().asSequence()
-                        .map { (project, diagnostics) ->
-                            project to diagnostics.filter { it.severity == ToolingDiagnostic.Severity.ERROR }
-                        }
-                        .filter { (_, diagnostics) -> diagnostics.isNotEmpty() }
-                        .toMap()
+                    kotlinToolingDiagnosticsCollector.map {
+                        it.getAllDiagnostics().asSequence()
+                            .map { (project, diagnostics) ->
+                                project to diagnostics.filter { it.severity == ToolingDiagnostic.Severity.ERROR }
+                            }
+                            .filter { (_, diagnostics) -> diagnostics.isNotEmpty() }
+                            .toMap()
+                    }
                 )
                 task.renderingOptions.set(toolingDiagnosticRenderingOptions)
 
