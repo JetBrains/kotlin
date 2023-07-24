@@ -7,15 +7,16 @@ package org.jetbrains.kotlin.gradle.plugin.diagnostics
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.InvalidUserCodeException
+import org.gradle.api.Project
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.TaskContainer
-import org.gradle.api.tasks.UntrackedTask
 import org.gradle.work.DisableCachingByDefault
+import org.jetbrains.kotlin.gradle.plugin.configurationResult
+import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileTool
 import org.jetbrains.kotlin.gradle.tasks.withType
 
@@ -41,25 +42,29 @@ internal abstract class EnsureNoKotlinGradlePluginErrors : DefaultTask() {
     companion object {
         private const val TASK_NAME = "ensureNoKotlinGradlePluginErrors"
 
-        internal fun register(
-            tasks: TaskContainer,
-            kotlinToolingDiagnosticsCollector: Provider<KotlinToolingDiagnosticsCollector>,
-            toolingDiagnosticRenderingOptions: ToolingDiagnosticRenderingOptions,
+        internal fun Project.register(
         ) {
-            tasks.register(TASK_NAME, EnsureNoKotlinGradlePluginErrors::class.java) { task ->
-                task.errorDiagnostics.set(
-                    kotlinToolingDiagnosticsCollector.map {
-                        it.getAllDiagnostics().asSequence()
-                            .map { (project, diagnostics) ->
-                                project to diagnostics.filter { it.severity == ToolingDiagnostic.Severity.ERROR }
-                            }
-                            .filter { (_, diagnostics) -> diagnostics.isNotEmpty() }
-                            .toMap()
-                    }
-                )
-                task.renderingOptions.set(toolingDiagnosticRenderingOptions)
+            launch {
+                // Registering task only after all the configuration is done so that diagnostics are collected
+                project.configurationResult.await()
 
-                task.addDependsOnFromTasksThatShouldFailWhenErrorsReported(tasks)
+                val toolingDiagnosticRenderingOptions = ToolingDiagnosticRenderingOptions.forProject(this@register)
+
+                tasks.register(TASK_NAME, EnsureNoKotlinGradlePluginErrors::class.java) { task ->
+                    task.errorDiagnostics.set(
+                        kotlinToolingDiagnosticsCollectorProvider.map {
+                            it.getAllDiagnostics().asSequence()
+                                .map { (project, diagnostics) ->
+                                    project to diagnostics.filter { it.severity == ToolingDiagnostic.Severity.ERROR }
+                                }
+                                .filter { (_, diagnostics) -> diagnostics.isNotEmpty() }
+                                .toMap()
+                        }
+                    )
+                    task.renderingOptions.set(toolingDiagnosticRenderingOptions)
+
+                    task.addDependsOnFromTasksThatShouldFailWhenErrorsReported(tasks)
+                }
             }
         }
 
