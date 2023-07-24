@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 public class SymbolLightClassesEqualityByPsiForLibraryTestGenerated extends AbstractSymbolLightClassesEqualityByPsiForLibraryTest {
     @Test
     public void testAllFilesPresentInLightClassByPsi() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true, "scripts");
     }
 
     @Test
@@ -523,34 +523,6 @@ public class SymbolLightClassesEqualityByPsiForLibraryTestGenerated extends Abst
         @TestMetadata("wildcardOptimization.kt")
         public void testWildcardOptimization() throws Exception {
             runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/facades/wildcardOptimization.kt");
-        }
-    }
-
-    @Nested
-    @TestMetadata("compiler/testData/asJava/lightClasses/lightClassByPsi/scripts")
-    @TestDataPath("$PROJECT_ROOT")
-    public class Scripts {
-        @Test
-        public void testAllFilesPresentInScripts() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByPsi/scripts"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
-        }
-
-        @Test
-        @TestMetadata("FunsPropsAndFields.kts")
-        public void testFunsPropsAndFields() throws Exception {
-            runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/scripts/FunsPropsAndFields.kts");
-        }
-
-        @Test
-        @TestMetadata("HelloWorld.kts")
-        public void testHelloWorld() throws Exception {
-            runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/scripts/HelloWorld.kts");
-        }
-
-        @Test
-        @TestMetadata("InnerClasses.kts")
-        public void testInnerClasses() throws Exception {
-            runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/scripts/InnerClasses.kts");
         }
     }
 }
