@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.common.actualizer
 
 import org.jetbrains.kotlin.KtDiagnosticReporterWithImplicitIrBasedContext
-import org.jetbrains.kotlin.backend.common.lower.parentsWithSelf
+import org.jetbrains.kotlin.backend.common.lower.parents
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
@@ -61,7 +61,8 @@ internal class IrExpectActualAnnotationMatchingChecker(
 
     private fun getTypealiasSymbolIfActualizedViaTypealias(expectSymbol: IrSymbol): IrTypeAliasSymbol? {
         val expectDeclaration = expectSymbol.owner as IrDeclaration
-        val topLevelExpectClass = expectDeclaration.parentsWithSelf.filterIsInstance<IrClass>().lastOrNull() ?: return null
+        val parentsWithSelf = sequenceOf(expectDeclaration) + expectDeclaration.parents
+        val topLevelExpectClass = parentsWithSelf.filterIsInstance<IrClass>().lastOrNull() ?: return null
         val classId = topLevelExpectClass.classIdOrFail
         return classActualizationInfo.actualTypeAliases[classId]
     }

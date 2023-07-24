@@ -62,10 +62,10 @@ class MethodsInsideTypealiasImpl {
 <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>MethodsInsideTypealias<!> = MethodsInsideTypealiasImpl<!>
 
 class ValueInsideTypealiasImpl {
-    <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>val value: String = ""<!>
+    val value: String = ""
 }
 
-actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>ValueInsideTypealias<!> = ValueInsideTypealiasImpl
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>ValueInsideTypealias<!> = ValueInsideTypealiasImpl<!>
 
 class ConstructorInsideTypealiasImpl
 
