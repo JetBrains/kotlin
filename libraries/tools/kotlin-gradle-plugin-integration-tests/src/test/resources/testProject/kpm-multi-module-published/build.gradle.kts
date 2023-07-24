@@ -1,9 +1,17 @@
+import org.jetbrains.kotlin.gradle.plugin.KotlinPm20PluginWrapper
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 
 plugins {
-    kotlin("multiplatform.pm20").version("<pluginMarkerVersion>")
     `maven-publish`
 }
+
+buildscript {
+    dependencies {
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:<pluginMarkerVersion>")
+    }
+}
+
+apply<KotlinPm20PluginWrapper>()
 
 repositories {
     mavenLocal()
@@ -13,7 +21,7 @@ repositories {
 group = "com.example.bar"
 version = "1.0"
 
-kotlin {
+configure<KotlinPm20ProjectExtension> {
     // feel free to add more modules, variants and fragments
     mainAndTest {
         jvm

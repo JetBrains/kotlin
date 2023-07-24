@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.gradle.unitTests.kpm
 import org.gradle.api.Project
 import org.gradle.api.artifacts.verification.DependencyVerificationMode
 import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.kotlin.dsl.apply
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmProject
+import org.jetbrains.kotlin.gradle.plugin.KotlinPm20PluginWrapper
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
 import org.jetbrains.kotlin.gradle.util.addBuildEventsListenerRegistryMock
 
@@ -23,7 +25,7 @@ abstract class AbstractKpmExtensionTest {
 
 fun Project.applyKpmPlugin(configure: KotlinPm20ProjectExtension.() -> Unit = {}): KotlinPm20ProjectExtension {
     addBuildEventsListenerRegistryMock(project)
-    plugins.apply("org.jetbrains.kotlin.multiplatform.pm20")
+    apply<KotlinPm20PluginWrapper>()
     return (extensions.getByName("kotlin") as KotlinPm20ProjectExtension).also(configure)
 }
 
