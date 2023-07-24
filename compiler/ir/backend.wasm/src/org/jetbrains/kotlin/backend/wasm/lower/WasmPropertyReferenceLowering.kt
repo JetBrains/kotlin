@@ -204,12 +204,12 @@ internal class WasmPropertyReferenceLowering(val context: WasmBackendContext) : 
             val returnType = expression.getter?.owner?.returnType ?: expression.field!!.owner.type
 
             val getterCallableReference = expression.getter?.owner?.let { getter ->
-                getter.extensionReceiverParameter.let {
-                    if (it != null && expression.extensionReceiver == null)
-                        receiverTypes.add(it.type)
-                }
                 getter.dispatchReceiverParameter.let {
                     if (it != null && expression.dispatchReceiver == null)
+                        receiverTypes.add(it.type)
+                }
+                getter.extensionReceiverParameter.let {
+                    if (it != null && expression.extensionReceiver == null)
                         receiverTypes.add(it.type)
                 }
                 val getterKFunctionType = this@WasmPropertyReferenceLowering.context.irBuiltIns.getKFunctionType(
