@@ -22,7 +22,6 @@ class ManglerChecker(
 
     companion object {
         val hasDescriptor: (IrDeclarationBase) -> Boolean = { it.symbol.hasDescriptor }
-        val hasMetadata: (IrDeclarationBase) -> Boolean = { (it as? IrMetadataSourceOwner)?.metadata != null }
     }
 
     private val manglers = _manglers.toList()

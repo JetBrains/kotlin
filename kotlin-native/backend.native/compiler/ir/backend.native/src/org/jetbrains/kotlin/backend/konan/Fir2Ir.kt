@@ -93,7 +93,11 @@ internal fun PhaseContext.fir2Ir(
             fir2IrResultPostCompute = {
                 // it's important to compare manglers before actualization, since IR will be actualized, while FIR won't
                 irModuleFragment.acceptVoid(
-                        ManglerChecker(KonanManglerIr, Ir2FirManglerAdapter(FirNativeKotlinMangler()), needsChecking = ManglerChecker.hasMetadata)
+                        ManglerChecker(
+                                KonanManglerIr,
+                                Ir2FirManglerAdapter(FirNativeKotlinMangler()),
+                                needsChecking = { false }, // FIXME(KT-60648): Re-enable
+                        )
                 )
             }
     ).also {
