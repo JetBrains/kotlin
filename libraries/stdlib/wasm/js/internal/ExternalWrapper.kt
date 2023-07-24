@@ -351,7 +351,7 @@ internal fun kotlinShortToExternRefAdapter(x: Short): ExternalInterfaceType =
     intToExternref(x.toInt())
 
 internal fun kotlinCharToExternRefAdapter(x: Char): ExternalInterfaceType =
-    intToExternref(x.toInt())
+    intToExternref(x.code)
 
 internal fun newJsArray(): ExternalInterfaceType =
     js("[]")

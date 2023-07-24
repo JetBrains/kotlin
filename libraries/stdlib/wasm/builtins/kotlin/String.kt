@@ -126,7 +126,7 @@ public class String internal @WasmPrimitiveConstructor constructor(
         val thisChars = chars
         var hash = 0
         repeat(thisLength) {
-            hash = (hash shl 5) - hash + thisChars.get(it).toInt()
+            hash = (hash shl 5) - hash + thisChars.get(it).code
         }
         _hashCode = hash
         return _hashCode

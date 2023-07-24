@@ -21,22 +21,22 @@ public class Char private constructor(private val value: Char) : Comparable<Char
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public override fun compareTo(other: Char): Int =
-        wasm_i32_compareTo(this.toInt(), other.toInt())
+        wasm_i32_compareTo(this.code, other.code)
 
     /** Adds the other Int value to this value resulting a Char. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun plus(other: Int): Char =
-        (this.toInt() + other).toChar()
+        (this.code + other).toChar()
 
     /** Subtracts the other Char value from this value resulting an Int. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun minus(other: Char): Int =
-        (this.toInt() - other.toInt())
+        (this.code - other.code)
 
     /** Subtracts the other Int value from this value resulting a Char. */
     @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun minus(other: Int): Char =
-        (this.toInt() - other).toChar()
+        (this.code - other).toChar()
 
     /**
      * Returns this value incremented by one.
@@ -44,7 +44,7 @@ public class Char private constructor(private val value: Char) : Comparable<Char
      * @sample samples.misc.Builtins.inc
      */
     public inline operator fun inc(): Char =
-        (this.toInt() + 1).toChar()
+        (this.code + 1).toChar()
 
     /**
      * Returns this value decremented by one.
@@ -52,7 +52,7 @@ public class Char private constructor(private val value: Char) : Comparable<Char
      * @sample samples.misc.Builtins.dec
      */
     public inline operator fun dec(): Char =
-        (this.toInt() - 1).toChar()
+        (this.code - 1).toChar()
 
     /** Creates a range from this value to the specified [other] value. */
     public operator fun rangeTo(other: Char): CharRange =
@@ -73,7 +73,7 @@ public class Char private constructor(private val value: Char) : Comparable<Char
     @DeprecatedSinceKotlin(warningSince = "1.5")
     @kotlin.internal.IntrinsicConstEvaluation
     public inline fun toByte(): Byte =
-        this.toInt().toByte()
+        this.code.toByte()
 
     /** Returns the value of this character as a `Char`. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -85,7 +85,7 @@ public class Char private constructor(private val value: Char) : Comparable<Char
     @DeprecatedSinceKotlin(warningSince = "1.5")
     @kotlin.internal.IntrinsicConstEvaluation
     public inline fun toShort(): Short =
-        this.toInt().toShort()
+        this.code.toShort()
 
     /** Returns the value of this character as a `Int`. */
     @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code"))
@@ -100,21 +100,21 @@ public class Char private constructor(private val value: Char) : Comparable<Char
     @DeprecatedSinceKotlin(warningSince = "1.5")
     @kotlin.internal.IntrinsicConstEvaluation
     public inline fun toLong(): Long =
-        this.toInt().toLong()
+        this.code.toLong()
 
     /** Returns the value of this character as a `Float`. */
     @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code.toFloat()"))
     @DeprecatedSinceKotlin(warningSince = "1.5")
     @kotlin.internal.IntrinsicConstEvaluation
     public inline fun toFloat(): Float =
-        this.toInt().toFloat()
+        this.code.toFloat()
 
     /** Returns the value of this character as a `Double`. */
     @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code.toDouble()"))
     @DeprecatedSinceKotlin(warningSince = "1.5")
     @kotlin.internal.IntrinsicConstEvaluation
     public inline fun toDouble(): Double =
-        this.toInt().toDouble()
+        this.code.toDouble()
 
     @kotlin.internal.IntrinsicConstEvaluation
     override fun toString(): String {
@@ -126,12 +126,12 @@ public class Char private constructor(private val value: Char) : Comparable<Char
     @kotlin.internal.IntrinsicConstEvaluation
     public override fun equals(other: Any?): Boolean {
         if (other is Char)
-            return wasm_i32_eq(this.toInt(), other.toInt())
+            return wasm_i32_eq(this.code, other.code)
         return false
     }
 
     override fun hashCode(): Int =
-        this.toInt().hashCode()
+        this.code.hashCode()
 
     public companion object {
         /**

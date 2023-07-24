@@ -490,32 +490,32 @@ class WasmCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
     }
 
     override fun MethodBuilder.modifyGeneratedCompareTo() {
-        "wasm_i32_compareTo(this.toInt(), other.toInt())".addAsSingleLineBody(bodyOnNewLine = true)
+        "wasm_i32_compareTo(this.code, other.code)".addAsSingleLineBody(bodyOnNewLine = true)
     }
 
     override fun MethodBuilder.modifyGeneratedPlus() {
         modifySignature { isInline = true }
-        "(this.toInt() + other).toChar()".addAsSingleLineBody(bodyOnNewLine = true)
+        "(this.code + other).toChar()".addAsSingleLineBody(bodyOnNewLine = true)
     }
 
     override fun MethodBuilder.modifyGeneratedMinusChar() {
         modifySignature { isInline = true }
-        "(this.toInt() - other.toInt())".addAsSingleLineBody(bodyOnNewLine = true)
+        "(this.code - other.code)".addAsSingleLineBody(bodyOnNewLine = true)
     }
 
     override fun MethodBuilder.modifyGeneratedMinusInt() {
         modifySignature { isInline = true }
-        "(this.toInt() - other).toChar()".addAsSingleLineBody(bodyOnNewLine = true)
+        "(this.code - other).toChar()".addAsSingleLineBody(bodyOnNewLine = true)
     }
 
     override fun MethodBuilder.modifyGeneratedInc() {
         modifySignature { isInline = true }
-        "(this.toInt() + 1).toChar()".addAsSingleLineBody(bodyOnNewLine = true)
+        "(this.code + 1).toChar()".addAsSingleLineBody(bodyOnNewLine = true)
     }
 
     override fun MethodBuilder.modifyGeneratedDec() {
         modifySignature { isInline = true }
-        "(this.toInt() - 1).toChar()".addAsSingleLineBody(bodyOnNewLine = true)
+        "(this.code - 1).toChar()".addAsSingleLineBody(bodyOnNewLine = true)
     }
 
     override fun MethodBuilder.modifyGeneratedRangeTo() {
@@ -534,7 +534,7 @@ class WasmCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
                 annotations += "WasmNoOpCast"
                 "implementedAsIntrinsic"
             }
-            else -> "this.toInt().$methodName()"
+            else -> "this.code.$methodName()"
         }
         body.addAsSingleLineBody(bodyOnNewLine = true)
     }
@@ -542,7 +542,7 @@ class WasmCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
     override fun MethodBuilder.modifyGeneratedEquals() {
         """
             if (other is Char)
-                return wasm_i32_eq(this.toInt(), other.toInt())
+                return wasm_i32_eq(this.code, other.code)
             return false
         """.trimIndent().addAsMultiLineBody()
     }
@@ -558,7 +558,7 @@ class WasmCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
 
     override fun MethodBuilder.modifyGeneratedHashCode() {
         modifySignature { visibility = null }
-        "this.toInt().hashCode()".addAsSingleLineBody(bodyOnNewLine = true)
+        "this.code.hashCode()".addAsSingleLineBody(bodyOnNewLine = true)
     }
 }
 
