@@ -12,6 +12,9 @@ import org.jetbrains.kotlin.ir.declarations.lazy.IrLazySymbolTable
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
 
+private fun <SymbolOwner : IrSymbolOwner, Symbol : IrBindableSymbol<*, SymbolOwner>> IdSignatureSymbolTableSlice(lock: IrLock) =
+    SymbolTableSlice.Flat<IdSignature, SymbolOwner, Symbol>(lock) { it.signature != null }
+
 @OptIn(SymbolTableInternals::class)
 open class SymbolTable(
     val signaturer: IdSignatureComposer,
@@ -20,15 +23,15 @@ open class SymbolTable(
 ) : ReferenceSymbolTable {
     val lock: IrLock = IrLock()
 
-    private val scriptSlice: SymbolTableSlice.Flat<IdSignature, IrScript, IrScriptSymbol> = SymbolTableSlice.Flat(lock)
-    private val classSlice: SymbolTableSlice.Flat<IdSignature, IrClass, IrClassSymbol> = SymbolTableSlice.Flat(lock)
-    private val constructorSlice: SymbolTableSlice.Flat<IdSignature, IrConstructor, IrConstructorSymbol> = SymbolTableSlice.Flat(lock)
-    private val enumEntrySlice: SymbolTableSlice.Flat<IdSignature, IrEnumEntry, IrEnumEntrySymbol> = SymbolTableSlice.Flat(lock)
-    private val fieldSlice: SymbolTableSlice.Flat<IdSignature, IrField, IrFieldSymbol> = SymbolTableSlice.Flat(lock)
-    private val functionSlice: SymbolTableSlice.Flat<IdSignature, IrSimpleFunction, IrSimpleFunctionSymbol> = SymbolTableSlice.Flat(lock)
-    private val propertySlice: SymbolTableSlice.Flat<IdSignature, IrProperty, IrPropertySymbol> = SymbolTableSlice.Flat(lock)
-    private val typeAliasSlice: SymbolTableSlice.Flat<IdSignature, IrTypeAlias, IrTypeAliasSymbol> = SymbolTableSlice.Flat(lock)
-    private val globalTypeParameterSlice: SymbolTableSlice.Flat<IdSignature, IrTypeParameter, IrTypeParameterSymbol> = SymbolTableSlice.Flat(lock)
+    private val scriptSlice = IdSignatureSymbolTableSlice<IrScript, IrScriptSymbol>(lock)
+    private val classSlice = IdSignatureSymbolTableSlice<IrClass, IrClassSymbol>(lock)
+    private val constructorSlice = IdSignatureSymbolTableSlice<IrConstructor, IrConstructorSymbol>(lock)
+    private val enumEntrySlice = IdSignatureSymbolTableSlice<IrEnumEntry, IrEnumEntrySymbol>(lock)
+    private val fieldSlice = IdSignatureSymbolTableSlice<IrField, IrFieldSymbol>(lock)
+    private val functionSlice = IdSignatureSymbolTableSlice<IrSimpleFunction, IrSimpleFunctionSymbol>(lock)
+    private val propertySlice = IdSignatureSymbolTableSlice<IrProperty, IrPropertySymbol>(lock)
+    private val typeAliasSlice = IdSignatureSymbolTableSlice<IrTypeAlias, IrTypeAliasSymbol>(lock)
+    private val globalTypeParameterSlice = IdSignatureSymbolTableSlice<IrTypeParameter, IrTypeParameterSymbol>(lock)
 
     @Suppress("LeakingThis")
     val lazyWrapper = IrLazySymbolTable(this)
