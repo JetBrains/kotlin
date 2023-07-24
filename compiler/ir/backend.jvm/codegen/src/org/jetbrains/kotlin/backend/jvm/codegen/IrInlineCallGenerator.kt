@@ -5,13 +5,16 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
-import org.jetbrains.kotlin.backend.common.psi.PsiSourceManager
+import org.jetbrains.kotlin.backend.jvm.ir.fileParent
 import org.jetbrains.kotlin.backend.jvm.ir.psiElement
 import org.jetbrains.kotlin.backend.jvm.ir.suspendFunctionOriginal
 import org.jetbrains.kotlin.backend.jvm.mapping.IrCallableMethod
 import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.codegen.inline.GlobalInlineContext
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmBackendErrors
 
 interface IrInlineCallGenerator : IrCallGenerator {
     override fun genCall(
@@ -20,10 +23,12 @@ interface IrInlineCallGenerator : IrCallGenerator {
         expression: IrFunctionAccessExpression,
         isInsideIfCondition: Boolean,
     ) {
-        val element = PsiSourceManager.findPsiElement(expression, codegen.irFunction)
-            ?: PsiSourceManager.findPsiElement(codegen.irFunction)
+        val element = IrInlineFunctionSource(expression)
         val descriptor = expression.symbol.owner.suspendFunctionOriginal().toIrBasedDescriptor()
-        if (!codegen.state.globalInlineContext.enterIntoInlining(descriptor, element)) {
+        if (!codegen.state.globalInlineContext.enterIntoInlining(descriptor, element) { reportOn, callee ->
+                codegen.context.ktDiagnosticReporter.at((reportOn as IrInlineFunctionSource).ir, codegen.irFunction.fileParent)
+                    .report(JvmBackendErrors.INLINE_CALL_CYCLE, callee.name)
+            }) {
             genCycleStub(expression.psiElement?.text ?: "<no source>", codegen)
             return
         }
@@ -44,4 +49,6 @@ interface IrInlineCallGenerator : IrCallGenerator {
     fun genCycleStub(text: String, codegen: ExpressionCodegen) {
         AsmUtil.genThrow(codegen.visitor, "java/lang/UnsupportedOperationException", "Call is a part of inline call cycle: $text")
     }
+
+    private class IrInlineFunctionSource(val ir: IrElement) : GlobalInlineContext.InlineFunctionSource()
 }

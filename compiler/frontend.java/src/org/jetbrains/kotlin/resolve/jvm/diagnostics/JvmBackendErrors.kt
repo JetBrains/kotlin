@@ -12,7 +12,9 @@ import org.jetbrains.kotlin.diagnostics.error0
 import org.jetbrains.kotlin.diagnostics.error1
 import org.jetbrains.kotlin.diagnostics.error2
 import org.jetbrains.kotlin.diagnostics.rendering.*
+import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.NAME
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.STRING
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.MemberComparator
 import org.jetbrains.kotlin.utils.join
 
@@ -32,6 +34,8 @@ object JvmBackendErrors {
     val SCRIPT_CAPTURING_INTERFACE by error1<PsiElement, String>()
     val SCRIPT_CAPTURING_ENUM by error1<PsiElement, String>()
     val SCRIPT_CAPTURING_ENUM_ENTRY by error1<PsiElement, String>()
+
+    val INLINE_CALL_CYCLE by error1<PsiElement, Name>()
 
     init {
         RootDiagnosticRendererFactory.registerFactory(KtDefaultJvmErrorMessages)
@@ -66,5 +70,7 @@ object KtDefaultJvmErrorMessages : BaseDiagnosticRendererFactory() {
         map.put(JvmBackendErrors.SCRIPT_CAPTURING_INTERFACE, "Interface {0} captures the script class instance. Try to use class instead", STRING)
         map.put(JvmBackendErrors.SCRIPT_CAPTURING_ENUM, "Enum class {0} captures the script class instance. Try to use class or anonymous object instead", STRING)
         map.put(JvmBackendErrors.SCRIPT_CAPTURING_ENUM_ENTRY, "Enum entry {0} captures the script class instance. Try to use class or anonymous object instead", STRING)
+
+        map.put(JvmBackendErrors.INLINE_CALL_CYCLE, "The ''{0}'' invocation is a part of inline cycle", NAME)
     }
 }

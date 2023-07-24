@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.diagnostics.rendering
 
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -17,6 +18,9 @@ object CommonRenderers {
 
     @JvmField
     val STRING = Renderer<String> { it }
+
+    @JvmField
+    val NAME = Renderer<Name> { it.asString() }
 
     @JvmField
     val THROWABLE = Renderer<Throwable> {

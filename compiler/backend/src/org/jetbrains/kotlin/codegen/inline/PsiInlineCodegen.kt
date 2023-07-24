@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.isSuspendFunctionTypeOrSubtype
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.coroutines.getOrCreateJvmSuspendFunctionView
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
@@ -58,8 +60,12 @@ class PsiInlineCodegen(
     ) {
         (sourceCompiler as PsiSourceCompilerForInline).callDefault = callDefault
         assert(hiddenParameters.isEmpty()) { "putHiddenParamsIntoLocals() should be called after processHiddenParameters()" }
-        if (!state.globalInlineContext.enterIntoInlining(functionDescriptor, resolvedCall?.call?.callElement)) {
-            generateStub(resolvedCall?.call?.callElement?.text ?: "<no source>", codegen)
+        val psiElement = resolvedCall?.call?.callElement
+        val element = psiElement?.let(::PsiInlineFunctionSource)
+        if (!state.globalInlineContext.enterIntoInlining(functionDescriptor, element) { reportOn, callee ->
+                state.diagnostics.report(Errors.INLINE_CALL_CYCLE.on((reportOn as PsiInlineFunctionSource).psi, callee))
+            }) {
+            generateStub(psiElement?.text ?: "<no source>", codegen)
             return
         }
         try {
@@ -194,6 +200,8 @@ class PsiInlineCodegen(
         val callerPackage = DescriptorUtils.getParentOfType(caller, PackageFragmentDescriptor::class.java) ?: return false
         return callerPackage.fqName.asString().startsWith("kotlin.")
     }
+
+    private class PsiInlineFunctionSource(val psi: PsiElement) : GlobalInlineContext.InlineFunctionSource()
 }
 
 private val FunctionDescriptor.explicitParameters
