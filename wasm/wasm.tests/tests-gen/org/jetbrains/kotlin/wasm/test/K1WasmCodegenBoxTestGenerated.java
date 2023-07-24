@@ -1811,6 +1811,70 @@ public class K1WasmCodegenBoxTestGenerated extends AbstractK1WasmCodegenBoxTest 
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/box/builderInference")
+    @TestDataPath("$PROJECT_ROOT")
+    public class BuilderInference {
+        @Test
+        public void testAllFilesPresentInBuilderInference() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builderInference"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/builderInference/oneParameter")
+        @TestDataPath("$PROJECT_ROOT")
+        public class OneParameter {
+            @Test
+            public void testAllFilesPresentInOneParameter() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builderInference/oneParameter"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable")
+            @TestDataPath("$PROJECT_ROOT")
+            public class OneTypeVariable {
+                @Test
+                public void testAllFilesPresentInOneTypeVariable() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                }
+
+                @Nested
+                @TestMetadata("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin")
+                @TestDataPath("$PROJECT_ROOT")
+                public class OneTypeInfoOrigin {
+                    @Test
+                    public void testAllFilesPresentInOneTypeInfoOrigin() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                    }
+
+                    @Test
+                    @TestMetadata("AnonymousFunctionArgumentAndBuildeeParameter.kt")
+                    public void testAnonymousFunctionArgumentAndBuildeeParameter() throws Exception {
+                        runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/AnonymousFunctionArgumentAndBuildeeParameter.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("AnonymousFunctionArgumentAndBuildeeReceiver.kt")
+                    public void testAnonymousFunctionArgumentAndBuildeeReceiver() throws Exception {
+                        runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/AnonymousFunctionArgumentAndBuildeeReceiver.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("LambdaArgumentAndBuildeeParameter.kt")
+                    public void testLambdaArgumentAndBuildeeParameter() throws Exception {
+                        runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/LambdaArgumentAndBuildeeParameter.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("LambdaArgumentAndBuildeeReceiver.kt")
+                    public void testLambdaArgumentAndBuildeeReceiver() throws Exception {
+                        runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/LambdaArgumentAndBuildeeReceiver.kt");
+                    }
+                }
+            }
+        }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/box/builtinStubMethods")
     @TestDataPath("$PROJECT_ROOT")
     public class BuiltinStubMethods {
