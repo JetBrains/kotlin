@@ -203,7 +203,7 @@ class LightTreeRawFirExpressionBuilder(
                                 source = expressionSource.fakeElement(KtFakeSourceElementKind.ImplicitReturn.FromExpressionBody)
                                 this.target = target
                                 result = buildUnitExpression {
-                                    source = expressionSource.fakeElement(KtFakeSourceElementKind.ImplicitUnit)
+                                    source = expressionSource.fakeElement(KtFakeSourceElementKind.ImplicitUnit.LambdaCoercion)
                                 }
                             }
                         )
@@ -1391,7 +1391,7 @@ class LightTreeRawFirExpressionBuilder(
         }
 
         val calculatedFirExpression = firExpression ?: buildUnitExpression {
-            source = returnExpression.toFirSourceElement(KtFakeSourceElementKind.ImplicitUnit)
+            source = returnExpression.toFirSourceElement(KtFakeSourceElementKind.ImplicitUnit.Return)
         }
         return calculatedFirExpression.toReturn(
             baseSource = returnExpression.toFirSourceElement(),

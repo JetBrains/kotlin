@@ -12,6 +12,7 @@ FILE: typeAliasWithForEach.kt
         lval result: R|java/util/HashMap<kotlin/String, ArgsInfo>| = R|java/util/HashMap.HashMap|<R|kotlin/String|, R|ArgsInfo|>()
         this@R|/deepCopy|.R|SubstitutionOverride<kotlin/collections/Map.forEach: R|kotlin/Unit|>|(<L> = forEach@fun <anonymous>(key: R|@EnhancedNullability kotlin/String|, value: R|@EnhancedNullability ArgsInfo|): R|kotlin/Unit| <inline=NoInline>  {
             R|<local>/result|.R|kotlin/collections/set|<R|kotlin/String|, R|ArgsInfo|>(R|<local>/key|, R|/ArgsInfoImpl.ArgsInfoImpl|(R|<local>/value|))
+            Unit
         }
         )
         ^deepCopy R|<local>/result|

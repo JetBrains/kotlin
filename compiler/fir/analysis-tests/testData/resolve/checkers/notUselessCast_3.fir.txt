@@ -26,6 +26,7 @@ FILE: notUselessCast_3.kt
         }
         )
         R|<local>/cards|.R|SubstitutionOverride<kotlin/collections/List.get: R|kotlin/collections/List<kotlin/collections/MutableList<Square>>|>|(Int(0)).R|SubstitutionOverride<kotlin/collections/List.get: R|kotlin/collections/MutableList<Square>|>|(Int(0)).R|SubstitutionOverride<kotlin/collections/MutableList.set: R|Square|>|(Int(0), Q|MARKED|)
+        Unit
     }
     public final fun test_2(): R|kotlin/Unit| {
         lval lines: R|kotlin/collections/List<kotlin/String>| = R|kotlin/collections/listOf|<R|kotlin/String|>()
@@ -40,4 +41,5 @@ FILE: notUselessCast_3.kt
         }
         )
         R|<local>/cards|.R|SubstitutionOverride<kotlin/collections/List.get: R|kotlin/collections/List<kotlin/collections/MutableList<UNMARKED>>|>|(Int(0)).R|SubstitutionOverride<kotlin/collections/List.get: R|kotlin/collections/MutableList<UNMARKED>|>|(Int(0)).R|SubstitutionOverride<kotlin/collections/MutableList.set: R|UNMARKED|><Inapplicable(INAPPLICABLE): kotlin/collections/MutableList.set>#|(Int(0), Q|MARKED|)
+        Unit
     }

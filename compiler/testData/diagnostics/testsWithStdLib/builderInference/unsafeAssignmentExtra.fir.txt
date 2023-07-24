@@ -29,6 +29,7 @@ FILE: unsafeAssignmentExtra.fir.kt
     public final fun main(arg: R|kotlin/Any|, condition: R|kotlin/Boolean|): R|kotlin/Unit| {
         lval value: R|Foo<kotlin/Int>| = R|/myBuilder|<R|kotlin/Int|>(<L> = myBuilder@fun R|Foo<kotlin/Int>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             this@R|special/anonymous|.R|SubstitutionOverride</Foo.b: R|kotlin/Array<Stub (chain inference): TypeVariable(T)>|>|.R|SubstitutionOverride<kotlin/Array.set: R|kotlin/Unit|>|(Int(0), Int(123))
+            Unit
             this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|Stub (chain inference): TypeVariable(T)|>| = Int(45)
              {
                 lval <unary>: R|kotlin/Int| = this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|Stub (chain inference): TypeVariable(T)|>|
@@ -103,6 +104,7 @@ FILE: unsafeAssignmentExtra.fir.kt
             this@R|special/anonymous|.R|SubstitutionOverride</Foo.accept: R|kotlin/Unit|>|(String())
             this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|Stub (chain inference): TypeVariable(T)|>| = Int(45)
             this@R|special/anonymous|.R|SubstitutionOverride</Foo.b: R|kotlin/Array<Stub (chain inference): TypeVariable(T)>|>|.R|SubstitutionOverride<kotlin/Array.set: R|kotlin/Unit|>|(Int(0), Int(123))
+            Unit
             R|<local>/baz|(this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|Stub (chain inference): TypeVariable(T)|>|)
         }
         )

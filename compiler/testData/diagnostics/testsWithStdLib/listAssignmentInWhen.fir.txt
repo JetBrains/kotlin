@@ -2,7 +2,11 @@ FILE: listAssignmentInWhen.fir.kt
     public final fun foo(list: R|kotlin/collections/MutableList<kotlin/Any?>|, condition: R|kotlin/Boolean|): R|kotlin/Unit| {
         ^foo when () {
             R|<local>/condition| ->  {
-                R|<local>/list|.R|SubstitutionOverride<kotlin/collections/MutableList.set: R|kotlin/Any?|>|(Int(0), String())
+                 {
+                    R|<local>/list|.R|SubstitutionOverride<kotlin/collections/MutableList.set: R|kotlin/Any?|>|(Int(0), String())
+                    Unit
+                }
+
             }
             else ->  {
                 Q|kotlin/Unit|

@@ -14786,6 +14786,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
             }
 
             @Test
+            @TestMetadata("listAssignmentInWhen.kt")
+            public void testListAssignmentInWhen() throws Exception {
+                runTest("compiler/testData/codegen/box/fir/listAssignmentInWhen.kt");
+            }
+
+            @Test
             @TestMetadata("localInvokeExtension.kt")
             public void testLocalInvokeExtension() throws Exception {
                 runTest("compiler/testData/codegen/box/fir/localInvokeExtension.kt");

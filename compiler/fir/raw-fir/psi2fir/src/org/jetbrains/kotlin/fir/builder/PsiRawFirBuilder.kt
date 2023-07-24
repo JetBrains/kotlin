@@ -1752,7 +1752,7 @@ open class PsiRawFirBuilder(
                                     source = expressionSource.fakeElement(KtFakeSourceElementKind.ImplicitReturn.FromExpressionBody)
                                     this.target = target
                                     result = buildUnitExpression {
-                                        source = expressionSource.fakeElement(KtFakeSourceElementKind.ImplicitUnit)
+                                        source = expressionSource.fakeElement(KtFakeSourceElementKind.ImplicitUnit.LambdaCoercion)
                                     }
                                 }
                             )
@@ -2269,7 +2269,7 @@ open class PsiRawFirBuilder(
         }
 
         override fun visitReturnExpression(expression: KtReturnExpression, data: FirElement?): FirElement {
-            val source = expression.toFirSourceElement(KtFakeSourceElementKind.ImplicitUnit)
+            val source = expression.toFirSourceElement(KtFakeSourceElementKind.ImplicitUnit.Return)
             val result = expression.returnedExpression?.toFirExpression("Incorrect return expression")
                 ?: buildUnitExpression { this.source = source }
             return result.toReturn(source, expression.getTargetLabel()?.getReferencedName(), fromKtReturnExpression = true)

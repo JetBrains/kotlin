@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
 class Fir2IrVisitor(
     private val components: Fir2IrComponents,
@@ -758,7 +759,9 @@ class Fir2IrVisitor(
 
     private fun FirStatement.toIrStatement(): IrStatement? {
         if (this is FirTypeAlias) return null
-        if (this is FirUnitExpression) return convertToIrExpression(this)
+        if (this is FirUnitExpression) return runUnless(source?.kind is KtFakeSourceElementKind.ImplicitUnit.IndexedAssignmentCoercion) {
+            convertToIrExpression(this)
+        }
         if (this is FirContractCallBlock) return null
         if (this is FirBlock) return convertToIrExpression(this)
         return accept(this@Fir2IrVisitor, null) as IrStatement

@@ -86,9 +86,19 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
         object FromLastStatement : ImplicitReturn()
     }
 
-    // return expression in procedures -> return Unit
-    // with a fake sources which refers to the return statement
-    object ImplicitUnit : KtFakeSourceElementKind()
+    sealed class ImplicitUnit : KtFakeSourceElementKind() {
+        // this source is used for implicit returns from empty lambdas {}
+        // fake source refers to the lambda expression
+        object LambdaCoercion : ImplicitUnit()
+
+        // this source is used for 'return' without given value converted to 'return Unit'
+        // fake source refers to the return statement
+        object Return : ImplicitUnit()
+
+        // this source is used for 'a[i] = b' converted to { a[i] = b; Unit }
+        // fake source refers to the assignment statement
+        object IndexedAssignmentCoercion : ImplicitUnit()
+    }
 
     // delegates are wrapped into FirWrappedDelegateExpression
     // with a fake sources which refers to delegated expression

@@ -88,7 +88,7 @@ object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker() {
                     )
                 }
             }
-        } else if (resultExpression.source?.kind == KtFakeSourceElementKind.ImplicitUnit && !functionReturnType.isUnit) {
+        } else if (resultExpression.source?.kind is KtFakeSourceElementKind.ImplicitUnit && !functionReturnType.isUnit) {
             reporter.reportOn(
                 resultExpression.source,
                 RETURN_TYPE_MISMATCH,

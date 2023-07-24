@@ -8,6 +8,7 @@ FILE: setWithTrailingLambda.kt
             ^ Unit
         }
         )
+        Unit
     }
     public final data class EditorData : R|kotlin/Any| {
         public constructor(meta: R|MyMap<EditorData, kotlin/Any>|): R|EditorData| {
