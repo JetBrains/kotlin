@@ -9,6 +9,7 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import java.nio.file.Files
 import java.nio.file.Path
+import java.util.zip.ZipFile
 import kotlin.io.path.exists
 import kotlin.io.path.isDirectory
 import kotlin.io.path.readLines
@@ -288,4 +289,17 @@ fun assertGradleVariant(gradleModuleFile: Path, variantName: String, code: Gradl
     }
 
     GradleVariantAssertions(variantJson.asJsonObject).apply(code)
+}
+
+fun Path.assertZipArchiveContainsFilesOnce(
+    fileNames: List<String>
+) {
+    ZipFile(toFile()).use { zip ->
+        fileNames.forEach { fileName ->
+            assert(zip.entries().asSequence().count { it.name == fileName } == 1) {
+                "The jar should contain one entry `$fileName` with no duplicates\n" +
+                        zip.entries().asSequence().map { it.name }.joinToString()
+            }
+        }
+    }
 }
