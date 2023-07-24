@@ -7,4 +7,5 @@ fun nativeMain() {
     usleep(100u)
 }
 
+@OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 fun nativeMainUsingCInterop() = dummyFunction()

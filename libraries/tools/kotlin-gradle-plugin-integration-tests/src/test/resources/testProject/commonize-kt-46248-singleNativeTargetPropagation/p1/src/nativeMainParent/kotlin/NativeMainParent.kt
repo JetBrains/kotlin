@@ -8,4 +8,5 @@ fun commonMain() {
     usleep(100u)
 }
 
+@OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 fun nativeMainParentUsingCInterop() = dummyFunction()

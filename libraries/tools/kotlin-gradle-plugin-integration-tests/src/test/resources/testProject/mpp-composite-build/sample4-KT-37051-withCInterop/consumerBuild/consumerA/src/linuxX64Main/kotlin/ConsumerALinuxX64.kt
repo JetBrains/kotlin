@@ -11,6 +11,7 @@ object ConsumerALinuxX64 {
         ProducerANative
         ProducerALinuxX64
 
+        @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
         myCFunction()
     }
 }

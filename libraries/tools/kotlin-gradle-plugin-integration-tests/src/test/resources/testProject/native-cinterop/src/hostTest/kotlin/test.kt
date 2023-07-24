@@ -10,5 +10,6 @@ import kotlin.test.*
 fun testAnswer() {
     assertEquals(12, libraryAnswer())
     assertEquals(12, selfCalculatedAnswer())
+    @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
     assertEquals(5, getTestNumber())
 }

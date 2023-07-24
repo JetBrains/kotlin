@@ -6,5 +6,6 @@
 package library.cinterop.project
 
 fun publishedAnswer(): Int {
+    @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
     return getNumber() * 2
 }

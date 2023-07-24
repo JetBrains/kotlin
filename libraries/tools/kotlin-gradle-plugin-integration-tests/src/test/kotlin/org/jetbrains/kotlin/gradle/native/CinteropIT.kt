@@ -26,7 +26,7 @@ class CinteropIT : KGPBaseTest() {
             headerFile.writeText("void foo();")
             buildAndFail(":compileKotlinLinux") {
                 assertTasksExecuted(":cinteropNlibLinux")
-                assertOutputContains("src/linuxMain/kotlin/org/sample/Platform.kt:2:10 Unresolved reference: sample")
+                assertOutputContains("src/linuxMain/kotlin/org/sample/Platform.kt:3:10 Unresolved reference: sample")
             }
 
             headerFile.writeText("void sample(int i);")

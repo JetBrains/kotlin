@@ -12,5 +12,6 @@ fun libraryAnswer(): Int {
 }
 
 fun selfCalculatedAnswer(): Int {
+    @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
     return getNumber() * 2 + getAnotherNumber() * 2
 }
