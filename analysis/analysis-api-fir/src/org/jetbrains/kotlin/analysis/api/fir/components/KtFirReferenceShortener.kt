@@ -66,6 +66,7 @@ import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal class KtFirReferenceShortener(
     override val analysisSession: KtFirAnalysisSession,
@@ -520,7 +521,9 @@ private class ElementsToShortenCollector(
         is FirNestedClassifierScope -> klass.classId
         is FirNestedClassifierScopeWithSubstitution -> originalScope.correspondingClassIdIfExists()
         is FirClassUseSiteMemberScope -> classId
-        else -> error("FirScope `$this` is expected to be one of FirNestedClassifierScope and FirClassUseSiteMemberScope to get ClassId")
+        else -> errorWithAttachment("FirScope ${this::class}` is expected to be one of FirNestedClassifierScope and FirClassUseSiteMemberScope to get ClassId") {
+            withEntry("firScope", this@correspondingClassIdIfExists) { it.toString() }
+        }
     }
 
     private fun ClassId.idWithoutCompanion() = if (shortClassName == SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT) outerClassId else this
@@ -1095,7 +1098,9 @@ private class ElementsToShortenCollector(
 
         val distinctCandidates = candidates.distinctBy { it.callableId }
         return distinctCandidates.singleOrNull()
-            ?: error("Expected all candidates to have same callableId, but got: ${distinctCandidates.map { it.callableId }}")
+            ?: errorWithAttachment("Expected all candidates to have same callableId but some of them but was different") {
+                withEntry("callableIds", distinctCandidates.map { it.callableId.asSingleFqName() }.joinToString())
+            }
     }
 
     private fun findFakePackageToShorten(wholeQualifiedExpression: KtDotQualifiedExpression): ShortenQualifier? {

@@ -16,31 +16,24 @@ import org.jetbrains.kotlin.analysis.api.impl.base.KtContextReceiverImpl
 import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
-import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
-import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.impl.FirPropertyFromParameterResolvedNamedReference
-import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 
 internal fun FirCallableSymbol<*>.invalidModalityError(): Nothing {
-    val rendered = FirRenderer.withResolvePhase().renderElementWithTypeAsString(fir)
-    error(
-        """|Symbol modality should not be null, looks like the FIR symbol was not properly resolved
-                   |
-                   |$rendered
-                   |
-                   |${(fir.psi as? KtDeclaration)?.getElementTextWithContext()}""".trimMargin()
-    )
+    errorWithAttachment("Symbol modality should not be null, looks like the FIR symbol was not properly resolved") {
+        withFirEntry("fir", this@invalidModalityError.fir)
+    }
 }
 
 internal fun FirFunctionSymbol<*>.createKtValueParameters(builder: KtSymbolByFirBuilder): List<KtValueParameterSymbol> {

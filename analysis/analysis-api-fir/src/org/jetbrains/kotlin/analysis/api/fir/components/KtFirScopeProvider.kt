@@ -51,6 +51,8 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 internal class KtFirScopeProvider(
     override val analysisSession: KtFirAnalysisSession,
@@ -194,7 +196,9 @@ internal class KtFirScopeProvider(
     ): KtScopeContext {
         val towerDataContext =
             analysisSession.firResolveSession.getTowerContextProvider(originalFile).getClosestAvailableParentContext(positionInFakeFile)
-                ?: error("Cannot find enclosing declaration for ${positionInFakeFile.getElementTextWithContext()}")
+                ?: errorWithAttachment("Cannot find enclosing declaration for ${positionInFakeFile::class}") {
+                    withPsiEntry("positionInFakeFile", positionInFakeFile)
+                }
         val towerDataElementsIndexed = towerDataContext.towerDataElements.asReversed().withIndex()
 
         val implicitReceivers = towerDataElementsIndexed.flatMap { (index, towerDataElement) ->

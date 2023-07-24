@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirWhenExhaustivenessTransf
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.unwrapParenthesesLabelsAndAnnotations
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 internal class KtFirExpressionInfoProvider(
     override val analysisSession: KtFirAnalysisSession,
@@ -172,8 +174,9 @@ internal class KtFirExpressionInfoProvider(
                 false
 
             !is KtExpression ->
-                error("Unhandled Non-KtExpression parent of KtExpression: ${parent::class}")
-
+                errorWithAttachment("Unhandled Non-KtExpression parent of KtExpression: ${parent::class}") {
+                    withPsiEntry("parent", parent)
+                }
             /**
              * EXPRESSIONS
              */
@@ -351,7 +354,9 @@ internal class KtFirExpressionInfoProvider(
                 false
 
             else ->
-                error("Unhandled KtElement subtype: ${parent::class}")
+                errorWithAttachment("Unhandled KtElement subtype: ${parent::class}") {
+                    withPsiEntry("parent", parent)
+                }
         }
     }
 }

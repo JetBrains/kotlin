@@ -22,6 +22,9 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
 internal class KtFirReceiverParameterSymbol(
     val firSymbol: FirCallableSymbol<*>,
@@ -31,11 +34,16 @@ internal class KtFirReceiverParameterSymbol(
     override val psi: PsiElement? = withValidityAssertion{ firSymbol.fir.receiverParameter?.typeRef?.psi }
 
     init {
-        require(firSymbol.fir.receiverParameter != null) { "$firSymbol doesn't have an extension receiver." }
+        requireWithAttachment(firSymbol.fir.receiverParameter != null, { "${firSymbol::class} doesn't have an extension receiver." }) {
+            withFirEntry("callable", firSymbol.fir)
+        }
     }
 
     override val type: KtType by cached {
-        firSymbol.receiverType(analysisSession.firSymbolBuilder) ?: error("$firSymbol doesn't have an extension receiver.")
+        firSymbol.receiverType(analysisSession.firSymbolBuilder)
+            ?: errorWithAttachment("${firSymbol::class} doesn't have an extension receiver") {
+                withFirEntry("callable", firSymbol.fir)
+            }
     }
 
     override val owningCallableSymbol: KtCallableSymbol by cached { analysisSession.firSymbolBuilder.callableBuilder.buildCallableSymbol(firSymbol) }

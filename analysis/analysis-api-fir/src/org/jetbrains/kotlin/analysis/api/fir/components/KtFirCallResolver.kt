@@ -71,6 +71,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions.EQUALS
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal class KtFirCallResolver(
     override val analysisSession: KtFirAnalysisSession,
@@ -403,8 +404,13 @@ internal class KtFirCallResolver(
             val explicitReceiverPsi = when (psi) {
                 is KtQualifiedExpression -> (psi.selectorExpression as KtCallExpression).calleeExpression
                 is KtCallExpression -> psi.calleeExpression
-                else -> error("unexpected PSI $psi for FirImplicitInvokeCall")
-            } ?: error("missing calleeExpression in PSI $psi for FirImplicitInvokeCall")
+                else -> errorWithAttachment("unexpected PSI ${psi::class} for FirImplicitInvokeCall") {
+                    withPsiEntry("psi", psi, analysisSession::getModule)
+                }
+            }
+                ?: errorWithAttachment("missing calleeExpression in PSI ${psi::class} for FirImplicitInvokeCall") {
+                    withPsiEntry("psi", psi, analysisSession::getModule)
+                }
 
             // Specially handle @ExtensionFunctionType
             if (dispatchReceiver.typeRef.coneTypeSafe<ConeKotlinType>()?.isExtensionFunctionType == true) {

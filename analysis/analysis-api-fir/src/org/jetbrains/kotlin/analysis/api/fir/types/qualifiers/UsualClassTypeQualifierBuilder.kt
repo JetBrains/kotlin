@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.LookupTagInternals
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 internal object UsualClassTypeQualifierBuilder {
     fun buildQualifiers(
@@ -104,7 +106,9 @@ internal object UsualClassTypeQualifierBuilder {
             is FirAnonymousObject -> listOf(declaration)
             is FirRegularClass -> declaration.collectForLocal()
             is FirTypeAlias -> listOf(declaration) // TODO: handle type aliases
-            else -> error("Invalid declaration ${declaration.renderWithType()}")
+            else -> errorWithAttachment("Invalid declaration ${declaration::class}") {
+                withFirEntry("declaration", declaration)
+            }
         }
     }
 }

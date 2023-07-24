@@ -42,6 +42,8 @@ import org.jetbrains.kotlin.psi.psiUtil.unwrapNullability
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.calls.util.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 internal class KtFirImportOptimizer(
     override val token: KtLifetimeToken,
@@ -444,7 +446,9 @@ private sealed interface TypeQualifier {
             }
 
             qualifier.getCalleeExpressionIfAny() as? KtNameReferenceExpression
-                ?: error("Cannot get referenced name from '${qualifier.text}'")
+                ?: errorWithAttachment("Cannot get referenced name from '${qualifier::class}'") {
+                    withPsiEntry("qualifier", qualifier)
+                }
         }
 
         override val referencedByName: Name
@@ -469,7 +473,9 @@ private sealed interface TypeQualifier {
 
         override val referencedByName: Name
             get() = qualifier.referenceExpression?.getReferencedNameAsName()
-                ?: error("Cannot get referenced name from '${qualifier.text}'")
+                ?: errorWithAttachment("Cannot get referenced name from '${qualifier::class}'") {
+                    withPsiEntry("qualifier", qualifier)
+                }
 
         override val isQualified: Boolean
             get() = qualifier.qualifier != null

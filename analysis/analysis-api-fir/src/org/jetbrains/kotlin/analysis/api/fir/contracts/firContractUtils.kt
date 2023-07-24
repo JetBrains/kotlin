@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.fir.contracts.description.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.contracts.description.LogicOperationKind
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal fun KtEffectDeclaration<ConeKotlinType, ConeDiagnostic>.coneEffectDeclarationToAnalysisApi(
     builder: KtSymbolByFirBuilder,
@@ -51,12 +53,16 @@ private class ConeContractDescriptionElementToAnalysisApi(
                     when (value) {
                         ConeContractConstantValues.TRUE -> KtContractConstantType.TRUE
                         ConeContractConstantValues.FALSE -> KtContractConstantType.FALSE
-                        else -> error("Can't convert $value to the Analysis API")
+                        else -> errorWithAttachment("Can't convert ${value::class} to the Analysis API") {
+                            withEntry("value", value) { value.toString() }
+                        }
                     },
                     builder.token
                 )
             )
-            else -> error("Can't convert $returnsEffect to the Analysis API")
+            else -> errorWithAttachment("Can't convert ${returnsEffect::class} to the Analysis API")  {
+                withEntry("value", value) { value.toString() }
+            }
         }
 
     override fun visitCallsEffectDeclaration(callsEffect: KtCallsEffectDeclaration<ConeKotlinType, ConeDiagnostic>, data: Unit): KtContractCallsInPlaceContractEffectDeclaration =
@@ -116,7 +122,9 @@ private class ConeContractDescriptionElementToAnalysisApi(
         constructor: (KtParameterSymbol) -> T
     ): T = constructor(
         if (valueParameterReference.parameterIndex == -1) firFunctionSymbol.receiverParameter
-            ?: error("$firFunctionSymbol should contain a receiver")
+            ?: errorWithAttachment("${firFunctionSymbol::class} should contain a receiver") {
+                withFirEntry("fir", firFunctionSymbol.firSymbol.fir)
+            }
         else firFunctionSymbol.valueParameters[valueParameterReference.parameterIndex]
     )
 
