@@ -10,7 +10,6 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.Action
 import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectContainer
-import org.gradle.api.Project
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.attributes.HasAttributes
 import org.gradle.api.component.SoftwareComponent
@@ -55,7 +54,7 @@ interface KotlinTarget : Named, HasAttributes, HasProject, HasMutableExtras {
 
     @OptIn(TargetPresetsDeprecation::class)
     @Deprecated(
-        presetsApiIsDeprecatedMessage,
+        PRESETS_API_IS_DEPRECATED_MESSAGE,
         level = DeprecationLevel.WARNING,
     )
     val preset: KotlinTargetPreset<out KotlinTarget>?

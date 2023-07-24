@@ -79,10 +79,10 @@ class TargetPresetDeprecationIT : KGPBaseTest() {
                 API.DeprecatedFromPreset -> {
                     assertOutputContainsSequence(
                         listOf(
-                            "targetPresetsDeprecation/kotlin/build.gradle.kts:10:5: 'fromPreset(KotlinTargetPreset<T>, String): T' is deprecated. fromPreset() API is deprecated and will be phased out soon. Learn how to configure targets at: https://kotl.in/target-configuration",
-                            "targetPresetsDeprecation/kotlin/build.gradle.kts:10:5: Presets API is deprecated and will be phased out soon. Learn how to configure targets at: https://kotl.in/target-configuration",
-                            "targetPresetsDeprecation/kotlin/build.gradle.kts:10:16: 'presets: NamedDomainObjectCollection<KotlinTargetPreset<*>>' is deprecated. Presets API is deprecated and will be phased out soon. Learn how to configure targets at: https://kotl.in/target-configuration",
-                            "targetPresetsDeprecation/kotlin/build.gradle.kts:10:16: 'presets: NamedDomainObjectCollection<KotlinTargetPreset<*>>' is deprecated. Presets API is deprecated and will be phased out soon. Learn how to configure targets at: https://kotl.in/target-configuration",
+                            "targetPresetsDeprecation/kotlin/build.gradle.kts:10:5: 'fromPreset(KotlinTargetPreset<T>, String): T' is deprecated. The fromPreset() API is deprecated and will be removed in future releases. Learn how to configure targets at: https://kotl.in/target-configuration",
+                            "targetPresetsDeprecation/kotlin/build.gradle.kts:10:5: The presets API is deprecated and will be removed in future releases. Learn how to configure targets at: https://kotl.in/target-configuration",
+                            "targetPresetsDeprecation/kotlin/build.gradle.kts:10:16: 'presets: NamedDomainObjectCollection<KotlinTargetPreset<*>>' is deprecated. The presets API is deprecated and will be removed in future releases. Learn how to configure targets at: https://kotl.in/target-configuration",
+                            "targetPresetsDeprecation/kotlin/build.gradle.kts:10:16: 'presets: NamedDomainObjectCollection<KotlinTargetPreset<*>>' is deprecated. The presets API is deprecated and will be removed in future releases. Learn how to configure targets at: https://kotl.in/target-configuration",
                         )
                     )
                 }
@@ -90,10 +90,10 @@ class TargetPresetDeprecationIT : KGPBaseTest() {
                 API.DeprecatedTargetFromPreset -> {
                     assertOutputContainsSequence(
                         listOf(
-                            "targetPresetsDeprecation/kotlin/build.gradle.kts:9:5: 'targetFromPreset(KotlinTargetPreset<T>, String): Unit' is deprecated. targetFromPreset() API is deprecated and will be phased out soon. Learn how to configure targets at: https://kotl.in/target-configuration",
-                            "targetPresetsDeprecation/kotlin/build.gradle.kts:9:5: Presets API is deprecated and will be phased out soon. Learn how to configure targets at: https://kotl.in/target-configuration",
-                            "targetPresetsDeprecation/kotlin/build.gradle.kts:9:22: 'presets: NamedDomainObjectCollection<KotlinTargetPreset<*>>' is deprecated. Presets API is deprecated and will be phased out soon. Learn how to configure targets at: https://kotl.in/target-configuration",
-                            "targetPresetsDeprecation/kotlin/build.gradle.kts:9:22: 'presets: NamedDomainObjectCollection<KotlinTargetPreset<*>>' is deprecated. Presets API is deprecated and will be phased out soon. Learn how to configure targets at: https://kotl.in/target-configuration",
+                            "targetPresetsDeprecation/kotlin/build.gradle.kts:9:5: 'targetFromPreset(KotlinTargetPreset<T>, String): T' is deprecated. The targetFromPreset() API is deprecated and will be removed in future releases. Learn how to configure targets at: https://kotl.in/target-configuration",
+                            "targetPresetsDeprecation/kotlin/build.gradle.kts:9:5: The presets API is deprecated and will be removed in future releases. Learn how to configure targets at: https://kotl.in/target-configuration",
+                            "targetPresetsDeprecation/kotlin/build.gradle.kts:9:22: 'presets: NamedDomainObjectCollection<KotlinTargetPreset<*>>' is deprecated. The presets API is deprecated and will be removed in future releases. Learn how to configure targets at: https://kotl.in/target-configuration",
+                            "targetPresetsDeprecation/kotlin/build.gradle.kts:9:22: 'presets: NamedDomainObjectCollection<KotlinTargetPreset<*>>' is deprecated. The presets API is deprecated and will be removed in future releases. Learn how to configure targets at: https://kotl.in/target-configuration",
                         )
                     )
                 }
@@ -101,10 +101,10 @@ class TargetPresetDeprecationIT : KGPBaseTest() {
                 API.DeprecatedCreateTarget -> {
                     assertOutputContainsSequence(
                         listOf(
-                            "targetPresetsDeprecation/kotlin/build.gradle.kts:9:17: 'presets: NamedDomainObjectCollection<KotlinTargetPreset<*>>' is deprecated. Presets API is deprecated and will be phased out soon. Learn how to configure targets at: https://kotl.in/target-configuration",
-                            "targetPresetsDeprecation/kotlin/build.gradle.kts:9:17: 'presets: NamedDomainObjectCollection<KotlinTargetPreset<*>>' is deprecated. Presets API is deprecated and will be phased out soon. Learn how to configure targets at: https://kotl.in/target-configuration",
-                            "targetPresetsDeprecation/kotlin/build.gradle.kts:9:42: 'createTarget(String): T' is deprecated. Presets API is deprecated and will be phased out soon. Learn how to configure targets at: https://kotl.in/target-configuration",
-                            "targetPresetsDeprecation/kotlin/build.gradle.kts:9:42: Presets API is deprecated and will be phased out soon. Learn how to configure targets at: https://kotl.in/target-configuration",
+                            "targetPresetsDeprecation/kotlin/build.gradle.kts:9:17: 'presets: NamedDomainObjectCollection<KotlinTargetPreset<*>>' is deprecated. The presets API is deprecated and will be removed in future releases. Learn how to configure targets at: https://kotl.in/target-configuration",
+                            "targetPresetsDeprecation/kotlin/build.gradle.kts:9:17: 'presets: NamedDomainObjectCollection<KotlinTargetPreset<*>>' is deprecated. The presets API is deprecated and will be removed in future releases. Learn how to configure targets at: https://kotl.in/target-configuration",
+                            "targetPresetsDeprecation/kotlin/build.gradle.kts:9:42: 'createTarget(String): T' is deprecated. The presets API is deprecated and will be removed in future releases. Learn how to configure targets at: https://kotl.in/target-configuration",
+                            "targetPresetsDeprecation/kotlin/build.gradle.kts:9:42: The presets API is deprecated and will be removed in future releases. Learn how to configure targets at: https://kotl.in/target-configuration",
                         )
                     )
                 }
@@ -119,13 +119,13 @@ class TargetPresetDeprecationIT : KGPBaseTest() {
     private fun expectedVerboseDiagnostics(api: API): List<String> {
         return when (api) {
             API.DeprecatedTargetFromPreset -> listOf(
-                KotlinToolingDiagnostics.TargetPresets.targetFromPresetDeprecationMessage
+                KotlinToolingDiagnostics.TargetPresets.TARGET_FROM_PRESET_DEPRECATION_MESSAGE
             )
             API.DeprecatedFromPreset -> listOf(
-                KotlinToolingDiagnostics.TargetPresets.fromPresetDeprecationMessage
+                KotlinToolingDiagnostics.TargetPresets.FROM_PRESET_DEPRECATION_MESSAGE
             )
             API.DeprecatedCreateTarget -> listOf(
-                KotlinToolingDiagnostics.TargetPresets.createTargetDeprecationMessage
+                KotlinToolingDiagnostics.TargetPresets.CREATE_TARGET_DEPRECATION_MESSAGE
             )
             API.Regular -> emptyList()
         }

@@ -32,7 +32,7 @@ abstract class KotlinMultiplatformExtension
     KotlinHierarchyDsl,
     KotlinMultiplatformSourceSetConventions by KotlinMultiplatformSourceSetConventionsImpl {
     @Deprecated(
-        presetsApiIsDeprecatedMessage,
+        PRESETS_API_IS_DEPRECATED_MESSAGE,
         level = DeprecationLevel.WARNING,
     )
     override val presets: NamedDomainObjectCollection<KotlinTargetPreset<*>> = project.container(KotlinTargetPreset::class.java)
@@ -172,7 +172,7 @@ abstract class KotlinMultiplatformExtension
 
     @TargetPresetsDeprecation
     @Deprecated(
-        KotlinToolingDiagnostics.TargetPresets.targetFromPresetDeprecationMessage,
+        KotlinToolingDiagnostics.TargetPresets.TARGET_FROM_PRESET_DEPRECATION_MESSAGE,
         level = DeprecationLevel.WARNING
     )
     fun <T : KotlinTarget> targetFromPreset(
@@ -190,7 +190,7 @@ abstract class KotlinMultiplatformExtension
 
     @TargetPresetsDeprecation
     @Deprecated(
-        KotlinToolingDiagnostics.TargetPresets.targetFromPresetDeprecationMessage,
+        KotlinToolingDiagnostics.TargetPresets.TARGET_FROM_PRESET_DEPRECATION_MESSAGE,
         level = DeprecationLevel.WARNING
     )
     fun <T : KotlinTarget> targetFromPreset(
@@ -208,7 +208,7 @@ abstract class KotlinMultiplatformExtension
 
     @TargetPresetsDeprecation
     @Deprecated(
-        KotlinToolingDiagnostics.TargetPresets.targetFromPresetDeprecationMessage,
+        KotlinToolingDiagnostics.TargetPresets.TARGET_FROM_PRESET_DEPRECATION_MESSAGE,
         level = DeprecationLevel.WARNING
     )
     fun <T : KotlinTarget> targetFromPreset(preset: KotlinTargetPreset<T>): T {
@@ -220,7 +220,7 @@ abstract class KotlinMultiplatformExtension
 
     @TargetPresetsDeprecation
     @Deprecated(
-        KotlinToolingDiagnostics.TargetPresets.targetFromPresetDeprecationMessage,
+        KotlinToolingDiagnostics.TargetPresets.TARGET_FROM_PRESET_DEPRECATION_MESSAGE,
         level = DeprecationLevel.WARNING
     )
     fun <T : KotlinTarget> targetFromPreset(preset: KotlinTargetPreset<T>, name: String): T {
@@ -233,7 +233,7 @@ abstract class KotlinMultiplatformExtension
 
     @TargetPresetsDeprecation
     @Deprecated(
-        KotlinToolingDiagnostics.TargetPresets.targetFromPresetDeprecationMessage,
+        KotlinToolingDiagnostics.TargetPresets.TARGET_FROM_PRESET_DEPRECATION_MESSAGE,
         level = DeprecationLevel.WARNING
     )
     fun <T : KotlinTarget> targetFromPreset(preset: KotlinTargetPreset<T>, configure: Action<T>): T {
@@ -254,7 +254,7 @@ abstract class KotlinMultiplatformExtension
 interface TargetsFromPresetExtension : NamedDomainObjectCollection<KotlinTarget> {
 
     @Deprecated(
-        KotlinToolingDiagnostics.TargetPresets.fromPresetDeprecationMessage,
+        KotlinToolingDiagnostics.TargetPresets.FROM_PRESET_DEPRECATION_MESSAGE,
         level = DeprecationLevel.WARNING,
     )
     fun <T : KotlinTarget> fromPreset(
@@ -264,7 +264,7 @@ interface TargetsFromPresetExtension : NamedDomainObjectCollection<KotlinTarget>
     ): T
 
     @Deprecated(
-        KotlinToolingDiagnostics.TargetPresets.fromPresetDeprecationMessage,
+        KotlinToolingDiagnostics.TargetPresets.FROM_PRESET_DEPRECATION_MESSAGE,
         level = DeprecationLevel.WARNING,
     )
     fun <T : KotlinTarget> fromPreset(
@@ -273,7 +273,7 @@ interface TargetsFromPresetExtension : NamedDomainObjectCollection<KotlinTarget>
     ): T = fromPreset(preset, name, {})
 
     @Deprecated(
-        KotlinToolingDiagnostics.TargetPresets.fromPresetDeprecationMessage,
+        KotlinToolingDiagnostics.TargetPresets.FROM_PRESET_DEPRECATION_MESSAGE,
         level = DeprecationLevel.WARNING,
     )
     fun <T : KotlinTarget> fromPreset(

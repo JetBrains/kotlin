@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_SUPPRESS_EXPERIMENTAL_ARTIFACTS_DSL_WARNING
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.*
-import org.jetbrains.kotlin.gradle.plugin.apiIsDeprecatedMessage
+import org.jetbrains.kotlin.gradle.plugin.PRESETS_DEPRECATION_MESSAGE_SUFFIX
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV1
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV2
 
@@ -522,14 +522,14 @@ object KotlinToolingDiagnostics {
     }
 
     object TargetPresets : ToolingDiagnosticFactory(WARNING) {
-        const val targetFromPresetDeprecationMessage = "targetFromPreset() $apiIsDeprecatedMessage"
-        const val fromPresetDeprecationMessage = "fromPreset() $apiIsDeprecatedMessage"
-        const val createTargetDeprecationMessage = "KotlinTargetPreset.createTarget() $apiIsDeprecatedMessage"
+        const val TARGET_FROM_PRESET_DEPRECATION_MESSAGE = "The targetFromPreset() $PRESETS_DEPRECATION_MESSAGE_SUFFIX"
+        const val FROM_PRESET_DEPRECATION_MESSAGE = "The fromPreset() $PRESETS_DEPRECATION_MESSAGE_SUFFIX"
+        const val CREATE_TARGET_DEPRECATION_MESSAGE = "The KotlinTargetPreset.createTarget() $PRESETS_DEPRECATION_MESSAGE_SUFFIX"
 
         enum class API(val message: String) {
-            TargetFromPreset(targetFromPresetDeprecationMessage),
-            FromPreset(fromPresetDeprecationMessage),
-            CreateTarget(createTargetDeprecationMessage)
+            TargetFromPreset(TARGET_FROM_PRESET_DEPRECATION_MESSAGE),
+            FromPreset(FROM_PRESET_DEPRECATION_MESSAGE),
+            CreateTarget(CREATE_TARGET_DEPRECATION_MESSAGE)
         }
 
         operator fun invoke(api: API) = build(

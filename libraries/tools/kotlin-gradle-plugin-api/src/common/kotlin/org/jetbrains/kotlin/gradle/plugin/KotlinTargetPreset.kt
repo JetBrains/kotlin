@@ -8,12 +8,12 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.Named
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 
-const val apiIsDeprecatedMessage =
-    "API is deprecated and will be phased out soon. Learn how to configure targets at: https://kotl.in/target-configuration"
-const val presetsApiIsDeprecatedMessage = "Presets $apiIsDeprecatedMessage"
+const val PRESETS_DEPRECATION_MESSAGE_SUFFIX =
+    "API is deprecated and will be removed in future releases. Learn how to configure targets at: https://kotl.in/target-configuration"
+const val PRESETS_API_IS_DEPRECATED_MESSAGE = "The presets $PRESETS_DEPRECATION_MESSAGE_SUFFIX"
 
 @RequiresOptIn(
-    message = presetsApiIsDeprecatedMessage,
+    message = PRESETS_API_IS_DEPRECATED_MESSAGE,
     level = RequiresOptIn.Level.WARNING
 )
 annotation class TargetPresetsDeprecation
@@ -25,7 +25,7 @@ interface KotlinTargetPreset<T: KotlinTarget> : Named {
 
     @OptIn(InternalKotlinGradlePluginApi::class)
     @Deprecated(
-        presetsApiIsDeprecatedMessage,
+        PRESETS_API_IS_DEPRECATED_MESSAGE,
         level = DeprecationLevel.WARNING,
     )
     fun createTarget(name: String): T {
