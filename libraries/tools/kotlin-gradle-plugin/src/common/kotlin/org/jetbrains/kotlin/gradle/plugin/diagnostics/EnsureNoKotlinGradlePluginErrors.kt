@@ -14,9 +14,14 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.TaskContainer
+import org.gradle.api.tasks.UntrackedTask
+import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileTool
 import org.jetbrains.kotlin.gradle.tasks.withType
 
+@DisableCachingByDefault(
+    because = "This task renders reported diagnostics; caching this task will hiding this report and hide issues in the build"
+)
 internal abstract class EnsureNoKotlinGradlePluginErrors : DefaultTask() {
     @get:Input
     abstract val errorDiagnostics: MapProperty<String, Collection<ToolingDiagnostic>>
