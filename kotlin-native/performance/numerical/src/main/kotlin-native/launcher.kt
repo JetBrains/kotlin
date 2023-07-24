@@ -22,6 +22,7 @@ fun konanBellardPi() {
 
 fun clangBellardPi() {
     for (n in 1 .. 1000 step 9) {
+        @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
         val result = cinterop.pi_nth_digit(n)
         Blackhole.consume(result)
     }
