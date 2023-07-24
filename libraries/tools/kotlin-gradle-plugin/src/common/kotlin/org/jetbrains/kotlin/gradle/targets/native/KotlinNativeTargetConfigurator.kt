@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.TEST_COMPI
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo.KPM
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.ReadyForExecution
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.KOTLIN_NATIVE_IGNORE_INCORRECT_DEPENDENCIES
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.internal.artifactTypeAttribute
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XcodeVersionTask
@@ -124,7 +125,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
     // FIXME support creating interop tasks for PM20
     private fun Project.createCInteropTasks(
         compilation: KotlinNativeCompilation,
-        cinterops: NamedDomainObjectCollection<DefaultCInteropSettings>
+        cinterops: NamedDomainObjectCollection<DefaultCInteropSettings>,
     ) {
         val compilationInfo = KotlinCompilationInfo(compilation)
         cinterops.all { interop ->
@@ -161,7 +162,10 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
             val interopOutput = project.files(interopTask.map { it.outputFileProvider })
             with(compilation) {
                 // Register the interop library as a dependency of the compilation to make IDE happy.
-                project.dependencies.add(compileDependencyConfigurationName, interopOutput)
+                project.dependencies.add(
+                    compileDependencyConfigurationName,
+                    KotlinOutputDependency(KotlinOutputDependencyIdentifier.CInterop(interop.identifier), interopOutput)
+                )
                 if (isMain()) {
                     // Add interop library to special CInteropApiElements configuration
                     createCInteropApiElementsKlibArtifact(compilation.target, interop, interopTask)
@@ -387,7 +391,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
 
         internal fun createKlibCompilationTask(
             compilationInfo: KotlinCompilationInfo,
-            konanTarget: KonanTarget
+            konanTarget: KonanTarget,
         ): TaskProvider<KotlinNativeCompile> {
             val project = compilationInfo.project
             val ext = project.topLevelExtension
@@ -455,7 +459,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
         }
 
         private fun Project.klibOutputDirectory(
-            compilation: KotlinCompilationInfo
+            compilation: KotlinCompilationInfo,
         ): File {
             val targetSubDirectory = compilation.targetDisambiguationClassifier?.let { "$it/" }.orEmpty()
             return buildDir.resolve("classes/kotlin/$targetSubDirectory${compilation.compilationName}")
@@ -478,7 +482,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
         internal fun createRegularKlibArtifact(
             compilation: KotlinCompilationInfo,
             konanTarget: KonanTarget,
-            compileTask: TaskProvider<out KotlinNativeCompile>
+            compileTask: TaskProvider<out KotlinNativeCompile>,
         ) = createKlibArtifact(compilation, konanTarget, compileTask.map { it.outputFile.get() }, null, compileTask)
 
         private fun createKlibArtifact(
@@ -517,7 +521,8 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
 abstract class KotlinNativeTargetWithTestsConfigurator<
         TargetType : KotlinNativeTargetWithTests<TestRunType>,
         TestRunType : KotlinNativeBinaryTestRun,
-        TaskType : KotlinNativeTest>(
+        TaskType : KotlinNativeTest,
+        >(
 ) : KotlinNativeTargetConfigurator<TargetType>(),
     KotlinTargetWithTestsConfigurator<TestRunType, TargetType> {
 
@@ -571,7 +576,7 @@ class KotlinNativeTargetWithHostTestsConfigurator() :
 
     override fun createTestRun(
         name: String,
-        target: KotlinNativeTargetWithHostTests
+        target: KotlinNativeTargetWithHostTests,
     ): KotlinNativeHostTestRun =
         DefaultHostTestRun(name, target).apply { configureTestRun(target, this) }
 }
@@ -605,7 +610,7 @@ class KotlinNativeTargetWithSimulatorTestsConfigurator :
 
     override fun createTestRun(
         name: String,
-        target: KotlinNativeTargetWithSimulatorTests
+        target: KotlinNativeTargetWithSimulatorTests,
     ): KotlinNativeSimulatorTestRun =
         DefaultSimulatorTestRun(name, target).apply { configureTestRun(target, this) }
 }

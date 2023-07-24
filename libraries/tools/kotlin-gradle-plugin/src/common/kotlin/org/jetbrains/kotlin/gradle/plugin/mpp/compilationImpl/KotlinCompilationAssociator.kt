@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
+import org.jetbrains.kotlin.gradle.plugin.KotlinOutputDependency
+import org.jetbrains.kotlin.gradle.plugin.KotlinOutputDependencyIdentifier
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.jvm
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinCompilation
@@ -15,6 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.plugin.mpp.isTest
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.utils.filesProvider
+
 
 internal fun interface KotlinCompilationAssociator {
     fun associate(target: KotlinTarget, auxiliary: InternalKotlinCompilation<*>, main: InternalKotlinCompilation<*>)
@@ -34,16 +37,24 @@ internal object DefaultKotlinCompilationAssociator : KotlinCompilationAssociator
           compilation itself (moreover, direct dependencies are not equivalent to transitive ones because of
           resolution order - e.g. in case of FQNs clash, so it's even harmful)
         */
-        project.dependencies.add(auxiliary.compileOnlyConfigurationName, project.files({ main.output.classesDirs }))
-        project.dependencies.add(auxiliary.runtimeOnlyConfigurationName, project.files({ main.output.allOutputs }))
+        project.dependencies.add(
+            auxiliary.compileOnlyConfigurationName,
+            KotlinOutputDependency(KotlinOutputDependencyIdentifier.AssociateCompilation(main), main.output.classesDirs)
+        )
+
+        project.dependencies.add(
+            auxiliary.runtimeOnlyConfigurationName,
+            KotlinOutputDependency(KotlinOutputDependencyIdentifier.AssociateCompilation(main), main.output.allOutputs)
+        )
+
+
         // Adding classes that could be produced into non-default destination for JVM target
         // Check KotlinSourceSetProcessor for details
         project.dependencies.add(
             auxiliary.implementationConfigurationName,
-            project.objects.fileCollection().from(
-                {
-                    main.defaultSourceSet.kotlin.classesDirectory.orNull?.asFile
-                }
+            KotlinOutputDependency(
+                KotlinOutputDependencyIdentifier.AssociateCompilation(main),
+                project.filesProvider { main.defaultSourceSet.kotlin.classesDirectory.orNull?.asFile }
             )
         )
 
