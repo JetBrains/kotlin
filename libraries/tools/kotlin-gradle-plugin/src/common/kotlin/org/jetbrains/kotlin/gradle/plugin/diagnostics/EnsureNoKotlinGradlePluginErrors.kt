@@ -46,7 +46,7 @@ internal abstract class EnsureNoKotlinGradlePluginErrors : DefaultTask() {
             kotlinToolingDiagnosticsCollector: Provider<KotlinToolingDiagnosticsCollector>,
             toolingDiagnosticRenderingOptions: ToolingDiagnosticRenderingOptions,
         ) {
-            val ensureNoErrorsTask = tasks.create(TASK_NAME, EnsureNoKotlinGradlePluginErrors::class.java) { task ->
+            tasks.register(TASK_NAME, EnsureNoKotlinGradlePluginErrors::class.java) { task ->
                 task.errorDiagnostics.set(
                     kotlinToolingDiagnosticsCollector.get()
                         .getAllDiagnostics().asSequence()
@@ -57,9 +57,9 @@ internal abstract class EnsureNoKotlinGradlePluginErrors : DefaultTask() {
                         .toMap()
                 )
                 task.renderingOptions.set(toolingDiagnosticRenderingOptions)
-            }
 
-            ensureNoErrorsTask.addDependsOnFromTasksThatShouldFailWhenErrorsReported(tasks)
+                task.addDependsOnFromTasksThatShouldFailWhenErrorsReported(tasks)
+            }
         }
 
         /**
