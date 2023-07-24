@@ -13,12 +13,49 @@ import org.jetbrains.kotlin.name.FqName
 abstract class IdSignatureBuilder<Declaration : Any, Mangler : KotlinMangler<Declaration>> {
     protected var packageFqn: FqName = FqName.ROOT
     protected val classFqnSegments = mutableListOf<String>()
+
+    /**
+     * Use [setHashIdAndDescriptionFor] or [setHashIdAndDescription] with `isPropertyAccessor = false` to set this property.
+     *
+     * This property is made private to enforce always setting [description] along with it.
+     */
     private var hashId: Long? = null
+
+    /**
+     * Use [setHashIdAndDescriptionFor] or [setHashIdAndDescription] with `isPropertyAccessor = true` to set this property.
+     *
+     * This property is made private to enforce always setting [description] along with it.
+     */
     private var hashIdAcc: Long? = null
+
     protected var overridden: List<Declaration>? = null
     protected var mask = 0L
+
+    /**
+     * For local or top-level private declarations, the signature of the containing declaration **or** [IdSignature.FileSignature]
+     * respectively.
+     *
+     * Used to build [IdSignature.CompositeSignature].
+     */
     protected var container: IdSignature? = null
+
+    protected fun createContainer() {
+        container = container?.let {
+            buildContainerSignature(it)
+        } ?: build()
+
+        reset(false)
+    }
+
     protected var description: String? = null
+
+    protected abstract fun renderDeclarationForDescription(declaration: Declaration): String
+
+    protected fun setDescriptionIfLocalDeclaration(declaration: Declaration) {
+        if (container != null) {
+            description = renderDeclarationForDescription(declaration)
+        }
+    }
 
     protected var isTopLevelPrivate: Boolean = false
 
@@ -59,7 +96,7 @@ abstract class IdSignatureBuilder<Declaration : Any, Mangler : KotlinMangler<Dec
     }
 
 
-    protected fun buildContainerSignature(container: IdSignature): IdSignature.CompositeSignature {
+    private fun buildContainerSignature(container: IdSignature): IdSignature.CompositeSignature {
         val localName = classFqnSegments.joinToString(".")
         val localHash = hashId
         return IdSignature.CompositeSignature(container, IdSignature.LocalSignature(localName, localHash, description))
