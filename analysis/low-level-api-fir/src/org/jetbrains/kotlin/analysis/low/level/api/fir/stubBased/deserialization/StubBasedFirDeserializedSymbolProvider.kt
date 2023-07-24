@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirKotlinSymb
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirKotlinSymbolNamesProvider
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
+import org.jetbrains.kotlin.analysis.providers.createPackageProvider
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
@@ -77,6 +78,8 @@ internal open class StubBasedFirDeserializedSymbolProvider(
 
     private val functionCache = session.firCachesFactory.createCache(::loadFunctionsByCallableId)
     private val propertyCache = session.firCachesFactory.createCache(::loadPropertiesByCallableId)
+
+    private val packageProvider = project.createPackageProvider(scope)
 
     private fun findAndDeserializeTypeAlias(
         classId: ClassId,
@@ -264,10 +267,7 @@ internal open class StubBasedFirDeserializedSymbolProvider(
     }
 
     override fun getPackage(fqName: FqName): FqName? =
-        fqName.takeIf {
-            symbolNamesProvider.getTopLevelClassifierNamesInPackage(fqName)?.isNotEmpty() == true ||
-                    symbolNamesProvider.getPackageNamesWithTopLevelCallables()?.contains(fqName.asString()) == true
-        }
+        fqName.takeIf { packageProvider.doesKotlinOnlyPackageExist(fqName) }
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
         if (!symbolNamesProvider.mayHaveTopLevelClassifier(classId)) return null

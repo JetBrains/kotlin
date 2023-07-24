@@ -128,16 +128,20 @@ public class StandaloneAnalysisAPISessionBuilder(
             registerService(KtModuleScopeProvider::class.java, KtModuleScopeProviderImpl())
             registerService(KotlinAnnotationsResolverFactory::class.java, KotlinStaticAnnotationsResolverFactory(ktFiles))
             registerService(KotlinResolutionScopeProvider::class.java, KotlinByModulesResolutionScopeProvider::class.java)
+            val declarationProviderFactory = KotlinStaticDeclarationProviderFactory(
+                this,
+                ktFiles,
+                kotlinCoreProjectEnvironment.environment.jarFileSystem as CoreJarFileSystem
+            )
             registerService(
                 KotlinDeclarationProviderFactory::class.java,
-                KotlinStaticDeclarationProviderFactory(
-                    this,
-                    ktFiles,
-                    kotlinCoreProjectEnvironment.environment.jarFileSystem as CoreJarFileSystem
-                )
+                declarationProviderFactory
             )
             registerService(KotlinDeclarationProviderMerger::class.java, KotlinStaticDeclarationProviderMerger(this))
-            registerService(KotlinPackageProviderFactory::class.java, KotlinStaticPackageProviderFactory(project, ktFiles))
+            registerService(
+                KotlinPackageProviderFactory::class.java,
+                KotlinStaticPackageProviderFactory(project, ktFiles + declarationProviderFactory.getAdditionalCreatedKtFiles())
+            )
 
             registerService(
                 FirSealedClassInheritorsProcessorFactory::class.java,
