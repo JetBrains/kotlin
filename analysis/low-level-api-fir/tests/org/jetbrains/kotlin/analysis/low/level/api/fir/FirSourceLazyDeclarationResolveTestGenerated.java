@@ -709,6 +709,22 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
     }
 
     @Nested
+    @TestMetadata("analysis/low-level-api-fir/testdata/lazyResolve/noRuntime")
+    @TestDataPath("$PROJECT_ROOT")
+    public class NoRuntime {
+        @Test
+        public void testAllFilesPresentInNoRuntime() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/lazyResolve/noRuntime"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("integerLiteralCall.kt")
+        public void testIntegerLiteralCall() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/lazyResolve/noRuntime/integerLiteralCall.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("analysis/low-level-api-fir/testdata/lazyResolve/properties")
     @TestDataPath("$PROJECT_ROOT")
     public class Properties {

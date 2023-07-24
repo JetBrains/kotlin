@@ -1,0 +1,65 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] integerLiteralCall.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] integerLiteralCall.kt
+    public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] integerLiteralCall.kt
+    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] integerLiteralCall.kt
+    public? final? [ResolvedTo(COMPANION_GENERATION)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] integerLiteralCall.kt
+    public? final? [ResolvedTo(SUPER_TYPES)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] integerLiteralCall.kt
+    public? final? [ResolvedTo(TYPES)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] integerLiteralCall.kt
+    public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] integerLiteralCall.kt
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+ARGUMENTS_OF_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] integerLiteralCall.kt
+    public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] integerLiteralCall.kt
+    public final [ResolvedTo(CONTRACTS)] fun foo(): R|kotlin/Unit| {
+        IntegerLiteral(1).toInt#()
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] integerLiteralCall.kt
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+        IntegerLiteral(1).toInt#()
+    }
+
+ANNOTATIONS_ARGUMENTS_MAPPING:
+FILE: [ResolvedTo(IMPORTS)] integerLiteralCall.kt
+    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun foo(): R|kotlin/Unit| {
+        IntegerLiteral(1).toInt#()
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] integerLiteralCall.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+        IntegerLiteral(1).<Unresolved name: toInt>#()
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(IMPORTS)] integerLiteralCall.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+        IntegerLiteral(1).<Unresolved name: toInt>#()
+    }

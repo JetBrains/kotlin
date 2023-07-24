@@ -43,9 +43,7 @@ class FirIntegerConstantOperatorScope(
             scopeSession,
             FakeOverrideTypeCalculator.DoNothing,
             requiredMembersPhase = FirResolvePhase.STATUS,
-        ) ?: errorWithAttachment("Scope for ${baseType::class.java} not found") {
-            withConeTypeEntry("type", baseType)
-        }
+        ) ?: Empty
     }
 
     private val mappedFunctions = mutableMapOf<Name, FirNamedFunctionSymbol>()

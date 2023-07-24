@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.NO_RUNTIME
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
@@ -57,8 +59,16 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractFirLazyDeclaratio
     override fun configureTest(builder: TestConfigurationBuilder) {
         super.configureTest(builder)
         with(builder) {
-            defaultDirectives {
-                +ConfigurationDirectives.WITH_STDLIB
+            forTestsNotMatching("analysis/low-level-api-fir/testdata/lazyResolve/noRuntime/*" ) {
+                defaultDirectives {
+                    +WITH_STDLIB
+                }
+            }
+
+            forTestsMatching("analysis/low-level-api-fir/testdata/lazyResolve/noRuntime/*") {
+                defaultDirectives {
+                    +NO_RUNTIME
+                }
             }
 
             useDirectives(Directives)
