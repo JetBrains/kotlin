@@ -190,11 +190,7 @@ abstract class AbstractKotlinTarget(
         internal set
 
     override fun warnAboutCreationOfTargetFromPreset() {
-        project.reportDiagnostic(
-            KotlinToolingDiagnostics.TargetPresets(
-                KotlinToolingDiagnostics.TargetPresets.API.CreateTarget
-            )
-        )
+        project.reportDiagnostic(KotlinToolingDiagnostics.CreateTarget())
     }
 }
 

@@ -163,16 +163,12 @@ abstract class KotlinMultiplatformExtension
         targetFromPresetInternal(preset, preset.name, configure)
 
     private fun warnAboutTargetFromPresetDeprecation() {
-        project.reportDiagnostic(
-            KotlinToolingDiagnostics.TargetPresets(
-                KotlinToolingDiagnostics.TargetPresets.API.TargetFromPreset
-            )
-        )
+        project.reportDiagnostic(KotlinToolingDiagnostics.TargetFromPreset())
     }
 
     @TargetPresetsDeprecation
     @Deprecated(
-        KotlinToolingDiagnostics.TargetPresets.TARGET_FROM_PRESET_DEPRECATION_MESSAGE,
+        KotlinToolingDiagnostics.TargetFromPreset.DEPRECATION_MESSAGE,
         level = DeprecationLevel.WARNING
     )
     fun <T : KotlinTarget> targetFromPreset(
@@ -190,7 +186,7 @@ abstract class KotlinMultiplatformExtension
 
     @TargetPresetsDeprecation
     @Deprecated(
-        KotlinToolingDiagnostics.TargetPresets.TARGET_FROM_PRESET_DEPRECATION_MESSAGE,
+        KotlinToolingDiagnostics.TargetFromPreset.DEPRECATION_MESSAGE,
         level = DeprecationLevel.WARNING
     )
     fun <T : KotlinTarget> targetFromPreset(
@@ -208,7 +204,7 @@ abstract class KotlinMultiplatformExtension
 
     @TargetPresetsDeprecation
     @Deprecated(
-        KotlinToolingDiagnostics.TargetPresets.TARGET_FROM_PRESET_DEPRECATION_MESSAGE,
+        KotlinToolingDiagnostics.TargetFromPreset.DEPRECATION_MESSAGE,
         level = DeprecationLevel.WARNING
     )
     fun <T : KotlinTarget> targetFromPreset(preset: KotlinTargetPreset<T>): T {
@@ -220,7 +216,7 @@ abstract class KotlinMultiplatformExtension
 
     @TargetPresetsDeprecation
     @Deprecated(
-        KotlinToolingDiagnostics.TargetPresets.TARGET_FROM_PRESET_DEPRECATION_MESSAGE,
+        KotlinToolingDiagnostics.TargetFromPreset.DEPRECATION_MESSAGE,
         level = DeprecationLevel.WARNING
     )
     fun <T : KotlinTarget> targetFromPreset(preset: KotlinTargetPreset<T>, name: String): T {
@@ -233,7 +229,7 @@ abstract class KotlinMultiplatformExtension
 
     @TargetPresetsDeprecation
     @Deprecated(
-        KotlinToolingDiagnostics.TargetPresets.TARGET_FROM_PRESET_DEPRECATION_MESSAGE,
+        KotlinToolingDiagnostics.TargetFromPreset.DEPRECATION_MESSAGE,
         level = DeprecationLevel.WARNING
     )
     fun <T : KotlinTarget> targetFromPreset(preset: KotlinTargetPreset<T>, configure: Action<T>): T {
@@ -254,7 +250,7 @@ abstract class KotlinMultiplatformExtension
 interface TargetsFromPresetExtension : NamedDomainObjectCollection<KotlinTarget> {
 
     @Deprecated(
-        KotlinToolingDiagnostics.TargetPresets.FROM_PRESET_DEPRECATION_MESSAGE,
+        KotlinToolingDiagnostics.FromPreset.DEPRECATION_MESSAGE,
         level = DeprecationLevel.WARNING,
     )
     fun <T : KotlinTarget> fromPreset(
@@ -264,7 +260,7 @@ interface TargetsFromPresetExtension : NamedDomainObjectCollection<KotlinTarget>
     ): T
 
     @Deprecated(
-        KotlinToolingDiagnostics.TargetPresets.FROM_PRESET_DEPRECATION_MESSAGE,
+        KotlinToolingDiagnostics.FromPreset.DEPRECATION_MESSAGE,
         level = DeprecationLevel.WARNING,
     )
     fun <T : KotlinTarget> fromPreset(
@@ -273,7 +269,7 @@ interface TargetsFromPresetExtension : NamedDomainObjectCollection<KotlinTarget>
     ): T = fromPreset(preset, name, {})
 
     @Deprecated(
-        KotlinToolingDiagnostics.TargetPresets.FROM_PRESET_DEPRECATION_MESSAGE,
+        KotlinToolingDiagnostics.FromPreset.DEPRECATION_MESSAGE,
         level = DeprecationLevel.WARNING,
     )
     fun <T : KotlinTarget> fromPreset(
@@ -291,11 +287,7 @@ internal abstract class DefaultTargetsFromPresetExtension @Inject constructor(
     NamedDomainObjectCollection<KotlinTarget> by targets {
 
     private fun warnAboutFromPresetDeprecation() {
-        project.reportDiagnostic(
-            KotlinToolingDiagnostics.TargetPresets(
-                KotlinToolingDiagnostics.TargetPresets.API.FromPreset
-            )
-        )
+        project.reportDiagnostic(KotlinToolingDiagnostics.FromPreset())
     }
 
     override fun <T : KotlinTarget> fromPreset(

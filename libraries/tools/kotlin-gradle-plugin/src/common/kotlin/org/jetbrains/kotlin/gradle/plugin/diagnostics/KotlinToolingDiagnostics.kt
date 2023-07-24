@@ -521,20 +521,21 @@ object KotlinToolingDiagnostics {
         )
     }
 
-    object TargetPresets : ToolingDiagnosticFactory(WARNING) {
-        const val TARGET_FROM_PRESET_DEPRECATION_MESSAGE = "The targetFromPreset() $PRESETS_DEPRECATION_MESSAGE_SUFFIX"
-        const val FROM_PRESET_DEPRECATION_MESSAGE = "The fromPreset() $PRESETS_DEPRECATION_MESSAGE_SUFFIX"
-        const val CREATE_TARGET_DEPRECATION_MESSAGE = "The KotlinTargetPreset.createTarget() $PRESETS_DEPRECATION_MESSAGE_SUFFIX"
+    private val presetsDeprecationSeverity = ToolingDiagnostic.Severity.WARNING
 
-        enum class API(val message: String) {
-            TargetFromPreset(TARGET_FROM_PRESET_DEPRECATION_MESSAGE),
-            FromPreset(FROM_PRESET_DEPRECATION_MESSAGE),
-            CreateTarget(CREATE_TARGET_DEPRECATION_MESSAGE)
-        }
+    object TargetFromPreset : ToolingDiagnosticFactory(presetsDeprecationSeverity) {
+        const val DEPRECATION_MESSAGE = "The targetFromPreset() $PRESETS_DEPRECATION_MESSAGE_SUFFIX"
+        operator fun invoke() = build(DEPRECATION_MESSAGE)
+    }
 
-        operator fun invoke(api: API) = build(
-            api.message
-        )
+    object FromPreset : ToolingDiagnosticFactory(presetsDeprecationSeverity) {
+        const val DEPRECATION_MESSAGE = "The fromPreset() $PRESETS_DEPRECATION_MESSAGE_SUFFIX"
+        operator fun invoke() = build(DEPRECATION_MESSAGE)
+    }
+
+    object CreateTarget : ToolingDiagnosticFactory(presetsDeprecationSeverity) {
+        const val DEPRECATION_MESSAGE = "The KotlinTargetPreset.createTarget() $PRESETS_DEPRECATION_MESSAGE_SUFFIX"
+        operator fun invoke() = build(DEPRECATION_MESSAGE)
     }
 
     object JvmWithJavaIsIncompatibleWithAndroid : ToolingDiagnosticFactory(FATAL) {

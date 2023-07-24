@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.mpp
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticFactory
 import org.jetbrains.kotlin.gradle.testbase.*
 import java.util.UUID
 
@@ -116,18 +117,34 @@ class TargetPresetDeprecationIT : KGPBaseTest() {
         }
     }
 
-    private fun expectedVerboseDiagnostics(api: API): List<String> {
+    private fun BuildResult.assertExpectedVerboseDiagnostics(api: API) {
         return when (api) {
-            API.DeprecatedTargetFromPreset -> listOf(
-                KotlinToolingDiagnostics.TargetPresets.TARGET_FROM_PRESET_DEPRECATION_MESSAGE
-            )
-            API.DeprecatedFromPreset -> listOf(
-                KotlinToolingDiagnostics.TargetPresets.FROM_PRESET_DEPRECATION_MESSAGE
-            )
-            API.DeprecatedCreateTarget -> listOf(
-                KotlinToolingDiagnostics.TargetPresets.CREATE_TARGET_DEPRECATION_MESSAGE
-            )
-            API.Regular -> emptyList()
+            API.DeprecatedTargetFromPreset -> {
+                assertVerboseDiagnosticsEqual(
+                    KotlinToolingDiagnostics.TargetFromPreset,
+                    listOf(KotlinToolingDiagnostics.TargetFromPreset.DEPRECATION_MESSAGE)
+                )
+            }
+
+            API.DeprecatedFromPreset -> {
+                assertVerboseDiagnosticsEqual(
+                    KotlinToolingDiagnostics.FromPreset,
+                    listOf(KotlinToolingDiagnostics.FromPreset.DEPRECATION_MESSAGE)
+                )
+            }
+
+            API.DeprecatedCreateTarget -> {
+                assertVerboseDiagnosticsEqual(
+                    KotlinToolingDiagnostics.CreateTarget,
+                    listOf(KotlinToolingDiagnostics.CreateTarget.DEPRECATION_MESSAGE)
+                )
+            }
+
+            API.Regular -> {
+                assertNoDiagnostic(KotlinToolingDiagnostics.TargetFromPreset)
+                assertNoDiagnostic(KotlinToolingDiagnostics.FromPreset)
+                assertNoDiagnostic(KotlinToolingDiagnostics.CreateTarget)
+            }
         }
     }
 
@@ -143,10 +160,7 @@ class TargetPresetDeprecationIT : KGPBaseTest() {
                     setup,
                     apiToUse(setup, api),
                 ) {
-                    assertVerboseDiagnosticsEqual(
-                        KotlinToolingDiagnostics.TargetPresets,
-                        expectedVerboseDiagnostics(api),
-                    )
+                    assertExpectedVerboseDiagnostics(api)
                     assertProjectFileBuildDiagnostics(setup, api)
                 }
             }

@@ -19,14 +19,14 @@ class TargetPresetDeprecationTest {
 
     @Test
     fun `targetFromPreset usage - emits TargetFromPreset diagnostic`() = checkDiagnostics(
-        listOf(KotlinToolingDiagnostics.TargetPresets(KotlinToolingDiagnostics.TargetPresets.API.TargetFromPreset))
+        listOf(KotlinToolingDiagnostics.TargetFromPreset())
     ) {
         targetFromPreset(presets.getByName("jvm"))
     }
 
     @Test
     fun `targets fromPreset usage - emits FromPreset diagnostic`() = checkDiagnostics(
-        listOf(KotlinToolingDiagnostics.TargetPresets(KotlinToolingDiagnostics.TargetPresets.API.FromPreset))
+        listOf(KotlinToolingDiagnostics.FromPreset())
     ) {
         targets {
             fromPreset(presets.getByName("jvm"), "jvm")
@@ -35,7 +35,7 @@ class TargetPresetDeprecationTest {
 
     @Test
     fun `presets createTarget usage - emits CreateTarget diagnostic`() = checkDiagnostics(
-        listOf(KotlinToolingDiagnostics.TargetPresets(KotlinToolingDiagnostics.TargetPresets.API.CreateTarget))
+        listOf(KotlinToolingDiagnostics.CreateTarget())
     ) {
         targets.add(presets.getByName("jvm").createTarget("jvm"))
     }
