@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.library.abi.impl
 
 import org.jetbrains.kotlin.library.abi.*
+import org.jetbrains.kotlin.library.abi.impl.AbiFunctionImpl.Companion.BITS_ENOUGH_FOR_STORING_PARAMETERS_COUNT
 import org.jetbrains.kotlin.metadata.deserialization.Flags.FlagField
 
 @ExperimentalLibraryAbiReader
@@ -53,7 +54,8 @@ internal class AbiClassImpl(
     isValue: Boolean,
     isFunction: Boolean,
     override val superTypes: List<AbiType>,
-    override val declarations: List<AbiDeclaration>
+    override val declarations: List<AbiDeclaration>,
+    override val typeParameters: List<AbiTypeParameter>
 ) : AbiClass {
     private val flags = IS_INNER.toFlags(isInner) or
             IS_VALUE.toFlags(isValue) or
@@ -87,28 +89,55 @@ internal class AbiEnumEntryImpl(
 }
 
 @ExperimentalLibraryAbiReader
+internal class AbiConstructorImpl(
+    override val qualifiedName: AbiQualifiedName,
+    override val signatures: AbiSignatures,
+    private val annotations: Set<AbiQualifiedName>,
+    isInline: Boolean,
+    contextReceiverParametersCount: Int,
+    override val valueParameters: List<AbiValueParameter>
+) : AbiFunction {
+    private val flags = IS_INLINE.toFlags(isInline) or
+            CONTEXT_RECEIVERS_COUNT.toFlags(contextReceiverParametersCount)
+
+    override val modality get() = AbiModality.FINAL // No need to render modality for constructors.
+    override val isConstructor get() = true
+    override val isInline get() = IS_INLINE.get(flags)
+    override val isSuspend get() = false
+    override val hasExtensionReceiverParameter get() = false
+    override val contextReceiverParametersCount get() = CONTEXT_RECEIVERS_COUNT.get(flags)
+    override val returnType get() = null // No need to render return type for constructors.
+    override val typeParameters get() = emptyList<AbiTypeParameter>()
+    override fun hasAnnotation(annotationClassName: AbiQualifiedName) = annotationClassName in annotations
+
+    companion object {
+        private val IS_INLINE = FlagField.booleanFirst()
+        private val CONTEXT_RECEIVERS_COUNT = FlagFieldEx.intAfter(IS_INLINE, BITS_ENOUGH_FOR_STORING_PARAMETERS_COUNT)
+    }
+}
+
+@ExperimentalLibraryAbiReader
 internal class AbiFunctionImpl(
     override val qualifiedName: AbiQualifiedName,
     override val signatures: AbiSignatures,
     private val annotations: Set<AbiQualifiedName>,
     modality: AbiModality,
-    isConstructor: Boolean,
     isInline: Boolean,
     isSuspend: Boolean,
-    hasExtensionReceiver: Boolean,
+    override val typeParameters: List<AbiTypeParameter>,
+    hasExtensionReceiverParameter: Boolean,
     contextReceiverParametersCount: Int,
     override val valueParameters: List<AbiValueParameter>,
     override val returnType: AbiType?
 ) : AbiFunction {
-    private val flags = IS_CONSTRUCTOR.toFlags(isConstructor) or
-            IS_INLINE.toFlags(isInline) or
+    private val flags = IS_INLINE.toFlags(isInline) or
             IS_SUSPEND.toFlags(isSuspend) or
-            HAS_EXTENSION_RECEIVER.toFlags(hasExtensionReceiver) or
+            HAS_EXTENSION_RECEIVER.toFlags(hasExtensionReceiverParameter) or
             CONTEXT_RECEIVERS_COUNT.toFlags(contextReceiverParametersCount) or
             MODALITY.toFlags(modality)
 
     override val modality get() = MODALITY.get(flags)
-    override val isConstructor get() = IS_CONSTRUCTOR.get(flags)
+    override val isConstructor get() = false
     override val isInline get() = IS_INLINE.get(flags)
     override val isSuspend get() = IS_SUSPEND.get(flags)
     override val hasExtensionReceiverParameter get() = HAS_EXTENSION_RECEIVER.get(flags)
@@ -119,8 +148,7 @@ internal class AbiFunctionImpl(
         /** JVM allows max 255 parameters for a function. Storing such number requires just 8 bits. */
         const val BITS_ENOUGH_FOR_STORING_PARAMETERS_COUNT = 8
 
-        private val IS_CONSTRUCTOR = FlagField.booleanFirst()
-        private val IS_INLINE = FlagField.booleanAfter(IS_CONSTRUCTOR)
+        private val IS_INLINE = FlagField.booleanFirst()
         private val IS_SUSPEND = FlagField.booleanAfter(IS_INLINE)
         private val HAS_EXTENSION_RECEIVER = FlagField.booleanAfter(IS_SUSPEND)
         private val CONTEXT_RECEIVERS_COUNT = FlagFieldEx.intAfter(HAS_EXTENSION_RECEIVER, BITS_ENOUGH_FOR_STORING_PARAMETERS_COUNT)
@@ -177,6 +205,31 @@ internal class AbiPropertyImpl(
 }
 
 @ExperimentalLibraryAbiReader
+internal class AbiTypeParameterImpl(
+    index: Int,
+    variance: AbiVariance,
+    isReified: Boolean,
+    override val upperBounds: List<AbiType>
+) : AbiTypeParameter {
+    private val flags = IS_REIFIED.toFlags(isReified) or
+            INDEX.toFlags(index) or
+            VARIANCE.toFlags(variance)
+
+    override val index get() = INDEX.get(flags)
+    override val variance = VARIANCE.get(flags)
+    override val isReified = IS_REIFIED.get(flags)
+
+    companion object {
+        /** The 14 bits allows storing [AbiTypeParameter.index] starting from 0 and up to 16383. */
+        private const val BITS_ENOUGH_FOR_STORING_INDEX = 14
+
+        private val IS_REIFIED = FlagField.booleanFirst()
+        private val INDEX = FlagFieldEx.intAfter(IS_REIFIED, BITS_ENOUGH_FOR_STORING_INDEX)
+        private val VARIANCE = FlagFieldEx.after<AbiVariance>(INDEX)
+    }
+}
+
+@ExperimentalLibraryAbiReader
 internal object DynamicTypeImpl : AbiType.Dynamic
 
 @ExperimentalLibraryAbiReader
@@ -193,16 +246,13 @@ internal class SimpleTypeImpl(
 internal object StarProjectionImpl : AbiTypeArgument.StarProjection
 
 @ExperimentalLibraryAbiReader
-internal class RegularProjectionImpl(
+internal class TypeProjectionImpl(
     override val type: AbiType,
-    override val projectionKind: AbiVariance
-) : AbiTypeArgument.RegularProjection
+    override val variance: AbiVariance
+) : AbiTypeArgument.TypeProjection
 
 @ExperimentalLibraryAbiReader
 internal class ClassImpl(override val className: AbiQualifiedName) : AbiClassifier.Class
 
 @ExperimentalLibraryAbiReader
-internal class TypeParameterImpl(
-    override val declaringClassName: AbiQualifiedName,
-    override val index: Int
-) : AbiClassifier.TypeParameter
+internal class TypeParameterImpl(override val index: Int) : AbiClassifier.TypeParameter

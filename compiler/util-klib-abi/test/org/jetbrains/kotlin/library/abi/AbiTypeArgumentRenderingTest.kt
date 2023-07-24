@@ -6,10 +6,6 @@
 package org.jetbrains.kotlin.library.abi
 
 import org.jetbrains.kotlin.library.abi.impl.*
-import org.jetbrains.kotlin.library.abi.impl.ClassImpl
-import org.jetbrains.kotlin.library.abi.impl.RegularProjectionImpl
-import org.jetbrains.kotlin.library.abi.impl.SimpleTypeImpl
-import org.jetbrains.kotlin.library.abi.impl.StarProjectionImpl
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
@@ -65,7 +61,8 @@ class AbiTypeArgumentRenderingTest {
             isValue = false,
             isFunction = false,
             superTypes = superTypes.toList(),
-            declarations = emptyList()
+            declarations = emptyList(),
+            typeParameters = emptyList()
         )
 
     private fun mockType(packageName: String, className: String, vararg arguments: Pair<AbiType, AbiVariance>?): AbiType {
@@ -75,7 +72,7 @@ class AbiTypeArgumentRenderingTest {
                 if (argument == null)
                     StarProjectionImpl
                 else
-                    RegularProjectionImpl(argument.first, argument.second)
+                    TypeProjectionImpl(argument.first, argument.second)
             },
             nullability = AbiTypeNullability.NOT_SPECIFIED
         )

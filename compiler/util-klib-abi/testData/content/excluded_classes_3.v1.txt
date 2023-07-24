@@ -4,11 +4,11 @@
 
 // Library unique name: <testExcluded_classes_3>
 final class /Bar { // /Bar|null[0]
-    constructor /Bar.<init>() // /Bar.<init>|-5645683436151566731[0]
+    constructor <init>() // /Bar.<init>|-5645683436151566731[0]
 }
 final class /Baz { // /Baz|null[0]
-    constructor /Baz.<init>() // /Baz.<init>|-5645683436151566731[0]
-    final class /Baz.Nested { // /Baz.Nested|null[0]
-        constructor /Baz.Nested.<init>() // /Baz.Nested.<init>|-5645683436151566731[0]
+    constructor <init>() // /Baz.<init>|-5645683436151566731[0]
+    final class Nested { // /Baz.Nested|null[0]
+        constructor <init>() // /Baz.Nested.<init>|-5645683436151566731[0]
     }
 }

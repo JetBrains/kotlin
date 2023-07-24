@@ -55,7 +55,24 @@ interface AbiSignatures {
 }
 
 /**
- * Compound name. An equivalent of one or more simple names which are concatenated with dots.
+ * Simple name.
+ * Examples: "TopLevelClass", "topLevelFun", "List", "EMPTY".
+ */
+@ExperimentalLibraryAbiReader
+@JvmInline
+value class AbiSimpleName(val value: String) : Comparable<AbiSimpleName> {
+    init {
+        require(AbiCompoundName.SEPARATOR !in value && AbiQualifiedName.SEPARATOR !in value) {
+            "Simple name contains illegal characters: $value"
+        }
+    }
+
+    override fun compareTo(other: AbiSimpleName) = value.compareTo(other.value)
+    override fun toString() = value
+}
+
+/**
+ * Compound name. An equivalent of one or more [AbiSimpleName]s which are concatenated with dots.
  * Examples: "TopLevelClass", "topLevelFun", "List", "CharRange.Companion.EMPTY".
  */
 @ExperimentalLibraryAbiReader
@@ -64,6 +81,11 @@ value class AbiCompoundName(val value: String) : Comparable<AbiCompoundName> {
     init {
         require(AbiQualifiedName.SEPARATOR !in value) { "Compound name contains illegal characters: $value" }
     }
+
+    val nameSegments: List<AbiSimpleName> get() = value.split(SEPARATOR).map(::AbiSimpleName)
+    val nameSegmentsCount: Int get() = value.count { it == SEPARATOR } + 1
+
+    val simpleName: AbiSimpleName get() = AbiSimpleName(value.substringAfterLast(SEPARATOR))
 
     override fun compareTo(other: AbiCompoundName) = value.compareTo(other.value)
     override fun toString() = value
@@ -144,7 +166,7 @@ interface AbiTopLevelDeclarations : AbiDeclarationContainer
  * Important: The order of [superTypes] is preserved exactly as in serialized IR.
  */
 @ExperimentalLibraryAbiReader
-interface AbiClass : AbiDeclarationWithModality, AbiDeclarationContainer {
+interface AbiClass : AbiDeclarationWithModality, AbiDeclarationContainer, AbiTypeParametersContainer {
     val kind: AbiClassKind
     val isInner: Boolean
     val isValue: Boolean
@@ -169,7 +191,7 @@ interface AbiEnumEntry : AbiDeclaration
  * value parameters of the function.
  */
 @ExperimentalLibraryAbiReader
-interface AbiFunction : AbiDeclarationWithModality {
+interface AbiFunction : AbiDeclarationWithModality, AbiTypeParametersContainer {
     val isConstructor: Boolean
     val isInline: Boolean
     val isSuspend: Boolean
@@ -198,6 +220,27 @@ interface AbiProperty : AbiDeclarationWithModality {
 @ExperimentalLibraryAbiReader
 enum class AbiPropertyKind { VAL, CONST_VAL, VAR }
 
+/**
+ * Important: The order of [typeParameters] is preserved exactly as in serialized IR.
+ */
+@ExperimentalLibraryAbiReader
+sealed interface AbiTypeParametersContainer : AbiDeclaration {
+    val typeParameters: List<AbiTypeParameter>
+}
+
+/**
+ * Important: The order of [upperBounds] is preserved exactly as in serialized IR.
+ */
+@ExperimentalLibraryAbiReader
+interface AbiTypeParameter {
+    val index: Int
+    val variance: AbiVariance
+    val isReified: Boolean
+
+    /** The set of non-trivial upper bounds (i.e. excluding nullable [kotlin.Any]). */
+    val upperBounds: List<AbiType>
+}
+
 @ExperimentalLibraryAbiReader
 sealed interface AbiType {
     interface Dynamic : AbiType
@@ -212,9 +255,9 @@ sealed interface AbiType {
 @ExperimentalLibraryAbiReader
 sealed interface AbiTypeArgument {
     interface StarProjection : AbiTypeArgument
-    interface RegularProjection : AbiTypeArgument {
+    interface TypeProjection : AbiTypeArgument {
         val type: AbiType
-        val projectionKind: AbiVariance
+        val variance: AbiVariance
     }
 }
 
@@ -225,7 +268,6 @@ sealed interface AbiClassifier {
     }
 
     interface TypeParameter : AbiClassifier {
-        val declaringClassName: AbiQualifiedName
         val index: Int
     }
 }

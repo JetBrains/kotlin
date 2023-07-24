@@ -18,11 +18,13 @@ import org.jetbrains.kotlin.ir.util.IdSignatureRenderer
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.abi.*
+import org.jetbrains.kotlin.library.abi.AbiTypeNullability.*
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.*
+import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import java.io.File
 import org.jetbrains.kotlin.konan.file.File as KFile
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrClass as ProtoClass
@@ -39,6 +41,7 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNu
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType as ProtoSimpleType
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability as ProtoSimpleTypeNullability
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeLegacy as ProtoSimpleTypeLegacy
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter as ProtoTypeParameter
 import org.jetbrains.kotlin.backend.common.serialization.IrFlags as ProtoFlags
 
 @ExperimentalLibraryAbiReader
@@ -128,42 +131,68 @@ private class LibraryDeserializer(
             topLevelDeclarationIds.mapNotNullTo(output) { topLevelDeclarationId ->
                 deserializeDeclaration(
                     proto = fileReader.declaration(topLevelDeclarationId),
-                    containingEntity = ContainingEntity.Package(packageName)
+                    containingEntity = ContainingEntity.Package(packageName),
+                    parentTypeParameterResolver = null
                 )
             }
         }
 
-        private fun deserializeDeclaration(proto: ProtoDeclaration, containingEntity: ContainingEntity): AbiDeclaration? =
+        private fun deserializeDeclaration(
+            proto: ProtoDeclaration,
+            containingEntity: ContainingEntity,
+            parentTypeParameterResolver: TypeParameterResolver?
+        ): AbiDeclaration? =
             when (proto.declaratorCase) {
-                ProtoDeclaration.DeclaratorCase.IR_CLASS -> deserializeClass(proto.irClass, containingEntity)
+                ProtoDeclaration.DeclaratorCase.IR_CLASS -> deserializeClass(proto.irClass, containingEntity, parentTypeParameterResolver)
                 ProtoDeclaration.DeclaratorCase.IR_CONSTRUCTOR -> deserializeFunction(
                     proto.irConstructor.base,
+                    isConstructor = true,
                     containingEntity,
-                    isConstructor = true
+                    parentTypeParameterResolver
                 )
-                ProtoDeclaration.DeclaratorCase.IR_FUNCTION -> deserializeFunction(proto.irFunction.base, containingEntity)
-                ProtoDeclaration.DeclaratorCase.IR_PROPERTY -> deserializeProperty(proto.irProperty, containingEntity)
+                ProtoDeclaration.DeclaratorCase.IR_FUNCTION -> deserializeFunction(
+                    proto.irFunction.base,
+                    isConstructor = false,
+                    containingEntity,
+                    parentTypeParameterResolver
+                )
+                ProtoDeclaration.DeclaratorCase.IR_PROPERTY -> deserializeProperty(
+                    proto.irProperty,
+                    containingEntity,
+                    parentTypeParameterResolver
+                )
                 ProtoDeclaration.DeclaratorCase.IR_ENUM_ENTRY -> deserializeEnumEntry(proto.irEnumEntry, containingEntity)
                 else -> null
             }.discardIfExcluded()
 
-        private fun deserializeClass(proto: ProtoClass, containingEntity: ContainingEntity): AbiClass? {
+        private fun deserializeClass(
+            proto: ProtoClass,
+            containingEntity: ContainingEntity,
+            parentTypeParameterResolver: TypeParameterResolver?,
+        ): AbiClass? {
             val annotations = deserializeAnnotations(proto.base)
             val containingClassModality = (containingEntity as? ContainingEntity.Class)?.modality
+
             if (!computeVisibilityStatus(proto.base, annotations, containingClassModality).isPubliclyVisible)
                 return null
 
             val flags = ClassFlags.decode(proto.base.flags)
-            val modality = deserializeModality(
-                flags.modality,
+
+            val modality = flags.modality.toAbiModality(
                 containingClassModality = /* Open nested classes in final class remain open. */ null
             )
 
             val qualifiedName = deserializeQualifiedName(proto.name, containingEntity)
             val thisClassEntity = ContainingEntity.Class(qualifiedName, modality)
 
+            val thisClassTypeParameterResolver = TypeParameterResolver(
+                declarationName = qualifiedName,
+                ownTypeParameters = proto.typeParameterCount,
+                parent = if (flags.isInner) parentTypeParameterResolver else null
+            )
+
             val memberDeclarations = proto.declarationList.memoryOptimizedMapNotNull { declaration ->
-                deserializeDeclaration(declaration, containingEntity = thisClassEntity)
+                deserializeDeclaration(declaration, containingEntity = thisClassEntity, thisClassTypeParameterResolver)
             }
 
             return AbiClassImpl(
@@ -182,21 +211,20 @@ private class LibraryDeserializer(
                 isInner = flags.isInner,
                 isValue = flags.isValue,
                 isFunction = flags.isFun,
-                superTypes = deserializeSuperTypes(proto),
-                declarations = memberDeclarations
+                superTypes = deserializeTypes(proto.superTypeList, thisClassTypeParameterResolver) { type ->
+                    !isKotlinBuiltInType(type, KOTLIN_ANY_QUALIFIED_NAME, DEFINITELY_NOT_NULL) && typeDeserializer.isPubliclyVisible(type)
+                },
+                declarations = memberDeclarations,
+                typeParameters = deserializeTypeParameters(proto.typeParameterList, thisClassTypeParameterResolver)
             )
         }
 
-        private fun deserializeSuperTypes(proto: ProtoClass): List<AbiType> {
-            val superTypeIds: List<Int> = proto.superTypeList
-            if (superTypeIds.isEmpty())
-                return emptyList()
-
-            return proto.superTypeList.memoryOptimizedMapNotNull { typeId ->
-                typeDeserializer.deserializeType(typeId).takeUnless { type ->
-                    isKotlinBuiltInType(type, KOTLIN_ANY_QUALIFIED_NAME) || !typeDeserializer.isPubliclyVisible(type)
-                }
-            }
+        private inline fun deserializeTypes(
+            typeIds: List<Int>,
+            typeParameterResolver: TypeParameterResolver,
+            predicate: (AbiType) -> Boolean
+        ): List<AbiType> = typeIds.memoryOptimizedMapNotNull { typeId ->
+            typeDeserializer.deserializeType(typeId, typeParameterResolver).takeIf(predicate)
         }
 
         private fun deserializeEnumEntry(proto: ProtoEnumEntry, containingEntity: ContainingEntity): AbiEnumEntry {
@@ -209,15 +237,16 @@ private class LibraryDeserializer(
 
         private fun deserializeFunction(
             proto: ProtoFunctionBase,
+            isConstructor: Boolean,
             containingEntity: ContainingEntity,
-            isConstructor: Boolean = false,
+            parentTypeParameterResolver: TypeParameterResolver?
         ): AbiFunction? {
             val annotations = deserializeAnnotations(proto.base)
 
             val containingClassModality = when (containingEntity) {
                 is ContainingEntity.Class -> containingEntity.modality
-                is ContainingEntity.Property -> if (isConstructor) null else containingEntity.containingClassModality
-                is ContainingEntity.Package -> null
+                is ContainingEntity.Property -> containingEntity.containingClassModality
+                else -> null
             }
 
             val parentVisibilityStatus = (containingEntity as? ContainingEntity.Property)?.propertyVisibilityStatus
@@ -228,43 +257,72 @@ private class LibraryDeserializer(
             if (flags.isFakeOverride) // TODO: FO of class with supertype from interop library
                 return null
 
-            val extensionReceiver = if (proto.hasExtensionReceiver()) deserializeValueParameter(proto.extensionReceiver) else null
-            val contextReceiversCount = if (proto.hasContextReceiverParametersCount()) proto.contextReceiverParametersCount else 0
-
-            val allValueParameters = ArrayList<AbiValueParameter>()
-            allValueParameters.addIfNotNull(extensionReceiver)
-            proto.valueParameterList.mapTo(allValueParameters, ::deserializeValueParameter)
-
             val nameAndType = BinaryNameAndType.decode(proto.nameType)
             val functionName = deserializeQualifiedName(
                 nameId = nameAndType.nameIndex,
                 containingEntity = containingEntity
             )
 
-            val nonTrivialReturnType = if (isConstructor) {
-                // Don't show the return type for constructors.
-                null
-            } else {
-                // Show only a non-trivial return type for the others.
-                typeDeserializer.deserializeType(nameAndType.typeIndex).takeUnless { isKotlinBuiltInType(it, KOTLIN_UNIT_QUALIFIED_NAME) }
+            val thisFunctionTypeParameterResolver = when {
+                isConstructor -> {
+                    // Reuse the TP resolved from the class as far as constructors can't have own TPs.
+                    parentTypeParameterResolver!!
+                }
+                containingEntity is ContainingEntity.Property -> {
+                    // Apparently, TPs serialized for property accessor have signature that points to the property itself.
+                    // So, for the need of TP resolution it's necessary to pass the property name to the TP resolver.
+                    TypeParameterResolver(containingEntity.propertyName, proto.typeParameterCount, parentTypeParameterResolver)
+                }
+                else -> TypeParameterResolver(functionName, proto.typeParameterCount, parentTypeParameterResolver)
             }
 
-            return AbiFunctionImpl(
-                qualifiedName = functionName,
-                signatures = deserializeSignatures(proto.base),
-                annotations = annotations,
-                modality = deserializeModality(flags.modality, containingClassModality),
-                isConstructor = isConstructor,
-                isInline = flags.isInline,
-                isSuspend = flags.isSuspend,
-                hasExtensionReceiver = extensionReceiver != null,
-                contextReceiverParametersCount = contextReceiversCount,
-                valueParameters = allValueParameters.compact(),
-                returnType = nonTrivialReturnType
-            )
+            val extensionReceiver = if (proto.hasExtensionReceiver())
+                deserializeValueParameter(proto.extensionReceiver, thisFunctionTypeParameterResolver)
+            else
+                null
+            val contextReceiversCount = if (proto.hasContextReceiverParametersCount()) proto.contextReceiverParametersCount else 0
+
+            val allValueParameters = ArrayList<AbiValueParameter>()
+            allValueParameters.addIfNotNull(extensionReceiver)
+            proto.valueParameterList.mapTo(allValueParameters) { deserializeValueParameter(it, thisFunctionTypeParameterResolver) }
+
+            return if (isConstructor) {
+                check(extensionReceiver == null) { "Unexpected extension receiver found for constructor $functionName" }
+
+                AbiConstructorImpl(
+                    qualifiedName = functionName,
+                    signatures = deserializeSignatures(proto.base),
+                    annotations = annotations,
+                    isInline = flags.isInline,
+                    contextReceiverParametersCount = contextReceiversCount,
+                    valueParameters = allValueParameters.compact()
+                )
+            } else {
+                // Show only a non-trivial return type for the others.
+                val nonTrivialReturnType = typeDeserializer.deserializeType(nameAndType.typeIndex, thisFunctionTypeParameterResolver)
+                    .takeUnless { isKotlinBuiltInType(it, KOTLIN_UNIT_QUALIFIED_NAME, DEFINITELY_NOT_NULL) }
+
+                AbiFunctionImpl(
+                    qualifiedName = functionName,
+                    signatures = deserializeSignatures(proto.base),
+                    annotations = annotations,
+                    modality = flags.modality.toAbiModality(containingClassModality),
+                    isInline = flags.isInline,
+                    isSuspend = flags.isSuspend,
+                    typeParameters = deserializeTypeParameters(proto.typeParameterList, thisFunctionTypeParameterResolver),
+                    hasExtensionReceiverParameter = extensionReceiver != null,
+                    contextReceiverParametersCount = contextReceiversCount,
+                    valueParameters = allValueParameters.compact(),
+                    returnType = nonTrivialReturnType
+                )
+            }
         }
 
-        private fun deserializeProperty(proto: ProtoProperty, containingEntity: ContainingEntity): AbiProperty? {
+        private fun deserializeProperty(
+            proto: ProtoProperty,
+            containingEntity: ContainingEntity,
+            typeParameterResolver: TypeParameterResolver?
+        ): AbiProperty? {
             val annotations = deserializeAnnotations(proto.base)
             val containingClassModality = (containingEntity as? ContainingEntity.Class)?.modality
 
@@ -283,14 +341,28 @@ private class LibraryDeserializer(
                 qualifiedName = qualifiedName,
                 signatures = deserializeSignatures(proto.base),
                 annotations = annotations,
-                modality = deserializeModality(flags.modality, containingClassModality),
+                modality = flags.modality.toAbiModality(containingClassModality),
                 kind = when {
                     flags.isConst -> AbiPropertyKind.CONST_VAL
                     flags.isVar -> AbiPropertyKind.VAR
                     else -> AbiPropertyKind.VAL
                 },
-                getter = if (proto.hasGetter()) deserializeFunction(proto.getter.base, thisPropertyEntity).discardIfExcluded() else null,
-                setter = if (proto.hasSetter()) deserializeFunction(proto.setter.base, thisPropertyEntity).discardIfExcluded() else null
+                getter = proto.hasGetter().ifTrue {
+                    deserializeFunction(
+                        proto = proto.getter.base,
+                        isConstructor = false,
+                        containingEntity = thisPropertyEntity,
+                        parentTypeParameterResolver = typeParameterResolver
+                    ).discardIfExcluded()
+                },
+                setter = proto.hasSetter().ifTrue {
+                    deserializeFunction(
+                        proto = proto.setter.base,
+                        isConstructor = false,
+                        containingEntity = thisPropertyEntity,
+                        parentTypeParameterResolver = typeParameterResolver
+                    ).discardIfExcluded()
+                }
             )
         }
 
@@ -304,6 +376,22 @@ private class LibraryDeserializer(
             return AbiSignaturesImpl(
                 signatureV1 = if (needV1Signatures) signature.render(IdSignatureRenderer.LEGACY) else null,
                 signatureV2 = if (needV2Signatures) signature.render(IdSignatureRenderer.DEFAULT) else null
+            )
+        }
+
+        private fun deserializeTypeParameters(
+            protos: List<ProtoTypeParameter>,
+            typeParameterResolver: TypeParameterResolver,
+        ): List<AbiTypeParameter> = protos.memoryOptimizedMapIndexed { index, proto ->
+            val flags = TypeParameterFlags.decode(proto.base.flags)
+
+            AbiTypeParameterImpl(
+                index = index + typeParameterResolver.typeParametersInOuterDeclarations,
+                variance = flags.variance.toAbiVariance(),
+                isReified = flags.isReified,
+                upperBounds = deserializeTypes(proto.superTypeList, typeParameterResolver) { type ->
+                    !isKotlinBuiltInType(type, KOTLIN_ANY_QUALIFIED_NAME, MARKED_NULLABLE)
+                }
             )
         }
 
@@ -351,23 +439,19 @@ private class LibraryDeserializer(
             else -> VisibilityStatus.NON_PUBLIC
         }
 
-        private fun deserializeModality(modality: Modality, containingClassModality: AbiModality?): AbiModality = when (modality) {
-            Modality.FINAL -> AbiModality.FINAL
-            Modality.OPEN -> if (containingClassModality == AbiModality.FINAL) AbiModality.FINAL else AbiModality.OPEN
-            Modality.ABSTRACT -> AbiModality.ABSTRACT
-            Modality.SEALED -> AbiModality.SEALED
-        }
-
         private fun deserializeIdSignature(symbolId: Long): IdSignature {
             val signatureId = BinarySymbolData.decode(symbolId).signatureId
             return signatureDeserializer.deserializeIdSignature(signatureId)
         }
 
-        private fun deserializeValueParameter(proto: ProtoValueParameter): AbiValueParameter {
+        private fun deserializeValueParameter(
+            proto: ProtoValueParameter,
+            typeParameterResolver: TypeParameterResolver
+        ): AbiValueParameter {
             val flags = ValueParameterFlags.decode(proto.base.flags)
 
             return AbiValueParameterImpl(
-                type = typeDeserializer.deserializeType(BinaryNameAndType.decode(proto.nameType).typeIndex),
+                type = typeDeserializer.deserializeType(BinaryNameAndType.decode(proto.nameType).typeIndex, typeParameterResolver),
                 isVararg = proto.hasVarargElementType(),
                 hasDefaultArg = proto.hasDefaultValue(),
                 isNoinline = flags.isNoInline,
@@ -407,6 +491,21 @@ private class LibraryDeserializer(
         }
     }
 
+    private class TypeParameterResolver(
+        val declarationName: AbiQualifiedName,
+        val ownTypeParameters: Int,
+        val parent: TypeParameterResolver?
+    ) {
+        val typeParametersInOuterDeclarations: Int = parent?.let { it.typeParametersInOuterDeclarations + it.ownTypeParameters } ?: 0
+
+        fun resolveTypeParameterIndex(declarationName: AbiQualifiedName, localIndex: Int): Int =
+            if (declarationName == this.declarationName)
+                typeParametersInOuterDeclarations + localIndex
+            else
+                parent?.resolveTypeParameterIndex(declarationName, localIndex)
+                    ?: error("Type parameter with local index $localIndex can not be resolved for $declarationName")
+    }
+
     private class TypeDeserializer(
         private val libraryFile: IrLibraryFile,
         private val signatureDeserializer: IdSignatureDeserializer
@@ -414,13 +513,13 @@ private class LibraryDeserializer(
         private val cache = HashMap</* type id */ Int, AbiType>()
         private val nonPublicTopLevelClassNames = HashSet<AbiQualifiedName>()
 
-        fun deserializeType(typeId: Int): AbiType {
+        fun deserializeType(typeId: Int, typeParameterResolver: TypeParameterResolver): AbiType {
             return cache.computeIfAbsent(typeId) {
                 val proto = libraryFile.type(typeId)
                 when (val kindCase = proto.kindCase) {
-                    ProtoType.KindCase.DNN -> deserializeDefinitelyNotNullType(proto.dnn)
-                    ProtoType.KindCase.SIMPLE -> deserializeSimpleType(proto.simple)
-                    ProtoType.KindCase.LEGACYSIMPLE -> deserializeSimpleType(proto.legacySimple)
+                    ProtoType.KindCase.DNN -> deserializeDefinitelyNotNullType(proto.dnn, typeParameterResolver)
+                    ProtoType.KindCase.SIMPLE -> deserializeSimpleType(proto.simple, typeParameterResolver)
+                    ProtoType.KindCase.LEGACYSIMPLE -> deserializeSimpleType(proto.legacySimple, typeParameterResolver)
                     ProtoType.KindCase.DYNAMIC -> DynamicTypeImpl
                     ProtoType.KindCase.ERROR -> ErrorTypeImpl
                     ProtoType.KindCase.KIND_NOT_SET -> error("Unexpected IR type: $kindCase")
@@ -431,41 +530,46 @@ private class LibraryDeserializer(
         fun isPubliclyVisible(type: AbiType): Boolean =
             ((type as? AbiType.Simple)?.classifier as? AbiClassifier.Class)?.className !in nonPublicTopLevelClassNames
 
-        private fun deserializeDefinitelyNotNullType(proto: ProtoIrDefinitelyNotNullType): AbiType {
+        private fun deserializeDefinitelyNotNullType(
+            proto: ProtoIrDefinitelyNotNullType,
+            typeParameterResolver: TypeParameterResolver,
+        ): AbiType {
             assert(proto.typesCount == 1) { "Only DefinitelyNotNull type is now supported" }
 
-            val underlyingType = deserializeType(proto.getTypes(0))
-            return if (underlyingType is AbiType.Simple && underlyingType.nullability != AbiTypeNullability.DEFINITELY_NOT_NULL)
-                SimpleTypeImpl(underlyingType.classifier, underlyingType.arguments, AbiTypeNullability.DEFINITELY_NOT_NULL)
+            val underlyingType = deserializeType(proto.getTypes(0), typeParameterResolver)
+            return if (underlyingType is AbiType.Simple && underlyingType.nullability != DEFINITELY_NOT_NULL)
+                SimpleTypeImpl(underlyingType.classifier, underlyingType.arguments, DEFINITELY_NOT_NULL)
             else
                 underlyingType
         }
 
-        private fun deserializeSimpleType(proto: ProtoSimpleType): AbiType.Simple = deserializeSimpleType(
-            symbolId = proto.classifier,
-            typeArgumentIds = proto.argumentList,
-            nullability = if (proto.hasNullability()) {
-                when (proto.nullability!!) {
-                    ProtoSimpleTypeNullability.MARKED_NULLABLE -> AbiTypeNullability.MARKED_NULLABLE
-                    ProtoSimpleTypeNullability.NOT_SPECIFIED -> AbiTypeNullability.NOT_SPECIFIED
-                    ProtoSimpleTypeNullability.DEFINITELY_NOT_NULL -> AbiTypeNullability.DEFINITELY_NOT_NULL
-                }
-            } else AbiTypeNullability.NOT_SPECIFIED
-        )
+        private fun deserializeSimpleType(proto: ProtoSimpleType, typeParameterResolver: TypeParameterResolver): AbiType.Simple =
+            deserializeSimpleType(
+                symbolId = proto.classifier,
+                typeArgumentIds = proto.argumentList,
+                nullability = if (proto.hasNullability()) {
+                    when (proto.nullability!!) {
+                        ProtoSimpleTypeNullability.MARKED_NULLABLE -> MARKED_NULLABLE
+                        ProtoSimpleTypeNullability.NOT_SPECIFIED -> NOT_SPECIFIED
+                        ProtoSimpleTypeNullability.DEFINITELY_NOT_NULL -> DEFINITELY_NOT_NULL
+                    }
+                } else NOT_SPECIFIED,
+                typeParameterResolver
+            )
 
-        private fun deserializeSimpleType(proto: ProtoSimpleTypeLegacy): AbiType.Simple = deserializeSimpleType(
-            symbolId = proto.classifier,
-            typeArgumentIds = proto.argumentList,
-            nullability = if (proto.hasHasQuestionMark() && proto.hasQuestionMark)
-                AbiTypeNullability.MARKED_NULLABLE
-            else
-                AbiTypeNullability.NOT_SPECIFIED
-        )
+        private fun deserializeSimpleType(proto: ProtoSimpleTypeLegacy, typeParameterResolver: TypeParameterResolver): AbiType.Simple =
+            deserializeSimpleType(
+                symbolId = proto.classifier,
+                typeArgumentIds = proto.argumentList,
+                nullability = if (proto.hasHasQuestionMark() && proto.hasQuestionMark) MARKED_NULLABLE else NOT_SPECIFIED,
+                typeParameterResolver
+            )
 
         private fun deserializeSimpleType(
             symbolId: Long,
             typeArgumentIds: List<Long>,
-            nullability: AbiTypeNullability
+            nullability: AbiTypeNullability,
+            typeParameterResolver: TypeParameterResolver
         ): AbiType.Simple {
             val symbolData = BinarySymbolData.decode(symbolId)
             val signature = signatureDeserializer.deserializeIdSignature(symbolData.signatureId)
@@ -478,7 +582,7 @@ private class LibraryDeserializer(
                         classifier = ClassImpl(
                             className = signature.extractQualifiedName()
                         ),
-                        arguments = deserializeTypeArguments(typeArgumentIds),
+                        arguments = deserializeTypeArguments(typeArgumentIds, typeParameterResolver),
                         nullability = nullability
                     )
                 }
@@ -492,7 +596,7 @@ private class LibraryDeserializer(
 
                     SimpleTypeImpl(
                         classifier = ClassImpl(className),
-                        arguments = deserializeTypeArguments(typeArgumentIds),
+                        arguments = deserializeTypeArguments(typeArgumentIds, typeParameterResolver),
                         nullability = nullability
                     )
                 }
@@ -501,8 +605,10 @@ private class LibraryDeserializer(
                     // A type-parameter.
                     SimpleTypeImpl(
                         classifier = TypeParameterImpl(
-                            declaringClassName = (signature.container as CommonSignature).extractQualifiedName(),
-                            index = (signature.inner as LocalSignature).index()
+                            index = typeParameterResolver.resolveTypeParameterIndex(
+                                declarationName = (signature.container as CommonSignature).extractQualifiedName(),
+                                localIndex = (signature.inner as LocalSignature).index()
+                            )
                         ),
                         arguments = emptyList(),
                         nullability = nullability
@@ -513,22 +619,20 @@ private class LibraryDeserializer(
             }
         }
 
-        private fun deserializeTypeArguments(typeArgumentIds: List<Long>): List<AbiTypeArgument> {
-            if (typeArgumentIds.isEmpty())
-                return emptyList()
-
-            return typeArgumentIds.memoryOptimizedMap { typeArgumentId ->
+        private fun deserializeTypeArguments(
+            typeArgumentIds: List<Long>,
+            typeParameterResolver: TypeParameterResolver
+        ): List<AbiTypeArgument> {
+            return if (typeArgumentIds.isEmpty())
+                emptyList()
+            else typeArgumentIds.memoryOptimizedMap { typeArgumentId ->
                 val typeProjection = BinaryTypeProjection.decode(typeArgumentId)
                 if (typeProjection.isStarProjection)
                     StarProjectionImpl
                 else
-                    RegularProjectionImpl(
-                        type = deserializeType(typeProjection.typeIndex),
-                        projectionKind = when (typeProjection.variance) {
-                            Variance.INVARIANT -> AbiVariance.INVARIANT
-                            Variance.IN_VARIANCE -> AbiVariance.IN_VARIANCE
-                            Variance.OUT_VARIANCE -> AbiVariance.OUT_VARIANCE
-                        }
+                    TypeProjectionImpl(
+                        type = deserializeType(typeProjection.typeIndex, typeParameterResolver),
+                        variance = typeProjection.variance.toAbiVariance()
                     )
             }
         }
@@ -556,12 +660,25 @@ private class LibraryDeserializer(
         private val KOTLIN_ANY_QUALIFIED_NAME = AbiQualifiedName(KOTLIN_COMPOUND_NAME, AbiCompoundName("Any"))
         private val KOTLIN_UNIT_QUALIFIED_NAME = AbiQualifiedName(KOTLIN_COMPOUND_NAME, AbiCompoundName("Unit"))
 
-        private fun isKotlinBuiltInType(type: AbiType, className: AbiQualifiedName): Boolean {
-            if (type !is AbiType.Simple || type.nullability != AbiTypeNullability.DEFINITELY_NOT_NULL) return false
+        private fun isKotlinBuiltInType(type: AbiType, className: AbiQualifiedName, nullability: AbiTypeNullability): Boolean {
+            if (type !is AbiType.Simple || type.nullability != nullability) return false
             return (type.classifier as? AbiClassifier.Class)?.className == className
         }
 
         private inline fun CommonSignature.extractQualifiedName(transformRelativeName: (String) -> String = { it }): AbiQualifiedName =
             AbiQualifiedName(AbiCompoundName(packageFqName), AbiCompoundName(transformRelativeName(declarationFqName)))
+
+        private fun Modality.toAbiModality(containingClassModality: AbiModality?): AbiModality = when (this) {
+            Modality.FINAL -> AbiModality.FINAL
+            Modality.OPEN -> if (containingClassModality == AbiModality.FINAL) AbiModality.FINAL else AbiModality.OPEN
+            Modality.ABSTRACT -> AbiModality.ABSTRACT
+            Modality.SEALED -> AbiModality.SEALED
+        }
+
+        private fun Variance.toAbiVariance(): AbiVariance = when (this) {
+            Variance.INVARIANT -> AbiVariance.INVARIANT
+            Variance.IN_VARIANCE -> AbiVariance.IN_VARIANCE
+            Variance.OUT_VARIANCE -> AbiVariance.OUT_VARIANCE
+        }
     }
 }

@@ -115,6 +115,12 @@ public class LibraryAbiReaderTest extends AbstractLibraryAbiReaderTest {
     }
 
     @Test
+    @TestMetadata("type_parameters.kt")
+    public void testType_parameters() throws Exception {
+        runTest("compiler/util-klib-abi/testData/content/type_parameters.kt");
+    }
+
+    @Test
     @TestMetadata("value_parameters.kt")
     public void testValue_parameters() throws Exception {
         runTest("compiler/util-klib-abi/testData/content/value_parameters.kt");

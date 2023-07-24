@@ -9,7 +9,9 @@ import org.jetbrains.kotlin.library.abi.*
 import org.jetbrains.kotlin.library.abi.impl.AbiFunctionImpl.Companion.BITS_ENOUGH_FOR_STORING_PARAMETERS_COUNT
 import org.jetbrains.kotlin.library.abi.impl.AbiRendererImpl.RenderedDeclaration.Companion.appendModalityOf
 import org.jetbrains.kotlin.library.abi.impl.AbiRendererImpl.RenderedDeclaration.Companion.appendNameOf
+import org.jetbrains.kotlin.library.abi.impl.AbiRendererImpl.RenderedDeclaration.Companion.appendSortedTypes
 import org.jetbrains.kotlin.library.abi.impl.AbiRendererImpl.RenderedDeclaration.Companion.appendType
+import org.jetbrains.kotlin.library.abi.impl.AbiRendererImpl.RenderedDeclaration.Companion.appendTypeParametersOf
 import org.jetbrains.kotlin.library.abi.impl.AbiRendererImpl.RenderedTopLevelDeclarations.printNestedDeclarationsInProperOrder as printTopLevelDeclarations
 import kotlin.text.Appendable
 
@@ -158,7 +160,30 @@ internal class AbiRendererImpl(
             }
 
             fun StringBuilder.appendNameOf(declaration: AbiDeclaration) {
-                append(declaration.qualifiedName)
+                // For non-top level declarations print only simple declaration's name.
+                val isTopLevel = declaration.qualifiedName.relativeName.nameSegmentsCount == 1
+                append(if (isTopLevel) declaration.qualifiedName else declaration.qualifiedName.relativeName.simpleName)
+            }
+
+            fun StringBuilder.appendTypeParametersOf(container: AbiTypeParametersContainer) {
+                if (container.typeParameters.isNotEmpty()) {
+                    container.typeParameters.joinTo(this, separator = ", ", prefix = "<", postfix = ">") { typeParameter ->
+                        appendTypeParameter(typeParameter)
+                    }
+                    append(' ')
+                }
+            }
+
+            private fun StringBuilder.appendTypeParameter(typeParameter: AbiTypeParameter): String {
+                append('#').append(typeParameter.index).append(": ")
+                if (typeParameter.isReified) append("reified ")
+                appendVariance(typeParameter.variance)
+                when (typeParameter.upperBounds.size) {
+                    0 -> append("kotlin/Any?")
+                    1 -> appendType(typeParameter.upperBounds[0])
+                    else -> appendSortedTypes(typeParameter.upperBounds, separator = " & ", prefix = "", postfix = "")
+                }
+                return ""
             }
 
             fun StringBuilder.appendType(type: AbiType) {
@@ -174,33 +199,41 @@ internal class AbiRendererImpl(
                             if (type.nullability == AbiTypeNullability.MARKED_NULLABLE) append('?')
                         }
                         is AbiClassifier.TypeParameter -> {
-                            if (type.nullability == AbiTypeNullability.DEFINITELY_NOT_NULL) append('{')
-                            append(classifier.declaringClassName).append('#').append(classifier.index)
+                            append('#').append(classifier.index)
                             when (type.nullability) {
                                 AbiTypeNullability.MARKED_NULLABLE -> append('?')
                                 AbiTypeNullability.NOT_SPECIFIED -> Unit // Do nothing.
-                                AbiTypeNullability.DEFINITELY_NOT_NULL -> append(" & kotlin/Any}")
+                                AbiTypeNullability.DEFINITELY_NOT_NULL -> append("!!")
                             }
                         }
                     }
                     is AbiType.Dynamic -> append("dynamic")
-                    is AbiType.Error -> append("<error>")
+                    is AbiType.Error -> append("error")
                 }
             }
 
             private fun StringBuilder.appendTypeArgument(typeArgument: AbiTypeArgument): String {
                 when (typeArgument) {
                     is AbiTypeArgument.StarProjection -> append('*')
-                    is AbiTypeArgument.RegularProjection -> {
-                        when (typeArgument.projectionKind) {
-                            AbiVariance.INVARIANT -> Unit
-                            AbiVariance.IN_VARIANCE -> append("in ")
-                            AbiVariance.OUT_VARIANCE -> append("out ")
-                        }
+                    is AbiTypeArgument.TypeProjection -> {
+                        appendVariance(typeArgument.variance)
                         appendType(typeArgument.type)
                     }
                 }
                 return ""
+            }
+
+            private fun StringBuilder.appendVariance(variance: AbiVariance) {
+                when (variance) {
+                    AbiVariance.INVARIANT -> Unit
+                    AbiVariance.IN_VARIANCE -> append("in ")
+                    AbiVariance.OUT_VARIANCE -> append("out ")
+                }
+            }
+
+            fun StringBuilder.appendSortedTypes(types: List<AbiType>, separator: String, prefix: String, postfix: String) {
+                types.mapAndSort(naturalOrder()) { buildString { appendType(it) } }
+                    .joinTo(this, separator = separator, prefix = prefix, postfix = postfix)
             }
         }
     }
@@ -212,12 +245,10 @@ internal class AbiRendererImpl(
             if (declaration.isValue) append("value ")
             if (declaration.isFunction) append("fun ")
             appendClassKind(declaration.kind)
-            // TODO: type parameters
+            appendTypeParametersOf(declaration)
             appendNameOf(declaration)
             if (declaration.superTypes.isNotEmpty()) {
-                declaration.superTypes
-                    .mapAndSort(naturalOrder()) { buildString { appendType(it) } }
-                    .joinTo(this, separator = ", ", prefix = " : ")
+                appendSortedTypes(declaration.superTypes, separator = ", ", prefix = " : ", postfix = "")
             }
         }
 
@@ -319,7 +350,7 @@ internal class AbiRendererImpl(
             if (declaration.isSuspend) append("suspend ")
             if (declaration.isInline) append("inline ")
             append(if (declaration.isConstructor) "constructor " else "fun ")
-            // TODO: type parameters
+            appendTypeParametersOf(declaration)
             appendIrregularValueParametersOf(declaration)
             appendNameOf(declaration)
             appendRegularValueParametersOf(declaration)

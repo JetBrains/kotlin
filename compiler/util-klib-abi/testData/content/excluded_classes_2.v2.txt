@@ -4,11 +4,11 @@
 
 // Library unique name: <testExcluded_classes_2>
 final class excluded_classes.test/Bar { // excluded_classes.test/Bar|null[0]
-    constructor excluded_classes.test/Bar.<init>() // excluded_classes.test/Bar.<init>|<init>(){}[0]
+    constructor <init>() // excluded_classes.test/Bar.<init>|<init>(){}[0]
 }
 final class excluded_classes.test/Baz { // excluded_classes.test/Baz|null[0]
-    constructor excluded_classes.test/Baz.<init>() // excluded_classes.test/Baz.<init>|<init>(){}[0]
-    final class excluded_classes.test/Baz.Nested { // excluded_classes.test/Baz.Nested|null[0]
-        constructor excluded_classes.test/Baz.Nested.<init>() // excluded_classes.test/Baz.Nested.<init>|<init>(){}[0]
+    constructor <init>() // excluded_classes.test/Baz.<init>|<init>(){}[0]
+    final class Nested { // excluded_classes.test/Baz.Nested|null[0]
+        constructor <init>() // excluded_classes.test/Baz.Nested.<init>|<init>(){}[0]
     }
 }
