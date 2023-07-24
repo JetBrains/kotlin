@@ -66,7 +66,7 @@ class AllCandidatesResolver(private val firSession: FirSession) {
         calleeName: Name,
         element: KtElement,
     ): List<OverloadCandidate> {
-        initializeBodyResolveContext(firResolveSession, element)
+//        initializeBodyResolveContext(firResolveSession, element)
 
         val firFile = element.containingKtFile.getOrBuildFirFile(firResolveSession)
         return bodyResolveComponents.context.withFile(firFile, bodyResolveComponents) {
@@ -82,7 +82,7 @@ class AllCandidatesResolver(private val firSession: FirSession) {
         derivedClassLookupTag: ConeClassLikeLookupTag,
         element: KtElement
     ): List<OverloadCandidate> {
-        initializeBodyResolveContext(firResolveSession, element)
+//        initializeBodyResolveContext(firResolveSession, element)
 
         val firFile = element.containingKtFile.getOrBuildFirFile(firResolveSession)
         val constructedType = delegatedConstructorCall.constructedTypeRef.coneType as ConeClassLikeType
