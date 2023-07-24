@@ -6,17 +6,11 @@
 package org.jetbrains.kotlin.gradle.plugin.diagnostics
 
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
-import java.io.Serializable
 
-/**
- * Represents a single report
- *
- * Extends [Serializable] to be saveable to Gradle configuration cache. See [EnsureNoKotlinGradlePluginErrors]
- */
 @InternalKotlinGradlePluginApi // used in integration tests
 data class ToolingDiagnostic(
     val id: String, val message: String, val severity: Severity, val throwable: Throwable? = null,
-) : Serializable {
+) {
     enum class Severity {
         /**
          * More visible than most of the output (intuition: yellow-highlighting).
