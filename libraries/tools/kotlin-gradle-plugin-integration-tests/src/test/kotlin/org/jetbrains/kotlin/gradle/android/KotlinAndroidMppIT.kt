@@ -9,7 +9,6 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.TestVersions.AGP.AGP_70
-import org.jetbrains.kotlin.gradle.testbase.TestVersions.AGP.AGP_71
 import org.jetbrains.kotlin.gradle.testbase.TestVersions.Gradle.G_7_1
 import org.jetbrains.kotlin.gradle.testbase.TestVersions.Gradle.G_7_2
 import org.jetbrains.kotlin.gradle.tooling.BuildKotlinToolingMetadataTask
@@ -23,7 +22,6 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.util.zip.ZipFile
 import kotlin.io.path.*
-import kotlin.streams.toList
 import kotlin.test.*
 
 @DisplayName("kotlin-android with mpp")
@@ -132,7 +130,7 @@ class KotlinAndroidMppIT : KGPBaseTest() {
         }
     }
 
-    @AndroidTestVersions(minVersion = AGP_71)
+    @AndroidTestVersions(minVersion = AGP_70)
     @GradleTestVersions(minVersion = G_7_2)
     @DisplayName("mpp source sets are registered in AGP")
     @GradleAndroidTest
