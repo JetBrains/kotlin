@@ -1,3 +1,5 @@
+// MODULE: classifiers_library
+
 package classifiers.test
 
 class RegularClass(val property: String) {

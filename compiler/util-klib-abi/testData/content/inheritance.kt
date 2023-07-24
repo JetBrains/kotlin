@@ -1,3 +1,5 @@
+// MODULE: classifiers_inheritance_library
+
 package classifiers.inheritance
 
 final class FinalClass {

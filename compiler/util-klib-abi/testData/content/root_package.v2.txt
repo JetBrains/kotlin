@@ -3,7 +3,7 @@
 // - Show manifest properties: false
 // - Show declarations: true
 
-// Library unique name: <testRoot_package>
+// Library unique name: <root_package_library>
 final class /Class : /Interface, /Interface.NestedInterface { // /Class|null[0]
     final val property // /Class.property|{}property[0]
         final fun <get-property>(): kotlin/String // /Class.property.<get-property>|<get-property>(){}[0]

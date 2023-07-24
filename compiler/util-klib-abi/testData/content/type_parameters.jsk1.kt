@@ -1,6 +1,9 @@
 // !LANGUAGE: +ContextReceivers
-// IGNORE_BACKEND_K1: JS_IR
 // MODULE: type_parameters_library
+
+// About this test:
+// This is an adapted version of the original `type_parameters.kt` test data file specially for JS IR K1 compiler.
+// For details see the comments below in this file.
 
 package type_parameters.test
 
@@ -12,28 +15,51 @@ fun <A> multipleBounds(p1: A) where A : CharSequence, A : Appendable, A : Number
 
 inline fun <reified R, T> functionWithReifiedParameter(p1: R, p2: T) = Unit
 
-fun <T00, T01 : Any, T02 : CharSequence?, T03 : CharSequence, T04 : Appendable?, T05 : Appendable, T06 : Number?, T07 : Number, T08 : List<*>?, T09 : List<*>,
-     T10, T11 : Any, T12 : CharSequence?, T13 : CharSequence, T14 : Appendable?, T15 : Appendable, T16 : Number?, T17 : Number, T18 : List<*>?, T19 : List<*>,
-     T20, T21 : Any, T22 : CharSequence?, T23 : CharSequence, T24 : Appendable?, T25 : Appendable, T26 : Number?, T27 : Number, T28 : List<*>?, T29 : List<*>,
-     T30, T31 : Any, T32 : CharSequence?, T33 : CharSequence, T34 : Appendable?, T35 : Appendable, T36 : Number?, T37 : Number, T38 : List<*>?, T39 : List<*>,
-     T40, T41 : Any, T42 : CharSequence?, T43 : CharSequence, T44 : Appendable?, T45 : Appendable, T46 : Number?, T47 : Number, T48 : List<*>?, T49 : List<*>,
-     T50, T51 : Any, T52 : CharSequence?, T53 : CharSequence, T54 : Appendable?, T55 : Appendable, T56 : Number?, T57 : Number, T58 : List<*>?, T59 : List<*>> lotsOfTypeParameters(): CharSequence = ""
-
-var <P : Number> P.property: P get() = TODO()
+// Note: The JS K1 compiler considers getters and setters of these two properties to be conflicting with each other:
+//
+//   var <P : Number> P.property: P get() = TODO()
+//       set(_) = Unit
+//   var <P : Number> P?.property: P get() = TODO()
+//       set(_) = Unit
+//
+// To overcome this we just use different upper bounds:
+//   var <P : List<*>> P.property: P get() = TODO()
+//       set(_) = Unit
+//   var <P : Number> P?.property: P get() = TODO()
+//       set(_) = Unit
+var <P : List<*>> P.property: P get() = TODO()
     set(_) = Unit
 var <P : Number> P?.property: P get() = TODO()
     set(_) = Unit
 
+// Note: The JS K1 compiler considers the following two declarations conflicting with each other:
+//
+//   fun <F : Number> one(p1: F)  = Unit
+//   fun <F : Number> one(p1: F?) = Unit
+//
+// Therefore, instead of testing the following three declarations altogether:
+//
+//   fun <F : Number>  one(p1: F)  = Unit // <-- these two are conflicting with each other
+//   fun <F : Number>  one(p1: F?) = Unit // <-- these two are conflicting with each other
+//   fun <F : Number?> one(p1: F)  = Unit
+//
+// we should split them into two pairs:
+//
+//   fun <F : Number>   one(p1: F)  = Unit
+//   fun <F : Number?>  one(p1: F)  = Unit
+//   fun <F : List<*>>  one(p1: F?) = Unit
+//   fun <F : List<*>?> one(p1: F)  = Unit
 fun <F : Number> one(p1: F) = Unit
-fun <F : Number> one(p1: F?) = Unit
 fun <F : Number?> one(p1: F) = Unit
+fun <F : List<*>> one(p1: F?) = Unit
+fun <F : List<*>?> one(p1: F) = Unit
 
 class Outer<O : Appendable>(p1: O) {
     inner class TypeParameterInSuperTypes<A, B> : Interface<List<List<O>>, Map<B, A>, Triple<O, B, A>>
 
     var O.property: O get() = TODO()
         set(_) = Unit
-    var <P : Number> P.property: P get() = TODO()
+    var <P : List<*>> P.property: P get() = TODO()
         set(_) = Unit
     var <P : Number> P?.property: P get() = TODO()
         set(_) = Unit
@@ -48,7 +74,7 @@ class Outer<O : Appendable>(p1: O) {
 
         var N.property: N get() = TODO()
             set(_) = kotlin.Unit
-        var <P : Number> P.property: P get() = TODO()
+        var <P : List<*>> P.property: P get() = TODO()
             set(_) = Unit
         var <P : Number> P?.property: P get() = TODO()
             set(_) = Unit
@@ -65,7 +91,7 @@ class Outer<O : Appendable>(p1: O) {
                 set(_) = kotlin.Unit
             var I.property: I get() = TODO()
                 set(_) = kotlin.Unit
-            var <P : Number> P.property: P get() = TODO()
+            var <P : List<*>> P.property: P get() = TODO()
                 set(_) = Unit
             var <P : Number> P?.property: P get() = TODO()
                 set(_) = Unit
@@ -97,7 +123,7 @@ class Outer<O : Appendable>(p1: O) {
             set(_) = kotlin.Unit
         var I.property: I get() = TODO()
             set(_) = kotlin.Unit
-        var <P : Number> P.property: P get() = TODO()
+        var <P : List<*>> P.property: P get() = TODO()
             set(_) = Unit
         var <P : Number> P?.property: P get() = TODO()
             set(_) = Unit

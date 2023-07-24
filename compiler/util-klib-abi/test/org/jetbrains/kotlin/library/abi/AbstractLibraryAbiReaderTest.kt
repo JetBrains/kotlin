@@ -5,38 +5,133 @@
 
 package org.jetbrains.kotlin.library.abi
 
-import org.jetbrains.kotlin.library.abi.impl.AbiSignatureVersions
-import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEqualsToFile
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.TestInfo
-import java.io.File
+import org.jetbrains.kotlin.js.test.converters.FirJsKlibBackendFacade
+import org.jetbrains.kotlin.js.test.converters.JsKlibBackendFacade
+import org.jetbrains.kotlin.library.abi.handlers.LibraryAbiDumpHandler
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.js.JsPlatforms
+import org.jetbrains.kotlin.test.Constructor
+import org.jetbrains.kotlin.test.FirParser
+import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
+import org.jetbrains.kotlin.test.backend.handlers.NoCompilationErrorsHandler
+import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
+import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.builders.*
+import org.jetbrains.kotlin.test.directives.configureFirParser
+import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
+import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
+import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
+import org.jetbrains.kotlin.test.frontend.fir.Fir2IrJsResultsConverter
+import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
+import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
+import org.jetbrains.kotlin.test.model.*
+import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
+import org.jetbrains.kotlin.test.services.LibraryProvider
+import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 
-@OptIn(ExperimentalLibraryAbiReader::class)
-abstract class AbstractLibraryAbiReaderTest {
-    private lateinit var testName: String
-    private lateinit var buildDir: File
+/**
+ * This test class can potentially be re-used in the future for other backends.
+ */
+abstract class AbstractLibraryAbiReaderTest<FrontendOutput : ResultingArtifact.FrontendOutput<FrontendOutput>>(
+    private val targetPlatform: TargetPlatform,
+    targetBackend: TargetBackend,
+) : AbstractKotlinCompilerWithTargetBackendTest(targetBackend) {
 
-    @BeforeEach
-    fun setUp(testInfo: TestInfo) {
-        testName = getTestName(testInfo)
-        buildDir = setUpBuildDir(testInfo)
-    }
+    abstract val frontend: FrontendKind<*>
+    abstract val frontendFacade: Constructor<FrontendFacade<FrontendOutput>>
+    abstract val converter: Constructor<Frontend2BackendConverter<FrontendOutput, IrBackendInput>>
+    abstract val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
 
-    fun runTest(relativePath: String) {
-        val (sourceFile, dumpFiles) = computeTestFiles(relativePath, AbiSignatureVersions.Supported.entries)
+    open fun TestConfigurationBuilder.applyConfigurators() {}
 
-        val filters = computeFiltersFromTestDirectives(sourceFile)
+    override fun TestConfigurationBuilder.configuration() {
+        globalDefaults {
+            frontend = this@AbstractLibraryAbiReaderTest.frontend
+            targetPlatform = this@AbstractLibraryAbiReaderTest.targetPlatform
+            artifactKind = BinaryKind.NoArtifact
+            targetBackend = this@AbstractLibraryAbiReaderTest.targetBackend
+            dependencyKind = DependencyKind.Binary
+        }
 
-        val library = buildLibrary(sourceFile, libraryName = testName, buildDir)
-        val libraryAbi = LibraryAbiReader.readAbiInfo(library, filters)
+        useAfterAnalysisCheckers(
+            ::BlackBoxCodegenSuppressor
+        )
 
-        dumpFiles.entries.forEach { (signatureVersion, dumpFile) ->
-            val abiDump = LibraryAbiRenderer.render(
-                libraryAbi,
-                AbiRenderingSettings(signatureVersion)
+        applyConfigurators()
+
+        facadeStep(frontendFacade)
+
+        classicFrontendHandlersStep {
+            useHandlers(
+                ::NoCompilationErrorsHandler
             )
+        }
 
-            assertEqualsToFile(dumpFile, abiDump)
+        firHandlersStep {
+            useHandlers(
+                ::NoFirCompilationErrorsHandler
+            )
+        }
+
+        facadeStep(converter)
+        irHandlersStep()
+
+        facadeStep(backendFacade)
+        klibArtifactsHandlersStep {
+            useHandlers(
+                ::LibraryAbiDumpHandler
+            )
         }
     }
+}
+
+abstract class AbstractJsLibraryAbiReaderTest<FrontendOutput : ResultingArtifact.FrontendOutput<FrontendOutput>> :
+    AbstractLibraryAbiReaderTest<FrontendOutput>(
+        JsPlatforms.defaultJsPlatform,
+        TargetBackend.JS_IR,
+    ) {
+
+    override fun TestConfigurationBuilder.applyConfigurators() {
+        useConfigurators(
+            ::CommonEnvironmentConfigurator,
+            ::JsEnvironmentConfigurator,
+        )
+
+        useAdditionalService(::LibraryProvider)
+    }
+}
+
+open class AbstractFirJsLibraryAbiReaderTest : AbstractJsLibraryAbiReaderTest<FirOutputArtifact>() {
+    final override val frontend: FrontendKind<*>
+        get() = FrontendKinds.FIR
+
+    final override val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>
+        get() = ::FirFrontendFacade
+
+    override val converter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
+        get() = ::Fir2IrJsResultsConverter
+
+    override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
+        get() = ::FirJsKlibBackendFacade
+
+    override fun configure(builder: TestConfigurationBuilder) {
+        builder.configureFirParser(FirParser.Psi)
+        super.configure(builder)
+    }
+}
+
+open class AbstractClassicJsLibraryAbiReaderTest : AbstractJsLibraryAbiReaderTest<ClassicFrontendOutputArtifact>() {
+    final override val frontend: FrontendKind<*>
+        get() = FrontendKinds.ClassicFrontend
+
+    final override val frontendFacade: Constructor<FrontendFacade<ClassicFrontendOutputArtifact>>
+        get() = ::ClassicFrontendFacade
+
+    override val converter: Constructor<Frontend2BackendConverter<ClassicFrontendOutputArtifact, IrBackendInput>>
+        get() = ::ClassicFrontend2IrConverter
+
+    override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
+        get() = ::JsKlibBackendFacade
 }

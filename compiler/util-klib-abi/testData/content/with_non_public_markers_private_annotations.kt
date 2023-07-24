@@ -1,4 +1,5 @@
 // NON_PUBLIC_MARKERS: /PublicAnnotation /InternalAnnotation /PrivateAnnotation /PublicContainer.PublicAnnotation /PublicContainer.InternalAnnotation /InternalContainer.PublicAnnotation /InternalContainer.InternalAnnotation /PrivateContainer.PublicAnnotation /PrivateContainer.InternalAnnotation
+// MODULE: with_non_public_markers_library
 
 annotation class PublicAnnotation
 internal annotation class InternalAnnotation

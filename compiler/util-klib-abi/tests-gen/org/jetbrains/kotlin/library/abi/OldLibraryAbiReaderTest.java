@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/util-klib-abi/testData/content")
 @TestDataPath("$PROJECT_ROOT")
-public class LibraryAbiReaderTest extends AbstractLibraryAbiReaderTest {
+public class OldLibraryAbiReaderTest extends AbstractOldLibraryAbiReaderTest {
     @Test
     public void testAllFilesPresentInContent() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/util-klib-abi/testData/content"), Pattern.compile("^(.+)\\.kt$"), null, true);
@@ -52,12 +52,6 @@ public class LibraryAbiReaderTest extends AbstractLibraryAbiReaderTest {
     @TestMetadata("excluded_classes_3.kt")
     public void testExcluded_classes_3() throws Exception {
         runTest("compiler/util-klib-abi/testData/content/excluded_classes_3.kt");
-    }
-
-    @Test
-    @TestMetadata("excluded_classes_unspecified.kt")
-    public void testExcluded_classes_unspecified() throws Exception {
-        runTest("compiler/util-klib-abi/testData/content/excluded_classes_unspecified.kt");
     }
 
     @Test
@@ -97,12 +91,6 @@ public class LibraryAbiReaderTest extends AbstractLibraryAbiReaderTest {
     }
 
     @Test
-    @TestMetadata("excluded_packages_unspecified.kt")
-    public void testExcluded_packages_unspecified() throws Exception {
-        runTest("compiler/util-klib-abi/testData/content/excluded_packages_unspecified.kt");
-    }
-
-    @Test
     @TestMetadata("inheritance.kt")
     public void testInheritance() throws Exception {
         runTest("compiler/util-klib-abi/testData/content/inheritance.kt");
@@ -118,6 +106,12 @@ public class LibraryAbiReaderTest extends AbstractLibraryAbiReaderTest {
     @TestMetadata("type_parameters.kt")
     public void testType_parameters() throws Exception {
         runTest("compiler/util-klib-abi/testData/content/type_parameters.kt");
+    }
+
+    @Test
+    @TestMetadata("type_parameters.jsk1.kt")
+    public void testType_parameters_jsk1() throws Exception {
+        runTest("compiler/util-klib-abi/testData/content/type_parameters.jsk1.kt");
     }
 
     @Test
@@ -166,11 +160,5 @@ public class LibraryAbiReaderTest extends AbstractLibraryAbiReaderTest {
     @TestMetadata("with_non_public_markers_private_annotations.kt")
     public void testWith_non_public_markers_private_annotations() throws Exception {
         runTest("compiler/util-klib-abi/testData/content/with_non_public_markers_private_annotations.kt");
-    }
-
-    @Test
-    @TestMetadata("with_non_public_markers_unspecified.kt")
-    public void testWith_non_public_markers_unspecified() throws Exception {
-        runTest("compiler/util-klib-abi/testData/content/with_non_public_markers_unspecified.kt");
     }
 }

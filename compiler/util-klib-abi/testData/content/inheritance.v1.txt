@@ -3,7 +3,7 @@
 // - Show manifest properties: false
 // - Show declarations: true
 
-// Library unique name: <testInheritance>
+// Library unique name: <classifiers_inheritance_library>
 abstract class classifiers.inheritance/AbstractClass { // classifiers.inheritance/AbstractClass|null[0]
     abstract val abstractVal // classifiers.inheritance/AbstractClass.abstractVal|2000751617811374017[0]
         abstract fun <get-abstractVal>(): kotlin/String // classifiers.inheritance/AbstractClass.abstractVal.<get-abstractVal>|-836793625462255519[0]

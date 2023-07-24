@@ -1,4 +1,5 @@
 // EXCLUDED_CLASSES: one.two/Foo three.four/Bar five.six/Baz
+// MODULE: excluded_classes_library
 
 package excluded_classes.test
 

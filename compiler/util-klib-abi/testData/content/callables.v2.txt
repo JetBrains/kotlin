@@ -3,7 +3,7 @@
 // - Show manifest properties: false
 // - Show declarations: true
 
-// Library unique name: <testCallables>
+// Library unique name: <callables_library>
 final class callables.test/FunctionContainer { // callables.test/FunctionContainer|null[0]
     constructor <init>() // callables.test/FunctionContainer.<init>|<init>(){}[0]
     final fun regularFun(): kotlin/String // callables.test/FunctionContainer.regularFun|regularFun(){}[0]

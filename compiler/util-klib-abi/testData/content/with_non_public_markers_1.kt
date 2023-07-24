@@ -1,4 +1,5 @@
 // NON_PUBLIC_MARKERS: one.two/Three.Four five.six/Seven.Eight nine.ten/Eleven.Twelve
+// MODULE: with_non_public_markers_library
 
 annotation class Foo
 annotation class Bar
