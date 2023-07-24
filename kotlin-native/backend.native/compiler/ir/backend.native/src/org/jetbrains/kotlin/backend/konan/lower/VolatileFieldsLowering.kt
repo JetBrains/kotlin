@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
+import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.irCall
@@ -203,11 +204,24 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
                     IntrinsicType.GET_AND_ADD_FIELD to ::getAndAddFunction,
             )
 
+            private val IrBlock.singleExpressionOrNull get() = statements.singleOrNull() as? IrExpression
+
+            private tailrec fun getConstPropertyReference(expression: IrExpression?, expectedReturn: IrReturnableBlockSymbol?) : IrPropertyReference? {
+                return when {
+                    expression == null -> null
+                    expectedReturn == null && expression is IrPropertyReference -> expression
+                    expectedReturn == null && expression is IrReturnableBlock -> getConstPropertyReference(expression.singleExpressionOrNull, expression.symbol)
+                    expression is IrReturn && expression.returnTargetSymbol == expectedReturn -> getConstPropertyReference(expression.value, null)
+                    expression is IrBlock -> getConstPropertyReference(expression.singleExpressionOrNull, expectedReturn)
+                    else -> null
+                }
+            }
+
             override fun visitCall(expression: IrCall): IrExpression {
                 expression.transformChildrenVoid(this)
                 val intrinsicType = tryGetIntrinsicType(expression).takeIf { it in intrinsicMap } ?: return expression
                 builder.at(expression)
-                val reference = expression.extensionReceiver as? IrPropertyReference
+                val reference = getConstPropertyReference(expression.extensionReceiver, null)
                         ?: return unsupported("Only compile-time known IrProperties supported for $intrinsicType")
                 val property = reference.symbol.owner
                 val backingField = property.backingField
