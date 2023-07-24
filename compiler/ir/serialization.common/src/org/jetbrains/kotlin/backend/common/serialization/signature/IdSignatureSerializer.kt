@@ -73,14 +73,6 @@ class PublicIdSignatureComputer(val mangler: KotlinMangler.IrMangler) : IdSignat
             d.acceptVoid(this)
         }
 
-        private fun createContainer() {
-            container = container?.let {
-                buildContainerSignature(it)
-            } ?: build()
-
-            reset(false)
-        }
-
         private fun collectParents(declaration: IrDeclarationWithName) {
             declaration.parent.acceptVoid(this)
             if (declaration !is IrClass || !declaration.isFacadeClass) {
@@ -88,17 +80,13 @@ class PublicIdSignatureComputer(val mangler: KotlinMangler.IrMangler) : IdSignat
             }
         }
 
-        private fun setDescription(declaration: IrDeclaration) {
-            if (container != null) {
-                description = declaration.render()
-            }
-        }
+        override fun renderDeclarationForDescription(declaration: IrDeclaration): String = declaration.render()
 
         override fun visitElement(element: IrElement) =
             error("Unexpected element ${element.render()}")
 
         override fun visitErrorDeclaration(declaration: IrErrorDeclaration) {
-            description = declaration.render()
+            description = renderDeclarationForDescription(declaration)
         }
 
         override fun visitPackageFragment(declaration: IrPackageFragment) {
@@ -115,7 +103,7 @@ class PublicIdSignatureComputer(val mangler: KotlinMangler.IrMangler) : IdSignat
             if (declaration.kind == ClassKind.ENUM_ENTRY) {
                 classFqnSegments.add(MangleConstant.ENUM_ENTRY_CLASS_NAME)
             }
-            setDescription(declaration)
+            setDescriptionIfLocalDeclaration(declaration)
             setExpected(declaration.isExpect)
         }
 
@@ -132,7 +120,9 @@ class PublicIdSignatureComputer(val mangler: KotlinMangler.IrMangler) : IdSignat
                 collectParents(declaration)
                 isTopLevelPrivate = isTopLevelPrivate || declaration.isTopLevelPrivate
                 setHashIdAndDescriptionFor(declaration, isPropertyAccessor = false)
-                setDescription(declaration)
+
+                // If this is a local function, overwrite `description` with the IR function's rendered form.
+                setDescriptionIfLocalDeclaration(declaration)
             }
             setExpected(declaration.isExpect)
         }
@@ -178,7 +168,7 @@ class PublicIdSignatureComputer(val mangler: KotlinMangler.IrMangler) : IdSignat
             } else {
                 classFqnSegments.add(MangleConstant.TYPE_PARAMETER_MARKER_NAME)
             }
-            setHashIdAndDescription(declaration.index.toLong(), declaration.render(), isPropertyAccessor = false)
+            setHashIdAndDescription(declaration.index.toLong(), renderDeclarationForDescription(declaration), isPropertyAccessor = false)
         }
 
         override fun visitField(declaration: IrField) {
@@ -189,7 +179,7 @@ class PublicIdSignatureComputer(val mangler: KotlinMangler.IrMangler) : IdSignat
                 prop.acceptVoid(this)
                 createContainer()
                 classFqnSegments.add(MangleConstant.BACKING_FIELD_NAME)
-                description = declaration.render()
+                setDescriptionIfLocalDeclaration(declaration)
             } else {
                 collectParents(declaration)
                 setHashIdAndDescriptionFor(declaration, isPropertyAccessor = false)

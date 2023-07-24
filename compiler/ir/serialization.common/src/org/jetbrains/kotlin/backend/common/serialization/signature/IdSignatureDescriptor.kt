@@ -30,23 +30,12 @@ open class IdSignatureDescriptor(private val mangler: KotlinMangler.DescriptorMa
             d.accept(this, null)
         }
 
-        private fun createContainer() {
-            container = container?.let {
-                buildContainerSignature(it)
-            } ?: build()
-
-            reset(false)
-        }
-
         private fun reportUnexpectedDescriptor(descriptor: DeclarationDescriptor) {
             error("Unexpected descriptor $descriptor")
         }
 
-        private fun setDescription(descriptor: DeclarationDescriptor) {
-            if (container != null) {
-                description = DescriptorRenderer.SHORT_NAMES_IN_TYPES.render(descriptor)
-            }
-        }
+        override fun renderDeclarationForDescription(declaration: DeclarationDescriptor): String =
+            DescriptorRenderer.SHORT_NAMES_IN_TYPES.render(declaration)
 
         private fun collectParents(descriptor: DeclarationDescriptorNonRoot) {
             descriptor.containingDeclaration.accept(this, null)
@@ -76,7 +65,9 @@ open class IdSignatureDescriptor(private val mangler: KotlinMangler.DescriptorMa
             collectParents(descriptor)
             setHashIdAndDescriptionFor(descriptor, isPropertyAccessor = false)
             isTopLevelPrivate = isTopLevelPrivate or descriptor.isTopLevelPrivate
-            setDescription(descriptor)
+
+            // If this is a local function, overwrite `description` with the descriptor's rendered form.
+            setDescriptionIfLocalDeclaration(descriptor)
             setExpected(descriptor.isExpect)
             platformSpecificFunction(descriptor)
         }
@@ -103,7 +94,7 @@ open class IdSignatureDescriptor(private val mangler: KotlinMangler.DescriptorMa
                 }
             }
 
-            setDescription(descriptor)
+            setDescriptionIfLocalDeclaration(descriptor)
             setExpected(descriptor.isExpect)
             platformSpecificClass(descriptor)
         }
