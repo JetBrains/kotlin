@@ -42,7 +42,7 @@ open enum class classifiers.test/EnumClassWithEntryClasses : kotlin/Enum<classif
     final fun classifiers.test/EnumClassWithEntryClasses.valueOf(kotlin/String): classifiers.test/EnumClassWithEntryClasses // classifiers.test/EnumClassWithEntryClasses.valueOf|-4683474617854611729[0]
     final fun classifiers.test/EnumClassWithEntryClasses.values(): kotlin/Array<classifiers.test/EnumClassWithEntryClasses> // classifiers.test/EnumClassWithEntryClasses.values|-8715569000920726747[0]
     enum entry classifiers.test/EnumClassWithEntryClasses.BAR_NO_CLASS // classifiers.test/EnumClassWithEntryClasses.BAR_NO_CLASS|null[0]
-    enum entry classifiers.test/EnumClassWithEntryClasses.BAZ_HAZ_CLASS // classifiers.test/EnumClassWithEntryClasses.BAZ_HAZ_CLASS|null[0]
+    enum entry classifiers.test/EnumClassWithEntryClasses.BAZ_HAS_CLASS // classifiers.test/EnumClassWithEntryClasses.BAZ_HAS_CLASS|null[0]
     enum entry classifiers.test/EnumClassWithEntryClasses.FOO_HAS_CLASS // classifiers.test/EnumClassWithEntryClasses.FOO_HAS_CLASS|null[0]
 }
 final enum class classifiers.test/EnumClassWithoutEntryClasses : kotlin/Enum<classifiers.test/EnumClassWithoutEntryClasses> { // classifiers.test/EnumClassWithoutEntryClasses|null[0]

@@ -38,7 +38,7 @@ enum class EnumClassWithoutEntryClasses {
 enum class EnumClassWithEntryClasses {
     FOO_HAS_CLASS { override fun function() = "" },
     BAR_NO_CLASS,
-    BAZ_HAZ_CLASS { override fun function() = "" };
+    BAZ_HAS_CLASS { override fun function() = "" };
 
     open fun function(): String = ""
 }
