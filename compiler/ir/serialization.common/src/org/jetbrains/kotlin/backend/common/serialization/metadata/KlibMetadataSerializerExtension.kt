@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.common.serialization.metadata
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
@@ -16,7 +15,6 @@ import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTabl
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyPublicApi
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.serialization.DescriptorSerializer.Companion.sort
@@ -32,11 +30,11 @@ class KlibMetadataSerializerExtension(
     override val stringTable: StringTableImpl,
     private val allowErrorTypes: Boolean,
     private val exportKDoc: Boolean,
-    private val headerKlib: Boolean
+    private val produceHeaderKlib: Boolean
 ) : KotlinSerializerExtensionBase(KlibMetadataSerializerProtocol) {
     override fun shouldUseTypeTable(): Boolean = true
     override val customClassMembersProducer: ClassMembersProducer?
-        get() = if (headerKlib)
+        get() = if (produceHeaderKlib)
             object : ClassMembersProducer {
                 override fun getCallableMembers(classDescriptor: ClassDescriptor) =
                     sort(

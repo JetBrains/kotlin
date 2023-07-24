@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.util.getAbsoluteFile
 import org.junit.jupiter.api.Tag
 import java.io.File
 import kotlin.test.assertContentEquals
-import kotlin.test.assertFails
+import kotlin.test.assertFailsWith
 
 private fun AbstractNativeSimpleTest.getHeaderPath(rev: String) = buildDir.absolutePath + "/header.$rev.klib"
 private fun AbstractNativeSimpleTest.generateTestcaseFromDirectory(source: File, rev: String, extraArgs: List<String>): TestCase {
@@ -42,7 +42,7 @@ private fun AbstractNativeSimpleTest.generateTestcaseFromDirectory(source: File,
     }
 }
 @Tag("header-klib-compare")
-@UsePartialLinkage(UsePartialLinkage.Mode.DISABLED)
+@UsePartialLinkage(UsePartialLinkage.Mode.ENABLED_WITH_ERROR)
 abstract class AbstractNativeHeaderKlibCompareTest : AbstractNativeSimpleTest() {
 
     protected fun runTest(@TestDataFile testPath: String) {
@@ -71,7 +71,7 @@ abstract class AbstractNativeHeaderKlibCompareTest : AbstractNativeSimpleTest() 
             compileToLibrary(testCaseDifferentAbi)
             val headerKlibDifferentAbi = File(getHeaderPath("differentAbi"))
             assert(headerKlibDifferentAbi.exists())
-            assertFails("base and differentAbi header klib are equal") {
+            assertFailsWith<AssertionError>("base and differentAbi header klib are equal") {
                 assertContentEquals(headerKlibBase.readBytes(), headerKlibDifferentAbi.readBytes())
             }
         }
@@ -80,6 +80,7 @@ abstract class AbstractNativeHeaderKlibCompareTest : AbstractNativeSimpleTest() 
 }
 
 @Tag("header-klib-compile")
+@UsePartialLinkage(UsePartialLinkage.Mode.ENABLED_WITH_ERROR)
 abstract class AbstractNativeHeaderKlibCompileTest : AbstractNativeSimpleTest() {
 
     protected fun runTest(@TestDataFile testPath: String) {

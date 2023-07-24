@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.library.SerializedMetadata
 internal data class SerializerInput(
         val moduleDescriptor: ModuleDescriptor,
         val psiToIrOutput: PsiToIrOutput.ForKlib?,
-        val headerKlib: Boolean,
+        val produceHeaderKlib: Boolean,
 )
 
 data class SerializerOutput(
@@ -50,8 +50,8 @@ internal val SerializerPhase = createSimpleNamedCompilerPhase<PhaseContext, Seri
                 normalizeAbsolutePaths = normalizeAbsolutePaths,
                 sourceBaseDirs = relativePathBase,
                 languageVersionSettings = config.languageVersionSettings,
-                bodiesOnlyForInlines = input.headerKlib,
-                skipPrivateApi = input.headerKlib,
+                bodiesOnlyForInlines = input.produceHeaderKlib,
+                skipPrivateApi = input.produceHeaderKlib,
         ).serializedIrModule(ir)
     }
 
@@ -60,17 +60,17 @@ internal val SerializerPhase = createSimpleNamedCompilerPhase<PhaseContext, Seri
         config.configuration.get(CommonConfigurationKeys.METADATA_VERSION)!!,
         config.project,
         exportKDoc = context.shouldExportKDoc(),
-        !expectActualLinker, includeOnlyModuleContent = true, produceHeaderKlib = input.headerKlib)
+        !expectActualLinker, includeOnlyModuleContent = true, produceHeaderKlib = input.produceHeaderKlib)
     val serializedMetadata = serializer.serializeModule(input.moduleDescriptor)
     val neededLibraries = config.librariesWithDependencies()
     SerializerOutput(serializedMetadata, serializedIr, null, neededLibraries)
 }
 
 internal fun <T : PhaseContext> PhaseEngine<T>.runSerializer(
-        moduleDescriptor: ModuleDescriptor,
-        psiToIrResult: PsiToIrOutput.ForKlib?,
-        headerKlib: Boolean = false,
+    moduleDescriptor: ModuleDescriptor,
+    psiToIrResult: PsiToIrOutput.ForKlib?,
+    produceHeaderKlib: Boolean = false,
 ): SerializerOutput {
-    val input = SerializerInput(moduleDescriptor, psiToIrResult, headerKlib)
+    val input = SerializerInput(moduleDescriptor, psiToIrResult, produceHeaderKlib)
     return this.runPhase(SerializerPhase, input)
 }

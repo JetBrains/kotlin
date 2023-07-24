@@ -1361,7 +1361,8 @@ open class IrFileSerializer(
     open fun backendSpecificSerializeAllMembers(irClass: IrClass) = false
     open fun backendSpecificMetadata(irFile: IrFile): FileBackendSpecificMetadata? = null
 
-    private fun skipIfPrivate(declaration: DeclarationDescriptor) = skipPrivateApi && declaration is DeclarationDescriptorWithVisibility && !declaration.isEffectivelyPublicApi
+    private fun skipIfPrivate(declaration: IrDeclaration) =
+        skipPrivateApi && (declaration as? IrDeclarationWithVisibility)?.visibility?.isPublicAPI != true
 
     open fun memberNeedsSerialization(member: IrDeclaration): Boolean {
         val parent = member.parent
@@ -1369,8 +1370,7 @@ open class IrFileSerializer(
         if (backendSpecificSerializeAllMembers(parent)) return true
         if (bodiesOnlyForInlines && member is IrAnonymousInitializer && parent.visibility != DescriptorVisibilities.LOCAL)
             return false
-        val descriptor = member.descriptor
-        if (skipPrivateApi && descriptor is DeclarationDescriptorWithVisibility && !descriptor.visibility.isPublicAPI) {
+        if (skipIfPrivate(member)) {
             return false
         }
 
@@ -1435,8 +1435,7 @@ open class IrFileSerializer(
             .addAllAnnotation(serializeAnnotations(file.annotations))
 
         file.declarations.forEach {
-            val descriptor = it.descriptor
-            if (skipIfPrivate(descriptor)) {
+            if (skipIfPrivate(it)) {
                 // Skip the declaration if producing header klib and the declaration is not public.
                 return@forEach
             }
@@ -1462,7 +1461,7 @@ open class IrFileSerializer(
 
         // Make sure that all top level properties are initialized on library's load.
         file.declarations
-            .filterIsInstanceAnd<IrProperty> { it.backingField?.initializer != null && keepOrderOfProperties(it) && !skipIfPrivate(it.descriptor) }
+            .filterIsInstanceAnd<IrProperty> { it.backingField?.initializer != null && keepOrderOfProperties(it) && !skipIfPrivate(it) }
             .forEach {
                 val fieldSymbol = it.backingField?.symbol ?: error("Not found ID ${it.render()}")
                 proto.addExplicitlyExportedToCompiler(serializeIrSymbol(fieldSymbol))
