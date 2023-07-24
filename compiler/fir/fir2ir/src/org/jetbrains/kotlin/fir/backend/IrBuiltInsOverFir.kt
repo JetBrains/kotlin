@@ -14,9 +14,11 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.ir.BuiltInOperatorNames
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -732,8 +734,9 @@ class IrBuiltInsOverFir(
         referenceClassByClassId(ClassId.topLevel(topLevelFqName))
 
     private fun referenceClassByClassId(classId: ClassId): IrClassSymbol? {
-        val firSymbol = components.session.symbolProvider.getClassLikeSymbolByClassId(classId) ?: return null
-        val firClassSymbol = firSymbol as? FirClassSymbol ?: return null
+        val firClassSymbol = components.session.symbolProvider.getClassLikeSymbolByClassId(classId) as? FirClassSymbol ?: return null
+        firClassSymbol.lazyResolveToPhase(FirResolvePhase.STATUS)
+
         return components.classifierStorage.getIrClassSymbol(firClassSymbol)
     }
 
@@ -1195,13 +1198,15 @@ class IrBuiltInsOverFir(
         )
     }
 
-    private fun findFunctions(packageName: FqName, name: Name): List<IrSimpleFunctionSymbol> =
-        components.session.symbolProvider.getTopLevelFunctionSymbols(packageName, name).mapNotNull { firOpSymbol ->
-            components.declarationStorage.getIrFunctionSymbol(firOpSymbol) as? IrSimpleFunctionSymbol
-        }
+    private fun findFunctions(packageName: FqName, name: Name): List<IrSimpleFunctionSymbol> {
+        return components.session.symbolProvider.getTopLevelFunctionSymbols(packageName, name)
+            .onEach { it.lazyResolveToPhase(FirResolvePhase.STATUS) }
+            .mapNotNull { components.declarationStorage.getIrFunctionSymbol(it) as? IrSimpleFunctionSymbol }
+    }
 
-    private fun findProperties(packageName: FqName, name: Name): List<IrPropertySymbol> =
-        components.session.symbolProvider.getTopLevelPropertySymbols(packageName, name).mapNotNull { firOpSymbol ->
-            components.declarationStorage.getIrPropertySymbol(firOpSymbol) as? IrPropertySymbol
-        }
+    private fun findProperties(packageName: FqName, name: Name): List<IrPropertySymbol> {
+        return components.session.symbolProvider.getTopLevelPropertySymbols(packageName, name)
+            .onEach { it.lazyResolveToPhase(FirResolvePhase.STATUS) }
+            .mapNotNull { components.declarationStorage.getIrPropertySymbol(it) as? IrPropertySymbol }
+    }
 }
