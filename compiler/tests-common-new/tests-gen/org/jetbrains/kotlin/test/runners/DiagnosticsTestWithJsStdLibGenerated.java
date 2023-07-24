@@ -514,6 +514,12 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
         public void testWrongExportedDeclarationInExportedFile() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/wrongExportedDeclarationInExportedFile.kt");
         }
+
+        @Test
+        @TestMetadata("wrongExportedDeclarationInExportedFileWhenIgnored.kt")
+        public void testWrongExportedDeclarationInExportedFileWhenIgnored() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/wrongExportedDeclarationInExportedFileWhenIgnored.kt");
+        }
     }
 
     @Nested

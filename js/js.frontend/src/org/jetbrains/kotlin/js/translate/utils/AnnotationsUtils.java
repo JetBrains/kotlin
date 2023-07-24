@@ -128,6 +128,12 @@ public final class AnnotationsUtils {
         }
 
         if (hasAnnotationOrInsideAnnotatedClass(descriptor, JS_EXPORT_IGNORE)) return false;
+
+        if (descriptor instanceof PropertyAccessorDescriptor) {
+            PropertyAccessorDescriptor propertyAccessor = (PropertyAccessorDescriptor) descriptor;
+            if (propertyAccessor.getCorrespondingProperty().getAnnotations().hasAnnotation(JS_EXPORT_IGNORE)) return false;
+        }
+
         if (hasAnnotationOrInsideAnnotatedClass(descriptor, JS_EXPORT)) return true;
 
         if (CollectionsKt.any(getContainingFileAnnotations(bindingContext, descriptor), annotation ->
