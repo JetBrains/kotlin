@@ -29,7 +29,7 @@ object ViperPoweredDeclarationChecker : FirFunctionChecker() {
         val contractDescription = declaration.contractDescription as? FirResolvedContractDescription ?: return
 
         val converter = Converter()
-        val config = Config(asScala(listOf<String>()).toSeq())
+        val config = Config(asScala(listOf("--ignoreFile", "dummy.vpr")).toSeq())
 
         @Suppress("UNCHECKED_CAST")
         val verifier = DefaultMainVerifier(
