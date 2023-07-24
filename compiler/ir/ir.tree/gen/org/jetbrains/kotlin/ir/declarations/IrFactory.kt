@@ -235,14 +235,6 @@ interface IrFactory {
     @Deprecated(
         message = "This method was moved to an extension." +
                 " This variant of the method will be removed when the 2024.2 IntelliJ platform is shipped (see KTIJ-26314).",
-        replaceWith = ReplaceWith(
-            """createBlockBody(
-                startOffset = startOffset,
-                endOffset = endOffset,
-                initializer = initializer,
-            )""",
-            "org.jetbrains.kotlin.ir.declarations.createBlockBody",
-        ),
         level = DeprecationLevel.HIDDEN,
     )
     fun createBlockBody(
@@ -258,14 +250,6 @@ interface IrFactory {
     @Deprecated(
         message = "This method was moved to an extension." +
                 " This variant of the method will be removed when the 2024.2 IntelliJ platform is shipped (see KTIJ-26314).",
-        replaceWith = ReplaceWith(
-            """createBlockBody(
-                startOffset = startOffset,
-                endOffset = endOffset,
-                statements = statements,
-            )""",
-            "org.jetbrains.kotlin.ir.declarations.createBlockBody",
-        ),
         level = DeprecationLevel.HIDDEN,
     )
     fun createBlockBody(
@@ -281,26 +265,6 @@ interface IrFactory {
     @Deprecated(
         message = "The method's parameters were reordered." +
                 " This variant of the method will be removed when the 2024.2 IntelliJ platform is shipped (see KTIJ-26314).",
-        replaceWith = ReplaceWith(
-            """createClass(
-                startOffset = startOffset,
-                endOffset = endOffset,
-                origin = origin,
-                name = name,
-                visibility = visibility,
-                symbol = symbol,
-                kind = kind,
-                modality = modality,
-                isExternal = isExternal,
-                isCompanion = isCompanion,
-                isInner = isInner,
-                isData = isData,
-                isValue = isValue,
-                isExpect = isExpect,
-                isFun = isFun,
-                source = source,
-            )""",
-        ),
         level = DeprecationLevel.HIDDEN,
     )
     fun createClass(
@@ -342,22 +306,6 @@ interface IrFactory {
     @Deprecated(
         message = "The method's parameters were reordered." +
                 " This variant of the method will be removed when the 2024.2 IntelliJ platform is shipped (see KTIJ-26314).",
-        replaceWith = ReplaceWith(
-            """createConstructor(
-                startOffset = startOffset,
-                endOffset = endOffset,
-                origin = origin,
-                name = name,
-                visibility = visibility,
-                isInline = isInline,
-                isExpect = isExpect,
-                returnType = returnType,
-                symbol = symbol,
-                isPrimary = isPrimary,
-                isExternal = isExternal,
-                containerSource = containerSource,
-            )""",
-        ),
         level = DeprecationLevel.HIDDEN,
     )
     fun createConstructor(
@@ -391,15 +339,6 @@ interface IrFactory {
     @Deprecated(
         message = "The method's parameters were reordered." +
                 " This variant of the method will be removed when the 2024.2 IntelliJ platform is shipped (see KTIJ-26314).",
-        replaceWith = ReplaceWith(
-            """createEnumEntry(
-                startOffset = startOffset,
-                endOffset = endOffset,
-                origin = origin,
-                name = name,
-                symbol = symbol,
-            )""",
-        ),
         level = DeprecationLevel.HIDDEN,
     )
     fun createEnumEntry(
@@ -419,12 +358,6 @@ interface IrFactory {
     @Deprecated(
         message = "This method was moved to an extension." +
                 " This variant of the method will be removed when the 2024.2 IntelliJ platform is shipped (see KTIJ-26314).",
-        replaceWith = ReplaceWith(
-            """createExpressionBody(
-                expression = expression,
-            )""",
-            "org.jetbrains.kotlin.ir.declarations.createExpressionBody",
-        ),
         level = DeprecationLevel.HIDDEN,
     )
     fun createExpressionBody(expression: IrExpression): IrExpressionBody =
@@ -435,20 +368,6 @@ interface IrFactory {
     @Deprecated(
         message = "The method's parameters were reordered." +
                 " This variant of the method will be removed when the 2024.2 IntelliJ platform is shipped (see KTIJ-26314).",
-        replaceWith = ReplaceWith(
-            """createField(
-                startOffset = startOffset,
-                endOffset = endOffset,
-                origin = origin,
-                name = name,
-                visibility = visibility,
-                symbol = symbol,
-                type = type,
-                isFinal = isFinal,
-                isStatic = isStatic,
-                isExternal = isExternal,
-            )""",
-        ),
         level = DeprecationLevel.HIDDEN,
     )
     fun createField(
@@ -478,24 +397,6 @@ interface IrFactory {
     @Deprecated(
         message = "The method's parameters were reordered." +
                 " This variant of the method will be removed when the 2024.2 IntelliJ platform is shipped (see KTIJ-26314).",
-        replaceWith = ReplaceWith(
-            """createFunctionWithLateBinding(
-                startOffset = startOffset,
-                endOffset = endOffset,
-                origin = origin,
-                name = name,
-                visibility = visibility,
-                isInline = isInline,
-                isExpect = isExpect,
-                returnType = returnType,
-                modality = modality,
-                isTailrec = isTailrec,
-                isSuspend = isSuspend,
-                isOperator = isOperator,
-                isInfix = isInfix,
-                isExternal = isExternal,
-            )""",
-        ),
         level = DeprecationLevel.HIDDEN,
     )
     fun createFunctionWithLateBinding(
@@ -533,17 +434,6 @@ interface IrFactory {
     @Deprecated(
         message = "The method's parameters were reordered." +
                 " This variant of the method will be removed when the 2024.2 IntelliJ platform is shipped (see KTIJ-26314).",
-        replaceWith = ReplaceWith(
-            """createLocalDelegatedProperty(
-                startOffset = startOffset,
-                endOffset = endOffset,
-                origin = origin,
-                name = name,
-                symbol = symbol,
-                type = type,
-                isVar = isVar,
-            )""",
-        ),
         level = DeprecationLevel.HIDDEN,
     )
     fun createLocalDelegatedProperty(
@@ -567,25 +457,6 @@ interface IrFactory {
     @Deprecated(
         message = "The method's parameters were reordered." +
                 " This variant of the method will be removed when the 2024.2 IntelliJ platform is shipped (see KTIJ-26314).",
-        replaceWith = ReplaceWith(
-            """createProperty(
-                startOffset = startOffset,
-                endOffset = endOffset,
-                origin = origin,
-                name = name,
-                visibility = visibility,
-                modality = modality,
-                symbol = symbol,
-                isVar = isVar,
-                isConst = isConst,
-                isLateinit = isLateinit,
-                isDelegated = isDelegated,
-                isExternal = isExternal,
-                containerSource = containerSource,
-                isExpect = isExpect,
-                isFakeOverride = isFakeOverride,
-            )""",
-        ),
         level = DeprecationLevel.HIDDEN,
     )
     fun createProperty(
@@ -625,22 +496,6 @@ interface IrFactory {
     @Deprecated(
         message = "The method's parameters were reordered." +
                 " This variant of the method will be removed when the 2024.2 IntelliJ platform is shipped (see KTIJ-26314).",
-        replaceWith = ReplaceWith(
-            """createPropertyWithLateBinding(
-                startOffset = startOffset,
-                endOffset = endOffset,
-                origin = origin,
-                name = name,
-                visibility = visibility,
-                modality = modality,
-                isVar = isVar,
-                isConst = isConst,
-                isLateinit = isLateinit,
-                isDelegated = isDelegated,
-                isExternal = isExternal,
-                isExpect = isExpect,
-            )""",
-        ),
         level = DeprecationLevel.HIDDEN,
     )
     fun createPropertyWithLateBinding(
@@ -674,27 +529,6 @@ interface IrFactory {
     @Deprecated(
         message = "The method has been renamed, and its parameters were reordered." +
                 " This variant of the method will be removed when the 2024.2 IntelliJ platform is shipped (see KTIJ-26314).",
-        replaceWith = ReplaceWith(
-            """createSimpleFunction(
-                startOffset = startOffset,
-                endOffset = endOffset,
-                origin = origin,
-                name = name,
-                visibility = visibility,
-                isInline = isInline,
-                isExpect = isExpect,
-                returnType = returnType,
-                modality = modality,
-                symbol = symbol,
-                isTailrec = isTailrec,
-                isSuspend = isSuspend,
-                isOperator = isOperator,
-                isInfix = isInfix,
-                isExternal = isExternal,
-                containerSource = containerSource,
-                isFakeOverride = isFakeOverride,
-            )""",
-        ),
         level = DeprecationLevel.HIDDEN,
     )
     fun createFunction(
@@ -738,18 +572,6 @@ interface IrFactory {
     @Deprecated(
         message = "The method's parameters were reordered." +
                 " This variant of the method will be removed when the 2024.2 IntelliJ platform is shipped (see KTIJ-26314).",
-        replaceWith = ReplaceWith(
-            """createTypeAlias(
-                startOffset = startOffset,
-                endOffset = endOffset,
-                origin = origin,
-                name = name,
-                visibility = visibility,
-                symbol = symbol,
-                isActual = isActual,
-                expandedType = expandedType,
-            )""",
-        ),
         level = DeprecationLevel.HIDDEN,
     )
     fun createTypeAlias(
@@ -775,18 +597,6 @@ interface IrFactory {
     @Deprecated(
         message = "The method's parameters were reordered." +
                 " This variant of the method will be removed when the 2024.2 IntelliJ platform is shipped (see KTIJ-26314).",
-        replaceWith = ReplaceWith(
-            """createTypeParameter(
-                startOffset = startOffset,
-                endOffset = endOffset,
-                origin = origin,
-                name = name,
-                symbol = symbol,
-                variance = variance,
-                index = index,
-                isReified = isReified,
-            )""",
-        ),
         level = DeprecationLevel.HIDDEN,
     )
     fun createTypeParameter(
@@ -812,22 +622,6 @@ interface IrFactory {
     @Deprecated(
         message = "The method's parameters were reordered." +
                 " This variant of the method will be removed when the 2024.2 IntelliJ platform is shipped (see KTIJ-26314).",
-        replaceWith = ReplaceWith(
-            """createValueParameter(
-                startOffset = startOffset,
-                endOffset = endOffset,
-                origin = origin,
-                name = name,
-                type = type,
-                isAssignable = isAssignable,
-                symbol = symbol,
-                index = index,
-                varargElementType = varargElementType,
-                isCrossinline = isCrossinline,
-                isNoinline = isNoinline,
-                isHidden = isHidden,
-            )""",
-        ),
         level = DeprecationLevel.HIDDEN,
     )
     fun createValueParameter(

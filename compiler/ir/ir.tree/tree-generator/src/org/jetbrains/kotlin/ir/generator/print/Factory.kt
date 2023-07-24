@@ -67,7 +67,6 @@ internal fun printFactory(generationPath: File, model: Model): GeneratedFile {
                 .build()
         ) {
             deprecationMessage = "This method was moved to an extension."
-            additionalImports.add("${Packages.declarations}.$oldName")
             parameter("startOffset")
             parameter("endOffset")
             parameter("initializer")
@@ -83,7 +82,6 @@ internal fun printFactory(generationPath: File, model: Model): GeneratedFile {
                 .build()
         ) {
             deprecationMessage = "This method was moved to an extension."
-            additionalImports.add("${Packages.declarations}.$oldName")
             parameter("startOffset")
             parameter("endOffset")
             parameter("statements")
@@ -133,7 +131,6 @@ internal fun printFactory(generationPath: File, model: Model): GeneratedFile {
 
         addDeprecatedFunction(replacement("createExpressionBody")) {
             deprecationMessage = "This method was moved to an extension."
-            additionalImports.add("${Packages.declarations}.$oldName")
             parameter("expression")
         }
 
@@ -212,7 +209,7 @@ internal fun printFactory(generationPath: File, model: Model): GeneratedFile {
             parameter("isExpect", removeDefaultValue = true)
         }
 
-        addDeprecatedFunction(replacement("createSimpleFunction"),) {
+        addDeprecatedFunction(replacement("createSimpleFunction")) {
             oldName = "createFunction"
             parameter("startOffset")
             parameter("endOffset")
@@ -284,8 +281,6 @@ private class DeprecatedFunctionBuilder(private val replacement: FunSpec) {
 
     var deprecationMessage: String? = null
 
-    val additionalImports = mutableListOf<String>()
-
     fun parameter(name: String, removeDefaultValue: Boolean = false) {
         val replacementParameter =
             replacement.parameters.find { it.name == name } ?: error("Parameter '$name' not found in $replacement")
@@ -314,47 +309,31 @@ private fun TypeSpec.Builder.addDeprecatedFunction(
         "The method's parameters were reordered."
     }
 
-    fun CodeBlock.Builder.addCallToNewFunction(explicitParameterName: Boolean) =
-        add("%N(\n", replacement)
-            .apply {
-                for (parameter in replacement.parameters) {
-                    if (builder.deprecatedFunctionParameterSpecs.any { it.name == parameter.name }) {
-                        indent()
-                        add(if (explicitParameterName) "%1N = %1N,\n" else "%N,\n", parameter)
-                        unindent()
-                    }
-                }
-            }
-            .add(")")
-
     return addFunction(
         FunSpec.builder(builder.oldName)
             .addTypeVariables(replacement.typeVariables)
-            .addCode(CodeBlock.builder().add("return ").addCallToNewFunction(explicitParameterName = false).build())
+            .addCode(
+                CodeBlock.builder()
+                    .add("return ")
+                    .add("%N(\n", replacement)
+                    .apply {
+                        for (parameter in replacement.parameters) {
+                            if (builder.deprecatedFunctionParameterSpecs.any { it.name == parameter.name }) {
+                                indent()
+                                add("%N,\n", parameter)
+                                unindent()
+                            }
+                        }
+                    }
+                    .add(")")
+                    .build()
+            )
             .addAnnotation(
                 AnnotationSpec.builder(Deprecated::class)
                     .addMember(
                         "message = %S + %S",
                         message,
                         " This variant of the method will be removed when the 2024.2 IntelliJ platform is shipped (see KTIJ-26314).",
-                    )
-                    .addMember(
-                        CodeBlock.builder()
-                            .add("replaceWith = ReplaceWith(\n")
-                            .indent()
-                            .add("\"\"\"")
-                            .addCallToNewFunction(explicitParameterName = true)
-                            .unindent()
-                            .add("\"\"\",\n")
-                            .apply {
-                                for (additionalImport in builder.additionalImports) {
-                                    indent()
-                                    add("%S,\n", additionalImport)
-                                    unindent()
-                                }
-                            }
-                            .add(")")
-                            .build()
                     )
                     .addMember("level = %T.%N", DeprecationLevel::class, DeprecationLevel.HIDDEN.name)
                     .build(),
