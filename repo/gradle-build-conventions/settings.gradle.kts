@@ -8,6 +8,7 @@ pluginManagement {
 
     repositories {
         maven(url = "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
+        maven(url = "https://maven.pkg.jetbrains.space/kotlin/p/dokka/dev/")
         mavenCentral()
         google()
         gradlePluginPortal()
