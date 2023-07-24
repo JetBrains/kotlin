@@ -7,14 +7,15 @@ package org.jetbrains.kotlin.backend.common.serialization.signature
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.name.FqName
 
-abstract class IdSignatureBuilder<D> {
+abstract class IdSignatureBuilder<Declaration : Any, Mangler : KotlinMangler<Declaration>> {
     protected var packageFqn: FqName = FqName.ROOT
     protected val classFqnSegments = mutableListOf<String>()
-    protected var hashId: Long? = null
-    protected var hashIdAcc: Long? = null
-    protected var overridden: List<D>? = null
+    private var hashId: Long? = null
+    private var hashIdAcc: Long? = null
+    protected var overridden: List<Declaration>? = null
     protected var mask = 0L
     protected var container: IdSignature? = null
     protected var description: String? = null
@@ -23,7 +24,26 @@ abstract class IdSignatureBuilder<D> {
 
     protected abstract val currentFileSignature: IdSignature.FileSignature?
 
-    protected abstract fun accept(d: D)
+    protected abstract val mangler: Mangler
+
+    protected fun setHashIdAndDescriptionFor(declaration: Declaration, isPropertyAccessor: Boolean) {
+        mangler.run {
+            val mangledName = declaration.signatureString(compatibleMode = false)
+            val id = mangledName.hashMangle
+            setHashIdAndDescription(id, mangledName, isPropertyAccessor)
+        }
+    }
+
+    protected fun setHashIdAndDescription(id: Long, description: String, isPropertyAccessor: Boolean) {
+        if (isPropertyAccessor) {
+            hashIdAcc = id
+        } else {
+            hashId = id
+        }
+        this.description = description
+    }
+
+    protected abstract fun accept(d: Declaration)
 
     protected fun reset(resetContainer: Boolean = true) {
         this.packageFqn = FqName.ROOT
@@ -118,7 +138,7 @@ abstract class IdSignatureBuilder<D> {
     protected open fun platformSpecificAlias(descriptor: TypeAliasDescriptor) {}
     protected open fun platformSpecificPackage(descriptor: PackageFragmentDescriptor) {}
 
-    fun buildSignature(declaration: D): IdSignature {
+    fun buildSignature(declaration: Declaration): IdSignature {
         reset()
 
         accept(declaration)

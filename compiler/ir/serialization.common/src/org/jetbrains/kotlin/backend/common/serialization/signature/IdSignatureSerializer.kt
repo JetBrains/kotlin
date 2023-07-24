@@ -60,8 +60,11 @@ class PublicIdSignatureComputer(val mangler: KotlinMangler.IrMangler) : IdSignat
         scopeCounter = 0
     }
 
-    private inner class PublicIdSigBuilder : IdSignatureBuilder<IrDeclaration>(),
+    private inner class PublicIdSigBuilder : IdSignatureBuilder<IrDeclaration, KotlinMangler.IrMangler>(),
         IrElementVisitorVoid {
+
+        override val mangler: KotlinMangler.IrMangler
+            get() = this@PublicIdSignatureComputer.mangler
 
         override val currentFileSignature: IdSignature.FileSignature?
             get() = currentFileSignatureX
@@ -116,25 +119,19 @@ class PublicIdSignatureComputer(val mangler: KotlinMangler.IrMangler) : IdSignat
             setExpected(declaration.isExpect)
         }
 
-        // Note: `false` because `compatibleMode` is not applied to public signatures
-        private fun IrDeclarationWithName.hashId(): Long = mangler.run { signatureMangle(compatibleMode = false) }
-
         override fun visitSimpleFunction(declaration: IrSimpleFunction) {
             val property = declaration.correspondingPropertySymbol
             if (property != null) {
                 property.owner.acceptVoid(this)
-                val preservedId = declaration.hashId()
                 if (container != null) {
                     createContainer()
-                    hashId = preservedId
-                } else {
-                    hashIdAcc = preservedId
                 }
+                setHashIdAndDescriptionFor(declaration, isPropertyAccessor = container == null)
                 classFqnSegments.add(declaration.name.asString())
             } else {
                 collectParents(declaration)
                 isTopLevelPrivate = isTopLevelPrivate || declaration.isTopLevelPrivate
-                hashId = declaration.hashId()
+                setHashIdAndDescriptionFor(declaration, isPropertyAccessor = false)
                 setDescription(declaration)
             }
             setExpected(declaration.isExpect)
@@ -142,7 +139,7 @@ class PublicIdSignatureComputer(val mangler: KotlinMangler.IrMangler) : IdSignat
 
         override fun visitConstructor(declaration: IrConstructor) {
             collectParents(declaration)
-            hashId = declaration.hashId()
+            setHashIdAndDescriptionFor(declaration, isPropertyAccessor = false)
             setExpected(declaration.isExpect)
         }
 
@@ -153,7 +150,7 @@ class PublicIdSignatureComputer(val mangler: KotlinMangler.IrMangler) : IdSignat
         override fun visitProperty(declaration: IrProperty) {
             collectParents(declaration)
             isTopLevelPrivate = isTopLevelPrivate || declaration.isTopLevelPrivate
-            hashId = declaration.hashId()
+            setHashIdAndDescriptionFor(declaration, isPropertyAccessor = false)
             setExpected(declaration.isExpect)
         }
 
@@ -181,8 +178,7 @@ class PublicIdSignatureComputer(val mangler: KotlinMangler.IrMangler) : IdSignat
             } else {
                 classFqnSegments.add(MangleConstant.TYPE_PARAMETER_MARKER_NAME)
             }
-            hashId = declaration.index.toLong()
-            description = declaration.render()
+            setHashIdAndDescription(declaration.index.toLong(), declaration.render(), isPropertyAccessor = false)
         }
 
         override fun visitField(declaration: IrField) {
@@ -196,7 +192,7 @@ class PublicIdSignatureComputer(val mangler: KotlinMangler.IrMangler) : IdSignat
                 description = declaration.render()
             } else {
                 collectParents(declaration)
-                hashId = declaration.hashId()
+                setHashIdAndDescriptionFor(declaration, isPropertyAccessor = false)
             }
         }
     }
