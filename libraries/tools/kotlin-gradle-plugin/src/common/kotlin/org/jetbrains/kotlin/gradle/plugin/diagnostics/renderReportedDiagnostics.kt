@@ -10,11 +10,11 @@ import org.gradle.api.logging.Logger
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.*
 
 internal fun renderAggregateReport(
-    projectNamesToDiagnostics: Map<String, Collection<ToolingDiagnostic>>,
+    projectPathsToDiagnostics: Map<String, Collection<ToolingDiagnostic>>,
     logger: Logger,
     isVerbose: Boolean,
 ) {
-    for ((projectName, diagnostics) in projectNamesToDiagnostics) {
+    for ((projectName, diagnostics) in projectPathsToDiagnostics) {
         logger.lifecycle("$PROJECT_HEADER_IN_ERROR_DIAGNOSTICS_REPORT '$projectName'")
         renderReportedDiagnostics(diagnostics, logger, isVerbose)
     }
