@@ -36334,6 +36334,26 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/reflection/callBy/inlineClassFunctionsAndConstructors.kt");
             }
 
+            @TestMetadata("inlineClassFunctionsAndConstructorsMfvc.kt")
+            public void testInlineClassFunctionsAndConstructorsMfvc() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/callBy/inlineClassFunctionsAndConstructorsMfvc.kt");
+            }
+
+            @TestMetadata("inlineClassFunctionsAndConstructorsNullable.kt")
+            public void testInlineClassFunctionsAndConstructorsNullable() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/callBy/inlineClassFunctionsAndConstructorsNullable.kt");
+            }
+
+            @TestMetadata("inlineClassFunctionsAndConstructorsPrimitive.kt")
+            public void testInlineClassFunctionsAndConstructorsPrimitive() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/callBy/inlineClassFunctionsAndConstructorsPrimitive.kt");
+            }
+
+            @TestMetadata("inlineClassFunctionsAndConstructorsPrimitiveNullable.kt")
+            public void testInlineClassFunctionsAndConstructorsPrimitiveNullable() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/callBy/inlineClassFunctionsAndConstructorsPrimitiveNullable.kt");
+            }
+
             @TestMetadata("inlineClassInterface.kt")
             public void testInlineClassInterface() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/callBy/inlineClassInterface.kt");
