@@ -7,10 +7,12 @@
 #define CUSTOM_ALLOC_CPP_PAGESTORE_HPP_
 
 #include <atomic>
+#include <cstdint>
 
 #include "AtomicStack.hpp"
 #include "ExtraObjectPage.hpp"
 #include "GCStatistics.hpp"
+#include "std_support/Vector.hpp"
 
 namespace kotlin::alloc {
 
@@ -78,6 +80,8 @@ public:
     }
 
 private:
+    friend class Heap;
+
     T* SweepSingle(GCSweepScope& sweepHandle, T* page, AtomicStack<T>& from, AtomicStack<T>& to, FinalizerQueue& finalizerQueue) noexcept {
         if (!page) {
             return nullptr;
@@ -90,6 +94,22 @@ private:
             empty_.Push(page);
         } while ((page = from.Pop()));
         return nullptr;
+    }
+
+    // Testing method
+    std_support::vector<T*> GetPages() noexcept {
+        std_support::vector<T*> pages;
+        for (T* page : ready_.GetElements()) pages.push_back(page);
+        for (T* page : used_.GetElements()) pages.push_back(page);
+        for (T* page : unswept_.GetElements()) pages.push_back(page);
+        return pages;
+    }
+
+    void ClearForTests() noexcept {
+        while (T* page = empty_.Pop()) page->Destroy();
+        while (T* page = ready_.Pop()) page->Destroy();
+        while (T* page = used_.Pop()) page->Destroy();
+        while (T* page = unswept_.Pop()) page->Destroy();
     }
 
     AtomicStack<T> empty_;

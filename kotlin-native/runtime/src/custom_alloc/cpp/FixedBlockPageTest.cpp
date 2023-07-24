@@ -150,6 +150,15 @@ TEST(CustomAllocTest, FixedBlockPageRandomExercise) {
                 }
             }
             EXPECT_EQ(page->Sweep(gcScope, finalizerQueue), !live.empty());
+            uint8_t* prev = nullptr;
+            uint32_t allocCount = 0;
+            for (auto* obj : page->GetAllocatedBlocks()) {
+                EXPECT_LT(prev, obj);
+                prev = obj;
+                ++allocCount;
+                EXPECT_NE(live.find(obj), live.end());
+            }
+            EXPECT_EQ(allocCount, live.size());
         }
         while ((ptr = alloc(page, size))) live.insert(ptr);
         EXPECT_EQ(live.size(), BLOCK_COUNT);

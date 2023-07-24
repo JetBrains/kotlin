@@ -29,14 +29,18 @@ public:
 
     mm::ExtraObjectData* CreateExtraObject() noexcept;
 
-    static mm::ExtraObjectData& CreateExtraObjectDataForObject(
-            mm::ThreadData* threadData, ObjHeader* baseObject, const TypeInfo* info) noexcept;
+    mm::ExtraObjectData& CreateExtraObjectDataForObject(
+            ObjHeader* baseObject, const TypeInfo* info) noexcept;
 
     void PrepareForGC() noexcept;
 
     FinalizerQueue ExtractFinalizerQueue() noexcept;
 
     static size_t GetAllocatedHeapSize(ObjHeader* object) noexcept;
+
+    Heap& heap() noexcept {
+        return heap_;
+    }
 
 private:
     uint8_t* Allocate(uint64_t cellCount) noexcept;

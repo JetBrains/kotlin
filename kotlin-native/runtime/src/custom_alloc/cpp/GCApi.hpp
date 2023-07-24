@@ -11,27 +11,19 @@
 #include <cstdlib>
 #include <limits>
 
+#include "Alignment.hpp"
 #include "AtomicStack.hpp"
-#include "ConcurrentMarkAndSweep.hpp"
 #include "ExtraObjectData.hpp"
 #include "ExtraObjectPage.hpp"
 #include "GCStatistics.hpp"
+#include "Memory.h"
+#include "GC.hpp"
 
 namespace kotlin::alloc {
 
-// copied over from ObjectFactory
-
-using ObjectData = gc::ConcurrentMarkAndSweep::ObjectData;
-
-struct HeapObjHeader {
-    ObjectData gcData;
-    alignas(kObjectAlignment) ObjHeader object;
-};
-
-struct HeapArrayHeader {
-    ObjectData gcData;
-    alignas(kObjectAlignment) ArrayHeader array;
-};
+const size_t gcDataSize = AlignUp(gc::GC::objectDataSize, kObjectAlignment);
+const size_t heapObjectHeaderSize = AlignUp(gcDataSize + sizeof(ObjHeader), kObjectAlignment);
+const size_t heapArrayHeaderSize = AlignUp(gcDataSize + sizeof(ArrayHeader), kObjectAlignment);
 
 // Returns `true` if the `object` must be kept alive still.
 bool SweepObject(uint8_t* object, FinalizerQueue& finalizerQueue, gc::GCHandle::GCSweepScope& sweepScope) noexcept;

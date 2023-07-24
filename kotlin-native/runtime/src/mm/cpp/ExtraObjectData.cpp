@@ -34,7 +34,7 @@ mm::ExtraObjectData& mm::ExtraObjectData::Install(ObjHeader* object) noexcept {
 
     auto *threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
 #ifdef CUSTOM_ALLOCATOR
-    auto& data = alloc::CustomAllocator::CreateExtraObjectDataForObject(threadData, object, typeInfo);
+    auto& data = threadData->gc().Allocator().CreateExtraObjectDataForObject(object, typeInfo);
 
     if (!compareExchange(object->typeInfoOrMeta_, typeInfo, reinterpret_cast<TypeInfo*>(&data))) {
         // Somebody else created `mm::ExtraObjectData` for this object.

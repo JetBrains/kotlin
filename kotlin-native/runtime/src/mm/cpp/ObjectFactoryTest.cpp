@@ -21,6 +21,8 @@
 #include "std_support/CStdlib.hpp"
 #include "std_support/Vector.hpp"
 
+// ObjectFactory is not used by custom allocator
+#ifndef CUSTOM_ALLOCATOR
 using namespace kotlin;
 
 using testing::_;
@@ -1130,3 +1132,4 @@ TEST(ObjectFactoryTest, ConcurrentPublish) {
     EXPECT_THAT(actual, testing::UnorderedElementsAreArray(expected));
     EXPECT_CALL(allocator, Free(_, _)).Times(kThreadCount);
 }
+#endif

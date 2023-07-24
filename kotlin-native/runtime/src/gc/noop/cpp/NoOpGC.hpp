@@ -12,6 +12,10 @@
 #include "Logging.hpp"
 #include "Utils.hpp"
 
+#ifdef CUSTOM_ALLOCATOR
+#include "Heap.hpp"
+#endif
+
 namespace kotlin {
 
 namespace mm {
@@ -51,7 +55,14 @@ public:
     NoOpGC() noexcept { RuntimeLogInfo({kTagGC}, "No-op GC initialized"); }
     ~NoOpGC() = default;
 
+#ifdef CUSTOM_ALLOCATOR
+    alloc::Heap& heap() noexcept { return heap_; }
+#endif
+
 private:
+#ifdef CUSTOM_ALLOCATOR
+    alloc::Heap heap_;
+#endif
 };
 
 } // namespace gc

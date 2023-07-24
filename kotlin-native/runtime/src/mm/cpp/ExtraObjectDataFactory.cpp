@@ -10,6 +10,7 @@
 
 using namespace kotlin;
 
+#ifndef CUSTOM_ALLOCATOR
 // static
 mm::ExtraObjectDataFactory& mm::ExtraObjectDataFactory::Instance() noexcept {
     return GlobalData::Instance().extraObjectDataFactory();
@@ -41,3 +42,4 @@ void mm::ExtraObjectDataFactory::ProcessThread(mm::ThreadData* threadData) noexc
 
 mm::ExtraObjectDataFactory::ExtraObjectDataFactory() = default;
 mm::ExtraObjectDataFactory::~ExtraObjectDataFactory() = default;
+#endif

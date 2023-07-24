@@ -9,9 +9,12 @@
 
 #include "GCScheduler.hpp"
 #include "Memory.h"
-#include "Types.h"
 #include "Utils.hpp"
 #include "std_support/Memory.hpp"
+
+#ifdef CUSTOM_ALLOCATOR
+#include "CustomAllocator.hpp"
+#endif
 
 namespace kotlin {
 
@@ -44,6 +47,10 @@ public:
         ObjHeader* CreateObject(const TypeInfo* typeInfo) noexcept;
         ArrayHeader* CreateArray(const TypeInfo* typeInfo, uint32_t elements) noexcept;
 
+#ifdef CUSTOM_ALLOCATOR
+        alloc::CustomAllocator& Allocator() noexcept;
+#endif
+
         void OnSuspendForGC() noexcept;
 
         void safePoint() noexcept;
@@ -75,6 +82,9 @@ public:
     int64_t Schedule() noexcept;
     void WaitFinalizers(int64_t epoch) noexcept;
     void ScheduleAndWaitFullGCWithFinalizers() noexcept { WaitFinalizers(Schedule()); }
+
+    static const size_t objectDataSize;
+    static bool SweepObject(void* objectData) noexcept;
 
 private:
     std_support::unique_ptr<Impl> impl_;

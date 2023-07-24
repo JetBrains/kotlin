@@ -17,6 +17,14 @@
 #include "Types.h"
 #include "Utils.hpp"
 
+#ifdef CUSTOM_ALLOCATOR
+#include "CustomAllocator.hpp"
+#include "CustomFinalizerProcessor.hpp"
+#include "ExtraObjectPage.hpp"
+#include "GCApi.hpp"
+#include "Heap.hpp"
+#endif
+
 namespace kotlin {
 
 namespace mm {
@@ -92,10 +100,18 @@ public:
 
     using Allocator = ThreadData::Allocator;
 
+#ifdef CUSTOM_ALLOCATOR
+    using FinalizerQueue = alloc::FinalizerQueue;
+    using FinalizerQueueTraits = alloc::FinalizerQueueTraits;
+
+    SameThreadMarkAndSweep(gcScheduler::GCScheduler& gcScheduler) noexcept;
+#else
     using FinalizerQueue = mm::ObjectFactory<SameThreadMarkAndSweep>::FinalizerQueue;
     using FinalizerQueueTraits = mm::ObjectFactory<SameThreadMarkAndSweep>::FinalizerQueueTraits;
 
     SameThreadMarkAndSweep(mm::ObjectFactory<SameThreadMarkAndSweep>& objectFactory, gcScheduler::GCScheduler& gcScheduler) noexcept;
+#endif
+
     ~SameThreadMarkAndSweep();
 
     void StartFinalizerThreadIfNeeded() noexcept;
@@ -105,10 +121,18 @@ public:
     int64_t Schedule() noexcept { return state_.schedule(); }
     void WaitFinalized(int64_t epoch) noexcept { state_.waitEpochFinalized(epoch); }
 
+#ifdef CUSTOM_ALLOCATOR
+    alloc::Heap& heap() noexcept { return heap_; }
+#endif
+
 private:
     void PerformFullGC(int64_t epoch) noexcept;
 
+#ifndef CUSTOM_ALLOCATOR
     mm::ObjectFactory<SameThreadMarkAndSweep>& objectFactory_;
+#else
+    alloc::Heap heap_;
+#endif
     gcScheduler::GCScheduler& gcScheduler_;
 
     GCStateHolder state_;

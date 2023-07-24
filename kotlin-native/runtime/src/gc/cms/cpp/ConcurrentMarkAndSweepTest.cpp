@@ -179,6 +179,9 @@ test_support::Object<Payload>& AllocateObjectWithFinalizer(mm::ThreadData& threa
 }
 
 std_support::vector<ObjHeader*> Alive(mm::ThreadData& threadData) {
+#ifdef CUSTOM_ALLOCATOR
+    return threadData.gc().impl().alloc().heap().GetAllocatedObjects();
+#else
     std_support::vector<ObjHeader*> objects;
     for (auto node : threadData.gc().impl().objectFactoryThreadQueue()) {
         objects.push_back(node.GetObjHeader());
@@ -187,6 +190,7 @@ std_support::vector<ObjHeader*> Alive(mm::ThreadData& threadData) {
         objects.push_back(node.GetObjHeader());
     }
     return objects;
+#endif
 }
 
 bool IsMarked(ObjHeader* objHeader) {
@@ -215,7 +219,9 @@ public:
     ~ConcurrentMarkAndSweepTest() {
         mm::GlobalsRegistry::Instance().ClearForTests();
         mm::SpecialRefRegistry::instance().clearForTests();
+#ifndef CUSTOM_ALLOCATOR
         mm::GlobalData::Instance().extraObjectDataFactory().ClearForTests();
+#endif
         mm::GlobalData::Instance().gc().ClearForTests();
     }
 
@@ -1016,6 +1022,7 @@ TEST_P(ConcurrentMarkAndSweepTest, MultipleMutatorsWeaks) {
     }
 }
 
+
 TEST_P(ConcurrentMarkAndSweepTest, NewThreadsWhileRequestingCollection) {
     std_support::vector<Mutator> mutators(kDefaultThreadCount);
     std_support::vector<ObjHeader*> globals(2 * kDefaultThreadCount);
@@ -1085,6 +1092,7 @@ TEST_P(ConcurrentMarkAndSweepTest, NewThreadsWhileRequestingCollection) {
         future.wait();
     }
 
+#ifndef CUSTOM_ALLOCATOR
     // Old mutators don't even see alive objects from the new threads yet (as the latter ones have not published anything).
 
     std_support::vector<ObjHeader*> expectedAlive;
@@ -1107,8 +1115,23 @@ TEST_P(ConcurrentMarkAndSweepTest, NewThreadsWhileRequestingCollection) {
         aliveForThisThread.push_back(unreachables[kDefaultThreadCount + i]);
         EXPECT_THAT(newMutators[i].Alive(), testing::UnorderedElementsAreArray(aliveForThisThread));
     }
+#else
+    // Custom allocator does not have a notion of objects alive only for some thread
+    std_support::vector<ObjHeader*> expectedAlive;
+    for (int i = 0; i < kDefaultThreadCount; ++i) {
+        expectedAlive.push_back(globals[i]);
+        expectedAlive.push_back(locals[i]);
+        expectedAlive.push_back(reachables[i]);
+        expectedAlive.push_back(globals[kDefaultThreadCount + i]);
+        expectedAlive.push_back(locals[kDefaultThreadCount + i]);
+        expectedAlive.push_back(reachables[kDefaultThreadCount + i]);
+        // Unreachables for new threads were not collected.
+        expectedAlive.push_back(unreachables[kDefaultThreadCount + i]);
+    }
+    // All threads see the same alive objects with the custom alloctor, enough to check a single mutator.
+    EXPECT_THAT(mutators[0].Alive(), testing::UnorderedElementsAreArray(expectedAlive));
+#endif // CUSTOM_ALLOCATOR
 }
-
 
 TEST_P(ConcurrentMarkAndSweepTest, FreeObjectWithFreeWeakReversedOrder) {
     std_support::vector<Mutator> mutators(2);
@@ -1138,7 +1161,7 @@ TEST_P(ConcurrentMarkAndSweepTest, FreeObjectWithFreeWeakReversedOrder) {
         EXPECT_THAT(Alive(threadData), testing::UnorderedElementsAre(global1.header()));
         done = true;
     });
-    
+
     auto f1 = mutators[1].Execute([&](mm::ThreadData& threadData, Mutator &) {
         while (object1.load() == nullptr) {}
         ObjHolder holder;

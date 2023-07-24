@@ -7,20 +7,22 @@
 
 #include <atomic>
 #include <cstdint>
+#include <cstring>
 #include <limits>
 
 #ifndef KONAN_WINDOWS
 #include <sys/mman.h>
 #endif
 
-#include "ConcurrentMarkAndSweep.hpp"
 #include "CompilerConstants.hpp"
 #include "CustomLogging.hpp"
 #include "ExtraObjectData.hpp"
 #include "ExtraObjectPage.hpp"
 #include "FinalizerHooks.hpp"
+#include "GC.hpp"
 #include "GCStatistics.hpp"
 #include "KAssert.h"
+#include "Memory.h"
 #include "ObjectFactory.hpp"
 
 namespace {
@@ -31,18 +33,17 @@ std::atomic<size_t> allocatedBytesCounter;
 
 namespace kotlin::alloc {
 
-bool SweepObject(uint8_t* object, FinalizerQueue& finalizerQueue, gc::GCHandle::GCSweepScope& gcHandle) noexcept {
-    HeapObjHeader* objHeader = reinterpret_cast<HeapObjHeader*>(object);
-    if (objHeader->gcData.tryResetMark()) {
-        CustomAllocDebug("SweepObject(%p): still alive", object);
+bool SweepObject(uint8_t* heapObjHeader, FinalizerQueue& finalizerQueue, gc::GCHandle::GCSweepScope& gcHandle) noexcept {
+    if (gc::GC::SweepObject(heapObjHeader)) {
+        CustomAllocDebug("SweepObject(%p): still alive", heapObjHeader);
         gcHandle.addKeptObject();
         return true;
     }
-    auto* baseObject = &objHeader->object;
-    auto* extraObject = mm::ExtraObjectData::Get(baseObject);
+    auto* objHeader = reinterpret_cast<ObjHeader*>(heapObjHeader + gcDataSize);
+    auto* extraObject = mm::ExtraObjectData::Get(objHeader);
     if (extraObject) {
         if (!extraObject->getFlag(mm::ExtraObjectData::FLAGS_IN_FINALIZER_QUEUE)) {
-            CustomAllocDebug("SweepObject(%p): needs to be finalized, extraObject at %p", object, extraObject);
+            CustomAllocDebug("SweepObject(%p): needs to be finalized, extraObject at %p", heapObjHeader, extraObject);
             extraObject->setFlag(mm::ExtraObjectData::FLAGS_IN_FINALIZER_QUEUE);
             extraObject->ClearRegularWeakReferenceImpl();
             CustomAllocDebug("SweepObject: fromExtraObject(%p) = %p", extraObject, ExtraObjectCell::fromExtraObject(extraObject));
@@ -51,14 +52,14 @@ bool SweepObject(uint8_t* object, FinalizerQueue& finalizerQueue, gc::GCHandle::
             return true;
         }
         if (!extraObject->getFlag(mm::ExtraObjectData::FLAGS_FINALIZED)) {
-            CustomAllocDebug("SweepObject(%p): already waiting to be finalized", object);
+            CustomAllocDebug("SweepObject(%p): already waiting to be finalized", heapObjHeader);
             gcHandle.addMarkedObject();
             return true;
         }
         extraObject->UnlinkFromBaseObject();
         extraObject->setFlag(mm::ExtraObjectData::FLAGS_SWEEPABLE);
     }
-    CustomAllocDebug("SweepObject(%p): can be reclaimed", object);
+    CustomAllocDebug("SweepObject(%p): can be reclaimed", heapObjHeader);
     gcHandle.addSweptObject();
     return false;
 }
@@ -98,10 +99,12 @@ void* SafeAlloc(uint64_t size) noexcept {
         konan::abort();
     }
     allocatedBytesCounter.fetch_add(static_cast<size_t>(size), std::memory_order_relaxed);
+    CustomAllocDebug("SafeAlloc(%zu) = %p", static_cast<size_t>(size), memory);
     return memory;
 }
 
 void Free(void* ptr, size_t size) noexcept {
+    CustomAllocDebug("Free(%p, %zu)", ptr, size);
     if (compiler::disableMmap()) {
         free(ptr);
     } else {

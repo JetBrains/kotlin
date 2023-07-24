@@ -19,6 +19,10 @@
 #include "ThreadRegistry.hpp"
 #include "ThreadSuspension.hpp"
 
+#ifdef CUSTOM_ALLOCATOR
+#include "CustomFinalizerProcessor.hpp"
+#endif
+
 using namespace kotlin;
 
 namespace {
@@ -82,9 +86,17 @@ void gc::SameThreadMarkAndSweep::ThreadData::OnOOM(size_t size) noexcept {
     ScheduleAndWaitFullGC();
 }
 
+#ifdef CUSTOM_ALLOCATOR
 gc::SameThreadMarkAndSweep::SameThreadMarkAndSweep(
-        mm::ObjectFactory<SameThreadMarkAndSweep>& objectFactory, gcScheduler::GCScheduler& gcScheduler) noexcept :
-    objectFactory_(objectFactory), gcScheduler_(gcScheduler), finalizerProcessor_([this](int64_t epoch) noexcept {
+        gcScheduler::GCScheduler& gcScheduler) noexcept :
+#else
+gc::SameThreadMarkAndSweep::SameThreadMarkAndSweep(
+        mm::ObjectFactory<SameThreadMarkAndSweep>& objectFactory,
+        gcScheduler::GCScheduler& gcScheduler) noexcept :
+
+    objectFactory_(objectFactory),
+#endif
+    gcScheduler_(gcScheduler), finalizerProcessor_([this](int64_t epoch) noexcept {
         GCHandle::getByEpoch(epoch).finalizersDone();
         state_.finalized(epoch);
     }) {
@@ -135,6 +147,14 @@ void gc::SameThreadMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
 
     state_.start(epoch);
 
+#ifdef CUSTOM_ALLOCATOR
+    // This should really be done by each individual thread while waiting
+    for (auto& thread : kotlin::mm::ThreadRegistry::Instance().LockForIter()) {
+        thread.gc().Allocator().PrepareForGC();
+    }
+    heap_.PrepareForGC();
+#endif
+
     gc::collectRootSet<internal::MarkTraits>(gcHandle, markQueue_, [](mm::ThreadData&) { return true; });
 
     gc::Mark<internal::MarkTraits>(gcHandle, markQueue_);
@@ -143,6 +163,7 @@ void gc::SameThreadMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
 
     gc::processWeaks<ProcessWeaksTraits>(gcHandle, mm::SpecialRefRegistry::instance());
 
+#ifndef CUSTOM_ALLOCATOR
     // Taking the locks before the pause is completed. So that any destroying thread
     // would not publish into the global state at an unexpected time.
     std::optional extraObjectFactoryIterable = mm::GlobalData::Instance().extraObjectDataFactory().LockForIter();
@@ -153,6 +174,9 @@ void gc::SameThreadMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
     auto finalizerQueue = gc::Sweep<SweepTraits>(gcHandle, *objectFactoryIterable);
     objectFactoryIterable = std::nullopt;
     kotlin::compactObjectPoolInMainThread();
+#else
+    auto finalizerQueue = heap_.Sweep(gcHandle);
+#endif
 
     mm::ResumeThreads();
     gcHandle.threadsAreResumed();

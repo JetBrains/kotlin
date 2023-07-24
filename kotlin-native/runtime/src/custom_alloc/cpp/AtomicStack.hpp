@@ -10,6 +10,7 @@
 
 #include "KAssert.h"
 #include "Utils.hpp"
+#include "std_support/Vector.hpp"
 
 namespace kotlin::alloc {
 
@@ -80,6 +81,17 @@ public:
 
     ~AtomicStack() {
         RuntimeAssert(isEmpty(), "AtomicStack must be empty on destruction");
+    }
+
+    // Test method
+    std_support::vector<T*> GetElements() {
+        std_support::vector<T*> elements;
+        T* elm = stack_.load();
+        while (elm) {
+            elements.push_back(elm);
+            elm = elm->next_;
+        }
+        return elements;
     }
 
 private:

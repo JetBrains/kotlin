@@ -7,6 +7,7 @@
 
 #include "GC.hpp"
 #include "MarkAndSweepUtils.hpp"
+#include "SameThreadMarkAndSweep.hpp"
 #include "std_support/Memory.hpp"
 #include "GlobalData.hpp"
 #include "GCStatistics.hpp"
@@ -32,20 +33,40 @@ void gc::GC::ThreadData::ScheduleAndWaitFullGCWithFinalizers() noexcept {
 }
 
 void gc::GC::ThreadData::Publish() noexcept {
+#ifndef CUSTOM_ALLOCATOR
     impl_->objectFactoryThreadQueue().Publish();
+#endif
 }
 
 void gc::GC::ThreadData::ClearForTests() noexcept {
+#ifndef CUSTOM_ALLOCATOR
     impl_->objectFactoryThreadQueue().ClearForTests();
+#else
+    impl_->alloc().PrepareForGC();
+#endif
 }
 
 ALWAYS_INLINE ObjHeader* gc::GC::ThreadData::CreateObject(const TypeInfo* typeInfo) noexcept {
+#ifndef CUSTOM_ALLOCATOR
     return impl_->objectFactoryThreadQueue().CreateObject(typeInfo);
+#else
+    return impl_->alloc().CreateObject(typeInfo);
+#endif
 }
 
 ALWAYS_INLINE ArrayHeader* gc::GC::ThreadData::CreateArray(const TypeInfo* typeInfo, uint32_t elements) noexcept {
+#ifndef CUSTOM_ALLOCATOR
     return impl_->objectFactoryThreadQueue().CreateArray(typeInfo, elements);
+#else
+    return impl_->alloc().CreateArray(typeInfo, elements);
+#endif
 }
+
+#ifdef CUSTOM_ALLOCATOR
+alloc::CustomAllocator& gc::GC::ThreadData::Allocator() noexcept {
+    return impl_->alloc();
+}
+#endif
 
 void gc::GC::ThreadData::OnSuspendForGC() noexcept { }
 
@@ -57,7 +78,11 @@ gc::GC::~GC() = default;
 
 // static
 size_t gc::GC::GetAllocatedHeapSize(ObjHeader* object) noexcept {
+#ifdef CUSTOM_ALLOCATOR
+    return alloc::CustomAllocator::GetAllocatedHeapSize(object);
+#else
     return mm::ObjectFactory<GCImpl>::GetAllocatedHeapSize(object);
+#endif
 }
 
 size_t gc::GC::GetTotalHeapObjectsSizeBytes() const noexcept {
@@ -66,7 +91,11 @@ size_t gc::GC::GetTotalHeapObjectsSizeBytes() const noexcept {
 
 void gc::GC::ClearForTests() noexcept {
     impl_->gc().StopFinalizerThreadIfRunning();
+#ifndef CUSTOM_ALLOCATOR
     impl_->objectFactory().ClearForTests();
+#else
+    impl_->gc().heap().ClearForTests();
+#endif
     GCHandle::ClearForTests();
 }
 
@@ -112,4 +141,12 @@ bool gc::isMarked(ObjHeader* object) noexcept {
 
 ALWAYS_INLINE OBJ_GETTER(gc::tryRef, std::atomic<ObjHeader*>& object) noexcept {
     RETURN_OBJ(object.load(std::memory_order_relaxed));
+}
+
+// static
+const size_t gc::GC::objectDataSize = sizeof(SameThreadMarkAndSweep::ObjectData);
+
+// static
+ALWAYS_INLINE bool gc::GC::SweepObject(void *objectData) noexcept {
+    return reinterpret_cast<SameThreadMarkAndSweep::ObjectData*>(objectData)->tryResetMark();
 }

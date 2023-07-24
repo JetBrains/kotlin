@@ -27,7 +27,9 @@ public:
     ThreadRegistry& threadRegistry() noexcept { return threadRegistry_; }
     GlobalsRegistry& globalsRegistry() noexcept { return globalsRegistry_; }
     SpecialRefRegistry& specialRefRegistry() noexcept { return specialRefRegistry_; }
+#ifndef CUSTOM_ALLOCATOR
     ExtraObjectDataFactory& extraObjectDataFactory() noexcept { return extraObjectDataFactory_; }
+#endif
     gcScheduler::GCScheduler& gcScheduler() noexcept { return gcScheduler_; }
     gc::GC& gc() noexcept { return gc_; }
     AppStateTracking& appStateTracking() noexcept { return appStateTracking_; }
@@ -43,9 +45,14 @@ private:
     AppStateTracking appStateTracking_;
     GlobalsRegistry globalsRegistry_;
     SpecialRefRegistry specialRefRegistry_;
-    ExtraObjectDataFactory extraObjectDataFactory_;
     gcScheduler::GCScheduler gcScheduler_;
     gc::GC gc_{gcScheduler_};
+#ifndef CUSTOM_ALLOCATOR
+    // by being last, ommiting it will not affect the offsets of the other
+    // members, and we avoid having to have _custom versions of the gcScheduler
+    // modules.
+    ExtraObjectDataFactory extraObjectDataFactory_;
+#endif
 };
 
 } // namespace mm
