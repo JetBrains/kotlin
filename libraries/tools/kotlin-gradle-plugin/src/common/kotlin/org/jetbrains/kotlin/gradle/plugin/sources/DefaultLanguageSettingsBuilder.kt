@@ -5,74 +5,118 @@
 
 package org.jetbrains.kotlin.gradle.plugin.sources
 
-import org.gradle.api.InvalidUserDataException
+import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Provider
-import org.jetbrains.kotlin.config.ApiVersion
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
-import org.jetbrains.kotlin.gradle.dsl.toCompilerValue
-import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompileTool
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinNativeCompile
 import org.jetbrains.kotlin.gradle.tasks.toSingleCompilerPluginOptions
-import org.jetbrains.kotlin.project.model.LanguageSettings
-import kotlin.properties.Delegates
+import org.jetbrains.kotlin.gradle.utils.*
+import javax.inject.Inject
 
-internal class DefaultLanguageSettingsBuilder : LanguageSettingsBuilder {
-    private var languageVersionImpl: LanguageVersion? = null
+internal open class DefaultLanguageSettingsBuilder @Inject constructor(
+    @Transient private val project: Project
+) : LanguageSettingsBuilder {
+    internal var compilationCompilerOptions: CompletableFuture<KotlinCommonCompilerOptions> = CompletableFuture()
 
-    override var languageVersion: String?
-        get() = languageVersionImpl?.versionString
-        set(value) {
-            languageVersionImpl = value?.let { versionString ->
-                LanguageVersion.fromVersionString(versionString) ?: throw InvalidUserDataException(
-                    "Incorrect language version. Expected one of: ${LanguageVersion.values().joinToString { "'${it.versionString}'" }}"
-                )
+    init {
+        project.launch {
+            KotlinPluginLifecycle.Stage.AfterFinaliseCompilations.await()
+            if (!compilationCompilerOptions.isCompleted) {
+                // For shared source sets without any associated compilation, it would be a separate instance of common compiler options
+                compilationCompilerOptions.complete(project.objects.newInstance<KotlinCommonCompilerOptionsDefault>())
             }
         }
-
-    private var apiVersionImpl: ApiVersion? = null
-
-    override var apiVersion: String?
-        get() = apiVersionImpl?.versionString
-        set(value) {
-            apiVersionImpl = value?.let { versionString ->
-                parseApiVersionSettings(versionString) ?: throw InvalidUserDataException(
-                    "Incorrect API version. Expected one of: ${apiVersionValues.joinToString { "'${it.versionString}'" }}"
-                )
-            }
-        }
-
-    // By using 'observable' delegate we are tracking value set by user and not default value,
-    // so we could propagate it to the compiler options only if it was configured explicitly
-    internal var setByUserProgressiveMode: Boolean? = null
-    override var progressiveMode: Boolean by Delegates.observable(false) { _, _, newValue ->
-        setByUserProgressiveMode = newValue
     }
 
-    private val enabledLanguageFeaturesImpl = mutableSetOf<LanguageFeature>()
+    override var languageVersion: String? = null
+        get() = if (compilationCompilerOptions.isCompleted) {
+            compilationCompilerOptions.getOrThrow().languageVersion.orNull?.version
+        } else {
+            field
+        }
+        set(value) {
+            field = value
+            project.launch {
+                compilationCompilerOptions.await()
+                    .languageVersion
+                    .set(value?.let { KotlinVersion.fromVersion(it) })
+            }
+        }
+
+    override var apiVersion: String? = null
+        get() = if (compilationCompilerOptions.isCompleted) {
+            compilationCompilerOptions.getOrThrow().apiVersion.orNull?.version
+        } else {
+            field
+        }
+        set(value) {
+            field = value
+            project.launch {
+                compilationCompilerOptions.await()
+                    .apiVersion
+                    .set(value?.let { KotlinVersion.fromVersion(it) })
+            }
+        }
+
+    override var progressiveMode: Boolean = false
+        get() = if (compilationCompilerOptions.isCompleted) {
+            compilationCompilerOptions.getOrThrow().progressiveMode.get()
+        } else {
+            field
+        }
+        set(value) {
+            field = value
+            project.launch {
+                compilationCompilerOptions.await()
+                    .progressiveMode
+                    .set(value)
+            }
+        }
+
+    private val enabledLanguageFeaturesField = mutableSetOf<String>()
 
     override val enabledLanguageFeatures: Set<String>
-        get() = enabledLanguageFeaturesImpl.map { it.name }.toSet()
+        get() = if (compilationCompilerOptions.isCompleted) {
+            compilationCompilerOptions.getOrThrow()
+                .freeCompilerArgs
+                .get()
+                .filter { it.startsWith("-XXLanguage:+") }
+                .map { it.substringAfter("-XXLanguage:+") }
+                .toSet()
+        } else {
+            enabledLanguageFeaturesField.toSet()
+        }
 
     override fun enableLanguageFeature(name: String) {
-        val languageFeature = parseLanguageFeature(name) ?: throw InvalidUserDataException(
-            "Unknown language feature '${name}'"
-        )
-        enabledLanguageFeaturesImpl += languageFeature
+        enabledLanguageFeaturesField.add(name)
+        project.launch {
+            compilationCompilerOptions.await()
+                .freeCompilerArgs
+                .add("-XXLanguage:+$name")
+        }
     }
 
-    private val optInAnnotationsInUseImpl = mutableSetOf<String>()
+    private val optInAnnotationsInUseField = mutableSetOf<String>()
 
-    override val optInAnnotationsInUse: Set<String> = optInAnnotationsInUseImpl
+    override val optInAnnotationsInUse: Set<String>
+        get() = if (compilationCompilerOptions.isCompleted) {
+            compilationCompilerOptions.getOrThrow().optIn.get().toSet()
+        } else {
+            optInAnnotationsInUseField.toSet()
+        }
 
     override fun optIn(annotationName: String) {
-        optInAnnotationsInUseImpl += annotationName
+        optInAnnotationsInUseField.add(annotationName)
+        project.launch {
+            compilationCompilerOptions.await()
+                .optIn.add(annotationName)
+        }
     }
 
     /* A Kotlin task that is responsible for code analysis of the owner of this language settings builder. */
@@ -100,65 +144,51 @@ internal class DefaultLanguageSettingsBuilder : LanguageSettingsBuilder {
         }
 
     var freeCompilerArgsProvider: Provider<List<String>>? = null
+        get() = if (compilationCompilerOptions.isCompleted) {
+            compilationCompilerOptions.getOrThrow().freeCompilerArgs
+        } else {
+            field
+        }
+        set(value) {
+            field = value
+            // Checking if the provider has value as it overwrites the convention
+            // https://github.com/gradle/gradle/issues/20266
+            if (value != null && value.isPresent) {
+                project.launch {
+                    compilationCompilerOptions.await()
+                        .freeCompilerArgs.addAll(value)
+                }
+            }
+        }
 
     // Kept here for compatibility with IDEA Kotlin import. It relies on explicit api argument in `freeCompilerArgs` to enable related
     // inspections
     internal var explicitApi: Provider<String>? = null
-
-    internal val freeCompilerArgsForNonImport: List<String>
-        get() = freeCompilerArgsProvider?.get().orEmpty()
+        get() = if (compilationCompilerOptions.isCompleted) {
+            val freeArgs = compilationCompilerOptions.getOrThrow()
+                .freeCompilerArgs
+                .get()
+            freeArgs.find { it.startsWith("-Xexplicit-api") }?.let { project.providers.provider { it } }
+        } else {
+            field
+        }
+        set(value) {
+            field = value
+            // Checking if the provider has value as it overwrites the convention
+            // https://github.com/gradle/gradle/issues/20266
+            if (value != null && value.isPresent) {
+                project.launch {
+                    compilationCompilerOptions.await()
+                        .freeCompilerArgs
+                        .add(value)
+                }
+            }
+        }
 
     val freeCompilerArgs: List<String>
-        get() = freeCompilerArgsProvider?.get()
-            .orEmpty()
-            .plus(explicitApi?.orNull)
-            .filterNotNull()
+        get() = if (compilationCompilerOptions.isCompleted) {
+            compilationCompilerOptions.getOrThrow().freeCompilerArgs.get()
+        } else {
+            emptyList()
+        }
 }
-
-internal fun applyLanguageSettingsToCompilerOptions(
-    languageSettingsBuilder: LanguageSettings,
-    compilerOptions: KotlinCommonCompilerOptions,
-) = with(compilerOptions) {
-    val languageSettingsBuilderDefault = languageSettingsBuilder as DefaultLanguageSettingsBuilder
-    languageSettingsBuilderDefault.languageVersion?.let {
-        languageVersion.convention(KotlinVersion.fromVersion(it))
-    }
-    languageSettingsBuilderDefault.apiVersion?.let {
-        apiVersion.convention(KotlinVersion.fromVersion(it))
-    }
-    languageSettingsBuilderDefault.setByUserProgressiveMode?.let {
-        progressiveMode.convention(it)
-    }
-    if (languageSettingsBuilder.optInAnnotationsInUse.isNotEmpty()) optIn.addAll(languageSettingsBuilder.optInAnnotationsInUse)
-
-    val freeArgs = mutableListOf<String>()
-    languageSettingsBuilder.enabledLanguageFeatures.forEach { featureName ->
-        freeArgs.add("-XXLanguage:+$featureName")
-    }
-    freeArgs.addAll(languageSettingsBuilderDefault.freeCompilerArgsForNonImport)
-
-    if (freeArgs.isNotEmpty()) {
-        freeCompilerArgs.addAll(freeArgs)
-    }
-}
-
-private val apiVersionValues = ApiVersion.run {
-    listOf(
-        KOTLIN_1_0,
-        KOTLIN_1_1,
-        KOTLIN_1_2,
-        KOTLIN_1_3,
-        KOTLIN_1_4,
-        KOTLIN_1_5,
-        KOTLIN_1_6,
-        KOTLIN_1_7,
-        KOTLIN_1_8,
-        KOTLIN_1_9,
-        KOTLIN_2_0,
-        KOTLIN_2_1,
-    )
-}
-
-internal fun parseLanguageVersionSetting(versionString: String) = LanguageVersion.fromVersionString(versionString)
-internal fun parseApiVersionSettings(versionString: String) = apiVersionValues.find { it.versionString == versionString }
-internal fun parseLanguageFeature(featureName: String) = LanguageFeature.fromString(featureName)

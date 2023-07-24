@@ -778,47 +778,58 @@ open class NewMultiplatformIT : BaseGradleIT() {
     }
 
     @Test
-    fun testLanguageSettingsConsistency() = with(Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")) {
+    fun testLanguageSettingsConsistency() = with(
+        Project("sample-lib", gradleVersion, "new-mpp-lib-and-app", minLogLevel = LogLevel.INFO)
+    ) {
         setupWorkingDir()
 
-        gradleBuildScript().appendText(
-            "\n" + """
-                kotlin.sourceSets {
-                    foo { }
-                    bar { dependsOn foo }
-                }
-            """.trimIndent()
-        )
-
         fun testMonotonousCheck(
-            initialSetupForSourceSets: String?,
             sourceSetConfigurationChange: String,
             expectedErrorHint: String,
+            initialSetupForSourceSets: String? = null,
         ) {
             if (initialSetupForSourceSets != null) {
                 gradleBuildScript().appendText(
-                    "\nkotlin.sourceSets.foo.${initialSetupForSourceSets}\n" + "" +
-                            "kotlin.sourceSets.bar.${initialSetupForSourceSets}",
+                    """
+                    |
+                    |kotlin.sourceSets.commonMain.${initialSetupForSourceSets}
+                    |kotlin.sourceSets.nativeMain.${initialSetupForSourceSets}
+                    |kotlin.sourceSets.linux64Main.${initialSetupForSourceSets}
+                    |kotlin.sourceSets.macos64Main.${initialSetupForSourceSets}
+                    |kotlin.sourceSets.jvm6Main.${initialSetupForSourceSets}
+                    |kotlin.sourceSets.mingw64Main.${initialSetupForSourceSets}
+                    |kotlin.sourceSets.nodeJsMain.${initialSetupForSourceSets}
+                    |kotlin.sourceSets.wasmMain.${initialSetupForSourceSets}
+                    """.trimMargin()
                 )
             }
-            gradleBuildScript().appendText("\nkotlin.sourceSets.foo.${sourceSetConfigurationChange}")
+            gradleBuildScript().appendText("\nkotlin.sourceSets.commonMain.${sourceSetConfigurationChange}")
             build("tasks") {
                 assertFailed()
                 assertContains(expectedErrorHint)
             }
-            gradleBuildScript().appendText("\nkotlin.sourceSets.bar.${sourceSetConfigurationChange}")
+            gradleBuildScript().appendText(
+                """
+                |
+                |kotlin.sourceSets.nativeMain.${sourceSetConfigurationChange}
+                |kotlin.sourceSets.linux64Main.${sourceSetConfigurationChange}
+                |kotlin.sourceSets.macos64Main.${sourceSetConfigurationChange}
+                |kotlin.sourceSets.jvm6Main.${sourceSetConfigurationChange}
+                |kotlin.sourceSets.mingw64Main.${sourceSetConfigurationChange}
+                |kotlin.sourceSets.nodeJsMain.${sourceSetConfigurationChange}
+                |kotlin.sourceSets.wasmMain.${sourceSetConfigurationChange}
+                """.trimMargin()
+            )
             build("tasks") {
                 assertSuccessful()
             }
         }
 
-        fun testMonotonousCheck(sourceSetConfigurationChange: String, expectedErrorHint: String): Unit =
-            testMonotonousCheck(null, sourceSetConfigurationChange, expectedErrorHint)
 
         testMonotonousCheck(
-            "languageSettings.languageVersion = '1.3'",
             "languageSettings.languageVersion = '1.4'",
-            "The language version of the dependent source set must be greater than or equal to that of its dependency."
+            "The language version of the dependent source set must be greater than or equal to that of its dependency.",
+            "languageSettings.languageVersion = '1.3'",
         )
 
         testMonotonousCheck(
@@ -835,7 +846,7 @@ open class NewMultiplatformIT : BaseGradleIT() {
         // don't require doing the same for dependent source sets:
         gradleBuildScript().appendText(
             "\n" + """
-                kotlin.sourceSets.foo.languageSettings {
+                kotlin.sourceSets.commonMain.languageSettings {
                     apiVersion = '1.4'
                     enableLanguageFeature('SoundSmartcastForEnumEntries')
                     progressiveMode = true

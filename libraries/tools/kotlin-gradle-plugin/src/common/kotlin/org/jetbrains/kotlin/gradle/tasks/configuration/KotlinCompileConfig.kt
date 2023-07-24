@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.tasks.configuration
 
 import org.gradle.api.Project
 import org.gradle.api.attributes.Attribute
-import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
@@ -17,12 +16,10 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaCompilation
 import org.jetbrains.kotlin.gradle.utils.markResolvable
-import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.tcsOrNull
 import org.jetbrains.kotlin.gradle.report.BuildMetricsService
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.utils.providerWithLazyConvention
-import org.jetbrains.kotlin.project.model.LanguageSettings
 
 internal typealias KotlinCompileConfig = BaseKotlinCompileConfig<KotlinCompile>
 
@@ -99,7 +96,7 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
 
 
     constructor(project: Project, ext: KotlinTopLevelExtension) : super(
-        project, ext, languageSettings = getDefaultLangSetting(project)
+        project, ext
     )
 
     companion object {
@@ -109,10 +106,6 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
         private const val DIRECTORY_ARTIFACT_TYPE = "directory"
         private const val JAR_ARTIFACT_TYPE = "jar"
         const val CLASSPATH_ENTRY_SNAPSHOT_ARTIFACT_TYPE = "classpath-entry-snapshot"
-
-        private fun getDefaultLangSetting(project: Project): Provider<LanguageSettings> {
-            return project.provider { DefaultLanguageSettingsBuilder() }
-        }
     }
 
     private fun registerTransformsOnce(project: Project) {

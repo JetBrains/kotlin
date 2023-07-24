@@ -61,12 +61,12 @@ class ExternalKotlinTargetSourcesJarUtilsTest {
         val target = multiplatformExtension.createExternalKotlinTarget<FakeTarget> { defaults() }
 
         val mainCompilation = target.createCompilation<FakeCompilation> {
-            defaults(multiplatformExtension)
+            defaults(multiplatformExtension, "mainFake")
             compilationName = "main"
         }
 
         val auxCompilation = target.createCompilation<FakeCompilation> {
-            defaults(multiplatformExtension)
+            defaults(multiplatformExtension, "auxFake")
             compilationName = "aux"
         }
 

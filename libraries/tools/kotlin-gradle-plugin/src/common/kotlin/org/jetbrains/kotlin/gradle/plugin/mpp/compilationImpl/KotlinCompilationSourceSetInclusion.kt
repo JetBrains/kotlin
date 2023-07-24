@@ -9,7 +9,9 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl
 
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.addSourcesToKotlinCompileTask
 import org.jetbrains.kotlin.gradle.plugin.sources.defaultSourceSetLanguageSettingsChecker
@@ -63,7 +65,9 @@ internal class KotlinCompilationSourceSetInclusion(
             // Temporary solution for checking consistency across source sets participating in a compilation that may
             // not be interconnected with the dependsOn relation: check the settings as if the default source set of
             // the compilation depends on the one added to the compilation:
-            defaultSourceSetLanguageSettingsChecker.runAllChecks(compilation.defaultSourceSet, sourceSet)
+            compilation.project.launchInStage(KotlinPluginLifecycle.Stage.FinaliseCompilations) {
+                defaultSourceSetLanguageSettingsChecker.runAllChecks(compilation.defaultSourceSet, sourceSet)
+            }
         }
     }
 

@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.registerEmbedAndSignAppleFra
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.version
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmVariant
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
-import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.targets.native.*
 import org.jetbrains.kotlin.gradle.targets.native.internal.*
@@ -51,6 +50,7 @@ import org.jetbrains.kotlin.gradle.testing.internal.configureConventions
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.testing.testTaskName
 import org.jetbrains.kotlin.gradle.utils.XcodeUtils
+import org.jetbrains.kotlin.gradle.utils.named
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -95,14 +95,11 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
     }
 
     private fun Project.syncLanguageSettingsToLinkTask(binary: NativeBinary) {
-        tasks.named(binary.linkTaskName, KotlinNativeLink::class.java).configure {
+        tasks.named<KotlinNativeLink>(binary.linkTaskName).configure { linkTask ->
             // We propagate compilation free args to the link task for now (see KT-33717).
-            val defaultLanguageSettings = binary.compilation.defaultSourceSet.languageSettings as? DefaultLanguageSettingsBuilder
-            if (defaultLanguageSettings != null && defaultLanguageSettings.freeCompilerArgsForNonImport.isNotEmpty()) {
-                it.toolOptions.freeCompilerArgs.addAll(
-                    defaultLanguageSettings.freeCompilerArgsForNonImport
-                )
-            }
+            linkTask.toolOptions.freeCompilerArgs.addAll(
+                binary.compilation.compilerOptions.options.freeCompilerArgs
+            )
         }
     }
 
@@ -252,11 +249,6 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
         project.runOnceAfterEvaluated("Sync language settings for NativeLinkTask") {
             target.binaries.all { binary ->
                 project.syncLanguageSettingsToLinkTask(binary)
-            }
-        }
-        project.launchInStage(KotlinPluginLifecycle.Stage.FinaliseCompilations) {
-            target.compilations.all { compilation ->
-                compilation.compilerOptions.syncLanguageSettings(compilation.defaultSourceSet.languageSettings)
             }
         }
 

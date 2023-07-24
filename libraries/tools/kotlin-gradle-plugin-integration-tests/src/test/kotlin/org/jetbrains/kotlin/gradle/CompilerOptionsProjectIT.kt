@@ -140,7 +140,7 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
                 |            languageVersion = '1.9'
                 |            apiVersion = '1.9'
                 |            progressiveMode = false
-                |            optInAnnotationsInUse.add("another.CustomOptInAnnotation")
+                |            optIn("another.CustomOptInAnnotation")
                 |            enableLanguageFeature("UnitConversionsOnArbitraryExpressions")
                 |        }
                 |    }

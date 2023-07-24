@@ -38,10 +38,8 @@ import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmMetadataCompilationData
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmNativeCompilationData
-import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.targets.native.KonanPropertiesBuildService
-import org.jetbrains.kotlin.gradle.targets.native.internal.isAllowCommonizer
 import org.jetbrains.kotlin.gradle.targets.native.tasks.*
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.listFilesOrEmpty
@@ -205,16 +203,16 @@ abstract class AbstractKotlinNativeCompile<
     @get:Input
     abstract val additionalCompilerOptions: Provider<Collection<String>>
 
+    @Deprecated("Use implementations compilerOptions")
     @get:Internal
-    val languageSettings: LanguageSettings by project.provider {
-        compilation.languageSettings
-    }
+    val languageSettings: LanguageSettings
+        get() = compilation.languageSettings
 
     @Suppress("DeprecatedCallableAddReplaceWith")
     @get:Deprecated("Replaced with 'compilerOptions.progressiveMode'")
     @get:Internal
     val progressiveMode: Boolean
-        get() = languageSettings.progressiveMode
+        get() = compilation.compilerOptions.options.progressiveMode.get()
     // endregion.
 
     @Suppress("DeprecatedCallableAddReplaceWith")
@@ -373,17 +371,21 @@ internal constructor(
         replaceWith = ReplaceWith("kotlinOptions.languageVersion")
     )
     val languageVersion: String?
-        @Optional @Input get() = languageSettings.languageVersion
+        @Optional @Input get() = compilerOptions.languageVersion.orNull?.version
 
     @Deprecated(
         message = "Replaced with kotlinOptions.apiVersion",
         replaceWith = ReplaceWith("kotlinOptions.apiVersion")
     )
     val apiVersion: String?
-        @Optional @Input get() = languageSettings.apiVersion
+        @Optional @Input get() = compilerOptions.apiVersion.orNull?.version
 
+    @Deprecated("Language features is internal Kotlin compiler flags and should not be used directly")
     val enabledLanguageFeatures: Set<String>
-        @Input get() = languageSettings.enabledLanguageFeatures
+        @Internal get() = compilerOptions
+            .freeCompilerArgs.get()
+            .filter { it.startsWith("-XXLanguage:+") }
+            .toSet()
 
     @Deprecated(
         message = "Replaced with compilerOptions.optIn",
@@ -414,15 +416,14 @@ internal constructor(
         fn.call()
     }
 
+    @Suppress("UNCHECKED_CAST")
     @Deprecated(
         message = "Replaced with compilerOptions.freeCompilerArgs",
         replaceWith = ReplaceWith("compilerOptions.freeCompilerArgs.get()")
     )
     @get:Input
     override val additionalCompilerOptions: Provider<Collection<String>>
-        get() = compilerOptions
-            .freeCompilerArgs
-            .map { it + (languageSettings as DefaultLanguageSettingsBuilder).freeCompilerArgsForNonImport }
+        get() = compilerOptions.freeCompilerArgs as Provider<Collection<String>>
 
     private val runnerSettings = KotlinNativeCompilerRunner.Settings.fromProject(project)
     // endregion.

@@ -90,12 +90,12 @@ class ExternalKotlinTargetApiTests {
                 "Expected CompilationAssociator.default being set in ${ExternalKotlinCompilationDescriptorBuilder::class.simpleName}"
             )
 
-            defaults(kotlin)
+            defaults(kotlin, "fakeMain")
             compileTaskName = "main"
         }
 
         val auxCompilation = target.createCompilation<FakeCompilation> {
-            defaults(kotlin)
+            defaults(kotlin, "fakeAux")
             compilationName = "aux"
         }
 
@@ -114,13 +114,13 @@ class ExternalKotlinTargetApiTests {
         }
 
         val mainCompilation = target.createCompilation<FakeCompilation> {
-            defaults(kotlin)
+            defaults(kotlin, "fakeMain")
             this.compilationAssociator = compilationAssociator
             this.compileTaskName = "main"
         }
 
         val auxCompilation = target.createCompilation<FakeCompilation> {
-            defaults(kotlin)
+            defaults(kotlin, "fakeAux")
             this.compilationName = "aux"
             this.compilationAssociator = compilationAssociator
         }

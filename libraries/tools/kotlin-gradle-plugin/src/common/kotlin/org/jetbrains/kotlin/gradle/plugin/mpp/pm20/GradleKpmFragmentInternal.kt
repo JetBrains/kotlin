@@ -41,7 +41,7 @@ abstract class GradleKpmFragmentInternal @Inject constructor(
     // TODO pull up to KotlinModuleFragment
     // FIXME apply to compilation
     // FIXME check for consistency
-    override val languageSettings: LanguageSettingsBuilder = DefaultLanguageSettingsBuilder()
+    override val languageSettings: LanguageSettingsBuilder = DefaultLanguageSettingsBuilder(project)
 
     override fun refines(other: GradleKpmFragment) {
         checkCanRefine(other)

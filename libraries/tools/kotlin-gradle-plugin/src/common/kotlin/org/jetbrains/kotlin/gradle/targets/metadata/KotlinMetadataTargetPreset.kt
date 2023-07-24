@@ -10,7 +10,6 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.sources.applyLanguageSettingsToCompilerOptions
 import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetConfigurator
 
 @DeprecatedTargetPresetApi
@@ -58,12 +57,5 @@ class KotlinMetadataTargetPreset(
 
             @Suppress("DEPRECATION")
             mainCompilation.addSourceSet(commonMainSourceSet)
-
-            project.whenEvaluated {
-                // Since there's no default source set, apply language settings from commonMain:
-                mainCompilation.compileTaskProvider.configure { compileKotlinMetadata ->
-                    applyLanguageSettingsToCompilerOptions(commonMainSourceSet.languageSettings, compileKotlinMetadata.compilerOptions)
-                }
-            }
         }
 }

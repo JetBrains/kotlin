@@ -209,11 +209,11 @@ internal class CompilerOptionsIT : KGPBaseTest() {
                 """.trimMargin()
             )
 
-            build("compileKotlinJvm6", forceOutput = true) {
+            build("compileKotlinJvm6") {
                 assertTasksExecuted(":compileKotlinJvm6")
-                assert(output.contains("-opt-in another.custom.UnderOptIn,my.custom.OptInAnnotation")) {
+                assert(output.contains("-opt-in my.custom.OptInAnnotation,another.custom.UnderOptIn")) {
                     printBuildOutput()
-                    "Output does not contain '-opt-in another.custom.UnderOptIn,my.custom.OptInAnnotation'!"
+                    "Output does not contain '-opt-in my.custom.OptInAnnotation,another.custom.UnderOptIn'!"
                 }
             }
         }
@@ -524,6 +524,99 @@ internal class CompilerOptionsIT : KGPBaseTest() {
 
                 extractNativeTasksCommandLineArgumentsFromOutput(":compileKotlinLinux64") {
                     assertCommandLineArgumentsContain("-module-name", "com.example:myNativeLib")
+                }
+            }
+        }
+    }
+
+    @GradleTest
+    @DisplayName("Syncs languageSettings changes to the related compiler options")
+    @MppGradlePluginTests
+    fun syncLanguageSettingsToCompilerOptions(gradleVersion: GradleVersion) {
+        project("mpp-default-hierarchy", gradleVersion) {
+            buildGradle.appendText(
+                //language=groovy
+                """
+                |
+                |kotlin.sourceSets.configureEach {
+                |    languageSettings.apiVersion = "1.7"
+                |    languageSettings.languageVersion = "1.8"
+                |}
+                |
+                |tasks.register("printCompilerOptions") {
+                |    dependsOn(kotlinTaskToCheck)
+                |    def tasksContainer = project.tasks
+                |    doLast {
+                |        def kotlinTask = tasks.getByName(kotlinTaskToCheck) as org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<?>
+                |        logger.warn("###AV:${'$'}{kotlinTask.compilerOptions.apiVersion.getOrNull()}")
+                |        logger.warn("###LV:${'$'}{kotlinTask.compilerOptions.languageVersion.getOrNull()}")
+                |    }
+                |}
+                """.trimMargin()
+            )
+
+            listOf(
+                "compileCommonMainKotlinMetadata",
+                "compileKotlinJvm",
+                "compileNativeMainKotlinMetadata",
+                "compileLinuxMainKotlinMetadata",
+                "compileAppleMainKotlinMetadata",
+                "compileIosMainKotlinMetadata",
+                "compileKotlinLinuxX64",
+                "compileKotlinLinuxArm64",
+                "compileKotlinIosX64",
+                "compileKotlinIosArm64"
+            ).forEach { task ->
+                build("printCompilerOptions", "-PkotlinTaskToCheck=$task") {
+                    assertOutputContains("###AV:KOTLIN_1_7")
+                    assertOutputContains("###LV:KOTLIN_1_8")
+                }
+            }
+        }
+    }
+
+    @GradleTest
+    @DisplayName("Syncs compiler option changes to the related language settings")
+    @MppGradlePluginTests
+    fun syncCompilerOptionsToLanguageSettings(gradleVersion: GradleVersion) {
+        project("mpp-default-hierarchy", gradleVersion) {
+            buildGradle.appendText(
+                //language=groovy
+                """
+                |
+                |tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask.class).all {
+                |    compilerOptions {
+                |        apiVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_7
+                |        languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_8
+                |    }
+                |}
+                |
+                |tasks.register("printLanguageSettingsOptions") {
+                |    doLast {
+                |        def languageSettings = kotlin.sourceSets.getByName(kotlinSourceSet).languageSettings
+                |        logger.warn("")
+                |        logger.warn("###AV:${'$'}{languageSettings.apiVersion}")
+                |        logger.warn("###LV:${'$'}{languageSettings.languageVersion}")
+                |    }
+                |}
+                """.trimMargin()
+            )
+
+            listOf(
+                "commonMain",
+                "jvmMain",
+                "nativeMain",
+                "linuxMain",
+                "appleMain",
+                "iosMain",
+                "linuxX64Main",
+                "linuxArm64Main",
+                "iosX64Main",
+                "iosArm64Main",
+            ).forEach { sourceSet ->
+                build("printLanguageSettingsOptions", "-PkotlinSourceSet=${sourceSet}") {
+                    assertOutputContains("###AV:1.7")
+                    assertOutputContains("###LV:1.8")
                 }
             }
         }

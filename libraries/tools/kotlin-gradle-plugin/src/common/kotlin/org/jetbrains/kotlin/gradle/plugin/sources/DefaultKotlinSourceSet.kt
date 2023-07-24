@@ -12,9 +12,8 @@ import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
+import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.tooling.core.MutableExtras
@@ -68,7 +67,7 @@ abstract class DefaultKotlinSourceSet @Inject constructor(
 
     override val kotlin: SourceDirectorySet = createDefaultSourceDirectorySet(project, "$name Kotlin source")
 
-    override val languageSettings: LanguageSettingsBuilder = DefaultLanguageSettingsBuilder()
+    override val languageSettings: LanguageSettingsBuilder = DefaultLanguageSettingsBuilder(project)
 
     override val resources: SourceDirectorySet = createDefaultSourceDirectorySet(project, "$name resources")
 
@@ -95,7 +94,7 @@ abstract class DefaultKotlinSourceSet @Inject constructor(
         dependencies { configure.execute(this) }
 
     override fun afterDependsOnAdded(other: KotlinSourceSet) {
-        project.runProjectConfigurationHealthCheckWhenEvaluated {
+        project.launchInStage(KotlinPluginLifecycle.Stage.FinaliseCompilations) {
             defaultSourceSetLanguageSettingsChecker.runAllChecks(this@DefaultKotlinSourceSet, other)
         }
     }
@@ -175,7 +174,7 @@ abstract class DefaultKotlinSourceSet @Inject constructor(
 }
 
 internal val defaultSourceSetLanguageSettingsChecker =
-    FragmentConsistencyChecker<KotlinSourceSet>(
+    FragmentConsistencyChecker(
         unitsName = "source sets",
         name = { name },
         checks = FragmentConsistencyChecks<KotlinSourceSet>(
