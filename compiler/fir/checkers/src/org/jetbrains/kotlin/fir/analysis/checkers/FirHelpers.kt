@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
@@ -149,6 +150,14 @@ fun FirBasedSymbol<*>.getContainingClassSymbol(session: FirSession): FirClassLik
     is FirClassLikeSymbol<*> -> getContainingClassLookupTag()?.toSymbol(session)
     is FirAnonymousInitializerSymbol -> dispatchReceiverType?.toSymbol(session) as? FirClassLikeSymbol<*>
     else -> null
+}
+
+/**
+ * Returns the containing class or file if the callable is top-level.
+ */
+fun FirCallableSymbol<*>.getContainingSymbol(session: FirSession): FirBasedSymbol<*>? {
+    return getContainingClassSymbol(session)
+        ?: session.firProvider.getFirCallableContainerFile(this)?.symbol
 }
 
 fun FirDeclaration.getContainingClassSymbol(session: FirSession) = symbol.getContainingClassSymbol(session)

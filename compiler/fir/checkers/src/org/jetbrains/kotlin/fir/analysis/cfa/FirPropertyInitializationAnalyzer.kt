@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
+import org.jetbrains.kotlin.fir.declarations.utils.isExternal
 import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.isCatchParameter
@@ -126,7 +127,7 @@ private fun PropertyInitializationInfoData.checkPropertyAccesses(
             node is QualifiedAccessNode -> {
                 if (doNotReportUninitializedVariable) continue
                 val symbol = node.fir.calleeReference.toResolvedPropertySymbol() ?: continue
-                if (!symbol.isLateInit && node.fir.hasCorrectReceiver() && symbol in properties &&
+                if (!symbol.isLateInit && !symbol.isExternal && node.fir.hasCorrectReceiver() && symbol in properties &&
                     getValue(node).values.any { it[symbol]?.isDefinitelyVisited() != true }
                 ) {
                     reporter.reportOn(node.fir.source, FirErrors.UNINITIALIZED_VARIABLE, symbol, context)

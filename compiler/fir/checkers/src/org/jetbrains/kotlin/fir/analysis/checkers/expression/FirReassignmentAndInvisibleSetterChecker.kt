@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.cfa.evaluatedInPlace
 import org.jetbrains.kotlin.fir.analysis.cfa.requiresInitialization
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
+import org.jetbrains.kotlin.fir.analysis.checkers.getContainingSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
 import org.jetbrains.kotlin.fir.references.*
+import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnosticWithCandidates
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -137,14 +139,32 @@ object FirReassignmentAndInvisibleSetterChecker : FirVariableAssignmentChecker()
         val property = expression.calleeReference?.toResolvedPropertySymbol() ?: return
         if (property.isVar) return
         // Assignments of uninitialized `val`s must be checked via CFG, since the first one is OK.
-        // See `FirPropertyInitializationAnalyzer` for locals and `FirMemberPropertiesChecker` for backing fields in initializers.
-        if (property.isLocal && property.requiresInitialization(isForClassInitialization = false)) return
+        // See `FirPropertyInitializationAnalyzer` for locals, `FirMemberPropertiesChecker` for backing fields in initializers,
+        // and `FirTopLevelPropertiesChecker` for top-level properties.
+        if (
+            (property.isLocal || isInFileGraph(property, context))
+            && property.requiresInitialization(isForClassInitialization = false)
+        ) return
         if (
             isInOwnersInitializer(expression.dispatchReceiver.unwrapSmartcastExpression(), context)
             && property.requiresInitialization(isForClassInitialization = true)
         ) return
 
         reporter.reportOn(expression.lValue.source, FirErrors.VAL_REASSIGNMENT, property, context)
+    }
+
+    private fun isInFileGraph(property: FirPropertySymbol, context: CheckerContext): Boolean {
+        val declarations = context.containingDeclarations.dropWhile { it !is FirFile }
+        val file = declarations.firstOrNull() as? FirFile ?: return false
+        if (file.symbol != property.getContainingSymbol(context.session)) return false
+
+        // Starting with the CFG for the containing FirFile, check if all following declarations are contained as sub-CFGs.
+        // If there is a break in the chain, then the variable assignment is not part of the file CFG, and VAL_REASSIGNMENT should be
+        // reported by this checker.
+        val containingGraph = declarations
+            .map { (it as? FirControlFlowGraphOwner)?.controlFlowGraphReference?.controlFlowGraph }
+            .reduceOrNull { acc, graph -> graph?.takeIf { acc != null && it in acc.subGraphs } }
+        return containingGraph != null
     }
 
     private fun isInOwnersInitializer(receiver: FirExpression, context: CheckerContext): Boolean {
