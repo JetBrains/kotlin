@@ -47,6 +47,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     )
     var languageVersion: String? = null
         set(value) {
+            if(value == "2.0") throw Exception("Someone set lv 2.0!")
             checkFrozen()
             field = if (value.isNullOrEmpty()) null else value
         }

@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.jps.incremental.CacheVersionManager
 import org.jetbrains.kotlin.jps.incremental.CompositeLookupsCacheAttributesManager
 import org.jetbrains.kotlin.jps.incremental.getKotlinCache
 import org.jetbrains.kotlin.jps.model.JpsKotlinFacetModuleExtension
+import org.jetbrains.kotlin.jps.model.k2JvmCompilerArguments
 import org.jetbrains.kotlin.jps.model.kotlinCommonCompilerArguments
 import org.jetbrains.kotlin.jps.model.kotlinFacet
 import org.jetbrains.kotlin.jps.targets.KotlinModuleBuildTarget
@@ -186,6 +187,9 @@ abstract class AbstractIncrementalJpsTest(
             builder.addMessageHandler(buildResult)
             val finalScope = scope.build()
             projectDescriptor.project.kotlinCommonCompilerArguments = projectDescriptor.project.kotlinCommonCompilerArguments.apply {
+                updateCommandLineArguments(this)
+            }
+            projectDescriptor.project.k2JvmCompilerArguments = projectDescriptor.project.k2JvmCompilerArguments.apply {
                 updateCommandLineArguments(this)
             }
 
