@@ -13,17 +13,18 @@ abstract class AbstractIncrementalK1JvmJpsTest(
     override fun updateCommandLineArguments(arguments: CommonCompilerArguments) {
         println(">>>>>updateCommandLineArguments")
         Thread.dumpStack()
-        if (KotlinVersion.CURRENT.major >= 2) {
-//            arguments.languageVersion = "1.9"
-            throw Exception("KotlinVersion.CURRENT.major >= 2" + KotlinVersion.CURRENT.major)
+        throw Exception(KotlinVersion.CURRENT.toString())
+//        if (KotlinVersion.CURRENT.major >= 2) {
+////            arguments.languageVersion = "1.9"
+//            throw Exception("KotlinVersion.CURRENT.major >= 2" + KotlinVersion.CURRENT.major)
+////            additionalCommandLineArguments = additionalCommandLineArguments + listOf("-language-version=1.9")
+//        }
+//        additionalCommandLineArguments = additionalCommandLineArguments + listOf("-language-version=1.9")
+//
+//        super.updateCommandLineArguments(arguments)
+//        if (KotlinVersion.CURRENT.major >= 2) {
+////            arguments.languageVersion = "1.9"
 //            additionalCommandLineArguments = additionalCommandLineArguments + listOf("-language-version=1.9")
-        }
-        additionalCommandLineArguments = additionalCommandLineArguments + listOf("-language-version=1.9")
-
-        super.updateCommandLineArguments(arguments)
-        if (KotlinVersion.CURRENT.major >= 2) {
-//            arguments.languageVersion = "1.9"
-            additionalCommandLineArguments = additionalCommandLineArguments + listOf("-language-version=1.9")
-        }
+//        }
     }
 }
