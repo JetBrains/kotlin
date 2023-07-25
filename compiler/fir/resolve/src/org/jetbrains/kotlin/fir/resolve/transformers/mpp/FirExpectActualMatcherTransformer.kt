@@ -83,7 +83,7 @@ open class FirExpectActualMatcherTransformer(
     // ------------------------------------------------------
 
     fun transformMemberDeclaration(memberDeclaration: FirMemberDeclaration) {
-        if (!memberDeclaration.isActual && !memberDeclaration.isImplicitlyActual()) return
+        if (!memberDeclaration.isActual) return
         val actualSymbol = memberDeclaration.symbol
 
         // Regardless of whether any `expect` symbols are found for `memberDeclaration`, it must be assigned an `expectForActual` map.
@@ -96,12 +96,5 @@ open class FirExpectActualMatcherTransformer(
             expectActualMatchingContext,
         ) ?: mapOf()
         memberDeclaration.expectForActual = expectForActualData
-    }
-
-    // TODO KT-60139 Remove special handling when implicitly actual elements have the actual flag set.
-    private fun FirMemberDeclaration.isImplicitlyActual(): Boolean {
-        if (this !is FirPrimaryConstructor) return false
-        val klass = getContainingClass(session) ?: return false
-        return klass.isActual && (klass.isInline || klass.classKind == ClassKind.ANNOTATION_CLASS)
     }
 }

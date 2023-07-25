@@ -122,7 +122,6 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
     ) {
         val symbol = declaration.symbol
         val compatibilityToMembersMap = symbol.expectForActual ?: return
-        val session = context.session
 
         checkAmbiguousExpects(symbol, compatibilityToMembersMap, symbol, context, reporter)
 
@@ -131,7 +130,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
             if (compatibilityToMembersMap.allStrongIncompatibilities()) return
 
             if (Compatible in compatibilityToMembersMap) {
-                if (checkActual && requireActualModifier(symbol, session)) {
+                if (checkActual) {
                     reporter.reportOn(source, FirErrors.ACTUAL_MISSING, context)
                 }
                 return
@@ -168,13 +167,15 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
             }
 
             Compatible !in compatibilityToMembersMap -> {
-                reporter.reportOn(
-                    source,
-                    FirErrors.ACTUAL_WITHOUT_EXPECT,
-                    symbol,
-                    compatibilityToMembersMap,
-                    context
-                )
+                if (requireActualModifier(declaration.symbol, context.session)) {
+                    reporter.reportOn(
+                        source,
+                        FirErrors.ACTUAL_WITHOUT_EXPECT,
+                        symbol,
+                        compatibilityToMembersMap,
+                        context
+                    )
+                }
             }
 
             else -> {}

@@ -550,7 +550,8 @@ class LightTreeRawFirDeclarationBuilder(
                         selfType.source,
                         classWrapper,
                         delegatedConstructorSource,
-                        containingClassIsExpectClass = status.isExpect
+                        containingClassIsExpectClass = status.isExpect,
+                        isImplicitlyActual = status.isActual && (status.isInline || classKind == ClassKind.ANNOTATION_CLASS)
                     )
                     val firPrimaryConstructor = primaryConstructorWrapper?.firConstructor
                     firPrimaryConstructor?.let { declarations += it }
@@ -884,7 +885,8 @@ class LightTreeRawFirDeclarationBuilder(
         classWrapper: ClassWrapper,
         delegatedConstructorSource: KtLightSourceElement?,
         isEnumEntry: Boolean = false,
-        containingClassIsExpectClass: Boolean
+        containingClassIsExpectClass: Boolean,
+        isImplicitlyActual: Boolean = false,
     ): PrimaryConstructor? {
         fun ClassKind.isEnumRelated(): Boolean = this == ClassKind.ENUM_CLASS || this == ClassKind.ENUM_ENTRY
         val shouldGenerateImplicitConstructor =
@@ -955,7 +957,7 @@ class LightTreeRawFirDeclarationBuilder(
         }
         val status = FirDeclarationStatusImpl(explicitVisibility ?: defaultVisibility, Modality.FINAL).apply {
             isExpect = modifiers.hasExpect() || context.containerIsExpect
-            isActual = modifiers.hasActual()
+            isActual = modifiers.hasActual() || isImplicitlyActual
             isInner = classWrapper.isInner()
             isFromSealedClass = classWrapper.isSealed() && explicitVisibility !== Visibilities.Private
             isFromEnumClass = classWrapper.isEnum()
