@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.js.klib.TopDownAnalyzerFacadeForJSIR
-import org.jetbrains.kotlin.cli.js.klib.generateIrForKlibSerialization
 import org.jetbrains.kotlin.cli.wasm.klib.TopDownAnalyzerFacadeForWasm
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.CodegenFactory
