@@ -13,11 +13,13 @@ import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.backend.FirMangler
+import org.jetbrains.kotlin.ir.backend.js.IrModuleInfo
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.test.model.BackendKind
 import org.jetbrains.kotlin.test.model.BackendKinds
 import org.jetbrains.kotlin.test.model.ResultingArtifact
+import java.io.File
 
 // IR backend (JVM, JS, Native, Wasm)
 sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
@@ -63,7 +65,9 @@ sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
 
     abstract val diagnosticReporter: BaseDiagnosticsCollector
 
-    class JsIrBackendInput(
+    sealed class JsIrBackendInput : IrBackendInput()
+
+    class JsIrAfterFrontendBackendInput(
         override val irModuleFragment: IrModuleFragment,
         override val irPluginContext: IrPluginContext,
         val icData: List<KotlinFileSerializedData>,
@@ -73,19 +77,25 @@ sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
         override val irMangler: KotlinMangler.IrMangler,
         override val firMangler: FirMangler?,
         val metadataSerializer: KlibSingleFileMetadataSerializer<*>,
-    ) : IrBackendInput()
+    ) : JsIrBackendInput()
 
-    data class JsIrDeserializedFromKlibBackendInput(
-        override val irModuleFragment: IrModuleFragment,
+    class JsIrDeserializedFromKlibBackendInput(
+        val moduleInfo: IrModuleInfo,
+        val klib: File,
         override val irPluginContext: IrPluginContext,
         override val diagnosticReporter: BaseDiagnosticsCollector,
-        override val descriptorMangler: KotlinMangler.DescriptorMangler?,
-        override val irMangler: KotlinMangler.IrMangler,
-        override val firMangler: FirMangler?,
-    ) : IrBackendInput() {
+    ) : JsIrBackendInput() {
+        override val irModuleFragment: IrModuleFragment
+            get() = moduleInfo.module
 
-        override val kind: BackendKind<IrBackendInput>
-            get() = BackendKinds.DeserializedIrBackend
+        override val descriptorMangler: KotlinMangler.DescriptorMangler?
+            get() = moduleInfo.symbolTable.signaturer?.mangler
+
+        override val irMangler: KotlinMangler.IrMangler
+            get() = moduleInfo.deserializer.fakeOverrideBuilder.mangler
+
+        override val firMangler: FirMangler?
+            get() = null
     }
 
     class WasmBackendInput(

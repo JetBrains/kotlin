@@ -70,3 +70,16 @@ abstract class BackendFacade<BackendInputArtifact, BinaryOutputArtifact>(
         return module.backendKind == inputKind && module.binaryKind == outputKind
     }
 }
+
+abstract class DeserializerFacade<BinaryArtifact, BackendInputArtifact>(
+    val testServices: TestServices,
+    final override val inputKind: BinaryKind<BinaryArtifact>,
+    final override val outputKind: BackendKind<BackendInputArtifact>,
+) : AbstractTestFacade<BinaryArtifact, BackendInputArtifact>()
+        where BinaryArtifact : ResultingArtifact.Binary<BinaryArtifact>,
+              BackendInputArtifact : ResultingArtifact.BackendInput<BackendInputArtifact> {
+
+    override fun shouldRunAnalysis(module: TestModule): Boolean {
+        return module.backendKind == outputKind
+    }
+}

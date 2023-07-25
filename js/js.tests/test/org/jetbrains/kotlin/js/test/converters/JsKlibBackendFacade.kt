@@ -40,8 +40,8 @@ class JsKlibBackendFacade(
     }
 
     override fun transform(module: TestModule, inputArtifact: IrBackendInput): BinaryArtifacts.KLib {
-        require(inputArtifact is IrBackendInput.JsIrBackendInput) {
-            "JsKlibBackendFacade expects IrBackendInput.JsIrBackendInput as input"
+        require(inputArtifact is IrBackendInput.JsIrAfterFrontendBackendInput) {
+            "JsKlibBackendFacade expects IrBackendInput.JsIrAfterFrontendBackendInput as input"
         }
 
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
