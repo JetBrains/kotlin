@@ -17,7 +17,9 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.lazyDeclarationResolver
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.ir.BuiltInOperatorNames
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -735,7 +737,7 @@ class IrBuiltInsOverFir(
 
     private fun referenceClassByClassId(classId: ClassId): IrClassSymbol? {
         val firClassSymbol = components.session.symbolProvider.getClassLikeSymbolByClassId(classId) as? FirClassSymbol ?: return null
-        firClassSymbol.lazyResolveToPhase(FirResolvePhase.STATUS)
+        firClassSymbol.lazyResolveToPhaseWithoutContractCheck(FirResolvePhase.STATUS)
 
         return components.classifierStorage.getIrClassSymbol(firClassSymbol)
     }
@@ -1200,13 +1202,23 @@ class IrBuiltInsOverFir(
 
     private fun findFunctions(packageName: FqName, name: Name): List<IrSimpleFunctionSymbol> {
         return components.session.symbolProvider.getTopLevelFunctionSymbols(packageName, name)
-            .onEach { it.lazyResolveToPhase(FirResolvePhase.STATUS) }
+            .onEach { it.lazyResolveToPhaseWithoutContractCheck(FirResolvePhase.STATUS) }
             .mapNotNull { components.declarationStorage.getIrFunctionSymbol(it) as? IrSimpleFunctionSymbol }
     }
 
     private fun findProperties(packageName: FqName, name: Name): List<IrPropertySymbol> {
         return components.session.symbolProvider.getTopLevelPropertySymbols(packageName, name)
-            .onEach { it.lazyResolveToPhase(FirResolvePhase.STATUS) }
+            .onEach { it.lazyResolveToPhaseWithoutContractCheck(FirResolvePhase.STATUS) }
             .mapNotNull { components.declarationStorage.getIrPropertySymbol(it) as? IrPropertySymbol }
+    }
+
+    private fun FirBasedSymbol<*>.lazyResolveToPhaseWithoutContractCheck(toPhase: FirResolvePhase) {
+        val session = moduleData.session
+
+        // In the compiler, the declaration should have been already resolved.
+        // In the IDE, the contract check is not active.
+        session.lazyDeclarationResolver.disableLazyResolveContractChecksInside {
+            lazyResolveToPhase(toPhase)
+        }
     }
 }
