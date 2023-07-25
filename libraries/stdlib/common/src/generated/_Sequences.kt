@@ -2722,7 +2722,10 @@ public inline fun <T> Sequence<T>.partition(predicate: (T) -> Boolean): Pair<Lis
  * The operation is _intermediate_ and _stateless_.
  */
 public operator fun <T> Sequence<T>.plus(element: T): Sequence<T> {
-    return sequenceOf(this, sequenceOf(element)).flatten()
+    return sequence {
+        yieldAll(this@plus)
+        yield(element)
+    }
 }
 
 /**
@@ -2746,7 +2749,10 @@ public operator fun <T> Sequence<T>.plus(elements: Array<out T>): Sequence<T> {
  * The operation is _intermediate_ and _stateless_.
  */
 public operator fun <T> Sequence<T>.plus(elements: Iterable<T>): Sequence<T> {
-    return sequenceOf(this, elements.asSequence()).flatten()
+    return sequence {
+        yieldAll(this@plus)
+        yieldAll(elements)
+    }
 }
 
 /**
@@ -2758,7 +2764,10 @@ public operator fun <T> Sequence<T>.plus(elements: Iterable<T>): Sequence<T> {
  * The operation is _intermediate_ and _stateless_.
  */
 public operator fun <T> Sequence<T>.plus(elements: Sequence<T>): Sequence<T> {
-    return sequenceOf(this, elements).flatten()
+    return sequence {
+        yieldAll(this@plus)
+        yieldAll(elements)
+    }
 }
 
 /**

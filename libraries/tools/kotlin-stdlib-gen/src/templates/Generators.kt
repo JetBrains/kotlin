@@ -93,7 +93,10 @@ object Generators : TemplateGroupBase() {
             doc { "Returns a sequence containing all elements of the original sequence and then the given [element]." }
             body {
                 """
-                return sequenceOf(this, sequenceOf(element)).flatten()
+                return sequence {
+                    yieldAll(this@plus)
+                    yield(element)
+                }
                 """
             }
         }
@@ -160,7 +163,10 @@ object Generators : TemplateGroupBase() {
             sequenceClassification(intermediate, stateless)
             body {
                 """
-                return sequenceOf(this, elements.asSequence()).flatten()
+                return sequence {
+                    yieldAll(this@plus)
+                    yieldAll(elements)
+                }
                 """
             }
         }
@@ -286,7 +292,10 @@ object Generators : TemplateGroupBase() {
             sequenceClassification(intermediate, stateless)
             body {
                 """
-                return sequenceOf(this, elements).flatten()
+                return sequence {
+                    yieldAll(this@plus)
+                    yieldAll(elements)
+                }
                 """
             }
         }
