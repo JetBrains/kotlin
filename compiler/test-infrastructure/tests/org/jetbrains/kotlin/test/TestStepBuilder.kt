@@ -8,38 +8,49 @@ package org.jetbrains.kotlin.test
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.TestServices
 
-sealed class TestStepBuilder<I : ResultingArtifact<I>, O : ResultingArtifact<O>> {
+sealed class TestStepBuilder<InputArtifact, OutputArtifact>
+        where InputArtifact : ResultingArtifact<InputArtifact>,
+              OutputArtifact : ResultingArtifact<OutputArtifact> {
     @TestInfrastructureInternals
-    abstract fun createTestStep(testServices: TestServices): TestStep<I, O>
+    abstract fun createTestStep(testServices: TestServices): TestStep<InputArtifact, OutputArtifact>
 }
 
 
-class FacadeStepBuilder<I : ResultingArtifact<I>, O : ResultingArtifact<O>>(
-    val facade: Constructor<AbstractTestFacade<I, O>>
-) : TestStepBuilder<I, O>() {
+class FacadeStepBuilder<InputArtifact, OutputArtifact>(
+    val facade: Constructor<AbstractTestFacade<InputArtifact, OutputArtifact>>,
+) : TestStepBuilder<InputArtifact, OutputArtifact>()
+        where InputArtifact : ResultingArtifact<InputArtifact>,
+              OutputArtifact : ResultingArtifact<OutputArtifact> {
     @TestInfrastructureInternals
-    override fun createTestStep(testServices: TestServices): TestStep.FacadeStep<I, O> {
+    override fun createTestStep(testServices: TestServices): TestStep.FacadeStep<InputArtifact, OutputArtifact> {
         return TestStep.FacadeStep(facade.invoke(testServices))
     }
 }
 
-class HandlersStepBuilder<I : ResultingArtifact<I>>(val artifactKind: TestArtifactKind<I>) : TestStepBuilder<I, Nothing>() {
-    private val handlers: MutableList<Constructor<AnalysisHandler<I>>> = mutableListOf()
+class HandlersStepBuilder<InputArtifact, InputArtifactKind>(val artifactKind: InputArtifactKind) :
+    TestStepBuilder<InputArtifact, Nothing>()
+        where InputArtifact : ResultingArtifact<InputArtifact>,
+              InputArtifactKind : TestArtifactKind<InputArtifact> {
+    private val handlers: MutableList<Constructor<AnalysisHandler<InputArtifact>>> = mutableListOf()
 
-    fun useHandlers(vararg constructor: Constructor<AnalysisHandler<I>>) {
+    fun useHandlers(vararg constructor: Constructor<AnalysisHandler<InputArtifact>>) {
         handlers += constructor
     }
 
-    fun useHandlersAtFirst(vararg constructor: Constructor<AnalysisHandler<I>>) {
+    fun useHandlers(vararg constructor: Constructor2<InputArtifactKind, AnalysisHandler<InputArtifact>>) {
+        constructor.mapTo(handlers) { it.bind(artifactKind) }
+    }
+
+    fun useHandlersAtFirst(vararg constructor: Constructor<AnalysisHandler<InputArtifact>>) {
         handlers.addAll(0, constructor.toList())
     }
 
-    fun useHandlers(constructors: List<Constructor<AnalysisHandler<I>>>) {
+    fun useHandlers(constructors: List<Constructor<AnalysisHandler<InputArtifact>>>) {
         handlers += constructors
     }
 
     @TestInfrastructureInternals
-    override fun createTestStep(testServices: TestServices): TestStep.HandlersStep<I> {
+    override fun createTestStep(testServices: TestServices): TestStep.HandlersStep<InputArtifact> {
         return TestStep.HandlersStep(artifactKind, handlers.map { it.invoke(testServices) })
     }
 }

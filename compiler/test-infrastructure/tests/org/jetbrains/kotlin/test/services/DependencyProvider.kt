@@ -35,16 +35,22 @@ class DependencyProviderImpl(
         return testModulesByName[name] ?: assertions.fail { "Module $name is not defined" }
     }
 
-    override fun <A : ResultingArtifact<A>> getArtifactSafe(module: TestModule, kind: TestArtifactKind<A>): A? {
+    override fun <OutputArtifact : ResultingArtifact<OutputArtifact>> getArtifactSafe(
+        module: TestModule,
+        kind: TestArtifactKind<OutputArtifact>,
+    ): OutputArtifact? {
         @Suppress("UNCHECKED_CAST")
-        return artifactsByModule.getMap(module)[kind] as A?
+        return artifactsByModule.getMap(module)[kind] as OutputArtifact?
     }
 
     override fun <A : ResultingArtifact<A>> getArtifact(module: TestModule, kind: TestArtifactKind<A>): A {
         return getArtifactSafe(module, kind) ?: error("Artifact with kind $kind is not registered for module ${module.name}")
     }
 
-    fun <A : ResultingArtifact<A>> registerArtifact(module: TestModule, artifact: ResultingArtifact<A>) {
+    fun <OutputArtifact : ResultingArtifact<OutputArtifact>> registerArtifact(
+        module: TestModule,
+        artifact: ResultingArtifact<OutputArtifact>,
+    ) {
         val kind = artifact.kind
         val previousValue = artifactsByModule.getMap(module).put(kind, artifact)
         if (previousValue != null) error("Artifact with kind $kind already registered for module ${module.name}")

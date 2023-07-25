@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.parsing.parseBoolean
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.bind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureJsArtifactsHandlersStep
 import org.jetbrains.kotlin.test.builders.jsArtifactsHandlersStep
@@ -207,7 +208,9 @@ open class AbstractIrJsSteppingTest : AbstractJsIrTest(
         }
         useAdditionalSourceProviders(::JsSteppingTestAdditionalSourceProvider)
         jsArtifactsHandlersStep {
-            useHandlers({ JsDebugRunner(it, localVariables = false) })
+            useHandlers(
+                ::JsDebugRunner.bind(false)
+            )
         }
     }
 }
@@ -223,7 +226,9 @@ open class AbstractIrJsLocalVariableTest : AbstractJsIrTest(
         }
         useAdditionalSourceProviders(::JsSteppingTestAdditionalSourceProvider)
         jsArtifactsHandlersStep {
-            useHandlers({ JsDebugRunner(it, localVariables = true) })
+            useHandlers(
+                ::JsDebugRunner.bind(true)
+            )
         }
     }
 }

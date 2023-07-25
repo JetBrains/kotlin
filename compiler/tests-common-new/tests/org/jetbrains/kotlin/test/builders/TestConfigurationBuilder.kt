@@ -104,45 +104,52 @@ class TestConfigurationBuilder {
         }
     }
 
-    inline fun <I : ResultingArtifact<I>> handlersStep(
-        artifactKind: TestArtifactKind<I>,
-        init: HandlersStepBuilder<I>.() -> Unit
-    ): HandlersStepBuilder<I> {
+    inline fun <InputArtifact, InputArtifactKind> handlersStep(
+        artifactKind: InputArtifactKind,
+        init: HandlersStepBuilder<InputArtifact, InputArtifactKind>.() -> Unit,
+    ): HandlersStepBuilder<InputArtifact, InputArtifactKind>
+            where InputArtifact : ResultingArtifact<InputArtifact>,
+                  InputArtifactKind : TestArtifactKind<InputArtifact> {
         return HandlersStepBuilder(artifactKind).also {
             it.init()
             steps += it
         }
     }
 
-    inline fun <I : ResultingArtifact<I>> namedHandlersStep(
+    inline fun <InputArtifact, InputArtifactKind> namedHandlersStep(
         name: String,
-        artifactKind: TestArtifactKind<I>,
-        init: HandlersStepBuilder<I>.() -> Unit
-    ): HandlersStepBuilder<I> {
-        val previouslyContainedStep = namedStepOfType<I>(name)
-        if (previouslyContainedStep == null) {
+        artifactKind: InputArtifactKind,
+        init: HandlersStepBuilder<InputArtifact, InputArtifactKind>.() -> Unit,
+    ): HandlersStepBuilder<InputArtifact, InputArtifactKind>
+            where InputArtifact : ResultingArtifact<InputArtifact>,
+                  InputArtifactKind : TestArtifactKind<InputArtifact> {
+        val previouslyContainedStep = namedStepOfType<InputArtifact, InputArtifactKind>(name)
+        return if (previouslyContainedStep == null) {
             val step = handlersStep(artifactKind, init)
             namedSteps[name] = step
-            return step
+            step
         } else {
             configureNamedHandlersStep(name, artifactKind, init)
-            return previouslyContainedStep
+            previouslyContainedStep
         }
     }
 
-    inline fun <I : ResultingArtifact<I>> configureNamedHandlersStep(
+    inline fun <InputArtifact, InputArtifactKind> configureNamedHandlersStep(
         name: String,
-        artifactKind: TestArtifactKind<I>,
-        init: HandlersStepBuilder<I>.() -> Unit
-    ) {
-        val step = namedStepOfType<I>(name) ?: error { "Step \"$name\" not found" }
+        artifactKind: InputArtifactKind,
+        init: HandlersStepBuilder<InputArtifact, InputArtifactKind>.() -> Unit
+    ) where InputArtifact : ResultingArtifact<InputArtifact>,
+            InputArtifactKind : TestArtifactKind<InputArtifact> {
+        val step = namedStepOfType<InputArtifact, InputArtifactKind>(name) ?: error { "Step \"$name\" not found" }
         require(step.artifactKind == artifactKind) { "Step kind: ${step.artifactKind}, passed kind is $artifactKind" }
         step.apply(init)
     }
 
-    fun <I : ResultingArtifact<I>> namedStepOfType(name: String):  HandlersStepBuilder<I>?  {
+    fun <InputArtifact, InputArtifactKind> namedStepOfType(name: String): HandlersStepBuilder<InputArtifact, InputArtifactKind>?
+        where InputArtifact : ResultingArtifact<InputArtifact>,
+              InputArtifactKind : TestArtifactKind<InputArtifact> {
         @Suppress("UNCHECKED_CAST")
-        return namedSteps[name] as HandlersStepBuilder<I>?
+        return namedSteps[name] as HandlersStepBuilder<InputArtifact, InputArtifactKind>?
     }
 
     fun useSourcePreprocessor(vararg preprocessors: Constructor<SourceFilePreprocessor>, needToPrepend: Boolean = false) {

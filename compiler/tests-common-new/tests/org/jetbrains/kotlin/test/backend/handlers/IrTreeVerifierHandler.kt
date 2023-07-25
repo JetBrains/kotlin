@@ -14,11 +14,15 @@ import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.EXTERNAL_FILE
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
+import org.jetbrains.kotlin.test.model.BackendKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 
-class IrTreeVerifierHandler(testServices: TestServices) : AbstractIrHandler(testServices) {
+class IrTreeVerifierHandler(
+    testServices: TestServices,
+    artifactKind: BackendKind<IrBackendInput>,
+) : AbstractIrHandler(testServices, artifactKind) {
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(CodegenTestDirectives)
 

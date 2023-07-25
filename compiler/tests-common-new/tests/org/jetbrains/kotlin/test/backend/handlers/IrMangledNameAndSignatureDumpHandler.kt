@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_LOCAL_DEC
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_SIGNATURES
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.MUTE_SIGNATURE_COMPARISON_K2
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.SKIP_SIGNATURE_DUMP
+import org.jetbrains.kotlin.test.model.BackendKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
@@ -92,7 +93,10 @@ private const val CHECK_MARKER = "// CHECK"
  *      any backends, we print the actual mangled name and signature for this declaration.
  *    - Otherwise, we print the parsed `// CHECK` block as is.
  */
-class IrMangledNameAndSignatureDumpHandler(testServices: TestServices) : AbstractIrHandler(testServices) {
+class IrMangledNameAndSignatureDumpHandler(
+    testServices: TestServices,
+    artifactKind: BackendKind<IrBackendInput>,
+) : AbstractIrHandler(testServices, artifactKind) {
 
     companion object {
         const val DUMP_EXTENSION = "sig.kt.txt"

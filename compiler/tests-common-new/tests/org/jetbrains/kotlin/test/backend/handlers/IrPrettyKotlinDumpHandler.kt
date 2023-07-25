@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.EXTERNAL_FILE
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.SKIP_KT_DUMP
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
+import org.jetbrains.kotlin.test.model.BackendKind
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
@@ -30,7 +31,10 @@ import org.jetbrains.kotlin.test.utils.withExtension
  * This handler can be enabled by specifying the [DUMP_KT_IR] test directive,
  * or disabled with the [SKIP_KT_DUMP] directive.
  */
-class IrPrettyKotlinDumpHandler(testServices: TestServices) : AbstractIrHandler(testServices) {
+class IrPrettyKotlinDumpHandler(
+    testServices: TestServices,
+    artifactKind: BackendKind<IrBackendInput>,
+) : AbstractIrHandler(testServices, artifactKind) {
     companion object {
         const val DUMP_EXTENSION = "kt.txt"
     }
