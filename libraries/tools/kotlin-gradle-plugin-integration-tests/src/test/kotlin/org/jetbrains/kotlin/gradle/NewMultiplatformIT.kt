@@ -421,6 +421,7 @@ open class NewMultiplatformIT : BaseGradleIT() {
     }
 
     @Test
+    @Ignore // KT-60745
     fun testJvmWithJavaEquivalence() = doTestJvmWithJava(testJavaSupportInJvmTargets = false)
 
     @Test
@@ -627,31 +628,12 @@ open class NewMultiplatformIT : BaseGradleIT() {
                 ":compileTestKotlinJs",
                 ":compileKotlinJvmWithoutJava",
                 ":compileTestKotlinJvmWithoutJava",
-                ":compileKotlinJvmWithJava",
-                ":compileJava",
-                ":compileTestKotlinJvmWithJava",
-                ":compileTestJava",
                 // test tasks:
                 ":jsTest", // does not run any actual tests for now
                 ":jvmWithoutJavaTest",
-                ":test"
             )
 
             val expectedKotlinOutputFiles = listOf(
-                *kotlinClassesDir(sourceSet = "jvmWithJava/main").let {
-                    arrayOf(
-                        it + "com/example/lib/JavaClassUsageKt.class",
-                        it + "com/example/lib/CommonKt.class",
-                        it + "META-INF/new-mpp-lib-with-tests.kotlin_module"
-                    )
-                },
-                *kotlinClassesDir(sourceSet = "jvmWithJava/test").let {
-                    arrayOf(
-                        it + "com/example/lib/TestCommonCode.class",
-                        it + "com/example/lib/TestWithJava.class",
-                        it + "META-INF/new-mpp-lib-with-tests_test.kotlin_module"
-                    )
-                },
                 *kotlinClassesDir(sourceSet = "jvmWithoutJava/main").let {
                     arrayOf(
                         it + "com/example/lib/CommonKt.class",
@@ -676,7 +658,6 @@ open class NewMultiplatformIT : BaseGradleIT() {
             assertTestResults(
                 expectedTestResults,
                 "jsNodeTest",
-                "test", // jvmTest
                 "${targetName}Test"
             )
         }

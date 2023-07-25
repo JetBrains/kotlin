@@ -101,8 +101,8 @@ class BuildCacheRelocationIT : KGPBaseTest() {
             listOf("build"),
             listOf(
                 ":compileCommonMainKotlinMetadata",
-                ":compileKotlinJvmWithJava",
-                ":compileTestKotlinJvmWithJava",
+                ":compileKotlinJvmWithoutJava",
+                ":compileTestKotlinJvmWithoutJava",
                 ":compileKotlinJs",
                 ":compileTestKotlinJs"
             )

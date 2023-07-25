@@ -136,7 +136,6 @@ internal class CompilerOptionsIT : KGPBaseTest() {
 
             val compileTasks = listOf(
                 "compileKotlinMetadata",
-                "compileKotlinJvmWithJava",
                 "compileKotlinJvmWithoutJava",
                 "compileKotlinJs",
                 // we do not allow modifying free args for K/N at execution time
