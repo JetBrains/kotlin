@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.CHECK_BYTECODE
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_EXTERNAL_CLASS
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.EXTERNAL_FILE
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.SKIP_KLIB_TEST
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_IDENTICAL
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
@@ -40,6 +41,7 @@ import java.io.File
 class IrTextDumpHandler(
     testServices: TestServices,
     artifactKind: BackendKind<IrBackendInput>,
+    private val isDeserializedInput: Boolean = false,
 ) : AbstractIrHandler(testServices, artifactKind) {
     companion object {
         const val DUMP_EXTENSION = "ir.txt"
@@ -92,7 +94,7 @@ class IrTextDumpHandler(
     override fun processModule(module: TestModule, info: IrBackendInput) {
         byteCodeListingEnabled = byteCodeListingEnabled || CHECK_BYTECODE_LISTING in module.directives
 
-        if (DUMP_IR !in module.directives) return
+        if (DUMP_IR !in module.directives || (isDeserializedInput && SKIP_KLIB_TEST in module.directives)) return
 
         val irBuiltins = info.irModuleFragment.irBuiltins
 
@@ -150,6 +152,8 @@ class IrTextDumpHandler(
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         val moduleStructure = testServices.moduleStructure
+        if (moduleStructure.modules.any { isDeserializedInput && SKIP_KLIB_TEST in it.directives })
+            return // don't check, don't remove testData
         val defaultExpectedFile = moduleStructure.originalTestDataFiles.first()
             .withExtension(moduleStructure.modules.first().getDumpExtension())
         checkOneExpectedFile(defaultExpectedFile, baseDumper.generateResultingDump())

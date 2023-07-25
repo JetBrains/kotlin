@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_SIGNATURES
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.MUTE_SIGNATURE_COMPARISON_K2
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.SEPARATE_SIGNATURE_DUMP_FOR_K2
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.SKIP_KLIB_TEST
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_IDENTICAL
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.model.BackendKind
@@ -101,6 +102,7 @@ private const val CHECK_MARKER = "// CHECK"
 class IrMangledNameAndSignatureDumpHandler(
     testServices: TestServices,
     artifactKind: BackendKind<IrBackendInput>,
+    private val isDeserializedInput: Boolean = false,
 ) : AbstractIrHandler(testServices, artifactKind) {
 
     companion object {
@@ -161,7 +163,7 @@ class IrMangledNameAndSignatureDumpHandler(
     }
 
     override fun processModule(module: TestModule, info: IrBackendInput) {
-        if (DUMP_SIGNATURES !in module.directives) return
+        if (DUMP_SIGNATURES !in module.directives || (isDeserializedInput && SKIP_KLIB_TEST in module.directives)) return
 
         dumpModuleKotlinLike(
             module,
@@ -186,6 +188,8 @@ class IrMangledNameAndSignatureDumpHandler(
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
+        if (testServices.moduleStructure.modules.any { isDeserializedInput && SKIP_KLIB_TEST in it.directives })
+            return // don't check, don't remove testData
         if (dumper.isEmpty()) {
             assertions.assertFileDoesntExist(expectedFile, DUMP_SIGNATURES)
             return

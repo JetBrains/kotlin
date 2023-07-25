@@ -4,6 +4,7 @@
 // FIR_IDENTICAL
 // LANGUAGE: +MultiPlatformProjects
 // SKIP_KLIB_TEST
+// REASON: KT-68988
 
 // MODULE: common
 // FILE: common.kt

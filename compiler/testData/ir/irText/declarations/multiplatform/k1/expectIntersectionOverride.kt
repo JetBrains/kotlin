@@ -2,6 +2,8 @@
 // ^^^ In FIR, declaring the same `expect` and `actual` classes in one compiler module is not possible (see KT-55177).
 
 // LANGUAGE: +MultiPlatformProjects
+// SKIP_KLIB_TEST
+// REASON: `expect class C` is not dumped after deserialization
 
 interface I1 {
     fun f(): String

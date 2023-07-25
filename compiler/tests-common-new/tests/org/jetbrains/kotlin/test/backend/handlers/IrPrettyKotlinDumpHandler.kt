@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_KT_IR
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.EXTERNAL_FILE
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.SKIP_KLIB_TEST
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.SKIP_KT_DUMP
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
@@ -36,6 +37,7 @@ import org.jetbrains.kotlin.test.utils.withExtension
 class IrPrettyKotlinDumpHandler(
     testServices: TestServices,
     artifactKind: BackendKind<IrBackendInput>,
+    private val isDeserializedInput: Boolean = false,
 ) : AbstractIrHandler(testServices, artifactKind) {
     companion object {
         const val DUMP_EXTENSION = "kt.txt"
@@ -50,7 +52,7 @@ class IrPrettyKotlinDumpHandler(
         get() = listOf(::FirIrDumpIdenticalChecker)
 
     override fun processModule(module: TestModule, info: IrBackendInput) {
-        if (DUMP_KT_IR !in module.directives || SKIP_KT_DUMP in module.directives) return
+        if (DUMP_KT_IR !in module.directives || SKIP_KT_DUMP in module.directives || (isDeserializedInput && SKIP_KLIB_TEST in module.directives)) return
         dumpModuleKotlinLike(
             module, testServices.moduleStructure.modules, info, dumper,
             KotlinLikeDumpOptions(
@@ -64,6 +66,8 @@ class IrPrettyKotlinDumpHandler(
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         val moduleStructure = testServices.moduleStructure
+        if (moduleStructure.modules.any { isDeserializedInput && SKIP_KLIB_TEST in it.directives })
+            return // don't check, don't remove testData
         val extension = computeDumpExtension(moduleStructure.modules.first(), DUMP_EXTENSION)
         val expectedFile = moduleStructure.originalTestDataFiles.first().withExtension(extension)
 

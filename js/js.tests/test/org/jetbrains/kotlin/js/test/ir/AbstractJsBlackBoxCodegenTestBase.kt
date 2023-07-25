@@ -116,17 +116,15 @@ abstract class AbstractJsBlackBoxCodegenTestBase<R : ResultingArtifact.FrontendO
     }
 }
 
-@Suppress("reformat")
-fun <
-    R : ResultingArtifact.FrontendOutput<R>,
-    I : ResultingArtifact.BackendInput<I>,
-    A : ResultingArtifact.Binary<A>
-> TestConfigurationBuilder.commonConfigurationForJsCodegenTest(
-    targetFrontend: FrontendKind<R>,
-    frontendFacade: Constructor<FrontendFacade<R>>,
-    frontendToBackendConverter: Constructor<Frontend2BackendConverter<R, I>>,
-    backendFacade: Constructor<BackendFacade<I, A>>,
-) {
+fun <FrontendOutputArtifact, BackendInputArtifact, BinaryArtifact> TestConfigurationBuilder.commonConfigurationForJsCodegenTest(
+    targetFrontend: FrontendKind<FrontendOutputArtifact>,
+    frontendFacade: Constructor<FrontendFacade<FrontendOutputArtifact>>,
+    frontendToBackendConverter: Constructor<Frontend2BackendConverter<FrontendOutputArtifact, BackendInputArtifact>>,
+    backendFacade: Constructor<BackendFacade<BackendInputArtifact, BinaryArtifact>>,
+) where FrontendOutputArtifact : ResultingArtifact.FrontendOutput<FrontendOutputArtifact>,
+        BackendInputArtifact : ResultingArtifact.BackendInput<BackendInputArtifact>,
+        BinaryArtifact : ResultingArtifact.Binary<BinaryArtifact> {
+
     globalDefaults {
         frontend = targetFrontend
         targetPlatform = JsPlatforms.defaultJsPlatform
