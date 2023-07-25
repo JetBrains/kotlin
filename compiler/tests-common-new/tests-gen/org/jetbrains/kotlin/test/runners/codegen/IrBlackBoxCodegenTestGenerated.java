@@ -52176,6 +52176,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("typeAliasOnTypeAlias.kt")
+        public void testTypeAliasOnTypeAlias() throws Exception {
+            runTest("compiler/testData/codegen/box/typealias/typeAliasOnTypeAlias.kt");
+        }
+
+        @Test
         @TestMetadata("typeAliasSecondaryConstructor.kt")
         public void testTypeAliasSecondaryConstructor() throws Exception {
             runTest("compiler/testData/codegen/box/typealias/typeAliasSecondaryConstructor.kt");

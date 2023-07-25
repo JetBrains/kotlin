@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
@@ -165,4 +165,8 @@ private fun mapTypeAliasArguments(
     }
 
     return substitutor.substituteOrSelf(resultingType)
+}
+
+fun FirTypeAlias.fullyExpandedConeType(useSiteSession: FirSession): ConeClassLikeType? {
+    return expandedConeType?.fullyExpandedType(useSiteSession)
 }

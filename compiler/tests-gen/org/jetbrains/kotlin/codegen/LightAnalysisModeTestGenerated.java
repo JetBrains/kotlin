@@ -42083,6 +42083,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/typealias/typeAliasObjectCallable.kt");
         }
 
+        @TestMetadata("typeAliasOnTypeAlias.kt")
+        public void testTypeAliasOnTypeAlias() throws Exception {
+            runTest("compiler/testData/codegen/box/typealias/typeAliasOnTypeAlias.kt");
+        }
+
         @TestMetadata("typeAliasSecondaryConstructor.kt")
         public void testTypeAliasSecondaryConstructor() throws Exception {
             runTest("compiler/testData/codegen/box/typealias/typeAliasSecondaryConstructor.kt");

@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.references.*
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedConeType
 import org.jetbrains.kotlin.fir.resolve.isIteratorNext
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -1435,7 +1436,7 @@ class Fir2IrVisitor(
                         classifierStorage.getIrClassSymbol(symbol)
                     }
                     is FirTypeAliasSymbol -> {
-                        symbol.fir.expandedConeType.toIrClassSymbol()
+                        symbol.fir.fullyExpandedConeType(session).toIrClassSymbol()
                     }
                     else ->
                         return getClassCall.convertWithOffsets { startOffset, endOffset ->
