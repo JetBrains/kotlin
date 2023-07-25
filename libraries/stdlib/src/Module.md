@@ -149,7 +149,9 @@ Functions for working with text and regular expressions.
 
 # Package kotlin.time
 
-API for representing [Duration][kotlin.time.Duration] values and experimental API for measuring time intervals.
+API for measuring time intervals and calculating durations.
+
+For more information, see our [Time measurement](/docs/time-measurement.html) guide.
 
 # Package org.khronos.webgl
 
