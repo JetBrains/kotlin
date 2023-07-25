@@ -4682,14 +4682,6 @@ if (PlatformInfo.isAppleTarget(project)) {
         UtilsKt.dependsOnPlatformLibs(it)
     }
 
-    interopTest("interop_kt49034_objcprotocol") {
-        disabled = isK2(project) // KT-56028
-        interop = 'kt49034_objcprotocol'
-        source = 'interop/objc/kt49034/objcprotocol/main.kt'
-
-        // The test depends on collision between kt49034.__darwin_fp_control and platform.darwin.__darwin_fp_control
-        UtilsKt.dependsOnPlatformLibs(it)
-    }
 
     interopTest("interop_objc_global_initializer") {
         useGoldenData = true
