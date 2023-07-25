@@ -746,28 +746,33 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
             if (operation == FirOperation.ASSIGN) {
                 context.arraySetArgument[unwrappedLhs] = rhsExpression
             }
-            return if (operation == FirOperation.ASSIGN) {
-                val result = unwrappedLhs.convert()
-                result.replaceAnnotations(result.annotations.smartPlus(annotations))
-                buildBlock {
+            return buildBlock {
+                if (operation == FirOperation.ASSIGN) {
+                    val result = unwrappedLhs.convert()
+                    result.replaceAnnotations(result.annotations.smartPlus(annotations))
                     source = result.source
                     statements += result.pullUpSafeCallIfNecessary()
-                    statements += buildUnitExpression {
-                        source = result.source?.fakeElement(KtFakeSourceElementKind.ImplicitUnit.IndexedAssignmentCoercion)
+                } else {
+                    val receiver = unwrappedLhs.convert()
+
+                    if (receiver is FirSafeCallExpression) {
+                        receiver.replaceSelector(
+                            generateAugmentedArraySetCall(
+                                receiver.selector as FirExpression, baseSource, arrayAccessSource, operation, annotations, rhsAST, convert
+                            )
+                        )
+                        source = receiver.source
+                        statements += receiver
+                    } else {
+                        val augmentedArraySetCall = generateAugmentedArraySetCall(
+                            receiver, baseSource, arrayAccessSource, operation, annotations, rhsAST, convert
+                        )
+                        source = augmentedArraySetCall.source
+                        statements += augmentedArraySetCall
                     }
                 }
-            } else {
-                val receiver = unwrappedLhs.convert()
-
-                if (receiver is FirSafeCallExpression) {
-                    receiver.replaceSelector(
-                        generateAugmentedArraySetCall(
-                            receiver.selector as FirExpression, baseSource, arrayAccessSource, operation, annotations, rhsAST, convert
-                        )
-                    )
-                    receiver
-                } else {
-                    generateAugmentedArraySetCall(receiver, baseSource, arrayAccessSource, operation, annotations, rhsAST, convert)
+                statements += buildUnitExpression {
+                    source = this@buildBlock.source?.fakeElement(KtFakeSourceElementKind.ImplicitUnit.IndexedAssignmentCoercion)
                 }
             }
         }

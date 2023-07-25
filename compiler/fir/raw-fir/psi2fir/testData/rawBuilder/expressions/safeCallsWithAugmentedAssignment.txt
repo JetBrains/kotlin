@@ -4,10 +4,16 @@ FILE: safeCallsWithAugmentedAssignment.kt
         a#?.{ $subj$.b# }?.{ +=($subj$.c#, IntegerLiteral(1)) }
         +=(a#?.{ $subj$.b# }.c#, IntegerLiteral(1))
         a#?.{ ArraySet:[$subj$.b#.get#(IntegerLiteral(0)) += IntegerLiteral(1)] }
+        Unit
         a#?.{ $subj$.b# }?.{ ArraySet:[$subj$.c#.get#(IntegerLiteral(0)) += IntegerLiteral(1)] }
+        Unit
         ArraySet:[a#?.{ $subj$.b# }.c#.get#(IntegerLiteral(0)) += IntegerLiteral(1)]
+        Unit
         a#?.{ ArraySet:[$subj$.b#.get#(IntegerLiteral(0)).get#(IntegerLiteral(0)) += IntegerLiteral(1)] }
+        Unit
         a#?.{ $subj$.b# }?.{ ArraySet:[$subj$.c#.get#(IntegerLiteral(0)).get#(IntegerLiteral(0)) += IntegerLiteral(1)] }
+        Unit
         ArraySet:[a#?.{ $subj$.b# }.c#.get#(IntegerLiteral(0)).get#(IntegerLiteral(0)) += IntegerLiteral(1)]
+        Unit
         +=(a#?.{ $subj$.b# }.d#(), IntegerLiteral(1))
     }

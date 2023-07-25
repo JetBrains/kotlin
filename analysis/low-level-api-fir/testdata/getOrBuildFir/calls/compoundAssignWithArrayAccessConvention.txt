@@ -20,4 +20,5 @@ FILE: [ResolvedTo(IMPORTS)] compoundAssignWithArrayAccessConvention.kt
             R|<local>/<array>|.R|SubstitutionOverride</MyMap.set: R|kotlin/Unit|>|(R|<local>/<index_0>|, R|<local>/<array>|.R|SubstitutionOverride</MyMap.get: R|kotlin/Int|>|(R|<local>/<index_0>|).R|kotlin/Int.plus|(Int(1)))
         }
 
+        Unit
     }

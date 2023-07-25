@@ -95,7 +95,7 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
         // fake source refers to the return statement
         object Return : ImplicitUnit()
 
-        // this source is used for 'a[i] = b' converted to { a[i] = b; Unit }
+        // this source is used for 'a[i] = b' or 'a[i] += b' converted to { a[i] = b; Unit }
         // fake source refers to the assignment statement
         object IndexedAssignmentCoercion : ImplicitUnit()
     }

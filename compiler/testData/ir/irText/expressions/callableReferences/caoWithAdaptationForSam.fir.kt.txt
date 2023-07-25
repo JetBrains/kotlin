@@ -76,9 +76,11 @@ fun test3(fn: Function1<Int, Unit>) {
 fun test4(fn: Function1<Int, Unit>) {
   when {
     fn is IFoo -> { // BLOCK
-      val <array>: A = A
-      val <index_0>: IFoo = fn /*as IFoo */
-      <array>.set(i = <index_0>, newValue = <array>.get(i = <index_0>).plus(other = 1))
+      { // BLOCK
+        val <array>: A = A
+        val <index_0>: IFoo = fn /*as IFoo */
+        <array>.set(i = <index_0>, newValue = <array>.get(i = <index_0>).plus(other = 1))
+      }
     }
   }
 }

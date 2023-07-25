@@ -17,4 +17,5 @@ FILE: [ResolvedTo(IMPORTS)] compoundAssignWithArrayGetConvention.kt
     }
     public final [ResolvedTo(BODY_RESOLVE)] fun test([ResolvedTo(BODY_RESOLVE)] m: R|MyMap<kotlin/String, A>|): R|kotlin/Unit| {
         R|<local>/m|.R|SubstitutionOverride</MyMap.get: R|A|>|(String(a)).R|/A.plusAssign|(Int(1))
+        Unit
     }

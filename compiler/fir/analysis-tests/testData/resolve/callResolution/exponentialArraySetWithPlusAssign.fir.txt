@@ -46,34 +46,49 @@ FILE: exponentialArraySetWithPlusAssign.kt
                                                                     Q|kotlin/Unit|
                                                                 }
                                                                 )
+                                                                Unit
                                                             }
                                                             )
+                                                            Unit
                                                         }
                                                         )
+                                                        Unit
                                                     }
                                                     )
+                                                    Unit
                                                 }
                                                 )
+                                                Unit
                                             }
                                             )
+                                            Unit
                                         }
                                         )
+                                        Unit
                                     }
                                     )
+                                    Unit
                                 }
                                 )
+                                Unit
                             }
                             )
+                            Unit
                         }
                         )
+                        Unit
                     }
                     )
+                    Unit
                 }
                 )
+                Unit
             }
             )
+            Unit
         }
         )
+        Unit
     }
     public final class D : R|kotlin/Any| {
         public constructor(): R|D| {
@@ -129,34 +144,49 @@ FILE: exponentialArraySetWithPlusAssign.kt
                                                                     Q|kotlin/Unit|
                                                                 }
                                                                 )
+                                                                Unit
                                                             }
                                                             )
+                                                            Unit
                                                         }
                                                         )
+                                                        Unit
                                                     }
                                                     )
+                                                    Unit
                                                 }
                                                 )
+                                                Unit
                                             }
                                             )
+                                            Unit
                                         }
                                         )
+                                        Unit
                                     }
                                     )
+                                    Unit
                                 }
                                 )
+                                Unit
                             }
                             )
+                            Unit
                         }
                         )
+                        Unit
                     }
                     )
+                    Unit
                 }
                 )
+                Unit
             }
             )
+            Unit
         }
         )
+        Unit
     }
     public final fun someCallInsideLambda(): R|kotlin/Unit| {
     }
