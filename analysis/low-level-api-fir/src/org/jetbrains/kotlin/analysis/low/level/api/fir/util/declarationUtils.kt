@@ -190,6 +190,9 @@ var KtFile.originalKtFile by UserDataProperty(ORIGINAL_KT_FILE_KEY)
 
 
 private fun KtClassLikeDeclaration.findFir(provider: FirProvider): FirClassLikeDeclaration? {
+    // TODO, KTIJ-26848: this is a workaround for IDE index inconsistency for unnamed classes
+    if (name == null) return null
+
     return if (provider is LLFirProvider) {
         provider.getFirClassifierByDeclaration(this)
     } else {

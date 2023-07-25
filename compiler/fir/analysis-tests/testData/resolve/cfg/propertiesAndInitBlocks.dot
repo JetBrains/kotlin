@@ -5,304 +5,313 @@ digraph propertiesAndInitBlocks_kt {
 
     subgraph cluster_0 {
         color=red
-        0 [label="Enter function run" style="filled" fillcolor=red];
+        0 [label="Enter file propertiesAndInitBlocks.kt" style="filled" fillcolor=red];
         subgraph cluster_1 {
             color=blue
-            1 [label="Enter block"];
-            2 [label="Function call: R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
-            3 [label="Exit block"];
+            1 [label="Enter property" style="filled" fillcolor=red];
+            2 [label="Const: Int(1)"];
+            3 [label="Exit property" style="filled" fillcolor=red];
         }
-        4 [label="Exit function run" style="filled" fillcolor=red];
+        subgraph cluster_2 {
+            color=blue
+            4 [label="Enter property" style="filled" fillcolor=red];
+            5 [label="Const: Int(1)"];
+            6 [label="Exit property" style="filled" fillcolor=red];
+        }
+        subgraph cluster_3 {
+            color=blue
+            7 [label="Enter property" style="filled" fillcolor=red];
+            8 [label="Postponed enter to lambda"];
+            subgraph cluster_4 {
+                color=blue
+                9 [label="Enter function <anonymous>" style="filled" fillcolor=red];
+                subgraph cluster_5 {
+                    color=blue
+                    10 [label="Enter block"];
+                    11 [label="Local function declaration"];
+                    12 [label="Local class declaration"];
+                    13 [label="Function call: R|java/lang/Exception.Exception|()" style="filled" fillcolor=yellow];
+                    14 [label="Throw: throw R|java/lang/Exception.Exception|()"];
+                    15 [label="Stub" style="filled" fillcolor=gray];
+                    16 [label="Exit block" style="filled" fillcolor=gray];
+                }
+                17 [label="Exit function <anonymous>" style="filled" fillcolor=gray];
+            }
+            subgraph cluster_6 {
+                color=blue
+                18 [label="Enter class InitializerLocalClass" style="filled" fillcolor=red];
+                subgraph cluster_7 {
+                    color=blue
+                    19 [label="Enter init block" style="filled" fillcolor=red];
+                    subgraph cluster_8 {
+                        color=blue
+                        20 [label="Enter block"];
+                        21 [label="Function call: R|java/lang/Exception.Exception|()" style="filled" fillcolor=yellow];
+                        22 [label="Throw: throw R|java/lang/Exception.Exception|()"];
+                        23 [label="Stub" style="filled" fillcolor=gray];
+                        24 [label="Const: Int(1)" style="filled" fillcolor=gray];
+                        25 [label="Exit block" style="filled" fillcolor=gray];
+                    }
+                    26 [label="Exit init block" style="filled" fillcolor=gray];
+                }
+                subgraph cluster_9 {
+                    color=blue
+                    27 [label="Enter function <init>" style="filled" fillcolor=gray];
+                    28 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=gray];
+                    29 [label="Exit function <init>" style="filled" fillcolor=gray];
+                }
+                30 [label="Exit class InitializerLocalClass" style="filled" fillcolor=gray];
+            }
+            subgraph cluster_10 {
+                color=blue
+                31 [label="Enter function foo" style="filled" fillcolor=red];
+                subgraph cluster_11 {
+                    color=blue
+                    32 [label="Enter block"];
+                    33 [label="Const: Int(1)"];
+                    34 [label="Const: Int(1)"];
+                    35 [label="Function call: Int(1).R|kotlin/Int.plus|(...)" style="filled" fillcolor=yellow];
+                    36 [label="Variable declaration: lval c: R|kotlin/Int|"];
+                    37 [label="Function call: R|java/lang/Exception.Exception|()" style="filled" fillcolor=yellow];
+                    38 [label="Throw: throw R|java/lang/Exception.Exception|()"];
+                    39 [label="Stub" style="filled" fillcolor=gray];
+                    40 [label="Exit block" style="filled" fillcolor=gray];
+                }
+                41 [label="Exit function foo" style="filled" fillcolor=gray];
+            }
+            42 [label="Postponed exit from lambda"];
+            43 [label="Function call: R|/run|(...)" style="filled" fillcolor=yellow];
+            44 [label="Exit property" style="filled" fillcolor=red];
+        }
+        subgraph cluster_12 {
+            color=blue
+            45 [label="Enter property" style="filled" fillcolor=red];
+            subgraph cluster_13 {
+                color=blue
+                46 [label="Try expression enter"];
+                subgraph cluster_14 {
+                    color=blue
+                    47 [label="Try main block enter"];
+                    subgraph cluster_15 {
+                        color=blue
+                        48 [label="Enter block"];
+                        49 [label="Const: Int(1)"];
+                        50 [label="Exit block"];
+                    }
+                    51 [label="Try main block exit"];
+                }
+                subgraph cluster_16 {
+                    color=blue
+                    52 [label="Catch enter"];
+                    53 [label="Variable declaration: e: R|kotlin/Exception|"];
+                    subgraph cluster_17 {
+                        color=blue
+                        54 [label="Enter block"];
+                        55 [label="Const: Int(2)"];
+                        56 [label="Exit block"];
+                    }
+                    57 [label="Catch exit"];
+                }
+                subgraph cluster_18 {
+                    color=blue
+                    58 [label="Enter finally"];
+                    subgraph cluster_19 {
+                        color=blue
+                        59 [label="Enter block"];
+                        60 [label="Const: Int(0)"];
+                        61 [label="Exit block"];
+                    }
+                    62 [label="Exit finally"];
+                }
+                63 [label="Try expression exit"];
+            }
+            64 [label="Exit property" style="filled" fillcolor=red];
+        }
+        65 [label="Exit file propertiesAndInitBlocks.kt" style="filled" fillcolor=red];
     }
-    0 -> {1};
+    0 -> {1} [color=green];
+    0 -> {65} [style=dotted];
+    0 -> {1 4 7 45} [style=dashed];
     1 -> {2};
     2 -> {3};
-    3 -> {4};
-
-    subgraph cluster_2 {
-        color=red
-        5 [label="Enter property" style="filled" fillcolor=red];
-        6 [label="Const: Int(1)"];
-        7 [label="Exit property" style="filled" fillcolor=red];
-    }
+    3 -> {4} [color=green];
+    4 -> {5};
     5 -> {6};
-    6 -> {7};
-
-    subgraph cluster_3 {
-        color=red
-        8 [label="Enter function <getter>" style="filled" fillcolor=red];
-        subgraph cluster_4 {
-            color=blue
-            9 [label="Enter block"];
-            10 [label="Const: Int(1)"];
-            11 [label="Jump: ^ Int(1)"];
-            12 [label="Stub" style="filled" fillcolor=gray];
-            13 [label="Exit block" style="filled" fillcolor=gray];
-        }
-        14 [label="Exit function <getter>" style="filled" fillcolor=red];
-    }
-    8 -> {9};
+    6 -> {7} [color=green];
+    7 -> {8};
+    8 -> {9 42 43};
+    8 -> {9} [style=dashed];
     9 -> {10};
     10 -> {11};
-    11 -> {14};
-    11 -> {12} [style=dotted];
-    12 -> {13} [style=dotted];
-    13 -> {14} [style=dotted];
-
-    subgraph cluster_5 {
-        color=red
-        15 [label="Enter function <setter>" style="filled" fillcolor=red];
-        subgraph cluster_6 {
-            color=blue
-            16 [label="Enter block"];
-            17 [label="Const: Int(1)"];
-            18 [label="Assignment: F|/x2|"];
-            19 [label="Exit block"];
-        }
-        20 [label="Exit function <setter>" style="filled" fillcolor=red];
-    }
-    15 -> {16};
-    16 -> {17};
-    17 -> {18};
+    11 -> {12 31};
+    11 -> {31} [style=dashed];
+    12 -> {13 18};
+    12 -> {18} [style=dashed];
+    13 -> {14};
+    14 -> {15} [style=dotted];
+    15 -> {16} [style=dotted];
+    16 -> {17} [style=dotted];
+    17 -> {42} [style=dotted];
     18 -> {19};
+    18 -> {27} [color=red];
+    18 -> {30} [style=dotted];
+    18 -> {19 27} [style=dashed];
     19 -> {20};
-
-    subgraph cluster_7 {
-        color=red
-        21 [label="Enter property" style="filled" fillcolor=red];
-        22 [label="Const: Int(1)"];
-        23 [label="Exit property" style="filled" fillcolor=red];
-    }
+    20 -> {21};
     21 -> {22};
-    22 -> {23};
-
-    subgraph cluster_8 {
-        color=red
-        24 [label="Enter function <getter>" style="filled" fillcolor=red];
-        subgraph cluster_9 {
-            color=blue
-            25 [label="Enter block"];
-            26 [label="Local class declaration"];
-            27 [label="Exit block"];
-        }
-        28 [label="Exit function <getter>" style="filled" fillcolor=red];
-    }
-    subgraph cluster_10 {
-        color=blue
-        29 [label="Enter class GetterLocalClass" style="filled" fillcolor=red];
-        subgraph cluster_11 {
-            color=blue
-            30 [label="Enter init block" style="filled" fillcolor=red];
-            subgraph cluster_12 {
-                color=blue
-                31 [label="Enter block"];
-                32 [label="Function call: R|java/lang/Exception.Exception|()" style="filled" fillcolor=yellow];
-                33 [label="Throw: throw R|java/lang/Exception.Exception|()"];
-                34 [label="Stub" style="filled" fillcolor=gray];
-                35 [label="Exit block" style="filled" fillcolor=gray];
-            }
-            36 [label="Exit init block" style="filled" fillcolor=gray];
-        }
-        subgraph cluster_13 {
-            color=blue
-            37 [label="Enter function <init>" style="filled" fillcolor=gray];
-            38 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=gray];
-            39 [label="Exit function <init>" style="filled" fillcolor=gray];
-        }
-        40 [label="Exit class GetterLocalClass" style="filled" fillcolor=gray];
-    }
-    24 -> {25};
-    25 -> {26};
-    26 -> {27 29};
-    26 -> {29} [style=dashed];
-    27 -> {28};
-    29 -> {30};
-    29 -> {37} [color=red];
-    29 -> {40} [style=dotted];
-    29 -> {30 37} [style=dashed];
-    30 -> {31};
+    22 -> {23} [style=dotted];
+    23 -> {24} [style=dotted];
+    24 -> {25} [style=dotted];
+    25 -> {26} [style=dotted];
+    26 -> {27} [style=dotted];
+    27 -> {28} [style=dotted];
+    28 -> {29} [style=dotted];
+    29 -> {30} [style=dotted];
     31 -> {32};
     32 -> {33};
-    33 -> {34} [style=dotted];
-    34 -> {35} [style=dotted];
-    35 -> {36} [style=dotted];
-    36 -> {37} [style=dotted];
-    37 -> {38} [style=dotted];
+    33 -> {34};
+    34 -> {35};
+    35 -> {36};
+    36 -> {37};
+    37 -> {38};
     38 -> {39} [style=dotted];
     39 -> {40} [style=dotted];
-
-    subgraph cluster_14 {
-        color=red
-        41 [label="Enter property" style="filled" fillcolor=red];
-        42 [label="Postponed enter to lambda"];
-        subgraph cluster_15 {
-            color=blue
-            43 [label="Enter function <anonymous>" style="filled" fillcolor=red];
-            subgraph cluster_16 {
-                color=blue
-                44 [label="Enter block"];
-                45 [label="Local function declaration"];
-                46 [label="Local class declaration"];
-                47 [label="Function call: R|java/lang/Exception.Exception|()" style="filled" fillcolor=yellow];
-                48 [label="Throw: throw R|java/lang/Exception.Exception|()"];
-                49 [label="Stub" style="filled" fillcolor=gray];
-                50 [label="Exit block" style="filled" fillcolor=gray];
-            }
-            51 [label="Exit function <anonymous>" style="filled" fillcolor=gray];
-        }
-        subgraph cluster_17 {
-            color=blue
-            52 [label="Enter class InitializerLocalClass" style="filled" fillcolor=red];
-            subgraph cluster_18 {
-                color=blue
-                53 [label="Enter init block" style="filled" fillcolor=red];
-                subgraph cluster_19 {
-                    color=blue
-                    54 [label="Enter block"];
-                    55 [label="Function call: R|java/lang/Exception.Exception|()" style="filled" fillcolor=yellow];
-                    56 [label="Throw: throw R|java/lang/Exception.Exception|()"];
-                    57 [label="Stub" style="filled" fillcolor=gray];
-                    58 [label="Const: Int(1)" style="filled" fillcolor=gray];
-                    59 [label="Exit block" style="filled" fillcolor=gray];
-                }
-                60 [label="Exit init block" style="filled" fillcolor=gray];
-            }
-            subgraph cluster_20 {
-                color=blue
-                61 [label="Enter function <init>" style="filled" fillcolor=gray];
-                62 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=gray];
-                63 [label="Exit function <init>" style="filled" fillcolor=gray];
-            }
-            64 [label="Exit class InitializerLocalClass" style="filled" fillcolor=gray];
-        }
-        subgraph cluster_21 {
-            color=blue
-            65 [label="Enter function foo" style="filled" fillcolor=red];
-            subgraph cluster_22 {
-                color=blue
-                66 [label="Enter block"];
-                67 [label="Const: Int(1)"];
-                68 [label="Const: Int(1)"];
-                69 [label="Function call: Int(1).R|kotlin/Int.plus|(...)" style="filled" fillcolor=yellow];
-                70 [label="Variable declaration: lval c: R|kotlin/Int|"];
-                71 [label="Function call: R|java/lang/Exception.Exception|()" style="filled" fillcolor=yellow];
-                72 [label="Throw: throw R|java/lang/Exception.Exception|()"];
-                73 [label="Stub" style="filled" fillcolor=gray];
-                74 [label="Exit block" style="filled" fillcolor=gray];
-            }
-            75 [label="Exit function foo" style="filled" fillcolor=gray];
-        }
-        76 [label="Postponed exit from lambda"];
-        77 [label="Function call: R|/run|(...)" style="filled" fillcolor=yellow];
-        78 [label="Exit property" style="filled" fillcolor=red];
-    }
-    41 -> {42};
-    42 -> {43 76 77};
-    42 -> {43} [style=dashed];
+    40 -> {41} [style=dotted];
+    42 -> {43};
+    42 -> {8} [color=green style=dashed];
     43 -> {44};
-    44 -> {45};
-    45 -> {46 65};
-    45 -> {65} [style=dashed];
+    44 -> {45} [color=green];
+    45 -> {46};
     46 -> {47 52};
-    46 -> {52} [style=dashed];
+    46 -> {58} [label="onUncaughtException"];
     47 -> {48};
-    48 -> {49} [style=dotted];
-    49 -> {50} [style=dotted];
-    50 -> {51} [style=dotted];
-    51 -> {76} [style=dotted];
+    48 -> {49};
+    49 -> {50};
+    50 -> {51};
+    51 -> {52 58};
     52 -> {53};
-    52 -> {61} [color=red];
-    52 -> {64} [style=dotted];
-    52 -> {53 61} [style=dashed];
+    52 -> {58} [label="onUncaughtException"];
     53 -> {54};
     54 -> {55};
     55 -> {56};
-    56 -> {57} [style=dotted];
-    57 -> {58} [style=dotted];
-    58 -> {59} [style=dotted];
-    59 -> {60} [style=dotted];
-    60 -> {61} [style=dotted];
-    61 -> {62} [style=dotted];
-    62 -> {63} [style=dotted];
-    63 -> {64} [style=dotted];
-    65 -> {66};
+    56 -> {57};
+    57 -> {58};
+    58 -> {59};
+    59 -> {60};
+    60 -> {61};
+    61 -> {62};
+    62 -> {63};
+    63 -> {64};
+    64 -> {65} [color=green];
+
+    subgraph cluster_20 {
+        color=red
+        66 [label="Enter function run" style="filled" fillcolor=red];
+        subgraph cluster_21 {
+            color=blue
+            67 [label="Enter block"];
+            68 [label="Function call: R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
+            69 [label="Exit block"];
+        }
+        70 [label="Exit function run" style="filled" fillcolor=red];
+    }
     66 -> {67};
     67 -> {68};
     68 -> {69};
     69 -> {70};
-    70 -> {71};
-    71 -> {72};
-    72 -> {73} [style=dotted];
-    73 -> {74} [style=dotted];
-    74 -> {75} [style=dotted];
-    76 -> {77};
-    76 -> {42} [color=green style=dashed];
-    77 -> {78};
 
-    subgraph cluster_23 {
+    subgraph cluster_22 {
         color=red
-        79 [label="Enter property" style="filled" fillcolor=red];
-        subgraph cluster_24 {
+        71 [label="Enter function <getter>" style="filled" fillcolor=red];
+        subgraph cluster_23 {
             color=blue
-            80 [label="Try expression enter"];
-            subgraph cluster_25 {
-                color=blue
-                81 [label="Try main block enter"];
-                subgraph cluster_26 {
-                    color=blue
-                    82 [label="Enter block"];
-                    83 [label="Const: Int(1)"];
-                    84 [label="Exit block"];
-                }
-                85 [label="Try main block exit"];
-            }
-            subgraph cluster_27 {
-                color=blue
-                86 [label="Catch enter"];
-                87 [label="Variable declaration: e: R|kotlin/Exception|"];
-                subgraph cluster_28 {
-                    color=blue
-                    88 [label="Enter block"];
-                    89 [label="Const: Int(2)"];
-                    90 [label="Exit block"];
-                }
-                91 [label="Catch exit"];
-            }
-            subgraph cluster_29 {
-                color=blue
-                92 [label="Enter finally"];
-                subgraph cluster_30 {
-                    color=blue
-                    93 [label="Enter block"];
-                    94 [label="Const: Int(0)"];
-                    95 [label="Exit block"];
-                }
-                96 [label="Exit finally"];
-            }
-            97 [label="Try expression exit"];
+            72 [label="Enter block"];
+            73 [label="Const: Int(1)"];
+            74 [label="Jump: ^ Int(1)"];
+            75 [label="Stub" style="filled" fillcolor=gray];
+            76 [label="Exit block" style="filled" fillcolor=gray];
         }
-        98 [label="Exit property" style="filled" fillcolor=red];
+        77 [label="Exit function <getter>" style="filled" fillcolor=red];
     }
+    71 -> {72};
+    72 -> {73};
+    73 -> {74};
+    74 -> {77};
+    74 -> {75} [style=dotted];
+    75 -> {76} [style=dotted];
+    76 -> {77} [style=dotted];
+
+    subgraph cluster_24 {
+        color=red
+        78 [label="Enter function <setter>" style="filled" fillcolor=red];
+        subgraph cluster_25 {
+            color=blue
+            79 [label="Enter block"];
+            80 [label="Const: Int(1)"];
+            81 [label="Assignment: F|/x2|"];
+            82 [label="Exit block"];
+        }
+        83 [label="Exit function <setter>" style="filled" fillcolor=red];
+    }
+    78 -> {79};
     79 -> {80};
-    80 -> {81 86};
-    80 -> {92} [label="onUncaughtException"];
+    80 -> {81};
     81 -> {82};
     82 -> {83};
-    83 -> {84};
+
+    subgraph cluster_26 {
+        color=red
+        84 [label="Enter function <getter>" style="filled" fillcolor=red];
+        subgraph cluster_27 {
+            color=blue
+            85 [label="Enter block"];
+            86 [label="Local class declaration"];
+            87 [label="Exit block"];
+        }
+        88 [label="Exit function <getter>" style="filled" fillcolor=red];
+    }
+    subgraph cluster_28 {
+        color=blue
+        89 [label="Enter class GetterLocalClass" style="filled" fillcolor=red];
+        subgraph cluster_29 {
+            color=blue
+            90 [label="Enter init block" style="filled" fillcolor=red];
+            subgraph cluster_30 {
+                color=blue
+                91 [label="Enter block"];
+                92 [label="Function call: R|java/lang/Exception.Exception|()" style="filled" fillcolor=yellow];
+                93 [label="Throw: throw R|java/lang/Exception.Exception|()"];
+                94 [label="Stub" style="filled" fillcolor=gray];
+                95 [label="Exit block" style="filled" fillcolor=gray];
+            }
+            96 [label="Exit init block" style="filled" fillcolor=gray];
+        }
+        subgraph cluster_31 {
+            color=blue
+            97 [label="Enter function <init>" style="filled" fillcolor=gray];
+            98 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=gray];
+            99 [label="Exit function <init>" style="filled" fillcolor=gray];
+        }
+        100 [label="Exit class GetterLocalClass" style="filled" fillcolor=gray];
+    }
     84 -> {85};
-    85 -> {86 92};
-    86 -> {87};
-    86 -> {92} [label="onUncaughtException"];
+    85 -> {86};
+    86 -> {87 89};
+    86 -> {89} [style=dashed];
     87 -> {88};
-    88 -> {89};
     89 -> {90};
+    89 -> {97} [color=red];
+    89 -> {100} [style=dotted];
+    89 -> {90 97} [style=dashed];
     90 -> {91};
     91 -> {92};
     92 -> {93};
-    93 -> {94};
-    94 -> {95};
-    95 -> {96};
-    96 -> {97};
-    97 -> {98};
+    93 -> {94} [style=dotted];
+    94 -> {95} [style=dotted];
+    95 -> {96} [style=dotted];
+    96 -> {97} [style=dotted];
+    97 -> {98} [style=dotted];
+    98 -> {99} [style=dotted];
+    99 -> {100} [style=dotted];
 
 }

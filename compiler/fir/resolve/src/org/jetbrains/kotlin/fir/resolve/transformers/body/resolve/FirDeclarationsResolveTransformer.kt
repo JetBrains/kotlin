@@ -510,6 +510,16 @@ open class FirDeclarationsResolveTransformer(
         )
     }
 
+    override fun transformFile(
+        file: FirFile,
+        data: ResolutionMode,
+    ): FirFile {
+        checkSessionConsistency(file)
+        return withFileAnalysisExceptionWrapping(file) {
+            doTransformFile(file, data)
+        }
+    }
+
     override fun transformRegularClass(
         regularClass: FirRegularClass,
         data: ResolutionMode
@@ -556,6 +566,35 @@ open class FirDeclarationsResolveTransformer(
         transformer.firResolveContextCollector?.addDeclarationContext(typeAlias, context)
         typeAlias.transformExpandedTypeRef(transformer, data)
         return typeAlias
+    }
+
+    private fun doTransformFile(
+        file: FirFile,
+        data: ResolutionMode,
+    ): FirFile = withFile(file) {
+        transformer.firResolveContextCollector?.addFileContext(file, context.towerDataContext)
+
+        transformDeclarationContent(file, data) as FirFile
+    }
+
+    open fun withFile(
+        file: FirFile,
+        action: () -> FirFile,
+    ): FirFile {
+        val result = context.withFile(file, components) {
+            // TODO Must be done within 'withFile' as the context - any the analyzer - is cleared as the first step.
+            //  yuk. maybe the clear shouldn't happen for `enterFile`? or at maybe separately?
+            dataFlowAnalyzer.enterFile(file, buildGraph = transformer.buildCfgForFiles)
+
+            action()
+        }
+
+        val controlFlowGraph = dataFlowAnalyzer.exitFile()
+        if (controlFlowGraph != null) {
+            result.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(controlFlowGraph))
+        }
+
+        return result
     }
 
     protected fun doTransformRegularClass(

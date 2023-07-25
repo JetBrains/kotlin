@@ -259,6 +259,12 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
             firClass.transformDeclarations(this, data)
         }
 
+         override fun withFile(file: FirFile, action: () -> FirFile): FirFile {
+            return context.withFile(file, components) {
+                action()
+            }
+        }
+
         override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): FirStatement {
             return withRegularClass(regularClass) {
                 transformDeclarationContent(regularClass, data)

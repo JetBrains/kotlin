@@ -5,86 +5,93 @@ digraph tryWithLambdaInside_kt {
 
     subgraph cluster_0 {
         color=red
-        0 [label="Enter function notInPlaceFilter" style="filled" fillcolor=red];
-        subgraph cluster_1 {
-            color=blue
-            1 [label="Enter block"];
-            2 [label="Access variable this@R|/notInPlaceFilter|"];
-            3 [label="Jump: ^notInPlaceFilter this@R|/notInPlaceFilter|"];
-            4 [label="Stub" style="filled" fillcolor=gray];
-            5 [label="Exit block" style="filled" fillcolor=gray];
-        }
-        6 [label="Exit function notInPlaceFilter" style="filled" fillcolor=red];
+        0 [label="Enter file tryWithLambdaInside.kt" style="filled" fillcolor=red];
+        1 [label="Exit file tryWithLambdaInside.kt" style="filled" fillcolor=red];
     }
-    0 -> {1};
-    1 -> {2};
+    0 -> {1} [color=green];
+
+    subgraph cluster_1 {
+        color=red
+        2 [label="Enter function notInPlaceFilter" style="filled" fillcolor=red];
+        subgraph cluster_2 {
+            color=blue
+            3 [label="Enter block"];
+            4 [label="Access variable this@R|/notInPlaceFilter|"];
+            5 [label="Jump: ^notInPlaceFilter this@R|/notInPlaceFilter|"];
+            6 [label="Stub" style="filled" fillcolor=gray];
+            7 [label="Exit block" style="filled" fillcolor=gray];
+        }
+        8 [label="Exit function notInPlaceFilter" style="filled" fillcolor=red];
+    }
     2 -> {3};
-    3 -> {6};
-    3 -> {4} [style=dotted];
-    4 -> {5} [style=dotted];
+    3 -> {4};
+    4 -> {5};
+    5 -> {8};
     5 -> {6} [style=dotted];
+    6 -> {7} [style=dotted];
+    7 -> {8} [style=dotted];
 
-    subgraph cluster_2 {
+    subgraph cluster_3 {
         color=red
-        7 [label="Enter function foo" style="filled" fillcolor=red];
-        subgraph cluster_3 {
+        9 [label="Enter function foo" style="filled" fillcolor=red];
+        subgraph cluster_4 {
             color=blue
-            8 [label="Enter block"];
-            9 [label="Exit block"];
+            10 [label="Enter block"];
+            11 [label="Exit block"];
         }
-        10 [label="Exit function foo" style="filled" fillcolor=red];
+        12 [label="Exit function foo" style="filled" fillcolor=red];
     }
-    7 -> {8};
-    8 -> {9};
     9 -> {10};
+    10 -> {11};
+    11 -> {12};
 
-    subgraph cluster_4 {
+    subgraph cluster_5 {
         color=red
-        11 [label="Enter function testInPlace" style="filled" fillcolor=red];
-        subgraph cluster_5 {
+        13 [label="Enter function testInPlace" style="filled" fillcolor=red];
+        subgraph cluster_6 {
             color=blue
-            12 [label="Enter block"];
-            subgraph cluster_6 {
+            14 [label="Enter block"];
+            subgraph cluster_7 {
                 color=blue
-                13 [label="Try expression enter"];
-                subgraph cluster_7 {
+                15 [label="Try expression enter"];
+                subgraph cluster_8 {
                     color=blue
-                    14 [label="Try main block enter"];
-                    subgraph cluster_8 {
+                    16 [label="Try main block enter"];
+                    subgraph cluster_9 {
                         color=blue
-                        15 [label="Enter block"];
-                        16 [label="Access variable R|<local>/list|"];
-                        17 [label="Postponed enter to lambda"];
-                        subgraph cluster_9 {
+                        17 [label="Enter block"];
+                        18 [label="Access variable R|<local>/list|"];
+                        19 [label="Postponed enter to lambda"];
+                        subgraph cluster_10 {
                             color=blue
-                            18 [label="Enter function <anonymous>" style="filled" fillcolor=red];
-                            subgraph cluster_10 {
+                            20 [label="Enter function <anonymous>" style="filled" fillcolor=red];
+                            subgraph cluster_11 {
                                 color=blue
-                                19 [label="Enter block"];
-                                20 [label="Access variable R|<local>/it|"];
-                                21 [label="Exit block"];
+                                21 [label="Enter block"];
+                                22 [label="Access variable R|<local>/it|"];
+                                23 [label="Exit block"];
                             }
-                            22 [label="Exit function <anonymous>" style="filled" fillcolor=red];
+                            24 [label="Exit function <anonymous>" style="filled" fillcolor=red];
                         }
-                        23 [label="Postponed exit from lambda"];
-                        24 [label="Function call: R|<local>/list|.R|kotlin/collections/filter|<R|kotlin/Boolean|>(...)" style="filled" fillcolor=yellow];
-                        25 [label="Exit block"];
+                        25 [label="Postponed exit from lambda"];
+                        26 [label="Function call: R|<local>/list|.R|kotlin/collections/filter|<R|kotlin/Boolean|>(...)" style="filled" fillcolor=yellow];
+                        27 [label="Exit block"];
                     }
-                    26 [label="Try main block exit"];
+                    28 [label="Try main block exit"];
                 }
-                subgraph cluster_11 {
+                subgraph cluster_12 {
                     color=blue
-                    27 [label="Enter finally"];
-                    subgraph cluster_12 {
+                    29 [label="Enter finally"];
+                    subgraph cluster_13 {
                         color=blue
-                        28 [label="Enter block"];
-                        29 [label="Exit block"];
+                        30 [label="Enter block"];
+                        31 [label="Exit block"];
                     }
-                    30 [label="Exit finally"];
+                    32 [label="Exit finally"];
                 }
-                31 [label="Try expression exit"];
+                33 [label="Try expression exit"];
             }
-            32 [label="Jump: ^testInPlace try {
+            34 [label="Jump: ^testInPlace try {
     R|<local>/list|.R|kotlin/collections/filter|<R|kotlin/Boolean|>(<L> = filter@fun <anonymous>(it: R|kotlin/Boolean|): R|kotlin/Boolean| <inline=Inline, kind=UNKNOWN>  {
         ^ R|<local>/it|
     }
@@ -93,89 +100,89 @@ digraph tryWithLambdaInside_kt {
 finally {
 }
 "];
-            33 [label="Stub" style="filled" fillcolor=gray];
-            34 [label="Exit block" style="filled" fillcolor=gray];
+            35 [label="Stub" style="filled" fillcolor=gray];
+            36 [label="Exit block" style="filled" fillcolor=gray];
         }
-        35 [label="Exit function testInPlace" style="filled" fillcolor=red];
+        37 [label="Exit function testInPlace" style="filled" fillcolor=red];
     }
-    11 -> {12};
-    12 -> {13};
     13 -> {14};
-    13 -> {27} [label="onUncaughtException"];
     14 -> {15};
     15 -> {16};
+    15 -> {29} [label="onUncaughtException"];
     16 -> {17};
-    17 -> {18 23 24};
-    17 -> {18} [style=dashed];
+    17 -> {18};
     18 -> {19};
-    19 -> {20};
+    19 -> {20 25 26};
+    19 -> {20} [style=dashed];
     20 -> {21};
     21 -> {22};
     22 -> {23};
-    23 -> {17} [color=green style=dashed];
-    23 -> {24} [color=green];
-    23 -> {31} [color=red];
+    23 -> {24};
     24 -> {25};
-    24 -> {27} [label="onUncaughtException"];
-    25 -> {26};
+    25 -> {19} [color=green style=dashed];
+    25 -> {26} [color=green];
+    25 -> {33} [color=red];
     26 -> {27};
+    26 -> {29} [label="onUncaughtException"];
     27 -> {28};
     28 -> {29};
     29 -> {30};
     30 -> {31};
     31 -> {32};
-    32 -> {35};
-    32 -> {33} [style=dotted];
-    33 -> {34} [style=dotted];
+    32 -> {33};
+    33 -> {34};
+    34 -> {37};
     34 -> {35} [style=dotted];
+    35 -> {36} [style=dotted];
+    36 -> {37} [style=dotted];
 
-    subgraph cluster_13 {
+    subgraph cluster_14 {
         color=red
-        36 [label="Enter function testNotInPlace" style="filled" fillcolor=red];
-        subgraph cluster_14 {
+        38 [label="Enter function testNotInPlace" style="filled" fillcolor=red];
+        subgraph cluster_15 {
             color=blue
-            37 [label="Enter block"];
-            subgraph cluster_15 {
+            39 [label="Enter block"];
+            subgraph cluster_16 {
                 color=blue
-                38 [label="Try expression enter"];
-                subgraph cluster_16 {
+                40 [label="Try expression enter"];
+                subgraph cluster_17 {
                     color=blue
-                    39 [label="Try main block enter"];
-                    subgraph cluster_17 {
+                    41 [label="Try main block enter"];
+                    subgraph cluster_18 {
                         color=blue
-                        40 [label="Enter block"];
-                        41 [label="Access variable R|<local>/list|"];
-                        42 [label="Postponed enter to lambda"];
-                        subgraph cluster_18 {
+                        42 [label="Enter block"];
+                        43 [label="Access variable R|<local>/list|"];
+                        44 [label="Postponed enter to lambda"];
+                        subgraph cluster_19 {
                             color=blue
-                            43 [label="Enter function <anonymous>" style="filled" fillcolor=red];
-                            subgraph cluster_19 {
+                            45 [label="Enter function <anonymous>" style="filled" fillcolor=red];
+                            subgraph cluster_20 {
                                 color=blue
-                                44 [label="Enter block"];
-                                45 [label="Access variable R|<local>/it|"];
-                                46 [label="Exit block"];
+                                46 [label="Enter block"];
+                                47 [label="Access variable R|<local>/it|"];
+                                48 [label="Exit block"];
                             }
-                            47 [label="Exit function <anonymous>" style="filled" fillcolor=red];
+                            49 [label="Exit function <anonymous>" style="filled" fillcolor=red];
                         }
-                        48 [label="Postponed exit from lambda"];
-                        49 [label="Function call: R|<local>/list|.R|/notInPlaceFilter|<R|kotlin/Boolean|>(...)" style="filled" fillcolor=yellow];
-                        50 [label="Exit block"];
+                        50 [label="Postponed exit from lambda"];
+                        51 [label="Function call: R|<local>/list|.R|/notInPlaceFilter|<R|kotlin/Boolean|>(...)" style="filled" fillcolor=yellow];
+                        52 [label="Exit block"];
                     }
-                    51 [label="Try main block exit"];
+                    53 [label="Try main block exit"];
                 }
-                subgraph cluster_20 {
+                subgraph cluster_21 {
                     color=blue
-                    52 [label="Enter finally"];
-                    subgraph cluster_21 {
+                    54 [label="Enter finally"];
+                    subgraph cluster_22 {
                         color=blue
-                        53 [label="Enter block"];
-                        54 [label="Exit block"];
+                        55 [label="Enter block"];
+                        56 [label="Exit block"];
                     }
-                    55 [label="Exit finally"];
+                    57 [label="Exit finally"];
                 }
-                56 [label="Try expression exit"];
+                58 [label="Try expression exit"];
             }
-            57 [label="Jump: ^testNotInPlace try {
+            59 [label="Jump: ^testNotInPlace try {
     R|<local>/list|.R|/notInPlaceFilter|<R|kotlin/Boolean|>(<L> = notInPlaceFilter@fun <anonymous>(it: R|kotlin/Boolean|): R|kotlin/Boolean| <inline=NoInline>  {
         ^ R|<local>/it|
     }
@@ -184,38 +191,38 @@ finally {
 finally {
 }
 "];
-            58 [label="Stub" style="filled" fillcolor=gray];
-            59 [label="Exit block" style="filled" fillcolor=gray];
+            60 [label="Stub" style="filled" fillcolor=gray];
+            61 [label="Exit block" style="filled" fillcolor=gray];
         }
-        60 [label="Exit function testNotInPlace" style="filled" fillcolor=red];
+        62 [label="Exit function testNotInPlace" style="filled" fillcolor=red];
     }
-    36 -> {37};
-    37 -> {38};
     38 -> {39};
-    38 -> {52} [label="onUncaughtException"];
     39 -> {40};
     40 -> {41};
+    40 -> {54} [label="onUncaughtException"];
     41 -> {42};
-    42 -> {43 48 49};
-    42 -> {43} [style=dashed];
+    42 -> {43};
     43 -> {44};
-    44 -> {45};
+    44 -> {45 50 51};
+    44 -> {45} [style=dashed];
     45 -> {46};
     46 -> {47};
-    48 -> {49} [color=green];
-    48 -> {56} [color=red];
-    49 -> {50};
-    49 -> {52} [label="onUncaughtException"];
-    50 -> {51};
+    47 -> {48};
+    48 -> {49};
+    50 -> {51} [color=green];
+    50 -> {58} [color=red];
     51 -> {52};
+    51 -> {54} [label="onUncaughtException"];
     52 -> {53};
     53 -> {54};
     54 -> {55};
     55 -> {56};
     56 -> {57};
-    57 -> {60};
-    57 -> {58} [style=dotted];
-    58 -> {59} [style=dotted];
+    57 -> {58};
+    58 -> {59};
+    59 -> {62};
     59 -> {60} [style=dotted];
+    60 -> {61} [style=dotted];
+    61 -> {62} [style=dotted];
 
 }

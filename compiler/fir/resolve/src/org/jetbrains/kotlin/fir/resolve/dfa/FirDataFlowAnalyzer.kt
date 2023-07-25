@@ -189,11 +189,7 @@ abstract class FirDataFlowAnalyzer(
             }
         }
         val info = DataFlowInfo(variableStorage)
-        if (graphBuilder.isTopLevel) {
-            context.reset()
-        } else {
-            resetReceivers()
-        }
+        resetReceivers()
         return FirControlFlowGraphReferenceImpl(graph, info)
     }
 
@@ -201,6 +197,22 @@ abstract class FirDataFlowAnalyzer(
 
     fun enterAnonymousFunctionExpression(anonymousFunctionExpression: FirAnonymousFunctionExpression) {
         graphBuilder.enterAnonymousFunctionExpression(anonymousFunctionExpression)?.mergeIncomingFlow()
+    }
+
+    // ----------------------------------- Files ------------------------------------------
+
+    fun enterFile(file: FirFile, buildGraph: Boolean) {
+        graphBuilder.enterFile(file, buildGraph)?.mergeIncomingFlow()
+    }
+
+    fun exitFile(): ControlFlowGraph? {
+        val (node, graph) = graphBuilder.exitFile()
+        if (node != null) {
+            node.mergeIncomingFlow()
+        } else {
+            resetReceivers()
+        }
+        return graph
     }
 
     // ----------------------------------- Classes -----------------------------------

@@ -98,6 +98,9 @@ fun CFGNode<*>.render(): String =
                 is MergePostponedLambdaExitsNode -> "Merge postponed lambda exits"
                 is AnonymousFunctionExpressionNode -> "Exit anonymous function expression"
 
+                is FileEnterNode -> "Enter file ${fir.name}"
+                is FileExitNode -> "Exit file ${fir.name}"
+
                 is ClassEnterNode -> "Enter class ${owner.name}"
                 is ClassExitNode -> "Exit class ${owner.name}"
                 is LocalClassExitNode -> "Local class declaration"

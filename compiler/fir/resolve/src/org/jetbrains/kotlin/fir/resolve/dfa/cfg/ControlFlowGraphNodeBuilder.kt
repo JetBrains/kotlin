@@ -229,6 +229,12 @@ fun ControlFlowGraphBuilder.createCodeFragmentEnterNode(fir: FirCodeFragment): C
 fun ControlFlowGraphBuilder.createCodeFragmentExitNode(fir: FirCodeFragment): CodeFragmentExitNode =
     CodeFragmentExitNode(currentGraph, fir, levelCounter)
 
+fun ControlFlowGraphBuilder.createFileEnterNode(fir: FirFile): FileEnterNode =
+    FileEnterNode(currentGraph, fir, levelCounter)
+
+fun ControlFlowGraphBuilder.createFileExitNode(fir: FirFile): FileExitNode =
+    FileExitNode(currentGraph, fir, levelCounter)
+
 fun ControlFlowGraphBuilder.createClassEnterNode(fir: FirClass): ClassEnterNode =
     ClassEnterNode(currentGraph, fir, levelCounter)
 

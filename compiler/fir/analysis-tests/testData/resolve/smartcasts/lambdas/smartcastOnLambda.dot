@@ -5,51 +5,58 @@ digraph smartcastOnLambda_kt {
 
     subgraph cluster_0 {
         color=red
-        0 [label="Enter function test" style="filled" fillcolor=red];
-        subgraph cluster_1 {
+        0 [label="Enter file smartcastOnLambda.kt" style="filled" fillcolor=red];
+        1 [label="Exit file smartcastOnLambda.kt" style="filled" fillcolor=red];
+    }
+    0 -> {1} [color=green];
+
+    subgraph cluster_1 {
+        color=red
+        2 [label="Enter function test" style="filled" fillcolor=red];
+        subgraph cluster_2 {
             color=blue
-            1 [label="Enter block"];
-            subgraph cluster_2 {
+            3 [label="Enter block"];
+            subgraph cluster_3 {
                 color=blue
-                2 [label="Enter when"];
-                subgraph cluster_3 {
-                    color=blue
-                    3 [label="Enter when branch condition "];
-                    4 [label="Access variable R|<local>/func|"];
-                    5 [label="Const: Null(null)"];
-                    6 [label="Equality operator !="];
-                    7 [label="Exit when branch condition"];
-                }
-                8 [label="Synthetic else branch"];
-                9 [label="Enter when branch result"];
+                4 [label="Enter when"];
                 subgraph cluster_4 {
                     color=blue
-                    10 [label="Enter block"];
-                    11 [label="Function call: R|<local>/func|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
-                    12 [label="Exit block"];
+                    5 [label="Enter when branch condition "];
+                    6 [label="Access variable R|<local>/func|"];
+                    7 [label="Const: Null(null)"];
+                    8 [label="Equality operator !="];
+                    9 [label="Exit when branch condition"];
                 }
-                13 [label="Exit when branch result"];
-                14 [label="Exit when"];
+                10 [label="Synthetic else branch"];
+                11 [label="Enter when branch result"];
+                subgraph cluster_5 {
+                    color=blue
+                    12 [label="Enter block"];
+                    13 [label="Function call: R|<local>/func|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
+                    14 [label="Exit block"];
+                }
+                15 [label="Exit when branch result"];
+                16 [label="Exit when"];
             }
-            15 [label="Exit block"];
+            17 [label="Exit block"];
         }
-        16 [label="Exit function test" style="filled" fillcolor=red];
+        18 [label="Exit function test" style="filled" fillcolor=red];
     }
-    0 -> {1};
-    1 -> {2};
     2 -> {3};
     3 -> {4};
     4 -> {5};
     5 -> {6};
     6 -> {7};
-    7 -> {8 9};
-    8 -> {14};
-    9 -> {10};
-    10 -> {11};
+    7 -> {8};
+    8 -> {9};
+    9 -> {10 11};
+    10 -> {16};
     11 -> {12};
     12 -> {13};
     13 -> {14};
     14 -> {15};
     15 -> {16};
+    16 -> {17};
+    17 -> {18};
 
 }

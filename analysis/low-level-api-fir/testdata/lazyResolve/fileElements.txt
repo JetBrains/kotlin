@@ -480,12 +480,12 @@ FILE: [ResolvedTo(BODY_RESOLVE)] fileElements.kt
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/Int|
 
     }
-    public? final? [ResolvedTo(RAW_FIR)] val a: <implicit> = LAZY_EXPRESSION
-        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public? final? [ResolvedTo(RAW_FIR)] val b: <implicit> = LAZY_EXPRESSION
-        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-    public? final? [ResolvedTo(RAW_FIR)] val c: <implicit> = LAZY_EXPRESSION
-        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+    public final [ResolvedTo(BODY_RESOLVE)] val a: R|kotlin/Int| = Int(1)
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+    public final [ResolvedTo(BODY_RESOLVE)] val b: R|kotlin/Int| = Int(2).R|kotlin/Int.plus|(R|one/a|)
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+    public final [ResolvedTo(BODY_RESOLVE)] val c: R|kotlin/Int| = R|one/b|.R|kotlin/Int.plus|(R|one/a|)
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
     public? final? [ResolvedTo(RAW_FIR)] fun test1(): R|kotlin/Unit| { LAZY_BLOCK }
     @Deprecated[Unresolved](String()) @Anno[Unresolved](IntegerLiteral(2)) public? final? [ResolvedTo(RAW_FIR)] fun test2(): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {

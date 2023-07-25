@@ -192,8 +192,6 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
 
     override fun visitRegularClass(regularClass: FirRegularClass)  = visitClass(regularClass)
 
-    override fun visitFile(file: FirFile)  = visitDeclaration(file)
-
     override fun visitScript(script: FirScript)  = visitDeclaration(script)
 
     override fun visitCodeFragment(codeFragment: FirCodeFragment)  = visitDeclaration(codeFragment)

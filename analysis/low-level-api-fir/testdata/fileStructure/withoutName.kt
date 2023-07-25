@@ -4,7 +4,7 @@ fun () {/* ReanalyzableFunctionStructureElement */
 
 }
 
-val : Int = 4/* ReanalyzablePropertyStructureElement */
+val : Int = 4/* NonReanalyzableNonClassDeclarationStructureElement */
 
 var : Int/* ReanalyzablePropertyStructureElement */
     get() = 4

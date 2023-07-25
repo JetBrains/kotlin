@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirResolveState
 import org.jetbrains.kotlin.fir.declarations.asResolveState
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.fir.MutableOrEmptyList
@@ -49,6 +50,7 @@ internal class FirFileImpl(
     override val symbol: FirFileSymbol,
 ) : FirFile() {
     override val annotations: List<FirAnnotation> get() = annotationsContainer?.annotations ?: emptyList()
+    override var controlFlowGraphReference: FirControlFlowGraphReference? = null
 
     init {
         symbol.bind(this)
@@ -57,6 +59,7 @@ internal class FirFileImpl(
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
+        controlFlowGraphReference?.accept(visitor, data)
         annotationsContainer?.accept(visitor, data)
         packageDirective.accept(visitor, data)
         imports.forEach { it.accept(visitor, data) }
@@ -64,6 +67,7 @@ internal class FirFileImpl(
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirFileImpl {
+        controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
         transformAnnotationsContainer(transformer, data)
         packageDirective = packageDirective.transform(transformer, data)
         transformImports(transformer, data)
@@ -91,4 +95,8 @@ internal class FirFileImpl(
     }
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {}
+
+    override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {
+        controlFlowGraphReference = newControlFlowGraphReference
+    }
 }

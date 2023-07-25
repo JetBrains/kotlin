@@ -42,7 +42,7 @@ sealed class LLFirResolveTarget(
     abstract fun forEachTarget(action: (FirElementWithResolveState) -> Unit)
 
     override fun toString(): String = buildString {
-        append(this::class.simpleName)
+        append(this@LLFirResolveTarget::class.simpleName)
         append("(")
         buildList {
             add(firFile.name)

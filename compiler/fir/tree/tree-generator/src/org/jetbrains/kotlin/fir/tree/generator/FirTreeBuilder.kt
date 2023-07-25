@@ -64,7 +64,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val propertyAccessor by element(Declaration, function, contractDescriptionOwner, typeParametersOwner)
     val backingField by element(Declaration, variable, typeParametersOwner, statement)
     val constructor by element(Declaration, function, typeParameterRefsOwner, contractDescriptionOwner)
-    val file by element(Declaration, declaration)
+    val file by element(Declaration, declaration, controlFlowGraphOwner)
     val script by element(Declaration, declaration)
     val codeFragment by element(Declaration, declaration)
     val packageDirective by element(Other)

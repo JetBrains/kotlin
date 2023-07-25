@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirPackageDirective
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
@@ -22,12 +23,13 @@ import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirFile : FirDeclaration() {
+abstract class FirFile : FirDeclaration(), FirControlFlowGraphOwner {
     abstract override val source: KtSourceElement?
     abstract override val annotations: List<FirAnnotation>
     abstract override val moduleData: FirModuleData
     abstract override val origin: FirDeclarationOrigin
     abstract override val attributes: FirDeclarationAttributes
+    abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
     abstract val annotationsContainer: FirFileAnnotationsContainer?
     abstract val packageDirective: FirPackageDirective
     abstract val imports: List<FirImport>
@@ -44,6 +46,8 @@ abstract class FirFile : FirDeclaration() {
         transformer.transformFile(this, data) as E
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
+    abstract override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirFile
 

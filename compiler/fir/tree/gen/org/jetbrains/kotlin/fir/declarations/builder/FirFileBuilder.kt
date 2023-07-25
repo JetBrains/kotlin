@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
 import org.jetbrains.kotlin.fir.declarations.asResolveState
 import org.jetbrains.kotlin.fir.declarations.impl.FirFileImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
 import org.jetbrains.kotlin.fir.visitors.*
 

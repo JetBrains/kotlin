@@ -85,6 +85,12 @@ private class FirExpressionTransformerForAnnotationArgumentsMapping(
 private class FirDeclarationsResolveTransformerForAnnotationArgumentsMapping(
     transformer: FirAbstractBodyResolveTransformerDispatcher
 ) : FirDeclarationsResolveTransformer(transformer) {
+    override fun withFile(file: FirFile, action: () -> FirFile): FirFile {
+        return context.withFile(file, components) {
+            action()
+        }
+    }
+
     override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): FirStatement {
         regularClass.transformAnnotations(this, data)
         doTransformTypeParameters(regularClass)

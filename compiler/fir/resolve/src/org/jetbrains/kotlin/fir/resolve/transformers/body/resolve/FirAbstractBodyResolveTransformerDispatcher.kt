@@ -30,6 +30,7 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
 ) : FirAbstractBodyResolveTransformer(phase) {
 
     open val preserveCFGForClasses: Boolean get() = !implicitTypeOnly
+    open val buildCfgForFiles: Boolean get() = !implicitTypeOnly
 
     final override val context: BodyResolveContext =
         outerBodyResolveContext ?: BodyResolveContext(returnTypeCalculator, DataFlowAnalyzerContext(session))
@@ -45,13 +46,7 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
     private val controlFlowStatementsTransformer = FirControlFlowStatementsResolveTransformer(this)
 
     override fun transformFile(file: FirFile, data: ResolutionMode): FirFile {
-        checkSessionConsistency(file)
-        return context.withFile(file, components) {
-            withFileAnalysisExceptionWrapping(file) {
-                firResolveContextCollector?.addFileContext(file, context.towerDataContext)
-                transformDeclarationContent(file, data) as FirFile
-            }
-        }
+        return declarationsTransformer?.transformFile(file, data) ?: file
     }
 
     override fun transformScript(script: FirScript, data: ResolutionMode): FirScript {

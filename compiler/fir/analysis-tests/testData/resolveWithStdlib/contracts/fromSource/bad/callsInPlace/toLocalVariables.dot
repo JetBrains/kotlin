@@ -5,91 +5,96 @@ digraph toLocalVariables_kt {
 
     subgraph cluster_0 {
         color=red
-        0 [label="Enter function bar" style="filled" fillcolor=red];
-        subgraph cluster_1 {
-            color=blue
-            1 [label="Enter block"];
-            2 [label="Exit block"];
-        }
-        3 [label="Exit function bar" style="filled" fillcolor=red];
+        0 [label="Enter file toLocalVariables.kt" style="filled" fillcolor=red];
+        1 [label="Exit file toLocalVariables.kt" style="filled" fillcolor=red];
     }
-    0 -> {1};
-    1 -> {2};
-    2 -> {3};
+    0 -> {1} [color=green];
 
-    subgraph cluster_2 {
+    subgraph cluster_1 {
         color=red
-        4 [label="Enter function foo" style="filled" fillcolor=red];
-        subgraph cluster_3 {
+        2 [label="Enter function bar" style="filled" fillcolor=red];
+        subgraph cluster_2 {
             color=blue
-            5 [label="Enter block"];
-            subgraph cluster_4 {
-                color=blue
-                6 [label="Enter block"];
-                7 [label="Exit block"];
-            }
+            3 [label="Enter block"];
+            4 [label="Exit block"];
+        }
+        5 [label="Exit function bar" style="filled" fillcolor=red];
+    }
+    2 -> {3};
+    3 -> {4};
+    4 -> {5};
+
+    subgraph cluster_3 {
+        color=red
+        6 [label="Enter function foo" style="filled" fillcolor=red];
+        subgraph cluster_4 {
+            color=blue
+            7 [label="Enter block"];
             subgraph cluster_5 {
                 color=blue
-                8 [label="Enter when"];
-                subgraph cluster_6 {
-                    color=blue
-                    9 [label="Enter when branch condition "];
-                    10 [label="Const: Boolean(true)"];
-                    11 [label="Exit when branch condition"];
-                }
+                8 [label="Enter block"];
+                9 [label="Exit block"];
+            }
+            subgraph cluster_6 {
+                color=blue
+                10 [label="Enter when"];
                 subgraph cluster_7 {
                     color=blue
-                    12 [label="Enter when branch condition else"];
+                    11 [label="Enter when branch condition "];
+                    12 [label="Const: Boolean(true)"];
                     13 [label="Exit when branch condition"];
                 }
-                14 [label="Enter when branch result"];
                 subgraph cluster_8 {
                     color=blue
-                    15 [label="Enter block"];
-                    16 [label="Access variable R|<local>/y|"];
-                    17 [label="Variable declaration: lval yCopy: R|() -> kotlin/Unit|"];
-                    18 [label="Function call: R|<local>/yCopy|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
-                    19 [label="Exit block"];
+                    14 [label="Enter when branch condition else"];
+                    15 [label="Exit when branch condition"];
                 }
-                20 [label="Exit when branch result"];
-                21 [label="Enter when branch result"];
+                16 [label="Enter when branch result"];
                 subgraph cluster_9 {
                     color=blue
-                    22 [label="Enter block"];
-                    23 [label="Access variable R|<local>/x|"];
-                    24 [label="Function call: R|/bar|(...)" style="filled" fillcolor=yellow];
-                    25 [label="Exit block"];
+                    17 [label="Enter block"];
+                    18 [label="Access variable R|<local>/y|"];
+                    19 [label="Variable declaration: lval yCopy: R|() -> kotlin/Unit|"];
+                    20 [label="Function call: R|<local>/yCopy|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
+                    21 [label="Exit block"];
                 }
-                26 [label="Exit when branch result"];
-                27 [label="Exit when"];
+                22 [label="Exit when branch result"];
+                23 [label="Enter when branch result"];
+                subgraph cluster_10 {
+                    color=blue
+                    24 [label="Enter block"];
+                    25 [label="Access variable R|<local>/x|"];
+                    26 [label="Function call: R|/bar|(...)" style="filled" fillcolor=yellow];
+                    27 [label="Exit block"];
+                }
+                28 [label="Exit when branch result"];
+                29 [label="Exit when"];
             }
-            28 [label="Variable declaration: lval zCopy: R|() -> kotlin/Unit|"];
-            29 [label="Access variable R|<local>/z|"];
-            30 [label="Assignment: R|<local>/zCopy|"];
-            31 [label="Function call: R|<local>/zCopy|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
-            32 [label="Exit block"];
+            30 [label="Variable declaration: lval zCopy: R|() -> kotlin/Unit|"];
+            31 [label="Access variable R|<local>/z|"];
+            32 [label="Assignment: R|<local>/zCopy|"];
+            33 [label="Function call: R|<local>/zCopy|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
+            34 [label="Exit block"];
         }
-        33 [label="Exit function foo" style="filled" fillcolor=red];
+        35 [label="Exit function foo" style="filled" fillcolor=red];
     }
-    4 -> {5};
-    5 -> {6};
     6 -> {7};
     7 -> {8};
     8 -> {9};
     9 -> {10};
     10 -> {11};
-    11 -> {12 21};
+    11 -> {12};
     12 -> {13};
-    13 -> {14};
+    13 -> {14 23};
     14 -> {15};
     15 -> {16};
     16 -> {17};
     17 -> {18};
     18 -> {19};
     19 -> {20};
-    20 -> {27};
+    20 -> {21};
     21 -> {22};
-    22 -> {23};
+    22 -> {29};
     23 -> {24};
     24 -> {25};
     25 -> {26};
@@ -100,5 +105,7 @@ digraph toLocalVariables_kt {
     30 -> {31};
     31 -> {32};
     32 -> {33};
+    33 -> {34};
+    34 -> {35};
 
 }

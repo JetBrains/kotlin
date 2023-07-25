@@ -5,109 +5,114 @@ digraph complexPostponedCfg_kt {
 
     subgraph cluster_0 {
         color=red
-        0 [label="Enter class FirBase" style="filled" fillcolor=red];
-        1 [label="Exit class FirBase" style="filled" fillcolor=red];
+        0 [label="Enter file complexPostponedCfg.kt" style="filled" fillcolor=red];
+        1 [label="Exit file complexPostponedCfg.kt" style="filled" fillcolor=red];
     }
     0 -> {1} [color=green];
 
     subgraph cluster_1 {
         color=red
-        2 [label="Enter class FirFunctionCall" style="filled" fillcolor=red];
-        3 [label="Exit class FirFunctionCall" style="filled" fillcolor=red];
+        2 [label="Enter class FirBase" style="filled" fillcolor=red];
+        3 [label="Exit class FirBase" style="filled" fillcolor=red];
     }
     2 -> {3} [color=green];
 
     subgraph cluster_2 {
         color=red
-        4 [label="Enter function foo" style="filled" fillcolor=red];
-        subgraph cluster_3 {
-            color=blue
-            5 [label="Enter block"];
-            6 [label="Access variable R|<local>/statements|"];
-            7 [label="Function call: R|<local>/statements|.R|kotlin/collections/last|<R|FirBase|>()" style="filled" fillcolor=yellow];
-            8 [label="Type operator: (R|<local>/statements|.R|kotlin/collections/last|<R|FirBase|>() as R|FirFunctionCall|)"];
-            9 [label="Postponed enter to lambda"];
-            subgraph cluster_4 {
-                color=blue
-                10 [label="Enter function <anonymous>" style="filled" fillcolor=red];
-                subgraph cluster_5 {
-                    color=blue
-                    11 [label="Enter block"];
-                    12 [label="Postponed enter to lambda"];
-                    subgraph cluster_6 {
-                        color=blue
-                        13 [label="Enter function <anonymous>" style="filled" fillcolor=red];
-                        subgraph cluster_7 {
-                            color=blue
-                            14 [label="Enter block"];
-                            15 [label="Access variable this@R|special/anonymous|"];
-                            16 [label="Function call: this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(...)" style="filled" fillcolor=yellow];
-                            17 [label="Access variable R|<local>/arguments|"];
-                            18 [label="Function call: R|<local>/arguments|.R|kotlin/collections/last|<R|FirBase|>()" style="filled" fillcolor=yellow];
-                            19 [label="Type operator: (R|<local>/arguments|.R|kotlin/collections/last|<R|FirBase|>() as R|FirFunctionCall|)"];
-                            20 [label="Postponed enter to lambda"];
-                            subgraph cluster_8 {
-                                color=blue
-                                21 [label="Enter function <anonymous>" style="filled" fillcolor=red];
-                                subgraph cluster_9 {
-                                    color=blue
-                                    22 [label="Enter block"];
-                                    23 [label="Access variable this@R|special/anonymous|"];
-                                    24 [label="Function call: this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(...)" style="filled" fillcolor=yellow];
-                                    25 [label="Access variable R|<local>/explicitReceiver|"];
-                                    26 [label="Type operator: (R|<local>/explicitReceiver| as R|FirFunctionCall|)"];
-                                    27 [label="Function call: this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(...)" style="filled" fillcolor=yellow];
-                                    28 [label="Exit block"];
-                                }
-                                29 [label="Exit function <anonymous>" style="filled" fillcolor=red];
-                            }
-                            30 [label="Postponed exit from lambda"];
-                            31 [label="Function call: R|kotlin/with|<R|FirFunctionCall|, R|kotlin/Unit|>(...)" style="filled" fillcolor=yellow];
-                            32 [label="Exit block"];
-                        }
-                        33 [label="Exit function <anonymous>" style="filled" fillcolor=red];
-                    }
-                    34 [label="Postponed exit from lambda"];
-                    35 [label="Function call: R|kotlin/collections/buildList|<R|FirFunctionCall|>(...)" style="filled" fillcolor=yellow];
-                    36 [label="Exit block"];
-                }
-                37 [label="Exit function <anonymous>" style="filled" fillcolor=red];
-            }
-            38 [label="Postponed exit from lambda"];
-            39 [label="Function call: R|kotlin/with|<R|FirFunctionCall|, R|kotlin/collections/List<FirFunctionCall>|>(...)" style="filled" fillcolor=yellow];
-            40 [label="Variable declaration: lval firstCalls: R|kotlin/collections/List<FirFunctionCall>|"];
-            41 [label="Access variable R|<local>/firstCalls|"];
-            42 [label="Jump: ^foo R|<local>/firstCalls|"];
-            43 [label="Stub" style="filled" fillcolor=gray];
-            44 [label="Exit block" style="filled" fillcolor=gray];
-        }
-        45 [label="Exit function foo" style="filled" fillcolor=red];
+        4 [label="Enter class FirFunctionCall" style="filled" fillcolor=red];
+        5 [label="Exit class FirFunctionCall" style="filled" fillcolor=red];
     }
-    4 -> {5};
-    5 -> {6};
+    4 -> {5} [color=green];
+
+    subgraph cluster_3 {
+        color=red
+        6 [label="Enter function foo" style="filled" fillcolor=red];
+        subgraph cluster_4 {
+            color=blue
+            7 [label="Enter block"];
+            8 [label="Access variable R|<local>/statements|"];
+            9 [label="Function call: R|<local>/statements|.R|kotlin/collections/last|<R|FirBase|>()" style="filled" fillcolor=yellow];
+            10 [label="Type operator: (R|<local>/statements|.R|kotlin/collections/last|<R|FirBase|>() as R|FirFunctionCall|)"];
+            11 [label="Postponed enter to lambda"];
+            subgraph cluster_5 {
+                color=blue
+                12 [label="Enter function <anonymous>" style="filled" fillcolor=red];
+                subgraph cluster_6 {
+                    color=blue
+                    13 [label="Enter block"];
+                    14 [label="Postponed enter to lambda"];
+                    subgraph cluster_7 {
+                        color=blue
+                        15 [label="Enter function <anonymous>" style="filled" fillcolor=red];
+                        subgraph cluster_8 {
+                            color=blue
+                            16 [label="Enter block"];
+                            17 [label="Access variable this@R|special/anonymous|"];
+                            18 [label="Function call: this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(...)" style="filled" fillcolor=yellow];
+                            19 [label="Access variable R|<local>/arguments|"];
+                            20 [label="Function call: R|<local>/arguments|.R|kotlin/collections/last|<R|FirBase|>()" style="filled" fillcolor=yellow];
+                            21 [label="Type operator: (R|<local>/arguments|.R|kotlin/collections/last|<R|FirBase|>() as R|FirFunctionCall|)"];
+                            22 [label="Postponed enter to lambda"];
+                            subgraph cluster_9 {
+                                color=blue
+                                23 [label="Enter function <anonymous>" style="filled" fillcolor=red];
+                                subgraph cluster_10 {
+                                    color=blue
+                                    24 [label="Enter block"];
+                                    25 [label="Access variable this@R|special/anonymous|"];
+                                    26 [label="Function call: this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(...)" style="filled" fillcolor=yellow];
+                                    27 [label="Access variable R|<local>/explicitReceiver|"];
+                                    28 [label="Type operator: (R|<local>/explicitReceiver| as R|FirFunctionCall|)"];
+                                    29 [label="Function call: this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(...)" style="filled" fillcolor=yellow];
+                                    30 [label="Exit block"];
+                                }
+                                31 [label="Exit function <anonymous>" style="filled" fillcolor=red];
+                            }
+                            32 [label="Postponed exit from lambda"];
+                            33 [label="Function call: R|kotlin/with|<R|FirFunctionCall|, R|kotlin/Unit|>(...)" style="filled" fillcolor=yellow];
+                            34 [label="Exit block"];
+                        }
+                        35 [label="Exit function <anonymous>" style="filled" fillcolor=red];
+                    }
+                    36 [label="Postponed exit from lambda"];
+                    37 [label="Function call: R|kotlin/collections/buildList|<R|FirFunctionCall|>(...)" style="filled" fillcolor=yellow];
+                    38 [label="Exit block"];
+                }
+                39 [label="Exit function <anonymous>" style="filled" fillcolor=red];
+            }
+            40 [label="Postponed exit from lambda"];
+            41 [label="Function call: R|kotlin/with|<R|FirFunctionCall|, R|kotlin/collections/List<FirFunctionCall>|>(...)" style="filled" fillcolor=yellow];
+            42 [label="Variable declaration: lval firstCalls: R|kotlin/collections/List<FirFunctionCall>|"];
+            43 [label="Access variable R|<local>/firstCalls|"];
+            44 [label="Jump: ^foo R|<local>/firstCalls|"];
+            45 [label="Stub" style="filled" fillcolor=gray];
+            46 [label="Exit block" style="filled" fillcolor=gray];
+        }
+        47 [label="Exit function foo" style="filled" fillcolor=red];
+    }
     6 -> {7};
     7 -> {8};
     8 -> {9};
-    9 -> {10 39};
-    9 -> {38} [style=dotted];
-    9 -> {10} [style=dashed];
+    9 -> {10};
     10 -> {11};
-    11 -> {12};
-    12 -> {13 35};
-    12 -> {34} [style=dotted];
-    12 -> {13} [style=dashed];
+    11 -> {12 41};
+    11 -> {40} [style=dotted];
+    11 -> {12} [style=dashed];
+    12 -> {13};
     13 -> {14};
-    14 -> {15};
+    14 -> {15 37};
+    14 -> {36} [style=dotted];
+    14 -> {15} [style=dashed];
     15 -> {16};
     16 -> {17};
     17 -> {18};
     18 -> {19};
     19 -> {20};
-    20 -> {21 31};
-    20 -> {30} [style=dotted];
-    20 -> {21} [style=dashed];
+    20 -> {21};
     21 -> {22};
-    22 -> {23};
+    22 -> {23 33};
+    22 -> {32} [style=dotted];
+    22 -> {23} [style=dashed];
     23 -> {24};
     24 -> {25};
     25 -> {26};
@@ -119,18 +124,20 @@ digraph complexPostponedCfg_kt {
     31 -> {32};
     32 -> {33};
     33 -> {34};
-    34 -> {35} [color=green];
-    34 -> {39} [color=red];
+    34 -> {35};
     35 -> {36};
-    36 -> {37};
+    36 -> {37} [color=green];
+    36 -> {41} [color=red];
     37 -> {38};
     38 -> {39};
     39 -> {40};
     40 -> {41};
     41 -> {42};
-    42 -> {45};
-    42 -> {43} [style=dotted];
-    43 -> {44} [style=dotted];
+    42 -> {43};
+    43 -> {44};
+    44 -> {47};
     44 -> {45} [style=dotted];
+    45 -> {46} [style=dotted];
+    46 -> {47} [style=dotted];
 
 }

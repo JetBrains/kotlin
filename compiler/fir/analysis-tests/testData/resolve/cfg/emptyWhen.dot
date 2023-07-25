@@ -5,77 +5,84 @@ digraph emptyWhen_kt {
 
     subgraph cluster_0 {
         color=red
-        0 [label="Enter function test_1" style="filled" fillcolor=red];
-        subgraph cluster_1 {
-            color=blue
-            1 [label="Enter block"];
-            subgraph cluster_2 {
-                color=blue
-                2 [label="Enter when"];
-                3 [label="Synthetic else branch"];
-                4 [label="Exit when"];
-            }
-            5 [label="Exit block"];
-        }
-        6 [label="Exit function test_1" style="filled" fillcolor=red];
+        0 [label="Enter file emptyWhen.kt" style="filled" fillcolor=red];
+        1 [label="Exit file emptyWhen.kt" style="filled" fillcolor=red];
     }
-    0 -> {1};
-    1 -> {2};
+    0 -> {1} [color=green];
+
+    subgraph cluster_1 {
+        color=red
+        2 [label="Enter function test_1" style="filled" fillcolor=red];
+        subgraph cluster_2 {
+            color=blue
+            3 [label="Enter block"];
+            subgraph cluster_3 {
+                color=blue
+                4 [label="Enter when"];
+                5 [label="Synthetic else branch"];
+                6 [label="Exit when"];
+            }
+            7 [label="Exit block"];
+        }
+        8 [label="Exit function test_1" style="filled" fillcolor=red];
+    }
     2 -> {3};
     3 -> {4};
     4 -> {5};
     5 -> {6};
-
-    subgraph cluster_3 {
-        color=red
-        7 [label="Enter function test_2" style="filled" fillcolor=red];
-        subgraph cluster_4 {
-            color=blue
-            8 [label="Enter block"];
-            subgraph cluster_5 {
-                color=blue
-                9 [label="Enter when"];
-                10 [label="Access variable R|<local>/x|"];
-                11 [label="Synthetic else branch"];
-                12 [label="Exit when"];
-            }
-            13 [label="Exit block"];
-        }
-        14 [label="Exit function test_2" style="filled" fillcolor=red];
-    }
+    6 -> {7};
     7 -> {8};
-    8 -> {9};
+
+    subgraph cluster_4 {
+        color=red
+        9 [label="Enter function test_2" style="filled" fillcolor=red];
+        subgraph cluster_5 {
+            color=blue
+            10 [label="Enter block"];
+            subgraph cluster_6 {
+                color=blue
+                11 [label="Enter when"];
+                12 [label="Access variable R|<local>/x|"];
+                13 [label="Synthetic else branch"];
+                14 [label="Exit when"];
+            }
+            15 [label="Exit block"];
+        }
+        16 [label="Exit function test_2" style="filled" fillcolor=red];
+    }
     9 -> {10};
     10 -> {11};
     11 -> {12};
     12 -> {13};
     13 -> {14};
-
-    subgraph cluster_6 {
-        color=red
-        15 [label="Enter function test_3" style="filled" fillcolor=red];
-        subgraph cluster_7 {
-            color=blue
-            16 [label="Enter block"];
-            subgraph cluster_8 {
-                color=blue
-                17 [label="Enter when"];
-                18 [label="Access variable R|<local>/x|"];
-                19 [label="Variable declaration: lval y: R|kotlin/Int|"];
-                20 [label="Synthetic else branch"];
-                21 [label="Exit when"];
-            }
-            22 [label="Exit block"];
-        }
-        23 [label="Exit function test_3" style="filled" fillcolor=red];
-    }
+    14 -> {15};
     15 -> {16};
-    16 -> {17};
+
+    subgraph cluster_7 {
+        color=red
+        17 [label="Enter function test_3" style="filled" fillcolor=red];
+        subgraph cluster_8 {
+            color=blue
+            18 [label="Enter block"];
+            subgraph cluster_9 {
+                color=blue
+                19 [label="Enter when"];
+                20 [label="Access variable R|<local>/x|"];
+                21 [label="Variable declaration: lval y: R|kotlin/Int|"];
+                22 [label="Synthetic else branch"];
+                23 [label="Exit when"];
+            }
+            24 [label="Exit block"];
+        }
+        25 [label="Exit function test_3" style="filled" fillcolor=red];
+    }
     17 -> {18};
     18 -> {19};
     19 -> {20};
     20 -> {21};
     21 -> {22};
     22 -> {23};
+    23 -> {24};
+    24 -> {25};
 
 }

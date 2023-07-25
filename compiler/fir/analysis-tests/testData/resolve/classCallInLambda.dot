@@ -5,52 +5,59 @@ digraph classCallInLambda_kt {
 
     subgraph cluster_0 {
         color=red
-        0 [label="Enter function test" style="filled" fillcolor=red];
-        subgraph cluster_1 {
+        0 [label="Enter file classCallInLambda.kt" style="filled" fillcolor=red];
+        1 [label="Exit file classCallInLambda.kt" style="filled" fillcolor=red];
+    }
+    0 -> {1} [color=green];
+
+    subgraph cluster_1 {
+        color=red
+        2 [label="Enter function test" style="filled" fillcolor=red];
+        subgraph cluster_2 {
             color=blue
-            1 [label="Enter block"];
-            2 [label="Access variable R|<local>/x|"];
-            3 [label="Postponed enter to lambda"];
-            subgraph cluster_2 {
+            3 [label="Enter block"];
+            4 [label="Access variable R|<local>/x|"];
+            5 [label="Postponed enter to lambda"];
+            subgraph cluster_3 {
                 color=blue
-                4 [label="Enter function <anonymous>" style="filled" fillcolor=red];
-                subgraph cluster_3 {
+                6 [label="Enter function <anonymous>" style="filled" fillcolor=red];
+                subgraph cluster_4 {
                     color=blue
-                    5 [label="Enter block"];
-                    6 [label="Access variable R|<local>/it|"];
-                    7 [label="::class call"];
-                    8 [label="Exit block"];
+                    7 [label="Enter block"];
+                    8 [label="Access variable R|<local>/it|"];
+                    9 [label="::class call"];
+                    10 [label="Exit block"];
                 }
-                9 [label="Exit function <anonymous>" style="filled" fillcolor=red];
+                11 [label="Exit function <anonymous>" style="filled" fillcolor=red];
             }
-            10 [label="Postponed exit from lambda"];
-            11 [label="Function call: R|<local>/x|.R|kotlin/let|<R|kotlin/String|, R|kotlin/reflect/KClass<out kotlin/String>|>(...)" style="filled" fillcolor=yellow];
-            12 [label="Jump: ^test R|<local>/x|.R|kotlin/let|<R|kotlin/String|, R|kotlin/reflect/KClass<out kotlin/String>|>(<L> = let@fun <anonymous>(it: R|kotlin/String|): R|kotlin/reflect/KClass<out kotlin/String>| <inline=Inline, kind=EXACTLY_ONCE>  {
+            12 [label="Postponed exit from lambda"];
+            13 [label="Function call: R|<local>/x|.R|kotlin/let|<R|kotlin/String|, R|kotlin/reflect/KClass<out kotlin/String>|>(...)" style="filled" fillcolor=yellow];
+            14 [label="Jump: ^test R|<local>/x|.R|kotlin/let|<R|kotlin/String|, R|kotlin/reflect/KClass<out kotlin/String>|>(<L> = let@fun <anonymous>(it: R|kotlin/String|): R|kotlin/reflect/KClass<out kotlin/String>| <inline=Inline, kind=EXACTLY_ONCE>  {
     ^ <getClass>(R|<local>/it|)
 }
 )"];
-            13 [label="Stub" style="filled" fillcolor=gray];
-            14 [label="Exit block" style="filled" fillcolor=gray];
+            15 [label="Stub" style="filled" fillcolor=gray];
+            16 [label="Exit block" style="filled" fillcolor=gray];
         }
-        15 [label="Exit function test" style="filled" fillcolor=red];
+        17 [label="Exit function test" style="filled" fillcolor=red];
     }
-    0 -> {1};
-    1 -> {2};
     2 -> {3};
-    3 -> {4 11};
-    3 -> {10} [style=dotted];
-    3 -> {4} [style=dashed];
+    3 -> {4};
     4 -> {5};
-    5 -> {6};
+    5 -> {6 13};
+    5 -> {12} [style=dotted];
+    5 -> {6} [style=dashed];
     6 -> {7};
     7 -> {8};
     8 -> {9};
     9 -> {10};
     10 -> {11};
     11 -> {12};
-    12 -> {15};
-    12 -> {13} [style=dotted];
-    13 -> {14} [style=dotted];
+    12 -> {13};
+    13 -> {14};
+    14 -> {17};
     14 -> {15} [style=dotted];
+    15 -> {16} [style=dotted];
+    16 -> {17} [style=dotted];
 
 }

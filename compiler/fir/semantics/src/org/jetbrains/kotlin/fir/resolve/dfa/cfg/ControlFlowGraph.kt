@@ -32,6 +32,7 @@ class ControlFlowGraph(val declaration: FirDeclaration?, val name: String, val k
     }
 
     enum class Kind {
+        File,
         Class,
         Function,
         LocalFunction,

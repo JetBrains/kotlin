@@ -5,82 +5,87 @@ digraph defaultArguments_kt {
 
     subgraph cluster_0 {
         color=red
-        0 [label="Enter function foo" style="filled" fillcolor=red];
-        subgraph cluster_1 {
-            color=blue
-            1 [label="Enter block"];
-            2 [label="Const: Int(1)"];
-            3 [label="Jump: ^foo Int(1)"];
-            4 [label="Stub" style="filled" fillcolor=gray];
-            5 [label="Exit block" style="filled" fillcolor=gray];
-        }
-        6 [label="Exit function foo" style="filled" fillcolor=red];
+        0 [label="Enter file defaultArguments.kt" style="filled" fillcolor=red];
+        1 [label="Exit file defaultArguments.kt" style="filled" fillcolor=red];
     }
-    0 -> {1};
-    1 -> {2};
-    2 -> {3};
-    3 -> {6};
-    3 -> {4} [style=dotted];
-    4 -> {5} [style=dotted];
-    5 -> {6} [style=dotted];
+    0 -> {1} [color=green];
 
-    subgraph cluster_2 {
+    subgraph cluster_1 {
         color=red
-        7 [label="Enter function test" style="filled" fillcolor=red];
-        8 [label="Enter default value of y"];
-        subgraph cluster_3 {
+        2 [label="Enter function foo" style="filled" fillcolor=red];
+        subgraph cluster_2 {
             color=blue
-            9 [label="Enter default value of y" style="filled" fillcolor=red];
-            10 [label="Access variable R|<local>/x|"];
-            11 [label="Type operator: (R|<local>/x| as R|kotlin/String|)"];
-            12 [label="Exit default value of y" style="filled" fillcolor=red];
+            3 [label="Enter block"];
+            4 [label="Const: Int(1)"];
+            5 [label="Jump: ^foo Int(1)"];
+            6 [label="Stub" style="filled" fillcolor=gray];
+            7 [label="Exit block" style="filled" fillcolor=gray];
         }
-        13 [label="Exit default value of y"];
-        14 [label="Enter default value of z"];
+        8 [label="Exit function foo" style="filled" fillcolor=red];
+    }
+    2 -> {3};
+    3 -> {4};
+    4 -> {5};
+    5 -> {8};
+    5 -> {6} [style=dotted];
+    6 -> {7} [style=dotted];
+    7 -> {8} [style=dotted];
+
+    subgraph cluster_3 {
+        color=red
+        9 [label="Enter function test" style="filled" fillcolor=red];
+        10 [label="Enter default value of y"];
         subgraph cluster_4 {
             color=blue
-            15 [label="Enter default value of z" style="filled" fillcolor=red];
-            16 [label="Postponed enter to lambda"];
-            subgraph cluster_5 {
-                color=blue
-                17 [label="Enter function <anonymous>" style="filled" fillcolor=red];
-                subgraph cluster_6 {
-                    color=blue
-                    18 [label="Enter block"];
-                    19 [label="Function call: R|/foo|()" style="filled" fillcolor=yellow];
-                    20 [label="Exit block"];
-                }
-                21 [label="Exit function <anonymous>" style="filled" fillcolor=red];
-            }
-            22 [label="Postponed exit from lambda"];
-            23 [label="Function call: R|kotlin/run|<R|kotlin/Int|>(...)" style="filled" fillcolor=yellow];
-            24 [label="Exit default value of z" style="filled" fillcolor=red];
+            11 [label="Enter default value of y" style="filled" fillcolor=red];
+            12 [label="Access variable R|<local>/x|"];
+            13 [label="Type operator: (R|<local>/x| as R|kotlin/String|)"];
+            14 [label="Exit default value of y" style="filled" fillcolor=red];
         }
-        25 [label="Exit default value of z"];
-        subgraph cluster_7 {
+        15 [label="Exit default value of y"];
+        16 [label="Enter default value of z"];
+        subgraph cluster_5 {
             color=blue
-            26 [label="Enter block"];
-            27 [label="Function call: R|/foo|()" style="filled" fillcolor=yellow];
-            28 [label="Exit block"];
+            17 [label="Enter default value of z" style="filled" fillcolor=red];
+            18 [label="Postponed enter to lambda"];
+            subgraph cluster_6 {
+                color=blue
+                19 [label="Enter function <anonymous>" style="filled" fillcolor=red];
+                subgraph cluster_7 {
+                    color=blue
+                    20 [label="Enter block"];
+                    21 [label="Function call: R|/foo|()" style="filled" fillcolor=yellow];
+                    22 [label="Exit block"];
+                }
+                23 [label="Exit function <anonymous>" style="filled" fillcolor=red];
+            }
+            24 [label="Postponed exit from lambda"];
+            25 [label="Function call: R|kotlin/run|<R|kotlin/Int|>(...)" style="filled" fillcolor=yellow];
+            26 [label="Exit default value of z" style="filled" fillcolor=red];
         }
-        29 [label="Exit function test" style="filled" fillcolor=red];
+        27 [label="Exit default value of z"];
+        subgraph cluster_8 {
+            color=blue
+            28 [label="Enter block"];
+            29 [label="Function call: R|/foo|()" style="filled" fillcolor=yellow];
+            30 [label="Exit block"];
+        }
+        31 [label="Exit function test" style="filled" fillcolor=red];
     }
-    7 -> {8};
-    8 -> {9 13};
-    8 -> {9} [style=dashed];
     9 -> {10};
-    10 -> {11};
+    10 -> {11 15};
+    10 -> {11} [style=dashed];
     11 -> {12};
     12 -> {13};
     13 -> {14};
-    14 -> {15 25};
-    14 -> {15} [style=dashed];
+    14 -> {15};
     15 -> {16};
-    16 -> {17 23};
-    16 -> {22} [style=dotted];
+    16 -> {17 27};
     16 -> {17} [style=dashed];
     17 -> {18};
-    18 -> {19};
+    18 -> {19 25};
+    18 -> {24} [style=dotted];
+    18 -> {19} [style=dashed];
     19 -> {20};
     20 -> {21};
     21 -> {22};
@@ -91,5 +96,7 @@ digraph defaultArguments_kt {
     26 -> {27};
     27 -> {28};
     28 -> {29};
+    29 -> {30};
+    30 -> {31};
 
 }

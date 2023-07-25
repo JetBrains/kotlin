@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveCont
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.FirContractsDslNames
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isUsedInControlFlowGraphBuilderForClass
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isUsedInControlFlowGraphBuilderForFile
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.psi.KtCodeFragment
@@ -114,6 +115,19 @@ private class LLFirBodyTargetResolver(
 
                 return true
             }
+            is FirFile -> {
+                if (target.resolvePhase >= resolverPhase) return true
+
+                resolveFileAnnotationContainerIfNeeded(target)
+
+                // resolve file CFG graph here, to do this we need to have property blocks resoled
+                resolveMembersForControlFlowGraph(target)
+                performCustomResolveUnderLock(target) {
+                    calculateControlFlowGraph(target)
+                }
+
+                return true
+            }
             is FirCodeFragment -> {
                 resolveCodeFragmentContext(target)
                 performCustomResolveUnderLock(target) {
@@ -156,6 +170,35 @@ private class LLFirBodyTargetResolver(
         }
     }
 
+    private fun calculateControlFlowGraph(target: FirFile) {
+        checkWithAttachment(
+            target.controlFlowGraphReference == null,
+            { "'controlFlowGraphReference' should be 'null' if the file phase < $resolverPhase)" },
+        ) {
+            withFirEntry("firFile", target)
+        }
+
+        val dataFlowAnalyzer = transformer.declarationsTransformer.dataFlowAnalyzer
+        dataFlowAnalyzer.enterFile(target, buildGraph = true)
+        val controlFlowGraph = dataFlowAnalyzer.exitFile()
+            ?: errorWithAttachment("CFG should not be 'null' as 'buildGraph' is specified") {
+                withFirEntry("firFile", target)
+            }
+
+        target.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(controlFlowGraph))
+    }
+
+    private fun resolveMembersForControlFlowGraph(target: FirFile) {
+        withFile(target) {
+            for (member in target.declarations) {
+                if (member is FirControlFlowGraphOwner && member.isUsedInControlFlowGraphBuilderForFile) {
+                    member.lazyResolveToPhase(resolverPhase.previous)
+                    performResolve(member)
+                }
+            }
+        }
+    }
+
     private fun resolveCodeFragmentContext(firCodeFragment: FirCodeFragment) {
         val ktCodeFragment = firCodeFragment.psi as? KtCodeFragment
             ?: errorWithAttachment("Code fragment source not found") {
@@ -191,7 +234,7 @@ private class LLFirBodyTargetResolver(
 
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
         when (target) {
-            is FirRegularClass, is FirCodeFragment -> error("Should have been resolved in ${::doResolveWithoutLock.name}")
+            is FirFile, is FirRegularClass, is FirCodeFragment -> error("Should have been resolved in ${::doResolveWithoutLock.name}")
             is FirConstructor -> resolve(target, BodyStateKeepers.CONSTRUCTOR)
             is FirFunction -> resolve(target, BodyStateKeepers.FUNCTION)
             is FirProperty -> resolve(target, BodyStateKeepers.PROPERTY)
@@ -202,7 +245,6 @@ private class LLFirBodyTargetResolver(
             is FirDanglingModifierList,
             is FirFileAnnotationsContainer,
             is FirTypeAlias,
-            is FirFile,
             -> {
                 // No bodies here
             }

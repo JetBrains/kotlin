@@ -1,7 +1,1 @@
-BEFORE MODIFICATION:
-public final [ResolvedTo(BODY_RESOLVE)] val <no name provided>: R|kotlin/Int| = R|/doSmth|(String(str))
-    public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
-
-AFTER MODIFICATION:
-public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] val <no name provided>: R|kotlin/Int| = LAZY_EXPRESSION
-    public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+IN-BLOCK MODIFICATION IS NOT APPLICABLE FOR THIS PLACE
