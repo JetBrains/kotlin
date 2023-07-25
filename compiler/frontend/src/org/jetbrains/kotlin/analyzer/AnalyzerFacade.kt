@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDependencies
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.TargetPlatformVersion
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.SealedClassInheritorsProvider
@@ -116,12 +115,6 @@ fun ModuleInfo.unwrapPlatform(): ModuleInfo = if (this is CombinedModuleInfo) pl
 
 interface LibraryModuleSourceInfoBase : ModuleInfo
 interface NonSourceModuleInfoBase : ModuleInfo
-
-interface LibraryModuleInfo : ModuleInfo {
-    override val platform: TargetPlatform
-
-    fun getLibraryRoots(): Collection<String>
-}
 
 abstract class ResolverForModuleFactory {
     open fun <M : ModuleInfo> createResolverForModule(
