@@ -156,6 +156,27 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
     private fun StringBuilder.appendExternalClassReference(klass: IrClass) {
         val parent = klass.parent
         if (parent is IrClass) {
+
+            // This is hack to support Kotlin/JS like implementation of IDL string enums bindings
+            // with error suppression:
+            //
+            //    @JsName("null")
+            //    @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
+            //    public external interface CanvasFillRule {
+            //        companion object
+            //    }
+            //    public inline val CanvasFillRule.Companion.NONZERO: CanvasFillRule get() = "nonzero".asDynamic().unsafeCast<CanvasFillRule>()
+            //
+            // Kotlin/JS translates access to CanvasFillRule.Companion as `null` due to @JsName("null"),
+            // but Kotlin/Wasm fails to do this due to stricter null checks on interop boundary.
+            //
+            // Instead, as a temporary solution, we evaluate such companion object to an empty JS object.
+            // TODO: Optimize (KT-60661)
+            if (parent.isInterface) {
+                append("({})")
+                return
+            }
+
             appendExternalClassReference(parent)
             if (klass.isCompanion) {
                 // Reference to external companion object is reference to its parent class

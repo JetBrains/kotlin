@@ -116,6 +116,12 @@ public class FirWasmCodegenWasmJsInteropTestGenerated extends AbstractFirWasmCod
     }
 
     @Test
+    @TestMetadata("kt59082.kt")
+    public void testKt59082() throws Exception {
+        runTest("compiler/testData/codegen/boxWasmJsInterop/kt59082.kt");
+    }
+
+    @Test
     @TestMetadata("lambdaAdapterNameClash.kt")
     public void testLambdaAdapterNameClash() throws Exception {
         runTest("compiler/testData/codegen/boxWasmJsInterop/lambdaAdapterNameClash.kt");
