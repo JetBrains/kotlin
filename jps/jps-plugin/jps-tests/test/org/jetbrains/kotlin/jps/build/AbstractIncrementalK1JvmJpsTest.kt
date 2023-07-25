@@ -6,12 +6,13 @@
 package org.jetbrains.kotlin.jps.build
 
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.config.LanguageVersion
 
 abstract class AbstractIncrementalK1JvmJpsTest(
     allowNoFilesWithSuffixInTestData: Boolean = false
 ) : AbstractIncrementalJvmJpsTest(allowNoFilesWithSuffixInTestData = allowNoFilesWithSuffixInTestData) {
     override fun updateCommandLineArguments(arguments: CommonCompilerArguments) {
-        if (KotlinVersion.CURRENT.major >= 2) {
+        if (LanguageVersion.LATEST_STABLE.major >= 2) {
             arguments.languageVersion = "1.9"
         }
         super.updateCommandLineArguments(arguments)
