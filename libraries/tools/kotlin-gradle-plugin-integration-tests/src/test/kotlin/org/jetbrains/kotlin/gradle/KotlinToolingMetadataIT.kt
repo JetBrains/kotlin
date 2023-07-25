@@ -49,7 +49,8 @@ class KotlinToolingMetadataMppIT : BaseGradleIT() {
                     KotlinPlatformType.common.name.takeIf { !isKpmModelMappingEnabled },
                     KotlinPlatformType.jvm.name,
                     KotlinPlatformType.js.name,
-                    KotlinPlatformType.native.name
+                    KotlinPlatformType.native.name,
+                    KotlinPlatformType.wasm.name,
                 ).sorted(),
                 metadata.projectTargets.map { it.platformType }.sorted()
             )
