@@ -70,6 +70,7 @@ class IrTextDumpHandler(
             normalizeNames = true,
             printFacadeClassInFqNames = false,
             printFlagsInDeclarationReferences = false,
+            renderOriginForExternalDeclarations = false,
         )
 
         info.processAllIrModuleFragments(module) { irModuleFragment, moduleName ->

@@ -52,6 +52,8 @@ fun IrFile.dumpTreesFromLineNumber(lineNumber: Int, options: DumpIrTreeOptions =
  * the file facade class (see [IrDeclarationOrigin.FILE_CLASS])
  * @property printFlagsInDeclarationReferences If `false`, flags like `fake_override`, `inline` etc. are not printed in rendered declaration
  * references.
+ * @property renderOriginForExternalDeclarations If `true`, we only print a declaration's origin if it is not
+ * [IrDeclarationOrigin.DEFINED]. If `false`, we don't print the [IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB] origin as well.
  */
 data class DumpIrTreeOptions(
     val normalizeNames: Boolean = false,
@@ -59,6 +61,7 @@ data class DumpIrTreeOptions(
     val verboseErrorTypes: Boolean = true,
     val printFacadeClassInFqNames: Boolean = true,
     val printFlagsInDeclarationReferences: Boolean = true,
+    val renderOriginForExternalDeclarations: Boolean = true,
 )
 
 private fun IrFile.shouldSkipDump(): Boolean {

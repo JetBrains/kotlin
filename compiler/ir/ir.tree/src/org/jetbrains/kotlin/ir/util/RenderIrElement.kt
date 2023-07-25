@@ -72,7 +72,7 @@ class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpIrTree
             renderClassWithRenderer(declaration, null, options)
 
         override fun visitEnumEntry(declaration: IrEnumEntry, data: Nothing?) =
-            renderEnumEntry(declaration)
+            renderEnumEntry(declaration, options)
 
         override fun visitField(declaration: IrField, data: Nothing?) =
             renderField(declaration, null, options)
@@ -252,14 +252,14 @@ class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpIrTree
 
     override fun visitFunction(declaration: IrFunction, data: Nothing?): String =
         declaration.runTrimEnd {
-            "FUN ${renderOriginIfNonTrivial()}"
+            "FUN ${renderOriginIfNonTrivial(options)}"
         }
 
     override fun visitScript(declaration: IrScript, data: Nothing?) = "SCRIPT"
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction, data: Nothing?): String =
         declaration.runTrimEnd {
-            "FUN ${renderOriginIfNonTrivial()}" +
+            "FUN ${renderOriginIfNonTrivial(options)}" +
                     "name:$name visibility:$visibility modality:$modality " +
                     renderTypeParameters() + " " +
                     renderValueParameterTypes() + " " +
@@ -276,7 +276,7 @@ class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpIrTree
 
     override fun visitConstructor(declaration: IrConstructor, data: Nothing?): String =
         declaration.runTrimEnd {
-            "CONSTRUCTOR ${renderOriginIfNonTrivial()}" +
+            "CONSTRUCTOR ${renderOriginIfNonTrivial(options)}" +
                     "visibility:$visibility " +
                     renderTypeParameters() + " " +
                     renderValueParameterTypes() + " " +
@@ -286,7 +286,7 @@ class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpIrTree
 
     override fun visitProperty(declaration: IrProperty, data: Nothing?): String =
         declaration.runTrimEnd {
-            "PROPERTY ${renderOriginIfNonTrivial()}" +
+            "PROPERTY ${renderOriginIfNonTrivial(options)}" +
                     "name:$name visibility:$visibility modality:$modality " +
                     renderPropertyFlags()
         }
@@ -299,11 +299,11 @@ class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpIrTree
 
     override fun visitVariable(declaration: IrVariable, data: Nothing?): String =
         declaration.runTrimEnd {
-            "VAR ${renderOriginIfNonTrivial()}name:${normalizedName(variableNameData)} type:${type.render()} ${renderVariableFlags()}"
+            "VAR ${renderOriginIfNonTrivial(options)}name:${normalizedName(variableNameData)} type:${type.render()} ${renderVariableFlags()}"
         }
 
     override fun visitEnumEntry(declaration: IrEnumEntry, data: Nothing?): String =
-        renderEnumEntry(declaration)
+        renderEnumEntry(declaration, options)
 
     override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer, data: Nothing?): String =
         "ANONYMOUS_INITIALIZER isStatic=${declaration.isStatic}"
@@ -313,7 +313,7 @@ class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpIrTree
 
     override fun visitValueParameter(declaration: IrValueParameter, data: Nothing?): String =
         declaration.runTrimEnd {
-            "VALUE_PARAMETER ${renderOriginIfNonTrivial()}" +
+            "VALUE_PARAMETER ${renderOriginIfNonTrivial(options)}" +
                     "name:$name " +
                     (if (index >= 0) "index:$index " else "") +
                     "type:${type.render()} " +
@@ -323,13 +323,13 @@ class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpIrTree
 
     override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty, data: Nothing?): String =
         declaration.runTrimEnd {
-            "LOCAL_DELEGATED_PROPERTY ${declaration.renderOriginIfNonTrivial()}" +
+            "LOCAL_DELEGATED_PROPERTY ${declaration.renderOriginIfNonTrivial(options)}" +
                     "name:$name type:${type.render()} flags:${renderLocalDelegatedPropertyFlags()}"
         }
 
     override fun visitTypeAlias(declaration: IrTypeAlias, data: Nothing?): String =
         declaration.run {
-            "TYPEALIAS ${declaration.renderOriginIfNonTrivial()}" +
+            "TYPEALIAS ${declaration.renderOriginIfNonTrivial(options)}" +
                     "name:$name visibility:$visibility expandedType:${expandedType.render()}" +
                     renderTypeAliasFlags()
         }
@@ -540,8 +540,13 @@ internal fun DescriptorRenderer.renderDescriptor(descriptor: DeclarationDescript
     else
         render(descriptor)
 
-internal fun IrDeclaration.renderOriginIfNonTrivial(): String =
-    if (origin != IrDeclarationOrigin.DEFINED) "$origin " else ""
+internal fun IrDeclaration.renderOriginIfNonTrivial(options: DumpIrTreeOptions): String {
+    val originsToSkipFromRendering: HashSet<IrDeclarationOrigin> = hashSetOf(IrDeclarationOrigin.DEFINED)
+    if (!options.renderOriginForExternalDeclarations) {
+        originsToSkipFromRendering.add(IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB)
+    }
+    return if (origin in originsToSkipFromRendering) "" else "$origin "
+}
 
 internal fun IrClassifierSymbol.renderClassifierFqn(options: DumpIrTreeOptions): String =
     if (isBound)
@@ -871,18 +876,18 @@ private fun StringBuilder.renderAsAnnotationArgument(irElement: IrElement?, rend
 
 private fun renderClassWithRenderer(declaration: IrClass, renderer: RenderIrElementVisitor?, options: DumpIrTreeOptions) =
     declaration.runTrimEnd {
-        "CLASS ${renderOriginIfNonTrivial()}" +
+        "CLASS ${renderOriginIfNonTrivial(options)}" +
                 "$kind name:$name modality:$modality visibility:$visibility " +
                 renderClassFlags() +
                 "superTypes:[${superTypes.joinToString(separator = "; ") { it.renderTypeWithRenderer(renderer, options) }}]"
     }
 
-private fun renderEnumEntry(declaration: IrEnumEntry) = declaration.runTrimEnd {
-    "ENUM_ENTRY ${renderOriginIfNonTrivial()}name:$name"
+private fun renderEnumEntry(declaration: IrEnumEntry, options: DumpIrTreeOptions) = declaration.runTrimEnd {
+    "ENUM_ENTRY ${renderOriginIfNonTrivial(options)}name:$name"
 }
 
 private fun renderField(declaration: IrField, renderer: RenderIrElementVisitor?, options: DumpIrTreeOptions) = declaration.runTrimEnd {
-    "FIELD ${renderOriginIfNonTrivial()}name:$name type:${
+    "FIELD ${renderOriginIfNonTrivial(options)}name:$name type:${
         type.renderTypeWithRenderer(
             renderer,
             options
@@ -892,7 +897,7 @@ private fun renderField(declaration: IrField, renderer: RenderIrElementVisitor?,
 
 private fun renderTypeParameter(declaration: IrTypeParameter, renderer: RenderIrElementVisitor?, options: DumpIrTreeOptions) =
     declaration.runTrimEnd {
-        "TYPE_PARAMETER ${renderOriginIfNonTrivial()}" +
+        "TYPE_PARAMETER ${renderOriginIfNonTrivial(options)}" +
                 "name:$name index:$index variance:$variance " +
                 "superTypes:[${
                     superTypes.joinToString(separator = "; ") {
