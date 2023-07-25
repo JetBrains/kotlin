@@ -57,6 +57,10 @@ internal object FirLazyBodiesCalculator {
 
     fun calculateLazyArgumentsForAnnotation(annotationCall: FirAnnotationCall, session: FirSession): FirArgumentList {
         require(needCalculatingAnnotationCall(annotationCall))
+        return createArgumentsForAnnotation(annotationCall, session)
+    }
+
+    fun createArgumentsForAnnotation(annotationCall: FirAnnotationCall, session: FirSession): FirArgumentList {
         val builder = PsiRawFirBuilder(session, baseScopeProvider = session.kotlinScopeProvider)
         val ktAnnotationEntry = annotationCall.psi as KtAnnotationEntry
         builder.context.packageFqName = ktAnnotationEntry.containingKtFile.packageFqName

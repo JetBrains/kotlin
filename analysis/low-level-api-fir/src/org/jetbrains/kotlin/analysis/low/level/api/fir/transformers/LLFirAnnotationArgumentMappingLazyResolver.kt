@@ -7,10 +7,9 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator.calculateAnnotations
+import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkAnnotationArgumentsMappingIsResolved
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.expressionGuard
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
@@ -62,7 +61,7 @@ private class LLFirAnnotationArgumentsMappingTargetResolver(
     )
 
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
-        resolveWithKeeper(target, target.llFirSession, AnnotationArgumentMappingStateKeepers.DECLARATION, ::calculateAnnotations) {
+        resolveWithKeeper(target, target.llFirSession, AnnotationArgumentMappingStateKeepers.DECLARATION) {
             transformAnnotations(target)
         }
     }
@@ -81,19 +80,21 @@ internal object AnnotationArgumentMappingStateKeepers {
         }
     }
 
-    private val ANNOTATION_CALL: StateKeeper<FirAnnotationCall, FirSession> = stateKeeper { annotationCall, _ ->
+    private val ANNOTATION_CALL: StateKeeper<FirAnnotationCall, FirSession> = stateKeeper { annotationCall, session ->
         add(FirAnnotationCall::calleeReference, FirAnnotationCall::replaceCalleeReference)
 
         val argumentList = annotationCall.argumentList
         if (argumentList !is FirResolvedArgumentList && argumentList !is FirEmptyArgumentList) {
             add(FirAnnotationCall::argumentList, FirAnnotationCall::replaceArgumentList) { oldList ->
+                val newArguments = FirLazyBodiesCalculator.createArgumentsForAnnotation(annotationCall, session).arguments
                 buildArgumentList {
                     source = oldList.source
-                    for (argument in oldList.arguments) {
+                    for ((index, argument) in oldList.arguments.withIndex()) {
                         val replacement = when {
                             argument is FirPropertyAccessExpression && argument.calleeReference.isError() -> argument
-                            else -> expressionGuard(argument)
+                            else -> newArguments[index]
                         }
+
                         arguments.add(replacement)
                     }
                 }
