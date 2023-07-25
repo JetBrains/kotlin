@@ -10,9 +10,9 @@ for applications that do not use reflection features.
 
 # Package kotlin.reflect.full
 
-Extensions for [Kotlin reflection](https://kotlinlang.org/docs/reference/reflection.html) types like [kotlin.reflect.KClass], [kotlin.reflect.KType], and others.
+Extensions for [Kotlin reflection](https://kotlinlang.org/docs/reflection.html) types like [kotlin.reflect.KClass], [kotlin.reflect.KType], and others.
 
 # Package kotlin.reflect.jvm
 
-Extensions for conversion between [Kotlin reflection](https://kotlinlang.org/docs/reference/reflection.html) and
+Extensions for conversion between [Kotlin reflection](https://kotlinlang.org/docs/reflection.html) and
 Java reflection types and other JVM-specific extensions.
