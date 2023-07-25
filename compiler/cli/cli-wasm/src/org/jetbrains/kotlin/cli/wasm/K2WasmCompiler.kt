@@ -273,7 +273,8 @@ class K2WasmCompiler : CLICompiler<K2WasmCompilerArguments>() {
                 environmentForWasm.configuration,
                 libraries,
                 friendLibraries,
-                AnalyzerWithCompilerReport(environmentForWasm.configuration)
+                AnalyzerWithCompilerReport(environmentForWasm.configuration),
+                analyzerFacade = TopDownAnalyzerFacadeForWasm,
             )
             val result = sourceModule.jsFrontEndResult.jsAnalysisResult
             if (result is JsAnalysisResult.RetryWithAdditionalRoots) {

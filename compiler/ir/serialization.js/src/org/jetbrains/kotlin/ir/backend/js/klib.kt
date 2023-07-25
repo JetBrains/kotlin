@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.analyze.AbstractTopDownAnalyzerFacadeForWeb
+import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
 import org.jetbrains.kotlin.js.config.ErrorTolerancePolicy
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
@@ -859,3 +860,20 @@ fun IncrementalDataProvider.getSerializedData(newSources: List<KtFile>): List<Ko
 
 val CompilerConfiguration.incrementalDataProvider: IncrementalDataProvider?
     get() = get(JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER)
+
+fun prepareAnalyzedSourceModule(
+    project: Project,
+    files: List<KtFile>,
+    configuration: CompilerConfiguration,
+    dependencies: List<String>,
+    friendDependencies: List<String>,
+    analyzer: AbstractAnalyzerWithCompilerReport,
+    errorPolicy: ErrorTolerancePolicy = configuration.get(JSConfigurationKeys.ERROR_TOLERANCE_POLICY) ?: ErrorTolerancePolicy.DEFAULT,
+    analyzerFacade: AbstractTopDownAnalyzerFacadeForWeb = TopDownAnalyzerFacadeForJS,
+): ModulesStructure {
+    val mainModule = MainModule.SourceFiles(files)
+    val sourceModule = ModulesStructure(project, mainModule, configuration, dependencies, friendDependencies)
+    return sourceModule.apply {
+        runAnalysis(errorPolicy, analyzer, analyzerFacade)
+    }
+}
