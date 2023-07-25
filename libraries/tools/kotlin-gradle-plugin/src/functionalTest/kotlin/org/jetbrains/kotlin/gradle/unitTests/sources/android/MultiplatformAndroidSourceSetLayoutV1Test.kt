@@ -16,8 +16,11 @@ import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.plugin.sources.android.findKotlinSourceSet
 import org.jetbrains.kotlin.gradle.util.addBuildEventsListenerRegistryMock
+import org.jetbrains.kotlin.gradle.util.checkDiagnostics
 import org.jetbrains.kotlin.gradle.util.setMultiplatformAndroidSourceSetLayoutVersion
 import kotlin.test.*
 
@@ -44,6 +47,12 @@ class MultiplatformAndroidSourceSetLayoutV1Test {
         kotlin = project.multiplatformExtension
     }
 
+    @Test
+    fun `version 1 layout usage - emits a deprecation error`() {
+        kotlin.androidTarget()
+        project.evaluate()
+        project.checkDiagnostics("AndroidSourceSetV1Deprecation")
+    }
 
     @Test
     fun `main source set with default settings`() {

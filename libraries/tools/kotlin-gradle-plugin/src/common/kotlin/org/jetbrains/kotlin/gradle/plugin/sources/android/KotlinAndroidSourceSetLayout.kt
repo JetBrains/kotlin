@@ -48,7 +48,7 @@ internal val multiplatformAndroidSourceSetLayoutV1 = KotlinAndroidSourceSetLayou
         MultiplatformLayoutV1SourceDirConfigurator
     ),
     checker = KotlinAndroidSourceSetLayoutChecker(
-        MultiplatformLayoutV1PromoteV2Checker
+        MultiplatformLayoutV1DeprecationError
     )
 )
 

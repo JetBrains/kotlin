@@ -87,17 +87,12 @@ object KotlinToolingDiagnostics {
         }
     }
 
-    object PromoteAndroidSourceSetLayoutV2Warning : ToolingDiagnosticFactory(WARNING) {
+    object AndroidSourceSetLayoutV1Deprecation : ToolingDiagnosticFactory(ERROR) {
         operator fun invoke() = build(
             """
-                ${multiplatformAndroidSourceSetLayoutV1.name} is deprecated. Use ${multiplatformAndroidSourceSetLayoutV2.name} instead. 
-                To enable ${multiplatformAndroidSourceSetLayoutV2.name}: put the following in your gradle.properties: 
-                ${PropertiesProvider.PropertyNames.KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_VERSION}=2
+                The version 1 of Android source set layout is deprecated. Please remove kotlin.mpp.androidSourceSetLayoutVersion=1 from the gradle.properties file.
                 
-                To suppress this warning: put the following in your gradle.properties:
-                ${PropertiesProvider.PropertyNames.KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_VERSION_1_NO_WARN}=true
-                
-                Learn more: https://kotlinlang.org/docs/whatsnew18.html#kotlin-multiplatform-a-new-android-source-set-layout
+                Learn how to migrate to the version 2 source set layout at: https://kotl.in/android-source-set-layout-v2
             """.trimIndent()
         )
     }
@@ -120,7 +115,7 @@ object KotlinToolingDiagnostics {
                 To suppress this warning: put the following in your gradle.properties:
                 ${PropertiesProvider.PropertyNames.KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_ANDROID_STYLE_NO_WARN}=true
                 
-                Learn more: https://kotlinlang.org/docs/whatsnew18.html#kotlin-multiplatform-a-new-android-source-set-layout
+                Learn more: https://kotl.in/android-source-set-layout-v2
             """.trimIndent()
         )
     }
@@ -181,7 +176,7 @@ object KotlinToolingDiagnostics {
                 sourceSets.getByName("androidAndroidTest") -> sourceSets.getByName("androidInstrumentedTest")
                 
                 Learn more about the new Kotlin/Android SourceSet Layout: 
-                https://kotlinlang.org/docs/whatsnew18.html#kotlin-multiplatform-a-new-android-source-set-layout
+                https://kotl.in/android-source-set-layout-v2
             """.trimIndent()
         )
     }

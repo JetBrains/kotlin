@@ -18,7 +18,7 @@ internal val Project.kotlinAndroidSourceSetLayout: KotlinAndroidSourceSetLayout
                 1 -> multiplatformAndroidSourceSetLayoutV1
                 null, 2 -> multiplatformAndroidSourceSetLayoutV2
                 else -> throw IllegalArgumentException(
-                    "Unsupported '${PropertiesProvider.PropertyNames.KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_VERSION}=$version' Supported versions: {1, 2}"
+                    "Unsupported '${PropertiesProvider.PropertyNames.KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_VERSION}=$version' Supported versions: {2}"
                 )
             }
         } else singleTargetAndroidSourceSetLayout
