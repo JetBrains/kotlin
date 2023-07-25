@@ -12,8 +12,8 @@ abstract class AbstractIncrementalJvmJpsTest(
     allowNoFilesWithSuffixInTestData: Boolean = false
 ) : AbstractIncrementalJpsTest(allowNoFilesWithSuffixInTestData = allowNoFilesWithSuffixInTestData) {
     override fun overrideModuleSettings() {
-        myProject.k2JvmCompilerArguments = K2JVMCompilerArguments().also {
-            it.disableDefaultScriptingPlugin = true
-        }
+//        myProject.k2JvmCompilerArguments = K2JVMCompilerArguments().also {
+//            it.disableDefaultScriptingPlugin = true
+//        }
     }
 }
