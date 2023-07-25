@@ -233,7 +233,7 @@ sealed interface AbiTypeParametersContainer : AbiDeclaration {
  */
 @ExperimentalLibraryAbiReader
 interface AbiTypeParameter {
-    val index: Int
+    val tag: String
     val variance: AbiVariance
     val isReified: Boolean
 
@@ -268,7 +268,7 @@ sealed interface AbiClassifier {
     }
 
     interface TypeParameter : AbiClassifier {
-        val index: Int
+        val tag: String
     }
 }
 

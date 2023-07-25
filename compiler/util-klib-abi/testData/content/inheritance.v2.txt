@@ -217,10 +217,10 @@ final class classifiers.inheritance/OpenClassImpl4 : classifiers.inheritance/Ope
     constructor <init>() // classifiers.inheritance/OpenClassImpl4.<init>|<init>(){}[0]
     final fun openFun(): kotlin/String // classifiers.inheritance/OpenClassImpl4.openFun|openFun(){}[0]
 }
-open class <#0: kotlin/Any?, #1: kotlin/Any?> classifiers.inheritance/OpenClassWithTypeParameters { // classifiers.inheritance/OpenClassWithTypeParameters|null[0]
+open class <#A: kotlin/Any?, #B: kotlin/Any?> classifiers.inheritance/OpenClassWithTypeParameters { // classifiers.inheritance/OpenClassWithTypeParameters|null[0]
     constructor <init>() // classifiers.inheritance/OpenClassWithTypeParameters.<init>|<init>(){}[0]
 }
-final class <#0: kotlin/Any?, #1: kotlin/Any?> classifiers.inheritance/OpenClassWithTypeParametersImpl_DNNT1_DNNT2 : classifiers.inheritance/OpenClassWithTypeParameters<#0!!, #1!!> { // classifiers.inheritance/OpenClassWithTypeParametersImpl_DNNT1_DNNT2|null[0]
+final class <#A: kotlin/Any?, #B: kotlin/Any?> classifiers.inheritance/OpenClassWithTypeParametersImpl_DNNT1_DNNT2 : classifiers.inheritance/OpenClassWithTypeParameters<#A!!, #B!!> { // classifiers.inheritance/OpenClassWithTypeParametersImpl_DNNT1_DNNT2|null[0]
     constructor <init>() // classifiers.inheritance/OpenClassWithTypeParametersImpl_DNNT1_DNNT2.<init>|<init>(){}[0]
 }
 final class classifiers.inheritance/OpenClassWithTypeParametersImpl_Int_String : classifiers.inheritance/OpenClassWithTypeParameters<kotlin/Int, kotlin/String> { // classifiers.inheritance/OpenClassWithTypeParametersImpl_Int_String|null[0]
@@ -232,13 +232,13 @@ final class classifiers.inheritance/OpenClassWithTypeParametersImpl_NInt_NString
 final class classifiers.inheritance/OpenClassWithTypeParametersImpl_String_Int : classifiers.inheritance/OpenClassWithTypeParameters<kotlin/String, kotlin/Int> { // classifiers.inheritance/OpenClassWithTypeParametersImpl_String_Int|null[0]
     constructor <init>() // classifiers.inheritance/OpenClassWithTypeParametersImpl_String_Int.<init>|<init>(){}[0]
 }
-final class <#0: kotlin/Number, #1: kotlin/CharSequence> classifiers.inheritance/OpenClassWithTypeParametersImpl_T1_Number_T2_CS : classifiers.inheritance/OpenClassWithTypeParameters<#0, #1> { // classifiers.inheritance/OpenClassWithTypeParametersImpl_T1_Number_T2_CS|null[0]
+final class <#A: kotlin/Number, #B: kotlin/CharSequence> classifiers.inheritance/OpenClassWithTypeParametersImpl_T1_Number_T2_CS : classifiers.inheritance/OpenClassWithTypeParameters<#A, #B> { // classifiers.inheritance/OpenClassWithTypeParametersImpl_T1_Number_T2_CS|null[0]
     constructor <init>() // classifiers.inheritance/OpenClassWithTypeParametersImpl_T1_Number_T2_CS.<init>|<init>(){}[0]
 }
-final class <#0: kotlin/Any?, #1: kotlin/Any?> classifiers.inheritance/OpenClassWithTypeParametersImpl_T1_T2 : classifiers.inheritance/OpenClassWithTypeParameters<#0, #1> { // classifiers.inheritance/OpenClassWithTypeParametersImpl_T1_T2|null[0]
+final class <#A: kotlin/Any?, #B: kotlin/Any?> classifiers.inheritance/OpenClassWithTypeParametersImpl_T1_T2 : classifiers.inheritance/OpenClassWithTypeParameters<#A, #B> { // classifiers.inheritance/OpenClassWithTypeParametersImpl_T1_T2|null[0]
     constructor <init>() // classifiers.inheritance/OpenClassWithTypeParametersImpl_T1_T2.<init>|<init>(){}[0]
 }
-final class <#0: kotlin/Any?, #1: kotlin/Any?> classifiers.inheritance/OpenClassWithTypeParametersImpl_T2_T1 : classifiers.inheritance/OpenClassWithTypeParameters<#1, #0> { // classifiers.inheritance/OpenClassWithTypeParametersImpl_T2_T1|null[0]
+final class <#A: kotlin/Any?, #B: kotlin/Any?> classifiers.inheritance/OpenClassWithTypeParametersImpl_T2_T1 : classifiers.inheritance/OpenClassWithTypeParameters<#B, #A> { // classifiers.inheritance/OpenClassWithTypeParametersImpl_T2_T1|null[0]
     constructor <init>() // classifiers.inheritance/OpenClassWithTypeParametersImpl_T2_T1.<init>|<init>(){}[0]
 }
 abstract interface classifiers.inheritance/PublicInterface { // classifiers.inheritance/PublicInterface|null[0]

@@ -185,10 +185,13 @@ private class LibraryDeserializer(
             val qualifiedName = deserializeQualifiedName(proto.name, containingEntity)
             val thisClassEntity = ContainingEntity.Class(qualifiedName, modality)
 
+            // Note: For inner classes pass the `parentTypeParameterResolver` to the constructor so that is could be
+            // possible to resolve TPs by delegating to the parent TP resolver. For non-inner classes just keep
+            // "level" to facilitate the proper TP numbering.
             val thisClassTypeParameterResolver = TypeParameterResolver(
                 declarationName = qualifiedName,
-                ownTypeParameters = proto.typeParameterCount,
-                parent = if (flags.isInner) parentTypeParameterResolver else null
+                parent = if (flags.isInner) parentTypeParameterResolver else null,
+                levelAdjustment = if (!flags.isInner && parentTypeParameterResolver != null) parentTypeParameterResolver.level + 1 else 0
             )
 
             val memberDeclarations = proto.declarationList.memoryOptimizedMapNotNull { declaration ->
@@ -269,11 +272,15 @@ private class LibraryDeserializer(
                     parentTypeParameterResolver!!
                 }
                 containingEntity is ContainingEntity.Property -> {
-                    // Apparently, TPs serialized for property accessor have signature that points to the property itself.
-                    // So, for the need of TP resolution it's necessary to pass the property name to the TP resolver.
-                    TypeParameterResolver(containingEntity.propertyName, proto.typeParameterCount, parentTypeParameterResolver)
+                    // 1. A TP of a serialized property accessor has signature that points to the property itself.
+                    //    So for the need of TP resolution it's necessary to pass the name of the property to the TP resolver.
+                    // 2. Properties don't have their own TPs, but their accessors can have TPs. This means that there is
+                    //    no need to create a TP resolver for a property, only for the accessor. To make rendering of
+                    //    accessor's TPs consistent with the position of the accessor inside the declaration's tree,
+                    //    it's necessary to adjust the "level" field inside the TP resolver by 1.
+                    TypeParameterResolver(containingEntity.propertyName, parentTypeParameterResolver, levelAdjustment = 1)
                 }
-                else -> TypeParameterResolver(functionName, proto.typeParameterCount, parentTypeParameterResolver)
+                else -> TypeParameterResolver(functionName, parentTypeParameterResolver)
             }
 
             val extensionReceiver = if (proto.hasExtensionReceiver())
@@ -386,7 +393,7 @@ private class LibraryDeserializer(
             val flags = TypeParameterFlags.decode(proto.base.flags)
 
             AbiTypeParameterImpl(
-                index = index + typeParameterResolver.typeParametersInOuterDeclarations,
+                tag = typeParameterResolver.computeTypeParameterTag(index),
                 variance = flags.variance.toAbiVariance(),
                 isReified = flags.isReified,
                 upperBounds = deserializeTypes(proto.superTypeList, typeParameterResolver) { type ->
@@ -493,17 +500,41 @@ private class LibraryDeserializer(
 
     private class TypeParameterResolver(
         val declarationName: AbiQualifiedName,
-        val ownTypeParameters: Int,
-        val parent: TypeParameterResolver?
+        val parent: TypeParameterResolver?,
+        levelAdjustment: Int = 0
     ) {
-        val typeParametersInOuterDeclarations: Int = parent?.let { it.typeParametersInOuterDeclarations + it.ownTypeParameters } ?: 0
+        val level: Int = (parent?.let { it.level + 1 } ?: 0) + levelAdjustment
 
-        fun resolveTypeParameterIndex(declarationName: AbiQualifiedName, localIndex: Int): Int =
-            if (declarationName == this.declarationName)
-                typeParametersInOuterDeclarations + localIndex
+        fun computeTypeParameterTag(index: Int): String {
+            val tagPrefix = computeTagPrefix(index)
+            return if (level > 0) "$tagPrefix$level" else tagPrefix
+        }
+
+        fun resolveTypeParameterTag(declarationName: AbiQualifiedName, index: Int): String {
+            return if (declarationName == this.declarationName)
+                computeTypeParameterTag(index)
             else
-                parent?.resolveTypeParameterIndex(declarationName, localIndex)
-                    ?: error("Type parameter with local index $localIndex can not be resolved for $declarationName")
+                parent?.resolveTypeParameterTag(declarationName, index)
+                    ?: error("Type parameter with local index $index can not be resolved for $declarationName")
+        }
+
+        companion object {
+            private const val ALPHABET_SIZE: Int = 'Z' - 'A' + 1
+
+            private fun computeTagPrefix(index: Int): String {
+                val result = mutableListOf<Char>()
+
+                var quotient = index
+                var remainder = quotient % ALPHABET_SIZE
+                do {
+                    result += ('A' + remainder)
+                    quotient /= ALPHABET_SIZE
+                    remainder = (quotient - 1) % ALPHABET_SIZE
+                } while (quotient != 0)
+
+                return result.reversed().joinToString(separator = "")
+            }
+        }
     }
 
     private class TypeDeserializer(
@@ -605,9 +636,9 @@ private class LibraryDeserializer(
                     // A type-parameter.
                     SimpleTypeImpl(
                         classifier = TypeParameterImpl(
-                            index = typeParameterResolver.resolveTypeParameterIndex(
+                            tag = typeParameterResolver.resolveTypeParameterTag(
                                 declarationName = (signature.container as CommonSignature).extractQualifiedName(),
-                                localIndex = (signature.inner as LocalSignature).index()
+                                index = (signature.inner as LocalSignature).index()
                             )
                         ),
                         arguments = emptyList(),

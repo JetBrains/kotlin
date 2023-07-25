@@ -206,26 +206,19 @@ internal class AbiPropertyImpl(
 
 @ExperimentalLibraryAbiReader
 internal class AbiTypeParameterImpl(
-    index: Int,
+    override val tag: String,
     variance: AbiVariance,
     isReified: Boolean,
     override val upperBounds: List<AbiType>
 ) : AbiTypeParameter {
-    private val flags = IS_REIFIED.toFlags(isReified) or
-            INDEX.toFlags(index) or
-            VARIANCE.toFlags(variance)
+    private val flags = IS_REIFIED.toFlags(isReified) or VARIANCE.toFlags(variance)
 
-    override val index get() = INDEX.get(flags)
     override val variance = VARIANCE.get(flags)
     override val isReified = IS_REIFIED.get(flags)
 
     companion object {
-        /** The 14 bits allows storing [AbiTypeParameter.index] starting from 0 and up to 16383. */
-        private const val BITS_ENOUGH_FOR_STORING_INDEX = 14
-
         private val IS_REIFIED = FlagField.booleanFirst()
-        private val INDEX = FlagFieldEx.intAfter(IS_REIFIED, BITS_ENOUGH_FOR_STORING_INDEX)
-        private val VARIANCE = FlagFieldEx.after<AbiVariance>(INDEX)
+        private val VARIANCE = FlagFieldEx.after<AbiVariance>(IS_REIFIED)
     }
 }
 
@@ -255,4 +248,4 @@ internal class TypeProjectionImpl(
 internal class ClassImpl(override val className: AbiQualifiedName) : AbiClassifier.Class
 
 @ExperimentalLibraryAbiReader
-internal class TypeParameterImpl(override val index: Int) : AbiClassifier.TypeParameter
+internal class TypeParameterImpl(override val tag: String) : AbiClassifier.TypeParameter

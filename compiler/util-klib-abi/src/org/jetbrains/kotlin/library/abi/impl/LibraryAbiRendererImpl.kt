@@ -175,7 +175,7 @@ internal class AbiRendererImpl(
             }
 
             private fun StringBuilder.appendTypeParameter(typeParameter: AbiTypeParameter): String {
-                append('#').append(typeParameter.index).append(": ")
+                append('#').append(typeParameter.tag).append(": ")
                 if (typeParameter.isReified) append("reified ")
                 appendVariance(typeParameter.variance)
                 when (typeParameter.upperBounds.size) {
@@ -199,7 +199,7 @@ internal class AbiRendererImpl(
                             if (type.nullability == AbiTypeNullability.MARKED_NULLABLE) append('?')
                         }
                         is AbiClassifier.TypeParameter -> {
-                            append('#').append(classifier.index)
+                            append('#').append(classifier.tag)
                             when (type.nullability) {
                                 AbiTypeNullability.MARKED_NULLABLE -> append('?')
                                 AbiTypeNullability.NOT_SPECIFIED -> Unit // Do nothing.
