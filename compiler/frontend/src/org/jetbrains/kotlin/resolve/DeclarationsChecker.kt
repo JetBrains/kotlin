@@ -191,6 +191,16 @@ class DeclarationsChecker(
             trace.report(ACTUAL_TYPE_ALIAS_WITH_COMPLEX_SUBSTITUTION.on(declaration))
             return
         }
+
+        if (rhs.isNothing()) {
+            trace.report(ACTUAL_TYPE_ALIAS_TO_NOTHING.on(declaration))
+            return
+        }
+
+        if (rhs.isMarkedNullable) {
+            trace.report(ACTUAL_TYPE_ALIAS_TO_NULLABLE_TYPE.on(declaration))
+            return
+        }
     }
 
     private fun getUsedTypeAliasParameters(type: KotlinType, typeAlias: TypeAliasDescriptor): Set<TypeParameterDescriptor> =

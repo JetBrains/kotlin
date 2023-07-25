@@ -449,6 +449,16 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
+        @TestMetadata("actualTypealiasToNothing")
+        public void testActualTypealiasToNothing() throws Exception {
+            runTest("compiler/testData/multiplatform/implTypeAlias/actualTypealiasToNothing/");
+        }
+
+        @TestMetadata("actualTypealiasToNullableType")
+        public void testActualTypealiasToNullableType() throws Exception {
+            runTest("compiler/testData/multiplatform/implTypeAlias/actualTypealiasToNullableType/");
+        }
+
         public void testAllFilesPresentInImplTypeAlias() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/implTypeAlias"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
@@ -466,6 +476,32 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
         @TestMetadata("nestedClassesViaTypeAlias")
         public void testNestedClassesViaTypeAlias() throws Exception {
             runTest("compiler/testData/multiplatform/implTypeAlias/nestedClassesViaTypeAlias/");
+        }
+
+        @TestMetadata("compiler/testData/multiplatform/implTypeAlias/actualTypealiasToNothing")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ActualTypealiasToNothing extends AbstractMultiPlatformIntegrationTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInActualTypealiasToNothing() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/implTypeAlias/actualTypealiasToNothing"), Pattern.compile("^([^\\.]+)$"), null, true);
+            }
+        }
+
+        @TestMetadata("compiler/testData/multiplatform/implTypeAlias/actualTypealiasToNullableType")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ActualTypealiasToNullableType extends AbstractMultiPlatformIntegrationTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInActualTypealiasToNullableType() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/implTypeAlias/actualTypealiasToNullableType"), Pattern.compile("^([^\\.]+)$"), null, true);
+            }
         }
 
         @TestMetadata("compiler/testData/multiplatform/implTypeAlias/discriminateHeaderClassInFavorOfTypeAlias")

@@ -1018,4 +1018,26 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated extends Abst
             runTest("compiler/testData/diagnostics/tests/multiplatform/topLevelProperty/simpleHeaderVar.kt");
         }
     }
+
+    @Nested
+    @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/typealias")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Typealias {
+        @Test
+        @TestMetadata("actualTypealiasToNothing.kt")
+        public void testActualTypealiasToNothing() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/typealias/actualTypealiasToNothing.kt");
+        }
+
+        @Test
+        @TestMetadata("actualTypealiasToNullableType.kt")
+        public void testActualTypealiasToNullableType() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/typealias/actualTypealiasToNullableType.kt");
+        }
+
+        @Test
+        public void testAllFilesPresentInTypealias() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/typealias"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_IR, true);
+        }
+    }
 }

@@ -2884,6 +2884,16 @@ internal class ActualTypeAliasWithComplexSubstitutionImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtTypeAlias>(firDiagnostic, token), KtFirDiagnostic.ActualTypeAliasWithComplexSubstitution
 
+internal class ActualTypeAliasToNullableTypeImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtTypeAlias>(firDiagnostic, token), KtFirDiagnostic.ActualTypeAliasToNullableType
+
+internal class ActualTypeAliasToNothingImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtTypeAlias>(firDiagnostic, token), KtFirDiagnostic.ActualTypeAliasToNothing
+
 internal class ActualFunctionWithDefaultArgumentsImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,

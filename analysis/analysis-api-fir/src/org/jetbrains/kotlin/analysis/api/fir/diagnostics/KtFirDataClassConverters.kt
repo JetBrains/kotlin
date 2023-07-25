@@ -3399,6 +3399,18 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.ACTUAL_TYPE_ALIAS_TO_NULLABLE_TYPE) { firDiagnostic ->
+        ActualTypeAliasToNullableTypeImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.ACTUAL_TYPE_ALIAS_TO_NOTHING) { firDiagnostic ->
+        ActualTypeAliasToNothingImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS) { firDiagnostic ->
         ActualFunctionWithDefaultArgumentsImpl(
             firDiagnostic as KtPsiDiagnostic,

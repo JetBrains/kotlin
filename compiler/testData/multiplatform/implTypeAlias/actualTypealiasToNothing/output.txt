@@ -1,0 +1,13 @@
+-- Common --
+Exit code: OK
+Output:
+
+-- JVM --
+Exit code: COMPILATION_ERROR
+Output:
+compiler/testData/multiplatform/implTypeAlias/actualTypealiasToNothing/jvm.kt:3:1: error: right-hand side of actual type alias cannot be of type kotlin.Nothing
+actual typealias E01 = Nothing
+^
+compiler/testData/multiplatform/implTypeAlias/actualTypealiasToNothing/jvm.kt:4:1: error: right-hand side of actual type alias should be a class, not another type alias
+actual typealias E02 = MyNothing
+^

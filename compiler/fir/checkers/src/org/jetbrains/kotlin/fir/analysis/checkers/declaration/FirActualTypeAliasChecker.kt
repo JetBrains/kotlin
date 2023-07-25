@@ -61,5 +61,15 @@ object FirActualTypeAliasChecker : FirTypeAliasChecker() {
         if (reportActualTypeAliasWithComplexSubstitution) {
             reporter.reportOn(declaration.source, FirErrors.ACTUAL_TYPE_ALIAS_WITH_COMPLEX_SUBSTITUTION, context)
         }
+
+        @OptIn(UnexpandedTypeCheck::class)
+        // an earlier check ensures we have an ACTUAL_TYPE_ALIAS_NOT_TO_CLASS error on non-expanded type alias
+        if (expandedTypeRef.isNothing) {
+            reporter.reportOn(declaration.source, FirErrors.ACTUAL_TYPE_ALIAS_TO_NOTHING, context)
+        }
+
+        if (expandedTypeRef.isMarkedNullable == true) {
+            reporter.reportOn(declaration.source, FirErrors.ACTUAL_TYPE_ALIAS_TO_NULLABLE_TYPE, context)
+        }
     }
 }

@@ -2391,6 +2391,14 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ActualTypeAliasWithComplexSubstitution::class
     }
 
+    interface ActualTypeAliasToNullableType : KtFirDiagnostic<KtTypeAlias> {
+        override val diagnosticClass get() = ActualTypeAliasToNullableType::class
+    }
+
+    interface ActualTypeAliasToNothing : KtFirDiagnostic<KtTypeAlias> {
+        override val diagnosticClass get() = ActualTypeAliasToNothing::class
+    }
+
     interface ActualFunctionWithDefaultArguments : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = ActualFunctionWithDefaultArguments::class
     }
