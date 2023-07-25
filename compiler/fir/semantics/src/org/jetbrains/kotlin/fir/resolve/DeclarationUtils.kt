@@ -93,6 +93,9 @@ private object TypeAliasForConstructorKey : FirDeclarationDataKey()
 
 var FirConstructor.typeAliasForConstructor: FirTypeAliasSymbol? by FirDeclarationDataRegistry.data(TypeAliasForConstructorKey)
 
+val FirConstructorSymbol.typeAliasForConstructor: FirTypeAliasSymbol?
+    get() = fir.typeAliasForConstructor
+
 interface FirCodeFragmentContext {
     val towerDataContext: FirTowerDataContext
     val variables: Map<FirBasedSymbol<*>, Set<ConeKotlinType>>

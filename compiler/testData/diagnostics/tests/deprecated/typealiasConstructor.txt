@@ -1,5 +1,7 @@
 package
 
+public val test1_1: DeprecatedClassAlias /* = DeprecatedClass */
+public val test2_1: WithDeprecatedCtorAlias /* = WithDeprecatedCtor */
 public val test3: ArrayListOfDeprecatedClass /* = java.util.ArrayList<DeprecatedClass> */
 
 @kotlin.Deprecated(message = "Deprecated class") public open class DeprecatedClass {

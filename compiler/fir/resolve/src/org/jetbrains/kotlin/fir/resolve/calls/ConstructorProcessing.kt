@@ -182,15 +182,15 @@ private fun processConstructors(
 
                 val outerType = bodyResolveComponents.outerClassManager.outerType(type)
 
-                if (basicScope != null &&
-                    (matchedSymbol.fir.typeParameters.isNotEmpty() || outerType != null || type.typeArguments.isNotEmpty())
-                ) {
+                if (basicScope != null) {
                     TypeAliasConstructorsSubstitutingScope(
                         matchedSymbol,
                         basicScope,
                         outerType
                     )
-                } else basicScope
+                } else {
+                    null
+                }
             }
             is FirClassSymbol -> {
                 val firClass = matchedSymbol.fir as FirClass
@@ -232,7 +232,7 @@ private class TypeAliasConstructorsSubstitutingScope(
                     origin = FirDeclarationOrigin.Synthetic.TypeAliasConstructor
 
                     this.typeParameters.clear()
-                    this.typeParameters += typeParameters.map { buildConstructedClassTypeParameterRef { symbol = it.symbol } }
+                    typeParameters.mapTo(this.typeParameters) { buildConstructedClassTypeParameterRef { symbol = it.symbol } }
 
                     if (outerType != null) {
                         // If the matched symbol is a type alias, and the expanded type is a nested class, e.g.,
