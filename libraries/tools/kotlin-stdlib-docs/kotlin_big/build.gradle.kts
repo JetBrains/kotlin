@@ -13,7 +13,6 @@ repositories {
 
 val modules = listOf(
     "kotlin-stdlib",
-    "kotlin-stdlib-common",
     "kotlin-stdlib-jdk7",
     "kotlin-stdlib-jdk8",
     "kotlin-stdlib-js",

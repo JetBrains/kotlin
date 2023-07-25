@@ -15,7 +15,6 @@ compileKotlin {
 
 dependencies {
     implementation project(":kotlin-stdlib")
-    implementation project(":kotlin-stdlib-common")
     implementation project(':kotlin-native:backend.native')
     implementation project(":compiler:cli-common")
     implementation project(':kotlin-native:Interop:StubGenerator')
