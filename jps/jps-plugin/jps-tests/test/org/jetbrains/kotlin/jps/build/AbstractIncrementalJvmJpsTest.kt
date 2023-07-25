@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.jps.build
 
-import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.jps.model.k2JvmCompilerArguments
+//import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+//import org.jetbrains.kotlin.jps.model.k2JvmCompilerArguments
 
 abstract class AbstractIncrementalJvmJpsTest(
     allowNoFilesWithSuffixInTestData: Boolean = false
