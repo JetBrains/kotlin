@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
+import org.jetbrains.kotlin.analysis.utils.collections.mapToSet
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirDelegatingCachedSymbolNamesProvider
@@ -22,13 +23,13 @@ internal open class LLFirKotlinSymbolNamesProvider(
     override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<String> =
         declarationProvider
             .getTopLevelKotlinClassLikeDeclarationNamesInPackage(packageFqName)
-            .mapTo(mutableSetOf()) { it.asString() }
+            .mapToSet { it.asString() }
 
     override fun getPackageNamesWithTopLevelCallables(): Set<String>? =
         declarationProvider.computePackageSetWithTopLevelCallableDeclarations()
 
     override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> =
-        declarationProvider.getTopLevelCallableNamesInPackage(packageFqName)
+        declarationProvider.getTopLevelCallableNamesInPackage(packageFqName).ifEmpty { emptySet() }
 
     companion object {
         fun cached(session: FirSession, declarationProvider: KotlinDeclarationProvider): FirCachedSymbolNamesProvider =
