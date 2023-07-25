@@ -2,7 +2,7 @@
  * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-@file:Suppress("DEPRECATION_ERROR")
+@file:Suppress("DEPRECATION_ERROR") // deprecated .accept implementation
 
 package kotlinx.metadata.internal.common
 
@@ -23,9 +23,9 @@ import java.io.ByteArrayInputStream
  * Usually such metadata comes from serialized klibs. However, special `kotlin_builtins` file from standard library
  * distribution can also be read with this reader.
  */
-public class KotlinCommonMetadata private constructor(private val proto: ProtoBuf.PackageFragment) {
+public class KotlinCommonMetadata private constructor(proto: ProtoBuf.PackageFragment) {
 
-    public val kmModuleFragment: KmModuleFragment = readImpl()
+    public val kmModuleFragment: KmModuleFragment = readImpl(proto)
 
     @Deprecated(
         "To avoid excessive copying, use .kmModuleFragment property instead. Note that it returns a view and not a copy.",
@@ -43,7 +43,7 @@ public class KotlinCommonMetadata private constructor(private val proto: ProtoBu
     @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
     public fun accept(v: KmModuleFragmentVisitor): Unit = kmModuleFragment.accept(v)
 
-    private fun readImpl(): KmModuleFragment {
+    private fun readImpl(proto: ProtoBuf.PackageFragment): KmModuleFragment {
         val v = KmModuleFragment()
         val strings = NameResolverImpl(proto.strings, proto.qualifiedNames)
         if (proto.hasPackage()) {

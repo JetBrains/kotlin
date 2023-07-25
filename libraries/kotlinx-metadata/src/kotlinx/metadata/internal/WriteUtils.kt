@@ -6,9 +6,6 @@
 package kotlinx.metadata.internal
 
 import kotlinx.metadata.*
-import kotlinx.metadata.internal.extensions.KmExtension
-import kotlinx.metadata.internal.extensions.MetadataExtensions
-import kotlinx.metadata.internal.extensions.applySingleExtension
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.serialization.StringTable
@@ -115,9 +112,3 @@ internal fun StringTable.getClassNameIndex(name: ClassName): Int =
         getQualifiedClassNameIndex(name.substring(1), true)
     else
         getQualifiedClassNameIndex(name, false)
-
-@Suppress("DEPRECATION_ERROR")
-internal fun <V : KmExtensionVisitor, E : KmExtension<V>> List<E>.writeExtensions(writer: MetadataExtensions.(KmExtensionType) -> V?) =
-    forEach { ext ->
-        applySingleExtension(ext.type) { writer(ext.type) }?.let { ext.accept(it) }
-    }

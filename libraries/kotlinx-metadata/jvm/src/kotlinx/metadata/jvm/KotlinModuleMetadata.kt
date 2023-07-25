@@ -5,11 +5,11 @@
 
 @file:Suppress(
     "MemberVisibilityCanBePrivate",
-    "DEPRECATION",
-    "DEPRECATION_ERROR",
+    "DEPRECATION", // For KmModule.annotations — remove reading when deprecation is raised to error
+    "DEPRECATION_ERROR", // deprecated .accept implementation
     "INVISIBLE_MEMBER", // InconsistentKotlinMetadataException
     "INVISIBLE_REFERENCE",
-    "UNUSED_PARAMETER"
+    "UNUSED_PARAMETER" // For deprecated Writer.write
 )
 
 package kotlinx.metadata.jvm

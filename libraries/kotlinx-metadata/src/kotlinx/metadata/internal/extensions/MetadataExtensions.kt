@@ -11,55 +11,54 @@ import kotlinx.metadata.internal.common.*
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import java.util.*
 
-@Suppress("DEPRECATION_ERROR")
 public interface MetadataExtensions {
-    public fun readClassExtensions(v: KmClassVisitor, proto: ProtoBuf.Class, c: ReadContext)
+    public fun readClassExtensions(kmClass: KmClass, proto: ProtoBuf.Class, c: ReadContext)
 
-    public fun readPackageExtensions(v: KmPackageVisitor, proto: ProtoBuf.Package, c: ReadContext)
+    public fun readPackageExtensions(kmPackage: KmPackage, proto: ProtoBuf.Package, c: ReadContext)
 
-    public fun readModuleFragmentExtensions(v: KmModuleFragmentVisitor, proto: ProtoBuf.PackageFragment, c: ReadContext)
+    public fun readModuleFragmentExtensions(kmModuleFragment: KmModuleFragment, proto: ProtoBuf.PackageFragment, c: ReadContext)
 
-    public fun readFunctionExtensions(v: KmFunctionVisitor, proto: ProtoBuf.Function, c: ReadContext)
+    public fun readFunctionExtensions(kmFunction: KmFunction, proto: ProtoBuf.Function, c: ReadContext)
 
-    public fun readPropertyExtensions(v: KmPropertyVisitor, proto: ProtoBuf.Property, c: ReadContext)
+    public fun readPropertyExtensions(kmProperty: KmProperty, proto: ProtoBuf.Property, c: ReadContext)
 
-    public fun readConstructorExtensions(v: KmConstructorVisitor, proto: ProtoBuf.Constructor, c: ReadContext)
+    public fun readConstructorExtensions(kmConstructor: KmConstructor, proto: ProtoBuf.Constructor, c: ReadContext)
 
-    public fun readTypeParameterExtensions(v: KmTypeParameterVisitor, proto: ProtoBuf.TypeParameter, c: ReadContext)
+    public fun readTypeParameterExtensions(kmTypeParameter: KmTypeParameter, proto: ProtoBuf.TypeParameter, c: ReadContext)
 
-    public fun readTypeExtensions(v: KmTypeVisitor, proto: ProtoBuf.Type, c: ReadContext)
+    public fun readTypeExtensions(kmType: KmType, proto: ProtoBuf.Type, c: ReadContext)
 
-    public fun readTypeAliasExtensions(v: KmTypeAliasVisitor, proto: ProtoBuf.TypeAlias, c: ReadContext)
+    public fun readTypeAliasExtensions(kmTypeAlias: KmTypeAlias, proto: ProtoBuf.TypeAlias, c: ReadContext)
 
-    public fun readValueParameterExtensions(v: KmValueParameterVisitor, proto: ProtoBuf.ValueParameter, c: ReadContext)
+    public fun readValueParameterExtensions(kmValueParameter: KmValueParameter, proto: ProtoBuf.ValueParameter, c: ReadContext)
 
-    public fun writeClassExtensions(extension: KmClassExtension, proto: ProtoBuf.Class.Builder, c: WriteContext): Boolean
+    public fun writeClassExtensions(kmClass: KmClass, proto: ProtoBuf.Class.Builder, c: WriteContext)
 
-    public fun writePackageExtensions(extension: KmPackageExtension, proto: ProtoBuf.Package.Builder, c: WriteContext): Boolean
+    public fun writePackageExtensions(kmPackage: KmPackage, proto: ProtoBuf.Package.Builder, c: WriteContext)
 
     public fun writeModuleFragmentExtensions(
-        type: KmExtensionType, proto: ProtoBuf.PackageFragment.Builder, c: WriteContext
-    ): KmModuleFragmentExtensionVisitor?
+        kmModuleFragment: KmModuleFragment, proto: ProtoBuf.PackageFragment.Builder, c: WriteContext
+    )
 
-    public fun writeFunctionExtensions(type: KmExtensionType, proto: ProtoBuf.Function.Builder, c: WriteContext): KmFunctionExtensionVisitor?
+    public fun writeFunctionExtensions(kmFunction: KmFunction, proto: ProtoBuf.Function.Builder, c: WriteContext)
 
-    public fun writePropertyExtensions(type: KmExtensionType, proto: ProtoBuf.Property.Builder, c: WriteContext): KmPropertyExtensionVisitor?
+    public fun writePropertyExtensions(kmProperty: KmProperty, proto: ProtoBuf.Property.Builder, c: WriteContext)
 
     public fun writeConstructorExtensions(
-        type: KmExtensionType, proto: ProtoBuf.Constructor.Builder, c: WriteContext
-    ): KmConstructorExtensionVisitor?
+        kmConstructor: KmConstructor, proto: ProtoBuf.Constructor.Builder, c: WriteContext
+    )
 
     public fun writeTypeParameterExtensions(
-        type: KmExtensionType, proto: ProtoBuf.TypeParameter.Builder, c: WriteContext
-    ): KmTypeParameterExtensionVisitor?
+        kmTypeParameter: KmTypeParameter, proto: ProtoBuf.TypeParameter.Builder, c: WriteContext
+    )
 
-    public fun writeTypeExtensions(type: KmExtensionType, proto: ProtoBuf.Type.Builder, c: WriteContext): KmTypeExtensionVisitor?
+    public fun writeTypeExtensions(type: KmType, proto: ProtoBuf.Type.Builder, c: WriteContext)
 
-    public fun writeTypeAliasExtensions(type: KmExtensionType, proto: ProtoBuf.TypeAlias.Builder, c: WriteContext): KmTypeAliasExtensionVisitor?
+    public fun writeTypeAliasExtensions(typeAlias: KmTypeAlias, proto: ProtoBuf.TypeAlias.Builder, c: WriteContext)
 
     public fun writeValueParameterExtensions(
-        type: KmExtensionType, proto: ProtoBuf.ValueParameter.Builder, c: WriteContext
-    ): KmValueParameterExtensionVisitor?
+        valueParameter: KmValueParameter, proto: ProtoBuf.ValueParameter.Builder, c: WriteContext
+    )
 
     public fun createClassExtension(): KmClassExtension
 

@@ -8,7 +8,6 @@ package kotlinx.metadata.internal
 import kotlinx.metadata.*
 import kotlinx.metadata.internal.common.KmModuleFragment
 import kotlinx.metadata.internal.extensions.MetadataExtensions
-import kotlinx.metadata.internal.extensions.matchExtensions
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement
 import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
@@ -24,6 +23,8 @@ public interface WriteContextExtension
 public open class WriteContext(public val strings: StringTable, public val contextExtensions: List<WriteContextExtension> = emptyList()) {
     internal val versionRequirements: MutableVersionRequirementTable = MutableVersionRequirementTable()
 
+    internal val extensions = MetadataExtensions.INSTANCES
+
     public operator fun get(string: String): Int =
         strings.getStringIndex(string)
 
@@ -36,8 +37,8 @@ private fun WriteContext.writeTypeParameter(kmTypeParameter: KmTypeParameter): P
     kmTypeParameter.upperBounds.forEach { ub ->
         t.addUpperBound(writeType(ub).build())
     }
-    kmTypeParameter.extensions.writeExtensions {
-        writeTypeParameterExtensions(it, t, this@writeTypeParameter)
+    extensions.forEach {
+        it.writeTypeParameterExtensions(kmTypeParameter, t, this)
     }
     t.name = this[kmTypeParameter.name]
     t.id = kmTypeParameter.id
@@ -91,9 +92,7 @@ private fun WriteContext.writeType(kmType: KmType): ProtoBuf.Type.Builder {
         t.flexibleUpperBound = fubType.build()
     }
 
-    kmType.extensions.writeExtensions {
-        writeTypeExtensions(it, t, this@writeType)
-    }
+    extensions.forEach { it.writeTypeExtensions(kmType, t, this) }
 
     if (kmType.isNullable) {
         t.nullable = true
@@ -112,8 +111,8 @@ private fun WriteContext.writeConstructor(kmConstructor: KmConstructor): ProtoBu
         t.addValueParameter(writeValueParameter(it).build())
     }
     kmConstructor.versionRequirements.forEach { t.addVersionRequirement(writeVersionRequirement(it)) }
-    kmConstructor.extensions.writeExtensions {
-        writeConstructorExtensions(it, t, this@writeConstructor)
+    extensions.forEach {
+        it.writeConstructorExtensions(kmConstructor, t, this)
     }
     if (kmConstructor.flags != ProtoBuf.Constructor.getDefaultInstance().flags) {
         t.flags = kmConstructor.flags
@@ -125,14 +124,18 @@ private fun WriteContext.writeFunction(kmFunction: KmFunction): ProtoBuf.Functio
     val t = ProtoBuf.Function.newBuilder()
     t.addAllTypeParameter(kmFunction.typeParameters.map { writeTypeParameter(it).build() })
     kmFunction.receiverParameterType?.let { t.receiverType = writeType(it).build() }
+
     @OptIn(ExperimentalContextReceivers::class)
     t.addAllContextReceiverType(kmFunction.contextReceiverTypes.map { writeType(it).build() })
     t.addAllValueParameter(kmFunction.valueParameters.map { writeValueParameter(it).build() })
     t.returnType = writeType(kmFunction.returnType).build()
     t.addAllVersionRequirement(kmFunction.versionRequirements.map(::writeVersionRequirement))
+
     @OptIn(ExperimentalContracts::class)
     kmFunction.contract?.let { t.contract = writeContract(it) }
-    kmFunction.extensions.writeExtensions { writeFunctionExtensions(it, t, this@writeFunction) }
+
+    extensions.forEach { it.writeFunctionExtensions(kmFunction, t, this) }
+
     t.name = this[kmFunction.name]
     if (kmFunction.flags != ProtoBuf.Function.getDefaultInstance().flags) {
         t.flags = kmFunction.flags
@@ -148,12 +151,15 @@ public fun WriteContext.writeProperty(kmProperty: KmProperty): ProtoBuf.Property
         t.addTypeParameter(writeTypeParameter(tp).build())
     }
     kmProperty.receiverParameterType?.let { t.receiverType = writeType(it).build() }
+
     @OptIn(ExperimentalContextReceivers::class)
     t.addAllContextReceiverType(kmProperty.contextReceiverTypes.map { writeType(it).build() })
     kmProperty.setterParameter?.let { t.setterValueParameter = writeValueParameter(it).build() }
     t.returnType = writeType(kmProperty.returnType).build()
     t.addAllVersionRequirement(kmProperty.versionRequirements.map { writeVersionRequirement(it) })
-    kmProperty.extensions.writeExtensions { writePropertyExtensions(it, t, this@writeProperty) }
+
+    extensions.forEach { it.writePropertyExtensions(kmProperty, t, this) }
+
     t.name = this[kmProperty.name]
     if (kmProperty.flags != ProtoBuf.Property.getDefaultInstance().flags) {
         t.flags = kmProperty.flags
@@ -170,7 +176,7 @@ private fun WriteContext.writeValueParameter(
     val t = ProtoBuf.ValueParameter.newBuilder()
     t.type = writeType(kmValueParameter.type).build()
     kmValueParameter.varargElementType?.let { t.varargElementType = writeType(it).build() }
-    kmValueParameter.extensions.writeExtensions { writeValueParameterExtensions(it, t, this@writeValueParameter) }
+    extensions.forEach { it.writeValueParameterExtensions(kmValueParameter, t, this) }
     if (kmValueParameter.flags != ProtoBuf.ValueParameter.getDefaultInstance().flags) {
         t.flags = kmValueParameter.flags
     }
@@ -187,7 +193,7 @@ private fun WriteContext.writeTypeAlias(
     t.expandedType = writeType(typeAlias.expandedType).build()
     t.addAllAnnotation(typeAlias.annotations.map { it.writeAnnotation(strings).build() })
     t.addAllVersionRequirement(typeAlias.versionRequirements.map(::writeVersionRequirement))
-    typeAlias.extensions.writeExtensions { writeTypeAliasExtensions(it, t, this@writeTypeAlias) }
+    extensions.forEach { it.writeTypeAliasExtensions(typeAlias, t, this) }
 
     if (typeAlias.flags != ProtoBuf.TypeAlias.getDefaultInstance().flags) {
         t.flags = typeAlias.flags
@@ -232,7 +238,7 @@ private fun WriteContext.writeVersionRequirement(kmVersionRequirement: KmVersion
         writeVersionFull = { t!!.versionFull = it }
     )
 
-    return this.versionRequirements[t] //??
+    return this.versionRequirements[t]
 }
 
 @ExperimentalContracts
@@ -324,7 +330,8 @@ public open class ClassWriter(stringTable: StringTable, contextExtensions: List<
         t.addAllContextReceiverType(kmClass.contextReceiverTypes.map { c.writeType(it).build() })
 
         t.addAllVersionRequirement(kmClass.versionRequirements.map { c.writeVersionRequirement(it) })
-        kmClass.extensions.matchExtensions { writeClassExtensions(it, t, c) }
+
+        c.extensions.forEach { it.writeClassExtensions(kmClass, t, c) }
 
         c.versionRequirements.serialize()?.let {
             t.versionRequirementTable = it
@@ -340,7 +347,7 @@ public open class PackageWriter(stringTable: StringTable, contextExtensions: Lis
         t.addAllFunction(kmPackage.functions.map { c.writeFunction(it).build() })
         t.addAllProperty(kmPackage.properties.map { c.writeProperty(it).build() })
         t.addAllTypeAlias(kmPackage.typeAliases.map { c.writeTypeAlias(it).build() })
-        kmPackage.extensions.matchExtensions { writePackageExtensions(it, t, c) }
+        c.extensions.forEach { it.writePackageExtensions(kmPackage, t, c) }
         c.versionRequirements.serialize()?.let {
             t.versionRequirementTable = it
         }
@@ -364,7 +371,7 @@ public open class ModuleFragmentWriter(stringTable: StringTable, contextExtensio
             t.addClass_(classWriter.t)
         }
 
-        kmPackageFragment.extensions.writeExtensions { writeModuleFragmentExtensions(it, t, c) }
+        c.extensions.forEach { it.writeModuleFragmentExtensions(kmPackageFragment, t, c) }
     }
 }
 

@@ -81,10 +81,10 @@ private fun compileAndPrintAllFiles(
             "class" -> {
                 val metadata = kotlinp.readClassFile(outputFile)
                 val classFile = kotlinp.readMetadata(metadata)
-                val classFile3 = KotlinClassMetadata.read(transformClassFileWithNodes(metadata, classFile))
+                val classFile2 = KotlinClassMetadata.read(transformClassFileWithNodes(metadata, classFile))
 
                 for ((sb, classFileToRender) in listOf(
-                    main to classFile, afterNodes to classFile3
+                    main to classFile, afterNodes to classFile2
                 )) {
                     sb.appendFileName(outputFile.relativeTo(tmpdir))
                     sb.append(kotlinp.renderClassFile(classFileToRender))

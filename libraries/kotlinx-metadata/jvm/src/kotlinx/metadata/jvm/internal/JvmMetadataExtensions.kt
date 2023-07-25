@@ -15,272 +15,212 @@ import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 
-@Suppress("DEPRECATION_ERROR")
 internal class JvmMetadataExtensions : MetadataExtensions {
-    override fun readClassExtensions(v: KmClassVisitor, proto: ProtoBuf.Class, c: ReadContext) {
-        val ext = v.visitExtensions(JvmClassExtensionVisitor.TYPE) as? JvmClassExtensionVisitor ?: return
-        ext as JvmClassExtension
+    override fun readClassExtensions(kmClass: KmClass, proto: ProtoBuf.Class, c: ReadContext) {
+        val ext = kmClass.jvm
 
         val anonymousObjectOriginName = proto.getExtensionOrNull(JvmProtoBuf.anonymousObjectOriginName)
         if (anonymousObjectOriginName != null) {
-            ext.visitAnonymousObjectOriginName(c[anonymousObjectOriginName])
+            ext.anonymousObjectOriginName = c[anonymousObjectOriginName]
         }
 
         for (property in proto.getExtension(JvmProtoBuf.classLocalVariable)) {
             ext.localDelegatedProperties.add(property.toKmProperty(c))
         }
 
-        ext.visitModuleName(proto.getExtensionOrNull(JvmProtoBuf.classModuleName)?.let(c::get) ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME)
+        ext.moduleName = proto.getExtensionOrNull(JvmProtoBuf.classModuleName)?.let(c::get) ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME
 
-        proto.getExtensionOrNull(JvmProtoBuf.jvmClassFlags)?.let(ext::visitJvmFlags)
-
-        ext.visitEnd()
+        proto.getExtensionOrNull(JvmProtoBuf.jvmClassFlags)?.let {
+            ext.jvmFlags = it
+        }
     }
 
-    override fun readPackageExtensions(v: KmPackageVisitor, proto: ProtoBuf.Package, c: ReadContext) {
-        val ext = v.visitExtensions(JvmPackageExtensionVisitor.TYPE) as? JvmPackageExtensionVisitor ?: return
-        ext as JvmPackageExtension
+    override fun readPackageExtensions(kmPackage: KmPackage, proto: ProtoBuf.Package, c: ReadContext) {
+        val ext = kmPackage.jvm
 
         for (property in proto.getExtension(JvmProtoBuf.packageLocalVariable)) {
             ext.localDelegatedProperties.add(property.toKmProperty(c))
         }
 
-        ext.visitModuleName(proto.getExtensionOrNull(JvmProtoBuf.packageModuleName)?.let(c::get) ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME)
-
-        ext.visitEnd()
+        ext.moduleName = proto.getExtensionOrNull(JvmProtoBuf.packageModuleName)?.let(c::get) ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME
     }
 
     // ModuleFragment is not used by JVM backend.
-    override fun readModuleFragmentExtensions(v: KmModuleFragmentVisitor, proto: ProtoBuf.PackageFragment, c: ReadContext) {}
+    override fun readModuleFragmentExtensions(kmModuleFragment: KmModuleFragment, proto: ProtoBuf.PackageFragment, c: ReadContext) {}
 
-    override fun readFunctionExtensions(v: KmFunctionVisitor, proto: ProtoBuf.Function, c: ReadContext) {
-        val ext = v.visitExtensions(JvmFunctionExtensionVisitor.TYPE) as? JvmFunctionExtensionVisitor ?: return
-        ext.visit(JvmProtoBufUtil.getJvmMethodSignature(proto, c.strings, c.types)?.wrapAsPublic())
+    override fun readFunctionExtensions(kmFunction: KmFunction, proto: ProtoBuf.Function, c: ReadContext) {
+        val ext = kmFunction.jvm
+        ext.signature = JvmProtoBufUtil.getJvmMethodSignature(proto, c.strings, c.types)?.wrapAsPublic()
 
         val lambdaClassOriginName = proto.getExtensionOrNull(JvmProtoBuf.lambdaClassOriginName)
         if (lambdaClassOriginName != null) {
-            ext.visitLambdaClassOriginName(c[lambdaClassOriginName])
+            ext.lambdaClassOriginName = c[lambdaClassOriginName]
         }
-
-        ext.visitEnd()
     }
 
-    override fun readPropertyExtensions(v: KmPropertyVisitor, proto: ProtoBuf.Property, c: ReadContext) {
-        val ext = v.visitExtensions(JvmPropertyExtensionVisitor.TYPE) as? JvmPropertyExtensionVisitor ?: return
+    override fun readPropertyExtensions(kmProperty: KmProperty, proto: ProtoBuf.Property, c: ReadContext) {
+        val ext = kmProperty.jvm
         val fieldSignature = JvmProtoBufUtil.getJvmFieldSignature(proto, c.strings, c.types)
         val propertySignature = proto.getExtensionOrNull(JvmProtoBuf.propertySignature)
         val getterSignature =
             if (propertySignature != null && propertySignature.hasGetter()) propertySignature.getter else null
         val setterSignature =
             if (propertySignature != null && propertySignature.hasSetter()) propertySignature.setter else null
-        ext.visit(
-            proto.getExtension(JvmProtoBuf.flags),
-            fieldSignature?.wrapAsPublic(),
-            getterSignature?.run { JvmMethodSignature(c[name], c[desc]) },
-            setterSignature?.run { JvmMethodSignature(c[name], c[desc]) }
-        )
+        ext.jvmFlags = proto.getExtension(JvmProtoBuf.flags)
+        ext.fieldSignature = fieldSignature?.wrapAsPublic()
+        ext.getterSignature = getterSignature?.run { JvmMethodSignature(c[name], c[desc]) }
+        ext.setterSignature = setterSignature?.run { JvmMethodSignature(c[name], c[desc]) }
 
         val syntheticMethod =
             if (propertySignature != null && propertySignature.hasSyntheticMethod()) propertySignature.syntheticMethod else null
-        ext.visitSyntheticMethodForAnnotations(syntheticMethod?.run { JvmMethodSignature(c[name], c[desc]) })
+        ext.syntheticMethodForAnnotations = syntheticMethod?.run { JvmMethodSignature(c[name], c[desc]) }
 
         val delegateMethod =
             if (propertySignature != null && propertySignature.hasDelegateMethod()) propertySignature.delegateMethod else null
-        ext.visitSyntheticMethodForDelegate(delegateMethod?.run { JvmMethodSignature(c[name], c[desc]) })
-
-        ext.visitEnd()
+        ext.syntheticMethodForDelegate = delegateMethod?.run { JvmMethodSignature(c[name], c[desc]) }
     }
 
-    override fun readConstructorExtensions(v: KmConstructorVisitor, proto: ProtoBuf.Constructor, c: ReadContext) {
-        val ext = v.visitExtensions(JvmConstructorExtensionVisitor.TYPE) as? JvmConstructorExtensionVisitor ?: return
-        ext.visit(JvmProtoBufUtil.getJvmConstructorSignature(proto, c.strings, c.types)?.wrapAsPublic())
+    override fun readConstructorExtensions(kmConstructor: KmConstructor, proto: ProtoBuf.Constructor, c: ReadContext) {
+        val ext = kmConstructor.jvm
+        ext.signature = JvmProtoBufUtil.getJvmConstructorSignature(proto, c.strings, c.types)?.wrapAsPublic()
     }
 
-    override fun readTypeParameterExtensions(v: KmTypeParameterVisitor, proto: ProtoBuf.TypeParameter, c: ReadContext) {
-        val ext = v.visitExtensions(JvmTypeParameterExtensionVisitor.TYPE) as? JvmTypeParameterExtensionVisitor ?: return
+    override fun readTypeParameterExtensions(kmTypeParameter: KmTypeParameter, proto: ProtoBuf.TypeParameter, c: ReadContext) {
+        val ext = kmTypeParameter.jvm
         for (annotation in proto.getExtension(JvmProtoBuf.typeParameterAnnotation)) {
-            ext.visitAnnotation(annotation.readAnnotation(c.strings))
+            ext.annotations.add(annotation.readAnnotation(c.strings))
         }
-        ext.visitEnd()
     }
 
-    override fun readTypeExtensions(v: KmTypeVisitor, proto: ProtoBuf.Type, c: ReadContext) {
-        val ext = v.visitExtensions(JvmTypeExtensionVisitor.TYPE) as? JvmTypeExtensionVisitor ?: return
-        ext.visit(proto.getExtension(JvmProtoBuf.isRaw))
+    override fun readTypeExtensions(kmType: KmType, proto: ProtoBuf.Type, c: ReadContext) {
+        val ext = kmType.jvm
+        ext.isRaw = proto.getExtension(JvmProtoBuf.isRaw)
         for (annotation in proto.getExtension(JvmProtoBuf.typeAnnotation)) {
-            ext.visitAnnotation(annotation.readAnnotation(c.strings))
+            ext.annotations.add(annotation.readAnnotation(c.strings))
         }
-        ext.visitEnd()
     }
 
-    override fun readTypeAliasExtensions(v: KmTypeAliasVisitor, proto: ProtoBuf.TypeAlias, c: ReadContext) {}
+    override fun readTypeAliasExtensions(kmTypeAlias: KmTypeAlias, proto: ProtoBuf.TypeAlias, c: ReadContext) {}
 
-    override fun readValueParameterExtensions(v: KmValueParameterVisitor, proto: ProtoBuf.ValueParameter, c: ReadContext) {}
+    override fun readValueParameterExtensions(kmValueParameter: KmValueParameter, proto: ProtoBuf.ValueParameter, c: ReadContext) {}
 
-    override fun writeClassExtensions(extension: KmClassExtension, proto: ProtoBuf.Class.Builder, c: WriteContext): Boolean {
-        if (extension.type != JvmClassExtensionVisitor.TYPE) return false
-        extension as JvmClassExtension
-        extension.anonymousObjectOriginName?.let { proto.setExtension(JvmProtoBuf.anonymousObjectOriginName, c[it]) }
-        extension.localDelegatedProperties.forEach {
-            proto.addExtension(JvmProtoBuf.classLocalVariable, c.writeProperty(it).build())
+    override fun writeClassExtensions(kmClass: KmClass, proto: ProtoBuf.Class.Builder, c: WriteContext) =
+        with(kmClass.jvm) {
+            anonymousObjectOriginName?.let {
+                proto.setExtension(JvmProtoBuf.anonymousObjectOriginName, c[it])
+            }
+            localDelegatedProperties.forEach {
+                proto.addExtension(JvmProtoBuf.classLocalVariable, c.writeProperty(it).build())
+            }
+            moduleName?.let { moduleName ->
+                if (moduleName != JvmProtoBufUtil.DEFAULT_MODULE_NAME) proto.setExtension(JvmProtoBuf.classModuleName, c[moduleName])
+            }
+            if (jvmFlags != 0) proto.setExtension(JvmProtoBuf.jvmClassFlags, jvmFlags)
         }
-        extension.moduleName?.let { moduleName ->
-            if (moduleName != JvmProtoBufUtil.DEFAULT_MODULE_NAME) proto.setExtension(JvmProtoBuf.classModuleName, c[moduleName])
-        }
-        if (extension.jvmFlags != 0) proto.setExtension(JvmProtoBuf.jvmClassFlags, extension.jvmFlags)
-        return true
-    }
 
     override fun writePackageExtensions(
-        extension: KmPackageExtension, proto: ProtoBuf.Package.Builder, c: WriteContext
-    ): Boolean {
-        if (extension.type != JvmPackageExtensionVisitor.TYPE) return false
-        extension as JvmPackageExtension
-        extension.localDelegatedProperties.forEach {
+        kmPackage: KmPackage, proto: ProtoBuf.Package.Builder, c: WriteContext,
+    ): Unit = with(kmPackage.jvm) {
+        localDelegatedProperties.forEach {
             proto.addExtension(JvmProtoBuf.packageLocalVariable, c.writeProperty(it).build())
         }
-        extension.moduleName?.let { name ->
+        moduleName?.let { name ->
             if (name != JvmProtoBufUtil.DEFAULT_MODULE_NAME) {
                 proto.setExtension(JvmProtoBuf.packageModuleName, c[name])
             }
         }
-        return true
     }
 
     // PackageFragment is not used by JVM backend.
     override fun writeModuleFragmentExtensions(
-        type: KmExtensionType,
+        kmModuleFragment: KmModuleFragment,
         proto: ProtoBuf.PackageFragment.Builder,
-        c: WriteContext
-    ): KmModuleFragmentExtensionVisitor? = null
+        c: WriteContext,
+    ) = Unit
 
     override fun writeFunctionExtensions(
-        type: KmExtensionType, proto: ProtoBuf.Function.Builder, c: WriteContext
-    ): KmFunctionExtensionVisitor? {
-        if (type != JvmFunctionExtensionVisitor.TYPE) return null
-        return object : JvmFunctionExtensionVisitor() {
-            override fun visit(signature: JvmMethodSignature?) {
-                if (signature != null) {
-                    proto.setExtension(JvmProtoBuf.methodSignature, signature.toJvmMethodSignature(c))
-                }
-            }
-
-            override fun visitLambdaClassOriginName(internalName: String) {
-                proto.setExtension(JvmProtoBuf.lambdaClassOriginName, c[internalName])
-            }
+        kmFunction: KmFunction, proto: ProtoBuf.Function.Builder, c: WriteContext,
+    ) {
+        with(kmFunction.jvm) {
+            signature?.let { proto.setExtension(JvmProtoBuf.methodSignature, it.toJvmMethodSignature(c)) }
+            lambdaClassOriginName?.let { proto.setExtension(JvmProtoBuf.lambdaClassOriginName, c[it]) }
         }
     }
 
     override fun writePropertyExtensions(
-        type: KmExtensionType, proto: ProtoBuf.Property.Builder, c: WriteContext
-    ): KmPropertyExtensionVisitor? {
-        if (type != JvmPropertyExtensionVisitor.TYPE) return null
-        return object : JvmPropertyExtensionVisitor() {
-            private var jvmFlags: Int = ProtoBuf.Property.getDefaultInstance().getExtension(JvmProtoBuf.flags)
-            private var signatureOrNull: JvmProtoBuf.JvmPropertySignature.Builder? = null
+        kmProperty: KmProperty, proto: ProtoBuf.Property.Builder, c: WriteContext,
+    ) = with(kmProperty.jvm) {
+        val composedSignature: JvmProtoBuf.JvmPropertySignature.Builder = JvmProtoBuf.JvmPropertySignature.newBuilder()
+        var hasSignature = false
 
-            private val signature: JvmProtoBuf.JvmPropertySignature.Builder
-                get() = signatureOrNull ?: JvmProtoBuf.JvmPropertySignature.newBuilder().also { signatureOrNull = it }
-
-            override fun visit(
-                jvmFlags: Int,
-                fieldSignature: JvmFieldSignature?,
-                getterSignature: JvmMethodSignature?,
-                setterSignature: JvmMethodSignature?
-            ) {
-                this.jvmFlags = jvmFlags
-                if (fieldSignature != null) {
-                    signature.field = JvmProtoBuf.JvmFieldSignature.newBuilder().also { field ->
-                        field.name = c[fieldSignature.name]
-                        field.desc = c[fieldSignature.descriptor]
-                    }.build()
-                }
-                if (getterSignature != null) {
-                    signature.getter = getterSignature.toJvmMethodSignature(c)
-                }
-                if (setterSignature != null) {
-                    signature.setter = setterSignature.toJvmMethodSignature(c)
-                }
-            }
-
-            override fun visitSyntheticMethodForAnnotations(signature: JvmMethodSignature?) {
-                if (signature == null) return
-
-                this.signature.syntheticMethod = signature.toJvmMethodSignature(c)
-            }
-
-            override fun visitSyntheticMethodForDelegate(signature: JvmMethodSignature?) {
-                if (signature == null) return
-
-                this.signature.delegateMethod = signature.toJvmMethodSignature(c)
-            }
-
-            override fun visitEnd() {
-                if (jvmFlags != ProtoBuf.Property.getDefaultInstance().getExtension(JvmProtoBuf.flags)) {
-                    proto.setExtension(JvmProtoBuf.flags, jvmFlags)
-                }
-                if (signatureOrNull != null) {
-                    proto.setExtension(JvmProtoBuf.propertySignature, signature.build())
-                }
-            }
+        if (fieldSignature != null) {
+            hasSignature = true
+            composedSignature.field = JvmProtoBuf.JvmFieldSignature.newBuilder().also { field ->
+                field.name = c[fieldSignature!!.name]
+                field.desc = c[fieldSignature!!.descriptor]
+            }.build()
+        }
+        if (getterSignature != null) {
+            hasSignature = true
+            composedSignature.getter = getterSignature!!.toJvmMethodSignature(c)
+        }
+        if (setterSignature != null) {
+            hasSignature = true
+            composedSignature.setter = setterSignature!!.toJvmMethodSignature(c)
+        }
+        if (hasSignature && syntheticMethodForAnnotations != null) {
+            composedSignature.syntheticMethod = syntheticMethodForAnnotations!!.toJvmMethodSignature(c)
+        }
+        if (hasSignature && syntheticMethodForDelegate != null) {
+            composedSignature.delegateMethod = syntheticMethodForDelegate!!.toJvmMethodSignature(c)
+        }
+        if (jvmFlags != ProtoBuf.Property.getDefaultInstance().getExtension(JvmProtoBuf.flags)) {
+            proto.setExtension(JvmProtoBuf.flags, jvmFlags)
+        }
+        if (hasSignature) {
+            proto.setExtension(JvmProtoBuf.propertySignature, composedSignature.build())
         }
     }
 
     override fun writeConstructorExtensions(
-        type: KmExtensionType, proto: ProtoBuf.Constructor.Builder, c: WriteContext
-    ): KmConstructorExtensionVisitor? {
-        if (type != JvmConstructorExtensionVisitor.TYPE) return null
-        return object : JvmConstructorExtensionVisitor() {
-            override fun visit(signature: JvmMethodSignature?) {
-                if (signature != null) {
-                    proto.setExtension(JvmProtoBuf.constructorSignature, signature.toJvmMethodSignature(c))
-                }
-            }
-        }
+        kmConstructor: KmConstructor, proto: ProtoBuf.Constructor.Builder, c: WriteContext,
+    ): Unit = with(kmConstructor.jvm) {
+        signature?.let { proto.setExtension(JvmProtoBuf.constructorSignature, it.toJvmMethodSignature(c)) }
     }
 
     override fun writeTypeParameterExtensions(
-        type: KmExtensionType, proto: ProtoBuf.TypeParameter.Builder, c: WriteContext
-    ): KmTypeParameterExtensionVisitor? {
-        if (type != JvmTypeParameterExtensionVisitor.TYPE) return null
-        return object : JvmTypeParameterExtensionVisitor() {
-            override fun visitAnnotation(annotation: KmAnnotation) {
-                proto.addExtension(JvmProtoBuf.typeParameterAnnotation, annotation.writeAnnotation(c.strings).build())
-            }
+        kmTypeParameter: KmTypeParameter, proto: ProtoBuf.TypeParameter.Builder, c: WriteContext,
+    ) = with(kmTypeParameter.jvm) {
+        annotations.forEach { annotation ->
+            proto.addExtension(JvmProtoBuf.typeParameterAnnotation, annotation.writeAnnotation(c.strings).build())
         }
     }
 
-    override fun writeTypeExtensions(type: KmExtensionType, proto: ProtoBuf.Type.Builder, c: WriteContext): KmTypeExtensionVisitor? {
-        if (type != JvmTypeExtensionVisitor.TYPE) return null
-        return object : JvmTypeExtensionVisitor() {
-            override fun visit(isRaw: Boolean) {
-                if (isRaw) {
-                    proto.setExtension(JvmProtoBuf.isRaw, true)
-                }
-            }
-
-            override fun visitAnnotation(annotation: KmAnnotation) {
+    override fun writeTypeExtensions(type: KmType, proto: ProtoBuf.Type.Builder, c: WriteContext) =
+        with(type.jvm) {
+            if (isRaw) proto.setExtension(JvmProtoBuf.isRaw, true)
+            annotations.forEach { annotation ->
                 proto.addExtension(JvmProtoBuf.typeAnnotation, annotation.writeAnnotation(c.strings).build())
             }
         }
-    }
 
     override fun writeTypeAliasExtensions(
-        type: KmExtensionType,
+        typeAlias: KmTypeAlias,
         proto: ProtoBuf.TypeAlias.Builder,
-        c: WriteContext
-    ): KmTypeAliasExtensionVisitor? = null
+        c: WriteContext,
+    ) = Unit
 
     override fun writeValueParameterExtensions(
-        type: KmExtensionType,
+        valueParameter: KmValueParameter,
         proto: ProtoBuf.ValueParameter.Builder,
-        c: WriteContext
-    ): KmValueParameterExtensionVisitor? = null
+        c: WriteContext,
+    ) = Unit
 
     override fun createClassExtension(): KmClassExtension = JvmClassExtension()
 
     override fun createPackageExtension(): KmPackageExtension = JvmPackageExtension()
 
+    @Suppress("DEPRECATION_ERROR")
     override fun createModuleFragmentExtensions(): KmModuleFragmentExtension =
         object : KmModuleFragmentExtension {
             override val type: KmExtensionType = KmExtensionType(KmModuleFragmentExtension::class)

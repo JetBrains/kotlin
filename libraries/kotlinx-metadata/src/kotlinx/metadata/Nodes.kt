@@ -821,7 +821,7 @@ public class KmTypeParameter @Deprecated(flagsCtorDeprecated) constructor(
         KmType(flags).addTo(upperBounds)
 
     @Deprecated(VISITOR_API_MESSAGE, level = DeprecationLevel.ERROR)
-    override fun visitExtensions(type: KmExtensionType): KmTypeParameterExtensionVisitor? =
+    override fun visitExtensions(type: KmExtensionType): KmTypeParameterExtensionVisitor =
         extensions.singleOfType(type)
 
     /**

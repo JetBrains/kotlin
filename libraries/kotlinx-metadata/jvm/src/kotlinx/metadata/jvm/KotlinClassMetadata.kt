@@ -2,7 +2,10 @@
  * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-@file:Suppress("DEPRECATION_ERROR", "UNUSED_PARAMETER")
+@file:Suppress(
+    "DEPRECATION_ERROR", // Deprecated .accept implementation
+    "UNUSED_PARAMETER" // For deprecated Writer.write
+)
 
 package kotlinx.metadata.jvm
 

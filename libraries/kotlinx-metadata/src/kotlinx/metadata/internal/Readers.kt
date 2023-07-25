@@ -86,9 +86,7 @@ public fun ProtoBuf.Class.toKmClass(
     contextReceiverTypes(c.types).mapTo(v.contextReceiverTypes) { it.toKmType(c) }
     versionRequirementList.mapTo(v.versionRequirements) { readVersionRequirement(it, c) }
 
-    for (extension in c.extensions) {
-        extension.readClassExtensions(v, this, c)
-    }
+    c.extensions.forEach { it.readClassExtensions(v, this, c) }
 
     return v
 }
@@ -119,9 +117,7 @@ public fun ProtoBuf.Package.toKmPackage(
 
     v.visitDeclarations(functionList, propertyList, typeAliasList, c)
 
-    for (extension in c.extensions) {
-        extension.readPackageExtensions(v, this, c)
-    }
+    c.extensions.forEach { it.readPackageExtensions(v, this, c) }
 
     return v
 }
@@ -141,9 +137,7 @@ public fun ProtoBuf.PackageFragment.toKmModuleFragment(
     v.pkg = `package`.toKmPackage(strings, contextExtensions)
     class_List.mapTo(v.classes) { it.toKmClass(strings, contextExtensions) }
 
-    for (extension in c.extensions) {
-        extension.readModuleFragmentExtensions(v, this, c)
-    }
+    c.extensions.forEach { it.readModuleFragmentExtensions(v, this, c) }
 
     return v
 }
@@ -171,9 +165,7 @@ private fun ProtoBuf.Constructor.toKmConstructor(c: ReadContext): KmConstructor 
     valueParameterList.mapTo(v.valueParameters) { it.toKmValueParameter(c) }
     versionRequirementList.mapTo(v.versionRequirements) { readVersionRequirement(it, c) }
 
-    for (extension in c.extensions) {
-        extension.readConstructorExtensions(v, this, c)
-    }
+    c.extensions.forEach { it.readConstructorExtensions(v, this, c) }
 
     return v
 }
@@ -196,9 +188,7 @@ private fun ProtoBuf.Function.toKmFunction(outer: ReadContext): KmFunction {
 
     versionRequirementList.mapTo(v.versionRequirements) { readVersionRequirement(it, c) }
 
-    for (extension in c.extensions) {
-        extension.readFunctionExtensions(v, this, c)
-    }
+    c.extensions.forEach { it.readFunctionExtensions(v, this, c) }
 
     return v
 }
@@ -217,9 +207,7 @@ public fun ProtoBuf.Property.toKmProperty(outer: ReadContext): KmProperty {
     v.returnType = returnType(c.types).toKmType(c)
     versionRequirementList.mapTo(v.versionRequirements) { readVersionRequirement(it, c) }
 
-    for (extension in c.extensions) {
-        extension.readPropertyExtensions(v, this, c)
-    }
+    c.extensions.forEach { it.readPropertyExtensions(v, this, c) }
 
     return v
 }
@@ -236,9 +224,7 @@ private fun ProtoBuf.TypeAlias.toKmTypeAlias(outer: ReadContext): KmTypeAlias {
 
     versionRequirementList.mapTo(v.versionRequirements) { readVersionRequirement(it, c) }
 
-    for (extension in c.extensions) {
-        extension.readTypeAliasExtensions(v, this, c)
-    }
+    c.extensions.forEach { it.readTypeAliasExtensions(v, this, c) }
 
     return v
 }
@@ -249,9 +235,7 @@ private fun ProtoBuf.ValueParameter.toKmValueParameter(c: ReadContext): KmValueP
 
     v.varargElementType = varargElementType(c.types)?.toKmType(c)
 
-    for (extension in c.extensions) {
-        extension.readValueParameterExtensions(v, this, c)
-    }
+    c.extensions.forEach { it.readValueParameterExtensions(v, this, c) }
 
     return v
 }
@@ -268,9 +252,7 @@ private fun ProtoBuf.TypeParameter.toKmTypeParameter(
 
     upperBounds(c.types).mapTo(ktp.upperBounds) { it.toKmType(c) }
 
-    for (extension in c.extensions) {
-        extension.readTypeParameterExtensions(ktp, this, c)
-    }
+    c.extensions.forEach { it.readTypeParameterExtensions(ktp, this, c) }
 
     return ktp
 }
@@ -313,9 +295,7 @@ private fun ProtoBuf.Type.toKmType(c: ReadContext): KmType {
         KmFlexibleTypeUpperBound(it, if (hasFlexibleTypeCapabilitiesId()) c[flexibleTypeCapabilitiesId] else null)
     }
 
-    for (extension in c.extensions) {
-        extension.readTypeExtensions(v, this, c)
-    }
+    c.extensions.forEach { it.readTypeExtensions(v, this, c) }
 
     return v
 }
