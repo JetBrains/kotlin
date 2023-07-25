@@ -5,25 +5,39 @@
 
 package org.jetbrains.kotlin.formver.plugin
 
-import scala.jdk.javaapi.CollectionConverters
-import viper.silver.ast.`NoInfo$`
-import viper.silver.ast.`NoPosition$`
-import viper.silver.ast.`NoTrafos$`
+import org.jetbrains.kotlin.formver.scala.Option
+import org.jetbrains.kotlin.formver.scala.emptySeq
+import org.jetbrains.kotlin.formver.scala.seqOf
+import org.jetbrains.kotlin.formver.scala.silicon.ast.*
+import scala.math.BigInt
 import viper.silver.ast.Program
 
-private fun<T> emptySeq() = CollectionConverters.asScala(emptyList<T>()).toSeq()
 
 class Converter {
     val program: Program
         get() = Program(
-            emptySeq(),
-            emptySeq(),
-            emptySeq(),
-            emptySeq(),
-            emptySeq(),
-            emptySeq(),
-            `NoPosition$`.`MODULE$`,
-            `NoInfo$`.`MODULE$`,
-            `NoTrafos$`.`MODULE$`
+            emptySeq(), /* Domains */
+            seqOf(
+                field("foo", Type.Int),
+                field("bar", Type.Ref),
+                field("baz", Type.Bool),
+                field("numbers", Type.Set(Type.Int))
+            ), /* Fields */
+            seqOf(
+                function(
+                    name = "sum",
+                    formalArgs = emptyList(),
+                    type = Type.Int,
+                    pres = emptyList(),
+                    posts = emptyList(),
+                    body = Option.Some(Exp.Add(Exp.IntLit(BigInt.apply(40)), Exp.IntLit(BigInt.apply(2))) as Exp).toScala()
+                )
+            ), /* Functions */
+            emptySeq(), /* Predicates */
+            emptySeq(), /* Methods */
+            emptySeq(), /* Extensions */
+            Position.NoPosition.toViper(),
+            Info.NoInfo.toViper(),
+            Trafos.NoTrafos.toViper()
         )
 }
