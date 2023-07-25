@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator.calculateAnnotations
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkAnnotationArgumentsMappingIsResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.expressionGuard
 import org.jetbrains.kotlin.fir.*
@@ -61,26 +62,26 @@ private class LLFirAnnotationArgumentsMappingTargetResolver(
     )
 
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
-        resolveWithKeeper(target, AnnotationArgumentMappingStateKeepers.DECLARATION, ::calculateAnnotations) {
+        resolveWithKeeper(target, target.llFirSession, AnnotationArgumentMappingStateKeepers.DECLARATION, ::calculateAnnotations) {
             transformAnnotations(target)
         }
     }
 }
 
 internal object AnnotationArgumentMappingStateKeepers {
-    private val ANNOTATION: StateKeeper<FirAnnotation> = stateKeeper {
-        add(ANNOTATION_BASE)
+    private val ANNOTATION: StateKeeper<FirAnnotation, FirSession> = stateKeeper { _, session ->
+        add(ANNOTATION_BASE, session)
         add(FirAnnotation::argumentMapping, FirAnnotation::replaceArgumentMapping)
         add(FirAnnotation::typeArgumentsCopied, FirAnnotation::replaceTypeArguments)
     }
 
-    private val ANNOTATION_BASE: StateKeeper<FirAnnotation> = stateKeeper { annotation ->
+    private val ANNOTATION_BASE: StateKeeper<FirAnnotation, FirSession> = stateKeeper { annotation, session ->
         if (annotation is FirAnnotationCall) {
-            entity(annotation, ANNOTATION_CALL)
+            entity(annotation, ANNOTATION_CALL, session)
         }
     }
 
-    private val ANNOTATION_CALL: StateKeeper<FirAnnotationCall> = stateKeeper { annotationCall ->
+    private val ANNOTATION_CALL: StateKeeper<FirAnnotationCall, FirSession> = stateKeeper { annotationCall, _ ->
         add(FirAnnotationCall::calleeReference, FirAnnotationCall::replaceCalleeReference)
 
         val argumentList = annotationCall.argumentList
@@ -100,12 +101,12 @@ internal object AnnotationArgumentMappingStateKeepers {
         }
     }
 
-    val DECLARATION: StateKeeper<FirElementWithResolveState> = stateKeeper { target ->
+    val DECLARATION: StateKeeper<FirElementWithResolveState, FirSession> = stateKeeper { target, session ->
         val visitor = object : FirVisitorVoid() {
             override fun visitElement(element: FirElement) {
                 when (element) {
                     is FirDeclaration -> if (element !== target) return // Avoid nested declarations
-                    is FirAnnotation -> entity(element, ANNOTATION)
+                    is FirAnnotation -> entity(element, ANNOTATION, session)
                     is FirStatement -> return
                 }
 

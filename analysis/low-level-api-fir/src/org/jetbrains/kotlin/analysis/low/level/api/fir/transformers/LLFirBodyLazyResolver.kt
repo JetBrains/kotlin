@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
@@ -154,16 +155,16 @@ private class LLFirBodyTargetResolver(
 }
 
 internal object BodyStateKeepers {
-    val SCRIPT: StateKeeper<FirScript> = stateKeeper {
+    val SCRIPT: StateKeeper<FirScript, FirDesignationWithFile> = stateKeeper { _, _ ->
         // TODO Lazy body is not supported for scripts yet
     }
 
-    val ANONYMOUS_INITIALIZER: StateKeeper<FirAnonymousInitializer> = stateKeeper {
+    val ANONYMOUS_INITIALIZER: StateKeeper<FirAnonymousInitializer, FirDesignationWithFile> = stateKeeper { _, _ ->
         add(FirAnonymousInitializer::body, FirAnonymousInitializer::replaceBody, ::blockGuard)
         add(FirAnonymousInitializer::controlFlowGraphReference, FirAnonymousInitializer::replaceControlFlowGraphReference)
     }
 
-    val FUNCTION: StateKeeper<FirFunction> = stateKeeper { function ->
+    val FUNCTION: StateKeeper<FirFunction, FirDesignationWithFile> = stateKeeper { function, designation ->
         if (function.isCertainlyResolved) {
             return@stateKeeper
         }
@@ -174,18 +175,18 @@ internal object BodyStateKeepers {
             preserveContractBlock(function)
 
             add(FirFunction::body, FirFunction::replaceBody, ::blockGuard)
-            entityList(function.valueParameters, VALUE_PARAMETER)
+            entityList(function.valueParameters, VALUE_PARAMETER, designation)
         }
 
         add(FirFunction::controlFlowGraphReference, FirFunction::replaceControlFlowGraphReference)
     }
 
-    val CONSTRUCTOR: StateKeeper<FirConstructor> = stateKeeper {
-        add(FUNCTION)
+    val CONSTRUCTOR: StateKeeper<FirConstructor, FirDesignationWithFile> = stateKeeper { _, designation ->
+        add(FUNCTION, designation)
         add(FirConstructor::delegatedConstructor, FirConstructor::replaceDelegatedConstructor, ::delegatedConstructorCallGuard)
     }
 
-    val VARIABLE: StateKeeper<FirVariable> = stateKeeper { variable ->
+    val VARIABLE: StateKeeper<FirVariable, FirDesignationWithFile> = stateKeeper { variable, _ ->
         add(FirVariable::returnTypeRef, FirVariable::replaceReturnTypeRef)
 
         if (!isCallableWithSpecialBody(variable)) {
@@ -194,7 +195,7 @@ internal object BodyStateKeepers {
         }
     }
 
-    private val VALUE_PARAMETER: StateKeeper<FirValueParameter> = stateKeeper { valueParameter ->
+    private val VALUE_PARAMETER: StateKeeper<FirValueParameter, FirDesignationWithFile> = stateKeeper { valueParameter, _ ->
         if (valueParameter.defaultValue != null) {
             add(FirValueParameter::defaultValue, FirValueParameter::replaceDefaultValue, ::expressionGuard)
         }
@@ -202,31 +203,31 @@ internal object BodyStateKeepers {
         add(FirValueParameter::controlFlowGraphReference, FirValueParameter::replaceControlFlowGraphReference)
     }
 
-    val FIELD: StateKeeper<FirField> = stateKeeper {
-        add(VARIABLE)
+    val FIELD: StateKeeper<FirField, FirDesignationWithFile> = stateKeeper { _, designation ->
+        add(VARIABLE, designation)
         add(FirField::controlFlowGraphReference, FirField::replaceControlFlowGraphReference)
     }
 
-    val PROPERTY: StateKeeper<FirProperty> = stateKeeper { property ->
+    val PROPERTY: StateKeeper<FirProperty, FirDesignationWithFile> = stateKeeper { property, designation ->
         if (property.bodyResolveState >= FirPropertyBodyResolveState.EVERYTHING_RESOLVED) {
             return@stateKeeper
         }
 
-        add(VARIABLE)
+        add(VARIABLE, designation)
 
         add(FirProperty::bodyResolveState, FirProperty::replaceBodyResolveState)
         add(FirProperty::returnTypeRef, FirProperty::replaceReturnTypeRef)
 
-        entity(property.getterIfUnresolved, FUNCTION)
-        entity(property.setterIfUnresolved, FUNCTION)
-        entity(property.backingFieldIfUnresolved, VARIABLE)
+        entity(property.getterIfUnresolved, FUNCTION, designation)
+        entity(property.setterIfUnresolved, FUNCTION, designation)
+        entity(property.backingFieldIfUnresolved, VARIABLE, designation)
 
         add(FirProperty::controlFlowGraphReference, FirProperty::replaceControlFlowGraphReference)
     }
 }
 
 context(StateKeeperBuilder)
-private fun StateKeeperScope<FirFunction>.preserveContractBlock(function: FirFunction) {
+private fun StateKeeperScope<FirFunction, FirDesignationWithFile>.preserveContractBlock(function: FirFunction) {
     val oldBody = function.body
     if (oldBody == null || oldBody is FirLazyBlock) {
         return

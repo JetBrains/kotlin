@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 import com.intellij.openapi.util.registry.Registry
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
@@ -29,7 +30,7 @@ internal interface StateKeeperBuilder {
 
 @JvmInline
 @StateKeeperDsl
-internal value class StateKeeperScope<Owner : Any>(private val owner: Owner) {
+internal value class StateKeeperScope<Owner : Any, Context : Any>(private val owner: Owner) {
     /**
      * Defines an entity state preservation rule.
      *
@@ -77,9 +78,9 @@ internal value class StateKeeperScope<Owner : Any>(private val owner: Owner) {
      * In other words, applies all rules defined in the [keeper] to the current entity.
      */
     context(StateKeeperBuilder)
-    fun add(keeper: StateKeeper<Owner>) {
+    fun add(keeper: StateKeeper<Owner, Context>, context: Context) {
         val owner = this@StateKeeperScope.owner
-        register(keeper.prepare(owner))
+        register(keeper.prepare(owner, context))
     }
 
     /**
@@ -99,9 +100,9 @@ internal value class StateKeeperScope<Owner : Any>(private val owner: Owner) {
  * Does nothing if the [entity] is `null`.
  */
 context(StateKeeperBuilder)
-internal fun <Entity : Any> entity(entity: Entity?, keeper: StateKeeper<Entity>) {
+internal fun <Entity : Any, Context : Any> entity(entity: Entity?, keeper: StateKeeper<Entity, Context>, context: Context) {
     if (entity != null) {
-        StateKeeperScope(entity).add(keeper)
+        StateKeeperScope<Entity, Context>(entity).add(keeper, context)
     }
 }
 
@@ -110,9 +111,13 @@ internal fun <Entity : Any> entity(entity: Entity?, keeper: StateKeeper<Entity>)
  * Does nothing if the [entity] is `null`.
  */
 context(StateKeeperBuilder)
-internal inline fun <Entity : Any> entity(entity: Entity?, block: StateKeeperScope<Entity>.(Entity) -> Unit) {
+internal inline fun <Entity : Any, Context : Any> entity(
+    entity: Entity?,
+    context: Context,
+    block: StateKeeperScope<Entity, Context>.(Entity, Context) -> Unit,
+) {
     if (entity != null) {
-        StateKeeperScope(entity).block(entity)
+        StateKeeperScope<Entity, Context>(entity).block(entity, context)
     }
 }
 
@@ -122,11 +127,11 @@ internal inline fun <Entity : Any> entity(entity: Entity?, block: StateKeeperSco
  * Skips `null` elements in the [list].
  */
 context(StateKeeperBuilder)
-internal fun <Entity : Any> entityList(list: List<Entity?>?, keeper: StateKeeper<Entity>) {
+internal fun <Entity : Any, Context : Any> entityList(list: List<Entity?>?, keeper: StateKeeper<Entity, Context>, context: Context) {
     if (list != null) {
         for (entity in list) {
             if (entity != null) {
-                StateKeeperScope(entity).add(keeper)
+                StateKeeperScope<Entity, Context>(entity).add(keeper, context)
             }
         }
     }
@@ -138,11 +143,15 @@ internal fun <Entity : Any> entityList(list: List<Entity?>?, keeper: StateKeeper
  * Skips `null` elements in the [list].
  */
 context(StateKeeperBuilder)
-internal inline fun <Entity : Any> entityList(list: List<Entity?>?, block: StateKeeperScope<Entity>.(Entity) -> Unit) {
+internal inline fun <Entity : Any, Context : Any> entityList(
+    list: List<Entity?>?,
+    context: Context,
+    block: StateKeeperScope<Entity, Context>.(Entity, Context) -> Unit,
+) {
     if (list != null) {
         for (entity in list) {
             if (entity != null) {
-                StateKeeperScope(entity).block(entity)
+                StateKeeperScope<Entity, Context>(entity).block(entity, context)
             }
         }
     }
@@ -156,8 +165,8 @@ internal inline fun <Entity : Any> entityList(list: List<Entity?>?, block: State
  *  The function collects rules for each individual owner separately.
  *  Nested owners can be handled inside [entity] or [entityList] blocks.
  */
-internal fun <Owner : Any> stateKeeper(block: context(StateKeeperBuilder) StateKeeperScope<Owner>.(Owner) -> Unit): StateKeeper<Owner> {
-    return StateKeeper { owner ->
+internal fun <Owner : Any, Context : Any> stateKeeper(block: context(StateKeeperBuilder) StateKeeperScope<Owner, Context>.(Owner, Context) -> Unit): StateKeeper<Owner, Context> {
+    return StateKeeper { owner, context ->
         val states = mutableListOf<PreservedState>()
 
         val builder = object : StateKeeperBuilder {
@@ -166,8 +175,8 @@ internal fun <Owner : Any> stateKeeper(block: context(StateKeeperBuilder) StateK
             }
         }
 
-        val scope = StateKeeperScope(owner)
-        block(builder, scope, owner)
+        val scope = StateKeeperScope<Owner, Context>(owner)
+        block(builder, scope, owner, context)
 
         object : PreservedState {
             private var isPostProcessed = false
@@ -222,13 +231,13 @@ internal fun <Owner : Any> stateKeeper(block: context(StateKeeperBuilder) StateK
  * }
  * ```
  */
-internal class StateKeeper<in Owner : Any>(val provider: (Owner) -> PreservedState) {
+internal class StateKeeper<in Owner : Any, Context : Any>(val provider: (Owner, Context) -> PreservedState) {
     /**
      * Backs up the [owner] state by calling providers, and potentially tweaks the object state with arrangers.
      * Note that post-processors are not run during preparation.
      */
-    fun prepare(owner: Owner): PreservedState {
-        return provider(owner)
+    fun prepare(owner: Owner, context: Context): PreservedState {
+        return provider(owner, context)
     }
 }
 
@@ -251,11 +260,12 @@ internal interface PreservedState {
     fun restore()
 }
 
-internal inline fun <Target : FirElementWithResolveState, Result> resolveWithKeeper(
+internal inline fun <Target : FirElementWithResolveState, Context : Any, Result> resolveWithKeeper(
     target: Target,
-    keeper: StateKeeper<Target>,
-    prepareTarget: (Target) -> Unit,
-    action: () -> Result
+    context: Context,
+    keeper: StateKeeper<Target, Context>,
+    prepareTarget: (Target) -> Unit = {},
+    action: () -> Result,
 ): Result {
     if (!USE_STATE_KEEPER) {
         prepareTarget(target)
@@ -274,7 +284,7 @@ internal inline fun <Target : FirElementWithResolveState, Result> resolveWithKee
     var preservedState: PreservedState? = null
 
     try {
-        preservedState = keeper.prepare(target)
+        preservedState = keeper.prepare(target, context)
         prepareTarget(target)
         preservedState.postProcess()
         return action()

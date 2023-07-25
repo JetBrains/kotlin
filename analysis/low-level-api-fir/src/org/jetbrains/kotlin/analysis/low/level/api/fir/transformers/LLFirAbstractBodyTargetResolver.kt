@@ -69,13 +69,9 @@ internal abstract class LLFirAbstractBodyTargetResolver(
         }
     }
 
-    protected fun calculateLazyBodies(declaration: FirElementWithResolveState) {
-        val firDesignation = FirDesignationWithFile(nestedClassesStack, declaration, resolveTarget.firFile)
-        FirLazyBodiesCalculator.calculateBodies(firDesignation)
-    }
-
-    protected fun <T : FirElementWithResolveState> resolve(target: T, keeper: StateKeeper<T>) {
-        resolveWithKeeper(target, keeper, ::calculateLazyBodies) {
+    protected fun <T : FirElementWithResolveState> resolve(target: T, keeper: StateKeeper<T, FirDesignationWithFile>) {
+        val firDesignation = FirDesignationWithFile(nestedClassesStack, target, resolveTarget.firFile)
+        resolveWithKeeper(target, firDesignation, keeper, { FirLazyBodiesCalculator.calculateBodies(firDesignation) }) {
             rawResolve(target)
         }
     }
