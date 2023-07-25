@@ -9,8 +9,10 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.info1
 import org.jetbrains.kotlin.diagnostics.warning0
+import org.jetbrains.kotlin.diagnostics.warning1
 
 object PluginErrors {
     val FUNCTION_WITH_UNVERIFIED_CONTRACT by warning0<PsiElement>(SourceElementPositioningStrategies.DECLARATION_NAME)
+    val VIPER_ERROR by warning1<PsiElement, String>(SourceElementPositioningStrategies.DECLARATION_NAME)
     val VIPER_TEXT by info1<PsiElement, String>(SourceElementPositioningStrategies.DECLARATION_NAME)
 }

@@ -5,36 +5,48 @@
 
 package org.jetbrains.kotlin.formver.plugin
 
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.formver.scala.Option
 import org.jetbrains.kotlin.formver.scala.emptySeq
-import org.jetbrains.kotlin.formver.scala.seqOf
 import org.jetbrains.kotlin.formver.scala.silicon.ast.*
-import org.jetbrains.kotlin.formver.scala.toScalaBigInt
+import org.jetbrains.kotlin.formver.scala.toScalaSeq
+import viper.silver.ast.Function
 import viper.silver.ast.Program
 
 
 class Converter {
+    private val functions: MutableList<Function> = mutableListOf()
+
     val program: Program
         get() = Program(
             emptySeq(), /* Domains */
-            seqOf(
-                field("foo", Type.Int),
-                field("bar", Type.Ref),
-                field("baz", Type.Bool),
-                field("numbers", Type.Set(Type.Int)),
-                field("numbers", Type.Set(Type.Int))
-            ), /* Fields */
-            seqOf(
-                function(
-                    name = "answerTheQuestion",
-                    formalArgs = emptyList(),
-                    type = Type.Int,
-                    pres = emptyList(),
-                    posts = emptyList(),
-                    body = Exp.IntLit(42.toScalaBigInt())
-                )
-            ), /* Functions */
+            emptySeq(), /* Fields */
+            functions.toScalaSeq(), /* Functions */
             emptySeq(), /* Predicates */
-            seqOf(
+            emptySeq(), /* Methods */
+            emptySeq(), /* Extensions */
+            Position.NoPosition.toViper(),
+            Info.NoInfo.toViper(),
+            Trafos.NoTrafos.toViper()
+        )
+
+    fun add(declaration: FirSimpleFunction) {
+        functions.add(convertSignature(declaration))
+    }
+
+    private fun convertSignature(declaration: FirSimpleFunction): Function {
+        return function(
+            declaration.name.asString(),
+            emptyList(),
+            Type.Int,
+            emptyList(),
+            emptyList(),
+            Option.None<Exp>().toScala()
+        )
+    }
+}
+
+/*
                 method(
                     name = "gaussSum",
                     formalArgs = listOf(localVarDecl("n", Type.Int)),
@@ -90,10 +102,5 @@ class Converter {
                         scopedStmtsDeclaration = emptyList()
                     )
                 )
-            ), /* Methods */
-            emptySeq(), /* Extensions */
-            Position.NoPosition.toViper(),
-            Info.NoInfo.toViper(),
-            Trafos.NoTrafos.toViper()
-        )
-}
+
+ */

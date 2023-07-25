@@ -21,8 +21,8 @@ interface IntoScala<T> {
 }
 
 sealed class Option<in T> : IntoScala<scala.Option<@UnsafeVariance T>> {
-    data object None {
-        fun <T> toScala(): scala.Option<T> = scala.`None$`.`MODULE$` as scala.Option<T>
+    class None<T> : Option<T>() {
+        override fun toScala(): scala.Option<T> = scala.`None$`.`MODULE$` as scala.Option<T>
     }
 
     class Some<T>(private val value: T) : Option<T>() {

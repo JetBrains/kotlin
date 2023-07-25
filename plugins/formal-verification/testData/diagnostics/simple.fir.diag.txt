@@ -1,3 +1,5 @@
-/simple.kt:(148,161): warning:
+/simple.kt:(84,100): info: function without_contract(): Int
 
-/simple.kt:(148,161): info: with_contract
+
+/simple.kt:(148,161): info: function with_contract(): Int
+
