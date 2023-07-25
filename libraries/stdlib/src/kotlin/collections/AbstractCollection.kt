@@ -31,7 +31,7 @@ public abstract class AbstractCollection<out E> protected constructor() : Collec
      * Returns new array of type `Array<Any?>` with the elements of this collection.
      */
     @JsName("toArray")
-    protected open fun toArray(): Array<Any?> = copyToArrayImpl(this)
+    protected open fun toArray(): Array<Any?> = collectionToArray(this)
 
     /**
      * Fills the provided [array] or creates new array of the same type
@@ -45,5 +45,5 @@ public abstract class AbstractCollection<out E> protected constructor() : Collec
      *
      * @return An array containing all elements of this collection.
      */
-    protected open fun <T> toArray(array: Array<T>): Array<T> = copyToArrayImpl(this, array)
+    protected open fun <T> toArray(array: Array<T>): Array<T> = collectionToArray(this, array)
 }

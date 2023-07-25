@@ -22,4 +22,4 @@ internal fun <T> copyToArray(collection: Collection<T>): Array<T> =
         //TODO: Find more proper way to call abstract collection's toArray
         @Suppress("INVISIBLE_MEMBER") collection.toArray() as Array<T>
     else
-        copyToArrayImpl(collection) as Array<T>
+        collectionToArray(collection) as Array<T>

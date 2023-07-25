@@ -84,9 +84,9 @@ internal fun <T> Array<out T>?.contentDeepHashCodeImpl(): Int {
 @Suppress("UNCHECKED_CAST")
 internal actual fun <T> arrayOfNulls(reference: Array<T>, size: Int): Array<T> = arrayOfNulls<Any>(size) as Array<T>
 
-internal actual fun copyToArrayImpl(collection: Collection<*>): Array<Any?> = collectionToArrayCommonImpl(collection)
+internal actual fun collectionToArray(collection: Collection<*>): Array<Any?> = collectionToArrayCommonImpl(collection)
 
-internal actual fun <T> copyToArrayImpl(collection: Collection<*>, array: Array<T>): Array<T> = collectionToArrayCommonImpl(collection, array)
+internal actual fun <T> collectionToArray(collection: Collection<*>, array: Array<T>): Array<T> = collectionToArrayCommonImpl(collection, array)
 
 internal actual fun <T> terminateCollectionToArray(collectionSize: Int, array: Array<T>): Array<T> = array
 
