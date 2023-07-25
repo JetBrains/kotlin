@@ -6,13 +6,14 @@
 package org.jetbrains.kotlin.jps.build
 
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.incremental.testingUtils.BuildLogFinder
 
 abstract class AbstractIncrementalK2LightTreeJvmJpsTest(
     allowNoFilesWithSuffixInTestData: Boolean = false
 ) : AbstractIncrementalJpsTest(allowNoFilesWithSuffixInTestData = allowNoFilesWithSuffixInTestData) {
     override fun updateCommandLineArguments(arguments: CommonCompilerArguments) {
-        if (KotlinVersion.CURRENT.major < 2) {
+        if (LanguageVersion.LATEST_STABLE.major < 2) {
             arguments.languageVersion = "2.0"
         }
         additionalCommandLineArguments = additionalCommandLineArguments + listOf("-Xuse-fir-lt=true")

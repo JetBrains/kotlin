@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.konan.blackboxtest.support.settings
 
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.konan.blackboxtest.support.MutedOption
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestKind
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.LocalTestRunner
@@ -259,9 +260,6 @@ internal sealed class CacheMode {
     }
 }
 
-private fun KotlinVersion.toCanonicalString(): String =
-    "$major.$minor"
-
 internal enum class PipelineType(val mutedOption: MutedOption, val compilerFlags: List<String>) {
     K1(
         MutedOption.K1,
@@ -269,7 +267,7 @@ internal enum class PipelineType(val mutedOption: MutedOption, val compilerFlags
     ),
     K2(
         MutedOption.K2,
-        listOf("-language-version", if (KotlinVersion.CURRENT.major < 2) "2.0" else KotlinVersion.CURRENT.toCanonicalString())
+        listOf("-language-version", if (LanguageVersion.LATEST_STABLE.major < 2) "2.0" else LanguageVersion.LATEST_STABLE.toString())
     );
 
     override fun toString() = if (compilerFlags.isEmpty()) "" else compilerFlags.joinToString(prefix = "(", postfix = ")", separator = " ")
