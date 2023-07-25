@@ -24,6 +24,8 @@ internal external fun KMutableProperty0<Byte>.getAndAddFieldLocal(newValue: Byte
 
 
 interface Wrapper<T> {
+    fun get(): T
+    fun set(new: T): Unit
     fun compareAndSwap(expected: T, new: T): T
     fun compareAndSet(expected: T, new: T): Boolean
     fun getAndSet(expected: T): T
@@ -38,6 +40,8 @@ interface RefWrapper<T> : Wrapper<T> {
 
 
 class IntWrapper(@Volatile var x : Int) : IncWrapper<Int> {
+    override fun get(): Int = this::x.atomicGetField()
+    override fun set(new: Int) = this::x.atomicSetField(new)
     override fun compareAndSwap(expected: Int, new: Int) = this::x.compareAndExchangeField(expected, new)
     override fun compareAndSet(expected: Int, new: Int) = this::x.compareAndSetField(expected, new)
     override fun getAndSet(new: Int) = this::x.getAndSetField(new)
@@ -45,6 +49,8 @@ class IntWrapper(@Volatile var x : Int) : IncWrapper<Int> {
 }
 
 class LongWrapper(@Volatile var x : Long) : IncWrapper<Long> {
+    override fun get(): Long = this::x.atomicGetField()
+    override fun set(new: Long) = this::x.atomicSetField(new)
     override fun compareAndSwap(expected: Long, new: Long) = this::x.compareAndExchangeField(expected, new)
     override fun compareAndSet(expected: Long, new: Long) = this::x.compareAndSetField(expected, new)
     override fun getAndSet(new: Long) = this::x.getAndSetField(new)
@@ -52,6 +58,8 @@ class LongWrapper(@Volatile var x : Long) : IncWrapper<Long> {
 }
 
 class ShortWrapper(@Volatile var x : Short) : IncWrapper<Short> {
+    override fun get(): Short = this::x.atomicGetField()
+    override fun set(new: Short) = this::x.atomicSetField(new)
     override fun compareAndSwap(expected: Short, new: Short) = this::x.compareAndExchangeField(expected, new)
     override fun compareAndSet(expected: Short, new: Short) = this::x.compareAndSetField(expected, new)
     override fun getAndSet(new: Short) = this::x.getAndSetField(new)
@@ -59,6 +67,8 @@ class ShortWrapper(@Volatile var x : Short) : IncWrapper<Short> {
 }
 
 class ByteWrapper(@Volatile var x : Byte) : IncWrapper<Byte> {
+    override fun get(): Byte = this::x.atomicGetField()
+    override fun set(new: Byte) = this::x.atomicSetField(new)
     override fun compareAndSwap(expected: Byte, new: Byte) = this::x.compareAndExchangeField(expected, new)
     override fun compareAndSet(expected: Byte, new: Byte) = this::x.compareAndSetField(expected, new)
     override fun getAndSet(new: Byte) = this::x.getAndSetField(new)
@@ -67,12 +77,16 @@ class ByteWrapper(@Volatile var x : Byte) : IncWrapper<Byte> {
 
 
 class StringWrapper(@Volatile var x : String) : RefWrapper<String> {
+    override fun get(): String = this::x.atomicGetField()
+    override fun set(new: String) = this::x.atomicSetField(new)
     override fun compareAndSwap(expected: String, new: String) = this::x.compareAndExchangeField(expected, new)
     override fun compareAndSet(expected: String, new: String) = this::x.compareAndSetField(expected, new)
     override fun getAndSet(new: String) = this::x.getAndSetField(new)
 }
 
 class GenericWrapper<T>(@Volatile var x : T) : RefWrapper<T> {
+    override fun get(): T = this::x.atomicGetField()
+    override fun set(new: T) = this::x.atomicSetField(new)
     override fun compareAndSwap(expected: T, new: T) = this::x.compareAndExchangeField(expected, new)
     override fun compareAndSet(expected: T, new: T) = this::x.compareAndSetField(expected, new)
     override fun getAndSet(new: T) = this::x.getAndSetField(new)
@@ -103,10 +117,16 @@ fun <T> test(one: T, two: T, three: T, wrap: (T) -> Wrapper<T>) : String? {
     if (w.compareAndSwap(one, two) != two) return "FAIL 9"
     if (w.compareAndSwap(one, two) != two) return "FAIL 10"
     if (w.compareAndSwap(two, one) != two) return "FAIL 11"
+    if (w.get() != one) return "FAIL 12"
+    w.set(three)
+    if (w.get() != three) return "FAIL 13"
+    w.set(one)
+    if (w.get() != one) return "FAIL 14"
     if (w is IncWrapper<T>) {
-        if (w.getAndAdd(one) != one) return "FAIL 12"
-        if (w.getAndAdd(one) != two) return "FAIL 13"
-        if (w.getAndAdd(one) != three) return "FAIL 14"
+        if (w.getAndAdd(one) != one) return "FAIL 15"
+        if (w.get() != two) return "FAIL 16"
+        if (w.getAndAdd(one) != two) return "FAIL 17"
+        if (w.getAndAdd(one) != three) return "FAIL 18"
     }
     return null
 }

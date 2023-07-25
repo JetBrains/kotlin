@@ -94,6 +94,8 @@ internal enum class IntrinsicType {
     // Worker
     WORKER_EXECUTE,
     // Atomics
+    ATOMIC_GET_FIELD,
+    ATOMIC_SET_FIELD,
     COMPARE_AND_SET_FIELD,
     COMPARE_AND_EXCHANGE_FIELD,
     GET_AND_SET_FIELD,
@@ -263,6 +265,8 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
                 IntrinsicType.INTEROP_MEMORY_COPY -> emitMemoryCopy(callSite, args)
                 IntrinsicType.IS_EXPERIMENTAL_MM -> emitIsExperimentalMM()
                 IntrinsicType.THE_UNIT_INSTANCE -> theUnitInstanceRef.llvm
+                IntrinsicType.ATOMIC_GET_FIELD -> reportNonLoweredIntrinsic(intrinsicType)
+                IntrinsicType.ATOMIC_SET_FIELD -> reportNonLoweredIntrinsic(intrinsicType)
                 IntrinsicType.COMPARE_AND_SET -> emitCompareAndSet(callSite, args)
                 IntrinsicType.COMPARE_AND_EXCHANGE -> emitCompareAndSwap(callSite, args, resultSlot)
                 IntrinsicType.GET_AND_SET -> emitGetAndSet(callSite, args, resultSlot)

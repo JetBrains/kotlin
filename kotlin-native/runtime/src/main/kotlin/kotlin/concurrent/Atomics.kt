@@ -282,49 +282,88 @@ private fun debugString(value: Any?): String {
 }
 
 /**
- * Compares the value of the field referenced by [this] to [expectedValue], and if they are equal,
- * atomically replaces it with [newValue].
+ * Atomically gets the value of the field referenced by [this].
+ *
+ * Provides sequential consistent ordering guarantees.
+ *
+ * This is equivalent to KMutableProperty0#get() invocation and used internally to optimize allocation of a property reference.
  *
  * For now, it can be used only within the same file, where property is defined.
  * Check https://youtrack.jetbrains.com/issue/KT-55426 for details.
- *
- * Comparison is done by reference or value depending on field representation.
  *
  * If [this] is not a compile-time known reference to the property with [Volatile] annotation [IllegalArgumentException]
  * would be thrown.
  *
  * If property referenced by [this] has nontrivial setter it will not be called.
+ */
+@PublishedApi
+@TypedIntrinsic(IntrinsicType.ATOMIC_GET_FIELD)
+internal external fun <T> KMutableProperty0<T>.atomicGetField(): T
+
+/**
+ * Atomically sets the value of the field referenced by [this] to the [new value][newValue].
  *
- * Returns true if the actual field value matched [expectedValue]
+ * Provides sequential consistent ordering guarantees.
  *
+ * This is equivalent to KMutableProperty0#set(value: T) invocation and used internally to optimize allocation of a property reference.
+ *
+ * For now, it can be used only within the same file, where property is defined.
+ * Check https://youtrack.jetbrains.com/issue/KT-55426 for details.
+ *
+ * If [this] is not a compile-time known reference to the property with [Volatile] annotation [IllegalArgumentException]
+ * would be thrown.
+ *
+ * If property referenced by [this] has nontrivial setter it will not be called.
+ */
+@PublishedApi
+@TypedIntrinsic(IntrinsicType.ATOMIC_SET_FIELD)
+internal external fun <T> KMutableProperty0<T>.atomicSetField(newValue: T)
+
+/**
+ * Atomically sets the value of the field referenced by [this] to the [new value][newValue]
+ * if the current value equals the [expected value][expectedValue].
+ * Returns true if the operation was successful and false only if the current value of the field was not equal to the expected value.
+ *
+ * Comparison is done by reference or value depending on field representation.
+ *
+ * Provides sequential consistent ordering guarantees and never fails spuriously.
+ *
+ * For now, it can be used only within the same file, where property is defined.
+ * Check https://youtrack.jetbrains.com/issue/KT-55426 for details.
+ *
+ * If [this] is not a compile-time known reference to the property with [Volatile] annotation [IllegalArgumentException]
+ * would be thrown.
+ *
+ * If property referenced by [this] has nontrivial setter it will not be called.
  */
 @PublishedApi
 @TypedIntrinsic(IntrinsicType.COMPARE_AND_SET_FIELD)
 internal external fun <T> KMutableProperty0<T>.compareAndSetField(expectedValue: T, newValue: T): Boolean
 
 /**
- * Compares the value of the field referenced by [this] to [expectedValue], and if they are equal,
- * atomically replaces it with [newValue].
+ * Atomically sets the value of the field referenced by [this] to the [new value][newValue]
+ * if the current value equals the [expected value][expectedValue] and returns the old value of the field in any case.
+ *
+ * Comparison is done by reference or value depending on field representation.
+ *
+ * Provides sequential consistent ordering guarantees and never fails spuriously.
  *
  * For now, it can be used only within the same file, where property is defined.
  * Check https://youtrack.jetbrains.com/issue/KT-55426 for details.
- *
- * Comparison is done by reference or value depending on field representation.
  *
  * If [this] is not a compile-time known reference to the property with [Volatile] annotation [IllegalArgumentException]
  * would be thrown.
  *
  * If property referenced by [this] has nontrivial setter it will not be called.
- *
- * Returns the field value before operation.
- *
  */
 @PublishedApi
 @TypedIntrinsic(IntrinsicType.COMPARE_AND_EXCHANGE_FIELD)
 internal external fun <T> KMutableProperty0<T>.compareAndExchangeField(expectedValue: T, newValue: T): T
 
 /**
- * Atomically sets value of the field referenced by [this] to [newValue] and returns old field value.
+ * Atomically sets the value of the field referenced by [this] to the [new value][newValue] and returns the old value of the field.
+ *
+ * Provides sequential consistent ordering guarantees.
  *
  * For now, it can be used only within the same file, where property is defined.
  * Check https://youtrack.jetbrains.com/issue/KT-55426 for details.
@@ -338,9 +377,10 @@ internal external fun <T> KMutableProperty0<T>.compareAndExchangeField(expectedV
 @TypedIntrinsic(IntrinsicType.GET_AND_SET_FIELD)
 internal external fun <T> KMutableProperty0<T>.getAndSetField(newValue: T): T
 
-
 /**
- * Atomically increments value of the field referenced by [this] by [delta] and returns old field value.
+ * Atomically adds the given [delta] to the value of the field referenced by [this] and returns the old value of the field.
+ *
+ * Provides sequential consistent ordering guarantees.
  *
  * For now, it can be used only within the same file, where property is defined.
  * Check https://youtrack.jetbrains.com/issue/KT-55426 for details.
@@ -355,7 +395,9 @@ internal external fun <T> KMutableProperty0<T>.getAndSetField(newValue: T): T
 internal external fun KMutableProperty0<Short>.getAndAddField(delta: Short): Short
 
 /**
- * Atomically increments value of the field referenced by [this] by [delta] and returns old field value.
+ * Atomically adds the given [delta] to the value of the field referenced by [this] and returns the old value of the field.
+ *
+ * Provides sequential consistent ordering guarantees.
  *
  * For now, it can be used only within the same file, where property is defined.
  * Check https://youtrack.jetbrains.com/issue/KT-55426 for details.
@@ -370,7 +412,9 @@ internal external fun KMutableProperty0<Short>.getAndAddField(delta: Short): Sho
 internal external fun KMutableProperty0<Int>.getAndAddField(newValue: Int): Int
 
 /**
- * Atomically increments value of the field referenced by [this] by [delta] and returns old field value.
+ * Atomically adds the given [delta] to the value of the field referenced by [this] and returns the old value of the field.
+ *
+ * Provides sequential consistent ordering guarantees.
  *
  * For now, it can be used only within the same file, where property is defined.
  * Check https://youtrack.jetbrains.com/issue/KT-55426 for details.
@@ -385,7 +429,9 @@ internal external fun KMutableProperty0<Int>.getAndAddField(newValue: Int): Int
 internal external fun KMutableProperty0<Long>.getAndAddField(newValue: Long): Long
 
 /**
- * Atomically increments value of the field referenced by [this] by [delta] and returns old field value.
+ * Atomically adds the given [delta] to the value of the field referenced by [this] and returns the old value of the field.
+ *
+ * Provides sequential consistent ordering guarantees.
  *
  * For now, it can be used only within the same file, where property is defined.
  * Check https://youtrack.jetbrains.com/issue/KT-55426 for details.

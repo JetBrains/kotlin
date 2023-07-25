@@ -83,6 +83,8 @@ internal class IntrinsicType {
         const val WORKER_EXECUTE                = "WORKER_EXECUTE"
 
         // Atomic
+        const val ATOMIC_GET_FIELD              = "ATOMIC_GET_FIELD"
+        const val ATOMIC_SET_FIELD              = "ATOMIC_SET_FIELD"
         const val COMPARE_AND_SET_FIELD         = "COMPARE_AND_SET_FIELD"
         const val COMPARE_AND_EXCHANGE_FIELD    = "COMPARE_AND_EXCHANGE_FIELD"
         const val GET_AND_SET_FIELD             = "GET_AND_SET_FIELD"
