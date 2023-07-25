@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution.Companion.DIST
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
@@ -21,8 +20,6 @@ abstract class KotlinJsIrLibraryGradlePluginITBase : KGPBaseTest() {
 
     override val defaultBuildOptions = super.defaultBuildOptions.copy(
         jsOptions = BuildOptions.JsOptions(
-            useIrBackend = true,
-            jsCompilerType = KotlinJsCompilerType.IR
         )
     )
 

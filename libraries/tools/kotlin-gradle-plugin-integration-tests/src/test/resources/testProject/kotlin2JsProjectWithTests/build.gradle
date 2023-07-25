@@ -30,12 +30,6 @@ artifacts {
 
 compileTestKotlin2Js.kotlinOptions.outputFile = "${buildDir}/kotlin2js/test/module-tests.js"
 
-if (project.findProperty("kotlin.js.useIrBackend")?.toBoolean() == true) {
-    compileKotlin2Js.kotlinOptions.freeCompilerArgs += ["-Xir-produce-klib-dir", "-Xir-only"]
-    compileTestKotlin2Js.kotlinOptions.freeCompilerArgs += ["-Xir-produce-js"]
-    compileKotlin2Js.kotlinOptions.outputFile = "${buildDir}/kotlin2js/main/"
-} else {
-    compileKotlin2Js.kotlinOptions.outputFile = "${buildDir}/kotlin2js/main/module.js"
-    compileKotlin2Js.kotlinOptions.freeCompilerArgs += "-Xforce-deprecated-legacy-compiler-usage"
-    compileTestKotlin2Js.kotlinOptions.freeCompilerArgs += "-Xforce-deprecated-legacy-compiler-usage"
-}
+compileKotlin2Js.kotlinOptions.freeCompilerArgs += ["-Xir-produce-klib-dir", "-Xir-only"]
+compileTestKotlin2Js.kotlinOptions.freeCompilerArgs += ["-Xir-produce-js"]
+compileKotlin2Js.kotlinOptions.outputFile = "${buildDir}/kotlin2js/main/"

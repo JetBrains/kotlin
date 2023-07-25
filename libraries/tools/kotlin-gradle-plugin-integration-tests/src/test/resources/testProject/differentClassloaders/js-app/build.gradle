@@ -11,6 +11,10 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-js"
 }
 
+kotlin {
+    js()
+}
+
 if (project.findProperty("mppProjectDependency") == "true") {
 
     dependencies {
@@ -27,8 +31,4 @@ if (project.findProperty("mppProjectDependency") == "true") {
         api "com.example:mpp-lib:1.0"
     }
 
-}
-
-tasks.withType(org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile) {
-    kotlinOptions.freeCompilerArgs += "-Xforce-deprecated-legacy-compiler-usage"
 }

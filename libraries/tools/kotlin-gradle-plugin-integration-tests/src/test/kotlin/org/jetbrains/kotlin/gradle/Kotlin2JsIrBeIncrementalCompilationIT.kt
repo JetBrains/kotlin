@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
@@ -38,7 +37,6 @@ class Kotlin2FirJsIrBeIncrementalCompilationIT : Kotlin2JsIrBeIncrementalCompila
 open class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
     override val defaultBuildOptions = BuildOptions(
         jsOptions = BuildOptions.JsOptions(
-            jsCompilerType = KotlinJsCompilerType.IR,
             incrementalJsKlib = true,
             incrementalJsIr = true
         ),

@@ -27,8 +27,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.targets
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
-import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.utils.toMap
 import java.util.*
@@ -202,20 +202,6 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
             "ImplementationDependenciesMetadata",
         )
 
-        // allJs
-        val expectedAllJsConfigurations = commonSourceSetsConfigurationsToCheck
-            .map { project.configurations.getByName("allJs$it") }
-
-        val actualAllJsConfigurations = expectedAllJsConfigurations
-            .filter { it.attributes.contains(KotlinJsCompilerAttribute.jsCompilerAttribute) }
-
-        assertEquals(
-            expectedAllJsConfigurations,
-            actualAllJsConfigurations,
-            "JS-only configurations should contain KotlinJsCompilerAttribute"
-        )
-
-
         // commonMain
         val actualCommonMainConfigurations = commonSourceSetsConfigurationsToCheck
             .map { project.configurations.getByName("commonMain$it") }
@@ -233,10 +219,9 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
     fun `test js IR compilation dependencies`() {
         val project = buildProjectWithMPP {
             kotlin {
-                @Suppress("DEPRECATION")
-                js(BOTH)
-                targets.withType<KotlinJsTarget> {
-                    irTarget!!.compilations.getByName("main").dependencies {
+                js()
+                targets.withType<KotlinJsIrTarget> {
+                    compilations.getByName("main").dependencies {
                         api("test:compilation-dependency")
                     }
                 }
@@ -267,8 +252,7 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
 
             kotlin {
                 jvm()
-                @Suppress("DEPRECATION")
-                js(BOTH)
+                js()
                 linuxX64("linux")
                 androidTarget()
             }
@@ -307,8 +291,7 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
         val project = buildProjectWithMPP {
             kotlin {
                 jvm()
-                @Suppress("DEPRECATION")
-                js(BOTH)
+                js()
                 linuxX64("linux")
             }
         }

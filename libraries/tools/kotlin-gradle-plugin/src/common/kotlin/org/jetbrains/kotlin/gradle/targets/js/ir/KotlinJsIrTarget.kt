@@ -10,15 +10,17 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions
-import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator.Companion.runTaskNameSuffix
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinUsageContext
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinTargetWithBinaries
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext
 import org.jetbrains.kotlin.gradle.targets.js.JsAggregatingExecutionSource
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
-import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenExec
 import org.jetbrains.kotlin.gradle.targets.js.dsl.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolverPlugin
@@ -35,7 +37,6 @@ abstract class KotlinJsIrTarget
 constructor(
     project: Project,
     platformType: KotlinPlatformType,
-    internal val mixedMode: Boolean
 ) :
     KotlinTargetWithBinaries<KotlinJsIrCompilation, KotlinJsBinaryContainer>(project, platformType),
     KotlinTargetWithTests<JsAggregatingExecutionSource, KotlinJsReportAggregatingTestRun>,
@@ -50,9 +51,6 @@ constructor(
     open var isMpp: Boolean? = null
         internal set
 
-    var legacyTarget: KotlinJsTarget? = null
-        internal set
-
     override var moduleName: String? = null
         set(value) {
             check(!isBrowserConfigured && !isNodejsConfigured) {
@@ -64,7 +62,7 @@ constructor(
     override fun createUsageContexts(producingCompilation: KotlinCompilation<*>): Set<DefaultKotlinUsageContext> {
         val usageContexts = super.createUsageContexts(producingCompilation)
 
-        if (isMpp!! || mixedMode) return usageContexts
+        if (isMpp!!) return usageContexts
 
         return usageContexts +
                 DefaultKotlinUsageContext(
@@ -77,19 +75,9 @@ constructor(
 
     internal val commonFakeApiElementsConfigurationName: String
         get() = lowerCamelCaseName(
-            if (mixedMode)
-                disambiguationClassifierInPlatform
-            else
-                disambiguationClassifier,
+            disambiguationClassifier,
             "commonFakeApiElements"
         )
-
-    val disambiguationClassifierInPlatform: String?
-        get() = if (mixedMode) {
-            disambiguationClassifier?.removeJsCompilerSuffix(KotlinJsCompilerType.IR)
-        } else {
-            disambiguationClassifier
-        }
 
     override val binaries: KotlinJsBinaryContainer
         get() = compilations.withType(KotlinJsIrCompilation::class.java)

@@ -350,6 +350,7 @@ abstract class AbstractKotlinJsPluginWrapper : KotlinBasePluginWrapper() {
     override val projectExtensionClass: KClass<out KotlinJsProjectExtension>
         get() = KotlinJsProjectExtension::class
 
+    @Suppress("DEPRECATION")
     override fun whenBuildEvaluated(project: Project) = project.runProjectConfigurationHealthCheck {
         val isJsTargetUninitialized = (project.kotlinExtension as KotlinJsProjectExtension)
             ._target == null

@@ -24,7 +24,7 @@ class KotlinWasmTargetPreset(
             project.logger.warn("New 'wasm' target is Work-in-Progress and is subject to change without notice.")
         }
 
-        val irTarget = project.objects.newInstance(KotlinJsIrTarget::class.java, project, KotlinPlatformType.wasm, false)
+        val irTarget = project.objects.newInstance(KotlinJsIrTarget::class.java, project, KotlinPlatformType.wasm)
         irTarget.isMpp = true
 
         return irTarget

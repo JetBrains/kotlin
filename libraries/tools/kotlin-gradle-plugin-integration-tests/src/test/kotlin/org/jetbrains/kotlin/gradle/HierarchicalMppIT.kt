@@ -10,7 +10,6 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.internals.MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME
 import org.jetbrains.kotlin.gradle.internals.parseKotlinSourceSetMetadataFromJson
-import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinProjectStructureMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.ModuleDependencyIdentifier
 import org.jetbrains.kotlin.gradle.plugin.mpp.SourceSetMetadataLayout
@@ -287,12 +286,11 @@ open class HierarchicalMppIT : KGPBaseTest() {
 
     @GradleTest
     @DisplayName("Works with published JS library")
-    fun testHmppWithPublishedJsBothDependency(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
+    fun testHmppWithPublishedJsIrDependency(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
         @Suppress("DEPRECATION")
         publishThirdPartyLib(
             projectName = "hierarchical-mpp-with-js-published-modules/third-party-lib",
             withGranularMetadata = true,
-            jsCompilerType = KotlinJsCompilerType.BOTH,
             gradleVersion = gradleVersion,
             localRepoDir = tempDir
         )
@@ -302,7 +300,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
                 "hierarchical-mpp-with-js-published-modules/my-lib-foo",
                 gradleVersion,
                 localRepoDir = tempDir,
-                buildOptions = defaultBuildOptions.copy(jsOptions = BuildOptions.JsOptions(jsCompilerType = KotlinJsCompilerType.IR))
+                buildOptions = defaultBuildOptions.copy(jsOptions = BuildOptions.JsOptions())
             )
         ) {
             build("publish", "assemble")
@@ -316,7 +314,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
             nativeProject(
                 projectName = "hierarchical-mpp-with-js-project-dependency",
                 gradleVersion = gradleVersion,
-                buildOptions = defaultBuildOptions.copy(jsOptions = BuildOptions.JsOptions(jsCompilerType = KotlinJsCompilerType.IR))
+                buildOptions = defaultBuildOptions.copy(jsOptions = BuildOptions.JsOptions())
             )
         ) {
             build("assemble")
@@ -385,7 +383,6 @@ open class HierarchicalMppIT : KGPBaseTest() {
     private fun publishThirdPartyLib(
         projectName: String = "third-party-lib".withPrefix,
         withGranularMetadata: Boolean,
-        jsCompilerType: KotlinJsCompilerType = KotlinJsCompilerType.IR,
         gradleVersion: GradleVersion,
         localRepoDir: Path,
         beforePublishing: TestProject.() -> Unit = { }
@@ -394,7 +391,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
             projectName = projectName,
             gradleVersion = gradleVersion,
             localRepoDir = localRepoDir,
-            buildOptions = defaultBuildOptions.copy(jsOptions = BuildOptions.JsOptions(jsCompilerType = jsCompilerType))
+            buildOptions = defaultBuildOptions.copy(jsOptions = BuildOptions.JsOptions())
         ).apply {
             beforePublishing()
 

@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
-import org.jetbrains.kotlin.gradle.testbase.TestVersions
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Test
 import kotlin.test.assertTrue
@@ -40,13 +38,6 @@ class VariantAwareDependenciesMppIT : BaseGradleIT() {
 
             testResolveAllConfigurations(subproject = innerProject.projectName) {
                 assertContains(">> :${innerProject.projectName}:runtimeClasspath --> sample-lib-nodejs-1.0.klib")
-            }
-
-            @Suppress("DEPRECATION")
-            gradleProperties().appendText(jsCompilerType(KotlinJsCompilerType.LEGACY))
-
-            testResolveAllConfigurations(subproject = innerProject.projectName, skipSetup = true) {
-                assertContains(">> :${innerProject.projectName}:runtimeClasspath --> sample-lib-nodejs-1.0.jar")
             }
         }
     }

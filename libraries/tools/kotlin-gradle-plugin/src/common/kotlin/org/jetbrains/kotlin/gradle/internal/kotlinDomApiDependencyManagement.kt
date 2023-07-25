@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
-import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.npm.SemVer
 
@@ -79,10 +78,6 @@ private fun KotlinTarget.addKotlinDomApiDependency(
     dependencies: DependencyHandler,
     coreLibrariesVersion: Provider<String>
 ) {
-    if (this is KotlinJsTarget) {
-        irTarget?.addKotlinDomApiDependency(configurations, dependencies, coreLibrariesVersion)
-    }
-
     compilations.configureEach { compilation ->
         if (compilation.platformType != KotlinPlatformType.js) return@configureEach
         if (compilation !is KotlinJsIrCompilation) return@configureEach

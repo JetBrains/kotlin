@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -18,15 +17,9 @@ import org.junit.jupiter.api.condition.OS
 @OsCondition(supportedOn = [OS.LINUX, OS.MAC, OS.WINDOWS], enabledOnCI = [OS.LINUX, OS.MAC, OS.WINDOWS])
 @NativeGradlePluginTests
 class JsSetupConfigurationCacheIT : KGPBaseTest() {
-    @Suppress("DEPRECATION")
-    private val defaultJsOptions = BuildOptions.JsOptions(
-        useIrBackend = true,
-        jsCompilerType = KotlinJsCompilerType.IR
-    )
 
     override val defaultBuildOptions =
         super.defaultBuildOptions.copy(
-            jsOptions = defaultJsOptions,
             configurationCache = true,
             configurationCacheProblems = BaseGradleIT.ConfigurationCacheProblems.FAIL
         )

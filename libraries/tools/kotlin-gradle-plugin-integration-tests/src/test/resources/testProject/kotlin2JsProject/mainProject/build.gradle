@@ -25,9 +25,7 @@ compileKotlin2Js.kotlinOptions.outputFile = "${projectDir}/web/js/app.js"
 compileKotlin2Js.kotlinOptions.suppressWarnings = true
 compileKotlin2Js.kotlinOptions.verbose = true
 
-if (project.findProperty("kotlin.js.useIrBackend")?.toBoolean() == true) {
-    compileKotlin2Js.kotlinOptions.freeCompilerArgs += ["-Xir-produce-js"]
-}
+compileKotlin2Js.kotlinOptions.freeCompilerArgs += ["-Xir-produce-js"]
 
 build.doLast {
     configurations.compile.each { File file ->

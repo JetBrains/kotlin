@@ -14,14 +14,11 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinTargetWithBinaries
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
-import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenExec
 import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.DEVELOPMENT
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.PRODUCTION
-import org.jetbrains.kotlin.gradle.targets.js.subtargets.DefaultDistribution
-import org.jetbrains.kotlin.gradle.targets.js.subtargets.KotlinJsSubTarget
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.createDefaultDistribution
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
@@ -82,22 +79,7 @@ constructor(
             return compilation.binaries.executableIrInternal(compilation)
         }
 
-        if (target is KotlinJsTarget) {
-            target.irTarget
-                ?.let { throw IllegalStateException("Can't use `executable()` with 'both' compiler type") }
-
-            target.whenBrowserConfigured {
-                (this as KotlinJsSubTarget).produceExecutable()
-            }
-
-            target.whenNodejsConfigured {
-                (this as KotlinJsSubTarget).produceExecutable()
-            }
-
-            return compilation.binaries.executableLegacyInternal(compilation)
-        }
-
-        throw GradleException("Target should be either KotlinJsTarget or KotlinJsIrTarget, but found $target")
+        throw GradleException("Target should be KotlinJsIrTarget, but found $target")
     }
 
     internal fun executableIrInternal(compilation: KotlinJsCompilation): List<JsBinary> = createBinaries(

@@ -13,7 +13,6 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties.COMPILE_INCREMENTAL_WITH_ARTIFACT_TRANSFORM
 import org.jetbrains.kotlin.gradle.model.ModelContainer
 import org.jetbrains.kotlin.gradle.model.ModelFetcherBuildAction
-import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.*
@@ -248,13 +247,12 @@ abstract class BaseGradleIT {
     }
 
     // the second parameter is for using with ToolingAPI, that do not like --daemon/--no-daemon  options at all
-    data class BuildOptions constructor(
+    data class BuildOptions(
         val withDaemon: Boolean = false,
         val daemonOptionSupported: Boolean = true,
         val incremental: Boolean? = null,
         val incrementalJs: Boolean? = null,
         val incrementalJsKlib: Boolean? = null,
-        val jsIrBackend: Boolean? = null,
         val androidHome: File? = null,
         val javaHome: File? = null,
         val gradleUserHome: File? = null,
@@ -269,7 +267,6 @@ abstract class BaseGradleIT {
         val withBuildCache: Boolean = false,
         val kaptOptions: KaptOptions? = null,
         val parallelTasksInProject: Boolean = false,
-        val jsCompilerType: KotlinJsCompilerType? = null,
         val configurationCache: Boolean = false,
         val configurationCacheProblems: ConfigurationCacheProblems = ConfigurationCacheProblems.FAIL,
         val warningMode: WarningMode = WarningMode.Fail,
@@ -881,9 +878,6 @@ abstract class BaseGradleIT {
             }
             options.incrementalJs?.let { add("-Pkotlin.incremental.js=$it") }
             options.incrementalJsKlib?.let { add("-Pkotlin.incremental.js.klib=$it") }
-            options.jsIrBackend?.let { add("-Pkotlin.js.useIrBackend=$it") }
-            // because we have legacy compiler tests, we need nowarn for compiler testing
-            add("-Pkotlin.js.compiler.nowarn=true")
             options.usePreciseJavaTracking?.let { add("-Pkotlin.incremental.usePreciseJavaTracking=$it") }
             options.useClasspathSnapshot?.let { add("-P${COMPILE_INCREMENTAL_WITH_ARTIFACT_TRANSFORM.property}=$it") }
             options.androidGradlePluginVersion?.let { add("-Pandroid_tools_version=$it") }
@@ -914,10 +908,6 @@ abstract class BaseGradleIT {
             }
 
             if (options.parallelTasksInProject) add("--parallel") else add("--no-parallel")
-
-            options.jsCompilerType?.let {
-                add("-Pkotlin.js.compiler=$it")
-            }
 
             if (options.dryRun) {
                 add("--dry-run")

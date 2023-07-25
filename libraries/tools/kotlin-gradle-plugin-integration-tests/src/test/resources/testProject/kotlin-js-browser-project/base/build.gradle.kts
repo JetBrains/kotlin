@@ -1,4 +1,4 @@
-import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType.BOTH as BOTH_TYPE
+import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType.IR as IR_TYPE
 
 plugins {
     kotlin("js")
@@ -10,18 +10,11 @@ dependencies {
 
 @Suppress("DEPRECATION")
 kotlin {
-    js("both")
-    js(BOTH)
-    js(BOTH_TYPE) {
+    js("ir")
+    js(IR)
+    js(IR_TYPE) {
         useCommonJs()
         browser {
         }
     }
-}
-
-tasks.named<org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile>("compileKotlinJsLegacy") {
-    kotlinOptions.freeCompilerArgs += "-Xforce-deprecated-legacy-compiler-usage"
-}
-tasks.named<org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile>("compileTestKotlinJsLegacy") {
-    kotlinOptions.freeCompilerArgs += "-Xforce-deprecated-legacy-compiler-usage"
 }

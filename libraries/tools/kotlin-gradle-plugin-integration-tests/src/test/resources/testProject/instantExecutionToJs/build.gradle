@@ -20,22 +20,12 @@ dependencies {
     testImplementation "org.jetbrains.kotlin:kotlin-test-js:$kotlin_version"
 }
 
-def jsUseIrBackend = project.findProperty("kotlin.js.useIrBackend")?.toBoolean() == true
-
 tasks.named("compileKotlinJs", Kotlin2JsCompile) {
     it.kotlinOptions.outputFile = "${buildDir}/kotlin2js/main/module.js"
-    if (jsUseIrBackend) {
-        it.kotlinOptions.freeCompilerArgs += ["-Xir-produce-klib-dir", "-Xir-only"]
-    } else {
-        it.kotlinOptions.freeCompilerArgs += "-Xforce-deprecated-legacy-compiler-usage"
-    }
+    it.kotlinOptions.freeCompilerArgs += ["-Xir-produce-klib-dir", "-Xir-only"]
 }
 
 tasks.named("compileTestKotlinJs", Kotlin2JsCompile) {
     it.kotlinOptions.outputFile = "${buildDir}/kotlin2js/test/module-tests.js"
-    if (jsUseIrBackend) {
-        it.kotlinOptions.freeCompilerArgs += ["-Xir-produce-js"]
-    } else {
-        it.kotlinOptions.freeCompilerArgs += "-Xforce-deprecated-legacy-compiler-usage"
-    }
+    it.kotlinOptions.freeCompilerArgs += ["-Xir-produce-js"]
 }

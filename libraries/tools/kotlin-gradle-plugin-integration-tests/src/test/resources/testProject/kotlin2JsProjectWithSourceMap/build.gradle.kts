@@ -12,7 +12,7 @@ repositories {
     mavenCentral()
 }
 
-allprojects {
+subprojects {
     apply(plugin = "org.jetbrains.kotlin.js")
 
     repositories {
@@ -21,41 +21,26 @@ allprojects {
     }
 }
 
-val useIrBackend = (findProperty("kotlin.js.useIrBackend") as? String?)?.toBoolean() ?: false
-
-val backend = if (useIrBackend) {
-    KotlinJsCompilerType.IR
-} else {
-    KotlinJsCompilerType.LEGACY
+kotlin {
+    js()
 }
 
 project("lib") {
     kotlin {
-        js(backend) {
+        js {
             browser()
         }
-    }
-
-    tasks.withType<KotlinJsCompile>() {
-        kotlinOptions.freeCompilerArgs += "-Xforce-deprecated-legacy-compiler-usage"
     }
 }
 
 project("app") {
     kotlin {
-        js(backend) {
+        js {
             browser()
             binaries.executable()
         }
         dependencies {
             implementation(project(":lib"))
-        }
-    }
-
-    tasks.withType<KotlinJsCompile>() {
-        kotlinOptions {
-            sourceMap = true
-            freeCompilerArgs += "-Xforce-deprecated-legacy-compiler-usage"
         }
     }
 }

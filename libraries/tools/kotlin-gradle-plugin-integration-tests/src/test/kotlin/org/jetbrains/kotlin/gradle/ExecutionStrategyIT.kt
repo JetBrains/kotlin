@@ -21,6 +21,12 @@ class ExecutionStrategyJsIT : ExecutionStrategyIT() {
             ) +
                     """
                     |
+                    |kotlin {
+                    |    js {
+                    |    
+                    |    }
+                    |}
+                    |
                     |afterEvaluate {
                     |    tasks.named('compileKotlinJs') {
                     |        kotlinOptions.outputFile = "${'$'}{project.projectDir}/web/js/"

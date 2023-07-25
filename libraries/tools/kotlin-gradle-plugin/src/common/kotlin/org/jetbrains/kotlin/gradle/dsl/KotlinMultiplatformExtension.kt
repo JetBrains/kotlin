@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinaliseDsl
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.KotlinHierarchyDslImpl
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import javax.inject.Inject
@@ -33,12 +32,13 @@ abstract class KotlinMultiplatformExtension
 
     final override val targets: NamedDomainObjectCollection<KotlinTarget> = project.container(KotlinTarget::class.java)
 
+    @Deprecated("Because only IR compiler is left, no more necessary to know about compiler type in properties")
+    override val compilerTypeFromProperties: KotlinJsCompilerType? = null
+
     internal suspend fun awaitTargets(): NamedDomainObjectCollection<KotlinTarget> {
         AfterFinaliseDsl.await()
         return targets
     }
-
-    override val compilerTypeFromProperties: KotlinJsCompilerType? = project.kotlinPropertiesProvider.jsCompiler
 
     private val presetExtension = project.objects.newInstance(
         DefaultTargetsFromPresetExtension::class.java,
