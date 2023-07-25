@@ -15,13 +15,14 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
+import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.utils.configureExperimentalTryK2
 
 @TargetPresetsDeprecation
 class KotlinJvmWithJavaTargetPreset(
     private val project: Project
-) : KotlinTargetPreset<KotlinWithJavaTarget<KotlinJvmOptions, KotlinJvmCompilerOptions>> {
+) : InternalKotlinTargetPreset<KotlinWithJavaTarget<KotlinJvmOptions, KotlinJvmCompilerOptions>> {
 
     override fun getName(): String = PRESET_NAME
 

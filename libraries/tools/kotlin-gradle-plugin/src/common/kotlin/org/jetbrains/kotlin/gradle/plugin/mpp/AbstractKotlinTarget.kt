@@ -188,10 +188,6 @@ abstract class AbstractKotlinTarget(
     )
     override var preset: KotlinTargetPreset<out KotlinTarget>? = null
         internal set
-
-    override fun warnAboutCreationOfTargetFromPreset() {
-        project.reportDiagnostic(KotlinToolingDiagnostics.CreateTarget())
-    }
 }
 
 private val publishedConfigurationNameSuffix = "-published"

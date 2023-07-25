@@ -8,15 +8,14 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.KotlinAndroidPlugin.Companion.dynamicallyApplyWhenAndroidPluginIsApplied
-import org.jetbrains.kotlin.gradle.plugin.KotlinTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.TargetPresetsDeprecation
-
+import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
 import javax.inject.Inject
 
 @TargetPresetsDeprecation
 abstract class KotlinAndroidTargetPreset @Inject constructor(
     private val project: Project
-) : KotlinTargetPreset<KotlinAndroidTarget> {
+) : InternalKotlinTargetPreset<KotlinAndroidTarget> {
 
     override fun getName(): String = PRESET_NAME
 

@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.KotlinHierarchyDslImpl
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
+import org.jetbrains.kotlin.gradle.targets.android.internal.internal
 import javax.inject.Inject
 
 @Suppress("DEPRECATION")
@@ -145,7 +147,7 @@ abstract class KotlinMultiplatformExtension
         preset: KotlinTargetPreset<T>,
         name: String = preset.name,
         configure: T.() -> Unit = { },
-    ): T = configureOrCreate(name, preset, configure)
+    ): T = configureOrCreate(name, preset.internal, configure)
 
     internal fun <T : KotlinTarget> targetFromPresetInternal(
         preset: KotlinTargetPreset<T>,
@@ -296,7 +298,7 @@ internal abstract class DefaultTargetsFromPresetExtension @Inject constructor(
         configureAction: T.() -> Unit,
     ): T {
         warnAboutFromPresetDeprecation()
-        return targetsContainer().configureOrCreate(name, preset, configureAction)
+        return targetsContainer().configureOrCreate(name, preset.internal, configureAction)
     }
 
     override fun <T : KotlinTarget> fromPreset(
@@ -313,7 +315,7 @@ private fun KotlinTarget.isProducedFromPreset(kotlinTargetPreset: KotlinTargetPr
 
 internal fun <T : KotlinTarget> KotlinTargetsContainerWithPresets.configureOrCreate(
     targetName: String,
-    targetPreset: KotlinTargetPreset<T>,
+    targetPreset: InternalKotlinTargetPreset<T>,
     configure: T.() -> Unit,
 ): T {
     val existingTarget = targets.findByName(targetName)

@@ -20,17 +20,5 @@ annotation class TargetPresetsDeprecation
 
 @TargetPresetsDeprecation
 interface KotlinTargetPreset<T: KotlinTarget> : Named {
-    @InternalKotlinGradlePluginApi
-    fun createTargetInternal(name: String): T
-
-    @OptIn(InternalKotlinGradlePluginApi::class)
-    @Deprecated(
-        PRESETS_API_IS_DEPRECATED_MESSAGE,
-        level = DeprecationLevel.WARNING,
-    )
-    fun createTarget(name: String): T {
-        val target = createTargetInternal(name)
-        target.warnAboutCreationOfTargetFromPreset()
-        return target
-    }
+    fun createTarget(name: String): T
 }
