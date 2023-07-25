@@ -653,8 +653,8 @@ private fun CompilerConfiguration.assertUniqueFileNameAndPackage(moduleName: Str
           |Note, that if the difference is only in letter cases, it also could lead to a clash of the compiled artifacts
     """.trimMargin()
 
-    irMessageLogger.report(IrMessageLogger.Severity.ERROR, message, null)
-    throw CompilationErrorException(message)
+    // It will be a warning until K2
+    irMessageLogger.report(IrMessageLogger.Severity.WARNING, message, null)
 }
 
 fun serializeModuleIntoKlib(

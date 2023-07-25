@@ -363,8 +363,7 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
     @GradleTest
     fun testPerFileProjectWithResultFilesClash(gradleVersion: GradleVersion) {
         project("kotlin-js-invalid-per-file-project", gradleVersion) {
-            buildAndFail("compileKotlinJs") {
-                assertTasksFailed(":compileKotlinJs")
+            build("compileKotlinJs") {
                 assertOutputContains("""
                    |There are clashes of file names and their package names in module 'kotlin-js-invalid-per-file-project'.
                    |  * Next files have package "com.example" and name "base":
