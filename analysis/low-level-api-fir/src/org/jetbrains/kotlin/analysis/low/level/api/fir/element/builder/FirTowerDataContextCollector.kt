@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -115,17 +116,33 @@ internal class FirTowerDataContextAllElementsCollector : FirResolveContextCollec
  * - a statement in a block
  * - an initializer of a declaration
  * - an expression in when entry
+ * - a right operand in binary expression with operator `&&` or `||`
  *
  * Otherwise, invokes this function recursively on the parent.
  */
-private tailrec fun PsiElement.closestParentExpressionWithSameContextOrSelf(): KtExpression? =
-    when {
-        this is KtExpression && (parent is KtBlockExpression || parent is KtDeclarationWithInitializer || isExpressionInWhenEntry) -> this
-        else -> parent?.closestParentExpressionWithSameContextOrSelf()
+private tailrec fun PsiElement.closestParentExpressionWithSameContextOrSelf(): KtExpression? {
+    if (this is KtExpression) {
+        if (
+            parent is KtBlockExpression ||
+            parent is KtDeclarationWithInitializer ||
+            isExpressionInWhenEntry ||
+            isRightOperandInBinaryLogicOperation
+        ) return this
     }
+
+    return parent?.closestParentExpressionWithSameContextOrSelf()
+}
 
 private val KtExpression.isExpressionInWhenEntry: Boolean
     get() = this == (parent as? KtWhenEntry)?.expression
+
+private val KtExpression.isRightOperandInBinaryLogicOperation: Boolean
+    get() {
+        val binaryLogicOperation = (parent as? KtBinaryExpression)
+            ?.takeIf { it.operationToken == KtTokens.ANDAND || it.operationToken == KtTokens.OROR }
+
+        return this == binaryLogicOperation?.right
+    }
 
 /**
  * Returns true if [element] is considered to be a part of [this] class header.
