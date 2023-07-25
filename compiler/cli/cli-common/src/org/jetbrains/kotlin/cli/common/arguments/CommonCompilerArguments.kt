@@ -46,8 +46,12 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         description = "Provide source compatibility with the specified version of Kotlin"
     )
     var languageVersion: String? = null
-        set(value) {
-            if(value == "2.0") throw Exception("Someone set lv 2.0!")
+        set(value){
+            println("===")
+            println(value)
+            println(Thread.dumpStack())
+
+//            if(value == "1.9") throw Exception("Good - Someone set lv 1.9!")
             checkFrozen()
             field = if (value.isNullOrEmpty()) null else value
         }
