@@ -16,5 +16,9 @@ abstract class AbstractIncrementalK1JvmJpsTest(
             additionalCommandLineArguments = additionalCommandLineArguments + listOf("-language-version=1.9")
         }
         super.updateCommandLineArguments(arguments)
+        if (KotlinVersion.CURRENT.major >= 2) {
+//            arguments.languageVersion = "1.9"
+            additionalCommandLineArguments = additionalCommandLineArguments + listOf("-language-version=1.9")
+        }
     }
 }
