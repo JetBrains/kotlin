@@ -676,28 +676,15 @@ class Fir2IrClassifierStorage(
 
         if (components.configuration.allowNonCachedDeclarations) {
             val firTypeParameterOwnerSymbol = firTypeParameter.containingDeclarationSymbol
-
             val firTypeParameterOwner = firTypeParameterOwnerSymbol.fir as FirTypeParameterRefsOwner
             val index = firTypeParameterOwner.typeParameters.indexOf(firTypeParameter).also { check(it >= 0) }
 
-            with(firTypeParameter) {
-                val symbol = IrTypeParameterSymbolImpl()
-                convertWithOffsets { startOffset, endOffset ->
-                    irFactory.createTypeParameter(
-                        startOffset, endOffset,
-                        firTypeParameter.computeIrOrigin(),
-                        name,
-                        symbol,
-                        variance,
-                        if (index < 0) 0 else index,
-                        isReified
-                    ).apply {
-                        superTypes = firTypeParameter.bounds.map { it.toIrType(typeConverter) }
-                    }
-                }
+            val isSetter = firTypeParameterOwner is FirPropertyAccessor && firTypeParameterOwner.isSetter
+            val conversionTypeOrigin = if (isSetter) ConversionTypeOrigin.SETTER else ConversionTypeOrigin.DEFAULT
 
-                return symbol
-            }
+            return createIrTypeParameterWithoutBounds(firTypeParameter, index, IrTypeParameterSymbolImpl(), conversionTypeOrigin).apply {
+                superTypes = firTypeParameter.bounds.map { it.toIrType(typeConverter) }
+            }.symbol
         }
 
         error("Cannot find cached type parameter by FIR symbol: ${firTypeParameterSymbol.name} of the owner: ${firTypeParameter.containingDeclarationSymbol}")
