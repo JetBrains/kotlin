@@ -431,21 +431,30 @@ fun IssueInfo.setDefaultMetadata() {
     val oldTargetVersions = fields["Target versions"]?.cast<JsonArray?>()
         ?.takeIf { it.isNotEmpty() }
         ?.mapChildrenAs<JsonObject, _> { it.getChildAs<JsonPrimitive>("name").content }
+    val oldSubsystems = fields["Subsystems"]?.cast<JsonArray?>()
+        ?.takeIf { it.isNotEmpty() }
+        ?.mapChildrenAs<JsonObject, _> { it.getChildAs<JsonPrimitive>("name").content }
 
-    if (oldState != "Submitted" && oldPriority != null && oldTargetVersions != null) {
+    if (
+        oldState != "Submitted" &&
+        oldPriority != null &&
+        oldTargetVersions != null &&
+        oldSubsystems != null
+    ) {
         return
     }
 
     val newState = oldState?.takeIf { it != "Submitted" } ?: NEW_ISSUE_STATE
     val newPriority = oldPriority ?: NEW_ISSUE_PRIORITY
     val newTargetVersions = oldTargetVersions ?: NEW_ISSUE_TARGET_VERSIONS
+    val newSubsystems = oldSubsystems ?: NEW_ISSUE_SUBSYSTEMS
 
     try {
         postJson(
             "https://youtrack.jetbrains.com/api/issues/KT-$numberInProject?fields=customFields(name,value(name))",
             API_HEADERS,
             mapOf(
-                buildIssueCustomFields(newState, newPriority, newTargetVersions),
+                buildIssueCustomFields(newState, newPriority, newTargetVersions, newSubsystems),
             ),
         ).also(::println)
     } catch (e: IOException) {

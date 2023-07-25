@@ -18,11 +18,13 @@ private const val INSERTION_MARKER = "//<::>"
 const val NEW_ISSUE_STATE = "Open"
 const val NEW_ISSUE_PRIORITY = "Minor"
 val NEW_ISSUE_TARGET_VERSIONS = listOf("2.0-M1")
+val NEW_ISSUE_SUBSYSTEMS = listOf("Frontend. Checkers")
 
 fun buildIssueCustomFields(
-    state: String,
-    priority: String,
-    targetVersions: List<String>,
+    state: String = NEW_ISSUE_STATE,
+    priority: String = NEW_ISSUE_PRIORITY,
+    targetVersions: List<String> = NEW_ISSUE_TARGET_VERSIONS,
+    subsystems: List<String> = NEW_ISSUE_SUBSYSTEMS,
 ) = "customFields" to listOf(
     mapOf(
         "name" to "State",
@@ -45,6 +47,13 @@ fun buildIssueCustomFields(
             mapOf("name" to it)
         },
     ),
+    mapOf(
+        "name" to "Subsystems",
+        "\$type" to "MultiOwnedIssueCustomField",
+        "value" to subsystems.map {
+            mapOf("name" to it)
+        },
+    ),
 )
 
 private fun createNewKotlinIssue(summary: String, description: String, tags: List<String>): IssueInfo {
@@ -58,16 +67,27 @@ private fun createNewKotlinIssue(summary: String, description: String, tags: Lis
             "summary" to summary,
             "tags" to tags.map { mapOf("id" to it) },
             "description" to description,
-            buildIssueCustomFields(NEW_ISSUE_STATE, NEW_ISSUE_PRIORITY, NEW_ISSUE_TARGET_VERSIONS)
+            // For some reason, while creating an issue only the target
+            // versions are set, and the issue state and the priority
+            // are left undefined.
+            buildIssueCustomFields()
         ),
     ).also(::println)
 
     val id = "\"id\":\"([^\"]*)\"".toRegex().find(result)?.groupValues?.last()
         ?: error("No `id` found in the issue creation response")
-    val numberInProcess = "\"numberInProject\":(\\d+)".toRegex().find(result)?.groupValues?.last()?.toLong()
+    val numberInProject = "\"numberInProject\":(\\d+)".toRegex().find(result)?.groupValues?.last()?.toLong()
         ?: error("No `id` found in the issue creation response")
 
-    return IssueInfo(id, numberInProcess)
+    postJson(
+        "https://youtrack.jetbrains.com/api/issues/KT-$numberInProject?fields=customFields(name,value(name))",
+        API_HEADERS,
+        mapOf(
+            buildIssueCustomFields(),
+        ),
+    ).also(::println)
+
+    return IssueInfo(id, numberInProject)
 }
 
 private operator fun File.div(name: String) = child(name)
@@ -406,6 +426,9 @@ private val mutableKnownDisappearedDiagnostics = mutableMapOf(
     "EXPRESSION_EXPECTED" to IssueInfo("25-4612630", 60006),
     "ACCIDENTAL_OVERRIDE" to IssueInfo("25-4536964", 59380),
     "CONFLICTING_INHERITED_JVM_DECLARATIONS" to IssueInfo("25-4537013", 59428),
+    "NO_CONSTRUCTOR" to IssueInfo("25-4702764", 60683),
+    "SUPERTYPE_INITIALIZED_IN_INTERFACE" to IssueInfo("25-4702766", 60684),
+    "DEPRECATION" to IssueInfo("25-4702763", 60682),
     //<::>knownDisappearedDiagnostics
 )
 
@@ -509,6 +532,11 @@ private val mutableKnownIntroducedDiagnostics = mutableMapOf(
     "OPERATOR_MODIFIER_REQUIRED" to IssueInfo("25-4613562", 60107),
     "EXTERNAL_ENUM_ENTRY_WITH_BODY" to IssueInfo("25-4613563", 60108),
     "ACCIDENTAL_OVERRIDE" to IssueInfo("25-4614433", 60114),
+    "RETURN_NOT_ALLOWED" to IssueInfo("25-4702767", 60685),
+    "BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY" to IssueInfo("25-4702768", 60686),
+    "UNEXPECTED_SAFE_CALL" to IssueInfo("25-4702769", 60687),
+    "SYNTAX" to IssueInfo("25-4702771", 60688),
+    "DEPRECATION" to IssueInfo("25-4702813", 60689),
     //<::>knownIntroducedDiagnostics
 )
 

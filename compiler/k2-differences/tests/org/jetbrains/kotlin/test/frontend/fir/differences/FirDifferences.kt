@@ -372,12 +372,20 @@ val k1WarningsMatchingK2Errors = mapOf(
 //    "ANNOTATION_IN_WHERE_CLAUSE_WARNING" to IssueInfo("25-3281567", 46483),
 )
 
-val k1DefinitelyNonErrors = collectAllK1NonErrors() - k1WarningsMatchingK2Errors
-val k2DefinitelyNonErrors = collectAllK2NonErrors()
+val commonWarningsToBeTreatedLikeErrors = setOf(
+    // The majority of tests check DEPRECATION, so
+    // DEPRECATION_ERROR stays mostly uncovered
+    "DEPRECATION",
+)
+val k1WarningsToBeTreatedLikeErrors = commonWarningsToBeTreatedLikeErrors
+val k2WarningsToBeTreatedLikeErrors = commonWarningsToBeTreatedLikeErrors
+
+val k1DefinitelyNonErrors = collectAllK1NonErrors() - k1WarningsMatchingK2Errors - k1WarningsToBeTreatedLikeErrors
+val k2DefinitelyNonErrors = collectAllK2NonErrors() - k2WarningsToBeTreatedLikeErrors
 
 val k1JvmDefinitelyNonErrors = collectFromFieldsOf(ErrorsJvm::class, instance = null, collector = ::getErrorFromFieldValue)
 
-val k2KnownErrors = collectAllK2Errors()
+val k2KnownErrors = collectAllK2Errors() + k2WarningsToBeTreatedLikeErrors
 
 val ParsedCodeMetaInfo.isProbablyK1Error get() = !tag.startsWith("DEBUG_INFO_") && tag !in k1DefinitelyNonErrors
 val ParsedCodeMetaInfo.isProbablyK2Error get() = !tag.startsWith("DEBUG_INFO_") && tag !in k2DefinitelyNonErrors
