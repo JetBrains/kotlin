@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.test.services.libraryProvider
 
 class JsIrDeserializerFacade(
     testServices: TestServices,
-    private val firstTimeCompilation: Boolean,
+    private val firstTimeCompilation: Boolean = true,
 ) : DeserializerFacade<BinaryArtifacts.KLib, IrBackendInput>(testServices, ArtifactKinds.KLib, BackendKinds.DeserializedIrBackend) {
 
     override fun shouldRunAnalysis(module: TestModule): Boolean {

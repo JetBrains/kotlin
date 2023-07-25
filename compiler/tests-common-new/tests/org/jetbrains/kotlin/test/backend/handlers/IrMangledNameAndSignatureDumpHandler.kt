@@ -161,7 +161,8 @@ class IrMangledNameAndSignatureDumpHandler(
     }
 
     override fun processModule(module: TestModule, info: IrBackendInput) {
-        if (DUMP_SIGNATURES !in module.directives) return
+        if (DUMP_SIGNATURES !in module.directives ||
+            module.shouldBeDisabledForDeserializedIr) return
 
         dumpModuleKotlinLike(
             module,
@@ -186,6 +187,8 @@ class IrMangledNameAndSignatureDumpHandler(
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
+        if (testServices.moduleStructure.modules.any { it.shouldBeDisabledForDeserializedIr })
+            return // don't check, don't remove testData
         if (dumper.isEmpty()) {
             assertions.assertFileDoesntExist(expectedFile, DUMP_SIGNATURES)
             return

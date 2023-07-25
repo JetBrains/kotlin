@@ -1,5 +1,7 @@
 // FIR_IDENTICAL
 // ISSUE: KT-65771
+// SKIP_KLIB_TEST
+// REASON: KT-68988
 
 // FILE: b.kt
 package b

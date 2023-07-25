@@ -92,7 +92,7 @@ class IrTextDumpHandler(
     override fun processModule(module: TestModule, info: IrBackendInput) {
         byteCodeListingEnabled = byteCodeListingEnabled || CHECK_BYTECODE_LISTING in module.directives
 
-        if (DUMP_IR !in module.directives) return
+        if (DUMP_IR !in module.directives || module.shouldBeDisabledForDeserializedIr) return
 
         val irBuiltins = info.irModuleFragment.irBuiltins
 
@@ -150,6 +150,8 @@ class IrTextDumpHandler(
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         val moduleStructure = testServices.moduleStructure
+        if (moduleStructure.modules.any { it.shouldBeDisabledForDeserializedIr })
+            return // don't check, don't remove testData
         val defaultExpectedFile = moduleStructure.originalTestDataFiles.first()
             .withExtension(moduleStructure.modules.first().getDumpExtension())
         checkOneExpectedFile(defaultExpectedFile, baseDumper.generateResultingDump())

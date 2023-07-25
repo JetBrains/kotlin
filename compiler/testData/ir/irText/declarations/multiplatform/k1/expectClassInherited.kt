@@ -2,6 +2,8 @@
 // ^^^ In FIR, declaring the same `expect` and `actual` classes in one compiler module is not possible (see KT-55177).
 
 // LANGUAGE: +MultiPlatformProjects
+// SKIP_KLIB_TEST
+// REASON: `expect class A` is not dumped after deserialization
 
 expect abstract class A protected constructor() {
     abstract fun foo()

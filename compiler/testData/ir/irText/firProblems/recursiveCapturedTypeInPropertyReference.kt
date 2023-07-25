@@ -1,5 +1,7 @@
 // WITH_STDLIB
 // FULL_JDK
+// SKIP_KLIB_TEST
+// REASON: extra @NoInfer annotation on type parameter of `fun filterIsInstance<Recursive<*>>()`
 
 interface Something
 

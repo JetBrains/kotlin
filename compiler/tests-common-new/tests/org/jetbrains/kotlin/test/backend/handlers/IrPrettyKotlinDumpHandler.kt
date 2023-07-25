@@ -50,7 +50,7 @@ class IrPrettyKotlinDumpHandler(
         get() = listOf(::FirIrDumpIdenticalChecker)
 
     override fun processModule(module: TestModule, info: IrBackendInput) {
-        if (DUMP_KT_IR !in module.directives || SKIP_KT_DUMP in module.directives) return
+        if (DUMP_KT_IR !in module.directives || SKIP_KT_DUMP in module.directives || module.shouldBeDisabledForDeserializedIr) return
         dumpModuleKotlinLike(
             module, testServices.moduleStructure.modules, info, dumper,
             KotlinLikeDumpOptions(
@@ -64,6 +64,8 @@ class IrPrettyKotlinDumpHandler(
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         val moduleStructure = testServices.moduleStructure
+        if (moduleStructure.modules.any { it.shouldBeDisabledForDeserializedIr })
+            return // don't check, don't remove testData
         val extension = computeDumpExtension(moduleStructure.modules.first(), DUMP_EXTENSION)
         val expectedFile = moduleStructure.originalTestDataFiles.first().withExtension(extension)
 
