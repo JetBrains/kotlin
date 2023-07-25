@@ -25,6 +25,11 @@ open class JvmDeclarationOrigin(
     val descriptor: DeclarationDescriptor?,
     val parametersForJvmOverload: List<KtParameter?>? = null
 ) {
+    // This property is used to get the original element in the sources, from which this declaration was generated.
+    // In the old JVM backend, it is just the PSI element. In JVM IR, it is the original IR element (before any deep copy).
+    open val originalSourceElement: Any?
+        get() = element
+
     override fun toString(): String =
         if (this == NO_ORIGIN) "NO_ORIGIN" else "origin=$originKind element=${element?.javaClass?.simpleName} descriptor=$descriptor"
 

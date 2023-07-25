@@ -20,7 +20,10 @@ class JvmIrDeclarationOrigin(
     originKind: JvmDeclarationOriginKind,
     element: PsiElement?,
     val declaration: IrDeclaration?,
-) : JvmDeclarationOrigin(originKind, element, declaration?.toIrBasedDescriptor(), null)
+) : JvmDeclarationOrigin(originKind, element, declaration?.toIrBasedDescriptor(), null) {
+    override val originalSourceElement: Any?
+        get() = (declaration as? IrAttributeContainer)?.attributeOwnerId
+}
 
 val IrDeclaration.descriptorOrigin: JvmIrDeclarationOrigin
     get() {

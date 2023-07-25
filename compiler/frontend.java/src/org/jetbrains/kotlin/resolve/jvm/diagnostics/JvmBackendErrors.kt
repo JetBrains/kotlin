@@ -39,6 +39,8 @@ object JvmBackendErrors {
 
     val NOT_ALL_MULTIFILE_CLASS_PARTS_ARE_JVM_SYNTHETIC by error0<PsiElement>()
 
+    val DUPLICATE_CLASS_NAMES by error2<PsiElement, String, String>()
+
     init {
         RootDiagnosticRendererFactory.registerFactory(KtDefaultJvmErrorMessages)
     }
@@ -78,5 +80,7 @@ object KtDefaultJvmErrorMessages : BaseDiagnosticRendererFactory() {
             JvmBackendErrors.NOT_ALL_MULTIFILE_CLASS_PARTS_ARE_JVM_SYNTHETIC,
             "All of multi-file class parts should be annotated with @JvmSynthetic if at least one of them is"
         )
+
+        map.put(JvmBackendErrors.DUPLICATE_CLASS_NAMES, "Duplicate JVM class name ''{0}'' generated from: {1}", STRING, STRING)
     }
 }

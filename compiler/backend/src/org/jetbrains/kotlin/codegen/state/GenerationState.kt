@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.resolve.diagnostics.OnDemandSuppressCache
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.JvmCompilerDeserializationConfiguration
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind.*
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
@@ -291,6 +292,12 @@ class GenerationState private constructor(
 
     var multiFieldValueClassUnboxInfo: (ClassDescriptor) -> MultiFieldValueClassUnboxInfo? = { null }
 
+    var reportDuplicateClassNameError: (JvmDeclarationOrigin, String, String) -> Unit = { origin, internalName, duplicateClasses ->
+        origin.element?.let {
+            diagnostics.report(ErrorsJvm.DUPLICATE_CLASS_NAMES.on(it, internalName, duplicateClasses))
+        }
+    }
+
     val typeApproximator: TypeApproximator? =
         if (languageVersionSettings.supportsFeature(LanguageFeature.NewInference))
             TypeApproximator(module.builtIns, languageVersionSettings)
@@ -308,7 +315,7 @@ class GenerationState private constructor(
                 },
                 {
                     // In IR backend, we have more precise information about classes and methods we are going to generate,
-                    // and report signature conflict errors in JvmSignatureClashTracker.
+                    // and report signature conflict errors in JvmSignatureClashDetector.
                     if (isIrBackend)
                         it
                     else
@@ -318,7 +325,7 @@ class GenerationState private constructor(
                             shouldGenerate = { origin -> !shouldOnlyCollectSignatures(origin) },
                         ).apply { duplicateSignatureFactory = this }
                 },
-                { BuilderFactoryForDuplicateClassNameDiagnostics(it, diagnostics) },
+                { BuilderFactoryForDuplicateClassNameDiagnostics(it, this) },
                 {
                     configuration.get(JVMConfigurationKeys.DECLARATIONS_JSON_PATH)
                         ?.let { destination -> SignatureDumpingBuilderFactory(it, File(destination)) } ?: it
