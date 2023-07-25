@@ -38,7 +38,6 @@ constructor() : AbstractExecTask<BinaryenExec>(BinaryenExec::class.java) {
 
         // Other options
         "--enable-nontrapping-float-to-int",
-        "--nominal",
         // It's turned out that it's not safe
         // "--closed-world",
 

@@ -25,7 +25,7 @@ open class BinaryenRootExtension(@Transient val rootProject: Project) : Configur
 
     var installationPath by Property(gradleHome.resolve("binaryen"))
     var downloadBaseUrl by Property("https://github.com/WebAssembly/binaryen/releases/download/")
-    var version by Property("112")
+    var version by Property("114")
 
     val setupTaskProvider: TaskProvider<out Copy>
         get() = rootProject.tasks.withType(Copy::class.java).named(BinaryenRootPlugin.INSTALL_TASK_NAME)
