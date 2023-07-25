@@ -2418,6 +2418,44 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                     public void testLambdaArgumentAndBuildeeReceiver() throws Exception {
                         runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/LambdaArgumentAndBuildeeReceiver.kt");
                     }
+
+                    @TestMetadata("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class SourceSinkFeedContexts extends AbstractLightAnalysisModeTest {
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+                        }
+
+                        public void testAllFilesPresentInSourceSinkFeedContexts() throws Exception {
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                        }
+
+                        @TestMetadata("InsideAnonymousObject.kt")
+                        public void testInsideAnonymousObject() throws Exception {
+                            runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/InsideAnonymousObject.kt");
+                        }
+
+                        @TestMetadata("InsideNestedLambda.kt")
+                        public void testInsideNestedLambda() throws Exception {
+                            runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/InsideNestedLambda.kt");
+                        }
+
+                        @TestMetadata("ThroughDelegatedLocalVariableMaterializeCase.kt")
+                        public void testThroughDelegatedLocalVariableMaterializeCase() throws Exception {
+                            runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/ThroughDelegatedLocalVariableMaterializeCase.kt");
+                        }
+
+                        @TestMetadata("ThroughDelegatedLocalVariableYieldCase.kt")
+                        public void testThroughDelegatedLocalVariableYieldCase() throws Exception {
+                            runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/ThroughDelegatedLocalVariableYieldCase.kt");
+                        }
+
+                        @TestMetadata("ThroughLocalVariable.kt")
+                        public void testThroughLocalVariable() throws Exception {
+                            runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/ThroughLocalVariable.kt");
+                        }
+                    }
                 }
             }
         }

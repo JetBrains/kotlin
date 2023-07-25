@@ -3276,6 +3276,28 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                         public void testAnonymousFunctionArgumentAndBuildeeReceiver() throws Exception {
                             runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/AnonymousFunctionArgumentAndBuildeeReceiver.kt");
                         }
+
+                        @Nested
+                        @TestMetadata("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts")
+                        @TestDataPath("$PROJECT_ROOT")
+                        public class SourceSinkFeedContexts {
+                            @Test
+                            public void testAllFilesPresentInSourceSinkFeedContexts() throws Exception {
+                                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+                            }
+
+                            @Test
+                            @TestMetadata("InsideNestedBuilderInferenceLambda.kt")
+                            public void testInsideNestedBuilderInferenceLambda() throws Exception {
+                                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/InsideNestedBuilderInferenceLambda.kt");
+                            }
+
+                            @Test
+                            @TestMetadata("ThroughDelegatedLocalVariableMaterializeCase.kt")
+                            public void testThroughDelegatedLocalVariableMaterializeCase() throws Exception {
+                                runTest("compiler/testData/diagnostics/tests/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/ThroughDelegatedLocalVariableMaterializeCase.kt");
+                            }
+                        }
                     }
                 }
             }

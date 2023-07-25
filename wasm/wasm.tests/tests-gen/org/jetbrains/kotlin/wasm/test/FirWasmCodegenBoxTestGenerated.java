@@ -1869,6 +1869,46 @@ public class FirWasmCodegenBoxTestGenerated extends AbstractFirWasmCodegenBoxTes
                     public void testLambdaArgumentAndBuildeeReceiver() throws Exception {
                         runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/LambdaArgumentAndBuildeeReceiver.kt");
                     }
+
+                    @Nested
+                    @TestMetadata("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts")
+                    @TestDataPath("$PROJECT_ROOT")
+                    public class SourceSinkFeedContexts {
+                        @Test
+                        public void testAllFilesPresentInSourceSinkFeedContexts() throws Exception {
+                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+                        }
+
+                        @Test
+                        @TestMetadata("InsideAnonymousObject.kt")
+                        public void testInsideAnonymousObject() throws Exception {
+                            runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/InsideAnonymousObject.kt");
+                        }
+
+                        @Test
+                        @TestMetadata("InsideNestedLambda.kt")
+                        public void testInsideNestedLambda() throws Exception {
+                            runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/InsideNestedLambda.kt");
+                        }
+
+                        @Test
+                        @TestMetadata("ThroughDelegatedLocalVariableMaterializeCase.kt")
+                        public void testThroughDelegatedLocalVariableMaterializeCase() throws Exception {
+                            runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/ThroughDelegatedLocalVariableMaterializeCase.kt");
+                        }
+
+                        @Test
+                        @TestMetadata("ThroughDelegatedLocalVariableYieldCase.kt")
+                        public void testThroughDelegatedLocalVariableYieldCase() throws Exception {
+                            runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/ThroughDelegatedLocalVariableYieldCase.kt");
+                        }
+
+                        @Test
+                        @TestMetadata("ThroughLocalVariable.kt")
+                        public void testThroughLocalVariable() throws Exception {
+                            runTest("compiler/testData/codegen/box/builderInference/oneParameter/oneTypeVariable/oneTypeInfoOrigin/sourceSinkFeedContexts/ThroughLocalVariable.kt");
+                        }
+                    }
                 }
             }
         }
