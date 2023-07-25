@@ -15,8 +15,11 @@ abstract class AbstractIncrementalK1JvmJpsTest(
         Thread.dumpStack()
         if (KotlinVersion.CURRENT.major >= 2) {
 //            arguments.languageVersion = "1.9"
-            additionalCommandLineArguments = additionalCommandLineArguments + listOf("-language-version=1.9")
+            throw Exception("KotlinVersion.CURRENT.major >= 2" + KotlinVersion.CURRENT.major)
+//            additionalCommandLineArguments = additionalCommandLineArguments + listOf("-language-version=1.9")
         }
+        additionalCommandLineArguments = additionalCommandLineArguments + listOf("-language-version=1.9")
+
         super.updateCommandLineArguments(arguments)
         if (KotlinVersion.CURRENT.major >= 2) {
 //            arguments.languageVersion = "1.9"
