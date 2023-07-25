@@ -5,15 +5,14 @@
 
 package org.jetbrains.kotlin.fir.serialization
 
-import org.jetbrains.kotlin.backend.common.serialization.metadata.buildKlibPackageFragment
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.library.metadata.buildKlibPackageFragment
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.SerializableStringTable

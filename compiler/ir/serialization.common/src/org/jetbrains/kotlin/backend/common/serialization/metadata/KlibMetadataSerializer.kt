@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.library.metadata.KlibMetadataHeaderFlags
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
+import org.jetbrains.kotlin.library.metadata.buildKlibPackageFragment
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.name.ClassId
@@ -21,7 +22,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.serialization.ApproximatingStringTable
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
-import org.jetbrains.kotlin.serialization.SerializableStringTable
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
@@ -291,29 +291,3 @@ fun DeclarationDescriptor.extractFileId(): Int? = when (this) {
 internal val ModuleDescriptor.packageFragmentProviderForModuleContentWithoutDependencies: PackageFragmentProvider
     get() = (this as? ModuleDescriptorImpl)?.packageFragmentProviderForModuleContentWithoutDependencies
         ?: error("Can't get a module content package fragments, it's not a ${ModuleDescriptorImpl::class.simpleName}.")
-
-fun buildKlibPackageFragment(
-    packageProto: ProtoBuf.Package,
-    classesProto: List<Pair<ProtoBuf.Class, Int>>,
-    fqName: FqName,
-    isEmpty: Boolean,
-    stringTable: SerializableStringTable,
-): ProtoBuf.PackageFragment {
-
-    val (stringTableProto, nameTableProto) = stringTable.buildProto()
-
-    return ProtoBuf.PackageFragment.newBuilder()
-        .setPackage(packageProto)
-        .addAllClass_(classesProto.map { it.first })
-        .setStrings(stringTableProto)
-        .setQualifiedNames(nameTableProto)
-        .also { packageFragment ->
-            classesProto.forEach {
-                packageFragment.addExtension(KlibMetadataProtoBuf.className, it.second )
-            }
-            packageFragment.setExtension(KlibMetadataProtoBuf.isEmpty, isEmpty)
-            packageFragment.setExtension(KlibMetadataProtoBuf.fqName, fqName.asString())
-        }
-        .build()
-}
-

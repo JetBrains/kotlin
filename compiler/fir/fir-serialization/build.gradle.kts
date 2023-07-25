@@ -8,7 +8,10 @@ dependencies {
     implementation(project(":core:compiler.common.jvm"))
     implementation(project(":core:deserialization.common.jvm"))
     implementation(project(":compiler:fir:fir-deserialization"))
-    implementation(project(":compiler:ir.serialization.common"))
+
+    implementation(project(":compiler:serialization"))
+    implementation(project(":kotlin-util-klib"))
+    implementation(project(":kotlin-util-klib-metadata"))
 
     api(project(":compiler:fir:cones"))
     api(project(":compiler:fir:tree"))
