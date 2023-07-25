@@ -59,7 +59,7 @@ class FirScriptBuilder : FirAnnotationContainerBuilder {
             origin,
             attributes,
             name,
-            statements,
+            statements.toMutableOrEmpty(),
             symbol,
             parameters,
             contextReceivers.toMutableOrEmpty(),

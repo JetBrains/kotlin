@@ -39,7 +39,7 @@ internal class FirScriptImpl(
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
     override val name: Name,
-    override val statements: MutableList<FirStatement>,
+    override var statements: MutableOrEmptyList<FirStatement>,
     override val symbol: FirScriptSymbol,
     override val parameters: MutableList<FirVariable>,
     override var contextReceivers: MutableOrEmptyList<FirContextReceiver>,
@@ -78,5 +78,9 @@ internal class FirScriptImpl(
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
         annotations = newAnnotations.toMutableOrEmpty()
+    }
+
+    override fun replaceStatements(newStatements: List<FirStatement>) {
+        statements = newStatements.toMutableOrEmpty()
     }
 }
