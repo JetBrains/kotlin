@@ -251,8 +251,6 @@ internal annotation class WasmOp(val name: String) {
         const val REF_TEST_NULL = "REF_TEST_NULL"
         const val REF_CAST = "REF_CAST"
         const val REF_CAST_NULL = "REF_CAST_NULL"
-        const val BR_ON_CAST = "BR_ON_CAST"
-        const val BR_ON_CAST_FAIL = "BR_ON_CAST_FAIL"
         const val EXTERN_INTERNALIZE = "EXTERN_INTERNALIZE"
         const val EXTERN_EXTERNALIZE = "EXTERN_EXTERNALIZE"
         const val PSEUDO_COMMENT_PREVIOUS_INSTR = "PSEUDO_COMMENT_PREVIOUS_INSTR"

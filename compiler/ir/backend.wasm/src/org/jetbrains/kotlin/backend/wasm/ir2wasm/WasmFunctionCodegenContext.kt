@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.wasm.ir.*
 
 enum class LoopLabelType { BREAK, CONTINUE }
-enum class SyntheticLocalType { IS_INTERFACE_PARAMETER, TABLE_SWITCH_SELECTOR }
+enum class SyntheticLocalType { IS_INTERFACE_PARAMETER, TABLE_SWITCH_SELECTOR, TMP_FOR_BR_ON_CAST_EMULATION }
 
 class WasmFunctionCodegenContext(
     val irFunction: IrFunction,
@@ -61,6 +61,8 @@ class WasmFunctionCodegenContext(
         get() = when (this) {
             SyntheticLocalType.IS_INTERFACE_PARAMETER ->
                 WasmRefNullType(WasmHeapType.Type(context.referenceGcType(backendContext.irBuiltIns.anyClass)))
+            SyntheticLocalType.TMP_FOR_BR_ON_CAST_EMULATION ->
+                WasmRefNullType(WasmHeapType.Simple.Any)
             SyntheticLocalType.TABLE_SWITCH_SELECTOR -> WasmI32
         }
 
