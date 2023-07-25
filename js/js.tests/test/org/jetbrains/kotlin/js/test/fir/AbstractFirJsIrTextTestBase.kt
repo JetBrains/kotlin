@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.js.test.fir
 
+import org.jetbrains.kotlin.js.test.converters.FirJsKlibBackendFacade
+import org.jetbrains.kotlin.js.test.converters.JsIrDeserializerFacade
 import org.jetbrains.kotlin.js.test.ir.AbstractJsIrTextTestBase
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
@@ -27,8 +29,14 @@ abstract class AbstractFirJsIrTextTestBase(private val parser: FirParser) : Abst
     override val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>
         get() = ::FirFrontendFacade
 
-    override val converter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
+    override val frontendToBackendConverter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
         get() = ::Fir2IrJsResultsConverter
+
+    override val klibFacades: KlibFacades?
+        get() = KlibFacades(
+            backendFacade = ::FirJsKlibBackendFacade,
+            deserializerFacade = ::JsIrDeserializerFacade,
+        )
 
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)

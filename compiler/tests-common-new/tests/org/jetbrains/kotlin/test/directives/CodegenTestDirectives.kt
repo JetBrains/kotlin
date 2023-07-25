@@ -177,6 +177,13 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
         description = "Ignores failures of signature dump comparison for tests with the $DUMP_SIGNATURES directive if the test uses the K2 frontend and the specified backend."
     )
 
+    val SKIP_KLIB_TEST by directive(
+        description = """
+        Disables ${IrTextDumpHandler::class}, ${IrPrettyKotlinDumpHandler::class} and ${IrMangledNameAndSignatureDumpHandler::class}
+        when running this test against the deserialized IR
+        """
+    )
+
     val DUMP_IR_FOR_GIVEN_PHASES by valueDirective<AnyNamedPhase>(
         description = "Dumps backend IR after given lowerings (enables ${PhasedIrDumpHandler::class})",
         parser = { error("Cannot parse value $it for \"DUMP_IR_FOR_GIVEN_PHASES\" directive. All arguments must be specified via code in test system") }

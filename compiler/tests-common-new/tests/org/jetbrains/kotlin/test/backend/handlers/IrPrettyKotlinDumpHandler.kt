@@ -45,7 +45,7 @@ class IrPrettyKotlinDumpHandler(
         get() = listOf(CodegenTestDirectives, FirDiagnosticsDirectives)
 
     override fun processModule(module: TestModule, info: IrBackendInput) {
-        if (DUMP_KT_IR !in module.directives || SKIP_KT_DUMP in module.directives) return
+        if (DUMP_KT_IR !in module.directives || SKIP_KT_DUMP in module.directives || module.shouldBeDisabledForDeserializedIr) return
         dumpModuleKotlinLike(
             module, testServices.moduleStructure.modules, info, dumper,
             KotlinLikeDumpOptions(

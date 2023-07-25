@@ -125,7 +125,9 @@ class IrMangledNameAndSignatureDumpHandler(
     }
 
     override fun processModule(module: TestModule, info: IrBackendInput) {
-        if (DUMP_SIGNATURES !in module.directives || SKIP_SIGNATURE_DUMP in module.directives) return
+        if (DUMP_SIGNATURES !in module.directives ||
+            SKIP_SIGNATURE_DUMP in module.directives ||
+            module.shouldBeDisabledForDeserializedIr) return
 
         dumpModuleKotlinLike(
             module,

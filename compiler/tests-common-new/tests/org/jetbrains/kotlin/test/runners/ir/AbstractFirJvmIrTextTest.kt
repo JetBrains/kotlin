@@ -25,7 +25,7 @@ abstract class AbstractFirJvmIrTextTest(
         get() = FrontendKinds.FIR
     override val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>
         get() = ::FirFrontendFacade
-    override val converter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
+    override val frontendToBackendConverter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
         get() = ::Fir2IrJvmResultsConverter
 
     override fun configure(builder: TestConfigurationBuilder) {

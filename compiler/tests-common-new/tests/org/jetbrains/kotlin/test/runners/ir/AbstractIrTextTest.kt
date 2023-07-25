@@ -11,14 +11,12 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.*
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
-import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.builders.classicFrontendHandlersStep
-import org.jetbrains.kotlin.test.builders.firHandlersStep
-import org.jetbrains.kotlin.test.builders.irHandlersStep
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_KT_IR
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_SIGNATURES
+import org.jetbrains.kotlin.test.HandlersStepBuilder
+import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LINK_VIA_SIGNATURES
 import org.jetbrains.kotlin.test.directives.configureFirParser
@@ -34,7 +32,18 @@ abstract class AbstractIrTextTest<FrontendOutput : ResultingArtifact.FrontendOut
 ) : AbstractKotlinCompilerWithTargetBackendTest(targetBackend) {
     abstract val frontend: FrontendKind<*>
     abstract val frontendFacade: Constructor<FrontendFacade<FrontendOutput>>
-    abstract val converter: Constructor<Frontend2BackendConverter<FrontendOutput, IrBackendInput>>
+    abstract val frontendToBackendConverter: Constructor<Frontend2BackendConverter<FrontendOutput, IrBackendInput>>
+
+    data class KlibFacades(
+        val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>,
+        val deserializerFacade: Constructor<DeserializerFacade<BinaryArtifacts.KLib, IrBackendInput>>,
+    )
+
+    /**
+     * Facades for serialization and deserialization to/from klibs.
+     */
+    open val klibFacades: KlibFacades?
+        get() = null
 
     open fun TestConfigurationBuilder.applyConfigurators() {}
 
@@ -79,16 +88,28 @@ abstract class AbstractIrTextTest<FrontendOutput : ResultingArtifact.FrontendOut
             )
         }
 
-        facadeStep(converter)
+        facadeStep(frontendToBackendConverter)
 
-        irHandlersStep {
-            useHandlers(
-                ::IrTextDumpHandler,
-                ::IrTreeVerifierHandler,
-                ::IrPrettyKotlinDumpHandler,
-                ::IrMangledNameAndSignatureDumpHandler,
-            )
-        }
+        irHandlersStep { useIrTextHandlers() }
+
+        klibFacades?.let { klibSteps(it) }
+    }
+
+    private fun TestConfigurationBuilder.klibSteps(klibFacades: KlibFacades) = klibFacades.run {
+        facadeStep(backendFacade)
+        klibArtifactsHandlersStep()
+        facadeStep(deserializerFacade)
+        deserializedIrHandlersStep { useIrTextHandlers() }
+    }
+
+    private fun <InputArtifactKind> HandlersStepBuilder<IrBackendInput, InputArtifactKind>.useIrTextHandlers()
+            where InputArtifactKind : BackendKind<IrBackendInput> {
+        useHandlers(
+            ::IrTextDumpHandler,
+            ::IrTreeVerifierHandler,
+            ::IrPrettyKotlinDumpHandler,
+//            ::IrMangledNameAndSignatureDumpHandler,
+        )
     }
 
     protected fun TestConfigurationBuilder.commonConfigurationForK2(parser: FirParser) {

@@ -64,7 +64,7 @@ class IrTextDumpHandler(
     private val buildersForSeparateFileDumps: MutableMap<File, StringBuilder> = mutableMapOf()
 
     override fun processModule(module: TestModule, info: IrBackendInput) {
-        if (DUMP_IR !in module.directives) return
+        if (DUMP_IR !in module.directives || module.shouldBeDisabledForDeserializedIr) return
 
         val dumpOptions = DumpIrTreeOptions(
             normalizeNames = true,
