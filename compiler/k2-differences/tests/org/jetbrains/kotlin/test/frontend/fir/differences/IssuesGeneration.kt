@@ -444,6 +444,10 @@ fun IssueInfo.setDefaultMetadata() {
         return
     }
 
+    if (oldState == "Declined") {
+        return
+    }
+
     val newState = oldState?.takeIf { it != "Submitted" } ?: NEW_ISSUE_STATE
     val newPriority = oldPriority ?: NEW_ISSUE_PRIORITY
     val newTargetVersions = oldTargetVersions ?: NEW_ISSUE_TARGET_VERSIONS

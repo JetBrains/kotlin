@@ -942,11 +942,23 @@ fun updateKnownIssuesDescriptions(statistics: DiagnosticsStatistics) {
         }
 
         knownIntroducedDiagnostics[diagnostic]?.let { knownIssue ->
-            val disappearancesOnly = filesToEntries
+            val introductionsOnly = filesToEntries
                 .filterValues { it.significantK2MetaInfo.isNotEmpty() }
                 .mapValues { EquivalenceTestResult(significantK2MetaInfo = it.value.significantK2MetaInfo) }
-            updateIssueDescription(knownIssue, disappearancesOnly)
+            updateIssueDescription(knownIssue, introductionsOnly)
         }
+    }
+
+    knownMissingDiagnostics.filterKeys { it !in statistics }.forEach { (_, knownIssue) ->
+        updateIssueDescription(knownIssue, emptyMap())
+    }
+
+    knownDisappearedDiagnostics.filterKeys { it !in statistics }.forEach { (_, knownIssue) ->
+        updateIssueDescription(knownIssue, emptyMap())
+    }
+
+    knownIntroducedDiagnostics.filterKeys { it !in statistics }.forEach { (_, knownIssue) ->
+        updateIssueDescription(knownIssue, emptyMap())
     }
 }
 
