@@ -53,7 +53,8 @@ class DependencyProviderImpl(
     ) {
         val kind = artifact.kind
         val previousValue = artifactsByModule.getMap(module).put(kind, artifact)
-        if (previousValue != null) error("Artifact with kind $kind already registered for module ${module.name}")
+        if (previousValue != null)
+            error("Artifact with kind $kind already registered for module ${module.name}")
     }
 
     override fun unregisterAllArtifacts(module: TestModule) {

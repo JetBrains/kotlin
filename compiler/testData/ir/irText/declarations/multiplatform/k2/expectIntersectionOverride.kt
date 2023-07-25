@@ -1,5 +1,7 @@
 // IGNORE_BACKEND_K1: ANY
 // ^^^ K1 as well as K1-based test infra do not support "fragment refinement".
+// SKIP_KLIB_TEST
+// REASON: KT-68988
 
 // FIR_IDENTICAL
 // LANGUAGE: +MultiPlatformProjects
