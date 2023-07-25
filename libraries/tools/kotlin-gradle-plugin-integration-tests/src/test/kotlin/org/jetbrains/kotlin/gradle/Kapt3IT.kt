@@ -28,7 +28,9 @@ import org.jetbrains.kotlin.gradle.util.testResolveAllConfigurations
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
+import java.io.File
 import java.nio.file.Files
+import java.nio.file.Path
 import java.util.zip.ZipFile
 import java.util.zip.ZipOutputStream
 import kotlin.io.path.appendText
@@ -36,7 +38,7 @@ import kotlin.io.path.deleteExisting
 import kotlin.io.path.outputStream
 import kotlin.test.assertEquals
 
-abstract class Kapt3BaseIT(val languageVersion: String = "1.9") : KGPBaseTest() {
+abstract class Kapt3BaseIT(val languageVersion: String = "1.9", val freeArgs: List<String> = emptyList()) : KGPBaseTest() {
     companion object {
         private const val KAPT_SUCCESSFUL_MESSAGE = "Annotation processing complete, errors: 0"
     }
@@ -45,6 +47,7 @@ abstract class Kapt3BaseIT(val languageVersion: String = "1.9") : KGPBaseTest() 
         .copy(
             kaptOptions = this.kaptOptions(),
             languageVersion = languageVersion,
+            freeArgs = freeArgs
         )
 
     protected open fun kaptOptions(): BuildOptions.KaptOptions = BuildOptions.KaptOptions(
@@ -63,6 +66,41 @@ abstract class Kapt3BaseIT(val languageVersion: String = "1.9") : KGPBaseTest() 
     }
 
     protected val String.withPrefix get() = "kapt2/$this"
+
+    @OptIn(EnvironmentalVariablesOverride::class)
+    fun project(
+        projectName: String,
+        gradleVersion: GradleVersion,
+        buildOptions: BuildOptions = defaultBuildOptions,
+        forceOutput: Boolean = false,
+        enableBuildScan: Boolean = false,
+        addHeapDumpOptions: Boolean = true,
+        enableGradleDebug: Boolean = false,
+        projectPathAdditionalSuffix: String = "",
+        buildJdk: File? = null,
+        localRepoDir: Path? = null,
+        environmentVariables: EnvironmentalVariables = EnvironmentalVariables(),
+        test: TestProject.() -> Unit = {},
+    ) {
+        (this as KGPBaseTest).project(
+            projectName = projectName,
+            gradleVersion = gradleVersion,
+            buildOptions = buildOptions,
+            forceOutput = forceOutput,
+            enableBuildScan = enableBuildScan,
+            addHeapDumpOptions = addHeapDumpOptions,
+            enableGradleDebug = enableGradleDebug,
+            projectPathAdditionalSuffix = projectPathAdditionalSuffix,
+            buildJdk = buildJdk,
+            localRepoDir = localRepoDir,
+            environmentVariables = environmentVariables,
+        ) {
+            customizeProject()
+            test()
+        }
+    }
+
+    protected open fun TestProject.customizeProject() {}
 }
 
 /**
@@ -140,7 +178,7 @@ class Kapt3ClassLoadersCacheIT : Kapt3IT() {
 
 @DisplayName("Kapt base checks")
 @OtherGradlePluginTests
-open class Kapt3IT : Kapt3BaseIT() {
+open class Kapt3IT(languageVersion: String = "1.9", freeArgs: List<String> = emptyList()) : Kapt3BaseIT(languageVersion, freeArgs) {
     @DisplayName("Kapt is skipped when no annotation processors are added")
     @GradleTest
     fun testKaptSkipped(gradleVersion: GradleVersion) {
