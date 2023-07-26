@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.name.Name
 
 internal const val NATIVE_PTR_NAME = "NativePtr"
 internal const val NON_NULL_NATIVE_PTR_NAME = "NonNullNativePtr"
-internal const val VECTOR128 = "Vector128"
 internal const val IMMUTABLE_BLOB_OF = "immutableBlobOf"
 
 object KonanFqNames {
@@ -20,7 +19,7 @@ object KonanFqNames {
     val internalPackageName = FqName("kotlin.native.internal")
     val nativePtr = internalPackageName.child(Name.identifier(NATIVE_PTR_NAME)).toUnsafe()
     val nonNullNativePtr = internalPackageName.child(Name.identifier(NON_NULL_NATIVE_PTR_NAME)).toUnsafe()
-    val Vector128 = packageName.child(Name.identifier(VECTOR128))
+    val Vector128 = FqName("kotlinx.cinterop.Vector128")
     val throws = FqName("kotlin.Throws")
     val cancellationException = FqName("kotlin.coroutines.cancellation.CancellationException")
     val threadLocal = FqName("kotlin.native.concurrent.ThreadLocal")

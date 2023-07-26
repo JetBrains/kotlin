@@ -54,23 +54,6 @@ external fun CPointer<*>.getRawValue(): NativePtr
 @ExperimentalForeignApi
 internal fun CPointer<*>.cPointerToString() = "CPointer(raw=$rawValue)"
 
-@ExperimentalForeignApi
-@Suppress("FINAL_UPPER_BOUND")
-public class Vector128VarOf<T : Vector128>(rawPtr: NativePtr) : CVariable(rawPtr) {
-    @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
-    @Suppress("DEPRECATION")
-    companion object : Type(size = 16, align = 16)
-}
-
-@ExperimentalForeignApi
-public typealias Vector128Var = Vector128VarOf<Vector128>
-
-@ExperimentalForeignApi
-@Suppress("FINAL_UPPER_BOUND", "UNCHECKED_CAST")
-public var <T : Vector128> Vector128VarOf<T>.value: T
-    get() = nativeMemUtils.getVector(this) as T
-    set(value) = nativeMemUtils.putVector(this, value)
-
 /**
  * Returns a pointer to C function which calls given Kotlin *static* function.
  *

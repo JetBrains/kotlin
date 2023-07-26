@@ -6,10 +6,7 @@
 
 package kotlin.native.internal
 
-import kotlinx.cinterop.CPointer
-import kotlinx.cinterop.NativePointed
-import kotlinx.cinterop.NativePtr
-import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.*
 
 import kotlin.native.internal.TypedIntrinsic
 import kotlin.native.internal.IntrinsicType

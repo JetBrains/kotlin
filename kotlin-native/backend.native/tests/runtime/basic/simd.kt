@@ -7,6 +7,8 @@
 package runtime.basic.simd
 
 import kotlin.test.*
+import kotlinx.cinterop.Vector128
+import kotlinx.cinterop.vectorOf
 
 
 @Test fun runTest() {

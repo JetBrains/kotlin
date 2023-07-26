@@ -1,6 +1,7 @@
 @file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class, kotlin.experimental.ExperimentalNativeApi::class)
 
 import kotlinx.cinterop.*
+import kotlinx.cinterop.vectorOf
 import kotlin.native.*
 import kotlin.test.*
 import cvectors.*
