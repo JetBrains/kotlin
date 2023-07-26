@@ -448,6 +448,7 @@ internal constructor(
             args.multiPlatform = true
             args.noendorsedlibs = true
             args.outputName = outputFile.get().absolutePath
+            args.libraryVersion = artifactVersion
             args.optimization = optimized
             args.debug = debuggable
             args.enableAssertions = debuggable
@@ -1032,7 +1033,6 @@ open class CInteropProcess @Inject internal constructor(params: Params) : Defaul
     @get:Input
     val konanVersion: String = project.konanVersion
 
-    @Suppress("unused")
     @get:Input
     val libraryVersion = project.version.toString()
 
@@ -1133,8 +1133,7 @@ open class CInteropProcess @Inject internal constructor(params: Params) : Defaul
             addArgs("-headerFilterAdditionalSearchPrefix", headerFilterDirs.map { it.absolutePath })
             addArg("-Xmodule-name", moduleName)
 
-            // TODO: uncomment after advancing bootstrap.
-            //addArg("-libraryVersion", libraryVersion)
+            addArg("-libraryVersion", libraryVersion)
 
             addAll(extraOpts)
         }
