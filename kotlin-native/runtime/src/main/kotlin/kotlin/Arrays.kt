@@ -8,7 +8,6 @@
 
 package kotlin
 
-import kotlin.internal.PureReifiable
 import kotlin.native.internal.ExportTypeInfo
 import kotlin.native.internal.IntrinsicType
 import kotlin.native.internal.GCUnsafeCall
@@ -588,7 +587,7 @@ private class BooleanIteratorImpl(val collection: BooleanArray) : BooleanIterato
  *
  * @throws RuntimeException if the specified [size] is negative.
  */
-public inline fun <reified @PureReifiable T> arrayOfNulls(size: Int): Array<T?> =
+public inline fun <T> arrayOfNulls(size: Int): Array<T?> =
         @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
         arrayOfUninitializedElements<T?>(size)
 
@@ -597,7 +596,7 @@ public inline fun <reified @PureReifiable T> arrayOfNulls(size: Int): Array<T?> 
  */
 @TypedIntrinsic(IntrinsicType.IDENTITY)
 @PointsTo(0x00, 0x01) // ret -> elements
-public external inline fun <reified @PureReifiable T> arrayOf(vararg elements: T): Array<T>
+public external inline fun <T> arrayOf(vararg elements: T): Array<T>
 
 @GCUnsafeCall("Kotlin_emptyArray")
 external public fun <T> emptyArray(): Array<T>
