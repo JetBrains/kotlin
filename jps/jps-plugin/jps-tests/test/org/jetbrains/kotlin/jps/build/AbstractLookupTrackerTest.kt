@@ -80,6 +80,7 @@ abstract class AbstractJvmLookupTrackerTest : AbstractLookupTrackerTest() {
             disableDefaultScriptingPlugin = true
             buildFile = moduleFile.canonicalPath
             reportOutputFiles = true
+            useFirLT = false
         }
         val argsArray = ArgumentUtils.convertArgumentsToStringList(args).toTypedArray()
 
@@ -166,6 +167,7 @@ abstract class AbstractJsLookupTrackerTest : AbstractLookupTrackerTest() {
             reportOutputFiles = true
             freeArgs = filesToCompile.map { it.canonicalPath }
             forceDeprecatedLegacyCompilerUsage = true
+            useFirLT = false
         }
         configureAdditionalArgs(args)
         return runJSCompiler(args, env)
