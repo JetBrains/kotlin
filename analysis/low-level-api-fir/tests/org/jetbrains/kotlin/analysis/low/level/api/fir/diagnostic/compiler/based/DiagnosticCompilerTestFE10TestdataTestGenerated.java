@@ -298,6 +298,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         }
 
         @Test
+        @TestMetadata("emptyLhsClassLiterals.kt")
+        public void testEmptyLhsClassLiterals() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/emptyLhsClassLiterals.kt");
+        }
+
+        @Test
         @TestMetadata("EnumEntryAsType.kt")
         public void testEnumEntryAsType() throws Exception {
             runTest("compiler/testData/diagnostics/tests/EnumEntryAsType.kt");

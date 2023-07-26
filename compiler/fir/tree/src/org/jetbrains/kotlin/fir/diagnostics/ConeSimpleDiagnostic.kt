@@ -71,6 +71,10 @@ class ConeAmbiguousFunctionTypeKinds(val kinds: List<FunctionTypeKind>) : ConeDi
         get() = "There are multiple function kinds for functional type ref"
 }
 
+object ConeUnsupportedClassLiteralsWithEmptyLhs : ConeDiagnostic {
+    override val reason: String get() = "No receiver in class literal"
+}
+
 enum class DiagnosticKind {
     ExpressionExpected,
     NotLoopLabel,

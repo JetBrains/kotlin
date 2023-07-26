@@ -595,6 +595,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSAFE_INFIX_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSAFE_OPERATOR_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSIGNED_LITERAL_WITHOUT_DECLARATIONS_ON_CLASSPATH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_CLASS_LITERALS_WITH_EMPTY_LHS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_FEATURE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNUSED_VARIABLE
@@ -1359,6 +1360,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Expression in a class literal has a nullable type ''{0}'', use !! to make the type non-nullable",
             RENDER_TYPE
         )
+        map.put(UNSUPPORTED_CLASS_LITERALS_WITH_EMPTY_LHS, "Class literals with empty left hand side are unsupported")
 
         // Value classes
         map.put(VALUE_CLASS_NOT_TOP_LEVEL, "Value class cannot be local or inner")
@@ -2002,7 +2004,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(USELESS_CAST, "No cast needed")
         map.put(UNCHECKED_CAST, "Unchecked cast: ''{0}'' to ''{1}''", RENDER_TYPE, RENDER_TYPE)
         map.put(USELESS_IS_CHECK, "Check for instance is always ''{0}''", TO_STRING)
-        map.put(DYNAMIC_NOT_ALLOWED, "Dynamic types are not allowed in this position");
+        map.put(DYNAMIC_NOT_ALLOWED, "Dynamic types are not allowed in this position")
         map.put(IS_ENUM_ENTRY, "'is' over enum entry is not allowed, use comparison instead")
         map.put(ENUM_ENTRY_AS_TYPE, "Use of enum entry names as types is not allowed, use enum type instead")
 

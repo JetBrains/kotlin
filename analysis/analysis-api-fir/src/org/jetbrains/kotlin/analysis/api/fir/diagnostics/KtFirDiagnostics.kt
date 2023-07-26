@@ -1730,6 +1730,10 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val lhsType: KtType
     }
 
+    interface UnsupportedClassLiteralsWithEmptyLhs : KtFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = UnsupportedClassLiteralsWithEmptyLhs::class
+    }
+
     interface NothingToOverride : KtFirDiagnostic<KtModifierListOwner> {
         override val diagnosticClass get() = NothingToOverride::class
         val declaration: KtCallableSymbol

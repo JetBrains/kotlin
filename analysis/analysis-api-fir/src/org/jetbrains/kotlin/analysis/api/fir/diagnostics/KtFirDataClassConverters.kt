@@ -2440,6 +2440,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.UNSUPPORTED_CLASS_LITERALS_WITH_EMPTY_LHS) { firDiagnostic ->
+        UnsupportedClassLiteralsWithEmptyLhsImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.NOTHING_TO_OVERRIDE) { firDiagnostic ->
         NothingToOverrideImpl(
             firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.a),

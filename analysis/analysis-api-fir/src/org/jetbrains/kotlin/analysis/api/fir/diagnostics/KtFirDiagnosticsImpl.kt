@@ -2080,6 +2080,11 @@ internal class ExpressionOfNullableTypeInClassLiteralLhsImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.ExpressionOfNullableTypeInClassLiteralLhs
 
+internal class UnsupportedClassLiteralsWithEmptyLhsImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.UnsupportedClassLiteralsWithEmptyLhs
+
 internal class NothingToOverrideImpl(
     override val declaration: KtCallableSymbol,
     firDiagnostic: KtPsiDiagnostic,
