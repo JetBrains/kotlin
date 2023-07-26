@@ -22,15 +22,16 @@ interface TestVersions {
         const val G_7_3 = "7.3.3"
         const val G_7_4 = "7.4.2"
         const val G_7_5 = "7.5.1"
-        const val G_7_6 = "7.6.2"
+        const val G_7_6 = "7.6.3"
         const val G_8_0 = "8.0.2"
         const val G_8_1 = "8.1.1"
         const val G_8_2 = "8.2.1"
-        const val G_8_3 = "8.3-rc-1"
+        const val G_8_3 = "8.3"
         const val G_8_4 = "8.4"
+        
         const val MIN_SUPPORTED = minSupportedGradleVersion
         const val MIN_SUPPORTED_KPM = G_7_0
-        const val MAX_SUPPORTED = G_8_1
+        const val MAX_SUPPORTED = G_8_2
     }
 
     object Kotlin {
@@ -51,7 +52,7 @@ interface TestVersions {
         const val AGP_82 = "8.2.0-rc03"
 
         const val MIN_SUPPORTED = AGP_71 // KotlinAndroidPlugin.minimalSupportedAgpVersion
-        const val MAX_SUPPORTED = AGP_81 // Update once Gradle MAX_SUPPORTED version will be bumped
+        const val MAX_SUPPORTED = AGP_82 // Update once Gradle MAX_SUPPORTED version will be bumped
     }
 
     enum class AgpCompatibilityMatrix(
@@ -65,8 +66,8 @@ interface TestVersions {
         AGP_73(AGP.AGP_73, GradleVersion.version(Gradle.G_7_4), GradleVersion.version(Gradle.G_7_5), JavaVersion.VERSION_11),
         AGP_74(AGP.AGP_74, GradleVersion.version(Gradle.G_7_5), GradleVersion.version(Gradle.G_7_6), JavaVersion.VERSION_11),
         AGP_80(AGP.AGP_80, GradleVersion.version(Gradle.G_8_0), GradleVersion.version(Gradle.G_8_0), JavaVersion.VERSION_17),
-        AGP_81(AGP.AGP_81, GradleVersion.version(Gradle.G_8_1), GradleVersion.version(Gradle.G_8_1), JavaVersion.VERSION_17),
-        AGP_82(AGP.AGP_82, GradleVersion.version(Gradle.G_8_2), GradleVersion.version(Gradle.G_8_3), JavaVersion.VERSION_17),
+        AGP_81(AGP.AGP_81, GradleVersion.version(Gradle.G_8_1), GradleVersion.version(Gradle.G_8_4), JavaVersion.VERSION_17),
+        AGP_82(AGP.AGP_82, GradleVersion.version(Gradle.G_8_1), GradleVersion.version(Gradle.G_8_4), JavaVersion.VERSION_17),
         ;
     }
 

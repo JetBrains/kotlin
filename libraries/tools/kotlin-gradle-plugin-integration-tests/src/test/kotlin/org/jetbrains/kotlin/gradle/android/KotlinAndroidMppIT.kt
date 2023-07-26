@@ -739,8 +739,6 @@ class KotlinAndroidMppIT : KGPBaseTest() {
      */
     @DisplayName("KT-49798: com.android.build.api.attributes.AgpVersionAttr is not published")
     @GradleAndroidTest
-    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_71)
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_2) // due AGP version limit ^
     fun testKT49798AgpVersionAttrNotPublished(
         gradleVersion: GradleVersion,
         agpVersion: String,
@@ -833,8 +831,6 @@ class KotlinAndroidMppIT : KGPBaseTest() {
 
     @DisplayName("KT-49877, KT-35916: associate compilation dependencies are passed correctly to android test compilations")
     @GradleAndroidTest
-    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_71)
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_2) // due AGP version limit ^
     fun testAssociateCompilationDependenciesArePassedToAndroidTestCompilations(
         gradleVersion: GradleVersion,
         agpVersion: String,
