@@ -420,7 +420,6 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             functionCall.transformAnnotations(transformer, data)
             functionCall.replaceLambdaArgumentInvocationKinds(session)
             functionCall.transformTypeArguments(transformer, ResolutionMode.ContextIndependent)
-            val initialExplicitReceiver = functionCall.explicitReceiver
             val withTransformedArguments = if (!resolvingAugmentedAssignment) {
                 dataFlowAnalyzer.enterCallArguments(functionCall, functionCall.arguments)
                 // In provideDelegate mode the explicitReceiver is already resolved
@@ -438,11 +437,6 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 functionCall
             }
             val resultExpression = callResolver.resolveCallAndSelectCandidate(withTransformedArguments)
-            val resultExplicitReceiver = resultExpression.explicitReceiver?.unwrapSmartcastExpression()
-            if (initialExplicitReceiver !== resultExplicitReceiver && resultExplicitReceiver is FirQualifiedAccessExpression) {
-                // name.invoke() case
-                callCompleter.completeCall(resultExplicitReceiver, ResolutionMode.ContextIndependent)
-            }
             val completeInference = callCompleter.completeCall(resultExpression, data)
             val result = completeInference.transformToIntegerOperatorCallOrApproximateItIfNeeded(data)
             if (!resolvingAugmentedAssignment) {
