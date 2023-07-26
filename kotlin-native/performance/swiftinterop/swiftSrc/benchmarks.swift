@@ -23,7 +23,7 @@ class SimpleCost: Cost {
         return SimpleCost(cost: value - otherInstance.value)
     }
 
-    func compareTo(other: Cost) -> Int32 {
+    func compareTo(other_ other: Cost) -> Int32 {
         let otherInstance = other as! SimpleCost
         if (value < otherInstance.value) {
             return -1
