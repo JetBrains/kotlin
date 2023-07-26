@@ -25,7 +25,7 @@ actual class FakeOverrideExpect : A() {
 }
 
 abstract class Intermediate : I {
-    <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>override fun noAnnotationOnActual() {}<!>
+    override fun noAnnotationOnActual() {}
 }
 
-actual class <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>FakeOverrideActual<!> : Intermediate(), I
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual class <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>FakeOverrideActual<!> : Intermediate(), I<!>

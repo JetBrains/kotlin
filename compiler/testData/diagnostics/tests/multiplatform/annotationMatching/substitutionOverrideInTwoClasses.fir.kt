@@ -14,11 +14,11 @@ expect class WithoutAnn {
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
 abstract class Parent<T> {
-    <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>open fun foo(p: T) {}<!>
+    open fun foo(p: T) {}
 }
 
 abstract class Intermediate : Parent<String>()
 
-actual class <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>WithAnn<!> : Intermediate()
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual class <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>WithAnn<!> : Intermediate()<!>
 
 actual class WithoutAnn : Intermediate()
