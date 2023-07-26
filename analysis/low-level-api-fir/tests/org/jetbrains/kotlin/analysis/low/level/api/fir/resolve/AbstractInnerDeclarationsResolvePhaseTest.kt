@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -22,7 +22,7 @@ abstract class AbstractInnerDeclarationsResolvePhaseTest : AbstractLowLevelApiSi
         resolveWithClearCaches(ktFile) { firResolveSession ->
             val firFile = ktFile.getOrBuildFirOfType<FirFile>(firResolveSession)
             val actual = FirRenderer.withResolvePhase().renderElementAsString(firFile)
-            testServices.assertions.assertEqualsToTestDataFileSibling(actual, extension = ".fir.txt")
+            testServices.assertions.assertEqualsToTestDataFileSibling(actual)
         }
     }
 }
@@ -32,5 +32,5 @@ abstract class AbstractSourceInnerDeclarationsResolvePhaseTest : AbstractInnerDe
 }
 
 abstract class AbstractOutOfContentRootInnerDeclarationsResolvePhaseTest : AbstractInnerDeclarationsResolvePhaseTest() {
-    override val configurator = AnalysisApiFirOutOfContentRootTestConfigurator
+    override val configurator get() = AnalysisApiFirOutOfContentRootTestConfigurator
 }
