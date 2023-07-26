@@ -1,5 +1,5 @@
-class Outer {
-    val i: Int = 1
+class Outer {/* NonReanalyzableClassDeclarationStructureElement */
+    val i: Int = 1/* ReanalyzablePropertyStructureElement */
         get() {
             class Inner {
                 var i: Int = 2
@@ -20,7 +20,7 @@ class Outer {
             return field
         }
 
-    val j: Int = 4
+    val j: Int = 4/* ReanalyzablePropertyStructureElement */
         get() {
             fun local() {
                 field++

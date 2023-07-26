@@ -25,6 +25,30 @@ public class SourceFileStructureTestGenerated extends AbstractSourceFileStructur
     }
 
     @Test
+    @TestMetadata("callInsideLambdaInsideSuperCallAndExplicitConstructor.kt")
+    public void testCallInsideLambdaInsideSuperCallAndExplicitConstructor() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/fileStructure/callInsideLambdaInsideSuperCallAndExplicitConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("callInsideLambdaInsideSuperCallAndImplicitConstructor.kt")
+    public void testCallInsideLambdaInsideSuperCallAndImplicitConstructor() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/fileStructure/callInsideLambdaInsideSuperCallAndImplicitConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("callInsideLambdaInsideSuperCallFromSecondaryConstructor.kt")
+    public void testCallInsideLambdaInsideSuperCallFromSecondaryConstructor() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/fileStructure/callInsideLambdaInsideSuperCallFromSecondaryConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("callInsideLambdaInsideSuperCallFromSingleSecondaryConstructor.kt")
+    public void testCallInsideLambdaInsideSuperCallFromSingleSecondaryConstructor() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/fileStructure/callInsideLambdaInsideSuperCallFromSingleSecondaryConstructor.kt");
+    }
+
+    @Test
     @TestMetadata("class.kt")
     public void testClass() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/fileStructure/class.kt");
@@ -34,6 +58,18 @@ public class SourceFileStructureTestGenerated extends AbstractSourceFileStructur
     @TestMetadata("classMemberProperty.kt")
     public void testClassMemberProperty() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/fileStructure/classMemberProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("constructorParameter.kt")
+    public void testConstructorParameter() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/fileStructure/constructorParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("constructorParameterWithAnnotations.kt")
+    public void testConstructorParameterWithAnnotations() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/fileStructure/constructorParameterWithAnnotations.kt");
     }
 
     @Test
@@ -73,9 +109,21 @@ public class SourceFileStructureTestGenerated extends AbstractSourceFileStructur
     }
 
     @Test
+    @TestMetadata("functionalType.kt")
+    public void testFunctionalType() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/fileStructure/functionalType.kt");
+    }
+
+    @Test
     @TestMetadata("initBlock.kt")
     public void testInitBlock() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/fileStructure/initBlock.kt");
+    }
+
+    @Test
+    @TestMetadata("lambda.kt")
+    public void testLambda() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/fileStructure/lambda.kt");
     }
 
     @Test
@@ -85,9 +133,21 @@ public class SourceFileStructureTestGenerated extends AbstractSourceFileStructur
     }
 
     @Test
+    @TestMetadata("localDeclarationsInAccessor.kt")
+    public void testLocalDeclarationsInAccessor() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/fileStructure/localDeclarationsInAccessor.kt");
+    }
+
+    @Test
     @TestMetadata("localFun.kt")
     public void testLocalFun() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/fileStructure/localFun.kt");
+    }
+
+    @Test
+    @TestMetadata("localFunctionWithImplicitType.kt")
+    public void testLocalFunctionWithImplicitType() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/fileStructure/localFunctionWithImplicitType.kt");
     }
 
     @Test
@@ -97,9 +157,57 @@ public class SourceFileStructureTestGenerated extends AbstractSourceFileStructur
     }
 
     @Test
+    @TestMetadata("localUnitFunction.kt")
+    public void testLocalUnitFunction() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/fileStructure/localUnitFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("memberFunctions.kt")
+    public void testMemberFunctions() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/fileStructure/memberFunctions.kt");
+    }
+
+    @Test
+    @TestMetadata("memberProperties.kt")
+    public void testMemberProperties() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/fileStructure/memberProperties.kt");
+    }
+
+    @Test
     @TestMetadata("memberTypeAlias.kt")
     public void testMemberTypeAlias() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/fileStructure/memberTypeAlias.kt");
+    }
+
+    @Test
+    @TestMetadata("multipleTopLevelClasses.kt")
+    public void testMultipleTopLevelClasses() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/fileStructure/multipleTopLevelClasses.kt");
+    }
+
+    @Test
+    @TestMetadata("multipleTopLevelFunctionsWithImplicitTypes.kt")
+    public void testMultipleTopLevelFunctionsWithImplicitTypes() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/fileStructure/multipleTopLevelFunctionsWithImplicitTypes.kt");
+    }
+
+    @Test
+    @TestMetadata("multipleTopLevelUnitFunctions.kt")
+    public void testMultipleTopLevelUnitFunctions() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/fileStructure/multipleTopLevelUnitFunctions.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedClases.kt")
+    public void testNestedClases() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/fileStructure/nestedClases.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedClasesWithFun.kt")
+    public void testNestedClasesWithFun() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/fileStructure/nestedClasesWithFun.kt");
     }
 
     @Test
@@ -115,9 +223,45 @@ public class SourceFileStructureTestGenerated extends AbstractSourceFileStructur
     }
 
     @Test
+    @TestMetadata("propertyWithGetterAndSetter.kt")
+    public void testPropertyWithGetterAndSetter() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/fileStructure/propertyWithGetterAndSetter.kt");
+    }
+
+    @Test
+    @TestMetadata("qualifiedCallInsideSuperCall.kt")
+    public void testQualifiedCallInsideSuperCall() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/fileStructure/qualifiedCallInsideSuperCall.kt");
+    }
+
+    @Test
+    @TestMetadata("secondaryConstructor.kt")
+    public void testSecondaryConstructor() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/fileStructure/secondaryConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("superCallAnnotation.kt")
+    public void testSuperCallAnnotation() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/fileStructure/superCallAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("superCallAnnotation2.kt")
+    public void testSuperCallAnnotation2() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/fileStructure/superCallAnnotation2.kt");
+    }
+
+    @Test
     @TestMetadata("superClassCall.kt")
     public void testSuperClassCall() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/fileStructure/superClassCall.kt");
+    }
+
+    @Test
+    @TestMetadata("superType.kt")
+    public void testSuperType() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/fileStructure/superType.kt");
     }
 
     @Test
