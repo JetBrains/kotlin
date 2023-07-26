@@ -97,7 +97,9 @@ value class AbiCompoundName(val value: String) : Comparable<AbiCompoundName> {
             else -> {
                 val memberName = member.value
                 val memberNameLength = memberName.length
-                memberNameLength > containerNameLength + 1 && memberName.startsWith(containerName) && memberName[containerNameLength] == SEPARATOR
+                memberNameLength > containerNameLength + 1 &&
+                        memberName.startsWith(containerName) &&
+                        memberName[containerNameLength] == SEPARATOR
             }
         }
     }
