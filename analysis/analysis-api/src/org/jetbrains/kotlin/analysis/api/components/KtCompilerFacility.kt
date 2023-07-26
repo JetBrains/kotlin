@@ -96,9 +96,10 @@ public interface KtCompilerFacilityMixIn : KtAnalysisSessionMixIn {
      *
      * @return Compilation result.
      *
-     * The function _does not_ wrap unchecked exceptions from the compiler.
-     * The implementation should wrap the `compile()` call into a `try`/`catch` block if necessary.
+     * The function rethrows exceptions from the compiler, wrapped in [KtCodeCompilationException].
+     * The implementation should wrap the `compile()` call into a `try`/`catch` block when necessary.
      */
+    @Throws(KtCodeCompilationException::class)
     public fun compile(
         file: KtFile,
         configuration: CompilerConfiguration,
@@ -106,7 +107,16 @@ public interface KtCompilerFacilityMixIn : KtAnalysisSessionMixIn {
         allowedErrorFilter: (KtDiagnostic) -> Boolean
     ): KtCompilationResult {
         return withValidityAssertion {
-            analysisSession.compilerFacility.compile(file, configuration, target, allowedErrorFilter)
+            try {
+                analysisSession.compilerFacility.compile(file, configuration, target, allowedErrorFilter)
+            } catch (e: Throwable) {
+                throw KtCodeCompilationException(e)
+            }
         }
     }
 }
+
+/**
+ * Thrown when an exception occurred on analyzing the code to be compiled, or during target platform code generation.
+ */
+public class KtCodeCompilationException(cause: Throwable) : RuntimeException(cause)
