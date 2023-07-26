@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.AbstractSo
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.AbstractSourceInBlockModificationTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.AbstractErrorResistanceTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.AbstractOutOfContentRootWholeFileResolvePhaseTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.AbstractScriptWholeFileResolvePhaseTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.AbstractSourceWholeFileResolvePhaseTest
 import org.jetbrains.kotlin.generators.TestGroup
 import org.jetbrains.kotlin.generators.TestGroupSuite
@@ -108,6 +109,10 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
 
         testClass<AbstractOutOfContentRootWholeFileResolvePhaseTest> {
             model("fileStructure", pattern = TestGeneratorUtil.KT)
+        }
+
+        testClass<AbstractScriptWholeFileResolvePhaseTest> {
+            model("fileStructure", pattern = TestGeneratorUtil.KTS)
         }
 
         testClass<AbstractSourcePartialRawFirBuilderTestCase> {

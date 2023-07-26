@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolveWithClearCaches
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
@@ -33,4 +34,8 @@ abstract class AbstractSourceWholeFileResolvePhaseTest : AbstractWholeFileResolv
 
 abstract class AbstractOutOfContentRootWholeFileResolvePhaseTest : AbstractWholeFileResolvePhaseTest() {
     override val configurator get() = AnalysisApiFirOutOfContentRootTestConfigurator
+}
+
+abstract class AbstractScriptWholeFileResolvePhaseTest : AbstractWholeFileResolvePhaseTest() {
+    override val configurator get() = AnalysisApiFirScriptTestConfigurator
 }

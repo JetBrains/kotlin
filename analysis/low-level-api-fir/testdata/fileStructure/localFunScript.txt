@@ -1,0 +1,19 @@
+FILE: [ResolvedTo(IMPORTS)] localFunScript.kts
+    public final [ResolvedTo(RAW_FIR)] fun x(): R|kotlin/Unit| {
+        local final [ResolvedTo(RAW_FIR)] fun y(): R|kotlin/Unit| {
+        }
+
+    }
+    public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(STATUS)] fun z(): R|kotlin/Unit| {
+            local final [ResolvedTo(RAW_FIR)] fun q(): R|kotlin/Unit| {
+            }
+
+        }
+
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|

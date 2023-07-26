@@ -1,0 +1,5 @@
+FILE: [ResolvedTo(IMPORTS)] topLevelExpressionBodyFunWithoutTypeScript.kts
+    public final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Int| {
+        ^foo Int(42)
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|

@@ -1,0 +1,23 @@
+FILE: [ResolvedTo(IMPORTS)] classMemberPropertyScript.kts
+    public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] constructor(): R|X| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(STATUS)] var x: R|kotlin/Int|
+            public [ResolvedTo(STATUS)] get(): R|kotlin/Int| {
+                ^ this@R|/X|.F|/X.x|
+            }
+            public [ResolvedTo(STATUS)] set([ResolvedTo(STATUS)] value: R|kotlin/Int|): R|kotlin/Unit| {
+                this@R|/X|.F|/X.x| = R|<local>/value|
+            }
+
+        public final [ResolvedTo(STATUS)] val y: R|kotlin/Int| = Int(42)
+            public [ResolvedTo(STATUS)] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(STATUS)] var z: R|kotlin/Int| = Int(15)
+            public [ResolvedTo(STATUS)] get(): R|kotlin/Int|
+            public [ResolvedTo(STATUS)] set([ResolvedTo(STATUS)] value: R|kotlin/Int|): R|kotlin/Unit|
+
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|

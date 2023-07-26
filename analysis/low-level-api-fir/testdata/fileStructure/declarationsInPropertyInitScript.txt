@@ -1,0 +1,24 @@
+FILE: [ResolvedTo(IMPORTS)] declarationsInPropertyInitScript.kts
+    public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(STATUS)] val a: R|kotlin/Unit| = this@R|/A|.R|kotlin/run|<R|A|, R|kotlin/Unit|>(<L> = [ResolvedTo(RAW_FIR)] run@fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            local final [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
+                public [ResolvedTo(RAW_FIR)] constructor(): R|A.X| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+            [ResolvedTo(RAW_FIR)] lval y: R|kotlin/Int| = Int(10)
+        }
+        )
+            public [ResolvedTo(STATUS)] get(): R|kotlin/Unit|
+
+    }
+    public final inline [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] R> run([ResolvedTo(RAW_FIR)] block: R|() -> R|): R|R| {
+        ^run R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|R|>|()
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|

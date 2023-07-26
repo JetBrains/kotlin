@@ -1,0 +1,30 @@
+FILE: [ResolvedTo(IMPORTS)] enumClassScript.kts
+    public final [ResolvedTo(STATUS)] enum class A : R|kotlin/Enum<A>| {
+        private [ResolvedTo(STATUS)] constructor(): R|A| {
+            super<R|kotlin/Enum<A>|>()
+        }
+
+        public final static [ResolvedTo(STATUS)] enum entry X: R|A|
+        public final static [ResolvedTo(STATUS)] enum entry Y: R|A|
+        public final static [ResolvedTo(STATUS)] enum entry Z: R|A|
+        public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
+        }
+
+        public final [ResolvedTo(STATUS)] val x: R|kotlin/Int| = Int(10)
+            public [ResolvedTo(STATUS)] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(STATUS)] fun bar(): R|kotlin/Int| {
+            ^bar Int(10)
+        }
+
+        public final static [ResolvedTo(STATUS)] fun values(): R|kotlin/Array<A>| {
+        }
+
+        public final static [ResolvedTo(STATUS)] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|A| {
+        }
+
+        public final static [ResolvedTo(STATUS)] val entries: R|kotlin/enums/EnumEntries<A>|
+            public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<A>|
+
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|

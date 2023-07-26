@@ -1,0 +1,19 @@
+FILE: [ResolvedTo(IMPORTS)] initBlockScript.kts
+    public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        init {
+            [ResolvedTo(RAW_FIR)] lval x: R|kotlin/Int| = Int(10)
+            local final [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
+                public [ResolvedTo(RAW_FIR)] constructor(): R|A.B| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+        }
+
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|

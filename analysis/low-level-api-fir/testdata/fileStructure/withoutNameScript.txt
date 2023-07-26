@@ -1,0 +1,38 @@
+FILE: [ResolvedTo(IMPORTS)] withoutNameScript.kts
+    public final [ResolvedTo(RAW_FIR)] fun <no name provided>([ResolvedTo(RAW_FIR)] a: R|kotlin/Int| = Int(1)): R|kotlin/String| {
+        ^<no name provided> String(str)
+    }
+    public final [ResolvedTo(RAW_FIR)] fun <no name provided>(): R|kotlin/Unit| {
+    }
+    public final [ResolvedTo(RAW_FIR)] val <no name provided>: R|kotlin/Int| = Int(4)
+        public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int|
+    public final [ResolvedTo(RAW_FIR)] var <no name provided>: R|kotlin/Int|
+        public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int| {
+            ^ Int(4)
+        }
+        public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
+        }
+    public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(STATUS)] fun <no name provided>([ResolvedTo(STATUS)] a: R|kotlin/Int| = Int(1)): R|kotlin/String| {
+            ^<no name provided> String(str)
+        }
+
+        public final [ResolvedTo(STATUS)] fun <no name provided>(): R|kotlin/Unit| {
+        }
+
+        public final [ResolvedTo(STATUS)] val <no name provided>: R|kotlin/Int| = Int(4)
+            public [ResolvedTo(STATUS)] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(STATUS)] var <no name provided>: R|kotlin/Boolean|
+            public [ResolvedTo(STATUS)] get(): R|kotlin/Boolean| {
+                ^ Boolean(true)
+            }
+            public [ResolvedTo(STATUS)] set([ResolvedTo(STATUS)] value: R|kotlin/Boolean|): R|kotlin/Unit| {
+            }
+
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
