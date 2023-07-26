@@ -17,29 +17,42 @@ fun fnv(vararg xs: Int): Int {
 }
 
 fun test0() {
-  return useUnit0(fn = local fun fn0() {
-    fn0()
-  }
-)
+  return useUnit0(fn = { // BLOCK
+    local fun fn0() {
+      fn0()
+    }
+
+    ::fn0
+  })
 }
 
 fun test1() {
-  return useUnit1(fn = local fun fn1(p0: Int) {
-    fn1(x = p0)
-  }
-)
+  return useUnit1(fn = { // BLOCK
+    local fun fn1(p0: Int) {
+      fn1(x = p0)
+    }
+
+    ::fn1
+  })
 }
 
 fun testV0() {
-  return useUnit0(fn = local fun fnv() {
-    fnv()
-  }
-)
+  return useUnit0(fn = { // BLOCK
+    local fun fnv() {
+      fnv()
+    }
+
+    ::fnv
+  })
 }
 
 fun testV1() {
-  return useUnit1(fn = local fun fnv(p0: Int) {
-    fnv(xs = [p0])
-  }
-)
+  return useUnit1(fn = { // BLOCK
+    local fun fnv(p0: Int) {
+      fnv(xs = [p0])
+    }
+
+    ::fnv
+  })
 }
+

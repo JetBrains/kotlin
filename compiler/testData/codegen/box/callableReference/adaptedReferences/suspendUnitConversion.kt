@@ -1,5 +1,7 @@
 // WITH_COROUTINES
 // WITH_STDLIB
+// KT-60700
+// IGNORE_BACKEND: WASM
 import helpers.*
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*

@@ -46,10 +46,13 @@ fun withVararg(vararg xs: Int): Int {
 fun test1() {
   { // BLOCK
     val <array>: A = A
-    val <index_0>: Function1<Int, Unit> = local fun withVararg(p0: Int) {
-      withVararg(xs = [p0])
-    }
+    val <index_0>: Function1<Int, Unit> = { // BLOCK
+      local fun withVararg(p0: Int) {
+        withVararg(xs = [p0])
+      }
 
+      ::withVararg
+    }
     <array>.set(i = <index_0> /*-> IFoo */, newValue = <array>.get(i = <index_0> /*-> IFoo */).plus(other = 1))
   }
 }
@@ -57,10 +60,13 @@ fun test1() {
 fun test2() {
   { // BLOCK
     val <array>: B = B
-    val <index_0>: Function1<Int, Unit> = local fun withVararg(p0: Int) {
-      withVararg(xs = [p0])
-    }
+    val <index_0>: Function1<Int, Unit> = { // BLOCK
+      local fun withVararg(p0: Int) {
+        withVararg(xs = [p0])
+      }
 
+      ::withVararg
+    }
     <array>.set(i = <index_0> /*-> IFoo2 */, newValue = <array>.get(i = <index_0> /*-> IFoo */).plus(other = 1))
   }
 }
@@ -103,3 +109,4 @@ fun test6(a: Any) {
     <array>.set(i = <index_0>, newValue = <array>.get(i = <index_0>).plus(other = 1))
   }
 }
+

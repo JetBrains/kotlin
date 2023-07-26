@@ -41,19 +41,22 @@ FILE fqName:<root> fileName:/suspendConversionWithFunInterfaces.kt
     BLOCK_BODY
       CALL 'public final fun foo1 (s: <root>.SuspendRunnable): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         s: TYPE_OP type=<root>.SuspendRunnable origin=SAM_CONVERSION typeOperand=<root>.SuspendRunnable
-          FUN_EXPR type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
+          BLOCK type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
             FUN ADAPTER_FOR_CALLABLE_REFERENCE name:bar1 visibility:local modality:FINAL <> () returnType:kotlin.Unit [suspend]
               BLOCK_BODY
                 CALL 'public final fun bar1 (): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+            FUNCTION_REFERENCE 'local final fun bar1 (): kotlin.Unit declared in <root>.box' type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun bar1 (): kotlin.Unit declared in <root>
       CALL 'public final fun foo1 (s: <root>.SuspendRunnable): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         s: TYPE_OP type=<root>.SuspendRunnable origin=SAM_CONVERSION typeOperand=<root>.SuspendRunnable
-          FUN_EXPR type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
+          BLOCK type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
             FUN ADAPTER_FOR_CALLABLE_REFERENCE name:bar2 visibility:local modality:FINAL <> () returnType:kotlin.Unit [suspend]
               BLOCK_BODY
                 CALL 'public final fun bar2 (s: kotlin.String): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+            FUNCTION_REFERENCE 'local final fun bar2 (): kotlin.Unit declared in <root>.box' type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun bar2 (s: kotlin.String): kotlin.Int declared in <root>
       CALL 'public final fun foo1 (s: <root>.SuspendRunnable): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         s: TYPE_OP type=<root>.SuspendRunnable origin=SAM_CONVERSION typeOperand=<root>.SuspendRunnable
-          FUN_EXPR type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
+          BLOCK type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
             FUN ADAPTER_FOR_CALLABLE_REFERENCE name:bar3 visibility:local modality:FINAL <> () returnType:kotlin.Unit [suspend]
               BLOCK_BODY
                 CALL 'public final fun bar3 (): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+            FUNCTION_REFERENCE 'local final fun bar3 (): kotlin.Unit declared in <root>.box' type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=public final fun bar3 (): kotlin.Unit declared in <root>

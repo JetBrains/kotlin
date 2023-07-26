@@ -31,10 +31,13 @@ object Obj : A {
 }
 
 fun testUnbound() {
-  use1(fn = local fun foo(p0: A, p1: Int) {
-    p0.foo(xs = [p1])
-  }
-)
+  use1(fn = { // BLOCK
+    local fun foo(p0: A, p1: Int) {
+      p0.foo(xs = [p1])
+    }
+
+    ::foo
+  })
 }
 
 fun testBound(a: A) {
@@ -56,3 +59,4 @@ fun testObject() {
     Obj::foo
   })
 }
+
