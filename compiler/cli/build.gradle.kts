@@ -52,12 +52,6 @@ allprojects {
     optInToExperimentalCompilerApi()
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile> {
-    compilerOptions {
-        progressiveMode.set(true)
-    }
-}
-
 testsJar {}
 
 projectTest {
