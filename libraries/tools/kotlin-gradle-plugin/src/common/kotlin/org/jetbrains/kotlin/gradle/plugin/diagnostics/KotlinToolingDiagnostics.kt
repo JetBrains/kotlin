@@ -237,6 +237,27 @@ object KotlinToolingDiagnostics {
         )
     }
 
+    object AndroidGradlePluginIsMissing : ToolingDiagnosticFactory(FATAL) {
+        operator fun invoke(trace: Throwable? = null) = build(
+            """
+                The Android target requires a 'Android Gradle Plugin' to be applied to the project. 
+                
+                plugins {
+                    kotlin("multiplatform")
+                    
+                    /* Android Gradle Plugin missing */
+                    id("com.android.library") /* <- Android Gradle Plugin for libraries */
+                    id("com.android.application") <* <- Android Gradle Plugin for applications */
+                }
+                
+                kotlin {
+                    androidTarget() /* <- requires Android Gradle Plugin to be applied */
+                }
+            """.trimIndent(),
+            throwable = trace
+        )
+    }
+
     object NoKotlinTargetsDeclared : ToolingDiagnosticFactory(ERROR) {
         operator fun invoke(projectName: String, projectPath: String) = build(
             """
