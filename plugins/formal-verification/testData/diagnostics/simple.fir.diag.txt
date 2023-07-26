@@ -1,5 +1,9 @@
-/simple.kt:(84,100): info: function without_contract(): Int
+/simple.kt:(84,100): info: field backing_int: Int
+
+method without_contract()
 
 
-/simple.kt:(148,161): info: function with_contract(): Int
+/simple.kt:(148,161): info: field backing_int: Int
+
+method with_contract()
 

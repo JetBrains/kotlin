@@ -6,24 +6,102 @@
 package org.jetbrains.kotlin.formver.plugin
 
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.isInt
+import org.jetbrains.kotlin.fir.types.isUnit
 import org.jetbrains.kotlin.formver.scala.Option
 import org.jetbrains.kotlin.formver.scala.emptySeq
+import org.jetbrains.kotlin.formver.scala.seqOf
 import org.jetbrains.kotlin.formver.scala.silicon.ast.*
 import org.jetbrains.kotlin.formver.scala.toScalaSeq
 import viper.silver.ast.Function
+import viper.silver.ast.LocalVarDecl
+import viper.silver.ast.Method
 import viper.silver.ast.Program
 
+const val INT_BACKING_FIELD = "backing_int"
+const val RETURN_VARIABLE_NAME = "ret"
+
+interface ConvertedType {
+    val viperType: Type?
+    fun preconditions(v: Exp.LocalVar): List<Exp>
+    fun postconditions(v: Exp.LocalVar): List<Exp>
+}
+
+interface ConvertedNonUnitType : ConvertedType {
+    override val viperType: Type
+}
+
+abstract class ConvertedPrimitive : ConvertedNonUnitType {
+    override fun preconditions(v: Exp.LocalVar): List<Exp> = emptyList()
+    override fun postconditions(v: Exp.LocalVar): List<Exp> = emptyList()
+}
+
+class ConvertedUnit : ConvertedType {
+    override val viperType: Type? = null
+    override fun preconditions(v: Exp.LocalVar): List<Exp> = emptyList()
+    override fun postconditions(v: Exp.LocalVar): List<Exp> = emptyList()
+}
+
+class ConvertedInt : ConvertedPrimitive() {
+    override val viperType: Type = Type.Int
+}
+
+class ConvertedClassType : ConvertedNonUnitType {
+    override val viperType: Type = Type.Ref
+
+    override fun preconditions(v: Exp.LocalVar): List<Exp> = listOf(Exp.NeCmp(v, Exp.NullLit()))
+    override fun postconditions(v: Exp.LocalVar): List<Exp> = emptyList()
+}
+
+class ConvertedVar(val name: String, val type: ConvertedNonUnitType) {
+    fun toLocalVarDecl(
+        pos: Position = Position.NoPosition,
+        info: Info = Info.NoInfo,
+        trafos: Trafos = Trafos.NoTrafos,
+    ): LocalVarDecl = localVarDecl(name, type.viperType, pos, info, trafos)
+
+    fun toLocalVar(
+        pos: Position = Position.NoPosition,
+        info: Info = Info.NoInfo,
+        trafos: Trafos = Trafos.NoTrafos,
+    ): Exp.LocalVar = Exp.LocalVar(name, type.viperType, pos, info, trafos)
+
+    fun preconditions(): List<Exp> = type.preconditions(toLocalVar())
+    fun postconditions(): List<Exp> = type.postconditions(toLocalVar())
+}
+
+// We see a (method) signature as a variable with parameters.
+class ConvertedMethodSignature(val name: String, val params: List<ConvertedVar>, val returns: List<ConvertedVar>) {
+    fun toMethod(
+        pres: List<Exp>, posts: List<Exp>,
+        body: Stmt.Seqn?,
+        pos: Position = Position.NoPosition,
+        info: Info = Info.NoInfo,
+        trafos: Trafos = Trafos.NoTrafos,
+    ): Method =
+        method(
+            name,
+            params.map { it.toLocalVarDecl() }.toList(),
+            returns.map { it.toLocalVarDecl() }.toList(),
+            params.flatMap { it.preconditions() }.toList() + pres,
+            params.flatMap { it.postconditions() }.toList() +
+                    returns.flatMap { it.preconditions() }.toList() + posts,
+            body, pos, info, trafos,
+        )
+}
 
 class Converter {
-    private val functions: MutableList<Function> = mutableListOf()
+    private val methods: MutableList<Method> = mutableListOf()
 
     val program: Program
         get() = Program(
             emptySeq(), /* Domains */
-            emptySeq(), /* Fields */
-            functions.toScalaSeq(), /* Functions */
+            seqOf(field(INT_BACKING_FIELD, Type.Int)), /* Fields */
+            emptySeq(), /* Functions */
             emptySeq(), /* Predicates */
-            emptySeq(), /* Methods */
+            methods.toScalaSeq(), /* Functions */
             emptySeq(), /* Extensions */
             Position.NoPosition.toViper(),
             Info.NoInfo.toViper(),
@@ -31,76 +109,33 @@ class Converter {
         )
 
     fun add(declaration: FirSimpleFunction) {
-        functions.add(convertSignature(declaration))
+        methods.add(convertSignature(declaration).toMethod(emptyList(), emptyList(), null))
     }
 
-    private fun convertSignature(declaration: FirSimpleFunction): Function {
-        return function(
-            declaration.name.asString(),
-            emptyList(),
-            Type.Int,
-            emptyList(),
-            emptyList(),
-            Option.None<Exp>().toScala()
-        )
+    private fun convertSignature(declaration: FirSimpleFunction): ConvertedMethodSignature {
+        val retType = (declaration.returnTypeRef as FirResolvedTypeRef).type
+        val convertedRetType = convertType(retType)
+        val params = declaration.valueParameters.map {
+            ConvertedVar(
+                it.name.toString(),
+                convertType((it.returnTypeRef as FirResolvedTypeRef).type) as ConvertedNonUnitType
+            )
+        }
+        val returns = if (convertedRetType is ConvertedNonUnitType) {
+            listOf(ConvertedVar(RETURN_VARIABLE_NAME, convertedRetType))
+        } else {
+            emptyList()
+        }
+        return ConvertedMethodSignature(declaration.name.asString(), params, returns)
+    }
+
+    private fun convertType(type: ConeKotlinType): ConvertedType {
+        if (type.isUnit) {
+            return ConvertedUnit()
+        } else if (type.isInt) {
+            return ConvertedInt()
+        }
+        // Otherwise, still need to get to this case.
+        throw NotImplementedError()
     }
 }
-
-/*
-                method(
-                    name = "gaussSum",
-                    formalArgs = listOf(localVarDecl("n", Type.Int)),
-                    formalReturns = listOf(localVarDecl("s", Type.Int)),
-                    pres = listOf(
-                        Exp.GeCmp(Exp.LocalVar("n", Type.Int), Exp.IntLit(0.toScalaBigInt()))
-                    ),
-                    posts = listOf(
-                        Exp.EqCmp(
-                            Exp.LocalVar("s", Type.Int),
-                            Exp.Div(
-                                Exp.Mul(
-                                    Exp.LocalVar("n", Type.Int),
-                                    Exp.Add(Exp.LocalVar("n", Type.Int), Exp.IntLit(1.toScalaBigInt())),
-                                ),
-                                Exp.IntLit(2.toScalaBigInt())
-                            )
-                        )
-                    ),
-                    body = Stmt.Seqn(
-                        stmts = listOf(
-                            Stmt.LocalVarDeclStmt(localVarDecl("i", Type.Int)),
-                            Stmt.LocalVarAssign(Exp.LocalVar("i", Type.Int), Exp.IntLit(0.toScalaBigInt())),
-                            Stmt.While(
-                                cond = Exp.LeCmp(Exp.LocalVar("i", Type.Int), Exp.LocalVar("n", Type.Int)),
-                                body = Stmt.Seqn(
-                                    stmts = listOf(
-                                        Stmt.LocalVarAssign(
-                                            lhs = Exp.LocalVar("i", Type.Int),
-                                            rhs = Exp.Add(Exp.LocalVar("i", Type.Int), Exp.IntLit(1.toScalaBigInt()))
-                                        ),
-                                        Stmt.LocalVarAssign(
-                                            lhs = Exp.LocalVar("s", Type.Int),
-                                            rhs = Exp.Add(Exp.LocalVar("s", Type.Int), Exp.LocalVar("i", Type.Int))
-                                        )
-                                    ),
-                                    scopedStmtsDeclaration = emptyList()
-                                ),
-                                invariants = listOf(
-                                    Exp.EqCmp(
-                                        Exp.LocalVar("s", Type.Int),
-                                        Exp.Div(
-                                            Exp.Mul(
-                                                Exp.LocalVar("i", Type.Int),
-                                                Exp.Add(Exp.LocalVar("i", Type.Int), Exp.IntLit(1.toScalaBigInt())),
-                                            ),
-                                            Exp.IntLit(2.toScalaBigInt())
-                                        )
-                                    )
-                                )
-                            ),
-                        ),
-                        scopedStmtsDeclaration = emptyList()
-                    )
-                )
-
- */

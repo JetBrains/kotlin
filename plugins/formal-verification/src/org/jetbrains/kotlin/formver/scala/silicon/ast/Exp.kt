@@ -182,6 +182,14 @@ sealed class Exp : IntoViper<viper.silver.ast.Exp> {
         override fun toViper(): viper.silver.ast.Exp = IntLit(value, pos.toViper(), info.toViper(), trafos.toViper())
     }
 
+    data class NullLit(
+        val pos: Position = Position.NoPosition,
+        val info: Info = Info.NoInfo,
+        val trafos: Trafos = Trafos.NoTrafos
+    ) : Exp() {
+        override fun toViper(): viper.silver.ast.Exp = NullLit(pos.toViper(), info.toViper(), trafos.toViper())
+    }
+
 
     data class LocalVar(
         val name: String,

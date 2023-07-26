@@ -1,0 +1,11 @@
+FILE: no_contracts.kt
+    public final fun return_unit(): R|kotlin/Unit| {
+    }
+    public final fun return_int(): R|kotlin/Int| {
+        ^return_int Int(0)
+    }
+    public final fun take_int_return_unit(@R|kotlin/Suppress|(names = vararg(String(UNUSED_PARAMETER))) x: R|kotlin/Int|): R|kotlin/Unit| {
+    }
+    public final fun take_int_return_int(x: R|kotlin/Int|): R|kotlin/Int| {
+        ^take_int_return_int R|<local>/x|
+    }
