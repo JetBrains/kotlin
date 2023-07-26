@@ -190,7 +190,7 @@ val soapXml = node("soap-env:Envelope", soapAttrs,
                             )
                             assertEquals(
                                 testSuite.additionalModifiers,
-                                extra[AdditionalModifiers]?.content?.values?.single(),
+                                extra[AdditionalModifiers]?.content?.values?.single() ?: emptySet<ExtraModifiers>(),
                                 "Test for class ${classlike.name} with property $name failed"
                             )
                         }
@@ -213,7 +213,7 @@ val soapXml = node("soap-env:Envelope", soapAttrs,
                             )
                             assertEquals(
                                 testSuite.additionalModifiers,
-                                extra[AdditionalModifiers]?.content?.values?.single(),
+                                extra[AdditionalModifiers]?.content?.values?.single() ?: emptySet<ExtraModifiers>(),
                                 "Test for class ${classlike.name} with function $name failed"
                             )
                         }
