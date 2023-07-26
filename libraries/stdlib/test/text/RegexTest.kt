@@ -529,17 +529,19 @@ class RegexTest {
     @Test fun splitByEmptyMatch() {
         val input = "test"
 
-        val emptyMatch = "".toRegex()
+        for (pattern in listOf("", "(?<=)")) {
+            val emptyMatch = pattern.toRegex()
 
-        testSplitEquals(listOf("", "t", "e", "s", "t", ""), input, emptyMatch)
-        testSplitEquals(listOf("", "t", "est"), input, emptyMatch, limit = 3)
+            testSplitEquals(listOf("", "t", "e", "s", "t", ""), input, emptyMatch)
+            testSplitEquals(listOf("", "t", "est"), input, emptyMatch, limit = 3)
 
-        testSplitEquals("".split(""), "", emptyMatch)
+            testSplitEquals("".split(""), "", emptyMatch)
 
-        testSplitEquals(
-            if (regexSplitUnicodeCodePointHandling) listOf("", "\uD83D\uDE04", "\uD801", "") else listOf("", "\uD83D", "\uDE04", "\uD801", ""),
-            "\uD83D\uDE04\uD801", emptyMatch
-        )
+            testSplitEquals(
+                if (regexSplitUnicodeCodePointHandling) listOf("", "\uD83D\uDE04", "\uD801", "") else listOf("", "\uD83D", "\uDE04", "\uD801", ""),
+                "\uD83D\uDE04\uD801", emptyMatch
+            )
+        }
 
         val emptyMatchBeforeT = "(?=t)".toRegex()
 

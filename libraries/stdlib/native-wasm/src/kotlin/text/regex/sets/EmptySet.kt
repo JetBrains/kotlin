@@ -33,12 +33,6 @@ internal class EmptySet(override var next: AbstractSet) : LeafSet() {
 
     override fun find(startIndex: Int, testString: CharSequence, matchResult: MatchResultImpl): Int {
         for (index in startIndex..testString.length) {
-            if (index < testString.length) {
-                if (testString[index].isLowSurrogate() &&
-                    index > 0 && testString[index - 1].isHighSurrogate()) {
-                    continue
-                }
-            }
             if (next.matches(index, testString, matchResult) >= 0) {
                 return index
             }
@@ -48,12 +42,6 @@ internal class EmptySet(override var next: AbstractSet) : LeafSet() {
 
     override fun findBack(leftLimit: Int, rightLimit: Int, testString: CharSequence, matchResult: MatchResultImpl): Int {
         for (index in rightLimit downTo leftLimit) {
-            if (index < testString.length) {
-                if (testString[index].isLowSurrogate() &&
-                    index > 0 && testString[index - 1].isHighSurrogate()) {
-                    continue
-                }
-            }
             if (next.matches(index, testString, matchResult) >= 0) {
                 return index
             }

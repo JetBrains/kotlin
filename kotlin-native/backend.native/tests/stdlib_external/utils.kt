@@ -24,7 +24,7 @@ public actual val supportsOctalLiteralInRegex: Boolean get() = true
 
 public actual val supportsEscapeAnyCharInRegex: Boolean get() = true
 
-public actual val regexSplitUnicodeCodePointHandling: Boolean get() = true
+public actual val regexSplitUnicodeCodePointHandling: Boolean get() = false
 
 public actual object BackReferenceHandling {
     actual val captureLargestValidIndex: Boolean get() = true
