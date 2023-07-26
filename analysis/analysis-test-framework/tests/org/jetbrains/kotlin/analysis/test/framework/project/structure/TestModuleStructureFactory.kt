@@ -50,7 +50,8 @@ object TestModuleStructureFactory {
         val binaryModulesBySourceRoots = mutableMapOf<Set<Path>, KtBinaryModule>()
 
         for (testModule in moduleStructure.modules) {
-            when (val ktModule = moduleEntriesByName.getValue(testModule.name).ktModule) {
+            val moduleWithFiles = moduleEntriesByName[testModule.name] ?: moduleEntriesByName.getValue(testModule.files.single().name)
+            when (val ktModule = moduleWithFiles.ktModule) {
                 is KtNotUnderContentRootModule -> {
                     // Not-under-content-root modules have no external dependencies on purpose
                 }
