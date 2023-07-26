@@ -1,0 +1,3 @@
+[CommonMainOrTestWithDependsOnDiagnostic | ERROR] commonMain can't declare dependsOn on other source sets
+----
+[CommonMainOrTestWithDependsOnDiagnostic | ERROR] commonTest can't declare dependsOn on other source sets

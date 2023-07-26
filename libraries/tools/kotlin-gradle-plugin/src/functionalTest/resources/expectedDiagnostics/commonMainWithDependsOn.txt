@@ -1,1 +1,0 @@
-[CommonMainWithDependsOnDiagnostic | ERROR] commonMain can't declare dependsOn on other source sets

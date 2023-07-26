@@ -14,8 +14,8 @@ import org.junit.Test
 class MppDiagnosticsFunctionalTest {
 
     @Test
-    fun testCommonMainWithDependsOn() {
-        checkDiagnosticsWithMppProject("commonMainWithDependsOn") {
+    fun testCommonMainOrTestWithDependsOn() {
+        checkDiagnosticsWithMppProject("commonMainOrTestWithDependsOn") {
             kotlin {
                 jvm()
                 linuxX64()
@@ -28,6 +28,13 @@ class MppDiagnosticsFunctionalTest {
                     commonMain {
                         dependsOn(myCustomCommonMain)
                         dependsOn(myCustomCommonMain2) // check that diagnostic isn't duplicated
+                    }
+
+                    val myCustomCommonTest = create("myCustomCommonTest")
+                    val myCustomCommonTest2 = create("myCustomCommonTest2")
+                    commonTest {
+                        dependsOn(myCustomCommonTest)
+                        dependsOn(myCustomCommonTest2) // check that diagnostic isn't duplicated
                     }
                 }
             }

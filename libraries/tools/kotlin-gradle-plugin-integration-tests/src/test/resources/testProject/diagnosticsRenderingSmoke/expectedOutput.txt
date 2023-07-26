@@ -6,7 +6,7 @@ kotlin.mpp.enableCompatibilityMetadataVariant, kotlin.mpp.hierarchicalStructureS
 Read the details here: https://kotlinlang.org/docs/multiplatform-compatibility-guide.html#deprecate-hmpp-properties
 #diagnostic-end
 
-e: [CommonMainWithDependsOnDiagnostic | ERROR] commonMain can't declare dependsOn on other source sets
+e: [CommonMainOrTestWithDependsOnDiagnostic | ERROR] commonMain can't declare dependsOn on other source sets
 #diagnostic-end
 
 w: [KotlinDefaultHierarchyFallbackDependsOnUsageDetected | WARNING] The Default Kotlin Hierarchy was not applied to 'project ':subprojectA'':
@@ -20,7 +20,7 @@ to your gradle.properties
 
 
 > Configure project :subprojectB
-e: [CommonMainWithDependsOnDiagnostic | ERROR] commonMain can't declare dependsOn on other source sets
+e: [CommonMainOrTestWithDependsOnDiagnostic | ERROR] commonMain can't declare dependsOn on other source sets
 #diagnostic-end
 
 w: [KotlinDefaultHierarchyFallbackDependsOnUsageDetected | WARNING] The Default Kotlin Hierarchy was not applied to 'project ':subprojectB'':

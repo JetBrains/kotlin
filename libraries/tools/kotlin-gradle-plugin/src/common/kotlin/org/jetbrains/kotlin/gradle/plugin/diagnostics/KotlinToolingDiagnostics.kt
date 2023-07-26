@@ -35,8 +35,8 @@ object KotlinToolingDiagnostics {
         )
     }
 
-    object CommonMainWithDependsOnDiagnostic : ToolingDiagnosticFactory(ERROR) {
-        operator fun invoke() = build("commonMain can't declare dependsOn on other source sets")
+    object CommonMainOrTestWithDependsOnDiagnostic : ToolingDiagnosticFactory(ERROR) {
+        operator fun invoke(suffix: String) = build("common$suffix can't declare dependsOn on other source sets")
     }
 
     object NativeStdlibIsMissingDiagnostic : ToolingDiagnosticFactory(WARNING) {

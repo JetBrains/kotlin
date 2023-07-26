@@ -97,7 +97,7 @@ internal interface KotlinGradleProjectChecker {
 
     companion object {
         val ALL_CHECKERS: List<KotlinGradleProjectChecker> = listOf(
-            CommonMainWithDependsOnChecker,
+            CommonMainOrTestWithDependsOnChecker,
             DeprecatedKotlinNativeTargetsChecker,
             MissingNativeStdlibChecker,
             UnusedSourceSetsChecker,
