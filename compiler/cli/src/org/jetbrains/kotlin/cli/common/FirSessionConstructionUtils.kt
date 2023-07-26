@@ -24,15 +24,18 @@ import org.jetbrains.kotlin.load.kotlin.PackageAndMetadataPartProvider
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.WasmPlatform
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
+import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import org.jetbrains.kotlin.resolve.konan.platform.NativePlatformAnalyzerServices
 import org.jetbrains.kotlin.resolve.multiplatform.hmppModuleName
 import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
+import org.jetbrains.kotlin.wasm.resolve.WasmPlatformAnalyzerServices
 
 val isCommonSourceForPsi: (KtFile) -> Boolean = { it.isCommonSource == true }
 val fileBelongsToModuleForPsi: (KtFile, String) -> Boolean = { file, moduleName -> file.hmppModuleName == moduleName }
@@ -185,6 +188,53 @@ fun <F> prepareNativeSessions(
             configuration.languageVersionSettings,
             sessionConfigurator,
             registerExtraComponents,
+        )
+    }
+}
+
+/**
+ * Creates library session and sources session for Wasm platform
+ * Number of created session depends on mode of MPP:
+ *   - disabled
+ *   - legacy (one platform and one common module)
+ *   - HMPP (multiple number of modules)
+ */
+fun <F> prepareWasmSessions(
+    files: List<F>,
+    configuration: CompilerConfiguration,
+    rootModuleName: Name,
+    resolvedLibraries: List<KotlinLibrary>,
+    libraryList: DependencyListForCliModule,
+    extensionRegistrars: List<FirExtensionRegistrar>,
+    isCommonSource: (F) -> Boolean,
+    fileBelongsToModule: (F, String) -> Boolean,
+    lookupTracker: LookupTracker?,
+    icData: KlibIcData?,
+): List<SessionWithSources<F>> {
+    return prepareSessions(
+        files, configuration, rootModuleName, WasmPlatforms.Default, WasmPlatformAnalyzerServices,
+        metadataCompilationMode = false, libraryList, isCommonSource, fileBelongsToModule,
+        createLibrarySession = { sessionProvider ->
+            FirWasmSessionFactory.createLibrarySession(
+                rootModuleName,
+                resolvedLibraries,
+                sessionProvider,
+                libraryList.moduleDataProvider,
+                extensionRegistrars,
+                configuration.languageVersionSettings,
+                registerExtraComponents = {},
+            )
+        }
+    ) { _, moduleData, sessionProvider, sessionConfigurator ->
+        FirWasmSessionFactory.createModuleBasedSession(
+            moduleData,
+            sessionProvider,
+            extensionRegistrars,
+            configuration.languageVersionSettings,
+            lookupTracker,
+            icData = icData,
+            registerExtraComponents = {},
+            init = sessionConfigurator,
         )
     }
 }

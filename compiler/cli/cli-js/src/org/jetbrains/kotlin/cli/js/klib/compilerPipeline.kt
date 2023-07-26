@@ -40,13 +40,16 @@ import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
 import org.jetbrains.kotlin.library.KotlinAbiVersion
+import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.unresolvedDependencies
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.js.JsPlatforms
+import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.utils.metadataVersion
+import org.jetbrains.kotlin.wasm.resolve.WasmPlatformAnalyzerServices
 import java.io.File
 import java.nio.file.Paths
 
@@ -60,6 +63,7 @@ inline fun <F> compileModuleToAnalyzedFir(
     noinline isCommonSource: (F) -> Boolean,
     noinline fileBelongsToModule: (F, String) -> Boolean,
     buildResolveAndCheckFir: (FirSession, List<F>) -> ModuleCompilerAnalyzedOutput,
+    useWasmPlatform: Boolean,
 ): List<ModuleCompilerAnalyzedOutput> {
     // FIR
     val extensionRegistrars = FirExtensionRegistrar.getInstances(moduleStructure.project)
@@ -67,7 +71,10 @@ inline fun <F> compileModuleToAnalyzedFir(
     val mainModuleName = moduleStructure.compilerConfiguration.get(CommonConfigurationKeys.MODULE_NAME)!!
     val escapedMainModuleName = Name.special("<$mainModuleName>")
 
-    val binaryModuleData = BinaryModuleData.initialize(escapedMainModuleName, JsPlatforms.defaultJsPlatform, JsPlatformAnalyzerServices)
+    val platform = if (useWasmPlatform) WasmPlatforms.Default else JsPlatforms.defaultJsPlatform
+    val platformAnalyzerServices = if (useWasmPlatform) WasmPlatformAnalyzerServices else JsPlatformAnalyzerServices
+
+    val binaryModuleData = BinaryModuleData.initialize(escapedMainModuleName, platform, platformAnalyzerServices)
     val dependencyList = DependencyListForCliModule.build(binaryModuleData) {
         dependencies(libraries.map { Paths.get(it).toAbsolutePath() })
         friendDependencies(friendLibraries.map { Paths.get(it).toAbsolutePath() })
@@ -75,14 +82,26 @@ inline fun <F> compileModuleToAnalyzedFir(
     }
 
     val resolvedLibraries = moduleStructure.allDependencies
-    val sessionsWithSources = prepareJsSessions(
-        files, moduleStructure.compilerConfiguration, escapedMainModuleName,
-        resolvedLibraries, dependencyList, extensionRegistrars,
-        isCommonSource = isCommonSource,
-        fileBelongsToModule = fileBelongsToModule,
-        lookupTracker,
-        icData = incrementalDataProvider?.let(::KlibIcData),
-    )
+
+    val sessionsWithSources = if (useWasmPlatform) {
+        prepareWasmSessions(
+            files, moduleStructure.compilerConfiguration, escapedMainModuleName,
+            resolvedLibraries, dependencyList, extensionRegistrars,
+            isCommonSource = isCommonSource,
+            fileBelongsToModule = fileBelongsToModule,
+            lookupTracker,
+            icData = incrementalDataProvider?.let(::KlibIcData),
+        )
+    } else {
+        prepareJsSessions(
+            files, moduleStructure.compilerConfiguration, escapedMainModuleName,
+            resolvedLibraries, dependencyList, extensionRegistrars,
+            isCommonSource = isCommonSource,
+            fileBelongsToModule = fileBelongsToModule,
+            lookupTracker,
+            icData = incrementalDataProvider?.let(::KlibIcData),
+        )
+    }
 
     val outputs = sessionsWithSources.map {
         buildResolveAndCheckFir(it.session, it.files)
@@ -128,6 +147,7 @@ fun compileModuleToAnalyzedFirWithPsi(
     diagnosticsReporter: BaseDiagnosticsCollector,
     incrementalDataProvider: IncrementalDataProvider?,
     lookupTracker: LookupTracker?,
+    useWasmPlatform: Boolean,
 ): AnalyzedFirWithPsiOutput {
     val output = compileModuleToAnalyzedFir(
         moduleStructure,
@@ -141,6 +161,7 @@ fun compileModuleToAnalyzedFirWithPsi(
         buildResolveAndCheckFir = { session, files ->
             buildResolveAndCheckFirFromKtFiles(session, files, diagnosticsReporter)
         },
+        useWasmPlatform = useWasmPlatform,
     )
     return AnalyzedFirWithPsiOutput(output, ktFiles)
 }
@@ -154,6 +175,7 @@ fun compileModulesToAnalyzedFirWithLightTree(
     diagnosticsReporter: BaseDiagnosticsCollector,
     incrementalDataProvider: IncrementalDataProvider?,
     lookupTracker: LookupTracker?,
+    useWasmPlatform: Boolean,
 ): AnalyzedFirOutput {
     val output = compileModuleToAnalyzedFir(
         moduleStructure,
@@ -167,6 +189,7 @@ fun compileModulesToAnalyzedFirWithLightTree(
         buildResolveAndCheckFir = { session, files ->
             buildResolveAndCheckFirViaLightTree(session, files, diagnosticsReporter, null)
         },
+        useWasmPlatform = useWasmPlatform,
     )
     return AnalyzedFirOutput(output)
 }
@@ -275,7 +298,8 @@ fun serializeFirKlib(
     outputKlibPath: String,
     messageCollector: MessageCollector,
     diagnosticsReporter: BaseDiagnosticsCollector,
-    jsOutputName: String?
+    jsOutputName: String?,
+    useWasmPlatform: Boolean,
 ) {
     val fir2KlibSerializer = Fir2KlibSerializer(moduleStructure, firOutputs, fir2IrActualizedResult)
     val icData = moduleStructure.compilerConfiguration.incrementalDataProvider?.getSerializedData(fir2KlibSerializer.sourceFiles)
@@ -295,7 +319,8 @@ fun serializeFirKlib(
         containsErrorCode = messageCollector.hasErrors() || diagnosticsReporter.hasErrors,
         abiVersion = KotlinAbiVersion.CURRENT, // TODO get from test file data
         jsOutputName = jsOutputName,
-        serializeSingleFile = fir2KlibSerializer::serializeSingleFirFile
+        serializeSingleFile = fir2KlibSerializer::serializeSingleFirFile,
+        builtInsPlatform = if (useWasmPlatform) BuiltInsPlatform.WASM else BuiltInsPlatform.JS,
     )
 }
 

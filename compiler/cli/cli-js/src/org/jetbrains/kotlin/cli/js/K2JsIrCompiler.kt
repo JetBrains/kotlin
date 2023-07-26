@@ -509,6 +509,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 diagnosticsReporter = diagnosticsReporter,
                 incrementalDataProvider = configuration[JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER],
                 lookupTracker = lookupTracker,
+                useWasmPlatform = arguments.wasm,
             )
         } else {
             compileModuleToAnalyzedFirWithPsi(
@@ -519,6 +520,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 diagnosticsReporter = diagnosticsReporter,
                 incrementalDataProvider = configuration[JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER],
                 lookupTracker = lookupTracker,
+                useWasmPlatform = arguments.wasm,
             )
         }
 
@@ -550,7 +552,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 outputKlibPath = outputKlibPath,
                 messageCollector = messageCollector,
                 diagnosticsReporter = diagnosticsReporter,
-                jsOutputName = arguments.irPerModuleOutputName
+                jsOutputName = arguments.irPerModuleOutputName,
+                useWasmPlatform = arguments.wasm
             )
         }
 

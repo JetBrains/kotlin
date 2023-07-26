@@ -76,6 +76,7 @@ abstract class FirAbstractInvalidationTest(
             diagnosticsReporter = diagnosticsReporter,
             incrementalDataProvider = null,
             lookupTracker = null,
+            useWasmPlatform = false,
         )
 
         val fir2IrActualizedResult = transformFirToIr(moduleStructure, analyzedOutput.output, diagnosticsReporter)
@@ -92,7 +93,8 @@ abstract class FirAbstractInvalidationTest(
             outputKlibPath = outputKlibFile.absolutePath,
             messageCollector = messageCollector,
             diagnosticsReporter = diagnosticsReporter,
-            jsOutputName = moduleName
+            jsOutputName = moduleName,
+            useWasmPlatform = false,
         )
 
         if (messageCollector.hasErrors()) {
