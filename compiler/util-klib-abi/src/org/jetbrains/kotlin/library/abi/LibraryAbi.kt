@@ -137,7 +137,7 @@ sealed interface AbiDeclaration {
     val signatures: AbiSignatures
 
     /**
-     * Annotations are not a part of ABI. But sometimes it is  useful to have an ability to check if some declaration
+     * Annotations are not a part of ABI. But sometimes it is useful to have the ability to check if some declaration
      * has a specific annotation. See [AbiReadingFilter.NonPublicMarkerAnnotations] as an example.
      */
     fun hasAnnotation(annotationClassName: AbiQualifiedName): Boolean
