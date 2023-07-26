@@ -743,6 +743,18 @@ publishing {
             variant("jvmSourcesElements")
 
             variant("metadataApiElements")
+            variant("commonMainMetadataElementsWithClassifier") {
+                name = "commonMainMetadataElements"
+                configuration {
+                    isCanBeConsumed = false
+                }
+                attributes {
+                    copyAttributes(from = project.configurations["commonMainMetadataElements"].attributes, to = this)
+                }
+                artifact(tasks["metadataJar"]) {
+                    classifier = "common"
+                }
+            }
             variant("metadataSourcesElementsFromJvm") {
                 name = "metadataSourcesElements"
                 configuration {
@@ -784,16 +796,15 @@ publishing {
             }
         }
 
-        // TODO: decide what should be published in kotlin-stdlib-common
+        // we cannot publish legacy common artifact with metadata in kotlin-stdlib-common
+        // because it will cause problems in explicitly configured stdlib dependencies in project
 //        val common = module("commonModule") {
 //            mavenPublication {
-//                groupId = "org.example"
-//                artifactId = "sample-lib-common"
+//                artifactId = "$artifactBaseName-common"
+//                configureKotlinPomAttributes(project, "Kotlin Common Standard Library (for compatibility with legacy multiplatform)")
+//                artifact(tasks["sourcesJar"]) // publish sources.jar just for maven, without including it in Gradle metadata
 //            }
-//            variant("commonMainMetadataElements") {
-//                // Multiplatform KGP already added klib artifact to metadataApiElements
-//                // attributes { kotlinLegacyMetadataAttributes() }
-//            }
+//            variant("commonMainMetadataElements")
 //        }
         val js = module("jsModule") {
             mavenPublication {
