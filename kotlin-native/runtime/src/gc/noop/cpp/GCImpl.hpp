@@ -12,7 +12,8 @@
 
 #ifdef CUSTOM_ALLOCATOR
 #include "CustomAllocator.hpp"
-#include "GCScheduler.hpp"
+#else
+#include "ExtraObjectDataFactory.hpp"
 #endif
 
 namespace kotlin {
@@ -26,12 +27,14 @@ public:
 
 #ifndef CUSTOM_ALLOCATOR
     mm::ObjectFactory<gc::GCImpl>& objectFactory() noexcept { return objectFactory_; }
+    mm::ExtraObjectDataFactory& extraObjectDataFactory() noexcept { return extraObjectDataFactory_; }
 #endif
     GCImpl& gc() noexcept { return gc_; }
 
 private:
 #ifndef CUSTOM_ALLOCATOR
     mm::ObjectFactory<gc::GCImpl> objectFactory_;
+    mm::ExtraObjectDataFactory extraObjectDataFactory_;
 #endif
     GCImpl gc_;
 };
@@ -43,7 +46,8 @@ public:
         alloc_(gc.impl_->gc().heap(), gcScheduler) {}
 #else
     Impl(GC& gc, mm::ThreadData& threadData) noexcept :
-        objectFactoryThreadQueue_(gc.impl_->objectFactory(), gc_.CreateAllocator()) {}
+        objectFactoryThreadQueue_(gc.impl_->objectFactory(), gc_.CreateAllocator()),
+        extraObjectDataFactoryThreadQueue_(gc.impl_->extraObjectDataFactory()) {}
 #endif
 
     GCImpl::ThreadData& gc() noexcept { return gc_; }
@@ -51,15 +55,16 @@ public:
     alloc::CustomAllocator& alloc() noexcept { return alloc_; }
 #else
     mm::ObjectFactory<GCImpl>::ThreadQueue& objectFactoryThreadQueue() noexcept { return objectFactoryThreadQueue_; }
+    mm::ExtraObjectDataFactory::ThreadQueue& extraObjectDataFactoryThreadQueue() noexcept { return extraObjectDataFactoryThreadQueue_; }
 #endif
 
 private:
     GCImpl::ThreadData gc_;
 #ifdef CUSTOM_ALLOCATOR
     alloc::CustomAllocator alloc_;
-    /* gcScheduler::GCSchedulerThreadData; */
 #else
     mm::ObjectFactory<GCImpl>::ThreadQueue objectFactoryThreadQueue_;
+    mm::ExtraObjectDataFactory::ThreadQueue extraObjectDataFactoryThreadQueue_;
 #endif
 };
 

@@ -108,8 +108,11 @@ void gc::ConcurrentMarkAndSweep::ThreadData::OnSuspendForGC() noexcept {
 
 #ifndef CUSTOM_ALLOCATOR
 gc::ConcurrentMarkAndSweep::ConcurrentMarkAndSweep(
-        mm::ObjectFactory<ConcurrentMarkAndSweep>& objectFactory, gcScheduler::GCScheduler& gcScheduler) noexcept :
+        mm::ObjectFactory<ConcurrentMarkAndSweep>& objectFactory,
+        mm::ExtraObjectDataFactory& extraObjectDataFactory,
+        gcScheduler::GCScheduler& gcScheduler) noexcept :
     objectFactory_(objectFactory),
+    extraObjectDataFactory_(extraObjectDataFactory),
 #else
 gc::ConcurrentMarkAndSweep::ConcurrentMarkAndSweep(gcScheduler::GCScheduler& gcScheduler) noexcept :
 #endif
@@ -168,7 +171,7 @@ void gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
 #ifdef CUSTOM_ALLOCATOR
     // This should really be done by each individual thread while waiting
     for (auto& thread : kotlin::mm::ThreadRegistry::Instance().LockForIter()) {
-        thread.gc().Allocator().PrepareForGC();
+        thread.gc().impl().alloc().PrepareForGC();
     }
     heap_.PrepareForGC();
 #endif
@@ -190,7 +193,7 @@ void gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
 #ifndef CUSTOM_ALLOCATOR
     // Taking the locks before the pause is completed. So that any destroying thread
     // would not publish into the global state at an unexpected time.
-    std::optional extraObjectFactoryIterable = mm::GlobalData::Instance().extraObjectDataFactory().LockForIter();
+    std::optional extraObjectFactoryIterable = extraObjectDataFactory_.LockForIter();
     std::optional objectFactoryIterable = objectFactory_.LockForIter();
 #endif
 
@@ -222,7 +225,7 @@ void gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
     // also sweeps extraObjects
     auto finalizerQueue = heap_.Sweep(gcHandle);
     for (auto& thread : kotlin::mm::ThreadRegistry::Instance().LockForIter()) {
-        finalizerQueue.TransferAllFrom(thread.gc().Allocator().ExtractFinalizerQueue());
+        finalizerQueue.TransferAllFrom(thread.gc().impl().alloc().ExtractFinalizerQueue());
     }
 #endif
     state_.finish(epoch);

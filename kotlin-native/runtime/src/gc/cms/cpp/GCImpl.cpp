@@ -34,12 +34,14 @@ void gc::GC::ThreadData::ScheduleAndWaitFullGCWithFinalizers() noexcept {
 
 void gc::GC::ThreadData::Publish() noexcept {
 #ifndef CUSTOM_ALLOCATOR
+    impl_->extraObjectDataFactoryThreadQueue().Publish();
     impl_->objectFactoryThreadQueue().Publish();
 #endif
 }
 
 void gc::GC::ThreadData::ClearForTests() noexcept {
 #ifndef CUSTOM_ALLOCATOR
+    impl_->extraObjectDataFactoryThreadQueue().ClearForTests();
     impl_->objectFactoryThreadQueue().ClearForTests();
 #else
     impl_->alloc().PrepareForGC();
@@ -62,11 +64,22 @@ ALWAYS_INLINE ArrayHeader* gc::GC::ThreadData::CreateArray(const TypeInfo* typeI
 #endif
 }
 
-#ifdef CUSTOM_ALLOCATOR
-alloc::CustomAllocator& gc::GC::ThreadData::Allocator() noexcept {
-    return impl_->alloc();
-}
+ALWAYS_INLINE mm::ExtraObjectData& gc::GC::ThreadData::CreateExtraObjectDataForObject(
+        ObjHeader* object, const TypeInfo* typeInfo) noexcept {
+#ifndef CUSTOM_ALLOCATOR
+    return impl_->extraObjectDataFactoryThreadQueue().CreateExtraObjectDataForObject(object, typeInfo);
+#else
+    return impl_->alloc().CreateExtraObjectDataForObject(object, typeInfo);
 #endif
+}
+
+ALWAYS_INLINE void gc::GC::ThreadData::DestroyUnattachedExtraObjectData(mm::ExtraObjectData& extraObject) noexcept {
+#ifndef CUSTOM_ALLOCATOR
+    impl_->extraObjectDataFactoryThreadQueue().DestroyExtraObjectData(extraObject);
+#else
+    extraObject.setFlag(mm::ExtraObjectData::FLAGS_SWEEPABLE);
+#endif
+}
 
 void gc::GC::ThreadData::OnSuspendForGC() noexcept {
     impl_->gc().OnSuspendForGC();
@@ -96,6 +109,7 @@ size_t gc::GC::GetTotalHeapObjectsSizeBytes() const noexcept {
 void gc::GC::ClearForTests() noexcept {
     impl_->gc().StopFinalizerThreadIfRunning();
 #ifndef CUSTOM_ALLOCATOR
+    impl_->extraObjectDataFactory().ClearForTests();
     impl_->objectFactory().ClearForTests();
 #else
     impl_->gc().heap().ClearForTests();
@@ -153,4 +167,16 @@ const size_t gc::GC::objectDataSize = sizeof(ConcurrentMarkAndSweep::ObjectData)
 // static
 ALWAYS_INLINE bool gc::GC::SweepObject(void *objectData) noexcept {
     return reinterpret_cast<ConcurrentMarkAndSweep::ObjectData*>(objectData)->tryResetMark();
+}
+
+// static
+ALWAYS_INLINE void gc::GC::DestroyExtraObjectData(mm::ExtraObjectData& extraObject) noexcept {
+#ifndef CUSTOM_ALLOCATOR
+    extraObject.Uninstall();
+    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
+    threadData->gc().impl().extraObjectDataFactoryThreadQueue().DestroyExtraObjectData(extraObject);
+#else
+    extraObject.ReleaseAssociatedObject();
+    extraObject.setFlag(mm::ExtraObjectData::FLAGS_FINALIZED);
+#endif
 }

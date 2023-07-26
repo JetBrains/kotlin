@@ -13,10 +13,6 @@
 #include "ObjCMMAPI.h"
 #endif
 
-#ifdef CUSTOM_ALLOCATOR
-#include "CustomAllocator.hpp"
-#endif
-
 using namespace kotlin;
 
 // static
@@ -32,20 +28,11 @@ mm::ExtraObjectData& mm::ExtraObjectData::Install(ObjHeader* object) noexcept {
 
     RuntimeCheck(!hasPointerBits(typeInfo, OBJECT_TAG_MASK), "Object must not be tagged");
 
-    auto *threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
-#ifdef CUSTOM_ALLOCATOR
-    auto& data = threadData->gc().Allocator().CreateExtraObjectDataForObject(object, typeInfo);
-
+    auto& gc = mm::ThreadRegistry::Instance().CurrentThreadData()->gc();
+    auto& data = gc.CreateExtraObjectDataForObject(object, typeInfo);
     if (!compareExchange(object->typeInfoOrMeta_, typeInfo, reinterpret_cast<TypeInfo*>(&data))) {
         // Somebody else created `mm::ExtraObjectData` for this object.
-        data.setFlag(mm::ExtraObjectData::FLAGS_SWEEPABLE);
-#else
-    auto& data = mm::ExtraObjectDataFactory::Instance().CreateExtraObjectDataForObject(threadData, object, typeInfo);
-
-    if (!compareExchange(object->typeInfoOrMeta_, typeInfo, reinterpret_cast<TypeInfo*>(&data))) {
-        // Somebody else created `mm::ExtraObjectData` for this object
-        mm::ExtraObjectDataFactory::Instance().DestroyExtraObjectData(threadData, data);
-#endif
+        gc.DestroyUnattachedExtraObjectData(data);
         return *reinterpret_cast<mm::ExtraObjectData*>(typeInfo);
     }
 

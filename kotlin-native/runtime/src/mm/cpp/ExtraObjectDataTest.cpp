@@ -29,9 +29,6 @@ public:
 
     ~ExtraObjectDataTest() {
         mm::GlobalsRegistry::Instance().ClearForTests();
-#ifndef CUSTOM_ALLOCATOR
-        mm::GlobalData::Instance().extraObjectDataFactory().ClearForTests();
-#endif
         mm::GlobalData::Instance().gc().ClearForTests();
     }
 };

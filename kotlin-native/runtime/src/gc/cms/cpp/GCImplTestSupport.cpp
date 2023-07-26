@@ -23,13 +23,25 @@ auto collectCopy(T& iterable) {
     return result;
 }
 
+template <typename T>
+auto collectPointers(T& iterable) {
+    std::vector<const std::remove_reference_t<decltype(*iterable.begin())>*> result;
+    for (const auto& element : iterable) {
+        result.push_back(&element);
+    }
+    return result;
+}
+
 } // namespace
 
 void gc::AssertClear(GC& gc) noexcept {
 #ifdef CUSTOM_ALLOCATOR
     auto objects = gc.impl().gc().heap().GetAllocatedObjects();
+    EXPECT_THAT(collectCopy(objects), testing::UnorderedElementsAre());
 #else
     auto objects = gc.impl().objectFactory().LockForIter();
-#endif
+    auto extraObjects = gc.impl().extraObjectDataFactory().LockForIter();
     EXPECT_THAT(collectCopy(objects), testing::UnorderedElementsAre());
+    EXPECT_THAT(collectPointers(extraObjects), testing::UnorderedElementsAre());
+#endif
 }

@@ -168,7 +168,7 @@ public:
         auto deallocExtraObject = [this](ObjHeader* obj) {
             auto *extraObject = mm::ExtraObjectData::Get(obj);
             extraObject->Uninstall();
-            extraObjectFactory_.DestroyExtraObjectData(extraObjectFactoryThreadQueue_, *extraObject);
+            extraObjectFactoryThreadQueue_.DestroyExtraObjectData(*extraObject);
             extraObjectFactoryThreadQueue_.Publish();
         };
         for (auto& finalizerQueue : finalizers_) {
@@ -240,7 +240,7 @@ public:
     }
 
     mm::ExtraObjectData& InstallExtraData(ObjHeader *objHeader) {
-        auto& extraObjectData = extraObjectFactory_.CreateExtraObjectDataForObject(extraObjectFactoryThreadQueue_, objHeader, objHeader->type_info());
+        auto& extraObjectData = extraObjectFactoryThreadQueue_.CreateExtraObjectDataForObject(objHeader, objHeader->type_info());
         extraObjectFactoryThreadQueue_.Publish();
         objHeader->typeInfoOrMeta_ = reinterpret_cast<TypeInfo*>(&extraObjectData);
         return *mm::ExtraObjectData::Get(objHeader);

@@ -215,12 +215,6 @@ public:
     ~SameThreadMarkAndSweepTest() {
         mm::GlobalsRegistry::Instance().ClearForTests();
         mm::SpecialRefRegistry::instance().clearForTests();
-#ifndef CUSTOM_ALLOCATOR
-        mm::GlobalData::Instance().extraObjectDataFactory().ClearForTests();
-        mm::GlobalData::Instance().gc().impl().objectFactory().ClearForTests();
-#else
-        mm::GlobalData::Instance().gc().impl().gc().heap().ClearForTests();
-#endif
         mm::GlobalData::Instance().gc().ClearForTests();
     }
 

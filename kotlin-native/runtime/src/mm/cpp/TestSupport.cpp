@@ -48,11 +48,6 @@ extern "C" void Kotlin_TestSupport_AssertClearGlobalState() {
     auto specialRefs = mm::SpecialRefRegistry::instance().lockForIter();
     auto threads = mm::ThreadRegistry::Instance().LockForIter();
 
-#ifndef CUSTOM_ALLOCATOR
-    auto extraObjects = mm::GlobalData::Instance().extraObjectDataFactory().LockForIter();
-    EXPECT_THAT(collectPointers(extraObjects), testing::UnorderedElementsAre());
-#endif
-
     EXPECT_THAT(collectCopy(globals), testing::UnorderedElementsAre());
     EXPECT_THAT(collectPointers(specialRefs), testing::UnorderedElementsAre());
     EXPECT_THAT(collectPointers(threads), testing::UnorderedElementsAre());

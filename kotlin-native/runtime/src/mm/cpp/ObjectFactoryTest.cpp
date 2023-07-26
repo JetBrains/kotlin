@@ -22,14 +22,17 @@
 #include "std_support/Vector.hpp"
 
 // ObjectFactory is not used by custom allocator
-#ifndef CUSTOM_ALLOCATOR
 using namespace kotlin;
 
 using testing::_;
 
 namespace {
 
-using SimpleAllocator = gc::Allocator;
+class SimpleAllocator {
+public:
+    void* Alloc(size_t size) noexcept { return std_support::calloc(1, size); }
+    static void Free(void* instance, size_t size) noexcept { std_support::free(instance); }
+};
 
 struct DataSizeProvider {
     static size_t GetDataSize(void* data) noexcept { return 0; }
@@ -790,9 +793,9 @@ public:
     MOCK_METHOD(void*, Alloc, (size_t));
     MOCK_METHOD(void, Free, (void*, size_t));
 
-    void* DefaultAlloc(size_t size) { return allocateInObjectPool(size); }
+    void* DefaultAlloc(size_t size) { return std_support::calloc(1, size); }
 
-    void DefaultFree(void* instance, size_t size) { freeInObjectPool(instance, size); }
+    void DefaultFree(void* instance, size_t size) { std_support::free(instance); }
 };
 
 class GlobalMockAllocator {
@@ -1132,4 +1135,3 @@ TEST(ObjectFactoryTest, ConcurrentPublish) {
     EXPECT_THAT(actual, testing::UnorderedElementsAreArray(expected));
     EXPECT_CALL(allocator, Free(_, _)).Times(kThreadCount);
 }
-#endif

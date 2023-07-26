@@ -13,7 +13,6 @@
 #include "SpecialRefRegistry.hpp"
 #include "ThreadRegistry.hpp"
 #include "Utils.hpp"
-#include "ExtraObjectDataFactory.hpp"
 #include "AppStateTracking.hpp"
 
 namespace kotlin {
@@ -27,9 +26,6 @@ public:
     ThreadRegistry& threadRegistry() noexcept { return threadRegistry_; }
     GlobalsRegistry& globalsRegistry() noexcept { return globalsRegistry_; }
     SpecialRefRegistry& specialRefRegistry() noexcept { return specialRefRegistry_; }
-#ifndef CUSTOM_ALLOCATOR
-    ExtraObjectDataFactory& extraObjectDataFactory() noexcept { return extraObjectDataFactory_; }
-#endif
     gcScheduler::GCScheduler& gcScheduler() noexcept { return gcScheduler_; }
     gc::GC& gc() noexcept { return gc_; }
     AppStateTracking& appStateTracking() noexcept { return appStateTracking_; }
@@ -47,12 +43,6 @@ private:
     SpecialRefRegistry specialRefRegistry_;
     gcScheduler::GCScheduler gcScheduler_;
     gc::GC gc_{gcScheduler_};
-#ifndef CUSTOM_ALLOCATOR
-    // by being last, ommiting it will not affect the offsets of the other
-    // members, and we avoid having to have _custom versions of the gcScheduler
-    // modules.
-    ExtraObjectDataFactory extraObjectDataFactory_;
-#endif
 };
 
 } // namespace mm

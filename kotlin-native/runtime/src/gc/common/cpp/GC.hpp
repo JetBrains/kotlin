@@ -7,14 +7,11 @@
 
 #include <atomic>
 
+#include "ExtraObjectData.hpp"
 #include "GCScheduler.hpp"
 #include "Memory.h"
 #include "Utils.hpp"
 #include "std_support/Memory.hpp"
-
-#ifdef CUSTOM_ALLOCATOR
-#include "CustomAllocator.hpp"
-#endif
 
 namespace kotlin {
 
@@ -46,10 +43,8 @@ public:
 
         ObjHeader* CreateObject(const TypeInfo* typeInfo) noexcept;
         ArrayHeader* CreateArray(const TypeInfo* typeInfo, uint32_t elements) noexcept;
-
-#ifdef CUSTOM_ALLOCATOR
-        alloc::CustomAllocator& Allocator() noexcept;
-#endif
+        mm::ExtraObjectData& CreateExtraObjectDataForObject(ObjHeader* object, const TypeInfo* typeInfo) noexcept;
+        void DestroyUnattachedExtraObjectData(mm::ExtraObjectData& extraObject) noexcept;
 
         void OnSuspendForGC() noexcept;
 
@@ -85,6 +80,8 @@ public:
 
     static const size_t objectDataSize;
     static bool SweepObject(void* objectData) noexcept;
+
+    static void DestroyExtraObjectData(mm::ExtraObjectData& extraObject) noexcept;
 
 private:
     std_support::unique_ptr<Impl> impl_;

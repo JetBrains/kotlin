@@ -9,6 +9,7 @@
 #include <cstddef>
 
 #include "Allocator.hpp"
+#include "ExtraObjectDataFactory.hpp"
 #include "FinalizerProcessor.hpp"
 #include "GCScheduler.hpp"
 #include "GCState.hpp"
@@ -109,7 +110,10 @@ public:
     using FinalizerQueue = mm::ObjectFactory<SameThreadMarkAndSweep>::FinalizerQueue;
     using FinalizerQueueTraits = mm::ObjectFactory<SameThreadMarkAndSweep>::FinalizerQueueTraits;
 
-    SameThreadMarkAndSweep(mm::ObjectFactory<SameThreadMarkAndSweep>& objectFactory, gcScheduler::GCScheduler& gcScheduler) noexcept;
+    SameThreadMarkAndSweep(
+            mm::ObjectFactory<SameThreadMarkAndSweep>& objectFactory,
+            mm::ExtraObjectDataFactory& extraObjectDataFactory,
+            gcScheduler::GCScheduler& gcScheduler) noexcept;
 #endif
 
     ~SameThreadMarkAndSweep();
@@ -130,6 +134,7 @@ private:
 
 #ifndef CUSTOM_ALLOCATOR
     mm::ObjectFactory<SameThreadMarkAndSweep>& objectFactory_;
+    mm::ExtraObjectDataFactory& extraObjectDataFactory_;
 #else
     alloc::Heap heap_;
 #endif

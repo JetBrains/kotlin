@@ -23,6 +23,15 @@ public:
     class ThreadQueue : public Queue::Producer {
     public:
         explicit ThreadQueue(ExtraObjectDataFactory& registry) : Producer(registry.extraObjects_) {}
+
+        ExtraObjectData& CreateExtraObjectDataForObject(ObjHeader* baseObject, const TypeInfo* info) noexcept;
+
+        void DestroyExtraObjectData(ExtraObjectData& data) noexcept;
+
+        // Collect extra data objects from thread corresponding to `threadData`. Must be called by the thread
+        // when it's asked by GC to stop.
+        using Producer::Publish;
+
         // Do not add fields as this is just a wrapper and Producer does not have virtual destructor.
     };
 
@@ -32,17 +41,6 @@ public:
     ExtraObjectDataFactory();
     ~ExtraObjectDataFactory();
 
-    static ExtraObjectDataFactory& Instance() noexcept;
-
-    ExtraObjectData& CreateExtraObjectDataForObject(mm::ThreadData* threadData, ObjHeader* baseObject, const TypeInfo* info) noexcept;
-    ExtraObjectData& CreateExtraObjectDataForObject(ThreadQueue& threadQueue, ObjHeader* baseObject, const TypeInfo* info) noexcept;
-
-    void DestroyExtraObjectData(mm::ThreadData* threadData, ExtraObjectData& data) noexcept;
-    void DestroyExtraObjectData(ThreadQueue& threadQueue, ExtraObjectData& data) noexcept;
-
-    // Collect extra data objects from thread corresponding to `threadData`. Must be called by the thread
-    // when it's asked by GC to stop.
-    void ProcessThread(mm::ThreadData* threadData) noexcept;
 
     // Lock registry for safe iteration.
     Iterable LockForIter() noexcept { return extraObjects_.LockForIter(); }

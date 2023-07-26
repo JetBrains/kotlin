@@ -9,6 +9,7 @@
 
 #include "CompilerConstants.hpp"
 #include "GlobalData.hpp"
+#include "GCImpl.hpp"
 #include "GCStatistics.hpp"
 #include "Logging.hpp"
 #include "MarkAndSweepUtils.hpp"
@@ -92,9 +93,11 @@ gc::SameThreadMarkAndSweep::SameThreadMarkAndSweep(
 #else
 gc::SameThreadMarkAndSweep::SameThreadMarkAndSweep(
         mm::ObjectFactory<SameThreadMarkAndSweep>& objectFactory,
+        mm::ExtraObjectDataFactory& extraObjectDataFactory,
         gcScheduler::GCScheduler& gcScheduler) noexcept :
 
     objectFactory_(objectFactory),
+    extraObjectDataFactory_(extraObjectDataFactory),
 #endif
     gcScheduler_(gcScheduler), finalizerProcessor_([this](int64_t epoch) noexcept {
         GCHandle::getByEpoch(epoch).finalizersDone();
@@ -150,7 +153,7 @@ void gc::SameThreadMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
 #ifdef CUSTOM_ALLOCATOR
     // This should really be done by each individual thread while waiting
     for (auto& thread : kotlin::mm::ThreadRegistry::Instance().LockForIter()) {
-        thread.gc().Allocator().PrepareForGC();
+        thread.gc().impl().alloc().PrepareForGC();
     }
     heap_.PrepareForGC();
 #endif
@@ -166,7 +169,7 @@ void gc::SameThreadMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
 #ifndef CUSTOM_ALLOCATOR
     // Taking the locks before the pause is completed. So that any destroying thread
     // would not publish into the global state at an unexpected time.
-    std::optional extraObjectFactoryIterable = mm::GlobalData::Instance().extraObjectDataFactory().LockForIter();
+    std::optional extraObjectFactoryIterable = extraObjectDataFactory_.LockForIter();
     std::optional objectFactoryIterable = objectFactory_.LockForIter();
 
     gc::SweepExtraObjects<SweepTraits>(gcHandle, *extraObjectFactoryIterable);

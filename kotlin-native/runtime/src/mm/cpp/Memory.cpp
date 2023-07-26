@@ -79,14 +79,7 @@ MetaObjHeader* ObjHeader::createMetaObject(ObjHeader* object) {
 void ObjHeader::destroyMetaObject(ObjHeader* object) {
     RuntimeAssert(object->has_meta_object(), "Object must have a meta object set");
     auto &extraObject = *mm::ExtraObjectData::Get(object);
-#ifdef CUSTOM_ALLOCATOR
-    extraObject.ReleaseAssociatedObject();
-    extraObject.setFlag(mm::ExtraObjectData::FLAGS_FINALIZED);
-#else
-    extraObject.Uninstall();
-    auto *threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
-    mm::ExtraObjectDataFactory::Instance().DestroyExtraObjectData(threadData, extraObject);
-#endif
+    gc::GC::DestroyExtraObjectData(extraObject);
 }
 
 ALWAYS_INLINE bool isPermanentOrFrozen(const ObjHeader* obj) {

@@ -10,6 +10,7 @@
 
 #include "Allocator.hpp"
 #include "Barriers.hpp"
+#include "ExtraObjectDataFactory.hpp"
 #include "FinalizerProcessor.hpp"
 #include "GCScheduler.hpp"
 #include "GCState.hpp"
@@ -120,7 +121,10 @@ public:
 #ifdef CUSTOM_ALLOCATOR
     explicit ConcurrentMarkAndSweep(gcScheduler::GCScheduler& scheduler) noexcept;
 #else
-    ConcurrentMarkAndSweep(mm::ObjectFactory<ConcurrentMarkAndSweep>& objectFactory, gcScheduler::GCScheduler& scheduler) noexcept;
+    ConcurrentMarkAndSweep(
+            mm::ObjectFactory<ConcurrentMarkAndSweep>& objectFactory,
+            mm::ExtraObjectDataFactory& extraObjectDataFactory,
+            gcScheduler::GCScheduler& scheduler) noexcept;
 #endif
     ~ConcurrentMarkAndSweep();
 
@@ -144,6 +148,7 @@ private:
 
 #ifndef CUSTOM_ALLOCATOR
     mm::ObjectFactory<ConcurrentMarkAndSweep>& objectFactory_;
+    mm::ExtraObjectDataFactory& extraObjectDataFactory_;
 #else
     alloc::Heap heap_;
 #endif
