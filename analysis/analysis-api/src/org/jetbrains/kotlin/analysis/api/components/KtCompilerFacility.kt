@@ -16,7 +16,10 @@ import org.jetbrains.kotlin.psi.KtCodeFragment
 import java.io.File
 
 /**
- * Compilation result.
+ * In-memory compilation result returned from [KtCompilerFacility].
+ *
+ * Compilation fails if there are critical errors reported either on the frontend or on the backend side.
+ * Keep in mind that [KtCompilationResult] is a part of Analysis API, so it should only be used inside an analysis block.
  */
 public sealed class KtCompilationResult {
     /**
@@ -77,7 +80,7 @@ public abstract class KtCompilerFacility : KtAnalysisSessionComponent() {
 
 public interface KtCompilerFacilityMixIn : KtAnalysisSessionMixIn {
     /**
-     * Compile the given [file].
+     * Compile the given [file] in-memory (without dumping the compiled binaries to a disk).
      *
      * @param file A file to compile.
      *  The file must be either a source module file, or a [KtCodeFragment].
