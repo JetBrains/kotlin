@@ -130,6 +130,8 @@ class KotlinArrayDocumentableReplacerTest : BaseAbstractTest() {
             }
         }
     }
+
+    // Unreal case: Upper bound of a type parameter cannot be an array
     @Test
     fun `generic fun and class`() {
         testInline(
@@ -138,7 +140,7 @@ class KotlinArrayDocumentableReplacerTest : BaseAbstractTest() {
             |package example
             |
             |fun<T : Array<Int>> testFunction() { }
-            |class<T : Array<Int>> myTestClass{ }
+            |class myTestClass<T : Array<Int>>{ }
             |
             |
         """.trimMargin(),
