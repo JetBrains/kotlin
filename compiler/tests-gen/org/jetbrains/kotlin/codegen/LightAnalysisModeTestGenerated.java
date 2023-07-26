@@ -430,6 +430,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/annotations/instances/innerAnnotationInstantiation.kt");
             }
 
+            @TestMetadata("javaAnnotationDefault.kt")
+            public void ignoreJavaAnnotationDefault() throws Exception {
+                runTest("compiler/testData/codegen/box/annotations/instances/javaAnnotationDefault.kt");
+            }
+
+            @TestMetadata("javaExistingAnnotation.kt")
+            public void ignoreJavaExistingAnnotation() throws Exception {
+                runTest("compiler/testData/codegen/box/annotations/instances/javaExistingAnnotation.kt");
+            }
+
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
             }

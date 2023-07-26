@@ -84,7 +84,10 @@ internal fun JavaAnnotationArgument.toFirExpression(
     session: FirSession, javaTypeParameterStack: JavaTypeParameterStack, expectedTypeRef: FirTypeRef?
 ): FirExpression {
     return when (this) {
-        is JavaLiteralAnnotationArgument -> value.createConstantOrError(session)
+        is JavaLiteralAnnotationArgument -> value.createConstantOrError(
+            session,
+            expectedTypeRef?.resolveIfJavaType(session, javaTypeParameterStack)
+        )
         is JavaArrayAnnotationArgument -> buildArrayLiteral {
             val argumentTypeRef = expectedTypeRef?.let {
                 typeRef = if (it is FirJavaTypeRef) buildResolvedTypeRef {
@@ -275,7 +278,9 @@ private fun JavaAnnotation.toFirAnnotationCall(session: FirSession): FirAnnotati
 
                 classId == StandardClassIds.Annotations.Java.Deprecated -> {
                     mapOf(
-                        StandardClassIds.Annotations.ParameterNames.deprecatedMessage to "Deprecated in Java".createConstantOrError(session)
+                        StandardClassIds.Annotations.ParameterNames.deprecatedMessage to "Deprecated in Java".createConstantOrError(
+                            session,
+                        )
                     )
                 }
 

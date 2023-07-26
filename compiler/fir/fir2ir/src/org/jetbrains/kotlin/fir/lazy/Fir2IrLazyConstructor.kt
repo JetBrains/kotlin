@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.isAnnotationClass
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
@@ -110,7 +111,8 @@ class Fir2IrLazyConstructor(
             fir.valueParameters.mapIndexedTo(this) { index, valueParameter ->
                 declarationStorage.createIrParameter(
                     valueParameter, index + contextReceiverParametersCount,
-                    useStubForDefaultValueStub = (parent as? IrClass)?.name != Name.identifier("Enum")
+                    useStubForDefaultValueStub = (parent as? IrClass)?.name != Name.identifier("Enum"),
+                    forcedDefaultValueConversion = (parent as? IrClass)?.isAnnotationClass == true,
                 ).apply {
                     this.parent = this@Fir2IrLazyConstructor
                 }

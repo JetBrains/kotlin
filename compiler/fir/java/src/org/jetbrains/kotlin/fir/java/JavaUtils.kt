@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildArrayLiteral
 import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildErrorExpression
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.expectedConeType
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.createArrayType
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.RXJAVA3_ANNOTATIONS
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
@@ -54,8 +54,19 @@ val JavaClass.classKind: ClassKind
 fun JavaClass.hasMetadataAnnotation(): Boolean =
     annotations.any { it.isResolvedTo(JvmAnnotationNames.METADATA_FQ_NAME) }
 
-internal fun Any?.createConstantOrError(session: FirSession): FirExpression {
-    return createConstantIfAny(session) ?: buildErrorExpression {
+internal fun Any?.createConstantOrError(session: FirSession, expectedTypeRef: FirTypeRef? = null): FirExpression {
+    val coneType = expectedTypeRef?.coneTypeOrNull
+    val value = if (this is Int && coneType != null) {
+        // special case for Java literals in annotation default values:
+        // literal value is always integer, but an expected parameter type can be any other number type
+        when {
+            coneType.isByte -> this.toByte()
+            coneType.isShort -> this.toShort()
+            coneType.isLong -> this.toLong()
+            else -> this
+        }
+    } else this
+    return value.createConstantIfAny(session) ?: buildErrorExpression {
         diagnostic = ConeSimpleDiagnostic("Unknown value in JavaLiteralAnnotationArgument: $this", DiagnosticKind.Java)
     }
 }

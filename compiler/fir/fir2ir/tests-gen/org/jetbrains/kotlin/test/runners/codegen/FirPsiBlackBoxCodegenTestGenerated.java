@@ -583,6 +583,18 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
             }
 
             @Test
+            @TestMetadata("javaAnnotationDefault.kt")
+            public void testJavaAnnotationDefault() throws Exception {
+                runTest("compiler/testData/codegen/box/annotations/instances/javaAnnotationDefault.kt");
+            }
+
+            @Test
+            @TestMetadata("javaExistingAnnotation.kt")
+            public void testJavaExistingAnnotation() throws Exception {
+                runTest("compiler/testData/codegen/box/annotations/instances/javaExistingAnnotation.kt");
+            }
+
+            @Test
             @TestMetadata("kotlinExistingAnnotation.kt")
             public void testKotlinExistingAnnotation() throws Exception {
                 runTest("compiler/testData/codegen/box/annotations/instances/kotlinExistingAnnotation.kt");

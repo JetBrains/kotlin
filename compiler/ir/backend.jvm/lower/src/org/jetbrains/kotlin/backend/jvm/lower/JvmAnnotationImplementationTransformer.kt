@@ -116,6 +116,7 @@ class JvmAnnotationImplementationTransformer(val jvmContext: JvmBackendContext, 
         generatedConstructor: IrConstructor
     ) {
         implementor.implementAnnotationPropertiesAndConstructor(
+            annotationClass,
             annotationClass.getAnnotationProperties(),
             implClass,
             generatedConstructor,
@@ -231,6 +232,7 @@ class JvmAnnotationImplementationTransformer(val jvmContext: JvmBackendContext, 
             }
 
         fun implementAnnotationPropertiesAndConstructor(
+            annotationClass: IrClass,
             annotationProperties: List<IrProperty>,
             implClass: IrClass,
             generatedConstructor: IrConstructor,
@@ -247,6 +249,11 @@ class JvmAnnotationImplementationTransformer(val jvmContext: JvmBackendContext, 
             )
 
             generatedConstructor.body = ctorBody
+
+            // For annotations defined in Java, IrProperties do not contain initializers in backing fields, as annotation properties are represented as Java methods
+            // (that are later converted to synthetic properties w/o fields).
+            // However, K2 stores default values in annotation's constructor parameters.
+            val fallbackPrimaryCtorParamsMap = annotationClass.primaryConstructor?.valueParameters?.associateBy { it.name }.orEmpty()
 
             annotationProperties.forEach { property ->
                 val propType = property.getter!!.returnType
@@ -266,12 +273,15 @@ class JvmAnnotationImplementationTransformer(val jvmContext: JvmBackendContext, 
 
                 val defaultExpression = property.backingField?.initializer?.expression
                 val newDefaultValue: IrExpressionBody? =
-                    if (defaultExpression is IrGetValue && defaultExpression.symbol.owner is IrValueParameter) {
-                        // INITIALIZE_PROPERTY_FROM_PARAMETER
-                        (defaultExpression.symbol.owner as IrValueParameter).defaultValue
-                    } else if (defaultExpression != null) {
-                        property.backingField!!.initializer
-                    } else null
+                    // INITIALIZE_PROPERTY_FROM_PARAMETER
+                    when {
+                        defaultExpression is IrGetValue && defaultExpression.symbol.owner is IrValueParameter ->
+                            (defaultExpression.symbol.owner as IrValueParameter).defaultValue
+                        defaultExpression != null -> property.backingField!!.initializer
+                        propName in fallbackPrimaryCtorParamsMap ->
+                            fallbackPrimaryCtorParamsMap[propName]?.defaultValue?.takeIf { it.expression !is IrErrorExpression }
+                        else -> null
+                    }
                 parameter.defaultValue = newDefaultValue?.deepCopyWithVariables()
                     ?.also { if (defaultValueTransformer != null) it.transformChildrenVoid(defaultValueTransformer) }
 

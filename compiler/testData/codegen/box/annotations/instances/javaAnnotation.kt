@@ -20,12 +20,6 @@ public @interface C {
     String v2();
 }
 
-// FILE: D.java
-
-public @interface D {
-    String value() default "hello";
-}
-
 // FILE: b.kt
 
 fun box(): String {
@@ -34,10 +28,5 @@ fun box(): String {
     assert(b.value == "OK")
     val c = C(v2 = "v2", v1 = intArrayOf(1))
     assert(c.v2 == "v2")
-    // TODO(KT-47702): Looks like we have to force users either to pass default java parameters explicitly
-    // or hack LazyJavaClassDescriptor/JavaPropertyDescriptor to load annotation param default value,
-    // because it is not stored currently anywhere.
-    // val d = D()
-    val d = D("OK").value
-    return d
+    return "OK"
 }

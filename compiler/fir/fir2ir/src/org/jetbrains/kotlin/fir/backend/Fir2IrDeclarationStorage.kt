@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.GeneratedByPlugi
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.symbols.*
@@ -1346,6 +1347,11 @@ class Fir2IrDeclarationStorage(
         useStubForDefaultValueStub: Boolean = true,
         typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT,
         skipDefaultParameter: Boolean = false,
+        // Use this parameter if you want to insert the actual default value instead of the stub (overrides useStubForDefaultValueStub parameter).
+        // This parameter is intended to be used for default values of annotation parameters where they are needed and
+        // may produce incorrect results for values that may be encountered outside annotations.
+        // Does not do anything if valueParameter.defaultValue is already FirExpressionStub.
+        forcedDefaultValueConversion: Boolean = false,
     ): IrValueParameter = convertCatching(valueParameter) {
         val origin = valueParameter.computeIrOrigin()
         val type = valueParameter.returnTypeRef.toIrType(typeOrigin)
@@ -1366,16 +1372,20 @@ class Fir2IrDeclarationStorage(
                 isNoinline = valueParameter.isNoinline,
                 isHidden = false,
             ).apply {
-                if (!skipDefaultParameter && valueParameter.defaultValue.let {
-                        it != null && (useStubForDefaultValueStub || it !is FirExpressionStub)
+                val defaultValue = valueParameter.defaultValue
+                if (!skipDefaultParameter && defaultValue != null) {
+                    this.defaultValue = when {
+                        forcedDefaultValueConversion && defaultValue !is FirExpressionStub ->
+                            defaultValue.asCompileTimeIrInitializer(components)
+                        useStubForDefaultValueStub || defaultValue !is FirExpressionStub ->
+                            factory.createExpressionBody(
+                                IrErrorExpressionImpl(
+                                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, type,
+                                    "Stub expression for default value of ${valueParameter.name}"
+                                )
+                            )
+                        else -> null
                     }
-                ) {
-                    this.defaultValue = factory.createExpressionBody(
-                        IrErrorExpressionImpl(
-                            UNDEFINED_OFFSET, UNDEFINED_OFFSET, type,
-                            "Stub expression for default value of ${valueParameter.name}"
-                        )
-                    )
                 }
                 annotationGenerator.generate(this, valueParameter)
             }

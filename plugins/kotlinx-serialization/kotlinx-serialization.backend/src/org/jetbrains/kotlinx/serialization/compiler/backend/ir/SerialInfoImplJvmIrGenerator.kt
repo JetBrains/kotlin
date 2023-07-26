@@ -91,7 +91,7 @@ class SerialInfoImplJvmIrGenerator(
             visibility = DescriptorVisibilities.PUBLIC
         }
 
-        implementor.implementAnnotationPropertiesAndConstructor(properties, subclass, ctor, null)
+        implementor.implementAnnotationPropertiesAndConstructor(annotationClass, properties, subclass, ctor, null)
     }
 
     private fun createPackage(packageName: String): IrPackageFragment =

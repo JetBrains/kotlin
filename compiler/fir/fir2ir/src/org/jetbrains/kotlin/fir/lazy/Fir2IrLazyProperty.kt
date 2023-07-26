@@ -94,13 +94,7 @@ class Fir2IrLazyProperty(
     private fun toIrInitializer(initializer: FirExpression?): IrExpressionBody? {
         // Annotations need full initializer information to instantiate them correctly
         return when {
-            containingClass?.classKind?.isAnnotationClass == true -> {
-                when (val elem = initializer?.accept(Fir2IrVisitor(components, Fir2IrConversionScope()), null)) {
-                    is IrExpressionBody -> elem
-                    is IrExpression -> factory.createExpressionBody(elem)
-                    else -> null
-                }
-            }
+            containingClass?.classKind?.isAnnotationClass == true -> initializer?.asCompileTimeIrInitializer(components)
             // Setting initializers to every other class causes some cryptic errors in lowerings
             initializer is FirConstExpression<*> -> {
                 val constType = with(typeConverter) { initializer.typeRef.toIrType() }
