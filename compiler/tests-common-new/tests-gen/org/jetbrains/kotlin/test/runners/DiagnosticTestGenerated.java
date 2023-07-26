@@ -22614,6 +22614,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("actualFakeOverride_substitutionFakeOverride.kt")
+            public void testActualFakeOverride_substitutionFakeOverride() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/multiplatform/actualFakeOverride_substitutionFakeOverride.kt");
+            }
+
+            @Test
             @TestMetadata("actualFakeOverride_transitiveFakeOverrides_compatible.kt")
             public void testActualFakeOverride_transitiveFakeOverrides_compatible() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/multiplatform/actualFakeOverride_transitiveFakeOverrides_compatible.kt");
