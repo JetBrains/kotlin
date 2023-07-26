@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.formver.scala.silicon.ast
 
+import org.jetbrains.kotlin.formver.scala.toScalaOption
 import org.jetbrains.kotlin.formver.scala.toScalaSeq
-import scala.Option
 import viper.silver.ast.*
 import viper.silver.ast.Function
 
@@ -18,7 +18,7 @@ fun field(
     trafos: Trafos = Trafos.NoTrafos
 ): Field = Field(name, type.toViper(), pos.toViper(), info.toViper(), trafos.toViper())
 
-fun localVar(
+fun localVarDecl(
     name: String,
     type: Type,
     pos: Position = Position.NoPosition,
@@ -33,7 +33,7 @@ fun function(
     type: Type,
     pres: List<Exp>,
     posts: List<Exp>,
-    body: Option<Exp>,
+    body: Exp?,
     pos: Position = Position.NoPosition,
     info: Info = Info.NoInfo,
     trafos: Trafos = Trafos.NoTrafos
@@ -43,7 +43,7 @@ fun function(
     type.toViper(),
     pres.map { it.toViper() }.toScalaSeq(),
     posts.map { it.toViper() }.toScalaSeq(),
-    body.map { it.toViper() },
+    body.toScalaOption().map { it.toViper() },
     pos.toViper(),
     info.toViper(),
     trafos.toViper()
@@ -55,7 +55,7 @@ fun method(
     formalReturns: List<LocalVarDecl>,
     pres: List<Exp>,
     posts: List<Exp>,
-    body: Option<Seqn>,
+    body: Stmt.Seqn?,
     pos: Position = Position.NoPosition,
     info: Info = Info.NoInfo,
     trafos: Trafos = Trafos.NoTrafos
@@ -65,7 +65,7 @@ fun method(
     formalReturns.toScalaSeq(),
     pres.map { it.toViper() }.toScalaSeq(),
     posts.map { it.toViper() }.toScalaSeq(),
-    body,
+    body.toScalaOption().map { it.toViper() as Seqn },
     pos.toViper(),
     info.toViper(),
     trafos.toViper()
