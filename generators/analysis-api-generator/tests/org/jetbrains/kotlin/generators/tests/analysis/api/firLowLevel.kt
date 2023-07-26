@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.AbstractDiagnosticTraversalCounterTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.AbstractFirOutOfContentRootContextCollectionTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.AbstractFirSourceContextCollectionTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.AbstractScriptContextCollectionTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.AbstractDiagnosticCompilerTestDataTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.AbstractLLFirPreresolvedReversedDiagnosticCompilerTestDataSpecTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.AbstractLLFirPreresolvedReversedDiagnosticCompilerTestDataTest
@@ -81,11 +82,15 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
         }
 
         testClass<AbstractFirSourceContextCollectionTest> {
-            model("fileStructure")
+            model("fileStructure", pattern = TestGeneratorUtil.KT)
         }
 
         testClass<AbstractFirOutOfContentRootContextCollectionTest> {
-            model("fileStructure")
+            model("fileStructure", pattern = TestGeneratorUtil.KT)
+        }
+
+        testClass<AbstractScriptContextCollectionTest> {
+            model("fileStructure", pattern = TestGeneratorUtil.KTS)
         }
 
         testClass<AbstractDiagnosticTraversalCounterTest> {

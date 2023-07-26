@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.useFirSessionConfigurator
 import org.jetbrains.kotlin.fir.SessionConfiguration
@@ -115,5 +116,9 @@ abstract class AbstractFirSourceContextCollectionTest : AbstractFirContextCollec
 }
 
 abstract class AbstractFirOutOfContentRootContextCollectionTest : AbstractFirContextCollectionTest() {
-    override val configurator = AnalysisApiFirOutOfContentRootTestConfigurator
+    override val configurator get() = AnalysisApiFirOutOfContentRootTestConfigurator
+}
+
+abstract class AbstractScriptContextCollectionTest : AbstractFirContextCollectionTest() {
+    override val configurator get() = AnalysisApiFirScriptTestConfigurator
 }

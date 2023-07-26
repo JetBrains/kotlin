@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 public class FirOutOfContentRootContextCollectionTestGenerated extends AbstractFirOutOfContentRootContextCollectionTest {
     @Test
     public void testAllFilesPresentInFileStructure() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/fileStructure"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/fileStructure"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Test
