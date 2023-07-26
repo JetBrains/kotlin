@@ -61,6 +61,11 @@ class PreHmppDependenciesDeprecationIT : KGPBaseTest() {
     }
 
     @GradleTest
+    fun testNoWarningsOnKotlinTestIfAddedInCommonMain(gradleVersion: GradleVersion) {
+        checkDiagnostics(gradleVersion, "noWarningsOnKotlinTestIfAddedInCommonMain")
+    }
+
+    @GradleTest
     fun testNoWarningsOnProjectDependencies(gradleVersion: GradleVersion) {
         checkDiagnostics(gradleVersion, "noWarningsOnProjectDependencies", projectPathToCheck = ":consumer")
     }

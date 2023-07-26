@@ -72,11 +72,21 @@ internal object PreHmppDependenciesUsageChecker : KotlinGradleProjectChecker {
     }
 
     private fun isPreHmppDependency(dependency: ResolvedDependencyResult): Boolean {
+        if (isAllowedDependency(dependency.selected.id)) return false
         val attributes = dependency.resolvedVariant.attributes
         val kotlinPlatformAttribute = attributes.getAttribute(Attribute.of(KotlinPlatformType.attribute.name, String::class.java))
             ?: return false
         val usageAttribute = attributes.getAttribute(Attribute.of(Usage.USAGE_ATTRIBUTE.name, String::class.java)) ?: return false
 
         return kotlinPlatformAttribute == KotlinPlatformType.common.name && usageAttribute != KotlinUsages.KOTLIN_METADATA
+    }
+
+    private fun isAllowedDependency(identifier: ComponentIdentifier): Boolean {
+        return when {
+            identifier !is ModuleComponentIdentifier -> false
+            identifier.group != "org.jetbrains.kotlin" -> false
+            identifier.module.contains("kotlin-stdlib") || identifier.module.contains("kotlin-test") -> true
+            else -> false
+        }
     }
 }
