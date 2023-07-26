@@ -23975,6 +23975,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             }
 
             @Test
+            @TestMetadata("RedeclarationThroughDestructuring.kt")
+            public void testRedeclarationThroughDestructuring() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/overload/RedeclarationThroughDestructuring.kt");
+            }
+
+            @Test
             @TestMetadata("SyntheticAndNotSynthetic.kt")
             public void testSyntheticAndNotSynthetic() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/overload/SyntheticAndNotSynthetic.kt");

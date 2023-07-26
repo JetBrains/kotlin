@@ -4,7 +4,7 @@ C:
   [Source]: public open override fun setName(newName: R|kotlin/String|): R|kotlin/Any?| from Use site scope of /C [id: 0]
     [SubstitutionOverride(DeclarationSite)]: public abstract fun setName(newName: R|kotlin/String!|): R|kotlin/Any!| from Substitution scope for [Java enhancement scope for /B] for type C [id: 1]
       [Enhancement]: public abstract fun setName(newName: R|kotlin/String!|): R|ft<T & Any, T?>| from Java enhancement scope for /B [id: 2]
-  [Source]: private final var name: R|kotlin/String| = R|<local>/name| from Use site scope of /C [id: 0]
+  [Source]: private final var name: R|kotlin/String| from Use site scope of /C [id: 0]
 
 D:
   [Source]: public open override fun getName(): R|kotlin/String| from Java enhancement scope for /D [id: 0]
@@ -12,6 +12,6 @@ D:
   [Source]: public open override fun setName(newName: R|kotlin/String|): R|kotlin/Any?| from Java enhancement scope for /D [id: 0]
     [SubstitutionOverride(DeclarationSite)]: public abstract fun setName(newName: R|kotlin/String!|): R|kotlin/Any!| from Substitution scope for [Java enhancement scope for /B] for type C [id: 1]
       [Enhancement]: public abstract fun setName(newName: R|kotlin/String!|): R|ft<T & Any, T?>| from Java enhancement scope for /B [id: 2]
-  [Source]: private final var name: R|kotlin/String| = R|<local>/name| from Java enhancement scope for /D [id: 0]
-    [Source]: private final var name: R|kotlin/String| = R|<local>/name| from Use site scope of /C [id: 0]
+  [Source]: private final var name: R|kotlin/String| from Java enhancement scope for /D [id: 0]
+    [Source]: private final var name: R|kotlin/String| from Use site scope of /C [id: 0]
 

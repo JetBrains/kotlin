@@ -305,14 +305,7 @@ class FirRenderer(
 
         override fun visitVariable(variable: FirVariable) {
             visitCallableDeclaration(variable)
-            variable.initializer?.let {
-                print(" = ")
-                it.accept(this)
-            }
-            variable.delegate?.let {
-                print("by ")
-                it.accept(this)
-            }
+            bodyRenderer?.render(variable)
         }
 
         override fun visitField(field: FirField) {

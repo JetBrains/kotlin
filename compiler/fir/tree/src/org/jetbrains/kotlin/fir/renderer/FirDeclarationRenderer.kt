@@ -10,7 +10,9 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirErrorConstructor
 import org.jetbrains.kotlin.fir.isCatchParameter
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
-open class FirDeclarationRenderer {
+open class FirDeclarationRenderer(
+    private val localVariablePrefix: String = "l",
+) {
 
     internal lateinit var components: FirRendererComponents
     protected val printer get() = components.printer
@@ -40,7 +42,7 @@ open class FirDeclarationRenderer {
                     if (declaration.isCatchParameter == true) {
                         ""
                     } else {
-                        val prefix = if (declaration.isLocal) "l" else ""
+                        val prefix = if (declaration.isLocal) localVariablePrefix else ""
                         prefix + if (declaration.isVal) "val" else "var"
                     }
                 }

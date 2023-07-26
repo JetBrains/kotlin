@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.renderer
 
 import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirLazyBlock
@@ -21,6 +22,17 @@ class FirBodyRenderer {
 
     fun render(function: FirFunction) {
         renderBody(function.body)
+    }
+
+    fun render(variable: FirVariable) {
+        variable.initializer?.let {
+            printer.print(" = ")
+            it.accept(visitor)
+        }
+        variable.delegate?.let {
+            printer.print("by ")
+            it.accept(visitor)
+        }
     }
 
     fun renderBody(block: FirBlock?, additionalStatements: List<FirStatement> = emptyList()) {
