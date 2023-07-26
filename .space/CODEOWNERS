@@ -22,6 +22,7 @@
 # OWNER_LIST: Alexander.Shabalin Aleksei.Glushko Sergey.Bogolepov Svyatoslav.Scherbina
 # Kotlin Libraries
 # OWNER_LIST: A.Qurbonzoda Vsevolod.Tolstopyato Ilya.Gorbunov Sergey.Shanshin Leonid.Startsev
+# OWNER_LIST: Simon.Ogorodnik
 
 # Fallback rule, must always be top
 * Kotlin
@@ -62,6 +63,12 @@
 /compiler/container/ "Kotlin Compiler Core"
 /compiler/daemon/ "Kotlin Build Tools"
 /compiler/fir/ "Kotlin Compiler Core"
+
+# ==== Temporary FIR2IR change restriction ====
+/compiler/fir/fir2ir/src/ Simon.Ogorodnik
+/compiler/fir/fir2ir/jvm-backend/src/ Simon.Ogorodnik
+# =============================================
+
 /compiler/fir/fir2ir/tests-gen/ "Kotlin Compiler Core" "Kotlin JVM" "Kotlin JS" "Kotlin Native" "Kotlin Wasm"
 /compiler/frontend/ "Kotlin Compiler Core"
 /compiler/frontend.common/ "Kotlin Compiler Core"
