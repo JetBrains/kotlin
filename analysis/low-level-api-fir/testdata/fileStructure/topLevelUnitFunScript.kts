@@ -1,0 +1,3 @@
+/* NonReanalyzableNonClassDeclarationStructureElement */fun foo() {
+    println("")
+}

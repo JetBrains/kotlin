@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.isSourceSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.psi.*
@@ -65,6 +66,9 @@ abstract class AbstractFileStructureTest : AbstractLowLevelApiSingleFileTest() {
                 }
                 is KtClassInitializer -> {
                     elementToComment[ktDeclaration.openBraceNode!!] = comment
+                }
+                is KtScript -> {
+                    elementToComment[ktFile.importList!!] = comment
                 }
                 else -> error("Unsupported declaration $ktDeclaration")
             }
@@ -121,5 +125,9 @@ abstract class AbstractSourceFileStructureTest : AbstractFileStructureTest() {
 }
 
 abstract class AbstractOutOfContentRootFileStructureTest : AbstractFileStructureTest() {
-    override val configurator = AnalysisApiFirOutOfContentRootTestConfigurator
+    override val configurator get() = AnalysisApiFirOutOfContentRootTestConfigurator
+}
+
+abstract class AbstractScriptFileStructureTest : AbstractFileStructureTest() {
+    override val configurator get() = AnalysisApiFirScriptTestConfigurator
 }

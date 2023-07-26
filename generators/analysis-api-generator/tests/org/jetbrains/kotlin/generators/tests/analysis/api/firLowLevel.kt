@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.AbstractLLFirPreresolvedReversedDiagnosticCompilerTestDataTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.AbstractOutOfContentRootFileStructureTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.AbstractOutOfContentRootInBlockModificationTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.AbstractScriptFileStructureTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.AbstractSourceFileStructureTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.AbstractSourceInBlockModificationTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.AbstractErrorResistanceTest
@@ -68,11 +69,15 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
         }
 
         testClass<AbstractSourceFileStructureTest> {
-            model("fileStructure")
+            model("fileStructure", pattern = TestGeneratorUtil.KT)
         }
 
         testClass<AbstractOutOfContentRootFileStructureTest> {
-            model("fileStructure")
+            model("fileStructure", pattern = TestGeneratorUtil.KT)
+        }
+
+        testClass<AbstractScriptFileStructureTest> {
+            model("fileStructure", pattern = TestGeneratorUtil.KTS)
         }
 
         testClass<AbstractFirSourceContextCollectionTest> {

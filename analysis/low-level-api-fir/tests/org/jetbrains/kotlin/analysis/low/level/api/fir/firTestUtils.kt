@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirNotUnderContentRootResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirScriptResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirSourceResolveSession
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
@@ -55,7 +56,7 @@ internal inline fun <R> resolveWithCaches(context: KtElement, action: (LLFirReso
 internal val LLFirResolveSession.isSourceSession: Boolean
     get() {
         return when (this) {
-            is LLFirSourceResolveSession, is LLFirNotUnderContentRootResolveSession -> true
+            is LLFirSourceResolveSession, is LLFirNotUnderContentRootResolveSession, is LLFirScriptResolveSession -> true
             else -> false
         }
     }
