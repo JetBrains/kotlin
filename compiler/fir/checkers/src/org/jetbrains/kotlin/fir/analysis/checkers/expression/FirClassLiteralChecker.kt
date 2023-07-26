@@ -14,6 +14,9 @@ import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeSyntaxDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.toResolvedTypeParameterSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -69,6 +72,14 @@ object FirClassLiteralChecker : FirGetClassCallChecker() {
             if (!it.isReified) {
                 // E.g., fun <T: Any> foo(): Any = T::class
                 reporter.reportOn(source, FirErrors.TYPE_PARAMETER_AS_REIFIED, it, context)
+            }
+        }
+
+        if (argument is FirErrorExpression) {
+            val diagnostic = argument.diagnostic
+
+            if (diagnostic is ConeSyntaxDiagnostic) {
+                reporter.reportOn(expression.source, FirErrors.UNSUPPORTED_CLASS_LITERALS_WITH_EMPTY_LHS, context)
             }
         }
 

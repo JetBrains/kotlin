@@ -2927,7 +2927,9 @@ open class PsiRawFirBuilder(
         override fun visitClassLiteralExpression(expression: KtClassLiteralExpression, data: FirElement?): FirElement {
             return buildGetClassCall {
                 source = expression.toFirSourceElement()
-                argumentList = buildUnaryArgumentList(expression.receiverExpression.toFirExpression("No receiver in class literal"))
+                argumentList = buildUnaryArgumentList(
+                    expression.receiverExpression.toFirExpression { ConeSyntaxDiagnostic("No receiver in class literal") }
+                )
             }
         }
 
