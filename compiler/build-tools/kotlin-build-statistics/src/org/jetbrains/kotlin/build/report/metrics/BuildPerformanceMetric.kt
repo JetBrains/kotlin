@@ -10,7 +10,7 @@ import java.io.Serializable
 interface BuildPerformanceMetric : BuildTime, Serializable {
     override fun getParent(): BuildPerformanceMetric?
 
-    override fun values(): List<BuildPerformanceMetric>
+    override fun getAllMetrics(): List<BuildPerformanceMetric>
 
     override fun children(): List<BuildPerformanceMetric>?
 
@@ -43,7 +43,7 @@ enum class JpsBuildPerformanceMetric(
 
     override fun getName(): String = this.name
 
-    override fun values(): List<BuildPerformanceMetric> {
+    override fun getAllMetrics(): List<BuildPerformanceMetric> {
         return entries
     }
 
@@ -156,7 +156,7 @@ enum class GradleBuildPerformanceMetric(
         return children[this]
     }
 
-    override fun values(): List<BuildPerformanceMetric> {
+    override fun getAllMetrics(): List<BuildPerformanceMetric> {
         return entries
     }
 

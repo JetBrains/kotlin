@@ -12,7 +12,7 @@ interface BuildTime : Serializable {
 
     fun getParent(): BuildTime?
 
-    fun values(): List<BuildTime>
+    fun getAllMetrics(): List<BuildTime>
 
     fun children(): List<BuildTime>?
 
@@ -28,7 +28,7 @@ enum class JpsBuildTime(private val parent: JpsBuildTime? = null, private val re
     override fun getReadableString(): String = readableString
     override fun getParent(): BuildTime? = parent
 
-    override fun values(): List<BuildTime> {
+    override fun getAllMetrics(): List<BuildTime> {
         return entries
     }
 
@@ -141,7 +141,7 @@ enum class GradleBuildTime(private val parent: GradleBuildTime? = null, private 
         return children[this]
     }
 
-    override fun values(): List<BuildTime> {
+    override fun getAllMetrics(): List<BuildTime> {
         return entries
     }
 

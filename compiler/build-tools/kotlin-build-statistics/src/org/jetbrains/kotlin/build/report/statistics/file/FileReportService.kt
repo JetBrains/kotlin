@@ -176,7 +176,7 @@ class FileReportService<B : BuildTime, P : BuildPerformanceMetric>(
                 }
             }
 
-            for (buildTime in buildTimes.keys.first().values()) {
+            for (buildTime in buildTimes.keys.first().getAllMetrics()) {
                 if (buildTime.getParent() != null) continue
 
                 printBuildTime(buildTime)
@@ -188,7 +188,7 @@ class FileReportService<B : BuildTime, P : BuildPerformanceMetric>(
         if (buildMetrics.isEmpty()) return
 
         p.withIndent("Size metrics:") {
-            for (metric in buildMetrics.keys.first().values()) {
+            for (metric in buildMetrics.keys.first().getAllMetrics()) {
                 buildMetrics[metric]?.let { printSizeMetric(metric, it) }
             }
         }
