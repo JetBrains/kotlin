@@ -41,6 +41,7 @@ test.Test
 # after
 Return code: 1
 
+warning: kapt currently doesn't support language version 2.0+. Falling back to 1.9.
 error: error: NonExistentClass type occurred
 Test.kt:4:8: error: unresolved reference: generated
 import generated.Property
