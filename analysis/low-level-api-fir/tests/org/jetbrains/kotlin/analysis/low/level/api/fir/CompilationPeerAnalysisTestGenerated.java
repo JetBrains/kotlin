@@ -37,6 +37,12 @@ public class CompilationPeerAnalysisTestGenerated extends AbstractCompilationPee
     }
 
     @Test
+    @TestMetadata("inlinedClasses.kt")
+    public void testInlinedClasses() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/compilationPeers/inlinedClasses.kt");
+    }
+
+    @Test
     @TestMetadata("libraryFunctionCall.kt")
     public void testLibraryFunctionCall() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/compilationPeers/libraryFunctionCall.kt");
