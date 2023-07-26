@@ -40,7 +40,7 @@ fun testYield() {
     val buildee = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>build<!> {
         nestedBuild {
             yield(arg)
-            nestedYield(42)
+            nestedYield(Any())
         }
     }
     checkExactType<Buildee<UserKlass>>(<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>buildee<!>)
@@ -52,7 +52,7 @@ fun testMaterialize() {
     val buildee = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>build<!> {
         nestedBuild {
             consume(materialize())
-            nestedYield(42)
+            nestedYield(Any())
         }
     }
     checkExactType<Buildee<UserKlass>>(<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>buildee<!>)
