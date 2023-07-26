@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.providers.impl.declarationProviders.FileBasedKotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -22,8 +23,6 @@ import kotlin.test.assertContains
 import kotlin.test.assertNotNull
 
 abstract class AbstractFileBasedKotlinDeclarationProviderTest : AbstractLowLevelApiSingleFileTest() {
-    override val configurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
-
     override fun configureTest(builder: TestConfigurationBuilder) {
         super.configureTest(builder)
         with(builder) {
@@ -151,4 +150,12 @@ private fun parseCallableId(rawString: String): CallableId {
         rawQualifier.endsWith('/') -> CallableId(FqName(rawQualifier.dropLast(1).replace('/', '.')), callableName)
         else -> CallableId(ClassId.fromString(rawQualifier, false), callableName)
     }
+}
+
+abstract class AbstractSourceFileBasedKotlinDeclarationProviderTest : AbstractFileBasedKotlinDeclarationProviderTest() {
+    override val configurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
+}
+
+abstract class AbstractScriptFileBasedKotlinDeclarationProviderTest : AbstractFileBasedKotlinDeclarationProviderTest() {
+    override val configurator get() = AnalysisApiFirScriptTestConfigurator
 }

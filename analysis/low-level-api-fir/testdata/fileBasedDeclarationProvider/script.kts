@@ -20,3 +20,5 @@ typealias MyString = String
 fun foo() {}
 
 val bar: String = "bar"
+
+foo()
