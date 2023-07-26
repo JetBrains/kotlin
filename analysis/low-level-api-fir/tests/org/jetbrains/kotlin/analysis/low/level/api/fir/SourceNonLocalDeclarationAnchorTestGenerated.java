@@ -18,10 +18,10 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("analysis/low-level-api-fir/testdata/nonLocalDeclarationAnchors")
 @TestDataPath("$PROJECT_ROOT")
-public class FirNonLocalDeclarationAnchorTestGenerated extends AbstractFirNonLocalDeclarationAnchorTest {
+public class SourceNonLocalDeclarationAnchorTestGenerated extends AbstractSourceNonLocalDeclarationAnchorTest {
     @Test
     public void testAllFilesPresentInNonLocalDeclarationAnchors() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/nonLocalDeclarationAnchors"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/nonLocalDeclarationAnchors"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Test

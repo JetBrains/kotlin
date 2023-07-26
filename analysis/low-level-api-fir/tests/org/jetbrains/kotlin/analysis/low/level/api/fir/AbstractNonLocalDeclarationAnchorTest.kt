@@ -11,6 +11,7 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -22,9 +23,7 @@ import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
-abstract class AbstractFirNonLocalDeclarationAnchorTest : AbstractLowLevelApiSingleFileTest() {
-    override val configurator: AnalysisApiTestConfigurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
-
+abstract class AbstractNonLocalDeclarationAnchorTest : AbstractLowLevelApiSingleFileTest() {
     override fun doTestByFileStructure(ktFile: KtFile, moduleStructure: TestModuleStructure, testServices: TestServices) {
         val anchors = hashSetOf<KtDeclaration>()
         ktFile.forEachDescendantOfType<PsiElement> {
@@ -64,4 +63,12 @@ abstract class AbstractFirNonLocalDeclarationAnchorTest : AbstractLowLevelApiSin
             }
         }
     }
+}
+
+abstract class AbstractSourceNonLocalDeclarationAnchorTest : AbstractNonLocalDeclarationAnchorTest() {
+    override val configurator: AnalysisApiTestConfigurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
+}
+
+abstract class AbstractScriptNonLocalDeclarationAnchorTest : AbstractNonLocalDeclarationAnchorTest() {
+    override val configurator: AnalysisApiTestConfigurator get() = AnalysisApiFirScriptTestConfigurator
 }

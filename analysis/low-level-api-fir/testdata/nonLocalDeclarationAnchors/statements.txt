@@ -1,0 +1,27 @@
+/* anchor --> *//* anchor --> */class Builder {
+    /* anchor --> */var version: String = ""/* <-- */
+
+    /* anchor --> */fun execute() {
+        println(version)
+    }/* <-- */
+}/* <-- */
+
+fun build(/* anchor --> */action: Builder.() -> Unit/* <-- */) = Builder().apply(action)
+
+build {
+    version = "123"
+    class A {
+        fun doo() {
+
+        }
+    }
+
+    execute()
+}
+
+val builder = build {
+    version = "321"
+}
+
+builder.execute()
+/* <-- */
