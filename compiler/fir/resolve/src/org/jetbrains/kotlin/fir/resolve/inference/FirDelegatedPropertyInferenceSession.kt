@@ -20,12 +20,10 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
-import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionContext
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
-import org.jetbrains.kotlin.types.model.TypeVariableMarker
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class FirDelegatedPropertyInferenceSession(
@@ -148,19 +146,8 @@ class FirDelegatedPropertyInferenceSession(
         currentConstraintSystem.asReadOnlyStorage()
             .buildAbstractResultingSubstitutor(components.session.typeContext) as ConeSubstitutor
 
-    override fun hasSyntheticTypeVariables(): Boolean = false
-
-    override fun isSyntheticTypeVariable(typeVariable: TypeVariableMarker): Boolean = false
-
     override fun createSyntheticStubTypes(system: NewConstraintSystemImpl): Map<TypeConstructorMarker, ConeStubType> {
         TODO("Not yet implemented")
-    }
-
-    override fun fixSyntheticTypeVariableWithNotEnoughInformation(
-        typeVariable: TypeVariableMarker,
-        completionContext: ConstraintSystemCompletionContext
-    ) {
-        error("")
     }
 
 

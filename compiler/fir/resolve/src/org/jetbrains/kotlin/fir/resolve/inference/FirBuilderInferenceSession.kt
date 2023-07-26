@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImp
 import org.jetbrains.kotlin.resolve.calls.inference.registerTypeVariableIfNotPresent
 import org.jetbrains.kotlin.resolve.descriptorUtil.BUILDER_INFERENCE_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
-import org.jetbrains.kotlin.types.model.TypeVariableMarker
 
 /**
  * General documentation for builder inference algorithm is located at `/docs/fir/builder_inference.md`
@@ -45,12 +44,6 @@ class FirBuilderInferenceSession(
     private val session = resolutionContext.session
     private val commonCalls: MutableList<Pair<FirStatement, Candidate>> = mutableListOf()
     private var lambdaImplicitReceivers: MutableList<ImplicitExtensionReceiverValue> = mutableListOf()
-
-    override fun hasSyntheticTypeVariables(): Boolean = false
-
-    override fun isSyntheticTypeVariable(typeVariable: TypeVariableMarker): Boolean {
-        return false
-    }
 
     override fun <T> shouldRunCompletion(call: T): Boolean where T : FirResolvable, T : FirStatement {
         val candidate = call.candidate
