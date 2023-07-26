@@ -1,0 +1,17 @@
+FILE: [ResolvedTo(IMPORTS)] secondaryConstructor.kt
+    public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/Int| = Int(10), [ResolvedTo(BODY_RESOLVE)] b: R|kotlin/String|): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val x: R|kotlin/Int| = R|<local>/x|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(BODY_RESOLVE)] val b: R|kotlin/String| = R|<local>/b|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
+
+        public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int|): R|A| {
+            this<R|A|>(x = Int(1), b = R|<local>/i|.R|kotlin/Int.toString|())
+        }
+
+    }

@@ -25,6 +25,12 @@ public class FirOutOfContentRootContextCollectionTestGenerated extends AbstractF
     }
 
     @Test
+    @TestMetadata("annonymousClass.kt")
+    public void testAnnonymousClass() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/fileStructure/annonymousClass.kt");
+    }
+
+    @Test
     @TestMetadata("callInsideLambdaInsideSuperCallAndExplicitConstructor.kt")
     public void testCallInsideLambdaInsideSuperCallAndExplicitConstructor() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/fileStructure/callInsideLambdaInsideSuperCallAndExplicitConstructor.kt");
@@ -55,6 +61,12 @@ public class FirOutOfContentRootContextCollectionTestGenerated extends AbstractF
     }
 
     @Test
+    @TestMetadata("class2.kt")
+    public void testClass2() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/fileStructure/class2.kt");
+    }
+
+    @Test
     @TestMetadata("classMemberProperty.kt")
     public void testClassMemberProperty() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/fileStructure/classMemberProperty.kt");
@@ -64,6 +76,12 @@ public class FirOutOfContentRootContextCollectionTestGenerated extends AbstractF
     @TestMetadata("constructorParameter.kt")
     public void testConstructorParameter() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/fileStructure/constructorParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("constructorParameter2.kt")
+    public void testConstructorParameter2() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/fileStructure/constructorParameter2.kt");
     }
 
     @Test
@@ -97,6 +115,12 @@ public class FirOutOfContentRootContextCollectionTestGenerated extends AbstractF
     }
 
     @Test
+    @TestMetadata("enum.kt")
+    public void testEnum() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/fileStructure/enum.kt");
+    }
+
+    @Test
     @TestMetadata("enumClass.kt")
     public void testEnumClass() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/fileStructure/enumClass.kt");
@@ -106,6 +130,24 @@ public class FirOutOfContentRootContextCollectionTestGenerated extends AbstractF
     @TestMetadata("enumClassWithBody.kt")
     public void testEnumClassWithBody() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/fileStructure/enumClassWithBody.kt");
+    }
+
+    @Test
+    @TestMetadata("funWithoutTypes.kt")
+    public void testFunWithoutTypes() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/fileStructure/funWithoutTypes.kt");
+    }
+
+    @Test
+    @TestMetadata("functionValueParameter.kt")
+    public void testFunctionValueParameter() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/fileStructure/functionValueParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("functionWithImplicitType.kt")
+    public void testFunctionWithImplicitType() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/fileStructure/functionWithImplicitType.kt");
     }
 
     @Test
@@ -127,9 +169,33 @@ public class FirOutOfContentRootContextCollectionTestGenerated extends AbstractF
     }
 
     @Test
+    @TestMetadata("lambdaInImplicitFunBody.kt")
+    public void testLambdaInImplicitFunBody() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/fileStructure/lambdaInImplicitFunBody.kt");
+    }
+
+    @Test
+    @TestMetadata("lambdaInImplicitPropertyBody.kt")
+    public void testLambdaInImplicitPropertyBody() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/fileStructure/lambdaInImplicitPropertyBody.kt");
+    }
+
+    @Test
+    @TestMetadata("lambdasInWithBodyFunction.kt")
+    public void testLambdasInWithBodyFunction() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/fileStructure/lambdasInWithBodyFunction.kt");
+    }
+
+    @Test
     @TestMetadata("localClass.kt")
     public void testLocalClass() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/fileStructure/localClass.kt");
+    }
+
+    @Test
+    @TestMetadata("localClass2.kt")
+    public void testLocalClass2() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/fileStructure/localClass2.kt");
     }
 
     @Test
@@ -226,6 +292,12 @@ public class FirOutOfContentRootContextCollectionTestGenerated extends AbstractF
     @TestMetadata("propertyWithGetterAndSetter.kt")
     public void testPropertyWithGetterAndSetter() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/fileStructure/propertyWithGetterAndSetter.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyWithSetter.kt")
+    public void testPropertyWithSetter() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/fileStructure/propertyWithSetter.kt");
     }
 
     @Test

@@ -103,11 +103,11 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
         }
 
         testClass<AbstractSourceInnerDeclarationsResolvePhaseTest> {
-            model("innerDeclarationsResolve")
+            model("fileStructure", pattern = TestGeneratorUtil.KT)
         }
 
         testClass<AbstractOutOfContentRootInnerDeclarationsResolvePhaseTest> {
-            model("innerDeclarationsResolve")
+            model("fileStructure", pattern = TestGeneratorUtil.KT)
         }
 
         testClass<AbstractSourcePartialRawFirBuilderTestCase> {

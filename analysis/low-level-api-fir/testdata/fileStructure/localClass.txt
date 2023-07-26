@@ -1,0 +1,26 @@
+FILE: [ResolvedTo(IMPORTS)] localClass.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun a(): R|kotlin/Unit| {
+        local final [ResolvedTo(BODY_RESOLVE)] class X : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] constructor(): R|X| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class Y : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|Y| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun b(): R|kotlin/Unit| {
+            local final [ResolvedTo(BODY_RESOLVE)] class Z : R|kotlin/Any| {
+                public [ResolvedTo(BODY_RESOLVE)] constructor(): R|Y.Z| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+        }
+
+    }
