@@ -550,11 +550,12 @@ class ClassesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "class
                | value class InlineTest(val x: String)  
             """.trimMargin()
         ) {
-            val classlike = packages.flatMap { it.classlikes }.first() as DClass
-            classlike.name equals "X"
-            classlike.properties.first().name equals "example"
-            classlike.extra[AdditionalModifiers]?.content?.values?.firstOrNull()
-                ?.firstOrNull() equals ExtraModifiers.KotlinOnlyModifiers.Inline
+            with((this / "classes" / "X").cast<DClass>()) {
+                name equals "X"
+                properties.first().name equals "example"
+                extra[AdditionalModifiers]?.content?.values?.firstOrNull()
+                    ?.firstOrNull() equals ExtraModifiers.KotlinOnlyModifiers.Inline
+            }
         }
     }
 
