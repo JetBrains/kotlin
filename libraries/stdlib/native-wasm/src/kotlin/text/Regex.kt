@@ -80,7 +80,7 @@ public actual operator fun MatchGroupCollection.get(name: String): MatchGroup? {
  * Represents a compiled regular expression.
  * Provides functions to match strings in text with a pattern, replace the found occurrences and split text around matches.
  */
-@Suppress("NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS") // Counterpart for ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS
+@Suppress("NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS") // Counterpart for @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual class Regex internal constructor(internal val nativePattern: Pattern) {
 
     internal enum class Mode {
