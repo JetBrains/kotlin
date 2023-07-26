@@ -33,6 +33,7 @@ fun <T> nestedBuild(
 ): NestedBuildee<T> {
     return NestedBuildee<T>().apply(instructions)
 }
+class Placeholder
 
 // test 1: PTV is in consuming position (yield-case)
 fun testYield() {
@@ -40,7 +41,7 @@ fun testYield() {
     val buildee = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>build<!> {
         nestedBuild {
             yield(arg)
-            nestedYield(Any())
+            nestedYield(Placeholder())
         }
     }
     checkExactType<Buildee<UserKlass>>(<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>buildee<!>)
@@ -52,7 +53,7 @@ fun testMaterialize() {
     val buildee = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>build<!> {
         nestedBuild {
             consume(materialize())
-            nestedYield(Any())
+            nestedYield(Placeholder())
         }
     }
     checkExactType<Buildee<UserKlass>>(<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>buildee<!>)
