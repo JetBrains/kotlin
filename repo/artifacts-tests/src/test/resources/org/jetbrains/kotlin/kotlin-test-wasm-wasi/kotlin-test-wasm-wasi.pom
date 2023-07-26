@@ -8,11 +8,11 @@
   <!-- do_not_remove: published-with-gradle-metadata -->
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jetbrains.kotlin</groupId>
-  <artifactId>kotlin-test-wasm</artifactId>
+  <artifactId>kotlin-test-wasm-wasi</artifactId>
   <version>ArtifactsTest.version</version>
   <packaging>klib</packaging>
-  <name>Kotlin Test Wasm</name>
-  <description>Kotlin Test for WASM</description>
+  <name>Kotlin Test Wasm Wasi</name>
+  <description>Kotlin Test for Wasm WASI</description>
   <url>https://kotlinlang.org/</url>
   <licenses>
     <license>
@@ -35,7 +35,7 @@
   <dependencies>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
-      <artifactId>kotlin-stdlib-wasm</artifactId>
+      <artifactId>kotlin-stdlib-wasm-wasi</artifactId>
       <version>ArtifactsTest.version</version>
       <scope>compile</scope>
     </dependency>

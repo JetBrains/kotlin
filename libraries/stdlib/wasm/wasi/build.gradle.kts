@@ -8,8 +8,6 @@ plugins {
 
 description = "Kotlin Standard Library for experimental WebAssembly WASI platform"
 
-D8RootPlugin.apply(rootProject).version = v8Version
-
 val targetDependentSources = listOf("builtins/kotlin", "src/kotlin", "src/kotlinx").map {
     "$rootDir/libraries/stdlib/wasm/wasi/$it"
 }
