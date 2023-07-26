@@ -91,7 +91,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
         implicitTypeOnly = false,
     ) {
         override val expressionsTransformer: FirExpressionsResolveTransformer = FirEnumAnnotationArgumentsTransformer(this)
-        override val declarationsTransformer: FirDeclarationsResolveTransformer get() = throw NotImplementedError()
+        override val declarationsTransformer: FirDeclarationsResolveTransformer? = null
     }
 
     /**

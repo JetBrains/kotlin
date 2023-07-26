@@ -38,9 +38,9 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
 
     final override val resolutionContext: ResolutionContext = ResolutionContext(session, components, context)
 
-    abstract val expressionsTransformer: FirExpressionsResolveTransformer
+    abstract val expressionsTransformer: FirExpressionsResolveTransformer?
 
-    abstract val declarationsTransformer: FirDeclarationsResolveTransformer
+    abstract val declarationsTransformer: FirDeclarationsResolveTransformer?
 
     private val controlFlowStatementsTransformer = FirControlFlowStatementsResolveTransformer(this)
 
@@ -49,19 +49,17 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
         return context.withFile(file, components) {
             withFileAnalysisExceptionWrapping(file) {
                 firResolveContextCollector?.addFileContext(file, context.towerDataContext)
-
-                @Suppress("UNCHECKED_CAST")
                 transformDeclarationContent(file, data) as FirFile
             }
         }
     }
 
     override fun transformScript(script: FirScript, data: ResolutionMode): FirScript {
-        return declarationsTransformer.transformScript(script, data)
+        return declarationsTransformer?.transformScript(script, data) ?: script
     }
 
     override fun transformCodeFragment(codeFragment: FirCodeFragment, data: ResolutionMode): FirCodeFragment {
-        return declarationsTransformer.transformCodeFragment(codeFragment, data)
+        return declarationsTransformer?.transformCodeFragment(codeFragment, data) ?: codeFragment
     }
 
     override fun <E : FirElement> transformElement(element: E, data: ResolutionMode): E {
@@ -103,7 +101,7 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
     // ------------------------------------- Expressions -------------------------------------
 
     override fun transformExpression(expression: FirExpression, data: ResolutionMode): FirStatement {
-        return expressionsTransformer.transformExpression(expression, data)
+        return expressionsTransformer?.transformExpression(expression, data) ?: expression
     }
 
     override fun transformWrappedArgumentExpression(
@@ -117,178 +115,180 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
         qualifiedAccessExpression: FirQualifiedAccessExpression,
         data: ResolutionMode
     ): FirStatement {
-        return expressionsTransformer.transformQualifiedAccessExpression(qualifiedAccessExpression, data)
+        return expressionsTransformer?.transformQualifiedAccessExpression(qualifiedAccessExpression, data) ?: qualifiedAccessExpression
     }
 
     override fun transformPropertyAccessExpression(
         propertyAccessExpression: FirPropertyAccessExpression,
         data: ResolutionMode
     ): FirStatement {
-        return expressionsTransformer.transformQualifiedAccessExpression(propertyAccessExpression, data)
+        return expressionsTransformer?.transformQualifiedAccessExpression(propertyAccessExpression, data) ?: propertyAccessExpression
     }
 
     override fun transformFunctionCall(functionCall: FirFunctionCall, data: ResolutionMode): FirStatement {
-        return expressionsTransformer.transformFunctionCall(functionCall, data)
+        return expressionsTransformer?.transformFunctionCall(functionCall, data) ?: functionCall
     }
 
     override fun transformStringConcatenationCall(stringConcatenationCall: FirStringConcatenationCall, data: ResolutionMode): FirStatement {
-        return expressionsTransformer.transformStringConcatenationCall(stringConcatenationCall, data)
+        return expressionsTransformer?.transformStringConcatenationCall(stringConcatenationCall, data) ?: stringConcatenationCall
     }
 
     override fun transformCallableReferenceAccess(
         callableReferenceAccess: FirCallableReferenceAccess,
         data: ResolutionMode
     ): FirStatement {
-        return expressionsTransformer.transformCallableReferenceAccess(callableReferenceAccess, data)
+        return expressionsTransformer?.transformCallableReferenceAccess(callableReferenceAccess, data) ?: callableReferenceAccess
     }
 
     override fun transformBlock(block: FirBlock, data: ResolutionMode): FirStatement {
-        return expressionsTransformer.transformBlock(block, data)
+        return expressionsTransformer?.transformBlock(block, data) ?: block
     }
 
     override fun transformThisReceiverExpression(
         thisReceiverExpression: FirThisReceiverExpression,
         data: ResolutionMode
     ): FirStatement {
-        return expressionsTransformer.transformThisReceiverExpression(thisReceiverExpression, data)
+        return expressionsTransformer?.transformThisReceiverExpression(thisReceiverExpression, data) ?: thisReceiverExpression
     }
 
     override fun transformComparisonExpression(
         comparisonExpression: FirComparisonExpression,
         data: ResolutionMode
     ): FirStatement {
-        return expressionsTransformer.transformComparisonExpression(comparisonExpression, data)
+        return expressionsTransformer?.transformComparisonExpression(comparisonExpression, data) ?: comparisonExpression
     }
 
     override fun transformTypeOperatorCall(
         typeOperatorCall: FirTypeOperatorCall,
         data: ResolutionMode
     ): FirStatement {
-        return expressionsTransformer.transformTypeOperatorCall(typeOperatorCall, data)
+        return expressionsTransformer?.transformTypeOperatorCall(typeOperatorCall, data) ?: typeOperatorCall
     }
 
     override fun transformAssignmentOperatorStatement(
         assignmentOperatorStatement: FirAssignmentOperatorStatement,
         data: ResolutionMode
     ): FirStatement {
-        return expressionsTransformer.transformAssignmentOperatorStatement(assignmentOperatorStatement, data)
+        return expressionsTransformer?.transformAssignmentOperatorStatement(assignmentOperatorStatement, data)
+            ?: assignmentOperatorStatement
     }
 
     override fun transformIncrementDecrementExpression(
         incrementDecrementExpression: FirIncrementDecrementExpression,
         data: ResolutionMode
     ): FirStatement {
-        return expressionsTransformer.transformIncrementDecrementExpression(incrementDecrementExpression, data)
+        return expressionsTransformer?.transformIncrementDecrementExpression(incrementDecrementExpression, data)
+            ?: incrementDecrementExpression
     }
 
     override fun transformEqualityOperatorCall(
         equalityOperatorCall: FirEqualityOperatorCall,
         data: ResolutionMode
     ): FirStatement {
-        return expressionsTransformer.transformEqualityOperatorCall(equalityOperatorCall, data)
+        return expressionsTransformer?.transformEqualityOperatorCall(equalityOperatorCall, data) ?: equalityOperatorCall
     }
 
     override fun transformCheckNotNullCall(
         checkNotNullCall: FirCheckNotNullCall,
         data: ResolutionMode
     ): FirStatement {
-        return expressionsTransformer.transformCheckNotNullCall(checkNotNullCall, data)
+        return expressionsTransformer?.transformCheckNotNullCall(checkNotNullCall, data) ?: checkNotNullCall
     }
 
     override fun transformBinaryLogicExpression(
         binaryLogicExpression: FirBinaryLogicExpression,
         data: ResolutionMode
     ): FirStatement {
-        return expressionsTransformer.transformBinaryLogicExpression(binaryLogicExpression, data)
+        return expressionsTransformer?.transformBinaryLogicExpression(binaryLogicExpression, data) ?: binaryLogicExpression
     }
 
     override fun transformDesugaredAssignmentValueReferenceExpression(
         desugaredAssignmentValueReferenceExpression: FirDesugaredAssignmentValueReferenceExpression,
         data: ResolutionMode
     ): FirStatement {
-        return expressionsTransformer.transformDesugaredAssignmentValueReferenceExpression(
+        return expressionsTransformer?.transformDesugaredAssignmentValueReferenceExpression(
             desugaredAssignmentValueReferenceExpression,
             data,
-        )
+        ) ?: desugaredAssignmentValueReferenceExpression
     }
 
     override fun transformVariableAssignment(
         variableAssignment: FirVariableAssignment,
         data: ResolutionMode
     ): FirStatement {
-        return expressionsTransformer.transformVariableAssignment(variableAssignment, data)
+        return expressionsTransformer?.transformVariableAssignment(variableAssignment, data) ?: variableAssignment
     }
 
     override fun transformGetClassCall(getClassCall: FirGetClassCall, data: ResolutionMode): FirStatement {
-        return expressionsTransformer.transformGetClassCall(getClassCall, data)
+        return expressionsTransformer?.transformGetClassCall(getClassCall, data) ?: getClassCall
     }
 
     override fun transformWrappedDelegateExpression(
         wrappedDelegateExpression: FirWrappedDelegateExpression,
         data: ResolutionMode
     ): FirStatement {
-        return declarationsTransformer.transformWrappedDelegateExpression(wrappedDelegateExpression, data)
+        return declarationsTransformer?.transformWrappedDelegateExpression(wrappedDelegateExpression, data) ?: wrappedDelegateExpression
     }
 
     override fun <T> transformConstExpression(
         constExpression: FirConstExpression<T>,
         data: ResolutionMode
     ): FirStatement {
-        return expressionsTransformer.transformConstExpression(constExpression, data)
+        return expressionsTransformer?.transformConstExpression(constExpression, data) ?: constExpression
     }
 
     override fun transformAnnotation(annotation: FirAnnotation, data: ResolutionMode): FirStatement {
-        return expressionsTransformer.transformAnnotation(annotation, data)
+        return expressionsTransformer?.transformAnnotation(annotation, data) ?: annotation
     }
 
     override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: ResolutionMode): FirStatement {
-        return expressionsTransformer.transformAnnotationCall(annotationCall, data)
+        return expressionsTransformer?.transformAnnotationCall(annotationCall, data) ?: annotationCall
     }
 
     override fun transformErrorAnnotationCall(errorAnnotationCall: FirErrorAnnotationCall, data: ResolutionMode): FirStatement {
-        return expressionsTransformer.transformErrorAnnotationCall(errorAnnotationCall, data)
+        return expressionsTransformer?.transformErrorAnnotationCall(errorAnnotationCall, data) ?: errorAnnotationCall
     }
 
     override fun transformDelegatedConstructorCall(
         delegatedConstructorCall: FirDelegatedConstructorCall,
         data: ResolutionMode
     ): FirStatement {
-        return expressionsTransformer.transformDelegatedConstructorCall(delegatedConstructorCall, data)
+        return expressionsTransformer?.transformDelegatedConstructorCall(delegatedConstructorCall, data) ?: delegatedConstructorCall
     }
 
     override fun transformAugmentedArraySetCall(
         augmentedArraySetCall: FirAugmentedArraySetCall,
         data: ResolutionMode
     ): FirStatement {
-        return expressionsTransformer.transformAugmentedArraySetCall(augmentedArraySetCall, data)
+        return expressionsTransformer?.transformAugmentedArraySetCall(augmentedArraySetCall, data) ?: augmentedArraySetCall
     }
 
     override fun transformSafeCallExpression(
         safeCallExpression: FirSafeCallExpression,
         data: ResolutionMode
     ): FirStatement {
-        return expressionsTransformer.transformSafeCallExpression(safeCallExpression, data)
+        return expressionsTransformer?.transformSafeCallExpression(safeCallExpression, data) ?: safeCallExpression
     }
 
     override fun transformCheckedSafeCallSubject(
         checkedSafeCallSubject: FirCheckedSafeCallSubject,
         data: ResolutionMode
     ): FirStatement {
-        return expressionsTransformer.transformCheckedSafeCallSubject(checkedSafeCallSubject, data)
+        return expressionsTransformer?.transformCheckedSafeCallSubject(checkedSafeCallSubject, data) ?: checkedSafeCallSubject
     }
 
     override fun transformArrayLiteral(arrayLiteral: FirArrayLiteral, data: ResolutionMode): FirStatement {
-        return expressionsTransformer.transformArrayLiteral(arrayLiteral, data)
+        return expressionsTransformer?.transformArrayLiteral(arrayLiteral, data) ?: arrayLiteral
     }
 
     override fun transformSmartCastExpression(smartCastExpression: FirSmartCastExpression, data: ResolutionMode): FirStatement {
-        return expressionsTransformer.transformSmartCastExpression(smartCastExpression, data)
+        return expressionsTransformer?.transformSmartCastExpression(smartCastExpression, data) ?: smartCastExpression
     }
 
     // ------------------------------------- Declarations -------------------------------------
 
     override fun transformDeclaration(declaration: FirDeclaration, data: ResolutionMode): FirDeclaration {
-        return declarationsTransformer.transformDeclaration(declaration, data)
+        return declarationsTransformer?.transformDeclaration(declaration, data) ?: declaration
     }
 
     open fun transformDeclarationContent(
@@ -301,95 +301,96 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
         declarationStatus: FirDeclarationStatus,
         data: ResolutionMode
     ): FirDeclarationStatus {
-        return declarationsTransformer.transformDeclarationStatus(declarationStatus, data)
+        return declarationsTransformer?.transformDeclarationStatus(declarationStatus, data) ?: declarationStatus
     }
 
     override fun transformEnumEntry(enumEntry: FirEnumEntry, data: ResolutionMode): FirEnumEntry {
-        return declarationsTransformer.transformEnumEntry(enumEntry, data)
+        return declarationsTransformer?.transformEnumEntry(enumEntry, data) ?: enumEntry
     }
 
     override fun transformProperty(property: FirProperty, data: ResolutionMode): FirProperty {
-        return declarationsTransformer.transformProperty(property, data)
+        return declarationsTransformer?.transformProperty(property, data) ?: property
     }
 
     override fun transformPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: ResolutionMode): FirStatement {
-        return declarationsTransformer.transformPropertyAccessor(propertyAccessor, data)
+        return declarationsTransformer?.transformPropertyAccessor(propertyAccessor, data) ?: propertyAccessor
     }
 
     override fun transformBackingField(
         backingField: FirBackingField,
         data: ResolutionMode
     ): FirStatement {
-        return declarationsTransformer.transformBackingField(backingField, data)
+        return declarationsTransformer?.transformBackingField(backingField, data) ?: backingField
     }
 
     override fun transformField(field: FirField, data: ResolutionMode): FirField {
-        return declarationsTransformer.transformField(field, data)
+        return declarationsTransformer?.transformField(field, data) ?: field
     }
 
     override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): FirStatement {
-        return declarationsTransformer.transformRegularClass(regularClass, data)
+        return declarationsTransformer?.transformRegularClass(regularClass, data) ?: regularClass
     }
 
     override fun transformAnonymousObject(
         anonymousObject: FirAnonymousObject,
         data: ResolutionMode
     ): FirStatement {
-        return declarationsTransformer.transformAnonymousObject(anonymousObject, data)
+        return declarationsTransformer?.transformAnonymousObject(anonymousObject, data) ?: anonymousObject
     }
 
     override fun transformAnonymousObjectExpression(
         anonymousObjectExpression: FirAnonymousObjectExpression,
         data: ResolutionMode
     ): FirStatement {
-        return expressionsTransformer.transformAnonymousObjectExpression(anonymousObjectExpression, data)
+        return expressionsTransformer?.transformAnonymousObjectExpression(anonymousObjectExpression, data) ?: anonymousObjectExpression
     }
 
     override fun transformSimpleFunction(
         simpleFunction: FirSimpleFunction,
         data: ResolutionMode
     ): FirSimpleFunction {
-        return declarationsTransformer.transformSimpleFunction(simpleFunction, data)
+        return declarationsTransformer?.transformSimpleFunction(simpleFunction, data) ?: simpleFunction
     }
 
     override fun transformFunction(
         function: FirFunction,
         data: ResolutionMode
     ): FirStatement {
-        return declarationsTransformer.transformFunction(function, data)
+        return declarationsTransformer?.transformFunction(function, data) ?: function
     }
 
     override fun transformConstructor(constructor: FirConstructor, data: ResolutionMode): FirConstructor {
-        return declarationsTransformer.transformConstructor(constructor, data)
+        return declarationsTransformer?.transformConstructor(constructor, data) ?: constructor
     }
 
     override fun transformAnonymousInitializer(
         anonymousInitializer: FirAnonymousInitializer,
         data: ResolutionMode
     ): FirAnonymousInitializer {
-        return declarationsTransformer.transformAnonymousInitializer(anonymousInitializer, data)
+        return declarationsTransformer?.transformAnonymousInitializer(anonymousInitializer, data) ?: anonymousInitializer
     }
 
     override fun transformAnonymousFunction(
         anonymousFunction: FirAnonymousFunction,
         data: ResolutionMode
     ): FirStatement {
-        return declarationsTransformer.transformAnonymousFunction(anonymousFunction, data)
+        return declarationsTransformer?.transformAnonymousFunction(anonymousFunction, data) ?: anonymousFunction
     }
 
     override fun transformAnonymousFunctionExpression(
         anonymousFunctionExpression: FirAnonymousFunctionExpression,
         data: ResolutionMode
     ): FirStatement {
-        return expressionsTransformer.transformAnonymousFunctionExpression(anonymousFunctionExpression, data)
+        return expressionsTransformer?.transformAnonymousFunctionExpression(anonymousFunctionExpression, data)
+            ?: anonymousFunctionExpression
     }
 
     override fun transformValueParameter(valueParameter: FirValueParameter, data: ResolutionMode): FirStatement {
-        return declarationsTransformer.transformValueParameter(valueParameter, data)
+        return declarationsTransformer?.transformValueParameter(valueParameter, data) ?: valueParameter
     }
 
     override fun transformTypeAlias(typeAlias: FirTypeAlias, data: ResolutionMode): FirTypeAlias {
-        return declarationsTransformer.transformTypeAlias(typeAlias, data)
+        return declarationsTransformer?.transformTypeAlias(typeAlias, data) ?: typeAlias
     }
 
     // ------------------------------------- Control flow statements -------------------------------------

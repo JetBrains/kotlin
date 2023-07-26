@@ -47,22 +47,16 @@ internal abstract class LLFirAbstractBodyTargetResolver(
 
     override fun withFile(firFile: FirFile, action: () -> Unit) {
         transformer.context.withFile(firFile, transformer.components) {
-            transformer.firResolveContextCollector?.let { collector ->
-                collector.addFileContext(firFile, transformer.context.towerDataContext)
-            }
-
+            transformer.firResolveContextCollector?.addFileContext(firFile, transformer.context.towerDataContext)
             action()
         }
     }
 
     @Deprecated("Should never be called directly, only for override purposes, please use withRegularClass", level = DeprecationLevel.ERROR)
     override fun withRegularClassImpl(firClass: FirRegularClass, action: () -> Unit) {
-        transformer.declarationsTransformer.context.withContainingClass(firClass) {
-            transformer.declarationsTransformer.withRegularClass(firClass) {
-                transformer.firResolveContextCollector?.let { collector ->
-                    collector.addDeclarationContext(firClass, transformer.context)
-                }
-
+        transformer.declarationsTransformer?.context?.withContainingClass(firClass) {
+            transformer.declarationsTransformer?.withRegularClass(firClass) {
+                transformer.firResolveContextCollector?.addDeclarationContext(firClass, transformer.context)
                 action()
                 firClass
             }
