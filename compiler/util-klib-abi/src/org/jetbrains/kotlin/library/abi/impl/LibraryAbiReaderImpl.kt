@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.util.IdSignatureRenderer
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.abi.*
+import org.jetbrains.kotlin.library.abi.AbiClassifierReference.ClassReference
 import org.jetbrains.kotlin.library.abi.AbiTypeNullability.*
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.name.FqName
@@ -559,7 +560,7 @@ private class LibraryDeserializer(
         }
 
         fun isPubliclyVisible(type: AbiType): Boolean =
-            ((type as? AbiType.Simple)?.classifier as? AbiClassifier.Class)?.className !in nonPublicTopLevelClassNames
+            ((type as? AbiType.Simple)?.classifierReference as? ClassReference)?.className !in nonPublicTopLevelClassNames
 
         private fun deserializeDefinitelyNotNullType(
             proto: ProtoIrDefinitelyNotNullType,
@@ -569,7 +570,7 @@ private class LibraryDeserializer(
 
             val underlyingType = deserializeType(proto.getTypes(0), typeParameterResolver)
             return if (underlyingType is AbiType.Simple && underlyingType.nullability != DEFINITELY_NOT_NULL)
-                SimpleTypeImpl(underlyingType.classifier, underlyingType.arguments, DEFINITELY_NOT_NULL)
+                SimpleTypeImpl(underlyingType.classifierReference, underlyingType.arguments, DEFINITELY_NOT_NULL)
             else
                 underlyingType
         }
@@ -610,7 +611,7 @@ private class LibraryDeserializer(
                 symbolKind == CLASS_SYMBOL && signature is CommonSignature -> {
                     // Publicly visible class or interface.
                     SimpleTypeImpl(
-                        classifier = ClassImpl(
+                        classifierReference = ClassReferenceImpl(
                             className = signature.extractQualifiedName()
                         ),
                         arguments = deserializeTypeArguments(typeArgumentIds, typeParameterResolver),
@@ -626,7 +627,7 @@ private class LibraryDeserializer(
                     nonPublicTopLevelClassNames += className
 
                     SimpleTypeImpl(
-                        classifier = ClassImpl(className),
+                        classifierReference = ClassReferenceImpl(className),
                         arguments = deserializeTypeArguments(typeArgumentIds, typeParameterResolver),
                         nullability = nullability
                     )
@@ -635,7 +636,7 @@ private class LibraryDeserializer(
                 symbolKind == TYPE_PARAMETER_SYMBOL && signature is CompositeSignature -> {
                     // A type-parameter.
                     SimpleTypeImpl(
-                        classifier = TypeParameterImpl(
+                        classifierReference = TypeParameterReferenceImpl(
                             tag = typeParameterResolver.resolveTypeParameterTag(
                                 declarationName = (signature.container as CommonSignature).extractQualifiedName(),
                                 index = (signature.inner as LocalSignature).index()
@@ -693,7 +694,7 @@ private class LibraryDeserializer(
 
         private fun isKotlinBuiltInType(type: AbiType, className: AbiQualifiedName, nullability: AbiTypeNullability): Boolean {
             if (type !is AbiType.Simple || type.nullability != nullability) return false
-            return (type.classifier as? AbiClassifier.Class)?.className == className
+            return (type.classifierReference as? ClassReference)?.className == className
         }
 
         private inline fun CommonSignature.extractQualifiedName(transformRelativeName: (String) -> String = { it }): AbiQualifiedName =
@@ -708,8 +709,8 @@ private class LibraryDeserializer(
 
         private fun Variance.toAbiVariance(): AbiVariance = when (this) {
             Variance.INVARIANT -> AbiVariance.INVARIANT
-            Variance.IN_VARIANCE -> AbiVariance.IN_VARIANCE
-            Variance.OUT_VARIANCE -> AbiVariance.OUT_VARIANCE
+            Variance.IN_VARIANCE -> AbiVariance.IN
+            Variance.OUT_VARIANCE -> AbiVariance.OUT
         }
     }
 }

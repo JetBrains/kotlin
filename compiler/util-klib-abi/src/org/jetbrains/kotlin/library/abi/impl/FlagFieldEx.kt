@@ -41,15 +41,7 @@ internal abstract class FlagFieldEx<T>(val offset: Int, val bitWidth: Int) {
         companion object {
             private fun <E : Enum<E>> computeBitWidth(entries: Array<E>): Int {
                 require(entries.isNotEmpty()) { "No enum entries" }
-
-                var value = entries.size - 1
-                var usedBits = 0
-                do {
-                    value = value ushr 1
-                    usedBits++
-                } while (value != 0)
-
-                return usedBits
+                return maxOf(1, Int.SIZE_BITS - entries.lastIndex.countLeadingZeroBits())
             }
         }
     }

@@ -32,7 +32,9 @@ class LibraryAbi(
  * @property isSupportedByAbiReader Whether this IR signature version is supported by the current implementation of
  *   the ABI reader. If it's not supported then such signatures can't be read by the ABI reader, and the version itself
  *   just serves for information purposes.
- * @property description Brief description of the IR signature version, if available.
+ * @property description Brief description of the IR signature version, if available. To be used purely for discovery
+ *   purposes by ABI reader clients. Warning: The description text may be freely changed in the future. So, it should
+ *   NEVER be used for making ABI snapshots.
  */
 @ExperimentalLibraryAbiReader
 interface AbiSignatureVersion {
@@ -153,20 +155,15 @@ enum class AbiModality {
     FINAL, OPEN, ABSTRACT, SEALED
 }
 
-/**
- * Important: The order of [declarations] is preserved exactly as in serialized IR.
- */
 @ExperimentalLibraryAbiReader
 interface AbiDeclarationContainer {
+    /** Important: The order of declarations is preserved exactly as in serialized IR. */
     val declarations: List<AbiDeclaration>
 }
 
 @ExperimentalLibraryAbiReader
 interface AbiTopLevelDeclarations : AbiDeclarationContainer
 
-/**
- * Important: The order of [superTypes] is preserved exactly as in serialized IR.
- */
 @ExperimentalLibraryAbiReader
 interface AbiClass : AbiDeclarationWithModality, AbiDeclarationContainer, AbiTypeParametersContainer {
     val kind: AbiClassKind
@@ -174,7 +171,10 @@ interface AbiClass : AbiDeclarationWithModality, AbiDeclarationContainer, AbiTyp
     val isValue: Boolean
     val isFunction: Boolean
 
-    /** The set of non-trivial supertypes (i.e. excluding [kotlin.Any]). */
+    /**
+     * The set of non-trivial supertypes (i.e. excluding [kotlin.Any]).
+     * Important: The order of supertypes is preserved exactly as in serialized IR.
+     */
     val superTypes: List<AbiType>
 }
 
@@ -186,12 +186,6 @@ enum class AbiClassKind {
 @ExperimentalLibraryAbiReader
 interface AbiEnumEntry : AbiDeclaration
 
-/**
- * Important: All value parameters of the function are stored in the single place, in the [valueParameters] list in
- * a well-defined order. First, unless [hasExtensionReceiverParameter] is false, goes the extension receiver parameter.
- * It is followed by [contextReceiverParametersCount] context receiver parameters. The remainder are the regular
- * value parameters of the function.
- */
 @ExperimentalLibraryAbiReader
 interface AbiFunction : AbiDeclarationWithModality, AbiTypeParametersContainer {
     val isConstructor: Boolean
@@ -199,6 +193,13 @@ interface AbiFunction : AbiDeclarationWithModality, AbiTypeParametersContainer {
     val isSuspend: Boolean
     val hasExtensionReceiverParameter: Boolean
     val contextReceiverParametersCount: Int
+
+    /**
+     * Important: All value parameters of the function are stored in the single place, in the [valueParameters] list in
+     * a well-defined order. First, unless [hasExtensionReceiverParameter] is false, goes the extension receiver parameter.
+     * It is followed by [contextReceiverParametersCount] context receiver parameters. The remainder are the regular
+     * value parameters of the function.
+     */
     val valueParameters: List<AbiValueParameter>
     val returnType: AbiType?
 }
@@ -222,24 +223,22 @@ interface AbiProperty : AbiDeclarationWithModality {
 @ExperimentalLibraryAbiReader
 enum class AbiPropertyKind { VAL, CONST_VAL, VAR }
 
-/**
- * Important: The order of [typeParameters] is preserved exactly as in serialized IR.
- */
 @ExperimentalLibraryAbiReader
 sealed interface AbiTypeParametersContainer : AbiDeclaration {
+    /** Important: The order of [typeParameters] is preserved exactly as in serialized IR. */
     val typeParameters: List<AbiTypeParameter>
 }
 
-/**
- * Important: The order of [upperBounds] is preserved exactly as in serialized IR.
- */
 @ExperimentalLibraryAbiReader
 interface AbiTypeParameter {
     val tag: String
     val variance: AbiVariance
     val isReified: Boolean
 
-    /** The set of non-trivial upper bounds (i.e. excluding nullable [kotlin.Any]). */
+    /**
+     * The set of non-trivial upper bounds (i.e. excluding nullable [kotlin.Any]).
+     * Important: The order of upper bounds is preserved exactly as in serialized IR.
+     */
     val upperBounds: List<AbiType>
 }
 
@@ -248,7 +247,7 @@ sealed interface AbiType {
     interface Dynamic : AbiType
     interface Error : AbiType
     interface Simple : AbiType {
-        val classifier: AbiClassifier
+        val classifierReference: AbiClassifierReference
         val arguments: List<AbiTypeArgument>
         val nullability: AbiTypeNullability
     }
@@ -264,12 +263,12 @@ sealed interface AbiTypeArgument {
 }
 
 @ExperimentalLibraryAbiReader
-sealed interface AbiClassifier {
-    interface Class : AbiClassifier {
+sealed interface AbiClassifierReference {
+    interface ClassReference : AbiClassifierReference {
         val className: AbiQualifiedName
     }
 
-    interface TypeParameter : AbiClassifier {
+    interface TypeParameterReference : AbiClassifierReference {
         val tag: String
     }
 }
@@ -281,5 +280,5 @@ enum class AbiTypeNullability {
 
 @ExperimentalLibraryAbiReader
 enum class AbiVariance {
-    INVARIANT, IN_VARIANCE, OUT_VARIANCE
+    INVARIANT, IN, OUT
 }

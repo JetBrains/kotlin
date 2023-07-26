@@ -22,8 +22,8 @@ class AbiTypeArgumentRenderingTest {
                 mockType(
                     "sample", "OpenClass",
                     mockType("sample", "InvariantClass") to AbiVariance.INVARIANT,
-                    mockType("sample", "InClass") to AbiVariance.IN_VARIANCE,
-                    mockType("sample", "OutClass") to AbiVariance.OUT_VARIANCE,
+                    mockType("sample", "InClass") to AbiVariance.IN,
+                    mockType("sample", "OutClass") to AbiVariance.OUT,
                     null
                 )
             )
@@ -67,7 +67,7 @@ class AbiTypeArgumentRenderingTest {
 
     private fun mockType(packageName: String, className: String, vararg arguments: Pair<AbiType, AbiVariance>?): AbiType {
         return SimpleTypeImpl(
-            classifier = ClassImpl(AbiQualifiedName(AbiCompoundName(packageName), AbiCompoundName(className))),
+            classifierReference = ClassReferenceImpl(AbiQualifiedName(AbiCompoundName(packageName), AbiCompoundName(className))),
             arguments = arguments.map { argument ->
                 if (argument == null)
                     StarProjectionImpl

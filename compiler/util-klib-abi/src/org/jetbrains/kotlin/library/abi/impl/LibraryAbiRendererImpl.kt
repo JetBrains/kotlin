@@ -188,8 +188,8 @@ internal class AbiRendererImpl(
 
             fun StringBuilder.appendType(type: AbiType) {
                 when (type) {
-                    is AbiType.Simple -> when (val classifier = type.classifier) {
-                        is AbiClassifier.Class -> {
+                    is AbiType.Simple -> when (val classifier = type.classifierReference) {
+                        is AbiClassifierReference.ClassReference -> {
                             append(classifier.className)
                             if (type.arguments.isNotEmpty()) {
                                 type.arguments.joinTo(this, separator = ", ", prefix = "<", postfix = ">") { typeArgument ->
@@ -198,7 +198,7 @@ internal class AbiRendererImpl(
                             }
                             if (type.nullability == AbiTypeNullability.MARKED_NULLABLE) append('?')
                         }
-                        is AbiClassifier.TypeParameter -> {
+                        is AbiClassifierReference.TypeParameterReference -> {
                             append('#').append(classifier.tag)
                             when (type.nullability) {
                                 AbiTypeNullability.MARKED_NULLABLE -> append('?')
@@ -226,8 +226,8 @@ internal class AbiRendererImpl(
             private fun StringBuilder.appendVariance(variance: AbiVariance) {
                 when (variance) {
                     AbiVariance.INVARIANT -> Unit
-                    AbiVariance.IN_VARIANCE -> append("in ")
-                    AbiVariance.OUT_VARIANCE -> append("out ")
+                    AbiVariance.IN -> append("in ")
+                    AbiVariance.OUT -> append("out ")
                 }
             }
 

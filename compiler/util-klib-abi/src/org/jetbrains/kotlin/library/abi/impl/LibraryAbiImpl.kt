@@ -230,7 +230,7 @@ internal object ErrorTypeImpl : AbiType.Error
 
 @ExperimentalLibraryAbiReader
 internal class SimpleTypeImpl(
-    override val classifier: AbiClassifier,
+    override val classifierReference: AbiClassifierReference,
     override val arguments: List<AbiTypeArgument>,
     override val nullability: AbiTypeNullability
 ) : AbiType.Simple
@@ -245,7 +245,7 @@ internal class TypeProjectionImpl(
 ) : AbiTypeArgument.TypeProjection
 
 @ExperimentalLibraryAbiReader
-internal class ClassImpl(override val className: AbiQualifiedName) : AbiClassifier.Class
+internal class ClassReferenceImpl(override val className: AbiQualifiedName) : AbiClassifierReference.ClassReference
 
 @ExperimentalLibraryAbiReader
-internal class TypeParameterImpl(override val tag: String) : AbiClassifier.TypeParameter
+internal class TypeParameterReferenceImpl(override val tag: String) : AbiClassifierReference.TypeParameterReference
