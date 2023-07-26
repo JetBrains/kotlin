@@ -70,6 +70,8 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
             int next = args.subList(index, args.size()).indexOf("---");
             if (next == -1) {
                 next = args.size();
+            } else {
+                next = index + next;
             }
             Pair<String, ExitCode> pair = CompilerTestUtil.executeCompiler(compiler, args.subList(index, next));
             output.append(pair.getFirst());

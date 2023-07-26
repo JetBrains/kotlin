@@ -1,5 +1,7 @@
 $TESTDATA_DIR$/simple2js.kt
 -Xir-only
+-libraries
+$STDLIB_JS$
 -ir-output-dir
 $TEMP_DIR$
 -ir-output-name

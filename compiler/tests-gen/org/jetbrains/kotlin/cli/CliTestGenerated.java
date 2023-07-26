@@ -1358,11 +1358,6 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/js/jsHelp.args");
         }
 
-        @TestMetadata("kotlinHomeWithoutStdlib.args")
-        public void testKotlinHomeWithoutStdlib() throws Exception {
-            runTest("compiler/testData/cli/js/kotlinHomeWithoutStdlib.args");
-        }
-
         @TestMetadata("kotlinPackage.args")
         public void testKotlinPackage() throws Exception {
             runTest("compiler/testData/cli/js/kotlinPackage.args");
@@ -1371,11 +1366,6 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("languageVersion.args")
         public void testLanguageVersion() throws Exception {
             runTest("compiler/testData/cli/js/languageVersion.args");
-        }
-
-        @TestMetadata("legacyCompilerUsageWithoutFlag.args")
-        public void testLegacyCompilerUsageWithoutFlag() throws Exception {
-            runTest("compiler/testData/cli/js/legacyCompilerUsageWithoutFlag.args");
         }
 
         @TestMetadata("libraryDirNotFound.args")
@@ -1448,11 +1438,6 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/js/sourceMapRelativeRoot.args");
         }
 
-        @TestMetadata("sourceMapRootAuto.args")
-        public void testSourceMapRootAuto() throws Exception {
-            runTest("compiler/testData/cli/js/sourceMapRootAuto.args");
-        }
-
         @TestMetadata("sourceMapRootManual.args")
         public void testSourceMapRootManual() throws Exception {
             runTest("compiler/testData/cli/js/sourceMapRootManual.args");
@@ -1486,11 +1471,6 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("withLib.args")
         public void testWithLib() throws Exception {
             runTest("compiler/testData/cli/js/withLib.args");
-        }
-
-        @TestMetadata("wrongAbiVersion.args")
-        public void testWrongAbiVersion() throws Exception {
-            runTest("compiler/testData/cli/js/wrongAbiVersion.args");
         }
     }
 

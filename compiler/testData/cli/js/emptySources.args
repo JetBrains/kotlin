@@ -1,5 +1,9 @@
 $TEMP_DIR$
--Xforce-deprecated-legacy-compiler-usage
--no-stdlib
--output
-$TESTDATA_DIR$
+-Xir-only
+-Xir-produce-klib-dir
+-libraries
+$STDLIB_JS$
+-ir-output-dir
+$TEMP_DIR$
+-ir-output-name
+out
