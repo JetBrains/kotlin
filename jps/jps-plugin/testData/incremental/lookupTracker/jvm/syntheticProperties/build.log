@@ -5,9 +5,9 @@ Compiling files:
 Exit code: COMPILATION_ERROR
   Unresolved reference: setFoo
   Val cannot be reassigned
-  Unresolved reference: bazBaz
-  Unresolved reference: bazBaz
+  Overload resolution ambiguity between candidates: [var bazBaz: Int, val bazBaz: Int]
+  Overload resolution ambiguity between candidates: [var bazBaz: Int, val bazBaz: Int]
   Unresolved reference: boo
-  Unresolved reference: bazBaz
-  Unresolved reference: bazBaz
+  Overload resolution ambiguity between candidates: [var bazBaz: Int, val bazBaz: Int]
+  Overload resolution ambiguity between candidates: [var bazBaz: Int, val bazBaz: Int]
   Unresolved reference: boo

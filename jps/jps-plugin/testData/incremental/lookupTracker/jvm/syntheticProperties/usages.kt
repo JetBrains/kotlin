@@ -4,27 +4,27 @@ package foo.bar
 /*p:foo(KotlinClass)*/import foo.KotlinClass
 
 /*p:foo.bar*/fun test() {
-    val j = /*p:<root>*/JavaClass()
-    val k = /*p:foo*/KotlinClass()
+    val j = /*p:<root> p:foo*/JavaClass()
+    val k = /*p:<root> p:foo*/KotlinClass()
 
-    /*p:<root>(JavaClass) p:kotlin(Int)*/j./*c:JavaClass*/getFoo()
-    /*p:<root>(JavaClass)*/j./*c:JavaClass c:JavaClass(getSETFoo) c:JavaClass(getSetFoo) p:foo.bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.comparisons p:kotlin.io p:kotlin.jvm p:kotlin.ranges p:kotlin.sequences p:kotlin.text*/setFoo(2)
-    /*p:<root>(JavaClass) p:kotlin(Int)*/j./*c:JavaClass c:JavaClass(getFOO) c:JavaClass(getFoo) c:JavaClass(setFoo)*/foo = /*p:kotlin(Int)*/2
-    /*p:<root>(JavaClass) p:kotlin(Int)*/j./*c:JavaClass c:JavaClass(getFOO) c:JavaClass(getFoo) c:JavaClass(setFoo)*/foo
-    /*p:<root>(JavaClass) p:kotlin(String)*/j./*c:JavaClass c:JavaClass(getBAR) c:JavaClass(getBar) c:JavaClass(setBar)*/bar
-    /*p:<root>(JavaClass) p:kotlin(String)*/j./*c:JavaClass c:JavaClass(getBAR) c:JavaClass(getBar) c:JavaClass(setBar)*/bar = /*p:kotlin(String)*/""
-    /*p:<root>(JavaClass)*/j./*c:JavaClass c:JavaClass(getBAZBaz) c:JavaClass(getBazBaz) p:foo.bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.comparisons p:kotlin.io p:kotlin.jvm p:kotlin.ranges p:kotlin.sequences p:kotlin.text*/bazBaz
-    /*p:<root>(JavaClass)*/j./*c:JavaClass c:JavaClass(getBAZBaz) c:JavaClass(getBazBaz) p:foo.bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.comparisons p:kotlin.io p:kotlin.jvm p:kotlin.ranges p:kotlin.sequences p:kotlin.text*/bazBaz = /*p:kotlin(String)*/""
-    /*p:<root>(JavaClass)*/j./*c:JavaClass*/setBoo(2)
-    /*p:<root>(JavaClass)*/j./*c:JavaClass c:JavaClass(getBOO) c:JavaClass(getBoo) p:foo.bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.comparisons p:kotlin.io p:kotlin.jvm p:kotlin.ranges p:kotlin.sequences p:kotlin.text*/boo = /*p:kotlin(Int)*/2
-    /*p:foo(KotlinClass) p:kotlin(Int)*/k./*c:JavaClass c:foo.KotlinClass*/getFoo() // getFoo may be an inner class in JavaClass
-    /*p:foo(KotlinClass)*/k./*c:JavaClass c:foo.KotlinClass*/setFoo(2)
-    /*p:foo(KotlinClass) p:kotlin(Int)*/k./*c:foo.KotlinClass c:foo.KotlinClass(getFOO) c:foo.KotlinClass(getFoo) c:foo.KotlinClass(setFoo)*/foo = /*p:kotlin(Int)*/2
-    /*p:foo(KotlinClass) p:kotlin(Int)*/k./*c:foo.KotlinClass c:foo.KotlinClass(getFOO) c:foo.KotlinClass(getFoo) c:foo.KotlinClass(setFoo)*/foo
-    /*p:foo(KotlinClass) p:kotlin(String)*/k./*c:foo.KotlinClass c:foo.KotlinClass(getBAR) c:foo.KotlinClass(getBar) c:foo.KotlinClass(setBar)*/bar
-    /*p:foo(KotlinClass) p:kotlin(String)*/k./*c:foo.KotlinClass c:foo.KotlinClass(getBAR) c:foo.KotlinClass(getBar) c:foo.KotlinClass(setBar)*/bar = /*p:kotlin(String)*/""
-    /*p:foo(KotlinClass)*/k./*c:JavaClass c:foo.KotlinClass c:foo.KotlinClass(getBAZBaz) c:foo.KotlinClass(getBazBaz) p:foo.bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.comparisons p:kotlin.io p:kotlin.jvm p:kotlin.ranges p:kotlin.sequences p:kotlin.text*/bazBaz
-    /*p:foo(KotlinClass)*/k./*c:JavaClass c:foo.KotlinClass c:foo.KotlinClass(getBAZBaz) c:foo.KotlinClass(getBazBaz) p:foo.bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.comparisons p:kotlin.io p:kotlin.jvm p:kotlin.ranges p:kotlin.sequences p:kotlin.text*/bazBaz = /*p:kotlin(String)*/""
-    /*p:foo(KotlinClass)*/k./*c:JavaClass c:foo.KotlinClass*/setBoo(2)
-    /*p:foo(KotlinClass)*/k./*c:JavaClass c:foo.KotlinClass c:foo.KotlinClass(getBOO) c:foo.KotlinClass(getBoo) p:foo.bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.comparisons p:kotlin.io p:kotlin.jvm p:kotlin.ranges p:kotlin.sequences p:kotlin.text*/boo = /*p:kotlin(Int)*/2
+    /*p:JavaClass(getFoo) p:kotlin(Int)*/j.getFoo()
+    /*p:<root>(setFoo) p:JavaClass(setFoo) p:foo(setFoo) p:foo.bar(setFoo)*/j.setFoo(2)
+    /*p:JavaClass(foo) p:kotlin(Int)*/j.foo = 2
+    /*p:JavaClass(foo) p:kotlin(Int)*/j.foo
+    /*p:JavaClass(bar)*/j.bar
+    /*p:JavaClass(bar)*/j.bar = ""
+    /*p:JavaClass(bazBaz) p:kotlin(Int)*/j.bazBaz
+    /*p:JavaClass(bazBaz) p:kotlin(Int)*/j.bazBaz = ""
+    /*p:JavaClass(setBoo) p:kotlin(Unit)*/j.setBoo(2)
+    /*p:<root>(boo) p:JavaClass(boo) p:foo(boo) p:foo.bar(boo)*/j.boo = 2
+    /*p:KotlinClass(getFoo) p:foo.KotlinClass(getFoo) p:kotlin(Int)*/k.getFoo() // getFoo may be an inner class in JavaClass
+    /*p:KotlinClass(setFoo) p:foo.KotlinClass(setFoo) p:kotlin(Unit)*/k.setFoo(2)
+    /*p:KotlinClass(foo) p:foo.KotlinClass(foo) p:kotlin(Int)*/k.foo = 2
+    /*p:KotlinClass(foo) p:foo.KotlinClass(foo) p:kotlin(Int)*/k.foo
+    /*p:JavaClass(bar) p:foo.KotlinClass(bar)*/k.bar
+    /*p:JavaClass(bar) p:foo.KotlinClass(bar)*/k.bar = ""
+    /*p:JavaClass(bazBaz) p:foo.KotlinClass(bazBaz) p:kotlin(Int)*/k.bazBaz
+    /*p:JavaClass(bazBaz) p:foo.KotlinClass(bazBaz) p:kotlin(Int)*/k.bazBaz = ""
+    /*p:JavaClass(setBoo) p:foo.KotlinClass(setBoo) p:kotlin(Unit)*/k.setBoo(2)
+    /*p:<root>(boo) p:foo(boo) p:foo.KotlinClass(boo) p:foo.bar(boo)*/k.boo = 2
 }

@@ -2,6 +2,6 @@ package foo
 
 import bar.*
 
-/*p:foo*/fun <T : /*p:foo*/A?, B : /*p:foo p:kotlin.collections*/Iterable</*p:foo p:kotlin*/Number>, C, D> test()
-        where C : /*p:foo p:kotlin*/Number, C : /*p:foo p:kotlin*/Comparable</*p:foo p:kotlin*/Number>, D : B
+/*p:foo*/fun <T : /*p:bar p:foo*/A?, B : /*p:bar p:foo*/Iterable</*p:bar p:foo*/Number>, C, D> test()
+        where C : /*p:bar p:foo*/Number, C : /*p:bar p:foo*/Comparable</*p:bar p:foo*/Number>, D : /*p:bar p:foo*/B
 {}

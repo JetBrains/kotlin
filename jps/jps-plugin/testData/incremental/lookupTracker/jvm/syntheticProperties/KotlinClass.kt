@@ -2,7 +2,7 @@ package foo
 
 /*p:<root>(JavaClass)*/import JavaClass
 
-/*p:foo*/class KotlinClass : /*p:<root>*/JavaClass() {
-    override fun getFoo() = /*p:kotlin(Int)*/2
-    fun setFoo(i: /*c:JavaClass c:foo.KotlinClass p:foo p:kotlin*/Int) {}
+/*p:foo*/class KotlinClass : /*p:<root> p:foo*/JavaClass() {
+    override fun getFoo() = 2
+    fun setFoo(i: /*p:<root> p:foo*/Int) {}
 }

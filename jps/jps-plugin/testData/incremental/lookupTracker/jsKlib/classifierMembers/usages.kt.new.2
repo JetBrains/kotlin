@@ -2,53 +2,53 @@ package foo
 
 import bar.*
 
-/*p:foo*/fun usages(i: /*p:foo*/I) {
-    /*c:foo.A.Companion(invoke) p:foo p:foo(invoke) p:kotlin(Int)*/A()./*c:foo.A*/a
-    /*c:foo.A.Companion(invoke) p:foo p:foo(invoke) p:kotlin(String)*/A()./*c:foo.A*/b
-    /*c:foo.A.Companion(invoke) p:foo p:foo(invoke) p:kotlin(String)*/A()./*c:foo.A*/c
-    /*c:foo.A.Companion(invoke) p:foo p:foo(invoke) p:kotlin(String)*/A()./*c:foo.A*/d = /*p:kotlin(String)*/"new value"
-    /*c:foo.A.Companion(invoke) p:foo p:foo(invoke)*/A()./*c:foo.A*/foo()
-    /*p:foo p:kotlin(Int)*/A./*c:foo.A c:foo.A.B.CO(invoke) c:foo.A.Companion*/B()./*c:foo.A.B*/a
-    /*p:foo*/A./*c:foo.A*/B./*c:foo.A.B c:foo.A.B.CO*/bar(1)
-    /*p:foo*/A./*c:foo.A*/B./*c:foo.A.B*/CO./*c:foo.A.B.CO*/bar(1)
-    /*c:foo.A(Companion) p:foo*/A
-    /*p:foo p:kotlin(Int)*/A./*c:foo.A c:foo.A.Companion*/a
-    /*p:foo*/A./*c:foo.A c:foo.A.Companion*/baz()
-    /*c:foo.A(Companion) p:foo*/A./*c:foo.A c:foo.A.Companion*/Companion
-    /*p:foo*/A./*c:foo.A*/Companion./*c:foo.A.Companion*/baz()
-    /*c:foo.A(O) p:foo*/A./*c:foo.A c:foo.A.Companion*/O
-    /*p:foo p:kotlin(String)*/A./*c:foo.A*/O./*c:foo.A.O*/v = /*p:kotlin(String)*/"OK"
-    /*p:foo*/A./*c:foo.A c:foo.A.Companion p:bar p:foo p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.comparisons p:kotlin.io p:kotlin.js p:kotlin.ranges p:kotlin.sequences p:kotlin.text*/vala
-    /*p:foo*/A./*c:foo.A c:foo.A.Companion p:bar p:foo p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.comparisons p:kotlin.io p:kotlin.js p:kotlin.ranges p:kotlin.sequences p:kotlin.text*/vara()
+/*p:foo*/fun usages(i: /*p:bar p:foo*/I) {
+    /*p:A(a) p:foo p:foo.A(a) p:kotlin(Int)*/A().a
+    /*p:A(b) p:foo p:foo.A(b) p:kotlin(String)*/A().b
+    /*p:A(c) p:foo p:foo.A(c) p:kotlin(String)*/A().c
+    /*p:A(d) p:foo p:foo.A(d) p:kotlin(String)*/A().d = "new value"
+    /*p:A(foo) p:foo p:foo.A(foo) p:kotlin(Unit)*/A().foo()
+    /*p:A.B(a) p:foo p:foo(B) p:foo.A.B(a) p:kotlin(Int)*/A.B().a
+    /*p:A.B.CO(bar) p:bar(bar) p:foo p:foo(bar) p:foo.A.B.CO(bar) p:kotlin(Unit)*/A.B.bar(1)
+    /*p:A.B.CO(bar) p:bar(bar) p:foo p:foo(bar) p:foo.A.B.CO(bar) p:kotlin(Unit)*/A.B.CO.bar(1)
+    /*p:foo*/A
+    /*p:A.Companion(a) p:foo p:foo.A(a) p:foo.A.Companion(a) p:kotlin(Int)*/A.a
+    /*p:A.Companion(baz) p:bar(baz) p:foo p:foo(baz) p:foo.A(baz) p:foo.A.Companion(baz) p:kotlin(Unit)*/A.baz()
+    /*p:foo*/A.Companion
+    /*p:A.Companion(baz) p:bar(baz) p:foo p:foo(baz) p:foo.A(baz) p:foo.A.Companion(baz) p:kotlin(Unit)*/A.Companion.baz()
+    /*p:foo*/A.O
+    /*p:A.O(v) p:foo p:foo.A.O(v) p:kotlin(String)*/A.O.v = "OK"
+    /*p:bar(vala) p:foo p:foo(vala) p:foo.A(vala) p:foo.A.Companion(vala)*/A.vala
+    /*p:bar(vara) p:foo p:foo(vara) p:foo.A(vara) p:foo.A.Companion(vara)*/A.vara()
 
-    /*p:foo(I) p:kotlin(Int)*/i./*c:foo.I*/a = /*p:kotlin(Int)*/2
-    /*p:foo p:kotlin(Int)*/Obj./*c:foo.Obj*/a
-    /*p:foo*/Obj./*c:foo.Obj*/foo()
-    var ii: /*p:foo*/I = /*p:foo*/Obj
-    /*p:foo(I) p:kotlin(Int)*/ii./*c:foo.I*/a
-    /*p:foo(I)*/ii./*c:foo.I*/foo()
-    /*p:foo p:kotlin(Int)*/Obj./*c:foo.Obj*/b
-    val iii = /*p:foo p:foo(I)*/Obj./*c:foo.Obj*/bar()
-    /*p:foo(I)*/iii./*c:foo.I*/foo()
+    /*p:I(a) p:foo.I(a) p:kotlin(Int)*/i.a = 2
+    /*p:Obj(a) p:foo p:foo.Obj(a) p:kotlin(Int)*/Obj.a
+    /*p:Obj(foo) p:bar(foo) p:foo p:foo(foo) p:foo.Obj(foo) p:kotlin(Unit)*/Obj.foo()
+    var ii: /*p:bar p:foo*/I = /*p:foo*/Obj
+    /*p:I(a) p:foo.I(a) p:kotlin(Int)*/ii.a
+    /*p:I(foo) p:foo.I(foo) p:kotlin(Unit)*/ii.foo()
+    /*p:Obj(b) p:foo p:foo.Obj(b) p:kotlin(Int)*/Obj.b
+    val iii = /*p:Obj(bar) p:bar(bar) p:foo p:foo(I) p:foo(bar) p:foo.Obj(bar)*/Obj.bar()
+    /*p:I(foo) p:foo.I(foo) p:kotlin(Unit)*/iii.foo()
 
-    /*p:bar p:foo p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.comparisons p:kotlin.io p:kotlin.js p:kotlin.ranges p:kotlin.sequences p:kotlin.text*/E./*c:foo.E*/X
-    /*p:bar p:foo p:kotlin p:kotlin(Int) p:kotlin.annotation p:kotlin.collections p:kotlin.comparisons p:kotlin.io p:kotlin.js p:kotlin.ranges p:kotlin.sequences p:kotlin.text*/E./*c:foo.E*/X./*c:foo.E*/a
-    /*p:bar p:foo p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.comparisons p:kotlin.io p:kotlin.js p:kotlin.ranges p:kotlin.sequences p:kotlin.text*/E./*c:foo.E*/Y./*c:foo.E c:kotlin.Enum*/foo()
-    /*p:bar p:foo p:kotlin p:kotlin(Array) p:kotlin.annotation p:kotlin.collections p:kotlin.comparisons p:kotlin.io p:kotlin.js p:kotlin.ranges p:kotlin.sequences p:kotlin.text*/E./*c:foo.E*/values()
-    /*p:bar p:foo p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.comparisons p:kotlin.io p:kotlin.js p:kotlin.ranges p:kotlin.sequences p:kotlin.text*/E./*c:foo.E*/valueOf(/*p:kotlin(String)*/"")
-    /*p:bar p:foo p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.comparisons p:kotlin.io p:kotlin.js p:kotlin.ranges p:kotlin.sequences p:kotlin.text*/E./*c:foo.E*/foo
-    /*p:bar p:foo p:kotlin p:kotlin.annotation p:kotlin.collections p:kotlin.comparisons p:kotlin.io p:kotlin.js p:kotlin.ranges p:kotlin.sequences p:kotlin.text*/E./*c:foo.E*/bar()
+    /*p:bar p:foo*/E.X
+    /*p:E(a) p:bar p:foo p:foo.E(a) p:kotlin(Int)*/E.X.a
+    /*p:E(foo) p:bar p:foo p:foo.E(foo) p:kotlin(Unit)*/E.Y.foo()
+    /*p:bar p:foo p:kotlin(Array)*/E.values()
+    /*p:bar p:foo*/E.valueOf("")
+    /*p:bar p:bar(foo) p:foo p:foo(foo)*/E.foo
+    /*p:bar p:bar(bar) p:foo p:foo(bar)*/E.bar()
 }
 
 /*p:foo*/fun classifiers(
-        a: /*p:foo*/A,
-        ab: /*p:foo*/A./*c:foo.A*/B,
-        ac: /*p:foo*/A./*c:foo.A*/C,
-        abCo: /*p:foo*/A./*c:foo.A*/B./*c:foo.A.B*/CO,
-        aCompanion: /*p:foo*/A./*c:foo.A*/Companion,
-        aO: /*p:foo*/A./*c:foo.A*/O,
-        i: /*p:foo*/I,
-        ni: /*p:foo*/I./*c:foo.I*/NI,
-        obj: /*p:foo*/Obj,
-        e: /*p:foo*/E
+        a: /*p:bar p:foo*/A,
+        ab: /*p:bar p:foo*/A.B,
+        ac: /*p:bar p:foo*/A.C,
+        abCo: /*p:bar p:foo*/A.B.CO,
+        aCompanion: /*p:bar p:foo*/A.Companion,
+        aO: /*p:bar p:foo*/A.O,
+        i: /*p:bar p:foo*/I,
+        ni: /*p:bar p:foo*/I.NI,
+        obj: /*p:bar p:foo*/Obj,
+        e: /*p:bar p:foo*/E
 ) {}
