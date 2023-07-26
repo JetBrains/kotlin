@@ -62,7 +62,7 @@ internal class FirTowerDataContextAllElementsCollector : FirResolveContextCollec
         // we do not collect contexts for such declarations
         if (psi is KtDelegatedSuperTypeEntry) return
 
-        elementsToContext[psi] = context.towerDataContext
+        elementsToContext[psi] = context.towerDataContext.createSnapshot()
     }
 
     override fun addClassHeaderContext(declaration: FirRegularClass, context: FirTowerDataContext) {

@@ -77,6 +77,12 @@ public class FirIdeDependentAnalysisSourceModuleScopeContextForPositionTestGener
     }
 
     @Test
+    @TestMetadata("smartCastInAnonymousFunction.kt")
+    public void testSmartCastInAnonymousFunction() throws Exception {
+        runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/smartCastInAnonymousFunction.kt");
+    }
+
+    @Test
     @TestMetadata("smartCastInWhenEntryCondition.kt")
     public void testSmartCastInWhenEntryCondition() throws Exception {
         runTest("analysis/analysis-api/testData/components/scopeProvider/scopeContextForPosition/smartCastInWhenEntryCondition.kt");

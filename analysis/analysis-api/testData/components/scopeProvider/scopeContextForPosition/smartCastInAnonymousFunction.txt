@@ -1,0 +1,277 @@
+element: e
+implicit receivers:
+  type: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: A
+  owner symbol: KtFirFunctionSymbol
+
+scopes:
+  LocalScope, index = 0
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  LocalScope, index = 1
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  LocalScope, index = 2
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  TypeScope, index = 3
+    packages: 0
+    classifiers: 0
+    callables: 3
+      KtFunctionSymbol:
+        annotationsList: []
+        callableIdIfNonLocal: kotlin/Any.equals
+        contextReceivers: []
+        contractEffects: []
+        hasStableParameterNames: true
+        isActual: false
+        isBuiltinFunctionInvoke: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isInfix: false
+        isInline: false
+        isOperator: true
+        isOverride: false
+        isStatic: false
+        isSuspend: false
+        modality: OPEN
+        name: equals
+        origin: LIBRARY
+        receiverParameter: null
+        returnType: KtUsualClassType:
+          annotationsList: []
+          ownTypeArguments: []
+          type: kotlin/Boolean
+        symbolKind: CLASS_MEMBER
+        typeParameters: []
+        valueParameters: [
+          KtValueParameterSymbol:
+            annotationsList: []
+            callableIdIfNonLocal: null
+            contextReceivers: []
+            generatedPrimaryConstructorProperty: null
+            hasDefaultValue: false
+            isCrossinline: false
+            isExtension: false
+            isImplicitLambdaParameter: false
+            isNoinline: false
+            isVararg: false
+            name: other
+            origin: LIBRARY
+            receiverParameter: null
+            returnType: KtUsualClassType:
+              annotationsList: []
+              ownTypeArguments: []
+              type: kotlin/Any?
+            symbolKind: LOCAL
+            typeParameters: []
+        ]
+        visibility: Public
+      KtFunctionSymbol:
+        annotationsList: []
+        callableIdIfNonLocal: kotlin/Any.hashCode
+        contextReceivers: []
+        contractEffects: []
+        hasStableParameterNames: true
+        isActual: false
+        isBuiltinFunctionInvoke: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isInfix: false
+        isInline: false
+        isOperator: false
+        isOverride: false
+        isStatic: false
+        isSuspend: false
+        modality: OPEN
+        name: hashCode
+        origin: LIBRARY
+        receiverParameter: null
+        returnType: KtUsualClassType:
+          annotationsList: []
+          ownTypeArguments: []
+          type: kotlin/Int
+        symbolKind: CLASS_MEMBER
+        typeParameters: []
+        valueParameters: []
+        visibility: Public
+      KtFunctionSymbol:
+        annotationsList: []
+        callableIdIfNonLocal: kotlin/Any.toString
+        contextReceivers: []
+        contractEffects: []
+        hasStableParameterNames: true
+        isActual: false
+        isBuiltinFunctionInvoke: false
+        isExpect: false
+        isExtension: false
+        isExternal: false
+        isInfix: false
+        isInline: false
+        isOperator: false
+        isOverride: false
+        isStatic: false
+        isSuspend: false
+        modality: OPEN
+        name: toString
+        origin: LIBRARY
+        receiverParameter: null
+        returnType: KtUsualClassType:
+          annotationsList: []
+          ownTypeArguments: []
+          type: kotlin/String
+        symbolKind: CLASS_MEMBER
+        typeParameters: []
+        valueParameters: []
+        visibility: Public
+    constructors: 1
+      KtConstructorSymbol:
+        annotationsList: []
+        callableIdIfNonLocal: null
+        containingClassIdIfNonLocal: A
+        contextReceivers: []
+        hasStableParameterNames: true
+        isActual: false
+        isExpect: false
+        isExtension: false
+        isPrimary: true
+        origin: SOURCE_MEMBER_GENERATED
+        receiverParameter: null
+        returnType: KtUsualClassType:
+          annotationsList: []
+          ownTypeArguments: []
+          type: A
+        symbolKind: CLASS_MEMBER
+        typeParameters: []
+        valueParameters: []
+        visibility: Public
+
+  LocalScope, index = 4
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  ExplicitSimpleImportingScope, index = 5
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  PackageMemberScope, index = 6
+    packages: 6
+      KtPackageSymbol:
+        fqName: META-INF
+        origin: SOURCE
+      KtPackageSymbol:
+        fqName: java
+        origin: SOURCE
+      KtPackageSymbol:
+        fqName: javax
+        origin: SOURCE
+      KtPackageSymbol:
+        fqName: kotlin
+        origin: SOURCE
+      KtPackageSymbol:
+        fqName: org
+        origin: SOURCE
+      KtPackageSymbol:
+        fqName: sun
+        origin: SOURCE
+    classifiers: 1
+      KtNamedClassOrObjectSymbol:
+        annotationsList: []
+        classIdIfNonLocal: A
+        classKind: CLASS
+        companionObject: null
+        contextReceivers: []
+        isActual: false
+        isData: false
+        isExpect: false
+        isExternal: false
+        isFun: false
+        isInline: false
+        isInner: false
+        modality: FINAL
+        name: A
+        origin: SOURCE
+        superTypes: [
+          KtUsualClassType:
+            annotationsList: []
+            ownTypeArguments: []
+            type: kotlin/Any
+        ]
+        symbolKind: TOP_LEVEL
+        typeParameters: []
+        visibility: Public
+    callables: 1
+      KtFunctionSymbol:
+        annotationsList: []
+        callableIdIfNonLocal: /test
+        contextReceivers: []
+        contractEffects: []
+        hasStableParameterNames: true
+        isActual: false
+        isBuiltinFunctionInvoke: false
+        isExpect: false
+        isExtension: true
+        isExternal: false
+        isInfix: false
+        isInline: false
+        isOperator: false
+        isOverride: false
+        isStatic: false
+        isSuspend: false
+        modality: FINAL
+        name: test
+        origin: SOURCE
+        receiverParameter: KtReceiverParameterSymbol:
+          annotationsList: []
+          origin: SOURCE
+          owningCallableSymbol: KtFunctionSymbol(/test)
+          type: KtUsualClassType:
+            annotationsList: []
+            ownTypeArguments: []
+            type: kotlin/Any
+        returnType: KtFunctionalType:
+          annotationsList: []
+          ownTypeArguments: [
+            KtUsualClassType:
+              annotationsList: []
+              ownTypeArguments: []
+              type: kotlin/Int
+          ]
+          type: kotlin/Function0<kotlin/Int>
+        symbolKind: TOP_LEVEL
+        typeParameters: []
+        valueParameters: []
+        visibility: Public
+    constructors: 0
+
+  DefaultSimpleImportingScope, index = 7
+
+  DefaultSimpleImportingScope, index = 8
+
+  ExplicitStarImportingScope, index = 9
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  DefaultSimpleImportingScope, index = 10
+
+  DefaultStarImportingScope, index = 11
+
