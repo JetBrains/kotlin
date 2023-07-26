@@ -8,14 +8,14 @@ package org.jetbrains.kotlin.library.abi
 /**
  * The result of reading ABI from KLIB.
  *
- * @property manifest Information from manifest that might be useful.
- * @property uniqueName Library unique name that is a part of library ABI.
- *   Corresponds to `unique_name` manifest property.
+ * @property manifest Information from the manifest that may be useful.
+ * @property uniqueName The library's unique name that is a part of the library ABI.
+ *   Corresponds to the `unique_name` manifest property.
  * @property signatureVersions The versions of signatures supported by the KLIB. Note that not every [AbiSignatureVersion]
- *   which is supported by a KLIB is also supported by the ABI reader. To check this please use
+ *   which is supported by the KLIB is also supported by the ABI reader. To check this please use
  *   [AbiSignatureVersion.isSupportedByAbiReader]. An attempt to obtain a signature of unsupported version will result
  *   in an exception. See also [AbiSignatures.get].
- * @property topLevelDeclarations Top-level declarations.
+ * @property topLevelDeclarations The list of top-level declarations.
  */
 @ExperimentalLibraryAbiReader
 class LibraryAbi(
