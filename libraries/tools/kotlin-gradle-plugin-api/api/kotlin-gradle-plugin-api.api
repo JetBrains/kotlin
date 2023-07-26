@@ -525,6 +525,17 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinNativeXCFr
 	public abstract fun targets ([Lorg/jetbrains/kotlin/konan/target/KonanTarget;)V
 }
 
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinTargetHierarchyDsl {
+	public abstract fun apply (Lorg/jetbrains/kotlin/gradle/plugin/KotlinHierarchyTemplate;Lkotlin/jvm/functions/Function1;)V
+	public abstract fun custom (Lkotlin/jvm/functions/Function1;)V
+	public abstract fun default (Lkotlin/jvm/functions/Function1;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/dsl/KotlinTargetHierarchyDsl$DefaultImpls {
+	public static synthetic fun apply$default (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetHierarchyDsl;Lorg/jetbrains/kotlin/gradle/plugin/KotlinHierarchyTemplate;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+	public static synthetic fun default$default (Lorg/jetbrains/kotlin/gradle/dsl/KotlinTargetHierarchyDsl;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
+}
+
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinTopLevelExtensionConfig {
 	public abstract fun explicitApi ()V
 	public abstract fun explicitApiWarning ()V

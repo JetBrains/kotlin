@@ -30,6 +30,7 @@ public abstract class org/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformExtensi
 	public fun androidTarget (Ljava/lang/String;Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;
 	public fun androidTarget (Lorg/gradle/api/Action;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;
 	public final fun applyDefaultHierarchyTemplate ()V
+	public final fun applyDefaultHierarchyTemplate (Lkotlin/jvm/functions/Function1;)V
 	public fun applyHierarchyTemplate (Lkotlin/jvm/functions/Function1;)V
 	public fun applyHierarchyTemplate (Lorg/jetbrains/kotlin/gradle/plugin/KotlinHierarchyTemplate;)V
 	public fun applyHierarchyTemplate (Lorg/jetbrains/kotlin/gradle/plugin/KotlinHierarchyTemplate;Lkotlin/jvm/functions/Function1;)V
@@ -61,6 +62,7 @@ public abstract class org/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformExtensi
 	public fun getNativeMain (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
 	public fun getNativeTest (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;
 	public fun getPresets ()Lorg/gradle/api/NamedDomainObjectCollection;
+	public final fun getTargetHierarchy ()Lorg/jetbrains/kotlin/gradle/dsl/DeprecatedKotlinTargetHierarchyDsl;
 	public final fun getTargets ()Lorg/gradle/api/NamedDomainObjectCollection;
 	public final fun getTestableTargets ()Lorg/gradle/api/NamedDomainObjectCollection;
 	public fun getTvosMain (Lorg/gradle/api/NamedDomainObjectContainer;)Lorg/gradle/api/NamedDomainObjectProvider;

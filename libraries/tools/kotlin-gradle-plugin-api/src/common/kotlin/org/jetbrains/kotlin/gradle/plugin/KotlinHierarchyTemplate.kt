@@ -88,6 +88,15 @@ internal class KotlinHierarchyTemplateImpl(
     fun layout(builder: KotlinHierarchyBuilder.Root) {
         describe(builder)
     }
+
+    override fun hashCode(): Int {
+        return describe.hashCode()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (other !is KotlinHierarchyTemplateImpl) return false
+        return this.describe == other.describe
+    }
 }
 
 /*

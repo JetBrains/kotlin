@@ -104,6 +104,16 @@ abstract class KotlinMultiplatformExtension
      */
     fun applyDefaultHierarchyTemplate() = applyHierarchyTemplate(KotlinHierarchyTemplate.default)
 
+    /**
+     * @see applyDefaultHierarchyTemplate
+     * @see applyHierarchyTemplate
+     * @param extension: Additionally extend the default hierarchy with additional groups
+     *
+     */
+    @ExperimentalKotlinGradlePluginApi
+    fun applyDefaultHierarchyTemplate(extension: KotlinHierarchyBuilder.Root.() -> Unit) {
+        hierarchy.applyHierarchyTemplate(KotlinHierarchyTemplate.default, extension)
+    }
 
     @ExperimentalKotlinGradlePluginApi
     override fun applyHierarchyTemplate(template: KotlinHierarchyTemplate) {
@@ -119,6 +129,9 @@ abstract class KotlinMultiplatformExtension
     override fun applyHierarchyTemplate(template: KotlinHierarchyBuilder.Root.() -> Unit) {
         hierarchy.applyHierarchyTemplate(template)
     }
+
+    @ExperimentalKotlinGradlePluginApi
+    val targetHierarchy: DeprecatedKotlinTargetHierarchyDsl get() = DeprecatedKotlinTargetHierarchyDsl(this)
 
     @Suppress("unused") // DSL
     val testableTargets: NamedDomainObjectCollection<KotlinTargetWithTests<*, *>>
