@@ -9,10 +9,12 @@ expect class Foo {
 // FILE: jvm.kt
 actual class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>Foo<!> : A
 
-interface A : B {
-    override fun foo(param: Int) {}
+interface A : B<Int> {
+    override fun getDefault(): Int = 3
 }
 
-interface B {
-    fun foo(param: Int = 3) {}
+interface B<T> {
+    fun foo(param: T = getDefault()) {}
+
+    fun getDefault(): T
 }

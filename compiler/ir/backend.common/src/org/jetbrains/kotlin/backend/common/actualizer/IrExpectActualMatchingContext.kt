@@ -292,7 +292,7 @@ internal abstract class IrExpectActualMatchingContext(
             onEnumEntry = { emptyList() }
         )
 
-    override fun FunctionSymbolMarker.overridden(): Collection<CallableSymbolMarker> =
+    override fun FunctionSymbolMarker.allOverriddenDeclarationsRecursive(): Sequence<CallableSymbolMarker> =
         throw NotImplementedError("Not implemented because it's unused")
 
     override val FunctionSymbolMarker.valueParameters: List<ValueParameterSymbolMarker>

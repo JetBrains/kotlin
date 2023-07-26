@@ -56,10 +56,7 @@ sealed class ExpectActualCompatibility<out D> {
             "some modifiers on expected declaration are missing on the actual one (infix, inline, operator)"
         )
         object ActualFunctionWithDefaultParameters :
-            Incompatible<Nothing>(
-                "actual function cannot have default argument values, they should be declared in the expected function",
-                IncompatibilityKind.STRONG
-            )
+            Incompatible<Nothing>("actual function cannot have default argument values, they should be declared in the expected function")
 
         // Properties
 
