@@ -45871,6 +45871,12 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
             }
 
             @Test
+            @TestMetadata("parentheses.kt")
+            public void testParentheses() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/functions/parentheses.kt");
+            }
+
+            @Test
             @TestMetadata("platformName.kt")
             public void testPlatformName() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/functions/platformName.kt");

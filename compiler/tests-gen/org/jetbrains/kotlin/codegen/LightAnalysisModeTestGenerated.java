@@ -36502,6 +36502,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/reflection/functions/javaMethodsSmokeTest.kt");
             }
 
+            @TestMetadata("parentheses.kt")
+            public void testParentheses() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/functions/parentheses.kt");
+            }
+
             @TestMetadata("platformName.kt")
             public void testPlatformName() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/functions/platformName.kt");

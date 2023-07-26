@@ -212,8 +212,9 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
     fun findMethodBySignature(name: String, desc: String): Method? {
         if (name == "<init>") return null
 
-        val parameterTypes = loadParameterTypes(desc).toTypedArray()
-        val returnType = loadReturnType(desc)
+        val functionJvmDescriptor = parseJvmDescriptor(desc, parseReturnType = true)
+        val parameterTypes = functionJvmDescriptor.parameters.toTypedArray()
+        val returnType = functionJvmDescriptor.returnType!!
         methodOwner.lookupMethod(name, parameterTypes, returnType, false)?.let { return it }
 
         // Methods from java.lang.Object (equals, hashCode, toString) cannot be found in the interface via
@@ -233,23 +234,24 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
             // Note that this value is replaced inside the lookupMethod call below, for each class/interface in the hierarchy.
             parameterTypes.add(jClass)
         }
-        addParametersAndMasks(parameterTypes, desc, false)
+        val jvmDescriptor = parseJvmDescriptor(desc, parseReturnType = true)
+        addParametersAndMasks(parameterTypes, jvmDescriptor.parameters, isConstructor = false)
 
         return methodOwner.lookupMethod(
-            name + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX, parameterTypes.toTypedArray(), loadReturnType(desc), isStaticDefault = isMember
+            name + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX, parameterTypes.toTypedArray(), jvmDescriptor.returnType!!, isStaticDefault = isMember
         )
     }
 
     fun findConstructorBySignature(desc: String): Constructor<*>? =
-        jClass.tryGetConstructor(loadParameterTypes(desc))
+        jClass.tryGetConstructor(parseJvmDescriptor(desc, parseReturnType = false).parameters)
 
     fun findDefaultConstructor(desc: String): Constructor<*>? =
         jClass.tryGetConstructor(arrayListOf<Class<*>>().also { parameterTypes ->
-            addParametersAndMasks(parameterTypes, desc, true)
+            val parsedParameters = parseJvmDescriptor(desc, parseReturnType = false).parameters
+            addParametersAndMasks(parameterTypes, parsedParameters, isConstructor = true)
         })
 
-    private fun addParametersAndMasks(result: MutableList<Class<*>>, desc: String, isConstructor: Boolean) {
-        val valueParameters = loadParameterTypes(desc)
+    private fun addParametersAndMasks(result: MutableList<Class<*>>, valueParameters: List<Class<*>>, isConstructor: Boolean) {
         result.addAll(valueParameters)
         repeat((valueParameters.size + Integer.SIZE - 1) / Integer.SIZE) {
             result.add(Integer.TYPE)
@@ -265,7 +267,9 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
         } else result.add(Any::class.java)
     }
 
-    private fun loadParameterTypes(desc: String): List<Class<*>> {
+    private class FunctionJvmDescriptor(val parameters: List<Class<*>>, val returnType: Class<*>?)
+
+    private fun parseJvmDescriptor(desc: String, parseReturnType: Boolean): FunctionJvmDescriptor {
         val result = arrayListOf<Class<*>>()
 
         var begin = 1
@@ -283,7 +287,9 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
             begin = end
         }
 
-        return result
+        val returnType = if (parseReturnType) parseType(desc, begin = begin + 1, end = desc.length) else null
+
+        return FunctionJvmDescriptor(result, returnType)
     }
 
     private fun parseType(desc: String, begin: Int, end: Int): Class<*> =
@@ -301,9 +307,6 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
             'D' -> Double::class.java
             else -> throw KotlinReflectionInternalError("Unknown type prefix in the method signature: $desc")
         }
-
-    private fun loadReturnType(desc: String): Class<*> =
-        parseType(desc, desc.indexOf(')') + 1, desc.length)
 
     companion object {
         private val DEFAULT_CONSTRUCTOR_MARKER = Class.forName("kotlin.jvm.internal.DefaultConstructorMarker")
