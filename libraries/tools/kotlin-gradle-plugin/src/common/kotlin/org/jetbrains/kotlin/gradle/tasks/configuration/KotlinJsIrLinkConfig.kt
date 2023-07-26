@@ -77,7 +77,9 @@ internal open class KotlinJsIrLinkConfig(
 
                     val alreadyDefinedOutputMode = any { it.startsWith(PER_MODULE) }
                     if (!alreadyDefinedOutputMode) {
-                        add(task.outputGranularity.toCompilerArgument())
+                        task.outputGranularity.toCompilerArgument()?.let {
+                            add(it)
+                        }
                     }
                 }
             }

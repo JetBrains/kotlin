@@ -17,10 +17,10 @@ enum class KotlinJsIrOutputGranularity {
     }
 }
 
-fun KotlinJsIrOutputGranularity.toCompilerArgument(): String {
+fun KotlinJsIrOutputGranularity.toCompilerArgument(): String? {
     return when (this) {
         KotlinJsIrOutputGranularity.PER_FILE -> PER_FILE
         KotlinJsIrOutputGranularity.PER_MODULE -> PER_MODULE
-        KotlinJsIrOutputGranularity.WHOLE_PROGRAM -> ""
+        KotlinJsIrOutputGranularity.WHOLE_PROGRAM -> null
     }
 }
