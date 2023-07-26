@@ -1,7 +1,7 @@
 public final val bar: R|kotlin/Int|
     public get(): R|kotlin/Int|
 
-@R|test/Anno|() public final fun baz(): R|kotlin/Unit|
+@R|test/Anno|(t = <implicitArrayOf>()) @R|test/Anno2|() @R|test/Anno3|() @R|test/Anno4|(t = <implicitArrayOf>()) @R|test/Anno5|() @R|test/Anno6|() public final fun baz(): R|kotlin/Unit|
 
 @R|test/Anno|(t = <implicitArrayOf>(String(live), String(long))) public final fun foo(): R|kotlin/Unit|
 
@@ -10,5 +10,45 @@ public final annotation class Anno : R|kotlin/Annotation| {
         public get(): R|kotlin/Array<out kotlin/String>|
 
     public constructor(vararg t: R|kotlin/Array<out kotlin/String>|): R|test/Anno|
+
+}
+
+public final annotation class Anno2 : R|kotlin/Annotation| {
+    public final val t: R|kotlin/Array<out kotlin/String>|
+        public get(): R|kotlin/Array<out kotlin/String>|
+
+    public constructor(vararg t: R|kotlin/Array<out kotlin/String>| = STUB): R|test/Anno2|
+
+}
+
+public final annotation class Anno3 : R|kotlin/Annotation| {
+    public final val t: R|kotlin/Array<out kotlin/String>|
+        public get(): R|kotlin/Array<out kotlin/String>|
+
+    public constructor(vararg t: R|kotlin/Array<out kotlin/String>| = STUB): R|test/Anno3|
+
+}
+
+public final annotation class Anno4 : R|kotlin/Annotation| {
+    public final val t: R|kotlin/Array<out kotlin/String>|
+        public get(): R|kotlin/Array<out kotlin/String>|
+
+    public constructor(vararg t: R|kotlin/Array<out kotlin/String>|): R|test/Anno4|
+
+}
+
+public final annotation class Anno5 : R|kotlin/Annotation| {
+    public final val t: R|kotlin/Array<out kotlin/String>|
+        public get(): R|kotlin/Array<out kotlin/String>|
+
+    public constructor(vararg t: R|kotlin/Array<out kotlin/String>| = STUB): R|test/Anno5|
+
+}
+
+public final annotation class Anno6 : R|kotlin/Annotation| {
+    public final val t: R|kotlin/Array<out kotlin/String>|
+        public get(): R|kotlin/Array<out kotlin/String>|
+
+    public constructor(vararg t: R|kotlin/Array<out kotlin/String>| = STUB): R|test/Anno6|
 
 }

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.FirField
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.references.toResolvedFunctionSymbol
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirArrayOfCallTransformer
@@ -101,9 +102,12 @@ internal object FirToConstantValueTransformer : FirDefaultVisitor<ConstantValue<
 
     override fun visitAnnotation(
         annotation: FirAnnotation,
-        data: FirToConstantValueTransformerData
+        data: FirToConstantValueTransformerData,
     ): ConstantValue<*> {
-        val mapping = annotation.argumentMapping.mapping.convertToConstantValues(data.session, data.constValueProvider)
+        val mapping = annotation.argumentMapping.mapping.convertToConstantValues(
+            data.session,
+            data.constValueProvider
+        ).addEmptyVarargValuesFor(annotation.toReference()?.toResolvedFunctionSymbol())
         return AnnotationValue.create(annotation.annotationTypeRef.coneType, mapping)
     }
 
@@ -149,7 +153,10 @@ internal object FirToConstantValueTransformer : FirDefaultVisitor<ConstantValue<
                 if (constructedClassSymbol.classKind != ClassKind.ANNOTATION_CLASS) return null
 
                 val mapping = constructorCall.resolvedArgumentMapping
-                    ?.convertToConstantValues(data.session, data.constValueProvider)
+                    ?.convertToConstantValues(
+                        data.session,
+                        data.constValueProvider
+                    )?.addEmptyVarargValuesFor(symbol)
                     ?: return null
                 return AnnotationValue.create(qualifiedAccessExpression.typeRef.coneType, mapping)
             }

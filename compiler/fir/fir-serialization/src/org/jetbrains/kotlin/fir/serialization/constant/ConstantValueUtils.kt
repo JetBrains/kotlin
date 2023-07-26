@@ -6,15 +6,14 @@
 package org.jetbrains.kotlin.fir.serialization.constant
 
 import org.jetbrains.kotlin.config.AnalysisFlags
-import org.jetbrains.kotlin.constant.AnnotationValue
-import org.jetbrains.kotlin.constant.ConstantValue
-import org.jetbrains.kotlin.constant.ErrorValue
-import org.jetbrains.kotlin.constant.KClassValue
+import org.jetbrains.kotlin.constant.*
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.itOrExpectHasDefaultParameterValue
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -22,24 +21,34 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 internal fun Map<Name, FirExpression>.convertToConstantValues(
     session: FirSession,
     constValueProvider: ConstValueProvider?
-): Map<Name, ConstantValue<*>> {
-    return this.map { (name, firExpression) ->
-        val constantValue = constValueProvider?.findConstantValueFor(firExpression)
+): MutableMap<Name, ConstantValue<*>> {
+    return this.mapValuesTo(mutableMapOf()) { (_, firExpression) ->
+        constValueProvider?.findConstantValueFor(firExpression)
             ?: firExpression.toConstantValue(session, constValueProvider)
             ?: runIf(session.languageVersionSettings.getFlag(AnalysisFlags.metadataCompilation)) {
                 ErrorValue.ErrorValueWithMessage("Constant conversion can be ignored in metadata compilation mode")
             }
             ?: error("Cannot convert expression ${firExpression.render()} to constant")
-        name to constantValue
-    }.toMap()
+    }
+}
+
+internal fun MutableMap<Name, ConstantValue<Any?>>.addEmptyVarargValuesFor(
+    symbol: FirFunctionSymbol<*>?,
+): MutableMap<Name, ConstantValue<Any?>> = apply {
+    if (symbol == null) return@apply
+    for ((i, parameter) in symbol.valueParameterSymbols.withIndex()) {
+        if (parameter.name !in this && parameter.isVararg && !symbol.fir.itOrExpectHasDefaultParameterValue(i)) {
+            this[parameter.name] = ArrayValue(emptyList())
+        }
+    }
 }
 
 internal fun LinkedHashMap<FirExpression, FirValueParameter>.convertToConstantValues(
     session: FirSession,
     constValueProvider: ConstValueProvider?,
-): Map<Name, ConstantValue<*>> {
-    return this.map { (firExpression, firValueParameter) -> firValueParameter.name to firExpression }
-        .toMap().convertToConstantValues(session, constValueProvider)
+): MutableMap<Name, ConstantValue<*>> {
+    return this.entries.associate { (firExpression, firValueParameter) -> firValueParameter.name to firExpression }
+        .convertToConstantValues(session, constValueProvider)
 }
 
 inline fun <reified T : ConeKotlinType> AnnotationValue.coneTypeSafe(): T? {

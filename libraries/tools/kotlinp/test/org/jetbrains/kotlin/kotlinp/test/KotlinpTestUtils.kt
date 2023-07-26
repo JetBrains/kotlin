@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 import kotlin.test.fail
 
+private const val IGNORE_K1_DIRECTIVE = "// IGNORE K1"
 private const val IGNORE_K2_DIRECTIVE = "// IGNORE K2"
 
 fun compareAllFiles(
@@ -37,15 +38,16 @@ fun compareAllFiles(
     readWriteAndCompare: Boolean,
     useK2: Boolean,
 ) {
-    val isMutedForK2 = useK2 && InTextDirectivesUtils.findStringWithPrefixes(file.readText(), IGNORE_K2_DIRECTIVE) != null
+    val directive = if (useK2) IGNORE_K2_DIRECTIVE else IGNORE_K1_DIRECTIVE
+    val isMuted = InTextDirectivesUtils.findStringWithPrefixes(file.readText(), directive) != null
     try {
         compileAndPrintAllFiles(file, disposable, tmpdir, compareWithTxt, readWriteAndCompare, useK2)
     } catch (e: Throwable) {
-        if (isMutedForK2) return
+        if (isMuted) return
         throw e
     }
-    if (isMutedForK2) {
-        throw AssertionError("Looks like this test can be unmuted. Remove the \"$IGNORE_K2_DIRECTIVE\" directive.")
+    if (isMuted) {
+        throw AssertionError("Looks like this test can be unmuted. Remove the \"$directive\" directive.")
     }
 }
 

@@ -48,6 +48,10 @@ fun FirReference.toResolvedValueParameterSymbol(discardErrorReference: Boolean =
     return this.toResolvedSymbol<FirValueParameterSymbol>(discardErrorReference)
 }
 
+fun FirReference.toResolvedFunctionSymbol(discardErrorReference: Boolean = false): FirFunctionSymbol<*>? {
+    return this.toResolvedSymbol<FirFunctionSymbol<*>>(discardErrorReference)
+}
+
 fun FirReference.toResolvedNamedFunctionSymbol(discardErrorReference: Boolean = false): FirNamedFunctionSymbol? {
     return this.toResolvedSymbol<FirNamedFunctionSymbol>(discardErrorReference)
 }
