@@ -1,5 +1,5 @@
 public enum AnnotationsOnEnumEntry /* two.AnnotationsOnEnumEntry*/ {
-  @two.PropertyImplicitly() @two.PropertyExplicitly() @two.FieldImplicitly() @two.FieldExplicitly() EntryWithoutConstructor,
+  @two.PropertyImplicitly() @two.FieldImplicitly() @two.FieldExplicitly() EntryWithoutConstructor,
   @two.PropertyImplicitly() @two.FieldImplicitly() EntryWithConstructor,
   EntryWithConstructor2;
 

@@ -14,7 +14,6 @@ annotation class FieldImplicitly
 
 enum class AnnotationsOnEnumEntry(i: Int = 1) {
     @PropertyImplicitly
-    @property:PropertyExplicitly
     @FieldImplicitly
     @field:FieldExplicitly
     EntryWithoutConstructor,
