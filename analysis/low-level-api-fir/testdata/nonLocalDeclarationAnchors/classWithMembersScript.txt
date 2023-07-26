@@ -1,16 +1,16 @@
-/* anchor --> *//* anchor --> */class A /* anchor --> */constructor(/* anchor --> */a: Int/* <-- */)/* <-- */ {
-    /* anchor --> */fun boo() {
+/* anchor --> */class A constructor(a: Int) {
+    fun boo() {
         fun bar() {
 
         }
-    }/* <-- */
+    }
 
-    /* anchor --> */val i: Int = 42/* <-- */
+    val i: Int = 42
 
-    /* anchor --> */init {
+    init {
         fun foo() {
 
         }
-    }/* <-- */
-}/* <-- */
+    }
+}
 /* <-- */
