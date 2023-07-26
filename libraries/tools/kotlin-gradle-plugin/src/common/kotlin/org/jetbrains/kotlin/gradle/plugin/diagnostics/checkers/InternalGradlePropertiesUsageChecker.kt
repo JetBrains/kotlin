@@ -18,8 +18,10 @@ internal object InternalGradlePropertiesUsageChecker : KotlinGradleProjectChecke
     override suspend fun KotlinGradleProjectCheckerContext.runChecks(collector: KotlinToolingDiagnosticsCollector) {
         KotlinPluginLifecycle.Stage.ReadyForExecution.await()
 
-        @OptIn(UnsafeApi::class)
-        val internalPropertiesUsed = kotlinPropertiesProvider.propertiesWithPrefix(PropertiesProvider.KOTLIN_INTERNAL_NAMESPACE).keys
+        val internalPropertiesUsed = PropertiesProvider.PropertyNames.allInternalProperties().filter { name ->
+            @OptIn(UnsafeApi::class)
+            kotlinPropertiesProvider.property(name) != null
+        }
         val internalPropertiesFiltered = internalPropertiesUsed.minus(PropertiesProvider.PropertyNames.MPP_13X_FLAGS_SET_BY_PLUGIN)
         if (internalPropertiesFiltered.isEmpty()) return
 
