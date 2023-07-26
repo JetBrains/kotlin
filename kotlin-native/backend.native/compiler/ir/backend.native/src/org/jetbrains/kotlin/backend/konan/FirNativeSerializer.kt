@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.backend.common.serialization.metadata.serializeKlibH
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.phases.Fir2IrOutput
 import org.jetbrains.kotlin.backend.konan.driver.phases.FirOutput
+import org.jetbrains.kotlin.backend.konan.driver.phases.FirSerializerInput
 import org.jetbrains.kotlin.backend.konan.driver.phases.SerializerOutput
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrModuleSerializer
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -36,11 +37,13 @@ internal fun PhaseContext.firSerializer(input: FirOutput): SerializerOutput? = w
     else -> firSerializerBase(input.firResult, null)
 }
 
-internal fun PhaseContext.fir2IrSerializer(input: Fir2IrOutput) = firSerializerBase(input.firResult, input)
+internal fun PhaseContext.fir2IrSerializer(input: FirSerializerInput) =
+    firSerializerBase(input.firToIrOutput.firResult, input.firToIrOutput, produceHeaderKlib = input.produceHeaderKlib)
 
 internal fun PhaseContext.firSerializerBase(
         firResult: FirResult,
         fir2IrInput: Fir2IrOutput?,
+        produceHeaderKlib: Boolean = false,
 ): SerializerOutput {
     val configuration = config.configuration
     val sourceFiles = mutableListOf<KtSourceFile>()
@@ -74,6 +77,8 @@ internal fun PhaseContext.firSerializerBase(
                     ?: firResult.outputs.last().session.moduleData.name.asString(),
             expectDescriptorToSymbol = mutableMapOf(), // TODO: expect -> actual mapping
             firFilesAndSessionsBySourceFile,
+            bodiesOnlyForInlines = produceHeaderKlib,
+            skipPrivateApi = produceHeaderKlib,
     ) { firFile, session, scopeSession ->
         serializeSingleFirFile(
                 firFile,
@@ -90,6 +95,7 @@ internal fun PhaseContext.firSerializerBase(
                         additionalAnnotationsProvider = fir2IrInput?.components?.annotationsFromPluginRegistrar?.createMetadataAnnotationsProvider()
                 ),
                 configuration.languageVersionSettings,
+                produceHeaderKlib,
         )
     }
 }
@@ -105,15 +111,17 @@ class KotlinFileSerializedData(
 }
 
 internal fun PhaseContext.serializeNativeModule(
-        configuration: CompilerConfiguration,
-        messageLogger: IrMessageLogger,
-        files: List<KtSourceFile>,
-        dependencies: List<KonanLibrary>?,
-        moduleFragment: IrModuleFragment?,
-        moduleName: String,
-        expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
-        firFilesAndSessionsBySourceFile: Map<KtSourceFile, Triple<FirFile, FirSession, ScopeSession>>,
-        serializeSingleFile: (FirFile, FirSession, ScopeSession) -> ProtoBuf.PackageFragment
+    configuration: CompilerConfiguration,
+    messageLogger: IrMessageLogger,
+    files: List<KtSourceFile>,
+    dependencies: List<KonanLibrary>?,
+    moduleFragment: IrModuleFragment?,
+    moduleName: String,
+    expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
+    firFilesAndSessionsBySourceFile: Map<KtSourceFile, Triple<FirFile, FirSession, ScopeSession>>,
+    bodiesOnlyForInlines: Boolean = false,
+    skipPrivateApi: Boolean = false,
+    serializeSingleFile: (FirFile, FirSession, ScopeSession) -> ProtoBuf.PackageFragment
 ): SerializerOutput {
     if (moduleFragment != null) {
         assert(files.size == moduleFragment.files.size)
@@ -133,6 +141,8 @@ internal fun PhaseContext.serializeNativeModule(
                 normalizeAbsolutePaths = absolutePathNormalization,
                 sourceBaseDirs = sourceBaseDirs,
                 languageVersionSettings = configuration.languageVersionSettings,
+                bodiesOnlyForInlines = bodiesOnlyForInlines,
+                skipPrivateApi = skipPrivateApi
         ).serializedIrModule(moduleFragment)
     }
 
