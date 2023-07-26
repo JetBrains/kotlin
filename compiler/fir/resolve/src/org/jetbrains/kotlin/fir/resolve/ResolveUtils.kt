@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedErrorReference
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.dfa.PropertyStability
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.FirAnonymousFunctionReturnExpressionInfo
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
@@ -511,7 +510,7 @@ fun FirSafeCallExpression.propagateTypeFromQualifiedAccessAfterNullCheck(
 
 private val FirExpression.isCallToStatementLikeFunction: Boolean
     get() {
-        val symbol = (this as? FirFunctionCall)?.calleeReference?.toResolvedFunctionSymbol() ?: return false
+        val symbol = (this as? FirFunctionCall)?.calleeReference?.toResolvedNamedFunctionSymbol() ?: return false
         return origin == FirFunctionCallOrigin.Operator && symbol.name in OperatorNameConventions.STATEMENT_LIKE_OPERATORS
     }
 

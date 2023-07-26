@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.toResolvedBaseSymbol
-import org.jetbrains.kotlin.fir.references.toResolvedFunctionSymbol
+import org.jetbrains.kotlin.fir.references.toResolvedNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -228,7 +228,7 @@ object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker() {
             val property = this.fir
             if (property.delegate == null || property.delegate !is FirFunctionCall) return null
             val delegateCall = property.delegate as FirFunctionCall
-            val calleeSymbol = delegateCall.calleeReference.toResolvedFunctionSymbol() ?: return null
+            val calleeSymbol = delegateCall.calleeReference.toResolvedNamedFunctionSymbol() ?: return null
             if (calleeSymbol.callableId.asSingleFqName().asString() != "kotlin.lazy") return null
             val lazyCallArgument = delegateCall.argumentList.arguments.singleOrNull() as? FirLambdaArgumentExpression ?: return null
             return (lazyCallArgument.expression as? FirAnonymousFunctionExpression)?.anonymousFunction

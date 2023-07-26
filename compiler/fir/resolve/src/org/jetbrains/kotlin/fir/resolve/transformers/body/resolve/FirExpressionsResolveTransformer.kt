@@ -470,7 +470,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
     private fun FirFunctionCall.transformToIntegerOperatorCallOrApproximateItIfNeeded(resolutionMode: ResolutionMode): FirFunctionCall {
         if (!explicitReceiver.isIntegerLiteralOrOperatorCall()) return this
-        val resolvedSymbol = calleeReference.toResolvedFunctionSymbol() ?: return this
+        val resolvedSymbol = calleeReference.toResolvedNamedFunctionSymbol() ?: return this
         if (!resolvedSymbol.isWrappedIntegerOperator()) return this
 
         val arguments = this.argumentList.arguments

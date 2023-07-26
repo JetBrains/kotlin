@@ -432,7 +432,7 @@ class Fir2IrVisitor(
         }
         val initializer = variable.initializer
         val isNextVariable = initializer is FirFunctionCall &&
-                initializer.calleeReference.toResolvedFunctionSymbol()?.callableId?.isIteratorNext() == true &&
+                initializer.calleeReference.toResolvedNamedFunctionSymbol()?.callableId?.isIteratorNext() == true &&
                 variable.source?.isChildOfForLoop == true
         val irVariable = declarationStorage.createIrVariable(
             variable, conversionScope.parentFromStack(),

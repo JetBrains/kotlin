@@ -54,7 +54,7 @@ inline val FirCall.dynamicVarargArguments: List<FirExpression>?
     get() = dynamicVararg?.arguments
 
 inline val FirFunctionCall.isCalleeDynamic: Boolean
-    get() = calleeReference.toResolvedFunctionSymbol()?.origin == FirDeclarationOrigin.DynamicScope
+    get() = calleeReference.toResolvedNamedFunctionSymbol()?.origin == FirDeclarationOrigin.DynamicScope
 
 inline val FirCall.resolvedArgumentMapping: LinkedHashMap<FirExpression, FirValueParameter>?
     get() = when (val argumentList = argumentList) {
@@ -178,7 +178,7 @@ val FirQualifiedAccessExpression.allReceiverExpressions: List<FirExpression>
     }
 
 inline fun FirFunctionCall.forAllReifiedTypeParameters(block: (ConeKotlinType, FirTypeProjectionWithVariance) -> Unit) {
-    val functionSymbol = calleeReference.toResolvedFunctionSymbol() ?: return
+    val functionSymbol = calleeReference.toResolvedNamedFunctionSymbol() ?: return
 
     for ((typeParameterSymbol, typeArgument) in functionSymbol.typeParameterSymbols.zip(typeArguments)) {
         if (typeParameterSymbol.isReified && typeArgument is FirTypeProjectionWithVariance) {

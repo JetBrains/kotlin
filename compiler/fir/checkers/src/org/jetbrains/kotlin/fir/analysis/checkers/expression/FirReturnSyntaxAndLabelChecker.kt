@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
-import org.jetbrains.kotlin.fir.references.toResolvedFunctionSymbol
+import org.jetbrains.kotlin.fir.references.toResolvedNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 
@@ -38,7 +38,7 @@ object FirReturnSyntaxAndLabelChecker : FirReturnExpressionChecker() {
             if (label?.source?.kind !is KtRealSourceElementKind) {
                 val functionCall = context.callsOrAssignments.asReversed().find {
                     it is FirFunctionCall &&
-                            (it.calleeReference.toResolvedFunctionSymbol())?.callableId ==
+                            (it.calleeReference.toResolvedNamedFunctionSymbol())?.callableId ==
                             FirSuspendCallChecker.KOTLIN_SUSPEND_BUILT_IN_FUNCTION_CALLABLE_ID
                 }
                 if (functionCall is FirFunctionCall &&

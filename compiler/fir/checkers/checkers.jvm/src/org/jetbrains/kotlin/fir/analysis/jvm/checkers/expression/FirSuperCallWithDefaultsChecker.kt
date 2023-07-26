@@ -13,14 +13,14 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirFunctionCallChec
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
-import org.jetbrains.kotlin.fir.references.toResolvedFunctionSymbol
+import org.jetbrains.kotlin.fir.references.toResolvedNamedFunctionSymbol
 
 object FirSuperCallWithDefaultsChecker : FirFunctionCallChecker() {
 
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
         if (expression.explicitReceiverIsNotSuperReference()) return
 
-        val functionSymbol = expression.calleeReference.toResolvedFunctionSymbol() ?: return
+        val functionSymbol = expression.calleeReference.toResolvedNamedFunctionSymbol() ?: return
         if (!functionSymbol.valueParameterSymbols.any { it.hasDefaultValue }) return
         val arguments = expression.argumentList as? FirResolvedArgumentList ?: return
         if (arguments.arguments.size < functionSymbol.valueParameterSymbols.size) {
