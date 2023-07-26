@@ -484,6 +484,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
         }
 
         @Test
+        @TestMetadata("invalidTargetCrashesCompiler.kt")
+        public void testInvalidTargetCrashesCompiler() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/invalidTargetCrashesCompiler.kt");
+        }
+
+        @Test
         @TestMetadata("invisibleClassInsteadOfFun.kt")
         public void testInvisibleClassInsteadOfFun() throws Exception {
             runTest("compiler/testData/diagnostics/tests/invisibleClassInsteadOfFun.kt");
