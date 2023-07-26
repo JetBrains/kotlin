@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.util
 
+import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.components.KtCompiledFile
 import org.jetbrains.kotlin.backend.common.output.OutputFile
 import java.io.File
 
+@KtAnalysisApiInternals
 class KtCompiledFileForOutputFile(private val outputFile: OutputFile) : KtCompiledFile {
     override val path: String
         get() = outputFile.relativePath
