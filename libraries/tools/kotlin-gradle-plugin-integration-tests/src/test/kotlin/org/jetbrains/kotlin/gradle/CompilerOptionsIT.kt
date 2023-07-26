@@ -209,7 +209,7 @@ internal class CompilerOptionsIT : KGPBaseTest() {
                 """.trimMargin()
             )
 
-            build("compileKotlinJvm6", enableGradleDebug = true) {
+            build("compileKotlinJvm6") {
                 assertTasksExecuted(":compileKotlinJvm6")
                 assert(output.contains("-opt-in my.custom.OptInAnnotation,another.custom.UnderOptIn")) {
                     printBuildOutput()
