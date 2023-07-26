@@ -30,6 +30,12 @@ sealed class Option<in T> : IntoScala<scala.Option<@UnsafeVariance T>> {
     }
 }
 
+fun Int.toScalaBigInt(): scala.math.BigInt = scala.math.BigInt.apply(this)
+
+fun Long.toScalaBigInt(): scala.math.BigInt = scala.math.BigInt.apply(this)
+
+fun <T> T?.toScalaOption(): scala.Option<T> = scala.Option.apply(this)
+
 fun <K, V> emptyScalaMap(): Map<K, V> = `Map$`.`MODULE$`.empty()
 
 fun <T> emptySeq(): Seq<T> = CollectionConverters.asScala(emptyList<T>()).toSeq()
