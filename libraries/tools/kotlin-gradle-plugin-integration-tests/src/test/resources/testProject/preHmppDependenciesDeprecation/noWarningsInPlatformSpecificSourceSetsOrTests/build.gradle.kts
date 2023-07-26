@@ -18,4 +18,9 @@ kotlin {
             implementation("org.jetbrains.kotlin.tests:preHmppLibrary:0.1")
         }
     }
+
+    // see KT-60724
+    sourceSets.getByName("commonTest").dependencies {
+        implementation("org.jetbrains.kotlin.tests:preHmppLibrary:0.1")
+    }
 }

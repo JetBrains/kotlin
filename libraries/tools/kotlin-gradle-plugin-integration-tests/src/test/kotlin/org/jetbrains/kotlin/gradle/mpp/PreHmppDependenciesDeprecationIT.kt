@@ -71,9 +71,9 @@ class PreHmppDependenciesDeprecationIT : KGPBaseTest() {
     }
 
     @GradleTest
-    fun testNoWarningsInPlatformSpecificSourceSets(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
+    fun testNoWarningsInPlatformSpecificSourceSetsOrTests(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
         publishLibrary("preHmppLibrary", gradleVersion, tempDir)
-        checkDiagnostics(gradleVersion, "noWarningsInPlatformSpecificSourceSets", tempDir)
+        checkDiagnostics(gradleVersion, "noWarningsInPlatformSpecificSourceSetsOrTests", tempDir)
     }
 
     private fun checkDiagnostics(
