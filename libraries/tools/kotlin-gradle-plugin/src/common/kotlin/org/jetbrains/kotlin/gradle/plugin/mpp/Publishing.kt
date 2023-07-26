@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
-import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.tooling.buildKotlinToolingMetadataTask
 
@@ -70,16 +69,12 @@ private fun createTargetPublications(project: Project, publishing: PublishingExt
         .withType(InternalKotlinTarget::class.java)
         .matching { it.publishable }
         .all { kotlinTarget ->
-            if (kotlinTarget is KotlinAndroidTarget)
-            // Android targets have their variants created in afterEvaluate; TODO handle this better?
-                project.whenEvaluated { kotlinTarget.createMavenPublications(publishing.publications) }
-            else
-                kotlinTarget.createMavenPublications(publishing.publications)
+            project.launch { kotlinTarget.createMavenPublications(publishing.publications) }
         }
 }
 
-private fun InternalKotlinTarget.createMavenPublications(publications: PublicationContainer) {
-    components
+private suspend fun InternalKotlinTarget.createMavenPublications(publications: PublicationContainer) {
+    awaitComponents()
         .map { gradleComponent -> gradleComponent to kotlinComponents.single { it.name == gradleComponent.name } }
         .filter { (_, kotlinComponent) -> kotlinComponent.publishableOnCurrentHost }
         .forEach { (gradleComponent, kotlinComponent) ->

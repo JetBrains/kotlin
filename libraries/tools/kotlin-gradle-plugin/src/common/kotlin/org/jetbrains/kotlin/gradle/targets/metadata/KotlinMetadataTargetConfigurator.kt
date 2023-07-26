@@ -467,11 +467,11 @@ internal suspend fun getCommonSourceSetsForMetadataCompilation(project: Project)
 internal suspend fun getPublishedPlatformCompilations(project: Project): Map<KotlinUsageContext, KotlinCompilation<*>> {
     val result = mutableMapOf<KotlinUsageContext, KotlinCompilation<*>>()
 
-    project.multiplatformExtension.awaitTargets().withType(AbstractKotlinTarget::class.java).forEach { target ->
+    project.multiplatformExtension.awaitTargets().withType(InternalKotlinTarget::class.java).forEach { target ->
         if (target.platformType == KotlinPlatformType.common)
             return@forEach
 
-        target.kotlinComponents
+        target.awaitKotlinComponents()
             .filterIsInstance<SoftwareComponentInternal>()
             .forEach { component ->
                 component.usages

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.external
 import org.gradle.api.*
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.AttributeContainer
-import org.gradle.api.component.SoftwareComponent
+import org.gradle.api.component.AdhocComponentWithVariants
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.api.publish.maven.MavenPublication
@@ -16,7 +16,6 @@ import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
 import org.jetbrains.kotlin.gradle.plugin.mpp.HierarchyAttributeContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinTarget
 import org.jetbrains.kotlin.tooling.core.MutableExtras
@@ -77,12 +76,9 @@ internal class ExternalKotlinTargetImpl internal constructor(
         get() = sourcesElementsConfiguration.name
 
     @InternalKotlinGradlePluginApi
-    override val kotlinComponents: Set<KotlinTargetComponent> = setOf(kotlinTargetComponent)
+    override val kotlinComponents: Set<ExternalKotlinTargetComponent> = setOf(kotlinTargetComponent)
 
-    override val components: Set<ExternalKotlinTargetSoftwareComponent> by lazy {
-        logger.debug("Creating SoftwareComponent")
-        setOf(ExternalKotlinTargetSoftwareComponent(this))
-    }
+    override val components: Set<AdhocComponentWithVariants> get() = kotlinComponents.map { it.gradleSoftwareComponent }.toSet()
 
     override val compilations: NamedDomainObjectContainer<DecoratedExternalKotlinCompilation> by lazy {
         project.container(DecoratedExternalKotlinCompilation::class.java)

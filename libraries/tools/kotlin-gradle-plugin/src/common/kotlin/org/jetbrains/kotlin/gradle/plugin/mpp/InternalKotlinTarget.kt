@@ -5,9 +5,12 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
+import org.gradle.api.component.SoftwareComponent
 import org.gradle.api.publish.maven.MavenPublication
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
+import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
 
 internal interface InternalKotlinTarget : KotlinTarget, HasMutableExtras {
@@ -20,3 +23,13 @@ internal val KotlinTarget.internal: InternalKotlinTarget
     get() = (this as? InternalKotlinTarget) ?: throw IllegalArgumentException(
         "KotlinTarget($name) ${this::class} does not implement ${InternalKotlinTarget::class}"
     )
+
+internal suspend fun InternalKotlinTarget.awaitKotlinComponents(): Set<KotlinTargetComponent> {
+    KotlinPluginLifecycle.Stage.FinaliseCompilations.await()
+    return kotlinComponents
+}
+
+internal suspend fun InternalKotlinTarget.awaitComponents(): Set<SoftwareComponent> {
+    KotlinPluginLifecycle.Stage.FinaliseCompilations.await()
+    return components
+}

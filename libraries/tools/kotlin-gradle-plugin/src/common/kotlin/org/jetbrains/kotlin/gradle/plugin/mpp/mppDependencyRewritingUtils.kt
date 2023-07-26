@@ -17,7 +17,6 @@ import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationToRunnableFiles
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext.MavenScope
@@ -38,7 +37,8 @@ internal class PomDependenciesRewriter(
 
     // Get the dependencies mapping according to the component's UsageContexts:
     private val dependenciesMappingForEachUsageContext by project.provider {
-        (component as SoftwareComponentInternal).usages.filterIsInstance<KotlinUsageContext>().mapNotNull { usage ->
+        if (component !is SoftwareComponentInternal) return@provider emptyList()
+        component.usages.filterIsInstance<KotlinUsageContext>().mapNotNull { usage ->
             // When maven scope is not set, we can shortcut immediately here, since no dependencies from that usage context
             // will be present in maven pom, e.g. from sourcesElements
             val mavenScope = usage.mavenScope ?: return@mapNotNull null
@@ -130,7 +130,7 @@ private fun associateDependenciesWithActualModuleDependencies(
             }
             else -> when (mavenScope) {
                 MavenScope.COMPILE -> compilation.compileDependencyConfigurationName
-                MavenScope.RUNTIME -> (compilation as KotlinCompilationToRunnableFiles).runtimeDependencyConfigurationName
+                MavenScope.RUNTIME -> compilation.runtimeDependencyConfigurationName ?: return emptyMap()
             }
         }
     )

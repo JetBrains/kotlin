@@ -29,6 +29,7 @@ interface ExternalKotlinTargetDescriptor<T : DecoratedExternalKotlinTarget> {
 
     val targetName: String
     val platformType: KotlinPlatformType
+
     val targetFactory: TargetFactory<T>
 
     val apiElements: ExternalKotlinTargetConfigurationDescriptor<T>

@@ -6,10 +6,14 @@
 package org.jetbrains.kotlin.gradle.util
 
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.mpp.external.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.external.DecoratedExternalKotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.external.DecoratedExternalKotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinCompilationDescriptor.CompilationFactory
+import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinCompilationDescriptorBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinTargetDescriptor.TargetFactory
+import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinTargetDescriptorBuilder
 
 class FakeCompilation(delegate: Delegate) : DecoratedExternalKotlinCompilation(delegate)
 class FakeTarget(delegate: Delegate) : DecoratedExternalKotlinTarget(delegate)
@@ -22,7 +26,7 @@ fun ExternalKotlinTargetDescriptorBuilder<FakeTarget>.defaults() {
 
 fun ExternalKotlinCompilationDescriptorBuilder<FakeCompilation>.defaults(
     kotlin: KotlinMultiplatformExtension,
-    name: String = "fake"
+    name: String = KotlinCompilation.MAIN_COMPILATION_NAME
 ) {
     compilationName = name
     compilationFactory = CompilationFactory(::FakeCompilation)
