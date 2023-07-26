@@ -53,7 +53,7 @@ internal class KFunctionImpl private constructor(
         descriptor
     )
 
-    override val isBound: Boolean get() = rawBoundReceiver != CallableReference.NO_RECEIVER
+    override val isBound: Boolean get() = rawBoundReceiver !== CallableReference.NO_RECEIVER
 
     override val descriptor: FunctionDescriptor by ReflectProperties.lazySoft(descriptorInitialValue) {
         container.findFunctionDescriptor(name, signature)

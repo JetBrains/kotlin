@@ -35884,6 +35884,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/reflection/callBy/jvmStaticInObject.kt");
             }
 
+            @TestMetadata("kt60709.kt")
+            public void testKt60709() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/callBy/kt60709.kt");
+            }
+
             @TestMetadata("kt61304.kt")
             public void testKt61304() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/callBy/kt61304.kt");
