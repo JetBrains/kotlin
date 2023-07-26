@@ -43,7 +43,12 @@ val STUB_UNBOUND_IR_SYMBOLS: CompilerConfigurationKey<Boolean> = CompilerConfigu
 internal class KtFe10CompilerFacility(
     override val analysisSession: KtFe10AnalysisSession
 ) : KtCompilerFacility(), Fe10KtAnalysisSessionComponent {
-    override fun compile(file: KtFile, configuration: CompilerConfiguration, target: KtCompilerTarget): KtCompilationResult {
+    override fun compile(
+        file: KtFile,
+        configuration: CompilerConfiguration,
+        target: KtCompilerTarget,
+        allowedErrorFilter: (KtDiagnostic) -> Boolean
+    ): KtCompilationResult {
         if (file is KtCodeFragment) {
             throw UnsupportedOperationException("Code fragments are not supported in K1 implementation")
         }
@@ -71,7 +76,7 @@ internal class KtFe10CompilerFacility(
         val filesToCompile = inlineAnalyzer.allFiles()
         val bindingContext = analysisContext.analyze(filesToCompile, AnalysisMode.ALL_COMPILER_CHECKS)
 
-        val frontendErrors = computeErrors(bindingContext.diagnostics, effectiveConfiguration)
+        val frontendErrors = computeErrors(bindingContext.diagnostics, allowedErrorFilter)
         if (frontendErrors.isNotEmpty()) {
             return KtCompilationResult.Failure(frontendErrors)
         }
@@ -127,7 +132,7 @@ internal class KtFe10CompilerFacility(
         try {
             KotlinCodegenFacade.compileCorrectFiles(state)
 
-            val backendErrors = computeErrors(state.collectedExtraJvmDiagnostics, effectiveConfiguration)
+            val backendErrors = computeErrors(state.collectedExtraJvmDiagnostics, allowedErrorFilter)
             if (backendErrors.isNotEmpty()) {
                 return KtCompilationResult.Failure(backendErrors)
             }
@@ -139,9 +144,7 @@ internal class KtFe10CompilerFacility(
         }
     }
 
-    private fun computeErrors(diagnostics: Diagnostics, configuration: CompilerConfiguration): List<KtDiagnostic> {
-        val allowedErrorFilter = configuration[ALLOWED_ERROR_FILTER] ?: { true }
-
+    private fun computeErrors(diagnostics: Diagnostics, allowedErrorFilter: (KtDiagnostic) -> Boolean): List<KtDiagnostic> {
         return buildList {
             for (diagnostic in diagnostics.all()) {
                 if (diagnostic.severity == Severity.ERROR) {

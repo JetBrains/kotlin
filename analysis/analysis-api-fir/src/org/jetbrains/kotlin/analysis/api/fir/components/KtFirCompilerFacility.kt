@@ -47,7 +47,12 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 internal class KtFirCompilerFacility(
     override val analysisSession: KtFirAnalysisSession
 ) : KtCompilerFacility(), KtFirAnalysisSessionComponent {
-    override fun compile(file: KtFile, configuration: CompilerConfiguration, target: KtCompilerTarget): KtCompilationResult {
+    override fun compile(
+        file: KtFile,
+        configuration: CompilerConfiguration,
+        target: KtCompilerTarget,
+        allowedErrorFilter: (KtDiagnostic) -> Boolean
+    ): KtCompilationResult {
         val classBuilderFactory = when (target) {
             is KtCompilerTarget.Jvm -> target.classBuilderFactory
         }
@@ -61,7 +66,7 @@ internal class KtFirCompilerFacility(
         val mainFirFile = getFullyResolvedFirFile(file)
 
         val frontendDiagnostics = file.collectDiagnosticsForFile(firResolveSession, DiagnosticCheckerFilter.ONLY_COMMON_CHECKERS)
-        val frontendErrors = computeErrors(frontendDiagnostics, effectiveConfiguration)
+        val frontendErrors = computeErrors(frontendDiagnostics, allowedErrorFilter)
 
         if (frontendErrors.isNotEmpty()) {
             return KtCompilationResult.Failure(frontendErrors)
@@ -133,7 +138,7 @@ internal class KtFirCompilerFacility(
             generationState.factory.done()
 
             val backendDiagnostics = generationState.collectedExtraJvmDiagnostics.all()
-            val backendErrors = computeErrors(backendDiagnostics, effectiveConfiguration)
+            val backendErrors = computeErrors(backendDiagnostics, allowedErrorFilter)
 
             if (backendErrors.isNotEmpty()) {
                 return KtCompilationResult.Failure(backendErrors)
@@ -152,9 +157,10 @@ internal class KtFirCompilerFacility(
         return firFile
     }
 
-    private fun computeErrors(diagnostics: Collection<DiagnosticMarker>, configuration: CompilerConfiguration): List<KtDiagnostic> {
-        val allowedErrorFilter = configuration[ALLOWED_ERROR_FILTER] ?: { true }
-
+    private fun computeErrors(
+        diagnostics: Collection<DiagnosticMarker>,
+        allowedErrorFilter: (KtDiagnostic) -> Boolean,
+    ): List<KtDiagnostic> {
         return buildList {
             for (diagnostic in diagnostics) {
                 require(diagnostic is KtPsiDiagnostic)

@@ -69,13 +69,12 @@ public sealed class KtCompilerTarget {
 }
 
 public abstract class KtCompilerFacility : KtAnalysisSessionComponent() {
-    public companion object {
-        /** Filter for the allowed errors. Compilation will be aborted if there are errors that this filter rejects. */
-        public val ALLOWED_ERROR_FILTER: CompilerConfigurationKey<(KtDiagnostic) -> Boolean> =
-            CompilerConfigurationKey<(KtDiagnostic) -> Boolean>("error filter")
-    }
-
-    public abstract fun compile(file: KtFile, configuration: CompilerConfiguration, target: KtCompilerTarget): KtCompilationResult
+    public abstract fun compile(
+        file: KtFile,
+        configuration: CompilerConfiguration,
+        target: KtCompilerTarget,
+        allowedErrorFilter: (KtDiagnostic) -> Boolean,
+    ): KtCompilationResult
 }
 
 public interface KtCompilerFacilityMixIn : KtAnalysisSessionMixIn {
@@ -92,14 +91,22 @@ public interface KtCompilerFacilityMixIn : KtAnalysisSessionMixIn {
      *
      * @param target Compilation target platform.
      *
+     * @param allowedErrorFilter Filter for the allowed errors.
+     * Compilation will be aborted if there are errors that this filter rejects.
+     *
      * @return Compilation result.
      *
      * The function _does not_ wrap unchecked exceptions from the compiler.
      * The implementation should wrap the `compile()` call into a `try`/`catch` block if necessary.
      */
-    public fun compile(file: KtFile, configuration: CompilerConfiguration, target: KtCompilerTarget): KtCompilationResult {
+    public fun compile(
+        file: KtFile,
+        configuration: CompilerConfiguration,
+        target: KtCompilerTarget,
+        allowedErrorFilter: (KtDiagnostic) -> Boolean
+    ): KtCompilationResult {
         return withValidityAssertion {
-            analysisSession.compilerFacility.compile(file, configuration, target)
+            analysisSession.compilerFacility.compile(file, configuration, target, allowedErrorFilter)
         }
     }
 }
