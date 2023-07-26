@@ -272,11 +272,18 @@ fun FirElementWithResolveState.tryCollectDesignationWithFile(): FirDesignationWi
             val firFile = getContainingFile() ?: return null
             FirDesignationWithFile(path = emptyList(), this, firFile)
         }
+
         is FirDeclaration -> {
             val path = collectDesignationPath(this) ?: return null
             val firFile = path.lastOrNull()?.getContainingFile() ?: getContainingFile() ?: return null
-            FirDesignationWithFile(path, this, firFile)
+            val firScript = firFile.declarations.singleOrNull() as? FirScript
+            if (firScript != null) {
+                FirDesignationWithFile(path = emptyList(), firScript, firFile)
+            } else {
+                FirDesignationWithFile(path, this, firFile)
+            }
         }
+
         else -> unexpectedElementError<FirElementWithResolveState>(this)
     }
 }

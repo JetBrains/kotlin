@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("analysis/low-level-api-fir/testdata/fileStructure")
 @TestDataPath("$PROJECT_ROOT")
-public class DiagnosticTraversalCounterTestGenerated extends AbstractDiagnosticTraversalCounterTest {
+public class SourceDiagnosticTraversalCounterTestGenerated extends AbstractSourceDiagnosticTraversalCounterTest {
     @Test
     public void testAllFilesPresentInFileStructure() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/fileStructure"), Pattern.compile("^(.+)\\.(kt)$"), null, true);

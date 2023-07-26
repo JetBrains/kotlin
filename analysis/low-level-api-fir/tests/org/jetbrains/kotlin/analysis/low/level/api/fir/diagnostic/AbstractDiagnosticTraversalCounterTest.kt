@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.useFirSessionConfigurator
 import org.jetbrains.kotlin.fir.FirElement
@@ -40,8 +41,6 @@ import org.jetbrains.kotlin.test.services.assertions
  * Check that every declaration is visited exactly one time during diagnostic collection
  */
 abstract class AbstractDiagnosticTraversalCounterTest : AbstractLowLevelApiSingleFileTest() {
-    override val configurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
-
     override fun configureTest(builder: TestConfigurationBuilder) {
         super.configureTest(builder)
         builder.apply {
@@ -152,4 +151,12 @@ abstract class AbstractDiagnosticTraversalCounterTest : AbstractLowLevelApiSingl
             }
         }
     }
+}
+
+abstract class AbstractSourceDiagnosticTraversalCounterTest : AbstractDiagnosticTraversalCounterTest() {
+    override val configurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
+}
+
+abstract class AbstractScriptDiagnosticTraversalCounterTest : AbstractDiagnosticTraversalCounterTest() {
+    override val configurator get() = AnalysisApiFirScriptTestConfigurator
 }
