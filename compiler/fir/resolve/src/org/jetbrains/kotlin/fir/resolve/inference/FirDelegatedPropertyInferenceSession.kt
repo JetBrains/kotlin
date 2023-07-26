@@ -62,17 +62,21 @@ class FirDelegatedPropertyInferenceSession(
 
         if (resolutionMode != ResolutionMode.ContextDependent.Delegate && !call.isAnyOfDelegateOperators()) return false
 
-        partiallyResolvedCalls.add(call to call.candidate)
-        currentConstraintSystem = call.candidate.system
-
+        val candidateSystem = call.candidate.system
         if (isProvideDelegateOperator) {
-            val innerSet = candidate.freshVariables.mapTo(mutableSetOf()) { it.typeConstructor }
-            currentConstraintSystem.withDisallowingOnlyThisTypeVariablesForProperTypes(innerSet) {
+            val allTypeVariables = candidateSystem.currentStorage().allTypeVariables.keys.toList()
+            val typeVariablesRelatedToProvideDelegate =
+                allTypeVariables.subList(currentConstraintStorage.allTypeVariables.size, allTypeVariables.size).toSet()
+
+            candidateSystem.withDisallowingOnlyThisTypeVariablesForProperTypes(typeVariablesRelatedToProvideDelegate) {
                 runCompletionCallback(ConstraintSystemCompletionMode.FULL)
             }
         } else {
             runCompletionCallback(ConstraintSystemCompletionMode.PARTIAL)
         }
+
+        partiallyResolvedCalls.add(call to call.candidate)
+        currentConstraintSystem = candidateSystem
 
         return true
     }
