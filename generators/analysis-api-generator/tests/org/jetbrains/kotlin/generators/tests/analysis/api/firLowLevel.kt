@@ -127,8 +127,12 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
             model("nonLocalDeclarationAnchors")
         }
 
-        testClass<AbstractClassIdTest> {
-            model("classId")
+        testClass<AbstractSourceClassIdTest> {
+            model("classId", pattern = TestGeneratorUtil.KT)
+        }
+
+        testClass<AbstractScriptClassIdTest> {
+            model("classId", pattern = TestGeneratorUtil.KTS)
         }
 
         testClass<AbstractCompilationPeerAnalysisTest> {

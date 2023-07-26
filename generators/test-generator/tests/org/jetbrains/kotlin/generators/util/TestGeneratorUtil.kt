@@ -11,6 +11,7 @@ import java.lang.StringBuilder
 object TestGeneratorUtil {
     @Language("RegExp") const val KT_OR_KTS = """^(.+)\.(kt|kts)$"""
     @Language("RegExp") const val KT = """^(.+)\.(kt)$"""
+    @Language("RegExp") const val KTS = """^(.+)\.(kts)$"""
     @Language("RegExp") const val KT_OR_KTS_WITHOUT_DOTS_IN_NAME = """^([^.]+)\.(kt|kts)$"""
 
     @Language("RegExp") const val KT_WITHOUT_DOTS_IN_NAME = """^([^.]+)\.kt$"""
