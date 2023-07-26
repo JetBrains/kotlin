@@ -33,6 +33,7 @@ object KtFirReferenceResolver : ResolveCache.PolyVariantResolver<KtReference> {
                     withPsiEntry("reference", ref.element)
                 }
             }
+            if (resolveToPsiElements.isEmpty()) return ResolveResult.EMPTY_ARRAY
             resolveToPsiElements.map { KotlinResolveResult(it) }.toTypedArray()
         }
     }
