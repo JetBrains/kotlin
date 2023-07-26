@@ -19,7 +19,10 @@ package kotlin.reflect.jvm.internal
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.resolve.descriptorUtil.overriddenTreeAsSequence
+import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.resolve.isMultiFieldValueClass
+import org.jetbrains.kotlin.resolve.isValueClass
 import org.jetbrains.kotlin.resolve.jvm.shouldHideConstructorDueToValueClassTypeValueParameters
 import java.lang.reflect.Constructor
 import java.lang.reflect.Member
@@ -100,11 +103,22 @@ internal class KFunctionImpl private constructor(
     }
 
     override val defaultCaller: Caller<*>? by lazy(PUBLICATION) defaultCaller@{
-        val jvmSignature = RuntimeTypeMapper.mapSignature(descriptor)
-        val member: Member? = when (jvmSignature) {
-            is KotlinFunction -> {
+        val member: Member? = when (val jvmSignature = RuntimeTypeMapper.mapSignature(descriptor)) {
+            is KotlinFunction -> run {
                 if (descriptor.let { it.containingDeclaration.isMultiFieldValueClass() && it is ConstructorDescriptor && it.isPrimary }) {
                     throw KotlinReflectionInternalError("${descriptor.containingDeclaration} cannot have default arguments")
+                }
+                if (
+                    descriptor.valueParameters.none { it.declaresDefaultValue() } &&
+                    descriptor.containingDeclaration.isValueClass() &&
+                    Modifier.isStatic(caller.member!!.modifiers)
+                ) {
+                    val defaultValuedFunction = descriptor.overriddenTreeAsSequence(false)
+                        .singleOrNull { function -> function.valueParameters.any { it.declaresDefaultValue() } } as? FunctionDescriptor
+                    if (defaultValuedFunction != null) {
+                        val replacingJvmSignature = RuntimeTypeMapper.mapSignature(defaultValuedFunction) as KotlinFunction
+                        return@run container.findDefaultMethod(replacingJvmSignature.methodName, replacingJvmSignature.methodDesc, true)
+                    }
                 }
                 container.findDefaultMethod(jvmSignature.methodName, jvmSignature.methodDesc, !Modifier.isStatic(caller.member!!.modifiers))
             }
@@ -144,8 +158,12 @@ internal class KFunctionImpl private constructor(
     private val boundReceiver
         get() = rawBoundReceiver.coerceToExpectedReceiverType(descriptor)
 
+    private fun useBoxedBoundReceiver(member: Method) =
+        descriptor.dispatchReceiverParameter?.type?.isInlineClassType() == true && member.parameterTypes.firstOrNull()?.isInterface == true
+
     private fun createStaticMethodCaller(member: Method) =
-        if (isBound) CallerImpl.Method.BoundStatic(member, boundReceiver) else CallerImpl.Method.Static(member)
+        if (isBound) CallerImpl.Method.BoundStatic(member, if (useBoxedBoundReceiver(member)) rawBoundReceiver else boundReceiver)
+        else CallerImpl.Method.Static(member)
 
     private fun createJvmStaticInObjectCaller(member: Method) =
         if (isBound) CallerImpl.Method.BoundJvmStaticInObject(member) else CallerImpl.Method.JvmStaticInObject(member)
