@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
-abstract class AbstractInnerDeclarationsResolvePhaseTest : AbstractLowLevelApiSingleFileTest() {
+abstract class AbstractWholeFileResolvePhaseTest : AbstractLowLevelApiSingleFileTest() {
     override fun doTestByFileStructure(ktFile: KtFile, moduleStructure: TestModuleStructure, testServices: TestServices) {
         resolveWithClearCaches(ktFile) { firResolveSession ->
             val firFile = ktFile.getOrBuildFirOfType<FirFile>(firResolveSession)
@@ -27,10 +27,10 @@ abstract class AbstractInnerDeclarationsResolvePhaseTest : AbstractLowLevelApiSi
     }
 }
 
-abstract class AbstractSourceInnerDeclarationsResolvePhaseTest : AbstractInnerDeclarationsResolvePhaseTest() {
+abstract class AbstractSourceWholeFileResolvePhaseTest : AbstractWholeFileResolvePhaseTest() {
     override val configurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
 }
 
-abstract class AbstractOutOfContentRootInnerDeclarationsResolvePhaseTest : AbstractInnerDeclarationsResolvePhaseTest() {
+abstract class AbstractOutOfContentRootWholeFileResolvePhaseTest : AbstractWholeFileResolvePhaseTest() {
     override val configurator get() = AnalysisApiFirOutOfContentRootTestConfigurator
 }

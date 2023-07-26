@@ -18,10 +18,10 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("analysis/low-level-api-fir/testdata/fileStructure")
 @TestDataPath("$PROJECT_ROOT")
-public class OutOfContentRootInnerDeclarationsResolvePhaseTestGenerated extends AbstractOutOfContentRootInnerDeclarationsResolvePhaseTest {
+public class OutOfContentRootWholeFileResolvePhaseTestGenerated extends AbstractOutOfContentRootWholeFileResolvePhaseTest {
     @Test
     public void testAllFilesPresentInFileStructure() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/fileStructure"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/fileStructure"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Test

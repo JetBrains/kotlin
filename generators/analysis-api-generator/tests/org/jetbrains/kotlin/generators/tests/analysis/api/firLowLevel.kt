@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.AbstractSc
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.AbstractSourceFileStructureTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.AbstractSourceInBlockModificationTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.AbstractErrorResistanceTest
-import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.AbstractOutOfContentRootInnerDeclarationsResolvePhaseTest
-import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.AbstractSourceInnerDeclarationsResolvePhaseTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.AbstractOutOfContentRootWholeFileResolvePhaseTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.AbstractSourceWholeFileResolvePhaseTest
 import org.jetbrains.kotlin.generators.TestGroup
 import org.jetbrains.kotlin.generators.TestGroupSuite
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
@@ -102,11 +102,11 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
             model("fileStructure", pattern = TestGeneratorUtil.KTS)
         }
 
-        testClass<AbstractSourceInnerDeclarationsResolvePhaseTest> {
+        testClass<AbstractSourceWholeFileResolvePhaseTest> {
             model("fileStructure", pattern = TestGeneratorUtil.KT)
         }
 
-        testClass<AbstractOutOfContentRootInnerDeclarationsResolvePhaseTest> {
+        testClass<AbstractOutOfContentRootWholeFileResolvePhaseTest> {
             model("fileStructure", pattern = TestGeneratorUtil.KT)
         }
 
