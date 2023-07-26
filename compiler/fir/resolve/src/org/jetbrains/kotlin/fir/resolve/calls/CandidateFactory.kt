@@ -36,10 +36,10 @@ class CandidateFactory private constructor(
     companion object {
         private fun buildBaseSystem(context: ResolutionContext, callInfo: CallInfo): ConstraintStorage {
             val system = context.inferenceComponents.createConstraintSystem()
+            system.addOtherSystem(context.bodyResolveContext.outerConstraintStorage)
             callInfo.arguments.forEach {
                 system.addSubsystemFromExpression(it)
             }
-            system.addOtherSystem(context.bodyResolveContext.outerConstraintStorage)
             return system.asReadOnlyStorage()
         }
     }
@@ -70,6 +70,7 @@ class CandidateFactory private constructor(
             explicitReceiverKind,
             context.inferenceComponents.constraintSystemFactory,
             baseSystem,
+            context.bodyResolveContext.outerConstraintStorage,
             callInfo,
             scope,
             isFromCompanionObjectTypeScope = when (explicitReceiverKind) {
@@ -156,6 +157,7 @@ class CandidateFactory private constructor(
             explicitReceiverKind = ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
             context.inferenceComponents.constraintSystemFactory,
             baseSystem,
+            context.bodyResolveContext.outerConstraintStorage,
             callInfo,
             originScope = null,
         )

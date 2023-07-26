@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
+import org.jetbrains.kotlin.fir.resolve.calls.candidate
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeFixVariableConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
 import org.jetbrains.kotlin.fir.returnExpressions
@@ -370,10 +371,16 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
         }
 
 
-//        require(result.size == notFixedTypeVariables.size) {
-//            val notFoundTypeVariables = notFixedTypeVariables.keys.toMutableSet().apply { removeAll(result) }
-//            "Not all type variables found: $notFoundTypeVariables"
-//        }
+        val outerVariables =
+            (topLevelAtoms.singleOrNull() as? FirResolvable)?.candidate()?.outerSystem?.notFixedTypeVariables?.keys ?: emptySet()
+
+        require(result.size == (notFixedTypeVariables.size - outerVariables.size)) {
+            val notFoundTypeVariables = notFixedTypeVariables.keys.toMutableSet().apply {
+                removeAll(result)
+                removeAll(outerVariables)
+            }
+            "Not all type variables found: $notFoundTypeVariables"
+        }
 
         return result.toList()
     }

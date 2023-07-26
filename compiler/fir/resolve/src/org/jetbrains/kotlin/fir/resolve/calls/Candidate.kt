@@ -42,6 +42,7 @@ class Candidate(
     override val explicitReceiverKind: ExplicitReceiverKind,
     private val constraintSystemFactory: InferenceComponents.ConstraintSystemFactory,
     private val baseSystem: ConstraintStorage,
+    val outerSystem: ConstraintStorage,
     override val callInfo: CallInfo,
     val originScope: FirScope?,
     val isFromCompanionObjectTypeScope: Boolean = false,
