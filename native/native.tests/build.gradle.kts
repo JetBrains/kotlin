@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.ideaExt.idea
-
 plugins {
     kotlin("jvm")
     id("jps-compatible")
@@ -50,8 +48,7 @@ val partialLinkageTest = nativeTest("partialLinkageTest", "partial-linkage")
 val cinteropTest = nativeTest("cinteropTest", "cinterop")
 val debuggerTest = nativeTest("debuggerTest", "debugger")
 val cachesTest = nativeTest("cachesTest", "caches")
-val klibContentsTest = nativeTest("klibContentsTest", "klib-contents & !frontend-fir")
-val klibContentsK2Test = nativeTest("klibContentsK2Test", "klib-contents & frontend-fir")
+val klibTest = nativeTest("klibTest", "klib")
 
 val testTags = findProperty("kotlin.native.tests.tags")?.toString()
 // Note: arbitrary JUnit tag expressions can be used in this property.
