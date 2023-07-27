@@ -1856,6 +1856,12 @@ public class FirIdeNormalAnalysisLibrarySourceModuleReferenceResolveTestGenerate
         }
 
         @Test
+        @TestMetadata("reifiedTypeParameterInBody.kt")
+        public void testReifiedTypeParameterInBody() throws Exception {
+            runTest("analysis/analysis-api/testData/referenceResolve/typeParameter/reifiedTypeParameterInBody.kt");
+        }
+
+        @Test
         @TestMetadata("reified_argumentInFunctionalType.kt")
         public void testReified_argumentInFunctionalType() throws Exception {
             runTest("analysis/analysis-api/testData/referenceResolve/typeParameter/reified_argumentInFunctionalType.kt");
