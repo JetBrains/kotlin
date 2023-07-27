@@ -180,7 +180,7 @@ private class LibraryDeserializer(
             val flags = ClassFlags.decode(proto.base.flags)
 
             val modality = flags.modality.toAbiModality(
-                containingClassModality = /* Open nested classes in final class remain open. */ null
+                containingClassModality = null // Open nested classes in a final class remain open.
             )
 
             val qualifiedName = deserializeQualifiedName(proto.name, containingEntity)
