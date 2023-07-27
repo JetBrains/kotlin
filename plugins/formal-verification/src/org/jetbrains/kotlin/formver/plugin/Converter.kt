@@ -5,20 +5,40 @@
 
 package org.jetbrains.kotlin.formver.plugin
 
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.expressions.FirBlock
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
+import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.isInt
 import org.jetbrains.kotlin.fir.types.isUnit
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.formver.scala.Option
 import org.jetbrains.kotlin.formver.scala.emptySeq
 import org.jetbrains.kotlin.formver.scala.seqOf
 import org.jetbrains.kotlin.formver.scala.silicon.ast.*
+import org.jetbrains.kotlin.formver.scala.silicon.ast.Exp
+import org.jetbrains.kotlin.formver.scala.silicon.ast.Exp.LocalVar
+import org.jetbrains.kotlin.formver.scala.silicon.ast.Exp.NeCmp
+import org.jetbrains.kotlin.formver.scala.silicon.ast.Exp.NullLit
+import org.jetbrains.kotlin.formver.scala.silicon.ast.Info
+import org.jetbrains.kotlin.formver.scala.silicon.ast.Info.NoInfo
+import org.jetbrains.kotlin.formver.scala.silicon.ast.Position
+import org.jetbrains.kotlin.formver.scala.silicon.ast.Position.NoPosition
+import org.jetbrains.kotlin.formver.scala.silicon.ast.Stmt
+import org.jetbrains.kotlin.formver.scala.silicon.ast.Stmt.Seqn
+import org.jetbrains.kotlin.formver.scala.silicon.ast.Trafos
+import org.jetbrains.kotlin.formver.scala.silicon.ast.Trafos.NoTrafos
+import org.jetbrains.kotlin.formver.scala.silicon.ast.Type
+import org.jetbrains.kotlin.formver.scala.silicon.ast.Type.Int
+import org.jetbrains.kotlin.formver.scala.silicon.ast.Type.Ref
 import org.jetbrains.kotlin.formver.scala.toScalaSeq
+import viper.silver.ast.*
 import viper.silver.ast.Function
-import viper.silver.ast.LocalVarDecl
-import viper.silver.ast.Method
-import viper.silver.ast.Program
 
 const val INT_BACKING_FIELD = "backing_int"
 const val RETURN_VARIABLE_NAME = "ret"
@@ -76,18 +96,18 @@ class ConvertedVar(val name: String, val type: ConvertedNonUnitType) {
 class ConvertedMethodSignature(val name: String, val params: List<ConvertedVar>, val returns: List<ConvertedVar>) {
     fun toMethod(
         pres: List<Exp>, posts: List<Exp>,
-        body: Stmt.Seqn?,
+        body: Seqn?,
         pos: Position = Position.NoPosition,
         info: Info = Info.NoInfo,
         trafos: Trafos = Trafos.NoTrafos,
     ): Method =
         method(
             name,
-            params.map { it.toLocalVarDecl() }.toList(),
-            returns.map { it.toLocalVarDecl() }.toList(),
-            params.flatMap { it.preconditions() }.toList() + pres,
-            params.flatMap { it.postconditions() }.toList() +
-                    returns.flatMap { it.preconditions() }.toList() + posts,
+            params.map { it.toLocalVarDecl() },
+            returns.map { it.toLocalVarDecl() },
+            params.flatMap { it.preconditions() } + pres,
+            params.flatMap { it.postconditions() } +
+                    returns.flatMap { it.preconditions() } + posts,
             body, pos, info, trafos,
         )
 }
@@ -109,7 +129,7 @@ class Converter {
         )
 
     fun add(declaration: FirSimpleFunction) {
-        methods.add(convertSignature(declaration).toMethod(emptyList(), emptyList(), null))
+        methods.add(convertSignature(declaration).toMethod(emptyList(), emptyList(), convertBody(declaration.body!!)))
     }
 
     private fun convertSignature(declaration: FirSimpleFunction): ConvertedMethodSignature {
@@ -137,5 +157,36 @@ class Converter {
         }
         // Otherwise, still need to get to this case.
         throw NotImplementedError()
+    }
+
+    private fun convertBody(body: FirBlock): Seqn {
+        val convertedBody = ConvertedBlock(this)
+        for (stmt in body.statements) {
+            convertedBody.convertAndAppend(stmt)
+        }
+        return Seqn(convertedBody.statements, convertedBody.declarations)
+    }
+}
+
+class ConvertedBlock(private val converter: Converter) {
+    val statements: MutableList<Stmt> = mutableListOf()
+    val declarations: MutableList<Declaration> = mutableListOf()
+
+    fun convertAndAppend(expr: FirExpression) {
+        expr.accept(ExpressionConversionVisitor(this))
+    }
+
+    fun convertAndAppend(stmt: FirStatement) {
+        stmt.accept(ExpressionConversionVisitor(this))
+    }
+}
+
+class ExpressionConversionVisitor(@Suppress("UNUSED_PARAMETER") block: ConvertedBlock) : FirVisitorVoid() {
+    override fun visitElement(element: FirElement) {
+        TODO("Not yet implemented")
+    }
+
+    override fun visitReturnExpression(returnExpression: FirReturnExpression) {
+        TODO("not implemented yet")
     }
 }
