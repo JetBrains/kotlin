@@ -186,7 +186,7 @@ private class LibraryDeserializer(
             val qualifiedName = deserializeQualifiedName(proto.name, containingEntity)
             val thisClassEntity = ContainingEntity.Class(qualifiedName, modality)
 
-            // Note: For inner classes pass the `parentTypeParameterResolver` to the constructor so that is could be
+            // Note: For inner classes pass the `parentTypeParameterResolver` to the constructor so that it could be
             // possible to resolve TPs by delegating to the parent TP resolver. For non-inner classes just keep
             // "level" to facilitate the proper TP numbering.
             val thisClassTypeParameterResolver = TypeParameterResolver(
