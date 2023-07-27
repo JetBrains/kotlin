@@ -18,9 +18,8 @@ object ExpectedActualResolver {
         expected: MemberDescriptor,
         platformModule: ModuleDescriptor,
         moduleVisibilityFilter: ModuleFilter = allModulesProvidingActualsFor(expected.module, platformModule),
-        shouldCheckAbsenceOfDefaultParamsInActual: Boolean = false
     ): Map<ExpectActualCompatibility<MemberDescriptor>, List<MemberDescriptor>>? {
-        val context = ClassicExpectActualMatchingContext(platformModule, shouldCheckAbsenceOfDefaultParamsInActual)
+        val context = ClassicExpectActualMatchingContext(platformModule)
         return when (expected) {
             is CallableMemberDescriptor -> {
                 expected.findNamesakesFromModule(context, platformModule, moduleVisibilityFilter).filter { actual ->
