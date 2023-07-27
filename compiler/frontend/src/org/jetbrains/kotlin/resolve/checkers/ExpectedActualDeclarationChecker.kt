@@ -269,7 +269,7 @@ class ExpectedActualDeclarationChecker(
         compatibility: Map<ExpectActualCompatibility<MemberDescriptor>, List<MemberDescriptor>>
     ): Boolean {
         return compatibility.values.flatMapTo(hashSetOf()) { it }.all { actual ->
-            val expectedOnes = ExpectedActualResolver.findExpectedForActual(actual, onlyFromThisModule(module))
+            val expectedOnes = ExpectedActualResolver.findExpectedForActual_incrementalCompilationWorkaround(actual, onlyFromThisModule(module))
             expectedOnes != null && Compatible in expectedOnes.keys
         }
     }
@@ -297,7 +297,7 @@ class ExpectedActualDeclarationChecker(
         moduleVisibilityFilter: ModuleFilter
     ) {
         val compatibility = ExpectedActualResolver
-            .findExpectedForActual(descriptor, moduleVisibilityFilter, shouldCheckAbsenceOfDefaultParamsInActual = true)
+            .findExpectedForActual_incrementalCompilationWorkaround(descriptor, moduleVisibilityFilter, shouldCheckAbsenceOfDefaultParamsInActual = true)
             ?: return
 
         checkAmbiguousExpects(compatibility, trace, reportOn, descriptor)
@@ -336,7 +336,7 @@ class ExpectedActualDeclarationChecker(
                 return actualMember != null &&
                         actualMember.isExplicitActualDeclaration() &&
                         !incompatibility.allStrongIncompatibilities() &&
-                        ExpectedActualResolver.findExpectedForActual(
+                        ExpectedActualResolver.findExpectedForActual_incrementalCompilationWorkaround(
                             actualMember, onlyFromThisModule(expectedMember.module)
                         )?.values?.singleOrNull()?.singleOrNull() == expectedMember
             }
