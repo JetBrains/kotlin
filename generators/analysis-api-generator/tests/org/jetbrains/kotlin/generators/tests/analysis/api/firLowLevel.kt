@@ -129,11 +129,15 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
         }
 
         testClass<AbstractSourceGetOrBuildFirTest> {
-            model("getOrBuildFir")
+            model("getOrBuildFir", pattern = TestGeneratorUtil.KT)
         }
 
         testClass<AbstractOutOfContentRootGetOrBuildFirTest> {
-            model("getOrBuildFir")
+            model("getOrBuildFir", pattern = TestGeneratorUtil.KT)
+        }
+
+        testClass<AbstractScriptGetOrBuildFirTest> {
+            model("getOrBuildFir", pattern = TestGeneratorUtil.KTS)
         }
 
         testClass<AbstractLibraryGetOrBuildFirTest> {

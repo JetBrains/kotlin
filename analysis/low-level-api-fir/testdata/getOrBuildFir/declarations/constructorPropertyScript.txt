@@ -1,0 +1,19 @@
+KT element: KtParameter
+FIR element: FirValueParameterImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+[ResolvedTo(STATUS)] [CorrespondingProperty=/Abc.i] i: R|kotlin/Int| = Int(4)
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] constructorPropertyScript.kts
+    public final [ResolvedTo(STATUS)] class Abc : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Abc] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Abc.i] i: R|kotlin/Int| = Int(4)): R|Abc| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Abc] get(): R|kotlin/Int|
+
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|

@@ -1,0 +1,18 @@
+KT element: KtTypeReference
+FIR element: FirResolvedTypeRefImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+R|A|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] superTypeScript.kts
+    public abstract [ResolvedTo(STATUS)] interface A : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(STATUS)] class C : R|A| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=C] constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|

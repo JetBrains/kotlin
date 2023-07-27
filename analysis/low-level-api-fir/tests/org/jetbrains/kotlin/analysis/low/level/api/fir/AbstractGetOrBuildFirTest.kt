@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.fir.FirElement
@@ -67,5 +68,9 @@ abstract class AbstractSourceGetOrBuildFirTest : AbstractGetOrBuildFirTest() {
 }
 
 abstract class AbstractOutOfContentRootGetOrBuildFirTest : AbstractGetOrBuildFirTest() {
-    override val configurator = AnalysisApiFirOutOfContentRootTestConfigurator
+    override val configurator get() = AnalysisApiFirOutOfContentRootTestConfigurator
+}
+
+abstract class AbstractScriptGetOrBuildFirTest : AbstractGetOrBuildFirTest() {
+    override val configurator get() = AnalysisApiFirScriptTestConfigurator
 }

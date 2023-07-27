@@ -1,0 +1,22 @@
+KT element: KtBinaryExpression
+FIR element: FirFunctionCallImpl
+FIR source kind: DesugaredCompoundAssignment
+
+FIR element rendered:
+R|<local>/m|.R|SubstitutionOverride</MyMap.get: R|A|>|(String(a)).R|/A.plusAssign|(Int(1))
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] compoundAssignWithArrayGetConventionScript.kts
+    public abstract [ResolvedTo(STATUS)] interface A : R|kotlin/Any| {
+        public abstract operator [ResolvedTo(STATUS)] fun plusAssign([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface MyMap<[ResolvedTo(STATUS)] K, [ResolvedTo(STATUS)] V> : R|kotlin/Any| {
+        public abstract operator [ResolvedTo(STATUS)] fun get([ResolvedTo(STATUS)] k: R|K|): R|V|
+
+    }
+    public final [ResolvedTo(RAW_FIR)] fun test([ResolvedTo(RAW_FIR)] m: R|MyMap<kotlin/String, A>|): R|kotlin/Unit| {
+        R|<local>/m|.R|SubstitutionOverride</MyMap.get: R|A|>|(String(a)).R|/A.plusAssign|(Int(1))
+        Unit
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|

@@ -1,0 +1,13 @@
+KT element: KtThrowExpression
+FIR element: FirThrowExpressionImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+throw R|java/lang/IllegalStateException.IllegalStateException|()
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] throwExpressionScript.kts
+    public final [ResolvedTo(RAW_FIR)] fun x(): R|kotlin/Unit| {
+        throw R|java/lang/IllegalStateException.IllegalStateException|()
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|

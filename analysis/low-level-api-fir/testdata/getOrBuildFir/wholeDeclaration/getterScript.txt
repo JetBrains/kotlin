@@ -1,0 +1,16 @@
+KT element: KtPropertyAccessor
+FIR element: FirPropertyAccessorImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+public [ResolvedTo(RAW_FIR)] get(): R|kotlin/String| {
+    ^ String()
+}
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] getterScript.kts
+    public final [ResolvedTo(RAW_FIR)] val x: R|kotlin/String|
+        public [ResolvedTo(RAW_FIR)] get(): R|kotlin/String| {
+            ^ String()
+        }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|

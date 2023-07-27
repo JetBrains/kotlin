@@ -1,0 +1,12 @@
+KT element: KtBlockStringTemplateEntry
+FIR element: FirIntegerLiteralOperatorCallImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+Int(1).R|kotlin/Int.plus|(Int(2))
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] stringTemplateExpressionEntryScript.kts
+    public final [ResolvedTo(RAW_FIR)] val x: R|kotlin/String| = <strcat>(String(string ), Int(1).R|kotlin/Int.plus|(Int(2)), String( template))
+        public [ResolvedTo(RAW_FIR)] get(): R|kotlin/String|
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|

@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFirTest {
     @Test
     public void testAllFilesPresentInGetOrBuildFir() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/getOrBuildFir"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/getOrBuildFir"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Test
@@ -36,7 +36,7 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
     public class Annotations {
         @Test
         public void testAllFilesPresentInAnnotations() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/getOrBuildFir/annotations"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/getOrBuildFir/annotations"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
         }
 
         @Test
@@ -213,7 +213,7 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
         public class UseSite {
             @Test
             public void testAllFilesPresentInUseSite() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/getOrBuildFir/annotations/useSite"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/getOrBuildFir/annotations/useSite"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
             }
 
             @Test
@@ -272,7 +272,7 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
     public class Calls {
         @Test
         public void testAllFilesPresentInCalls() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/getOrBuildFir/calls"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/getOrBuildFir/calls"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
         }
 
         @Test
@@ -480,7 +480,7 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
     public class Declarations {
         @Test
         public void testAllFilesPresentInDeclarations() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/getOrBuildFir/declarations"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/getOrBuildFir/declarations"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
         }
 
         @Test
@@ -574,7 +574,7 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
     public class Expressions {
         @Test
         public void testAllFilesPresentInExpressions() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/getOrBuildFir/expressions"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/getOrBuildFir/expressions"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
         }
 
         @Test
@@ -782,7 +782,7 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
     public class InImport {
         @Test
         public void testAllFilesPresentInInImport() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/getOrBuildFir/inImport"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/getOrBuildFir/inImport"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
         }
 
         @Test
@@ -828,7 +828,7 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
     public class InPackage {
         @Test
         public void testAllFilesPresentInInPackage() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/getOrBuildFir/inPackage"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/getOrBuildFir/inPackage"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
         }
 
         @Test
@@ -868,7 +868,7 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
     public class InvalidCode {
         @Test
         public void testAllFilesPresentInInvalidCode() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/getOrBuildFir/invalidCode"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/getOrBuildFir/invalidCode"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
         }
 
         @Test
@@ -920,7 +920,7 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
     public class QualifiedExpressions {
         @Test
         public void testAllFilesPresentInQualifiedExpressions() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/getOrBuildFir/qualifiedExpressions"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/getOrBuildFir/qualifiedExpressions"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
         }
 
         @Test
@@ -960,7 +960,7 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
     public class Types {
         @Test
         public void testAllFilesPresentInTypes() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/getOrBuildFir/types"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/getOrBuildFir/types"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
         }
 
         @Test
@@ -1078,7 +1078,7 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
     public class WholeDeclaration {
         @Test
         public void testAllFilesPresentInWholeDeclaration() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/getOrBuildFir/wholeDeclaration"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/getOrBuildFir/wholeDeclaration"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
         }
 
         @Test

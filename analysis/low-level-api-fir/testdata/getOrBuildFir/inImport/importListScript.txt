@@ -1,0 +1,10 @@
+KT element: KtImportList
+FIR element: null
+FIR source kind: null
+
+FIR element rendered:
+null
+
+FIR FILE:
+FILE: [ResolvedTo(RAW_FIR)] importListScript.kts
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs

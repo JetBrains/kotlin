@@ -1,0 +1,26 @@
+KT element: KtTryExpression
+FIR element: FirTryExpressionImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+try {
+    Int(1)
+}
+catch ([ResolvedTo(RAW_FIR)] [IsCatchParameterProperty=true] e: R|kotlin/Throwable|) {
+}
+finally {
+}
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] tryExpressionScript.kts
+    public final [ResolvedTo(RAW_FIR)] fun x(): R|kotlin/Unit| {
+        try {
+            Int(1)
+        }
+        catch ([ResolvedTo(RAW_FIR)] [IsCatchParameterProperty=true] e: R|kotlin/Throwable|) {
+        }
+        finally {
+        }
+
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|

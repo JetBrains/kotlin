@@ -1,0 +1,13 @@
+KT element: KtIsExpression
+FIR element: FirTypeOperatorCallImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+(R|<local>/x| is R|kotlin/String|)
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] isExpressionScript.kts
+    public final [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] x: R|kotlin/Any|): R|kotlin/Boolean| {
+        ^foo (R|<local>/x| is R|kotlin/String|)
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
