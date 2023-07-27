@@ -27,7 +27,7 @@ internal class KtFe10MultiplatformInfoProvider(
         val memberDescriptor = (getSymbolDescriptor(actual) as? MemberDescriptor)?.takeIf { it.isActual } ?: return null
 
         val expectedCompatibilityMap =
-            ExpectedActualResolver.findExpectedForActual(memberDescriptor) ?: return null
+            ExpectedActualResolver.findExpectedForActual_incrementalCompilationWorkaround(memberDescriptor) ?: return null
 
         val expectsForActual = (expectedCompatibilityMap[ExpectActualCompatibility.Compatible]
             ?: expectedCompatibilityMap.values.flatten())
