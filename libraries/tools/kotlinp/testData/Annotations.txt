@@ -2,7 +2,6 @@
 // ------------------------------------------
 public final annotation class A : kotlin/Annotation {
 
-  // requires language version 1.3.0 (level=ERROR)
   // signature: <init>(ZCBSIFJDLkotlin/UInt;Lkotlin/UByte;Lkotlin/UShort;Lkotlin/ULong;Lkotlin/UInt;Lkotlin/UByte;Lkotlin/UShort;Lkotlin/ULong;[Z[C[B[S[I[F[J[DLjava/lang/String;Lkotlin/annotation/AnnotationTarget;Lkotlin/reflect/KClass;Lkotlin/reflect/KClass;LB;Lkotlin/Array;Lkotlin/Array;Lkotlin/Array;Lkotlin/Array;)V
   public constructor(z: kotlin/Boolean, c: kotlin/Char, b: kotlin/Byte, s: kotlin/Short, i: kotlin/Int, f: kotlin/Float, j: kotlin/Long, d: kotlin/Double, ui: kotlin/UInt, ub: kotlin/UByte, us: kotlin/UShort, ul: kotlin/ULong, ui_max: kotlin/UInt, ub_max: kotlin/UByte, us_max: kotlin/UShort, ul_max: kotlin/ULong, za: kotlin/BooleanArray, ca: kotlin/CharArray, ba: kotlin/ByteArray, sa: kotlin/ShortArray, ia: kotlin/IntArray, fa: kotlin/FloatArray, ja: kotlin/LongArray, da: kotlin/DoubleArray, str: kotlin/String, enum: kotlin/annotation/AnnotationTarget, klass: kotlin/reflect/KClass<*>, klass2: kotlin/reflect/KClass<*>, anno: B, stra: kotlin/Array<kotlin/String>, ka: kotlin/Array<kotlin/reflect/KClass<*>>, ea: kotlin/Array<kotlin/annotation/AnnotationTarget>, aa: kotlin/Array<B>)
 
@@ -98,56 +97,48 @@ public final annotation class A : kotlin/Annotation {
   public final val stra: kotlin/Array<kotlin/String>
     public final get
 
-  // requires language version 1.3.0 (level=ERROR)
   // requires compiler version 1.4.30 (level=ERROR)
   // requires language version 1.4.0 (level=ERROR)
   // getter: ub()B
   public final val ub: kotlin/UByte
     public final get
 
-  // requires language version 1.3.0 (level=ERROR)
   // requires compiler version 1.4.30 (level=ERROR)
   // requires language version 1.4.0 (level=ERROR)
   // getter: ub_max()B
   public final val ub_max: kotlin/UByte
     public final get
 
-  // requires language version 1.3.0 (level=ERROR)
   // requires compiler version 1.4.30 (level=ERROR)
   // requires language version 1.4.0 (level=ERROR)
   // getter: ui()I
   public final val ui: kotlin/UInt
     public final get
 
-  // requires language version 1.3.0 (level=ERROR)
   // requires compiler version 1.4.30 (level=ERROR)
   // requires language version 1.4.0 (level=ERROR)
   // getter: ui_max()I
   public final val ui_max: kotlin/UInt
     public final get
 
-  // requires language version 1.3.0 (level=ERROR)
   // requires compiler version 1.4.30 (level=ERROR)
   // requires language version 1.4.0 (level=ERROR)
   // getter: ul()J
   public final val ul: kotlin/ULong
     public final get
 
-  // requires language version 1.3.0 (level=ERROR)
   // requires compiler version 1.4.30 (level=ERROR)
   // requires language version 1.4.0 (level=ERROR)
   // getter: ul_max()J
   public final val ul_max: kotlin/ULong
     public final get
 
-  // requires language version 1.3.0 (level=ERROR)
   // requires compiler version 1.4.30 (level=ERROR)
   // requires language version 1.4.0 (level=ERROR)
   // getter: us()S
   public final val us: kotlin/UShort
     public final get
 
-  // requires language version 1.3.0 (level=ERROR)
   // requires compiler version 1.4.30 (level=ERROR)
   // requires language version 1.4.0 (level=ERROR)
   // getter: us_max()S

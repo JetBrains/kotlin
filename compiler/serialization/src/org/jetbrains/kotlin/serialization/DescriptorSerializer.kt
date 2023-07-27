@@ -25,8 +25,10 @@ import org.jetbrains.kotlin.metadata.serialization.MutableTypeTable
 import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
+import org.jetbrains.kotlin.resolve.MemberComparator
+import org.jetbrains.kotlin.resolve.RequireKotlinConstants
 import org.jetbrains.kotlin.resolve.calls.components.isActualParameterWithAnyExpectedDefault
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.constants.IntValue
@@ -35,13 +37,13 @@ import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.inlineClassRepresentation
 import org.jetbrains.kotlin.resolve.descriptorUtil.multiFieldValueClassRepresentation
 import org.jetbrains.kotlin.resolve.descriptorUtil.nonSourceAnnotations
+import org.jetbrains.kotlin.resolve.isValueClass
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
 import org.jetbrains.kotlin.serialization.deserialization.descriptorVisibility
 import org.jetbrains.kotlin.serialization.deserialization.memberKind
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.extensions.TypeAttributeTranslators
 import org.jetbrains.kotlin.types.typeUtil.contains
-import org.jetbrains.kotlin.types.typeUtil.immediateSupertypes
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 import java.util.*
 
@@ -193,8 +195,6 @@ class DescriptorSerializer private constructor(
 
         plugins.forEach { it.afterClass(classDescriptor, builder, versionRequirementTable, this, extension) }
 
-        writeVersionRequirementForInlineClasses(classDescriptor, builder, versionRequirementTable)
-
         if (metDefinitelyNotNullType) {
             builder.addVersionRequirement(
                 writeLanguageVersionRequirement(LanguageFeature.DefinitelyNonNullableTypes, versionRequirementTable)
@@ -205,28 +205,6 @@ class DescriptorSerializer private constructor(
         versionRequirementTable.serialize()?.let { builder.versionRequirementTable = it }
 
         return builder
-    }
-
-    private fun writeVersionRequirementForInlineClasses(
-        classDescriptor: ClassDescriptor,
-        builder: ProtoBuf.Class.Builder,
-        versionRequirementTable: MutableVersionRequirementTable
-    ) {
-        if (!classDescriptor.isInlineClass() && !classDescriptor.hasInlineClassTypesInSignature()) return
-
-        builder.addVersionRequirement(
-            writeLanguageVersionRequirement(LanguageFeature.InlineClasses, versionRequirementTable)
-        )
-    }
-
-    private fun ClassDescriptor.hasInlineClassTypesInSignature(): Boolean {
-        for (typeParameter in declaredTypeParameters) {
-            if (typeParameter.upperBounds.any { it.contains(UnwrappedType::isInlineClassType) }) return true
-        }
-
-        if (defaultType.immediateSupertypes().any { supertype -> supertype.contains(UnwrappedType::isInlineClassType) }) return true
-
-        return false
     }
 
     fun propertyProto(descriptor: PropertyDescriptor): ProtoBuf.Property.Builder? {
@@ -322,10 +300,6 @@ class DescriptorSerializer private constructor(
                 builder.addVersionRequirement(writeVersionRequirementDependingOnCoroutinesVersion())
             }
 
-            if (descriptor.hasInlineClassTypesInSignature()) {
-                builder.addVersionRequirement(writeVersionRequirement(LanguageFeature.InlineClasses))
-            }
-
             if (local.metDefinitelyNotNullType) {
                 builder.addVersionRequirement(writeVersionRequirement(LanguageFeature.DefinitelyNonNullableTypes))
             }
@@ -419,10 +393,6 @@ class DescriptorSerializer private constructor(
                 builder.addVersionRequirement(writeVersionRequirementDependingOnCoroutinesVersion())
             }
 
-            if (descriptor.hasInlineClassTypesInSignature()) {
-                builder.addVersionRequirement(writeVersionRequirement(LanguageFeature.InlineClasses))
-            }
-
             if (local.metDefinitelyNotNullType) {
                 builder.addVersionRequirement(writeVersionRequirement(LanguageFeature.DefinitelyNonNullableTypes))
             }
@@ -455,10 +425,6 @@ class DescriptorSerializer private constructor(
                 builder.addVersionRequirement(writeVersionRequirementDependingOnCoroutinesVersion())
             }
 
-            if (descriptor.hasInlineClassTypesInSignature()) {
-                builder.addVersionRequirement(writeVersionRequirement(LanguageFeature.InlineClasses))
-            }
-
             if (local.metDefinitelyNotNullType) {
                 builder.addVersionRequirement(writeVersionRequirement(LanguageFeature.DefinitelyNonNullableTypes))
             }
@@ -478,10 +444,6 @@ class DescriptorSerializer private constructor(
         if (this is FunctionDescriptor && isSuspend) return true
 
         return allTypesFromSignature().any { type -> type.contains(UnwrappedType::isSuspendFunctionTypeOrSubtype) }
-    }
-
-    private fun CallableMemberDescriptor.hasInlineClassTypesInSignature(): Boolean {
-        return allTypesFromSignature().any { type -> type.contains(UnwrappedType::isInlineClassType) }
     }
 
     private fun CallableMemberDescriptor.allTypesFromSignature(): List<KotlinType> {
@@ -760,9 +722,6 @@ class DescriptorSerializer private constructor(
         return writeLanguageVersionRequirement(languageFeature, this)
     }
 
-    private fun MutableVersionRequirementTable.writeCompilerVersionRequirement(major: Int, minor: Int, patch: Int): Int =
-        writeCompilerVersionRequirement(major, minor, patch, this)
-
     // Returns a list of indices into versionRequirementTable, or empty list if there's no @RequireKotlin on the descriptor
     private fun MutableVersionRequirementTable.serializeVersionRequirements(descriptor: DeclarationDescriptor): List<Int> =
         descriptor.annotations
@@ -924,17 +883,6 @@ class DescriptorSerializer private constructor(
                 versionRequirementTable
             )
         }
-
-        fun writeCompilerVersionRequirement(
-            major: Int,
-            minor: Int,
-            patch: Int,
-            versionRequirementTable: MutableVersionRequirementTable
-        ): Int = writeVersionRequirement(
-            major, minor, patch,
-            ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION,
-            versionRequirementTable
-        )
 
         fun writeVersionRequirement(
             major: Int,
