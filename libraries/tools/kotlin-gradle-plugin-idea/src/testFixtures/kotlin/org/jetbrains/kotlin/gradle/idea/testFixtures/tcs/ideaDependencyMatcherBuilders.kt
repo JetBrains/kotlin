@@ -51,12 +51,12 @@ fun projectArtifactDependency(
     buildIdAndProjectPath: String, artifactFilePath: FilePathRegex
 ): IdeaKotlinDependencyMatcher {
     val slicedProjectPath = buildIdAndProjectPath.split("::", limit = 2)
-    val buildId = if (slicedProjectPath.size == 2) slicedProjectPath.first() else ":"
+    val buildPath = if (slicedProjectPath.size == 2) slicedProjectPath.first() else ":"
     val projectPath = if (slicedProjectPath.size == 2) ":" + slicedProjectPath.last() else slicedProjectPath.last()
 
     return IdeaKotlinProjectArtifactDependencyMatcher(
         type = type,
-        buildId = buildId,
+        buildPath = buildPath,
         projectPath = projectPath,
         artifactFilePath = artifactFilePath
     )
