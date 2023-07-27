@@ -130,7 +130,7 @@ internal fun checkPropertyInitializer(
                 !isExternal &&
                 !property.hasExplicitBackingField
             ) {
-                if (property.receiverParameter != null && !property.hasAnyAccessorImplementation) {
+                if (property.receiverParameter != null && !property.hasAllAccessorImplementation) {
                     reporter.reportOn(propertySource, FirErrors.EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT, context)
                 } else if (reachable) {
                     reportMustBeInitialized(property, isDefinitelyAssignedInConstructor, containingClass, propertySource, reporter, context)
@@ -208,6 +208,9 @@ private val FirProperty.hasSetterAccessorImplementation: Boolean
     get() = setter.hasImplementation
 private val FirProperty.hasAnyAccessorImplementation: Boolean
     get() = getter.hasImplementation || setter.hasImplementation
+
+private val FirProperty.hasAllAccessorImplementation: Boolean
+    get() = getter.hasImplementation && (isVal || setter.hasImplementation)
 
 private fun FirProperty.getEffectiveModality(containingClass: FirClass?, languageVersionSettings: LanguageVersionSettings): Modality? =
     when (languageVersionSettings.supportsFeature(LanguageFeature.TakeIntoAccountEffectivelyFinalInMustBeInitializedCheck) &&
