@@ -547,11 +547,11 @@ private class LibraryDeserializer(
         private val libraryFile: IrLibraryFile,
         private val signatureDeserializer: IdSignatureDeserializer
     ) {
-        private val cache = HashMap</* type id */ Int, AbiType>()
+        private val typeIdToTypeCache = HashMap<Int, AbiType>()
         private val nonPublicTopLevelClassNames = HashSet<AbiQualifiedName>()
 
         fun deserializeType(typeId: Int, typeParameterResolver: TypeParameterResolver): AbiType {
-            return cache.computeIfAbsent(typeId) {
+            return typeIdToTypeCache.computeIfAbsent(typeId) {
                 val proto = libraryFile.type(typeId)
                 when (val kindCase = proto.kindCase) {
                     ProtoType.KindCase.DNN -> deserializeDefinitelyNotNullType(proto.dnn, typeParameterResolver)
