@@ -22,6 +22,7 @@ object LibraryAbiRenderer {
  *   listed in [LibraryAbi.signatureVersions].
  * @param renderManifest Whether KLIB manifest properties should be rendered.
  * @param renderDeclarations Whether declarations should be rendered.
+ * @param indentationString The string used for indentation of nested declarations.
  * @param whenSignatureNotFound A handler that is executed when a signature is not found for a specific declaration.
  */
 @ExperimentalLibraryAbiReader
@@ -29,6 +30,7 @@ class AbiRenderingSettings(
     val renderedSignatureVersion: AbiSignatureVersion,
     val renderManifest: Boolean = false,
     val renderDeclarations: Boolean = true,
+    val indentationString: String = "    ",
     val whenSignatureNotFound: (AbiDeclaration, AbiSignatureVersion) -> String = { declaration, signatureVersion ->
         error("No signature $signatureVersion for ${declaration::class.java}, $declaration")
     }

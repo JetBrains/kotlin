@@ -81,7 +81,7 @@ internal class AbiRendererImpl(
         }
 
         private fun appendIndent() {
-            for (i in 0u until indent) output.append("    ")
+            for (i in 0u until indent) output.append(settings.indentationString)
         }
 
         private fun appendSignature(declaration: AbiDeclaration) {
