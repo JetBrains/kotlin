@@ -505,7 +505,7 @@ private class LibraryDeserializer(
     }
 
     private class TypeParameterResolver(
-        val declarationName: AbiQualifiedName,
+        private val declarationName: AbiQualifiedName,
         val parent: TypeParameterResolver?,
         levelAdjustment: Int = 0
     ) {
@@ -528,7 +528,7 @@ private class LibraryDeserializer(
             private const val ALPHABET_SIZE: Int = 'Z' - 'A' + 1
 
             private fun computeTagPrefix(index: Int): String {
-                val result = mutableListOf<Char>()
+                val result = SmartList<Char>()
 
                 var quotient = index
                 var remainder = quotient % ALPHABET_SIZE
@@ -538,7 +538,7 @@ private class LibraryDeserializer(
                     remainder = (quotient - 1) % ALPHABET_SIZE
                 } while (quotient != 0)
 
-                return result.reversed().joinToString(separator = "")
+                return if (result.size == 1) result[0].toString() else result.asReversed().joinToString(separator = "")
             }
         }
     }
