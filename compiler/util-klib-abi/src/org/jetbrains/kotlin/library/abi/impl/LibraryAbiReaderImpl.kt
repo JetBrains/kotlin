@@ -269,7 +269,7 @@ private class LibraryDeserializer(
 
             val thisFunctionTypeParameterResolver = when {
                 isConstructor -> {
-                    // Reuse the TP resolved from the class as far as constructors can't have own TPs.
+                    // Reuse the TP resolved from the class, as constructors can't have own TPs.
                     parentTypeParameterResolver!!
                 }
                 containingEntity is ContainingEntity.Property -> {
