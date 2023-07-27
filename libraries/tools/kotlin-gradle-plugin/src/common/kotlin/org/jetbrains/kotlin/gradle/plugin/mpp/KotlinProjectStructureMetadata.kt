@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.gradle.targets.metadata.dependsOnClosureWithInterCom
 import org.jetbrains.kotlin.gradle.targets.metadata.getPublishedPlatformCompilations
 import org.jetbrains.kotlin.gradle.targets.metadata.isNativeSourceSet
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerCompositeMetadataJarBundling.cinteropMetadataDirectoryPath
+import org.jetbrains.kotlin.gradle.utils.buildPathCompat
 import org.jetbrains.kotlin.gradle.utils.compositeBuildRootProject
 import org.jetbrains.kotlin.gradle.utils.future
 import org.jetbrains.kotlin.gradle.utils.getOrPut
@@ -421,13 +422,13 @@ internal object GlobalProjectStructureMetadataStorage {
     fun registerProjectStructureMetadata(project: Project, metadataProvider: () -> KotlinProjectStructureMetadata) {
         project.compositeBuildRootProject {
             (it as ExtensionAware).extensions.extraProperties.set(
-                propertyName(project.currentBuildId().name, project.path),
+                propertyName(project.currentBuildId().buildPathCompat, project.path),
                 { metadataProvider().toJson() }
             )
         }
     }
 
-    fun getProjectStructureMetadataProvidersFromAllGradleBuilds(project: Project): Map<ProjectPathWithBuildName, Lazy<KotlinProjectStructureMetadata?>> {
+    fun getProjectStructureMetadataProvidersFromAllGradleBuilds(project: Project): Map<ProjectPathWithBuildPath, Lazy<KotlinProjectStructureMetadata?>> {
         return project.compositeBuildRootProject.extensions.extraProperties.properties
             .filterKeys { it.startsWith(propertyPrefix) }
             .entries
@@ -445,11 +446,11 @@ internal object GlobalProjectStructureMetadataStorage {
         return parseKotlinSourceSetMetadataFromJson(jsonString)
     }
 
-    private fun String.toProjectPathWithBuildName(): ProjectPathWithBuildName {
-        val (buildName, projectPath) = removePrefix("$propertyPrefix.").split(".path.")
-        return ProjectPathWithBuildName(
+    private fun String.toProjectPathWithBuildName(): ProjectPathWithBuildPath {
+        val (buildPath, projectPath) = removePrefix("$propertyPrefix.").split(".path.")
+        return ProjectPathWithBuildPath(
             projectPath = projectPath,
-            buildName = buildName
+            buildPath = buildPath
         )
     }
 }

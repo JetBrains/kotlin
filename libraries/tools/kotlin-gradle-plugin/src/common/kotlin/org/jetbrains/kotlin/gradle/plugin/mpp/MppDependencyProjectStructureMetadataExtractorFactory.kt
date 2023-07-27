@@ -11,23 +11,25 @@ import org.gradle.api.artifacts.result.ResolvedArtifactResult
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toSingleKpmModuleIdentifier
+import org.jetbrains.kotlin.gradle.utils.buildNameCompat
+import org.jetbrains.kotlin.gradle.utils.buildPathCompat
 import org.jetbrains.kotlin.gradle.utils.getOrPut
 
 internal val Project.kotlinMppDependencyProjectStructureMetadataExtractorFactory: MppDependencyProjectStructureMetadataExtractorFactory
     get() = MppDependencyProjectStructureMetadataExtractorFactory.getOrCreate(this)
 
-internal data class ProjectPathWithBuildName(
+internal data class ProjectPathWithBuildPath(
     val projectPath: String,
-    val buildName: String
+    val buildPath: String,
 )
 
 internal class MppDependencyProjectStructureMetadataExtractorFactory
 private constructor(
-    private val includedBuildsProjectStructureMetadataProviders: Lazy<Map<ProjectPathWithBuildName, Lazy<KotlinProjectStructureMetadata?>>>,
-    private val currentBuildProjectStructureMetadataProviders: Map<String, Lazy<KotlinProjectStructureMetadata?>>
+    private val includedBuildsProjectStructureMetadataProviders: Lazy<Map<ProjectPathWithBuildPath, Lazy<KotlinProjectStructureMetadata?>>>,
+    private val currentBuildProjectStructureMetadataProviders: Map<String, Lazy<KotlinProjectStructureMetadata?>>,
 ) {
     fun create(
-        metadataArtifact: ResolvedArtifactResult
+        metadataArtifact: ResolvedArtifactResult,
     ): MppDependencyProjectStructureMetadataExtractor {
         val moduleId = metadataArtifact.variant.owner
 
@@ -42,11 +44,22 @@ private constructor(
                     projectStructureMetadataProvider = projectStructureMetadataProvider::value
                 )
             } else {
-                val key = ProjectPathWithBuildName(moduleId.projectPath, moduleId.build.name)
+                /*
+                We switched to using 'buildPath' instead of 'buildName' in 1.9.20,
+                (See: https://youtrack.jetbrains.com/issue/KT-58157/)
+
+                In order for 1.9.20 projects to consume included builds with lesser KGP versions,
+                we will still query this 'legacy key' which is the key we expect older KGP versions to use.
+                */
+                val pre1920Key = ProjectPathWithBuildPath(moduleId.projectPath, moduleId.build.buildNameCompat)
+                val key = ProjectPathWithBuildPath(moduleId.projectPath, moduleId.build.buildPathCompat)
                 IncludedBuildMppDependencyProjectStructureMetadataExtractor(
                     componentId = moduleId,
                     primaryArtifact = metadataArtifact.file,
-                    projectStructureMetadataProvider = { includedBuildsProjectStructureMetadataProviders.value[key]?.value }
+                    projectStructureMetadataProvider = {
+                        includedBuildsProjectStructureMetadataProviders.value[key]?.value
+                            ?: includedBuildsProjectStructureMetadataProviders.value[pre1920Key]?.value
+                    }
                 )
             }
         } else {
