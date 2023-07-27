@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.version
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmVariant
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
+import org.jetbrains.kotlin.gradle.report.BuildMetricsService
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.targets.native.*
 import org.jetbrains.kotlin.gradle.targets.native.internal.*
@@ -428,6 +429,10 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
                         }
                     )
                     .finalizeValueOnRead()
+
+                BuildMetricsService.registerIfAbsent(project)?.let { buildMetricService ->
+                    it.buildMetricsService.value(buildMetricService)
+                }
             }
 
             compilationInfo.classesDirs.from(compileTaskProvider.map { it.outputFile })

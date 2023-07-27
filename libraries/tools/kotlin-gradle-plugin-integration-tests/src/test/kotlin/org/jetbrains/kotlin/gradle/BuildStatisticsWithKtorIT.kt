@@ -15,9 +15,9 @@ import io.ktor.server.netty.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import io.ktor.util.*
-import io.ktor.util.collections.*
+import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.build.report.statistics.*
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.report.data.GradleCompileStatisticsData
@@ -28,7 +28,6 @@ import java.net.HttpURLConnection
 import java.net.InetSocketAddress
 import java.net.ServerSocket
 import java.net.URL
-import java.util.*
 import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.TimeUnit
 import kotlin.test.*
@@ -253,16 +252,24 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
                         StatTag.NON_INCREMENTAL,
                         StatTag.CONFIGURATION_CACHE,
                         StatTag.KOTLIN_1,
-                    ), taskData.getTags().sorted(),
+                    ),
+                    taskData.getTags().sorted(),
                 )
                 assertEquals(
                     defaultBuildOptions.kotlinVersion, taskData.getKotlinVersion(),
-                                           "Unexpected kotlinVersion: ${taskData.getKotlinVersion()} instead of ${defaultBuildOptions.kotlinVersion}"
+                    "Unexpected kotlinVersion: ${taskData.getKotlinVersion()} instead of ${defaultBuildOptions.kotlinVersion}"
                 )
             }
             validateTaskData(port) { taskData ->
                 assertEquals(":app:compileKotlin", taskData.getTaskName())
-                assertContentEquals(listOf(StatTag.ARTIFACT_TRANSFORM, StatTag.NON_INCREMENTAL, StatTag.CONFIGURATION_CACHE, StatTag.KOTLIN_1), taskData.getTags().sorted())
+                assertContentEquals(
+                    listOf(
+                        StatTag.ARTIFACT_TRANSFORM,
+                        StatTag.NON_INCREMENTAL,
+                        StatTag.CONFIGURATION_CACHE,
+                        StatTag.KOTLIN_1
+                    ), taskData.getTags().sorted()
+                )
                 assertEquals(
                     defaultBuildOptions.kotlinVersion, taskData.getKotlinVersion(),
                     "Unexpected kotlinVersion: ${taskData.getKotlinVersion()} instead of ${defaultBuildOptions.kotlinVersion}"
@@ -274,14 +281,54 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
             //second build
             validateTaskData(port) { taskData ->
                 assertEquals(":lib:compileKotlin", taskData.getTaskName())
-                assertContentEquals(listOf(StatTag.ARTIFACT_TRANSFORM, StatTag.INCREMENTAL, StatTag.CONFIGURATION_CACHE, StatTag.KOTLIN_1), taskData.getTags().sorted())
+                assertContentEquals(
+                    listOf(StatTag.ARTIFACT_TRANSFORM, StatTag.INCREMENTAL, StatTag.CONFIGURATION_CACHE, StatTag.KOTLIN_1),
+                    taskData.getTags().sorted()
+                )
             }
             validateTaskData(port) { taskData ->
                 assertEquals(":app:compileKotlin", taskData.getTaskName())
-                assertContentEquals(listOf(StatTag.ARTIFACT_TRANSFORM, StatTag.INCREMENTAL, StatTag.CONFIGURATION_CACHE, StatTag.KOTLIN_1), taskData.getTags().sorted())
+                assertContentEquals(
+                    listOf(StatTag.ARTIFACT_TRANSFORM, StatTag.INCREMENTAL, StatTag.CONFIGURATION_CACHE, StatTag.KOTLIN_1),
+                    taskData.getTags().sorted()
+                )
             }
         }
     }
+
+    @DisplayName("Build reports for native")
+    @GradleTest
+    fun buildReportForNative(gradleVersion: GradleVersion) {
+        runWithKtorService { port ->
+            project(
+                "k2-native-intermediate-metadata",
+                gradleVersion,
+                buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.WARN)
+            ) {
+                setProjectForTest(port)
+                build("build") {
+                    assertOutputDoesNotContain("Failed to send statistic to")
+                }
+            }
+
+            val nativeTasks = listOf(":compileCommonMainKotlinMetadata", ":compileNativeMainKotlinMetadata")
+
+            for (task in nativeTasks) {
+                validateTaskData(port) { taskData ->
+                    //can be sure in task execution order
+                    assertEquals(taskData.getTaskName(), task)
+
+                    assertContains(taskData.getBuildTimesMetrics().keys, GradleBuildTime.NATIVE_IN_PROCESS)
+                    assertContains(taskData.getBuildTimesMetrics().keys, GradleBuildTime.RUN_ENTRY_POINT)
+                    assertEquals(
+                        defaultBuildOptions.kotlinVersion, taskData.getKotlinVersion(),
+                        "Unexpected kotlinVersion: ${taskData.getKotlinVersion()} instead of ${defaultBuildOptions.kotlinVersion}"
+                    )
+                }
+            }
+        }
+    }
+
 
     private fun TestProject.setProjectForTest(port: Int) {
         enableStatisticReports(BuildReportType.HTTP, "http://localhost:$port/put")

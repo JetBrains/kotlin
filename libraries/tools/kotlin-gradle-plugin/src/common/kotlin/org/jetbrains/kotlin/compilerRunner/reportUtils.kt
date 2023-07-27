@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.daemon.client.DaemonReportingTargets
 import org.jetbrains.kotlin.daemon.client.launchProcessWithFallback
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.logging.GradleErrorMessageCollector
 import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
@@ -237,4 +238,10 @@ internal fun exitCodeFromProcessExitCode(log: KotlinLogger, code: Int): ExitCode
 
     log.debug("Could not find exit code by value: $code")
     return if (code == 0) ExitCode.OK else ExitCode.COMPILATION_ERROR
+}
+
+//Copy of CommonCompilerArguments.parseOrConfigureLanguageVersion to avoid direct dependency
+internal fun parseLanguageVersion(languageVersion: String?, useK2: Boolean): KotlinVersion {
+    val explicitVersion = languageVersion?.let { KotlinVersion.fromVersion(languageVersion) } ?: KotlinVersion.DEFAULT
+    return if (useK2 && (explicitVersion < KotlinVersion.KOTLIN_2_0)) KotlinVersion.KOTLIN_2_0 else explicitVersion
 }

@@ -270,7 +270,7 @@ class BuildReportsService {
                 // Filtering by only KGP tasks and by those that actually do compilation
                 it.isFromKotlinPlugin && it.kotlinLanguageVersion != null
             }
-        log.warn("##### 'kotlin.experimental.tryK2' results (Kotlin/Native not checked) #####")
+        log.warn("##### 'kotlin.experimental.tryK2' results #####")
         if (tasksData.isEmpty()) {
             log.warn("No Kotlin compilation tasks have been run")
             log.warn("#####")

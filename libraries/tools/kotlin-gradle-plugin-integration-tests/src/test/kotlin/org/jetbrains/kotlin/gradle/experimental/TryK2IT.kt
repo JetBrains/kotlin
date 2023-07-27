@@ -65,7 +65,7 @@ class TryK2IT : KGPBaseTest() {
         ) {
             build("build") {
                 assertOutputDoesNotContain(
-                    "##### 'kotlin.experimental.tryK2' results (Kotlin/Native not checked) #####"
+                    "##### 'kotlin.experimental.tryK2' results #####"
                 )
             }
         }
@@ -85,12 +85,44 @@ class TryK2IT : KGPBaseTest() {
             build("build") {
                 assertOutputContains(
                     """
-                    |##### 'kotlin.experimental.tryK2' results (Kotlin/Native not checked) #####
+                    |##### 'kotlin.experimental.tryK2' results #####
                     |:lib:compileKotlin: 2.0 language version
                     |:app:compileKotlin: 2.0 language version
                     |##### 100% (2/2) tasks have been compiled with Kotlin 2.0 #####
                     """.trimMargin().normalizeLineEndings()
                 )
+            }
+        }
+    }
+
+    @DisplayName("Native: report is printed at the end of the build")
+    @MppGradlePluginTests
+    @GradleTest
+    fun buildReportForNative(gradleVersion: GradleVersion) {
+        project(
+            "k2-native-intermediate-metadata",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.WARN)
+        ) {
+            enableTryK2()
+
+            build("build") {
+                assertOutputContains(
+                    """
+                    |##### 'kotlin.experimental.tryK2' results #####
+                    |:compileCommonMainKotlinMetadata: 2.0 language version
+                    |:compileNativeMainKotlinMetadata: 2.0 language version
+                    """.trimMargin().normalizeLineEndings()
+                )
+                //depends on system
+                assertOutputContains(
+                    """
+                    |:compileKotlinMingwX64: 2.0 language version
+                    """.trimIndent()
+                )
+
+                assertOutputContains("##### 100%")
+                assertOutputContains("tasks have been compiled with Kotlin 2.0 #####")
             }
         }
     }
@@ -116,7 +148,7 @@ class TryK2IT : KGPBaseTest() {
             buildAndFail("build", forceOutput = true) {
                 assertOutputContains(
                     """
-                    |##### 'kotlin.experimental.tryK2' results (Kotlin/Native not checked) #####
+                    |##### 'kotlin.experimental.tryK2' results #####
                     |:lib:compileKotlin: 2.0 language version
                     |:app:compileKotlin: 2.0 language version
                     |##### 100% (2/2) tasks have been compiled with Kotlin 2.0 #####

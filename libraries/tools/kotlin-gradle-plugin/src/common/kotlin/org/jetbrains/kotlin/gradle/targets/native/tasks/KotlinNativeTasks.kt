@@ -23,6 +23,7 @@ import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
+import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.compilerRunner.KotlinNativeCInteropRunner.Companion.run
@@ -35,11 +36,15 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.create
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
+import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmMetadataCompilationData
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmNativeCompilationData
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
+import org.jetbrains.kotlin.gradle.report.TaskExecutionInfo
+import org.jetbrains.kotlin.gradle.report.TaskExecutionResult
+import org.jetbrains.kotlin.gradle.report.UsesBuildMetricsService
 import org.jetbrains.kotlin.gradle.targets.native.KonanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.targets.native.internal.isAllowCommonizer
 import org.jetbrains.kotlin.gradle.targets.native.tasks.*
@@ -124,10 +129,10 @@ internal fun FileCollection.filterKlibsPassedToCompiler(): FileCollection = filt
 @DisableCachingByDefault(because = "Abstract super-class, not to be instantiated directly")
 abstract class AbstractKotlinNativeCompile<
         T : KotlinCommonToolOptions,
-        M : CommonToolArguments
+        M : CommonToolArguments,
         >
 @Inject constructor(
-    private val objectFactory: ObjectFactory
+    private val objectFactory: ObjectFactory,
 ) : AbstractKotlinCompileTool<M>(objectFactory) {
 
     @get:Inject
@@ -311,10 +316,11 @@ internal constructor(
     override val compilerOptions: KotlinNativeCompilerOptions,
     private val objectFactory: ObjectFactory,
     private val providerFactory: ProviderFactory,
-    private val execOperations: ExecOperations
+    private val execOperations: ExecOperations,
 ) : AbstractKotlinNativeCompile<KotlinCommonOptions, K2NativeCompilerArguments>(objectFactory),
     KotlinCompile<KotlinCommonOptions>,
     K2MultiplatformCompilationTask,
+    UsesBuildMetricsService ,
     KotlinCompilationTask<KotlinNativeCompilerOptions> {
 
     @get:Input
@@ -517,17 +523,31 @@ internal constructor(
 
     @TaskAction
     fun compile() {
-        val output = outputFile.get()
-        output.parentFile.mkdirs()
-
-        collectCommonCompilerStats()
+        val buildMetrics = metrics.get()
         val arguments = createCompilerArguments()
-        val buildArguments = ArgumentUtils.convertArgumentsToStringList(arguments)
+        buildMetrics.addTimeMetric(GradleBuildPerformanceMetric.START_TASK_ACTION_EXECUTION)
+        val buildArguments = buildMetrics.measure(GradleBuildTime.OUT_OF_WORKER_TASK_ACTION) {
+            val output = outputFile.get()
+            output.parentFile.mkdirs()
+
+            collectCommonCompilerStats()
+            ArgumentUtils.convertArgumentsToStringList(arguments)
+        }
+        buildMetricsService.orNull?.also { it.addTask(path, this.javaClass, buildMetrics) }
 
         KotlinNativeCompilerRunner(
             settings = runnerSettings,
             executionContext = KotlinToolRunner.GradleExecutionContext.fromTaskContext(objectFactory, execOperations, logger)
-        ).run(buildArguments)
+        ).run(buildArguments, buildMetrics)
+
+
+        val taskInfo = TaskExecutionInfo(
+            kotlinLanguageVersion = parseLanguageVersion(arguments.languageVersion, arguments.useK2),
+        )
+
+        val result = TaskExecutionResult(buildMetrics = BuildMetrics(), taskInfo = taskInfo)
+        TaskExecutionResults[path] = result
+
     }
 
     private fun collectCommonCompilerStats() {
@@ -546,7 +566,7 @@ internal constructor(
 internal class ExternalDependenciesBuilder(
     val project: Project,
     val compilation: KotlinCompilation<*>,
-    intermediateLibraryName: String?
+    intermediateLibraryName: String?,
 ) {
     constructor(project: Project, compilation: KotlinNativeCompilation) : this(
         project, compilation, compilation.compileKotlinTask.moduleName
@@ -746,7 +766,7 @@ internal class CacheBuilder(
                 binary: NativeBinary,
                 konanTarget: KonanTarget,
                 toolOptions: KotlinCommonCompilerToolOptions,
-                externalDependenciesArgs: List<String>
+                externalDependenciesArgs: List<String>,
             ): Settings {
                 val konanCacheKind = project.getKonanCacheKind(konanTarget)
                 return Settings(
@@ -799,7 +819,7 @@ internal class CacheBuilder(
 
     private fun getCacheDirectory(
         resolvedConfiguration: LazyResolvedConfiguration,
-        dependency: ResolvedDependencyResult
+        dependency: ResolvedDependencyResult,
     ): File = getCacheDirectory(
         rootCacheDirectory = rootCacheDirectory,
         dependency = dependency,
@@ -813,7 +833,7 @@ internal class CacheBuilder(
 
     private fun LazyResolvedConfiguration.ensureDependencyPrecached(
         dependency: ResolvedDependencyResult,
-        visitedDependencies: MutableSet<ResolvedDependencyResult>
+        visitedDependencies: MutableSet<ResolvedDependencyResult>,
     ) {
         if (dependency in visitedDependencies)
             return
@@ -912,7 +932,7 @@ internal class CacheBuilder(
     private fun ensureCompilerProvidedLibPrecached(
         platformLibName: String,
         platformLibs: Map<String, File>,
-        visitedLibs: MutableSet<String>
+        visitedLibs: MutableSet<String>,
     ) {
         if (platformLibName in visitedLibs)
             return
@@ -1002,11 +1022,11 @@ open class CInteropProcess @Inject internal constructor(params: Params) : Defaul
         val compilationName: String,
         val konanTarget: KonanTarget,
         val baseKlibName: String,
-        val services: Services
+        val services: Services,
     ) {
         internal open class Services @Inject constructor(
             val objectFactory: ObjectFactory,
-            val execOperations: ExecOperations
+            val execOperations: ExecOperations,
         )
     }
 
