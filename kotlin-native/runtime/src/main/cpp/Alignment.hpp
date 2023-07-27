@@ -28,7 +28,7 @@ constexpr inline bool IsValidAlignment(size_t alignment) {
     return alignment != 0 && (alignment & (alignment - 1)) == 0;
 }
 
-constexpr inline bool IsAligned(size_t size, size_t alignment) {
+constexpr inline bool IsAligned(uint64_t size, size_t alignment) {
     return size % alignment == 0;
 }
 
