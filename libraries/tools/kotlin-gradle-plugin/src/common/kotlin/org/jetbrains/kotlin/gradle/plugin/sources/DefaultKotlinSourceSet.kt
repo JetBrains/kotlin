@@ -68,7 +68,7 @@ abstract class DefaultKotlinSourceSet @Inject constructor(
 
     override val kotlin: SourceDirectorySet = createDefaultSourceDirectorySet(project, "$name Kotlin source")
 
-    override val languageSettings: LanguageSettingsBuilder = project.objects.newInstance<DefaultLanguageSettingsBuilder>(project)
+    override val languageSettings: LanguageSettingsBuilder = DefaultLanguageSettingsBuilder(project)
 
     override val resources: SourceDirectorySet = createDefaultSourceDirectorySet(project, "$name resources")
 

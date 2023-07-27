@@ -8,6 +8,8 @@
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.kotlin.dsl.provideDelegate
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformSourceSetConventionsImpl.jvmMain
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformSourceSetConventionsImpl.jvmTest
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.configurationResult
@@ -50,21 +52,31 @@ class KotlinMultiplatformSourceSetConventionsTest {
     }
 
     @Test
-    fun `test - languageSettings`() = buildProjectWithMPP().runLifecycleAwareTest {
-        multiplatformExtension.apply {
-            jvm()
+    fun `test - languageSettings`() {
+        val project = buildProjectWithMPP()
+        project.runLifecycleAwareTest {
+            multiplatformExtension.apply {
+                jvm()
 
-            sourceSets.jvmMain.languageSettings {
-                this.optIn("jvmMain.optIn")
+                sourceSets.jvmMain.languageSettings {
+                    optIn("jvmMain.optIn")
+                }
+
+                sourceSets.jvmTest.languageSettings {
+                    this.optIn("jvmTest.optIn")
+                }
+
             }
-
-            sourceSets.jvmTest.languageSettings {
-                this.optIn("jvmTest.optIn")
-            }
-
-            assertEquals(setOf("jvmMain.optIn"), sourceSets.jvmMain.get().languageSettings.optInAnnotationsInUse)
-            assertEquals(setOf("jvmTest.optIn"), sourceSets.jvmTest.get().languageSettings.optInAnnotationsInUse)
         }
+
+        assertEquals(
+            setOf("jvmMain.optIn"),
+            project.multiplatformExtension.sourceSets.jvmMain.get().languageSettings.optInAnnotationsInUse
+        )
+        assertEquals(
+            setOf("jvmTest.optIn"),
+            project.multiplatformExtension.sourceSets.jvmTest.get().languageSettings.optInAnnotationsInUse
+        )
     }
 
     @Test

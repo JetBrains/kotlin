@@ -76,7 +76,7 @@ internal fun buildSyntheticPlainModule(
 ): GradleKpmExternalPlainModule {
     val moduleDependency = resolvedComponentResult.toKpmModuleDependency()
     return GradleKpmExternalPlainModule(KpmBasicModule(moduleDependency.moduleIdentifier).apply {
-        KpmBasicVariant(this@apply, singleVariantName, DefaultLanguageSettingsBuilder(TODO(), TODO())).apply {
+        KpmBasicVariant(this@apply, singleVariantName, DefaultLanguageSettingsBuilder(TODO())).apply {
             fragments.add(this)
             this.declaredModuleDependencies.addAll(
                 resolvedComponentResult.dependencies

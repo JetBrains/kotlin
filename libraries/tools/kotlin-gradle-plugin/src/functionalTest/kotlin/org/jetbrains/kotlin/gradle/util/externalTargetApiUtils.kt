@@ -20,8 +20,11 @@ fun ExternalKotlinTargetDescriptorBuilder<FakeTarget>.defaults() {
     targetFactory = TargetFactory(::FakeTarget)
 }
 
-fun ExternalKotlinCompilationDescriptorBuilder<FakeCompilation>.defaults(kotlin: KotlinMultiplatformExtension) {
-    compilationName = "fake"
+fun ExternalKotlinCompilationDescriptorBuilder<FakeCompilation>.defaults(
+    kotlin: KotlinMultiplatformExtension,
+    name: String = "fake"
+) {
+    compilationName = name
     compilationFactory = CompilationFactory(::FakeCompilation)
-    defaultSourceSet = kotlin.sourceSets.maybeCreate("fake")
+    defaultSourceSet = kotlin.sourceSets.maybeCreate(name)
 }

@@ -164,7 +164,7 @@ class GradleProjectModuleBuilder(private val addInferredSourceSetVisibilityAsExp
                             ?: listOf(compilation.defaultSourceSetName)
 
                     variantNames.forEach { variantName ->
-                        val variant = KpmBasicVariant(this@apply, variantName, DefaultLanguageSettingsBuilder(project, project.providers))
+                        val variant = KpmBasicVariant(this@apply, variantName, DefaultLanguageSettingsBuilder(project))
                         moduleByFragment[variant] = this@apply
                         variantToCompilation[variant] = compilation
                         fragments.add(variant)

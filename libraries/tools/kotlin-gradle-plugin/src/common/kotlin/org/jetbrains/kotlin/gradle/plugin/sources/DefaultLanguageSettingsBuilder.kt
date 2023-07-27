@@ -8,135 +8,113 @@ package org.jetbrains.kotlin.gradle.plugin.sources
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Provider
-import org.gradle.api.provider.ProviderFactory
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
-import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
-import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
-import org.jetbrains.kotlin.gradle.plugin.launchInStage
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompileTool
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinNativeCompile
 import org.jetbrains.kotlin.gradle.tasks.toSingleCompilerPluginOptions
-import java.util.concurrent.atomic.AtomicBoolean
+import org.jetbrains.kotlin.gradle.utils.*
 import javax.inject.Inject
-import kotlin.reflect.KProperty
 
 internal open class DefaultLanguageSettingsBuilder @Inject constructor(
-    project: Project,
-    private val providersFactory: ProviderFactory
+    private val project: Project
 ) : LanguageSettingsBuilder {
-    // For shared source sets, it could be null if there is no associated Kotlin compilation task
-    internal var compilationCompilerOptions: KotlinCommonCompilerOptions? = null
-
-    // For shared source sets, it will contain additional compiler options for source sets, which depend on shared
-    internal val dependentCompilerOptions: MutableSet<KotlinCommonCompilerOptions> = mutableSetOf()
-
-    private val allCompilerOptions: Set<KotlinCommonCompilerOptions>
-        get() = setOfNotNull(compilationCompilerOptions) + dependentCompilerOptions
-
-    private val compilerOptionsAreAvailable = AtomicBoolean(false)
+    internal var compilationCompilerOptions: CompletableFuture<KotlinCommonCompilerOptions> = CompletableFuture()
 
     init {
-        // Kotlin source set could be created before related Kotlin compilation,
-        // leaving a gap where none of the compilation options are available.
-        // Additionally, 'allCompilerOptions' become fully available after 'AfterFinaliseRefinesEdges' state
-        // when source sets relationship is finalized
-        project.launchInStage(KotlinPluginLifecycle.Stage.FinaliseCompilations) {
-            compilerOptionsAreAvailable.set(true)
-            // Executing all pending compiler options changes
-            if (languageVersionWrapper.isUpdated) languageVersion = languageVersionWrapper.get()
-            if (apiVersionWrapper.isUpdated) apiVersion = apiVersionWrapper.get()
-            if (progressiveModeWrapper.isUpdated) progressiveMode = progressiveModeWrapper.get()
-            if (enabledLanguageFeaturesWrapper.isUpdated) enabledLanguageFeaturesWrapper.get()
-                .forEach { enableLanguageFeature(it) }
-            if (optInAnnotationsInUseWrapper.isUpdated) optInAnnotationsInUseWrapper.get()
-                .forEach { optIn(it) }
-            if (freeCompilerArgsProviderWrapper.isUpdated) freeCompilerArgsProvider = freeCompilerArgsProviderWrapper.get()
-            if (explicitApiWrapper.isUpdated) explicitApi = explicitApiWrapper.get()
+        project.launch {
+            KotlinPluginLifecycle.Stage.AfterFinaliseCompilations.await()
+            if (!compilationCompilerOptions.isCompleted) {
+                // For shared source sets without any associated compilation, it would be a separate instance of common compiler options
+                compilationCompilerOptions.complete(project.objects.newInstance<KotlinCommonCompilerOptionsDefault>())
+            }
         }
     }
 
-    private val languageVersionWrapper = ValueWrapper<String?>(null)
-
-    override var languageVersion by DelayableValue(
-        languageVersionWrapper,
-        { allCompilerOptions.mapNotNull { it.languageVersion.orNull }.minByOrNull { it.ordinal }?.version },
-        { value ->
-            allCompilerOptions.forEach { compilerOptions ->
-                compilerOptions.languageVersion.set(value?.let { KotlinVersion.fromVersion(it) })
+    override var languageVersion: String? = null
+        get() = if (compilationCompilerOptions.isCompleted) {
+            compilationCompilerOptions.getOrThrow().languageVersion.orNull?.version
+        } else {
+            field
+        }
+        set(value) {
+            field = value
+            project.launch {
+                compilationCompilerOptions.await()
+                    .languageVersion
+                    .set(value?.let { KotlinVersion.fromVersion(it) })
             }
         }
-    )
 
-    private val apiVersionWrapper = ValueWrapper<String?>(null)
-
-    override var apiVersion by DelayableValue(
-        apiVersionWrapper,
-        { allCompilerOptions.mapNotNull { it.apiVersion.orNull }.minByOrNull { it.ordinal }?.version },
-        { value ->
-            allCompilerOptions.forEach { compilerOptions ->
-                compilerOptions.apiVersion.set(value?.let { KotlinVersion.fromVersion(it) })
+    override var apiVersion: String? = null
+        get() = if (compilationCompilerOptions.isCompleted) {
+            compilationCompilerOptions.getOrThrow().apiVersion.orNull?.version
+        } else {
+            field
+        }
+        set(value) {
+            field = value
+            project.launch {
+                compilationCompilerOptions.await()
+                    .apiVersion
+                    .set(value?.let { KotlinVersion.fromVersion(it) })
             }
         }
-    )
 
-    private val progressiveModeWrapper = ValueWrapper(false)
-
-    override var progressiveMode by DelayableValue(
-        progressiveModeWrapper,
-        { allCompilerOptions.map { it.progressiveMode.get() }.all { it } },
-        { value ->
-            allCompilerOptions.forEach { compilerOptions ->
-                compilerOptions.progressiveMode.set(value)
+    override var progressiveMode: Boolean = false
+        get() = if (compilationCompilerOptions.isCompleted) {
+            compilationCompilerOptions.getOrThrow().progressiveMode.get()
+        } else {
+            field
+        }
+        set(value) {
+            field = value
+            project.launch {
+                compilationCompilerOptions.await()
+                    .progressiveMode
+                    .set(value)
             }
         }
-    )
 
-    private val enabledLanguageFeaturesWrapper = ValueWrapper<MutableSet<String>>(mutableSetOf())
+    private val enabledLanguageFeaturesField = mutableSetOf<String>()
 
     override val enabledLanguageFeatures: Set<String>
-        get() = if (compilerOptionsAreAvailable.get()) {
-            allCompilerOptions
-                .flatMap { it.freeCompilerArgs.get() }
-                .filter { it.startsWith("-XXLanguage:+") } // TODO: minimal common set
+        get() = if (compilationCompilerOptions.isCompleted) {
+            compilationCompilerOptions.getOrThrow()
+                .freeCompilerArgs
+                .get()
+                .filter { it.startsWith("-XXLanguage:+") }
                 .toSet()
         } else {
-            enabledLanguageFeaturesWrapper.get().toSet()
+            enabledLanguageFeaturesField.toSet()
         }
 
     override fun enableLanguageFeature(name: String) {
-        if (compilerOptionsAreAvailable.get()) {
-            allCompilerOptions.forEach { compilerOptions ->
-                compilerOptions.freeCompilerArgs.add("-XXLanguage:+$name")
-            }
-        } else {
-            enabledLanguageFeaturesWrapper.set(
-                enabledLanguageFeaturesWrapper.get().apply { add(name) }
-            )
+        enabledLanguageFeaturesField.add(name)
+        project.launch {
+            compilationCompilerOptions.await()
+                .freeCompilerArgs
+                .add("-XXLanguage:+$name")
         }
     }
 
-    private val optInAnnotationsInUseWrapper = ValueWrapper<MutableSet<String>>(mutableSetOf())
+    private val optInAnnotationsInUseField = mutableSetOf<String>()
 
     override val optInAnnotationsInUse: Set<String>
-        get() = if (compilerOptionsAreAvailable.get()) {
-            allCompilerOptions
-                .flatMap { it.optIn.get() }
-                .toSet()
+        get() = if (compilationCompilerOptions.isCompleted) {
+            compilationCompilerOptions.getOrThrow().optIn.get().toSet()
         } else {
-            optInAnnotationsInUseWrapper.get().toSet()
+            optInAnnotationsInUseField.toSet()
         }
 
     override fun optIn(annotationName: String) {
-        if (compilerOptionsAreAvailable.get()) {
-            allCompilerOptions.forEach { compilerOptions ->
-                compilerOptions.optIn.add(annotationName)
-            }
-        } else {
-            optInAnnotationsInUseWrapper.set(
-                optInAnnotationsInUseWrapper.get().apply { add(annotationName) }
-            )
+        optInAnnotationsInUseField.add(annotationName)
+        project.launch {
+            compilationCompilerOptions.await()
+                .optIn.add(annotationName)
         }
     }
 
@@ -164,82 +142,52 @@ internal open class DefaultLanguageSettingsBuilder @Inject constructor(
             }
         }
 
-    private val freeCompilerArgsProviderWrapper = ValueWrapper<Provider<List<String>>?>(null)
-
-    var freeCompilerArgsProvider by DelayableValue(
-        freeCompilerArgsProviderWrapper,
-        {
-            providersFactory.provider {
-                allCompilerOptions.flatMap { it.freeCompilerArgs.get() }
-            }
-        },
-        { value ->
+    var freeCompilerArgsProvider: Provider<List<String>>? = null
+        get() = if (compilationCompilerOptions.isCompleted) {
+            compilationCompilerOptions.getOrThrow().freeCompilerArgs
+        } else {
+            field
+        }
+        set(value) {
+            field = value
+            // Checking if the provider has value as it overwrites the convention
+            // https://github.com/gradle/gradle/issues/20266
             if (value != null && value.isPresent) {
-                allCompilerOptions.forEach { compilerOptions ->
-                    compilerOptions.freeCompilerArgs.addAll(value)
+                project.launch {
+                    compilationCompilerOptions.await()
+                        .freeCompilerArgs.addAll(value)
                 }
             }
         }
-    )
-
-    private val explicitApiWrapper = ValueWrapper<Provider<String>?>(null)
 
     // Kept here for compatibility with IDEA Kotlin import. It relies on explicit api argument in `freeCompilerArgs` to enable related
     // inspections
-    internal var explicitApi by DelayableValue(
-        explicitApiWrapper,
-        {
-            providersFactory.provider {
-                allCompilerOptions
-                    .flatMap { it.freeCompilerArgs.get() }
-                    .find { it.startsWith("-Xexplicit-api") }
-            }
-        },
-        { value ->
+    internal var explicitApi: Provider<String>? = null
+        get() = if (compilationCompilerOptions.isCompleted) {
+            val freeArgs = compilationCompilerOptions.getOrThrow()
+                .freeCompilerArgs
+                .get()
+            freeArgs.find { it.startsWith("-Xexplicit-api") }?.let { project.providers.provider { it } }
+        } else {
+            field
+        }
+        set(value) {
+            field = value
+            // Checking if the provider has value as it overwrites the convention
+            // https://github.com/gradle/gradle/issues/20266
             if (value != null && value.isPresent) {
-                allCompilerOptions.forEach { compilerOptions ->
-                    compilerOptions.freeCompilerArgs.add(value)
+                project.launch {
+                    compilationCompilerOptions.await()
+                        .freeCompilerArgs
+                        .add(value)
                 }
             }
         }
-    )
 
-    val freeCompilerArgs: List<String> get() = allCompilerOptions.flatMap { it.freeCompilerArgs.get() }
-
-    private class ValueWrapper<T : Any?>(
-        initialValue: T
-    ) {
-        private var value: T = initialValue
-        private var wasUpdated = false
-
-        val isUpdated get() = wasUpdated
-
-        fun get() = value
-        fun set(value: T) {
-            wasUpdated = true
-            this.value = value
+    val freeCompilerArgs: List<String>
+        get() = if (compilationCompilerOptions.isCompleted) {
+            compilationCompilerOptions.getOrThrow().freeCompilerArgs.get()
+        } else {
+            emptyList()
         }
-    }
-
-    private inner class DelayableValue<T>(
-        private val backingFieldWrapper: ValueWrapper<T>,
-        private val getValueWhenOptionsAvailable: () -> T,
-        private val setValueWhenOptionsAvailable: (T) -> Unit
-    ) {
-        operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
-            return if (compilerOptionsAreAvailable.get()) {
-                getValueWhenOptionsAvailable()
-            } else {
-                backingFieldWrapper.get()
-            }
-        }
-
-        operator fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
-            if (compilerOptionsAreAvailable.get()) {
-                setValueWhenOptionsAvailable(value)
-            } else {
-                backingFieldWrapper.set(value)
-            }
-        }
-    }
 }
