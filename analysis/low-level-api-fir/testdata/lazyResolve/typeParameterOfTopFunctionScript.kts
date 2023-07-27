@@ -1,0 +1,1 @@
+fun <resolve<caret>Me> ddd() {}

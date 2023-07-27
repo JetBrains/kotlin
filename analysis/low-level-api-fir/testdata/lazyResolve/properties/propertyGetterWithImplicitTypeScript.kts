@@ -1,0 +1,1 @@
+val prop ge<caret>t() = 42

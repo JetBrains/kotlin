@@ -1,0 +1,266 @@
+RAW_FIR:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegateScript.kts
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    field:@PROPERTY_DELEGATE_FIELD:R|kotlin/Deprecated|[Types](message = String(delegate)) @PROPERTY_DELEGATE_FIELD:R|Anno|[Types](s = String(delegate)) public final [ResolvedTo(RAW_FIR)] val memberProperty: R|kotlin/String|by R|kotlin/lazy|<R|kotlin/String|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
+        ^ String(42)
+    }
+    )
+        public [ResolvedTo(RAW_FIR)] get(): R|kotlin/String| {
+            ^ D|/memberProperty|.R|kotlin/getValue|<R|kotlin/String|>(Null(null), ::R|/memberProperty|)
+        }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegateScript.kts
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    field:@PROPERTY_DELEGATE_FIELD:R|kotlin/Deprecated|[Types](message = String(delegate)) @PROPERTY_DELEGATE_FIELD:R|Anno|[Types](s = String(delegate)) public final [ResolvedTo(RAW_FIR)] val memberProperty: R|kotlin/String|by R|kotlin/lazy|<R|kotlin/String|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
+        ^ String(42)
+    }
+    )
+        public [ResolvedTo(RAW_FIR)] get(): R|kotlin/String| {
+            ^ D|/memberProperty|.R|kotlin/getValue|<R|kotlin/String|>(Null(null), ::R|/memberProperty|)
+        }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegateScript.kts
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    field:@PROPERTY_DELEGATE_FIELD:R|kotlin/Deprecated|[Types](message = String(delegate)) @PROPERTY_DELEGATE_FIELD:R|Anno|[Types](s = String(delegate)) public final [ResolvedTo(RAW_FIR)] val memberProperty: R|kotlin/String|by R|kotlin/lazy|<R|kotlin/String|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
+        ^ String(42)
+    }
+    )
+        public [ResolvedTo(RAW_FIR)] get(): R|kotlin/String| {
+            ^ D|/memberProperty|.R|kotlin/getValue|<R|kotlin/String|>(Null(null), ::R|/memberProperty|)
+        }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegateScript.kts
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    field:@PROPERTY_DELEGATE_FIELD:R|kotlin/Deprecated|[Types](message = String(delegate)) @PROPERTY_DELEGATE_FIELD:R|Anno|[Types](s = String(delegate)) public final [ResolvedTo(RAW_FIR)] val memberProperty: R|kotlin/String|by R|kotlin/lazy|<R|kotlin/String|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
+        ^ String(42)
+    }
+    )
+        public [ResolvedTo(RAW_FIR)] get(): R|kotlin/String| {
+            ^ D|/memberProperty|.R|kotlin/getValue|<R|kotlin/String|>(Null(null), ::R|/memberProperty|)
+        }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegateScript.kts
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    field:@PROPERTY_DELEGATE_FIELD:R|kotlin/Deprecated|[Types](message = String(delegate)) @PROPERTY_DELEGATE_FIELD:R|Anno|[Types](s = String(delegate)) public final [ResolvedTo(RAW_FIR)] val memberProperty: R|kotlin/String|by R|kotlin/lazy|<R|kotlin/String|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
+        ^ String(42)
+    }
+    )
+        public [ResolvedTo(RAW_FIR)] get(): R|kotlin/String| {
+            ^ D|/memberProperty|.R|kotlin/getValue|<R|kotlin/String|>(Null(null), ::R|/memberProperty|)
+        }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegateScript.kts
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    field:@PROPERTY_DELEGATE_FIELD:R|kotlin/Deprecated|[Types](message = String(delegate)) @PROPERTY_DELEGATE_FIELD:R|Anno|[Types](s = String(delegate)) public final [ResolvedTo(RAW_FIR)] val memberProperty: R|kotlin/String|by R|kotlin/lazy|<R|kotlin/String|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
+        ^ String(42)
+    }
+    )
+        public [ResolvedTo(RAW_FIR)] get(): R|kotlin/String| {
+            ^ D|/memberProperty|.R|kotlin/getValue|<R|kotlin/String|>(Null(null), ::R|/memberProperty|)
+        }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegateScript.kts
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    field:@PROPERTY_DELEGATE_FIELD:R|kotlin/Deprecated|[Types](message = String(delegate)) @PROPERTY_DELEGATE_FIELD:R|Anno|[Types](s = String(delegate)) public final [ResolvedTo(RAW_FIR)] val memberProperty: R|kotlin/String|by R|kotlin/lazy|<R|kotlin/String|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
+        ^ String(42)
+    }
+    )
+        public [ResolvedTo(RAW_FIR)] get(): R|kotlin/String| {
+            ^ D|/memberProperty|.R|kotlin/getValue|<R|kotlin/String|>(Null(null), ::R|/memberProperty|)
+        }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegateScript.kts
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    field:@PROPERTY_DELEGATE_FIELD:R|kotlin/Deprecated|[Types](message = String(delegate)) @PROPERTY_DELEGATE_FIELD:R|Anno|[Types](s = String(delegate)) public final [ResolvedTo(RAW_FIR)] val memberProperty: R|kotlin/String|by R|kotlin/lazy|<R|kotlin/String|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
+        ^ String(42)
+    }
+    )
+        public [ResolvedTo(RAW_FIR)] get(): R|kotlin/String| {
+            ^ D|/memberProperty|.R|kotlin/getValue|<R|kotlin/String|>(Null(null), ::R|/memberProperty|)
+        }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+ARGUMENTS_OF_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegateScript.kts
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    field:@PROPERTY_DELEGATE_FIELD:R|kotlin/Deprecated|[Types](message = String(delegate)) @PROPERTY_DELEGATE_FIELD:R|Anno|[Types](s = String(delegate)) public final [ResolvedTo(RAW_FIR)] val memberProperty: R|kotlin/String|by R|kotlin/lazy|<R|kotlin/String|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
+        ^ String(42)
+    }
+    )
+        public [ResolvedTo(RAW_FIR)] get(): R|kotlin/String| {
+            ^ D|/memberProperty|.R|kotlin/getValue|<R|kotlin/String|>(Null(null), ::R|/memberProperty|)
+        }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegateScript.kts
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    field:@PROPERTY_DELEGATE_FIELD:R|kotlin/Deprecated|[Types](message = String(delegate)) @PROPERTY_DELEGATE_FIELD:R|Anno|[Types](s = String(delegate)) public final [ResolvedTo(RAW_FIR)] val memberProperty: R|kotlin/String|by R|kotlin/lazy|<R|kotlin/String|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
+        ^ String(42)
+    }
+    )
+        public [ResolvedTo(RAW_FIR)] get(): R|kotlin/String| {
+            ^ D|/memberProperty|.R|kotlin/getValue|<R|kotlin/String|>(Null(null), ::R|/memberProperty|)
+        }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegateScript.kts
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    field:@PROPERTY_DELEGATE_FIELD:R|kotlin/Deprecated|[Types](message = String(delegate)) @PROPERTY_DELEGATE_FIELD:R|Anno|[Types](s = String(delegate)) public final [ResolvedTo(RAW_FIR)] val memberProperty: R|kotlin/String|by R|kotlin/lazy|<R|kotlin/String|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
+        ^ String(42)
+    }
+    )
+        public [ResolvedTo(RAW_FIR)] get(): R|kotlin/String| {
+            ^ D|/memberProperty|.R|kotlin/getValue|<R|kotlin/String|>(Null(null), ::R|/memberProperty|)
+        }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+ANNOTATIONS_ARGUMENTS_MAPPING:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegateScript.kts
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    field:@PROPERTY_DELEGATE_FIELD:R|kotlin/Deprecated|[Types](message = String(delegate)) @PROPERTY_DELEGATE_FIELD:R|Anno|[Types](s = String(delegate)) public final [ResolvedTo(RAW_FIR)] val memberProperty: R|kotlin/String|by R|kotlin/lazy|<R|kotlin/String|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
+        ^ String(42)
+    }
+    )
+        public [ResolvedTo(RAW_FIR)] get(): R|kotlin/String| {
+            ^ D|/memberProperty|.R|kotlin/getValue|<R|kotlin/String|>(Null(null), ::R|/memberProperty|)
+        }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegateScript.kts
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    field:@PROPERTY_DELEGATE_FIELD:R|kotlin/Deprecated|[Types](message = String(delegate)) @PROPERTY_DELEGATE_FIELD:R|Anno|[Types](s = String(delegate)) public final [ResolvedTo(RAW_FIR)] val memberProperty: R|kotlin/String|by R|kotlin/lazy|<R|kotlin/String|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
+        ^ String(42)
+    }
+    )
+        public [ResolvedTo(RAW_FIR)] get(): R|kotlin/String| {
+            ^ D|/memberProperty|.R|kotlin/getValue|<R|kotlin/String|>(Null(null), ::R|/memberProperty|)
+        }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+FILE RAW TO BODY:
+FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegateScript.kts
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    field:@PROPERTY_DELEGATE_FIELD:R|kotlin/Deprecated|[Types](message = String(delegate)) @PROPERTY_DELEGATE_FIELD:R|Anno|[Types](s = String(delegate)) public final [ResolvedTo(RAW_FIR)] val memberProperty: R|kotlin/String|by R|kotlin/lazy|<R|kotlin/String|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
+        ^ String(42)
+    }
+    )
+        public [ResolvedTo(RAW_FIR)] get(): R|kotlin/String| {
+            ^ D|/memberProperty|.R|kotlin/getValue|<R|kotlin/String|>(Null(null), ::R|/memberProperty|)
+        }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|

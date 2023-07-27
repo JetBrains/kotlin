@@ -1,0 +1,294 @@
+RAW_FIR:
+FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
+    public final [ResolvedTo(STATUS)] class Arg : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public abstract fun [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] a: R|foo/Arg|): R|foo/Arg|
+
+    }
+    public final [ResolvedTo(RAW_FIR)] fun testMe([ResolvedTo(RAW_FIR)] f: R|foo/Foo|): R|kotlin/Unit| {
+    }
+    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        R|foo/testMe|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=foo/Foo] testMe@fun <anonymous>([ResolvedTo(RAW_FIR)] b: R|foo/Arg|): R|foo/Arg| <inline=NoInline>  {
+            ^ R|<local>/b|
+        }
+        )
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
+    public final [ResolvedTo(STATUS)] class Arg : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public abstract fun [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] a: R|foo/Arg|): R|foo/Arg|
+
+    }
+    public final [ResolvedTo(RAW_FIR)] fun testMe([ResolvedTo(RAW_FIR)] f: R|foo/Foo|): R|kotlin/Unit| {
+    }
+    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        R|foo/testMe|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=foo/Foo] testMe@fun <anonymous>([ResolvedTo(RAW_FIR)] b: R|foo/Arg|): R|foo/Arg| <inline=NoInline>  {
+            ^ R|<local>/b|
+        }
+        )
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
+    public final [ResolvedTo(STATUS)] class Arg : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public abstract fun [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] a: R|foo/Arg|): R|foo/Arg|
+
+    }
+    public final [ResolvedTo(RAW_FIR)] fun testMe([ResolvedTo(RAW_FIR)] f: R|foo/Foo|): R|kotlin/Unit| {
+    }
+    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        R|foo/testMe|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=foo/Foo] testMe@fun <anonymous>([ResolvedTo(RAW_FIR)] b: R|foo/Arg|): R|foo/Arg| <inline=NoInline>  {
+            ^ R|<local>/b|
+        }
+        )
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
+    public final [ResolvedTo(STATUS)] class Arg : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public abstract fun [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] a: R|foo/Arg|): R|foo/Arg|
+
+    }
+    public final [ResolvedTo(RAW_FIR)] fun testMe([ResolvedTo(RAW_FIR)] f: R|foo/Foo|): R|kotlin/Unit| {
+    }
+    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        R|foo/testMe|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=foo/Foo] testMe@fun <anonymous>([ResolvedTo(RAW_FIR)] b: R|foo/Arg|): R|foo/Arg| <inline=NoInline>  {
+            ^ R|<local>/b|
+        }
+        )
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
+    public final [ResolvedTo(STATUS)] class Arg : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public abstract fun [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] a: R|foo/Arg|): R|foo/Arg|
+
+    }
+    public final [ResolvedTo(RAW_FIR)] fun testMe([ResolvedTo(RAW_FIR)] f: R|foo/Foo|): R|kotlin/Unit| {
+    }
+    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        R|foo/testMe|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=foo/Foo] testMe@fun <anonymous>([ResolvedTo(RAW_FIR)] b: R|foo/Arg|): R|foo/Arg| <inline=NoInline>  {
+            ^ R|<local>/b|
+        }
+        )
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
+    public final [ResolvedTo(STATUS)] class Arg : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public abstract fun [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] a: R|foo/Arg|): R|foo/Arg|
+
+    }
+    public final [ResolvedTo(RAW_FIR)] fun testMe([ResolvedTo(RAW_FIR)] f: R|foo/Foo|): R|kotlin/Unit| {
+    }
+    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        R|foo/testMe|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=foo/Foo] testMe@fun <anonymous>([ResolvedTo(RAW_FIR)] b: R|foo/Arg|): R|foo/Arg| <inline=NoInline>  {
+            ^ R|<local>/b|
+        }
+        )
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
+    public final [ResolvedTo(STATUS)] class Arg : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public abstract fun [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] a: R|foo/Arg|): R|foo/Arg|
+
+    }
+    public final [ResolvedTo(RAW_FIR)] fun testMe([ResolvedTo(RAW_FIR)] f: R|foo/Foo|): R|kotlin/Unit| {
+    }
+    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        R|foo/testMe|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=foo/Foo] testMe@fun <anonymous>([ResolvedTo(RAW_FIR)] b: R|foo/Arg|): R|foo/Arg| <inline=NoInline>  {
+            ^ R|<local>/b|
+        }
+        )
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
+    public final [ResolvedTo(STATUS)] class Arg : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public abstract fun [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] a: R|foo/Arg|): R|foo/Arg|
+
+    }
+    public final [ResolvedTo(RAW_FIR)] fun testMe([ResolvedTo(RAW_FIR)] f: R|foo/Foo|): R|kotlin/Unit| {
+    }
+    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        R|foo/testMe|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=foo/Foo] testMe@fun <anonymous>([ResolvedTo(RAW_FIR)] b: R|foo/Arg|): R|foo/Arg| <inline=NoInline>  {
+            ^ R|<local>/b|
+        }
+        )
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+ARGUMENTS_OF_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
+    public final [ResolvedTo(STATUS)] class Arg : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public abstract fun [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] a: R|foo/Arg|): R|foo/Arg|
+
+    }
+    public final [ResolvedTo(RAW_FIR)] fun testMe([ResolvedTo(RAW_FIR)] f: R|foo/Foo|): R|kotlin/Unit| {
+    }
+    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        R|foo/testMe|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=foo/Foo] testMe@fun <anonymous>([ResolvedTo(RAW_FIR)] b: R|foo/Arg|): R|foo/Arg| <inline=NoInline>  {
+            ^ R|<local>/b|
+        }
+        )
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
+    public final [ResolvedTo(STATUS)] class Arg : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public abstract fun [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] a: R|foo/Arg|): R|foo/Arg|
+
+    }
+    public final [ResolvedTo(RAW_FIR)] fun testMe([ResolvedTo(RAW_FIR)] f: R|foo/Foo|): R|kotlin/Unit| {
+    }
+    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        R|foo/testMe|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=foo/Foo] testMe@fun <anonymous>([ResolvedTo(RAW_FIR)] b: R|foo/Arg|): R|foo/Arg| <inline=NoInline>  {
+            ^ R|<local>/b|
+        }
+        )
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
+    public final [ResolvedTo(STATUS)] class Arg : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public abstract fun [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] a: R|foo/Arg|): R|foo/Arg|
+
+    }
+    public final [ResolvedTo(RAW_FIR)] fun testMe([ResolvedTo(RAW_FIR)] f: R|foo/Foo|): R|kotlin/Unit| {
+    }
+    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        R|foo/testMe|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=foo/Foo] testMe@fun <anonymous>([ResolvedTo(RAW_FIR)] b: R|foo/Arg|): R|foo/Arg| <inline=NoInline>  {
+            ^ R|<local>/b|
+        }
+        )
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+ANNOTATIONS_ARGUMENTS_MAPPING:
+FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
+    public final [ResolvedTo(STATUS)] class Arg : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public abstract fun [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] a: R|foo/Arg|): R|foo/Arg|
+
+    }
+    public final [ResolvedTo(RAW_FIR)] fun testMe([ResolvedTo(RAW_FIR)] f: R|foo/Foo|): R|kotlin/Unit| {
+    }
+    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        R|foo/testMe|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=foo/Foo] testMe@fun <anonymous>([ResolvedTo(RAW_FIR)] b: R|foo/Arg|): R|foo/Arg| <inline=NoInline>  {
+            ^ R|<local>/b|
+        }
+        )
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
+    public final [ResolvedTo(STATUS)] class Arg : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public abstract fun [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] a: R|foo/Arg|): R|foo/Arg|
+
+    }
+    public final [ResolvedTo(RAW_FIR)] fun testMe([ResolvedTo(RAW_FIR)] f: R|foo/Foo|): R|kotlin/Unit| {
+    }
+    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        R|foo/testMe|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=foo/Foo] testMe@fun <anonymous>([ResolvedTo(RAW_FIR)] b: R|foo/Arg|): R|foo/Arg| <inline=NoInline>  {
+            ^ R|<local>/b|
+        }
+        )
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+FILE RAW TO BODY:
+FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
+    public final [ResolvedTo(STATUS)] class Arg : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public abstract fun [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] a: R|foo/Arg|): R|foo/Arg|
+
+    }
+    public final [ResolvedTo(RAW_FIR)] fun testMe([ResolvedTo(RAW_FIR)] f: R|foo/Foo|): R|kotlin/Unit| {
+    }
+    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        R|foo/testMe|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=foo/Foo] testMe@fun <anonymous>([ResolvedTo(RAW_FIR)] b: R|foo/Arg|): R|foo/Arg| <inline=NoInline>  {
+            ^ R|<local>/b|
+        }
+        )
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|

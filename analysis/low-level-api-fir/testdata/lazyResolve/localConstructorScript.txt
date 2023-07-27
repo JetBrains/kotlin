@@ -1,0 +1,490 @@
+RAW_FIR:
+FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
+    public final [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): R|T| {
+        ^magic Null(null)!!
+    }
+    public final [ResolvedTo(STATUS)] class Q : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Q] constructor(): R|Q| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(STATUS)] fun <[ResolvedTo(STATUS)] E, [ResolvedTo(STATUS)] F> foo(): R|() -> Q.C<F, E, F>| {
+            ^foo [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|Q.C<F, E, F>| <inline=Unknown>  {
+                local final [ResolvedTo(RAW_FIR)] class C<[ResolvedTo(RAW_FIR)] G, [ResolvedTo(STATUS)] E, [ResolvedTo(STATUS)] F> : R|kotlin/Any| {
+                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor<[ResolvedTo(RAW_FIR)] G>(): R|Q.C<G, E, F>| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                    public final [ResolvedTo(RAW_FIR)] val e: R|E| = R|/magic|<R|E|>()
+                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|E|
+
+                    public final [ResolvedTo(RAW_FIR)] val f: R|F| = R|/magic|<R|F|>()
+                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|F|
+
+                    public final [ResolvedTo(RAW_FIR)] val g: R|G| = R|/magic|<R|G|>()
+                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|G|
+
+                }
+
+                ^ R|SubstitutionOverride<<local>/Q.C.C>|<R|F|>()
+            }
+
+        }
+
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
+    public final [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): R|T| {
+        ^magic Null(null)!!
+    }
+    public final [ResolvedTo(STATUS)] class Q : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Q] constructor(): R|Q| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(STATUS)] fun <[ResolvedTo(STATUS)] E, [ResolvedTo(STATUS)] F> foo(): R|() -> Q.C<F, E, F>| {
+            ^foo [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|Q.C<F, E, F>| <inline=Unknown>  {
+                local final [ResolvedTo(RAW_FIR)] class C<[ResolvedTo(RAW_FIR)] G, [ResolvedTo(STATUS)] E, [ResolvedTo(STATUS)] F> : R|kotlin/Any| {
+                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor<[ResolvedTo(RAW_FIR)] G>(): R|Q.C<G, E, F>| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                    public final [ResolvedTo(RAW_FIR)] val e: R|E| = R|/magic|<R|E|>()
+                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|E|
+
+                    public final [ResolvedTo(RAW_FIR)] val f: R|F| = R|/magic|<R|F|>()
+                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|F|
+
+                    public final [ResolvedTo(RAW_FIR)] val g: R|G| = R|/magic|<R|G|>()
+                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|G|
+
+                }
+
+                ^ R|SubstitutionOverride<<local>/Q.C.C>|<R|F|>()
+            }
+
+        }
+
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
+    public final [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): R|T| {
+        ^magic Null(null)!!
+    }
+    public final [ResolvedTo(STATUS)] class Q : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Q] constructor(): R|Q| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(STATUS)] fun <[ResolvedTo(STATUS)] E, [ResolvedTo(STATUS)] F> foo(): R|() -> Q.C<F, E, F>| {
+            ^foo [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|Q.C<F, E, F>| <inline=Unknown>  {
+                local final [ResolvedTo(RAW_FIR)] class C<[ResolvedTo(RAW_FIR)] G, [ResolvedTo(STATUS)] E, [ResolvedTo(STATUS)] F> : R|kotlin/Any| {
+                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor<[ResolvedTo(RAW_FIR)] G>(): R|Q.C<G, E, F>| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                    public final [ResolvedTo(RAW_FIR)] val e: R|E| = R|/magic|<R|E|>()
+                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|E|
+
+                    public final [ResolvedTo(RAW_FIR)] val f: R|F| = R|/magic|<R|F|>()
+                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|F|
+
+                    public final [ResolvedTo(RAW_FIR)] val g: R|G| = R|/magic|<R|G|>()
+                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|G|
+
+                }
+
+                ^ R|SubstitutionOverride<<local>/Q.C.C>|<R|F|>()
+            }
+
+        }
+
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
+    public final [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): R|T| {
+        ^magic Null(null)!!
+    }
+    public final [ResolvedTo(STATUS)] class Q : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Q] constructor(): R|Q| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(STATUS)] fun <[ResolvedTo(STATUS)] E, [ResolvedTo(STATUS)] F> foo(): R|() -> Q.C<F, E, F>| {
+            ^foo [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|Q.C<F, E, F>| <inline=Unknown>  {
+                local final [ResolvedTo(RAW_FIR)] class C<[ResolvedTo(RAW_FIR)] G, [ResolvedTo(STATUS)] E, [ResolvedTo(STATUS)] F> : R|kotlin/Any| {
+                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor<[ResolvedTo(RAW_FIR)] G>(): R|Q.C<G, E, F>| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                    public final [ResolvedTo(RAW_FIR)] val e: R|E| = R|/magic|<R|E|>()
+                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|E|
+
+                    public final [ResolvedTo(RAW_FIR)] val f: R|F| = R|/magic|<R|F|>()
+                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|F|
+
+                    public final [ResolvedTo(RAW_FIR)] val g: R|G| = R|/magic|<R|G|>()
+                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|G|
+
+                }
+
+                ^ R|SubstitutionOverride<<local>/Q.C.C>|<R|F|>()
+            }
+
+        }
+
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
+    public final [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): R|T| {
+        ^magic Null(null)!!
+    }
+    public final [ResolvedTo(STATUS)] class Q : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Q] constructor(): R|Q| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(STATUS)] fun <[ResolvedTo(STATUS)] E, [ResolvedTo(STATUS)] F> foo(): R|() -> Q.C<F, E, F>| {
+            ^foo [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|Q.C<F, E, F>| <inline=Unknown>  {
+                local final [ResolvedTo(RAW_FIR)] class C<[ResolvedTo(RAW_FIR)] G, [ResolvedTo(STATUS)] E, [ResolvedTo(STATUS)] F> : R|kotlin/Any| {
+                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor<[ResolvedTo(RAW_FIR)] G>(): R|Q.C<G, E, F>| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                    public final [ResolvedTo(RAW_FIR)] val e: R|E| = R|/magic|<R|E|>()
+                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|E|
+
+                    public final [ResolvedTo(RAW_FIR)] val f: R|F| = R|/magic|<R|F|>()
+                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|F|
+
+                    public final [ResolvedTo(RAW_FIR)] val g: R|G| = R|/magic|<R|G|>()
+                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|G|
+
+                }
+
+                ^ R|SubstitutionOverride<<local>/Q.C.C>|<R|F|>()
+            }
+
+        }
+
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
+    public final [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): R|T| {
+        ^magic Null(null)!!
+    }
+    public final [ResolvedTo(STATUS)] class Q : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Q] constructor(): R|Q| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(STATUS)] fun <[ResolvedTo(STATUS)] E, [ResolvedTo(STATUS)] F> foo(): R|() -> Q.C<F, E, F>| {
+            ^foo [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|Q.C<F, E, F>| <inline=Unknown>  {
+                local final [ResolvedTo(RAW_FIR)] class C<[ResolvedTo(RAW_FIR)] G, [ResolvedTo(STATUS)] E, [ResolvedTo(STATUS)] F> : R|kotlin/Any| {
+                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor<[ResolvedTo(RAW_FIR)] G>(): R|Q.C<G, E, F>| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                    public final [ResolvedTo(RAW_FIR)] val e: R|E| = R|/magic|<R|E|>()
+                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|E|
+
+                    public final [ResolvedTo(RAW_FIR)] val f: R|F| = R|/magic|<R|F|>()
+                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|F|
+
+                    public final [ResolvedTo(RAW_FIR)] val g: R|G| = R|/magic|<R|G|>()
+                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|G|
+
+                }
+
+                ^ R|SubstitutionOverride<<local>/Q.C.C>|<R|F|>()
+            }
+
+        }
+
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
+    public final [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): R|T| {
+        ^magic Null(null)!!
+    }
+    public final [ResolvedTo(STATUS)] class Q : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Q] constructor(): R|Q| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(STATUS)] fun <[ResolvedTo(STATUS)] E, [ResolvedTo(STATUS)] F> foo(): R|() -> Q.C<F, E, F>| {
+            ^foo [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|Q.C<F, E, F>| <inline=Unknown>  {
+                local final [ResolvedTo(RAW_FIR)] class C<[ResolvedTo(RAW_FIR)] G, [ResolvedTo(STATUS)] E, [ResolvedTo(STATUS)] F> : R|kotlin/Any| {
+                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor<[ResolvedTo(RAW_FIR)] G>(): R|Q.C<G, E, F>| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                    public final [ResolvedTo(RAW_FIR)] val e: R|E| = R|/magic|<R|E|>()
+                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|E|
+
+                    public final [ResolvedTo(RAW_FIR)] val f: R|F| = R|/magic|<R|F|>()
+                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|F|
+
+                    public final [ResolvedTo(RAW_FIR)] val g: R|G| = R|/magic|<R|G|>()
+                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|G|
+
+                }
+
+                ^ R|SubstitutionOverride<<local>/Q.C.C>|<R|F|>()
+            }
+
+        }
+
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
+    public final [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): R|T| {
+        ^magic Null(null)!!
+    }
+    public final [ResolvedTo(STATUS)] class Q : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Q] constructor(): R|Q| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(STATUS)] fun <[ResolvedTo(STATUS)] E, [ResolvedTo(STATUS)] F> foo(): R|() -> Q.C<F, E, F>| {
+            ^foo [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|Q.C<F, E, F>| <inline=Unknown>  {
+                local final [ResolvedTo(RAW_FIR)] class C<[ResolvedTo(RAW_FIR)] G, [ResolvedTo(STATUS)] E, [ResolvedTo(STATUS)] F> : R|kotlin/Any| {
+                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor<[ResolvedTo(RAW_FIR)] G>(): R|Q.C<G, E, F>| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                    public final [ResolvedTo(RAW_FIR)] val e: R|E| = R|/magic|<R|E|>()
+                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|E|
+
+                    public final [ResolvedTo(RAW_FIR)] val f: R|F| = R|/magic|<R|F|>()
+                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|F|
+
+                    public final [ResolvedTo(RAW_FIR)] val g: R|G| = R|/magic|<R|G|>()
+                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|G|
+
+                }
+
+                ^ R|SubstitutionOverride<<local>/Q.C.C>|<R|F|>()
+            }
+
+        }
+
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+ARGUMENTS_OF_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
+    public final [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): R|T| {
+        ^magic Null(null)!!
+    }
+    public final [ResolvedTo(STATUS)] class Q : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Q] constructor(): R|Q| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(STATUS)] fun <[ResolvedTo(STATUS)] E, [ResolvedTo(STATUS)] F> foo(): R|() -> Q.C<F, E, F>| {
+            ^foo [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|Q.C<F, E, F>| <inline=Unknown>  {
+                local final [ResolvedTo(RAW_FIR)] class C<[ResolvedTo(RAW_FIR)] G, [ResolvedTo(STATUS)] E, [ResolvedTo(STATUS)] F> : R|kotlin/Any| {
+                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor<[ResolvedTo(RAW_FIR)] G>(): R|Q.C<G, E, F>| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                    public final [ResolvedTo(RAW_FIR)] val e: R|E| = R|/magic|<R|E|>()
+                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|E|
+
+                    public final [ResolvedTo(RAW_FIR)] val f: R|F| = R|/magic|<R|F|>()
+                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|F|
+
+                    public final [ResolvedTo(RAW_FIR)] val g: R|G| = R|/magic|<R|G|>()
+                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|G|
+
+                }
+
+                ^ R|SubstitutionOverride<<local>/Q.C.C>|<R|F|>()
+            }
+
+        }
+
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
+    public final [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): R|T| {
+        ^magic Null(null)!!
+    }
+    public final [ResolvedTo(STATUS)] class Q : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Q] constructor(): R|Q| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(STATUS)] fun <[ResolvedTo(STATUS)] E, [ResolvedTo(STATUS)] F> foo(): R|() -> Q.C<F, E, F>| {
+            ^foo [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|Q.C<F, E, F>| <inline=Unknown>  {
+                local final [ResolvedTo(RAW_FIR)] class C<[ResolvedTo(RAW_FIR)] G, [ResolvedTo(STATUS)] E, [ResolvedTo(STATUS)] F> : R|kotlin/Any| {
+                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor<[ResolvedTo(RAW_FIR)] G>(): R|Q.C<G, E, F>| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                    public final [ResolvedTo(RAW_FIR)] val e: R|E| = R|/magic|<R|E|>()
+                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|E|
+
+                    public final [ResolvedTo(RAW_FIR)] val f: R|F| = R|/magic|<R|F|>()
+                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|F|
+
+                    public final [ResolvedTo(RAW_FIR)] val g: R|G| = R|/magic|<R|G|>()
+                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|G|
+
+                }
+
+                ^ R|SubstitutionOverride<<local>/Q.C.C>|<R|F|>()
+            }
+
+        }
+
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
+    public final [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): R|T| {
+        ^magic Null(null)!!
+    }
+    public final [ResolvedTo(STATUS)] class Q : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Q] constructor(): R|Q| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(STATUS)] fun <[ResolvedTo(STATUS)] E, [ResolvedTo(STATUS)] F> foo(): R|() -> Q.C<F, E, F>| {
+            ^foo [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|Q.C<F, E, F>| <inline=Unknown>  {
+                local final [ResolvedTo(RAW_FIR)] class C<[ResolvedTo(RAW_FIR)] G, [ResolvedTo(STATUS)] E, [ResolvedTo(STATUS)] F> : R|kotlin/Any| {
+                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor<[ResolvedTo(RAW_FIR)] G>(): R|Q.C<G, E, F>| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                    public final [ResolvedTo(RAW_FIR)] val e: R|E| = R|/magic|<R|E|>()
+                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|E|
+
+                    public final [ResolvedTo(RAW_FIR)] val f: R|F| = R|/magic|<R|F|>()
+                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|F|
+
+                    public final [ResolvedTo(RAW_FIR)] val g: R|G| = R|/magic|<R|G|>()
+                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|G|
+
+                }
+
+                ^ R|SubstitutionOverride<<local>/Q.C.C>|<R|F|>()
+            }
+
+        }
+
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+ANNOTATIONS_ARGUMENTS_MAPPING:
+FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
+    public final [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): R|T| {
+        ^magic Null(null)!!
+    }
+    public final [ResolvedTo(STATUS)] class Q : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Q] constructor(): R|Q| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(STATUS)] fun <[ResolvedTo(STATUS)] E, [ResolvedTo(STATUS)] F> foo(): R|() -> Q.C<F, E, F>| {
+            ^foo [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|Q.C<F, E, F>| <inline=Unknown>  {
+                local final [ResolvedTo(RAW_FIR)] class C<[ResolvedTo(RAW_FIR)] G, [ResolvedTo(STATUS)] E, [ResolvedTo(STATUS)] F> : R|kotlin/Any| {
+                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor<[ResolvedTo(RAW_FIR)] G>(): R|Q.C<G, E, F>| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                    public final [ResolvedTo(RAW_FIR)] val e: R|E| = R|/magic|<R|E|>()
+                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|E|
+
+                    public final [ResolvedTo(RAW_FIR)] val f: R|F| = R|/magic|<R|F|>()
+                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|F|
+
+                    public final [ResolvedTo(RAW_FIR)] val g: R|G| = R|/magic|<R|G|>()
+                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|G|
+
+                }
+
+                ^ R|SubstitutionOverride<<local>/Q.C.C>|<R|F|>()
+            }
+
+        }
+
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
+    public final [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): R|T| {
+        ^magic Null(null)!!
+    }
+    public final [ResolvedTo(STATUS)] class Q : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Q] constructor(): R|Q| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(STATUS)] fun <[ResolvedTo(STATUS)] E, [ResolvedTo(STATUS)] F> foo(): R|() -> Q.C<F, E, F>| {
+            ^foo [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|Q.C<F, E, F>| <inline=Unknown>  {
+                local final [ResolvedTo(RAW_FIR)] class C<[ResolvedTo(RAW_FIR)] G, [ResolvedTo(STATUS)] E, [ResolvedTo(STATUS)] F> : R|kotlin/Any| {
+                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor<[ResolvedTo(RAW_FIR)] G>(): R|Q.C<G, E, F>| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                    public final [ResolvedTo(RAW_FIR)] val e: R|E| = R|/magic|<R|E|>()
+                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|E|
+
+                    public final [ResolvedTo(RAW_FIR)] val f: R|F| = R|/magic|<R|F|>()
+                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|F|
+
+                    public final [ResolvedTo(RAW_FIR)] val g: R|G| = R|/magic|<R|G|>()
+                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|G|
+
+                }
+
+                ^ R|SubstitutionOverride<<local>/Q.C.C>|<R|F|>()
+            }
+
+        }
+
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+FILE RAW TO BODY:
+FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
+    public final [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): R|T| {
+        ^magic Null(null)!!
+    }
+    public final [ResolvedTo(STATUS)] class Q : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Q] constructor(): R|Q| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(STATUS)] fun <[ResolvedTo(STATUS)] E, [ResolvedTo(STATUS)] F> foo(): R|() -> Q.C<F, E, F>| {
+            ^foo [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|Q.C<F, E, F>| <inline=Unknown>  {
+                local final [ResolvedTo(RAW_FIR)] class C<[ResolvedTo(RAW_FIR)] G, [ResolvedTo(STATUS)] E, [ResolvedTo(STATUS)] F> : R|kotlin/Any| {
+                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor<[ResolvedTo(RAW_FIR)] G>(): R|Q.C<G, E, F>| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                    public final [ResolvedTo(RAW_FIR)] val e: R|E| = R|/magic|<R|E|>()
+                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|E|
+
+                    public final [ResolvedTo(RAW_FIR)] val f: R|F| = R|/magic|<R|F|>()
+                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|F|
+
+                    public final [ResolvedTo(RAW_FIR)] val g: R|G| = R|/magic|<R|G|>()
+                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|G|
+
+                }
+
+                ^ R|SubstitutionOverride<<local>/Q.C.C>|<R|F|>()
+            }
+
+        }
+
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|

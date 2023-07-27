@@ -1,0 +1,154 @@
+RAW_FIR:
+FILE: [ResolvedTo(IMPORTS)] topLevelFunctionsWithExpressionBodyAndExplicitTypeScript.kts
+    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        R|/receive|(R|/functionWithLazyBody|())
+    }
+    public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|kotlin/Unit| {
+    }
+    public final [ResolvedTo(RAW_FIR)] fun functionWithLazyBody(): R|kotlin/String| {
+        ^functionWithLazyBody String(42)
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] topLevelFunctionsWithExpressionBodyAndExplicitTypeScript.kts
+    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        R|/receive|(R|/functionWithLazyBody|())
+    }
+    public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|kotlin/Unit| {
+    }
+    public final [ResolvedTo(RAW_FIR)] fun functionWithLazyBody(): R|kotlin/String| {
+        ^functionWithLazyBody String(42)
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] topLevelFunctionsWithExpressionBodyAndExplicitTypeScript.kts
+    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        R|/receive|(R|/functionWithLazyBody|())
+    }
+    public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|kotlin/Unit| {
+    }
+    public final [ResolvedTo(RAW_FIR)] fun functionWithLazyBody(): R|kotlin/String| {
+        ^functionWithLazyBody String(42)
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] topLevelFunctionsWithExpressionBodyAndExplicitTypeScript.kts
+    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        R|/receive|(R|/functionWithLazyBody|())
+    }
+    public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|kotlin/Unit| {
+    }
+    public final [ResolvedTo(RAW_FIR)] fun functionWithLazyBody(): R|kotlin/String| {
+        ^functionWithLazyBody String(42)
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] topLevelFunctionsWithExpressionBodyAndExplicitTypeScript.kts
+    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        R|/receive|(R|/functionWithLazyBody|())
+    }
+    public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|kotlin/Unit| {
+    }
+    public final [ResolvedTo(RAW_FIR)] fun functionWithLazyBody(): R|kotlin/String| {
+        ^functionWithLazyBody String(42)
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] topLevelFunctionsWithExpressionBodyAndExplicitTypeScript.kts
+    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        R|/receive|(R|/functionWithLazyBody|())
+    }
+    public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|kotlin/Unit| {
+    }
+    public final [ResolvedTo(RAW_FIR)] fun functionWithLazyBody(): R|kotlin/String| {
+        ^functionWithLazyBody String(42)
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] topLevelFunctionsWithExpressionBodyAndExplicitTypeScript.kts
+    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        R|/receive|(R|/functionWithLazyBody|())
+    }
+    public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|kotlin/Unit| {
+    }
+    public final [ResolvedTo(RAW_FIR)] fun functionWithLazyBody(): R|kotlin/String| {
+        ^functionWithLazyBody String(42)
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] topLevelFunctionsWithExpressionBodyAndExplicitTypeScript.kts
+    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        R|/receive|(R|/functionWithLazyBody|())
+    }
+    public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|kotlin/Unit| {
+    }
+    public final [ResolvedTo(RAW_FIR)] fun functionWithLazyBody(): R|kotlin/String| {
+        ^functionWithLazyBody String(42)
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+ARGUMENTS_OF_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] topLevelFunctionsWithExpressionBodyAndExplicitTypeScript.kts
+    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        R|/receive|(R|/functionWithLazyBody|())
+    }
+    public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|kotlin/Unit| {
+    }
+    public final [ResolvedTo(RAW_FIR)] fun functionWithLazyBody(): R|kotlin/String| {
+        ^functionWithLazyBody String(42)
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] topLevelFunctionsWithExpressionBodyAndExplicitTypeScript.kts
+    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        R|/receive|(R|/functionWithLazyBody|())
+    }
+    public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|kotlin/Unit| {
+    }
+    public final [ResolvedTo(RAW_FIR)] fun functionWithLazyBody(): R|kotlin/String| {
+        ^functionWithLazyBody String(42)
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] topLevelFunctionsWithExpressionBodyAndExplicitTypeScript.kts
+    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        R|/receive|(R|/functionWithLazyBody|())
+    }
+    public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|kotlin/Unit| {
+    }
+    public final [ResolvedTo(RAW_FIR)] fun functionWithLazyBody(): R|kotlin/String| {
+        ^functionWithLazyBody String(42)
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+ANNOTATIONS_ARGUMENTS_MAPPING:
+FILE: [ResolvedTo(IMPORTS)] topLevelFunctionsWithExpressionBodyAndExplicitTypeScript.kts
+    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        R|/receive|(R|/functionWithLazyBody|())
+    }
+    public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|kotlin/Unit| {
+    }
+    public final [ResolvedTo(RAW_FIR)] fun functionWithLazyBody(): R|kotlin/String| {
+        ^functionWithLazyBody String(42)
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] topLevelFunctionsWithExpressionBodyAndExplicitTypeScript.kts
+    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        R|/receive|(R|/functionWithLazyBody|())
+    }
+    public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|kotlin/Unit| {
+    }
+    public final [ResolvedTo(RAW_FIR)] fun functionWithLazyBody(): R|kotlin/String| {
+        ^functionWithLazyBody String(42)
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+FILE RAW TO BODY:
+FILE: [ResolvedTo(IMPORTS)] topLevelFunctionsWithExpressionBodyAndExplicitTypeScript.kts
+    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        R|/receive|(R|/functionWithLazyBody|())
+    }
+    public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|kotlin/Unit| {
+    }
+    public final [ResolvedTo(RAW_FIR)] fun functionWithLazyBody(): R|kotlin/String| {
+        ^functionWithLazyBody String(42)
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|

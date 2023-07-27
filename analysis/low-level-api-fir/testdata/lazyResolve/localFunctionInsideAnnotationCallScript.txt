@@ -1,0 +1,280 @@
+RAW_FIR:
+FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.s] s: R|kotlin/String|): R|one/Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    @R|one/Anno|[Types](s = [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+    }
+    .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(STATUS)] class TopLevelClass : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.s] s: R|kotlin/String|): R|one/Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    @R|one/Anno|[Types](s = [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+    }
+    .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(STATUS)] class TopLevelClass : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.s] s: R|kotlin/String|): R|one/Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    @R|one/Anno|[Types](s = [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+    }
+    .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(STATUS)] class TopLevelClass : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.s] s: R|kotlin/String|): R|one/Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    @R|one/Anno|[Types](s = [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+    }
+    .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(STATUS)] class TopLevelClass : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.s] s: R|kotlin/String|): R|one/Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    @R|one/Anno|[Types](s = [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+    }
+    .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(STATUS)] class TopLevelClass : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.s] s: R|kotlin/String|): R|one/Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    @R|one/Anno|[Types](s = [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+    }
+    .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(STATUS)] class TopLevelClass : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.s] s: R|kotlin/String|): R|one/Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    @R|one/Anno|[Types](s = [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+    }
+    .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(STATUS)] class TopLevelClass : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.s] s: R|kotlin/String|): R|one/Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    @R|one/Anno|[Types](s = [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+    }
+    .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(STATUS)] class TopLevelClass : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+ARGUMENTS_OF_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.s] s: R|kotlin/String|): R|one/Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    @R|one/Anno|[Types](s = [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+    }
+    .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(STATUS)] class TopLevelClass : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.s] s: R|kotlin/String|): R|one/Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    @R|one/Anno|[Types](s = [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+    }
+    .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(STATUS)] class TopLevelClass : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.s] s: R|kotlin/String|): R|one/Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    @R|one/Anno|[Types](s = [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+    }
+    .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(STATUS)] class TopLevelClass : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+ANNOTATIONS_ARGUMENTS_MAPPING:
+FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.s] s: R|kotlin/String|): R|one/Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    @R|one/Anno|[Types](s = [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+    }
+    .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(STATUS)] class TopLevelClass : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.s] s: R|kotlin/String|): R|one/Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    @R|one/Anno|[Types](s = [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+    }
+    .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(STATUS)] class TopLevelClass : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+FILE RAW TO BODY:
+FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCallScript.kts
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.s] s: R|kotlin/String|): R|one/Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+    }
+    @R|one/Anno|[Types](s = [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+    }
+    .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()) public final [ResolvedTo(STATUS)] class TopLevelClass : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|

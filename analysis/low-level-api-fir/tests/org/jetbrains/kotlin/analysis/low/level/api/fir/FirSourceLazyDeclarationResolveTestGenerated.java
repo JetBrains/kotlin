@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSourceLazyDeclarationResolveTest {
     @Test
     public void testAllFilesPresentInLazyResolve() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/lazyResolve"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/lazyResolve"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
     }
 
     @Test
@@ -540,7 +540,7 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
 
         @Test
         public void testAllFilesPresentInClasses() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/lazyResolve/classes"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/lazyResolve/classes"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
         }
 
         @Test
@@ -622,7 +622,7 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
     public class Errors {
         @Test
         public void testAllFilesPresentInErrors() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/lazyResolve/errors"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/lazyResolve/errors"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
         }
 
         @Test
@@ -644,7 +644,13 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
     public class Functions {
         @Test
         public void testAllFilesPresentInFunctions() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/lazyResolve/functions"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/lazyResolve/functions"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("contract.kt")
+        public void testContract() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/lazyResolve/functions/contract.kt");
         }
 
         @Test
@@ -714,7 +720,7 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
     public class NoRuntime {
         @Test
         public void testAllFilesPresentInNoRuntime() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/lazyResolve/noRuntime"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/lazyResolve/noRuntime"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
         }
 
         @Test
@@ -730,7 +736,7 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
     public class Properties {
         @Test
         public void testAllFilesPresentInProperties() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/lazyResolve/properties"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/lazyResolve/properties"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
         }
 
         @Test
@@ -818,7 +824,7 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
     public class TypeAliases {
         @Test
         public void testAllFilesPresentInTypeAliases() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/lazyResolve/typeAliases"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/lazyResolve/typeAliases"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
         }
 
         @Test
