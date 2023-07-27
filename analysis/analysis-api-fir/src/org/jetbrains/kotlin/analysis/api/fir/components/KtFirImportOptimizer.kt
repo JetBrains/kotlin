@@ -57,7 +57,7 @@ internal class KtFirImportOptimizer(
 
     override fun analyseImports(file: KtFile): KtImportOptimizerResult {
         val existingImports = file.importDirectives
-        if (existingImports.isEmpty()) return KtImportOptimizerResult(emptySet())
+        if (existingImports.isEmpty()) return KtImportOptimizerResult()
 
         val firFile = file.getOrBuildFirFile(firResolveSession).apply { lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE) }
 
@@ -68,9 +68,10 @@ internal class KtFirImportOptimizer(
             .map { it.fqName }
             .toSet()
 
-        val (usedImports, unresolvedNames) = collectReferencedEntities(firFile)
+        val (usedDeclarations, unresolvedNames) = collectReferencedEntities(firFile)
 
-        val referencesEntities = usedImports
+        // TODO remove unused imports computing code completely
+        val referencesEntities = usedDeclarations
             .filterNot { (fqName, referencedByNames) ->
                 val fromCurrentPackage = fqName.parentOrNull() == file.packageFqName
                 val noAliasedImports = referencedByNames.singleOrNull() == fqName.shortName()
@@ -104,7 +105,7 @@ internal class KtFirImportOptimizer(
             }
         }
 
-        return KtImportOptimizerResult(unusedImports)
+        return KtImportOptimizerResult(unusedImports, usedDeclarations, unresolvedNames)
     }
 
     private data class ReferencedEntitiesResult(
