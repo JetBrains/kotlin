@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCompilationFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationFriendPathsResolver
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.JsIrCompilationSourceSetsContainerFactory
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.JsKotlinCompilationDependencyConfigurationsFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinCompilationImplFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinJsCompilerOptionsFactory
 
@@ -20,10 +22,12 @@ class KotlinJsIrCompilationFactory internal constructor(
     private val compilationImplFactory: KotlinCompilationImplFactory = KotlinCompilationImplFactory(
         compilerOptionsFactory = KotlinJsCompilerOptionsFactory,
         compilationFriendPathsResolver = DefaultKotlinCompilationFriendPathsResolver(
-            friendArtifactResolver = { _ ->
+            friendArtifactResolver = DefaultKotlinCompilationFriendPathsResolver.FriendArtifactResolver { _ ->
                 target.project.files()
             }
         ),
+        compilationSourceSetsContainerFactory = JsIrCompilationSourceSetsContainerFactory,
+        compilationDependencyConfigurationsFactory = JsKotlinCompilationDependencyConfigurationsFactory
     )
 
     override fun create(name: String): KotlinJsIrCompilation = target.project.objects.newInstance(

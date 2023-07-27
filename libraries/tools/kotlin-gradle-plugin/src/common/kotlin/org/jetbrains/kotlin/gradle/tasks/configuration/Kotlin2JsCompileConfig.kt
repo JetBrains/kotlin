@@ -43,7 +43,6 @@ internal open class BaseKotlin2JsCompileConfig<TASK : Kotlin2JsCompile>(
                 }
             )
 
-            @Suppress("DEPRECATION")
             task.destinationDirectory
                 .convention(
                     project.objects.directoryProperty().fileProvider(

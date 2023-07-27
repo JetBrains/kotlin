@@ -6,8 +6,11 @@
 package org.jetbrains.kotlin.gradle.dsl
 
 import org.gradle.api.Action
+import org.jetbrains.kotlin.gradle.dsl.KotlinJsProjectExtension.Companion.warnAboutDeprecatedCompiler
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.targets.js.calculateJsCompilerType
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
+import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
 @KotlinGradlePluginDsl
 interface KotlinTargetContainerWithJsPresetFunctions :
@@ -80,12 +83,72 @@ private fun KotlinTargetContainerWithJsPresetFunctions.jsInternal(
     compiler: KotlinJsCompilerType? = null,
     configure: KotlinJsTargetDsl.() -> Unit
 ): KotlinJsTargetDsl {
+    val existingTarget = getExistingTarget(name, compiler)
+
+    val kotlinJsCompilerType = (compiler
+        ?: existingTarget?.calculateJsCompilerType())
+
+    val compilerOrDefault = kotlinJsCompilerType
+        ?: defaultJsCompilerType
+
+    val targetName = getTargetName(name, compilerOrDefault)
+
+    if (existingTarget != null) {
+        val previousCompilerType = existingTarget.calculateJsCompilerType()
+        check(compiler == null || previousCompilerType == compiler) {
+            "You already registered Kotlin/JS target '$targetName' with another compiler: ${previousCompilerType.lowerName}"
+        }
+    }
+
     @Suppress("UNCHECKED_CAST")
     return configureOrCreate(
-        name,
+        targetName,
         presets.getByName(
-            "js"
+            lowerCamelCaseName(
+                "js",
+                if (compilerOrDefault == KotlinJsCompilerType.LEGACY) null else compilerOrDefault.lowerName
+            )
         ) as KotlinTargetPreset<KotlinJsTargetDsl>,
         configure
+    ).also { target ->
+        warnAboutDeprecatedCompiler(target.project, compilerOrDefault)
+    }
+}
+
+// Try to find existing target with exact name
+// and with append suffix Legacy in case when compiler for found target is BOTH,
+// and removed suffix Legacy in case when current compiler is BOTH
+private fun KotlinTargetContainerWithJsPresetFunctions.getExistingTarget(
+    name: String,
+    compiler: KotlinJsCompilerType?
+): KotlinJsTargetDsl? {
+
+    fun getPreviousTarget(
+        targetName: String,
+        currentBoth: Boolean
+    ): KotlinJsTargetDsl? {
+        val singleTarget = targets.findByName(
+            targetName
+        ) as KotlinJsTargetDsl?
+
+        return singleTarget?.let {
+            val previousCompiler = it.calculateJsCompilerType()
+            if (compiler == KotlinJsCompilerType.BOTH && currentBoth || previousCompiler == KotlinJsCompilerType.BOTH && !currentBoth) {
+                it
+            } else null
+        }
+    }
+
+    val targetNameCandidate = getTargetName(name, compiler)
+
+    return targets.findByName(targetNameCandidate) as KotlinJsTargetDsl?
+        ?: getPreviousTarget(targetNameCandidate.removeJsCompilerSuffix(KotlinJsCompilerType.LEGACY), true)
+        ?: getPreviousTarget(lowerCamelCaseName(targetNameCandidate, KotlinJsCompilerType.LEGACY.lowerName), false)
+}
+
+private fun getTargetName(name: String, compiler: KotlinJsCompilerType?): String {
+    return lowerCamelCaseName(
+        name,
+        if (compiler == KotlinJsCompilerType.BOTH) KotlinJsCompilerType.LEGACY.lowerName else null
     )
 }
