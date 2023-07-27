@@ -1,4 +1,4 @@
-// COMPARE_WITH_LIGHT_TREE
+// FIR_IDENTICAL
 
 interface Base1 {
     fun getX(): Int
@@ -9,4 +9,4 @@ interface Base2 {
         get() = 1
 }
 
-interface <!CONFLICTING_INHERITED_JVM_DECLARATIONS!>Test<!> : Base1, Base2
+<!CONFLICTING_INHERITED_JVM_DECLARATIONS!>interface Test : Base1, Base2<!>

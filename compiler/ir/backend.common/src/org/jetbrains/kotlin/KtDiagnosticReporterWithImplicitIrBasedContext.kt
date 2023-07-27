@@ -36,22 +36,6 @@ class KtDiagnosticReporterWithImplicitIrBasedContext(
         (PsiSourceManager.findPsiElement(this, containingIrFile)?.let(::KtRealPsiSourceElement)
             ?: sourceElement())
 
-    fun atFirstValidFrom(vararg irElements: IrElement, containingIrFile: IrFile): DiagnosticContextImpl? =
-        atFirstValidFrom(irElements.asIterable(), containingIrFile)
-
-    fun atFirstValidFrom(irElements: Iterable<IrElement>, containingIrFile: IrFile): DiagnosticContextImpl? {
-        var irElement: IrElement? = null
-        for (e in irElements) {
-            PsiSourceManager.findPsiElement(e, containingIrFile)?.let {
-                return at(KtRealPsiSourceElement(it), e, containingIrFile)
-            }
-            if (irElement == null && e.startOffset >= 0) {
-                irElement = e
-            }
-        }
-        return irElement?.let { at(it.sourceElement(), it, containingIrFile) }
-    }
-
     fun at(irElement: IrElement, containingIrDeclaration: IrDeclaration): DiagnosticContextImpl =
         at(irElement, containingIrDeclaration.file)
 

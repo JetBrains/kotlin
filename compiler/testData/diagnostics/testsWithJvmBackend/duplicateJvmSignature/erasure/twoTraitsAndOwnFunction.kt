@@ -1,4 +1,4 @@
-// COMPARE_WITH_LIGHT_TREE
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 interface Foo<T> {
@@ -10,5 +10,5 @@ interface Bar<T> {
 }
 
 class Baz(): Foo<String>, Bar<Int> {
-    <!ACCIDENTAL_OVERRIDE!>fun foo(l: List<Long>)<!> {}
+    <!ACCIDENTAL_OVERRIDE!>fun foo(l: List<Long>) {}<!>
 }

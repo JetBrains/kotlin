@@ -1,4 +1,4 @@
-// COMPARE_WITH_LIGHT_TREE
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 open class B {
@@ -6,5 +6,5 @@ open class B {
 }
 
 class C : B() {
-    <!ACCIDENTAL_OVERRIDE!>fun foo(l: List<Int>)<!> {}
+    <!ACCIDENTAL_OVERRIDE!>fun foo(l: List<Int>) {}<!>
 }

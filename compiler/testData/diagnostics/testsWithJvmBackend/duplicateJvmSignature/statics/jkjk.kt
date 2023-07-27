@@ -21,9 +21,9 @@ public class C extends B {
 // FILE: K.kt
 
 open class K : C() {
-    <!ACCIDENTAL_OVERRIDE!>fun foo()<!> {}
+    <!ACCIDENTAL_OVERRIDE!>fun foo() {}<!>
     fun foo(a: Any) {}
-    <!ACCIDENTAL_OVERRIDE!>fun bar(i: Int)<!> {}
+    <!ACCIDENTAL_OVERRIDE!>fun bar(i: Int) {}<!>
     fun bar(i: String) {}
     fun baz(i: Int) {}
 

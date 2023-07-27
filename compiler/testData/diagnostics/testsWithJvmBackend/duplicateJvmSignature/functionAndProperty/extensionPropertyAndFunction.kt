@@ -1,8 +1,7 @@
-// COMPARE_WITH_LIGHT_TREE
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 class C {
-    <!CONFLICTING_JVM_DECLARATIONS!>fun getX(t: Any)<!> = 1
+    <!CONFLICTING_JVM_DECLARATIONS!>fun getX(t: Any) = 1<!>
     val Any.x: Int
-        <!CONFLICTING_JVM_DECLARATIONS!>get()<!> = 1
+        <!CONFLICTING_JVM_DECLARATIONS!>get() = 1<!>
 }

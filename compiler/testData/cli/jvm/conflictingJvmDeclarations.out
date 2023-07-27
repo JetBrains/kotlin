@@ -4,10 +4,10 @@ compiler/testData/cli/jvm/conflictingJvmDeclarations.kt:3:9: error: platform dec
     fun getY(): Int defined in Foo
         get() = 42
         ^
-compiler/testData/cli/jvm/conflictingJvmDeclarations.kt:8:5: error: platform declaration clash: The following declarations have the same JVM signature (getX()I):
+compiler/testData/cli/jvm/conflictingJvmDeclarations.kt:9:5: error: platform declaration clash: The following declarations have the same JVM signature (getX()I):
     fun `<get-x>`(): Int defined in Foo
     fun getX(): Int defined in Foo
     fun getY(): Int defined in Foo
-    @JvmName("getX")
+    fun getY() = 42
     ^
 COMPILATION_ERROR

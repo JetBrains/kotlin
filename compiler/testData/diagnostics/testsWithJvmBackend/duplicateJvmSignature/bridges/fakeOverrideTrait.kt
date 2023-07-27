@@ -1,4 +1,4 @@
-// COMPARE_WITH_LIGHT_TREE
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 interface B<T> {
@@ -6,5 +6,5 @@ interface B<T> {
 }
 
 class C : B<String> {
-    <!ACCIDENTAL_OVERRIDE!>fun foo(o: Any)<!> {}
+    <!ACCIDENTAL_OVERRIDE!>fun foo(o: Any) {}<!>
 }

@@ -1,4 +1,4 @@
-// COMPARE_WITH_LIGHT_TREE
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 open class B<T> {
@@ -8,5 +8,5 @@ open class B<T> {
 class C : B<String>() {
     override fun foo(t: String) {}
 
-    <!ACCIDENTAL_OVERRIDE!>fun foo(o: Any)<!> {}
+    <!ACCIDENTAL_OVERRIDE!>fun foo(o: Any) {}<!>
 }

@@ -1,4 +1,4 @@
-// COMPARE_WITH_LIGHT_TREE
+// FIR_IDENTICAL
 
 interface T {
     val x: Int
@@ -6,5 +6,5 @@ interface T {
 }
 
 interface C : T {
-    <!ACCIDENTAL_OVERRIDE!>fun getX()<!> = 1
+    <!ACCIDENTAL_OVERRIDE!>fun getX() = 1<!>
 }

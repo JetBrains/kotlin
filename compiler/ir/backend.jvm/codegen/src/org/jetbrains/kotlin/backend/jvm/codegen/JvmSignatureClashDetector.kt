@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.common.lower.ANNOTATION_IMPLEMENTATION
+import org.jetbrains.kotlin.backend.common.sourceElement
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
@@ -145,8 +146,10 @@ class JvmSignatureClashDetector(
         irDeclarations: Collection<IrDeclaration>,
         conflictingJvmDeclarationsData: ConflictingJvmDeclarationsData
     ) {
-        irDeclarations.mapNotNullTo(LinkedHashSet()) { irDeclaration ->
-            classCodegen.context.ktDiagnosticReporter.atFirstValidFrom(irDeclaration, classCodegen.irClass, containingIrFile = irDeclaration.file)
+        irDeclarations.mapTo(LinkedHashSet()) { irDeclaration ->
+            // Offset can be negative (SYNTHETIC_OFFSET) for delegated members; report an error on the class in that case.
+            val reportOn = irDeclaration.takeUnless { it.startOffset < 0 } ?: classCodegen.irClass
+            classCodegen.context.ktDiagnosticReporter.at(reportOn.sourceElement(), reportOn, irDeclaration.file)
         }.forEach {
             it.report(diagnosticFactory1, conflictingJvmDeclarationsData)
         }

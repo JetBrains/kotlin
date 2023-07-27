@@ -6,4 +6,4 @@ interface D {
     val x: Int
 }
 
-class <!ACCIDENTAL_OVERRIDE!>C(d: D)<!> : D by d, B
+<!ACCIDENTAL_OVERRIDE!>class C(d: D) : D by d, B<!>

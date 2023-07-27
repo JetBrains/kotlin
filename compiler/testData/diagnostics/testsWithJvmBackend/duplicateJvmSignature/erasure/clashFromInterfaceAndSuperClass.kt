@@ -1,4 +1,4 @@
-// COMPARE_WITH_LIGHT_TREE
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 public open class A<T> {
@@ -15,6 +15,6 @@ interface D {
     fun foo(x: A<String>): String
 }
 
-class <!CONFLICTING_INHERITED_JVM_DECLARATIONS!>B1<!> : A<A<String>>(), D
+<!CONFLICTING_INHERITED_JVM_DECLARATIONS!>class B1 : A<A<String>>(), D<!>
 
-interface <!CONFLICTING_INHERITED_JVM_DECLARATIONS!>B2<!> : C<A<String>>, D
+<!CONFLICTING_INHERITED_JVM_DECLARATIONS!>interface B2 : C<A<String>>, D<!>
