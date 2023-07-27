@@ -109,7 +109,7 @@ internal class AbiRendererImpl(
                  *   2. by a fully-qualified name of the declaration
                  *   3. by an additional ordering factor #1, see implementations of [RenderedDeclaration.additionalOrderingFactor1]
                  *   4. by the text of the rendered declaration (excluding signatures!)
-                 * 5  . by an additional ordering factor #2, see implementations of [RenderedDeclaration.additionalOrderingFactor2]
+                 *   5. by an additional ordering factor #2, see implementations of [RenderedDeclaration.additionalOrderingFactor2]
                  */
                 compareBy(
                     ::orderByDeclarationKind,
