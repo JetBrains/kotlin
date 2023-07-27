@@ -253,9 +253,16 @@ private class LibraryDeserializer(
                 else -> null
             }
 
-            val parentVisibilityStatus = (containingEntity as? ContainingEntity.Property)?.propertyVisibilityStatus
-            if (!computeVisibilityStatus(proto.base, annotations, containingClassModality, parentVisibilityStatus).isPubliclyVisible)
+            val parentPropertyVisibilityStatus = (containingEntity as? ContainingEntity.Property)?.propertyVisibilityStatus
+            if (!computeVisibilityStatus(
+                    proto.base,
+                    annotations,
+                    containingClassModality,
+                    parentPropertyVisibilityStatus
+                ).isPubliclyVisible
+            ) {
                 return null
+            }
 
             val flags = FunctionFlags.decode(proto.base.flags)
             if (flags.isFakeOverride) // TODO: FO of class with supertype from interop library
@@ -432,7 +439,7 @@ private class LibraryDeserializer(
             proto: ProtoDeclarationBase,
             annotations: Set<AbiQualifiedName>,
             containingClassModality: AbiModality?,
-            parentVisibilityStatus: VisibilityStatus? = null
+            parentPropertyVisibilityStatus: VisibilityStatus? = null
         ): VisibilityStatus = when (ProtoFlags.VISIBILITY.get(proto.flags.toInt())) {
             ProtoBuf.Visibility.PUBLIC -> VisibilityStatus.PUBLIC
 
@@ -444,7 +451,7 @@ private class LibraryDeserializer(
             }
 
             ProtoBuf.Visibility.INTERNAL -> when {
-                parentVisibilityStatus == VisibilityStatus.INTERNAL_PUBLISHED_API -> VisibilityStatus.INTERNAL_PUBLISHED_API
+                parentPropertyVisibilityStatus == VisibilityStatus.INTERNAL_PUBLISHED_API -> VisibilityStatus.INTERNAL_PUBLISHED_API
                 PUBLISHED_API_CONSTRUCTOR_QUALIFIED_NAME in annotations -> VisibilityStatus.INTERNAL_PUBLISHED_API
                 else -> VisibilityStatus.NON_PUBLIC
             }
