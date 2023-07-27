@@ -489,9 +489,7 @@ private val objectClassesPhase = createFileLoweringPhase(
 
 private val constEvaluationPhase = createFileLoweringPhase(
         lowering = { context: Context ->
-            // NaN constants has inconsistencies between IR and metadata representation,
-            // so inlining them can lead to incorrect behaviour. Check KT-53258 for details.
-            val configuration = IrInterpreterConfiguration(printOnlyExceptionMessage = true, inlineNanVal = false)
+            val configuration = IrInterpreterConfiguration(printOnlyExceptionMessage = true)
             ConstEvaluationLowering(context, configuration = configuration)
         },
         name = "ConstEvaluationLowering",

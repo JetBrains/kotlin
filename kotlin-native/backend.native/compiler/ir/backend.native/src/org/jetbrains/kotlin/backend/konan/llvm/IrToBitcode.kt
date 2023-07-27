@@ -1843,6 +1843,22 @@ internal class CodeGeneratorVisitor(
     private fun evaluateStringConst(value: IrConst<String>) =
             codegen.staticData.kotlinStringLiteral(value.value)
 
+    /**
+     * Normalizing nans to single value is useful for build reproducibility.
+     *
+     * It's possible that it can lead to some bad consequences for interop libraries,
+     * for which exact nan value is important. We are not aware of the existence of
+     * any such useful library, at least on priority targets.
+     *
+     * On the other side, the semantics of exact cases, NaN values should be not normalized, is unclear.
+     * E.g., in previous implementation, storing constant to another constant could change the exact bit pattern.
+     *
+     * So for now, we would just normalize all NaN constants. At least this leads to predictable result
+     * useful in almost all cases.
+     */
+    private fun Float.normalizeNan() = if (isNaN()) Float.NaN else this
+    private fun Double.normalizeNan() = if (isNaN()) Double.NaN else this
+
     private fun evaluateConst(value: IrConst<*>): ConstValue {
         context.log{"evaluateConst                  : ${ir2string(value)}"}
         /* This suppression against IrConst<String> */
@@ -1856,8 +1872,8 @@ internal class CodeGeneratorVisitor(
             IrConstKind.Int -> llvm.constInt32(value.value as Int)
             IrConstKind.Long -> llvm.constInt64(value.value as Long)
             IrConstKind.String -> evaluateStringConst(value as IrConst<String>)
-            IrConstKind.Float -> llvm.constFloat32(value.value as Float)
-            IrConstKind.Double -> llvm.constFloat64(value.value as Double)
+            IrConstKind.Float -> llvm.constFloat32((value.value as Float).normalizeNan())
+            IrConstKind.Double -> llvm.constFloat64((value.value as Double).normalizeNan())
         }
     }
 

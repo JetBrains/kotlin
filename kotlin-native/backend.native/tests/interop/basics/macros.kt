@@ -60,7 +60,7 @@ fun main(args: Array<String>) {
         assertEquals(doubleNanBase, 0x7ff8000000000000L)
         assertEquals(floatNanBase, DEFAULT_FLOAT_NAN.toRawBits())
         assertEquals(doubleNanBase, DEFAULT_DOUBLE_NAN.toRawBits())
-        assertEquals(floatNanBase or 0x12345, OTHER_FLOAT_NAN.toRawBits())
-        assertEquals(doubleNanBase or 0x123456789abL, OTHER_DOUBLE_NAN.toRawBits())
+        assertEquals(floatNanBase, OTHER_FLOAT_NAN.toRawBits())
+        assertEquals(doubleNanBase, OTHER_DOUBLE_NAN.toRawBits())
     }
 }

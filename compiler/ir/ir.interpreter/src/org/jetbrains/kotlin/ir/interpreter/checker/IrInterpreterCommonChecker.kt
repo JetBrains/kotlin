@@ -122,9 +122,6 @@ class IrInterpreterCommonChecker : IrInterpreterChecker {
     }
 
     override fun visitConst(expression: IrConst<*>, data: IrInterpreterCheckerData): Boolean {
-        if (!data.interpreterConfiguration.inlineNanVal) {
-            return !expression.isNaN()
-        }
         return true
     }
 

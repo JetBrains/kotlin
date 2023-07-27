@@ -4298,7 +4298,6 @@ interopTest("interop_globals") {
 }
 
 interopTest("interop_macros") {
-    disabled = isK2(project) // KT-56041
     source = "interop/basics/macros.kt"
     interop = 'cmacros'
 }
