@@ -14,9 +14,13 @@ import org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.impl.base.util.KtCompiledFileForOutputFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.*
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDiagnosticsForFile
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirWholeFileResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.resolve
+import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.CodeFragmentCapturedId
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.CodeFragmentCapturedValueAnalyzer
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.CompilationPeerCollector
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.codeFragment
@@ -324,7 +328,9 @@ internal class KtFirCompilerFacility(
 
         val capturedSymbols = capturedData.symbols
         val capturedValues = capturedSymbols.map { it.value }
-        val injectedSymbols = capturedSymbols.map { InjectedValue(it.symbol, it.typeRef, it.value.isMutated) }
+        val injectedSymbols = capturedSymbols.map {
+            InjectedValue(it.symbol, it.contextReceiverNumber, it.typeRef, it.value.isMutated)
+        }
 
         codeFragment.conversionData = CodeFragmentConversionData(
             classId = ClassId(FqName.ROOT, Name.identifier(configuration[CODE_FRAGMENT_CLASS_NAME] ?: "CodeFragment")),
@@ -332,7 +338,9 @@ internal class KtFirCompilerFacility(
             injectedSymbols
         )
 
-        val injectedSymbolMapping = injectedSymbols.associateBy { it.symbol }
+        val injectedSymbolMapping = injectedSymbols.associateBy {
+            CodeFragmentCapturedId(it.symbol, it.contextReceiverNumber)
+        }
         val injectedValueProvider = InjectedSymbolProvider(mainKtFile, injectedSymbolMapping)
 
         return CodeFragmentMappings(capturedValues, capturedData.files, injectedValueProvider)
@@ -340,7 +348,7 @@ internal class KtFirCompilerFacility(
 
     private class InjectedSymbolProvider(
         private val mainKtFile: KtFile,
-        private val injectedSymbolMapping: Map<FirBasedSymbol<*>, InjectedValue>
+        private val injectedSymbolMapping: Map<CodeFragmentCapturedId, InjectedValue>
     ) : (FirReference, Fir2IrConversionScope) -> InjectedValue? {
         override fun invoke(calleeReference: FirReference, conversionScope: Fir2IrConversionScope): InjectedValue? {
             val irFile = conversionScope.containingFileIfAny()
@@ -350,11 +358,13 @@ internal class KtFirCompilerFacility(
                 return null
             }
 
-            val symbol = when (calleeReference) {
-                is FirThisReference -> calleeReference.boundSymbol
-                else -> calleeReference.toResolvedSymbol<FirBasedSymbol<*>>()
+            val id = when (calleeReference) {
+                is FirThisReference -> calleeReference.boundSymbol?.let {
+                    CodeFragmentCapturedId(it, calleeReference.contextReceiverNumber)
+                }
+                else -> calleeReference.toResolvedSymbol<FirBasedSymbol<*>>()?.let { CodeFragmentCapturedId(it) }
             }
-            return injectedSymbolMapping[symbol]
+            return injectedSymbolMapping[id]
         }
     }
 
