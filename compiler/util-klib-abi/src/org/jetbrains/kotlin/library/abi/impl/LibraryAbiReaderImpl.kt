@@ -23,6 +23,9 @@ import org.jetbrains.kotlin.library.abi.AbiTypeNullability.*
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.storage.CacheWithNotNullValues
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.*
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
@@ -116,13 +119,20 @@ private class LibraryDeserializer(
             val packageFQN = fileReader.deserializeFqName(proto.fqNameList)
             packageName = AbiCompoundName(packageFQN)
 
+            val fileName = if (proto.hasFileEntry() && proto.fileEntry.hasName()) proto.fileEntry.name else "<unknown>"
+
             val fileSignature = FileSignature(
                 id = Any(), // Just an unique object.
                 fqName = FqName(packageFQN),
-                fileName = if (proto.hasFileEntry() && proto.fileEntry.hasName()) proto.fileEntry.name else "<unknown>"
+                fileName = fileName
             )
             signatureDeserializer = IdSignatureDeserializer(fileReader, fileSignature, interner)
-            typeDeserializer = TypeDeserializer(fileReader, signatureDeserializer)
+
+            typeDeserializer = TypeDeserializer(
+                storageManager = LockBasedStorageManager("file '$fileName', package '$packageFQN'"),
+                libraryFile = fileReader,
+                signatureDeserializer = signatureDeserializer
+            )
         }
 
         fun deserializeTo(output: MutableList<AbiDeclaration>) {
@@ -551,10 +561,22 @@ private class LibraryDeserializer(
     }
 
     private class TypeDeserializer(
+        storageManager: StorageManager,
         private val libraryFile: IrLibraryFile,
         private val signatureDeserializer: IdSignatureDeserializer
     ) {
-        private val typeIdToTypeCache = HashMap<Int, AbiType>()
+        /**
+         * Type Id -> [AbiType] cache.
+         *
+         * Implementation detail: The cache is backed by [CacheWithNotNullValues] instance provided by
+         * [LockBasedStorageManager.createCacheWithNotNullValues]. Unlike regular [java.util.Map] implementations
+         * that may throw an exception (preferably [java.util.ConcurrentModificationException]) if a mapping
+         * function in [java.util.Map.computeIfAbsent] attempts to modify the same map, or even may lead to
+         * 1-thread deadlocks (a real case with [java.util.concurrent.ConcurrentHashMap]), the cache based on
+         * [CacheWithNotNullValues] is always safe: It allows recursive calls of the mapping function to
+         * compute values for nested entities by design.
+         */
+        private val typeIdToTypeCache = storageManager.createCacheWithNotNullValues<Int, AbiType>()
         private val nonPublicTopLevelClassNames = HashSet<AbiQualifiedName>()
 
         fun deserializeType(typeId: Int, typeParameterResolver: TypeParameterResolver): AbiType {
