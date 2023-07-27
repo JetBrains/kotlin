@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.library.abi
 
+import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
@@ -26,12 +27,12 @@ class ManifestRenderingTest {
     @Test
     fun renderWithManifest() {
         val customManifest = LibraryManifest(
-            platform = generateRandomString(10),
-            nativeTargets = List(5) { index -> "${index}_${generateRandomString(8)}" },
-            compilerVersion = generateRandomVersion(),
-            abiVersion = generateRandomVersion(),
-            libraryVersion = generateRandomVersion(),
-            irProviderName = generateRandomString(20)
+            platform = BuiltInsPlatform.JS.name,
+            nativeTargets = listOf("ios_arm64", "ios_simulator_arm64", "macos_arm64", "macos_x64"),
+            compilerVersion = "1.23.45",
+            abiVersion = "2.34.56",
+            libraryVersion = "3.45.67",
+            irProviderName = "test_ir_provider_123"
         )
 
         val libraryFile = buildLibrary(sourceFile, libraryName = "sample-library", buildDir)
