@@ -221,11 +221,11 @@ internal fun AbstractNativeSimpleTest.generateTestCaseWithSingleModule(
 
 internal fun AbstractNativeSimpleTest.generateTestCaseWithSingleFile(
     sourceFile: File,
+    moduleName: String = sourceFile.name,
     freeCompilerArgs: TestCompilerArgs = TestCompilerArgs.EMPTY,
     testKind: TestKind = TestKind.STANDALONE,
     extras: TestCase.Extras = TestCase.WithTestRunnerExtras(TestRunnerType.DEFAULT)
 ): TestCase {
-    val moduleName: String = sourceFile.name ?: LAUNCHER_MODULE_NAME
     val module = TestModule.Exclusive(moduleName, emptySet(), emptySet(), emptySet())
     module.files += TestFile.createCommitted(sourceFile, module)
 
