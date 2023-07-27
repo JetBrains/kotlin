@@ -15,10 +15,7 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.isLong
-import org.jetbrains.kotlin.ir.util.constructors
-import org.jetbrains.kotlin.ir.util.findDeclaration
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
-import org.jetbrains.kotlin.ir.util.kotlinPackageFqn
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi2ir.findSingleFunction
@@ -142,6 +139,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
 
     val enumValueOfIntrinsic = getInternalFunction("enumValueOfIntrinsic")
     val enumValuesIntrinsic = getInternalFunction("enumValuesIntrinsic")
+    val enumEntriesIntrinsic = getFunctionInEnumPackage("enumEntriesIntrinsic")
 
 
     // Other:
@@ -395,6 +393,11 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
         val descriptor = context.getFunctions(FqName(name)).singleOrNull() ?: return null
         return context.symbolTable.descriptorExtension.referenceSimpleFunction(descriptor)
     }
+
+    private fun getFunctionInEnumPackage(name: String) =
+        context.symbolTable.descriptorExtension.referenceSimpleFunction(
+            context.getFunctions(kotlinEnumsPackageFqn.child(Name.identifier(name))).single()
+        )
 
     private fun getFunctionInKotlinPackage(name: String) =
         context.symbolTable.descriptorExtension.referenceSimpleFunction(

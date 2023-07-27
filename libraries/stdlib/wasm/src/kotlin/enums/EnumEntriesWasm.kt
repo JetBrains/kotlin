@@ -8,10 +8,6 @@ package kotlin.enums
 @SinceKotlin("1.9")
 @ExperimentalStdlibApi
 @PublishedApi
-internal actual inline fun <reified T : Enum<T>> enumEntriesIntrinsic(): EnumEntries<T> {
-    /*
-     * Implementation note: this body will be replaced with `throw NotImplementedException()` the moment
-     * all backends starts intrinsifying this call.
-     */
-    return enumEntries(enumValues<T>())
-}
+// TODO: After the expect fun enumEntriesIntrinsic become non-inline function, the suppress and external keyword should be removed
+@Suppress("INLINE_EXTERNAL_DECLARATION", "WRONG_JS_INTEROP_TYPE")
+internal actual external inline fun <reified T : Enum<T>> enumEntriesIntrinsic(): EnumEntries<T>

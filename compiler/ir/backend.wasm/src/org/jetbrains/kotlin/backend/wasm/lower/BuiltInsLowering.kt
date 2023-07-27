@@ -182,6 +182,8 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
                 return EnumIntrinsicsUtils.transformEnumValueOfIntrinsic(call)
             symbols.enumValuesIntrinsic ->
                 return EnumIntrinsicsUtils.transformEnumValuesIntrinsic(call)
+            symbols.enumEntriesIntrinsic ->
+                return EnumIntrinsicsUtils.transformEnumEntriesIntrinsic(call)
         }
 
         return call

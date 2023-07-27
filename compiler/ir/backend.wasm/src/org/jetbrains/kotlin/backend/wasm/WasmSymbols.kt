@@ -118,6 +118,7 @@ class WasmSymbols(
 
     val enumValueOfIntrinsic = getInternalFunction("enumValueOfIntrinsic")
     val enumValuesIntrinsic = getInternalFunction("enumValuesIntrinsic")
+    val enumEntriesIntrinsic = getEnumsFunction("enumEntriesIntrinsic")
 
     val coroutineEmptyContinuation: IrPropertySymbol = symbolTable.descriptorExtension.referenceProperty(
         getProperty(FqName.fromSegments(listOf("kotlin", "wasm", "internal", "EmptyContinuation")))
@@ -381,6 +382,8 @@ class WasmSymbols(
     }
 
     private fun getInternalFunction(name: String) = getFunction(name, wasmInternalPackage)
+
+    private fun getEnumsFunction(name: String) = getFunction(name, enumsInternalPackage)
 
     private fun getIrClass(fqName: FqName): IrClassSymbol = symbolTable.descriptorExtension.referenceClass(getClass(fqName))
     private fun getInternalClass(name: String): IrClassSymbol = getIrClass(FqName("kotlin.wasm.internal.$name"))

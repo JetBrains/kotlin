@@ -11,6 +11,10 @@ public sealed interface EnumEntries<E : Enum<E>>
 
 @PublishedApi
 @ExperimentalStdlibApi
+internal external fun <T: Enum<T>> enumEntriesIntrinsic(): EnumEntries<T>
+
+@PublishedApi
+@ExperimentalStdlibApi
 @SinceKotlin("1.8")
 internal fun <E : Enum<E>> enumEntries(entries: Array<E>): EnumEntries<E> = EnumEntriesList(entries)
 
