@@ -240,6 +240,10 @@ internal class AbiRendererImpl(
             if (declaration.isValue) append("value ")
             if (declaration.isFunction) append("fun ")
             appendClassKind(declaration.kind)
+
+            // Note: Type parameters are rendered before the class name, exactly as it is done for functions.
+            // This is done intentionally for the purpose of unification of the rendering notation for different
+            // types of declarations.
             appendTypeParametersOf(declaration)
             appendNameOf(declaration)
             if (declaration.superTypes.isNotEmpty()) {
