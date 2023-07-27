@@ -18,11 +18,25 @@ class IdeaKotlinSourceCoordinatesSerializationTest : AbstractSerializationTest<I
     override fun deserialize(data: ByteArray): IdeaKotlinSourceCoordinates =
         IdeaKotlinSourceCoordinates(IdeaKotlinSourceCoordinatesProto.parseFrom(data))
 
+    @Suppress("DEPRECATION")
     @Test
     fun `sample 0`() = testSerialization(
         IdeaKotlinSourceCoordinates(
             project = IdeaKotlinProjectCoordinates(
                 buildId = "myBuildId",
+                projectPath = "myProjectPath",
+                projectName = "myProjectName"
+            ),
+            sourceSetName = "mySourceSetName"
+        )
+    )
+
+    @Test
+    fun `sample 1`() = testSerialization(
+        IdeaKotlinSourceCoordinates(
+            project = IdeaKotlinProjectCoordinates(
+                buildName = "myBuildId",
+                buildPath = ":myBuildPath",
                 projectPath = "myProjectPath",
                 projectName = "myProjectName"
             ),

@@ -19,6 +19,7 @@ object TestIdeaKotlinInstances {
         extrasKeyOf<String>() withValue "Cash"
     )
 
+    @Suppress("DEPRECATION")
     val simpleProjectCoordinates = IdeaKotlinProjectCoordinates(
         buildId = "myBuildId",
         projectPath = "my:project:path",

@@ -431,13 +431,18 @@ public final class org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinProjectArtifac
 public final class org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinProjectCoordinates : java/io/Serializable, org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinDependencyCoordinates {
 	public static final field serialVersionUID J
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/lang/String;
 	public final fun component3 ()Ljava/lang/String;
 	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinProjectCoordinates;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinProjectCoordinates;
 	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinProjectCoordinates;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinProjectCoordinates;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinProjectCoordinates;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinProjectCoordinates;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getBuildId ()Ljava/lang/String;
+	public final fun getBuildName ()Ljava/lang/String;
+	public final fun getBuildPath ()Ljava/lang/String;
 	public final fun getProjectName ()Ljava/lang/String;
 	public final fun getProjectPath ()Ljava/lang/String;
 	public fun hashCode ()I
@@ -477,6 +482,8 @@ public final class org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinSourceCoordina
 	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinSourceCoordinates;Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinProjectCoordinates;Ljava/lang/String;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinSourceCoordinates;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getBuildId ()Ljava/lang/String;
+	public final fun getBuildName ()Ljava/lang/String;
+	public final fun getBuildPath ()Ljava/lang/String;
 	public final fun getProject ()Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinProjectCoordinates;
 	public final fun getProjectName ()Ljava/lang/String;
 	public final fun getProjectPath ()Ljava/lang/String;

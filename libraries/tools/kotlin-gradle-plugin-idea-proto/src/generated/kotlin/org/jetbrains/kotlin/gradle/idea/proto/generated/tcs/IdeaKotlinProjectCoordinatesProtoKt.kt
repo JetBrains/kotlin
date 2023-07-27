@@ -23,27 +23,75 @@ object IdeaKotlinProjectCoordinatesProtoKt {
     internal fun _build(): org.jetbrains.kotlin.gradle.idea.proto.generated.tcs.IdeaKotlinProjectCoordinatesProto = _builder.build()
 
     /**
-     * <code>optional string build_id = 1;</code>
+     * <pre>
+     * Renamed from 'build_id' to 'build_name' in 1.9.20
+     * </pre>
+     *
+     * <code>optional string build_name = 1;</code>
      */
-    var buildId: kotlin.String
-      @JvmName("getBuildId")
-      get() = _builder.getBuildId()
-      @JvmName("setBuildId")
+    var buildName: kotlin.String
+      @JvmName("getBuildName")
+      get() = _builder.getBuildName()
+      @JvmName("setBuildName")
       set(value) {
-        _builder.setBuildId(value)
+        _builder.setBuildName(value)
       }
     /**
-     * <code>optional string build_id = 1;</code>
+     * <pre>
+     * Renamed from 'build_id' to 'build_name' in 1.9.20
+     * </pre>
+     *
+     * <code>optional string build_name = 1;</code>
      */
-    fun clearBuildId() {
-      _builder.clearBuildId()
+    fun clearBuildName() {
+      _builder.clearBuildName()
     }
     /**
-     * <code>optional string build_id = 1;</code>
-     * @return Whether the buildId field is set.
+     * <pre>
+     * Renamed from 'build_id' to 'build_name' in 1.9.20
+     * </pre>
+     *
+     * <code>optional string build_name = 1;</code>
+     * @return Whether the buildName field is set.
      */
-    fun hasBuildId(): kotlin.Boolean {
-      return _builder.hasBuildId()
+    fun hasBuildName(): kotlin.Boolean {
+      return _builder.hasBuildName()
+    }
+
+    /**
+     * <pre>
+     * Added in 1.9.20
+     * </pre>
+     *
+     * <code>optional string build_path = 4;</code>
+     */
+    var buildPath: kotlin.String
+      @JvmName("getBuildPath")
+      get() = _builder.getBuildPath()
+      @JvmName("setBuildPath")
+      set(value) {
+        _builder.setBuildPath(value)
+      }
+    /**
+     * <pre>
+     * Added in 1.9.20
+     * </pre>
+     *
+     * <code>optional string build_path = 4;</code>
+     */
+    fun clearBuildPath() {
+      _builder.clearBuildPath()
+    }
+    /**
+     * <pre>
+     * Added in 1.9.20
+     * </pre>
+     *
+     * <code>optional string build_path = 4;</code>
+     * @return Whether the buildPath field is set.
+     */
+    fun hasBuildPath(): kotlin.Boolean {
+      return _builder.hasBuildPath()
     }
 
     /**

@@ -213,13 +213,114 @@ class IdeaKotlinBinaryCoordinates(
     }
 }
 
-data class IdeaKotlinProjectCoordinates(
-    val buildId: String,
+
+class IdeaKotlinProjectCoordinates(
+    val buildName: String,
+    val buildPath: String,
     val projectPath: String,
     val projectName: String,
 ) : Serializable, IdeaKotlinDependencyCoordinates {
+
+    /**
+     * Keeping binary compatibility!
+     */
+    @Deprecated("Use 'buildName' or 'buildPath' instead")
+    val buildId: String get() = buildName
+
+    /**
+     * Keeping binary compatibility!
+     */
+    @Deprecated("Use constructor with 'buildName' and 'buildPath' instead")
+    constructor(
+        buildId: String,
+        projectPath: String,
+        projectName: String,
+    ) : this(
+        buildName = buildId,
+        buildPath = if (buildId.startsWith(":")) buildId else ":$buildId",
+        projectPath = projectPath,
+        projectName = projectName
+    )
+
+    /**
+     * Keeping binary compatibility!
+     */
+    @Suppress("DEPRECATION")
+    @Deprecated("Use copy method with 'buildName' and 'buildPath' instead", level = DeprecationLevel.ERROR)
+    fun copy(
+        buildId: String = this.buildId,
+        projectPath: String = this.projectPath,
+        projectName: String = this.projectName,
+    ): IdeaKotlinProjectCoordinates {
+        return if (this.buildId != buildId) {
+            IdeaKotlinProjectCoordinates(
+                buildId = buildId,
+                projectPath = projectPath,
+                projectName = projectName
+            )
+        } else {
+            IdeaKotlinProjectCoordinates(
+                buildName = buildName,
+                buildPath = buildPath,
+                projectPath = projectPath,
+                projectName = projectName
+            )
+        }
+    }
+
+    /**
+     * Keeping binary compatibility!
+     */
+    @Deprecated("Please reference the property directly!", level = DeprecationLevel.ERROR)
+    @Suppress("DEPRECATION")
+    operator fun component1() = buildId
+
+    /**
+     * Keeping binary compatibility!
+     */
+    @Deprecated("Please reference the property directly!", level = DeprecationLevel.ERROR)
+    operator fun component2() = projectPath
+
+    /**
+     * Keeping binary compatibility!
+     */
+    @Deprecated("Please reference the property directly!", level = DeprecationLevel.ERROR)
+    operator fun component3() = projectName
+
+    fun copy(
+        buildName: String = this.buildName,
+        buildPath: String = this.buildPath,
+        projectPath: String = this.projectPath,
+        projectName: String = this.projectName,
+    ): IdeaKotlinProjectCoordinates {
+        return IdeaKotlinProjectCoordinates(
+            buildName = buildName,
+            buildPath = buildPath,
+            projectPath = projectPath,
+            projectName = projectName
+        )
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is IdeaKotlinProjectCoordinates) return false
+        if (other.buildName != this.buildName) return false
+        if (other.buildPath != this.buildPath) return false
+        if (other.projectPath != this.projectPath) return false
+        if (other.projectName != this.projectName) return false
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = buildName.hashCode()
+        result = 31 * result + buildPath.hashCode()
+        result = 31 * result + projectPath.hashCode()
+        result = 31 * result + projectName.hashCode()
+        return result
+    }
+
     override fun toString(): String {
-        return "${buildId.takeIf { it != ":" }?.plus(":").orEmpty()}$projectPath"
+        return "${projectPath.takeIf { it != ":" }?.plus(":").orEmpty()}$projectPath"
     }
 
     internal companion object {
@@ -232,7 +333,11 @@ data class IdeaKotlinSourceCoordinates(
     val sourceSetName: String,
 ) : IdeaKotlinDependencyCoordinates {
 
+    @Deprecated("Use 'buildPath' instead")
+    @Suppress("DEPRECATION")
     val buildId: String get() = project.buildId
+    val buildName: String get() = project.buildName
+    val buildPath: String get() = project.buildPath
     val projectPath: String get() = project.projectPath
     val projectName: String get() = project.projectName
 
