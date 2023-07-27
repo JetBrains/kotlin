@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.backend.common.lower.inline
 
 
-import org.jetbrains.kotlin.backend.common.*
+import org.jetbrains.kotlin.backend.common.BodyLoweringPass
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.ScopeWithIr
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.ir.isPure
 import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
@@ -44,18 +47,10 @@ interface InlineFunctionResolver {
     fun getFunctionSymbol(irFunction: IrFunction): IrFunctionSymbol
 }
 
-fun IrFunction.isTopLevelInPackage(name: String, packageName: String): Boolean {
-    if (name != this.name.asString()) return false
-
-    val containingDeclaration = parent as? IrPackageFragment ?: return false
-    val packageFqName = containingDeclaration.packageFqName.asString()
-    return packageName == packageFqName
-}
-
 fun IrFunction.isBuiltInSuspendCoroutineUninterceptedOrReturn(): Boolean =
     isTopLevelInPackage(
         "suspendCoroutineUninterceptedOrReturn",
-        StandardNames.COROUTINES_INTRINSICS_PACKAGE_FQ_NAME.asString()
+        StandardNames.COROUTINES_INTRINSICS_PACKAGE_FQ_NAME
     )
 
 open class DefaultInlineFunctionResolver(open val context: CommonBackendContext) : InlineFunctionResolver {
@@ -87,7 +82,9 @@ class FunctionInlining(
     private val regenerateInlinedAnonymousObjects: Boolean = false,
     private val inlineArgumentsWithTheirOriginalTypeAndOffset: Boolean = false,
     private val allowExternalInlining: Boolean = false,
-    private val useTypeParameterUpperBound: Boolean = false
+    private val useTypeParameterUpperBound: Boolean = false,
+    private val defaultNonReifiedTypeParameterRemappingMode: NonReifiedTypeParameterRemappingMode
+    = NonReifiedTypeParameterRemappingMode.SUBSTITUTE,
 ) : IrElementTransformerVoidWithContext(), BodyLoweringPass {
     private var containerScope: ScopeWithIr? = null
 
@@ -170,7 +167,7 @@ class FunctionInlining(
                 (0 until callSite.typeArgumentsCount).associate {
                     typeParameters[it].symbol to callSite.getTypeArgument(it)
                 }
-            DeepCopyIrTreeWithSymbolsForInliner(typeArguments, parent)
+            DeepCopyIrTreeWithSymbolsForInliner(typeArguments, parent, defaultNonReifiedTypeParameterRemappingMode)
         }
 
         val substituteMap = mutableMapOf<IrValueParameter, IrExpression>()
@@ -912,4 +909,8 @@ class InlinerExpressionLocationHint(val inlineAtSymbol: IrSymbol) : IrStatementO
 
     private val functionNameOrDefaultToString: String
         get() = (inlineAtSymbol as? IrFunction)?.name?.asString() ?: inlineAtSymbol.toString()
+}
+
+enum class NonReifiedTypeParameterRemappingMode {
+    LEAVE_AS_IS, SUBSTITUTE, ERASE
 }
