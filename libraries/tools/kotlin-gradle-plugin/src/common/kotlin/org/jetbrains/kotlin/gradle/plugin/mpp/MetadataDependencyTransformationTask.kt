@@ -186,7 +186,7 @@ private typealias SerializableComponentIdentifierKey = String
  */
 private val ComponentIdentifier.serializableUniqueKey
     get(): SerializableComponentIdentifierKey = when (this) {
-        is ProjectComponentIdentifier -> "project ${build.name}$projectPath"
+        is ProjectComponentIdentifier -> "project ${build.buildPathCompat}$projectPath"
         is ModuleComponentIdentifier -> "module $group:$module:$version"
         else -> error("Unexpected Component Identifier: '$this' of type ${this.javaClass}")
     }
