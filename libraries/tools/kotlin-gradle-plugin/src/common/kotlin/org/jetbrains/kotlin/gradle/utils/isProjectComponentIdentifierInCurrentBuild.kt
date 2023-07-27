@@ -21,7 +21,7 @@ internal val ComponentIdentifier.isProjectComponentIdentifierInCurrentBuild: Boo
 
 internal val ComponentIdentifier.currentBuildProjectIdOrNull
     get(): ProjectComponentIdentifier? = when {
-        this is ProjectComponentIdentifier && build.isCurrentBuild -> this
+        this is ProjectComponentIdentifier && build.isCurrentBuildCompat -> this
         else -> null
     }
 

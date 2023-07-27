@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KpmGradleModuleVariantResolver
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.allDependencyModules
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.disambiguateName
 import org.jetbrains.kotlin.gradle.utils.filesProvider
+import org.jetbrains.kotlin.gradle.utils.isCurrentBuildCompat
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.project.model.KpmVariantResolution
 
@@ -38,7 +39,7 @@ interface GradleKpmVariantCompilationDataInternal<T : KotlinCommonOptions> : Gra
                             view.componentFilter { id ->
                                 // FIXME rewrite using the proper module resolution after those changes are merged
                                 val asProject = id as? ProjectComponentIdentifier
-                                asProject?.build?.isCurrentBuild == true &&
+                                asProject?.build?.isCurrentBuildCompat == true &&
                                         asProject.projectPath == owner.project.path
                             }
                         }.artifacts.filter {

@@ -53,3 +53,12 @@ internal val BuildIdentifier.buildNameCompat: String
 internal val BuildIdentifier.buildPathCompat: String
     get() = if (GradleVersion.current() >= GradleVersion.version("8.2")) buildPath
     else @Suppress("DEPRECATION") if (name.startsWith(":")) name else ":$name"
+
+
+/**
+ * Will return [BuildIdentifier.isCurrentBuild] for Gradle versions less than 8.2
+ * Will use the [BuildIdentifier.getBuildPath] to check if the buildIdentifier is the 'current' build
+ */
+internal val BuildIdentifier.isCurrentBuildCompat: Boolean
+    get() = if (GradleVersion.current() >= GradleVersion.version("8.2")) buildPath == ":"
+    else @Suppress("DEPRECATION") isCurrentBuild

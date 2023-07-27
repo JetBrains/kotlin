@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toSingleKpmModuleIdentifier
 import org.jetbrains.kotlin.gradle.utils.buildNameCompat
 import org.jetbrains.kotlin.gradle.utils.buildPathCompat
 import org.jetbrains.kotlin.gradle.utils.getOrPut
+import org.jetbrains.kotlin.gradle.utils.isCurrentBuildCompat
 
 internal val Project.kotlinMppDependencyProjectStructureMetadataExtractorFactory: MppDependencyProjectStructureMetadataExtractorFactory
     get() = MppDependencyProjectStructureMetadataExtractorFactory.getOrCreate(this)
@@ -34,7 +35,7 @@ private constructor(
         val moduleId = metadataArtifact.variant.owner
 
         return if (moduleId is ProjectComponentIdentifier) {
-            if (moduleId.build.isCurrentBuild) {
+            if (moduleId.build.isCurrentBuildCompat) {
                 val projectStructureMetadataProvider = currentBuildProjectStructureMetadataProviders[moduleId.projectPath]
                     ?: error("Project structure metadata not found for project '${moduleId.projectPath}'")
 

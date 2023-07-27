@@ -232,7 +232,7 @@ internal class GranularMetadataTransformation(
             error("Artifacts of dependency ${module.id.displayName} is built by old Kotlin Gradle Plugin and can't be consumed in this way")
         }
 
-        val isResolvedToProject = moduleId is ProjectComponentIdentifier && moduleId.build.isCurrentBuild
+        val isResolvedToProject = moduleId is ProjectComponentIdentifier && moduleId.build.isCurrentBuildCompat
 
         val sourceSetVisibility =
             params.sourceSetVisibilityProvider.getVisibleSourceSets(
@@ -300,7 +300,7 @@ internal class GranularMetadataTransformation(
         return when (val componentId = component.id) {
             is ModuleComponentIdentifier -> ModuleDependencyIdentifier(componentId.group, componentId.module)
             is ProjectComponentIdentifier -> {
-                if (componentId.build.isCurrentBuild) {
+                if (componentId.build.isCurrentBuildCompat) {
                     params.projectData[componentId.projectPath]?.moduleId?.getOrThrow()
                         ?: error("Cant find project Module ID by ${componentId.projectPath}")
                 } else {

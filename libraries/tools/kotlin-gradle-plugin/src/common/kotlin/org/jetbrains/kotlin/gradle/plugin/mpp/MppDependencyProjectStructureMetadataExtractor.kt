@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
+import org.jetbrains.kotlin.gradle.utils.isCurrentBuildCompat
 import org.jetbrains.kotlin.project.model.KpmModuleIdentifier
 import java.io.File
 import java.io.InputStream
@@ -56,7 +57,7 @@ internal class IncludedBuildMppDependencyProjectStructureMetadataExtractor(
 ) : JarMppDependencyProjectStructureMetadataExtractor(primaryArtifact) {
 
     init {
-        require(!componentId.build.isCurrentBuild) { "should be a project from an included build" }
+        require(!componentId.build.isCurrentBuildCompat) { "should be a project from an included build" }
     }
 
     override fun getProjectStructureMetadata(): KotlinProjectStructureMetadata? = projectStructureMetadataProvider()
