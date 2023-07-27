@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.library.abi.AbiTypeNullability.*
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.*
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
@@ -116,13 +118,20 @@ private class LibraryDeserializer(
             val packageFQN = fileReader.deserializeFqName(proto.fqNameList)
             packageName = AbiCompoundName(packageFQN)
 
+            val fileName = if (proto.hasFileEntry() && proto.fileEntry.hasName()) proto.fileEntry.name else "<unknown>"
+
             val fileSignature = FileSignature(
                 id = Any(), // Just an unique object.
                 fqName = FqName(packageFQN),
-                fileName = if (proto.hasFileEntry() && proto.fileEntry.hasName()) proto.fileEntry.name else "<unknown>"
+                fileName = fileName
             )
             signatureDeserializer = IdSignatureDeserializer(fileReader, fileSignature, interner)
-            typeDeserializer = TypeDeserializer(fileReader, signatureDeserializer)
+
+            typeDeserializer = TypeDeserializer(
+                storageManager = LockBasedStorageManager("file '$fileName', package '$packageFQN'"),
+                libraryFile = fileReader,
+                signatureDeserializer = signatureDeserializer
+            )
         }
 
         fun deserializeTo(output: MutableList<AbiDeclaration>) {
@@ -551,10 +560,11 @@ private class LibraryDeserializer(
     }
 
     private class TypeDeserializer(
+        storageManager: StorageManager,
         private val libraryFile: IrLibraryFile,
         private val signatureDeserializer: IdSignatureDeserializer
     ) {
-        private val typeIdToTypeCache = HashMap<Int, AbiType>()
+        private val typeIdToTypeCache = storageManager.createCacheWithNotNullValues<Int, AbiType>()
         private val nonPublicTopLevelClassNames = HashSet<AbiQualifiedName>()
 
         fun deserializeType(typeId: Int, typeParameterResolver: TypeParameterResolver): AbiType {
