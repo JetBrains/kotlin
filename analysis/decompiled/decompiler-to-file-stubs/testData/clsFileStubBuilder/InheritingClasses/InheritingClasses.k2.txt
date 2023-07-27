@@ -1,0 +1,346 @@
+PsiJetFileStubImpl[package=a]
+  PACKAGE_DIRECTIVE
+    REFERENCE_EXPRESSION[referencedName=a]
+  IMPORT_LIST
+  CLASS[classId=a/InheritingClasses, fqName=a.InheritingClasses, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=InheritingClasses, superNames=[]]
+    MODIFIER_LIST[public final]
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=InheritingClasses]
+      MODIFIER_LIST[public]
+      VALUE_PARAMETER_LIST
+    CLASS_BODY
+      CLASS[classId=a/InheritingClasses.A, fqName=a.InheritingClasses.A, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=A, superNames=[C]]
+        MODIFIER_LIST[abstract public]
+        PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=A]
+          MODIFIER_LIST[public]
+          VALUE_PARAMETER_LIST
+            VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=c]
+              TYPE_REFERENCE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=Int]
+              REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+        SUPER_TYPE_LIST
+          SUPER_TYPE_ENTRY
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=a]
+                  REFERENCE_EXPRESSION[referencedName=InheritingClasses]
+                REFERENCE_EXPRESSION[referencedName=C]
+        CLASS_BODY
+          PROPERTY[fqName=a.InheritingClasses.A.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
+            MODIFIER_LIST[open public]
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=Int]
+          PROPERTY[fqName=a.InheritingClasses.A.op, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=op]
+            MODIFIER_LIST[open public]
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=Int]
+          PROPERTY[fqName=a.InheritingClasses.A.ap, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=ap]
+            MODIFIER_LIST[abstract public]
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=Int]
+          FUN[fqName=a.InheritingClasses.A.of, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=of]
+            MODIFIER_LIST[open public]
+            VALUE_PARAMETER_LIST
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=Int]
+          FUN[fqName=a.InheritingClasses.A.af, hasBlockBody=true, hasBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=af]
+            MODIFIER_LIST[abstract public]
+            VALUE_PARAMETER_LIST
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=Int]
+      CLASS[classId=a/InheritingClasses.B, fqName=a.InheritingClasses.B, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=B, superNames=[A]]
+        MODIFIER_LIST[open public]
+        PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=B]
+          MODIFIER_LIST[public]
+          VALUE_PARAMETER_LIST
+        SUPER_TYPE_LIST
+          SUPER_TYPE_ENTRY
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=a]
+                  REFERENCE_EXPRESSION[referencedName=InheritingClasses]
+                REFERENCE_EXPRESSION[referencedName=A]
+        CLASS_BODY
+          PROPERTY[fqName=a.InheritingClasses.B.op, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=op]
+            MODIFIER_LIST[open public]
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=Int]
+          PROPERTY[fqName=a.InheritingClasses.B.ap, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=ap]
+            MODIFIER_LIST[open public]
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=Int]
+          FUN[fqName=a.InheritingClasses.B.of, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=of]
+            MODIFIER_LIST[open public]
+            VALUE_PARAMETER_LIST
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=Int]
+          FUN[fqName=a.InheritingClasses.B.af, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=af]
+            MODIFIER_LIST[open public]
+            VALUE_PARAMETER_LIST
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=Int]
+      CLASS[classId=a/InheritingClasses.C, fqName=a.InheritingClasses.C, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=false, name=C, superNames=[]]
+        MODIFIER_LIST[public]
+        CLASS_BODY
+          PROPERTY[fqName=a.InheritingClasses.C.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
+            MODIFIER_LIST[abstract public]
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=Int]
+      CLASS[classId=a/InheritingClasses.D, fqName=a.InheritingClasses.D, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=false, name=D, superNames=[C]]
+        MODIFIER_LIST[public]
+        TYPE_PARAMETER_LIST
+          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+        SUPER_TYPE_LIST
+          SUPER_TYPE_ENTRY
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=a]
+                  REFERENCE_EXPRESSION[referencedName=InheritingClasses]
+                REFERENCE_EXPRESSION[referencedName=C]
+        CLASS_BODY
+          PROPERTY[fqName=a.InheritingClasses.D.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
+            MODIFIER_LIST[abstract public]
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=Int]
+      CLASS[classId=a/InheritingClasses.E, fqName=a.InheritingClasses.E, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=false, name=E, superNames=[]]
+        MODIFIER_LIST[public]
+        CLASS_BODY
+      CLASS[classId=a/InheritingClasses.G, fqName=a.InheritingClasses.G, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=G, superNames=[B, C, D, E]]
+        MODIFIER_LIST[public final]
+        PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=G]
+          MODIFIER_LIST[public]
+          VALUE_PARAMETER_LIST
+        SUPER_TYPE_LIST
+          SUPER_TYPE_ENTRY
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=a]
+                  REFERENCE_EXPRESSION[referencedName=InheritingClasses]
+                REFERENCE_EXPRESSION[referencedName=B]
+          SUPER_TYPE_ENTRY
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=a]
+                  REFERENCE_EXPRESSION[referencedName=InheritingClasses]
+                REFERENCE_EXPRESSION[referencedName=C]
+          SUPER_TYPE_ENTRY
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=a]
+                  REFERENCE_EXPRESSION[referencedName=InheritingClasses]
+                REFERENCE_EXPRESSION[referencedName=D]
+                TYPE_ARGUMENT_LIST
+                  TYPE_PROJECTION[projectionKind=NONE]
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=kotlin]
+                        REFERENCE_EXPRESSION[referencedName=Int]
+          SUPER_TYPE_ENTRY
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=a]
+                  REFERENCE_EXPRESSION[referencedName=InheritingClasses]
+                REFERENCE_EXPRESSION[referencedName=E]
+        CLASS_BODY
+      CLASS[classId=a/InheritingClasses.InheritAny, fqName=a.InheritingClasses.InheritAny, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=InheritAny, superNames=[]]
+        MODIFIER_LIST[public final]
+        PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=InheritAny]
+          MODIFIER_LIST[public]
+          VALUE_PARAMETER_LIST
+        CLASS_BODY
+          CLASS[classId=a/InheritingClasses.InheritAny.SomeTrait, fqName=a.InheritingClasses.InheritAny.SomeTrait, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=false, name=SomeTrait, superNames=[]]
+            MODIFIER_LIST[public]
+            CLASS_BODY
+          CLASS[classId=a/InheritingClasses.InheritAny.SomeTrait2, fqName=a.InheritingClasses.InheritAny.SomeTrait2, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=false, name=SomeTrait2, superNames=[]]
+            MODIFIER_LIST[public]
+            CLASS_BODY
+          CLASS[classId=a/InheritingClasses.InheritAny.ImplicitAny, fqName=a.InheritingClasses.InheritAny.ImplicitAny, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=ImplicitAny, superNames=[]]
+            MODIFIER_LIST[public final]
+            PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=ImplicitAny]
+              MODIFIER_LIST[public]
+              VALUE_PARAMETER_LIST
+            CLASS_BODY
+          CLASS[classId=a/InheritingClasses.InheritAny.ExplicitAny, fqName=a.InheritingClasses.InheritAny.ExplicitAny, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=ExplicitAny, superNames=[]]
+            MODIFIER_LIST[public final]
+            PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=ExplicitAny]
+              MODIFIER_LIST[public]
+              VALUE_PARAMETER_LIST
+            CLASS_BODY
+          CLASS[classId=a/InheritingClasses.InheritAny.OnlyTrait, fqName=a.InheritingClasses.InheritAny.OnlyTrait, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=OnlyTrait, superNames=[SomeTrait]]
+            MODIFIER_LIST[public final]
+            PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=OnlyTrait]
+              MODIFIER_LIST[public]
+              VALUE_PARAMETER_LIST
+            SUPER_TYPE_LIST
+              SUPER_TYPE_ENTRY
+                TYPE_REFERENCE
+                  USER_TYPE
+                    USER_TYPE
+                      USER_TYPE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=a]
+                        REFERENCE_EXPRESSION[referencedName=InheritingClasses]
+                      REFERENCE_EXPRESSION[referencedName=InheritAny]
+                    REFERENCE_EXPRESSION[referencedName=SomeTrait]
+            CLASS_BODY
+          CLASS[classId=a/InheritingClasses.InheritAny.OnlyTraits, fqName=a.InheritingClasses.InheritAny.OnlyTraits, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=OnlyTraits, superNames=[SomeTrait, SomeTrait2]]
+            MODIFIER_LIST[public final]
+            PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=OnlyTraits]
+              MODIFIER_LIST[public]
+              VALUE_PARAMETER_LIST
+            SUPER_TYPE_LIST
+              SUPER_TYPE_ENTRY
+                TYPE_REFERENCE
+                  USER_TYPE
+                    USER_TYPE
+                      USER_TYPE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=a]
+                        REFERENCE_EXPRESSION[referencedName=InheritingClasses]
+                      REFERENCE_EXPRESSION[referencedName=InheritAny]
+                    REFERENCE_EXPRESSION[referencedName=SomeTrait]
+              SUPER_TYPE_ENTRY
+                TYPE_REFERENCE
+                  USER_TYPE
+                    USER_TYPE
+                      USER_TYPE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=a]
+                        REFERENCE_EXPRESSION[referencedName=InheritingClasses]
+                      REFERENCE_EXPRESSION[referencedName=InheritAny]
+                    REFERENCE_EXPRESSION[referencedName=SomeTrait2]
+            CLASS_BODY
+          CLASS[classId=a/InheritingClasses.InheritAny.TraitWithExplicitAny, fqName=a.InheritingClasses.InheritAny.TraitWithExplicitAny, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=TraitWithExplicitAny, superNames=[Any, SomeTrait]]
+            MODIFIER_LIST[public final]
+            PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=TraitWithExplicitAny]
+              MODIFIER_LIST[public]
+              VALUE_PARAMETER_LIST
+            SUPER_TYPE_LIST
+              SUPER_TYPE_ENTRY
+                TYPE_REFERENCE
+                  USER_TYPE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                    REFERENCE_EXPRESSION[referencedName=Any]
+              SUPER_TYPE_ENTRY
+                TYPE_REFERENCE
+                  USER_TYPE
+                    USER_TYPE
+                      USER_TYPE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=a]
+                        REFERENCE_EXPRESSION[referencedName=InheritingClasses]
+                      REFERENCE_EXPRESSION[referencedName=InheritAny]
+                    REFERENCE_EXPRESSION[referencedName=SomeTrait]
+            CLASS_BODY
+          CLASS[classId=a/InheritingClasses.InheritAny.TraitsWithExplicitAny, fqName=a.InheritingClasses.InheritAny.TraitsWithExplicitAny, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=TraitsWithExplicitAny, superNames=[SomeTrait2, Any, SomeTrait]]
+            MODIFIER_LIST[public final]
+            PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=TraitsWithExplicitAny]
+              MODIFIER_LIST[public]
+              VALUE_PARAMETER_LIST
+            SUPER_TYPE_LIST
+              SUPER_TYPE_ENTRY
+                TYPE_REFERENCE
+                  USER_TYPE
+                    USER_TYPE
+                      USER_TYPE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=a]
+                        REFERENCE_EXPRESSION[referencedName=InheritingClasses]
+                      REFERENCE_EXPRESSION[referencedName=InheritAny]
+                    REFERENCE_EXPRESSION[referencedName=SomeTrait2]
+              SUPER_TYPE_ENTRY
+                TYPE_REFERENCE
+                  USER_TYPE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                    REFERENCE_EXPRESSION[referencedName=Any]
+              SUPER_TYPE_ENTRY
+                TYPE_REFERENCE
+                  USER_TYPE
+                    USER_TYPE
+                      USER_TYPE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=a]
+                        REFERENCE_EXPRESSION[referencedName=InheritingClasses]
+                      REFERENCE_EXPRESSION[referencedName=InheritAny]
+                    REFERENCE_EXPRESSION[referencedName=SomeTrait]
+            CLASS_BODY
+      CLASS[classId=a/InheritingClasses.InheritFunctionType, fqName=a.InheritingClasses.InheritFunctionType, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=InheritFunctionType, superNames=[]]
+        MODIFIER_LIST[abstract public]
+        PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=InheritFunctionType]
+          MODIFIER_LIST[public]
+          VALUE_PARAMETER_LIST
+        SUPER_TYPE_LIST
+          SUPER_TYPE_ENTRY
+            TYPE_REFERENCE
+              FUNCTION_TYPE
+                VALUE_PARAMETER_LIST
+                  VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=kotlin]
+                        REFERENCE_EXPRESSION[referencedName=Int]
+                  VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=kotlin]
+                        REFERENCE_EXPRESSION[referencedName=String]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                    REFERENCE_EXPRESSION[referencedName=Int]
+        CLASS_BODY

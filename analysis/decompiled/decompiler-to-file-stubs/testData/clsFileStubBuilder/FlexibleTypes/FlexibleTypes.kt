@@ -1,3 +1,6 @@
+// FIR_IGNORE
+// Ignored for fir, as FIR does not support org.jetbrains.kotlin.load.java.InternalFlexibleTypeTransformer
+
 package test
 
 import kotlin.internal.flexible.ft

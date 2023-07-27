@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // JVM_FILE_NAME: ContextReceiversOnFunctionTypeKt
 // !LANGUAGE: +ContextReceivers
 

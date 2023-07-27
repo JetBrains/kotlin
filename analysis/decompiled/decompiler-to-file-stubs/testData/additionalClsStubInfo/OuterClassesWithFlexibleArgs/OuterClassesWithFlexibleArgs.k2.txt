@@ -1,0 +1,50 @@
+PsiJetFileStubImpl[package=test]
+KotlinStub$PACKAGE_DIRECTIVE
+  KotlinStub$REFERENCE_EXPRESSION[referencedName=test]
+KotlinStub$IMPORT_LIST
+KotlinStub$CLASS[classId=test/OuterClassesWithFlexibleArgs, fqName=test.OuterClassesWithFlexibleArgs, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=OuterClassesWithFlexibleArgs, superNames=[]]
+  KotlinStub$MODIFIER_LIST[public final]
+  KotlinStub$TYPE_PARAMETER_LIST
+    KotlinStub$TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=K]
+    KotlinStub$TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=L]
+  KotlinStub$PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=OuterClassesWithFlexibleArgs]
+    KotlinStub$MODIFIER_LIST[public]
+    KotlinStub$VALUE_PARAMETER_LIST
+      KotlinStub$VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=k]
+        KotlinStub$TYPE_REFERENCE
+          KotlinStub$USER_TYPE
+            KotlinStub$REFERENCE_EXPRESSION[referencedName=K]
+      KotlinStub$VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=l]
+        KotlinStub$TYPE_REFERENCE
+          KotlinStub$USER_TYPE
+            KotlinStub$REFERENCE_EXPRESSION[referencedName=L]
+  KotlinStub$CLASS_BODY
+    KotlinStub$PROPERTY[fqName=test.OuterClassesWithFlexibleArgs.baz, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=baz]
+      KotlinStub$MODIFIER_LIST[public final]
+      KotlinStub$TYPE_REFERENCE
+        KotlinStub$USER_TYPE    ft: d.JavaClass.InnerClass<L & Any .. L?>?
+          KotlinStub$USER_TYPE
+            KotlinStub$USER_TYPE
+              KotlinStub$REFERENCE_EXPRESSION[referencedName=d]
+            KotlinStub$REFERENCE_EXPRESSION[referencedName=JavaClass]
+            KotlinStub$TYPE_ARGUMENT_LIST
+              KotlinStub$TYPE_PROJECTION[projectionKind=NONE]
+                KotlinStub$TYPE_REFERENCE
+                  KotlinStub$INTERSECTION_TYPE
+                    KotlinStub$TYPE_REFERENCE
+                      KotlinStub$USER_TYPE    ft: K?
+                        KotlinStub$REFERENCE_EXPRESSION[referencedName=K]
+                    KotlinStub$TYPE_REFERENCE
+                      KotlinStub$USER_TYPE
+                        KotlinStub$REFERENCE_EXPRESSION[referencedName=Any]
+          KotlinStub$REFERENCE_EXPRESSION[referencedName=InnerClass]
+          KotlinStub$TYPE_ARGUMENT_LIST
+            KotlinStub$TYPE_PROJECTION[projectionKind=NONE]
+              KotlinStub$TYPE_REFERENCE
+                KotlinStub$INTERSECTION_TYPE
+                  KotlinStub$TYPE_REFERENCE
+                    KotlinStub$USER_TYPE    ft: L?
+                      KotlinStub$REFERENCE_EXPRESSION[referencedName=L]
+                  KotlinStub$TYPE_REFERENCE
+                    KotlinStub$USER_TYPE
+                      KotlinStub$REFERENCE_EXPRESSION[referencedName=Any]

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 package test
 
 import java.io.Serializable
