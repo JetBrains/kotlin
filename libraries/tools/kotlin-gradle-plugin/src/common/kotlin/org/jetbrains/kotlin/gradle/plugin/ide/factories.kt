@@ -6,32 +6,41 @@
 package org.jetbrains.kotlin.gradle.plugin.ide
 
 import org.gradle.api.Project
+import org.gradle.api.artifacts.component.BuildIdentifier
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.capabilities.Capability
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.idea.tcs.*
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.KlibExtra
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.currentBuildId
+import org.jetbrains.kotlin.gradle.utils.buildNameCompat
+import org.jetbrains.kotlin.gradle.utils.buildPathCompat
 import org.jetbrains.kotlin.library.*
 
 
 internal fun IdeaKotlinProjectCoordinates(identifier: ProjectComponentIdentifier): IdeaKotlinProjectCoordinates {
     return IdeaKotlinProjectCoordinates(
-        buildId = identifier.build.name,
+        buildPath = identifier.build.buildPathCompat,
+        buildName = identifier.build.buildNameCompat,
         projectPath = identifier.projectPath,
         projectName = identifier.projectName
     )
 }
 
 internal fun IdeaKotlinProjectCoordinates(project: Project): IdeaKotlinProjectCoordinates {
+    val buildIdentifier = project.currentBuildId()
     return IdeaKotlinProjectCoordinates(
-        buildId = project.currentBuildId().name,
+        buildPath = buildIdentifier.buildPathCompat,
+        buildName = buildIdentifier.buildNameCompat,
         projectPath = project.path,
         projectName = project.name
     )
 }
+
+
 
 internal fun IdeaKotlinSourceCoordinates(sourceSet: KotlinSourceSet): IdeaKotlinSourceCoordinates {
     return IdeaKotlinSourceCoordinates(
