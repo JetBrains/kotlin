@@ -17,9 +17,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.isTest
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragment
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmModule
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.android.AndroidBaseSourceSetName
 import org.jetbrains.kotlin.gradle.plugin.sources.android.AndroidVariantType
@@ -42,8 +39,6 @@ internal fun Project.configureStdlibDefaultDependency(
     coreLibrariesVersion: Provider<String>
 ) {
     when (topLevelExtension) {
-        is KotlinPm20ProjectExtension -> addStdlibToKpmProject(project, coreLibrariesVersion)
-
         is KotlinJsProjectExtension -> topLevelExtension.registerTargetObserver { target ->
             target?.addStdlibDependency(configurations, dependencies, coreLibrariesVersion)
         }
@@ -104,35 +99,6 @@ private fun Configuration.alignStdlibJvmVariantVersions(
     }
 }
 
-private fun addStdlibToKpmProject(
-    project: Project,
-    coreLibrariesVersion: Provider<String>
-) {
-    project.pm20Extension.modules.named(GradleKpmModule.MAIN_MODULE_NAME) { main ->
-        main.fragments.named(GradleKpmFragment.COMMON_FRAGMENT_NAME) { common ->
-            common.dependencies {
-                api(project.dependencies.kotlinDependency(KOTLIN_STDLIB_MODULE_NAME, coreLibrariesVersion.get()))
-            }
-        }
-        main.variants.configureEach { variant ->
-            val dependencyHandler = project.dependencies
-            val stdlibModule = when (variant.platformType) {
-                KotlinPlatformType.common -> error("variants are not expected to be common")
-                KotlinPlatformType.jvm -> KOTLIN_STDLIB_MODULE_NAME
-                KotlinPlatformType.js -> KOTLIN_STDLIB_MODULE_NAME
-                KotlinPlatformType.wasm -> KOTLIN_STDLIB_WASM_MODULE_NAME
-                KotlinPlatformType.androidJvm -> null // TODO: expect support on the AGP side?
-                KotlinPlatformType.native -> KOTLIN_STDLIB_MODULE_NAME
-            }
-            if (stdlibModule != null) {
-                variant.dependencies {
-                    api(dependencyHandler.kotlinDependency(stdlibModule, coreLibrariesVersion.get()))
-                }
-            }
-        }
-    }
-}
-
 private fun KotlinTarget.addStdlibDependency(
     configurations: ConfigurationContainer,
     dependencies: DependencyHandler,
@@ -162,7 +128,6 @@ private fun KotlinTarget.addStdlibDependency(
                     ?: return@withDependencies
 
                 // Check if stdlib module is added to SourceSets hierarchy
-                @Suppress("DEPRECATION")
                 if (
                     isStdlibAddedByUser(
                         configurations,
