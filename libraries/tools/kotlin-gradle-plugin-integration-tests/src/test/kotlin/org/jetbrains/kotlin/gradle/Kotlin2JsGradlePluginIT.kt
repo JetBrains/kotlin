@@ -1663,4 +1663,19 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
             }
         }
     }
+
+    @GradleTest
+    fun testJsIrWholeProgram(gradleVersion: GradleVersion) {
+        project("kotlin-js-browser-project", gradleVersion) {
+            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
+            gradleProperties.appendText(
+                """
+                |
+                |kotlin.js.ir.output.granularity=whole-program
+                """.trimMargin()
+            )
+
+            build("assemble")
+        }
+    }
 }
