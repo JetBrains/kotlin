@@ -8,6 +8,13 @@ fun <A> multipleBounds(p1: A) where A : CharSequence, A : Appendable, A : Number
 
 inline fun <reified R, T> functionWithReifiedParameter(p1: R, p2: T) = Unit
 
+fun <T00, T01 : Any, T02 : CharSequence?, T03 : CharSequence, T04 : Appendable?, T05 : Appendable, T06 : Number?, T07 : Number, T08 : List<*>?, T09 : List<*>,
+     T10, T11 : Any, T12 : CharSequence?, T13 : CharSequence, T14 : Appendable?, T15 : Appendable, T16 : Number?, T17 : Number, T18 : List<*>?, T19 : List<*>,
+     T20, T21 : Any, T22 : CharSequence?, T23 : CharSequence, T24 : Appendable?, T25 : Appendable, T26 : Number?, T27 : Number, T28 : List<*>?, T29 : List<*>,
+     T30, T31 : Any, T32 : CharSequence?, T33 : CharSequence, T34 : Appendable?, T35 : Appendable, T36 : Number?, T37 : Number, T38 : List<*>?, T39 : List<*>,
+     T40, T41 : Any, T42 : CharSequence?, T43 : CharSequence, T44 : Appendable?, T45 : Appendable, T46 : Number?, T47 : Number, T48 : List<*>?, T49 : List<*>,
+     T50, T51 : Any, T52 : CharSequence?, T53 : CharSequence, T54 : Appendable?, T55 : Appendable, T56 : Number?, T57 : Number, T58 : List<*>?, T59 : List<*>> lotsOfTypeParameters(): CharSequence = ""
+
 var <P : Number> P.property: P get() = TODO()
     set(_) = Unit
 var <P : Number> P?.property: P get() = TODO()
