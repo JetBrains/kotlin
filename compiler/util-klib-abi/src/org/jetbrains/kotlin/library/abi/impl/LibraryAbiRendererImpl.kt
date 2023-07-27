@@ -7,11 +7,6 @@ package org.jetbrains.kotlin.library.abi.impl
 
 import org.jetbrains.kotlin.library.abi.*
 import org.jetbrains.kotlin.library.abi.impl.AbiFunctionImpl.Companion.BITS_ENOUGH_FOR_STORING_PARAMETERS_COUNT
-import org.jetbrains.kotlin.library.abi.impl.AbiRendererImpl.RenderedDeclaration.Companion.appendModalityOf
-import org.jetbrains.kotlin.library.abi.impl.AbiRendererImpl.RenderedDeclaration.Companion.appendNameOf
-import org.jetbrains.kotlin.library.abi.impl.AbiRendererImpl.RenderedDeclaration.Companion.appendSortedTypes
-import org.jetbrains.kotlin.library.abi.impl.AbiRendererImpl.RenderedDeclaration.Companion.appendType
-import org.jetbrains.kotlin.library.abi.impl.AbiRendererImpl.RenderedDeclaration.Companion.appendTypeParametersOf
 import org.jetbrains.kotlin.library.abi.impl.AbiRendererImpl.RenderedTopLevelDeclarations.printNestedDeclarationsInProperOrder as printTopLevelDeclarations
 import kotlin.text.Appendable
 
@@ -140,13 +135,11 @@ internal class AbiRendererImpl(
             }
     }
 
-    private sealed interface RenderedDeclaration<T : AbiDeclaration> {
-        val declaration: T
-        val text: String
-        val additionalOrderingFactor1: Int get() = 0
-        val additionalOrderingFactor2: String get() = ""
+    private sealed class RenderedDeclaration<T : AbiDeclaration>(val declaration: T, val text: String) {
+        open val additionalOrderingFactor1: Int get() = 0
+        open val additionalOrderingFactor2: String get() = ""
 
-        fun print(printer: Printer)
+        abstract fun print(printer: Printer)
 
         companion object {
             fun createFor(declaration: AbiDeclaration): RenderedDeclaration<*> = when (declaration) {
@@ -239,8 +232,9 @@ internal class AbiRendererImpl(
         }
     }
 
-    private class RenderedClass(override val declaration: AbiClass) : RenderedDeclaration<AbiClass> {
-        override val text = buildString {
+    private class RenderedClass(declaration: AbiClass) : RenderedDeclaration<AbiClass>(
+        declaration = declaration,
+        text = buildString {
             appendModalityOf(declaration)
             if (declaration.isInner) append("inner ")
             if (declaration.isValue) append("value ")
@@ -252,7 +246,7 @@ internal class AbiRendererImpl(
                 appendSortedTypes(declaration.superTypes, separator = ", ", prefix = " : ", postfix = "")
             }
         }
-
+    ) {
         override fun print(printer: Printer) {
             val hasChildren = declaration.declarations.isNotEmpty()
             printer.printDeclaration(this, printOpeningBrace = hasChildren)
@@ -295,24 +289,26 @@ internal class AbiRendererImpl(
         }
     }
 
-    private class RenderedEnumEntry(override val declaration: AbiEnumEntry) : RenderedDeclaration<AbiEnumEntry> {
-        override val text = buildString {
+    private class RenderedEnumEntry(declaration: AbiEnumEntry) : RenderedDeclaration<AbiEnumEntry>(
+        declaration = declaration,
+        text = buildString {
             append("enum entry ")
             appendNameOf(declaration)
         }
-
+    ) {
         override fun print(printer: Printer) = printer.printDeclaration(this)
     }
 
-    private class RenderedProperty(override val declaration: AbiProperty) : RenderedDeclaration<AbiProperty> {
-        private val getter = declaration.getter?.let(::RenderedFunction)
-        private val setter = declaration.setter?.let(::RenderedFunction)
-
-        override val text = buildString {
+    private class RenderedProperty(declaration: AbiProperty) : RenderedDeclaration<AbiProperty>(
+        declaration = declaration,
+        text = buildString {
             appendModalityOf(declaration)
             appendPropertyKind(declaration.kind)
             appendNameOf(declaration)
         }
+    ) {
+        private val getter = declaration.getter?.let(::RenderedFunction)
+        private val setter = declaration.setter?.let(::RenderedFunction)
 
         /** Delegates to [getter] or [setter], because the property itself knows nothing about value parameters. */
         override val additionalOrderingFactor1 get() = (getter ?: setter)?.additionalOrderingFactor1 ?: 0
@@ -345,8 +341,9 @@ internal class AbiRendererImpl(
         }
     }
 
-    private class RenderedFunction(override val declaration: AbiFunction) : RenderedDeclaration<AbiFunction> {
-        override val text = buildString {
+    private class RenderedFunction(declaration: AbiFunction) : RenderedDeclaration<AbiFunction>(
+        declaration = declaration,
+        text = buildString {
             if (!declaration.isConstructor || declaration.modality != AbiModality.FINAL) appendModalityOf(declaration)
             if (declaration.isSuspend) append("suspend ")
             if (declaration.isInline) append("inline ")
@@ -357,7 +354,7 @@ internal class AbiRendererImpl(
             appendRegularValueParametersOf(declaration)
             appendReturnTypeOf(declaration)
         }
-
+    ) {
         /**
          * Determines the relative order of a function to put it upper or lower in the renderer's output:
          * - Functions without extension receiver go above functions with an extension receiver.
