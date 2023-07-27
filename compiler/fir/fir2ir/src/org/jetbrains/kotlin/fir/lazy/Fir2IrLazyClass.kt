@@ -209,7 +209,7 @@ class Fir2IrLazyClass(
         addDeclarationsFromScope(fir.staticScope(session, scopeSession))
 
         with(classifierStorage) {
-            result.addAll(this@Fir2IrLazyClass.createContextReceiverFields(fir))
+            result.addAll(getFieldsWithContextReceiversForClass(this@Fir2IrLazyClass, fir))
         }
 
         for (name in scope.getCallableNames()) {
