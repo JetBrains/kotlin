@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import com.sun.org.apache.bcel.internal.generic.RETURN
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
