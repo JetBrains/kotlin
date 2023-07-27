@@ -339,7 +339,7 @@ konan::AutoreleasePool::AutoreleasePool()
   : handle(objc_autoreleasePoolPush()) {}
 
 konan::AutoreleasePool::~AutoreleasePool() {
-  kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
+  kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative, true);
   objc_autoreleasePoolPop(handle);
 }
 

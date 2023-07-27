@@ -4147,6 +4147,10 @@ if (PlatformInfo.isAppleTarget(project)) {
         it.defFile 'interop/objc/kt56402/objclib.def'
         it.headers "$projectDir/interop/objc/kt56402/objclib.h"
     }
+    createInterop("objc_autorelease_from_dealloc") {
+        it.defFile 'interop/objc/autorelease_from_dealloc/objclib.def'
+        it.headers "$projectDir/interop/objc/autorelease_from_dealloc/objclib.h"
+    }
     createInterop("objCAction") {
         it.defFile 'interop/objc/objCAction/objclib.def'
         it.headers "$projectDir/interop/objc/objCAction/objclib.h"
@@ -4934,6 +4938,7 @@ if (PlatformInfo.isAppleTarget(project)) {
             mkdir(buildDir)
             project.extensions.execClang.execClangForCompilerTests(project.target) {
                 args "$projectDir/interop/objc/kt56402/objclib.m"
+                args "-g"
                 args "-lobjc", '-fobjc-arc'
                 args '-fPIC', '-shared', '-o', "$buildDir/libobjc_kt56402.dylib"
                 args '-framework', 'AppKit'
@@ -4942,6 +4947,26 @@ if (PlatformInfo.isAppleTarget(project)) {
                 UtilsKt.codesign(project, "$buildDir/libobjc_kt56402.dylib")
             }
         }
+    }
+
+    interopTest("interop_objc_autorelease_from_dealloc") {
+        enabled = !isNoopGC // requires some GC
+        source = 'interop/objc/autorelease_from_dealloc/main.kt'
+        interop = "objc_autorelease_from_dealloc"
+        flags = ["-tr"]
+
+        doBeforeBuild {
+            mkdir(buildDir)
+            project.extensions.execClang.execClangForCompilerTests(project.target) {
+                args "$projectDir/interop/objc/autorelease_from_dealloc/objclib.m"
+                args "-lobjc", '-fno-objc-arc'
+                args '-fPIC', '-shared', '-o', "$buildDir/libobjc_autorelease_from_dealloc.dylib"
+            }
+            if (UtilsKt.isSimulatorTarget(project, project.target)) {
+                UtilsKt.codesign(project, "$buildDir/libobjc_autorelease_from_dealloc.dylib")
+            }
+        }
+        UtilsKt.dependsOnPlatformLibs(it)
     }
 
     interopTest("interop_objCAction") {
