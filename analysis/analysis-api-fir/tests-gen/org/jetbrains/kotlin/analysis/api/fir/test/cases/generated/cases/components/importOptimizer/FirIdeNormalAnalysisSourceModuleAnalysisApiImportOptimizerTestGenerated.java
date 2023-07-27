@@ -95,6 +95,12 @@ public class FirIdeNormalAnalysisSourceModuleAnalysisApiImportOptimizerTestGener
     }
 
     @Test
+    @TestMetadata("unusedImplicitReturnTypeReference_destructuring.kt")
+    public void testUnusedImplicitReturnTypeReference_destructuring() throws Exception {
+        runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/unusedImplicitReturnTypeReference_destructuring.kt");
+    }
+
+    @Test
     @TestMetadata("unusedImportFromObject.kt")
     public void testUnusedImportFromObject() throws Exception {
         runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/unusedImportFromObject.kt");

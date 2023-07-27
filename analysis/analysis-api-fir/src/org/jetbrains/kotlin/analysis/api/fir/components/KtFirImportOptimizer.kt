@@ -506,6 +506,8 @@ private sealed interface TypeQualifier {
         }
 
         fun createFor(typeRef: FirResolvedTypeRef): TypeQualifier? {
+            if (typeRef.source?.kind !is KtRealSourceElementKind) return null
+
             val wholeClassId = typeRef.resolvedClassId ?: return null
             val psi = typeRef.psi as? KtTypeReference ?: return null
 
