@@ -41,7 +41,6 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
 import java.nio.charset.Charset
-import kotlin.random.Random
 import org.jetbrains.kotlin.konan.file.File as KFile
 
 private val TestInfo.className: String get() = testClass.orElseGet { fail("Can't get test class name") }.simpleName
@@ -229,19 +228,6 @@ internal fun patchManifest(libraryFile: File, customManifest: LibraryManifest) {
         .forEach { manifestProperties.saveToFile(KFile(it.absolutePath)) }
 
     libraryKDir.zipDirAs(libraryKFile)
-}
-
-internal fun generateRandomString(length: Int): String = buildString {
-    assertTrue(length > 0)
-    repeat(length) { append(Random.nextInt('a'.code, 'z'.code).toChar()) }
-}
-
-internal fun generateRandomVersion(): String = buildString {
-    append(Random.nextInt(1, 100))
-    append('.')
-    append(Random.nextInt(1, 100))
-    append('.')
-    append(Random.nextInt(1, 100))
 }
 
 private const val ENV_VAR_PROJECT_BUILD_DIR = "PROJECT_BUILD_DIR"
