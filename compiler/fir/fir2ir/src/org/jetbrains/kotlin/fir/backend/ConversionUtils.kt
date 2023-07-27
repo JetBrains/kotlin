@@ -699,7 +699,7 @@ fun FirSession.createFilesWithGeneratedDeclarations(): List<FirFile> {
                     moduleData = this@createFilesWithGeneratedDeclarations.moduleData
                     containingFileSymbol = this@buildFile.symbol
                 }
-                origin = FirDeclarationOrigin.Synthetic
+                origin = FirDeclarationOrigin.Synthetic.PluginFile
                 moduleData = this@createFilesWithGeneratedDeclarations.moduleData
                 packageDirective = buildPackageDirective {
                     this.packageFqName = packageFqName

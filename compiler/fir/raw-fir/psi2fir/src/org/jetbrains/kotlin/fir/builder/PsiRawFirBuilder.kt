@@ -880,7 +880,7 @@ open class PsiRawFirBuilder(
             return buildField {
                 source = delegateSource
                 moduleData = baseModuleData
-                origin = FirDeclarationOrigin.Synthetic
+                origin = FirDeclarationOrigin.Synthetic.DelegateField
                 name = NameUtils.delegateFieldName(fieldOrd)
                 returnTypeRef = type
                 symbol = FirFieldSymbol(CallableId(this@PsiRawFirBuilder.context.currentClassId, name))

@@ -166,7 +166,7 @@ class CandidateFactory private constructor(
             buildErrorFunction {
                 moduleData = context.session.moduleData
                 resolvePhase = FirResolvePhase.BODY_RESOLVE
-                origin = FirDeclarationOrigin.Synthetic
+                origin = FirDeclarationOrigin.Synthetic.Error
                 this.diagnostic = diagnostic
                 symbol = it
             }
@@ -178,7 +178,7 @@ class CandidateFactory private constructor(
             buildErrorProperty {
                 moduleData = context.session.moduleData
                 resolvePhase = FirResolvePhase.BODY_RESOLVE
-                origin = FirDeclarationOrigin.Synthetic
+                origin = FirDeclarationOrigin.Synthetic.Error
                 name = FirErrorPropertySymbol.NAME
                 this.diagnostic = diagnostic
                 symbol = it

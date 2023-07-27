@@ -907,7 +907,7 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
                 val componentFunction = buildSimpleFunction {
                     source = sourceNode?.toFirSourceElement(KtFakeSourceElementKind.DataClassGeneratedMembers)
                     moduleData = baseModuleData
-                    origin = FirDeclarationOrigin.Synthetic
+                    origin = FirDeclarationOrigin.Synthetic.DataClassMember
                     returnTypeRef = firProperty.returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DataClassGeneratedMembers)
                     this.name = name
                     status = FirDeclarationStatusImpl(firProperty.visibility, Modality.FINAL).apply {
@@ -1100,7 +1100,7 @@ fun <TBase, TSource : TBase, TParameter : TBase> FirRegularClassBuilder.createDa
         val classTypeRef = createClassTypeRefWithSourceKind(KtFakeSourceElementKind.DataClassGeneratedMembers)
         this.source = toFirSource(sourceElement, KtFakeSourceElementKind.DataClassGeneratedMembers)
         moduleData = this@createDataClassCopyFunction.moduleData
-        origin = FirDeclarationOrigin.Synthetic
+        origin = FirDeclarationOrigin.Synthetic.DataClassMember
         returnTypeRef = classTypeRef
         name = StandardNames.DATA_CLASS_COPY
         status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
@@ -1116,7 +1116,7 @@ fun <TBase, TSource : TBase, TParameter : TBase> FirRegularClassBuilder.createDa
                 source = parameterSource
                 containingFunctionSymbol = this@buildSimpleFunction.symbol
                 moduleData = this@createDataClassCopyFunction.moduleData
-                origin = FirDeclarationOrigin.Synthetic
+                origin = FirDeclarationOrigin.Synthetic.DataClassMember
                 returnTypeRef = propertyReturnTypeRef
                 name = propertyName
                 symbol = FirValueParameterSymbol(propertyName)

@@ -160,7 +160,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
                     for (name in listOf(EQUALS, HASHCODE_NAME, TO_STRING)) {
                         scope.processFunctionsByName(name) {
                             // We won't synthesize a function if there is a user-contributed (non-synthetic) one.
-                            if (it.origin != FirDeclarationOrigin.Synthetic) return@processFunctionsByName
+                            if (it.origin !is FirDeclarationOrigin.Synthetic) return@processFunctionsByName
                             if (it.containingClassLookupTag() != klass.symbol.toLookupTag()) return@processFunctionsByName
                             require(!contains(name)) {
                                 "Two synthetic functions $name were found in data/value class ${klass.name}:\n" +

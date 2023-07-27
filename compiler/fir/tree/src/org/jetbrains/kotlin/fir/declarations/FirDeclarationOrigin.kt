@@ -23,7 +23,17 @@ sealed class FirDeclarationOrigin(
         object Library : Java("Java(Library)")
     }
 
-    object Synthetic : FirDeclarationOrigin()
+    sealed class Synthetic : FirDeclarationOrigin() {
+        object DataClassMember : Synthetic()
+        object ValueClassMember : Synthetic()
+        object JavaProperty : Synthetic()
+        object DelegateField : Synthetic()
+        object PluginFile : Synthetic()
+        object Error : Synthetic()
+        object TypeAliasConstructor : Synthetic()
+        object FakeFunction : Synthetic()
+        object ForwardDeclaration : Synthetic()
+    }
     object DynamicScope : FirDeclarationOrigin()
     object SamConstructor : FirDeclarationOrigin()
     object Enhancement : FirDeclarationOrigin()

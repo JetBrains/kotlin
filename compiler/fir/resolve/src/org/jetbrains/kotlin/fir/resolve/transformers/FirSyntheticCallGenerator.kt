@@ -436,7 +436,7 @@ class FirSyntheticCallGenerator(
     ): FirSimpleFunctionBuilder {
         return FirSimpleFunctionBuilder().apply {
             moduleData = session.moduleData
-            origin = FirDeclarationOrigin.Synthetic
+            origin = FirDeclarationOrigin.Synthetic.FakeFunction
             this.symbol = symbol
             this.name = name
             status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)

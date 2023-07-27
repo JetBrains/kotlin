@@ -229,7 +229,7 @@ private class TypeAliasConstructorsSubstitutingScope(
             processor(
                 buildConstructorCopy(originalConstructorSymbol.fir) {
                     symbol = FirConstructorSymbol(originalConstructorSymbol.callableId)
-                    origin = FirDeclarationOrigin.Synthetic
+                    origin = FirDeclarationOrigin.Synthetic.TypeAliasConstructor
 
                     this.typeParameters.clear()
                     this.typeParameters += typeParameters.map { buildConstructedClassTypeParameterRef { symbol = it.symbol } }

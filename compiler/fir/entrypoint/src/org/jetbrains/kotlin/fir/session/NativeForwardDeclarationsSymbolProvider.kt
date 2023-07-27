@@ -87,7 +87,7 @@ class NativeForwardDeclarationsSymbolProvider(
 
         buildRegularClass {
             moduleData = forwardDeclarationsModuleData
-            origin = FirDeclarationOrigin.Synthetic
+            origin = FirDeclarationOrigin.Synthetic.ForwardDeclaration
             check(!classId.isNestedClass) { "Expected top-level class when building forward declaration, got $classId" }
             name = classId.shortClassName
             status = FirResolvedDeclarationStatusImpl(

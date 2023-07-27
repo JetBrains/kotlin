@@ -34,7 +34,7 @@ class FirSyntheticPropertyAccessor(
         get() = delegate.moduleData
 
     override val origin: FirDeclarationOrigin
-        get() = FirDeclarationOrigin.Synthetic
+        get() = FirDeclarationOrigin.Synthetic.JavaProperty
 
     override val returnTypeRef: FirTypeRef
         get() = delegate.returnTypeRef

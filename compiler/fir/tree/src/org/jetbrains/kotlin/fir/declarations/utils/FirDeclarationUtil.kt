@@ -34,7 +34,7 @@ inline val FirDeclaration.isFromLibrary: Boolean
 inline val FirDeclaration.isPrecompiled: Boolean
     get() = origin == FirDeclarationOrigin.Precompiled
 inline val FirDeclaration.isSynthetic: Boolean
-    get() = origin == FirDeclarationOrigin.Synthetic
+    get() = origin is FirDeclarationOrigin.Synthetic
 
 // NB: This function checks transitive localness. That is,
 // if a declaration `isNonLocal`, then its parent also `isNonLocal`.

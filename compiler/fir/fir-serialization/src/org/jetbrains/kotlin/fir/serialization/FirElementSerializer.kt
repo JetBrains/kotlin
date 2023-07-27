@@ -598,7 +598,7 @@ class FirElementSerializer private constructor(
     private fun FirFunction.memberKind(): MemberKind {
         return when (origin) {
             FirDeclarationOrigin.Delegated -> MemberKind.DELEGATION
-            FirDeclarationOrigin.Synthetic -> MemberKind.SYNTHESIZED
+            is FirDeclarationOrigin.Synthetic -> MemberKind.SYNTHESIZED
             else -> MemberKind.DECLARATION
         }
     }
