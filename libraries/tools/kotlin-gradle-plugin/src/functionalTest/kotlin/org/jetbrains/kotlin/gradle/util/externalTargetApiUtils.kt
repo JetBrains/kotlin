@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinCompilationDescriptorBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinTargetDescriptor.TargetFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinTargetDescriptorBuilder
+import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
 class FakeCompilation(delegate: Delegate) : DecoratedExternalKotlinCompilation(delegate)
 class FakeTarget(delegate: Delegate) : DecoratedExternalKotlinTarget(delegate)
@@ -26,9 +27,9 @@ fun ExternalKotlinTargetDescriptorBuilder<FakeTarget>.defaults() {
 
 fun ExternalKotlinCompilationDescriptorBuilder<FakeCompilation>.defaults(
     kotlin: KotlinMultiplatformExtension,
-    name: String = KotlinCompilation.MAIN_COMPILATION_NAME
+    compilationName: String = KotlinCompilation.MAIN_COMPILATION_NAME
 ) {
-    compilationName = name
+    this.compilationName = compilationName
     compilationFactory = CompilationFactory(::FakeCompilation)
-    defaultSourceSet = kotlin.sourceSets.maybeCreate(name)
+    defaultSourceSet = kotlin.sourceSets.maybeCreate(lowerCamelCaseName("fake", compilationName))
 }

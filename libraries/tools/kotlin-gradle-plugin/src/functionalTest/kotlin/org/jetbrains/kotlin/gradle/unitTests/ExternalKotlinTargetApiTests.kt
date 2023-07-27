@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.createCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.createExternalKotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
+import org.jetbrains.kotlin.gradle.plugin.mpp.kotlinProjectStructureMetadata
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.gradle.utils.toMap
@@ -38,7 +39,11 @@ class ExternalKotlinTargetApiTests {
     fun `test - sourceSetClassifier - default`() = project.runLifecycleAwareTest {
         val target = kotlin.createExternalKotlinTarget<FakeTarget> { defaults() }
         val mainCompilation = target.createCompilation<FakeCompilation> { defaults(kotlin) }
-        val fakeCompilation = target.createCompilation<FakeCompilation> { defaults(kotlin); compilationName = "fake"; }
+        val fakeCompilation = target.createCompilation<FakeCompilation> {
+            defaults(kotlin)
+            compilationName = "fake"
+            defaultSourceSet = kotlin.sourceSets.create("fake")
+        }
 
         assertEquals(KotlinSourceSetTree.main, KotlinSourceSetTree.orNull(mainCompilation))
         assertEquals(KotlinSourceSetTree("fake"), KotlinSourceSetTree.orNull(fakeCompilation))
@@ -219,5 +224,45 @@ class ExternalKotlinTargetApiTests {
         if (sourcesUsage != null) {
             fail("Unexpected usage '${sourcesUsage.name} in target publication")
         }
+    }
+
+    @Test
+    fun `test project structure metadata contains external target variants`() {
+        val target = kotlin.createExternalKotlinTarget<FakeTarget> { defaults() }
+        val mainCompilation = target.createCompilation<FakeCompilation>() { defaults(kotlin) }
+        val testCompilation = target.createCompilation<FakeCompilation>() {
+            defaults(kotlin)
+            compilationName = "test"
+            defaultSourceSet = kotlin.sourceSets.create("fakeTest")
+        }
+
+        kotlin.linuxX64()
+        kotlin.macosX64()
+
+        fun KotlinHierarchyBuilder.withFakeTarget() = withCompilations { it == mainCompilation || it == testCompilation }
+        kotlin.applyHierarchyTemplate {
+            sourceSetTrees(KotlinSourceSetTree.main, KotlinSourceSetTree.test)
+            common {
+                group("linuxAndFake") {
+                    withLinux()
+                    withFakeTarget()
+                }
+
+                withMacos()
+            }
+        }
+
+        project.evaluate()
+
+        val projectStructureMetadata = kotlin.kotlinProjectStructureMetadata
+        val fakeApiElementsSourceSets = projectStructureMetadata
+            .sourceSetNamesByVariantName["fakeApiElements"]
+            ?: fail("Expected 'fakeApiElements' variant")
+        assertEquals(setOf("commonMain", "linuxAndFakeMain"), fakeApiElementsSourceSets)
+
+        val fakeRuntimeElementsSourceSets = projectStructureMetadata
+            .sourceSetNamesByVariantName["fakeRuntimeElements"]
+            ?: fail("Expected 'fakeRuntimeElements' variant")
+        assertEquals(setOf("commonMain", "linuxAndFakeMain"), fakeRuntimeElementsSourceSets)
     }
 }

@@ -160,6 +160,8 @@ internal val KotlinMultiplatformExtension.kotlinProjectStructureMetadata: Kotlin
         buildKotlinProjectStructureMetadata(this)
     }
 
+private val KotlinUsageContext.variantName get() = kotlinVariantNameFromPublishedVariantName(name)
+
 private fun buildKotlinProjectStructureMetadata(extension: KotlinMultiplatformExtension): KotlinProjectStructureMetadata {
     val project = extension.project
     require(project.state.executed) { "Cannot build 'KotlinProjectStructureMetadata' during project configuration phase" }
@@ -168,7 +170,7 @@ private fun buildKotlinProjectStructureMetadata(extension: KotlinMultiplatformEx
         .getByName(KotlinMultiplatformPlugin.METADATA_TARGET_NAME)
         .compilations.associateBy { it.defaultSourceSet }
 
-    val publishedVariantsNamesWithCompilation = project.future { getPublishedPlatformCompilations(project).mapKeys { it.key.name } }
+    val publishedVariantsNamesWithCompilation = project.future { getPublishedPlatformCompilations(project).mapKeys { it.key.variantName } }
         .getOrThrow()
 
     return KotlinProjectStructureMetadata(
