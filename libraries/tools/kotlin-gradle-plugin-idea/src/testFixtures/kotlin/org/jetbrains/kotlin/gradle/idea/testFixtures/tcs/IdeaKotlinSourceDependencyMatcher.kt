@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency
 
 internal class IdeaKotlinSourceDependencyMatcher(
     val type: IdeaKotlinSourceDependency.Type,
-    val buildName: String,
+    val buildPath: String,
     val projectPath: String,
     val sourceSetName: String
 ) : IdeaKotlinDependencyMatcher {
@@ -20,7 +20,7 @@ internal class IdeaKotlinSourceDependencyMatcher(
     override fun matches(dependency: IdeaKotlinDependency): Boolean {
         if (dependency !is IdeaKotlinSourceDependency) return false
         return dependency.type == type &&
-                dependency.coordinates.buildName == buildName &&
+                dependency.coordinates.buildPath == buildPath &&
                 dependency.coordinates.projectPath == projectPath &&
                 dependency.coordinates.sourceSetName == sourceSetName
     }

@@ -17,6 +17,11 @@ import org.junit.jupiter.api.condition.OS
 
 @MppGradlePluginTests
 @DisplayName("Tests for multiplatform with composite builds")
+/*
+ Testing with maxVersion 8.2, because of significant branching introduced in KT-58157
+ We can remove this, once MAX_SUPPORTED is higher or equal to 8.2
+ */
+@GradleTestVersions(maxVersion = TestVersions.Gradle.G_8_2)
 class MppCompositeBuildIT : KGPBaseTest() {
     @GradleTest
     fun `test - sample0 - ide dependencies`(gradleVersion: GradleVersion) {
@@ -26,15 +31,15 @@ class MppCompositeBuildIT : KGPBaseTest() {
             settingsGradleKts.toFile().replaceText("<producer_path>", producer.projectPath.toUri().path)
             resolveIdeDependencies(":consumerA") { dependencies ->
                 dependencies["commonMain"].assertMatches(
-                    regularSourceDependency("producerBuild::producerA/commonMain"),
+                    regularSourceDependency(":producerBuild::producerA/commonMain"),
                     kotlinStdlibDependencies
                 )
 
                 dependencies["nativeMain"].assertMatches(
                     dependsOnDependency(":consumerA/commonMain"),
-                    regularSourceDependency("producerBuild::producerA/commonMain"),
-                    regularSourceDependency("producerBuild::producerA/nativeMain"),
-                    regularSourceDependency("producerBuild::producerA/linuxMain"),
+                    regularSourceDependency(":producerBuild::producerA/commonMain"),
+                    regularSourceDependency(":producerBuild::producerA/nativeMain"),
+                    regularSourceDependency(":producerBuild::producerA/linuxMain"),
                     kotlinNativeDistributionDependencies,
                     binaryCoordinates(Regex(".*stdlib-common:.*")) /* KT-56278 */
                 )
@@ -48,7 +53,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
                     dependsOnDependency(":consumerA/commonMain"),
                     dependsOnDependency(":consumerA/nativeMain"),
                     dependsOnDependency(":consumerA/linuxMain"),
-                    projectArtifactDependency(Regular, "producerBuild::producerA", FilePathRegex(".*/linuxX64/main/klib/producerA.klib")),
+                    projectArtifactDependency(Regular, ":producerBuild::producerA", FilePathRegex(".*/linuxX64/main/klib/producerA.klib")),
                     kotlinNativeDistributionDependencies,
                 )
             }
@@ -119,7 +124,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
             resolveIdeDependencies { dependencies ->
                 dependencies["commonMain"].assertMatches(
                     kotlinStdlibDependencies,
-                    regularSourceDependency("included-build::included/commonMain")
+                    regularSourceDependency(":included-build::included/commonMain")
                 )
 
                 dependencies["jvmMain"].assertMatches(
@@ -128,7 +133,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
 
                     dependsOnDependency(":/commonMain"),
                     projectArtifactDependency(
-                        Regular, "included-build::included",
+                        Regular, ":included-build::included",
                         FilePathRegex(".*/included-build/included/build/libs/included-jvm.jar")
                     )
                 )
@@ -221,7 +226,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
                     kotlinStdlibDependencies,
                     jetbrainsAnnotationDependencies,
                     projectArtifactDependency(
-                        Regular, "producerBuild::producerA", FilePathRegex(".*producerA/build/libs/producerA-1.0.0-SNAPSHOT.jar")
+                        Regular, ":producerBuild::producerA", FilePathRegex(".*producerA/build/libs/producerA-1.0.0-SNAPSHOT.jar")
                     )
                 )
 
@@ -230,7 +235,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
                     jetbrainsAnnotationDependencies,
                     dependsOnDependency(":consumerA/commonMain"),
                     projectArtifactDependency(
-                        Regular, "producerBuild::producerA", FilePathRegex(".*producerA/build/libs/producerA-1.0.0-SNAPSHOT.jar")
+                        Regular, ":producerBuild::producerA", FilePathRegex(".*producerA/build/libs/producerA-1.0.0-SNAPSHOT.jar")
                     )
                 )
             }
@@ -288,15 +293,15 @@ class MppCompositeBuildIT : KGPBaseTest() {
             settingsGradleKts.toFile().replaceText("<producer_path>", producer.projectPath.toUri().path)
             resolveIdeDependencies(":consumerA") { dependencies ->
                 dependencies["commonMain"].assertMatches(
-                    regularSourceDependency("producerBuild::producerA/commonMain"),
+                    regularSourceDependency(":producerBuild::producerA/commonMain"),
                     kotlinStdlibDependencies
                 )
 
                 dependencies["nativeMain"].assertMatches(
                     dependsOnDependency(":consumerA/commonMain"),
-                    regularSourceDependency("producerBuild::producerA/commonMain"),
-                    regularSourceDependency("producerBuild::producerA/nativeMain"),
-                    regularSourceDependency("producerBuild::producerA/linuxMain"),
+                    regularSourceDependency(":producerBuild::producerA/commonMain"),
+                    regularSourceDependency(":producerBuild::producerA/nativeMain"),
+                    regularSourceDependency(":producerBuild::producerA/linuxMain"),
                     kotlinNativeDistributionDependencies,
                     binaryCoordinates(Regex(".*stdlib-common:.*")) /* KT-56278 */
                 )
@@ -310,7 +315,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
                     dependsOnDependency(":consumerA/commonMain"),
                     dependsOnDependency(":consumerA/nativeMain"),
                     dependsOnDependency(":consumerA/linuxMain"),
-                    projectArtifactDependency(Regular, "producerBuild::producerA", FilePathRegex(".*/linuxX64/main/klib/producerA.klib")),
+                    projectArtifactDependency(Regular, ":producerBuild::producerA", FilePathRegex(".*/linuxX64/main/klib/producerA.klib")),
                     kotlinNativeDistributionDependencies,
                 )
             }
@@ -345,14 +350,14 @@ class MppCompositeBuildIT : KGPBaseTest() {
 
             build(":consumerA:resolveIdeDependencies") {
                 consumerA.readIdeDependencies()["commonMain"].assertMatches(
-                    regularSourceDependency("producer::/commonMain"),
+                    regularSourceDependency(":producer::/commonMain"),
                     kotlinStdlibDependencies
                 )
             }
 
             build(":consumerB:resolveIdeDependencies") {
                 consumerB.readIdeDependencies()["commonMain"].assertMatches(
-                    regularSourceDependency("producer::/commonMain"),
+                    regularSourceDependency(":producer::/commonMain"),
                     kotlinStdlibDependencies
                 )
             }
@@ -366,7 +371,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
     }
 
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0)
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0, maxVersion = TestVersions.Gradle.G_8_2)
     fun `test sample7`(gradleVersion: GradleVersion) {
         val producer = project("mpp-composite-build/sample7-KT-59863-pluginManagement.includeBuild/producerBuild", gradleVersion)
         project("mpp-composite-build/sample7-KT-59863-pluginManagement.includeBuild/consumerBuild", gradleVersion, defaultBuildOptions) {

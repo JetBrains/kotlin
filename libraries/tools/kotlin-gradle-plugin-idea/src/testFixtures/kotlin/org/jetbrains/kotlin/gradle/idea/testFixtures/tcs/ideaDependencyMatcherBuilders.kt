@@ -25,8 +25,7 @@ fun buildIdeaKotlinDependencyMatchers(notation: Any?): List<IdeaKotlinDependency
 }
 
 fun ideSourceDependency(type: IdeaKotlinSourceDependency.Type, project: Project, sourceSetName: String): IdeaKotlinDependencyMatcher {
-    @Suppress("DEPRECATION") // Should be fixed via https://youtrack.jetbrains.com/issue/KT-58157
-    return IdeaKotlinSourceDependencyMatcher(type, project.currentBuildId().name, project.path, sourceSetName)
+    return IdeaKotlinSourceDependencyMatcher(type, project.currentBuildId().buildPath, project.path, sourceSetName)
 }
 
 fun ideSourceDependency(type: IdeaKotlinSourceDependency.Type, path: String): IdeaKotlinDependencyMatcher {
