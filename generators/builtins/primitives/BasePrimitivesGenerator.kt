@@ -589,7 +589,7 @@ abstract class BasePrimitivesGenerator(private val writer: PrintWriter) : BuiltI
                     methodName = "to$otherName"
                     returnType = otherName
                 }
-            }.modifyGeneratedConversions(thisKind)
+            }.modifyGeneratedConversions(thisKind, otherKind)
         }
     }
 
@@ -630,7 +630,7 @@ abstract class BasePrimitivesGenerator(private val writer: PrintWriter) : BuiltI
     internal open fun MethodBuilder.modifyGeneratedRangeUntil(thisKind: PrimitiveType, otherKind: PrimitiveType, opReturnType: PrimitiveType) {}
     internal open fun MethodBuilder.modifyGeneratedBitShiftOperators(thisKind: PrimitiveType) {}
     internal open fun MethodBuilder.modifyGeneratedBitwiseOperators(thisKind: PrimitiveType) {}
-    internal open fun MethodBuilder.modifyGeneratedConversions(thisKind: PrimitiveType) {}
+    internal open fun MethodBuilder.modifyGeneratedConversions(thisKind: PrimitiveType, otherKind: PrimitiveType) {}
     internal open fun MethodBuilder.modifyGeneratedEquals(thisKind: PrimitiveType) {}
     internal open fun MethodBuilder.modifyGeneratedToString(thisKind: PrimitiveType) {}
     internal open fun ClassBuilder.generateAdditionalMethods(thisKind: PrimitiveType) {}

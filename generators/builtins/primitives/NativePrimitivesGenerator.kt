@@ -109,38 +109,37 @@ class NativePrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(w
         setAsExternal(thisKind)
     }
 
-    override fun MethodBuilder.modifyGeneratedConversions(thisKind: PrimitiveType) {
-        val returnTypeAsPrimitive = PrimitiveType.valueOf(returnType.uppercase())
+    override fun MethodBuilder.modifyGeneratedConversions(thisKind: PrimitiveType, otherKind: PrimitiveType) {
         when {
-            returnTypeAsPrimitive == thisKind -> {
+            otherKind == thisKind -> {
                 modifySignature { isInline = true }
                 "this".addAsSingleLineBody(bodyOnNewLine = true)
             }
             thisKind !in PrimitiveType.floatingPoint -> {
                 modifySignature { isExternal = true }
                 val intrinsicType = when {
-                    returnTypeAsPrimitive in PrimitiveType.floatingPoint -> "SIGNED_TO_FLOAT"
-                    returnTypeAsPrimitive.byteSize < thisKind.byteSize -> "INT_TRUNCATE"
-                    returnTypeAsPrimitive.byteSize > thisKind.byteSize -> "SIGN_EXTEND"
+                    otherKind in PrimitiveType.floatingPoint -> "SIGNED_TO_FLOAT"
+                    otherKind.byteSize < thisKind.byteSize -> "INT_TRUNCATE"
+                    otherKind.byteSize > thisKind.byteSize -> "SIGN_EXTEND"
                     else -> "ZERO_EXTEND"
                 }
                 annotations += "TypedIntrinsic(IntrinsicType.$intrinsicType)"
             }
             else -> {
-                if (returnTypeAsPrimitive in setOf(PrimitiveType.BYTE, PrimitiveType.SHORT, PrimitiveType.CHAR)) {
+                if (otherKind in setOf(PrimitiveType.BYTE, PrimitiveType.SHORT, PrimitiveType.CHAR)) {
                     "this.toInt().to${returnType}()".addAsSingleLineBody(bodyOnNewLine = false)
                     return
                 }
 
                 modifySignature { isExternal = true }
                 when {
-                    returnTypeAsPrimitive in setOf(PrimitiveType.INT, PrimitiveType.LONG) -> {
+                    otherKind in setOf(PrimitiveType.INT, PrimitiveType.LONG) -> {
                         annotations += "GCUnsafeCall(\"Kotlin_${thisKind.capitalized}_to${returnType}\")"
                     }
-                    thisKind.byteSize > returnTypeAsPrimitive.byteSize -> {
+                    thisKind.byteSize > otherKind.byteSize -> {
                         annotations += "TypedIntrinsic(IntrinsicType.FLOAT_TRUNCATE)"
                     }
-                    thisKind.byteSize < returnTypeAsPrimitive.byteSize -> {
+                    thisKind.byteSize < otherKind.byteSize -> {
                         annotations += "TypedIntrinsic(IntrinsicType.FLOAT_EXTEND)"
                     }
                 }
