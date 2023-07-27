@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.StandardNames.KOTLIN_REFLECT_FQ_NAME
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
@@ -253,9 +252,10 @@ abstract class Symbols(
 
         fun isTypeOfIntrinsic(symbol: IrFunctionSymbol): Boolean =
             symbol is IrSimpleFunctionSymbol && symbol.owner.let { function ->
-                function.name.asString() == "typeOf" &&
-                        function.valueParameters.isEmpty() &&
-                        (function.parent as? IrPackageFragment)?.packageFqName == KOTLIN_REFLECT_FQ_NAME
+                function.isTopLevelInPackage("typeOf", KOTLIN_REFLECT_FQ_NAME)
+                        && function.valueParameters.isEmpty()
+                        && function.dispatchReceiverParameter == null
+                        && function.extensionReceiverParameter == null
             }
     }
 }
