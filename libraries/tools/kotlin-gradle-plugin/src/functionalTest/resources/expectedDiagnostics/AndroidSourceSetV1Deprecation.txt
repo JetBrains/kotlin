@@ -1,0 +1,14 @@
+[AndroidSourceSetLayoutV1Deprecation | ERROR] The version 1 of Android source set layout is deprecated. Please remove kotlin.mpp.androidSourceSetLayoutVersion=1 from the gradle.properties file.
+
+Learn how to migrate to the version 2 source set layout at: https://kotl.in/android-source-set-layout-v2
+----
+[KotlinDefaultHierarchyFallbackDependsOnUsageDetected | WARNING] The Default Kotlin Hierarchy was not applied to 'root project 'test'':
+Manual .dependsOn() edges were configured for the following source sets:
+[androidAndroidTest, androidMain, androidTest]
+
+To suppress the 'Default Hierarchy Template' add
+    'kotlin.mpp.applyDefaultHierarchyTemplate=false'
+to your gradle.properties
+----
+[KotlinSourceSetTreeDependsOnMismatch | WARNING] Kotlin Source Set 'androidAndroidTest' can't depend on 'commonTest' as they are from different Source Set Trees.
+Please remove this dependency edge.

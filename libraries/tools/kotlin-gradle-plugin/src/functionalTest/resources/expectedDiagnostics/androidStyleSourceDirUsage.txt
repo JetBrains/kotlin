@@ -4,7 +4,7 @@ Use src/androidMain/kotlin instead.
 To suppress this warning: put the following in your gradle.properties:
 kotlin.mpp.androidSourceSetLayoutV2AndroidStyleDirs.nowarn=true
 
-Learn more: https://kotlinlang.org/docs/whatsnew18.html#kotlin-multiplatform-a-new-android-source-set-layout
+Learn more: https://kotl.in/android-source-set-layout-v2
 ----
 [AndroidStyleSourceDirUsageWarning | WARNING] Usage of 'Android Style' source directory src/test/kotlin is deprecated.
 Use src/androidUnitTest/kotlin instead.
@@ -12,4 +12,4 @@ Use src/androidUnitTest/kotlin instead.
 To suppress this warning: put the following in your gradle.properties:
 kotlin.mpp.androidSourceSetLayoutV2AndroidStyleDirs.nowarn=true
 
-Learn more: https://kotlinlang.org/docs/whatsnew18.html#kotlin-multiplatform-a-new-android-source-set-layout
+Learn more: https://kotl.in/android-source-set-layout-v2

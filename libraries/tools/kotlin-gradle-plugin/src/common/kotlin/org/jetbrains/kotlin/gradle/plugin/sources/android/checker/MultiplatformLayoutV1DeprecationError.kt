@@ -5,28 +5,22 @@
 
 package org.jetbrains.kotlin.gradle.plugin.sources.android.checker
 
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.sources.android.KotlinAndroidSourceSetLayout
 
 /**
- * Promotes MultiplatformAndroidSourceSetLayoutV2 when requirements are met
+ * Emits a deprecation error
  */
-internal object MultiplatformLayoutV1PromoteV2Checker : KotlinAndroidSourceSetLayoutChecker {
+internal object MultiplatformLayoutV1DeprecationChecker : KotlinAndroidSourceSetLayoutChecker {
     override fun checkBeforeLayoutApplied(
         diagnosticsCollector: KotlinToolingDiagnosticsCollector,
         target: KotlinAndroidTarget,
         layout: KotlinAndroidSourceSetLayout
     ) {
-        if (target.project.kotlinPropertiesProvider.ignoreMppAndroidSourceSetLayoutVersion) return
-        runCatching {
-            if (MultiplatformLayoutV2AgpRequirementChecker.isAgpRequirementMet()) {
-                diagnosticsCollector.reportOncePerGradleBuild(
-                    target.project, KotlinToolingDiagnostics.PromoteAndroidSourceSetLayoutV2Warning()
-                )
-            }
-        }
+        diagnosticsCollector.reportOncePerGradleBuild(
+            target.project, KotlinToolingDiagnostics.AndroidSourceSetLayoutV1Deprecation()
+        )
     }
 }

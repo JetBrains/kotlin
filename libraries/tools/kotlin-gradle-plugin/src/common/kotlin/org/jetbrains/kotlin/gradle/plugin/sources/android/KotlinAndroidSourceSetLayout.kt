@@ -48,7 +48,7 @@ internal val multiplatformAndroidSourceSetLayoutV1 = KotlinAndroidSourceSetLayou
         MultiplatformLayoutV1SourceDirConfigurator
     ),
     checker = KotlinAndroidSourceSetLayoutChecker(
-        MultiplatformLayoutV1PromoteV2Checker
+        MultiplatformLayoutV1DeprecationChecker
     )
 )
 
@@ -60,7 +60,8 @@ internal val multiplatformAndroidSourceSetLayoutV2 = KotlinAndroidSourceSetLayou
         AndroidKaptSourceSetConfigurator,
         MultiplatformAndroidResourceDirConfigurator,
         MultiplatformLayoutV2DependsOnConfigurator,
-        Agp7AddKotlinSourcesToAndroidSourceSetConfigurator,
+        Agp7AddKotlinSourcesToAndroidSourceSetConfigurator
+            .onlyIf { AndroidGradlePluginVersion.current >= "7.0.0" },
         MultiplatformLayoutV2SourceDirConfigurator,
         MultiplatformLayoutV2DefaultManifestLocationConfigurator
     ),

@@ -4,4 +4,4 @@ Use src/androidInstrumentedTest/kotlin instead.
 To suppress this warning: put the following in your gradle.properties:
 kotlin.mpp.androidSourceSetLayoutV2AndroidStyleDirs.nowarn=true
 
-Learn more: https://kotlinlang.org/docs/whatsnew18.html#kotlin-multiplatform-a-new-android-source-set-layout
+Learn more: https://kotl.in/android-source-set-layout-v2
