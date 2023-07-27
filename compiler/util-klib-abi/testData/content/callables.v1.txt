@@ -1,6 +1,7 @@
 // Rendering settings:
 // - Signature version: 1
 // - Show manifest properties: false
+// - Show declarations: true
 
 // Library unique name: <testCallables>
 final class callables.test/FunctionContainer { // callables.test/FunctionContainer|null[0]

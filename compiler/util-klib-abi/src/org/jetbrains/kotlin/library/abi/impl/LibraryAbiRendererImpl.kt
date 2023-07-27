@@ -34,6 +34,7 @@ internal class AbiRendererImpl(
                 // Rendering settings:
                 // - Signature version: ${settings.renderedSignatureVersion.versionNumber}
                 // - Show manifest properties: ${settings.renderManifest}
+                // - Show declarations: ${settings.renderDeclarations}
                
                 // Library unique name: <${libraryAbi.uniqueName}>
             """.trimIndent()

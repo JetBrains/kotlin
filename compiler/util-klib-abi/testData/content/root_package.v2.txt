@@ -1,6 +1,7 @@
 // Rendering settings:
 // - Signature version: 2
 // - Show manifest properties: false
+// - Show declarations: true
 
 // Library unique name: <testRoot_package>
 final class /Class : /Interface, /Interface.NestedInterface { // /Class|null[0]
