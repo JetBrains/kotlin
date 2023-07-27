@@ -255,6 +255,14 @@ private val returnableBlocksPhase = makeIrFilePhase(
     prerequisite = setOf(arrayConstructorPhase, assertionPhase, directInvokeLowering)
 )
 
+private val singletonReferencesPhase = makeIrFilePhase(
+    ::SingletonReferencesLowering,
+    name = "SingletonReferences",
+    description = "Handle singleton references",
+    // ReturnableBlock lowering may produce references to the `Unit` object
+    prerequisite = setOf(returnableBlocksPhase)
+)
+
 private val syntheticAccessorPhase = makeIrFilePhase(
     ::SyntheticAccessorLowering,
     name = "SyntheticAccessor",
@@ -292,7 +300,7 @@ internal val functionInliningPhase = makeIrModulePhase(
             context, JvmInlineFunctionResolver(), context.innerClassesSupport,
             alwaysCreateTemporaryVariablesForArguments = true,
             regenerateInlinedAnonymousObjects = true,
-            inlineArgumentsWithTheirOriginalTypeAndOffset = true
+            inlineArgumentsWithOriginalOffset = true
         )
     },
     name = "FunctionInliningPhase",
@@ -372,10 +380,10 @@ private val jvmFilePhases = listOf(
     // makePatchParentsPhase(),
 
     enumWhenPhase,
-    singletonReferencesPhase,
 
     assertionPhase,
     returnableBlocksPhase,
+    singletonReferencesPhase,
     sharedVariablesPhase,
     localDeclarationsPhase,
     // makePatchParentsPhase(),

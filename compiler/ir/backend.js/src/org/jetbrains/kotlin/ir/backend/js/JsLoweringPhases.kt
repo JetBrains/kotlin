@@ -299,10 +299,9 @@ private val functionInliningPhase = makeBodyLoweringPhase(
             it,
             JsInlineFunctionResolver(it),
             it.innerClassesSupport,
-            allowExternalInlining = true,
-            useTypeParameterUpperBound = true,
             alwaysCreateTemporaryVariablesForArguments = true,
-            inlineArgumentsWithTheirOriginalTypeAndOffset = true
+            inlineArgumentsWithOriginalOffset = true,
+            allowExternalInlining = true
         )
     },
     name = "FunctionInliningPhase",
