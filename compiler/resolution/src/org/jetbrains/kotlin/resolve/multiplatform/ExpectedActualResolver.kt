@@ -54,7 +54,8 @@ object ExpectedActualResolver {
         }
     }
 
-    fun findExpectedForActual(
+    // incremental compilation workaround for KT-60759
+    fun findExpectedForActual_incrementalCompilationWorkaround(
         actual: MemberDescriptor,
         moduleFilter: (ModuleDescriptor) -> Boolean = allModulesProvidingExpectsFor(actual.module),
         shouldCheckAbsenceOfDefaultParamsInActual: Boolean = false,
@@ -67,7 +68,7 @@ object ExpectedActualResolver {
                     is ClassifierDescriptorWithTypeParameters -> {
                         // TODO: replace with 'singleOrNull' as soon as multi-module diagnostic tests are refactored
                         val expectedClass =
-                            findExpectedForActual(container, moduleFilter, shouldCheckAbsenceOfDefaultParamsInActual)?.values
+                            findExpectedForActual_incrementalCompilationWorkaround(container, moduleFilter, shouldCheckAbsenceOfDefaultParamsInActual)?.values
                                 ?.firstOrNull()?.firstOrNull() as? ClassDescriptor
                         with(context) {
                             expectedClass?.getMembersForExpectClass(actual.name)?.filterIsInstance<CallableMemberDescriptor>().orEmpty()
@@ -183,7 +184,7 @@ fun MemberDescriptor.findAnyActualsForExpected(
 fun MemberDescriptor.findCompatibleExpectsForActual(
     moduleFilter: ModuleFilter = allModulesProvidingExpectsFor(module)
 ): List<MemberDescriptor> =
-    ExpectedActualResolver.findExpectedForActual(this, moduleFilter)?.get(Compatible).orEmpty()
+    ExpectedActualResolver.findExpectedForActual_incrementalCompilationWorkaround(this, moduleFilter)?.get(Compatible).orEmpty()
 
 fun DeclarationDescriptor.findExpects(): List<MemberDescriptor> {
     if (this !is MemberDescriptor) return emptyList()
