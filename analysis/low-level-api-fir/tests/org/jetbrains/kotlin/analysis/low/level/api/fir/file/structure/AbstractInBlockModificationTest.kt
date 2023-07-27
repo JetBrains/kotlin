@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.lazyResolveRenderer
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolveWithCaches
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
@@ -82,5 +83,9 @@ abstract class AbstractSourceInBlockModificationTest : AbstractInBlockModificati
 }
 
 abstract class AbstractOutOfContentRootInBlockModificationTest : AbstractInBlockModificationTest() {
-    override val configurator = AnalysisApiFirOutOfContentRootTestConfigurator
+    override val configurator get() = AnalysisApiFirOutOfContentRootTestConfigurator
+}
+
+abstract class AbstractScriptInBlockModificationTest : AbstractInBlockModificationTest() {
+    override val configurator get() = AnalysisApiFirScriptTestConfigurator
 }
