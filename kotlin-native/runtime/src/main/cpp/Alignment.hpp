@@ -32,6 +32,10 @@ constexpr inline bool IsAligned(size_t size, size_t alignment) {
     return size % alignment == 0;
 }
 
+constexpr inline bool IsAligned(uint64_t size, size_t alignment) {
+    return size % alignment == 0;
+}
+
 inline bool IsAligned(void* ptr, size_t alignment) {
     return reinterpret_cast<uintptr_t>(ptr) % alignment == 0;
 }
