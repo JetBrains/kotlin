@@ -53,7 +53,10 @@ class FirScriptConfiguratorExtensionImpl(
         val sourceFile = fileBuilder.sourceFile ?: return
 
         val configuration = getOrLoadConfiguration(sourceFile)
-        check(configuration != null) { "Configuration for ${sourceFile.asString()} wasn't found" }
+            ?: run {
+                log.warn("Configuration for ${sourceFile.asString()} wasn't found. FirScriptBuilder wasn't configured.")
+                return
+            }
 
         // TODO: rewrite/extract decision logic for clarity
         configuration.getNoDefault(ScriptCompilationConfiguration.baseClass)?.let { baseClass ->
@@ -162,23 +165,16 @@ class FirScriptConfiguratorExtensionImpl(
 
     private fun KtSourceFile.asString() = path ?: name
 
-    private fun logConfiguration(file: KtSourceFile, config: ScriptCompilationConfiguration) {
-        log.debug(
-            "Using configuration: ${file.asString()} => " +
-                    "(${config[ScriptCompilationConfiguration.displayName]}, " +
-                    "ext=.${config[ScriptCompilationConfiguration.fileExtension]}, " +
-                    "pattern=${config[ScriptCompilationConfiguration.filePathPattern]})"
-        )
-    }
-
     private fun getOrLoadConfiguration(file: KtSourceFile): ScriptCompilationConfiguration? {
         val service = checkNotNull(session.scriptDefinitionProviderService)
         val sourceCode = file.toSourceCode()
         val ktFile = sourceCode?.originalKtFile()
-        return with(service) {
-            ktFile?.let { asKtFile -> configurationFor(asKtFile)?.also { logConfiguration(file, it) } }
-                ?: sourceCode?.let { asSourceCode -> configurationFor(asSourceCode)?.also { logConfiguration(file, it) } }
+        val configuration = with(service) {
+            ktFile?.let { asKtFile -> configurationFor(asKtFile) }
+                ?: sourceCode?.let { asSourceCode -> configurationFor(asSourceCode) }
+                ?: defaultConfiguration()?.also { log.debug("Default configuration loaded for ${file.asString()}") }
         }
+        return configuration
     }
 
     private fun buildContextReceiverWithFqName(classFqn: FqName, customName: Name? = null) =
@@ -202,7 +198,7 @@ class FirScriptConfiguratorExtensionImpl(
         get() = _knownAnnotationsForSamWithReceiver
 
     companion object {
-        private val log = Logger.getInstance(FirScriptConfiguratorExtensionImpl::class.java)
+        private val log: Logger get() = Logger.getInstance(FirScriptConfiguratorExtensionImpl::class.java)
 
         fun getFactory(hostConfiguration: ScriptingHostConfiguration): Factory {
             return Factory { session -> FirScriptConfiguratorExtensionImpl(session, hostConfiguration) }
@@ -221,6 +217,9 @@ private fun FirScriptDefinitionProviderService.configurationFor(file: KtFile): S
 
 private fun FirScriptDefinitionProviderService.configurationFor(sourceCode: SourceCode): ScriptCompilationConfiguration? =
     definitionProvider?.findDefinition(sourceCode)?.compilationConfiguration
+
+private fun FirScriptDefinitionProviderService.defaultConfiguration(): ScriptCompilationConfiguration? =
+    definitionProvider?.getDefaultDefinition()?.compilationConfiguration
 
 fun KtSourceFile.toSourceCode(): SourceCode? = when (this) {
     is KtPsiSourceFile -> (psiFile as? KtFile)?.let(::KtFileScriptSource) ?: VirtualFileScriptSource(psiFile.virtualFile)
