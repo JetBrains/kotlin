@@ -2,7 +2,7 @@ public abstract interface ReturnInnerSubclassOfSupersInner : R|kotlin/Any| {
     public open class Sub<B : R|kotlin/Any!|> : R|test/ReturnInnerSubclassOfSupersInner.Super<ft<B & Any, B?>>| {
         public constructor<B : R|kotlin/Any!|>(): R|test/ReturnInnerSubclassOfSupersInner.Sub<B>|
 
-        public/*package*/ open inner class Inner<B : R|kotlin/Any!|> : R|test/ReturnInnerSubclassOfSupersInner.Super.Inner<ft<B & Any, B?>>| {
+        public/*package*/ open inner class Inner<Outer(B) : R|kotlin/Any!|> : R|test/ReturnInnerSubclassOfSupersInner.Super.Inner<ft<B & Any, B?>>| {
             public/*package*/ open fun get(): R|ft<test/ReturnInnerSubclassOfSupersInner.Sub<ft<B & Any, B?>>, test/ReturnInnerSubclassOfSupersInner.Sub<ft<B & Any, B?>>?>|
 
             public/*package*/ test/ReturnInnerSubclassOfSupersInner.Sub<B>.constructor(): R|test/ReturnInnerSubclassOfSupersInner.Sub.Inner<B>|
@@ -12,7 +12,7 @@ public abstract interface ReturnInnerSubclassOfSupersInner : R|kotlin/Any| {
     public open class Super<A : R|kotlin/Any!|> : R|kotlin/Any| {
         public constructor<A : R|kotlin/Any!|>(): R|test/ReturnInnerSubclassOfSupersInner.Super<A>|
 
-        public/*package*/ open inner class Inner<A : R|kotlin/Any!|> : R|kotlin/Any| {
+        public/*package*/ open inner class Inner<Outer(A) : R|kotlin/Any!|> : R|kotlin/Any| {
             public/*package*/ open fun get(): R|ft<test/ReturnInnerSubclassOfSupersInner.Super<ft<A & Any, A?>>, test/ReturnInnerSubclassOfSupersInner.Super<ft<A & Any, A?>>?>|
 
             public/*package*/ test/ReturnInnerSubclassOfSupersInner.Super<A>.constructor(): R|test/ReturnInnerSubclassOfSupersInner.Super.Inner<A>|

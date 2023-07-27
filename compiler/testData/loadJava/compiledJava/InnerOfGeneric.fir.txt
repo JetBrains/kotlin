@@ -4,7 +4,7 @@ public open class InnerOfGeneric : R|kotlin/Any| {
     public abstract inner class A<K : R|kotlin/Any!|> : R|kotlin/Any| {
         public test/InnerOfGeneric.constructor<K : R|kotlin/Any!|>(): R|test/InnerOfGeneric.A<K>|
 
-        public abstract inner class Inner<K : R|kotlin/Any!|> : R|test/InnerOfGeneric.S<ft<K & Any, K?>>| {
+        public abstract inner class Inner<Outer(K) : R|kotlin/Any!|> : R|test/InnerOfGeneric.S<ft<K & Any, K?>>| {
             public test/InnerOfGeneric.A<K>.constructor(): R|test/InnerOfGeneric.A.Inner<K>|
 
         }
@@ -12,7 +12,7 @@ public open class InnerOfGeneric : R|kotlin/Any| {
     public open inner class B<L : R|kotlin/Any!|> : R|test/InnerOfGeneric.A<ft<L & Any, L?>>| {
         public test/InnerOfGeneric.constructor<L : R|kotlin/Any!|>(): R|test/InnerOfGeneric.B<L>|
 
-        public open inner class SubInner<L : R|kotlin/Any!|> : R|test/InnerOfGeneric.A.Inner<ft<L & Any, L?>>| {
+        public open inner class SubInner<Outer(L) : R|kotlin/Any!|> : R|test/InnerOfGeneric.A.Inner<ft<L & Any, L?>>| {
             @R|java/lang/Override|() public open operator fun iterator(): R|ft<kotlin/collections/MutableIterator<ft<L & Any, L?>>, kotlin/collections/Iterator<ft<L & Any, L?>>?>|
 
             public test/InnerOfGeneric.B<L>.constructor(): R|test/InnerOfGeneric.B.SubInner<L>|

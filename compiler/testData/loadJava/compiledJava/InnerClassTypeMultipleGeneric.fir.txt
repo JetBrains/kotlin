@@ -6,7 +6,7 @@ public open class InnerClassTypeMultipleGeneric : R|kotlin/Any| {
     public open inner class BaseOuter<H1 : R|kotlin/Any!|, H2 : R|kotlin/Any!|> : R|kotlin/Any| {
         public test/InnerClassTypeMultipleGeneric.constructor<H1 : R|kotlin/Any!|, H2 : R|kotlin/Any!|>(): R|test/InnerClassTypeMultipleGeneric.BaseOuter<H1, H2>|
 
-        public abstract inner class BaseInner<H3 : R|kotlin/Any!|, H4 : R|kotlin/Any!|, H1 : R|kotlin/Any!|, H2 : R|kotlin/Any!|> : R|kotlin/Any| {
+        public abstract inner class BaseInner<H3 : R|kotlin/Any!|, H4 : R|kotlin/Any!|, Outer(H1) : R|kotlin/Any!|, Outer(H2) : R|kotlin/Any!|> : R|kotlin/Any| {
             public test/InnerClassTypeMultipleGeneric.BaseOuter<H1, H2>.constructor<H3 : R|kotlin/Any!|, H4 : R|kotlin/Any!|>(): R|test/InnerClassTypeMultipleGeneric.BaseOuter.BaseInner<H3, H4, H1, H2>|
 
         }
@@ -16,7 +16,7 @@ public open class InnerClassTypeMultipleGeneric : R|kotlin/Any| {
 
         public test/InnerClassTypeMultipleGeneric.constructor<E1 : R|kotlin/Any!|, E2 : R|kotlin/Any!|>(): R|test/InnerClassTypeMultipleGeneric.Outer<E1, E2>|
 
-        public open inner class Inner<E3 : R|kotlin/Any!|, E1 : R|kotlin/Any!|, E2 : R|kotlin/Any!|> : R|test/InnerClassTypeMultipleGeneric.BaseOuter.BaseInner<kotlin/Double!, kotlin/String!, ft<E2 & Any, E2?>, ft<E3 & Any, E3?>>| {
+        public open inner class Inner<E3 : R|kotlin/Any!|, Outer(E1) : R|kotlin/Any!|, Outer(E2) : R|kotlin/Any!|> : R|test/InnerClassTypeMultipleGeneric.BaseOuter.BaseInner<kotlin/Double!, kotlin/String!, ft<E2 & Any, E2?>, ft<E3 & Any, E3?>>| {
             public test/InnerClassTypeMultipleGeneric.Outer<E1, E2>.constructor<E3 : R|kotlin/Any!|>(): R|test/InnerClassTypeMultipleGeneric.Outer.Inner<E3, E1, E2>|
 
         }

@@ -1,7 +1,7 @@
 public final class MethodReferencesOuterClassTP<P : R|kotlin/Any!|> : R|kotlin/Any| {
     public constructor<P : R|kotlin/Any!|>(): R|test/MethodReferencesOuterClassTP<P>|
 
-    public final inner class Inner<P : R|kotlin/Any!|> : R|kotlin/Any| {
+    public final inner class Inner<Outer(P) : R|kotlin/Any!|> : R|kotlin/Any| {
         public final fun <Q : R|ft<P & Any, P?>|> f(): R|kotlin/Unit|
 
         public test/MethodReferencesOuterClassTP<P>.constructor(): R|test/MethodReferencesOuterClassTP.Inner<P>|

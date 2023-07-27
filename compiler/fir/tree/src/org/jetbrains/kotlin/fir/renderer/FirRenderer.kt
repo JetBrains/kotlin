@@ -269,7 +269,7 @@ class FirRenderer(
         }
 
         override fun visitOuterClassTypeParameterRef(outerClassTypeParameterRef: FirOuterClassTypeParameterRef) {
-            visitTypeParameterRef(outerClassTypeParameterRef)
+            renderTypeParameter(outerClassTypeParameterRef.symbol.fir, forOuterTypeRef = true)
         }
 
         override fun visitConstructedClassTypeParameterRef(constructedClassTypeParameterRef: FirConstructedClassTypeParameterRef) {
@@ -466,11 +466,20 @@ class FirRenderer(
         }
 
         override fun visitTypeParameter(typeParameter: FirTypeParameter) {
+            renderTypeParameter(typeParameter)
+        }
+
+        private fun renderTypeParameter(typeParameter: FirTypeParameter, forOuterTypeRef: Boolean = false) {
             annotationRenderer?.render(typeParameter)
             modifierRenderer?.renderModifiers(typeParameter)
             resolvePhaseRenderer?.render(typeParameter)
             typeParameter.variance.renderVariance()
-            print(typeParameter.name)
+
+            if (!forOuterTypeRef) {
+                print(typeParameter.name)
+            } else {
+                print("Outer(${typeParameter.name})")
+            }
 
             val meaningfulBounds = typeParameter.bounds.filter {
                 if (it !is FirResolvedTypeRef) return@filter true

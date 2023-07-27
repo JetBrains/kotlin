@@ -44,7 +44,7 @@ FILE: RedundantVisibilityModifierChecker.kt
         public final fun <T1, T2> foo2(): R|kotlin/Unit| {
         }
 
-        internal final inner class B<T, T2, T1, T2 : R|T1|> : R|kotlin/Any| {
+        internal final inner class B<T, T2, Outer(T1), Outer(T2) : R|T1|> : R|kotlin/Any| {
             public Foo2<T1, T2>.constructor<T, T2>(): R|Foo2.B<T, T2, T1, T2>| {
                 super<R|kotlin/Any|>()
             }

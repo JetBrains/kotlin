@@ -6,7 +6,7 @@ FILE: incorrectReferenceOnInnerClassMember.kt
             super<R|kotlin/Any|>()
         }
 
-        public final inner class Inner<T> : R|kotlin/Any| {
+        public final inner class Inner<Outer(T)> : R|kotlin/Any| {
             public foo/Outer<T>.constructor(): R|foo/Outer.Inner<T>| {
                 super<R|kotlin/Any|>()
             }

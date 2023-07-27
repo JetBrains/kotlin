@@ -38,7 +38,7 @@ FILE: InnerClassOfThrowableOnObject.kt
 
         }
 
-        public final inner class Inner<T> : R|kotlin/Any| {
+        public final inner class Inner<Outer(T)> : R|kotlin/Any| {
             public Generic<T>.constructor(): R|Generic.Inner<T>| {
                 super<R|kotlin/Any|>()
             }
