@@ -655,9 +655,12 @@ class Fir2IrVisitor(
     ): IrElement = whileAnalysing(session, thisReceiverExpression) {
         val calleeReference = thisReceiverExpression.calleeReference
 
-        callGenerator.injectGetValueCall(thisReceiverExpression, calleeReference)?.let { return it }
-
         val boundSymbol = calleeReference.boundSymbol
+
+        if (boundSymbol !is FirClassSymbol || calleeReference.contextReceiverNumber == -1) {
+            callGenerator.injectGetValueCall(thisReceiverExpression, calleeReference)?.let { return it }
+        }
+
         when (boundSymbol) {
             is FirClassSymbol -> {
                 // Object case
@@ -680,7 +683,9 @@ class Fir2IrVisitor(
                 val dispatchReceiver = conversionScope.dispatchReceiverParameter(irClass)
                 if (dispatchReceiver != null) {
                     return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
-                        val thisRef = IrGetValueImpl(startOffset, endOffset, dispatchReceiver.type, dispatchReceiver.symbol)
+                        val thisRef = callGenerator.findInjectedValue(calleeReference)?.let {
+                            callGenerator.useInjectedValue(it, calleeReference, startOffset, endOffset)
+                        } ?: IrGetValueImpl(startOffset, endOffset, dispatchReceiver.type, dispatchReceiver.symbol)
                         if (calleeReference.contextReceiverNumber != -1) {
                             val constructorForCurrentlyGeneratedDelegatedConstructor =
                                 conversionScope.getConstructorForCurrentlyGeneratedDelegatedConstructor(irClass)

@@ -263,6 +263,18 @@ public class FirIdeNormalAnalysisSourceModuleCompilerFacilityTestGenerated exten
             }
 
             @Test
+            @TestMetadata("secondClassContextReceiver.kt")
+            public void testSecondClassContextReceiver() throws Exception {
+                runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/secondClassContextReceiver.kt");
+            }
+
+            @Test
+            @TestMetadata("singleClassContextReceiver.kt")
+            public void testSingleClassContextReceiver() throws Exception {
+                runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/singleClassContextReceiver.kt");
+            }
+
+            @Test
             @TestMetadata("valueParameter.kt")
             public void testValueParameter() throws Exception {
                 runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/valueParameter.kt");

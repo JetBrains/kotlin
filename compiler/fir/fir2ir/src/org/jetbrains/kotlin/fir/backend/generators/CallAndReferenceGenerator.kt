@@ -343,16 +343,25 @@ class CallAndReferenceGenerator(
     }
 
     internal fun injectGetValueCall(element: FirElement, calleeReference: FirReference): IrExpression? {
-        val injectedValue = extensions.findInjectedValue(calleeReference, conversionScope)
+        val injectedValue = findInjectedValue(calleeReference)
         if (injectedValue != null) {
             return element.convertWithOffsets { startOffset, endOffset ->
-                val type = injectedValue.typeRef.toIrType()
-                val origin = calleeReference.statementOrigin()
-                IrGetValueImpl(startOffset, endOffset, type, injectedValue.irParameterSymbol, origin)
+                useInjectedValue(injectedValue, calleeReference, startOffset, endOffset)
             }
         }
 
         return null
+    }
+
+    internal fun useInjectedValue(
+        injectedValue: InjectedValue,
+        calleeReference: FirReference,
+        startOffset: Int,
+        endOffset: Int,
+    ): IrGetValueImpl {
+        val type = injectedValue.typeRef.toIrType()
+        val origin = calleeReference.statementOrigin()
+        return IrGetValueImpl(startOffset, endOffset, type, injectedValue.irParameterSymbol, origin)
     }
 
     fun convertToIrCall(
@@ -552,7 +561,7 @@ class CallAndReferenceGenerator(
     }
 
     private fun injectSetValueCall(element: FirElement, calleeReference: FirReference, assignedValue: IrExpression): IrExpression? {
-        val injectedValue = extensions.findInjectedValue(calleeReference, conversionScope)
+        val injectedValue = findInjectedValue(calleeReference)
         if (injectedValue != null) {
             return element.convertWithOffsets { startOffset, endOffset ->
                 val type = irBuiltIns.unitType
@@ -563,6 +572,8 @@ class CallAndReferenceGenerator(
 
         return null
     }
+
+    internal fun findInjectedValue(calleeReference: FirReference) = extensions.findInjectedValue(calleeReference, conversionScope)
 
     fun convertToIrSetCall(variableAssignment: FirVariableAssignment, explicitReceiverExpression: IrExpression?): IrExpression {
         try {

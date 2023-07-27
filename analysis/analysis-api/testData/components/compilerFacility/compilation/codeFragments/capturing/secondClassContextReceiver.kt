@@ -1,0 +1,13 @@
+// !LANGUAGE: +ContextReceivers
+class Ctx1
+class Ctx2
+
+context(Ctx2)
+fun useWithCtx2() = 3
+
+context(Ctx1, Ctx2)
+class Test {
+    fun foo() {
+        <caret>val x = 1
+    }
+}
