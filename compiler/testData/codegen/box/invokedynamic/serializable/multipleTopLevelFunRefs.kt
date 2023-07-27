@@ -10,7 +10,7 @@
 // JVM_IR_TEMPLATES
 // 12 java/lang/invoke/LambdaMetafactory
 // 1 (LOOKUP|TABLE)SWITCH
-// 24 java/lang/String\.equals
+// 4 java/lang/String\.equals
 
 // FILE: multipleTopLevelFunRefs.kt
 import java.io.*
