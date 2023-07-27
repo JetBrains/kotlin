@@ -17,7 +17,7 @@ public class Inv<T> {
 // FILE: test.kt
 
 fun test(inv: Inv<String>) {
-    val m: ((String) -> String) -> Inv<String> = inv::<!UNRESOLVED_REFERENCE!>map<!>
+    val m: ((String) -> String) -> Inv<String> = <!INITIALIZER_TYPE_MISMATCH!>inv::<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>map<!><!>
     take(inv::<!UNRESOLVED_REFERENCE!>map<!>)
 }
 

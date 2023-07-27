@@ -3529,6 +3529,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
             }
 
             @Test
+            @TestMetadata("kt55373.kt")
+            public void testKt55373() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/callableReference/kt55373.kt");
+            }
+
+            @Test
             @TestMetadata("kt7430_wrongClassOnLHS.kt")
             public void testKt7430_wrongClassOnLHS() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/callableReference/kt7430_wrongClassOnLHS.kt");

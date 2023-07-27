@@ -13,7 +13,7 @@ FILE: moreSpecificAmbiguousExtensions.kt
     }
     public final fun testWithExpectedType(): R|kotlin/Unit| {
         lval extFun_AB_A: R|IA.(IB) -> kotlin/Unit| = Q|IA|::R|/extFun|
-        lval extFun_AA_B: R|IA.(IA) -> kotlin/Unit| = Q|IB|::<Unresolved reference: extFun>#
+        lval extFun_AA_B: R|IA.(IA) -> kotlin/Unit| = Q|IB|::<Ambiguity: extFun, [/extFun, /extFun]>#
         lval extFun_BB_A: R|IB.(IB) -> kotlin/Unit| = Q|IA|::R|/extFun|
         lval extFun_BA_B: R|IB.(IA) -> kotlin/Unit| = Q|IB|::R|/extFun|
         lval extFun_BB_B: R|IB.(IB) -> kotlin/Unit| = Q|IB|::<Ambiguity: extFun, [/extFun, /extFun]>#
