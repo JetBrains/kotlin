@@ -23,7 +23,7 @@ abstract class AbstractWholeFileResolvePhaseTest : AbstractLowLevelApiSingleFile
         resolveWithClearCaches(ktFile) { firResolveSession ->
             val firFile = ktFile.getOrBuildFirOfType<FirFile>(firResolveSession)
             val actual = FirRenderer.withResolvePhase().renderElementAsString(firFile)
-            testServices.assertions.assertEqualsToTestDataFileSibling(actual)
+            testServices.assertions.assertEqualsToTestDataFileSibling(actual, extension = ".lazy.resolve.txt")
         }
     }
 }
