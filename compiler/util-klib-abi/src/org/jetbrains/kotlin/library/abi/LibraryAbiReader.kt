@@ -46,11 +46,10 @@ interface AbiReadingFilter {
 
     class NonPublicMarkerAnnotations(nonPublicMarkerNames: Collection<AbiQualifiedName>) : AbiReadingFilter {
         private val nonPublicMarkerNames = nonPublicMarkerNames.toSet().toTypedArray()
-        private val indices = nonPublicMarkerNames.indices
 
         override fun isDeclarationExcluded(declaration: AbiDeclaration): Boolean {
-            for (index in indices) {
-                if (declaration.hasAnnotation(nonPublicMarkerNames[index])) return true
+            for (nonPublicMarkerName in nonPublicMarkerNames) {
+                if (declaration.hasAnnotation(nonPublicMarkerName)) return true
             }
             return false
         }
@@ -58,18 +57,17 @@ interface AbiReadingFilter {
 
     class Composite(filters: List<AbiReadingFilter>) : AbiReadingFilter {
         private val filters = filters.toTypedArray()
-        private val indices = filters.indices
 
         override fun isPackageExcluded(packageName: AbiCompoundName): Boolean {
-            for (index in indices) {
-                if (filters[index].isPackageExcluded(packageName)) return true
+            for (filter in filters) {
+                if (filter.isPackageExcluded(packageName)) return true
             }
             return false
         }
 
         override fun isDeclarationExcluded(declaration: AbiDeclaration): Boolean {
-            for (index in indices) {
-                if (filters[index].isDeclarationExcluded(declaration)) return true
+            for (filter in filters) {
+                if (filter.isDeclarationExcluded(declaration)) return true
             }
             return false
         }
