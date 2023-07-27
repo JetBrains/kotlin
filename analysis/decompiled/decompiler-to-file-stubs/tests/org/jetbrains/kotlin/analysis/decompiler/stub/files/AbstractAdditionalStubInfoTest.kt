@@ -22,7 +22,8 @@ abstract class AbstractAdditionalStubInfoTest : AbstractDecompiledClassTest() {
         val stub = KotlinClsStubBuilder().buildFileStub(FileContentImpl.createByFile(getClassFileToDecompile(testData, false)))!!
         val builder = StringBuilder()
         extractAdditionInfo(stub, builder, 0)
-        KotlinTestUtils.assertEqualsToFile(testData.expectedFile, builder.toString())
+        KotlinTestUtils.assertEqualsToFile(testData.getExpectedFile(useK2ToCompileCode), builder.toString())
+        testData.checkIfIdentical(useK2ToCompileCode)
     }
 
     private fun extractAdditionInfo(stub: StubElement<*>, builder: StringBuilder, level: Int) {

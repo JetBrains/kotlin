@@ -19,9 +19,10 @@ abstract class AbstractStubBuilderTest : AbstractDecompiledClassTest() {
     fun runTest(testDirectory: String) {
         val testDirectoryPath = Paths.get(testDirectory)
         val testData = TestData.createFromDirectory(testDirectoryPath)
-
-        doTest(testData, useStringTable = true)
-        doTest(testData, useStringTable = false)
+        testData.withFirIgnoreDirective {
+            doTest(testData, useStringTable = true)
+            doTest(testData, useStringTable = false)
+        }
     }
 
 
@@ -31,7 +32,9 @@ abstract class AbstractStubBuilderTest : AbstractDecompiledClassTest() {
     }
 
     private fun testClsStubsForFile(classFile: VirtualFile, testData: TestData) {
-        KotlinTestUtils.assertEqualsToFile(testData.expectedFile, getStubToTest(classFile).serializeToString())
+        val stub = getStubToTest(classFile)
+        KotlinTestUtils.assertEqualsToFile(testData.getExpectedFile(useK2ToCompileCode), stub.serializeToString())
+        testData.checkIfIdentical(useK2ToCompileCode)
     }
 
     protected abstract fun getStubToTest(classFile: VirtualFile): PsiFileStub<*>
