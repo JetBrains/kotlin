@@ -69,18 +69,23 @@ private fun createTargetPublications(project: Project, publishing: PublishingExt
         .withType(InternalKotlinTarget::class.java)
         .matching { it.publishable }
         .all { kotlinTarget ->
-            project.launch { kotlinTarget.createMavenPublications(publishing.publications) }
+            if (kotlinTarget is KotlinAndroidTarget) {
+                project.whenEvaluated { kotlinTarget.createMavenPublications(publishing.publications) }
+            } else {
+                kotlinTarget.createMavenPublications(publishing.publications)
+            }
         }
 }
 
-private suspend fun InternalKotlinTarget.createMavenPublications(publications: PublicationContainer) {
-    awaitComponents()
+private fun InternalKotlinTarget.createMavenPublications(publications: PublicationContainer) {
+    components
         .map { gradleComponent -> gradleComponent to kotlinComponents.single { it.name == gradleComponent.name } }
         .filter { (_, kotlinComponent) -> kotlinComponent.publishableOnCurrentHost }
         .forEach { (gradleComponent, kotlinComponent) ->
             val componentPublication = publications.create(kotlinComponent.name, MavenPublication::class.java).apply {
                 // do this in whenEvaluated since older Gradle versions seem to check the files in the variant eagerly:
-                project.whenEvaluated {
+                project.launch {
+                    awaitComponents()
                     from(gradleComponent)
                 }
                 (this as MavenPublicationInternal).publishWithOriginalFileName()
