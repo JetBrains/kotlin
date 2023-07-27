@@ -58,7 +58,7 @@ internal annotation class marker
  *
  */
 @Retention(AnnotationRetention.BINARY)
-@Target(FILE, CLASS, FUNCTION, PROPERTY, CONSTRUCTOR, PROPERTY_GETTER, PROPERTY_SETTER)
+@Target(CLASS, FUNCTION, PROPERTY, CONSTRUCTOR, PROPERTY_GETTER, PROPERTY_SETTER)
 public actual annotation class JsName(actual val name: String)
 
 /**
@@ -66,7 +66,7 @@ public actual annotation class JsName(actual val name: String)
  *
  * This annotation can be applied only to files and only when the compilation granularity is `PER_FILE`.
  */
-@Retention(AnnotationRetention.BINARY)
+@Retention(AnnotationRetention.SOURCE)
 @Target(FILE)
 public actual annotation class JsFileName(actual val name: String)
 

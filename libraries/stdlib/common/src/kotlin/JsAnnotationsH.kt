@@ -11,7 +11,7 @@ import kotlin.reflect.KClass
 /**
  * Gives a declaration (a function, a property or a class) specific name in JavaScript.
  */
-@Target(FILE, CLASS, FUNCTION, PROPERTY, CONSTRUCTOR, PROPERTY_GETTER, PROPERTY_SETTER)
+@Target(CLASS, FUNCTION, PROPERTY, CONSTRUCTOR, PROPERTY_GETTER, PROPERTY_SETTER)
 @OptionalExpectation
 public expect annotation class JsName(val name: String)
 
@@ -37,6 +37,7 @@ public annotation class ExperimentalJsFileName
 @Target(FILE)
 @OptionalExpectation
 @ExperimentalJsFileName
+@Retention(AnnotationRetention.SOURCE)
 public expect annotation class JsFileName(val name: String)
 
 /**

@@ -281,7 +281,7 @@ public final annotation class JsExternalInheritorsOnly : kotlin.Annotation {
     public constructor JsExternalInheritorsOnly()
 }
 
-@kotlin.annotation.Retention(value = AnnotationRetention.BINARY)
+@kotlin.annotation.Retention(value = AnnotationRetention.SOURCE)
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FILE})
 public final annotation class JsFileName : kotlin.Annotation {
     public constructor JsFileName(name: kotlin.String)
@@ -298,7 +298,7 @@ public final annotation class JsModule : kotlin.Annotation {
 }
 
 @kotlin.annotation.Retention(value = AnnotationRetention.BINARY)
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FILE, AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER})
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER})
 public final annotation class JsName : kotlin.Annotation {
     public constructor JsName(name: kotlin.String)
 

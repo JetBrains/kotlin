@@ -338,7 +338,7 @@ class IrModuleToJsTransformer(
         val staticContext = JsStaticContext(backendContext, nameGenerator, globalNameScope, mode)
 
         val result = JsIrProgramFragment(
-            fileExports.file.getJsName() ?: fileExports.file.nameWithoutExtension,
+            fileExports.file.getJsFileName() ?: fileExports.file.nameWithoutExtension,
             fileExports.file.packageFqName.asString()
         ).apply {
             if (shouldGeneratePolyfills) {

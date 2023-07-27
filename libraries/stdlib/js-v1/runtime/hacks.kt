@@ -8,7 +8,7 @@ package kotlin.js
 import kotlin.annotation.AnnotationTarget.*
 
 @Retention(AnnotationRetention.BINARY)
-@Target(FILE, CLASS, FUNCTION, PROPERTY, CONSTRUCTOR, PROPERTY_GETTER, PROPERTY_SETTER)
+@Target(CLASS, FUNCTION, PROPERTY, CONSTRUCTOR, PROPERTY_GETTER, PROPERTY_SETTER)
 internal external annotation class JsName(val name: String)
 
 internal external annotation class native

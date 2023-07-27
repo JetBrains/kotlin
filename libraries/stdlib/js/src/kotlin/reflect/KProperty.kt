@@ -4,7 +4,7 @@
  */
 
 @file:Suppress("IMPLEMENTING_FUNCTION_INTERFACE")
-@file:JsName("KPropertyJs")
+@file:JsFileName("KPropertyJs")
 
 package kotlin.reflect
 
