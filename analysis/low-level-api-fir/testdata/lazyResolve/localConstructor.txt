@@ -116,7 +116,7 @@ FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
 
         public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] E, [ResolvedTo(CONTRACTS)] F> foo(): <implicit> {
             ^foo [ResolvedTo(RAW_FIR)] fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-                local final? [ResolvedTo(RAW_FIR)] class C<[ResolvedTo(RAW_FIR)] G, [ResolvedTo(CONTRACTS)] E, [ResolvedTo(CONTRACTS)] F> : R|kotlin/Any| {
+                local final? [ResolvedTo(RAW_FIR)] class C<[ResolvedTo(RAW_FIR)] G, [ResolvedTo(CONTRACTS)] Outer(E), [ResolvedTo(CONTRACTS)] Outer(F)> : R|kotlin/Any| {
                     public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor<[ResolvedTo(RAW_FIR)] G>(): R|Q.C<G, E, F>| {
                         super<R|kotlin/Any|>()
                     }
@@ -151,7 +151,7 @@ FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun <[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] E, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] F> foo(): R|() -> Q.C<F, E, F>| {
             ^foo [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|Q.C<F, E, F>| <inline=Unknown>  {
-                local final [ResolvedTo(RAW_FIR)] class C<[ResolvedTo(RAW_FIR)] G, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] E, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] F> : R|kotlin/Any| {
+                local final [ResolvedTo(RAW_FIR)] class C<[ResolvedTo(RAW_FIR)] G, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] Outer(E), [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] Outer(F)> : R|kotlin/Any| {
                     public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor<[ResolvedTo(RAW_FIR)] G>(): R|Q.C<G, E, F>| {
                         super<R|kotlin/Any|>()
                     }
@@ -186,7 +186,7 @@ FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
 
         public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun <[ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] E, [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] F> foo(): R|() -> Q.C<F, E, F>| {
             ^foo [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|Q.C<F, E, F>| <inline=Unknown>  {
-                local final [ResolvedTo(RAW_FIR)] class C<[ResolvedTo(RAW_FIR)] G, [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] E, [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] F> : R|kotlin/Any| {
+                local final [ResolvedTo(RAW_FIR)] class C<[ResolvedTo(RAW_FIR)] G, [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] Outer(E), [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] Outer(F)> : R|kotlin/Any| {
                     public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor<[ResolvedTo(RAW_FIR)] G>(): R|Q.C<G, E, F>| {
                         super<R|kotlin/Any|>()
                     }
@@ -221,7 +221,7 @@ FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
 
         public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] E, [ResolvedTo(BODY_RESOLVE)] F> foo(): R|() -> Q.C<F, E, F>| {
             ^foo [ResolvedTo(BODY_RESOLVE)] fun <anonymous>(): R|Q.C<F, E, F>| <inline=Unknown>  {
-                local final [ResolvedTo(BODY_RESOLVE)] class C<[ResolvedTo(BODY_RESOLVE)] G, [ResolvedTo(BODY_RESOLVE)] E, [ResolvedTo(BODY_RESOLVE)] F> : R|kotlin/Any| {
+                local final [ResolvedTo(BODY_RESOLVE)] class C<[ResolvedTo(BODY_RESOLVE)] G, [ResolvedTo(BODY_RESOLVE)] Outer(E), [ResolvedTo(BODY_RESOLVE)] Outer(F)> : R|kotlin/Any| {
                     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] constructor<[ResolvedTo(BODY_RESOLVE)] G>(): R|Q.C<G, E, F>| {
                         super<R|kotlin/Any|>()
                     }
@@ -256,7 +256,7 @@ FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
 
         public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] E, [ResolvedTo(BODY_RESOLVE)] F> foo(): R|() -> Q.C<F, E, F>| {
             ^foo [ResolvedTo(BODY_RESOLVE)] fun <anonymous>(): R|Q.C<F, E, F>| <inline=Unknown>  {
-                local final [ResolvedTo(BODY_RESOLVE)] class C<[ResolvedTo(BODY_RESOLVE)] G, [ResolvedTo(BODY_RESOLVE)] E, [ResolvedTo(BODY_RESOLVE)] F> : R|kotlin/Any| {
+                local final [ResolvedTo(BODY_RESOLVE)] class C<[ResolvedTo(BODY_RESOLVE)] G, [ResolvedTo(BODY_RESOLVE)] Outer(E), [ResolvedTo(BODY_RESOLVE)] Outer(F)> : R|kotlin/Any| {
                     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] constructor<[ResolvedTo(BODY_RESOLVE)] G>(): R|Q.C<G, E, F>| {
                         super<R|kotlin/Any|>()
                     }

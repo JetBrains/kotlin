@@ -23,7 +23,7 @@ FILE: privateToThis.fir.kt
             R|<local>/a|.R|SubstitutionOverride</A.t: R|CapturedType(*)|><HIDDEN: /A.t is invisible>#|
         }
 
-        public final inner class B<in T> : R|kotlin/Any| {
+        public final inner class B<in Outer(T)> : R|kotlin/Any| {
             public A<T>.constructor(): R|A.B<T>| {
                 super<R|kotlin/Any|>()
             }

@@ -27,7 +27,7 @@ public final class Generic<T> : R|kotlin/Any| {
 public final class InnerGeneric<A, B> : R|kotlin/Any| {
     public constructor<A, B>(): R|test/InnerGeneric<A, B>|
 
-    public final inner class Inner<in C, D : R|A|, A, B> : R|kotlin/Any| {
+    public final inner class Inner<in C, D : R|A|, Outer(A), Outer(B)> : R|kotlin/Any| {
         public test/InnerGeneric<A, B>.constructor<in C, D : R|A|>(): R|test/InnerGeneric.Inner<C, D, A, B>|
 
     }

@@ -3,10 +3,10 @@ public final class Outer<E, F> : R|kotlin/Any| {
 
     public constructor<E, F>(): R|test/Outer<E, F>|
 
-    public final inner class Inner<G, H, E, F> : R|kotlin/Any| {
+    public final inner class Inner<G, H, Outer(E), Outer(F)> : R|kotlin/Any| {
         public test/Outer<E, F>.constructor<G, H>(): R|test/Outer.Inner<G, H, E, F>|
 
-        public final inner class Inner3<I, G, H, E, F> : R|kotlin/Any| {
+        public final inner class Inner3<I, Outer(G), Outer(H), Outer(E), Outer(F)> : R|kotlin/Any| {
             public final fun foo(x: R|test/Outer.Inner<G, kotlin/Int, kotlin/String, F>|, y: R|test/Outer.Inner<E, kotlin/Double, E, F>|, z: R|test/Outer.Inner.Inner3<kotlin/Double, G, kotlin/Int, kotlin/String, F>|, w: R|test/Outer.Inner.Inner3<*, G, H, E, F>|): R|kotlin/Unit|
 
             public test/Outer.Inner<G, H, E, F>.constructor<I>(): R|test/Outer.Inner.Inner3<I, G, H, E, F>|
@@ -15,7 +15,7 @@ public final class Outer<E, F> : R|kotlin/Any| {
 
     }
 
-    public final inner class Inner2<E, F> : R|kotlin/Any| {
+    public final inner class Inner2<Outer(E), Outer(F)> : R|kotlin/Any| {
         public test/Outer<E, F>.constructor(): R|test/Outer.Inner2<E, F>|
 
     }

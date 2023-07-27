@@ -4,7 +4,7 @@ FILE: complexTypes.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public? final? inner class D<R, in P, T, out S> : R|kotlin/Any| {
+        public? final? inner class D<R, in P, Outer(T), out Outer(S)> : R|kotlin/Any| {
             public? a/b/C<T, S>.constructor<R, in P>(): R|a/b/C.D<R, P, T, S>| {
                 LAZY_super<R|kotlin/Any|>
             }
