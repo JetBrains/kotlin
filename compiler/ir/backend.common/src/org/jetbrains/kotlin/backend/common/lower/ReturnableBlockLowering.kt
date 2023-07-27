@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrDoWhileLoopImpl
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.transformStatement
+import org.jetbrains.kotlin.ir.types.isSubtypeOf
 import org.jetbrains.kotlin.ir.types.isUnit
 
 // TODO migrate other usages and move this file to backend.jvm
@@ -90,7 +91,24 @@ class ReturnableBlockTransformer(val context: CommonBackendContext, val containe
         val scopeSymbol = currentScope?.scope?.scopeOwnerSymbol ?: containerSymbol
         val builder = context.createIrBuilder(scopeSymbol!!)
         val variable by lazy {
-            builder.scope.createTmpVariable(expression.type, "tmp\$ret\$${labelCnt++}", true)
+            builder.scope.createTmpVariable(expression.type, "tmp\$ret\$${labelCnt++}", true).apply {
+                // Consider the code:
+                //
+                // inline fun <T> myrun(block: () -> T) = block()
+                // fun foo() = myrun L@{ if (false) return@L }
+                //
+                // Note that the block has execution path without explicit `Unit` return. That is why `variable` may be uninitialized
+                // before its reading.
+                // We worked it around that way: since explicit value return from `Unit` block is not obligatory, later in this lowering
+                // we don't create `variable` reading if its type is known to be `Unit`.
+                // On the other hand, despite the block in fact returns `Unit`, due to erasure of non-reified type parameters when inlining,
+                // block's type in IR can be any superclass of `Unit`, e.g. `Any?`. Thus, the workaround does not work in that case.
+                // Therefore, we should explicitly initialize `variable`.
+                // It is safe even if block actually returns something, because in that case `Unit` initializer will be overwritten.
+                if (!expression.type.isUnit() && context.irBuiltIns.unitType.isSubtypeOf(expression.type, context.typeSystem)) {
+                    initializer = builder.irUnit()
+                }
+            }
         }
 
         val loop by lazy {
