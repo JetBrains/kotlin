@@ -300,8 +300,7 @@ private val functionInliningPhase = makeBodyLoweringPhase(
             allowExternalInlining = true,
             useTypeParameterUpperBound = true,
             alwaysCreateTemporaryVariablesForArguments = true,
-            inlineArgumentsWithTheirOriginalTypeAndOffset = true
-        )
+            inlineArgumentsWithOriginalOffset = true)
     },
     name = "FunctionInliningPhase",
     description = "Perform function inlining",
