@@ -1617,3 +1617,6 @@ val IrDeclaration.isExpect
 fun IrElement.sourceElement(): AbstractKtSourceElement? =
     if (startOffset >= 0) KtOffsetsOnlySourceElement(this.startOffset, this.endOffset)
     else null
+
+fun IrFunction.isTopLevelInPackage(name: String, packageFqName: FqName) =
+    this.name.asString() == name && parent.kotlinFqName == packageFqName
