@@ -31,7 +31,7 @@ import kotlin.math.max
 import org.jetbrains.kotlin.compatibility.binary.TestFile as TFile
 import org.jetbrains.kotlin.compatibility.binary.TestModule as TModule
 
-@Tag("klib-evolution")
+@Tag("klib")
 @UsePartialLinkage(UsePartialLinkage.Mode.DISABLED)
 abstract class AbstractNativeKlibEvolutionTest : AbstractNativeSimpleTest() {
     // Const evaluation tests muted for FIR because FIR does const propagation.

@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEqualsToFile
 import org.junit.jupiter.api.Tag
 import java.io.File
 
-@Tag("klib-contents")
+@Tag("klib")
 @UsePartialLinkage(UsePartialLinkage.Mode.DISABLED)
 abstract class AbstractNativeKlibContentsTest : AbstractNativeSimpleTest() {
 
