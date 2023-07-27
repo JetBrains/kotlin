@@ -44,7 +44,7 @@ class IdeOriginalMetadataDependencyResolverTest {
 
         for (sourceSet in stdlibCommonSourceSets) {
             IdeOriginalMetadataDependencyResolver.resolve(sourceSet).assertMatches(
-                binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-common:${kotlin.coreLibrariesVersion}")
+                binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib:common:${kotlin.coreLibrariesVersion}")
             )
         }
     }

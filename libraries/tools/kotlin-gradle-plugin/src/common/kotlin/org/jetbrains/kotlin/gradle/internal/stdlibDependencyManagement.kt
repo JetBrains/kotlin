@@ -40,17 +40,27 @@ internal fun Project.configureStdlibDefaultDependency(
 ) {
     when (topLevelExtension) {
         is KotlinJsProjectExtension -> topLevelExtension.registerTargetObserver { target ->
-            target?.addStdlibDependency(configurations, dependencies, coreLibrariesVersion)
+            target?.addStdlibDependency(
+                configurations,
+                dependencies,
+                coreLibrariesVersion,
+                false,
+            )
         }
 
         is KotlinSingleTargetExtension<*> -> topLevelExtension
             .target
-            .addStdlibDependency(configurations, dependencies, coreLibrariesVersion)
+            .addStdlibDependency(
+                configurations,
+                dependencies,
+                coreLibrariesVersion,
+                false
+            )
 
         is KotlinMultiplatformExtension -> topLevelExtension
             .targets
             .configureEach { target ->
-                target.addStdlibDependency(configurations, dependencies, coreLibrariesVersion)
+                target.addStdlibDependency(configurations, dependencies, coreLibrariesVersion, true)
             }
     }
 }
@@ -102,7 +112,8 @@ private fun Configuration.alignStdlibJvmVariantVersions(
 private fun KotlinTarget.addStdlibDependency(
     configurations: ConfigurationContainer,
     dependencies: DependencyHandler,
-    coreLibrariesVersion: Provider<String>
+    coreLibrariesVersion: Provider<String>,
+    isMppProject: Boolean,
 ) {
     compilations.configureEach { compilation ->
         compilation.allKotlinSourceSets.forEach { kotlinSourceSet ->
@@ -122,9 +133,20 @@ private fun KotlinTarget.addStdlibDependency(
                 // Check if stdlib is directly added to SourceSet
                 if (isStdlibAddedByUser(configurations, stdlibModules, kotlinSourceSet)) return@withDependencies
 
+                val requestedStdlibVersion = coreLibrariesVersion.get()
+                val stdlibVersion = SemVer.fromGradleRichVersion(requestedStdlibVersion)
+
+                // Since 1.9.20 in MPP projects, we should add stdlib only for common dependencies
+                // except standalone compilations which as not using 'common'
+                if (isMppProject &&
+                    stdlibVersion >= kotlin1920Version &&
+                    compilation.platformType != KotlinPlatformType.common &&
+                    kotlinSourceSet.hasDependencyOnCommon()
+                ) return@withDependencies
+
                 val stdlibModule = compilation
                     .platformType
-                    .stdlibPlatformType(this, kotlinSourceSet)
+                    .stdlibPlatformType(this, kotlinSourceSet, stdlibVersion >= kotlin1920Version)
                     ?: return@withDependencies
 
                 // Check if stdlib module is added to SourceSets hierarchy
@@ -146,6 +168,11 @@ private fun KotlinTarget.addStdlibDependency(
     }
 }
 
+internal fun KotlinSourceSet.hasDependencyOnCommon(): Boolean = dependsOn
+    .any { sourceSet ->
+        sourceSet.internal.compilations.any { it.platformType == KotlinPlatformType.common }
+    }
+
 internal fun isStdlibAddedByUser(
     configurations: ConfigurationContainer,
     stdlibModules: Set<String>,
@@ -166,29 +193,31 @@ internal fun isStdlibAddedByUser(
 
 internal fun KotlinPlatformType.stdlibPlatformType(
     kotlinTarget: KotlinTarget,
-    kotlinSourceSet: KotlinSourceSet
+    kotlinSourceSet: KotlinSourceSet,
+    isVersionWithGradleMetadata: Boolean
 ): String? = when (this) {
-    KotlinPlatformType.jvm -> KOTLIN_STDLIB_MODULE_NAME
+    KotlinPlatformType.jvm -> if (isVersionWithGradleMetadata) KOTLIN_STDLIB_MODULE_NAME else KOTLIN_STDLIB_JDK8_MODULE_NAME
     KotlinPlatformType.androidJvm -> {
         if (kotlinTarget is KotlinAndroidTarget &&
             kotlinSourceSet.androidSourceSetInfoOrNull?.androidSourceSetName == AndroidBaseSourceSetName.Main.name
         ) {
-            KOTLIN_ANDROID_JVM_STDLIB_MODULE_NAME
+            if (isVersionWithGradleMetadata) KOTLIN_ANDROID_JVM_STDLIB_MODULE_NAME else KOTLIN_STDLIB_JDK8_MODULE_NAME
         } else {
             null
         }
     }
 
-    KotlinPlatformType.js -> KOTLIN_STDLIB_MODULE_NAME
+    KotlinPlatformType.js -> if (isVersionWithGradleMetadata) KOTLIN_STDLIB_MODULE_NAME else KOTLIN_STDLIB_JS_MODULE_NAME
     KotlinPlatformType.wasm -> KOTLIN_STDLIB_WASM_MODULE_NAME
     KotlinPlatformType.native -> null
     KotlinPlatformType.common -> // there's no platform compilation that the source set is default for
-        KOTLIN_STDLIB_MODULE_NAME
+        if (isVersionWithGradleMetadata) KOTLIN_STDLIB_MODULE_NAME else KOTLIN_STDLIB_COMMON_MODULE_NAME
 }
 
 private val androidTestVariants = setOf(AndroidVariantType.UnitTest, AndroidVariantType.InstrumentedTest)
 
 private val kotlin180Version = SemVer(1.toBigInteger(), 8.toBigInteger(), 0.toBigInteger())
+private val kotlin1920Version = SemVer(1.toBigInteger(), 9.toBigInteger(), 20.toBigInteger())
 
 private fun KotlinSourceSet.isRelatedToAndroidTestSourceSet(): Boolean {
     val androidVariant = androidSourceSetInfoOrNull?.androidVariantType ?: return false

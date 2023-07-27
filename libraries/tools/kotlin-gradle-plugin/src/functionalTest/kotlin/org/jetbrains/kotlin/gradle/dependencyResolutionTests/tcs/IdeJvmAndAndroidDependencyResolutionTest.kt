@@ -150,8 +150,6 @@ class IdeJvmAndAndroidDependencyResolutionTest {
         val stdlibVersion = project.getKotlinPluginVersion()
         val stdlibDependencies = listOf(
             binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib:${stdlibVersion}"),
-            binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-jdk7:${stdlibVersion}"),
-            binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${stdlibVersion}"),
             binaryCoordinates("org.jetbrains:annotations:13.0"),
         )
 
