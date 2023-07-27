@@ -410,7 +410,12 @@ private class LibraryDeserializer(
                     signature is CommonSignature -> signature
                     signature is CompositeSignature && signature.container is FileSignature -> signature.inner as CommonSignature
                     else -> error("Unexpected annotation signature encountered: ${signature::class.java}, ${signature.render()}")
-                }.extractQualifiedName { rawRelativeName -> rawRelativeName.removeSuffix(INIT_SUFFIX) }
+                }.extractQualifiedName { rawRelativeName ->
+                    check(rawRelativeName.endsWith(INIT_SUFFIX)) {
+                        "Annotation constructor name does not have '$INIT_SUFFIX' suffix: $rawRelativeName"
+                    }
+                    rawRelativeName.substring(0, rawRelativeName.length - INIT_SUFFIX.length)
+                }
 
                 // Avoid duplicated instances of popular signature names:
                 return annotationsInterner.intern(annotationClassName)
