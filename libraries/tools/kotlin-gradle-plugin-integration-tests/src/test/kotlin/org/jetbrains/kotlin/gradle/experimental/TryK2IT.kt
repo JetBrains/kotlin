@@ -115,11 +115,7 @@ class TryK2IT : KGPBaseTest() {
                     """.trimMargin().normalizeLineEndings()
                 )
                 //depends on system
-                assertOutputContains(
-                    """
-                    |:compileKotlinMingwX64: 2.0 language version
-                    """.trimIndent()
-                )
+                assertOutputContains(":compileKotlinMingwX64: 2.0 language version")
 
                 assertOutputContains("##### 100%")
                 assertOutputContains("tasks have been compiled with Kotlin 2.0 #####")
