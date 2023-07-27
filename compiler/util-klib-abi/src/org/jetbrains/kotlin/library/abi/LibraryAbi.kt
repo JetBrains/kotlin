@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.library.abi
 
+import org.jetbrains.kotlin.library.abi.impl.AbiSignatureVersions
+
 /**
  * The result of reading ABI from KLIB.
  *
@@ -41,6 +43,11 @@ interface AbiSignatureVersion {
     val versionNumber: Int
     val isSupportedByAbiReader: Boolean
     val description: String?
+
+    companion object {
+        val allSupportedByAbiReader: List<AbiSignatureVersion> get() = AbiSignatureVersions.Supported.entries
+        fun resolveByVersionNumber(versionNumber: Int): AbiSignatureVersion = AbiSignatureVersions.resolveByVersionNumber(versionNumber)
+    }
 }
 
 @ExperimentalLibraryAbiReader
