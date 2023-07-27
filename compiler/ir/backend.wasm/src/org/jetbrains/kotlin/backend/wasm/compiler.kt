@@ -162,13 +162,14 @@ fun compileWasm(
         jsWrapper = jsWrapper,
         wasm = byteArray,
         sourceMap = generateSourceMap(backendContext.configuration, sourceLocationMappings),
-        watSourceMap = generateSourceMap(backendContext.configuration, watSourceLocationMappings),
+        watSourceMap = generateSourceMap(backendContext.configuration, watSourceLocationMappings, relative = false),
     )
 }
 
 private fun generateSourceMap(
     configuration: CompilerConfiguration,
-    sourceLocationMappings: MutableList<SourceLocationMapping>?
+    sourceLocationMappings: MutableList<SourceLocationMapping>?,
+    relative: Boolean = true
 ): String? {
     if (sourceLocationMappings == null) return null
 
@@ -191,7 +192,7 @@ private fun generateSourceMap(
 
         location.apply {
             // TODO resulting path goes too deep since temporary directory we compiled first is deeper than final destination.   
-            val relativePath = pathResolver.getPathRelativeToSourceRoots(File(file)).substring(3)
+            val relativePath = if (relative) pathResolver.getPathRelativeToSourceRoots(File(file)).substring(3) else file
             sourceMapBuilder.addMapping(relativePath, null, { null }, line, column, null, mapping.offset)
         }
     }
