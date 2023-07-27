@@ -5,9 +5,9 @@ plugins {
 
 dependencies {
     api(kotlinStdlib())
-    api(project(":kotlin-util-klib"))
-    api(project(":core:compiler.common"))
-    api(project(":compiler:ir.serialization.common"))
+    implementation(project(":kotlin-util-klib"))
+    implementation(project(":core:compiler.common"))
+    implementation(project(":compiler:ir.serialization.common"))
     compileOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
     testApiJUnit5()
     testImplementation(intellijCore())
