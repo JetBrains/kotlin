@@ -30,11 +30,7 @@ import org.jetbrains.kotlin.konan.properties.saveToFile
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.serialization.js.ModuleKind
-import org.jetbrains.kotlin.test.util.KtTestUtil.getHomeDirectory
 import org.jetbrains.kotlin.test.utils.TestDisposable
-import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
-import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
-import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.TestInfo
 import java.io.ByteArrayOutputStream
@@ -45,8 +41,6 @@ import org.jetbrains.kotlin.konan.file.File as KFile
 
 private val TestInfo.className: String get() = testClass.orElseGet { fail("Can't get test class name") }.simpleName
 private val TestInfo.methodName: String get() = testMethod.orElseGet { fail("Can't get test method name") }.name
-
-internal fun getTestName(testInfo: TestInfo): String = testInfo.methodName
 
 internal fun setUpBuildDir(testInfo: TestInfo): File {
     val projectBuildDir = System.getenv(ENV_VAR_PROJECT_BUILD_DIR)
@@ -60,80 +54,6 @@ internal fun setUpBuildDir(testInfo: TestInfo): File {
         mkdirs()
     }
 }
-
-@OptIn(ExperimentalLibraryAbiReader::class)
-internal fun computeTestFiles(
-    relativePath: String,
-    signatureVersions: List<AbiSignatureVersion>
-): Pair<File, Map<AbiSignatureVersion, File>> {
-    assertTrue(signatureVersions.isNotEmpty()) { "Signature versions not specified" }
-
-    val sourceFile = File(getHomeDirectory()).resolve(relativePath)
-    assertEquals("kt", sourceFile.extension) { "Invalid source file: $sourceFile" }
-    assertTrue(sourceFile.isFile) { "Source file does not exist: $sourceFile" }
-
-    return sourceFile to signatureVersions.associateWith { signatureVersion ->
-        val dumpFile = sourceFile.withReplacedExtensionOrNull("kt", "v${signatureVersion.versionNumber}.txt")!!
-        assertTrue(dumpFile.isFile) { "Dump file does not exist: $dumpFile" }
-        dumpFile
-    }
-}
-
-@OptIn(ExperimentalLibraryAbiReader::class)
-internal fun computeModuleNameAndFiltersFromTestDirectives(sourceFile: File): Pair<String, List<AbiReadingFilter>> {
-    fun String.parseQualifiedName() = AbiQualifiedName(
-        packageName = AbiCompoundName(substringBefore('/', missingDelimiterValue = "")),
-        relativeName = AbiCompoundName(substringAfter('/'))
-    )
-
-    var moduleName: String? = null
-    val excludedPackages = mutableListOf<AbiCompoundName>()
-    val excludedClasses = mutableListOf<AbiQualifiedName>()
-    val nonPublicMarkers = mutableListOf<AbiQualifiedName>()
-
-    for (line in sourceFile.bufferedReader().lineSequence()) {
-        if (!line.parseTestDirective(DIRECTIVE_EXCLUDED_PACKAGES, ::AbiCompoundName, excludedPackages::add)
-            && !line.parseTestDirective(DIRECTIVE_EXCLUDED_CLASSES, String::parseQualifiedName, excludedClasses::add)
-            && !line.parseTestDirective(DIRECTIVE_NON_PUBLIC_MARKERS, String::parseQualifiedName, nonPublicMarkers::add)
-            && !line.parseTestDirective(DIRECTIVE_MODULE, { it }, { moduleName = it })
-            && !line.startsWith("//")
-            && line.isNotBlank()
-        ) {
-            break
-        }
-    }
-
-    assert(moduleName != null) { "No module name specified with MODULE test directive" }
-
-    return moduleName!! to listOfNotNull(
-        excludedPackages.ifNotEmpty(AbiReadingFilter::ExcludedPackages),
-        excludedClasses.ifNotEmpty(AbiReadingFilter::ExcludedClasses),
-        nonPublicMarkers.ifNotEmpty(AbiReadingFilter::NonPublicMarkerAnnotations)
-    )
-}
-
-private inline fun <T> String.parseTestDirective(
-    directivePrefix: String,
-    parser: (String) -> T,
-    consumer: (T) -> Unit,
-): Boolean {
-    if (!startsWith(directivePrefix))
-        return false
-
-    val remainder = substring(directivePrefix.length)
-    try {
-        val items = parseSpaceSeparatedArgs(remainder)
-        items.forEach { item -> consumer(parser(item)) }
-        return true
-    } catch (e: Exception) {
-        throw fail<Nothing>("Failure during parsing test directive: $this", e)
-    }
-}
-
-private const val DIRECTIVE_MODULE = "// MODULE:"
-private const val DIRECTIVE_EXCLUDED_PACKAGES = "// EXCLUDED_PACKAGES:"
-private const val DIRECTIVE_EXCLUDED_CLASSES = "// EXCLUDED_CLASSES:"
-private const val DIRECTIVE_NON_PUBLIC_MARKERS = "// NON_PUBLIC_MARKERS:"
 
 internal fun buildLibrary(sourceFile: File, libraryName: String, buildDir: File): File {
     val configuration = CompilerConfiguration()

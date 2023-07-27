@@ -266,6 +266,27 @@ fun main() {
                 model("diagnostics/nativeTests", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
             }
         }
+
+        generateTestGroupSuiteWithJUnit5 {
+            testGroup("native/native.tests/tests-gen", "compiler/util-klib-abi/testData") {
+                testClass<AbstractNativeLibraryAbiReaderTest>(
+                    suiteTestClassName = "NativeLibraryAbiReaderTest"
+                ) {
+                    model("content", targetBackend = TargetBackend.NATIVE)
+                }
+            }
+
+            testGroup("native/native.tests/tests-gen", "compiler/util-klib-abi/testData") {
+                testClass<AbstractNativeLibraryAbiReaderTest>(
+                    suiteTestClassName = "FirNativeLibraryAbiReaderTest",
+                    annotations = listOf(
+                        *frontendFir()
+                    )
+                ) {
+                    model("content", targetBackend = TargetBackend.NATIVE)
+                }
+            }
+        }
     }
 }
 

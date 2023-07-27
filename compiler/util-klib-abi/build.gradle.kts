@@ -37,3 +37,5 @@ projectTest(jUnitMode = JUnitMode.JUnit5) {
 }
 
 val generateTests by generator("org.jetbrains.kotlin.library.abi.GenerateLibraryAbiReaderTestsKt")
+
+testsJar()
