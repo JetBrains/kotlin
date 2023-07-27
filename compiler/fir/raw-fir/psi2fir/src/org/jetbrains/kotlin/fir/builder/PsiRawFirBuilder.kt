@@ -276,9 +276,12 @@ open class PsiRawFirBuilder(
             kind: DiagnosticKind = DiagnosticKind.ExpressionExpected
         ): FirExpression = toFirExpression { ConeSimpleDiagnostic(errorReason, kind) }
 
-        private inline fun KtElement?.toFirExpression(diagnosticFn: () -> ConeDiagnostic): FirExpression {
+        private inline fun KtElement?.toFirExpression(
+            sourceWhenThisIsNull: PsiElement? = null,
+            diagnosticFn: () -> ConeDiagnostic,
+        ): FirExpression {
             if (this == null) {
-                return buildErrorExpression(source = null, diagnosticFn())
+                return buildErrorExpression(source = sourceWhenThisIsNull?.toFirSourceElement(), diagnosticFn())
             }
 
             val result = when (val fir = convertElement(this, null)) {
@@ -2928,7 +2931,9 @@ open class PsiRawFirBuilder(
             return buildGetClassCall {
                 source = expression.toFirSourceElement()
                 argumentList = buildUnaryArgumentList(
-                    expression.receiverExpression.toFirExpression { ConeSyntaxDiagnostic("No receiver in class literal") }
+                    expression.receiverExpression.toFirExpression(sourceWhenThisIsNull = expression) {
+                        ConeUnsupportedClassLiteralsWithEmptyLhs
+                    }
                 )
             }
         }

@@ -463,11 +463,13 @@ class LightTreeRawFirExpressionBuilder(
             if (it.isExpression()) firReceiverExpression = getAsFirExpression(it, "No receiver in class literal")
         }
 
+        val classLiteralSource = classLiteralExpression.toFirSourceElement()
+
         return buildGetClassCall {
-            source = classLiteralExpression.toFirSourceElement()
+            source = classLiteralSource
             argumentList = buildUnaryArgumentList(
                 firReceiverExpression
-                    ?: buildErrorExpression(null, ConeSyntaxDiagnostic("No receiver in class literal"))
+                    ?: buildErrorExpression(classLiteralSource, ConeUnsupportedClassLiteralsWithEmptyLhs)
             )
         }
     }
