@@ -478,10 +478,6 @@ class FirElementSerializer private constructor(
         versionRequirementTable?.run {
             builder.addAllVersionRequirement(serializeVersionRequirements(property))
 
-            if (property.isSuspendOrHasSuspendTypesInSignature()) {
-                builder.addVersionRequirement(writeVersionRequirementDependingOnCoroutinesVersion())
-            }
-
             if (local.metDefinitelyNotNullType) {
                 builder.addVersionRequirement(writeVersionRequirement(LanguageFeature.DefinitelyNonNullableTypes))
             }
@@ -572,10 +568,6 @@ class FirElementSerializer private constructor(
 
         versionRequirementTable?.run {
             builder.addAllVersionRequirement(serializeVersionRequirements(function))
-
-            if (function.isSuspendOrHasSuspendTypesInSignature()) {
-                builder.addVersionRequirement(writeVersionRequirementDependingOnCoroutinesVersion())
-            }
 
             if (local.metDefinitelyNotNullType) {
                 builder.addVersionRequirement(writeVersionRequirement(LanguageFeature.DefinitelyNonNullableTypes))
@@ -678,10 +670,6 @@ class FirElementSerializer private constructor(
 
         versionRequirementTable?.run {
             builder.addAllVersionRequirement(serializeVersionRequirements(constructor))
-
-            if (constructor.isSuspendOrHasSuspendTypesInSignature()) {
-                builder.addVersionRequirement(writeVersionRequirementDependingOnCoroutinesVersion())
-            }
 
             if (local.metDefinitelyNotNullType) {
                 builder.addVersionRequirement(writeVersionRequirement(LanguageFeature.DefinitelyNonNullableTypes))
@@ -1062,11 +1050,6 @@ class FirElementSerializer private constructor(
 
     private fun useTypeTable(): Boolean = extension.shouldUseTypeTable()
 
-    private fun FirCallableDeclaration.isSuspendOrHasSuspendTypesInSignature(): Boolean {
-        // TODO (types in signature)
-        return this.isSuspend
-    }
-
     private fun MutableVersionRequirementTable.serializeVersionRequirements(container: FirAnnotationContainer): List<Int> =
         serializeVersionRequirements(container.annotations)
 
@@ -1081,9 +1064,6 @@ class FirElementSerializer private constructor(
     private fun MutableVersionRequirementTable.writeVersionRequirement(languageFeature: LanguageFeature): Int {
         return writeLanguageVersionRequirement(languageFeature, this)
     }
-
-    private fun MutableVersionRequirementTable.writeVersionRequirementDependingOnCoroutinesVersion(): Int =
-        writeVersionRequirement(LanguageFeature.ReleaseCoroutines)
 
     private fun serializeVersionRequirementFromRequireKotlin(annotation: FirAnnotation): ProtoBuf.VersionRequirement.Builder? {
         val argumentMapping = annotation.argumentMapping.mapping
@@ -1240,7 +1220,7 @@ class FirElementSerializer private constructor(
             return serializer
         }
 
-        fun writeLanguageVersionRequirement(
+        private fun writeLanguageVersionRequirement(
             languageFeature: LanguageFeature,
             versionRequirementTable: MutableVersionRequirementTable
         ): Int {
@@ -1252,7 +1232,7 @@ class FirElementSerializer private constructor(
             )
         }
 
-        fun writeVersionRequirement(
+        private fun writeVersionRequirement(
             major: Int,
             minor: Int,
             patch: Int,

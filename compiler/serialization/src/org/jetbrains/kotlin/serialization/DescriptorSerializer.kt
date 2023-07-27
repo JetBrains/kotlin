@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.serialization
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.isSuspendFunctionType
-import org.jetbrains.kotlin.builtins.isSuspendFunctionTypeOrSubtype
 import org.jetbrains.kotlin.builtins.transformSuspendFunctionToRuntimeFunctionType
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -43,7 +42,6 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptorVisibility
 import org.jetbrains.kotlin.serialization.deserialization.memberKind
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.extensions.TypeAttributeTranslators
-import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 import java.util.*
 
@@ -296,10 +294,6 @@ class DescriptorSerializer private constructor(
         versionRequirementTable?.run {
             builder.addAllVersionRequirement(serializeVersionRequirements(descriptor))
 
-            if (descriptor.isSuspendOrHasSuspendTypesInSignature()) {
-                builder.addVersionRequirement(writeVersionRequirementDependingOnCoroutinesVersion())
-            }
-
             if (local.metDefinitelyNotNullType) {
                 builder.addVersionRequirement(writeVersionRequirement(LanguageFeature.DefinitelyNonNullableTypes))
             }
@@ -389,10 +383,6 @@ class DescriptorSerializer private constructor(
         versionRequirementTable?.run {
             builder.addAllVersionRequirement(serializeVersionRequirements(descriptor))
 
-            if (descriptor.isSuspendOrHasSuspendTypesInSignature()) {
-                builder.addVersionRequirement(writeVersionRequirementDependingOnCoroutinesVersion())
-            }
-
             if (local.metDefinitelyNotNullType) {
                 builder.addVersionRequirement(writeVersionRequirement(LanguageFeature.DefinitelyNonNullableTypes))
             }
@@ -421,10 +411,6 @@ class DescriptorSerializer private constructor(
         versionRequirementTable?.run {
             builder.addAllVersionRequirement(serializeVersionRequirements(descriptor))
 
-            if (descriptor.isSuspendOrHasSuspendTypesInSignature()) {
-                builder.addVersionRequirement(writeVersionRequirementDependingOnCoroutinesVersion())
-            }
-
             if (local.metDefinitelyNotNullType) {
                 builder.addVersionRequirement(writeVersionRequirement(LanguageFeature.DefinitelyNonNullableTypes))
             }
@@ -435,24 +421,6 @@ class DescriptorSerializer private constructor(
         plugins.forEach { it.afterConstructor(descriptor, builder, versionRequirementTable, this, extension) }
 
         return builder
-    }
-
-    private fun MutableVersionRequirementTable.writeVersionRequirementDependingOnCoroutinesVersion(): Int =
-        writeVersionRequirement(LanguageFeature.ReleaseCoroutines)
-
-    private fun CallableMemberDescriptor.isSuspendOrHasSuspendTypesInSignature(): Boolean {
-        if (this is FunctionDescriptor && isSuspend) return true
-
-        return allTypesFromSignature().any { type -> type.contains(UnwrappedType::isSuspendFunctionTypeOrSubtype) }
-    }
-
-    private fun CallableMemberDescriptor.allTypesFromSignature(): List<KotlinType> {
-        return listOfNotNull(
-            extensionReceiverParameter?.type,
-            returnType,
-            *typeParameters.flatMap { it.upperBounds }.toTypedArray(),
-            *valueParameters.map(ValueParameterDescriptor::getType).toTypedArray()
-        )
     }
 
     private fun typeAliasProto(descriptor: TypeAliasDescriptor): ProtoBuf.TypeAlias.Builder? {
