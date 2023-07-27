@@ -663,8 +663,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         compileKotlin("main.kt", tmpdir, listOf(library), additionalOptions = features)
     }
 
-    // Fixed in the LV2.0 branch.
-    fun testUnreachableExtensionVarPropertyDeclaration() = muteForK2 {
+    fun testUnreachableExtensionVarPropertyDeclaration() {
         val (output, exitCode) = compileKotlin("source.kt", tmpdir, expectedFileName = null)
         assertEquals("Output:\n$output", ExitCode.COMPILATION_ERROR, exitCode)
     }
