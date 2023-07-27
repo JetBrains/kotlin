@@ -148,10 +148,10 @@ fun box() {
 // String.kt:66 $kotlin.String.hashCode (15, 8)
 // String.kt:127 $kotlin.String.hashCode (19, 8)
 // String.kt:128 $kotlin.String.hashCode (8, 8)
+// Standard.kt:136 $kotlin.String.hashCode (18, 52, 61, 52, 66, 51, 51, 44)
 // Standard.kt:152 $kotlin.String.hashCode
 // Standard.kt:154 $kotlin.String.hashCode (18, 4, 26, 4, 18, 9, 18, 4, 26, 4, 4)
-// Standard.kt:155 $kotlin.String.hashCode
-// Standard.kt:136 $kotlin.String.hashCode (52, 61, 52, 66, 51, 51, 44)
+// Standard.kt:155 $kotlin.String.hashCode (8, 15)
 // Standard.kt:138 $kotlin.String.hashCode (8, 4, 0)
 // Standard.kt:137 $kotlin.String.hashCode
 // Standard.kt:53 $kotlin.String.hashCode (25, 37)
@@ -180,9 +180,11 @@ fun box() {
 // StringBuilder.kt:227 $kotlin.text.StringBuilder.append (8, 32, 39, 48, 19, 8, 8, 8, 32, 39, 48, 19, 8, 8, 8, 32, 39, 48, 19, 8, 8, 8, 32, 39, 48, 19, 8, 8)
 // StringBuilder.kt:915 $kotlin.text.insertString (21, 28, 35, 42, 45, 51, 8, 58, 21, 28, 35, 42, 45, 51, 8, 58, 21, 28, 35, 42, 45, 51, 8, 58, 21, 28, 35, 42, 45, 51, 8, 58)
 // StringBuilderWasm.kt:41 $kotlin.text.insertString (4, 4, 4, 4, 4, 4, 4, 4, 4, 4)
-// _WasmArrays.kt:62 $kotlin.text.insertString (53, 60, 66, 53, 60, 66, 53, 60, 66, 53, 60, 66, 53, 60, 66)
+// _WasmArrays.kt:62 $kotlin.text.insertString (53, 47, 60, 66, 53, 47, 60, 66, 53, 47, 60, 66, 53, 47, 60, 66, 53, 47, 60, 66)
 // _WasmArrays.kt:79 $kotlin.text.insertString (21, 21, 21, 21, 21)
 // _WasmArrays.kt:83 $kotlin.text.insertString (10, 3, 10, 3, 10, 3, 10, 3, 10, 3)
+// _WasmArrays.kt:63 $kotlin.text.insertString (2, 2, 2, 2, 2)
+// _WasmArrays.kt:64 $kotlin.text.insertString (1, 19, 1, 19, 1, 19, 1, 19, 1, 19)
 // _WasmArrays.kt:88 $kotlin.text.insertString (35, 48, 66, 74, 87, 4, 35, 48, 66, 74, 87, 4, 35, 48, 66, 74, 87, 4, 35, 48, 66, 74, 87, 4, 35, 48, 66, 74, 87, 4)
 // StringBuilderWasm.kt:42 $kotlin.text.insertString (11, 4, 11, 4, 11, 4, 11, 4, 11, 4)
 // StringBuilder.kt:228 $kotlin.text.StringBuilder.append (15, 8, 15, 8, 15, 8, 15, 8)
@@ -207,7 +209,7 @@ fun box() {
 // _ArraysWasm.kt:1229 $kotlin.collections.copyInto (20, 31, 20, 4)
 // _ArraysWasm.kt:1230 $kotlin.collections.copyInto (35, 54, 74, 54, 85, 97, 17)
 // _ArraysWasm.kt:1231 $kotlin.collections.copyInto (25, 25)
-// _WasmArrays.kt:244 $kotlin.collections.copyInto (42869, 42874, 42883, 42895)
+// _WasmArrays.kt:244 $kotlin.collections.copyInto (42869, 42874, 42883, 42895, 42904, 42916, 42935)
 // _WasmArrays.kt:88 $kotlin.collections.copyInto (35, 48, 66, 74, 87, 4)
 // _ArraysWasm.kt:1232 $kotlin.collections.copyInto (11, 4)
 // _ArraysWasm.kt:1700 $kotlin.collections.copyOfUninitializedElements (11, 4)
@@ -222,7 +224,7 @@ fun box() {
 // Number2String.kt:204 $kotlin.wasm.internal.<init properties Number2String.kt>
 // Number2String.kt:206 $kotlin.wasm.internal.<init properties Number2String.kt>
 // Library.kt:93 $kotlin.wasm.internal.<init properties Number2String.kt> (2841, 2841, 2841, 2841, 3432, 3432, 3432, 3432, 3453, 3432, 11556, 11560, 3484, 3463, 11556, 11560, 3515, 3494, 11556, 11560, 3546, 3525, 11556, 11560, 3581, 3560, 11556, 11560, 3612, 3591, 11556, 11560, 3643, 3622, 11556, 11560, 3674, 3653, 11556, 11560, 3709, 3688, 11556, 11560, 3740, 3719, 11556, 11560, 3771, 3750, 11556, 11560, 3802, 3781, 11556, 11560, 3837, 3816, 11556, 11560, 3868, 3847, 11556, 11560, 3899, 3878, 11556, 11560, 3930, 3909, 11556, 11560, 3965, 3944, 11556, 11560, 3996, 3975, 11556, 11560, 4027, 4006, 11556, 11560, 4058, 4037, 11556, 11560, 4093, 4072, 11556, 11560, 4124, 4103, 11556, 11560, 4155, 4134, 11556, 11560, 4186, 4165, 11556, 11560, 4221, 4200, 11556, 11560, 4252, 4231, 11556, 11560, 4283, 4262, 11556, 11560, 4314, 4293, 11556, 11560, 4349, 4328, 11556, 11560, 4380, 4359, 11556, 11560, 4411, 4390, 11556, 11560, 4442, 4421, 11556, 11560, 4477, 4456, 11556, 11560, 4508, 4487, 11556, 11560, 4539, 4518, 11556, 11560, 4570, 4549, 11556, 11560, 4605, 4584, 11556, 11560, 4636, 4615, 11556, 11560, 4667, 4646, 11556, 11560, 4698, 4677, 11556, 11560, 4733, 4712, 11556, 11560, 4764, 4743, 11556, 11560, 4795, 4774, 11556, 11560, 4826, 4805, 11556, 11560, 4861, 4840, 11556, 11560, 4892, 4871, 11556, 11560, 4923, 4902, 11556, 11560, 4954, 4933, 11556, 11560, 4989, 4968, 11556, 11560, 5020, 4999, 11556, 11560, 5051, 5030, 11556, 11560, 5082, 5061, 11556, 11560, 5117, 5096, 11556, 11560, 5148, 5127, 11556, 11560, 5179, 5158, 11556, 11560, 5210, 5189, 11556, 11560, 5245, 5224, 11556, 11560, 5276, 5255, 11556, 11560, 5307, 5286, 11556, 11560, 5338, 5317, 11556, 11560, 5373, 5352, 11556, 11560, 5404, 5383, 11556, 11560, 5435, 5414, 11556, 11560, 5466, 5445, 11556, 11560, 5501, 5480, 11556, 11560, 5532, 5511, 11556, 11560, 5563, 5542, 11556, 11560, 5594, 5573, 11556, 11560, 5629, 5608, 11556, 11560, 5660, 5639, 11556, 11560, 5691, 5670, 11556, 11560, 5722, 5701, 11556, 11560, 5757, 5736, 11556, 11560, 5788, 5767, 11556, 11560, 5819, 5798, 11556, 11560, 5850, 5829, 11556, 11560, 5885, 5864, 11556, 11560, 5916, 5895, 11556, 11560, 5947, 5926, 11556, 11560, 5978, 5957, 11556, 11560, 6013, 5992, 11556, 11560, 6044, 6023, 11556, 11560, 6075, 6054, 11556, 11560, 6106, 6085, 11556, 11560, 6141, 6120, 11556, 11560, 6172, 6151, 11556, 11560, 6203, 6182, 11556, 11560, 3432, 3432)
-// Library.kt:69 $kotlin.wasm.internal.<init properties Number2String.kt>
+// Library.kt:69 $kotlin.wasm.internal.<init properties Number2String.kt> (69, 77)
 // Number2String.kt:219 $kotlin.wasm.internal.<init properties Number2String.kt>
 // ULong.kt:17 $kotlin.<ULong__<get-data>-impl> (125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125, 125)
 // Library.kt:54 $kotlin.wasm.internal.<init properties Number2String.kt> (66, 74)
@@ -272,6 +274,7 @@ fun box() {
 // Number2String.kt:84 $kotlin.wasm.internal.utoaDecSimple
 // Number2String.kt:64 $kotlin.wasm.internal.itoa32 (8, 16, 8)
 // Number2String.kt:67 $kotlin.wasm.internal.itoa32 (15, 4)
+// String.kt:46 $kotlin.wasm.internal.itoa32
 // String.kt:138 $kotlin.wasm.internal.itoa32 (4, 4, 4, 4, 11, 17, 22, 29, 4, 34)
 // StringBuilderWasm.kt:53 $kotlin.text.insertInt (17, 29, 4)
 // StringBuilderWasm.kt:54 $kotlin.text.insertInt (17, 24, 31, 44, 47, 4, 4)
@@ -280,9 +283,11 @@ fun box() {
 // StringBuilder.kt:499 $kotlin.text.StringBuilder.toString (64, 71, 74, 38, 82)
 // StringBuilderWasm.kt:46 $kotlin.text.unsafeStringFromCharArray (29, 15, 4)
 // StringBuilderWasm.kt:47 $kotlin.text.unsafeStringFromCharArray (4, 4)
-// _WasmArrays.kt:73 $kotlin.text.unsafeStringFromCharArray (3, 9, 31)
-// _WasmArrays.kt:88 $kotlin.text.unsafeStringFromCharArray (35, 66, 74, 87, 4)
+// _WasmArrays.kt:73 $kotlin.text.unsafeStringFromCharArray (3, 9, 18, 24, 31)
+// _WasmArrays.kt:74 $kotlin.text.unsafeStringFromCharArray
+// _WasmArrays.kt:88 $kotlin.text.unsafeStringFromCharArray (35, 48, 66, 74, 87, 4)
 // StringBuilderWasm.kt:48 $kotlin.text.unsafeStringFromCharArray (16, 4)
+// String.kt:57 $kotlin.text.unsafeStringFromCharArray
 // String.kt:138 $kotlin.text.unsafeStringFromCharArray (4, 4, 4, 4, 11, 17, 22, 29, 4, 34)
 // test.kt:18 $box (17, 9, 9, 17, 12, 12)
 // test.kt:1 $D.component1

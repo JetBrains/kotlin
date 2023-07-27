@@ -190,18 +190,23 @@ internal class BuiltinOperatorLowering(val context: Context) : FileLoweringPass,
     private fun IrBuilderWithScope.genFloatingOrReferenceEquals(symbol: IrFunctionSymbol, lhs: IrExpression, rhs: IrExpression): IrExpression {
         // TODO: areEqualByValue and ieee754Equals intrinsics are specially treated by code generator
         // and thus can be declared synthetically in the compiler instead of explicitly in the runtime.
-        fun callEquals(lhs: IrExpression, rhs: IrExpression) =
-                if (symbol in ieee754EqualsSymbols)
+        fun callEquals(lhs: IrExpression, rhs: IrExpression): IrExpression {
+            if (symbol in ieee754EqualsSymbols) {
                 // Find a type-compatible `konan.internal.ieee754Equals` intrinsic:
-                    irCall(selectIntrinsic(symbols.ieee754Equals, lhs.type, rhs.type, true)!!).apply {
+                val intrinsic = selectIntrinsic(symbols.ieee754Equals, lhs.type, rhs.type, true)
+                // Type of operands may be lost due to erasure on inlining phase
+                if (intrinsic != null) {
+                    return irCall(intrinsic).apply {
                         putValueArgument(0, lhs)
                         putValueArgument(1, rhs)
                     }
-                else
-                    irCall(symbols.equals).apply {
-                        dispatchReceiver = lhs
-                        putValueArgument(0, rhs)
-                    }
+                }
+            }
+            return irCall(symbols.equals).apply {
+                dispatchReceiver = lhs
+                putValueArgument(0, rhs)
+            }
+        }
 
         val lhsIsNotNullable = !lhs.type.isNullable()
         val rhsIsNotNullable = !rhs.type.isNullable()

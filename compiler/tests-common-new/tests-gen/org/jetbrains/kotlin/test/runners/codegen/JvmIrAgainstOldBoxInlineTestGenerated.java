@@ -2346,6 +2346,76 @@ public class JvmIrAgainstOldBoxInlineTestGenerated extends AbstractJvmIrAgainstO
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/boxInline/dontReify")
+    @TestDataPath("$PROJECT_ROOT")
+    public class DontReify {
+        @Test
+        public void testAllFilesPresentInDontReify() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/dontReify"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD, true);
+        }
+
+        @Test
+        @TestMetadata("arrayRead.kt")
+        public void testArrayRead() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/dontReify/arrayRead.kt");
+        }
+
+        @Test
+        @TestMetadata("arrayWrite.kt")
+        public void testArrayWrite() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/dontReify/arrayWrite.kt");
+        }
+
+        @Test
+        @TestMetadata("dispatchReceiver.kt")
+        public void testDispatchReceiver() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/dontReify/dispatchReceiver.kt");
+        }
+
+        @Test
+        @TestMetadata("extensionReceiver.kt")
+        public void testExtensionReceiver() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/dontReify/extensionReceiver.kt");
+        }
+
+        @Test
+        @TestMetadata("lambdaParameter.kt")
+        public void testLambdaParameter() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/dontReify/lambdaParameter.kt");
+        }
+
+        @Test
+        @TestMetadata("localDelegatedProperty.kt")
+        public void testLocalDelegatedProperty() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/dontReify/localDelegatedProperty.kt");
+        }
+
+        @Test
+        @TestMetadata("localObjectProperty.kt")
+        public void testLocalObjectProperty() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/dontReify/localObjectProperty.kt");
+        }
+
+        @Test
+        @TestMetadata("localVariable.kt")
+        public void testLocalVariable() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/dontReify/localVariable.kt");
+        }
+
+        @Test
+        @TestMetadata("methodReturnType.kt")
+        public void testMethodReturnType() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/dontReify/methodReturnType.kt");
+        }
+
+        @Test
+        @TestMetadata("parameterInLocalObject.kt")
+        public void testParameterInLocalObject() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/dontReify/parameterInLocalObject.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/boxInline/enclosingInfo")
     @TestDataPath("$PROJECT_ROOT")
     public class EnclosingInfo {
@@ -5000,6 +5070,12 @@ public class JvmIrAgainstOldBoxInlineTestGenerated extends AbstractJvmIrAgainstO
         @Test
         public void testAllFilesPresentInSpecial() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/special"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD, true);
+        }
+
+        @Test
+        @TestMetadata("blockReturnsNullableUnit.kt")
+        public void testBlockReturnsNullableUnit() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/special/blockReturnsNullableUnit.kt");
         }
 
         @Test

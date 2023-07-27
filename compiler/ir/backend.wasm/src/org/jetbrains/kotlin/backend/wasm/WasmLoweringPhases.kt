@@ -136,9 +136,10 @@ private val functionInliningPhase = makeCustomPhase<WasmBackendContext>(
     { context, module ->
         FunctionInlining(
             context = context,
-            innerClassesSupport = context.innerClassesSupport,
             inlineFunctionResolver = WasmInlineFunctionResolver(context),
+            innerClassesSupport = context.innerClassesSupport,
             insertAdditionalImplicitCasts = true,
+            alwaysCreateTemporaryVariablesForArguments = true
         ).inline(module)
         module.patchDeclarationParents()
     },
