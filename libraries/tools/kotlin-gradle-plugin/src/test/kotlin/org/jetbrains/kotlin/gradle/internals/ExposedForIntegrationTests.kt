@@ -7,8 +7,12 @@ package org.jetbrains.kotlin.gradle.internals
 
 import org.jetbrains.kotlin.compilerRunner.asFinishLogMessage
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_INTERNAL_DIAGNOSTICS_USE_PARSABLE_FORMATTING
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_INTERNAL_DIAGNOSTICS_SHOW_STACKTRACE
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.DIAGNOSTIC_SEPARATOR
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.CheckKotlinGradlePluginConfigurationErrors
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.DIAGNOSTIC_STACKTRACE_END_SEPARATOR
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.DIAGNOSTIC_STACKTRACE_START
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinProjectStructureMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME
 import org.jetbrains.kotlin.gradle.plugin.mpp.parseKotlinSourceSetMetadataFromJson
@@ -26,3 +30,8 @@ const val ENSURE_NO_KOTLIN_GRADLE_PLUGIN_ERRORS_TASK_NAME = CheckKotlinGradlePlu
 
 val KotlinCompilerExecutionStrategy.asFinishLogMessage: String
     get() = this.asFinishLogMessage
+
+val KOTLIN_INTERNAL_DIAGNOSTICS_USE_PARSABLE_FORMATTING = KOTLIN_INTERNAL_DIAGNOSTICS_USE_PARSABLE_FORMATTING
+val KOTLIN_INTERNAL_DIAGNOSTICS_SHOW_STACKTRACE = KOTLIN_INTERNAL_DIAGNOSTICS_SHOW_STACKTRACE
+val KOTLIN_DIAGNOSTIC_STACKTRACE_START = DIAGNOSTIC_STACKTRACE_START
+val KOTLIN_DIAGNOSTIC_STACKTRACE_END_SEPARATOR = DIAGNOSTIC_STACKTRACE_END_SEPARATOR

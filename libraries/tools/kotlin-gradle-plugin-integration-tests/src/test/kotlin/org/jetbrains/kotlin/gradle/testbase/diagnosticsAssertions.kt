@@ -7,8 +7,7 @@ package org.jetbrains.kotlin.gradle.testbase
 
 import org.gradle.testkit.runner.BuildResult
 import org.jetbrains.kotlin.gradle.BaseGradleIT
-import org.jetbrains.kotlin.gradle.internals.ENSURE_NO_KOTLIN_GRADLE_PLUGIN_ERRORS_TASK_NAME
-import org.jetbrains.kotlin.gradle.internals.VERBOSE_DIAGNOSTIC_SEPARATOR
+import org.jetbrains.kotlin.gradle.internals.*
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticFactory
 import kotlin.test.assertNull
@@ -31,7 +30,7 @@ fun BuildResult.assertNoDiagnostic(diagnosticFactory: ToolingDiagnosticFactory, 
 }
 
 fun String.assertHasDiagnostic(diagnosticFactory: ToolingDiagnosticFactory, withSubstring: String? = null) {
-    val diagnosticsMessages = extractVerboselyRenderedDiagnostics(diagnosticFactory, this)
+    val diagnosticsMessages = extractRenderedDiagnostics(diagnosticFactory, this)
     assertTrue(diagnosticsMessages.isNotEmpty(), "Diagnostic with id=${diagnosticFactory.id} not found. Full text output:\n\n" + this)
     if (withSubstring != null) {
         assertTrue(
@@ -46,7 +45,7 @@ fun String.assertHasDiagnostic(diagnosticFactory: ToolingDiagnosticFactory, with
 }
 
 fun String.assertNoDiagnostic(diagnosticFactory: ToolingDiagnosticFactory, withSubstring: String? = null) {
-    val diagnosticMessages = extractVerboselyRenderedDiagnostics(diagnosticFactory, this)
+    val diagnosticMessages = extractRenderedDiagnostics(diagnosticFactory, this)
     if (withSubstring != null) {
         val matchedWithSubstring = diagnosticMessages.find { withSubstring in it }
         assertNull(
@@ -76,6 +75,7 @@ fun String.assertNoDiagnostic(diagnosticFactory: ToolingDiagnosticFactory, withS
  */
 fun BuildResult.extractProjectsAndTheirDiagnostics(): String = buildString {
     var diagnosticStarted = false
+    var stacktraceStarted = false
     val currentDiagnostic = mutableListOf<String>()
 
     fun startDiagnostic(line: String, lineIndex: Int) {
@@ -89,7 +89,21 @@ fun BuildResult.extractProjectsAndTheirDiagnostics(): String = buildString {
     }
 
     fun continueDiagnostic(line: String) {
-        currentDiagnostic += line
+        when {
+            line == KOTLIN_DIAGNOSTIC_STACKTRACE_START -> {
+                stacktraceStarted = true
+                currentDiagnostic += line
+                currentDiagnostic += DIAGNOSTIC_STACKTRACE_REPLACEMENT_STUB
+            }
+
+            line == KOTLIN_DIAGNOSTIC_STACKTRACE_END_SEPARATOR -> {
+                stacktraceStarted = false
+            }
+
+            stacktraceStarted -> return // Omit stacktrace lines for tests stability
+
+            else -> currentDiagnostic += line
+        }
     }
 
     fun endDiagnostic(line: String, lineIndex: Int) {
@@ -100,12 +114,10 @@ fun BuildResult.extractProjectsAndTheirDiagnostics(): String = buildString {
 
         currentDiagnostic += line
 
-        // Suppress InternalKotlinGradlePluginProperties, but only if the single property it complains about is
-        // 'kotlin.internal.diagnostics.useParsableFormatting'
-        val offendingProperties = currentDiagnostic.asSequence().filter { it.startsWith("kotlin.internal.") }
-        if (KotlinToolingDiagnostics.InternalKotlinGradlePluginPropertiesUsed.id !in currentDiagnostic.first() ||
-            offendingProperties.singleOrNull() != "kotlin.internal.diagnostics.useParsableFormatting"
-        ) {
+        if (KotlinToolingDiagnostics.InternalKotlinGradlePluginPropertiesUsed.id in currentDiagnostic.first()) {
+            val cleanedDiagnostic = filterKgpUtilityPropertiesFromDiagnostic(currentDiagnostic)
+            if (cleanedDiagnostic.isNotEmpty()) appendLine(cleanedDiagnostic.joinToString(separator = "\n", postfix = "\n"))
+        } else {
             appendLine(currentDiagnostic.joinToString(separator = "\n", postfix = "\n"))
         }
 
@@ -130,6 +142,27 @@ fun BuildResult.extractProjectsAndTheirDiagnostics(): String = buildString {
         }
     }
 }.trim()
+
+/**
+ * Filters from the report all internal utility-properties that KGP uses in tests.
+ * If no properties aside from utility-properties were reported, the whole report is hidden
+ */
+private fun filterKgpUtilityPropertiesFromDiagnostic(diagnosticLines: List<String>): List<String> {
+    val diagnosticWithUtilityPropertiesFiltered = diagnosticLines.filter { line ->
+        !utilityInternalProperties.any { line.startsWith(it) }
+    }
+
+    return if (diagnosticWithUtilityPropertiesFiltered.none { it.startsWith("kotlin.internal") }) {
+        // all reported properties were utility-properties, so don't render this diagnostic at all
+        emptyList()
+    } else {
+        diagnosticWithUtilityPropertiesFiltered
+    }
+}
+private val utilityInternalProperties = listOf(
+    KOTLIN_INTERNAL_DIAGNOSTICS_USE_PARSABLE_FORMATTING,
+    KOTLIN_INTERNAL_DIAGNOSTICS_SHOW_STACKTRACE,
+)
 
 /*
 Expected format
@@ -158,18 +191,18 @@ private val DIAGNOSTIC_START_REGEX = """\s*([we]:)?\s*\[\w+ \| \w+].*""".toRegex
      Multiline
          Text"
   */
-private fun extractVerboselyRenderedDiagnostics(diagnostic: ToolingDiagnosticFactory, fromText: String): List<String> {
+private fun extractRenderedDiagnostics(diagnostic: ToolingDiagnosticFactory, fromText: String): List<String> {
     var parsedPrefix = 0
 
     return generateSequence {
-        extractNextVerboselyRenderedDiagnosticAndIndex(diagnostic, fromText, startIndex = parsedPrefix)
+        extractNextDiagnosticAndIndex(diagnostic, fromText, startIndex = parsedPrefix)
             ?.also { (_, newPrefix) -> parsedPrefix = newPrefix }
             ?.first
     }.toList()
 }
 
 // Returns diagnostic substring + index of the first symbol after the diagnostic message
-private fun extractNextVerboselyRenderedDiagnosticAndIndex(
+private fun extractNextDiagnosticAndIndex(
     diagnostic: ToolingDiagnosticFactory,
     fromText: String,
     startIndex: Int,
@@ -184,9 +217,12 @@ private fun extractNextVerboselyRenderedDiagnosticAndIndex(
     // NB: substring's endIndex is exclusive, which gives us exactly the message
     val diagnosticMessage = fromText.substring(diagnosticMessageStart, diagnosticSeparatorStartIndex)
         .trim { it.isWhitespace() || it == '\n' }
+    val diagnosticMessageSanitized = diagnosticMessage.replace(DIAGNOSTIC_STACKTRACE_REGEX, DIAGNOSTIC_STACKTRACE_REPLACEMENT_STUB)
     val indexOfFirstSymbolAfterSeparator = diagnosticSeparatorStartIndex + VERBOSE_DIAGNOSTIC_SEPARATOR.length
-    return diagnosticMessage to indexOfFirstSymbolAfterSeparator
+    return diagnosticMessageSanitized to indexOfFirstSymbolAfterSeparator
 }
 
 private const val CONFIGURE_PROJECT_PREFIX = "> Configure project"
 private const val TASK_EXECUTION_PREFIX = "> Task"
+private val DIAGNOSTIC_STACKTRACE_REGEX = Regex("""$KOTLIN_DIAGNOSTIC_STACKTRACE_START[^#]*$KOTLIN_DIAGNOSTIC_STACKTRACE_END_SEPARATOR""")
+private val DIAGNOSTIC_STACKTRACE_REPLACEMENT_STUB = """    <... stackframes are omitted for test stability ...>"""

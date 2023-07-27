@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.testbase
 
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.configuration.WarningMode
+import org.gradle.internal.logging.LoggingConfigurationBuildOptions.StacktraceOption
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties.COMPILE_INCREMENTAL_WITH_ARTIFACT_TRANSFORM
 import org.jetbrains.kotlin.gradle.BaseGradleIT
@@ -18,6 +19,7 @@ import java.util.*
 
 data class BuildOptions(
     val logLevel: LogLevel = LogLevel.INFO,
+    val stacktraceMode: String? = StacktraceOption.FULL_STACKTRACE_LONG_OPTION,
     val kotlinVersion: String = TestVersions.Kotlin.CURRENT,
     val warningMode: WarningMode = WarningMode.Fail,
     val configurationCache: Boolean = false,
@@ -44,6 +46,7 @@ data class BuildOptions(
     val keepIncrementalCompilationCachesInMemory: Boolean? = null,
     val useDaemonFallbackStrategy: Boolean = false,
     val useParsableDiagnosticsFormatting: Boolean = true,
+    val showDiagnosticsStacktrace: Boolean? = false, // false by default to not clutter the testdata + stacktraces change often
     val nativeOptions: NativeOptions = NativeOptions(),
     val compilerExecutionStrategy: KotlinCompilerExecutionStrategy? = null,
     val runViaBuildToolsApi: Boolean? = null,
@@ -185,6 +188,14 @@ data class BuildOptions(
 
         if (runViaBuildToolsApi != null) {
             arguments.add("-Pkotlin.compiler.runViaBuildToolsApi=$runViaBuildToolsApi")
+        }
+
+        if (showDiagnosticsStacktrace != null) {
+            arguments.add("-Pkotlin.internal.diagnostics.showStacktrace=$showDiagnosticsStacktrace")
+        }
+
+        if (stacktraceMode != null) {
+            arguments.add("--$stacktraceMode")
         }
 
         arguments.addAll(freeArgs)

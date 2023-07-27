@@ -168,6 +168,26 @@ class MppDiagnosticsIt : KGPBaseTest() {
         }
     }
 
+    @GradleTest
+    fun testDiagnosticsRenderingWithStacktraceOption(gradleVersion: GradleVersion) {
+        project("diagnosticsRenderingWithStacktraceOption", gradleVersion) {
+            // KGP sets showDiagnosticsStacktrace=false and --full-stacktrace by default in tests,
+            // need to override that to mimic real-life scenarios
+            val options = buildOptions.copy(showDiagnosticsStacktrace = null, stacktraceMode = null)
+            build("help", buildOptions = options) {
+                assertEqualsToFile(expectedOutputFile("without-stacktrace"), extractProjectsAndTheirDiagnostics())
+            }
+
+            build("help", "--stacktrace", buildOptions = options) {
+                assertEqualsToFile(expectedOutputFile("with-stacktrace"), extractProjectsAndTheirDiagnostics())
+            }
+
+            build("help", "--full-stacktrace", buildOptions = options) {
+                assertEqualsToFile(expectedOutputFile("with-full-stacktrace"), extractProjectsAndTheirDiagnostics())
+            }
+        }
+    }
+
     private fun TestProject.expectedOutputFile(suffix: String? = null): File {
         val suffixIfAny = if (suffix != null) "-$suffix" else ""
         return projectPath.resolve("expectedOutput$suffixIfAny.txt").toFile()

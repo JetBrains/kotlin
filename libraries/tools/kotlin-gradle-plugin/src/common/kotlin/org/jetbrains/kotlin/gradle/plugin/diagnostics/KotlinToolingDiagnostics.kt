@@ -610,7 +610,7 @@ object KotlinToolingDiagnostics {
                 |
                 |${propertiesUsed.joinToString(separator = "\n")}
                 |
-                |kotlin.internal-properties are not recommended for production use. 
+                |Internal properties are not recommended for production use. 
                 |Stability and future compatibility of the build is not guaranteed.
             """.trimMargin()
         )

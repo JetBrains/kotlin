@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle
 import com.intellij.testFramework.TestDataFile
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.configuration.WarningMode
+import org.gradle.internal.logging.LoggingConfigurationBuildOptions.StacktraceOption
 import org.gradle.tooling.GradleConnector
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties.COMPILE_INCREMENTAL_WITH_ARTIFACT_TRANSFORM
@@ -281,6 +282,8 @@ abstract class BaseGradleIT {
         val enableKpmModelMapping: Boolean? = null,
         val useDaemonFallbackStrategy: Boolean = false,
         val useParsableDiagnosticsFormatting: Boolean = true,
+        val showDiagnosticsStacktrace: Boolean? = false, // false by default to not clutter the testdata + stacktraces change often
+        val stacktraceMode: String? = StacktraceOption.FULL_STACKTRACE_LONG_OPTION,
     ) {
         val safeAndroidGradlePluginVersion: AGPVersion
             get() = androidGradlePluginVersion ?: error("AGP version is expected to be set")
@@ -856,7 +859,6 @@ abstract class BaseGradleIT {
 
     private fun Project.createGradleTailParameters(options: BuildOptions, params: Array<out String> = arrayOf()): List<String> =
         params.toMutableList().apply {
-            add("--stacktrace")
             when (minLogLevel) {
                 // Do not allow to configure Gradle project with `ERROR` log level (error logs visible on all log levels)
                 LogLevel.ERROR -> error("Log level ERROR is not supported by Gradle command-line")
@@ -939,6 +941,14 @@ abstract class BaseGradleIT {
 
             if (options.useParsableDiagnosticsFormatting) {
                 add("-Pkotlin.internal.diagnostics.useParsableFormatting=true")
+            }
+
+            if (options.showDiagnosticsStacktrace != null) {
+                add("-Pkotlin.internal.diagnostics.showStacktrace=${options.showDiagnosticsStacktrace}")
+            }
+
+            if (options.stacktraceMode != null) {
+                add("--${options.stacktraceMode}")
             }
 
             // Workaround: override a console type set in the user machine gradle.properties (since Gradle 4.3):

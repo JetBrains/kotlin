@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_COMPILER_USE_PRECISE_COMPILATION_RESULTS_BACKUP
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_CREATE_DEFAULT_MULTIPLATFORM_PUBLICATIONS
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_EXPERIMENTAL_TRY_K2
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_INTERNAL_DIAGNOSTICS_SHOW_STACKTRACE
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_INTERNAL_DIAGNOSTICS_USE_PARSABLE_FORMATTING
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_JS_KARMA_BROWSERS
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_JS_STDLIB_DOM_API_INCLUDED
@@ -524,8 +525,21 @@ internal class PropertiesProvider private constructor(private val project: Proje
         }
         .orElse(false)
 
+    /**
+     * Outputs diagnostics in a more verbose format with synthetic delimiters, helping to parse
+     * diagnostics from unstructured input (e.g. build log).
+     * This mode is meant to be at least somewhat human-readable (as it's used in our tests),
+     * but is not meant to be pretty (users shouldn't see it)
+     */
     val internalDiagnosticsUseParsableFormat: Boolean
         get() = booleanProperty(KOTLIN_INTERNAL_DIAGNOSTICS_USE_PARSABLE_FORMATTING) ?: false
+
+    /**
+     * *Overrides* the default option for rendering a stacktrace from which a diagnostic has been reported.
+     * Because it's an override, 'null' is meaningful here and signifies "prefer the choice made without this property"
+     */
+    val internalDiagnosticsShowStacktrace: Boolean?
+        get() = booleanProperty(KOTLIN_INTERNAL_DIAGNOSTICS_SHOW_STACKTRACE)
 
     val suppressedGradlePluginWarnings: List<String>
         get() = property(PropertyNames.KOTLIN_SUPPRESS_GRADLE_PLUGIN_WARNINGS)?.split(",").orEmpty()
@@ -651,6 +665,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_MPP_HIERARCHICAL_STRUCTURE_BY_DEFAULT = property("$KOTLIN_INTERNAL_NAMESPACE.mpp.hierarchicalStructureByDefault")
         val KOTLIN_CREATE_DEFAULT_MULTIPLATFORM_PUBLICATIONS = property("$KOTLIN_INTERNAL_NAMESPACE.mpp.createDefaultMultiplatformPublications")
         val KOTLIN_INTERNAL_DIAGNOSTICS_USE_PARSABLE_FORMATTING = property("$KOTLIN_INTERNAL_NAMESPACE.diagnostics.useParsableFormatting")
+        val KOTLIN_INTERNAL_DIAGNOSTICS_SHOW_STACKTRACE = property("$KOTLIN_INTERNAL_NAMESPACE.diagnostics.showStacktrace")
         val KOTLIN_SUPPRESS_GRADLE_PLUGIN_ERRORS = property("$KOTLIN_INTERNAL_NAMESPACE.suppressGradlePluginErrors")
         val MPP_13X_FLAGS_SET_BY_PLUGIN = property("$KOTLIN_INTERNAL_NAMESPACE.mpp.13X.flags.setByPlugin")
     }

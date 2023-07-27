@@ -9,7 +9,6 @@ import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.utils.registerClassLoaderScopedBuildService
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -39,7 +38,7 @@ internal abstract class KotlinToolingDiagnosticsCollector : BuildService<BuildSe
     fun report(task: UsesKotlinToolingDiagnostics, diagnostic: ToolingDiagnostic) {
         val options = task.diagnosticRenderingOptions.get()
         if (!diagnostic.isSuppressed(options)) {
-            renderReportedDiagnostic(diagnostic, task.logger, options.useParsableFormat)
+            renderReportedDiagnostic(diagnostic, task.logger, options)
         }
     }
 
@@ -60,12 +59,11 @@ internal abstract class KotlinToolingDiagnosticsCollector : BuildService<BuildSe
     }
 
     private fun handleDiagnostic(project: Project, diagnostic: ToolingDiagnostic) {
-        if (diagnostic.isSuppressed(ToolingDiagnosticRenderingOptions.forProject(project))) return
-
-        val useParsableFormat = project.kotlinPropertiesProvider.internalDiagnosticsUseParsableFormat
+        val options = ToolingDiagnosticRenderingOptions.forProject(project)
+        if (diagnostic.isSuppressed(options)) return
 
         if (isTransparent) {
-            renderReportedDiagnostic(diagnostic, project.logger, useParsableFormat)
+            renderReportedDiagnostic(diagnostic, project.logger, options)
             return
         }
 
@@ -74,7 +72,7 @@ internal abstract class KotlinToolingDiagnosticsCollector : BuildService<BuildSe
         }
 
         if (diagnostic.severity == ToolingDiagnostic.Severity.FATAL) {
-            throw diagnostic.createAnExceptionForFatalDiagnostic(isVerbose)
+            throw diagnostic.createAnExceptionForFatalDiagnostic(options)
         }
     }
 }
