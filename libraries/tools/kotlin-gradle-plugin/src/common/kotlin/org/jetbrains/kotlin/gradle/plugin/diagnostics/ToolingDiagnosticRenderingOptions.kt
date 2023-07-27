@@ -9,14 +9,14 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 
 internal class ToolingDiagnosticRenderingOptions(
-    val isVerbose: Boolean,
+    val useParsableFormat: Boolean,
     val suppressedWarningIds: List<String>,
     val suppressedErrorIds: List<String>
 ) {
     companion object {
         fun forProject(project: Project): ToolingDiagnosticRenderingOptions = with(project.kotlinPropertiesProvider) {
             ToolingDiagnosticRenderingOptions(
-                internalVerboseDiagnostics,
+                internalDiagnosticsUseParsableFormat,
                 suppressedGradlePluginWarnings,
                 suppressedGradlePluginErrors
             )

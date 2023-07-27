@@ -69,12 +69,12 @@ fun String.assertNoDiagnostic(diagnosticFactory: ToolingDiagnosticFactory, withS
 }
 
 /**
- * NB: Needs verbose mode of diagnostics, see [org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.internalVerboseDiagnostics]
+ * NB: Needs parsable formatting of diagnostics, see [org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.internalDiagnosticsUseParsableFormat]
  * Because this mode is enabled by the 'kotlin.internal'-property, actual output will always contain
  * [org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.InternalKotlinGradlePluginPropertiesUsed].
  * For the sake of clarity, this diagnostic is filtered by default.
  */
-fun BuildResult.extractProjectsAndTheirVerboseDiagnostics(): String = buildString {
+fun BuildResult.extractProjectsAndTheirDiagnostics(): String = buildString {
     var diagnosticStarted = false
     val currentDiagnostic = mutableListOf<String>()
 
@@ -101,10 +101,10 @@ fun BuildResult.extractProjectsAndTheirVerboseDiagnostics(): String = buildStrin
         currentDiagnostic += line
 
         // Suppress InternalKotlinGradlePluginProperties, but only if the single property it complains about is
-        // 'kotlin.internal.verboseDiagnostics'
+        // 'kotlin.internal.diagnostics.useParsableFormatting'
         val offendingProperties = currentDiagnostic.asSequence().filter { it.startsWith("kotlin.internal.") }
         if (KotlinToolingDiagnostics.InternalKotlinGradlePluginPropertiesUsed.id !in currentDiagnostic.first() ||
-            offendingProperties.singleOrNull() != "kotlin.internal.verboseDiagnostics"
+            offendingProperties.singleOrNull() != "kotlin.internal.diagnostics.useParsableFormatting"
         ) {
             appendLine(currentDiagnostic.joinToString(separator = "\n", postfix = "\n"))
         }

@@ -280,7 +280,7 @@ abstract class BaseGradleIT {
         val withReports: List<BuildReportType> = emptyList(),
         val enableKpmModelMapping: Boolean? = null,
         val useDaemonFallbackStrategy: Boolean = false,
-        val useVerboseDiagnosticsReporting: Boolean = true,
+        val useParsableDiagnosticsFormatting: Boolean = true,
     ) {
         val safeAndroidGradlePluginVersion: AGPVersion
             get() = androidGradlePluginVersion ?: error("AGP version is expected to be set")
@@ -937,8 +937,8 @@ abstract class BaseGradleIT {
             add("-Dorg.gradle.unsafe.configuration-cache=${options.configurationCache}")
             add("-Dorg.gradle.unsafe.configuration-cache-problems=${options.configurationCacheProblems.name.lowercase(Locale.getDefault())}")
 
-            if (options.useVerboseDiagnosticsReporting) {
-                add("-Pkotlin.internal.verboseDiagnostics=true")
+            if (options.useParsableDiagnosticsFormatting) {
+                add("-Pkotlin.internal.diagnostics.useParsableFormatting=true")
             }
 
             // Workaround: override a console type set in the user machine gradle.properties (since Gradle 4.3):

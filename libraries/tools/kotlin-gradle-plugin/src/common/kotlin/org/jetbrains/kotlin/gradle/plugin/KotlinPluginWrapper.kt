@@ -294,7 +294,7 @@ private fun Project.setupDiagnosticsChecksAndReporting() {
         renderReportedDiagnostics(
             collectorProvider.get().getDiagnosticsForProject(project),
             logger,
-            diagnosticRenderingOptions.isVerbose
+            diagnosticRenderingOptions.useParsableFormat
         )
     }
 

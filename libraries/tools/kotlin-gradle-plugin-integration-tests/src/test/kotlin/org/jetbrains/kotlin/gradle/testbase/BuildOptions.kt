@@ -43,7 +43,7 @@ data class BuildOptions(
     val usePreciseOutputsBackup: Boolean? = null,
     val keepIncrementalCompilationCachesInMemory: Boolean? = null,
     val useDaemonFallbackStrategy: Boolean = false,
-    val verboseDiagnostics: Boolean = true,
+    val useParsableDiagnosticsFormatting: Boolean = true,
     val nativeOptions: NativeOptions = NativeOptions(),
     val compilerExecutionStrategy: KotlinCompilerExecutionStrategy? = null,
     val runViaBuildToolsApi: Boolean? = null,
@@ -175,8 +175,8 @@ data class BuildOptions(
 
         arguments.add("-Pkotlin.daemon.useFallbackStrategy=$useDaemonFallbackStrategy")
 
-        if (verboseDiagnostics) {
-            arguments.add("-Pkotlin.internal.verboseDiagnostics=$verboseDiagnostics")
+        if (useParsableDiagnosticsFormatting) {
+            arguments.add("-Pkotlin.internal.diagnostics.useParsableFormatting=$useParsableDiagnosticsFormatting")
         }
 
         if (compilerExecutionStrategy != null) {

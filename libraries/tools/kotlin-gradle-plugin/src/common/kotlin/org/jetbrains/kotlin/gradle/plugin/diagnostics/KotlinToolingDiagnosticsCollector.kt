@@ -39,7 +39,7 @@ internal abstract class KotlinToolingDiagnosticsCollector : BuildService<BuildSe
     fun report(task: UsesKotlinToolingDiagnostics, diagnostic: ToolingDiagnostic) {
         val options = task.diagnosticRenderingOptions.get()
         if (!diagnostic.isSuppressed(options)) {
-            renderReportedDiagnostic(diagnostic, task.logger, options.isVerbose)
+            renderReportedDiagnostic(diagnostic, task.logger, options.useParsableFormat)
         }
     }
 
@@ -62,10 +62,10 @@ internal abstract class KotlinToolingDiagnosticsCollector : BuildService<BuildSe
     private fun handleDiagnostic(project: Project, diagnostic: ToolingDiagnostic) {
         if (diagnostic.isSuppressed(ToolingDiagnosticRenderingOptions.forProject(project))) return
 
-        val isVerbose = project.kotlinPropertiesProvider.internalVerboseDiagnostics
+        val useParsableFormat = project.kotlinPropertiesProvider.internalDiagnosticsUseParsableFormat
 
         if (isTransparent) {
-            renderReportedDiagnostic(diagnostic, project.logger, isVerbose)
+            renderReportedDiagnostic(diagnostic, project.logger, useParsableFormat)
             return
         }
 
