@@ -59,11 +59,11 @@ open class FirDeclarationsResolveTransformer(
     }
 
     private inline fun <T> withFirArrayOfCallTransformer(block: () -> T): T {
-        transformer.expressionsTransformer.enableArrayOfCallTransformation = true
+        transformer.expressionsTransformer?.enableArrayOfCallTransformation = true
         return try {
             block()
         } finally {
-            transformer.expressionsTransformer.enableArrayOfCallTransformation = false
+            transformer.expressionsTransformer?.enableArrayOfCallTransformation = false
         }
     }
 
@@ -355,7 +355,7 @@ open class FirDeclarationsResolveTransformer(
         // Resolve call for provideDelegate, without completion
         // TODO: this generates some nodes in the control flow graph which we don't want if we
         //  end up not selecting this option, KT-59684
-        transformer.expressionsTransformer.transformFunctionCallInternal(
+        transformer.expressionsTransformer?.transformFunctionCallInternal(
             provideDelegateCall, ResolutionMode.ContextIndependent, provideDelegate = true
         )
 

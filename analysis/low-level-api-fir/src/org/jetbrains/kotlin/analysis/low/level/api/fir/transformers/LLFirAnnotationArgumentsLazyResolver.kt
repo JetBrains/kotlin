@@ -103,10 +103,10 @@ private class LLFirAnnotationArgumentsTargetResolver(
 
 internal fun LLFirAbstractBodyTargetResolver.transformAnnotations(target: FirElementWithResolveState) {
     when {
-        target is FirRegularClass -> {
-            target.transformAnnotations(transformer.declarationsTransformer, ResolutionMode.ContextIndependent)
-            target.transformTypeParameters(transformer.declarationsTransformer, ResolutionMode.ContextIndependent)
-            target.transformSuperTypeRefs(transformer.declarationsTransformer, ResolutionMode.ContextIndependent)
+        target is FirRegularClass -> transformer.declarationsTransformer?.let { declarationsTransformer ->
+            target.transformAnnotations(declarationsTransformer, ResolutionMode.ContextIndependent)
+            target.transformTypeParameters(declarationsTransformer, ResolutionMode.ContextIndependent)
+            target.transformSuperTypeRefs(declarationsTransformer, ResolutionMode.ContextIndependent)
         }
 
         target.isRegularDeclarationWithAnnotation -> {

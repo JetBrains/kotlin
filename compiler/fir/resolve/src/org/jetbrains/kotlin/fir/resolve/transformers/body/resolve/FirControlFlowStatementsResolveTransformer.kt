@@ -42,7 +42,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
             val context = ResolutionMode.ContextIndependent
             doWhileLoop.also(dataFlowAnalyzer::enterDoWhileLoop)
                 .also {
-                    transformer.expressionsTransformer.transformBlockInCurrentScope(it.block, context)
+                    transformer.expressionsTransformer?.transformBlockInCurrentScope(it.block, context)
                 }
                 .also(dataFlowAnalyzer::enterDoWhileLoopCondition)
                 .transformCondition(transformer, withExpectedType(session.builtinTypes.booleanType))
