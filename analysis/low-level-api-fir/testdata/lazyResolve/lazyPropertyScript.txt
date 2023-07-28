@@ -628,43 +628,43 @@ FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] class LazyDelegate<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LazyDelegate] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/LazyDelegate.value] value: T): R|LazyDelegate<T>| {
+        public final [ResolvedTo(BODY_RESOLVE)] class LazyDelegate<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LazyDelegate] constructor<[ResolvedTo(BODY_RESOLVE)] T>([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/LazyDelegate.value] value: R|T|): R|LazyDelegate<T>| {
                 super<R|kotlin/Any|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: T = R|<local>/value|
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LazyDelegate] get(): T
+            public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val value: R|T| = R|<local>/value|
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LazyDelegate] get(): R|T|
 
-            public? final? operator [ResolvedTo(RAW_FIR)] fun getValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>): T {
-                ^getValue value#
+            public final operator [ResolvedTo(BODY_RESOLVE)] fun getValue([ResolvedTo(BODY_RESOLVE)] thisRef: R|kotlin/Any?|, [ResolvedTo(BODY_RESOLVE)] property: R|kotlin/reflect/KProperty<*>|): R|T| {
+                ^getValue this@R|/LazyDelegate|.R|/LazyDelegate.value|
             }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> lazy([ResolvedTo(RAW_FIR)] block: ( () -> T )): LazyDelegate<T> {
-            ^lazy LazyDelegate#(block#())
+        public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T> lazy([ResolvedTo(BODY_RESOLVE)] block: R|() -> T|): R|LazyDelegate<T>| {
+            ^lazy R|/LazyDelegate.LazyDelegate|<R|T|>(R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|())
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun getAny(): Any? {
+        public final [ResolvedTo(BODY_RESOLVE)] fun getAny(): R|kotlin/Any?| {
             ^getAny Null(null)
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] Q> materialize(): Q {
+        public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] Q> materialize(): R|Q| {
             ^materialize Null(null)!!
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] class Test : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Test] constructor(): R|Test| {
+        public final [ResolvedTo(BODY_RESOLVE)] class Test : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Test] constructor(): R|Test| {
                 super<R|kotlin/Any|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] val resolveMe: Stringby lazy#(<L> = [ResolvedTo(RAW_FIR)] lazy@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-                materialize#()
+            public final [ResolvedTo(BODY_RESOLVE)] val resolveMe: R|kotlin/String|by R|kotlin/lazy<Inapplicable(INAPPLICABLE): kotlin/lazy>#|<<ERROR TYPE REF: Type for T is not inferred>>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] lazy@fun <anonymous>(): <ERROR TYPE REF: Type for T is not inferred> <inline=NoInline>  {
+                ^ <Unresolved name: materialize>#()
             }
             )
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Test] get(): <implicit> {
-                    ^ this@R|/Test|.D|/Test.resolveMe|.getValue#(this@R|/Test|, ::R|/Test.resolveMe|)
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Test] get(): R|kotlin/String| {
+                    ^ this@R|/Test|.D|/Test.resolveMe|.R|kotlin/getValue|<<ERROR TYPE REF: Type for T is not inferred>>(this@R|/Test|, ::R|/Test.resolveMe|)
                 }
 
         }

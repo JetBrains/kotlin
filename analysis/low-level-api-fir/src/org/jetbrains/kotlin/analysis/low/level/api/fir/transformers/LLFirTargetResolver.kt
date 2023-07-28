@@ -8,10 +8,13 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.forEachDeclaration
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.FirScript
 
 internal abstract class LLFirTargetResolver(
     protected val resolveTarget: LLFirResolveTarget,
@@ -91,12 +94,14 @@ internal abstract class LLFirTargetResolver(
 
     private fun resolveTargetWithNestedDeclarations(target: FirElementWithResolveState) {
         performResolve(target)
-        if (target is FirRegularClass) {
-            withRegularClass(target) {
+        when (target) {
+            is FirRegularClass -> withRegularClass(target) {
                 for (member in target.declarations) {
                     resolveTargetWithNestedDeclarations(member)
                 }
             }
+
+            is FirScript -> target.forEachDeclaration(::resolveTargetWithNestedDeclarations)
         }
     }
 

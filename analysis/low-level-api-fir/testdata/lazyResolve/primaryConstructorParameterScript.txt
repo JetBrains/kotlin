@@ -238,12 +238,12 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameterScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] a: Boolean, [ResolvedTo(RAW_FIR)] param: Int = IntegerLiteral(1), [ResolvedTo(RAW_FIR)] c: Long): R|A| {
+        public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/Boolean|, [ResolvedTo(BODY_RESOLVE)] param: R|kotlin/Int| = Int(1), [ResolvedTo(BODY_RESOLVE)] c: R|kotlin/Long|): R|A| {
                 super<R|kotlin/Any|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> {
+            public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/String| {
                 ^foo String(str)
             }
 

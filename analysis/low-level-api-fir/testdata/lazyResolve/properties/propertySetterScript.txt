@@ -160,8 +160,8 @@ FILE: [ResolvedTo(IMPORTS)] propertySetterScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] var prop: <implicit> = IntegerLiteral(42)
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit| {
+        public final [ResolvedTo(BODY_RESOLVE)] var prop: R|kotlin/Int| = Int(42)
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+            public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit| {
             }
 

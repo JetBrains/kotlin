@@ -173,9 +173,9 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfTopSetterScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] var x: Int = IntegerLiteral(2)
-            public? [ResolvedTo(RAW_FIR)] get(): Int
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] resolveMe: Int): R|kotlin/Unit| {
-                ^ Unit#
+        public final [ResolvedTo(BODY_RESOLVE)] var x: R|kotlin/Int| = Int(2)
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+            public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+                ^ Q|kotlin/Unit|
             }
 

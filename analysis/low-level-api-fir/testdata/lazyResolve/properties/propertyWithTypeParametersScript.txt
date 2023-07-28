@@ -160,8 +160,8 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithTypeParametersScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] val <[ResolvedTo(RAW_FIR)] T : Int, [ResolvedTo(RAW_FIR)] K> T.resolveMe: K
-            public? [ResolvedTo(RAW_FIR)] get(): K {
-                ^ TODO#()
+        public final [ResolvedTo(BODY_RESOLVE)] val <[ResolvedTo(BODY_RESOLVE)] T : R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] K> R|T|.resolveMe: R|K|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|K| {
+                ^ R|kotlin/TODO|()
             }
 

@@ -381,25 +381,25 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameterScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/A.prop] prop: Int = IntegerLiteral(42), [ResolvedTo(RAW_FIR)] c: String): R|A| {
+        public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/A.prop] prop: R|kotlin/Int| = Int(42), [ResolvedTo(BODY_RESOLVE)] c: R|kotlin/String|): R|A| {
                 super<R|kotlin/Any|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val prop: Int = R|<local>/prop|
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] get(): Int
+            public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val prop: R|kotlin/Int| = R|<local>/prop|
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] get(): R|kotlin/Int|
 
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] str: String): R|A| {
-                this<R|A|>(str#.myToInt#(), str#)
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor([ResolvedTo(BODY_RESOLVE)] str: R|kotlin/String|): R|A| {
+                this<R|A|>(R|<local>/str|.<Unresolved name: myToInt>#(), R|<local>/str|)
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> {
+            public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/String| {
                 ^foo String(str)
             }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun String.myToInt(): Int {
-            ^myToInt IntegerLiteral(42)
+        public final [ResolvedTo(BODY_RESOLVE)] fun R|kotlin/String|.myToInt(): R|kotlin/Int| {
+            ^myToInt Int(42)
         }
 

@@ -121,5 +121,5 @@ FILE: [ResolvedTo(IMPORTS)] typeAliasWithTypeParametersScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final [ResolvedTo(RAW_FIR)] typealias ResolveMe<[ResolvedTo(RAW_FIR)] T : Int, [ResolvedTo(RAW_FIR)] K> = Map<T, K>
+        public final [ResolvedTo(BODY_RESOLVE)] typealias ResolveMe<[ResolvedTo(BODY_RESOLVE)] T : R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] K> = R|kotlin/collections/Map<T, K>|
 

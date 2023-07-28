@@ -3,21 +3,21 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassesScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] constructor(): R|A| {
+        public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] constructor(): R|A| {
                 super<R|kotlin/Any|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] constructor(): R|A.B| {
+            public final [ResolvedTo(BODY_RESOLVE)] class B : R|kotlin/Any| {
+                public [ResolvedTo(BODY_RESOLVE)] constructor(): R|A.B| {
                     super<R|kotlin/Any|>()
                 }
 
-                public? final? [ResolvedTo(RAW_FIR)] fun x(): R|kotlin/Unit| {
+                public final [ResolvedTo(BODY_RESOLVE)] fun x(): R|kotlin/Unit| {
                 }
 
-                public? final? [ResolvedTo(RAW_FIR)] class C : R|kotlin/Any| {
-                    public? [ResolvedTo(RAW_FIR)] constructor(): R|A.B.C| {
+                public final [ResolvedTo(BODY_RESOLVE)] class C : R|kotlin/Any| {
+                    public [ResolvedTo(BODY_RESOLVE)] constructor(): R|A.B.C| {
                         super<R|kotlin/Any|>()
                     }
 
@@ -25,15 +25,15 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassesScript.kts
 
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] class E : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] constructor(): R|A.E| {
+            public final [ResolvedTo(BODY_RESOLVE)] class E : R|kotlin/Any| {
+                public [ResolvedTo(BODY_RESOLVE)] constructor(): R|A.E| {
                     super<R|kotlin/Any|>()
                 }
 
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] fun y(): Int {
-                ^y IntegerLiteral(10)
+            public final [ResolvedTo(BODY_RESOLVE)] fun y(): R|kotlin/Int| {
+                ^y Int(10)
             }
 
         }

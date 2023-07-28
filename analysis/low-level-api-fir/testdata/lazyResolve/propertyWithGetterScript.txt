@@ -251,15 +251,15 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithGetterScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            receive#(withGetter#)
+        public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
+            <Unresolved name: receive>#(<Unresolved name: withGetter>#)
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
+        public final [ResolvedTo(BODY_RESOLVE)] fun receive([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit| {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] val withGetter: Int
-            public? [ResolvedTo(RAW_FIR)] get(): Int {
-                ^ IntegerLiteral(42)
+        public final [ResolvedTo(BODY_RESOLVE)] val withGetter: R|kotlin/Int|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
+                ^ Int(42)
             }
 

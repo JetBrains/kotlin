@@ -186,8 +186,8 @@ FILE: [ResolvedTo(IMPORTS)] classWithTypeParametersScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] class ResolveMe<[ResolvedTo(RAW_FIR)] T : Int, [ResolvedTo(RAW_FIR)] K> : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor<[ResolvedTo(RAW_FIR)] T : Int, [ResolvedTo(RAW_FIR)] K>(): R|ResolveMe<T, K>| {
+        public final [ResolvedTo(BODY_RESOLVE)] class ResolveMe<[ResolvedTo(BODY_RESOLVE)] T : R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] K> : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ResolveMe] constructor<[ResolvedTo(BODY_RESOLVE)] T : R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] K>(): R|ResolveMe<T, K>| {
                 super<R|kotlin/Any|>()
             }
 

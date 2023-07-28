@@ -160,8 +160,8 @@ FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitTypeScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] val prop: <implicit>
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ IntegerLiteral(42)
+        public final [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/Int|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
+                ^ Int(42)
             }
 

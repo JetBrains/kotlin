@@ -654,40 +654,40 @@ FILE: [ResolvedTo(IMPORTS)] localNestedClassScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
+        public open [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
                 super<R|kotlin/Any|>()
             }
 
-            public? open [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| {
+            public open [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int|): R|kotlin/Unit| {
             }
 
-            public? open [ResolvedTo(RAW_FIR)] fun boo([ResolvedTo(RAW_FIR)] b: String): R|kotlin/Unit| {
-            }
-
-        }
-
-        public? open [ResolvedTo(RAW_FIR)] class AnotherTopLevelClass : TopLevelClass {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherTopLevelClass] constructor(): R|AnotherTopLevelClass| {
-                super<TopLevelClass>()
-            }
-
-            public? open? override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| {
+            public open [ResolvedTo(BODY_RESOLVE)] fun boo([ResolvedTo(BODY_RESOLVE)] b: R|kotlin/String|): R|kotlin/Unit| {
             }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            local final? [ResolvedTo(RAW_FIR)] class LocalClass : AnotherTopLevelClass {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|LocalClass| {
-                    super<AnotherTopLevelClass>()
+        public open [ResolvedTo(BODY_RESOLVE)] class AnotherTopLevelClass : R|TopLevelClass| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AnotherTopLevelClass] constructor(): R|AnotherTopLevelClass| {
+                super<R|TopLevelClass|>()
+            }
+
+            public open override [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int|): R|kotlin/Unit| {
+            }
+
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
+            local final [ResolvedTo(BODY_RESOLVE)] class LocalClass : R|AnotherTopLevelClass| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LocalClass] constructor(): R|LocalClass| {
+                    super<R|AnotherTopLevelClass|>()
                 }
 
-                public? open? override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| {
+                public open override [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int|): R|kotlin/Unit| {
                 }
 
-                local final? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] class NestedLocalClass : R|kotlin/Any| {
-                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedLocalClass] constructor(): R|LocalClass.NestedLocalClass| {
+                local final [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LocalClass] class NestedLocalClass : R|kotlin/Any| {
+                    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=NestedLocalClass] constructor(): R|LocalClass.NestedLocalClass| {
                         super<R|kotlin/Any|>()
                     }
 

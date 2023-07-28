@@ -368,23 +368,23 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideLambdaCallInsideStringTemplateScr
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? open [ResolvedTo(RAW_FIR)] class ClassWithParameter : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(RAW_FIR)] s: String): R|one/ClassWithParameter| {
+        public open [ResolvedTo(BODY_RESOLVE)] class ClassWithParameter : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(BODY_RESOLVE)] s: R|kotlin/String|): R|one/ClassWithParameter| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] class TopLevelClass : ClassWithParameter {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
-                super<ClassWithParameter>(<strcat>([ResolvedTo(RAW_FIR)] fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-                    local final? [ResolvedTo(RAW_FIR)] fun str(): String {
-                        ^str IntegerLiteral(42)
+        public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+                super<R|one/ClassWithParameter|>(<strcat>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+                    local final [ResolvedTo(RAW_FIR)] fun str(): R|kotlin/String| {
+                        ^str Int(42)
                     }
 
-                    str#()
+                    ^ R|<local>/str|()
                 }
-                .invoke#()))
+                .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()))
             }
 
         }

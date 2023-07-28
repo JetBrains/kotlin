@@ -615,42 +615,42 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] enum class X : R|kotlin/Enum<X>| {
-            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
+        public final [ResolvedTo(BODY_RESOLVE)] enum class X : R|kotlin/Enum<X>| {
+            private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X] constructor(): R|X| {
                 super<R|kotlin/Enum<X>|>()
             }
 
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] enum entry A: R|X|
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] fun values(): R|kotlin/Array<X>| {
+            public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X] enum entry A: R|X|
+            public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X] fun values(): R|kotlin/Array<X>| {
             }
 
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|X| {
+            public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X] fun valueOf([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|X| {
             }
 
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] val entries: R|kotlin/enums/EnumEntries<X>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<X>|
+            public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X] val entries: R|kotlin/enums/EnumEntries<X>|
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<X>|
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
+        public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.args] args: <ERROR TYPE REF: Symbol not found for A.X>): R|Anno| {
                 super<R|kotlin/Any|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val args: A.X = R|<local>/args|
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): A.X
+            public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val args: <ERROR TYPE REF: Symbol not found for A.X> = R|<local>/args|
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): <ERROR TYPE REF: Symbol not found for A.X>
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
+        public final [ResolvedTo(BODY_RESOLVE)] class B : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=B] constructor(): R|B| {
                 super<R|kotlin/Any|>()
             }
 
-            @Anno[Unresolved](X#.A#) public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            @R|Anno|[Types](args = Q|X|.R|/X.A|) public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
             }
 
-            @Anno[Unresolved](X#.A#) public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
+            @R|Anno|[Types](args = Q|X|.R|/X.A|) public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
             }
 
         }

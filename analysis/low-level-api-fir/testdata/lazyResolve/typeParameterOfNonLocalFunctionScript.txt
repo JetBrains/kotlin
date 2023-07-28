@@ -225,12 +225,12 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunctionScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
+        public final [ResolvedTo(BODY_RESOLVE)] class X : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X] constructor(): R|X| {
                 super<R|kotlin/Any|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] resolveMe> ddd(): R|kotlin/Unit| {
+            public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] resolveMe> ddd(): R|kotlin/Unit| {
             }
 
         }

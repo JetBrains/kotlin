@@ -290,17 +290,17 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            receive#(A#(IntegerLiteral(42)))
+        public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
+            <Unresolved name: receive>#(R|/A.A|(Int(42)))
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: A): R|kotlin/Unit| {
+        public final [ResolvedTo(BODY_RESOLVE)] fun receive([ResolvedTo(BODY_RESOLVE)] value: R|A|): R|kotlin/Unit| {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] x: Int): R|A| {
+        public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/Int|): R|A| {
                 super<R|kotlin/Any|>()
-                [ResolvedTo(RAW_FIR)] lval a: <implicit> = x#
+                [ResolvedTo(BODY_RESOLVE)] lval a: R|kotlin/Int| = R|<local>/x|
             }
 
         }

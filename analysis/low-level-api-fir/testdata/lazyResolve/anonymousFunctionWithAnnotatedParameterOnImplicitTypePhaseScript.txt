@@ -394,25 +394,25 @@ FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterOnImplicitTyp
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](AnnotationTarget#.TYPE#) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.message] message: String): R|Anno| {
+        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.message] message: R|kotlin/String|): R|Anno| {
                 super<R|kotlin/Any|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val message: String = R|<local>/message|
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+            public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val message: R|kotlin/String| = R|<local>/message|
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] val nullablePropertyWithAnnotatedType: @Anno[Unresolved](String(str)) String?
-            public? [ResolvedTo(RAW_FIR)] get(): @Anno[Unresolved](String(str)) String? {
+        public final [ResolvedTo(BODY_RESOLVE)] val nullablePropertyWithAnnotatedType: R|@R|Anno|(message = String(str))  kotlin/String?|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|@R|Anno|(message = String(str))  kotlin/String?| {
                 ^ Null(null)
             }
 
-        public? final? [ResolvedTo(RAW_FIR)] val propertyToResolve: <implicit>
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ nullablePropertyWithAnnotatedType#?.{ $subj$.let#(<L> = [ResolvedTo(RAW_FIR)] let@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-                    <strcat>(String( (), it#, String()))
+        public final [ResolvedTo(BODY_RESOLVE)] val propertyToResolve: <ERROR TYPE REF: Cannot infer argument for type parameter K>
+            public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Cannot infer argument for type parameter K> {
+                ^ <Unresolved name: nullablePropertyWithAnnotatedType>#?.{ $subj$.R|kotlin/let<None of the following candidates is applicable because of receiver type mismatch: [kotlin/let]>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>, <ERROR TYPE REF: Cannot infer argument for type parameter R>>(<L> = [ResolvedTo(BODY_RESOLVE)] let@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: <ERROR TYPE REF: Cannot infer argument for type parameter T>): <ERROR TYPE REF: Cannot infer argument for type parameter R> <inline=Unknown, kind=EXACTLY_ONCE>  {
+                    ^ <strcat>(String( (), R|<local>/it|, String()))
                 }
                 ) } ?: String()
             }

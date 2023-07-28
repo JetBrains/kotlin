@@ -3,18 +3,18 @@ FILE: [ResolvedTo(IMPORTS)] topLevelPropertyScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] var x: Int
-            public? [ResolvedTo(RAW_FIR)] get(): Int {
-                ^ field#
+        public final [ResolvedTo(BODY_RESOLVE)] var x: R|kotlin/Int|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
+                ^ F|/x|
             }
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
-                field# = value#
+            public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit| {
+                F|/x| = R|<local>/value|
             }
 
-        public? final? [ResolvedTo(RAW_FIR)] val y: <implicit> = IntegerLiteral(42)
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+        public final [ResolvedTo(BODY_RESOLVE)] val y: R|kotlin/Int| = Int(42)
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        public? final? [ResolvedTo(RAW_FIR)] var z: Int = IntegerLiteral(15)
-            public? [ResolvedTo(RAW_FIR)] get(): Int
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit|
+        public final [ResolvedTo(BODY_RESOLVE)] var z: R|kotlin/Int| = Int(15)
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+            public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
 

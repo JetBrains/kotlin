@@ -3,16 +3,16 @@ FILE: [ResolvedTo(IMPORTS)] constructorsScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] constructor([ResolvedTo(RAW_FIR)] a: Int): R|A| {
+        public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/Int|): R|A| {
                 super<R|kotlin/Any|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] val a: Int = R|<local>/a|
-                public? [ResolvedTo(RAW_FIR)] get(): Int
+            public final [ResolvedTo(BODY_RESOLVE)] val a: R|kotlin/Int| = R|<local>/a|
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
-            public? [ResolvedTo(RAW_FIR)] constructor(): R|A| {
-                this<R|A|>(IntegerLiteral(1))
+            public [ResolvedTo(BODY_RESOLVE)] constructor(): R|A| {
+                this<R|A|>(Int(1))
             }
 
         }

@@ -277,15 +277,15 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorPropertyScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] a: Boolean, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/A.prop] prop: Int = IntegerLiteral(42)): R|A| {
+        public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/Boolean|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/A.prop] prop: R|kotlin/Int| = Int(42)): R|A| {
                 super<R|kotlin/Any|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val prop: Int = R|<local>/prop|
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] get(): Int
+            public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val prop: R|kotlin/Int| = R|<local>/prop|
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] get(): R|kotlin/Int|
 
-            public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> {
+            public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/String| {
                 ^foo String(str)
             }
 

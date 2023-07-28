@@ -3,32 +3,32 @@ FILE: [ResolvedTo(IMPORTS)] enumClassScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] enum class A : R|kotlin/Enum<A>| {
-            private [ResolvedTo(RAW_FIR)] constructor(): R|A| {
+        public final [ResolvedTo(BODY_RESOLVE)] enum class A : R|kotlin/Enum<A>| {
+            private [ResolvedTo(BODY_RESOLVE)] constructor(): R|A| {
                 super<R|kotlin/Enum<A>|>()
             }
 
-            public final static [ResolvedTo(RAW_FIR)] enum entry X: R|A|
-            public final static [ResolvedTo(RAW_FIR)] enum entry Y: R|A|
-            public final static [ResolvedTo(RAW_FIR)] enum entry Z: R|A|
-            public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
+            public final static [ResolvedTo(BODY_RESOLVE)] enum entry X: R|A|
+            public final static [ResolvedTo(BODY_RESOLVE)] enum entry Y: R|A|
+            public final static [ResolvedTo(BODY_RESOLVE)] enum entry Z: R|A|
+            public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] val x: <implicit> = IntegerLiteral(10)
-                public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public final [ResolvedTo(BODY_RESOLVE)] val x: R|kotlin/Int| = Int(10)
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
-            public? final? [ResolvedTo(RAW_FIR)] fun bar(): <implicit> {
-                ^bar IntegerLiteral(10)
+            public final [ResolvedTo(BODY_RESOLVE)] fun bar(): R|kotlin/Int| {
+                ^bar Int(10)
             }
 
-            public final static [ResolvedTo(RAW_FIR)] fun values(): R|kotlin/Array<A>| {
+            public final static [ResolvedTo(BODY_RESOLVE)] fun values(): R|kotlin/Array<A>| {
             }
 
-            public final static [ResolvedTo(RAW_FIR)] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|A| {
+            public final static [ResolvedTo(BODY_RESOLVE)] fun valueOf([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|A| {
             }
 
-            public final static [ResolvedTo(RAW_FIR)] val entries: R|kotlin/enums/EnumEntries<A>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<A>|
+            public final static [ResolvedTo(BODY_RESOLVE)] val entries: R|kotlin/enums/EnumEntries<A>|
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<A>|
 
         }
 

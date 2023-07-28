@@ -3,7 +3,7 @@ FILE: [ResolvedTo(IMPORTS)] topLevelUnitFunScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-            println#(String())
+        public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+            <Unresolved name: println>#(String())
         }
 

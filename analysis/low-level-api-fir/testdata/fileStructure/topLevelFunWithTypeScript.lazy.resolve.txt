@@ -3,8 +3,8 @@ FILE: [ResolvedTo(IMPORTS)] topLevelFunWithTypeScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun foo(): Int {
-            println#(String())
-            ^foo IntegerLiteral(10)
+        public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Int| {
+            <Unresolved name: println>#(String())
+            ^foo Int(10)
         }
 

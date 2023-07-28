@@ -277,13 +277,13 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] Type>(): R|MyClass<Type>| {
+        public final [ResolvedTo(BODY_RESOLVE)] class MyClass<[ResolvedTo(BODY_RESOLVE)] Type> : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(BODY_RESOLVE)] Type>(): R|MyClass<Type>| {
                 super<R|kotlin/Any|>()
             }
 
-            public? final? inner [ResolvedTo(RAW_FIR)] class Second<[ResolvedTo(RAW_FIR)] Type2, [ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] MyClass<Type>.constructor<[ResolvedTo(RAW_FIR)] Type2>(): R|MyClass.Second<Type2, Type>| {
+            public final inner [ResolvedTo(BODY_RESOLVE)] class Second<[ResolvedTo(BODY_RESOLVE)] Type2, [ResolvedTo(BODY_RESOLVE)] Type> : R|kotlin/Any| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Second] MyClass<Type>.constructor<[ResolvedTo(BODY_RESOLVE)] Type2>(): R|MyClass.Second<Type2, Type>| {
                     super<R|kotlin/Any|>()
                 }
 

@@ -238,14 +238,14 @@ FILE: [ResolvedTo(IMPORTS)] topLevelFunctionsScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            receive#(functionWithLazyBody#())
+        public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
+            <Unresolved name: receive>#(<Unresolved name: functionWithLazyBody>#())
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit| {
+        public final [ResolvedTo(BODY_RESOLVE)] fun receive([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|kotlin/Unit| {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun functionWithLazyBody(): String {
+        public final [ResolvedTo(BODY_RESOLVE)] fun functionWithLazyBody(): R|kotlin/String| {
             ^functionWithLazyBody String(42)
         }
 

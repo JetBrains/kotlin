@@ -537,34 +537,34 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T {
+        public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T> magic(): R|T| {
             ^magic Null(null)!!
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] class Q : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Q] constructor(): R|Q| {
+        public final [ResolvedTo(BODY_RESOLVE)] class Q : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Q] constructor(): R|Q| {
                 super<R|kotlin/Any|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] E, [ResolvedTo(RAW_FIR)] F> foo(): <implicit> {
-                ^foo [ResolvedTo(RAW_FIR)] fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-                    local final? [ResolvedTo(RAW_FIR)] class C<[ResolvedTo(RAW_FIR)] G, [ResolvedTo(RAW_FIR)] E, [ResolvedTo(RAW_FIR)] F> : R|kotlin/Any| {
-                        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor<[ResolvedTo(RAW_FIR)] G>(): R|Q.C<G, E, F>| {
+            public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] E, [ResolvedTo(BODY_RESOLVE)] F> foo(): R|() -> Q.C<F, E, F>| {
+                ^foo [ResolvedTo(BODY_RESOLVE)] fun <anonymous>(): R|Q.C<F, E, F>| <inline=Unknown>  {
+                    local final [ResolvedTo(BODY_RESOLVE)] class C<[ResolvedTo(BODY_RESOLVE)] G, [ResolvedTo(BODY_RESOLVE)] E, [ResolvedTo(BODY_RESOLVE)] F> : R|kotlin/Any| {
+                        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] constructor<[ResolvedTo(BODY_RESOLVE)] G>(): R|Q.C<G, E, F>| {
                             super<R|kotlin/Any|>()
                         }
 
-                        public? final? [ResolvedTo(RAW_FIR)] val e: E = magic#()
-                            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): E
+                        public final [ResolvedTo(BODY_RESOLVE)] val e: R|E| = <Unresolved name: magic>#()
+                            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] get(): R|E|
 
-                        public? final? [ResolvedTo(RAW_FIR)] val f: F = magic#()
-                            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): F
+                        public final [ResolvedTo(BODY_RESOLVE)] val f: R|F| = <Unresolved name: magic>#()
+                            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] get(): R|F|
 
-                        public? final? [ResolvedTo(RAW_FIR)] val g: G = magic#()
-                            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): G
+                        public final [ResolvedTo(BODY_RESOLVE)] val g: R|G| = <Unresolved name: magic>#()
+                            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] get(): R|G|
 
                     }
 
-                    C#<F>()
+                    ^ R|SubstitutionOverride<<local>/Q.C.C>|<R|F|>()
                 }
 
             }

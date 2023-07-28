@@ -485,31 +485,31 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
+        public final [ResolvedTo(BODY_RESOLVE)] class UnusedClass : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] interface UsedInterface : R|kotlin/Any| {
+        public abstract [ResolvedTo(BODY_RESOLVE)] interface UsedInterface : R|kotlin/Any| {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] class UsedClass : UsedInterface {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UsedClass] constructor(): R|one/two/UsedClass| {
-                super<<implicit>>()
+        public final [ResolvedTo(BODY_RESOLVE)] class UsedClass : R|one/two/UsedInterface| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=UsedClass] constructor(): R|one/two/UsedClass| {
+                super<R|kotlin/Any|>()
             }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            local final? [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/u] u: UsedClass): R|one/two/Local| {
+        public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
+            local final [ResolvedTo(BODY_RESOLVE)] class Local : R|kotlin/Any| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Local] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=<local>/u] u: R|one/two/UsedClass|): R|one/two/Local| {
                     super<R|kotlin/Any|>()
                 }
 
-                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val u: UsedClass = R|<local>/u|
-                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] get(): UsedClass
+                public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val u: R|one/two/UsedClass| = R|<local>/u|
+                    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Local] get(): R|one/two/UsedClass|
 
             }
 

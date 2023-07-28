@@ -186,10 +186,10 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            receive#(property#)
+        public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
+            <Unresolved name: receive>#(<Unresolved name: property>#)
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] val property: Int = IntegerLiteral(10)
-            public? [ResolvedTo(RAW_FIR)] get(): Int
+        public final [ResolvedTo(BODY_RESOLVE)] val property: R|kotlin/Int| = Int(10)
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 

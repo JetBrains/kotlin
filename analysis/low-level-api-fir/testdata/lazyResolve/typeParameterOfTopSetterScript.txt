@@ -160,8 +160,8 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopSetterScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] val <[ResolvedTo(RAW_FIR)] Type> Type.x: Int
-            public? [ResolvedTo(RAW_FIR)] get(): Int {
-                ^ IntegerLiteral(42)
+        public final [ResolvedTo(BODY_RESOLVE)] val <[ResolvedTo(BODY_RESOLVE)] Type> R|Type|.x: R|kotlin/Int|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
+                ^ Int(42)
             }
 

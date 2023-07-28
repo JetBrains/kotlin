@@ -459,27 +459,27 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
+        public open [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public? open [ResolvedTo(RAW_FIR)] class AnotherTopLevelClass : TopLevelClass {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherTopLevelClass] constructor(): R|AnotherTopLevelClass| {
-                super<TopLevelClass>()
+        public open [ResolvedTo(BODY_RESOLVE)] class AnotherTopLevelClass : R|TopLevelClass| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AnotherTopLevelClass] constructor(): R|AnotherTopLevelClass| {
+                super<R|TopLevelClass|>()
             }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] class OuterClass : AnotherTopLevelClass {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
-                super<AnotherTopLevelClass>()
+        public final [ResolvedTo(BODY_RESOLVE)] class OuterClass : R|AnotherTopLevelClass| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
+                super<R|AnotherTopLevelClass|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] class NestedClass : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|OuterClass.NestedClass| {
+            public final [ResolvedTo(BODY_RESOLVE)] class NestedClass : R|kotlin/Any| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=NestedClass] constructor(): R|OuterClass.NestedClass| {
                     super<R|kotlin/Any|>()
                 }
 

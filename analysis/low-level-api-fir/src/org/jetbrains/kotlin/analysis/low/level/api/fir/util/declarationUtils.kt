@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirFileBui
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
@@ -190,6 +191,12 @@ private fun KtClassLikeDeclaration.findFir(provider: FirProvider): FirClassLikeD
     }
 }
 
-
 val FirDeclaration.isGeneratedDeclaration
     get() = realPsi == null
+
+internal inline fun FirScript.forEachDeclaration(action: (FirDeclaration) -> Unit) {
+    for (statement in statements) {
+        if (statement !is FirDeclaration || statement.origin is FirDeclarationOrigin.ScriptCustomization) continue
+        action(statement)
+    }
+}

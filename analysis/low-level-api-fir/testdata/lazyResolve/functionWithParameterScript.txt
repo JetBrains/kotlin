@@ -186,10 +186,10 @@ FILE: [ResolvedTo(IMPORTS)] functionWithParameterScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] interface I : R|kotlin/Any| {
+        public abstract [ResolvedTo(BODY_RESOLVE)] interface I : R|kotlin/Any| {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe([ResolvedTo(RAW_FIR)] param: I): <implicit> {
-            ^resolveMe Unit#
+        public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe([ResolvedTo(BODY_RESOLVE)] param: R|I|): R|kotlin/Unit| {
+            ^resolveMe Q|kotlin/Unit|
         }
 

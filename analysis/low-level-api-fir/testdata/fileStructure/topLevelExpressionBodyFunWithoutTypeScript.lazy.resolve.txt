@@ -3,7 +3,7 @@ FILE: [ResolvedTo(IMPORTS)] topLevelExpressionBodyFunWithoutTypeScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> {
-            ^foo IntegerLiteral(42)
+        public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Int| {
+            ^foo Int(42)
         }
 

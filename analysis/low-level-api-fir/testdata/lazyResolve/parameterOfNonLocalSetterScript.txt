@@ -264,15 +264,15 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetterScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
+        public final [ResolvedTo(BODY_RESOLVE)] class X : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X] constructor(): R|X| {
                 super<R|kotlin/Any|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] var x: Int = IntegerLiteral(2)
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] get(): Int
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] set([ResolvedTo(RAW_FIR)] resolveMe: Int): R|kotlin/Unit| {
-                    ^ Unit#
+            public final [ResolvedTo(BODY_RESOLVE)] var x: R|kotlin/Int| = Int(2)
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X] get(): R|kotlin/Int|
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X] set([ResolvedTo(BODY_RESOLVE)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+                    ^ Q|kotlin/Unit|
                 }
 
         }

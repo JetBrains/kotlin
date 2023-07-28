@@ -3,15 +3,15 @@ FILE: [ResolvedTo(IMPORTS)] initBlockScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] constructor(): R|A| {
+        public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] constructor(): R|A| {
                 super<R|kotlin/Any|>()
             }
 
             init {
-                [ResolvedTo(RAW_FIR)] lval x: <implicit> = IntegerLiteral(10)
-                local final? [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
-                    public? [ResolvedTo(RAW_FIR)] constructor(): R|A.B| {
+                [ResolvedTo(RAW_FIR)] lval x: R|kotlin/Int| = Int(10)
+                local final [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
+                    public [ResolvedTo(RAW_FIR)] constructor(): R|A.B| {
                         super<R|kotlin/Any|>()
                     }
 

@@ -303,19 +303,19 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithGetterAndSetterScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            receive#(withGetterAndSetter#)
-            withGetterAndSetter# = IntegerLiteral(123)
+        public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
+            <Unresolved name: receive>#(<Unresolved name: withGetterAndSetter>#)
+            <Unresolved name: withGetterAndSetter># = Int(123)
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
+        public final [ResolvedTo(BODY_RESOLVE)] fun receive([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit| {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] var withGetterAndSetter: Int = IntegerLiteral(42)
-            public? [ResolvedTo(RAW_FIR)] get(): Int {
-                ^ field#
+        public final [ResolvedTo(BODY_RESOLVE)] [IsReferredViaField=true] var withGetterAndSetter: R|kotlin/Int| = Int(42)
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
+                ^ F|/withGetterAndSetter|
             }
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
-                field# = value#
+            public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit| {
+                F|/withGetterAndSetter| = R|<local>/value|
             }
 

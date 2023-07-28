@@ -3,43 +3,43 @@ FILE: [ResolvedTo(IMPORTS)] withoutNameScript.kts
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun <no name provided>([ResolvedTo(RAW_FIR)] a: Int = IntegerLiteral(1)): String {
+        public final [ResolvedTo(BODY_RESOLVE)] fun <no name provided>([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/Int| = Int(1)): R|kotlin/String| {
             ^<no name provided> String(str)
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun <no name provided>(): R|kotlin/Unit| {
+        public final [ResolvedTo(BODY_RESOLVE)] fun <no name provided>(): R|kotlin/Unit| {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] val <no name provided>: Int = IntegerLiteral(4)
-            public? [ResolvedTo(RAW_FIR)] get(): Int
+        public final [ResolvedTo(BODY_RESOLVE)] val <no name provided>: R|kotlin/Int| = Int(4)
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        public? final? [ResolvedTo(RAW_FIR)] var <no name provided>: Int
-            public? [ResolvedTo(RAW_FIR)] get(): Int {
-                ^ IntegerLiteral(4)
+        public final [ResolvedTo(BODY_RESOLVE)] var <no name provided>: R|kotlin/Int|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
+                ^ Int(4)
             }
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
+            public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit| {
             }
 
-        public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] constructor(): R|A| {
+        public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] constructor(): R|A| {
                 super<R|kotlin/Any|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] fun <no name provided>([ResolvedTo(RAW_FIR)] a: Int = IntegerLiteral(1)): String {
+            public final [ResolvedTo(BODY_RESOLVE)] fun <no name provided>([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/Int| = Int(1)): R|kotlin/String| {
                 ^<no name provided> String(str)
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] fun <no name provided>(): R|kotlin/Unit| {
+            public final [ResolvedTo(BODY_RESOLVE)] fun <no name provided>(): R|kotlin/Unit| {
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] val <no name provided>: Int = IntegerLiteral(4)
-                public? [ResolvedTo(RAW_FIR)] get(): Int
+            public final [ResolvedTo(BODY_RESOLVE)] val <no name provided>: R|kotlin/Int| = Int(4)
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
-            public? final? [ResolvedTo(RAW_FIR)] var <no name provided>: Boolean
-                public? [ResolvedTo(RAW_FIR)] get(): Boolean {
+            public final [ResolvedTo(BODY_RESOLVE)] var <no name provided>: R|kotlin/Boolean|
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Boolean| {
                     ^ Boolean(true)
                 }
-                public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: Boolean): R|kotlin/Unit| {
+                public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Boolean|): R|kotlin/Unit| {
                 }
 
         }

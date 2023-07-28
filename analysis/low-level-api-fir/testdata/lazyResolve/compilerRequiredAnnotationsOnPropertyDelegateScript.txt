@@ -329,21 +329,21 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegateScript.
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
+        public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
                 super<R|kotlin/Any|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+            public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
         }
 
-        field:@PROPERTY_DELEGATE_FIELD:Deprecated[Unresolved](String(delegate)) @PROPERTY_DELEGATE_FIELD:Anno[Unresolved](String(delegate)) public? final? [ResolvedTo(RAW_FIR)] val memberProperty: <implicit>by lazy#(<L> = [ResolvedTo(RAW_FIR)] lazy@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-            String(42)
+        field:@PROPERTY_DELEGATE_FIELD:R|kotlin/Deprecated|[Types](message = String(delegate)) @PROPERTY_DELEGATE_FIELD:R|Anno|[Types](s = String(delegate)) public final [ResolvedTo(BODY_RESOLVE)] val memberProperty: R|kotlin/String|by R|kotlin/lazy|<R|kotlin/String|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
+            ^ String(42)
         }
         )
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ D|/memberProperty|.getValue#(Null(null), ::R|/memberProperty|)
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String| {
+                ^ D|/memberProperty|.R|kotlin/getValue|<R|kotlin/String|>(Null(null), ::R|/memberProperty|)
             }
 
