@@ -74,7 +74,6 @@ abstract class AbstractDiagnosticsTestWithJvmBackend<R : ResultingArtifact.Front
         if (targetFrontend == FrontendKinds.ClassicFrontend) {
             classicFrontendHandlersStep {
                 useHandlers(
-                    ::DeclarationsDumpHandler,
                     ::ClassicDiagnosticsHandler,
                 )
             }

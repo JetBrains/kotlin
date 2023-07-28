@@ -1,4 +1,0 @@
-package
-
-public inline fun inlineFun1(/*0*/ p: () -> kotlin.Unit): kotlin.Unit
-public inline fun inlineFun2(/*0*/ p: () -> kotlin.Unit): kotlin.Unit
