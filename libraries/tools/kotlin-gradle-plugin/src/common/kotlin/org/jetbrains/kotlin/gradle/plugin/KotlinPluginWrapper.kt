@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheck.runMultiplatformAndroidGradlePluginCompatibilityHealthCheckWhenAndroidIsApplied
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.*
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.EnsureNoKotlinGradlePluginErrors
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticRenderingOptions
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollectorProvider
@@ -287,7 +286,7 @@ private fun Project.setupDiagnosticsChecksAndReporting() {
     launchKotlinGradleProjectCheckers()
 
     // Setup a task that will abort the build if errors will be reported. This task should be the first in the taskgraph
-    project.locateOrRegisterEnsureNoKotlinGradlePluginErrors()
+    project.locateOrRegisterCheckKotlinGradlePluginErrorsTask()
 
     // Schedule diagnostics rendering
     launch {

@@ -3,6 +3,6 @@ e: [CommonMainWithDependsOnDiagnostic | ERROR] commonMain can't declare dependsO
 #diagnostic-end
 
 
-> Task :ensureNoKotlinGradlePluginErrors FAILED
+> Task :checkKotlinGradlePluginConfigurationErrors FAILED
 e: [CommonMainWithDependsOnDiagnostic | ERROR] commonMain can't declare dependsOn on other source sets
 #diagnostic-end

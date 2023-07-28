@@ -12,6 +12,6 @@ e: [CommonMainWithDependsOnDiagnostic | ERROR] commonMain can't declare dependsO
 
 > Configure project :healthyProject
 
-> Task :brokenProjectB:ensureNoKotlinGradlePluginErrors FAILED
+> Task :brokenProjectB:checkKotlinGradlePluginConfigurationErrors FAILED
 e: [CommonMainWithDependsOnDiagnostic | ERROR] commonMain can't declare dependsOn on other source sets
 #diagnostic-end

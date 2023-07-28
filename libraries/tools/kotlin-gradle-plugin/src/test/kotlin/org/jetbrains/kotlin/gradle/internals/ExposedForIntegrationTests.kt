@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.internals
 import org.jetbrains.kotlin.compilerRunner.asFinishLogMessage
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.DIAGNOSTIC_SEPARATOR
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.EnsureNoKotlinGradlePluginErrors
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.CheckKotlinGradlePluginConfigurationErrors
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinProjectStructureMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME
 import org.jetbrains.kotlin.gradle.plugin.mpp.parseKotlinSourceSetMetadataFromJson
@@ -22,7 +22,7 @@ val KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS_PROPERTY = KOTLIN_NATIVE_IGNORE_DISABL
 
 const val VERBOSE_DIAGNOSTIC_SEPARATOR = DIAGNOSTIC_SEPARATOR
 
-const val ENSURE_NO_KOTLIN_GRADLE_PLUGIN_ERRORS_TASK_NAME = EnsureNoKotlinGradlePluginErrors.TASK_NAME
+const val ENSURE_NO_KOTLIN_GRADLE_PLUGIN_ERRORS_TASK_NAME = CheckKotlinGradlePluginConfigurationErrors.TASK_NAME
 
 val KotlinCompilerExecutionStrategy.asFinishLogMessage: String
     get() = this.asFinishLogMessage

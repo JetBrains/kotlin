@@ -3,6 +3,6 @@ e: [DeprecatedKotlinNativeTargetsDiagnostic | ERROR] The following removed Kotli
 #diagnostic-end
 
 
-> Task :ensureNoKotlinGradlePluginErrors FAILED
+> Task :checkKotlinGradlePluginConfigurationErrors FAILED
 e: [DeprecatedKotlinNativeTargetsDiagnostic | ERROR] The following removed Kotlin/Native targets were used in the project: linuxMips32
 #diagnostic-end

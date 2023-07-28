@@ -9,4 +9,4 @@ Stability and future compatibility of the build is not guaranteed.
 #diagnostic-end
 
 
-> Task :ensureNoKotlinGradlePluginErrors
+> Task :checkKotlinGradlePluginConfigurationErrors
