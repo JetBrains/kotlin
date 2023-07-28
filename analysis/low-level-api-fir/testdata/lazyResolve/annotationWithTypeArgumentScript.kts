@@ -1,4 +1,3 @@
-// IGNORE_FIR
 package one
 
 annotation class Anno<T : Number>(val value: KClass<T>)

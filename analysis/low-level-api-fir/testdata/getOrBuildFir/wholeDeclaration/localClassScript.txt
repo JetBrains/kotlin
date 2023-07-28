@@ -3,28 +3,28 @@ FIR element: FirRegularClassImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-local final? [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
-    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
+local final [ResolvedTo(BODY_RESOLVE)] class X : R|kotlin/Any| {
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X] constructor(): R|X| {
         super<R|kotlin/Any|>()
     }
 
-    public? final? [ResolvedTo(RAW_FIR)] fun y(): String
+    public final [ResolvedTo(BODY_RESOLVE)] fun y(): R|kotlin/String|
 
 }
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] localClassScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun y(): R|kotlin/Unit| {
-            local final? [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
+        public final [ResolvedTo(BODY_RESOLVE)] fun y(): R|kotlin/Unit| {
+            local final [ResolvedTo(BODY_RESOLVE)] class X : R|kotlin/Any| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X] constructor(): R|X| {
                     super<R|kotlin/Any|>()
                 }
 
-                public? final? [ResolvedTo(RAW_FIR)] fun y(): String
+                public final [ResolvedTo(BODY_RESOLVE)] fun y(): R|kotlin/String|
 
             }
 

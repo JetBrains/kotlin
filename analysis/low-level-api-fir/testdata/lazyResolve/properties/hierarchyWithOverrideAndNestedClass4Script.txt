@@ -1,7 +1,7 @@
 RAW_FIR:
-FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
+FILE: [ResolvedTo(RAW_FIR)] hierarchyWithOverrideAndNestedClass4Script.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] interface Foo1 : R|kotlin/Any| {
@@ -88,7 +88,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] interface Foo1 : R|kotlin/Any| {
@@ -175,7 +175,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] interface Foo1 : R|kotlin/Any| {
@@ -251,8 +251,8 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
                 public? open? override [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit| {
                 }
 
-                public? open? override [ResolvedTo(RAW_FIR)] val isBoo: <implicit> = Boolean(false)
-                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherNestedClass] get(): <implicit>
+                public? open? override [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val isBoo: <implicit> = Boolean(false)
+                    public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=AnotherNestedClass] get(): <implicit>
 
             }
 
@@ -262,7 +262,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] interface Foo1 : R|kotlin/Any| {
@@ -338,8 +338,8 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
                 public? open? override [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit| {
                 }
 
-                public? open? override [ResolvedTo(RAW_FIR)] val isBoo: <implicit> = Boolean(false)
-                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherNestedClass] get(): <implicit>
+                public? open? override [ResolvedTo(COMPANION_GENERATION)] val isBoo: <implicit> = Boolean(false)
+                    public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=AnotherNestedClass] get(): <implicit>
 
             }
 
@@ -349,10 +349,10 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] interface Foo1 : R|kotlin/Any| {
+        public? final? [ResolvedTo(SUPER_TYPES)] interface Foo1 : R|kotlin/Any| {
             public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
             public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit|
@@ -369,7 +369,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] interface Foo2 : Foo1 {
+        public? final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : R|Foo1| {
             public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit|
 
             public? final? [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit|
@@ -389,7 +389,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
 
         }
 
-        public? abstract [ResolvedTo(RAW_FIR)] class OuterClass : Foo1 {
+        public? abstract [ResolvedTo(SUPER_TYPES)] class OuterClass : R|Foo1| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
                 super<<implicit>>()
             }
@@ -404,7 +404,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
 
             }
 
-            public? abstract [ResolvedTo(RAW_FIR)] class NestedClass : Foo2 {
+            public? abstract [ResolvedTo(SUPER_TYPES)] class NestedClass : R|Foo2| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|OuterClass.NestedClass| {
                     super<<implicit>>()
                 }
@@ -417,7 +417,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
 
             }
 
-            public? abstract [ResolvedTo(RAW_FIR)] class AnotherNestedClass : NestedClass {
+            public? abstract [ResolvedTo(SUPER_TYPES)] class AnotherNestedClass : R|OuterClass.NestedClass| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherNestedClass] constructor(): R|OuterClass.AnotherNestedClass| {
                     super<NestedClass>()
                 }
@@ -425,8 +425,8 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
                 public? open? override [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit| {
                 }
 
-                public? open? override [ResolvedTo(RAW_FIR)] val isBoo: <implicit> = Boolean(false)
-                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherNestedClass] get(): <implicit>
+                public? open? override [ResolvedTo(SUPER_TYPES)] val isBoo: <implicit> = Boolean(false)
+                    public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=AnotherNestedClass] get(): <implicit>
 
             }
 
@@ -436,10 +436,10 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] interface Foo1 : R|kotlin/Any| {
+        public? final? [ResolvedTo(SUPER_TYPES)] interface Foo1 : R|kotlin/Any| {
             public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
             public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit|
@@ -456,7 +456,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] interface Foo2 : Foo1 {
+        public? final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : R|Foo1| {
             public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit|
 
             public? final? [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit|
@@ -476,7 +476,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
 
         }
 
-        public? abstract [ResolvedTo(RAW_FIR)] class OuterClass : Foo1 {
+        public? abstract [ResolvedTo(TYPES)] class OuterClass : R|Foo1| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
                 super<<implicit>>()
             }
@@ -491,7 +491,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
 
             }
 
-            public? abstract [ResolvedTo(RAW_FIR)] class NestedClass : Foo2 {
+            public? abstract [ResolvedTo(SUPER_TYPES)] class NestedClass : R|Foo2| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|OuterClass.NestedClass| {
                     super<<implicit>>()
                 }
@@ -504,7 +504,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
 
             }
 
-            public? abstract [ResolvedTo(RAW_FIR)] class AnotherNestedClass : NestedClass {
+            public? abstract [ResolvedTo(TYPES)] class AnotherNestedClass : R|OuterClass.NestedClass| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherNestedClass] constructor(): R|OuterClass.AnotherNestedClass| {
                     super<NestedClass>()
                 }
@@ -512,8 +512,8 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
                 public? open? override [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit| {
                 }
 
-                public? open? override [ResolvedTo(RAW_FIR)] val isBoo: <implicit> = Boolean(false)
-                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherNestedClass] get(): <implicit>
+                public? open? override [ResolvedTo(TYPES)] val isBoo: <implicit> = Boolean(false)
+                    public? [ResolvedTo(TYPES)] [ContainingClassKey=AnotherNestedClass] get(): <implicit>
 
             }
 
@@ -523,16 +523,16 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] interface Foo1 : R|kotlin/Any| {
-            public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
+        public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
+            public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
-            public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit|
+            public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
 
-            public? final? [ResolvedTo(RAW_FIR)] val str: String
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo1] get(): String
+            public abstract [ResolvedTo(STATUS)] val str: R|kotlin/String|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
 
             public? final? [ResolvedTo(RAW_FIR)] class ClassFromInterface : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassFromInterface] constructor(): R|Foo1.ClassFromInterface| {
@@ -543,13 +543,13 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] interface Foo2 : Foo1 {
-            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit|
+        public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
+            public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
 
-            public? final? [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit|
+            public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
 
-            public? final? [ResolvedTo(RAW_FIR)] val isBoo: Boolean
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo2] get(): Boolean
+            public abstract [ResolvedTo(STATUS)] val isBoo: R|kotlin/Boolean|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Foo2] get(): R|kotlin/Boolean|
 
         }
 
@@ -563,8 +563,8 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
 
         }
 
-        public? abstract [ResolvedTo(RAW_FIR)] class OuterClass : Foo1 {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
+        public abstract [ResolvedTo(STATUS)] class OuterClass : R|Foo1| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
                 super<<implicit>>()
             }
 
@@ -578,29 +578,29 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
 
             }
 
-            public? abstract [ResolvedTo(RAW_FIR)] class NestedClass : Foo2 {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|OuterClass.NestedClass| {
+            public abstract [ResolvedTo(STATUS)] class NestedClass : R|Foo2| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] constructor(): R|OuterClass.NestedClass| {
                     super<<implicit>>()
                 }
 
-                public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
+                public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
                 }
 
-                public? final? [ResolvedTo(RAW_FIR)] val st: <implicit> = String()
-                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] get(): <implicit>
+                public final [ResolvedTo(STATUS)] val st: <implicit> = String()
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] get(): <implicit>
 
             }
 
-            public? abstract [ResolvedTo(RAW_FIR)] class AnotherNestedClass : NestedClass {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherNestedClass] constructor(): R|OuterClass.AnotherNestedClass| {
-                    super<NestedClass>()
+            public abstract [ResolvedTo(STATUS)] class AnotherNestedClass : R|OuterClass.NestedClass| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherNestedClass] constructor(): R|OuterClass.AnotherNestedClass| {
+                    super<R|OuterClass.NestedClass|>()
                 }
 
-                public? open? override [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit| {
+                public open override [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit| {
                 }
 
-                public? open? override [ResolvedTo(RAW_FIR)] val isBoo: <implicit> = Boolean(false)
-                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherNestedClass] get(): <implicit>
+                public open override [ResolvedTo(STATUS)] val isBoo: <implicit> = Boolean(false)
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherNestedClass] get(): <implicit>
 
             }
 
@@ -610,16 +610,16 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] interface Foo1 : R|kotlin/Any| {
-            public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
+        public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
+            public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
-            public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit|
+            public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
 
-            public? final? [ResolvedTo(RAW_FIR)] val str: String
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo1] get(): String
+            public abstract [ResolvedTo(STATUS)] val str: R|kotlin/String|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
 
             public? final? [ResolvedTo(RAW_FIR)] class ClassFromInterface : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassFromInterface] constructor(): R|Foo1.ClassFromInterface| {
@@ -630,13 +630,13 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] interface Foo2 : Foo1 {
-            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit|
+        public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
+            public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
 
-            public? final? [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit|
+            public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
 
-            public? final? [ResolvedTo(RAW_FIR)] val isBoo: Boolean
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo2] get(): Boolean
+            public abstract [ResolvedTo(STATUS)] val isBoo: R|kotlin/Boolean|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Foo2] get(): R|kotlin/Boolean|
 
         }
 
@@ -650,8 +650,8 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
 
         }
 
-        public? abstract [ResolvedTo(RAW_FIR)] class OuterClass : Foo1 {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
+        public abstract [ResolvedTo(STATUS)] class OuterClass : R|Foo1| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
                 super<<implicit>>()
             }
 
@@ -665,29 +665,29 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
 
             }
 
-            public? abstract [ResolvedTo(RAW_FIR)] class NestedClass : Foo2 {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|OuterClass.NestedClass| {
+            public abstract [ResolvedTo(STATUS)] class NestedClass : R|Foo2| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] constructor(): R|OuterClass.NestedClass| {
                     super<<implicit>>()
                 }
 
-                public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
+                public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
                 }
 
-                public? final? [ResolvedTo(RAW_FIR)] val st: <implicit> = String()
-                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] get(): <implicit>
+                public final [ResolvedTo(STATUS)] val st: <implicit> = String()
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] get(): <implicit>
 
             }
 
-            public? abstract [ResolvedTo(RAW_FIR)] class AnotherNestedClass : NestedClass {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherNestedClass] constructor(): R|OuterClass.AnotherNestedClass| {
-                    super<NestedClass>()
+            public abstract [ResolvedTo(STATUS)] class AnotherNestedClass : R|OuterClass.NestedClass| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherNestedClass] constructor(): R|OuterClass.AnotherNestedClass| {
+                    super<R|OuterClass.NestedClass|>()
                 }
 
-                public? open? override [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit| {
+                public open override [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit| {
                 }
 
-                public? open? override [ResolvedTo(RAW_FIR)] val isBoo: <implicit> = Boolean(false)
-                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherNestedClass] get(): <implicit>
+                public open override [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val isBoo: <implicit> = Boolean(false)
+                    public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=AnotherNestedClass] get(): <implicit>
 
             }
 
@@ -697,16 +697,16 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] interface Foo1 : R|kotlin/Any| {
-            public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
+        public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
+            public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
-            public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit|
+            public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
 
-            public? final? [ResolvedTo(RAW_FIR)] val str: String
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo1] get(): String
+            public abstract [ResolvedTo(STATUS)] val str: R|kotlin/String|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
 
             public? final? [ResolvedTo(RAW_FIR)] class ClassFromInterface : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassFromInterface] constructor(): R|Foo1.ClassFromInterface| {
@@ -717,13 +717,13 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] interface Foo2 : Foo1 {
-            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit|
+        public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
+            public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
 
-            public? final? [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit|
+            public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
 
-            public? final? [ResolvedTo(RAW_FIR)] val isBoo: Boolean
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo2] get(): Boolean
+            public abstract [ResolvedTo(STATUS)] val isBoo: R|kotlin/Boolean|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Foo2] get(): R|kotlin/Boolean|
 
         }
 
@@ -737,8 +737,8 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
 
         }
 
-        public? abstract [ResolvedTo(RAW_FIR)] class OuterClass : Foo1 {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
+        public abstract [ResolvedTo(STATUS)] class OuterClass : R|Foo1| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
                 super<<implicit>>()
             }
 
@@ -752,29 +752,29 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
 
             }
 
-            public? abstract [ResolvedTo(RAW_FIR)] class NestedClass : Foo2 {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|OuterClass.NestedClass| {
+            public abstract [ResolvedTo(STATUS)] class NestedClass : R|Foo2| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] constructor(): R|OuterClass.NestedClass| {
                     super<<implicit>>()
                 }
 
-                public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
+                public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
                 }
 
-                public? final? [ResolvedTo(RAW_FIR)] val st: <implicit> = String()
-                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] get(): <implicit>
+                public final [ResolvedTo(STATUS)] val st: <implicit> = String()
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] get(): <implicit>
 
             }
 
-            public? abstract [ResolvedTo(RAW_FIR)] class AnotherNestedClass : NestedClass {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherNestedClass] constructor(): R|OuterClass.AnotherNestedClass| {
-                    super<NestedClass>()
+            public abstract [ResolvedTo(STATUS)] class AnotherNestedClass : R|OuterClass.NestedClass| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherNestedClass] constructor(): R|OuterClass.AnotherNestedClass| {
+                    super<R|OuterClass.NestedClass|>()
                 }
 
-                public? open? override [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit| {
+                public open override [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit| {
                 }
 
-                public? open? override [ResolvedTo(RAW_FIR)] val isBoo: <implicit> = Boolean(false)
-                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherNestedClass] get(): <implicit>
+                public open override [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] val isBoo: <implicit> = Boolean(false)
+                    public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] [ContainingClassKey=AnotherNestedClass] get(): <implicit>
 
             }
 
@@ -784,16 +784,16 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] interface Foo1 : R|kotlin/Any| {
-            public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
+        public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
+            public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
-            public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit|
+            public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
 
-            public? final? [ResolvedTo(RAW_FIR)] val str: String
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo1] get(): String
+            public abstract [ResolvedTo(STATUS)] val str: R|kotlin/String|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
 
             public? final? [ResolvedTo(RAW_FIR)] class ClassFromInterface : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassFromInterface] constructor(): R|Foo1.ClassFromInterface| {
@@ -804,13 +804,13 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] interface Foo2 : Foo1 {
-            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit|
+        public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
+            public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
 
-            public? final? [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit|
+            public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
 
-            public? final? [ResolvedTo(RAW_FIR)] val isBoo: Boolean
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo2] get(): Boolean
+            public abstract [ResolvedTo(STATUS)] val isBoo: R|kotlin/Boolean|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Foo2] get(): R|kotlin/Boolean|
 
         }
 
@@ -824,8 +824,8 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
 
         }
 
-        public? abstract [ResolvedTo(RAW_FIR)] class OuterClass : Foo1 {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
+        public abstract [ResolvedTo(STATUS)] class OuterClass : R|Foo1| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
                 super<<implicit>>()
             }
 
@@ -839,29 +839,29 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
 
             }
 
-            public? abstract [ResolvedTo(RAW_FIR)] class NestedClass : Foo2 {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|OuterClass.NestedClass| {
+            public abstract [ResolvedTo(STATUS)] class NestedClass : R|Foo2| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] constructor(): R|OuterClass.NestedClass| {
                     super<<implicit>>()
                 }
 
-                public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
+                public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
                 }
 
-                public? final? [ResolvedTo(RAW_FIR)] val st: <implicit> = String()
-                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] get(): <implicit>
+                public final [ResolvedTo(STATUS)] val st: <implicit> = String()
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] get(): <implicit>
 
             }
 
-            public? abstract [ResolvedTo(RAW_FIR)] class AnotherNestedClass : NestedClass {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherNestedClass] constructor(): R|OuterClass.AnotherNestedClass| {
-                    super<NestedClass>()
+            public abstract [ResolvedTo(STATUS)] class AnotherNestedClass : R|OuterClass.NestedClass| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherNestedClass] constructor(): R|OuterClass.AnotherNestedClass| {
+                    super<R|OuterClass.NestedClass|>()
                 }
 
-                public? open? override [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit| {
+                public open override [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit| {
                 }
 
-                public? open? override [ResolvedTo(RAW_FIR)] val isBoo: <implicit> = Boolean(false)
-                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherNestedClass] get(): <implicit>
+                public open override [ResolvedTo(CONTRACTS)] val isBoo: <implicit> = Boolean(false)
+                    public [ResolvedTo(CONTRACTS)] [ContainingClassKey=AnotherNestedClass] get(): <implicit>
 
             }
 
@@ -871,16 +871,16 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] interface Foo1 : R|kotlin/Any| {
-            public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
+        public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
+            public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
-            public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit|
+            public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
 
-            public? final? [ResolvedTo(RAW_FIR)] val str: String
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo1] get(): String
+            public abstract [ResolvedTo(STATUS)] val str: R|kotlin/String|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
 
             public? final? [ResolvedTo(RAW_FIR)] class ClassFromInterface : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassFromInterface] constructor(): R|Foo1.ClassFromInterface| {
@@ -891,13 +891,13 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] interface Foo2 : Foo1 {
-            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit|
+        public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
+            public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
 
-            public? final? [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit|
+            public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
 
-            public? final? [ResolvedTo(RAW_FIR)] val isBoo: Boolean
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo2] get(): Boolean
+            public abstract [ResolvedTo(STATUS)] val isBoo: R|kotlin/Boolean|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Foo2] get(): R|kotlin/Boolean|
 
         }
 
@@ -911,8 +911,8 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
 
         }
 
-        public? abstract [ResolvedTo(RAW_FIR)] class OuterClass : Foo1 {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
+        public abstract [ResolvedTo(STATUS)] class OuterClass : R|Foo1| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
                 super<<implicit>>()
             }
 
@@ -926,29 +926,29 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
 
             }
 
-            public? abstract [ResolvedTo(RAW_FIR)] class NestedClass : Foo2 {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|OuterClass.NestedClass| {
+            public abstract [ResolvedTo(STATUS)] class NestedClass : R|Foo2| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] constructor(): R|OuterClass.NestedClass| {
                     super<<implicit>>()
                 }
 
-                public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
+                public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
                 }
 
-                public? final? [ResolvedTo(RAW_FIR)] val st: <implicit> = String()
-                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] get(): <implicit>
+                public final [ResolvedTo(STATUS)] val st: <implicit> = String()
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] get(): <implicit>
 
             }
 
-            public? abstract [ResolvedTo(RAW_FIR)] class AnotherNestedClass : NestedClass {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherNestedClass] constructor(): R|OuterClass.AnotherNestedClass| {
-                    super<NestedClass>()
+            public abstract [ResolvedTo(STATUS)] class AnotherNestedClass : R|OuterClass.NestedClass| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherNestedClass] constructor(): R|OuterClass.AnotherNestedClass| {
+                    super<R|OuterClass.NestedClass|>()
                 }
 
-                public? open? override [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit| {
+                public open override [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit| {
                 }
 
-                public? open? override [ResolvedTo(RAW_FIR)] val isBoo: <implicit> = Boolean(false)
-                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherNestedClass] get(): <implicit>
+                public open override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val isBoo: R|kotlin/Boolean| = Boolean(false)
+                    public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=AnotherNestedClass] get(): R|kotlin/Boolean|
 
             }
 
@@ -958,16 +958,16 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] interface Foo1 : R|kotlin/Any| {
-            public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
+        public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
+            public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
-            public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit|
+            public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
 
-            public? final? [ResolvedTo(RAW_FIR)] val str: String
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo1] get(): String
+            public abstract [ResolvedTo(STATUS)] val str: R|kotlin/String|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
 
             public? final? [ResolvedTo(RAW_FIR)] class ClassFromInterface : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassFromInterface] constructor(): R|Foo1.ClassFromInterface| {
@@ -978,13 +978,13 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] interface Foo2 : Foo1 {
-            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit|
+        public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
+            public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
 
-            public? final? [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit|
+            public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
 
-            public? final? [ResolvedTo(RAW_FIR)] val isBoo: Boolean
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo2] get(): Boolean
+            public abstract [ResolvedTo(STATUS)] val isBoo: R|kotlin/Boolean|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Foo2] get(): R|kotlin/Boolean|
 
         }
 
@@ -998,8 +998,8 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
 
         }
 
-        public? abstract [ResolvedTo(RAW_FIR)] class OuterClass : Foo1 {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
+        public abstract [ResolvedTo(STATUS)] class OuterClass : R|Foo1| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
                 super<<implicit>>()
             }
 
@@ -1013,29 +1013,29 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
 
             }
 
-            public? abstract [ResolvedTo(RAW_FIR)] class NestedClass : Foo2 {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|OuterClass.NestedClass| {
+            public abstract [ResolvedTo(STATUS)] class NestedClass : R|Foo2| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] constructor(): R|OuterClass.NestedClass| {
                     super<<implicit>>()
                 }
 
-                public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
+                public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
                 }
 
-                public? final? [ResolvedTo(RAW_FIR)] val st: <implicit> = String()
-                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] get(): <implicit>
+                public final [ResolvedTo(STATUS)] val st: <implicit> = String()
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] get(): <implicit>
 
             }
 
-            public? abstract [ResolvedTo(RAW_FIR)] class AnotherNestedClass : NestedClass {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherNestedClass] constructor(): R|OuterClass.AnotherNestedClass| {
-                    super<NestedClass>()
+            public abstract [ResolvedTo(STATUS)] class AnotherNestedClass : R|OuterClass.NestedClass| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherNestedClass] constructor(): R|OuterClass.AnotherNestedClass| {
+                    super<R|OuterClass.NestedClass|>()
                 }
 
-                public? open? override [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit| {
+                public open override [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit| {
                 }
 
-                public? open? override [ResolvedTo(RAW_FIR)] val isBoo: <implicit> = Boolean(false)
-                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherNestedClass] get(): <implicit>
+                public open override [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] val isBoo: R|kotlin/Boolean| = Boolean(false)
+                    public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=AnotherNestedClass] get(): R|kotlin/Boolean|
 
             }
 
@@ -1045,16 +1045,16 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] interface Foo1 : R|kotlin/Any| {
-            public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
+        public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
+            public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
-            public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit|
+            public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
 
-            public? final? [ResolvedTo(RAW_FIR)] val str: String
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo1] get(): String
+            public abstract [ResolvedTo(STATUS)] val str: R|kotlin/String|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
 
             public? final? [ResolvedTo(RAW_FIR)] class ClassFromInterface : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassFromInterface] constructor(): R|Foo1.ClassFromInterface| {
@@ -1065,13 +1065,13 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] interface Foo2 : Foo1 {
-            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit|
+        public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
+            public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
 
-            public? final? [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit|
+            public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
 
-            public? final? [ResolvedTo(RAW_FIR)] val isBoo: Boolean
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo2] get(): Boolean
+            public abstract [ResolvedTo(STATUS)] val isBoo: R|kotlin/Boolean|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Foo2] get(): R|kotlin/Boolean|
 
         }
 
@@ -1085,8 +1085,8 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
 
         }
 
-        public? abstract [ResolvedTo(RAW_FIR)] class OuterClass : Foo1 {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
+        public abstract [ResolvedTo(STATUS)] class OuterClass : R|Foo1| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
                 super<<implicit>>()
             }
 
@@ -1100,29 +1100,29 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass4Script.kts
 
             }
 
-            public? abstract [ResolvedTo(RAW_FIR)] class NestedClass : Foo2 {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|OuterClass.NestedClass| {
+            public abstract [ResolvedTo(STATUS)] class NestedClass : R|Foo2| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] constructor(): R|OuterClass.NestedClass| {
                     super<<implicit>>()
                 }
 
-                public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
+                public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
                 }
 
-                public? final? [ResolvedTo(RAW_FIR)] val st: <implicit> = String()
-                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] get(): <implicit>
+                public final [ResolvedTo(STATUS)] val st: <implicit> = String()
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] get(): <implicit>
 
             }
 
-            public? abstract [ResolvedTo(RAW_FIR)] class AnotherNestedClass : NestedClass {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherNestedClass] constructor(): R|OuterClass.AnotherNestedClass| {
-                    super<NestedClass>()
+            public abstract [ResolvedTo(STATUS)] class AnotherNestedClass : R|OuterClass.NestedClass| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherNestedClass] constructor(): R|OuterClass.AnotherNestedClass| {
+                    super<R|OuterClass.NestedClass|>()
                 }
 
-                public? open? override [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit| {
+                public open override [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit| {
                 }
 
-                public? open? override [ResolvedTo(RAW_FIR)] val isBoo: <implicit> = Boolean(false)
-                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherNestedClass] get(): <implicit>
+                public open override [ResolvedTo(BODY_RESOLVE)] val isBoo: R|kotlin/Boolean| = Boolean(false)
+                    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AnotherNestedClass] get(): R|kotlin/Boolean|
 
             }
 

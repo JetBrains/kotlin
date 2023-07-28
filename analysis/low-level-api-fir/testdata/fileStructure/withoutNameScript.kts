@@ -1,27 +1,27 @@
-/* NonReanalyzableNonClassDeclarationStructureElement */fun (a: Int = 1): String = "str"
+/* NonReanalyzableNonClassDeclarationStructureElement */fun (a: Int = 1): String = "str"/* ReanalyzableFunctionStructureElement */
 
-fun () {
+fun () {/* ReanalyzableFunctionStructureElement */
 
 }
 
-val : Int = 4
+val : Int = 4/* NonReanalyzableNonClassDeclarationStructureElement */
 
-var : Int
+var : Int/* ReanalyzablePropertyStructureElement */
     get() = 4
     set(value) {
 
     }
 
-class A {
-    fun (a: Int = 1): String = "str"
+class A {/* NonReanalyzableClassDeclarationStructureElement */
+    fun (a: Int = 1): String = "str"/* ReanalyzableFunctionStructureElement */
 
-    fun () {
+    fun () {/* ReanalyzableFunctionStructureElement */
 
     }
 
-    val : Int = 4
+    val : Int = 4/* NonReanalyzableNonClassDeclarationStructureElement */
 
-    var : Boolean
+    var : Boolean/* ReanalyzablePropertyStructureElement */
         get() = true
         set(value) {
 

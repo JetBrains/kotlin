@@ -3,19 +3,19 @@ FIR element: FirTypeAliasImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-public? final [ResolvedTo(RAW_FIR)] typealias Str = String
+public final [ResolvedTo(BODY_RESOLVE)] typealias Str = R|kotlin/String|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] memberTypeAliasScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] class Y : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Y] constructor(): R|Y| {
+        public final [ResolvedTo(STATUS)] class Y : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Y] constructor(): R|Y| {
                 super<R|kotlin/Any|>()
             }
 
-            public? final [ResolvedTo(RAW_FIR)] typealias Str = String
+            public final [ResolvedTo(BODY_RESOLVE)] typealias Str = R|kotlin/String|
 
         }

@@ -3,20 +3,20 @@ FIR element: FirConstExpressionImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-IntegerLiteral(0)
+Int(0)
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] arrayIndexExpressionWithIncScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun main([ResolvedTo(RAW_FIR)] args: Array<String>): R|kotlin/Unit| {
-            [ResolvedTo(RAW_FIR)] lval a: <implicit> = ArrayList#<String>()
-            a#.add#(String())
-            [ResolvedTo(RAW_FIR)] lval <array>: <implicit> = a#
-            [ResolvedTo(RAW_FIR)] lval <index_0>: <implicit> = IntegerLiteral(0)
-            [ResolvedTo(RAW_FIR)] lval <unary>: <implicit> = R|<local>/<array>|.get#(R|<local>/<index_0>|)
-            R|<local>/<array>|.set#(R|<local>/<index_0>|, R|<local>/<unary>|.inc#())
+        public final [ResolvedTo(BODY_RESOLVE)] fun main([ResolvedTo(BODY_RESOLVE)] args: R|kotlin/Array<kotlin/String>|): R|kotlin/Unit| {
+            [ResolvedTo(BODY_RESOLVE)] lval a: R|java/util/ArrayList<kotlin/String>| = R|java/util/ArrayList.ArrayList|<R|kotlin/String|>()
+            R|<local>/a|.R|SubstitutionOverride<java/util/ArrayList.add: R|kotlin/Boolean|>|(String())
+            [ResolvedTo(BODY_RESOLVE)] lval <array>: R|java/util/ArrayList<kotlin/String>| = R|<local>/a|
+            [ResolvedTo(BODY_RESOLVE)] lval <index_0>: R|kotlin/Int| = Int(0)
+            [ResolvedTo(BODY_RESOLVE)] lval <unary>: R|kotlin/String| = R|<local>/<array>|.R|SubstitutionOverride<java/util/ArrayList.get: R|@EnhancedNullability kotlin/String|>|(R|<local>/<index_0>|)
+            R|<local>/<array>|.R|SubstitutionOverride<java/util/ArrayList.set: R|@EnhancedNullability kotlin/String|>|(R|<local>/<index_0>|, R|<local>/<unary>|.<Unresolved name: inc>#())
             R|<local>/<unary>|
         }

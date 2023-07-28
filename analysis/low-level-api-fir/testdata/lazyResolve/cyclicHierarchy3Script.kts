@@ -1,4 +1,3 @@
-// IGNORE_FIR
 interface B : A, ResolveMe {}
 interface C1 : B {}
 interface C2 : C1 {}

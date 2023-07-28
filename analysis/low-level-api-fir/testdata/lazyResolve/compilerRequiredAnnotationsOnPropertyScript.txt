@@ -1,7 +1,7 @@
 RAW_FIR:
-FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
+FILE: [ResolvedTo(RAW_FIR)] compilerRequiredAnnotationsOnPropertyScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -26,7 +26,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -51,7 +51,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -64,11 +64,11 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
 
         }
 
-        @Deprecated[Unresolved](String(property)) @Anno[Unresolved](String(property)) public? final? [ResolvedTo(RAW_FIR)] var memberProperty: <implicit> = IntegerLiteral(32)
-            @Deprecated[Unresolved](String(getter)) @Anno[Unresolved](String(getter)) public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+        @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(property)) @Anno[Unresolved](String(property)) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] var memberProperty: <implicit> = IntegerLiteral(32)
+            @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(getter)) @Anno[Unresolved](String(getter)) public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): <implicit> {
                 ^ field#
             }
-            @PROPERTY_SETTER:Deprecated[Unresolved](String(setter)) @Anno[Unresolved](String(setter)) @SETTER_PARAMETER:Deprecated[Unresolved](String(setparam)) @SETTER_PARAMETER:Anno[Unresolved](String(setparam)) public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit| {
+            @PROPERTY_SETTER:R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(setter)) @Anno[Unresolved](String(setter)) @SETTER_PARAMETER:R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(setparam)) @SETTER_PARAMETER:Anno[Unresolved](String(setparam)) public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] set([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] value: <implicit>): R|kotlin/Unit| {
                 field# = value#
             }
 
@@ -76,7 +76,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -89,11 +89,11 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
 
         }
 
-        @Deprecated[Unresolved](String(property)) @Anno[Unresolved](String(property)) public? final? [ResolvedTo(RAW_FIR)] var memberProperty: <implicit> = IntegerLiteral(32)
-            @Deprecated[Unresolved](String(getter)) @Anno[Unresolved](String(getter)) public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+        @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(property)) @Anno[Unresolved](String(property)) public? final? [ResolvedTo(COMPANION_GENERATION)] var memberProperty: <implicit> = IntegerLiteral(32)
+            @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(getter)) @Anno[Unresolved](String(getter)) public? [ResolvedTo(COMPANION_GENERATION)] get(): <implicit> {
                 ^ field#
             }
-            @PROPERTY_SETTER:Deprecated[Unresolved](String(setter)) @Anno[Unresolved](String(setter)) @SETTER_PARAMETER:Deprecated[Unresolved](String(setparam)) @SETTER_PARAMETER:Anno[Unresolved](String(setparam)) public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit| {
+            @PROPERTY_SETTER:R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(setter)) @Anno[Unresolved](String(setter)) @SETTER_PARAMETER:R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(setparam)) @SETTER_PARAMETER:Anno[Unresolved](String(setparam)) public? [ResolvedTo(COMPANION_GENERATION)] set([ResolvedTo(COMPANION_GENERATION)] value: <implicit>): R|kotlin/Unit| {
                 field# = value#
             }
 
@@ -101,7 +101,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -114,11 +114,11 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
 
         }
 
-        @Deprecated[Unresolved](String(property)) @Anno[Unresolved](String(property)) public? final? [ResolvedTo(RAW_FIR)] var memberProperty: <implicit> = IntegerLiteral(32)
-            @Deprecated[Unresolved](String(getter)) @Anno[Unresolved](String(getter)) public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+        @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(property)) @Anno[Unresolved](String(property)) public? final? [ResolvedTo(SUPER_TYPES)] var memberProperty: <implicit> = IntegerLiteral(32)
+            @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(getter)) @Anno[Unresolved](String(getter)) public? [ResolvedTo(SUPER_TYPES)] get(): <implicit> {
                 ^ field#
             }
-            @PROPERTY_SETTER:Deprecated[Unresolved](String(setter)) @Anno[Unresolved](String(setter)) @SETTER_PARAMETER:Deprecated[Unresolved](String(setparam)) @SETTER_PARAMETER:Anno[Unresolved](String(setparam)) public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit| {
+            @PROPERTY_SETTER:R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(setter)) @Anno[Unresolved](String(setter)) @SETTER_PARAMETER:R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(setparam)) @SETTER_PARAMETER:Anno[Unresolved](String(setparam)) public? [ResolvedTo(SUPER_TYPES)] set([ResolvedTo(SUPER_TYPES)] value: <implicit>): R|kotlin/Unit| {
                 field# = value#
             }
 
@@ -126,7 +126,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -139,11 +139,11 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
 
         }
 
-        @Deprecated[Unresolved](String(property)) @Anno[Unresolved](String(property)) public? final? [ResolvedTo(RAW_FIR)] var memberProperty: <implicit> = IntegerLiteral(32)
-            @Deprecated[Unresolved](String(getter)) @Anno[Unresolved](String(getter)) public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+        @R|kotlin/Deprecated|[Types](String(property)) @R|Anno|[Types](String(property)) public? final? [ResolvedTo(TYPES)] var memberProperty: <implicit> = IntegerLiteral(32)
+            @R|kotlin/Deprecated|[Types](String(getter)) @R|Anno|[Types](String(getter)) public? [ResolvedTo(TYPES)] get(): <implicit> {
                 ^ field#
             }
-            @PROPERTY_SETTER:Deprecated[Unresolved](String(setter)) @Anno[Unresolved](String(setter)) @SETTER_PARAMETER:Deprecated[Unresolved](String(setparam)) @SETTER_PARAMETER:Anno[Unresolved](String(setparam)) public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit| {
+            @PROPERTY_SETTER:R|kotlin/Deprecated|[Types](String(setter)) @R|Anno|[Types](String(setter)) @SETTER_PARAMETER:R|kotlin/Deprecated|[Types](String(setparam)) @SETTER_PARAMETER:R|Anno|[Types](String(setparam)) public? [ResolvedTo(TYPES)] set([ResolvedTo(TYPES)] value: <implicit>): R|kotlin/Unit| {
                 field# = value#
             }
 
@@ -151,7 +151,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -164,11 +164,11 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
 
         }
 
-        @Deprecated[Unresolved](String(property)) @Anno[Unresolved](String(property)) public? final? [ResolvedTo(RAW_FIR)] var memberProperty: <implicit> = IntegerLiteral(32)
-            @Deprecated[Unresolved](String(getter)) @Anno[Unresolved](String(getter)) public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+        @R|kotlin/Deprecated|[Types](String(property)) @R|Anno|[Types](String(property)) public final [ResolvedTo(STATUS)] var memberProperty: <implicit> = IntegerLiteral(32)
+            @R|kotlin/Deprecated|[Types](String(getter)) @R|Anno|[Types](String(getter)) public [ResolvedTo(STATUS)] get(): <implicit> {
                 ^ field#
             }
-            @PROPERTY_SETTER:Deprecated[Unresolved](String(setter)) @Anno[Unresolved](String(setter)) @SETTER_PARAMETER:Deprecated[Unresolved](String(setparam)) @SETTER_PARAMETER:Anno[Unresolved](String(setparam)) public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit| {
+            @PROPERTY_SETTER:R|kotlin/Deprecated|[Types](String(setter)) @R|Anno|[Types](String(setter)) @SETTER_PARAMETER:R|kotlin/Deprecated|[Types](String(setparam)) @SETTER_PARAMETER:R|Anno|[Types](String(setparam)) public [ResolvedTo(STATUS)] set([ResolvedTo(STATUS)] value: <implicit>): R|kotlin/Unit| {
                 field# = value#
             }
 
@@ -176,7 +176,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -189,11 +189,11 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
 
         }
 
-        @Deprecated[Unresolved](String(property)) @Anno[Unresolved](String(property)) public? final? [ResolvedTo(RAW_FIR)] var memberProperty: <implicit> = IntegerLiteral(32)
-            @Deprecated[Unresolved](String(getter)) @Anno[Unresolved](String(getter)) public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+        @R|kotlin/Deprecated|[Types](String(property)) @R|Anno|[Types](String(property)) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] var memberProperty: <implicit> = IntegerLiteral(32)
+            @R|kotlin/Deprecated|[Types](String(getter)) @R|Anno|[Types](String(getter)) public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): <implicit> {
                 ^ field#
             }
-            @PROPERTY_SETTER:Deprecated[Unresolved](String(setter)) @Anno[Unresolved](String(setter)) @SETTER_PARAMETER:Deprecated[Unresolved](String(setparam)) @SETTER_PARAMETER:Anno[Unresolved](String(setparam)) public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit| {
+            @PROPERTY_SETTER:R|kotlin/Deprecated|[Types](String(setter)) @R|Anno|[Types](String(setter)) @SETTER_PARAMETER:R|kotlin/Deprecated|[Types](String(setparam)) @SETTER_PARAMETER:R|Anno|[Types](String(setparam)) public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] set([ResolvedTo(EXPECT_ACTUAL_MATCHING)] value: <implicit>): R|kotlin/Unit| {
                 field# = value#
             }
 
@@ -201,7 +201,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -214,11 +214,11 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
 
         }
 
-        @Deprecated[Unresolved](String(property)) @Anno[Unresolved](String(property)) public? final? [ResolvedTo(RAW_FIR)] var memberProperty: <implicit> = IntegerLiteral(32)
-            @Deprecated[Unresolved](String(getter)) @Anno[Unresolved](String(getter)) public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+        @R|kotlin/Deprecated|[Types](String(property)) @R|Anno|[Types](String(property)) public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] var memberProperty: <implicit> = IntegerLiteral(32)
+            @R|kotlin/Deprecated|[Types](String(getter)) @R|Anno|[Types](String(getter)) public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] get(): <implicit> {
                 ^ field#
             }
-            @PROPERTY_SETTER:Deprecated[Unresolved](String(setter)) @Anno[Unresolved](String(setter)) @SETTER_PARAMETER:Deprecated[Unresolved](String(setparam)) @SETTER_PARAMETER:Anno[Unresolved](String(setparam)) public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit| {
+            @PROPERTY_SETTER:R|kotlin/Deprecated|[Types](String(setter)) @R|Anno|[Types](String(setter)) @SETTER_PARAMETER:R|kotlin/Deprecated|[Types](String(setparam)) @SETTER_PARAMETER:R|Anno|[Types](String(setparam)) public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] set([ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] value: <implicit>): R|kotlin/Unit| {
                 field# = value#
             }
 
@@ -226,7 +226,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -239,11 +239,11 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
 
         }
 
-        @Deprecated[Unresolved](String(property)) @Anno[Unresolved](String(property)) public? final? [ResolvedTo(RAW_FIR)] var memberProperty: <implicit> = IntegerLiteral(32)
-            @Deprecated[Unresolved](String(getter)) @Anno[Unresolved](String(getter)) public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+        @R|kotlin/Deprecated|[Types](String(property)) @R|Anno|[Types](String(property)) public final [ResolvedTo(CONTRACTS)] var memberProperty: <implicit> = IntegerLiteral(32)
+            @R|kotlin/Deprecated|[Types](String(getter)) @R|Anno|[Types](String(getter)) public [ResolvedTo(CONTRACTS)] get(): <implicit> {
                 ^ field#
             }
-            @PROPERTY_SETTER:Deprecated[Unresolved](String(setter)) @Anno[Unresolved](String(setter)) @SETTER_PARAMETER:Deprecated[Unresolved](String(setparam)) @SETTER_PARAMETER:Anno[Unresolved](String(setparam)) public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit| {
+            @PROPERTY_SETTER:R|kotlin/Deprecated|[Types](String(setter)) @R|Anno|[Types](String(setter)) @SETTER_PARAMETER:R|kotlin/Deprecated|[Types](String(setparam)) @SETTER_PARAMETER:R|Anno|[Types](String(setparam)) public [ResolvedTo(CONTRACTS)] set([ResolvedTo(CONTRACTS)] value: <implicit>): R|kotlin/Unit| {
                 field# = value#
             }
 
@@ -251,24 +251,24 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
+        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
                 super<R|kotlin/Any|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
         }
 
-        @Deprecated[Unresolved](String(property)) @Anno[Unresolved](String(property)) public? final? [ResolvedTo(RAW_FIR)] var memberProperty: <implicit> = IntegerLiteral(32)
-            @Deprecated[Unresolved](String(getter)) @Anno[Unresolved](String(getter)) public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+        @R|kotlin/Deprecated|[Types](message = String(property)) @R|Anno|[Types](s = String(property)) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var memberProperty: R|kotlin/Int| = Int(32)
+            @R|kotlin/Deprecated|[Types](String(getter)) @R|Anno|[Types](String(getter)) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int| {
                 ^ field#
             }
-            @PROPERTY_SETTER:Deprecated[Unresolved](String(setter)) @Anno[Unresolved](String(setter)) @SETTER_PARAMETER:Deprecated[Unresolved](String(setparam)) @SETTER_PARAMETER:Anno[Unresolved](String(setparam)) public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit| {
+            @PROPERTY_SETTER:R|kotlin/Deprecated|[Types](String(setter)) @R|Anno|[Types](String(setter)) @SETTER_PARAMETER:R|kotlin/Deprecated|[Types](String(setparam)) @SETTER_PARAMETER:R|Anno|[Types](String(setparam)) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit| {
                 field# = value#
             }
 
@@ -276,24 +276,24 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
+        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
                 super<R|kotlin/Any|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
         }
 
-        @Deprecated[Unresolved](String(property)) @Anno[Unresolved](String(property)) public? final? [ResolvedTo(RAW_FIR)] var memberProperty: <implicit> = IntegerLiteral(32)
-            @Deprecated[Unresolved](String(getter)) @Anno[Unresolved](String(getter)) public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+        @R|kotlin/Deprecated|[Types](message = String(property)) @R|Anno|[Types](s = String(property)) public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] var memberProperty: R|kotlin/Int| = Int(32)
+            @R|kotlin/Deprecated|[Types](message = String(getter)) @R|Anno|[Types](s = String(getter)) public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] get(): R|kotlin/Int| {
                 ^ field#
             }
-            @PROPERTY_SETTER:Deprecated[Unresolved](String(setter)) @Anno[Unresolved](String(setter)) @SETTER_PARAMETER:Deprecated[Unresolved](String(setparam)) @SETTER_PARAMETER:Anno[Unresolved](String(setparam)) public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit| {
+            @PROPERTY_SETTER:R|kotlin/Deprecated|[Types](message = String(setter)) @R|Anno|[Types](s = String(setter)) @SETTER_PARAMETER:R|kotlin/Deprecated|[Types](message = String(setparam)) @SETTER_PARAMETER:R|Anno|[Types](s = String(setparam)) public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] set([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] value: R|kotlin/Int|): R|kotlin/Unit| {
                 field# = value#
             }
 
@@ -301,25 +301,25 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
+        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
                 super<R|kotlin/Any|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
         }
 
-        @Deprecated[Unresolved](String(property)) @Anno[Unresolved](String(property)) public? final? [ResolvedTo(RAW_FIR)] var memberProperty: <implicit> = IntegerLiteral(32)
-            @Deprecated[Unresolved](String(getter)) @Anno[Unresolved](String(getter)) public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ field#
+        @R|kotlin/Deprecated|[Types](message = String(property)) @R|Anno|[Types](s = String(property)) public final [ResolvedTo(BODY_RESOLVE)] [IsReferredViaField=true] var memberProperty: R|kotlin/Int| = Int(32)
+            @R|kotlin/Deprecated|[Types](message = String(getter)) @R|Anno|[Types](s = String(getter)) public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
+                ^ F|/memberProperty|
             }
-            @PROPERTY_SETTER:Deprecated[Unresolved](String(setter)) @Anno[Unresolved](String(setter)) @SETTER_PARAMETER:Deprecated[Unresolved](String(setparam)) @SETTER_PARAMETER:Anno[Unresolved](String(setparam)) public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit| {
-                field# = value#
+            @PROPERTY_SETTER:R|kotlin/Deprecated|[Types](message = String(setter)) @R|Anno|[Types](s = String(setter)) @SETTER_PARAMETER:R|kotlin/Deprecated|[Types](message = String(setparam)) @SETTER_PARAMETER:R|Anno|[Types](s = String(setparam)) public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit| {
+                F|/memberProperty| = R|<local>/value|
             }
 
 

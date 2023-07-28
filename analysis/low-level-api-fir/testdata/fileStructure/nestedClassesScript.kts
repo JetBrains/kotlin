@@ -1,16 +1,16 @@
-/* NonReanalyzableNonClassDeclarationStructureElement */class A {
-    class B {
-        fun x() {
+/* NonReanalyzableNonClassDeclarationStructureElement */class A {/* NonReanalyzableClassDeclarationStructureElement */
+    class B {/* NonReanalyzableClassDeclarationStructureElement */
+        fun x() {/* ReanalyzableFunctionStructureElement */
         }
 
-        class C {
+        class C {/* NonReanalyzableClassDeclarationStructureElement */
 
         }
     }
 
-    class E {
+    class E {/* NonReanalyzableClassDeclarationStructureElement */
 
     }
 
-    fun y(): Int = 10
+    fun y(): Int = 10/* ReanalyzableFunctionStructureElement */
 }

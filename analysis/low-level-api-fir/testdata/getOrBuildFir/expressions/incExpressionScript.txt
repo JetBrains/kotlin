@@ -1,17 +1,22 @@
 KT element: KtPostfixExpression
-FIR element: FirIncrementDecrementExpressionImpl
-FIR source kind: KtRealSourceElementKind
+FIR element: FirVariableAssignmentImpl
+FIR source kind: DesugaredIncrementOrDecrement
 
 FIR element rendered:
-nextUnnamedLibraryIndex#++
+R|<local>/nextUnnamedLibraryIndex| = R|<local>/<unary>|.R|kotlin/Int.inc|()
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] incExpressionScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun main([ResolvedTo(RAW_FIR)] args: Array<String>): R|kotlin/Unit| {
-            [ResolvedTo(RAW_FIR)] lvar nextUnnamedLibraryIndex: <implicit> = IntegerLiteral(1)
-            [ResolvedTo(RAW_FIR)] lval originalName: <implicit> = <strcat>(nextUnnamedLibraryIndex#++)
+        public final [ResolvedTo(BODY_RESOLVE)] fun main([ResolvedTo(BODY_RESOLVE)] args: R|kotlin/Array<kotlin/String>|): R|kotlin/Unit| {
+            [ResolvedTo(BODY_RESOLVE)] lvar nextUnnamedLibraryIndex: R|kotlin/Int| = Int(1)
+            [ResolvedTo(BODY_RESOLVE)] lval originalName: R|kotlin/String| = <strcat>( {
+                [ResolvedTo(BODY_RESOLVE)] lval <unary>: R|kotlin/Int| = R|<local>/nextUnnamedLibraryIndex|
+                R|<local>/nextUnnamedLibraryIndex| = R|<local>/<unary>|.R|kotlin/Int.inc|()
+                R|<local>/<unary>|
+            }
+            )
         }

@@ -1,4 +1,3 @@
-// IGNORE_FIR
 interface Foo1 : Foo2 {
     fun foo()
     val s<caret>tr: String

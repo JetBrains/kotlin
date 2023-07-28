@@ -1,4 +1,3 @@
-// IGNORE_FIR
 interface Resolve<caret>Me : A, E {}
 interface C : ResolveMe {}
 interface D : ResolveMe {}

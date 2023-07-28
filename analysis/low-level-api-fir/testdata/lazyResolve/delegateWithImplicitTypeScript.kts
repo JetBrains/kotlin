@@ -1,4 +1,3 @@
-// IGNORE_FIR
 // MEMBER_NAME_FILTER: implicitType
 
 class Aa<caret>a(i: Interface) : Interface by i

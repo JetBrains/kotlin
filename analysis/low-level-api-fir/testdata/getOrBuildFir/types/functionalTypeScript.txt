@@ -1,17 +1,17 @@
 KT element: KtTypeReference
-FIR element: FirFunctionTypeRefImpl
+FIR element: FirResolvedTypeRefImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-( (Int) -> String )
+R|(kotlin/Int) -> kotlin/String|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] functionalTypeScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun x(): ( (Int) -> String ) {
+        public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun x(): R|(kotlin/Int) -> kotlin/String| {
             ^x [ResolvedTo(RAW_FIR)] fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
                 String()
             }

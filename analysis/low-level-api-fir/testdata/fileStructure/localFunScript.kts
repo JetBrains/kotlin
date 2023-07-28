@@ -1,11 +1,11 @@
-/* NonReanalyzableNonClassDeclarationStructureElement */fun x() {
+/* NonReanalyzableNonClassDeclarationStructureElement */fun x() {/* ReanalyzableFunctionStructureElement */
     fun y() {
 
     }
 }
 
-class A {
-    fun z() {
+class A {/* NonReanalyzableClassDeclarationStructureElement */
+    fun z() {/* ReanalyzableFunctionStructureElement */
         fun q() {
 
         }

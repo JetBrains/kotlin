@@ -3,8 +3,8 @@ FIR element: FirWhileLoopImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-while(R|<local>/<iterator>|.hasNext#()) {
-    [ResolvedTo(RAW_FIR)] lval x: <implicit> = R|<local>/<iterator>|.next#()
+while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/IntIterator.hasNext: R|kotlin/Boolean|>|()) {
+    [ResolvedTo(BODY_RESOLVE)] lval x: R|kotlin/Int| = R|<local>/<iterator>|.R|kotlin/collections/IntIterator.next|()
      {
     }
 
@@ -13,14 +13,14 @@ while(R|<local>/<iterator>|.hasNext#()) {
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] forExpressionScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
+        public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
              {
-                [ResolvedTo(RAW_FIR)] lval <iterator>: <implicit> = IntegerLiteral(0).rangeTo#(IntegerLiteral(1)).iterator#()
-                while(R|<local>/<iterator>|.hasNext#()) {
-                    [ResolvedTo(RAW_FIR)] lval x: <implicit> = R|<local>/<iterator>|.next#()
+                [ResolvedTo(BODY_RESOLVE)] lval <iterator>: R|kotlin/collections/IntIterator| = Int(0).R|kotlin/Int.rangeTo|(Int(1)).R|kotlin/ranges/IntProgression.iterator|()
+                while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/IntIterator.hasNext: R|kotlin/Boolean|>|()) {
+                    [ResolvedTo(BODY_RESOLVE)] lval x: R|kotlin/Int| = R|<local>/<iterator>|.R|kotlin/collections/IntIterator.next|()
                      {
                     }
 

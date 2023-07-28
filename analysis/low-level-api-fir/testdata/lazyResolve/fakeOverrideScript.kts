@@ -1,4 +1,3 @@
-// IGNORE_FIR
 fun ex<caret>pression(expression: IrConst<*>) {
     when (val kind = expression.kind) {
         is Kind.Null -> kind.valueOf(expression)

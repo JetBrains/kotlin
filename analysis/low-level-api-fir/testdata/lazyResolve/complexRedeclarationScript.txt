@@ -1,7 +1,7 @@
 RAW_FIR:
-FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
+FILE: [ResolvedTo(RAW_FIR)] complexRedeclarationScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? sealed [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
@@ -133,7 +133,7 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? sealed [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
@@ -265,7 +265,7 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? sealed [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
@@ -368,7 +368,7 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
             }
 
             public? final? [ResolvedTo(RAW_FIR)] class I : P {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=I] constructor(): R|B.I| {
+                public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=I] constructor(): R|B.I| {
                     super<P>()
                 }
 
@@ -397,7 +397,7 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? sealed [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
@@ -500,7 +500,7 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
             }
 
             public? final? [ResolvedTo(RAW_FIR)] class I : P {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=I] constructor(): R|B.I| {
+                public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=I] constructor(): R|B.I| {
                     super<P>()
                 }
 
@@ -529,17 +529,17 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? sealed [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? sealed [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
             protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] class B : A {
+        public? final? [ResolvedTo(SUPER_TYPES)] class B : R|A| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
                 super<A>()
             }
@@ -559,7 +559,7 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 
         }
 
-        public? sealed [ResolvedTo(RAW_FIR)] class P : R|kotlin/Any| {
+        public? sealed [ResolvedTo(SUPER_TYPES)] class P : R|kotlin/Any| {
             protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=P] constructor(): R|P| {
                 super<R|kotlin/Any|>()
             }
@@ -626,13 +626,13 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] object B : R|kotlin/Any| {
+        public? final? [ResolvedTo(SUPER_TYPES)] object B : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
                 super<R|kotlin/Any|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] class I : P {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=I] constructor(): R|B.I| {
+            public? final? [ResolvedTo(SUPER_TYPES)] class I : R|P| {
+                public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=I] constructor(): R|B.I| {
                     super<P>()
                 }
 
@@ -661,17 +661,17 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? sealed [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? sealed [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
             protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] class B : A {
+        public? final? [ResolvedTo(SUPER_TYPES)] class B : R|A| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
                 super<A>()
             }
@@ -691,7 +691,7 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 
         }
 
-        public? sealed [ResolvedTo(RAW_FIR)] class P : R|kotlin/Any| {
+        public? sealed [ResolvedTo(SUPER_TYPES)] class P : R|kotlin/Any| {
             protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=P] constructor(): R|P| {
                 super<R|kotlin/Any|>()
             }
@@ -758,14 +758,14 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] object B : R|kotlin/Any| {
+        public? final? [ResolvedTo(TYPES)] object B : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
                 super<R|kotlin/Any|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] class I : P {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=I] constructor(): R|B.I| {
-                    super<P>()
+            public? final? [ResolvedTo(TYPES)] class I : R|P| {
+                public? [ResolvedTo(TYPES)] [ContainingClassKey=I] constructor(): R|B.I| {
+                    super<R|P|>()
                 }
 
             }
@@ -793,17 +793,17 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? sealed [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? sealed [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
             protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] class B : A {
+        public? final? [ResolvedTo(SUPER_TYPES)] class B : R|A| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
                 super<A>()
             }
@@ -823,8 +823,8 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 
         }
 
-        public? sealed [ResolvedTo(RAW_FIR)] class P : R|kotlin/Any| {
-            protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=P] constructor(): R|P| {
+        public sealed [ResolvedTo(STATUS)] class P : R|kotlin/Any| {
+            protected [ResolvedTo(STATUS)] [ContainingClassKey=P] constructor(): R|P| {
                 super<R|kotlin/Any|>()
             }
 
@@ -863,23 +863,23 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] val p: P = object : P {
+            public final [ResolvedTo(STATUS)] val p: R|P| = object : P {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
                     super<P>()
                 }
 
             }
 
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P] get(): P
+                public [ResolvedTo(STATUS)] [ContainingClassKey=P] get(): R|P|
 
-            public? final? [ResolvedTo(RAW_FIR)] val r: <implicit> = object : P {
+            public final [ResolvedTo(STATUS)] val r: <implicit> = object : P {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
                     super<P>()
                 }
 
             }
 
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P] get(): <implicit>
+                public [ResolvedTo(STATUS)] [ContainingClassKey=P] get(): <implicit>
 
         }
 
@@ -890,14 +890,14 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] object B : R|kotlin/Any| {
-            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
+        public final [ResolvedTo(STATUS)] object B : R|kotlin/Any| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
                 super<R|kotlin/Any|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] class I : P {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=I] constructor(): R|B.I| {
-                    super<P>()
+            public final [ResolvedTo(STATUS)] class I : R|P| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=I] constructor(): R|B.I| {
+                    super<R|P|>()
                 }
 
             }
@@ -925,17 +925,17 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? sealed [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? sealed [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
             protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] class B : A {
+        public? final? [ResolvedTo(SUPER_TYPES)] class B : R|A| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
                 super<A>()
             }
@@ -955,8 +955,8 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 
         }
 
-        public? sealed [ResolvedTo(RAW_FIR)] class P : R|kotlin/Any| {
-            protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=P] constructor(): R|P| {
+        public sealed [ResolvedTo(STATUS)] class P : R|kotlin/Any| {
+            protected [ResolvedTo(STATUS)] [ContainingClassKey=P] constructor(): R|P| {
                 super<R|kotlin/Any|>()
             }
 
@@ -995,23 +995,23 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] val p: P = object : P {
+            public final [ResolvedTo(STATUS)] val p: R|P| = object : P {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
                     super<P>()
                 }
 
             }
 
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P] get(): P
+                public [ResolvedTo(STATUS)] [ContainingClassKey=P] get(): R|P|
 
-            public? final? [ResolvedTo(RAW_FIR)] val r: <implicit> = object : P {
+            public final [ResolvedTo(STATUS)] val r: <implicit> = object : P {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
                     super<P>()
                 }
 
             }
 
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P] get(): <implicit>
+                public [ResolvedTo(STATUS)] [ContainingClassKey=P] get(): <implicit>
 
         }
 
@@ -1022,14 +1022,14 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] object B : R|kotlin/Any| {
-            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
+        public final [ResolvedTo(STATUS)] object B : R|kotlin/Any| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
                 super<R|kotlin/Any|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] class I : P {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=I] constructor(): R|B.I| {
-                    super<P>()
+            public final [ResolvedTo(STATUS)] class I : R|P| {
+                public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=I] constructor(): R|B.I| {
+                    super<R|P|>()
                 }
 
             }
@@ -1057,19 +1057,19 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? sealed [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
-            protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+        public sealed [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+            protected [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] class B : A {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
-                super<A>()
+        public final [ResolvedTo(STATUS)] class B : R|A| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
+                super<R|A|>()
             }
 
         }
@@ -1087,8 +1087,8 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 
         }
 
-        public? sealed [ResolvedTo(RAW_FIR)] class P : R|kotlin/Any| {
-            protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=P] constructor(): R|P| {
+        public sealed [ResolvedTo(STATUS)] class P : R|kotlin/Any| {
+            protected [ResolvedTo(STATUS)] [ContainingClassKey=P] constructor(): R|P| {
                 super<R|kotlin/Any|>()
             }
 
@@ -1127,23 +1127,23 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] val p: P = object : P {
+            public final [ResolvedTo(STATUS)] val p: R|P| = object : P {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
                     super<P>()
                 }
 
             }
 
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P] get(): P
+                public [ResolvedTo(STATUS)] [ContainingClassKey=P] get(): R|P|
 
-            public? final? [ResolvedTo(RAW_FIR)] val r: <implicit> = object : P {
+            public final [ResolvedTo(STATUS)] val r: <implicit> = object : P {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
                     super<P>()
                 }
 
             }
 
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P] get(): <implicit>
+                public [ResolvedTo(STATUS)] [ContainingClassKey=P] get(): <implicit>
 
         }
 
@@ -1154,14 +1154,14 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] object B : R|kotlin/Any| {
-            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
+        public final [ResolvedTo(STATUS)] object B : R|kotlin/Any| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
                 super<R|kotlin/Any|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] class I : P {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=I] constructor(): R|B.I| {
-                    super<P>()
+            public final [ResolvedTo(STATUS)] class I : R|P| {
+                public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] [ContainingClassKey=I] constructor(): R|B.I| {
+                    super<R|P|>()
                 }
 
             }
@@ -1189,19 +1189,19 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? sealed [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
-            protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+        public sealed [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+            protected [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] class B : A {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
-                super<A>()
+        public final [ResolvedTo(STATUS)] class B : R|A| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
+                super<R|A|>()
             }
 
         }
@@ -1219,8 +1219,8 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 
         }
 
-        public? sealed [ResolvedTo(RAW_FIR)] class P : R|kotlin/Any| {
-            protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=P] constructor(): R|P| {
+        public sealed [ResolvedTo(STATUS)] class P : R|kotlin/Any| {
+            protected [ResolvedTo(STATUS)] [ContainingClassKey=P] constructor(): R|P| {
                 super<R|kotlin/Any|>()
             }
 
@@ -1259,23 +1259,23 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] val p: P = object : P {
+            public final [ResolvedTo(STATUS)] val p: R|P| = object : P {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
                     super<P>()
                 }
 
             }
 
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P] get(): P
+                public [ResolvedTo(STATUS)] [ContainingClassKey=P] get(): R|P|
 
-            public? final? [ResolvedTo(RAW_FIR)] val r: <implicit> = object : P {
+            public final [ResolvedTo(STATUS)] val r: <implicit> = object : P {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
                     super<P>()
                 }
 
             }
 
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P] get(): <implicit>
+                public [ResolvedTo(STATUS)] [ContainingClassKey=P] get(): <implicit>
 
         }
 
@@ -1286,14 +1286,14 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] object B : R|kotlin/Any| {
-            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
+        public final [ResolvedTo(STATUS)] object B : R|kotlin/Any| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
                 super<R|kotlin/Any|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] class I : P {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=I] constructor(): R|B.I| {
-                    super<P>()
+            public final [ResolvedTo(STATUS)] class I : R|P| {
+                public [ResolvedTo(CONTRACTS)] [ContainingClassKey=I] constructor(): R|B.I| {
+                    super<R|P|>()
                 }
 
             }
@@ -1321,19 +1321,19 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? sealed [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
-            protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+        public sealed [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+            protected [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] class B : A {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
-                super<A>()
+        public final [ResolvedTo(STATUS)] class B : R|A| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
+                super<R|A|>()
             }
 
         }
@@ -1351,8 +1351,8 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 
         }
 
-        public? sealed [ResolvedTo(RAW_FIR)] class P : R|kotlin/Any| {
-            protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=P] constructor(): R|P| {
+        public sealed [ResolvedTo(STATUS)] class P : R|kotlin/Any| {
+            protected [ResolvedTo(STATUS)] [ContainingClassKey=P] constructor(): R|P| {
                 super<R|kotlin/Any|>()
             }
 
@@ -1391,23 +1391,23 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] val p: P = object : P {
+            public final [ResolvedTo(STATUS)] val p: R|P| = object : P {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
                     super<P>()
                 }
 
             }
 
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P] get(): P
+                public [ResolvedTo(STATUS)] [ContainingClassKey=P] get(): R|P|
 
-            public? final? [ResolvedTo(RAW_FIR)] val r: <implicit> = object : P {
+            public final [ResolvedTo(STATUS)] val r: <implicit> = object : P {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
                     super<P>()
                 }
 
             }
 
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P] get(): <implicit>
+                public [ResolvedTo(STATUS)] [ContainingClassKey=P] get(): <implicit>
 
         }
 
@@ -1418,14 +1418,14 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] object B : R|kotlin/Any| {
-            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
+        public final [ResolvedTo(STATUS)] object B : R|kotlin/Any| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
                 super<R|kotlin/Any|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] class I : P {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=I] constructor(): R|B.I| {
-                    super<P>()
+            public final [ResolvedTo(STATUS)] class I : R|P| {
+                public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=I] constructor(): R|B.I| {
+                    super<R|P|>()
                 }
 
             }
@@ -1453,19 +1453,19 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? sealed [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
-            protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+        public sealed [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+            protected [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] class B : A {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
-                super<A>()
+        public final [ResolvedTo(STATUS)] class B : R|A| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
+                super<R|A|>()
             }
 
         }
@@ -1483,8 +1483,8 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 
         }
 
-        public? sealed [ResolvedTo(RAW_FIR)] class P : R|kotlin/Any| {
-            protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=P] constructor(): R|P| {
+        public sealed [ResolvedTo(STATUS)] class P : R|kotlin/Any| {
+            protected [ResolvedTo(STATUS)] [ContainingClassKey=P] constructor(): R|P| {
                 super<R|kotlin/Any|>()
             }
 
@@ -1523,23 +1523,23 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] val p: P = object : P {
+            public final [ResolvedTo(STATUS)] val p: R|P| = object : P {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
                     super<P>()
                 }
 
             }
 
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P] get(): P
+                public [ResolvedTo(STATUS)] [ContainingClassKey=P] get(): R|P|
 
-            public? final? [ResolvedTo(RAW_FIR)] val r: <implicit> = object : P {
+            public final [ResolvedTo(STATUS)] val r: <implicit> = object : P {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
                     super<P>()
                 }
 
             }
 
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P] get(): <implicit>
+                public [ResolvedTo(STATUS)] [ContainingClassKey=P] get(): <implicit>
 
         }
 
@@ -1550,14 +1550,14 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] object B : R|kotlin/Any| {
-            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
+        public final [ResolvedTo(STATUS)] object B : R|kotlin/Any| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
                 super<R|kotlin/Any|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] class I : P {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=I] constructor(): R|B.I| {
-                    super<P>()
+            public final [ResolvedTo(STATUS)] class I : R|P| {
+                public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=I] constructor(): R|B.I| {
+                    super<R|P|>()
                 }
 
             }
@@ -1585,19 +1585,19 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? sealed [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
-            protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+        public sealed [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+            protected [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] class B : A {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
-                super<A>()
+        public final [ResolvedTo(STATUS)] class B : R|A| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
+                super<R|A|>()
             }
 
         }
@@ -1615,8 +1615,8 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 
         }
 
-        public? sealed [ResolvedTo(RAW_FIR)] class P : R|kotlin/Any| {
-            protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=P] constructor(): R|P| {
+        public sealed [ResolvedTo(STATUS)] class P : R|kotlin/Any| {
+            protected [ResolvedTo(STATUS)] [ContainingClassKey=P] constructor(): R|P| {
                 super<R|kotlin/Any|>()
             }
 
@@ -1655,23 +1655,23 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] val p: P = object : P {
+            public final [ResolvedTo(STATUS)] val p: R|P| = object : P {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
                     super<P>()
                 }
 
             }
 
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P] get(): P
+                public [ResolvedTo(STATUS)] [ContainingClassKey=P] get(): R|P|
 
-            public? final? [ResolvedTo(RAW_FIR)] val r: <implicit> = object : P {
+            public final [ResolvedTo(STATUS)] val r: <implicit> = object : P {
                 private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
                     super<P>()
                 }
 
             }
 
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P] get(): <implicit>
+                public [ResolvedTo(STATUS)] [ContainingClassKey=P] get(): <implicit>
 
         }
 
@@ -1682,14 +1682,14 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] object B : R|kotlin/Any| {
-            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
+        public final [ResolvedTo(STATUS)] object B : R|kotlin/Any| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
                 super<R|kotlin/Any|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] class I : P {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=I] constructor(): R|B.I| {
-                    super<P>()
+            public final [ResolvedTo(STATUS)] class I : R|P| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=I] constructor(): R|B.I| {
+                    super<R|P|>()
                 }
 
             }

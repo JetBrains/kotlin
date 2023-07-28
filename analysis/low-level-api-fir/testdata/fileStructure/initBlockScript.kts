@@ -1,5 +1,5 @@
-/* NonReanalyzableNonClassDeclarationStructureElement */class A {
-    init {
+/* NonReanalyzableNonClassDeclarationStructureElement */class A {/* NonReanalyzableClassDeclarationStructureElement */
+    init {/* NonReanalyzableNonClassDeclarationStructureElement */
         val x = 10
         class B
     }

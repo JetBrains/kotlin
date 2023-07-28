@@ -1,7 +1,7 @@
 RAW_FIR:
-FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
+FILE: [ResolvedTo(RAW_FIR)] functionWithGenericExpectedTypeInsideScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
@@ -30,7 +30,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
@@ -59,7 +59,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
@@ -80,7 +80,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
             ^bar Bar#()
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| {
             [ResolvedTo(RAW_FIR)] lval x: Foo<String> = bar#()
         }
 
@@ -88,7 +88,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
@@ -109,7 +109,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
             ^bar Bar#()
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        public? final? [ResolvedTo(COMPANION_GENERATION)] fun resolveMe(): R|kotlin/Unit| {
             [ResolvedTo(RAW_FIR)] lval x: Foo<String> = bar#()
         }
 
@@ -117,7 +117,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
@@ -138,7 +138,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
             ^bar Bar#()
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        public? final? [ResolvedTo(SUPER_TYPES)] fun resolveMe(): R|kotlin/Unit| {
             [ResolvedTo(RAW_FIR)] lval x: Foo<String> = bar#()
         }
 
@@ -146,7 +146,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
@@ -167,7 +167,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
             ^bar Bar#()
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        public? final? [ResolvedTo(TYPES)] fun resolveMe(): R|kotlin/Unit| {
             [ResolvedTo(RAW_FIR)] lval x: Foo<String> = bar#()
         }
 
@@ -175,7 +175,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
@@ -196,7 +196,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
             ^bar Bar#()
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| {
             [ResolvedTo(RAW_FIR)] lval x: Foo<String> = bar#()
         }
 
@@ -204,7 +204,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
@@ -225,7 +225,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
             ^bar Bar#()
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| {
             [ResolvedTo(RAW_FIR)] lval x: Foo<String> = bar#()
         }
 
@@ -233,7 +233,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
@@ -254,7 +254,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
             ^bar Bar#()
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| {
             [ResolvedTo(RAW_FIR)] lval x: Foo<String> = bar#()
         }
 
@@ -262,7 +262,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
@@ -283,7 +283,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
             ^bar Bar#()
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        public final [ResolvedTo(CONTRACTS)] fun resolveMe(): R|kotlin/Unit| {
             [ResolvedTo(RAW_FIR)] lval x: Foo<String> = bar#()
         }
 
@@ -291,7 +291,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
@@ -312,7 +312,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
             ^bar Bar#()
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
             [ResolvedTo(RAW_FIR)] lval x: Foo<String> = bar#()
         }
 
@@ -320,7 +320,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
@@ -341,7 +341,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
             ^bar Bar#()
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun resolveMe(): R|kotlin/Unit| {
             [ResolvedTo(RAW_FIR)] lval x: Foo<String> = bar#()
         }
 
@@ -349,7 +349,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
@@ -370,8 +370,8 @@ FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
             ^bar Bar#()
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            [ResolvedTo(RAW_FIR)] lval x: Foo<String> = bar#()
+        public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
+            [ResolvedTo(BODY_RESOLVE)] lval x: R|Foo<kotlin/String>| = <Unresolved name: bar>#()
         }
 
 

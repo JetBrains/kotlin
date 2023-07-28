@@ -1,17 +1,17 @@
 KT element: KtNameReferenceExpression
-FIR element: FirPropertyAccessExpressionImpl
+FIR element: FirResolvedNamedReferenceImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-AnnotationRetention#.SOURCE#
+R|kotlin/annotation/AnnotationRetention.SOURCE|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] retentionValueScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Retention[Unresolved](AnnotationRetention#.SOURCE#) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Retention|[Types](value = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.SOURCE|) public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor(): R|Anno| {
                 super<R|kotlin/Any|>()
             }

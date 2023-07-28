@@ -1,0 +1,346 @@
+RAW_FIR:
+TARGET: public open [ResolvedTo(STATUS)] [DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0, FakeOverrideSubstitutionKey=FakeOverrideSubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /Interface.implicitType)] fun implicitType(): <implicit>
+
+FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(RAW_FIR)]
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|Interface|): R|Aaa| {
+                super<<implicit>>()
+            }
+
+            private final [ResolvedTo(STATUS)] field $$delegate_0: R|Interface| = i#
+
+        }
+
+        public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
+            public open [ResolvedTo(STATUS)] fun implicitType(): <implicit> {
+                ^implicitType IntegerLiteral(42)
+            }
+
+        }
+
+
+IMPORTS:
+TARGET: public open [ResolvedTo(STATUS)] [DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0, FakeOverrideSubstitutionKey=FakeOverrideSubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /Interface.implicitType)] fun implicitType(): <implicit>
+
+FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(RAW_FIR)]
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|Interface|): R|Aaa| {
+                super<<implicit>>()
+            }
+
+            private final [ResolvedTo(STATUS)] field $$delegate_0: R|Interface| = i#
+
+        }
+
+        public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
+            public open [ResolvedTo(STATUS)] fun implicitType(): <implicit> {
+                ^implicitType IntegerLiteral(42)
+            }
+
+        }
+
+
+COMPILER_REQUIRED_ANNOTATIONS:
+TARGET: public open [ResolvedTo(STATUS)] [DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0, FakeOverrideSubstitutionKey=FakeOverrideSubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /Interface.implicitType)] fun implicitType(): <implicit>
+
+FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(RAW_FIR)]
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|Interface|): R|Aaa| {
+                super<<implicit>>()
+            }
+
+            private final [ResolvedTo(STATUS)] field $$delegate_0: R|Interface| = i#
+
+        }
+
+        public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
+            public open [ResolvedTo(STATUS)] fun implicitType(): <implicit> {
+                ^implicitType IntegerLiteral(42)
+            }
+
+        }
+
+
+COMPANION_GENERATION:
+TARGET: public open [ResolvedTo(STATUS)] [DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0, FakeOverrideSubstitutionKey=FakeOverrideSubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /Interface.implicitType)] fun implicitType(): <implicit>
+
+FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(RAW_FIR)]
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|Interface|): R|Aaa| {
+                super<<implicit>>()
+            }
+
+            private final [ResolvedTo(STATUS)] field $$delegate_0: R|Interface| = i#
+
+        }
+
+        public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
+            public open [ResolvedTo(STATUS)] fun implicitType(): <implicit> {
+                ^implicitType IntegerLiteral(42)
+            }
+
+        }
+
+
+SUPER_TYPES:
+TARGET: public open [ResolvedTo(STATUS)] [DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0, FakeOverrideSubstitutionKey=FakeOverrideSubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /Interface.implicitType)] fun implicitType(): <implicit>
+
+FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(RAW_FIR)]
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|Interface|): R|Aaa| {
+                super<<implicit>>()
+            }
+
+            private final [ResolvedTo(STATUS)] field $$delegate_0: R|Interface| = i#
+
+        }
+
+        public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
+            public open [ResolvedTo(STATUS)] fun implicitType(): <implicit> {
+                ^implicitType IntegerLiteral(42)
+            }
+
+        }
+
+
+TYPES:
+TARGET: public open [ResolvedTo(STATUS)] [DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0, FakeOverrideSubstitutionKey=FakeOverrideSubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /Interface.implicitType)] fun implicitType(): <implicit>
+
+FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(RAW_FIR)]
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|Interface|): R|Aaa| {
+                super<<implicit>>()
+            }
+
+            private final [ResolvedTo(STATUS)] field $$delegate_0: R|Interface| = i#
+
+        }
+
+        public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
+            public open [ResolvedTo(STATUS)] fun implicitType(): <implicit> {
+                ^implicitType IntegerLiteral(42)
+            }
+
+        }
+
+
+STATUS:
+TARGET: public open [ResolvedTo(STATUS)] [DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0, FakeOverrideSubstitutionKey=FakeOverrideSubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /Interface.implicitType)] fun implicitType(): <implicit>
+
+FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(RAW_FIR)]
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|Interface|): R|Aaa| {
+                super<<implicit>>()
+            }
+
+            private final [ResolvedTo(STATUS)] field $$delegate_0: R|Interface| = i#
+
+        }
+
+        public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
+            public open [ResolvedTo(STATUS)] fun implicitType(): <implicit> {
+                ^implicitType IntegerLiteral(42)
+            }
+
+        }
+
+
+EXPECT_ACTUAL_MATCHING:
+TARGET: public open [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0, FakeOverrideSubstitutionKey=FakeOverrideSubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /Interface.implicitType)] fun implicitType(): <implicit>
+
+FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(RAW_FIR)]
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|Interface|): R|Aaa| {
+                super<<implicit>>()
+            }
+
+            private final [ResolvedTo(STATUS)] field $$delegate_0: R|Interface| = i#
+
+        }
+
+        public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
+            public open [ResolvedTo(STATUS)] fun implicitType(): <implicit> {
+                ^implicitType IntegerLiteral(42)
+            }
+
+        }
+
+
+ARGUMENTS_OF_ANNOTATIONS:
+TARGET: public open [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] [DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0, FakeOverrideSubstitutionKey=FakeOverrideSubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /Interface.implicitType)] fun implicitType(): <implicit>
+
+FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(RAW_FIR)]
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|Interface|): R|Aaa| {
+                super<<implicit>>()
+            }
+
+            private final [ResolvedTo(STATUS)] field $$delegate_0: R|Interface| = i#
+
+        }
+
+        public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
+            public open [ResolvedTo(STATUS)] fun implicitType(): <implicit> {
+                ^implicitType IntegerLiteral(42)
+            }
+
+        }
+
+
+CONTRACTS:
+TARGET: public open [ResolvedTo(CONTRACTS)] [DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0, FakeOverrideSubstitutionKey=FakeOverrideSubstitution(substitutor=Empty, baseSymbol=FirNamedFunctionSymbol /Interface.implicitType)] fun implicitType(): <implicit>
+
+FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(RAW_FIR)]
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|Interface|): R|Aaa| {
+                super<<implicit>>()
+            }
+
+            private final [ResolvedTo(STATUS)] field $$delegate_0: R|Interface| = i#
+
+        }
+
+        public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
+            public open [ResolvedTo(STATUS)] fun implicitType(): <implicit> {
+                ^implicitType IntegerLiteral(42)
+            }
+
+        }
+
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+TARGET: public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0] fun implicitType(): R|kotlin/Int|
+
+FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(RAW_FIR)]
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|Interface|): R|Aaa| {
+                super<<implicit>>()
+            }
+
+            private final [ResolvedTo(STATUS)] field $$delegate_0: R|Interface| = i#
+
+        }
+
+        public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
+            public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun implicitType(): R|kotlin/Int| {
+                ^implicitType Int(42)
+            }
+
+        }
+
+
+ANNOTATIONS_ARGUMENTS_MAPPING:
+TARGET: public open [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0] fun implicitType(): R|kotlin/Int|
+
+FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(RAW_FIR)]
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|Interface|): R|Aaa| {
+                super<<implicit>>()
+            }
+
+            private final [ResolvedTo(STATUS)] field $$delegate_0: R|Interface| = i#
+
+        }
+
+        public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
+            public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun implicitType(): R|kotlin/Int| {
+                ^implicitType Int(42)
+            }
+
+        }
+
+
+BODY_RESOLVE:
+TARGET: public open [ResolvedTo(BODY_RESOLVE)] [DelegatedWrapperDataKey=[wrapped=FirNamedFunctionSymbol /Interface.implicitType, containingClass=Aaa, delegateField=FirFieldSymbol /Aaa.$$delegate_0] fun implicitType(): R|kotlin/Int|
+
+FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(RAW_FIR)]
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|Interface|): R|Aaa| {
+                super<<implicit>>()
+            }
+
+            private final [ResolvedTo(STATUS)] field $$delegate_0: R|Interface| = i#
+
+        }
+
+        public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
+            public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun implicitType(): R|kotlin/Int| {
+                ^implicitType Int(42)
+            }
+
+        }
+
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)]
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? [ResolvedTo(RAW_FIR)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : Interface {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Aaa] constructor([ResolvedTo(RAW_FIR)] i: Interface): R|Aaa| {
+                super<<implicit>>()
+            }
+
+            private final [ResolvedTo(RAW_FIR)] field $$delegate_0: Interface = i#
+
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] interface Interface : R|kotlin/Any| {
+            public? final? [ResolvedTo(RAW_FIR)] fun implicitType(): <implicit> {
+                ^implicitType IntegerLiteral(42)
+            }
+
+        }

@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FileStruct
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FirElementsRecorder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.declarationCanBeLazilyResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceNonLocalFirDeclaration
-import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
@@ -263,8 +262,7 @@ internal fun PsiElement.getNonLocalContainingOrThisDeclaration(predicate: (KtDec
                 !notNullCandidate.isPartOf(parent) ||
                 parent is KtClassInitializer ||
                 parent is KtObjectLiteralExpression ||
-                parent is KtCallElement ||
-                parent is KtScript
+                parent is KtCallElement
             ) {
                 // Candidate turned out to be local. Let's find another one.
                 candidate = null

@@ -1,11 +1,11 @@
-/* NonReanalyzableNonClassDeclarationStructureElement */var x: Int = 10
+/* NonReanalyzableNonClassDeclarationStructureElement */var x: Int = 10/* ReanalyzablePropertyStructureElement */
     get() = field
     set(value) {
         field = value
     }
 
-class X {
-    var y: Int = 10
+class X {/* NonReanalyzableClassDeclarationStructureElement */
+    var y: Int = 10/* ReanalyzablePropertyStructureElement */
         get() = field
         set(value) {
             field = value

@@ -1,1 +1,7 @@
-IN-BLOCK MODIFICATION IS NOT APPLICABLE FOR THIS PLACE
+BEFORE MODIFICATION:
+public final [ResolvedTo(BODY_RESOLVE)] fun x(): R|kotlin/Unit| {
+    [ResolvedTo(BODY_RESOLVE)] lval a: <ERROR TYPE REF: Unresolved name: doSmth> = <Unresolved name: doSmth>#(String(str))
+}
+
+AFTER MODIFICATION:
+public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun x(): R|kotlin/Unit| { LAZY_BLOCK }

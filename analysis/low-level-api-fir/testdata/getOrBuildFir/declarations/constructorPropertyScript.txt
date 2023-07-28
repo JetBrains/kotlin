@@ -3,20 +3,20 @@ FIR element: FirValueParameterImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-[ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Abc.i] i: Int = IntegerLiteral(4)
+[ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Abc.i] i: R|kotlin/Int| = Int(4)
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] constructorPropertyScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] class Abc : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Abc] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Abc.i] i: Int = IntegerLiteral(4)): R|Abc| {
+        public final [ResolvedTo(STATUS)] class Abc : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Abc] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Abc.i] i: R|kotlin/Int| = Int(4)): R|Abc| {
                 super<R|kotlin/Any|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Abc] get(): Int
+            public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Abc] get(): R|kotlin/Int|
 
         }

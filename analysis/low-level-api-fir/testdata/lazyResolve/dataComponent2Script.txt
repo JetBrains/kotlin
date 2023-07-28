@@ -1,7 +1,7 @@
 RAW_FIR:
-FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
+FILE: [ResolvedTo(RAW_FIR)] dataComponent2Script.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? data [ResolvedTo(RAW_FIR)] class DataClass : R|kotlin/Any| {
@@ -27,7 +27,7 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? data [ResolvedTo(RAW_FIR)] class DataClass : R|kotlin/Any| {
@@ -53,7 +53,7 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? data [ResolvedTo(RAW_FIR)] class DataClass : R|kotlin/Any| {
@@ -69,7 +69,7 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
 
             public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
 
-            public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Boolean
+            public? final operator [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun component2(): Boolean
 
             public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(RAW_FIR)] b: Boolean = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
 
@@ -79,7 +79,7 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? data [ResolvedTo(RAW_FIR)] class DataClass : R|kotlin/Any| {
@@ -95,7 +95,7 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
 
             public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
 
-            public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Boolean
+            public? final operator [ResolvedTo(COMPANION_GENERATION)] fun component2(): Boolean
 
             public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(RAW_FIR)] b: Boolean = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
 
@@ -105,10 +105,10 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? data [ResolvedTo(RAW_FIR)] class DataClass : R|kotlin/Any| {
+        public? final? data [ResolvedTo(SUPER_TYPES)] class DataClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/DataClass.i] i: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/DataClass.b] b: Boolean): R|one/DataClass| {
                 super<R|kotlin/Any|>()
             }
@@ -121,7 +121,7 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
 
             public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
 
-            public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Boolean
+            public? final operator [ResolvedTo(SUPER_TYPES)] fun component2(): Boolean
 
             public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(RAW_FIR)] b: Boolean = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
 
@@ -131,10 +131,10 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? data [ResolvedTo(RAW_FIR)] class DataClass : R|kotlin/Any| {
+        public? final? data [ResolvedTo(TYPES)] class DataClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/DataClass.i] i: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/DataClass.b] b: Boolean): R|one/DataClass| {
                 super<R|kotlin/Any|>()
             }
@@ -147,7 +147,7 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
 
             public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
 
-            public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Boolean
+            public? final operator [ResolvedTo(TYPES)] fun component2(): R|kotlin/Boolean|
 
             public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(RAW_FIR)] b: Boolean = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
 
@@ -157,25 +157,25 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? data [ResolvedTo(RAW_FIR)] class DataClass : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/DataClass.i] i: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/DataClass.b] b: Boolean): R|one/DataClass| {
+        public final data [ResolvedTo(STATUS)] class DataClass : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/DataClass.i] i: R|kotlin/Int|, [ResolvedTo(STATUS)] [CorrespondingProperty=one/DataClass.b] b: R|kotlin/Boolean|): R|one/DataClass| {
                 super<R|kotlin/Any|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] get(): Int
+            public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] get(): R|kotlin/Int|
 
-            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=one/DataClass.component2, IsFromPrimaryConstructor=true] val b: Boolean = R|<local>/b|
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] get(): Boolean
+            public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=one/DataClass.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Boolean| = R|<local>/b|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] get(): R|kotlin/Boolean|
 
-            public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+            public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Int|
 
-            public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Boolean
+            public final operator [ResolvedTo(STATUS)] fun component2(): R|kotlin/Boolean|
 
-            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(RAW_FIR)] b: Boolean = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
+            public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] i: R|kotlin/Int| = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(STATUS)] b: R|kotlin/Boolean| = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
 
         }
 
@@ -183,25 +183,25 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? data [ResolvedTo(RAW_FIR)] class DataClass : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/DataClass.i] i: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/DataClass.b] b: Boolean): R|one/DataClass| {
+        public final data [ResolvedTo(STATUS)] class DataClass : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/DataClass.i] i: R|kotlin/Int|, [ResolvedTo(STATUS)] [CorrespondingProperty=one/DataClass.b] b: R|kotlin/Boolean|): R|one/DataClass| {
                 super<R|kotlin/Any|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] get(): Int
+            public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] get(): R|kotlin/Int|
 
-            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=one/DataClass.component2, IsFromPrimaryConstructor=true] val b: Boolean = R|<local>/b|
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] get(): Boolean
+            public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=one/DataClass.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Boolean| = R|<local>/b|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] get(): R|kotlin/Boolean|
 
-            public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+            public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Int|
 
-            public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Boolean
+            public final operator [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun component2(): R|kotlin/Boolean|
 
-            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(RAW_FIR)] b: Boolean = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
+            public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] i: R|kotlin/Int| = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(STATUS)] b: R|kotlin/Boolean| = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
 
         }
 
@@ -209,25 +209,25 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? data [ResolvedTo(RAW_FIR)] class DataClass : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/DataClass.i] i: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/DataClass.b] b: Boolean): R|one/DataClass| {
+        public final data [ResolvedTo(STATUS)] class DataClass : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/DataClass.i] i: R|kotlin/Int|, [ResolvedTo(STATUS)] [CorrespondingProperty=one/DataClass.b] b: R|kotlin/Boolean|): R|one/DataClass| {
                 super<R|kotlin/Any|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] get(): Int
+            public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] get(): R|kotlin/Int|
 
-            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=one/DataClass.component2, IsFromPrimaryConstructor=true] val b: Boolean = R|<local>/b|
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] get(): Boolean
+            public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=one/DataClass.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Boolean| = R|<local>/b|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] get(): R|kotlin/Boolean|
 
-            public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+            public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Int|
 
-            public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Boolean
+            public final operator [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun component2(): R|kotlin/Boolean|
 
-            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(RAW_FIR)] b: Boolean = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
+            public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] i: R|kotlin/Int| = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(STATUS)] b: R|kotlin/Boolean| = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
 
         }
 
@@ -235,25 +235,25 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? data [ResolvedTo(RAW_FIR)] class DataClass : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/DataClass.i] i: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/DataClass.b] b: Boolean): R|one/DataClass| {
+        public final data [ResolvedTo(STATUS)] class DataClass : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/DataClass.i] i: R|kotlin/Int|, [ResolvedTo(STATUS)] [CorrespondingProperty=one/DataClass.b] b: R|kotlin/Boolean|): R|one/DataClass| {
                 super<R|kotlin/Any|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] get(): Int
+            public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] get(): R|kotlin/Int|
 
-            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=one/DataClass.component2, IsFromPrimaryConstructor=true] val b: Boolean = R|<local>/b|
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] get(): Boolean
+            public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=one/DataClass.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Boolean| = R|<local>/b|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] get(): R|kotlin/Boolean|
 
-            public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+            public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Int|
 
-            public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Boolean
+            public final operator [ResolvedTo(CONTRACTS)] fun component2(): R|kotlin/Boolean|
 
-            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(RAW_FIR)] b: Boolean = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
+            public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] i: R|kotlin/Int| = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(STATUS)] b: R|kotlin/Boolean| = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
 
         }
 
@@ -261,25 +261,25 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? data [ResolvedTo(RAW_FIR)] class DataClass : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/DataClass.i] i: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/DataClass.b] b: Boolean): R|one/DataClass| {
+        public final data [ResolvedTo(STATUS)] class DataClass : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/DataClass.i] i: R|kotlin/Int|, [ResolvedTo(STATUS)] [CorrespondingProperty=one/DataClass.b] b: R|kotlin/Boolean|): R|one/DataClass| {
                 super<R|kotlin/Any|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] get(): Int
+            public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] get(): R|kotlin/Int|
 
-            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=one/DataClass.component2, IsFromPrimaryConstructor=true] val b: Boolean = R|<local>/b|
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] get(): Boolean
+            public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=one/DataClass.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Boolean| = R|<local>/b|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] get(): R|kotlin/Boolean|
 
-            public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+            public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Int|
 
-            public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Boolean
+            public final operator [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun component2(): R|kotlin/Boolean|
 
-            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(RAW_FIR)] b: Boolean = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
+            public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] i: R|kotlin/Int| = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(STATUS)] b: R|kotlin/Boolean| = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
 
         }
 
@@ -287,25 +287,25 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? data [ResolvedTo(RAW_FIR)] class DataClass : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/DataClass.i] i: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/DataClass.b] b: Boolean): R|one/DataClass| {
+        public final data [ResolvedTo(STATUS)] class DataClass : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/DataClass.i] i: R|kotlin/Int|, [ResolvedTo(STATUS)] [CorrespondingProperty=one/DataClass.b] b: R|kotlin/Boolean|): R|one/DataClass| {
                 super<R|kotlin/Any|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] get(): Int
+            public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] get(): R|kotlin/Int|
 
-            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=one/DataClass.component2, IsFromPrimaryConstructor=true] val b: Boolean = R|<local>/b|
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] get(): Boolean
+            public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=one/DataClass.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Boolean| = R|<local>/b|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] get(): R|kotlin/Boolean|
 
-            public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+            public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Int|
 
-            public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Boolean
+            public final operator [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun component2(): R|kotlin/Boolean|
 
-            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(RAW_FIR)] b: Boolean = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
+            public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] i: R|kotlin/Int| = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(STATUS)] b: R|kotlin/Boolean| = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
 
         }
 
@@ -313,25 +313,25 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? data [ResolvedTo(RAW_FIR)] class DataClass : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/DataClass.i] i: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/DataClass.b] b: Boolean): R|one/DataClass| {
+        public final data [ResolvedTo(STATUS)] class DataClass : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/DataClass.i] i: R|kotlin/Int|, [ResolvedTo(STATUS)] [CorrespondingProperty=one/DataClass.b] b: R|kotlin/Boolean|): R|one/DataClass| {
                 super<R|kotlin/Any|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] get(): Int
+            public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] get(): R|kotlin/Int|
 
-            public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=one/DataClass.component2, IsFromPrimaryConstructor=true] val b: Boolean = R|<local>/b|
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] get(): Boolean
+            public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=one/DataClass.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Boolean| = R|<local>/b|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] get(): R|kotlin/Boolean|
 
-            public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+            public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Int|
 
-            public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Boolean
+            public final operator [ResolvedTo(BODY_RESOLVE)] fun component2(): R|kotlin/Boolean|
 
-            public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(RAW_FIR)] b: Boolean = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
+            public final [ResolvedTo(STATUS)] fun copy([ResolvedTo(STATUS)] i: R|kotlin/Int| = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(STATUS)] b: R|kotlin/Boolean| = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
 
         }
 

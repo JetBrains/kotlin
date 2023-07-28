@@ -1,1 +1,9 @@
-IN-BLOCK MODIFICATION IS NOT APPLICABLE FOR THIS PLACE
+BEFORE MODIFICATION:
+public final [ResolvedTo(BODY_RESOLVE)] val x: <ERROR TYPE REF: Unresolved name: doSmth>
+    public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: doSmth> {
+        ^ <Unresolved name: doSmth>#(String(str))
+    }
+
+AFTER MODIFICATION:
+public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] val x: <ERROR TYPE REF: Unresolved name: doSmth>
+    public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] get(): <ERROR TYPE REF: Unresolved name: doSmth> { LAZY_BLOCK }

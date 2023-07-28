@@ -1,7 +1,7 @@
 RAW_FIR:
-FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitTypeScript.kts
+FILE: [ResolvedTo(RAW_FIR)] propertyGetterWithImplicitTypeScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] val prop: <implicit>
@@ -13,7 +13,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitTypeScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitTypeScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] val prop: <implicit>
@@ -25,11 +25,11 @@ FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitTypeScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitTypeScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] val prop: <implicit>
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+        public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val prop: <implicit>
+            public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): <implicit> {
                 ^ IntegerLiteral(42)
             }
 
@@ -37,11 +37,11 @@ FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitTypeScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitTypeScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] val prop: <implicit>
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+        public? final? [ResolvedTo(COMPANION_GENERATION)] val prop: <implicit>
+            public? [ResolvedTo(COMPANION_GENERATION)] get(): <implicit> {
                 ^ IntegerLiteral(42)
             }
 
@@ -49,11 +49,11 @@ FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitTypeScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitTypeScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] val prop: <implicit>
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+        public? final? [ResolvedTo(SUPER_TYPES)] val prop: <implicit>
+            public? [ResolvedTo(SUPER_TYPES)] get(): <implicit> {
                 ^ IntegerLiteral(42)
             }
 
@@ -61,11 +61,11 @@ FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitTypeScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitTypeScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] val prop: <implicit>
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+        public? final? [ResolvedTo(TYPES)] val prop: <implicit>
+            public? [ResolvedTo(TYPES)] get(): <implicit> {
                 ^ IntegerLiteral(42)
             }
 
@@ -73,11 +73,11 @@ FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitTypeScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitTypeScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] val prop: <implicit>
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+        public final [ResolvedTo(STATUS)] val prop: <implicit>
+            public [ResolvedTo(STATUS)] get(): <implicit> {
                 ^ IntegerLiteral(42)
             }
 
@@ -85,11 +85,11 @@ FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitTypeScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitTypeScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] val prop: <implicit>
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val prop: <implicit>
+            public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): <implicit> {
                 ^ IntegerLiteral(42)
             }
 
@@ -97,11 +97,11 @@ FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitTypeScript.kts
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitTypeScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] val prop: <implicit>
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+        public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] val prop: <implicit>
+            public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] get(): <implicit> {
                 ^ IntegerLiteral(42)
             }
 
@@ -109,11 +109,11 @@ FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitTypeScript.kts
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitTypeScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] val prop: <implicit>
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+        public final [ResolvedTo(CONTRACTS)] val prop: <implicit>
+            public [ResolvedTo(CONTRACTS)] get(): <implicit> {
                 ^ IntegerLiteral(42)
             }
 
@@ -121,36 +121,36 @@ FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitTypeScript.kts
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitTypeScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] val prop: <implicit>
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ IntegerLiteral(42)
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/Int|
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int| {
+                ^ Int(42)
             }
 
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitTypeScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] val prop: <implicit>
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ IntegerLiteral(42)
+        public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] val prop: R|kotlin/Int|
+            public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] get(): R|kotlin/Int| {
+                ^ Int(42)
             }
 
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitTypeScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] val prop: <implicit>
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ IntegerLiteral(42)
+        public final [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/Int|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
+                ^ Int(42)
             }
 
 

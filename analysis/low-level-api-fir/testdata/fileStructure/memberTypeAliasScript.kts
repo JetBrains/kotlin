@@ -1,3 +1,3 @@
-/* NonReanalyzableNonClassDeclarationStructureElement */class A {
-    typealias X = Int
+/* NonReanalyzableNonClassDeclarationStructureElement */class A {/* NonReanalyzableClassDeclarationStructureElement */
+    typealias X = Int/* NonReanalyzableNonClassDeclarationStructureElement */
 }

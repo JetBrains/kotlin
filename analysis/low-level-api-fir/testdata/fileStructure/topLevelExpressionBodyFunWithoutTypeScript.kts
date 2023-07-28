@@ -1,1 +1,1 @@
-/* NonReanalyzableNonClassDeclarationStructureElement */fun foo() = 42
+/* NonReanalyzableNonClassDeclarationStructureElement */fun foo() = 42/* NonReanalyzableNonClassDeclarationStructureElement */

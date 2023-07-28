@@ -1,14 +1,14 @@
-/* NonReanalyzableNonClassDeclarationStructureElement */fun foo() {
+/* NonReanalyzableNonClassDeclarationStructureElement */fun foo() {/* ReanalyzableFunctionStructureElement */
     var x: Int
 }
-class A {
-    fun q() {
+class A {/* NonReanalyzableClassDeclarationStructureElement */
+    fun q() {/* ReanalyzableFunctionStructureElement */
         val y = 42
     }
 }
-class B {
-    class C {
-        fun u() {
+class B {/* NonReanalyzableClassDeclarationStructureElement */
+    class C {/* NonReanalyzableClassDeclarationStructureElement */
+        fun u() {/* ReanalyzableFunctionStructureElement */
             var z: Int = 15
         }
     }

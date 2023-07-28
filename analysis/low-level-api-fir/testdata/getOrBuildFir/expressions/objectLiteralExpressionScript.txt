@@ -3,9 +3,9 @@ FIR element: FirAnonymousObjectExpressionImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-object : Any {
-    private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
-        super<<implicit>>()
+object : R|kotlin/Any| {
+    private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+        super<R|kotlin/Any|>()
     }
 
 }
@@ -13,14 +13,14 @@ object : Any {
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] objectLiteralExpressionScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] val x: <implicit> = object : Any {
-            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
-                super<<implicit>>()
+        public final [ResolvedTo(BODY_RESOLVE)] val x: R|kotlin/Any| = object : R|kotlin/Any| {
+            private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                super<R|kotlin/Any|>()
             }
 
         }
 
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Any|

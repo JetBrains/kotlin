@@ -3,17 +3,17 @@ FIR element: FirTypeProjectionWithVarianceImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-Int
+R|kotlin/Int|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] calllTypeArgumentsScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> y(): R|kotlin/Unit| {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun x(): R|kotlin/Unit| {
-            y#<Int>()
+        public final [ResolvedTo(BODY_RESOLVE)] fun x(): R|kotlin/Unit| {
+            <Unresolved name: y>#<R|kotlin/Int|>()
         }

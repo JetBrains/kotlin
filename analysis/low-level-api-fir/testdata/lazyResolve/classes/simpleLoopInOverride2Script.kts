@@ -1,4 +1,3 @@
-// IGNORE_FIR
 interface Fo<caret>o1 : Foo2 {
     fun foo()
 }

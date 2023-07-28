@@ -3,13 +3,13 @@ FIR element: FirConstExpressionImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-IntegerLiteral(1)
+Int(1)
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] intLiteralScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] val x: <implicit> = IntegerLiteral(1)
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+        public final [ResolvedTo(BODY_RESOLVE)] val x: R|kotlin/Int| = Int(1)
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|

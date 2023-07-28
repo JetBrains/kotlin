@@ -3,17 +3,17 @@ FIR element: FirConstExpressionImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-IntegerLiteral(1)
+Int(1)
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] callArgumentScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun y([ResolvedTo(RAW_FIR)] a: Int): R|kotlin/Unit| {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun x(): R|kotlin/Unit| {
-            y#(IntegerLiteral(1))
+        public final [ResolvedTo(BODY_RESOLVE)] fun x(): R|kotlin/Unit| {
+            <Unresolved name: y>#(Int(1))
         }

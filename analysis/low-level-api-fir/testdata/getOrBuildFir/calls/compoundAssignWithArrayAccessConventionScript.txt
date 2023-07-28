@@ -1,24 +1,29 @@
 KT element: KtBinaryExpression
-FIR element: FirAugmentedArraySetCallImpl
+FIR element: FirFunctionCallImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-ArraySet:[m#.get#(String(a)) += IntegerLiteral(1)]
+R|<local>/<array>|.R|SubstitutionOverride</MyMap.set: R|kotlin/Unit|>|(R|<local>/<index_0>|, R|<local>/<array>|.R|SubstitutionOverride</MyMap.get: R|kotlin/Int|>|(R|<local>/<index_0>|).R|kotlin/Int.plus|(Int(1)))
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] compoundAssignWithArrayAccessConventionScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] interface MyMap<[ResolvedTo(RAW_FIR)] K, [ResolvedTo(RAW_FIR)] V> : R|kotlin/Any| {
-            public? final? operator [ResolvedTo(RAW_FIR)] fun get([ResolvedTo(RAW_FIR)] k: K): V
+        public abstract [ResolvedTo(STATUS)] interface MyMap<[ResolvedTo(STATUS)] K, [ResolvedTo(STATUS)] V> : R|kotlin/Any| {
+            public abstract operator [ResolvedTo(CONTRACTS)] fun get([ResolvedTo(CONTRACTS)] k: R|K|): R|V|
 
-            public? final? operator [ResolvedTo(RAW_FIR)] fun set([ResolvedTo(RAW_FIR)] k: K, [ResolvedTo(RAW_FIR)] v: V): R|kotlin/Unit|
+            public abstract operator [ResolvedTo(CONTRACTS)] fun set([ResolvedTo(CONTRACTS)] k: R|K|, [ResolvedTo(CONTRACTS)] v: R|V|): R|kotlin/Unit|
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun test([ResolvedTo(RAW_FIR)] m: MyMap<String, Int>): R|kotlin/Unit| {
-            ArraySet:[m#.get#(String(a)) += IntegerLiteral(1)]
+        public final [ResolvedTo(BODY_RESOLVE)] fun test([ResolvedTo(BODY_RESOLVE)] m: R|MyMap<kotlin/String, kotlin/Int>|): R|kotlin/Unit| {
+             {
+                [ResolvedTo(BODY_RESOLVE)] lval <array>: R|MyMap<kotlin/String, kotlin/Int>| = R|<local>/m|
+                [ResolvedTo(BODY_RESOLVE)] lval <index_0>: R|kotlin/String| = String(a)
+                R|<local>/<array>|.R|SubstitutionOverride</MyMap.set: R|kotlin/Unit|>|(R|<local>/<index_0>|, R|<local>/<array>|.R|SubstitutionOverride</MyMap.get: R|kotlin/Int|>|(R|<local>/<index_0>|).R|kotlin/Int.plus|(Int(1)))
+            }
+
             Unit
         }

@@ -1,7 +1,7 @@
 RAW_FIR:
-FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
+FILE: [ResolvedTo(RAW_FIR)] compilerRequiredAnnotationsOnFunctionScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -21,7 +21,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -41,7 +41,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -54,14 +54,14 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
 
         }
 
-        @Deprecated[Unresolved](String(function)) @Anno[Unresolved](String(function)) public? final? [ResolvedTo(RAW_FIR)] fun fooo([ResolvedTo(RAW_FIR)] @Deprecated[Unresolved](String(a)) @Anno[Unresolved](String(a)) a: Int): R|kotlin/Unit| {
+        @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(function)) @Anno[Unresolved](String(function)) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun fooo([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(a)) @Anno[Unresolved](String(a)) a: Int): R|kotlin/Unit| {
         }
 
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -74,14 +74,14 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
 
         }
 
-        @Deprecated[Unresolved](String(function)) @Anno[Unresolved](String(function)) public? final? [ResolvedTo(RAW_FIR)] fun fooo([ResolvedTo(RAW_FIR)] @Deprecated[Unresolved](String(a)) @Anno[Unresolved](String(a)) a: Int): R|kotlin/Unit| {
+        @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(function)) @Anno[Unresolved](String(function)) public? final? [ResolvedTo(COMPANION_GENERATION)] fun fooo([ResolvedTo(COMPANION_GENERATION)] @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(a)) @Anno[Unresolved](String(a)) a: Int): R|kotlin/Unit| {
         }
 
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -94,14 +94,14 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
 
         }
 
-        @Deprecated[Unresolved](String(function)) @Anno[Unresolved](String(function)) public? final? [ResolvedTo(RAW_FIR)] fun fooo([ResolvedTo(RAW_FIR)] @Deprecated[Unresolved](String(a)) @Anno[Unresolved](String(a)) a: Int): R|kotlin/Unit| {
+        @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(function)) @Anno[Unresolved](String(function)) public? final? [ResolvedTo(SUPER_TYPES)] fun fooo([ResolvedTo(SUPER_TYPES)] @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(a)) @Anno[Unresolved](String(a)) a: Int): R|kotlin/Unit| {
         }
 
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -114,14 +114,14 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
 
         }
 
-        @Deprecated[Unresolved](String(function)) @Anno[Unresolved](String(function)) public? final? [ResolvedTo(RAW_FIR)] fun fooo([ResolvedTo(RAW_FIR)] @Deprecated[Unresolved](String(a)) @Anno[Unresolved](String(a)) a: Int): R|kotlin/Unit| {
+        @R|kotlin/Deprecated|[Types](String(function)) @R|Anno|[Types](String(function)) public? final? [ResolvedTo(TYPES)] fun fooo([ResolvedTo(TYPES)] @R|kotlin/Deprecated|[Types](String(a)) @R|Anno|[Types](String(a)) a: R|kotlin/Int|): R|kotlin/Unit| {
         }
 
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -134,14 +134,14 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
 
         }
 
-        @Deprecated[Unresolved](String(function)) @Anno[Unresolved](String(function)) public? final? [ResolvedTo(RAW_FIR)] fun fooo([ResolvedTo(RAW_FIR)] @Deprecated[Unresolved](String(a)) @Anno[Unresolved](String(a)) a: Int): R|kotlin/Unit| {
+        @R|kotlin/Deprecated|[Types](String(function)) @R|Anno|[Types](String(function)) public final [ResolvedTo(STATUS)] fun fooo([ResolvedTo(STATUS)] @R|kotlin/Deprecated|[Types](String(a)) @R|Anno|[Types](String(a)) a: R|kotlin/Int|): R|kotlin/Unit| {
         }
 
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -154,14 +154,14 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
 
         }
 
-        @Deprecated[Unresolved](String(function)) @Anno[Unresolved](String(function)) public? final? [ResolvedTo(RAW_FIR)] fun fooo([ResolvedTo(RAW_FIR)] @Deprecated[Unresolved](String(a)) @Anno[Unresolved](String(a)) a: Int): R|kotlin/Unit| {
+        @R|kotlin/Deprecated|[Types](String(function)) @R|Anno|[Types](String(function)) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun fooo([ResolvedTo(EXPECT_ACTUAL_MATCHING)] @R|kotlin/Deprecated|[Types](String(a)) @R|Anno|[Types](String(a)) a: R|kotlin/Int|): R|kotlin/Unit| {
         }
 
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -174,14 +174,14 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
 
         }
 
-        @Deprecated[Unresolved](String(function)) @Anno[Unresolved](String(function)) public? final? [ResolvedTo(RAW_FIR)] fun fooo([ResolvedTo(RAW_FIR)] @Deprecated[Unresolved](String(a)) @Anno[Unresolved](String(a)) a: Int): R|kotlin/Unit| {
+        @R|kotlin/Deprecated|[Types](String(function)) @R|Anno|[Types](String(function)) public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun fooo([ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] @R|kotlin/Deprecated|[Types](String(a)) @R|Anno|[Types](String(a)) a: R|kotlin/Int|): R|kotlin/Unit| {
         }
 
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -194,14 +194,14 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
 
         }
 
-        @Deprecated[Unresolved](String(function)) @Anno[Unresolved](String(function)) public? final? [ResolvedTo(RAW_FIR)] fun fooo([ResolvedTo(RAW_FIR)] @Deprecated[Unresolved](String(a)) @Anno[Unresolved](String(a)) a: Int): R|kotlin/Unit| {
+        @R|kotlin/Deprecated|[Types](String(function)) @R|Anno|[Types](String(function)) public final [ResolvedTo(CONTRACTS)] fun fooo([ResolvedTo(CONTRACTS)] @R|kotlin/Deprecated|[Types](String(a)) @R|Anno|[Types](String(a)) a: R|kotlin/Int|): R|kotlin/Unit| {
         }
 
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -214,47 +214,47 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
 
         }
 
-        @Deprecated[Unresolved](String(function)) @Anno[Unresolved](String(function)) public? final? [ResolvedTo(RAW_FIR)] fun fooo([ResolvedTo(RAW_FIR)] @Deprecated[Unresolved](String(a)) @Anno[Unresolved](String(a)) a: Int): R|kotlin/Unit| {
+        @R|kotlin/Deprecated|[Types](String(function)) @R|Anno|[Types](String(function)) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun fooo([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] @R|kotlin/Deprecated|[Types](String(a)) @R|Anno|[Types](String(a)) a: R|kotlin/Int|): R|kotlin/Unit| {
         }
 
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
+        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
                 super<R|kotlin/Any|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
         }
 
-        @Deprecated[Unresolved](String(function)) @Anno[Unresolved](String(function)) public? final? [ResolvedTo(RAW_FIR)] fun fooo([ResolvedTo(RAW_FIR)] @Deprecated[Unresolved](String(a)) @Anno[Unresolved](String(a)) a: Int): R|kotlin/Unit| {
+        @R|kotlin/Deprecated|[Types](message = String(function)) @R|Anno|[Types](s = String(function)) public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun fooo([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] @R|kotlin/Deprecated|[Types](message = String(a)) @R|Anno|[Types](s = String(a)) a: R|kotlin/Int|): R|kotlin/Unit| {
         }
 
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
+        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
                 super<R|kotlin/Any|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
 
         }
 
-        @Deprecated[Unresolved](String(function)) @Anno[Unresolved](String(function)) public? final? [ResolvedTo(RAW_FIR)] fun fooo([ResolvedTo(RAW_FIR)] @Deprecated[Unresolved](String(a)) @Anno[Unresolved](String(a)) a: Int): R|kotlin/Unit| {
+        @R|kotlin/Deprecated|[Types](message = String(function)) @R|Anno|[Types](s = String(function)) public final [ResolvedTo(BODY_RESOLVE)] fun fooo([ResolvedTo(BODY_RESOLVE)] @R|kotlin/Deprecated|[Types](message = String(a)) @R|Anno|[Types](s = String(a)) a: R|kotlin/Int|): R|kotlin/Unit| {
         }
 
 

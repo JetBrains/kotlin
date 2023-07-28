@@ -1,9 +1,9 @@
-/* NonReanalyzableNonClassDeclarationStructureElement */fun a() {
+/* NonReanalyzableNonClassDeclarationStructureElement */fun a() {/* ReanalyzableFunctionStructureElement */
     class X
 }
 
-class Y {
-    fun b() {
+class Y {/* NonReanalyzableClassDeclarationStructureElement */
+    fun b() {/* ReanalyzableFunctionStructureElement */
         class Z
     }
 }

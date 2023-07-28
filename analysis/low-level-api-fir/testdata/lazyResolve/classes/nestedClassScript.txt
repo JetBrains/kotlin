@@ -1,7 +1,7 @@
 RAW_FIR:
-FILE: [ResolvedTo(IMPORTS)] nestedClassScript.kts
+FILE: [ResolvedTo(RAW_FIR)] nestedClassScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
@@ -36,7 +36,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] nestedClassScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
@@ -71,7 +71,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] nestedClassScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
@@ -93,7 +93,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassScript.kts
                 super<AnotherTopLevelClass>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] class NestedClass : R|kotlin/Any| {
+            public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class NestedClass : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|OuterClass.NestedClass| {
                     super<R|kotlin/Any|>()
                 }
@@ -106,7 +106,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] nestedClassScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
@@ -128,7 +128,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassScript.kts
                 super<AnotherTopLevelClass>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] class NestedClass : R|kotlin/Any| {
+            public? final? [ResolvedTo(COMPANION_GENERATION)] class NestedClass : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|OuterClass.NestedClass| {
                     super<R|kotlin/Any|>()
                 }
@@ -141,29 +141,29 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] nestedClassScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
+        public? open [ResolvedTo(SUPER_TYPES)] class TopLevelClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public? open [ResolvedTo(RAW_FIR)] class AnotherTopLevelClass : TopLevelClass {
+        public? open [ResolvedTo(SUPER_TYPES)] class AnotherTopLevelClass : R|TopLevelClass| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherTopLevelClass] constructor(): R|AnotherTopLevelClass| {
                 super<TopLevelClass>()
             }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] class OuterClass : AnotherTopLevelClass {
+        public? final? [ResolvedTo(SUPER_TYPES)] class OuterClass : R|AnotherTopLevelClass| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
                 super<AnotherTopLevelClass>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] class NestedClass : R|kotlin/Any| {
+            public? final? [ResolvedTo(SUPER_TYPES)] class NestedClass : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|OuterClass.NestedClass| {
                     super<R|kotlin/Any|>()
                 }
@@ -176,29 +176,29 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] nestedClassScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
+        public? open [ResolvedTo(SUPER_TYPES)] class TopLevelClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public? open [ResolvedTo(RAW_FIR)] class AnotherTopLevelClass : TopLevelClass {
+        public? open [ResolvedTo(SUPER_TYPES)] class AnotherTopLevelClass : R|TopLevelClass| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherTopLevelClass] constructor(): R|AnotherTopLevelClass| {
                 super<TopLevelClass>()
             }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] class OuterClass : AnotherTopLevelClass {
+        public? final? [ResolvedTo(TYPES)] class OuterClass : R|AnotherTopLevelClass| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
                 super<AnotherTopLevelClass>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] class NestedClass : R|kotlin/Any| {
+            public? final? [ResolvedTo(TYPES)] class NestedClass : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|OuterClass.NestedClass| {
                     super<R|kotlin/Any|>()
                 }
@@ -211,29 +211,29 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] nestedClassScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
+        public? open [ResolvedTo(SUPER_TYPES)] class TopLevelClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public? open [ResolvedTo(RAW_FIR)] class AnotherTopLevelClass : TopLevelClass {
+        public? open [ResolvedTo(SUPER_TYPES)] class AnotherTopLevelClass : R|TopLevelClass| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherTopLevelClass] constructor(): R|AnotherTopLevelClass| {
                 super<TopLevelClass>()
             }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] class OuterClass : AnotherTopLevelClass {
+        public final [ResolvedTo(STATUS)] class OuterClass : R|AnotherTopLevelClass| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
                 super<AnotherTopLevelClass>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] class NestedClass : R|kotlin/Any| {
+            public final [ResolvedTo(STATUS)] class NestedClass : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|OuterClass.NestedClass| {
                     super<R|kotlin/Any|>()
                 }
@@ -246,29 +246,29 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] nestedClassScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
+        public? open [ResolvedTo(SUPER_TYPES)] class TopLevelClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public? open [ResolvedTo(RAW_FIR)] class AnotherTopLevelClass : TopLevelClass {
+        public? open [ResolvedTo(SUPER_TYPES)] class AnotherTopLevelClass : R|TopLevelClass| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherTopLevelClass] constructor(): R|AnotherTopLevelClass| {
                 super<TopLevelClass>()
             }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] class OuterClass : AnotherTopLevelClass {
+        public final [ResolvedTo(STATUS)] class OuterClass : R|AnotherTopLevelClass| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
                 super<AnotherTopLevelClass>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] class NestedClass : R|kotlin/Any| {
+            public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class NestedClass : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|OuterClass.NestedClass| {
                     super<R|kotlin/Any|>()
                 }
@@ -281,29 +281,29 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassScript.kts
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] nestedClassScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
+        public open [ResolvedTo(STATUS)] class TopLevelClass : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public? open [ResolvedTo(RAW_FIR)] class AnotherTopLevelClass : TopLevelClass {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherTopLevelClass] constructor(): R|AnotherTopLevelClass| {
-                super<TopLevelClass>()
+        public open [ResolvedTo(STATUS)] class AnotherTopLevelClass : R|TopLevelClass| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherTopLevelClass] constructor(): R|AnotherTopLevelClass| {
+                super<R|TopLevelClass|>()
             }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] class OuterClass : AnotherTopLevelClass {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
-                super<AnotherTopLevelClass>()
+        public final [ResolvedTo(STATUS)] class OuterClass : R|AnotherTopLevelClass| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
+                super<R|AnotherTopLevelClass|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] class NestedClass : R|kotlin/Any| {
+            public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] class NestedClass : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|OuterClass.NestedClass| {
                     super<R|kotlin/Any|>()
                 }
@@ -316,29 +316,29 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassScript.kts
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] nestedClassScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
+        public open [ResolvedTo(STATUS)] class TopLevelClass : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public? open [ResolvedTo(RAW_FIR)] class AnotherTopLevelClass : TopLevelClass {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherTopLevelClass] constructor(): R|AnotherTopLevelClass| {
-                super<TopLevelClass>()
+        public open [ResolvedTo(STATUS)] class AnotherTopLevelClass : R|TopLevelClass| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherTopLevelClass] constructor(): R|AnotherTopLevelClass| {
+                super<R|TopLevelClass|>()
             }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] class OuterClass : AnotherTopLevelClass {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
-                super<AnotherTopLevelClass>()
+        public final [ResolvedTo(STATUS)] class OuterClass : R|AnotherTopLevelClass| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
+                super<R|AnotherTopLevelClass|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] class NestedClass : R|kotlin/Any| {
+            public final [ResolvedTo(CONTRACTS)] class NestedClass : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|OuterClass.NestedClass| {
                     super<R|kotlin/Any|>()
                 }
@@ -351,29 +351,29 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassScript.kts
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] nestedClassScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
+        public open [ResolvedTo(STATUS)] class TopLevelClass : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public? open [ResolvedTo(RAW_FIR)] class AnotherTopLevelClass : TopLevelClass {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherTopLevelClass] constructor(): R|AnotherTopLevelClass| {
-                super<TopLevelClass>()
+        public open [ResolvedTo(STATUS)] class AnotherTopLevelClass : R|TopLevelClass| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherTopLevelClass] constructor(): R|AnotherTopLevelClass| {
+                super<R|TopLevelClass|>()
             }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] class OuterClass : AnotherTopLevelClass {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
-                super<AnotherTopLevelClass>()
+        public final [ResolvedTo(STATUS)] class OuterClass : R|AnotherTopLevelClass| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
+                super<R|AnotherTopLevelClass|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] class NestedClass : R|kotlin/Any| {
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class NestedClass : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|OuterClass.NestedClass| {
                     super<R|kotlin/Any|>()
                 }
@@ -386,29 +386,29 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassScript.kts
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] nestedClassScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
+        public open [ResolvedTo(STATUS)] class TopLevelClass : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public? open [ResolvedTo(RAW_FIR)] class AnotherTopLevelClass : TopLevelClass {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherTopLevelClass] constructor(): R|AnotherTopLevelClass| {
-                super<TopLevelClass>()
+        public open [ResolvedTo(STATUS)] class AnotherTopLevelClass : R|TopLevelClass| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherTopLevelClass] constructor(): R|AnotherTopLevelClass| {
+                super<R|TopLevelClass|>()
             }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] class OuterClass : AnotherTopLevelClass {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
-                super<AnotherTopLevelClass>()
+        public final [ResolvedTo(STATUS)] class OuterClass : R|AnotherTopLevelClass| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
+                super<R|AnotherTopLevelClass|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] class NestedClass : R|kotlin/Any| {
+            public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class NestedClass : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|OuterClass.NestedClass| {
                     super<R|kotlin/Any|>()
                 }
@@ -421,30 +421,30 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassScript.kts
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] nestedClassScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
+        public open [ResolvedTo(STATUS)] class TopLevelClass : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public? open [ResolvedTo(RAW_FIR)] class AnotherTopLevelClass : TopLevelClass {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherTopLevelClass] constructor(): R|AnotherTopLevelClass| {
-                super<TopLevelClass>()
+        public open [ResolvedTo(STATUS)] class AnotherTopLevelClass : R|TopLevelClass| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherTopLevelClass] constructor(): R|AnotherTopLevelClass| {
+                super<R|TopLevelClass|>()
             }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] class OuterClass : AnotherTopLevelClass {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
-                super<AnotherTopLevelClass>()
+        public final [ResolvedTo(STATUS)] class OuterClass : R|AnotherTopLevelClass| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
+                super<R|AnotherTopLevelClass|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] class NestedClass : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|OuterClass.NestedClass| {
+            public final [ResolvedTo(BODY_RESOLVE)] class NestedClass : R|kotlin/Any| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=NestedClass] constructor(): R|OuterClass.NestedClass| {
                     super<R|kotlin/Any|>()
                 }
 

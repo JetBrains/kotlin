@@ -59,6 +59,7 @@ internal fun declarationCanBeLazilyResolved(declaration: KtDeclaration): Boolean
         when (val parent = declaration.parent) {
             is KtFile -> true
             is KtClassBody -> (parent.parent as? KtClassOrObject)?.isLocal == false
+            is KtBlockExpression -> parent.parent is KtScript
             else -> false
         }
     }

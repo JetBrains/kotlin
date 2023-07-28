@@ -1,7 +1,7 @@
 RAW_FIR:
-FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterOnImplicitTypePhaseScript.kts
+FILE: [ResolvedTo(RAW_FIR)] anonymousFunctionWithAnnotatedParameterOnImplicitTypePhaseScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](AnnotationTarget#.TYPE#) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -31,7 +31,7 @@ FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterOnImplicitTyp
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterOnImplicitTypePhaseScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](AnnotationTarget#.TYPE#) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -61,7 +61,7 @@ FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterOnImplicitTyp
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterOnImplicitTypePhaseScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](AnnotationTarget#.TYPE#) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -79,8 +79,8 @@ FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterOnImplicitTyp
                 ^ Null(null)
             }
 
-        public? final? [ResolvedTo(RAW_FIR)] val propertyToResolve: <implicit>
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+        public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val propertyToResolve: <implicit>
+            public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): <implicit> {
                 ^ nullablePropertyWithAnnotatedType#?.{ $subj$.let#(<L> = [ResolvedTo(RAW_FIR)] let@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
                     <strcat>(String( (), it#, String()))
                 }
@@ -91,7 +91,7 @@ FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterOnImplicitTyp
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterOnImplicitTypePhaseScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](AnnotationTarget#.TYPE#) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -109,8 +109,8 @@ FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterOnImplicitTyp
                 ^ Null(null)
             }
 
-        public? final? [ResolvedTo(RAW_FIR)] val propertyToResolve: <implicit>
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+        public? final? [ResolvedTo(COMPANION_GENERATION)] val propertyToResolve: <implicit>
+            public? [ResolvedTo(COMPANION_GENERATION)] get(): <implicit> {
                 ^ nullablePropertyWithAnnotatedType#?.{ $subj$.let#(<L> = [ResolvedTo(RAW_FIR)] let@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
                     <strcat>(String( (), it#, String()))
                 }
@@ -121,7 +121,7 @@ FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterOnImplicitTyp
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterOnImplicitTypePhaseScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](AnnotationTarget#.TYPE#) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -139,8 +139,8 @@ FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterOnImplicitTyp
                 ^ Null(null)
             }
 
-        public? final? [ResolvedTo(RAW_FIR)] val propertyToResolve: <implicit>
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+        public? final? [ResolvedTo(SUPER_TYPES)] val propertyToResolve: <implicit>
+            public? [ResolvedTo(SUPER_TYPES)] get(): <implicit> {
                 ^ nullablePropertyWithAnnotatedType#?.{ $subj$.let#(<L> = [ResolvedTo(RAW_FIR)] let@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
                     <strcat>(String( (), it#, String()))
                 }
@@ -151,7 +151,7 @@ FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterOnImplicitTyp
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterOnImplicitTypePhaseScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](AnnotationTarget#.TYPE#) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -169,8 +169,8 @@ FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterOnImplicitTyp
                 ^ Null(null)
             }
 
-        public? final? [ResolvedTo(RAW_FIR)] val propertyToResolve: <implicit>
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+        public? final? [ResolvedTo(TYPES)] val propertyToResolve: <implicit>
+            public? [ResolvedTo(TYPES)] get(): <implicit> {
                 ^ nullablePropertyWithAnnotatedType#?.{ $subj$.let#(<L> = [ResolvedTo(RAW_FIR)] let@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
                     <strcat>(String( (), it#, String()))
                 }
@@ -181,7 +181,7 @@ FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterOnImplicitTyp
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterOnImplicitTypePhaseScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](AnnotationTarget#.TYPE#) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -199,8 +199,8 @@ FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterOnImplicitTyp
                 ^ Null(null)
             }
 
-        public? final? [ResolvedTo(RAW_FIR)] val propertyToResolve: <implicit>
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+        public final [ResolvedTo(STATUS)] val propertyToResolve: <implicit>
+            public [ResolvedTo(STATUS)] get(): <implicit> {
                 ^ nullablePropertyWithAnnotatedType#?.{ $subj$.let#(<L> = [ResolvedTo(RAW_FIR)] let@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
                     <strcat>(String( (), it#, String()))
                 }
@@ -211,7 +211,7 @@ FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterOnImplicitTyp
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterOnImplicitTypePhaseScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](AnnotationTarget#.TYPE#) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -229,8 +229,8 @@ FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterOnImplicitTyp
                 ^ Null(null)
             }
 
-        public? final? [ResolvedTo(RAW_FIR)] val propertyToResolve: <implicit>
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val propertyToResolve: <implicit>
+            public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): <implicit> {
                 ^ nullablePropertyWithAnnotatedType#?.{ $subj$.let#(<L> = [ResolvedTo(RAW_FIR)] let@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
                     <strcat>(String( (), it#, String()))
                 }
@@ -241,7 +241,7 @@ FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterOnImplicitTyp
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterOnImplicitTypePhaseScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](AnnotationTarget#.TYPE#) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -259,8 +259,8 @@ FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterOnImplicitTyp
                 ^ Null(null)
             }
 
-        public? final? [ResolvedTo(RAW_FIR)] val propertyToResolve: <implicit>
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+        public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] val propertyToResolve: <implicit>
+            public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] get(): <implicit> {
                 ^ nullablePropertyWithAnnotatedType#?.{ $subj$.let#(<L> = [ResolvedTo(RAW_FIR)] let@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
                     <strcat>(String( (), it#, String()))
                 }
@@ -271,7 +271,7 @@ FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterOnImplicitTyp
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterOnImplicitTypePhaseScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](AnnotationTarget#.TYPE#) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -289,8 +289,8 @@ FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterOnImplicitTyp
                 ^ Null(null)
             }
 
-        public? final? [ResolvedTo(RAW_FIR)] val propertyToResolve: <implicit>
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+        public final [ResolvedTo(CONTRACTS)] val propertyToResolve: <implicit>
+            public [ResolvedTo(CONTRACTS)] get(): <implicit> {
                 ^ nullablePropertyWithAnnotatedType#?.{ $subj$.let#(<L> = [ResolvedTo(RAW_FIR)] let@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
                     <strcat>(String( (), it#, String()))
                 }
@@ -301,7 +301,7 @@ FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterOnImplicitTyp
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterOnImplicitTypePhaseScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](AnnotationTarget#.TYPE#) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -319,10 +319,10 @@ FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterOnImplicitTyp
                 ^ Null(null)
             }
 
-        public? final? [ResolvedTo(RAW_FIR)] val propertyToResolve: <implicit>
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ nullablePropertyWithAnnotatedType#?.{ $subj$.let#(<L> = [ResolvedTo(RAW_FIR)] let@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-                    <strcat>(String( (), it#, String()))
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val propertyToResolve: <ERROR TYPE REF: Cannot infer argument for type parameter K>
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Cannot infer argument for type parameter K> {
+                ^ <Unresolved name: nullablePropertyWithAnnotatedType>#?.{ $subj$.R|kotlin/let<None of the following candidates is applicable because of receiver type mismatch: [kotlin/let]>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>, <ERROR TYPE REF: Cannot infer argument for type parameter R>>(<L> = [ResolvedTo(RAW_FIR)] let@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: <ERROR TYPE REF: Cannot infer argument for type parameter T>): <ERROR TYPE REF: Cannot infer argument for type parameter R> <inline=Unknown, kind=EXACTLY_ONCE>  {
+                    ^ <strcat>(String( (), R|<local>/it|, String()))
                 }
                 ) } ?: String()
             }
@@ -331,7 +331,7 @@ FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterOnImplicitTyp
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterOnImplicitTypePhaseScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](AnnotationTarget#.TYPE#) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -349,10 +349,10 @@ FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterOnImplicitTyp
                 ^ Null(null)
             }
 
-        public? final? [ResolvedTo(RAW_FIR)] val propertyToResolve: <implicit>
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ nullablePropertyWithAnnotatedType#?.{ $subj$.let#(<L> = [ResolvedTo(RAW_FIR)] let@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-                    <strcat>(String( (), it#, String()))
+        public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] val propertyToResolve: <ERROR TYPE REF: Cannot infer argument for type parameter K>
+            public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] get(): <ERROR TYPE REF: Cannot infer argument for type parameter K> {
+                ^ <Unresolved name: nullablePropertyWithAnnotatedType>#?.{ $subj$.R|kotlin/let<None of the following candidates is applicable because of receiver type mismatch: [kotlin/let]>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>, <ERROR TYPE REF: Cannot infer argument for type parameter R>>(<L> = [ResolvedTo(RAW_FIR)] let@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: <ERROR TYPE REF: Cannot infer argument for type parameter T>): <ERROR TYPE REF: Cannot infer argument for type parameter R> <inline=Unknown, kind=EXACTLY_ONCE>  {
+                    ^ <strcat>(String( (), R|<local>/it|, String()))
                 }
                 ) } ?: String()
             }
@@ -361,7 +361,7 @@ FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterOnImplicitTyp
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterOnImplicitTypePhaseScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Target[Unresolved](AnnotationTarget#.TYPE#) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -379,10 +379,10 @@ FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterOnImplicitTyp
                 ^ Null(null)
             }
 
-        public? final? [ResolvedTo(RAW_FIR)] val propertyToResolve: <implicit>
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ nullablePropertyWithAnnotatedType#?.{ $subj$.let#(<L> = [ResolvedTo(RAW_FIR)] let@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-                    <strcat>(String( (), it#, String()))
+        public final [ResolvedTo(BODY_RESOLVE)] val propertyToResolve: <ERROR TYPE REF: Cannot infer argument for type parameter K>
+            public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Cannot infer argument for type parameter K> {
+                ^ <Unresolved name: nullablePropertyWithAnnotatedType>#?.{ $subj$.R|kotlin/let<None of the following candidates is applicable because of receiver type mismatch: [kotlin/let]>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>, <ERROR TYPE REF: Cannot infer argument for type parameter R>>(<L> = [ResolvedTo(BODY_RESOLVE)] let@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: <ERROR TYPE REF: Cannot infer argument for type parameter T>): <ERROR TYPE REF: Cannot infer argument for type parameter R> <inline=Unknown, kind=EXACTLY_ONCE>  {
+                    ^ <strcat>(String( (), R|<local>/it|, String()))
                 }
                 ) } ?: String()
             }

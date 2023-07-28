@@ -1,12 +1,12 @@
-/* anchor --> */class Builder {
-    var version: String = ""
+/* anchor --> *//* anchor --> */class Builder {
+    /* anchor --> */var version: String = ""/* <-- */
 
-    fun execute() {
+    /* anchor --> */fun execute() {
         println(version)
-    }
-}
+    }/* <-- */
+}/* <-- */
 
-fun build(action: Builder.() -> Unit) = Builder().apply(action)
+/* anchor --> */fun build(/* anchor --> */action: Builder.() -> Unit/* <-- */) = Builder().apply(action)/* <-- */
 
 build {
     version = "123"
@@ -19,9 +19,9 @@ build {
     execute()
 }
 
-val builder = build {
+/* anchor --> */val builder = build {
     version = "321"
-}
+}/* <-- */
 
 builder.execute()
 /* <-- */

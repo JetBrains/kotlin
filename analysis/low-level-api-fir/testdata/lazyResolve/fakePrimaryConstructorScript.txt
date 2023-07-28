@@ -1,7 +1,7 @@
 RAW_FIR:
-FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
+FILE: [ResolvedTo(RAW_FIR)] fakePrimaryConstructorScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] class Problem : R|kotlin/Any| {
@@ -18,7 +18,7 @@ FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] class Problem : R|kotlin/Any| {
@@ -35,11 +35,11 @@ FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] class Problem : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Problem] constructor(): R|Problem| {
+            public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=Problem] constructor(): R|Problem| {
                 super<R|kotlin/Any|>()
             }
 
@@ -52,11 +52,11 @@ FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] class Problem : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Problem] constructor(): R|Problem| {
+            public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=Problem] constructor(): R|Problem| {
                 super<R|kotlin/Any|>()
             }
 
@@ -69,11 +69,11 @@ FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] class Problem : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Problem] constructor(): R|Problem| {
+        public? final? [ResolvedTo(SUPER_TYPES)] class Problem : R|kotlin/Any| {
+            public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=Problem] constructor(): R|Problem| {
                 super<R|kotlin/Any|>()
             }
 
@@ -86,11 +86,11 @@ FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] class Problem : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Problem] constructor(): R|Problem| {
+        public? final? [ResolvedTo(TYPES)] class Problem : R|kotlin/Any| {
+            public? [ResolvedTo(TYPES)] [ContainingClassKey=Problem] constructor(): R|Problem| {
                 super<R|kotlin/Any|>()
             }
 
@@ -103,15 +103,15 @@ FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] class Problem : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Problem] constructor(): R|Problem| {
+        public final [ResolvedTo(STATUS)] class Problem : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Problem] constructor(): R|Problem| {
                 super<R|kotlin/Any|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| {
+            public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit| {
             }
 
         }
@@ -120,15 +120,15 @@ FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] class Problem : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Problem] constructor(): R|Problem| {
+        public final [ResolvedTo(STATUS)] class Problem : R|kotlin/Any| {
+            public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=Problem] constructor(): R|Problem| {
                 super<R|kotlin/Any|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| {
+            public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit| {
             }
 
         }
@@ -137,15 +137,15 @@ FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] class Problem : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Problem] constructor(): R|Problem| {
+        public final [ResolvedTo(STATUS)] class Problem : R|kotlin/Any| {
+            public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] [ContainingClassKey=Problem] constructor(): R|Problem| {
                 super<R|kotlin/Any|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| {
+            public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit| {
             }
 
         }
@@ -154,15 +154,15 @@ FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] class Problem : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Problem] constructor(): R|Problem| {
+        public final [ResolvedTo(STATUS)] class Problem : R|kotlin/Any| {
+            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Problem] constructor(): R|Problem| {
                 super<R|kotlin/Any|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| {
+            public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit| {
             }
 
         }
@@ -171,15 +171,15 @@ FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] class Problem : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Problem] constructor(): R|Problem| {
+        public final [ResolvedTo(STATUS)] class Problem : R|kotlin/Any| {
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Problem] constructor(): R|Problem| {
                 super<R|kotlin/Any|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| {
+            public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit| {
             }
 
         }
@@ -188,15 +188,15 @@ FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] class Problem : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Problem] constructor(): R|Problem| {
+        public final [ResolvedTo(STATUS)] class Problem : R|kotlin/Any| {
+            public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=Problem] constructor(): R|Problem| {
                 super<R|kotlin/Any|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| {
+            public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit| {
             }
 
         }
@@ -205,15 +205,15 @@ FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] class Problem : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Problem] constructor(): R|Problem| {
+        public final [ResolvedTo(STATUS)] class Problem : R|kotlin/Any| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Problem] constructor(): R|Problem| {
                 super<R|kotlin/Any|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| {
+            public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit| {
             }
 
         }

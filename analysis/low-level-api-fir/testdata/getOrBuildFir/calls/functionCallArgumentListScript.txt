@@ -1,19 +1,19 @@
 KT element: KtValueArgumentList
-FIR element: FirArgumentListImpl
+FIR element: FirResolvedArgumentListForErrorCall
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-IntegerLiteral(1)String(2)
+Int(1)String(2)
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] functionCallArgumentListScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun callMe([ResolvedTo(RAW_FIR)] x: Int, [ResolvedTo(RAW_FIR)] y: String): R|kotlin/Unit| {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-            callMe#(IntegerLiteral(1), String(2))
+        public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+            <Unresolved name: callMe>#(Int(1), String(2))
         }

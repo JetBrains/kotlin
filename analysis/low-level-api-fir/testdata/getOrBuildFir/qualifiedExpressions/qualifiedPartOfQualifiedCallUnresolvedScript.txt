@@ -3,21 +3,27 @@ FIR element: FirFunctionCallImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-peek#()
+<Unresolved name: peek>#()
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] qualifiedPartOfQualifiedCallUnresolvedScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] class FF : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FF] constructor(): R|FF| {
+        public final [ResolvedTo(STATUS)] class FF : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=FF] constructor(): R|FF| {
                 super<R|kotlin/Any|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] fun handleLeftBracketInFragment(): R|kotlin/Unit| {
-                peek#().braceBalance#++
+            public final [ResolvedTo(BODY_RESOLVE)] fun handleLeftBracketInFragment(): R|kotlin/Unit| {
+                 {
+                    [ResolvedTo(BODY_RESOLVE)] lval <receiver>: <ERROR TYPE REF: Unresolved name: peek> = <Unresolved name: peek>#()
+                    [ResolvedTo(BODY_RESOLVE)] lval <unary>: <ERROR TYPE REF: Unresolved name: braceBalance> = R|<local>/<receiver>|.<Unresolved name: braceBalance>#
+                    R|<local>/<receiver>|.<Unresolved name: braceBalance># = R|<local>/<unary>|.<Unresolved name: inc>#()
+                    R|<local>/<unary>|
+                }
+
             }
 
         }

@@ -1,7 +1,7 @@
 RAW_FIR:
-FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
+FILE: [ResolvedTo(RAW_FIR)] resolveTypeFromLocalClassConstructorScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
@@ -38,7 +38,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
@@ -75,7 +75,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
@@ -95,7 +95,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| {
             local final? [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/u] u: UsedClass): R|one/two/Local| {
                     super<R|kotlin/Any|>()
@@ -112,7 +112,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
@@ -132,7 +132,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        public? final? [ResolvedTo(COMPANION_GENERATION)] fun resolveMe(): R|kotlin/Unit| {
             local final? [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/u] u: UsedClass): R|one/two/Local| {
                     super<R|kotlin/Any|>()
@@ -149,7 +149,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
@@ -169,7 +169,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        public? final? [ResolvedTo(SUPER_TYPES)] fun resolveMe(): R|kotlin/Unit| {
             local final? [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/u] u: UsedClass): R|one/two/Local| {
                     super<R|kotlin/Any|>()
@@ -186,7 +186,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
@@ -206,7 +206,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        public? final? [ResolvedTo(TYPES)] fun resolveMe(): R|kotlin/Unit| {
             local final? [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/u] u: UsedClass): R|one/two/Local| {
                     super<R|kotlin/Any|>()
@@ -223,7 +223,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
@@ -243,7 +243,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| {
             local final? [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/u] u: UsedClass): R|one/two/Local| {
                     super<R|kotlin/Any|>()
@@ -260,7 +260,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
@@ -280,7 +280,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| {
             local final? [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/u] u: UsedClass): R|one/two/Local| {
                     super<R|kotlin/Any|>()
@@ -297,7 +297,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
@@ -317,7 +317,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| {
             local final? [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/u] u: UsedClass): R|one/two/Local| {
                     super<R|kotlin/Any|>()
@@ -334,7 +334,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
@@ -354,7 +354,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        public final [ResolvedTo(CONTRACTS)] fun resolveMe(): R|kotlin/Unit| {
             local final? [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/u] u: UsedClass): R|one/two/Local| {
                     super<R|kotlin/Any|>()
@@ -371,7 +371,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
@@ -391,7 +391,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
             local final? [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/u] u: UsedClass): R|one/two/Local| {
                     super<R|kotlin/Any|>()
@@ -408,7 +408,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
@@ -428,7 +428,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun resolveMe(): R|kotlin/Unit| {
             local final? [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/u] u: UsedClass): R|one/two/Local| {
                     super<R|kotlin/Any|>()
@@ -445,7 +445,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
@@ -465,14 +465,14 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructorScript.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            local final? [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/u] u: UsedClass): R|one/two/Local| {
+        public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
+            local final [ResolvedTo(BODY_RESOLVE)] class Local : R|kotlin/Any| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Local] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=<local>/u] u: R|one/two/UsedClass|): R|one/two/Local| {
                     super<R|kotlin/Any|>()
                 }
 
-                public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val u: UsedClass = R|<local>/u|
-                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] get(): UsedClass
+                public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val u: R|one/two/UsedClass| = R|<local>/u|
+                    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Local] get(): R|one/two/UsedClass|
 
             }
 

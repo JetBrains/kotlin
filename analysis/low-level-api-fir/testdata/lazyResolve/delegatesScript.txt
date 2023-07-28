@@ -1,0 +1,824 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] delegatesScript.kts
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(RAW_FIR)]
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            receive#(valueWithExplicitType#)
+            receive#(valueWithImplicitType#)
+            variableWithExplicitType# = IntegerLiteral(10)
+            variableWithImplicitType# = IntegerLiteral(10)
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val delegate: <implicit> = object : ReadWriteProperty<Any?, Int> {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                super<<implicit>>()
+            }
+
+            public? open? override [ResolvedTo(RAW_FIR)] fun getValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>): Int {
+                ^getValue IntegerLiteral(1)
+            }
+
+            public? open? override [ResolvedTo(RAW_FIR)] fun setValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>, [ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
+            }
+
+        }
+
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public? final? [ResolvedTo(RAW_FIR)] val valueWithExplicitType: Intby delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/valueWithExplicitType|.getValue#(Null(null), ::R|/valueWithExplicitType|)
+            }
+
+        public? final? [ResolvedTo(RAW_FIR)] val valueWithImplicitType: <implicit>by delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/valueWithImplicitType|.getValue#(Null(null), ::R|/valueWithImplicitType|)
+            }
+
+        public? final? [ResolvedTo(RAW_FIR)] var variableWithExplicitType: Intby delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/variableWithExplicitType|.getValue#(Null(null), ::R|/variableWithExplicitType|)
+            }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
+                D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
+            }
+
+        public? final? [ResolvedTo(RAW_FIR)] var variableWithImplicitType: <implicit>by delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/variableWithImplicitType|.getValue#(Null(null), ::R|/variableWithImplicitType|)
+            }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
+                D|/variableWithImplicitType|.setValue#(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
+            }
+
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(RAW_FIR)]
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            receive#(valueWithExplicitType#)
+            receive#(valueWithImplicitType#)
+            variableWithExplicitType# = IntegerLiteral(10)
+            variableWithImplicitType# = IntegerLiteral(10)
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val delegate: <implicit> = object : ReadWriteProperty<Any?, Int> {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                super<<implicit>>()
+            }
+
+            public? open? override [ResolvedTo(RAW_FIR)] fun getValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>): Int {
+                ^getValue IntegerLiteral(1)
+            }
+
+            public? open? override [ResolvedTo(RAW_FIR)] fun setValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>, [ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
+            }
+
+        }
+
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public? final? [ResolvedTo(RAW_FIR)] val valueWithExplicitType: Intby delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/valueWithExplicitType|.getValue#(Null(null), ::R|/valueWithExplicitType|)
+            }
+
+        public? final? [ResolvedTo(RAW_FIR)] val valueWithImplicitType: <implicit>by delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/valueWithImplicitType|.getValue#(Null(null), ::R|/valueWithImplicitType|)
+            }
+
+        public? final? [ResolvedTo(RAW_FIR)] var variableWithExplicitType: Intby delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/variableWithExplicitType|.getValue#(Null(null), ::R|/variableWithExplicitType|)
+            }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
+                D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
+            }
+
+        public? final? [ResolvedTo(RAW_FIR)] var variableWithImplicitType: <implicit>by delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/variableWithImplicitType|.getValue#(Null(null), ::R|/variableWithImplicitType|)
+            }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
+                D|/variableWithImplicitType|.setValue#(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
+            }
+
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(RAW_FIR)]
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| {
+            receive#(valueWithExplicitType#)
+            receive#(valueWithImplicitType#)
+            variableWithExplicitType# = IntegerLiteral(10)
+            variableWithImplicitType# = IntegerLiteral(10)
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val delegate: <implicit> = object : ReadWriteProperty<Any?, Int> {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                super<<implicit>>()
+            }
+
+            public? open? override [ResolvedTo(RAW_FIR)] fun getValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>): Int {
+                ^getValue IntegerLiteral(1)
+            }
+
+            public? open? override [ResolvedTo(RAW_FIR)] fun setValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>, [ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
+            }
+
+        }
+
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public? final? [ResolvedTo(RAW_FIR)] val valueWithExplicitType: Intby delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/valueWithExplicitType|.getValue#(Null(null), ::R|/valueWithExplicitType|)
+            }
+
+        public? final? [ResolvedTo(RAW_FIR)] val valueWithImplicitType: <implicit>by delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/valueWithImplicitType|.getValue#(Null(null), ::R|/valueWithImplicitType|)
+            }
+
+        public? final? [ResolvedTo(RAW_FIR)] var variableWithExplicitType: Intby delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/variableWithExplicitType|.getValue#(Null(null), ::R|/variableWithExplicitType|)
+            }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
+                D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
+            }
+
+        public? final? [ResolvedTo(RAW_FIR)] var variableWithImplicitType: <implicit>by delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/variableWithImplicitType|.getValue#(Null(null), ::R|/variableWithImplicitType|)
+            }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
+                D|/variableWithImplicitType|.setValue#(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
+            }
+
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(RAW_FIR)]
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? [ResolvedTo(COMPANION_GENERATION)] fun resolveMe(): R|kotlin/Unit| {
+            receive#(valueWithExplicitType#)
+            receive#(valueWithImplicitType#)
+            variableWithExplicitType# = IntegerLiteral(10)
+            variableWithImplicitType# = IntegerLiteral(10)
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val delegate: <implicit> = object : ReadWriteProperty<Any?, Int> {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                super<<implicit>>()
+            }
+
+            public? open? override [ResolvedTo(RAW_FIR)] fun getValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>): Int {
+                ^getValue IntegerLiteral(1)
+            }
+
+            public? open? override [ResolvedTo(RAW_FIR)] fun setValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>, [ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
+            }
+
+        }
+
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public? final? [ResolvedTo(RAW_FIR)] val valueWithExplicitType: Intby delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/valueWithExplicitType|.getValue#(Null(null), ::R|/valueWithExplicitType|)
+            }
+
+        public? final? [ResolvedTo(RAW_FIR)] val valueWithImplicitType: <implicit>by delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/valueWithImplicitType|.getValue#(Null(null), ::R|/valueWithImplicitType|)
+            }
+
+        public? final? [ResolvedTo(RAW_FIR)] var variableWithExplicitType: Intby delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/variableWithExplicitType|.getValue#(Null(null), ::R|/variableWithExplicitType|)
+            }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
+                D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
+            }
+
+        public? final? [ResolvedTo(RAW_FIR)] var variableWithImplicitType: <implicit>by delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/variableWithImplicitType|.getValue#(Null(null), ::R|/variableWithImplicitType|)
+            }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
+                D|/variableWithImplicitType|.setValue#(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
+            }
+
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(RAW_FIR)]
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? [ResolvedTo(SUPER_TYPES)] fun resolveMe(): R|kotlin/Unit| {
+            receive#(valueWithExplicitType#)
+            receive#(valueWithImplicitType#)
+            variableWithExplicitType# = IntegerLiteral(10)
+            variableWithImplicitType# = IntegerLiteral(10)
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val delegate: <implicit> = object : ReadWriteProperty<Any?, Int> {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                super<<implicit>>()
+            }
+
+            public? open? override [ResolvedTo(RAW_FIR)] fun getValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>): Int {
+                ^getValue IntegerLiteral(1)
+            }
+
+            public? open? override [ResolvedTo(RAW_FIR)] fun setValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>, [ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
+            }
+
+        }
+
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public? final? [ResolvedTo(RAW_FIR)] val valueWithExplicitType: Intby delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/valueWithExplicitType|.getValue#(Null(null), ::R|/valueWithExplicitType|)
+            }
+
+        public? final? [ResolvedTo(RAW_FIR)] val valueWithImplicitType: <implicit>by delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/valueWithImplicitType|.getValue#(Null(null), ::R|/valueWithImplicitType|)
+            }
+
+        public? final? [ResolvedTo(RAW_FIR)] var variableWithExplicitType: Intby delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/variableWithExplicitType|.getValue#(Null(null), ::R|/variableWithExplicitType|)
+            }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
+                D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
+            }
+
+        public? final? [ResolvedTo(RAW_FIR)] var variableWithImplicitType: <implicit>by delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/variableWithImplicitType|.getValue#(Null(null), ::R|/variableWithImplicitType|)
+            }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
+                D|/variableWithImplicitType|.setValue#(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
+            }
+
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(RAW_FIR)]
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? [ResolvedTo(TYPES)] fun resolveMe(): R|kotlin/Unit| {
+            receive#(valueWithExplicitType#)
+            receive#(valueWithImplicitType#)
+            variableWithExplicitType# = IntegerLiteral(10)
+            variableWithImplicitType# = IntegerLiteral(10)
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val delegate: <implicit> = object : ReadWriteProperty<Any?, Int> {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                super<<implicit>>()
+            }
+
+            public? open? override [ResolvedTo(RAW_FIR)] fun getValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>): Int {
+                ^getValue IntegerLiteral(1)
+            }
+
+            public? open? override [ResolvedTo(RAW_FIR)] fun setValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>, [ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
+            }
+
+        }
+
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public? final? [ResolvedTo(RAW_FIR)] val valueWithExplicitType: Intby delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/valueWithExplicitType|.getValue#(Null(null), ::R|/valueWithExplicitType|)
+            }
+
+        public? final? [ResolvedTo(RAW_FIR)] val valueWithImplicitType: <implicit>by delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/valueWithImplicitType|.getValue#(Null(null), ::R|/valueWithImplicitType|)
+            }
+
+        public? final? [ResolvedTo(RAW_FIR)] var variableWithExplicitType: Intby delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/variableWithExplicitType|.getValue#(Null(null), ::R|/variableWithExplicitType|)
+            }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
+                D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
+            }
+
+        public? final? [ResolvedTo(RAW_FIR)] var variableWithImplicitType: <implicit>by delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/variableWithImplicitType|.getValue#(Null(null), ::R|/variableWithImplicitType|)
+            }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
+                D|/variableWithImplicitType|.setValue#(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
+            }
+
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(RAW_FIR)]
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| {
+            receive#(valueWithExplicitType#)
+            receive#(valueWithImplicitType#)
+            variableWithExplicitType# = IntegerLiteral(10)
+            variableWithImplicitType# = IntegerLiteral(10)
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val delegate: <implicit> = object : ReadWriteProperty<Any?, Int> {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                super<<implicit>>()
+            }
+
+            public? open? override [ResolvedTo(RAW_FIR)] fun getValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>): Int {
+                ^getValue IntegerLiteral(1)
+            }
+
+            public? open? override [ResolvedTo(RAW_FIR)] fun setValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>, [ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
+            }
+
+        }
+
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public? final? [ResolvedTo(RAW_FIR)] val valueWithExplicitType: Intby delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/valueWithExplicitType|.getValue#(Null(null), ::R|/valueWithExplicitType|)
+            }
+
+        public? final? [ResolvedTo(RAW_FIR)] val valueWithImplicitType: <implicit>by delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/valueWithImplicitType|.getValue#(Null(null), ::R|/valueWithImplicitType|)
+            }
+
+        public? final? [ResolvedTo(RAW_FIR)] var variableWithExplicitType: Intby delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/variableWithExplicitType|.getValue#(Null(null), ::R|/variableWithExplicitType|)
+            }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
+                D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
+            }
+
+        public? final? [ResolvedTo(RAW_FIR)] var variableWithImplicitType: <implicit>by delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/variableWithImplicitType|.getValue#(Null(null), ::R|/variableWithImplicitType|)
+            }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
+                D|/variableWithImplicitType|.setValue#(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
+            }
+
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(RAW_FIR)]
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| {
+            receive#(valueWithExplicitType#)
+            receive#(valueWithImplicitType#)
+            variableWithExplicitType# = IntegerLiteral(10)
+            variableWithImplicitType# = IntegerLiteral(10)
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val delegate: <implicit> = object : ReadWriteProperty<Any?, Int> {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                super<<implicit>>()
+            }
+
+            public? open? override [ResolvedTo(RAW_FIR)] fun getValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>): Int {
+                ^getValue IntegerLiteral(1)
+            }
+
+            public? open? override [ResolvedTo(RAW_FIR)] fun setValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>, [ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
+            }
+
+        }
+
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public? final? [ResolvedTo(RAW_FIR)] val valueWithExplicitType: Intby delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/valueWithExplicitType|.getValue#(Null(null), ::R|/valueWithExplicitType|)
+            }
+
+        public? final? [ResolvedTo(RAW_FIR)] val valueWithImplicitType: <implicit>by delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/valueWithImplicitType|.getValue#(Null(null), ::R|/valueWithImplicitType|)
+            }
+
+        public? final? [ResolvedTo(RAW_FIR)] var variableWithExplicitType: Intby delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/variableWithExplicitType|.getValue#(Null(null), ::R|/variableWithExplicitType|)
+            }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
+                D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
+            }
+
+        public? final? [ResolvedTo(RAW_FIR)] var variableWithImplicitType: <implicit>by delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/variableWithImplicitType|.getValue#(Null(null), ::R|/variableWithImplicitType|)
+            }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
+                D|/variableWithImplicitType|.setValue#(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
+            }
+
+
+ARGUMENTS_OF_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(RAW_FIR)]
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| {
+            receive#(valueWithExplicitType#)
+            receive#(valueWithImplicitType#)
+            variableWithExplicitType# = IntegerLiteral(10)
+            variableWithImplicitType# = IntegerLiteral(10)
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val delegate: <implicit> = object : ReadWriteProperty<Any?, Int> {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                super<<implicit>>()
+            }
+
+            public? open? override [ResolvedTo(RAW_FIR)] fun getValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>): Int {
+                ^getValue IntegerLiteral(1)
+            }
+
+            public? open? override [ResolvedTo(RAW_FIR)] fun setValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>, [ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
+            }
+
+        }
+
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public? final? [ResolvedTo(RAW_FIR)] val valueWithExplicitType: Intby delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/valueWithExplicitType|.getValue#(Null(null), ::R|/valueWithExplicitType|)
+            }
+
+        public? final? [ResolvedTo(RAW_FIR)] val valueWithImplicitType: <implicit>by delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/valueWithImplicitType|.getValue#(Null(null), ::R|/valueWithImplicitType|)
+            }
+
+        public? final? [ResolvedTo(RAW_FIR)] var variableWithExplicitType: Intby delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/variableWithExplicitType|.getValue#(Null(null), ::R|/variableWithExplicitType|)
+            }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
+                D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
+            }
+
+        public? final? [ResolvedTo(RAW_FIR)] var variableWithImplicitType: <implicit>by delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/variableWithImplicitType|.getValue#(Null(null), ::R|/variableWithImplicitType|)
+            }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
+                D|/variableWithImplicitType|.setValue#(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
+            }
+
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(RAW_FIR)]
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(CONTRACTS)] fun resolveMe(): R|kotlin/Unit| {
+            receive#(valueWithExplicitType#)
+            receive#(valueWithImplicitType#)
+            variableWithExplicitType# = IntegerLiteral(10)
+            variableWithImplicitType# = IntegerLiteral(10)
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val delegate: <implicit> = object : ReadWriteProperty<Any?, Int> {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                super<<implicit>>()
+            }
+
+            public? open? override [ResolvedTo(RAW_FIR)] fun getValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>): Int {
+                ^getValue IntegerLiteral(1)
+            }
+
+            public? open? override [ResolvedTo(RAW_FIR)] fun setValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>, [ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
+            }
+
+        }
+
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public? final? [ResolvedTo(RAW_FIR)] val valueWithExplicitType: Intby delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/valueWithExplicitType|.getValue#(Null(null), ::R|/valueWithExplicitType|)
+            }
+
+        public? final? [ResolvedTo(RAW_FIR)] val valueWithImplicitType: <implicit>by delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/valueWithImplicitType|.getValue#(Null(null), ::R|/valueWithImplicitType|)
+            }
+
+        public? final? [ResolvedTo(RAW_FIR)] var variableWithExplicitType: Intby delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/variableWithExplicitType|.getValue#(Null(null), ::R|/variableWithExplicitType|)
+            }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
+                D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
+            }
+
+        public? final? [ResolvedTo(RAW_FIR)] var variableWithImplicitType: <implicit>by delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/variableWithImplicitType|.getValue#(Null(null), ::R|/variableWithImplicitType|)
+            }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
+                D|/variableWithImplicitType|.setValue#(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
+            }
+
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(RAW_FIR)]
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
+            receive#(valueWithExplicitType#)
+            receive#(valueWithImplicitType#)
+            variableWithExplicitType# = IntegerLiteral(10)
+            variableWithImplicitType# = IntegerLiteral(10)
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val delegate: <implicit> = object : ReadWriteProperty<Any?, Int> {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                super<<implicit>>()
+            }
+
+            public? open? override [ResolvedTo(RAW_FIR)] fun getValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>): Int {
+                ^getValue IntegerLiteral(1)
+            }
+
+            public? open? override [ResolvedTo(RAW_FIR)] fun setValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>, [ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
+            }
+
+        }
+
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public? final? [ResolvedTo(RAW_FIR)] val valueWithExplicitType: Intby delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/valueWithExplicitType|.getValue#(Null(null), ::R|/valueWithExplicitType|)
+            }
+
+        public? final? [ResolvedTo(RAW_FIR)] val valueWithImplicitType: <implicit>by delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/valueWithImplicitType|.getValue#(Null(null), ::R|/valueWithImplicitType|)
+            }
+
+        public? final? [ResolvedTo(RAW_FIR)] var variableWithExplicitType: Intby delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/variableWithExplicitType|.getValue#(Null(null), ::R|/variableWithExplicitType|)
+            }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
+                D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
+            }
+
+        public? final? [ResolvedTo(RAW_FIR)] var variableWithImplicitType: <implicit>by delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/variableWithImplicitType|.getValue#(Null(null), ::R|/variableWithImplicitType|)
+            }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
+                D|/variableWithImplicitType|.setValue#(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
+            }
+
+
+ANNOTATIONS_ARGUMENTS_MAPPING:
+FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(RAW_FIR)]
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun resolveMe(): R|kotlin/Unit| {
+            receive#(valueWithExplicitType#)
+            receive#(valueWithImplicitType#)
+            variableWithExplicitType# = IntegerLiteral(10)
+            variableWithImplicitType# = IntegerLiteral(10)
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val delegate: <implicit> = object : ReadWriteProperty<Any?, Int> {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                super<<implicit>>()
+            }
+
+            public? open? override [ResolvedTo(RAW_FIR)] fun getValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>): Int {
+                ^getValue IntegerLiteral(1)
+            }
+
+            public? open? override [ResolvedTo(RAW_FIR)] fun setValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>, [ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
+            }
+
+        }
+
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public? final? [ResolvedTo(RAW_FIR)] val valueWithExplicitType: Intby delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/valueWithExplicitType|.getValue#(Null(null), ::R|/valueWithExplicitType|)
+            }
+
+        public? final? [ResolvedTo(RAW_FIR)] val valueWithImplicitType: <implicit>by delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/valueWithImplicitType|.getValue#(Null(null), ::R|/valueWithImplicitType|)
+            }
+
+        public? final? [ResolvedTo(RAW_FIR)] var variableWithExplicitType: Intby delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/variableWithExplicitType|.getValue#(Null(null), ::R|/variableWithExplicitType|)
+            }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
+                D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
+            }
+
+        public? final? [ResolvedTo(RAW_FIR)] var variableWithImplicitType: <implicit>by delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/variableWithImplicitType|.getValue#(Null(null), ::R|/variableWithImplicitType|)
+            }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
+                D|/variableWithImplicitType|.setValue#(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
+            }
+
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(RAW_FIR)]
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
+            <Unresolved name: receive>#(<Unresolved name: valueWithExplicitType>#)
+            <Unresolved name: receive>#(<Unresolved name: valueWithImplicitType>#)
+            <Unresolved name: variableWithExplicitType># = Int(10)
+            <Unresolved name: variableWithImplicitType># = Int(10)
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val delegate: <implicit> = object : ReadWriteProperty<Any?, Int> {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                super<<implicit>>()
+            }
+
+            public? open? override [ResolvedTo(RAW_FIR)] fun getValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>): Int {
+                ^getValue IntegerLiteral(1)
+            }
+
+            public? open? override [ResolvedTo(RAW_FIR)] fun setValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>, [ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
+            }
+
+        }
+
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public? final? [ResolvedTo(RAW_FIR)] val valueWithExplicitType: Intby delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/valueWithExplicitType|.getValue#(Null(null), ::R|/valueWithExplicitType|)
+            }
+
+        public? final? [ResolvedTo(RAW_FIR)] val valueWithImplicitType: <implicit>by delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/valueWithImplicitType|.getValue#(Null(null), ::R|/valueWithImplicitType|)
+            }
+
+        public? final? [ResolvedTo(RAW_FIR)] var variableWithExplicitType: Intby delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/variableWithExplicitType|.getValue#(Null(null), ::R|/variableWithExplicitType|)
+            }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
+                D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
+            }
+
+        public? final? [ResolvedTo(RAW_FIR)] var variableWithImplicitType: <implicit>by delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/variableWithImplicitType|.getValue#(Null(null), ::R|/variableWithImplicitType|)
+            }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
+                D|/variableWithImplicitType|.setValue#(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
+            }
+
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(IMPORTS)] delegatesScript.kts
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)]
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            receive#(valueWithExplicitType#)
+            receive#(valueWithImplicitType#)
+            variableWithExplicitType# = IntegerLiteral(10)
+            variableWithImplicitType# = IntegerLiteral(10)
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val delegate: <implicit> = object : ReadWriteProperty<Any?, Int> {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                super<<implicit>>()
+            }
+
+            public? open? override [ResolvedTo(RAW_FIR)] fun getValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>): Int {
+                ^getValue IntegerLiteral(1)
+            }
+
+            public? open? override [ResolvedTo(RAW_FIR)] fun setValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>, [ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
+            }
+
+        }
+
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+
+        public? final? [ResolvedTo(RAW_FIR)] val valueWithExplicitType: Intby delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/valueWithExplicitType|.getValue#(Null(null), ::R|/valueWithExplicitType|)
+            }
+
+        public? final? [ResolvedTo(RAW_FIR)] val valueWithImplicitType: <implicit>by delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/valueWithImplicitType|.getValue#(Null(null), ::R|/valueWithImplicitType|)
+            }
+
+        public? final? [ResolvedTo(RAW_FIR)] var variableWithExplicitType: Intby delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/variableWithExplicitType|.getValue#(Null(null), ::R|/variableWithExplicitType|)
+            }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
+                D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
+            }
+
+        public? final? [ResolvedTo(RAW_FIR)] var variableWithImplicitType: <implicit>by delegate#
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+                ^ D|/variableWithImplicitType|.getValue#(Null(null), ::R|/variableWithImplicitType|)
+            }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] <set-?>: <implicit>): R|kotlin/Unit| {
+                D|/variableWithImplicitType|.setValue#(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
+            }

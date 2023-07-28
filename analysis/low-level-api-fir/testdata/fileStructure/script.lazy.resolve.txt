@@ -22,6 +22,10 @@ FILE: [ResolvedTo(IMPORTS)] script.kts
             ^build Builder#().apply#(action#)
         }
 
+        public? final? [ResolvedTo(RAW_FIR)] fun build2([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): Builder {
+            ^build2 Builder#().apply#(action#)
+        }
+
         build#(<L> = [ResolvedTo(RAW_FIR)] build@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
             version# = String(123)
             local final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {

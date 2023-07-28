@@ -3,21 +3,21 @@ FIR element: FirPropertyImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-public? final? [ResolvedTo(RAW_FIR)] val x: String = String()
-    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Y] get(): String
+public final [ResolvedTo(BODY_RESOLVE)] val x: R|kotlin/String| = String()
+    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Y] get(): R|kotlin/String|
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] memberPropertyScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] class Y : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Y] constructor(): R|Y| {
+        public final [ResolvedTo(STATUS)] class Y : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Y] constructor(): R|Y| {
                 super<R|kotlin/Any|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] val x: String = String()
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Y] get(): String
+            public final [ResolvedTo(BODY_RESOLVE)] val x: R|kotlin/String| = String()
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Y] get(): R|kotlin/String|
 
         }

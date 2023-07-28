@@ -1,7 +1,7 @@
 RAW_FIR:
-FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
+FILE: [ResolvedTo(RAW_FIR)] lambdaAsSAMInterfaceScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] class Arg : R|kotlin/Any| {
@@ -30,7 +30,7 @@ FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] class Arg : R|kotlin/Any| {
@@ -59,7 +59,7 @@ FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] class Arg : R|kotlin/Any| {
@@ -77,7 +77,7 @@ FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
         public? final? [ResolvedTo(RAW_FIR)] fun testMe([ResolvedTo(RAW_FIR)] f: Foo): R|kotlin/Unit| {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| {
             testMe#(<L> = [ResolvedTo(RAW_FIR)] testMe@fun <implicit>.<anonymous>([ResolvedTo(RAW_FIR)] b: <implicit>): <implicit> <inline=Unknown>  {
                 b#
             }
@@ -88,7 +88,7 @@ FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] class Arg : R|kotlin/Any| {
@@ -106,7 +106,7 @@ FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
         public? final? [ResolvedTo(RAW_FIR)] fun testMe([ResolvedTo(RAW_FIR)] f: Foo): R|kotlin/Unit| {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        public? final? [ResolvedTo(COMPANION_GENERATION)] fun resolveMe(): R|kotlin/Unit| {
             testMe#(<L> = [ResolvedTo(RAW_FIR)] testMe@fun <implicit>.<anonymous>([ResolvedTo(RAW_FIR)] b: <implicit>): <implicit> <inline=Unknown>  {
                 b#
             }
@@ -117,7 +117,7 @@ FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] class Arg : R|kotlin/Any| {
@@ -135,7 +135,7 @@ FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
         public? final? [ResolvedTo(RAW_FIR)] fun testMe([ResolvedTo(RAW_FIR)] f: Foo): R|kotlin/Unit| {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        public? final? [ResolvedTo(SUPER_TYPES)] fun resolveMe(): R|kotlin/Unit| {
             testMe#(<L> = [ResolvedTo(RAW_FIR)] testMe@fun <implicit>.<anonymous>([ResolvedTo(RAW_FIR)] b: <implicit>): <implicit> <inline=Unknown>  {
                 b#
             }
@@ -146,7 +146,7 @@ FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] class Arg : R|kotlin/Any| {
@@ -164,7 +164,7 @@ FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
         public? final? [ResolvedTo(RAW_FIR)] fun testMe([ResolvedTo(RAW_FIR)] f: Foo): R|kotlin/Unit| {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        public? final? [ResolvedTo(TYPES)] fun resolveMe(): R|kotlin/Unit| {
             testMe#(<L> = [ResolvedTo(RAW_FIR)] testMe@fun <implicit>.<anonymous>([ResolvedTo(RAW_FIR)] b: <implicit>): <implicit> <inline=Unknown>  {
                 b#
             }
@@ -175,7 +175,7 @@ FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] class Arg : R|kotlin/Any| {
@@ -193,7 +193,7 @@ FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
         public? final? [ResolvedTo(RAW_FIR)] fun testMe([ResolvedTo(RAW_FIR)] f: Foo): R|kotlin/Unit| {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| {
             testMe#(<L> = [ResolvedTo(RAW_FIR)] testMe@fun <implicit>.<anonymous>([ResolvedTo(RAW_FIR)] b: <implicit>): <implicit> <inline=Unknown>  {
                 b#
             }
@@ -204,7 +204,7 @@ FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] class Arg : R|kotlin/Any| {
@@ -222,7 +222,7 @@ FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
         public? final? [ResolvedTo(RAW_FIR)] fun testMe([ResolvedTo(RAW_FIR)] f: Foo): R|kotlin/Unit| {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| {
             testMe#(<L> = [ResolvedTo(RAW_FIR)] testMe@fun <implicit>.<anonymous>([ResolvedTo(RAW_FIR)] b: <implicit>): <implicit> <inline=Unknown>  {
                 b#
             }
@@ -233,7 +233,7 @@ FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] class Arg : R|kotlin/Any| {
@@ -251,7 +251,7 @@ FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
         public? final? [ResolvedTo(RAW_FIR)] fun testMe([ResolvedTo(RAW_FIR)] f: Foo): R|kotlin/Unit| {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| {
             testMe#(<L> = [ResolvedTo(RAW_FIR)] testMe@fun <implicit>.<anonymous>([ResolvedTo(RAW_FIR)] b: <implicit>): <implicit> <inline=Unknown>  {
                 b#
             }
@@ -262,7 +262,7 @@ FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] class Arg : R|kotlin/Any| {
@@ -280,7 +280,7 @@ FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
         public? final? [ResolvedTo(RAW_FIR)] fun testMe([ResolvedTo(RAW_FIR)] f: Foo): R|kotlin/Unit| {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        public final [ResolvedTo(CONTRACTS)] fun resolveMe(): R|kotlin/Unit| {
             testMe#(<L> = [ResolvedTo(RAW_FIR)] testMe@fun <implicit>.<anonymous>([ResolvedTo(RAW_FIR)] b: <implicit>): <implicit> <inline=Unknown>  {
                 b#
             }
@@ -291,7 +291,7 @@ FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] class Arg : R|kotlin/Any| {
@@ -309,7 +309,7 @@ FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
         public? final? [ResolvedTo(RAW_FIR)] fun testMe([ResolvedTo(RAW_FIR)] f: Foo): R|kotlin/Unit| {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
             testMe#(<L> = [ResolvedTo(RAW_FIR)] testMe@fun <implicit>.<anonymous>([ResolvedTo(RAW_FIR)] b: <implicit>): <implicit> <inline=Unknown>  {
                 b#
             }
@@ -320,7 +320,7 @@ FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] class Arg : R|kotlin/Any| {
@@ -338,7 +338,7 @@ FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
         public? final? [ResolvedTo(RAW_FIR)] fun testMe([ResolvedTo(RAW_FIR)] f: Foo): R|kotlin/Unit| {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun resolveMe(): R|kotlin/Unit| {
             testMe#(<L> = [ResolvedTo(RAW_FIR)] testMe@fun <implicit>.<anonymous>([ResolvedTo(RAW_FIR)] b: <implicit>): <implicit> <inline=Unknown>  {
                 b#
             }
@@ -349,7 +349,7 @@ FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] class Arg : R|kotlin/Any| {
@@ -367,9 +367,9 @@ FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterfaceScript.kts
         public? final? [ResolvedTo(RAW_FIR)] fun testMe([ResolvedTo(RAW_FIR)] f: Foo): R|kotlin/Unit| {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            testMe#(<L> = [ResolvedTo(RAW_FIR)] testMe@fun <implicit>.<anonymous>([ResolvedTo(RAW_FIR)] b: <implicit>): <implicit> <inline=Unknown>  {
-                b#
+        public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
+            <Unresolved name: testMe>#(<L> = [ResolvedTo(BODY_RESOLVE)] testMe@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] b: R|kotlin/Nothing|): R|kotlin/Nothing| <inline=Unknown>  {
+                R|<local>/b|
             }
             )
         }

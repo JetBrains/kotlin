@@ -1,4 +1,3 @@
-// IGNORE_FIR
 fun resolve<caret>Me() {
     receive(functionWithLazyBody())
 }

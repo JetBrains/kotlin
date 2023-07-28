@@ -1,4 +1,3 @@
-// IGNORE_FIR
 annotation class Anno(val s: String)
 
 @Deprecated("FirstClass")

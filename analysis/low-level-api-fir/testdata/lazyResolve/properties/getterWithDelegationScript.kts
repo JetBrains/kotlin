@@ -1,4 +1,3 @@
-// IGNORE_FIR
 val one: Int by Prp()
 @Deprecated("reason") ge<caret>t
 

@@ -1,7 +1,7 @@
 RAW_FIR:
-FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
+FILE: [ResolvedTo(RAW_FIR)] nestedClassWithPropertiesOverridesScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] interface OV : R|kotlin/Any| {
@@ -31,7 +31,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] interface OV : R|kotlin/Any| {
@@ -61,14 +61,14 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] interface OV : R|kotlin/Any| {
             public? final? [ResolvedTo(RAW_FIR)] val originalExpressions: A
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OV] get(): A
 
-            public? final? [ResolvedTo(RAW_FIR)] class ResolveMe : OV {
+            public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class ResolveMe : OV {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
                     super<<implicit>>()
                 }
@@ -91,14 +91,14 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] interface OV : R|kotlin/Any| {
             public? final? [ResolvedTo(RAW_FIR)] val originalExpressions: A
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OV] get(): A
 
-            public? final? [ResolvedTo(RAW_FIR)] class ResolveMe : OV {
+            public? final? [ResolvedTo(COMPANION_GENERATION)] class ResolveMe : OV {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
                     super<<implicit>>()
                 }
@@ -121,14 +121,14 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] interface OV : R|kotlin/Any| {
+        public? final? [ResolvedTo(SUPER_TYPES)] interface OV : R|kotlin/Any| {
             public? final? [ResolvedTo(RAW_FIR)] val originalExpressions: A
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OV] get(): A
 
-            public? final? [ResolvedTo(RAW_FIR)] class ResolveMe : OV {
+            public? final? [ResolvedTo(SUPER_TYPES)] class ResolveMe : R|OV| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
                     super<<implicit>>()
                 }
@@ -151,14 +151,14 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] interface OV : R|kotlin/Any| {
+        public? final? [ResolvedTo(TYPES)] interface OV : R|kotlin/Any| {
             public? final? [ResolvedTo(RAW_FIR)] val originalExpressions: A
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OV] get(): A
 
-            public? final? [ResolvedTo(RAW_FIR)] class ResolveMe : OV {
+            public? final? [ResolvedTo(TYPES)] class ResolveMe : R|OV| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
                     super<<implicit>>()
                 }
@@ -181,14 +181,14 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] interface OV : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] interface OV : R|kotlin/Any| {
             public? final? [ResolvedTo(RAW_FIR)] val originalExpressions: A
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OV] get(): A
 
-            public? final? [ResolvedTo(RAW_FIR)] class ResolveMe : OV {
+            public final [ResolvedTo(STATUS)] class ResolveMe : R|OV| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
                     super<<implicit>>()
                 }
@@ -211,14 +211,14 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] interface OV : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] interface OV : R|kotlin/Any| {
             public? final? [ResolvedTo(RAW_FIR)] val originalExpressions: A
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OV] get(): A
 
-            public? final? [ResolvedTo(RAW_FIR)] class ResolveMe : OV {
+            public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class ResolveMe : R|OV| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
                     super<<implicit>>()
                 }
@@ -241,14 +241,14 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] interface OV : R|kotlin/Any| {
-            public? final? [ResolvedTo(RAW_FIR)] val originalExpressions: A
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OV] get(): A
+        public abstract [ResolvedTo(STATUS)] interface OV : R|kotlin/Any| {
+            public abstract [ResolvedTo(STATUS)] val originalExpressions: R|A|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=OV] get(): R|A|
 
-            public? final? [ResolvedTo(RAW_FIR)] class ResolveMe : OV {
+            public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] class ResolveMe : R|OV| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
                     super<<implicit>>()
                 }
@@ -271,14 +271,14 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] interface OV : R|kotlin/Any| {
-            public? final? [ResolvedTo(RAW_FIR)] val originalExpressions: A
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OV] get(): A
+        public abstract [ResolvedTo(STATUS)] interface OV : R|kotlin/Any| {
+            public abstract [ResolvedTo(STATUS)] val originalExpressions: R|A|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=OV] get(): R|A|
 
-            public? final? [ResolvedTo(RAW_FIR)] class ResolveMe : OV {
+            public final [ResolvedTo(CONTRACTS)] class ResolveMe : R|OV| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
                     super<<implicit>>()
                 }
@@ -301,14 +301,14 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] interface OV : R|kotlin/Any| {
-            public? final? [ResolvedTo(RAW_FIR)] val originalExpressions: A
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OV] get(): A
+        public abstract [ResolvedTo(STATUS)] interface OV : R|kotlin/Any| {
+            public abstract [ResolvedTo(STATUS)] val originalExpressions: R|A|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=OV] get(): R|A|
 
-            public? final? [ResolvedTo(RAW_FIR)] class ResolveMe : OV {
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class ResolveMe : R|OV| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
                     super<<implicit>>()
                 }
@@ -331,14 +331,14 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] interface OV : R|kotlin/Any| {
-            public? final? [ResolvedTo(RAW_FIR)] val originalExpressions: A
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OV] get(): A
+        public abstract [ResolvedTo(STATUS)] interface OV : R|kotlin/Any| {
+            public abstract [ResolvedTo(STATUS)] val originalExpressions: R|A|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=OV] get(): R|A|
 
-            public? final? [ResolvedTo(RAW_FIR)] class ResolveMe : OV {
+            public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class ResolveMe : R|OV| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
                     super<<implicit>>()
                 }
@@ -361,20 +361,20 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] interface OV : R|kotlin/Any| {
-            public? final? [ResolvedTo(RAW_FIR)] val originalExpressions: A
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OV] get(): A
+        public abstract [ResolvedTo(STATUS)] interface OV : R|kotlin/Any| {
+            public abstract [ResolvedTo(STATUS)] val originalExpressions: R|A|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=OV] get(): R|A|
 
-            public? final? [ResolvedTo(RAW_FIR)] class ResolveMe : OV {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
-                    super<<implicit>>()
+            public final [ResolvedTo(BODY_RESOLVE)] class ResolveMe : R|OV| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
+                    super<R|kotlin/Any|>()
                 }
 
-                public? open? override [ResolvedTo(RAW_FIR)] val originalExpressions: A
-                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] get(): A
+                public open override [ResolvedTo(STATUS)] val originalExpressions: R|A|
+                    public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] get(): R|A|
 
             }
 

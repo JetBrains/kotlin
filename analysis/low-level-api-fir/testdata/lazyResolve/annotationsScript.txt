@@ -1,9 +1,9 @@
 RAW_FIR:
-FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
-    @FILE:R|kotlin/Suppress|[Types](names = vararg(String(1)))
-    [ResolvedTo(BODY_RESOLVE)] annotations container
+FILE: [ResolvedTo(RAW_FIR)] annotationsScript.kts
+    @FILE:Suppress[Unresolved](String(1))
+    [ResolvedTo(RAW_FIR)] annotations container
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Suppress[Unresolved](String(2)) public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
@@ -12,10 +12,10 @@ FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
-    @FILE:R|kotlin/Suppress|[Types](names = vararg(String(1)))
-    [ResolvedTo(BODY_RESOLVE)] annotations container
+    @FILE:Suppress[Unresolved](String(1))
+    [ResolvedTo(RAW_FIR)] annotations container
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         @Suppress[Unresolved](String(2)) public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
@@ -24,121 +24,121 @@ FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
-    @FILE:R|kotlin/Suppress|[Types](names = vararg(String(1)))
-    [ResolvedTo(BODY_RESOLVE)] annotations container
+    @FILE:Suppress[Unresolved](String(1))
+    [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotations container
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Suppress[Unresolved](String(2)) public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        @Suppress[Unresolved](String(2)) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| {
         }
 
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
-    @FILE:R|kotlin/Suppress|[Types](names = vararg(String(1)))
-    [ResolvedTo(BODY_RESOLVE)] annotations container
+    @FILE:Suppress[Unresolved](String(1))
+    [ResolvedTo(COMPANION_GENERATION)] annotations container
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Suppress[Unresolved](String(2)) public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        @Suppress[Unresolved](String(2)) public? final? [ResolvedTo(COMPANION_GENERATION)] fun resolveMe(): R|kotlin/Unit| {
         }
 
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
-    @FILE:R|kotlin/Suppress|[Types](names = vararg(String(1)))
-    [ResolvedTo(BODY_RESOLVE)] annotations container
+    @FILE:Suppress[Unresolved](String(1))
+    [ResolvedTo(SUPER_TYPES)] annotations container
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Suppress[Unresolved](String(2)) public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        @Suppress[Unresolved](String(2)) public? final? [ResolvedTo(SUPER_TYPES)] fun resolveMe(): R|kotlin/Unit| {
         }
 
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
-    @FILE:R|kotlin/Suppress|[Types](names = vararg(String(1)))
-    [ResolvedTo(BODY_RESOLVE)] annotations container
+    @FILE:R|kotlin/Suppress|[Types](String(1))
+    [ResolvedTo(TYPES)] annotations container
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Suppress[Unresolved](String(2)) public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        @R|kotlin/Suppress|[Types](String(2)) public? final? [ResolvedTo(TYPES)] fun resolveMe(): R|kotlin/Unit| {
         }
 
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
-    @FILE:R|kotlin/Suppress|[Types](names = vararg(String(1)))
-    [ResolvedTo(BODY_RESOLVE)] annotations container
+    @FILE:R|kotlin/Suppress|[Types](String(1))
+    [ResolvedTo(STATUS)] annotations container
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Suppress[Unresolved](String(2)) public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        @R|kotlin/Suppress|[Types](String(2)) public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| {
         }
 
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
-    @FILE:R|kotlin/Suppress|[Types](names = vararg(String(1)))
-    [ResolvedTo(BODY_RESOLVE)] annotations container
+    @FILE:R|kotlin/Suppress|[Types](String(1))
+    [ResolvedTo(EXPECT_ACTUAL_MATCHING)] annotations container
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Suppress[Unresolved](String(2)) public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        @R|kotlin/Suppress|[Types](String(2)) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| {
         }
 
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
-    @FILE:R|kotlin/Suppress|[Types](names = vararg(String(1)))
-    [ResolvedTo(BODY_RESOLVE)] annotations container
+    @FILE:R|kotlin/Suppress|[Types](String(1))
+    [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] annotations container
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Suppress[Unresolved](String(2)) public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        @R|kotlin/Suppress|[Types](String(2)) public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| {
         }
 
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
-    @FILE:R|kotlin/Suppress|[Types](names = vararg(String(1)))
-    [ResolvedTo(BODY_RESOLVE)] annotations container
+    @FILE:R|kotlin/Suppress|[Types](String(1))
+    [ResolvedTo(CONTRACTS)] annotations container
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Suppress[Unresolved](String(2)) public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        @R|kotlin/Suppress|[Types](String(2)) public final [ResolvedTo(CONTRACTS)] fun resolveMe(): R|kotlin/Unit| {
         }
 
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
-    @FILE:R|kotlin/Suppress|[Types](names = vararg(String(1)))
-    [ResolvedTo(BODY_RESOLVE)] annotations container
+    @FILE:R|kotlin/Suppress|[Types](String(1))
+    [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] annotations container
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Suppress[Unresolved](String(2)) public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        @R|kotlin/Suppress|[Types](String(2)) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
         }
 
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
     @FILE:R|kotlin/Suppress|[Types](names = vararg(String(1)))
-    [ResolvedTo(BODY_RESOLVE)] annotations container
+    [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] annotations container
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Suppress[Unresolved](String(2)) public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        @R|kotlin/Suppress|[Types](names = vararg(String(2))) public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun resolveMe(): R|kotlin/Unit| {
         }
 
 
@@ -147,10 +147,10 @@ FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
     @FILE:R|kotlin/Suppress|[Types](names = vararg(String(1)))
     [ResolvedTo(BODY_RESOLVE)] annotations container
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Suppress[Unresolved](String(2)) public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+        @R|kotlin/Suppress|[Types](names = vararg(String(2))) public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
         }
 
 

@@ -1,4 +1,3 @@
-// IGNORE_FIR
 open class C : D() {
     open class CC
 }

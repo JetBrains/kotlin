@@ -1,9 +1,9 @@
 /* NonReanalyzableNonClassDeclarationStructureElement */class A
 
-    (val a: Int)
+    (val a: Int)/* NonReanalyzableNonClassDeclarationStructureElement */
 
-{
-    constructor() : this(1) {
+{/* NonReanalyzableClassDeclarationStructureElement */
+    constructor() : this(1) {/* NonReanalyzableNonClassDeclarationStructureElement */
 
     }
 }

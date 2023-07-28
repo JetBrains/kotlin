@@ -1,4 +1,3 @@
-// IGNORE_FIR
 interface Foo1 : Foo2 {
     override fun foo()
     override val st<caret>r: String
