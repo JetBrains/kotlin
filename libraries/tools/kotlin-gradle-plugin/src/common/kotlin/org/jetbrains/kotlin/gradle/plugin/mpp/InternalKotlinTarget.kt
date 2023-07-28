@@ -7,12 +7,18 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.provider.Property
 import org.gradle.api.publish.maven.MavenPublication
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
 
 internal interface InternalKotlinTarget : KotlinTarget, HasMutableExtras {
+    @InternalKotlinGradlePluginApi
     val isSourcesPublishableProperty: Property<Boolean>
+    var isSourcesPublishable: Boolean
+        get() = isSourcesPublishableProperty.get()
+        set(value) = isSourcesPublishableProperty.set(value)
+
     val kotlinComponents: Set<KotlinTargetComponent>
     fun onPublicationCreated(publication: MavenPublication)
 }
