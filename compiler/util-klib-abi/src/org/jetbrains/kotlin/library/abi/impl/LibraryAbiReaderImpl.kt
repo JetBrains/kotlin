@@ -20,6 +20,9 @@ import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.abi.*
 import org.jetbrains.kotlin.library.abi.AbiClassifierReference.ClassReference
 import org.jetbrains.kotlin.library.abi.AbiTypeNullability.*
+import org.jetbrains.kotlin.library.abi.impl.LibraryDeserializer.ContainingEntity.Class.Companion.excludeFakeOverrides
+import org.jetbrains.kotlin.library.abi.impl.LibraryDeserializer.TypeDeserializer.Companion.underlyingTypeId
+import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.SpecialNames
@@ -91,6 +94,8 @@ private class LibraryDeserializer(
     supportedSignatureVersions: Set<AbiSignatureVersion>,
     private val compositeFilter: AbiReadingFilter.Composite?
 ) {
+    private val platform: BuiltInsPlatform? = library.builtInsPlatform?.let(BuiltInsPlatform::parseFromString)
+
     private val interner = IrInterningService()
 
     private val annotationsInterner = object {
@@ -188,13 +193,14 @@ private class LibraryDeserializer(
                 return null
 
             val flags = ClassFlags.decode(proto.base.flags)
-
             val modality = flags.modality.toAbiModality(
                 containingClassModality = null // Open nested classes in a final class remain open.
             )
 
             val qualifiedName = deserializeQualifiedName(proto.name, containingEntity)
-            val thisClassEntity = ContainingEntity.Class(qualifiedName, modality)
+            val thisClassEntity = ContainingEntity.Class(qualifiedName, modality, lazyExcludeFakeOverrides = {
+                platform != BuiltInsPlatform.NATIVE || !isDirectlyInheritedFromNativeInteropClass(proto)
+            })
 
             // Note: For inner classes pass the `parentTypeParameterResolver` to the constructor so that it could be
             // possible to resolve TPs by delegating to the parent TP resolver. For non-inner classes just keep
@@ -211,7 +217,7 @@ private class LibraryDeserializer(
 
             return AbiClassImpl(
                 qualifiedName = qualifiedName,
-                signatures = deserializeSignatures(proto.base),
+                signatures = deserializeIdSignature(proto.base.symbol).toAbiSignatures(),
                 annotations = annotations,
                 modality = modality,
                 kind = when (val kind = flags.kind) {
@@ -233,6 +239,24 @@ private class LibraryDeserializer(
             )
         }
 
+        private fun isDirectlyInheritedFromNativeInteropClass(proto: ProtoClass): Boolean {
+            fun extractIdSignature(typeId: Int): IdSignature? {
+                val type = fileReader.type(typeId)
+                val symbolId = when (type.kindCase) {
+                    ProtoType.KindCase.DNN -> return extractIdSignature(type.dnn.underlyingTypeId)
+                    ProtoType.KindCase.SIMPLE -> type.simple.classifier
+                    ProtoType.KindCase.LEGACYSIMPLE -> type.legacySimple.classifier
+                    ProtoType.KindCase.DYNAMIC, ProtoType.KindCase.ERROR, ProtoType.KindCase.KIND_NOT_SET, null -> return null
+                }
+                return deserializeIdSignature(symbolId)
+            }
+
+            return proto.superTypeList.any { superTypeId ->
+                val idSignature = extractIdSignature(superTypeId) ?: return@any false
+                with(idSignature) { Flags.IS_NATIVE_INTEROP_LIBRARY.test() }
+            }
+        }
+
         private inline fun deserializeTypes(
             typeIds: List<Int>,
             typeParameterResolver: TypeParameterResolver,
@@ -244,7 +268,7 @@ private class LibraryDeserializer(
         private fun deserializeEnumEntry(proto: ProtoEnumEntry, containingEntity: ContainingEntity): AbiEnumEntry {
             return AbiEnumEntryImpl(
                 qualifiedName = deserializeQualifiedName(proto.name, containingEntity),
-                signatures = deserializeSignatures(proto.base),
+                signatures = deserializeIdSignature(proto.base.symbol).toAbiSignatures(),
                 annotations = deserializeAnnotations(proto.base)
             )
         }
@@ -257,17 +281,29 @@ private class LibraryDeserializer(
         ): AbiFunction? {
             val annotations = deserializeAnnotations(proto.base)
 
-            val containingClassModality = when (containingEntity) {
-                is ContainingEntity.Class -> containingEntity.modality
-                is ContainingEntity.Property -> containingEntity.containingClassModality
-                else -> null
+            val containingProperty: ContainingEntity.Property?
+            val containingClass: ContainingEntity.Class?
+
+            when (containingEntity) {
+                is ContainingEntity.Class -> {
+                    containingProperty = null
+                    containingClass = containingEntity
+                }
+                is ContainingEntity.Property -> {
+                    containingProperty = containingEntity
+                    containingClass = containingEntity.containingClass
+                }
+                else -> {
+                    containingProperty = null
+                    containingClass = null
+                }
             }
 
-            val parentPropertyVisibilityStatus = (containingEntity as? ContainingEntity.Property)?.propertyVisibilityStatus
+            val parentPropertyVisibilityStatus = containingProperty?.propertyVisibilityStatus
             if (!computeVisibilityStatus(
                     proto.base,
                     annotations,
-                    containingClassModality,
+                    containingClass?.modality,
                     parentPropertyVisibilityStatus
                 ).isPubliclyVisible
             ) {
@@ -275,7 +311,7 @@ private class LibraryDeserializer(
             }
 
             val flags = FunctionFlags.decode(proto.base.flags)
-            if (flags.isFakeOverride) // TODO: FO of class with supertype from interop library
+            if (flags.isFakeOverride && containingClass.excludeFakeOverrides)
                 return null
 
             val nameAndType = BinaryNameAndType.decode(proto.nameType)
@@ -289,14 +325,14 @@ private class LibraryDeserializer(
                     // Reuse the TP resolved from the class, as constructors can't have own TPs.
                     parentTypeParameterResolver!!
                 }
-                containingEntity is ContainingEntity.Property -> {
+                containingProperty != null -> {
                     // 1. A TP of a serialized property accessor has signature that points to the property itself.
                     //    So for the need of TP resolution it's necessary to pass the name of the property to the TP resolver.
                     // 2. Properties don't have their own TPs, but their accessors can have TPs. This means that there is
                     //    no need to create a TP resolver for a property, only for the accessor. To make rendering of
                     //    accessor's TPs consistent with the position of the accessor inside the declaration's tree,
                     //    it's necessary to adjust the "level" field inside the TP resolver by 1.
-                    TypeParameterResolver(containingEntity.propertyName, parentTypeParameterResolver, levelAdjustment = 1)
+                    TypeParameterResolver(containingProperty.propertyName, parentTypeParameterResolver, levelAdjustment = 1)
                 }
                 else -> TypeParameterResolver(functionName, parentTypeParameterResolver)
             }
@@ -316,7 +352,7 @@ private class LibraryDeserializer(
 
                 AbiConstructorImpl(
                     qualifiedName = functionName,
-                    signatures = deserializeSignatures(proto.base),
+                    signatures = deserializeIdSignature(proto.base.symbol).toAbiSignatures(),
                     annotations = annotations,
                     isInline = flags.isInline,
                     contextReceiverParametersCount = contextReceiversCount,
@@ -329,9 +365,9 @@ private class LibraryDeserializer(
 
                 AbiFunctionImpl(
                     qualifiedName = functionName,
-                    signatures = deserializeSignatures(proto.base),
+                    signatures = deserializeIdSignature(proto.base.symbol).toAbiSignatures(),
                     annotations = annotations,
-                    modality = flags.modality.toAbiModality(containingClassModality),
+                    modality = flags.modality.toAbiModality(containingClass?.modality),
                     isInline = flags.isInline,
                     isSuspend = flags.isSuspend,
                     typeParameters = deserializeTypeParameters(proto.typeParameterList, thisFunctionTypeParameterResolver),
@@ -349,24 +385,24 @@ private class LibraryDeserializer(
             typeParameterResolver: TypeParameterResolver?
         ): AbiProperty? {
             val annotations = deserializeAnnotations(proto.base)
-            val containingClassModality = (containingEntity as? ContainingEntity.Class)?.modality
+            val containingClass: ContainingEntity.Class? = containingEntity as? ContainingEntity.Class
 
-            val visibilityStatus = computeVisibilityStatus(proto.base, annotations, containingClassModality)
+            val visibilityStatus = computeVisibilityStatus(proto.base, annotations, containingClass?.modality)
             if (!visibilityStatus.isPubliclyVisible)
                 return null
 
             val flags = PropertyFlags.decode(proto.base.flags)
-            if (flags.isFakeOverride) // TODO: FO of class with supertype from interop library
+            if (flags.isFakeOverride && containingClass.excludeFakeOverrides)
                 return null
 
             val qualifiedName = deserializeQualifiedName(proto.name, containingEntity)
-            val thisPropertyEntity = ContainingEntity.Property(qualifiedName, containingClassModality, visibilityStatus)
+            val thisPropertyEntity = ContainingEntity.Property(qualifiedName, containingClass, visibilityStatus)
 
             return AbiPropertyImpl(
                 qualifiedName = qualifiedName,
-                signatures = deserializeSignatures(proto.base),
+                signatures = deserializeIdSignature(proto.base.symbol).toAbiSignatures(),
                 annotations = annotations,
-                modality = flags.modality.toAbiModality(containingClassModality),
+                modality = flags.modality.toAbiModality(containingClass?.modality),
                 kind = when {
                     flags.isConst -> AbiPropertyKind.CONST_VAL
                     flags.isVar -> AbiPropertyKind.VAR
@@ -395,14 +431,15 @@ private class LibraryDeserializer(
             return containingEntity.computeNestedName(fileReader.string(nameId))
         }
 
-        private fun deserializeSignatures(proto: ProtoDeclarationBase): AbiSignatures {
-            val signature = deserializeIdSignature(proto.symbol)
-
-            return AbiSignaturesImpl(
-                signatureV1 = if (needV1Signatures) signature.render(IdSignatureRenderer.LEGACY) else null,
-                signatureV2 = if (needV2Signatures) signature.render(IdSignatureRenderer.DEFAULT) else null
-            )
+        private fun deserializeIdSignature(symbolId: Long): IdSignature {
+            val signatureId = BinarySymbolData.decode(symbolId).signatureId
+            return signatureDeserializer.deserializeIdSignature(signatureId)
         }
+
+        private fun IdSignature.toAbiSignatures(): AbiSignatures = AbiSignaturesImpl(
+            signatureV1 = if (needV1Signatures) render(IdSignatureRenderer.LEGACY) else null,
+            signatureV2 = if (needV2Signatures) render(IdSignatureRenderer.DEFAULT) else null
+        )
 
         private fun deserializeTypeParameters(
             protos: List<ProtoTypeParameter>,
@@ -422,11 +459,11 @@ private class LibraryDeserializer(
 
         private fun deserializeAnnotations(proto: ProtoDeclarationBase): Set<AbiQualifiedName> {
             fun deserialize(annotation: ProtoConstructorCall): AbiQualifiedName {
-                val signature = deserializeIdSignature(annotation.symbol)
+                val idSignature = deserializeIdSignature(annotation.symbol)
                 val annotationClassName = when {
-                    signature is CommonSignature -> signature
-                    signature is CompositeSignature && signature.container is FileSignature -> signature.inner as CommonSignature
-                    else -> error("Unexpected annotation signature encountered: ${signature::class.java}, ${signature.render()}")
+                    idSignature is CommonSignature -> idSignature
+                    idSignature is CompositeSignature && idSignature.container is FileSignature -> idSignature.inner as CommonSignature
+                    else -> error("Unexpected annotation signature encountered: ${idSignature::class.java}, ${idSignature.render()}")
                 }.extractQualifiedName { rawRelativeName ->
                     check(rawRelativeName.endsWith(INIT_SUFFIX)) {
                         "Annotation constructor name does not have '$INIT_SUFFIX' suffix: $rawRelativeName"
@@ -469,11 +506,6 @@ private class LibraryDeserializer(
             else -> VisibilityStatus.NON_PUBLIC
         }
 
-        private fun deserializeIdSignature(symbolId: Long): IdSignature {
-            val signatureId = BinarySymbolData.decode(symbolId).signatureId
-            return signatureDeserializer.deserializeIdSignature(signatureId)
-        }
-
         private fun deserializeValueParameter(
             proto: ProtoValueParameter,
             typeParameterResolver: TypeParameterResolver
@@ -497,13 +529,23 @@ private class LibraryDeserializer(
             override fun computeNestedName(simpleName: String) = qualifiedName(packageName, simpleName)
         }
 
-        class Class(val className: AbiQualifiedName, val modality: AbiModality) : ContainingEntity {
+        class Class(
+            val className: AbiQualifiedName,
+            val modality: AbiModality,
+            lazyExcludeFakeOverrides: () -> Boolean
+        ) : ContainingEntity {
+            private val excludeFakeOverrides: Boolean by lazy(LazyThreadSafetyMode.NONE, lazyExcludeFakeOverrides)
+
             override fun computeNestedName(simpleName: String) = qualifiedName(className, simpleName)
+
+            companion object {
+                val Class?.excludeFakeOverrides: Boolean get() = this?.excludeFakeOverrides ?: false
+            }
         }
 
         class Property(
             val propertyName: AbiQualifiedName,
-            val containingClassModality: AbiModality?,
+            val containingClass: Class?,
             val propertyVisibilityStatus: VisibilityStatus
         ) : ContainingEntity {
             override fun computeNestedName(simpleName: String) = qualifiedName(propertyName, simpleName)
@@ -588,7 +630,7 @@ private class LibraryDeserializer(
                     ProtoType.KindCase.LEGACYSIMPLE -> deserializeSimpleType(proto.legacySimple, typeParameterResolver)
                     ProtoType.KindCase.DYNAMIC -> DynamicTypeImpl
                     ProtoType.KindCase.ERROR -> ErrorTypeImpl
-                    ProtoType.KindCase.KIND_NOT_SET -> error("Unexpected IR type: $kindCase")
+                    ProtoType.KindCase.KIND_NOT_SET, null -> error("Unexpected IR type: $kindCase")
                 }
             }
         }
@@ -600,9 +642,7 @@ private class LibraryDeserializer(
             proto: ProtoIrDefinitelyNotNullType,
             typeParameterResolver: TypeParameterResolver,
         ): AbiType {
-            assert(proto.typesCount == 1) { "Only DefinitelyNotNull type is now supported" }
-
-            val underlyingType = deserializeType(proto.getTypes(0), typeParameterResolver)
+            val underlyingType = deserializeType(proto.underlyingTypeId, typeParameterResolver)
             return if (underlyingType is AbiType.Simple && underlyingType.nullability != DEFINITELY_NOT_NULL)
                 SimpleTypeImpl(underlyingType.classifierReference, underlyingType.arguments, DEFINITELY_NOT_NULL)
             else
@@ -638,26 +678,26 @@ private class LibraryDeserializer(
             typeParameterResolver: TypeParameterResolver
         ): AbiType.Simple {
             val symbolData = BinarySymbolData.decode(symbolId)
-            val signature = signatureDeserializer.deserializeIdSignature(symbolData.signatureId)
+            val idSignature = signatureDeserializer.deserializeIdSignature(symbolData.signatureId)
             val symbolKind = symbolData.kind
 
             return when {
-                symbolKind == CLASS_SYMBOL && signature is CommonSignature -> {
+                symbolKind == CLASS_SYMBOL && idSignature is CommonSignature -> {
                     // Publicly visible class or interface.
                     SimpleTypeImpl(
                         classifierReference = ClassReferenceImpl(
-                            className = signature.extractQualifiedName()
+                            className = idSignature.extractQualifiedName()
                         ),
                         arguments = deserializeTypeArguments(typeArgumentIds, typeParameterResolver),
                         nullability = nullability
                     )
                 }
 
-                symbolKind == CLASS_SYMBOL && signature is CompositeSignature && signature.container is FileSignature -> {
+                symbolKind == CLASS_SYMBOL && idSignature is CompositeSignature && idSignature.container is FileSignature -> {
                     // Non-publicly visible classifier. Practically, this can only be a private top-level interface
                     // that some publicly visible class inherits. Need to memoize it to avoid displaying it later among
                     // supertypes of the inherited class.
-                    val className = (signature.inner as CommonSignature).extractQualifiedName()
+                    val className = (idSignature.inner as CommonSignature).extractQualifiedName()
                     nonPublicTopLevelClassNames += className
 
                     SimpleTypeImpl(
@@ -667,13 +707,13 @@ private class LibraryDeserializer(
                     )
                 }
 
-                symbolKind == TYPE_PARAMETER_SYMBOL && signature is CompositeSignature -> {
+                symbolKind == TYPE_PARAMETER_SYMBOL && idSignature is CompositeSignature -> {
                     // A type-parameter.
                     SimpleTypeImpl(
                         classifierReference = TypeParameterReferenceImpl(
                             tag = typeParameterResolver.resolveTypeParameterTag(
-                                declarationName = (signature.container as CommonSignature).extractQualifiedName(),
-                                index = (signature.inner as LocalSignature).index()
+                                declarationName = (idSignature.container as CommonSignature).extractQualifiedName(),
+                                index = (idSignature.inner as LocalSignature).index()
                             )
                         ),
                         arguments = emptyList(),
@@ -681,7 +721,7 @@ private class LibraryDeserializer(
                     )
                 }
 
-                else -> error("Unexpected combination of symbol kind ($symbolKind) and a signature: ${signature::class.java}, ${signature.render()}")
+                else -> error("Unexpected combination of symbol kind ($symbolKind) and a signature: ${idSignature::class.java}, ${idSignature.render()}")
             }
         }
 
@@ -701,6 +741,11 @@ private class LibraryDeserializer(
                         variance = typeProjection.variance.toAbiVariance()
                     )
             }
+        }
+
+        companion object {
+            val ProtoIrDefinitelyNotNullType.underlyingTypeId: Int
+                get() = typesList.singleOrNull() ?: error("Only DefinitelyNotNull type is now supported")
         }
     }
 
