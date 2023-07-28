@@ -15,9 +15,7 @@ import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.publish.maven.MavenPublication
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
-import org.jetbrains.kotlin.gradle.plugin.await
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinUsageContext
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinTargetComponentWithPublication
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext
@@ -25,7 +23,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext.MavenScope.COMP
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext.MavenScope.RUNTIME
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinTargetComponent.TargetProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.getCoordinatesFromPublicationDelegateAndProject
-import org.jetbrains.kotlin.gradle.utils.Future
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.gradle.utils.future
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
@@ -75,7 +72,7 @@ internal class ExternalKotlinTargetComponent(
     override fun getCoordinates(): ModuleVersionIdentifier =
         getCoordinatesFromPublicationDelegateAndProject(publicationDelegate, target.project, null)
 
-    private val usagesFuture: Future<Set<DefaultKotlinUsageContext>> = project.future {
+    val kotlinUsagesFuture = project.future {
         KotlinPluginLifecycle.Stage.FinaliseCompilations.await()
 
         val compilation = target
@@ -88,7 +85,7 @@ internal class ExternalKotlinTargetComponent(
             DefaultKotlinUsageContext(compilation, RUNTIME, target.runtimeElementsPublishedConfiguration.name),
         )
 
-        if (target.isSourcesPublishable) {
+        if (target.isSourcesPublishableProperty.awaitFinalValueOrThrow()) {
             result += DefaultKotlinUsageContext(
                 compilation = compilation,
                 mavenScope = null,
@@ -100,20 +97,30 @@ internal class ExternalKotlinTargetComponent(
         result
     }
 
-    private val gradleSoftwareComponentFuture = project.future {
-        val usages = usagesFuture.await()
+    override fun getUsages(): Set<KotlinUsageContext> = kotlinUsagesFuture.getOrThrow()
 
+    /**
+     * Should be used in Gradle's Publication only.
+     * See [org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSoftwareComponent.getVariants]
+     */
+    val gradleSoftwareComponent: AdhocComponentWithVariants by lazy {
         val softwareComponentFactory = (target.project as ProjectInternal).services.get(SoftwareComponentFactory::class.java)
         val adhocSoftwareComponent = softwareComponentFactory.adhoc(target.targetName)
 
-        usages.forEach {
-            val configuration = target.project.configurations.getByName(it.dependencyConfigurationName)
-            val mavenScope = it.mavenScope
-            adhocSoftwareComponent.addVariantsFromConfiguration(configuration) { details ->
-                if (mavenScope != null) {
-                    details.mapToMavenScope(mavenScope.name.toLowerCaseAsciiOnly())
-                } else {
-                    details.mapToOptional()
+        // try to execute in-place, in case if [gradleSoftwareComponent] requested at late stages.
+        // For example, during configuration cache serialization KotlinPluginLifecycle will be finished and none will execute
+        // this coroutine.
+        project.launch(KotlinPluginLifecycle.CoroutineStart.Undispatched) {
+            val kotlinUsages = kotlinUsagesFuture.await()
+            kotlinUsages.forEach {
+                val configuration = target.project.configurations.getByName(it.dependencyConfigurationName)
+                val mavenScope = it.mavenScope
+                adhocSoftwareComponent.addVariantsFromConfiguration(configuration) { details ->
+                    if (mavenScope != null) {
+                        details.mapToMavenScope(mavenScope.name.toLowerCaseAsciiOnly())
+                    } else {
+                        details.mapToOptional()
+                    }
                 }
             }
         }
@@ -121,11 +128,4 @@ internal class ExternalKotlinTargetComponent(
         adhocSoftwareComponent
     }
 
-    override fun getUsages(): Set<KotlinUsageContext> = usagesFuture.getOrThrow()
-
-    /**
-     * Should be used in Gradle's Publication only.
-     * See [org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSoftwareComponent.getVariants]
-     */
-    val gradleSoftwareComponent: AdhocComponentWithVariants get() = gradleSoftwareComponentFuture.getOrThrow()
 }

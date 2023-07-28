@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator.Compa
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType.LEGACY
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.PRIMARY_SINGLE_COMPONENT_NAME
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetContainerDsl
@@ -30,9 +29,7 @@ import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.testing.internal.KotlinTestReport
 import org.jetbrains.kotlin.gradle.testing.testTaskName
-import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
-import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import org.jetbrains.kotlin.gradle.utils.setProperty
+import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.addIfNotNull
 import javax.inject.Inject
@@ -78,25 +75,30 @@ constructor(
             super.kotlinComponents
         else {
             val mainCompilation = compilations.getByName(MAIN_COMPILATION_NAME)
-            val usageContexts = createUsageContexts(mainCompilation).toMutableSet()
-
-            usageContexts += irTarget!!.createUsageContexts(irTarget!!.compilations.getByName(MAIN_COMPILATION_NAME))
-
             val componentName =
                 if (project.kotlinExtension is KotlinMultiplatformExtension)
                     irTarget?.let { targetName.removeJsCompilerSuffix(LEGACY) } ?: targetName
                 else PRIMARY_SINGLE_COMPONENT_NAME
 
-            usageContexts.addIfNotNull(
-                createSourcesJarAndUsageContextIfPublishable(
-                    mainCompilation,
-                    componentName,
-                    dashSeparatedName(targetName.toLowerCaseAsciiOnly()),
-                    mavenScope = KotlinUsageContext.MavenScope.RUNTIME
-                )
-            )
+            val usageContextsFuture = project.future {
+                val usageContexts = createUsageContexts(mainCompilation).toMutableSet()
 
-            val result = createKotlinVariant(componentName, mainCompilation, usageContexts)
+                val irTarget = irTarget
+                if (irTarget != null) usageContexts += irTarget.createUsageContexts(irTarget.compilations.getByName(MAIN_COMPILATION_NAME))
+
+                usageContexts.addIfNotNull(
+                    createSourcesJarAndUsageContextIfPublishable(
+                        mainCompilation,
+                        componentName,
+                        dashSeparatedName(targetName.toLowerCaseAsciiOnly()),
+                        mavenScope = KotlinUsageContext.MavenScope.RUNTIME
+                    )
+                )
+
+                usageContexts
+            }
+
+            val result = createKotlinVariant(componentName, mainCompilation, usageContextsFuture)
 
             setOf(result)
         }
@@ -119,7 +121,7 @@ constructor(
     override fun createKotlinVariant(
         componentName: String,
         compilation: KotlinCompilation<*>,
-        usageContexts: Set<DefaultKotlinUsageContext>
+        usageContexts: Future<Set<DefaultKotlinUsageContext>>
     ): KotlinVariant {
         return super.createKotlinVariant(componentName, compilation, usageContexts).apply {
             irTarget?.let {

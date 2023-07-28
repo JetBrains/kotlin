@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.*
-import org.gradle.api.attributes.*
+import org.gradle.api.attributes.Attribute
+import org.gradle.api.attributes.AttributeContainer
+import org.gradle.api.attributes.Usage
 import org.gradle.api.capabilities.Capability
 import org.gradle.api.component.ComponentWithCoordinates
 import org.gradle.api.component.ComponentWithVariants
@@ -23,13 +25,10 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinaliseCompilations
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
-import org.jetbrains.kotlin.gradle.utils.markResolvable
 import org.jetbrains.kotlin.gradle.targets.metadata.*
-import org.jetbrains.kotlin.gradle.targets.metadata.COMMON_MAIN_ELEMENTS_CONFIGURATION_NAME
-import org.jetbrains.kotlin.gradle.targets.metadata.isCompatibilityMetadataVariantEnabled
-import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.utils.Future
 import org.jetbrains.kotlin.gradle.utils.future
+import org.jetbrains.kotlin.gradle.utils.markResolvable
 import org.jetbrains.kotlin.gradle.utils.setProperty
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
@@ -94,13 +93,12 @@ abstract class KotlinSoftwareComponent(
             }
 
             val sourcesElements = metadataTarget.sourcesElementsConfigurationName
-            if (metadataTarget.isSourcesPublishable) {
+            if (metadataTarget.isSourcesPublishableProperty.awaitFinalValueOrThrow()) {
                 addSourcesJarArtifactToConfiguration(sourcesElements)
                 this += DefaultKotlinUsageContext(
                     compilation = metadataTarget.compilations.getByName(MAIN_COMPILATION_NAME),
                     dependencyConfigurationName = sourcesElements,
-                    includeIntoProjectStructureMetadata = false,
-                    publishOnlyIf = { metadataTarget.isSourcesPublishable }
+                    includeIntoProjectStructureMetadata = false
                 )
             }
         }
@@ -108,7 +106,7 @@ abstract class KotlinSoftwareComponent(
 
 
     override fun getUsages(): Set<UsageContext> {
-        return _usages.getOrThrow().publishableUsages()
+        return _usages.getOrThrow()
     }
 
     private suspend fun allPublishableCommonSourceSets() = getCommonSourceSetsForMetadataCompilation(project) +
@@ -156,19 +154,14 @@ interface KotlinUsageContext : UsageContext {
     }
 }
 
-class DefaultKotlinUsageContext(
+class DefaultKotlinUsageContext internal constructor(
     override val compilation: KotlinCompilation<*>,
     override val mavenScope: KotlinUsageContext.MavenScope? = null,
     override val dependencyConfigurationName: String,
     internal val overrideConfigurationArtifacts: SetProperty<PublishArtifact>? = null,
     internal val overrideConfigurationAttributes: AttributeContainer? = null,
     override val includeIntoProjectStructureMetadata: Boolean = true,
-    internal val publishOnlyIf: PublishOnlyIf = PublishOnlyIf { true },
 ) : KotlinUsageContext {
-    fun interface PublishOnlyIf {
-        fun predicate(): Boolean
-    }
-
     private val kotlinTarget: KotlinTarget get() = compilation.target
     private val project: Project get() = kotlinTarget.project
 
@@ -249,7 +242,3 @@ class DefaultKotlinUsageContext(
         }
 
 }
-
-internal fun Iterable<DefaultKotlinUsageContext>.publishableUsages() = this
-    .filter { it.publishOnlyIf.predicate() }
-    .toSet()

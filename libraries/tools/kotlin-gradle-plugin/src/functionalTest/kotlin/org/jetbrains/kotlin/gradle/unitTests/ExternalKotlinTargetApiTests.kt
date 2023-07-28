@@ -15,13 +15,12 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.KotlinSourceSetTreeClassifier
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.orNull
-import org.jetbrains.kotlin.gradle.plugin.mpp.awaitComponents
+import org.jetbrains.kotlin.gradle.plugin.mpp.awaitKotlinUsagesOrEmpty
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinCompilationDescriptor.CompilationAssociator
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinCompilationDescriptor.CompilationFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinCompilationDescriptorBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.createCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.createExternalKotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.kotlinProjectStructureMetadata
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.utils.property
@@ -204,10 +203,9 @@ class ExternalKotlinTargetApiTests {
         target.createCompilation<FakeCompilation> { defaults(kotlin) }
 
         KotlinPluginLifecycle.Stage.AfterFinaliseCompilations.await()
-        val component = target.delegate.internal.awaitComponents().singleOrNull() ?: fail("Expected single 'component' for external target")
+        val component = target.delegate.kotlinComponents.singleOrNull() ?: fail("Expected single 'component' for external target")
 
-        if (component !is SoftwareComponentInternal) fail("ExternalTarget.component expected to implement SoftwareComponentInternal")
-        component.usages.find { it.name == target.sourcesElementsPublishedConfiguration.name }
+        component.awaitKotlinUsagesOrEmpty().find { it.dependencyConfigurationName == target.sourcesElementsPublishedConfiguration.name }
             ?: fail("Missing sourcesElements usage")
     }
 
@@ -224,6 +222,23 @@ class ExternalKotlinTargetApiTests {
         if (sourcesUsage != null) {
             fail("Unexpected usage '${sourcesUsage.name} in target publication")
         }
+    }
+
+    @Test
+    fun `test gradle usage component contains the same usages as kotlin component`() = project.runLifecycleAwareTest {
+        val target = kotlin.createExternalKotlinTarget<FakeTarget> { defaults() }
+        target.createCompilation<FakeCompilation>() { defaults(kotlin) }
+
+        val kotlinComponent = target.delegate.kotlinComponents.singleOrNull() ?: fail("Expected single 'kotlinComponent' for external target")
+        val kotlinUsagesConfigurationNames = kotlinComponent.awaitKotlinUsagesOrEmpty().map { it.dependencyConfigurationName }
+        KotlinPluginLifecycle.Stage.AfterFinaliseCompilations.await()
+
+        // When kotlin usages is available corresponding gradle component usages should be also available
+        val gradleComponent = target.delegate.components.singleOrNull() ?: fail("Expected single 'component' for external target")
+        val usagesNames = (gradleComponent as SoftwareComponentInternal).usages.map { it.name }
+
+        if (kotlinUsagesConfigurationNames.toSet() != usagesNames.toSet())
+            fail("Kotlin Usages ($kotlinUsagesConfigurationNames) from Kotlin Component didn't match Usages from Gradle Component ($usagesNames)")
     }
 
     @Test

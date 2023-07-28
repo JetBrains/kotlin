@@ -18,7 +18,10 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.plugin.sources.awaitPlatformCompilations
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
-import org.jetbrains.kotlin.gradle.targets.metadata.*
+import org.jetbrains.kotlin.gradle.targets.metadata.filesWithUnpackedArchives
+import org.jetbrains.kotlin.gradle.targets.metadata.findMetadataCompilation
+import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
+import org.jetbrains.kotlin.gradle.targets.metadata.isNativeSourceSet
 import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeBinaryTestRun
 import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeHostTestRun
 import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeSimulatorTestRun
@@ -26,6 +29,7 @@ import org.jetbrains.kotlin.gradle.targets.native.NativeBinaryTestRunSource
 import org.jetbrains.kotlin.gradle.targets.native.internal.includeCommonizedCInteropMetadata
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
+import org.jetbrains.kotlin.gradle.utils.future
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
@@ -57,7 +61,8 @@ abstract class KotlinNativeTarget @Inject constructor(
         // NB: another usage context for the host-specific metadata may be added to this set below
         val mutableUsageContexts = createUsageContexts(mainCompilation).toMutableSet()
 
-        project.launchInStage(KotlinPluginLifecycle.Stage.AfterFinaliseDsl) {
+        val kotlinUsagesFuture = project.future {
+            KotlinPluginLifecycle.Stage.AfterFinaliseDsl.await()
             val hostSpecificSourceSets = getHostSpecificSourceSets(project)
                 .intersect(mainCompilation.allKotlinSourceSets)
 
@@ -104,17 +109,19 @@ abstract class KotlinNativeTarget @Inject constructor(
                     )
                 )
             }
+
+            mutableUsageContexts.addIfNotNull(
+                createSourcesJarAndUsageContextIfPublishable(
+                    mainCompilation,
+                    targetName,
+                    dashSeparatedName(targetName.toLowerCaseAsciiOnly())
+                )
+            )
+
+            mutableUsageContexts
         }
 
-        mutableUsageContexts.addIfNotNull(
-            createSourcesJarAndUsageContextIfPublishable(
-                mainCompilation,
-                targetName,
-                dashSeparatedName(targetName.toLowerCaseAsciiOnly())
-            )
-        )
-
-        val result = createKotlinVariant(targetName, mainCompilation, mutableUsageContexts)
+        val result = createKotlinVariant(targetName, mainCompilation, kotlinUsagesFuture)
 
         setOf(result)
     }

@@ -8,11 +8,7 @@
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.*
-import org.jetbrains.kotlin.gradle.plugin.awaitFinalValue
-import org.jetbrains.kotlin.gradle.plugin.currentKotlinPluginLifecycle
-import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
 import org.jetbrains.kotlin.gradle.utils.newProperty
@@ -54,6 +50,17 @@ class LifecycleAwaitFinalPropertyValueTest {
 
         launchInStage(FinaliseDsl.nextOrThrow) {
             assertFailsWith<IllegalStateException> { property.set(2) }
+        }
+    }
+
+    @Test
+    fun `test - getting value is an idempotent operation`() = project.runLifecycleAwareTest {
+        val property = project.newProperty<Int>()
+        property.set(1)
+
+        launch {
+            assertEquals(1, property.awaitFinalValue())
+            assertEquals(1, property.awaitFinalValue())
         }
     }
 

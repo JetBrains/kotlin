@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
-import org.gradle.api.artifacts.*
+import org.gradle.api.artifacts.ModuleIdentifier
+import org.gradle.api.artifacts.ModuleVersionIdentifier
+import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.component.ComponentWithCoordinates
 import org.gradle.api.component.ComponentWithVariants
 import org.gradle.api.internal.component.SoftwareComponentInternal
@@ -14,9 +16,7 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
-import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
-import org.jetbrains.kotlin.gradle.utils.getValue
-import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 internal interface KotlinTargetComponentWithPublication : KotlinTargetComponent {
@@ -56,9 +56,9 @@ private interface KotlinTargetComponentWithCoordinatesAndPublication :
     override fun getCoordinates() = getCoordinatesFromPublicationDelegateAndProject(publicationDelegate, target.project, target)
 }
 
-open class KotlinVariant(
+open class KotlinVariant internal constructor(
     val producingCompilation: KotlinCompilation<*>,
-    private val usages: Set<DefaultKotlinUsageContext>
+    internal val kotlinUsagesFuture: Future<Set<DefaultKotlinUsageContext>>
 ) : KotlinTargetComponentWithPublication, SoftwareComponentInternal {
     var componentName: String? = null
 
@@ -67,7 +67,7 @@ open class KotlinVariant(
     final override val target: KotlinTarget
         get() = producingCompilation.target
 
-    override fun getUsages(): Set<KotlinUsageContext> = usages.publishableUsages()
+    override fun getUsages(): Set<KotlinUsageContext> = kotlinUsagesFuture.getOrThrow()
 
     override fun getName(): String = componentName ?: producingCompilation.target.targetName
 
@@ -94,17 +94,17 @@ open class KotlinVariant(
     override var publicationDelegate: MavenPublication? = null
 }
 
-open class KotlinVariantWithCoordinates(
+open class KotlinVariantWithCoordinates internal constructor(
     producingCompilation: KotlinCompilation<*>,
-    usages: Set<DefaultKotlinUsageContext>
-) : KotlinVariant(producingCompilation, usages),
+    kotlinUsagesFuture: Future<Set<DefaultKotlinUsageContext>>,
+) : KotlinVariant(producingCompilation, kotlinUsagesFuture),
     KotlinTargetComponentWithCoordinatesAndPublication /* Gradle 4.7+ API, don't use with older versions */
 
-class KotlinVariantWithMetadataVariant(
+class KotlinVariantWithMetadataVariant internal constructor(
     producingCompilation: KotlinCompilation<*>,
-    usages: Set<DefaultKotlinUsageContext>,
+    kotlinUsagesFuture: Future<Set<DefaultKotlinUsageContext>>,
     internal val metadataTarget: AbstractKotlinTarget
-) : KotlinVariantWithCoordinates(producingCompilation, usages), ComponentWithVariants {
+) : KotlinVariantWithCoordinates(producingCompilation, kotlinUsagesFuture), ComponentWithVariants {
     override fun getVariants() = metadataTarget.components
 }
 
@@ -114,7 +114,11 @@ class JointAndroidKotlinTargetComponent(
     val flavorNames: List<String>
 ) : KotlinTargetComponentWithCoordinatesAndPublication, SoftwareComponentInternal {
 
-    override fun getUsages(): Set<KotlinUsageContext> = nestedVariants.filter { it.publishable }.flatMap { it.usages }.toSet()
+    internal val kotlinUsagesFuture = target.project.future {
+        nestedVariants.filter { it.publishable }.flatMap { it.kotlinUsagesFuture.await() }.toSet()
+    }
+
+    override fun getUsages(): Set<KotlinUsageContext> = kotlinUsagesFuture.getOrThrow()
 
     override fun getName(): String = lowerCamelCaseName(target.targetName, *flavorNames.toTypedArray())
 

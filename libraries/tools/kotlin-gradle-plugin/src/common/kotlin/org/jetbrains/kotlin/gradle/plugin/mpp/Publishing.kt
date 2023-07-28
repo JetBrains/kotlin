@@ -78,14 +78,14 @@ private fun createTargetPublications(project: Project, publishing: PublishingExt
 }
 
 private fun InternalKotlinTarget.createMavenPublications(publications: PublicationContainer) {
-    components
-        .map { gradleComponent -> gradleComponent to kotlinComponents.single { it.name == gradleComponent.name } }
-        .filter { (_, kotlinComponent) -> kotlinComponent.publishableOnCurrentHost }
-        .forEach { (gradleComponent, kotlinComponent) ->
+    kotlinComponents
+        .filter { kotlinComponent -> kotlinComponent.publishableOnCurrentHost }
+        .forEach { kotlinComponent ->
             val componentPublication = publications.create(kotlinComponent.name, MavenPublication::class.java).apply {
-                // do this in whenEvaluated since older Gradle versions seem to check the files in the variant eagerly:
+                // do await for usages since older Gradle versions seem to check the files in the variant eagerly:
                 project.launch {
-                    awaitComponents()
+                    kotlinComponent.awaitKotlinUsagesOrEmpty()
+                    val gradleComponent = components.find { kotlinComponent.name == it.name } ?: return@launch
                     from(gradleComponent)
                 }
                 (this as MavenPublicationInternal).publishWithOriginalFileName()

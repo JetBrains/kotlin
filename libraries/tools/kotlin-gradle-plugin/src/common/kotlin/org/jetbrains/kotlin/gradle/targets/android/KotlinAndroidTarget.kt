@@ -14,10 +14,7 @@ import org.gradle.api.attributes.AttributeContainer
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
-import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
-import org.jetbrains.kotlin.gradle.utils.forAllAndroidVariants
-import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import org.jetbrains.kotlin.gradle.utils.setProperty
+import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.addIfNotNull
 import javax.inject.Inject
@@ -169,16 +166,18 @@ abstract class KotlinAndroidTarget @Inject constructor(
                 val androidVariantName = getVariantName(androidVariant)
                 val compilation = compilations.getByName(androidVariantName)
 
-                val usageContexts = createAndroidUsageContexts(
-                    variant = androidVariant,
-                    compilation = compilation,
-                    isSingleBuildType = publishableVariants.filter(::isVariantPublished).map(::getBuildTypeName).distinct().size == 1,
-                )
+                val usageContextsFuture = project.future {
+                    createAndroidUsageContexts(
+                        variant = androidVariant,
+                        compilation = compilation,
+                        isSingleBuildType = publishableVariants.filter(::isVariantPublished).map(::getBuildTypeName).distinct().size == 1,
+                    )
+                }
 
                 createKotlinVariant(
                     lowerCamelCaseName(compilation.target.name, *flavorGroupNameParts.toTypedArray()),
                     compilation,
-                    usageContexts,
+                    usageContextsFuture,
                 ).apply {
                     publishable = isVariantPublished(androidVariant)
 
@@ -204,7 +203,7 @@ abstract class KotlinAndroidTarget @Inject constructor(
         }.toSet()
     }
 
-    private fun AndroidProjectHandler.createAndroidUsageContexts(
+    private suspend fun AndroidProjectHandler.createAndroidUsageContexts(
         variant: BaseVariant,
         compilation: KotlinCompilation<*>,
         isSingleBuildType: Boolean,

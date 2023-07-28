@@ -12,7 +12,6 @@ import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Category.CATEGORY_ATTRIBUTE
 import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
 import org.gradle.api.file.FileCollection
-import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Jar
@@ -471,11 +470,9 @@ internal suspend fun getPublishedPlatformCompilations(project: Project): Map<Kot
         if (target.platformType == KotlinPlatformType.common)
             return@forEach
 
-        target.awaitKotlinComponents()
-            .filterIsInstance<SoftwareComponentInternal>()
+        target.kotlinComponents
             .forEach { component ->
-                component.usages
-                    .filterIsInstance<KotlinUsageContext>()
+                component.awaitKotlinUsagesOrEmpty()
                     .filter { it.includeIntoProjectStructureMetadata }
                     .forEach { usage -> result[usage] = usage.compilation }
             }

@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
+import org.jetbrains.kotlin.gradle.plugin.await
+import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
-import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 
 
 /**
@@ -17,11 +19,12 @@ import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
  */
 internal fun applyUserDefinedAttributes(target: AbstractKotlinTarget) {
     val project = target.project
-    project.whenEvaluated {
+    project.launch {
+        KotlinPluginLifecycle.Stage.AfterEvaluateBuildscript.await()
         // To copy the attributes to the output configurations, find those output configurations and their producing compilations
         // based on the target's components:
         val outputConfigurationsWithCompilations = target.kotlinComponents.filterIsInstance<KotlinVariant>().flatMap { kotlinVariant ->
-            kotlinVariant.usages.mapNotNull { usageContext ->
+            kotlinVariant.awaitKotlinUsagesOrEmpty().mapNotNull { usageContext ->
                 project.configurations.findByName(usageContext.dependencyConfigurationName)?.let { configuration ->
                     configuration to usageContext.compilation
                 }
@@ -31,7 +34,7 @@ internal fun applyUserDefinedAttributes(target: AbstractKotlinTarget) {
         // Add usages of android library when its variants are grouped by flavor
         outputConfigurationsWithCompilations += target.kotlinComponents
             .filterIsInstance<JointAndroidKotlinTargetComponent>()
-            .flatMap { variant -> variant.usages }
+            .flatMap { variant -> variant.awaitKotlinUsagesOrEmpty() }
             .mapNotNull { usage ->
                 val configuration = project.configurations.findByName(usage.dependencyConfigurationName) ?: return@mapNotNull null
                 configuration to usage.compilation
@@ -46,7 +49,9 @@ internal fun applyUserDefinedAttributes(target: AbstractKotlinTarget) {
 
             compilation.allOwnedConfigurationsNames
                 .mapNotNull { configurationName -> target.project.configurations.findByName(configurationName) }
-                .forEach { configuration -> copyAttributes(compilationAttributes, configuration.attributes) }
+                .forEach { configuration ->
+                    copyAttributes(compilationAttributes, configuration.attributes)
+                }
         }
 
         // Copy to host-specific metadata elements configurations
