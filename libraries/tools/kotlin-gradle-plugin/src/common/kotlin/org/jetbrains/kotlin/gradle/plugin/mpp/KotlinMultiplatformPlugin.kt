@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 class KotlinMultiplatformPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
-        checkGradleCompatibility("the Kotlin Multiplatform plugin", GradleVersion.version("6.0"))
+        checkGradleCompatibility("the Kotlin Multiplatform plugin")
         runDeprecationDiagnostics(project)
 
         project.plugins.apply(JavaBasePlugin::class.java)
