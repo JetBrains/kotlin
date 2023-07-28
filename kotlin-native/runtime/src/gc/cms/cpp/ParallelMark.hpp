@@ -4,12 +4,12 @@
 #include <condition_variable>
 
 #include "GCStatistics.hpp"
-#include "MarkStack.hpp"
-#include "std_support/Vector.hpp"
+#include "ManuallyScoped.hpp"
+#include "ObjectData.hpp"
+#include "ParallelProcessor.hpp"
 #include "ThreadRegistry.hpp"
 #include "Utils.hpp"
-#include "ParallelProcessor.hpp"
-#include "ManuallyScoped.hpp"
+#include "std_support/Vector.hpp"
 
 namespace kotlin::gc::mark {
 
@@ -70,14 +70,13 @@ private:
  * Mark workers are able to balance work between each other through sharing/stealing.
  */
 class ParallelMark : private Pinned {
-    using MarkStackImpl = intrusive_forward_list<ObjectData>;
+    using MarkStackImpl = intrusive_forward_list<GC::ObjectData>;
     // work balancing parameters were chosen pretty arbitrary
     using ParallelProcessor = ParallelProcessor<MarkStackImpl, 512, 4096>;
 public:
     class MarkTraits {
     public:
         using MarkQueue = ParallelProcessor::Worker;
-        using ObjectFactory = ObjectData::ObjectFactory;
 
         static void clear(MarkQueue& queue) noexcept {
             RuntimeAssert(queue.localEmpty(), "Mark queue must be empty");
@@ -86,19 +85,18 @@ public:
         static ALWAYS_INLINE ObjHeader* tryDequeue(MarkQueue& queue) noexcept {
             auto* obj = compiler::gcMarkSingleThreaded() ? queue.tryPopLocal() : queue.tryPop();
             if (obj) {
-                auto node = ObjectFactory::NodeRef::From(*obj);
-                return node->GetObjHeader();
+                return objectForObjectData(*obj);
             }
             return nullptr;
         }
 
         static ALWAYS_INLINE bool tryEnqueue(MarkQueue& queue, ObjHeader* object) noexcept {
-            auto& objectData = ObjectFactory::NodeRef::From(object).ObjectData();
+            auto& objectData = objectDataForObject(object);
             return compiler::gcMarkSingleThreaded() ? queue.tryPushLocal(objectData) : queue.tryPush(objectData);
         }
 
         static ALWAYS_INLINE bool tryMark(ObjHeader* object) noexcept {
-            auto& objectData = ObjectFactory::NodeRef::From(object).ObjectData();
+            auto& objectData = objectDataForObject(object);
             return objectData.tryMark();
         }
 

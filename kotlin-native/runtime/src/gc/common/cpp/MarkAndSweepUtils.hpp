@@ -7,6 +7,7 @@
 #define RUNTIME_GC_COMMON_MARK_AND_SWEEP_UTILS_H
 
 #include "ExtraObjectData.hpp"
+#include "ExtraObjectDataFactory.hpp"
 #include "FinalizerHooks.hpp"
 #include "GlobalData.hpp"
 #include "GCStatistics.hpp"
@@ -164,6 +165,20 @@ typename Traits::ObjectFactory::FinalizerQueue Sweep(GCHandle handle, typename T
     return Sweep<Traits>(handle, iter);
 }
 
+template <typename T>
+struct DefaultSweepTraits {
+    using ObjectFactory = T;
+    using ExtraObjectsFactory = mm::ExtraObjectDataFactory;
+
+    static bool IsMarkedByExtraObject(mm::ExtraObjectData& object) noexcept {
+        auto* baseObject = object.GetBaseObject();
+        if (!baseObject->heap()) return true;
+        return gc::isMarked(baseObject);
+    }
+
+    static bool TryResetMark(typename ObjectFactory::NodeRef node) noexcept { return gc::tryResetMark(node.ObjectData()); }
+};
+
 template <typename Traits>
 void collectRootSetForThread(GCHandle gcHandle, typename Traits::MarkQueue& markQueue, mm::ThreadData& thread) {
     auto handle = gcHandle.collectThreadRoots(thread);
@@ -234,6 +249,10 @@ void processWeaks(GCHandle gcHandle, mm::SpecialRefRegistry& registry) noexcept 
         handle.addNulled();
     }
 }
+
+struct DefaultProcessWeaksTraits {
+    static bool IsMarked(ObjHeader* obj) noexcept { return gc::isMarked(obj); }
+};
 
 } // namespace gc
 } // namespace kotlin

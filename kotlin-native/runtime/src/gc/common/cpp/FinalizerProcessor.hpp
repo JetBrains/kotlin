@@ -13,7 +13,6 @@
 
 #include "KAssert.h"
 #include "Memory.h"
-#include "ObjectFactory.hpp"
 #include "Runtime.h"
 #include "ScopedThread.hpp"
 #include "Utils.hpp"

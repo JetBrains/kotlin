@@ -6,12 +6,13 @@
 #include "GCImpl.hpp"
 
 #include "GC.hpp"
+#include "GCStatistics.hpp"
+#include "GlobalData.hpp"
 #include "MarkAndSweepUtils.hpp"
+#include "ObjectAlloc.hpp"
+#include "ObjectOps.hpp"
 #include "SameThreadMarkAndSweep.hpp"
 #include "std_support/Memory.hpp"
-#include "GlobalData.hpp"
-#include "GCStatistics.hpp"
-#include "ObjectOps.hpp"
 
 using namespace kotlin;
 
@@ -81,7 +82,7 @@ size_t gc::GC::GetAllocatedHeapSize(ObjHeader* object) noexcept {
 #ifdef CUSTOM_ALLOCATOR
     return alloc::CustomAllocator::GetAllocatedHeapSize(object);
 #else
-    return mm::ObjectFactory<GCImpl>::GetAllocatedHeapSize(object);
+    return ObjectFactory::GetAllocatedHeapSize(object);
 #endif
 }
 
@@ -140,20 +141,15 @@ void gc::GC::WaitFinalizers(int64_t epoch) noexcept {
 }
 
 bool gc::isMarked(ObjHeader* object) noexcept {
-    auto& objectData = mm::ObjectFactory<gc::SameThreadMarkAndSweep>::NodeRef::From(object).ObjectData();
-    return objectData.marked();
+    return objectDataForObject(object).marked();
 }
 
 ALWAYS_INLINE OBJ_GETTER(gc::tryRef, std::atomic<ObjHeader*>& object) noexcept {
     RETURN_OBJ(object.load(std::memory_order_relaxed));
 }
 
-// static
-const size_t gc::GC::objectDataSize = sizeof(SameThreadMarkAndSweep::ObjectData);
-
-// static
-ALWAYS_INLINE bool gc::GC::SweepObject(void *objectData) noexcept {
-    return reinterpret_cast<SameThreadMarkAndSweep::ObjectData*>(objectData)->tryResetMark();
+ALWAYS_INLINE bool gc::tryResetMark(GC::ObjectData& objectData) noexcept {
+    return objectData.tryResetMark();
 }
 
 // static
@@ -166,4 +162,19 @@ ALWAYS_INLINE void gc::GC::DestroyExtraObjectData(mm::ExtraObjectData& extraObje
     extraObject.ReleaseAssociatedObject();
     extraObject.setFlag(mm::ExtraObjectData::FLAGS_FINALIZED);
 #endif
+}
+
+// static
+ALWAYS_INLINE uint64_t type_layout::descriptor<gc::GC::ObjectData>::type::size() noexcept {
+    return sizeof(gc::GC::ObjectData);
+}
+
+// static
+ALWAYS_INLINE size_t type_layout::descriptor<gc::GC::ObjectData>::type::alignment() noexcept {
+    return alignof(gc::GC::ObjectData);
+}
+
+// static
+ALWAYS_INLINE gc::GC::ObjectData* type_layout::descriptor<gc::GC::ObjectData>::type::construct(uint8_t* ptr) noexcept {
+    return new (ptr) gc::GC::ObjectData();
 }

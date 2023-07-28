@@ -93,18 +93,18 @@ std_support::vector<ObjHeader*> Heap::GetAllocatedObjects() noexcept {
     for (int blockSize = 0; blockSize <= FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE; ++blockSize) {
         for (auto* page : fixedBlockPages_[blockSize].GetPages()) {
             for (auto* block : page->GetAllocatedBlocks()) {
-                allocated.push_back(reinterpret_cast<ObjHeader*>(block + gcDataSize));
+                allocated.push_back(reinterpret_cast<HeapObjHeader*>(block)->object());
             }
         }
     }
     for (auto* page : nextFitPages_.GetPages()) {
         for (auto* block : page->GetAllocatedBlocks()) {
-            allocated.push_back(reinterpret_cast<ObjHeader*>(block + gcDataSize));
+            allocated.push_back(reinterpret_cast<HeapObjHeader*>(block)->object());
         }
     }
     for (auto* page : singleObjectPages_.GetPages()) {
         for (auto* block : page->GetAllocatedBlocks()) {
-            allocated.push_back(reinterpret_cast<ObjHeader*>(block + gcDataSize));
+            allocated.push_back(reinterpret_cast<HeapObjHeader*>(block)->object());
         }
     }
     std_support::vector<ObjHeader*> unfinalized;

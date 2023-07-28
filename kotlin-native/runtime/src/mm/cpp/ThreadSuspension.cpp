@@ -12,6 +12,7 @@
 
 #include "CallsChecker.hpp"
 #include "Logging.hpp"
+#include "Porting.h"
 #include "SafePoint.hpp"
 #include "StackTrace.hpp"
 

@@ -19,9 +19,11 @@
 
 #include <utility>
 
+#include "Alignment.hpp"
 #include "KAssert.h"
 #include "Common.h"
 #include "TypeInfo.h"
+#include "TypeLayout.hpp"
 #include "Atomic.h"
 #include "PointerBits.h"
 #include "Utils.hpp"
@@ -125,6 +127,7 @@ struct ObjHeader {
   static MetaObjHeader* createMetaObject(ObjHeader* object);
   static void destroyMetaObject(ObjHeader* object);
 };
+static_assert(alignof(ObjHeader) <= kotlin::kObjectAlignment);
 
 // Header of value type array objects. Keep layout in sync with that of object header.
 struct ArrayHeader {
@@ -140,6 +143,61 @@ struct ArrayHeader {
   // Elements count. Element size is stored in instanceSize_ field of TypeInfo, negated.
   uint32_t count_;
 };
+static_assert(alignof(ArrayHeader) <= kotlin::kObjectAlignment);
+
+#ifndef KONAN_WASM
+namespace kotlin {
+
+struct ObjectBody;
+struct ArrayBody;
+
+template <>
+struct type_layout::descriptor<ObjectBody> {
+    class type {
+    public:
+        using value_type = ObjectBody;
+
+        explicit type(const TypeInfo* typeInfo) noexcept : size_(typeInfo->instanceSize_ - sizeof(ObjHeader)) {}
+
+        static constexpr size_t alignment() noexcept { return kObjectAlignment; }
+        uint64_t size() const noexcept { return size_; }
+
+        value_type* construct(uint8_t* ptr) noexcept {
+            RuntimeAssert(isZeroed(std_support::span<uint8_t>(ptr, size_)), "ObjectBodyDescriptor::construct@%p memory is not zeroed", ptr);
+            return reinterpret_cast<value_type*>(ptr);
+        }
+
+    private:
+        uint64_t size_;
+    };
+};
+
+template <>
+struct type_layout::descriptor<ArrayBody> {
+    class type {
+    public:
+        using value_type = ArrayBody;
+
+        explicit type(const TypeInfo* typeInfo, uint32_t count) noexcept :
+            // -(int32_t min) * uint32_t max cannot overflow uint64_t. And are capped
+            // at about half of uint64_t max.
+            size_(static_cast<uint64_t>(-typeInfo->instanceSize_) * count) {}
+
+        static constexpr size_t alignment() noexcept { return kObjectAlignment; }
+        uint64_t size() const noexcept { return size_; }
+
+        value_type* construct(uint8_t* ptr) noexcept {
+            RuntimeAssert(isZeroed(std_support::span<uint8_t>(ptr, size_)), "ArrayBodyDescriptor::construct@%p memory is not zeroed", ptr);
+            return reinterpret_cast<ArrayBody*>(ptr);
+        }
+
+    private:
+        uint64_t size_;
+    };
+};
+
+} // namespace kotlin
+#endif
 
 ALWAYS_INLINE bool isPermanentOrFrozen(const ObjHeader* obj);
 ALWAYS_INLINE bool isShareable(const ObjHeader* obj);

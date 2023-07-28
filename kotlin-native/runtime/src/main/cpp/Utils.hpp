@@ -10,6 +10,8 @@
 
 #include <type_traits>
 
+#include "std_support/Span.hpp"
+
 namespace kotlin {
 
 // A helper for implementing classes with disabled copy constructor and copy assignment.
@@ -97,6 +99,9 @@ private:
 size_t CombineHash(size_t seed, size_t value);
 
 #define ownerOf(type, field, ref) *reinterpret_cast<type*>(reinterpret_cast<char*>(&ref) - offsetof(type, field))
+
+// Returns `true` if the entire `span` is zeroed.
+bool isZeroed(std_support::span<uint8_t> span) noexcept;
 
 } // namespace kotlin
 

@@ -11,7 +11,6 @@
 #include "GlobalData.hpp"
 #include "GlobalsRegistry.hpp"
 #include "GC.hpp"
-#include "ObjectFactory.hpp"
 #include "ShadowStack.hpp"
 #include "SpecialRefRegistry.hpp"
 #include "ThreadLocalStorage.hpp"
