@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.JavaVersion
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.util.replaceText
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 
@@ -71,6 +72,7 @@ class StdlibAlignmentIT : KGPBaseTest() {
                 |}
                 """.trimMargin()
             )
+            buildGradle.replaceText("kotlin-stdlib:\$kotlin_version", "kotlin-stdlib:1.9.0")
 
             gradleProperties.appendText(
                 """
