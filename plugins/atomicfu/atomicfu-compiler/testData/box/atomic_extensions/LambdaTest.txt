@@ -14,8 +14,8 @@ public final class LambdaTest {
     private synthetic final static method getRs$volatile$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
     private synthetic final method getRs$volatile(): java.lang.Object
     private final method inlineLambda(p0: java.lang.Object, p1: kotlin.jvm.functions.Function1): void
-    private synthetic final method loop$atomicfu(p0: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p1: kotlin.jvm.functions.Function1, p2: java.lang.Object): void
-    private synthetic final method loop$atomicfu(p0: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p1: kotlin.jvm.functions.Function1, p2: java.lang.Object): void
+    private synthetic final method loop$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p2: kotlin.jvm.functions.Function1): void
+    private synthetic final method loop$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p2: kotlin.jvm.functions.Function1): void
     public final method loopInLambda1(p0: int): void
     public final method loopInLambda2(p0: int): void
     public final method loopInLambda2Ref(@org.jetbrains.annotations.NotNull p0: java.lang.String): void

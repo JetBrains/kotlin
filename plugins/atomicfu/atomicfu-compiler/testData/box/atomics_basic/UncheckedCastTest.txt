@@ -42,7 +42,7 @@ public final class UncheckedCastTest {
     private synthetic final method getBs$volatile(): java.lang.Object
     private synthetic final static method getS$volatile$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
     private synthetic final method getS$volatile(): java.lang.Object
-    private synthetic final method getString$atomicfu$array(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicReferenceArray, p2: int): java.lang.String
+    private synthetic final method getString$atomicfu$array(p0: java.util.concurrent.atomic.AtomicReferenceArray, p1: int): java.lang.String
     private synthetic final method getString$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicReferenceFieldUpdater): java.lang.String
     private synthetic final method setBs$volatile(p0: java.lang.Object): void
     private synthetic final method setS$volatile(p0: java.lang.Object): void

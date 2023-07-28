@@ -15,10 +15,13 @@ import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
+import org.jetbrains.kotlin.ir.types.isInt
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeAsciiOnly
@@ -37,6 +40,13 @@ abstract class AbstractAtomicfuIrBuilder(
             this.dispatchReceiver = dispatchReceiver?.deepCopyWithSymbols()
         }
 
+    // atomicArr.get(index)
+    fun atomicGetArrayElement(atomicArrayClass: IrClassSymbol, receiver: IrExpression, index: IrExpression) =
+        irCall(atomicSymbols.getAtomicHandlerFunctionSymbol(atomicArrayClass, "get")).apply {
+            dispatchReceiver = receiver
+            putValueArgument(0, index)
+        }
+
     fun irCallWithArgs(symbol: IrSimpleFunctionSymbol, dispatchReceiver: IrExpression?, extensionReceiver: IrExpression?, valueArguments: List<IrExpression?>) =
         irCall(symbol).apply {
             this.dispatchReceiver = dispatchReceiver
@@ -45,6 +55,13 @@ abstract class AbstractAtomicfuIrBuilder(
                 putValueArgument(i, arg)
             }
         }
+
+    fun callAtomicExtension(
+        symbol: IrSimpleFunctionSymbol,
+        dispatchReceiver: IrExpression?,
+        syntheticValueArguments: List<IrExpression?>,
+        valueArguments: List<IrExpression?>
+    ) = irCallWithArgs(symbol, dispatchReceiver, null, syntheticValueArguments + valueArguments)
 
     fun irVolatileField(
         name: String,
@@ -65,6 +82,57 @@ abstract class AbstractAtomicfuIrBuilder(
             this.annotations = annotations + atomicSymbols.volatileAnnotationConstructorCall
             this.parent = parentContainer
         }
+
+    fun irAtomicArrayField(
+        name: Name,
+        arrayClass: IrClassSymbol,
+        isStatic: Boolean,
+        annotations: List<IrConstructorCall>,
+        size: IrExpression,
+        dispatchReceiver: IrExpression?,
+        parentContainer: IrDeclarationContainer
+    ): IrField =
+        context.irFactory.buildField {
+            this.name = name
+            type = arrayClass.defaultType
+            this.isFinal = true
+            this.isStatic = isStatic
+            visibility = DescriptorVisibilities.PRIVATE
+            origin = AbstractAtomicSymbols.ATOMICFU_GENERATED_FIELD
+        }.apply {
+            this.initializer = IrExpressionBodyImpl(
+                newAtomicArray(arrayClass, size, dispatchReceiver)
+            )
+            this.annotations = annotations
+            this.parent = parentContainer
+        }
+
+    abstract fun newAtomicArray(
+        atomicArrayClass: IrClassSymbol,
+        size: IrExpression,
+        dispatchReceiver: IrExpression?
+    ): IrFunctionAccessExpression
+
+    // atomicArr.compareAndSet(index, expect, update)
+    fun callAtomicArray(
+        arrayClassSymbol: IrClassSymbol,
+        functionName: String,
+        dispatchReceiver: IrExpression?,
+        index: IrExpression,
+        valueArguments: List<IrExpression?>,
+        isBooleanReceiver: Boolean
+    ): IrCall {
+        val irCall = irCall(atomicSymbols.getAtomicHandlerFunctionSymbol(arrayClassSymbol, functionName)).apply {
+            this.dispatchReceiver = dispatchReceiver
+            putValueArgument(0, index) // array element index
+            valueArguments.forEachIndexed { index, arg ->
+                // as AtomicBooleanArray is represented with AtomicIntArray,
+                // boolean arguments should be cast to int
+                putValueArgument(index + 1, if (isBooleanReceiver) arg?.toInt() else arg)
+            }
+        }
+        return if (isBooleanReceiver && irCall.type.isInt()) irCall.toBoolean() else irCall
+    }
 
     fun buildClassInstance(
         irClass: IrClass,
@@ -89,6 +157,7 @@ abstract class AbstractAtomicfuIrBuilder(
         }
 
     fun IrExpression.toBoolean() = irNotEquals(this, irInt(0)) as IrCall
+    fun IrExpression.toInt() = irIfThenElse(irBuiltIns.intType, irEquals(this, irBoolean(true)), irInt(1), irInt(0))
 
     fun irClassWithPrivateConstructor(
         name: String,
@@ -156,7 +225,7 @@ abstract class AbstractAtomicfuIrBuilder(
 
     private fun IrProperty.addGetter(isStatic: Boolean, parentContainer: IrDeclarationContainer, irBuiltIns: IrBuiltIns) {
         val property = this
-        val field = requireNotNull(backingField) { "BackingField of the property $property should not be null"}
+        val field = requireNotNull(backingField) { "The backing field of the property $property should not be null."}
         addGetter {
             visibility = property.visibility
             returnType = field.type
@@ -189,7 +258,7 @@ abstract class AbstractAtomicfuIrBuilder(
 
     private fun IrProperty.addSetter(isStatic: Boolean, parentClass: IrDeclarationContainer, irBuiltIns: IrBuiltIns) {
         val property = this
-        val field = requireNotNull(property.backingField) { "BackingField of the property $property should not be null"}
+        val field = requireNotNull(property.backingField) { "The backing field of the property $property should not be null."}
         this@addSetter.addSetter {
             visibility = property.visibility
             returnType = irBuiltIns.unitType
@@ -222,4 +291,9 @@ abstract class AbstractAtomicfuIrBuilder(
             )
         }
     }
+
+    abstract fun atomicfuLoopBody(valueType: IrType, valueParameters: List<IrValueParameter>): IrBlockBody
+    abstract fun atomicfuArrayLoopBody(atomicArrayClass: IrClassSymbol, valueParameters: List<IrValueParameter>): IrBlockBody
+    abstract fun atomicfuUpdateBody(functionName: String, valueType: IrType, valueParameters: List<IrValueParameter>): IrBlockBody
+    abstract fun atomicfuArrayUpdateBody(functionName: String, valueType: IrType, atomicArrayClass: IrClassSymbol, valueParameters: List<IrValueParameter>): IrBlockBody
 }

@@ -7,7 +7,7 @@ public final class SimpleLock {
     public method <init>(): void
     private synthetic final static method get_locked$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
     private synthetic final method get_locked$volatile(): int
-    private synthetic final method loop$atomicfu(p0: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p1: kotlin.jvm.functions.Function1, p2: java.lang.Object): void
+    private synthetic final method loop$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p2: kotlin.jvm.functions.Function1): void
     private synthetic final method set_locked$volatile(p0: int): void
     public final method withLock(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): java.lang.Object
 }

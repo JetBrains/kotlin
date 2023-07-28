@@ -13,7 +13,7 @@ public final class LockFreeIntBits {
     private synthetic final method getBits$volatile(): int
     private final method mask(p0: int): int
     private synthetic final method setBits$volatile(p0: int): void
-    private synthetic final method update$atomicfu(p0: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p1: kotlin.jvm.functions.Function1, p2: java.lang.Object): void
+    private synthetic final method update$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p2: kotlin.jvm.functions.Function1): void
 }
 
 @kotlin.Metadata

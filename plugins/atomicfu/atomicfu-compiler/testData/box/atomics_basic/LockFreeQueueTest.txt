@@ -29,7 +29,7 @@ public final class LockFreeQueue {
     private synthetic final method getHead$volatile(): java.lang.Object
     private synthetic final static method getTail$volatile$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
     private synthetic final method getTail$volatile(): java.lang.Object
-    private synthetic final method loop$atomicfu(p0: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p1: kotlin.jvm.functions.Function1, p2: java.lang.Object): void
+    private synthetic final method loop$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p2: kotlin.jvm.functions.Function1): void
     private synthetic final method setHead$volatile(p0: java.lang.Object): void
     private synthetic final method setTail$volatile(p0: java.lang.Object): void
     private final inner class LockFreeQueue$Node

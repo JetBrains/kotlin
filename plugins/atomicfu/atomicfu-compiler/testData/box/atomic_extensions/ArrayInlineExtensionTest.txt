@@ -17,19 +17,19 @@ public final class ArrayInlineExtensionTest {
     private synthetic final field refArr: java.util.concurrent.atomic.AtomicReferenceArray
     static method <clinit>(): void
     public method <init>(): void
-    private synthetic final method bar$atomicfu$array(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicIntegerArray, p2: int, p3: int): int
+    private synthetic final method bar$atomicfu$array(p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int, p2: int): int
     private synthetic final method bar$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p2: int): int
     private final method casLoop(p0: int): int
     private final method casLoopExpression(p0: long): long
-    private synthetic final method extensionLoop$atomicfu$array(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicIntegerArray, p2: int, p3: int): int
+    private synthetic final method extensionLoop$atomicfu$array(p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int, p2: int): int
     private synthetic final method extensionLoop$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p2: int): int
-    private synthetic final method extensionLoopExpression$atomicfu$array(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicIntegerArray, p2: int, p3: int): int
+    private synthetic final method extensionLoopExpression$atomicfu$array(p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int, p2: int): int
     private synthetic final method extensionLoopExpression$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p2: int): int
-    private synthetic final method extensionLoopMixedReceivers$atomicfu$array(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicIntegerArray, p2: int, p3: int, p4: int, p5: int): int
+    private synthetic final method extensionLoopMixedReceivers$atomicfu$array(p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int, p2: int, p3: int, p4: int): int
     private synthetic final method extensionLoopMixedReceivers$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p2: int, p3: int, p4: int): int
-    private synthetic final method extensionLoopRecursive$atomicfu$array(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicIntegerArray, p2: int, p3: int): int
+    private synthetic final method extensionLoopRecursive$atomicfu$array(p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int, p2: int): int
     private synthetic final method extensionLoopRecursive$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p2: int): int
-    private synthetic final method foo$atomicfu$array(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicIntegerArray, p2: int, p3: int): int
+    private synthetic final method foo$atomicfu$array(p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int, p2: int): int
     private synthetic final method foo$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p2: int): int
     private synthetic final static method getA$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
     private synthetic final method getA$volatile(): int
@@ -38,7 +38,7 @@ public final class ArrayInlineExtensionTest {
     private synthetic final method getRefArr(): java.util.concurrent.atomic.AtomicReferenceArray
     private synthetic final method loop$atomicfu$array(p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int, p2: kotlin.jvm.functions.Function1): void
     private synthetic final method loop$atomicfu$array(p0: java.util.concurrent.atomic.AtomicLongArray, p1: int, p2: kotlin.jvm.functions.Function1): void
-    private synthetic final method loop$atomicfu(p0: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p1: kotlin.jvm.functions.Function1, p2: java.lang.Object): void
+    private synthetic final method loop$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p2: kotlin.jvm.functions.Function1): void
     private synthetic final method setA$volatile(p0: int): void
     public final method testIntExtensionLoops(): void
     public final inner class ArrayInlineExtensionTest$A

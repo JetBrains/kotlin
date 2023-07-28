@@ -22,7 +22,7 @@ public final class InlineExtensionWithTypeParameterTest {
     private synthetic volatile field sref$volatile: java.lang.Object
     static method <clinit>(): void
     public method <init>(): void
-    private synthetic final method foo$atomicfu$array(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicReferenceArray, p2: int, p3: int, p4: InlineExtensionWithTypeParameterTest$Segment): int
+    private synthetic final method foo$atomicfu$array(p0: java.util.concurrent.atomic.AtomicReferenceArray, p1: int, p2: int, p3: InlineExtensionWithTypeParameterTest$Segment): int
     private synthetic final method foo$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p2: int, p3: InlineExtensionWithTypeParameterTest$Segment): int
     private final method getSegmentId(p0: InlineExtensionWithTypeParameterTest$Segment): int
     private synthetic final static method getSref$volatile$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater

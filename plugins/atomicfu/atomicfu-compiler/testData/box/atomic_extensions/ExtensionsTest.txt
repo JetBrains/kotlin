@@ -11,7 +11,7 @@ public final class ExtensionsTest {
     private synthetic volatile field s$volatile: java.lang.Object
     static method <clinit>(): void
     public method <init>(): void
-    private synthetic final method booleanExtensionArithmetic$atomicfu$array(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicIntegerArray, p2: int): void
+    private synthetic final method booleanExtensionArithmetic$atomicfu$array(p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int): void
     private synthetic final method booleanExtensionArithmetic$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicIntegerFieldUpdater): void
     private synthetic final static method getA$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
     private synthetic final method getA$volatile(): int
@@ -21,11 +21,11 @@ public final class ExtensionsTest {
     private synthetic final method getL$volatile(): long
     private synthetic final static method getS$volatile$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
     private synthetic final method getS$volatile(): java.lang.Object
-    private synthetic final method intExtensionArithmetic$atomicfu$array(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicIntegerArray, p2: int): void
+    private synthetic final method intExtensionArithmetic$atomicfu$array(p0: java.util.concurrent.atomic.AtomicIntegerArray, p1: int): void
     private synthetic final method intExtensionArithmetic$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicIntegerFieldUpdater): void
-    private synthetic final method longExtensionArithmetic$atomicfu$array(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicLongArray, p2: int): void
+    private synthetic final method longExtensionArithmetic$atomicfu$array(p0: java.util.concurrent.atomic.AtomicLongArray, p1: int): void
     private synthetic final method longExtensionArithmetic$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicLongFieldUpdater): void
-    private synthetic final method refExtension$atomicfu$array(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicReferenceArray, p2: int): void
+    private synthetic final method refExtension$atomicfu$array(p0: java.util.concurrent.atomic.AtomicReferenceArray, p1: int): void
     private synthetic final method refExtension$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicReferenceFieldUpdater): void
     private synthetic final method setA$volatile(p0: int): void
     private synthetic final method setB$volatile(p0: int): void

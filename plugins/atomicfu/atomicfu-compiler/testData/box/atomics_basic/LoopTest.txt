@@ -36,9 +36,9 @@ public final class LoopTest {
     private synthetic final method getA$volatile(): int
     private synthetic final static method getA1$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
     private synthetic final method getA1$volatile(): int
-    private synthetic final method getAndUpdate$atomicfu(p0: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p1: kotlin.jvm.functions.Function1, p2: java.lang.Object): int
-    private synthetic final method getAndUpdate$atomicfu(p0: java.util.concurrent.atomic.AtomicLongFieldUpdater, p1: kotlin.jvm.functions.Function1, p2: java.lang.Object): long
-    private synthetic final method getAndUpdate$atomicfu(p0: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p1: kotlin.jvm.functions.Function1, p2: java.lang.Object): java.lang.Object
+    private synthetic final method getAndUpdate$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p2: kotlin.jvm.functions.Function1): int
+    private synthetic final method getAndUpdate$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicLongFieldUpdater, p2: kotlin.jvm.functions.Function1): long
+    private synthetic final method getAndUpdate$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p2: kotlin.jvm.functions.Function1): java.lang.Object
     private synthetic final static method getB$volatile$FU(): java.util.concurrent.atomic.AtomicIntegerFieldUpdater
     private synthetic final method getB$volatile(): int
     private synthetic final static method getL$volatile$FU(): java.util.concurrent.atomic.AtomicLongFieldUpdater
@@ -47,21 +47,21 @@ public final class LoopTest {
     private synthetic final method getR$volatile(): java.lang.Object
     private synthetic final static method getRs$volatile$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
     private synthetic final method getRs$volatile(): java.lang.Object
-    private synthetic final method loop$atomicfu(p0: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p1: kotlin.jvm.functions.Function1, p2: java.lang.Object): void
-    private synthetic final method loop$atomicfu(p0: java.util.concurrent.atomic.AtomicLongFieldUpdater, p1: kotlin.jvm.functions.Function1, p2: java.lang.Object): void
-    private synthetic final method loop$atomicfu(p0: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p1: kotlin.jvm.functions.Function1, p2: java.lang.Object): void
+    private synthetic final method loop$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p2: kotlin.jvm.functions.Function1): void
+    private synthetic final method loop$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicLongFieldUpdater, p2: kotlin.jvm.functions.Function1): void
+    private synthetic final method loop$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p2: kotlin.jvm.functions.Function1): void
     private synthetic final method setA$volatile(p0: int): void
     private synthetic final method setA1$volatile(p0: int): void
     private synthetic final method setB$volatile(p0: int): void
     private synthetic final method setL$volatile(p0: long): void
     private synthetic final method setR$volatile(p0: java.lang.Object): void
     private synthetic final method setRs$volatile(p0: java.lang.Object): void
-    private synthetic final method update$atomicfu(p0: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p1: kotlin.jvm.functions.Function1, p2: java.lang.Object): void
-    private synthetic final method update$atomicfu(p0: java.util.concurrent.atomic.AtomicLongFieldUpdater, p1: kotlin.jvm.functions.Function1, p2: java.lang.Object): void
-    private synthetic final method update$atomicfu(p0: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p1: kotlin.jvm.functions.Function1, p2: java.lang.Object): void
-    private synthetic final method updateAndGet$atomicfu(p0: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p1: kotlin.jvm.functions.Function1, p2: java.lang.Object): int
-    private synthetic final method updateAndGet$atomicfu(p0: java.util.concurrent.atomic.AtomicLongFieldUpdater, p1: kotlin.jvm.functions.Function1, p2: java.lang.Object): long
-    private synthetic final method updateAndGet$atomicfu(p0: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p1: kotlin.jvm.functions.Function1, p2: java.lang.Object): java.lang.Object
+    private synthetic final method update$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p2: kotlin.jvm.functions.Function1): void
+    private synthetic final method update$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicLongFieldUpdater, p2: kotlin.jvm.functions.Function1): void
+    private synthetic final method update$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p2: kotlin.jvm.functions.Function1): void
+    private synthetic final method updateAndGet$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p2: kotlin.jvm.functions.Function1): int
+    private synthetic final method updateAndGet$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicLongFieldUpdater, p2: kotlin.jvm.functions.Function1): long
+    private synthetic final method updateAndGet$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p2: kotlin.jvm.functions.Function1): java.lang.Object
     public final inner class LoopTest$A
 }
 

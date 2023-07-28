@@ -17,17 +17,17 @@ public final class LockFreeStack {
     static method <clinit>(): void
     public method <init>(): void
     public final method clear(): void
-    private synthetic final method getAndUpdate$atomicfu(p0: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p1: kotlin.jvm.functions.Function1, p2: java.lang.Object): java.lang.Object
+    private synthetic final method getAndUpdate$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p2: kotlin.jvm.functions.Function1): java.lang.Object
     private synthetic final static method getTop$volatile$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
     private synthetic final method getTop$volatile(): java.lang.Object
     public final method isEmpty(): boolean
-    private synthetic final method loop$atomicfu(p0: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p1: kotlin.jvm.functions.Function1, p2: java.lang.Object): void
+    private synthetic final method loop$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p2: kotlin.jvm.functions.Function1): void
     public final @org.jetbrains.annotations.Nullable method popLoop(): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method popUpdate(): java.lang.Object
     public final method pushLoop(p0: java.lang.Object): void
     public final method pushUpdate(p0: java.lang.Object): void
     private synthetic final method setTop$volatile(p0: java.lang.Object): void
-    private synthetic final method update$atomicfu(p0: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p1: kotlin.jvm.functions.Function1, p2: java.lang.Object): void
+    private synthetic final method update$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p2: kotlin.jvm.functions.Function1): void
     private final inner class LockFreeStack$Node
 }
 

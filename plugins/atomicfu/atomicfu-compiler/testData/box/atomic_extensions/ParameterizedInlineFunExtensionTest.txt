@@ -5,9 +5,9 @@ public final class ParameterizedInlineFunExtensionTest {
     private synthetic volatile field tail$volatile: java.lang.Object
     static method <clinit>(): void
     public method <init>(): void
-    private synthetic final method bar$atomicfu$array(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicReferenceArray, p2: int, p3: java.lang.Object, p4: java.lang.Object): java.lang.Object
+    private synthetic final method bar$atomicfu$array(p0: java.util.concurrent.atomic.AtomicReferenceArray, p1: int, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
     private synthetic final method bar$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
-    private synthetic final method foo$atomicfu$array(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicReferenceArray, p2: int, p3: java.lang.Object, p4: java.lang.Object, p5: kotlin.jvm.functions.Function1): java.lang.Object
+    private synthetic final method foo$atomicfu$array(p0: java.util.concurrent.atomic.AtomicReferenceArray, p1: int, p2: java.lang.Object, p3: java.lang.Object, p4: kotlin.jvm.functions.Function1): java.lang.Object
     private synthetic final method foo$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p2: java.lang.Object, p3: java.lang.Object, p4: kotlin.jvm.functions.Function1): java.lang.Object
     private synthetic final static method getTail$volatile$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
     private synthetic final method getTail$volatile(): java.lang.Object
