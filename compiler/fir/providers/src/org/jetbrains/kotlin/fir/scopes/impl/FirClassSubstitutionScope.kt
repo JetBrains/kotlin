@@ -69,14 +69,17 @@ class FirClassSubstitutionScope(
         processDirectOverriddenCallablesWithBaseScope: FirTypeScope.(D, ((D, FirTypeScope) -> ProcessorAction)) -> ProcessorAction,
         originalInCache: (D) -> Boolean
     ): ProcessorAction {
-        val original = callableSymbol.originalForSubstitutionOverride?.takeIf { originalInCache(it) }
-            ?: return useSiteMemberScope.processDirectOverriddenCallablesWithBaseScope(callableSymbol, processor)
+        val original = callableSymbol.originalForSubstitutionOverride
 
-        if (original != callableSymbol) {
-            if (!processor(original, useSiteMemberScope)) return ProcessorAction.STOP
+        return when {
+            original == null || !originalInCache(original) -> {
+                useSiteMemberScope.processDirectOverriddenCallablesWithBaseScope(callableSymbol, processor)
+            }
+            else -> when {
+                !processor(original, useSiteMemberScope) -> ProcessorAction.STOP
+                else -> ProcessorAction.NONE
+            }
         }
-
-        return useSiteMemberScope.processDirectOverriddenCallablesWithBaseScope(original, processor)
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {

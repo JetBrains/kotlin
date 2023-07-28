@@ -24327,6 +24327,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
             }
 
             @Test
+            @TestMetadata("MultipleDefaultParametersInSupertypesWithOverloads.kt")
+            public void testMultipleDefaultParametersInSupertypesWithOverloads() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/override/MultipleDefaultParametersInSupertypesWithOverloads.kt");
+            }
+
+            @Test
             @TestMetadata("MultipleDefaultsAndNamesInSupertypes.kt")
             public void testMultipleDefaultsAndNamesInSupertypes() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/override/MultipleDefaultsAndNamesInSupertypes.kt");
