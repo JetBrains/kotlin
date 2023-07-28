@@ -275,7 +275,6 @@ fun main() {
                     model("content", targetBackend = TargetBackend.NATIVE)
                 }
             }
-
             testGroup("native/native.tests/tests-gen", "compiler/util-klib-abi/testData") {
                 testClass<AbstractNativeLibraryAbiReaderTest>(
                     suiteTestClassName = "FirNativeLibraryAbiReaderTest",
@@ -284,6 +283,24 @@ fun main() {
                     )
                 ) {
                     model("content", targetBackend = TargetBackend.NATIVE)
+                }
+            }
+
+            testGroup("native/native.tests/tests-gen", "compiler/util-klib-abi/testData") {
+                testClass<AbstractNativeCInteropLibraryAbiReaderTest>(
+                    suiteTestClassName = "NativeCInteropLibraryAbiReaderTest"
+                ) {
+                    model("cinterop")
+                }
+            }
+            testGroup("native/native.tests/tests-gen", "compiler/util-klib-abi/testData") {
+                testClass<AbstractNativeCInteropLibraryAbiReaderTest>(
+                    suiteTestClassName = "FirNativeCInteropLibraryAbiReaderTest",
+                    annotations = listOf(
+                        *frontendFir()
+                    )
+                ) {
+                    model("cinterop")
                 }
             }
         }

@@ -10,6 +10,10 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.TestCompilerArgs
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestDirectives
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestDirectives.MODULE
 import org.jetbrains.kotlin.konan.blackboxtest.support.parseModule
+import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.ExistingDependency
+import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationArtifact
+import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationResult.Companion.assertSuccess
+import org.jetbrains.kotlin.konan.blackboxtest.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.getAbsoluteFile
 import org.jetbrains.kotlin.library.abi.*
 import org.jetbrains.kotlin.library.abi.directives.LibraryAbiDumpDirectives
@@ -21,9 +25,11 @@ import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEqualsToFile
 import org.jetbrains.kotlin.test.services.impl.RegisteredDirectivesParser
 import org.jetbrains.kotlin.test.services.impl.RegisteredDirectivesParser.ParsedDirective
+import org.jetbrains.kotlin.test.utils.withExtension
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
 import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.Tag
 import java.io.File
 
@@ -34,12 +40,16 @@ abstract class AbstractNativeLibraryAbiReaderTest : AbstractNativeSimpleTest() {
         val (sourceFile, dumpFiles) = computeTestFiles(localPath)
         val (moduleName, filters) = parseDirectives(sourceFile)
 
+        val customDependencies: List<ExistingDependency<TestCompilationArtifact.KLIB>> =
+            produceCustomDependencies(sourceFile).map(TestCompilationArtifact.KLIB::asLibraryDependency)
+
         val library = compileToLibrary(
             testCase = generateTestCaseWithSingleFile(
                 sourceFile = sourceFile,
                 moduleName = moduleName,
                 freeCompilerArgs = TestCompilerArgs("-Xcontext-receivers")
-            )
+            ),
+            dependencies = customDependencies.toTypedArray()
         ).resultingArtifact.klibFile
 
         val libraryAbi = LibraryAbiReader.readAbiInfo(library, filters)
@@ -53,6 +63,8 @@ abstract class AbstractNativeLibraryAbiReaderTest : AbstractNativeSimpleTest() {
             assertEqualsToFile(dumpFile, abiDump)
         }
     }
+
+    internal open fun produceCustomDependencies(sourceFile: File): List<TestCompilationArtifact.KLIB> = emptyList()
 
     companion object {
         private fun computeTestFiles(localPath: String): Pair<File, Map<AbiSignatureVersion, File>> {
@@ -96,5 +108,25 @@ abstract class AbstractNativeLibraryAbiReaderTest : AbstractNativeSimpleTest() {
                 )
             )
         }
+    }
+}
+
+abstract class AbstractNativeCInteropLibraryAbiReaderTest : AbstractNativeLibraryAbiReaderTest() {
+    override fun produceCustomDependencies(sourceFile: File): List<TestCompilationArtifact.KLIB> {
+        val targets: KotlinNativeTargets = testRunSettings.get()
+
+        assumeTrue(targets.hostTarget.family.isAppleFamily) // ObjC tests can run only on Apple targets.
+
+        val defFile = sourceFile.withExtension(".def")
+        assertTrue(defFile.isFile) { "Def file does not exist: $defFile" }
+
+        return listOf(
+            cinteropToLibrary(
+                targets = targets,
+                defFile = defFile,
+                outputDir = buildDir,
+                freeCompilerArgs = TestCompilerArgs.EMPTY
+            ).assertSuccess().resultingArtifact
+        )
     }
 }
