@@ -1,28 +1,23 @@
+/*
+ * Copyright 2010-2023 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the LICENSE file.
+ */
+
 #pragma once
 
 #include <atomic>
-#include <cstddef>
+#include <type_traits>
 
-#include "Allocator.hpp"
+#include "AllocatorImpl.hpp"
+#include "GC.hpp"
 #include "IntrusiveList.hpp"
-#include "ObjectFactory.hpp"
-#include "Types.h"
-#include "Utils.hpp"
-#include "std_support/Memory.hpp"
+#include "KAssert.h"
 
-namespace kotlin::gc::mark {
+namespace kotlin::gc {
 
-class ObjectData {
-    struct ObjectFactoryTraits {
-        using ObjectData = ObjectData;
-        class Allocator;
-    };
+class GC::ObjectData {
 public:
-    using ObjectFactory = mm::ObjectFactory<ObjectFactoryTraits>;
-
-    bool tryMark() noexcept {
-        return trySetNext(reinterpret_cast<ObjectData*>(1));
-    }
+    bool tryMark() noexcept { return trySetNext(reinterpret_cast<ObjectData*>(1)); }
 
     bool marked() const noexcept { return next() != nullptr; }
 
@@ -30,10 +25,6 @@ public:
         if (next() == nullptr) return false;
         next_.store(nullptr, std::memory_order_relaxed);
         return true;
-    }
-
-    ObjHeader* objHeader() noexcept { // FIXME const
-        return ObjectFactory::NodeRef::From(*this).GetObjHeader();
     }
 
 private:
@@ -52,6 +43,6 @@ private:
 
     std::atomic<ObjectData*> next_ = nullptr;
 };
+static_assert(std::is_trivially_destructible_v<GC::ObjectData>);
 
-
-} // namespace kotlin::gc::mark
+} // namespace kotlin::gc

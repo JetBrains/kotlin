@@ -193,11 +193,6 @@ std_support::vector<ObjHeader*> Alive(mm::ThreadData& threadData) {
 #endif
 }
 
-bool IsMarked(ObjHeader* objHeader) {
-    auto nodeRef = mm::ObjectFactory<gc::ConcurrentMarkAndSweep>::NodeRef::From(objHeader);
-    return nodeRef.ObjectData().marked();
-}
-
 test_support::RegularWeakReferenceImpl& InstallWeakReference(mm::ThreadData& threadData, ObjHeader* objHeader, ObjHeader** location) {
     mm::AllocateObject(&threadData, theRegularWeakReferenceImplTypeInfo, location);
     auto& weakReference = test_support::RegularWeakReferenceImpl::FromObjHeader(*location);
@@ -263,12 +258,12 @@ TEST_P(ConcurrentMarkAndSweepTest, RootSet) {
                 Alive(threadData),
                 testing::UnorderedElementsAre(
                         global1.header(), global2.header(), global3.header(), stack1.header(), stack2.header(), stack3.header()));
-        ASSERT_THAT(IsMarked(global1.header()), false);
-        ASSERT_THAT(IsMarked(global2.header()), false);
-        ASSERT_THAT(IsMarked(global3.header()), false);
-        ASSERT_THAT(IsMarked(stack1.header()), false);
-        ASSERT_THAT(IsMarked(stack2.header()), false);
-        ASSERT_THAT(IsMarked(stack3.header()), false);
+        ASSERT_THAT(gc::isMarked(global1.header()), false);
+        ASSERT_THAT(gc::isMarked(global2.header()), false);
+        ASSERT_THAT(gc::isMarked(global3.header()), false);
+        ASSERT_THAT(gc::isMarked(stack1.header()), false);
+        ASSERT_THAT(gc::isMarked(stack2.header()), false);
+        ASSERT_THAT(gc::isMarked(stack3.header()), false);
 
         mm::GlobalData::Instance().gcScheduler().scheduleAndWaitFinalized();
 
@@ -276,12 +271,12 @@ TEST_P(ConcurrentMarkAndSweepTest, RootSet) {
                 Alive(threadData),
                 testing::UnorderedElementsAre(
                         global1.header(), global2.header(), global3.header(), stack1.header(), stack2.header(), stack3.header()));
-        EXPECT_THAT(IsMarked(global1.header()), false);
-        EXPECT_THAT(IsMarked(global2.header()), false);
-        EXPECT_THAT(IsMarked(global3.header()), false);
-        EXPECT_THAT(IsMarked(stack1.header()), false);
-        EXPECT_THAT(IsMarked(stack2.header()), false);
-        EXPECT_THAT(IsMarked(stack3.header()), false);
+        EXPECT_THAT(gc::isMarked(global1.header()), false);
+        EXPECT_THAT(gc::isMarked(global2.header()), false);
+        EXPECT_THAT(gc::isMarked(global3.header()), false);
+        EXPECT_THAT(gc::isMarked(stack1.header()), false);
+        EXPECT_THAT(gc::isMarked(stack2.header()), false);
+        EXPECT_THAT(gc::isMarked(stack3.header()), false);
     });
 }
 
@@ -309,12 +304,12 @@ TEST_P(ConcurrentMarkAndSweepTest, InterconnectedRootSet) {
                 Alive(threadData),
                 testing::UnorderedElementsAre(
                         global1.header(), global2.header(), global3.header(), stack1.header(), stack2.header(), stack3.header()));
-        ASSERT_THAT(IsMarked(global1.header()), false);
-        ASSERT_THAT(IsMarked(global2.header()), false);
-        ASSERT_THAT(IsMarked(global3.header()), false);
-        ASSERT_THAT(IsMarked(stack1.header()), false);
-        ASSERT_THAT(IsMarked(stack2.header()), false);
-        ASSERT_THAT(IsMarked(stack3.header()), false);
+        ASSERT_THAT(gc::isMarked(global1.header()), false);
+        ASSERT_THAT(gc::isMarked(global2.header()), false);
+        ASSERT_THAT(gc::isMarked(global3.header()), false);
+        ASSERT_THAT(gc::isMarked(stack1.header()), false);
+        ASSERT_THAT(gc::isMarked(stack2.header()), false);
+        ASSERT_THAT(gc::isMarked(stack3.header()), false);
 
         mm::GlobalData::Instance().gcScheduler().scheduleAndWaitFinalized();
 
@@ -322,12 +317,12 @@ TEST_P(ConcurrentMarkAndSweepTest, InterconnectedRootSet) {
                 Alive(threadData),
                 testing::UnorderedElementsAre(
                         global1.header(), global2.header(), global3.header(), stack1.header(), stack2.header(), stack3.header()));
-        EXPECT_THAT(IsMarked(global1.header()), false);
-        EXPECT_THAT(IsMarked(global2.header()), false);
-        EXPECT_THAT(IsMarked(global3.header()), false);
-        EXPECT_THAT(IsMarked(stack1.header()), false);
-        EXPECT_THAT(IsMarked(stack2.header()), false);
-        EXPECT_THAT(IsMarked(stack3.header()), false);
+        EXPECT_THAT(gc::isMarked(global1.header()), false);
+        EXPECT_THAT(gc::isMarked(global2.header()), false);
+        EXPECT_THAT(gc::isMarked(global3.header()), false);
+        EXPECT_THAT(gc::isMarked(stack1.header()), false);
+        EXPECT_THAT(gc::isMarked(stack2.header()), false);
+        EXPECT_THAT(gc::isMarked(stack3.header()), false);
     });
 }
 
@@ -337,8 +332,8 @@ TEST_P(ConcurrentMarkAndSweepTest, FreeObjects) {
         auto& object2 = AllocateObject(threadData);
 
         ASSERT_THAT(Alive(threadData), testing::UnorderedElementsAre(object1.header(), object2.header()));
-        ASSERT_THAT(IsMarked(object1.header()), false);
-        ASSERT_THAT(IsMarked(object2.header()), false);
+        ASSERT_THAT(gc::isMarked(object1.header()), false);
+        ASSERT_THAT(gc::isMarked(object2.header()), false);
 
         mm::GlobalData::Instance().gcScheduler().scheduleAndWaitFinalized();
 
@@ -352,8 +347,8 @@ TEST_P(ConcurrentMarkAndSweepTest, FreeObjectsWithFinalizers) {
         auto& object2 = AllocateObjectWithFinalizer(threadData);
 
         ASSERT_THAT(Alive(threadData), testing::UnorderedElementsAre(object1.header(), object2.header()));
-        ASSERT_THAT(IsMarked(object1.header()), false);
-        ASSERT_THAT(IsMarked(object2.header()), false);
+        ASSERT_THAT(gc::isMarked(object1.header()), false);
+        ASSERT_THAT(gc::isMarked(object2.header()), false);
 
         EXPECT_CALL(finalizerHook(), Call(object1.header()));
         EXPECT_CALL(finalizerHook(), Call(object2.header()));
@@ -372,8 +367,8 @@ TEST_P(ConcurrentMarkAndSweepTest, FreeObjectWithFreeWeak) {
         })();
 
         ASSERT_THAT(Alive(threadData), testing::UnorderedElementsAre(object1.header(), weak1.header()));
-        ASSERT_THAT(IsMarked(object1.header()), false);
-        ASSERT_THAT(IsMarked(weak1.header()), false);
+        ASSERT_THAT(gc::isMarked(object1.header()), false);
+        ASSERT_THAT(gc::isMarked(weak1.header()), false);
         ASSERT_THAT(weak1.get(), object1.header());
 
         EXPECT_CALL(finalizerHook(), Call(weak1.header()));
@@ -390,14 +385,14 @@ TEST_P(ConcurrentMarkAndSweepTest, FreeObjectWithHoldedWeak) {
         auto& weak1 = InstallWeakReference(threadData, object1.header(), &stack->field1);
 
         ASSERT_THAT(Alive(threadData), testing::UnorderedElementsAre(object1.header(), weak1.header(), stack.header()));
-        ASSERT_THAT(IsMarked(object1.header()), false);
-        ASSERT_THAT(IsMarked(weak1.header()), false);
+        ASSERT_THAT(gc::isMarked(object1.header()), false);
+        ASSERT_THAT(gc::isMarked(weak1.header()), false);
         ASSERT_THAT(weak1.get(), object1.header());
 
         mm::GlobalData::Instance().gcScheduler().scheduleAndWaitFinalized();
 
         EXPECT_THAT(Alive(threadData), testing::UnorderedElementsAre(weak1.header(), stack.header()));
-        EXPECT_THAT(IsMarked(weak1.header()), false);
+        EXPECT_THAT(gc::isMarked(weak1.header()), false);
         EXPECT_THAT(weak1.get(), nullptr);
     });
 }
@@ -420,12 +415,12 @@ TEST_P(ConcurrentMarkAndSweepTest, ObjectReferencedFromRootSet) {
                 Alive(threadData),
                 testing::UnorderedElementsAre(
                         global.header(), stack.header(), object1.header(), object2.header(), object3.header(), object4.header()));
-        ASSERT_THAT(IsMarked(global.header()), false);
-        ASSERT_THAT(IsMarked(stack.header()), false);
-        ASSERT_THAT(IsMarked(object1.header()), false);
-        ASSERT_THAT(IsMarked(object2.header()), false);
-        ASSERT_THAT(IsMarked(object3.header()), false);
-        ASSERT_THAT(IsMarked(object4.header()), false);
+        ASSERT_THAT(gc::isMarked(global.header()), false);
+        ASSERT_THAT(gc::isMarked(stack.header()), false);
+        ASSERT_THAT(gc::isMarked(object1.header()), false);
+        ASSERT_THAT(gc::isMarked(object2.header()), false);
+        ASSERT_THAT(gc::isMarked(object3.header()), false);
+        ASSERT_THAT(gc::isMarked(object4.header()), false);
 
         mm::GlobalData::Instance().gcScheduler().scheduleAndWaitFinalized();
 
@@ -433,12 +428,12 @@ TEST_P(ConcurrentMarkAndSweepTest, ObjectReferencedFromRootSet) {
                 Alive(threadData),
                 testing::UnorderedElementsAre(
                         global.header(), stack.header(), object1.header(), object2.header(), object3.header(), object4.header()));
-        EXPECT_THAT(IsMarked(global.header()), false);
-        EXPECT_THAT(IsMarked(stack.header()), false);
-        EXPECT_THAT(IsMarked(object1.header()), false);
-        EXPECT_THAT(IsMarked(object2.header()), false);
-        EXPECT_THAT(IsMarked(object3.header()), false);
-        EXPECT_THAT(IsMarked(object4.header()), false);
+        EXPECT_THAT(gc::isMarked(global.header()), false);
+        EXPECT_THAT(gc::isMarked(stack.header()), false);
+        EXPECT_THAT(gc::isMarked(object1.header()), false);
+        EXPECT_THAT(gc::isMarked(object2.header()), false);
+        EXPECT_THAT(gc::isMarked(object3.header()), false);
+        EXPECT_THAT(gc::isMarked(object4.header()), false);
     });
 }
 
@@ -467,14 +462,14 @@ TEST_P(ConcurrentMarkAndSweepTest, ObjectsWithCycles) {
                 testing::UnorderedElementsAre(
                         global.header(), stack.header(), object1.header(), object2.header(), object3.header(), object4.header(),
                         object5.header(), object6.header()));
-        ASSERT_THAT(IsMarked(global.header()), false);
-        ASSERT_THAT(IsMarked(stack.header()), false);
-        ASSERT_THAT(IsMarked(object1.header()), false);
-        ASSERT_THAT(IsMarked(object2.header()), false);
-        ASSERT_THAT(IsMarked(object3.header()), false);
-        ASSERT_THAT(IsMarked(object4.header()), false);
-        ASSERT_THAT(IsMarked(object5.header()), false);
-        ASSERT_THAT(IsMarked(object6.header()), false);
+        ASSERT_THAT(gc::isMarked(global.header()), false);
+        ASSERT_THAT(gc::isMarked(stack.header()), false);
+        ASSERT_THAT(gc::isMarked(object1.header()), false);
+        ASSERT_THAT(gc::isMarked(object2.header()), false);
+        ASSERT_THAT(gc::isMarked(object3.header()), false);
+        ASSERT_THAT(gc::isMarked(object4.header()), false);
+        ASSERT_THAT(gc::isMarked(object5.header()), false);
+        ASSERT_THAT(gc::isMarked(object6.header()), false);
 
         mm::GlobalData::Instance().gcScheduler().scheduleAndWaitFinalized();
 
@@ -482,12 +477,12 @@ TEST_P(ConcurrentMarkAndSweepTest, ObjectsWithCycles) {
                 Alive(threadData),
                 testing::UnorderedElementsAre(
                         global.header(), stack.header(), object1.header(), object2.header(), object3.header(), object4.header()));
-        EXPECT_THAT(IsMarked(global.header()), false);
-        EXPECT_THAT(IsMarked(stack.header()), false);
-        EXPECT_THAT(IsMarked(object1.header()), false);
-        EXPECT_THAT(IsMarked(object2.header()), false);
-        EXPECT_THAT(IsMarked(object3.header()), false);
-        EXPECT_THAT(IsMarked(object4.header()), false);
+        EXPECT_THAT(gc::isMarked(global.header()), false);
+        EXPECT_THAT(gc::isMarked(stack.header()), false);
+        EXPECT_THAT(gc::isMarked(object1.header()), false);
+        EXPECT_THAT(gc::isMarked(object2.header()), false);
+        EXPECT_THAT(gc::isMarked(object3.header()), false);
+        EXPECT_THAT(gc::isMarked(object4.header()), false);
     });
 }
 
@@ -516,14 +511,14 @@ TEST_P(ConcurrentMarkAndSweepTest, ObjectsWithCyclesAndFinalizers) {
                 testing::UnorderedElementsAre(
                         global.header(), stack.header(), object1.header(), object2.header(), object3.header(), object4.header(),
                         object5.header(), object6.header()));
-        ASSERT_THAT(IsMarked(global.header()), false);
-        ASSERT_THAT(IsMarked(stack.header()), false);
-        ASSERT_THAT(IsMarked(object1.header()), false);
-        ASSERT_THAT(IsMarked(object2.header()), false);
-        ASSERT_THAT(IsMarked(object3.header()), false);
-        ASSERT_THAT(IsMarked(object4.header()), false);
-        ASSERT_THAT(IsMarked(object5.header()), false);
-        ASSERT_THAT(IsMarked(object6.header()), false);
+        ASSERT_THAT(gc::isMarked(global.header()), false);
+        ASSERT_THAT(gc::isMarked(stack.header()), false);
+        ASSERT_THAT(gc::isMarked(object1.header()), false);
+        ASSERT_THAT(gc::isMarked(object2.header()), false);
+        ASSERT_THAT(gc::isMarked(object3.header()), false);
+        ASSERT_THAT(gc::isMarked(object4.header()), false);
+        ASSERT_THAT(gc::isMarked(object5.header()), false);
+        ASSERT_THAT(gc::isMarked(object6.header()), false);
 
         EXPECT_CALL(finalizerHook(), Call(object5.header()));
         EXPECT_CALL(finalizerHook(), Call(object6.header()));
@@ -533,12 +528,12 @@ TEST_P(ConcurrentMarkAndSweepTest, ObjectsWithCyclesAndFinalizers) {
                 Alive(threadData),
                 testing::UnorderedElementsAre(
                         global.header(), stack.header(), object1.header(), object2.header(), object3.header(), object4.header()));
-        EXPECT_THAT(IsMarked(global.header()), false);
-        EXPECT_THAT(IsMarked(stack.header()), false);
-        EXPECT_THAT(IsMarked(object1.header()), false);
-        EXPECT_THAT(IsMarked(object2.header()), false);
-        EXPECT_THAT(IsMarked(object3.header()), false);
-        EXPECT_THAT(IsMarked(object4.header()), false);
+        EXPECT_THAT(gc::isMarked(global.header()), false);
+        EXPECT_THAT(gc::isMarked(stack.header()), false);
+        EXPECT_THAT(gc::isMarked(object1.header()), false);
+        EXPECT_THAT(gc::isMarked(object2.header()), false);
+        EXPECT_THAT(gc::isMarked(object3.header()), false);
+        EXPECT_THAT(gc::isMarked(object4.header()), false);
     });
 }
 
@@ -555,18 +550,18 @@ TEST_P(ConcurrentMarkAndSweepTest, ObjectsWithCyclesIntoRootSet) {
         object2->field1 = stack.header();
 
         ASSERT_THAT(Alive(threadData), testing::UnorderedElementsAre(global.header(), stack.header(), object1.header(), object2.header()));
-        ASSERT_THAT(IsMarked(global.header()), false);
-        ASSERT_THAT(IsMarked(stack.header()), false);
-        ASSERT_THAT(IsMarked(object1.header()), false);
-        ASSERT_THAT(IsMarked(object2.header()), false);
+        ASSERT_THAT(gc::isMarked(global.header()), false);
+        ASSERT_THAT(gc::isMarked(stack.header()), false);
+        ASSERT_THAT(gc::isMarked(object1.header()), false);
+        ASSERT_THAT(gc::isMarked(object2.header()), false);
 
         mm::GlobalData::Instance().gcScheduler().scheduleAndWaitFinalized();
 
         EXPECT_THAT(Alive(threadData), testing::UnorderedElementsAre(global.header(), stack.header(), object1.header(), object2.header()));
-        EXPECT_THAT(IsMarked(global.header()), false);
-        EXPECT_THAT(IsMarked(stack.header()), false);
-        EXPECT_THAT(IsMarked(object1.header()), false);
-        EXPECT_THAT(IsMarked(object2.header()), false);
+        EXPECT_THAT(gc::isMarked(global.header()), false);
+        EXPECT_THAT(gc::isMarked(stack.header()), false);
+        EXPECT_THAT(gc::isMarked(object1.header()), false);
+        EXPECT_THAT(gc::isMarked(object2.header()), false);
     });
 }
 
@@ -595,14 +590,14 @@ TEST_P(ConcurrentMarkAndSweepTest, RunGCTwice) {
                 testing::UnorderedElementsAre(
                         global.header(), stack.header(), object1.header(), object2.header(), object3.header(), object4.header(),
                         object5.header(), object6.header()));
-        ASSERT_THAT(IsMarked(global.header()), false);
-        ASSERT_THAT(IsMarked(stack.header()), false);
-        ASSERT_THAT(IsMarked(object1.header()), false);
-        ASSERT_THAT(IsMarked(object2.header()), false);
-        ASSERT_THAT(IsMarked(object3.header()), false);
-        ASSERT_THAT(IsMarked(object4.header()), false);
-        ASSERT_THAT(IsMarked(object5.header()), false);
-        ASSERT_THAT(IsMarked(object6.header()), false);
+        ASSERT_THAT(gc::isMarked(global.header()), false);
+        ASSERT_THAT(gc::isMarked(stack.header()), false);
+        ASSERT_THAT(gc::isMarked(object1.header()), false);
+        ASSERT_THAT(gc::isMarked(object2.header()), false);
+        ASSERT_THAT(gc::isMarked(object3.header()), false);
+        ASSERT_THAT(gc::isMarked(object4.header()), false);
+        ASSERT_THAT(gc::isMarked(object5.header()), false);
+        ASSERT_THAT(gc::isMarked(object6.header()), false);
 
         mm::GlobalData::Instance().gcScheduler().scheduleAndWaitFinalized();
         mm::GlobalData::Instance().gcScheduler().scheduleAndWaitFinalized();
@@ -611,12 +606,12 @@ TEST_P(ConcurrentMarkAndSweepTest, RunGCTwice) {
                 Alive(threadData),
                 testing::UnorderedElementsAre(
                         global.header(), stack.header(), object1.header(), object2.header(), object3.header(), object4.header()));
-        EXPECT_THAT(IsMarked(global.header()), false);
-        EXPECT_THAT(IsMarked(stack.header()), false);
-        EXPECT_THAT(IsMarked(object1.header()), false);
-        EXPECT_THAT(IsMarked(object2.header()), false);
-        EXPECT_THAT(IsMarked(object3.header()), false);
-        EXPECT_THAT(IsMarked(object4.header()), false);
+        EXPECT_THAT(gc::isMarked(global.header()), false);
+        EXPECT_THAT(gc::isMarked(stack.header()), false);
+        EXPECT_THAT(gc::isMarked(object1.header()), false);
+        EXPECT_THAT(gc::isMarked(object2.header()), false);
+        EXPECT_THAT(gc::isMarked(object3.header()), false);
+        EXPECT_THAT(gc::isMarked(object4.header()), false);
     });
 }
 
@@ -633,12 +628,12 @@ TEST_P(ConcurrentMarkAndSweepTest, PermanentObjects) {
         global2->field1 = global1.header();
 
         ASSERT_THAT(Alive(threadData), testing::UnorderedElementsAre(global2.header()));
-        EXPECT_THAT(IsMarked(global2.header()), false);
+        EXPECT_THAT(gc::isMarked(global2.header()), false);
 
         mm::GlobalData::Instance().gcScheduler().scheduleAndWaitFinalized();
 
         EXPECT_THAT(Alive(threadData), testing::UnorderedElementsAre(global2.header()));
-        EXPECT_THAT(IsMarked(global2.header()), false);
+        EXPECT_THAT(gc::isMarked(global2.header()), false);
     });
 }
 
@@ -652,14 +647,14 @@ TEST_P(ConcurrentMarkAndSweepTest, SameObjectInRootSet) {
 
         ASSERT_THAT(global.header(), stack.header());
         ASSERT_THAT(Alive(threadData), testing::UnorderedElementsAre(global.header(), object.header()));
-        EXPECT_THAT(IsMarked(global.header()), false);
-        EXPECT_THAT(IsMarked(object.header()), false);
+        EXPECT_THAT(gc::isMarked(global.header()), false);
+        EXPECT_THAT(gc::isMarked(object.header()), false);
 
         mm::GlobalData::Instance().gcScheduler().scheduleAndWaitFinalized();
 
         EXPECT_THAT(Alive(threadData), testing::UnorderedElementsAre(global.header(), object.header()));
-        EXPECT_THAT(IsMarked(global.header()), false);
-        EXPECT_THAT(IsMarked(object.header()), false);
+        EXPECT_THAT(gc::isMarked(global.header()), false);
+        EXPECT_THAT(gc::isMarked(object.header()), false);
     });
 }
 
@@ -1165,9 +1160,9 @@ TEST_P(ConcurrentMarkAndSweepTest, FreeObjectWithFreeWeakReversedOrder) {
         mm::GlobalData::Instance().gcScheduler().scheduleAndWaitFinalized();
 
         ASSERT_THAT(Alive(threadData), testing::UnorderedElementsAre(object1_local.header(), weak.load()->header(), global1.header()));
-        ASSERT_THAT(IsMarked(global1.header()), false);
-        ASSERT_THAT(IsMarked(object1_local.header()), false);
-        ASSERT_THAT(IsMarked(weak.load()->header()), false);
+        ASSERT_THAT(gc::isMarked(global1.header()), false);
+        ASSERT_THAT(gc::isMarked(object1_local.header()), false);
+        ASSERT_THAT(gc::isMarked(weak.load()->header()), false);
         ASSERT_THAT(weak.load()->get(), object1_local.header());
 
         global1->field1 = nullptr;

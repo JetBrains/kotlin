@@ -23,7 +23,6 @@
 #include "GCStatistics.hpp"
 #include "KAssert.h"
 #include "Memory.h"
-#include "ObjectFactory.hpp"
 
 namespace {
 
@@ -33,14 +32,14 @@ std::atomic<size_t> allocatedBytesCounter;
 
 namespace kotlin::alloc {
 
-bool SweepObject(uint8_t* heapObjHeader, FinalizerQueue& finalizerQueue, gc::GCHandle::GCSweepScope& gcHandle) noexcept {
-    if (gc::GC::SweepObject(heapObjHeader)) {
+bool SweepObject(uint8_t* object, FinalizerQueue& finalizerQueue, gc::GCHandle::GCSweepScope& gcHandle) noexcept {
+    auto* heapObjHeader = reinterpret_cast<HeapObjHeader*>(object);
+    if (gc::tryResetMark(heapObjHeader->objectData())) {
         CustomAllocDebug("SweepObject(%p): still alive", heapObjHeader);
         gcHandle.addKeptObject();
         return true;
     }
-    auto* objHeader = reinterpret_cast<ObjHeader*>(heapObjHeader + gcDataSize);
-    auto* extraObject = mm::ExtraObjectData::Get(objHeader);
+    auto* extraObject = mm::ExtraObjectData::Get(heapObjHeader->object());
     if (extraObject) {
         if (!extraObject->getFlag(mm::ExtraObjectData::FLAGS_IN_FINALIZER_QUEUE)) {
             CustomAllocDebug("SweepObject(%p): needs to be finalized, extraObject at %p", heapObjHeader, extraObject);

@@ -7,6 +7,7 @@
 
 #include "gtest/gtest.h"
 
+#include "Porting.h"
 #include "ScopedThread.hpp"
 #include "ThreadData.hpp"
 

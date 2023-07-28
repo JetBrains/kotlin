@@ -15,44 +15,17 @@
 #include "Logging.hpp"
 #include "MarkAndSweepUtils.hpp"
 #include "Memory.h"
+#include "ObjectAlloc.hpp"
 #include "ThreadData.hpp"
 #include "ThreadSuspension.hpp"
 #include "GCState.hpp"
 #include "GCStatistics.hpp"
-
-#ifdef CUSTOM_ALLOCATOR
-#include "Heap.hpp"
-#endif
 
 using namespace kotlin;
 
 namespace {
 
 [[clang::no_destroy]] std::mutex gcMutex;
-
-struct SweepTraits {
-    using ObjectFactory = mm::ObjectFactory<gc::ConcurrentMarkAndSweep>;
-    using ExtraObjectsFactory = mm::ExtraObjectDataFactory;
-
-    static bool IsMarkedByExtraObject(mm::ExtraObjectData &object) noexcept {
-        auto *baseObject = object.GetBaseObject();
-        if (!baseObject->heap()) return true;
-        auto& objectData = mm::ObjectFactory<gc::ConcurrentMarkAndSweep>::NodeRef::From(baseObject).ObjectData();
-        return objectData.marked();
-    }
-
-    static bool TryResetMark(ObjectFactory::NodeRef node) noexcept {
-        auto& objectData = node.ObjectData();
-        return objectData.tryResetMark();
-    }
-};
-
-struct ProcessWeaksTraits {
-    static bool IsMarked(ObjHeader* obj) noexcept {
-        auto& objectData = mm::ObjectFactory<gc::ConcurrentMarkAndSweep>::NodeRef::From(obj).ObjectData();
-        return objectData.marked();
-    }
-};
 
 template<typename Body>
 ScopedThread createGCThread(const char* name, Body&& body) {
@@ -63,8 +36,9 @@ ScopedThread createGCThread(const char* name, Body&& body) {
     });
 }
 
+#ifndef CUSTOM_ALLOCATOR
 // TODO move to common
-[[maybe_unused]] inline void checkMarkCorrectness(mm::ObjectFactory<gc::ConcurrentMarkAndSweep>::Iterable& heap) {
+[[maybe_unused]] inline void checkMarkCorrectness(gc::ObjectFactory::Iterable& heap) {
     if (compiler::runtimeAssertsMode() == compiler::RuntimeAssertsMode::kIgnore) return;
     for (auto objRef: heap) {
         auto obj = objRef.GetObjHeader();
@@ -72,22 +46,16 @@ ScopedThread createGCThread(const char* name, Body&& body) {
         if (objData.marked()) {
             traverseReferredObjects(obj, [obj](ObjHeader* field) {
                 if (field->heap()) {
-                    auto& fieldObjData =
-                            mm::ObjectFactory<gc::ConcurrentMarkAndSweep>::NodeRef::From(field).ObjectData();
+                    auto& fieldObjData = gc::ObjectFactory::NodeRef::From(field).ObjectData();
                     RuntimeAssert(fieldObjData.marked(), "Field %p of an alive obj %p must be alive", field, obj);
                 }
             });
         }
     }
 }
+#endif
 
 } // namespace
-
-void gc::ConcurrentMarkAndSweep::ThreadData::OnOOM(size_t size) noexcept {
-    RuntimeLogDebug({kTagGC}, "Attempt to GC on OOM at size=%zu", size);
-    // TODO: This will print the log for "manual" scheduling. Fix this.
-    mm::GlobalData::Instance().gcScheduler().scheduleAndWaitFinished();
-}
 
 void gc::ConcurrentMarkAndSweep::ThreadData::OnSuspendForGC() noexcept {
     CallsCheckerIgnoreGuard guard;
@@ -133,7 +101,7 @@ mm::ThreadData& gc::ConcurrentMarkAndSweep::ThreadData::commonThreadData() const
 
 #ifndef CUSTOM_ALLOCATOR
 gc::ConcurrentMarkAndSweep::ConcurrentMarkAndSweep(
-        mm::ObjectFactory<ConcurrentMarkAndSweep>& objectFactory,
+        ObjectFactory& objectFactory,
         mm::ExtraObjectDataFactory& extraObjectDataFactory,
         gcScheduler::GCScheduler& gcScheduler,
         bool mutatorsCooperate, std::size_t auxGCThreads) noexcept :
@@ -250,7 +218,7 @@ void gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
         gcHandle.threadsAreResumed();
     }
 
-    gc::processWeaks<ProcessWeaksTraits>(gcHandle, mm::SpecialRefRegistry::instance());
+    gc::processWeaks<DefaultProcessWeaksTraits>(gcHandle, mm::SpecialRefRegistry::instance());
 
     if (compiler::concurrentWeakSweep()) {
         // Expected to happen outside STW.
@@ -261,9 +229,9 @@ void gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
     }
 
 #ifndef CUSTOM_ALLOCATOR
-    gc::SweepExtraObjects<SweepTraits>(gcHandle, *extraObjectFactoryIterable);
+    gc::SweepExtraObjects<DefaultSweepTraits<ObjectFactory>>(gcHandle, *extraObjectFactoryIterable);
     extraObjectFactoryIterable = std::nullopt;
-    auto finalizerQueue = gc::Sweep<SweepTraits>(gcHandle, *objectFactoryIterable);
+    auto finalizerQueue = gc::Sweep<DefaultSweepTraits<ObjectFactory>>(gcHandle, *objectFactoryIterable);
     objectFactoryIterable = std::nullopt;
     kotlin::compactObjectPoolInMainThread();
 #else

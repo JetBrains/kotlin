@@ -8,13 +8,10 @@
 
 #include <cstddef>
 
-#include "Allocator.hpp"
+#include "AllocatorImpl.hpp"
+#include "GC.hpp"
 #include "Logging.hpp"
 #include "Utils.hpp"
-
-#ifdef CUSTOM_ALLOCATOR
-#include "Heap.hpp"
-#endif
 
 namespace kotlin {
 
@@ -28,20 +25,10 @@ namespace gc {
 // TODO: It can be made more efficient.
 class NoOpGC : private Pinned {
 public:
-    class ObjectData {};
-
-    using Allocator = gc::Allocator;
-
     class ThreadData : private Pinned {
     public:
-        using ObjectData = NoOpGC::ObjectData;
-
         ThreadData() noexcept {}
         ~ThreadData() = default;
-
-        void OnOOM(size_t size) noexcept {}
-
-        Allocator CreateAllocator() noexcept { return Allocator(); }
 
     private:
     };

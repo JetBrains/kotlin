@@ -62,7 +62,7 @@ template <typename T, size_t DataAlignment>
 std_support::vector<T> Collect(ObjectFactoryStorage<DataAlignment>& storage) {
     std_support::vector<T> result;
     for (auto& node : storage.LockForIter()) {
-        result.push_back(*static_cast<T*>(node.Data()));
+        result.push_back(*reinterpret_cast<T*>(node.Data()));
     }
     return result;
 }
@@ -71,7 +71,7 @@ template <typename T, size_t DataAlignment>
 std_support::vector<T> Collect(Consumer<ObjectFactoryStorage<DataAlignment>>& consumer) {
     std_support::vector<T> result;
     for (auto& node : consumer) {
-        result.push_back(*static_cast<T*>(node.Data()));
+        result.push_back(*reinterpret_cast<T*>(node.Data()));
     }
     return result;
 }
@@ -710,7 +710,7 @@ TEST(ObjectFactoryStorageTest, IterWhileConcurrentPublish) {
         }
 
         for (auto& node : iter) {
-            int element = *static_cast<int*>(node.Data());
+            int element = *reinterpret_cast<int*>(node.Data());
             actualBefore.push_back(element);
         }
     }
