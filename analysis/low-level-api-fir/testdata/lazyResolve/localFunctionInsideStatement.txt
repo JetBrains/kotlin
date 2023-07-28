@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStatement.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
@@ -43,7 +43,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStatement.kts
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStatement.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
@@ -86,7 +86,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStatement.kts
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStatement.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
@@ -129,7 +129,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStatement.kts
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStatement.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
@@ -172,7 +172,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStatement.kts
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStatement.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
@@ -215,7 +215,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStatement.kts
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStatement.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
@@ -258,7 +258,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStatement.kts
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStatement.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
@@ -301,7 +301,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStatement.kts
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStatement.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
@@ -344,7 +344,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStatement.kts
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStatement.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
@@ -387,7 +387,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStatement.kts
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStatement.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
@@ -430,7 +430,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStatement.kts
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStatement.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
@@ -473,7 +473,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStatement.kts
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStatement.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
@@ -516,7 +516,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStatement.kts
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStatement.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
@@ -559,7 +559,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStatement.kts
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStatement.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 

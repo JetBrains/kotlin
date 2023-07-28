@@ -1,6 +1,6 @@
 RAW_FIR:
 FILE: [ResolvedTo(IMPORTS)] statement2.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
@@ -35,7 +35,7 @@ FILE: [ResolvedTo(IMPORTS)] statement2.kts
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] statement2.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
@@ -70,7 +70,7 @@ FILE: [ResolvedTo(IMPORTS)] statement2.kts
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] statement2.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
@@ -105,7 +105,7 @@ FILE: [ResolvedTo(IMPORTS)] statement2.kts
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] statement2.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
@@ -140,7 +140,7 @@ FILE: [ResolvedTo(IMPORTS)] statement2.kts
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] statement2.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
@@ -175,7 +175,7 @@ FILE: [ResolvedTo(IMPORTS)] statement2.kts
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] statement2.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
@@ -210,7 +210,7 @@ FILE: [ResolvedTo(IMPORTS)] statement2.kts
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] statement2.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
@@ -245,7 +245,7 @@ FILE: [ResolvedTo(IMPORTS)] statement2.kts
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] statement2.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
@@ -280,7 +280,7 @@ FILE: [ResolvedTo(IMPORTS)] statement2.kts
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] statement2.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
@@ -315,7 +315,7 @@ FILE: [ResolvedTo(IMPORTS)] statement2.kts
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] statement2.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
@@ -350,7 +350,7 @@ FILE: [ResolvedTo(IMPORTS)] statement2.kts
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] statement2.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
@@ -385,7 +385,7 @@ FILE: [ResolvedTo(IMPORTS)] statement2.kts
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] statement2.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
@@ -420,7 +420,7 @@ FILE: [ResolvedTo(IMPORTS)] statement2.kts
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] statement2.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
@@ -455,7 +455,7 @@ FILE: [ResolvedTo(IMPORTS)] statement2.kts
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] statement2.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 

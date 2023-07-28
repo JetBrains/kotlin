@@ -1,5 +1,5 @@
 FILE: [ResolvedTo(IMPORTS)] classScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 

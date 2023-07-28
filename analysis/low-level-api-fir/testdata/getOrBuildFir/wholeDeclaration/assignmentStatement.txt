@@ -7,7 +7,7 @@ builder#.version# = String()
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] assignmentStatement.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 

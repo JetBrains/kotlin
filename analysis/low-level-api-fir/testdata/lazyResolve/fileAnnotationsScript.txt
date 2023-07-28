@@ -263,7 +263,7 @@ FILE: [ResolvedTo(IMPORTS)] fileAnnotationsScript.kts
     @FILE:R|kotlin/Deprecated|[Types](message = String())
     @FILE:R|one/Anno|[Types](s = String(anno))
     [ResolvedTo(BODY_RESOLVE)] annotations container
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 

@@ -754,7 +754,7 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] fakeOverrideScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 

@@ -123,7 +123,7 @@ private class LLFirTypeTargetResolver(
 
                 target.accept(transformer, null)
             }
-            is FirScript -> {}
+            is FirScript -> resolveScriptTypes(target)
             is FirDanglingModifierList, is FirFileAnnotationsContainer, is FirCallableDeclaration, is FirTypeAlias -> {
                 target.accept(transformer, null)
             }
@@ -135,6 +135,11 @@ private class LLFirTypeTargetResolver(
                 withFirEntry("declaration", target)
             }
         }
+    }
+
+    private fun resolveScriptTypes(firScript: FirScript) {
+        firScript.annotations.forEach { it.accept(transformer, null) }
+        firScript.contextReceivers.forEach { it.accept(transformer, null) }
     }
 
     private fun resolveClassTypes(firClass: FirRegularClass) {
