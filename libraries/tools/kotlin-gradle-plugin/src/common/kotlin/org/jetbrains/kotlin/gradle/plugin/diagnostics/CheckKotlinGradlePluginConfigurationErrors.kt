@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.gradle.tasks.withType
 @DisableCachingByDefault(
     because = "This task renders reported diagnostics; caching this task will hide diagnostics and obscure issues in the build"
 )
-internal abstract class EnsureNoKotlinGradlePluginErrors : DefaultTask() {
+internal abstract class CheckKotlinGradlePluginConfigurationErrors : DefaultTask() {
     @get:Input
     abstract val errorDiagnostics: ListProperty<ToolingDiagnostic>
 
@@ -35,7 +35,7 @@ internal abstract class EnsureNoKotlinGradlePluginErrors : DefaultTask() {
     }
 
     companion object {
-        internal const val TASK_NAME = "ensureNoKotlinGradlePluginErrors"
+        internal const val TASK_NAME = "checkKotlinGradlePluginConfigurationErrors"
     }
 }
 
@@ -43,10 +43,10 @@ private const val DESCRIPTION =
     "Checks that Kotlin Gradle Plugin hasn't reported project configuration errors, failing otherwise. " +
             "This task always runs before compileKotlin* or similar tasks."
 
-internal fun Project.locateOrRegisterEnsureNoKotlinGradlePluginErrors(): TaskProvider<EnsureNoKotlinGradlePluginErrors> {
+internal fun Project.locateOrRegisterCheckKotlinGradlePluginErrorsTask(): TaskProvider<CheckKotlinGradlePluginConfigurationErrors> {
     val taskProvider = tasks.register(
-        EnsureNoKotlinGradlePluginErrors.TASK_NAME,
-        EnsureNoKotlinGradlePluginErrors::class.java
+        CheckKotlinGradlePluginConfigurationErrors.TASK_NAME,
+        CheckKotlinGradlePluginConfigurationErrors::class.java
     ) { task ->
         task.errorDiagnostics.set(
             provider {
@@ -74,6 +74,6 @@ internal fun Project.locateOrRegisterEnsureNoKotlinGradlePluginErrors(): TaskPro
  * The intuition here is that if the build manages to do something useful for a user without compiling any .kt-sources,
  * then it's OK for KGP to let that build pass even if it reported ERROR-diagnostics.
  */
-private fun TaskProvider<EnsureNoKotlinGradlePluginErrors>.addDependsOnFromTasksThatShouldFailWhenErrorsReported(tasks: TaskContainer) {
+private fun TaskProvider<CheckKotlinGradlePluginConfigurationErrors>.addDependsOnFromTasksThatShouldFailWhenErrorsReported(tasks: TaskContainer) {
     tasks.withType<KotlinCompileTool>().configureEach { it.dependsOn(this) }
 }

@@ -12,14 +12,14 @@ e: [CommonMainOrTestWithDependsOnDiagnostic | ERROR] commonMain can't declare de
 
 > Configure project :healthyProject
 
-> Task :brokenProjectA:ensureNoKotlinGradlePluginErrors FAILED
+> Task :brokenProjectA:checkKotlinGradlePluginConfigurationErrors FAILED
 e: [DeprecatedKotlinNativeTargetsDiagnostic | ERROR] The following removed Kotlin/Native targets were used in the project: linuxMips32
 #diagnostic-end
 
 
-> Task :brokenProjectB:ensureNoKotlinGradlePluginErrors FAILED
+> Task :brokenProjectB:checkKotlinGradlePluginConfigurationErrors FAILED
 e: [CommonMainOrTestWithDependsOnDiagnostic | ERROR] commonMain can't declare dependsOn on other source sets
 #diagnostic-end
 
 
-> Task :healthyProject:ensureNoKotlinGradlePluginErrors
+> Task :healthyProject:checkKotlinGradlePluginConfigurationErrors
