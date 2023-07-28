@@ -109,11 +109,15 @@ internal fun LLFirAbstractBodyTargetResolver.transformAnnotations(target: FirEle
             target.transformSuperTypeRefs(declarationsTransformer, ResolutionMode.ContextIndependent)
         }
 
+        target is FirScript -> {
+            transformer.declarationsTransformer?.let {
+                target.transformAnnotations(it, ResolutionMode.ContextIndependent)
+            }
+        }
+
         target.isRegularDeclarationWithAnnotation -> {
             target.transformSingle(transformer, ResolutionMode.ContextIndependent)
         }
-
-        target is FirScript -> {}
 
         else -> throwUnexpectedFirElementError(target)
     }
