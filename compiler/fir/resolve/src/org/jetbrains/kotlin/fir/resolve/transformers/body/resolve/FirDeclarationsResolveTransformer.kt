@@ -666,16 +666,12 @@ open class FirDeclarationsResolveTransformer(
         function: FirFunction,
         data: ResolutionMode
     ): FirStatement = whileAnalysing(session, function) {
-        val functionIsNotAnalyzed = !function.bodyResolved
-        if (functionIsNotAnalyzed) {
-            dataFlowAnalyzer.enterFunction(function)
-        }
+        if (function.bodyResolved) return function
+        dataFlowAnalyzer.enterFunction(function)
         return transformDeclarationContent(function, data).also {
-            if (functionIsNotAnalyzed) {
-                val result = it as FirFunction
-                val controlFlowGraphReference = dataFlowAnalyzer.exitFunction(result)
-                result.replaceControlFlowGraphReference(controlFlowGraphReference)
-            }
+            val result = it as FirFunction
+            val controlFlowGraphReference = dataFlowAnalyzer.exitFunction(result)
+            result.replaceControlFlowGraphReference(controlFlowGraphReference)
         } as FirStatement
     }
 

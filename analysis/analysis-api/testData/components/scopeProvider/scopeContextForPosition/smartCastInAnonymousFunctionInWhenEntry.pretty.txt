@@ -1,0 +1,79 @@
+element: e
+implicit receivers:
+  type: A
+  owner symbol: KtFirFunctionSymbol
+
+scopes:
+  LocalScope, index = 0
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  LocalScope, index = 1
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  LocalScope, index = 2
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  LocalScope, index = 3
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  TypeScope, index = 4
+    packages: 0
+    classifiers: 0
+    callables: 3
+      fun equals(other: kotlin.Any?): kotlin.Boolean
+      fun hashCode(): kotlin.Int
+      fun toString(): kotlin.String
+    constructors: 1
+      constructor()
+
+  LocalScope, index = 5
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  ExplicitSimpleImportingScope, index = 6
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  PackageMemberScope, index = 7
+    packages: 6
+      META-INF
+      java
+      javax
+      kotlin
+      org
+      sun
+    classifiers: 1
+      class A
+    callables: 1
+      fun kotlin.Any.test(): () -> kotlin.Int
+    constructors: 0
+
+  DefaultSimpleImportingScope, index = 8
+
+  DefaultSimpleImportingScope, index = 9
+
+  ExplicitStarImportingScope, index = 10
+    packages: 0
+    classifiers: 0
+    callables: 0
+    constructors: 0
+
+  DefaultSimpleImportingScope, index = 11
+
+  DefaultStarImportingScope, index = 12
