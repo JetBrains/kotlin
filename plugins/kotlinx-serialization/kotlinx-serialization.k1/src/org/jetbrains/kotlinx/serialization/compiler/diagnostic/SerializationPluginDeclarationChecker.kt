@@ -27,12 +27,14 @@ import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyAnnotationDescriptor
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isEnum
+import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlin.util.slicedMap.Slices
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.*
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.bodyPropertiesDescriptorsMap
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.primaryConstructorPropertiesDescriptorsMap
+import org.jetbrains.kotlinx.serialization.compiler.diagnostic.SerializationErrors.EXTERNAL_SERIALIZER_NO_SUITABLE_CONSTRUCTOR
 import org.jetbrains.kotlinx.serialization.compiler.diagnostic.SerializationErrors.EXTERNAL_SERIALIZER_USELESS
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.LOAD_NAME
@@ -88,6 +90,25 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         val serializableKType = classDescriptor.serializerForClass ?: return
         val serializableDescriptor = serializableKType.toClassDescriptor ?: return
         val props = SerializableProperties(serializableDescriptor, trace.bindingContext)
+
+        val parametersCount = serializableKType.arguments.size
+        if (parametersCount > 0) {
+            val hasSuitableConstructor = classDescriptor.constructors.any { constructor ->
+                constructor.valueParameters.size == parametersCount
+                        && constructor.valueParameters.all { param -> isKSerializer(param.type) }
+            }
+
+            if (!hasSuitableConstructor) {
+                trace.report(
+                    EXTERNAL_SERIALIZER_NO_SUITABLE_CONSTRUCTOR.on(
+                        declaration,
+                        classDescriptor.defaultType,
+                        serializableKType,
+                        parametersCount.toString()
+                    )
+                )
+            }
+        }
 
         val descriptorOverridden = classDescriptor.unsubstitutedMemberScope
             .getContributedVariables(SERIAL_DESC_FIELD_NAME, NoLookupLocation.FROM_BACKEND).singleOrNull {
@@ -325,6 +346,7 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         val annotationPsi = descriptor.findSerializableOrMetaAnnotationDeclaration()
         checkCustomSerializerMatch(descriptor.module, descriptor.defaultType, descriptor, annotationPsi, trace, declaration)
         checkCustomSerializerIsNotLocal(descriptor.module, descriptor, trace, declaration)
+        checkCustomSerializerParameters(descriptor.module, descriptor, descriptor.defaultType, annotationPsi, declaration, trace)
         checkCustomSerializerNotAbstract(descriptor.module, descriptor.defaultType, descriptor, annotationPsi, trace, declaration)
     }
 
@@ -441,14 +463,9 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
             if (serializer != null) {
                 val element = ktType?.typeElement
                 checkCustomSerializerMatch(it.module, it.type, it.descriptor, element, trace, propertyPsi)
-                checkCustomSerializerNotAbstract(
-                    it.module,
-                    it.type,
-                    it.descriptor,
-                    it.descriptor.findSerializableOrMetaAnnotationDeclaration(),
-                    trace,
-                    propertyPsi
-                )
+                val annotationPsi = it.descriptor.findSerializableOrMetaAnnotationDeclaration()
+                checkCustomSerializerNotAbstract(it.module, it.type, it.descriptor, annotationPsi, trace, propertyPsi)
+                checkCustomSerializerParameters(it.module, it.descriptor, it.type, annotationPsi, propertyPsi, trace)
                 checkCustomSerializerIsNotLocal(it.module, it.descriptor, trace, propertyPsi)
                 checkSerializerNullability(it.type, serializer.defaultType, element, trace, propertyPsi)
                 generatorContextForAnalysis.checkTypeArguments(it.module, it.type, element, trace, propertyPsi)
@@ -516,8 +533,14 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         }
         val serializer = findTypeSerializerOrContextUnchecked(module, type)
         if (serializer != null) {
-            checkCustomSerializerMatch(module, type, type, element, trace, fallbackElement)
-            checkCustomSerializerIsNotLocal(module, type, trace, fallbackElement)
+            type.annotations.serializableWith(module)?.let {
+                checkCustomSerializerMatch(module, type, type, element, trace, fallbackElement)
+                checkCustomSerializerIsNotLocal(module, type, trace, fallbackElement)
+
+                val annotationElement = type.findSerializableAnnotationDeclaration()
+                checkCustomSerializerParameters(module, type, type, annotationElement, fallbackElement, trace)
+                checkCustomSerializerNotAbstract(module, type, type, annotationElement, trace, fallbackElement)
+            }
             checkSerializerNullability(type, serializer.defaultType, element, trace, fallbackElement)
             checkTypeArguments(module, type, element, trace, fallbackElement)
         } else {
@@ -588,6 +611,63 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
                     serializerType
                 )
             )
+        }
+    }
+
+    private fun checkCustomSerializerParameters(
+        module: ModuleDescriptor,
+        declaration: Annotated,
+        serializableType: KotlinType,
+        element: KtElement?,
+        fallbackElement: PsiElement,
+        trace: BindingTrace,
+    ) {
+        val serializerType = declaration.annotations.serializableWith(module) ?: return
+        val serializerDescriptor = serializerType.toClassDescriptor ?: return
+
+        if (serializerDescriptor.classId in SerializersClassIds.setOfSpecialSerializers) {
+            return
+        }
+
+        val primaryConstructor = serializerDescriptor.constructors.singleOrNull { constructor -> constructor.isPrimary } ?: return
+
+        val targetElement = element ?: fallbackElement
+
+        val isExternalSerializer = serializerDescriptor.serializerForClass != null
+        if ( // for external serializer, the verification will be carried out at the definition
+            !isExternalSerializer
+            // it is allowed that parameters are not passed to regular serializers at all
+            && primaryConstructor.valueParameters.isNotEmpty()
+            // if the parameters are still specified, then their number must match in the serializable class and constructor
+            && primaryConstructor.valueParameters.size != serializableType.arguments.size
+        ) {
+            val message = if (serializableType.arguments.isNotEmpty()) {
+                "expected no parameters or ${serializableType.arguments.size}, but has ${primaryConstructor.valueParameters.size} parameters"
+            } else {
+                "expected no parameters but has ${primaryConstructor.valueParameters.size} parameters"
+            }
+
+            trace.report(
+                SerializationErrors.CUSTOM_SERIALIZER_PARAM_ILLEGAL_COUNT.on(
+                    targetElement,
+                    serializerType,
+                    serializableType,
+                    message
+                )
+            )
+        }
+
+        primaryConstructor.valueParameters.forEach { param ->
+            if (!isKSerializer(param.type)) {
+                trace.report(
+                    SerializationErrors.CUSTOM_SERIALIZER_PARAM_ILLEGAL_TYPE.on(
+                        targetElement,
+                        serializerType,
+                        serializableType,
+                        param.name.asString()
+                    )
+                )
+            }
         }
     }
 

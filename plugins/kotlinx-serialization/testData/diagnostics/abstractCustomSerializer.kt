@@ -27,11 +27,17 @@ class WithSealed(val i: Int)
 @Serializable
 class Holder (
     <!ABSTRACT_SERIALIZER_TYPE!>@Serializable(InterfaceSerializer::class)<!>
-val withInterface: WithInterfaceSerializer,
+    val withInterface: WithInterfaceSerializer,
 
-<!ABSTRACT_SERIALIZER_TYPE!>@Serializable(AbstractSerializer::class)<!>
-val withAbstract: WithAbstract,
+    <!ABSTRACT_SERIALIZER_TYPE!>@Serializable(AbstractSerializer::class)<!>
+    val withAbstract: WithAbstract,
 
-<!ABSTRACT_SERIALIZER_TYPE!>@Serializable(SealedSerializer::class)<!>
-val withSealed: WithSealed
+    <!ABSTRACT_SERIALIZER_TYPE!>@Serializable(SealedSerializer::class)<!>
+    val withSealed: WithSealed,
+
+    val ListWithInterface: List<<!ABSTRACT_SERIALIZER_TYPE!>@Serializable(InterfaceSerializer::class)<!> WithInterfaceSerializer>,
+
+    val ListWithAbstract: List<<!ABSTRACT_SERIALIZER_TYPE!>@Serializable(AbstractSerializer::class)<!> WithAbstract>,
+
+    val ListWithSealed: List<<!ABSTRACT_SERIALIZER_TYPE!>@Serializable(SealedSerializer::class)<!> WithSealed>
 )
