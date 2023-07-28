@@ -27,12 +27,6 @@ object JvmBuiltInsSignatures {
                         "List",
                         "sort(Ljava/util/Comparator;)V",
                         // From JDK 21
-                        "addFirst(Ljava/lang/Object;)V",
-                        "addLast(Ljava/lang/Object;)V",
-                        "getFirst()Ljava/lang/Object;",
-                        "getLast()Ljava/lang/Object;",
-                        "removeFirst()Ljava/lang/Object;",
-                        "removeLast()Ljava/lang/Object;",
                         "reversed()Ljava/util/List;",
                     ) +
 
@@ -108,7 +102,12 @@ object JvmBuiltInsSignatures {
 
                     inJavaUtil(
                         "List",
-                        "replaceAll(Ljava/util/function/UnaryOperator;)V"
+                        "replaceAll(Ljava/util/function/UnaryOperator;)V",
+                        // From JDK 21
+                        "addFirst(Ljava/lang/Object;)V",
+                        "addLast(Ljava/lang/Object;)V",
+                        "removeFirst()Ljava/lang/Object;",
+                        "removeLast()Ljava/lang/Object;",
                     ) +
 
                     inJavaUtil(
