@@ -129,13 +129,11 @@ internal class CompilerOptionsIT : KGPBaseTest() {
                 """
                 |
                 |kotlin.options.suppressFreeCompilerArgsModificationWarning=true
-                |# to enable the :compileKotlinMetadata task
-                |kotlin.mpp.enableCompatibilityMetadataVariant=true
                 """.trimMargin()
             )
 
             val compileTasks = listOf(
-                "compileKotlinMetadata",
+                "compileCommonMainKotlinMetadata",
                 "compileKotlinJvmWithoutJava",
                 "compileKotlinJs",
                 // we do not allow modifying free args for K/N at execution time

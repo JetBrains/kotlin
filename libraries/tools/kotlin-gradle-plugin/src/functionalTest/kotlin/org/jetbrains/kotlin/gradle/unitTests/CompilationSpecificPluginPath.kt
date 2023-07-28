@@ -25,7 +25,6 @@ internal class CompilationSpecificPluginPath {
         class NativeSpecificPlugin : FakeSubPlugin("common", "native", { true })
 
         val project = buildProject {
-            extensions.getByType(ExtraPropertiesExtension::class.java).set("kotlin.mpp.enableGranularSourceSetsMetadata", "true")
             project.plugins.apply("kotlin-multiplatform")
 
             plugins.apply(NativeSpecificPlugin::class.java)

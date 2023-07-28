@@ -13,11 +13,6 @@ import kotlin.test.Test
 
 class KT46273JvmTargetAndOrphanTestSourceSetTest : MultiplatformExtensionTest() {
 
-    override fun setup() {
-        enableGranularSourceSetsMetadata()
-        super.setup()
-    }
-
     @Test
     fun `test KT-46273`() {
         kotlin.jvm()

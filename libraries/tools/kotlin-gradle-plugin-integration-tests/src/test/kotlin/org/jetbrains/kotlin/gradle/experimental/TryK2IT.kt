@@ -137,10 +137,10 @@ class TryK2IT : KGPBaseTest() {
         ) {
             enableTryK2()
 
-            build(":compileKotlinMetadata") {
-                assertTasksExecuted(":compileKotlinMetadata")
+            build(":compileCommonMainKotlinMetadata") {
+                assertTasksExecuted(":compileCommonMainKotlinMetadata")
 
-                assertCompilerArgument(":compileKotlinMetadata", "-language-version 2.0")
+                assertCompilerArgument(":compileCommonMainKotlinMetadata", "-language-version 2.0")
             }
 
             build(":compileKotlinJvm") {

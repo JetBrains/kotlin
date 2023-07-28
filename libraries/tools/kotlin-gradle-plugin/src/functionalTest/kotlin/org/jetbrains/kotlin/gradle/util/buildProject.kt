@@ -112,16 +112,8 @@ fun Project.applyCocoapodsPlugin(): CocoapodsExtension {
 val Project.propertiesExtension: ExtraPropertiesExtension
     get() = extensions.getByType(ExtraPropertiesExtension::class.java)
 
-fun Project.enableGranularSourceSetsMetadata() {
-    propertiesExtension.set("kotlin.mpp.enableGranularSourceSetsMetadata", "true")
-}
-
 fun Project.enableCInteropCommonization(enabled: Boolean = true) {
     propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_CINTEROP_COMMONIZATION, enabled.toString())
-}
-
-fun Project.enableHierarchicalStructureByDefault(enabled: Boolean = true) {
-    propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_MPP_HIERARCHICAL_STRUCTURE_BY_DEFAULT, enabled.toString())
 }
 
 fun Project.enableIntransitiveMetadataConfiguration(enabled: Boolean = true) {
