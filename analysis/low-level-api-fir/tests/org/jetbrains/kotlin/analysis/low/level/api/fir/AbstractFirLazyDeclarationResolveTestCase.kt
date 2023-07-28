@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirResolve
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder.findElementIn
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
-import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.renderer.FirDeclarationRendererWithFilteredAttributes
 import org.jetbrains.kotlin.fir.renderer.FirErrorExpressionExtendedRenderer
@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.renderer.FirResolvePhaseRenderer
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -104,12 +105,22 @@ abstract class AbstractFirLazyDeclarationResolveTestCase : AbstractLowLevelApiSi
             directives.singleOrZeroValue(Directives.MEMBER_NAME_FILTER),
         ).ifEmpty { return symbol }
 
-        val classSymbol = symbol as FirClassSymbol
-        val declarations = classSymbol.declarationSymbols
+        val (classSymbol, declarations) = when (symbol) {
+            is FirClassSymbol -> symbol to symbol.declarationSymbols
+            is FirScriptSymbol -> {
+                symbol to symbol.fir.let { it.parameters + it.statements }.mapNotNull { (it as? FirDeclaration)?.symbol }
+            }
+
+            else -> error("Unknown container: ${symbol::class.simpleName}")
+        }
+
         val filter = { declaration: FirBasedSymbol<*> -> memberClassFilters.all { it.invoke(declaration) } }
         val filteredSymbols = declarations.filter(filter)
         return when (filteredSymbols.size) {
-            0 -> deepSearch(classSymbol, session, filter) ?: error("Empty result for:${declarations.joinToString("\n")}")
+            0 -> {
+                (classSymbol as? FirClassSymbol)?.let { deepSearch(it, session, filter) }
+                    ?: error("Empty result for:${declarations.joinToString("\n")}")
+            }
             1 -> filteredSymbols.single()
             else -> error("Result ambiguity:\n${filteredSymbols.joinToString("\n")}")
         }

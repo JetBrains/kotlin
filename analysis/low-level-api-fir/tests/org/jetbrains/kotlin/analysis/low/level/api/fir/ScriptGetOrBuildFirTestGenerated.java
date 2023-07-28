@@ -222,6 +222,42 @@ public class ScriptGetOrBuildFirTestGenerated extends AbstractScriptGetOrBuildFi
         }
 
         @Test
+        @TestMetadata("argsFromFunction.kts")
+        public void testArgsFromFunction() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/calls/argsFromFunction.kts");
+        }
+
+        @Test
+        @TestMetadata("argsFromInit.kts")
+        public void testArgsFromInit() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/calls/argsFromInit.kts");
+        }
+
+        @Test
+        @TestMetadata("argsFromMemberFunction.kts")
+        public void testArgsFromMemberFunction() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/calls/argsFromMemberFunction.kts");
+        }
+
+        @Test
+        @TestMetadata("argsFromMemberProperty.kts")
+        public void testArgsFromMemberProperty() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/calls/argsFromMemberProperty.kts");
+        }
+
+        @Test
+        @TestMetadata("argsFromProperty.kts")
+        public void testArgsFromProperty() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/calls/argsFromProperty.kts");
+        }
+
+        @Test
+        @TestMetadata("argsFromStatement.kts")
+        public void testArgsFromStatement() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/calls/argsFromStatement.kts");
+        }
+
+        @Test
         @TestMetadata("callArgumentScript.kts")
         public void testCallArgumentScript() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/calls/callArgumentScript.kts");
@@ -231,6 +267,12 @@ public class ScriptGetOrBuildFirTestGenerated extends AbstractScriptGetOrBuildFi
         @TestMetadata("callInsideLambdaInsideSuperCallAndExplicitConstructorScript.kts")
         public void testCallInsideLambdaInsideSuperCallAndExplicitConstructorScript() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/calls/callInsideLambdaInsideSuperCallAndExplicitConstructorScript.kts");
+        }
+
+        @Test
+        @TestMetadata("callOnePropertyFromAnother.kts")
+        public void testCallOnePropertyFromAnother() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/calls/callOnePropertyFromAnother.kts");
         }
 
         @Test
@@ -291,6 +333,12 @@ public class ScriptGetOrBuildFirTestGenerated extends AbstractScriptGetOrBuildFi
         @TestMetadata("superTypeScript.kts")
         public void testSuperTypeScript() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/calls/superTypeScript.kts");
+        }
+
+        @Test
+        @TestMetadata("syntheticResultDeclaration.kts")
+        public void testSyntheticResultDeclaration() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/calls/syntheticResultDeclaration.kts");
         }
     }
 

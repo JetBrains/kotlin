@@ -1,0 +1,18 @@
+KT element: KtDotQualifiedExpression
+FIR element: FirPropertyAccessExpressionImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+R|<local>/args|.R|SubstitutionOverride<kotlin/Array.size: R|kotlin/Int|>|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] argsFromStatement.kts
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)]
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(BODY_RESOLVE)] val $$result: <ERROR TYPE REF: Unresolved name: foo> = <Unresolved name: foo>#(<L> = [ResolvedTo(BODY_RESOLVE)] foo@fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+            ^ R|<local>/args|.R|SubstitutionOverride<kotlin/Array.size: R|kotlin/Int|>|
+        }
+        )
+            public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: foo>

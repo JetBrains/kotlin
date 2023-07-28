@@ -1,0 +1,15 @@
+KT element: KtDotQualifiedExpression
+FIR element: FirPropertyAccessExpressionImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+<Unresolved name: args>#.<Unresolved name: size>#
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] argsFromProperty.kts
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(RAW_FIR)]
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(BODY_RESOLVE)] val bar: <ERROR TYPE REF: Unresolved name: size> = <Unresolved name: args>#.<Unresolved name: size>#
+            public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: size>
