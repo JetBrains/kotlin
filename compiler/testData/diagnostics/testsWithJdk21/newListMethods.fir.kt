@@ -20,18 +20,26 @@ class A<T> : ArrayList<T>() {
 }
 
 fun foo(x: MutableList<String>, y: ArrayList<String>, z: A<String>) {
-    x.<!UNRESOLVED_REFERENCE!>addFirst<!>("")
-    x.<!UNRESOLVED_REFERENCE!>addLast<!>("")
+    x.addFirst("")
+    x.addLast("")
     x.<!UNRESOLVED_REFERENCE!>getFirst<!>()
+    x.<!FUNCTION_CALL_EXPECTED!>first<!> // synthetic property for getFirst()
+    x.first() // stdlib extension on List
     x.<!UNRESOLVED_REFERENCE!>getLast<!>()
-    x.<!DEBUG_INFO_CALL("fqName: kotlin.collections.removeFirst; typeCall: extension function")!>removeFirst()<!>
-    x.<!DEBUG_INFO_CALL("fqName: kotlin.collections.removeLast; typeCall: extension function")!>removeLast()<!>
+    x.<!FUNCTION_CALL_EXPECTED!>last<!>
+    x.last()
+    x.<!DEBUG_INFO_CALL("fqName: kotlin.collections.MutableList.removeFirst; typeCall: function")!>removeFirst()<!>
+    x.<!DEBUG_INFO_CALL("fqName: kotlin.collections.MutableList.removeLast; typeCall: function")!>removeLast()<!>
     x.<!DEBUG_INFO_CALL("fqName: kotlin.collections.reversed; typeCall: extension function")!>reversed()<!>
 
     y.addFirst("")
     y.addLast("")
     y.getFirst()
+    y.first
+    y.first()
     y.getLast()
+    y.last
+    y.last()
     y.<!DEBUG_INFO_CALL("fqName: java.util.ArrayList.removeFirst; typeCall: function")!>removeFirst()<!>
     y.<!DEBUG_INFO_CALL("fqName: java.util.ArrayList.removeLast; typeCall: function")!>removeLast()<!>
     y.<!DEBUG_INFO_CALL("fqName: kotlin.collections.reversed; typeCall: extension function")!>reversed()<!>
@@ -39,7 +47,11 @@ fun foo(x: MutableList<String>, y: ArrayList<String>, z: A<String>) {
     z.addFirst("")
     z.addLast("")
     z.getFirst()
+    z.first
+    z.first()
     z.getLast()
+    z.last
+    z.last()
     z.<!DEBUG_INFO_CALL("fqName: A.removeFirst; typeCall: function")!>removeFirst()<!>
     z.<!DEBUG_INFO_CALL("fqName: A.removeLast; typeCall: function")!>removeLast()<!>
     z.<!DEBUG_INFO_CALL("fqName: A.reversed; typeCall: function")!>reversed()<!>

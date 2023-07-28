@@ -25,6 +25,12 @@ public class FirPsiJdk21DiagnosticTestGenerated extends AbstractFirPsiJdk21Diagn
     }
 
     @Test
+    @TestMetadata("implementationsForSequencedCollection.kt")
+    public void testImplementationsForSequencedCollection() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithJdk21/implementationsForSequencedCollection.kt");
+    }
+
+    @Test
     @TestMetadata("newListMethods.kt")
     public void testNewListMethods() throws Exception {
         runTest("compiler/testData/diagnostics/testsWithJdk21/newListMethods.kt");
