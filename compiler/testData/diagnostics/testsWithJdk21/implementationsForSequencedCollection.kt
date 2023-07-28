@@ -3,10 +3,10 @@
 fun foo(ll: java.util.LinkedList<String>, al: ArrayList<String>, ad: ArrayDeque<String>, jad: java.util.ArrayDeque<String>) {
     ll.addFirst("")
     ll.addLast("")
-    ll.getFirst()
+    ll.<!DEPRECATION!>getFirst<!>()
     ll.first // synthetic property for getFirst()
     ll.first() // stdlib extension on List
-    ll.getLast()
+    ll.<!DEPRECATION!>getLast<!>()
     ll.last
     ll.last()
     ll.<!DEBUG_INFO_CALL("fqName: java.util.LinkedList.removeFirst; typeCall: function")!>removeFirst()<!>
@@ -15,10 +15,10 @@ fun foo(ll: java.util.LinkedList<String>, al: ArrayList<String>, ad: ArrayDeque<
 
     al.addFirst("")
     al.addLast("")
-    al.getFirst()
+    al.<!DEPRECATION!>getFirst<!>()
     al.first
     al.first()
-    al.getLast()
+    al.<!DEPRECATION!>getLast<!>()
     al.last
     al.last()
     al.<!DEBUG_INFO_CALL("fqName: java.util.ArrayList.removeFirst; typeCall: function")!>removeFirst()<!>
