@@ -35,10 +35,10 @@ fun foo(x: MutableList<String>, y: ArrayList<String>, z: A<String>) {
     y.addFirst("")
     y.addLast("")
     y.<!DEPRECATION!>getFirst<!>()
-    y.first
+    y.<!DEPRECATION!>first<!>
     y.first()
     y.<!DEPRECATION!>getLast<!>()
-    y.last
+    y.<!DEPRECATION!>last<!>
     y.last()
     y.<!DEBUG_INFO_CALL("fqName: java.util.ArrayList.removeFirst; typeCall: function")!>removeFirst()<!>
     y.<!DEBUG_INFO_CALL("fqName: java.util.ArrayList.removeLast; typeCall: function")!>removeLast()<!>
@@ -47,10 +47,10 @@ fun foo(x: MutableList<String>, y: ArrayList<String>, z: A<String>) {
     z.addFirst("")
     z.addLast("")
     z.<!DEPRECATION!>getFirst<!>()
-    z.first
+    z.<!DEPRECATION!>first<!>
     z.first()
     z.<!DEPRECATION!>getLast<!>()
-    z.last
+    z.<!DEPRECATION!>last<!>
     z.last()
     z.<!DEBUG_INFO_CALL("fqName: A.removeFirst; typeCall: function")!>removeFirst()<!>
     z.<!DEBUG_INFO_CALL("fqName: A.removeLast; typeCall: function")!>removeLast()<!>

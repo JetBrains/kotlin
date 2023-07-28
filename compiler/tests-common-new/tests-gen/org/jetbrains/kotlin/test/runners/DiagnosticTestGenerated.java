@@ -20110,6 +20110,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("doNotMarkWriteIfGetterDeprecated.kt")
+                public void testDoNotMarkWriteIfGetterDeprecated() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/j+k/deprecations/doNotMarkWriteIfGetterDeprecated.kt");
+                }
+
+                @Test
                 @TestMetadata("forFakeOverrides.kt")
                 public void testForFakeOverrides() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/j+k/deprecations/forFakeOverrides.kt");
@@ -20125,6 +20131,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 @TestMetadata("forOverrides.kt")
                 public void testForOverrides() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/j+k/deprecations/forOverrides.kt");
+                }
+
+                @Test
+                @TestMetadata("forSyntheticPropertyOverrides.kt")
+                public void testForSyntheticPropertyOverrides() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/j+k/deprecations/forSyntheticPropertyOverrides.kt");
                 }
             }
 
