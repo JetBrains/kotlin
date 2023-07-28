@@ -379,7 +379,7 @@ FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameterScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/A.prop] prop: R|kotlin/Int| = Int(42), [ResolvedTo(BODY_RESOLVE)] c: R|kotlin/String|): R|A| {

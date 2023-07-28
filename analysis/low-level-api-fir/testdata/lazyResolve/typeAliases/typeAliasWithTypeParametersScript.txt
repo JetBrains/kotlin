@@ -119,7 +119,7 @@ FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] typeAliasWithTypeParametersScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] typealias ResolveMe<[ResolvedTo(BODY_RESOLVE)] T : R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] K> = R|kotlin/collections/Map<T, K>|
 

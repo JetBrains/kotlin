@@ -302,7 +302,7 @@ BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] contractScript2.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? inline [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] block: ( () -> Unit )): R|kotlin/Unit|
             [Contract description] <
@@ -327,7 +327,7 @@ FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] contractScript2.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final inline [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] block: R|() -> kotlin/Unit|): R|kotlin/Unit|
             [R|Contract description]

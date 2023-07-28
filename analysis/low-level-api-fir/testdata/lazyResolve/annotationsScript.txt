@@ -160,7 +160,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationsScript.kts
     [ResolvedTo(BODY_RESOLVE)] annotations container
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/Suppress|[Types](names = vararg(String(2))) public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
         }

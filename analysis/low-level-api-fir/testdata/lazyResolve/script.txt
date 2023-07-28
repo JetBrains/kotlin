@@ -914,83 +914,83 @@ BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] script.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] class Builder : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
+        public final [ResolvedTo(STATUS)] class Builder : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Builder] constructor(): R|Builder| {
                 super<R|kotlin/Any|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] var version: String = String()
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] get(): String
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] set([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit|
+            public final [ResolvedTo(CONTRACTS)] var version: R|kotlin/String| = String()
+                public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Builder] get(): R|kotlin/String|
+                public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Builder] set([ResolvedTo(CONTRACTS)] value: R|kotlin/String|): R|kotlin/Unit|
 
-            @Anno[Unresolved](En#.Entry#) public? final? [ResolvedTo(RAW_FIR)] fun execute(): R|kotlin/Unit| {
+            @R|Anno|[Types](Q|En|.R|/En.Entry|) public final [ResolvedTo(CONTRACTS)] fun execute(): R|kotlin/Unit| {
                 println#(version#)
             }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] enum class En : R|kotlin/Enum<En>| {
-            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] constructor(): R|En| {
+        public final [ResolvedTo(STATUS)] enum class En : R|kotlin/Enum<En>| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=En] constructor(): R|En| {
                 super<R|kotlin/Enum<En>|>()
             }
 
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] enum entry Entry: R|En|
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] fun values(): R|kotlin/Array<En>| {
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=En] enum entry Entry: R|En|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=En] fun values(): R|kotlin/Array<En>| {
             }
 
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|En| {
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=En] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|En| {
             }
 
-            public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=En] val entries: R|kotlin/enums/EnumEntries<En>|
-                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<En>|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=En] val entries: R|kotlin/enums/EnumEntries<En>|
+                public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<En>|
 
         }
 
-        @Target[Unresolved](AnnotationTarget#.EXPRESSION#, AnnotationTarget#.FUNCTION#) @Retention[Unresolved](AnnotationRetention#.SOURCE#) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: En): R|Anno| {
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.EXPRESSION|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|) @R|kotlin/annotation/Retention|[Types](AnnotationRetention#.SOURCE#) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|En|): R|Anno| {
                 super<R|kotlin/Any|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: En = R|<local>/s|
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): En
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|En| = R|<local>/s|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|En|
 
         }
 
-        @Anno[Unresolved](En#.Entry#) public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> {
-            ^build Builder#().apply#(action#)
+        @R|Anno|[Types](s = Q|En|.R|/En.Entry|) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun build([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] action: R|Builder.() -> kotlin/Unit|): R|Builder| {
+            ^build R|/Builder.Builder|().R|kotlin/apply|<R|Builder|>(R|<local>/action|)
         }
 
-        @Anno[Unresolved](En#.Entry#) build#(<L> = [ResolvedTo(RAW_FIR)] build@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-            version# = String(123)
-            local final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+        @R|Anno|[Types](s = Q|En|.R|/En.Entry|) R|/build|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<Builder, kotlin/Unit>] build@fun R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|/Builder.version| = String(123)
+            local final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|A| {
                     super<R|kotlin/Any|>()
                 }
 
-                @Anno[Unresolved](En#.Entry#) public? final? [ResolvedTo(RAW_FIR)] fun doo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| {
+                @R|Anno|[Types](s = Q|En|.R|/En.Entry|) public final [ResolvedTo(BODY_RESOLVE)] fun doo([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int|): R|kotlin/Unit| {
                 }
 
             }
 
-            execute#()
+            this@R|special/anonymous|.R|/Builder.execute|()
         }
         )
-        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = build#(<L> = [ResolvedTo(RAW_FIR)] build@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-            version# = String(321)
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val builder: <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]> = <Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>#(<L> = [ResolvedTo(RAW_FIR)] build@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            <Unresolved name: version># = String(321)
         }
         )
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>
 
-        @Anno[Unresolved](En#.Entry#) builder#.execute#()
-        builder#.version# = String()
+        @R|Anno|[Types](s = Q|En|.R|/En.Entry|) R|/builder|.<Unresolved name: execute>#()
+        R|/builder|.<Unresolved name: version># = String()
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] script.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)]
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] class Builder : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Builder] constructor(): R|Builder| {
@@ -1038,19 +1038,19 @@ FILE: [ResolvedTo(IMPORTS)] script.kts
             ^build R|/Builder.Builder|().R|kotlin/apply|<R|Builder|>(R|<local>/action|)
         }
 
-        @Anno[Unresolved](En#.Entry#) build#(<L> = [ResolvedTo(RAW_FIR)] build@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-            version# = String(123)
-            local final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+        @R|Anno|[Types](s = Q|En|.R|/En.Entry|) R|/build|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<Builder, kotlin/Unit>] build@fun R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|/Builder.version| = String(123)
+            local final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|A| {
                     super<R|kotlin/Any|>()
                 }
 
-                @Anno[Unresolved](En#.Entry#) public? final? [ResolvedTo(RAW_FIR)] fun doo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| {
+                @R|Anno|[Types](s = Q|En|.R|/En.Entry|) public final [ResolvedTo(BODY_RESOLVE)] fun doo([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int|): R|kotlin/Unit| {
                 }
 
             }
 
-            execute#()
+            this@R|special/anonymous|.R|/Builder.execute|()
         }
         )
         public final [ResolvedTo(BODY_RESOLVE)] val builder: <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]> = <Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>#(<L> = [ResolvedTo(BODY_RESOLVE)] build@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
@@ -1059,5 +1059,5 @@ FILE: [ResolvedTo(IMPORTS)] script.kts
         )
             public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>
 
-        @Anno[Unresolved](En#.Entry#) builder#.execute#()
-        builder#.version# = String()
+        @R|Anno|[Types](s = Q|En|.R|/En.Entry|) R|/builder|.<Unresolved name: execute>#()
+        R|/builder|.<Unresolved name: version># = String()

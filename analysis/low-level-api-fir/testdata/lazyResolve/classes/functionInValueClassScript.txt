@@ -262,7 +262,7 @@ FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] functionInValueClassScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(BODY_RESOLVE)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Value] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Value.value] value: R|kotlin/Int|): R|Value| {

@@ -457,7 +457,7 @@ FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] nestedClassScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public open [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {

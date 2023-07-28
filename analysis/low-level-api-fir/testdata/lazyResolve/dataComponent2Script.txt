@@ -340,7 +340,7 @@ FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final data [ResolvedTo(BODY_RESOLVE)] class DataClass : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=DataClass] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=one/DataClass.i] i: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=one/DataClass.b] b: R|kotlin/Boolean|): R|one/DataClass| {

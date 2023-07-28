@@ -314,7 +314,7 @@ FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] enumEntriesScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
             private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {

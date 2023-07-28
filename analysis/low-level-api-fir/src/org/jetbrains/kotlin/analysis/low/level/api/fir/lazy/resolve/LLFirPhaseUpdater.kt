@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isScriptStatement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.*
@@ -19,7 +20,7 @@ internal object LLFirPhaseUpdater {
     ) {
         updatePhaseForNonLocals(target, newPhase, isTargetDeclaration = true)
 
-        if (updateForLocalDeclarations && target is FirCallableDeclaration) {
+        if (updateForLocalDeclarations) {
             when (target) {
                 is FirFunction -> target.body?.accept(PhaseUpdatingTransformer, newPhase)
                 is FirVariable -> {
@@ -27,6 +28,14 @@ internal object LLFirPhaseUpdater {
                     target.getter?.body?.accept(PhaseUpdatingTransformer, newPhase)
                     target.setter?.body?.accept(PhaseUpdatingTransformer, newPhase)
                     target.backingField?.accept(PhaseUpdatingTransformer, newPhase)
+                }
+
+                is FirScript -> {
+                    target.parameters.forEach { it.accept(PhaseUpdatingTransformer, newPhase) }
+                    for (statement in target.statements) {
+                        if (!statement.isScriptStatement) continue
+                        statement.accept(PhaseUpdatingTransformer, newPhase)
+                    }
                 }
             }
         }

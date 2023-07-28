@@ -196,7 +196,9 @@ val FirDeclaration.isGeneratedDeclaration
 
 internal inline fun FirScript.forEachDeclaration(action: (FirDeclaration) -> Unit) {
     for (statement in statements) {
-        if (statement !is FirDeclaration || statement.origin is FirDeclarationOrigin.ScriptCustomization) continue
-        action(statement)
+        if (statement.isScriptStatement) continue
+        action(statement as FirDeclaration)
     }
 }
+
+internal val FirStatement.isScriptStatement: Boolean get() = this !is FirDeclaration || origin is FirDeclarationOrigin.ScriptCustomization

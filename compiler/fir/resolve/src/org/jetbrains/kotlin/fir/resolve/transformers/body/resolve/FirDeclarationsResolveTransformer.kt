@@ -525,13 +525,17 @@ open class FirDeclarationsResolveTransformer(
             }
         }
 
-    override fun transformScript(script: FirScript, data: ResolutionMode): FirScript {
+    fun withScript(script: FirScript, action: () -> FirScript): FirScript {
         dataFlowAnalyzer.enterScript(script)
         val result = context.withScopesForScript(script, components) {
-            transformDeclarationContent(script, data) as FirScript
+            action()
         }
         dataFlowAnalyzer.exitScript() // TODO: FirScript should be a FirControlFlowGraphOwner, KT-59683
         return result
+    }
+
+    override fun transformScript(script: FirScript, data: ResolutionMode): FirScript = withScript(script) {
+        transformDeclarationContent(script, data) as FirScript
     }
 
     override fun transformCodeFragment(codeFragment: FirCodeFragment, data: ResolutionMode): FirCodeFragment {

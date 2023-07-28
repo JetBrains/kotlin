@@ -590,7 +590,7 @@ BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] script2.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun f([ResolvedTo(RAW_FIR)] p: Int?): Int {
             [ResolvedTo(RAW_FIR)] lval fy: <implicit> = p#!!
@@ -598,11 +598,11 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
             ^f fz#
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun consume([ResolvedTo(RAW_FIR)] x: Int): R|kotlin/Unit| {
+        public final [ResolvedTo(CONTRACTS)] fun consume([ResolvedTo(CONTRACTS)] x: R|kotlin/Int|): R|kotlin/Unit| {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] val x: Int? = IntegerLiteral(1)
-            public? [ResolvedTo(RAW_FIR)] get(): Int?
+        public final [ResolvedTo(CONTRACTS)] val x: R|kotlin/Int?| = IntegerLiteral(1)
+            public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int?|
 
         public? final? [ResolvedTo(RAW_FIR)] val y: <implicit> = x#!!
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
@@ -614,9 +614,9 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
             ^foo x#.plus#(IntegerLiteral(1))
         }
 
-        consume#(x#.plus#(IntegerLiteral(1)))
-        x#!!
-        consume#(x#.plus#(IntegerLiteral(1)))
+        R|/consume|(R|/x|.R|kotlin/Int.plus<Inapplicable(UNSAFE_CALL): kotlin/Int.plus>#|(Int(1)))
+        R|/x|!!
+        R|/consume|(R|/x|.R|kotlin/Int.plus|(Int(1)))
         public? final? [ResolvedTo(RAW_FIR)] val zz: <implicit> = x#.plus#(IntegerLiteral(1))
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
@@ -638,8 +638,8 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
 FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] script2.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)]
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] fun f([ResolvedTo(BODY_RESOLVE)] p: R|kotlin/Int?|): R|kotlin/Int| {
             [ResolvedTo(BODY_RESOLVE)] lval fy: R|kotlin/Int| = R|<local>/p|!!
@@ -663,9 +663,9 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
             ^foo <Unresolved name: x>#.<Ambiguity: plus, [kotlin/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/sequences/plus]>#(Int(1))
         }
 
-        consume#(x#.plus#(IntegerLiteral(1)))
-        x#!!
-        consume#(x#.plus#(IntegerLiteral(1)))
+        R|/consume|(R|/x|.R|kotlin/Int.plus<Inapplicable(UNSAFE_CALL): kotlin/Int.plus>#|(Int(1)))
+        R|/x|!!
+        R|/consume|(R|/x|.R|kotlin/Int.plus|(Int(1)))
         public final [ResolvedTo(BODY_RESOLVE)] val zz: <ERROR TYPE REF: Ambiguity: plus, [kotlin/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/sequences/plus]> = <Unresolved name: x>#.<Ambiguity: plus, [kotlin/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/sequences/plus]>#(Int(1))
             public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Ambiguity: plus, [kotlin/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/sequences/plus]>
 

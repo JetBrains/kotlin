@@ -427,6 +427,12 @@ public class FirScriptLazyDeclarationResolveTestGenerated extends AbstractFirScr
     }
 
     @Test
+    @TestMetadata("script3.kts")
+    public void testScript3() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/script3.kts");
+    }
+
+    @Test
     @TestMetadata("secondaryConstructorParameterScript.kts")
     public void testSecondaryConstructorParameterScript() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/lazyResolve/secondaryConstructorParameterScript.kts");

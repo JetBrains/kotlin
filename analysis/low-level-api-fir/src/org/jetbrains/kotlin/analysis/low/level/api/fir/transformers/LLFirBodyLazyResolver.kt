@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.references.builder.buildExplicitSuperReference
 import org.jetbrains.kotlin.fir.references.builder.buildExplicitThisReference
+import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.dfa.FirControlFlowGraphReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
@@ -37,6 +38,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.contracts.FirContractsDslNa
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isUsedInControlFlowGraphBuilderForClass
+import org.jetbrains.kotlin.fir.visitors.transformSingle
 
 internal object LLFirBodyLazyResolver : LLFirLazyResolver(FirResolvePhase.BODY_RESOLVE) {
     override fun resolve(
@@ -142,7 +144,7 @@ private class LLFirBodyTargetResolver(
             is FirField -> resolve(target, BodyStateKeepers.FIELD)
             is FirVariable -> resolve(target, BodyStateKeepers.VARIABLE)
             is FirAnonymousInitializer -> resolve(target, BodyStateKeepers.ANONYMOUS_INITIALIZER)
-            is FirScript,
+            is FirScript -> resolve(target, BodyStateKeepers.SCRIPT)
             is FirDanglingModifierList,
             is FirFileAnnotationsContainer,
             is FirTypeAlias,
@@ -150,6 +152,22 @@ private class LLFirBodyTargetResolver(
                 // No bodies here
             }
             else -> throwUnexpectedFirElementError(target)
+        }
+    }
+
+    override fun rawResolve(target: FirElementWithResolveState) {
+        if (target !is FirScript) return super.rawResolve(target)
+
+        transformer.declarationsTransformer.withScript(target) {
+            target.parameters.forEach { it.transformSingle(transformer, ResolutionMode.ContextIndependent) }
+            target.statements.forEach {
+                if (it.isScriptStatement) {
+                    transformer.firResolveContextCollector?.addStatementContext(it, transformer.context)
+                    it.transformSingle(transformer, ResolutionMode.ContextIndependent)
+                }
+            }
+
+            target
         }
     }
 }

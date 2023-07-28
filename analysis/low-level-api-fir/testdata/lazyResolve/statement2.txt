@@ -2,7 +2,7 @@ RAW_FIR:
 FILE: [ResolvedTo(IMPORTS)] statement2.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] class Builder : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
@@ -23,21 +23,21 @@ FILE: [ResolvedTo(IMPORTS)] statement2.kts
             ^build Builder#().apply#(action#)
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = build#(<L> = [ResolvedTo(RAW_FIR)] build@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-            version# = String(321)
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val builder: <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]> = <Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>#(<L> = [ResolvedTo(RAW_FIR)] build@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            <Unresolved name: version># = String(321)
         }
         )
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>
 
-        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = builder#.execute#()
-            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+        public final [ResolvedTo(BODY_RESOLVE)] val $$result: <ERROR TYPE REF: Unresolved name: execute> = R|/builder|.<Unresolved name: execute>#()
+            public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: execute>
 
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] statement2.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)]
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] class Builder : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
@@ -58,21 +58,21 @@ FILE: [ResolvedTo(IMPORTS)] statement2.kts
             ^build Builder#().apply#(action#)
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = build#(<L> = [ResolvedTo(RAW_FIR)] build@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-            version# = String(321)
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val builder: <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]> = <Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>#(<L> = [ResolvedTo(RAW_FIR)] build@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            <Unresolved name: version># = String(321)
         }
         )
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>
 
-        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = builder#.execute#()
-            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+        public final [ResolvedTo(BODY_RESOLVE)] val $$result: <ERROR TYPE REF: Unresolved name: execute> = R|/builder|.<Unresolved name: execute>#()
+            public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: execute>
 
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] statement2.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)]
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] class Builder : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
@@ -93,21 +93,21 @@ FILE: [ResolvedTo(IMPORTS)] statement2.kts
             ^build Builder#().apply#(action#)
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = build#(<L> = [ResolvedTo(RAW_FIR)] build@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-            version# = String(321)
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val builder: <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]> = <Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>#(<L> = [ResolvedTo(RAW_FIR)] build@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            <Unresolved name: version># = String(321)
         }
         )
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>
 
-        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = builder#.execute#()
-            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+        public final [ResolvedTo(BODY_RESOLVE)] val $$result: <ERROR TYPE REF: Unresolved name: execute> = R|/builder|.<Unresolved name: execute>#()
+            public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: execute>
 
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] statement2.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)]
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] class Builder : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
@@ -128,21 +128,21 @@ FILE: [ResolvedTo(IMPORTS)] statement2.kts
             ^build Builder#().apply#(action#)
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = build#(<L> = [ResolvedTo(RAW_FIR)] build@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-            version# = String(321)
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val builder: <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]> = <Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>#(<L> = [ResolvedTo(RAW_FIR)] build@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            <Unresolved name: version># = String(321)
         }
         )
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>
 
-        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = builder#.execute#()
-            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+        public final [ResolvedTo(BODY_RESOLVE)] val $$result: <ERROR TYPE REF: Unresolved name: execute> = R|/builder|.<Unresolved name: execute>#()
+            public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: execute>
 
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] statement2.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)]
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] class Builder : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
@@ -163,21 +163,21 @@ FILE: [ResolvedTo(IMPORTS)] statement2.kts
             ^build Builder#().apply#(action#)
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = build#(<L> = [ResolvedTo(RAW_FIR)] build@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-            version# = String(321)
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val builder: <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]> = <Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>#(<L> = [ResolvedTo(RAW_FIR)] build@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            <Unresolved name: version># = String(321)
         }
         )
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>
 
-        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = builder#.execute#()
-            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+        public final [ResolvedTo(BODY_RESOLVE)] val $$result: <ERROR TYPE REF: Unresolved name: execute> = R|/builder|.<Unresolved name: execute>#()
+            public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: execute>
 
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] statement2.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)]
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] class Builder : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
@@ -198,21 +198,21 @@ FILE: [ResolvedTo(IMPORTS)] statement2.kts
             ^build Builder#().apply#(action#)
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = build#(<L> = [ResolvedTo(RAW_FIR)] build@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-            version# = String(321)
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val builder: <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]> = <Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>#(<L> = [ResolvedTo(RAW_FIR)] build@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            <Unresolved name: version># = String(321)
         }
         )
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>
 
-        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = builder#.execute#()
-            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+        public final [ResolvedTo(BODY_RESOLVE)] val $$result: <ERROR TYPE REF: Unresolved name: execute> = R|/builder|.<Unresolved name: execute>#()
+            public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: execute>
 
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] statement2.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)]
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] class Builder : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
@@ -233,21 +233,21 @@ FILE: [ResolvedTo(IMPORTS)] statement2.kts
             ^build Builder#().apply#(action#)
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = build#(<L> = [ResolvedTo(RAW_FIR)] build@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-            version# = String(321)
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val builder: <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]> = <Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>#(<L> = [ResolvedTo(RAW_FIR)] build@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            <Unresolved name: version># = String(321)
         }
         )
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>
 
-        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = builder#.execute#()
-            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+        public final [ResolvedTo(BODY_RESOLVE)] val $$result: <ERROR TYPE REF: Unresolved name: execute> = R|/builder|.<Unresolved name: execute>#()
+            public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: execute>
 
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] statement2.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)]
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] class Builder : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
@@ -268,21 +268,21 @@ FILE: [ResolvedTo(IMPORTS)] statement2.kts
             ^build Builder#().apply#(action#)
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = build#(<L> = [ResolvedTo(RAW_FIR)] build@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-            version# = String(321)
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val builder: <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]> = <Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>#(<L> = [ResolvedTo(RAW_FIR)] build@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            <Unresolved name: version># = String(321)
         }
         )
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>
 
-        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = builder#.execute#()
-            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+        public final [ResolvedTo(BODY_RESOLVE)] val $$result: <ERROR TYPE REF: Unresolved name: execute> = R|/builder|.<Unresolved name: execute>#()
+            public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: execute>
 
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] statement2.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)]
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] class Builder : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
@@ -303,21 +303,21 @@ FILE: [ResolvedTo(IMPORTS)] statement2.kts
             ^build Builder#().apply#(action#)
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = build#(<L> = [ResolvedTo(RAW_FIR)] build@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-            version# = String(321)
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val builder: <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]> = <Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>#(<L> = [ResolvedTo(RAW_FIR)] build@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            <Unresolved name: version># = String(321)
         }
         )
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>
 
-        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = builder#.execute#()
-            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+        public final [ResolvedTo(BODY_RESOLVE)] val $$result: <ERROR TYPE REF: Unresolved name: execute> = R|/builder|.<Unresolved name: execute>#()
+            public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: execute>
 
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] statement2.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)]
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] class Builder : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
@@ -338,21 +338,21 @@ FILE: [ResolvedTo(IMPORTS)] statement2.kts
             ^build Builder#().apply#(action#)
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = build#(<L> = [ResolvedTo(RAW_FIR)] build@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-            version# = String(321)
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val builder: <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]> = <Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>#(<L> = [ResolvedTo(RAW_FIR)] build@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            <Unresolved name: version># = String(321)
         }
         )
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>
 
-        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = builder#.execute#()
-            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+        public final [ResolvedTo(BODY_RESOLVE)] val $$result: <ERROR TYPE REF: Unresolved name: execute> = R|/builder|.<Unresolved name: execute>#()
+            public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: execute>
 
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] statement2.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)]
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] class Builder : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
@@ -373,21 +373,21 @@ FILE: [ResolvedTo(IMPORTS)] statement2.kts
             ^build Builder#().apply#(action#)
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = build#(<L> = [ResolvedTo(RAW_FIR)] build@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-            version# = String(321)
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val builder: <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]> = <Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>#(<L> = [ResolvedTo(RAW_FIR)] build@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            <Unresolved name: version># = String(321)
         }
         )
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>
 
-        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = builder#.execute#()
-            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+        public final [ResolvedTo(BODY_RESOLVE)] val $$result: <ERROR TYPE REF: Unresolved name: execute> = R|/builder|.<Unresolved name: execute>#()
+            public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: execute>
 
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] statement2.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)]
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] class Builder : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
@@ -408,21 +408,21 @@ FILE: [ResolvedTo(IMPORTS)] statement2.kts
             ^build Builder#().apply#(action#)
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = build#(<L> = [ResolvedTo(RAW_FIR)] build@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-            version# = String(321)
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val builder: <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]> = <Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>#(<L> = [ResolvedTo(RAW_FIR)] build@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            <Unresolved name: version># = String(321)
         }
         )
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>
 
-        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = builder#.execute#()
-            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+        public final [ResolvedTo(BODY_RESOLVE)] val $$result: <ERROR TYPE REF: Unresolved name: execute> = R|/builder|.<Unresolved name: execute>#()
+            public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: execute>
 
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] statement2.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)]
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] class Builder : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
@@ -443,21 +443,21 @@ FILE: [ResolvedTo(IMPORTS)] statement2.kts
             ^build Builder#().apply#(action#)
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = build#(<L> = [ResolvedTo(RAW_FIR)] build@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-            version# = String(321)
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val builder: <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]> = <Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>#(<L> = [ResolvedTo(RAW_FIR)] build@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            <Unresolved name: version># = String(321)
         }
         )
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>
 
-        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = builder#.execute#()
-            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+        public final [ResolvedTo(BODY_RESOLVE)] val $$result: <ERROR TYPE REF: Unresolved name: execute> = R|/builder|.<Unresolved name: execute>#()
+            public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: execute>
 
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] statement2.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)]
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] class Builder : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Builder] constructor(): R|Builder| {
@@ -484,6 +484,6 @@ FILE: [ResolvedTo(IMPORTS)] statement2.kts
         )
             public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>
 
-        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = builder#.execute#()
-            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+        public final [ResolvedTo(BODY_RESOLVE)] val $$result: <ERROR TYPE REF: Unresolved name: execute> = R|/builder|.<Unresolved name: execute>#()
+            public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: execute>
 

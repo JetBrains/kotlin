@@ -1094,7 +1094,7 @@ FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public abstract [ResolvedTo(BODY_RESOLVE)] interface Foo1 : R|kotlin/Any| {
             public abstract [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit|

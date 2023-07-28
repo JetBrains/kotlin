@@ -483,7 +483,7 @@ FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] nestedTypeAliasScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] class OuterClass<[ResolvedTo(BODY_RESOLVE)] T1> : R|SuperForOuter| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(BODY_RESOLVE)] T1>(): R|OuterClass<T1>| {

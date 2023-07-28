@@ -275,7 +275,7 @@ FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe([ResolvedTo(BODY_RESOLVE)] foo: R|Foo|): R|kotlin/Unit| {
             R|<local>/foo|.<Unresolved name: util>#()

@@ -5,22 +5,22 @@ FIR source kind: KtRealSourceElementKind
 FIR element rendered:
 context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
 SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+    [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-    public? final? [ResolvedTo(RAW_FIR)] var i: <implicit> = IntegerLiteral(1)
-        public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-        public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var i: R|kotlin/Int| = Int(1)
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
 
-    +=(i#, IntegerLiteral(1))
+    +=(R|/i|, Int(1))
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] compoundAssignOnVarScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] var i: <implicit> = IntegerLiteral(1)
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var i: R|kotlin/Int| = Int(1)
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
 
-        +=(i#, IntegerLiteral(1))
+        +=(R|/i|, Int(1))

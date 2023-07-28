@@ -1718,7 +1718,7 @@ FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] complexRedeclarationScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public sealed [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
             protected [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|A| {
