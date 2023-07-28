@@ -108,9 +108,6 @@ private fun File.listLibraryFiles(): List<File> = listFiles().orEmpty()
     .filter { it.isDirectory || it.extension == "klib" }
 
 
-internal val Project.isNativeDependencyPropagationEnabled: Boolean
-    get() = PropertiesProvider(this).nativeDependencyPropagation ?: true
-
 /**
  * Function signature needs to be kept stable since this is used during import
  * in IDEs (KotlinCommonizerModelBuilder) < 222
@@ -124,5 +121,4 @@ internal fun Project.isAllowCommonizer(): Boolean {
 
     return multiplatformExtension.targets.any { it.platformType == KotlinPlatformType.native }
             && isKotlinGranularMetadataEnabled
-            && !isNativeDependencyPropagationEnabled // temporary fix: turn on commonizer only when native deps propagation is disabled
 }
