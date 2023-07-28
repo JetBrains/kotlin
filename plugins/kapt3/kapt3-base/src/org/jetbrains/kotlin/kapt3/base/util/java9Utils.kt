@@ -57,6 +57,8 @@ fun TreeMaker.TopLevelJava9Aware(packageClause: JCTree.JCExpression?, declaratio
     }
 }
 
+// The cast is not useless on JDK 21
+@Suppress("USELESS_CAST")
 fun JCTree.JCCompilationUnit.getPackageNameJava9Aware(): JCTree? {
     return if (isJava9OrLater()) {
         JCTree.JCCompilationUnit::class.java.getDeclaredMethod("getPackageName").invoke(this) as JCTree?
