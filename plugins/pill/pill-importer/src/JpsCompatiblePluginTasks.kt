@@ -11,6 +11,8 @@ import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.SourceSet
 import org.gradle.kotlin.dsl.extra
 import org.gradle.kotlin.dsl.getByType
+import org.jetbrains.kotlin.pill.artifact.ArtifactDependencyMapper
+import org.jetbrains.kotlin.pill.artifact.ArtifactGenerator
 import org.jetbrains.kotlin.pill.model.PDependency
 import org.jetbrains.kotlin.pill.model.PLibrary
 import org.jetbrains.kotlin.pill.model.POrderRoot
@@ -28,7 +30,8 @@ const val EMBEDDED_CONFIGURATION_NAME = "embedded"
 class JpsCompatiblePluginTasks(
     private val rootProject: Project,
     private val platformDir: File,
-    private val resourcesDir: File
+    private val resourcesDir: File,
+    private val isIdePluginAttached: Boolean
 ) {
     companion object {
         private val DIST_LIBRARIES = listOf(
@@ -114,6 +117,29 @@ class JpsCompatiblePluginTasks(
         removeExistingIdeaLibrariesAndModules()
         removeJpsAndPillRunConfigurations()
         removeArtifactConfigurations()
+
+        if (isIdePluginAttached && variant.includes.contains(PillExtensionMirror.Variant.BASE)) {
+            val artifactDependencyMapper = object : ArtifactDependencyMapper {
+                override fun map(dependency: PDependency): List<PDependency> {
+                    val result = mutableListOf<PDependency>()
+
+                    for (mappedDependency in jpsProject.mapDependency(dependency, dependencyMappers)) {
+                        result += mappedDependency
+
+                        if (mappedDependency is PDependency.Module) {
+                            val module = jpsProject.modules.find { it.name == mappedDependency.name }
+                            if (module != null) {
+                                result += module.embeddedDependencies
+                            }
+                        }
+                    }
+
+                    return result
+                }
+            }
+
+            ArtifactGenerator(artifactDependencyMapper).generateKotlinPluginArtifact(rootProject).write()
+        }
 
         copyRunConfigurations()
         setOptionsForDefaultJunitRunConfiguration(rootProject)
