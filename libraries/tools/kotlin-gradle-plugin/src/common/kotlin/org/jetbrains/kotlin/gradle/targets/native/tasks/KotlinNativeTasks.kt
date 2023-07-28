@@ -36,19 +36,17 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.create
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
-import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmMetadataCompilationData
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmNativeCompilationData
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
-import org.jetbrains.kotlin.gradle.report.TaskExecutionInfo
-import org.jetbrains.kotlin.gradle.report.TaskExecutionResult
+import org.jetbrains.kotlin.gradle.report.*
 import org.jetbrains.kotlin.gradle.report.UsesBuildMetricsService
 import org.jetbrains.kotlin.gradle.targets.native.KonanPropertiesBuildService
-import org.jetbrains.kotlin.gradle.targets.native.internal.isAllowCommonizer
 import org.jetbrains.kotlin.gradle.targets.native.tasks.*
 import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.gradle.utils.GradleLoggerAdapter
 import org.jetbrains.kotlin.gradle.utils.listFilesOrEmpty
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageMode
 import org.jetbrains.kotlin.konan.library.KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
@@ -320,7 +318,7 @@ internal constructor(
 ) : AbstractKotlinNativeCompile<KotlinCommonOptions, K2NativeCompilerArguments>(objectFactory),
     KotlinCompile<KotlinCommonOptions>,
     K2MultiplatformCompilationTask,
-    UsesBuildMetricsService ,
+    UsesBuildMetricsService,
     KotlinCompilationTask<KotlinNativeCompilerOptions> {
 
     @get:Input
@@ -525,28 +523,24 @@ internal constructor(
     fun compile() {
         val buildMetrics = metrics.get()
         val arguments = createCompilerArguments()
-        buildMetrics.addTimeMetric(GradleBuildPerformanceMetric.START_TASK_ACTION_EXECUTION)
-        val buildArguments = buildMetrics.measure(GradleBuildTime.OUT_OF_WORKER_TASK_ACTION) {
-            val output = outputFile.get()
-            output.parentFile.mkdirs()
+        addBuildMetricsForTaskAction(
+            metricsReporter = buildMetrics,
+            languageVersion = parseLanguageVersion(arguments.languageVersion, arguments.useK2)
+        ) {
+            val buildArguments = buildMetrics.measure(GradleBuildTime.OUT_OF_WORKER_TASK_ACTION) {
+                val output = outputFile.get()
+                output.parentFile.mkdirs()
 
-            collectCommonCompilerStats()
-            ArgumentUtils.convertArgumentsToStringList(arguments)
+                collectCommonCompilerStats()
+                ArgumentUtils.convertArgumentsToStringList(arguments)
+            }
+
+            KotlinNativeCompilerRunner(
+                settings = runnerSettings,
+                executionContext = KotlinToolRunner.GradleExecutionContext.fromTaskContext(objectFactory, execOperations, logger),
+                metricsReporter = buildMetrics
+            ).run(buildArguments)
         }
-        buildMetricsService.orNull?.also { it.addTask(path, this.javaClass, buildMetrics) }
-
-        KotlinNativeCompilerRunner(
-            settings = runnerSettings,
-            executionContext = KotlinToolRunner.GradleExecutionContext.fromTaskContext(objectFactory, execOperations, logger)
-        ).run(buildArguments, buildMetrics)
-
-
-        val taskInfo = TaskExecutionInfo(
-            kotlinLanguageVersion = parseLanguageVersion(arguments.languageVersion, arguments.useK2),
-        )
-
-        val result = TaskExecutionResult(buildMetrics = BuildMetrics(), taskInfo = taskInfo)
-        TaskExecutionResults[path] = result
 
     }
 
@@ -740,6 +734,7 @@ internal class CacheBuilder(
     private val executionContext: KotlinToolRunner.GradleExecutionContext,
     private val settings: Settings,
     private val konanPropertiesService: KonanPropertiesBuildService,
+    private val metricsReporter: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>
 ) {
     class Settings(
         val runnerSettings: KotlinNativeCompilerRunner.Settings,
@@ -922,7 +917,7 @@ internal class CacheBuilder(
                     args += "-l"
                     args += it.libraryFile.absolutePath
                 }
-            KotlinNativeCompilerRunner(settings.runnerSettings, executionContext).run(args)
+            KotlinNativeCompilerRunner(settings.runnerSettings, executionContext, GradleBuildMetricsReporter()).run(args)
         }
     }
 
@@ -963,7 +958,7 @@ internal class CacheBuilder(
         }
         args += "-Xadd-cache=${platformLib.absolutePath}"
         args += "-Xcache-directory=${rootCacheDirectory.absolutePath}"
-        KotlinNativeCompilerRunner(settings.runnerSettings, executionContext).run(args)
+        KotlinNativeCompilerRunner(settings.runnerSettings, executionContext, metricsReporter).run(args)
     }
 
     private fun ensureCompilerProvidedLibsPrecached() {
@@ -1014,7 +1009,13 @@ internal class CacheBuilder(
 }
 
 @CacheableTask
-open class CInteropProcess @Inject internal constructor(params: Params) : DefaultTask() {
+abstract class CInteropProcess @Inject internal constructor(params: Params, project: Project) :
+    DefaultTask(), UsesBuildMetricsService {
+    init {
+        BuildMetricsService.registerIfAbsent(project)?.let {
+            buildMetricsService.value(it)
+        }
+    }
 
     internal class Params(
         val settings: DefaultCInteropSettings,
@@ -1123,48 +1124,57 @@ open class CInteropProcess @Inject internal constructor(params: Params) : Defaul
     @get:Input
     val extraOpts: List<String> get() = settings.extraOpts
 
+    @get:Internal
+    val metrics: Property<BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>> = project.objects
+        .property(GradleBuildMetricsReporter())
+
     private val isInIdeaSync = project.isInIdeaSync
 
     // Task action.
     @TaskAction
     fun processInterop() {
-        val args = mutableListOf<String>().apply {
-            addArg("-o", outputFile.absolutePath)
+        val buildMetrics = metrics.get()
 
-            addArgIfNotNull("-target", konanTarget.visibleName)
-            addArgIfNotNull("-def", defFile.canonicalPath)
-            addArgIfNotNull("-pkg", packageName)
+        val args =
+            mutableListOf<String>().apply {
+                addArg("-o", outputFile.absolutePath)
 
-            addFileArgs("-header", headers)
+                addArgIfNotNull("-target", konanTarget.visibleName)
+                addArgIfNotNull("-def", defFile.canonicalPath)
+                addArgIfNotNull("-pkg", packageName)
 
-            compilerOpts.forEach {
-                addArg("-compiler-option", it)
+                addFileArgs("-header", headers)
+
+                compilerOpts.forEach {
+                    addArg("-compiler-option", it)
+                }
+
+                linkerOpts.forEach {
+                    addArg("-linker-option", it)
+                }
+
+                libraries.files.filterKlibsPassedToCompiler().forEach { library ->
+                    addArg("-library", library.absolutePath)
+                }
+
+                addArgs("-compiler-option", allHeadersDirs.map { "-I${it.absolutePath}" })
+                addArgs("-headerFilterAdditionalSearchPrefix", headerFilterDirs.map { it.absolutePath })
+                addArg("-Xmodule-name", moduleName)
+
+                addArg("-libraryVersion", libraryVersion)
+
+                addAll(extraOpts)
+
             }
-
-            linkerOpts.forEach {
-                addArg("-linker-option", it)
-            }
-
-            libraries.files.filterKlibsPassedToCompiler().forEach { library ->
-                addArg("-library", library.absolutePath)
-            }
-
-            addArgs("-compiler-option", allHeadersDirs.map { "-I${it.absolutePath}" })
-            addArgs("-headerFilterAdditionalSearchPrefix", headerFilterDirs.map { it.absolutePath })
-            addArg("-Xmodule-name", moduleName)
-
-            // TODO: uncomment after advancing bootstrap.
-            //addArg("-libraryVersion", libraryVersion)
-
-            addAll(extraOpts)
+        addBuildMetricsForTaskAction(buildMetrics, languageVersion = null) {
+            outputFile.parentFile.mkdirs()
+            KotlinNativeCInteropRunner.createExecutionContext(
+                task = this,
+                isInIdeaSync = isInIdeaSync,
+                runnerSettings = runnerSettings,
+                gradleExecutionContext = KotlinToolRunner.GradleExecutionContext.fromTaskContext(objectFactory, execOperations, logger),
+                metricsReporter = buildMetrics
+            ).run(args)
         }
-
-        outputFile.parentFile.mkdirs()
-        KotlinNativeCInteropRunner.createExecutionContext(
-            task = this,
-            isInIdeaSync = isInIdeaSync,
-            runnerSettings = runnerSettings,
-            gradleExecutionContext = KotlinToolRunner.GradleExecutionContext.fromTaskContext(objectFactory, execOperations, logger)
-        ).run(args)
     }
 }

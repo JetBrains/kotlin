@@ -55,7 +55,7 @@ class TryK2IT : KGPBaseTest() {
     }
 
     @DisplayName("JVM: build report is not printed")
-    @JvmGradlePluginTests
+    @NativeGradlePluginTests
     @GradleTest
     fun buildReportNotPrinted(gradleVersion: GradleVersion) {
         project(

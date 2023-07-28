@@ -43,6 +43,7 @@ private val packageName = "org.jetbrains.kotlin.gradle.plugin.mpp.pm20"
 
 private fun allKonanTargets() = KonanTarget.predefinedTargets.values
 
+
 private fun variantClasses() = allKonanTargets()
     .map { variantClass(it) }
     .joinToString("\n\n")

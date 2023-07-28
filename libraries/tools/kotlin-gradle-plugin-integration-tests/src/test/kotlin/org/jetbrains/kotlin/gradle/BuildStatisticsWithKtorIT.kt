@@ -33,7 +33,6 @@ import java.util.concurrent.TimeUnit
 import kotlin.test.*
 
 @DisplayName("Build statistics")
-@JvmGradlePluginTests
 class BuildStatisticsWithKtorIT : KGPBaseTest() {
 
     companion object {
@@ -151,6 +150,7 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
 
     @DisplayName("Http build report request problems are logged only ones")
     @GradleTest
+    @JvmGradlePluginTests
     fun testHttpServiceWithBadRequest(gradleVersion: GradleVersion) {
         runWithKtorService { port ->
             project("incrementalMultiproject", gradleVersion) {
@@ -191,6 +191,7 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
 
     @DisplayName("Validate mandatory field for http request body")
     @GradleTest
+    @JvmGradlePluginTests
     fun testHttpRequest(gradleVersion: GradleVersion) {
         simpleTestHttpReport(gradleVersion) { taskData ->
             assertContains(taskData.getTags(), StatTag.NON_INCREMENTAL)
@@ -207,6 +208,7 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
 
     @DisplayName("Compiler arguments reporting can be disabled")
     @GradleTest
+    @JvmGradlePluginTests
     fun testDisablingCompilerArgumentsReporting(gradleVersion: GradleVersion) {
         simpleTestHttpReport(gradleVersion, { project ->
             project.gradleProperties.append(
@@ -230,6 +232,7 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
 
     @DisplayName("Validate configuration cache tag")
     @GradleTest
+    @JvmGradlePluginTests
     fun testConfigurationCache(gradleVersion: GradleVersion) {
         runWithKtorService { port ->
 
@@ -298,6 +301,7 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
 
     @DisplayName("Build reports for native")
     @GradleTest
+    @NativeGradlePluginTests
     fun buildReportForNative(gradleVersion: GradleVersion) {
         runWithKtorService { port ->
             project(

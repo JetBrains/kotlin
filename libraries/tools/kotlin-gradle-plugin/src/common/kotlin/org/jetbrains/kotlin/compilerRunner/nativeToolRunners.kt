@@ -7,12 +7,16 @@ package org.jetbrains.kotlin.compilerRunner
 
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
+import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheOrchestration
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.useXcodeMessageStyle
 import org.jetbrains.kotlin.gradle.plugin.mpp.nativeUseEmbeddableCompilerJar
+import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
 import org.jetbrains.kotlin.gradle.targets.native.KonanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.konan.properties.resolvablePropertyString
@@ -73,7 +77,8 @@ internal abstract class KotlinNativeToolRunner(
     protected val toolName: String,
     private val settings: Settings,
     executionContext: GradleExecutionContext,
-) : KotlinToolRunner(executionContext) {
+    metricsReporter: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>
+) : KotlinToolRunner(executionContext, metricsReporter) {
 
     class Settings(
         val konanVersion: String,
@@ -151,7 +156,8 @@ internal abstract class AbstractKotlinNativeCInteropRunner(
     toolName: String,
     settings: Settings,
     executionContext: GradleExecutionContext,
-) : KotlinNativeToolRunner(toolName, settings, executionContext) {
+    metricsReporter: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>
+) : KotlinNativeToolRunner(toolName, settings, executionContext, metricsReporter) {
 
     override val mustRunViaExec get() = true
 
@@ -187,17 +193,19 @@ internal class KotlinNativeCInteropRunner
 private constructor(
     private val settings: Settings,
     gradleExecutionContext: GradleExecutionContext,
-) : AbstractKotlinNativeCInteropRunner("cinterop", settings, gradleExecutionContext) {
+    metricsReporter: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>
+) : AbstractKotlinNativeCInteropRunner("cinterop", settings, gradleExecutionContext, metricsReporter) {
 
     interface ExecutionContext {
         val runnerSettings: Settings
         val gradleExecutionContext: GradleExecutionContext
+        val metricsReporter: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>
         fun runWithContext(action: () -> Unit)
     }
 
     companion object {
         fun ExecutionContext.run(args: List<String>) {
-            val runner = KotlinNativeCInteropRunner(runnerSettings, gradleExecutionContext)
+            val runner = KotlinNativeCInteropRunner(runnerSettings, gradleExecutionContext, metricsReporter)
             runWithContext { runner.run(args) }
         }
     }
@@ -207,7 +215,8 @@ private constructor(
 internal class KotlinNativeCompilerRunner(
     private val settings: Settings,
     executionContext: GradleExecutionContext,
-) : KotlinNativeToolRunner("konanc", settings.parent, executionContext) {
+    metricsReporter: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>
+) : KotlinNativeToolRunner("konanc", settings.parent, executionContext, metricsReporter) {
     class Settings(
         val parent: KotlinNativeToolRunner.Settings,
         val disableKonanDaemon: Boolean,
@@ -245,13 +254,15 @@ internal class KotlinNativeCompilerRunner(
 internal class KotlinNativeLibraryGenerationRunner(
     private val settings: Settings,
     executionContext: GradleExecutionContext,
+    metricsReporter: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>
 ) :
-    AbstractKotlinNativeCInteropRunner("generatePlatformLibraries", settings, executionContext) {
+    AbstractKotlinNativeCInteropRunner("generatePlatformLibraries", settings, executionContext, metricsReporter) {
 
     companion object {
         fun fromProject(project: Project) = KotlinNativeLibraryGenerationRunner(
             settings = Settings.fromProject(project),
-            executionContext = GradleExecutionContext.fromProject(project)
+            executionContext = GradleExecutionContext.fromProject(project),
+            metricsReporter = GradleBuildMetricsReporter()
         )
     }
 

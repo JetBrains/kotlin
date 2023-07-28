@@ -15,6 +15,9 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
+import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.commonizer.*
 import org.jetbrains.kotlin.compilerRunner.GradleCliCommonizer
 import org.jetbrains.kotlin.compilerRunner.KotlinNativeCommonizerToolRunner
@@ -26,6 +29,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.withDependsOnClosure
+import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerTask.CInteropCommonizerDependencies
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerTask.CInteropGist
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
@@ -177,6 +181,10 @@ internal open class CInteropCommonizerTask
     val allOutputDirectories: Set<File>
         get() = allInteropGroups.getOrThrow().map { outputDirectory(it) }.toSet()
 
+    @get:Internal
+    val metrics: Property<BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>> = project.objects
+        .property(GradleBuildMetricsReporter())
+
     internal fun from(task: TaskProvider<CInteropProcess>) {
         dependsOn(task)
         cinterops.add(task.map { it.toGist() })
@@ -195,7 +203,8 @@ internal open class CInteropCommonizerTask
 
         val commonizerRunner = KotlinNativeCommonizerToolRunner(
             context = KotlinToolRunner.GradleExecutionContext.fromTaskContext(objectFactory, execOperations, logger),
-            settings = runnerSettings.get()
+            settings = runnerSettings.get(),
+            metricsReporter = metrics.get(),
         )
 
         GradleCliCommonizer(commonizerRunner).commonizeLibraries(

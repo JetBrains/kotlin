@@ -16,7 +16,10 @@
 
 package org.jetbrains.kotlin.compilerRunner
 
-import org.gradle.internal.impldep.org.apache.commons.lang.StringEscapeUtils
+import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
+import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -29,6 +32,10 @@ import org.jetbrains.kotlin.daemon.client.launchProcessWithFallback
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.logging.GradleErrorMessageCollector
 import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
+import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
+import org.jetbrains.kotlin.gradle.report.TaskExecutionInfo
+import org.jetbrains.kotlin.gradle.report.TaskExecutionResult
+import org.jetbrains.kotlin.gradle.report.UsesBuildMetricsService
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.org.objectweb.asm.ClassReader
@@ -36,7 +43,6 @@ import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.FieldVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import java.io.File
-import java.io.StringWriter
 import java.nio.file.Files
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -244,4 +250,21 @@ internal fun exitCodeFromProcessExitCode(log: KotlinLogger, code: Int): ExitCode
 internal fun parseLanguageVersion(languageVersion: String?, useK2: Boolean): KotlinVersion {
     val explicitVersion = languageVersion?.let { KotlinVersion.fromVersion(languageVersion) } ?: KotlinVersion.DEFAULT
     return if (useK2 && (explicitVersion < KotlinVersion.KOTLIN_2_0)) KotlinVersion.KOTLIN_2_0 else explicitVersion
+}
+
+internal fun UsesBuildMetricsService.addBuildMetricsForTaskAction(
+    metricsReporter: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
+    languageVersion: KotlinVersion?,
+    fn: () -> Any
+) {
+    metricsReporter.addTimeMetric(GradleBuildPerformanceMetric.START_TASK_ACTION_EXECUTION)
+    buildMetricsService.orNull?.also { it.addTask(path, this.javaClass, metricsReporter) }
+
+    try {
+        fn.invoke()
+    } finally {
+        val result = TaskExecutionResult(buildMetrics = BuildMetrics(), taskInfo = TaskExecutionInfo(kotlinLanguageVersion = languageVersion))
+        TaskExecutionResults[path] = result
+    }
+
 }

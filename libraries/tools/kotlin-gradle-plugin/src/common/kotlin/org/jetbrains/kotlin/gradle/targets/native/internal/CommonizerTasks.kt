@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.plugin.ide.Idea222Api
 import org.jetbrains.kotlin.gradle.plugin.ide.ideaImportDependsOn
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
+import org.jetbrains.kotlin.gradle.report.BuildMetricsService
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import java.io.File
@@ -152,6 +153,9 @@ internal val Project.commonizeNativeDistributionTask: TaskProvider<NativeDistrib
                 kotlinPluginVersion.set(getKotlinPluginVersion())
                 commonizerClasspath.from(rootProject.maybeCreateCommonizerClasspathConfiguration())
                 customJvmArgs.set(PropertiesProvider(rootProject).commonizerJvmArgs)
+                BuildMetricsService.registerIfAbsent(project)?.let { buildMetricService ->
+                    buildMetricsService.value(buildMetricService)
+                }
             }
         )
     }

@@ -24,6 +24,7 @@ import java.util.concurrent.ConcurrentHashMap
 // Note: this class is public because it is used in the K/N build infrastructure.
 abstract class KotlinToolRunner(
     private val executionContext: GradleExecutionContext,
+    private val metricsReporter: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric> = DoNothingBuildMetricsReporter
 ) {
     @Deprecated(
         "Using Project object is not compatible with Gradle Configuration Cache",
@@ -128,10 +129,6 @@ abstract class KotlinToolRunner(
     }
 
     open fun run(args: List<String>) {
-        run(args, DoNothingBuildMetricsReporter)
-    }
-
-    fun run(args: List<String>, metricsReporter: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>) {
         metricsReporter.startMeasure(GradleBuildTime.RUN_COMPILATION_IN_WORKER)
         checkClasspath()
 
@@ -154,15 +151,15 @@ abstract class KotlinToolRunner(
 
             executionContext.logger.info(
                 """|Run "$displayName" tool in a separate JVM process
-               |Main class = $mainClass
-               |Arguments = ${args.toPrettyString()}
-               |Transformed arguments = ${if (transformedArgs == args) "same as arguments" else transformedArgs.toPrettyString()}
-               |Classpath = ${classpath.files.map { it.absolutePath }.toPrettyString()}
-               |JVM options = ${jvmArgs.toPrettyString()}
-               |Java system properties = ${systemProperties.toPrettyString()}
-               |Suppressed ENV variables = ${execEnvironmentBlacklist.toPrettyString()}
-               |Custom ENV variables = ${execEnvironment.toPrettyString()}
-            """.trimMargin()
+                   |Main class = $mainClass
+                   |Arguments = ${args.toPrettyString()}
+                   |Transformed arguments = ${if (transformedArgs == args) "same as arguments" else transformedArgs.toPrettyString()}
+                   |Classpath = ${classpath.files.map { it.absolutePath }.toPrettyString()}
+                   |JVM options = ${jvmArgs.toPrettyString()}
+                   |Java system properties = ${systemProperties.toPrettyString()}
+                   |Suppressed ENV variables = ${execEnvironmentBlacklist.toPrettyString()}
+                   |Custom ENV variables = ${execEnvironment.toPrettyString()}
+                """.trimMargin()
             )
 
             executionContext.javaexec { spec ->
