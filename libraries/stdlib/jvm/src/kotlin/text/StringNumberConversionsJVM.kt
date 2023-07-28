@@ -16,7 +16,7 @@ package kotlin.text
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
-public actual inline fun Byte.toString(radix: Int): String = this.toInt().toString(checkRadix(radix))
+public actual inline fun Byte.toString(radix: Int): String = this.toInt().toString(radix)
 
 /**
  * Returns a string representation of this [Short] value in the specified [radix].
@@ -25,7 +25,7 @@ public actual inline fun Byte.toString(radix: Int): String = this.toInt().toStri
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
-public actual inline fun Short.toString(radix: Int): String = this.toInt().toString(checkRadix(radix))
+public actual inline fun Short.toString(radix: Int): String = this.toInt().toString(radix)
 
 /**
  * Returns a string representation of this [Int] value in the specified [radix].
