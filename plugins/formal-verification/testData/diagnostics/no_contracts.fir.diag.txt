@@ -1,19 +1,24 @@
 /no_contracts.kt:(4,15): info: field backing_int: Int
 
 method return_unit()
-
+{
+}
 
 /no_contracts.kt:(25,35): info: field backing_int: Int
 
 method return_int() returns (ret: Int)
-
+{
+  ret := 0
+}
 
 /no_contracts.kt:(60,80): info: field backing_int: Int
 
 method take_int_return_unit(x: Int)
-
+{
+}
 
 /no_contracts.kt:(126,145): info: field backing_int: Int
 
 method take_int_return_int(x: Int) returns (ret: Int)
-
+{
+}

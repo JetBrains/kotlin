@@ -25,11 +25,11 @@ import viper.silver.reporter.StdIOReporter
 
 object ViperPoweredDeclarationChecker : FirSimpleFunctionChecker() {
     override fun check(declaration: FirSimpleFunction, context: CheckerContext, reporter: DiagnosticReporter) {
-        val converter = Converter()
-        converter.add(declaration)
+        val programConversionContext = ProgramConversionContext()
+        programConversionContext.addWithBody(declaration)
 
         val verifier = newVerifier()
-        val results = verifier.verify(converter.program, emptySeq<SilverCfg>(), Option.None<String>().toScala())
+        val results = verifier.verify(programConversionContext.program, emptySeq<SilverCfg>(), Option.None<String>().toScala())
 
         var anyErrors = false
         for (result in results) {
@@ -42,7 +42,7 @@ object ViperPoweredDeclarationChecker : FirSimpleFunctionChecker() {
             reporter.reportOn(declaration.source, PluginErrors.FUNCTION_WITH_UNVERIFIED_CONTRACT, context)
         }
 
-        reporter.reportOn(declaration.source, PluginErrors.VIPER_TEXT, converter.program.toString(), context)
+        reporter.reportOn(declaration.source, PluginErrors.VIPER_TEXT, programConversionContext.program.toString(), context)
     }
 
 
