@@ -1,3 +1,5 @@
+@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+
 import cocoapods.pod1.Pod1
 import cocoapods.pod2.Pod2
 import cocoapods.pod3.Pod3
