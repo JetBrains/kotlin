@@ -200,6 +200,12 @@ public class SerializationIrBoxTestGenerated extends AbstractSerializationIrBoxT
     }
 
     @Test
+    @TestMetadata("namedCompanions.kt")
+    public void testNamedCompanions() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/namedCompanions.kt");
+    }
+
+    @Test
     @TestMetadata("repeatableSerialInfo.kt")
     public void testRepeatableSerialInfo() throws Exception {
         runTest("plugins/kotlinx-serialization/testData/boxIr/repeatableSerialInfo.kt");

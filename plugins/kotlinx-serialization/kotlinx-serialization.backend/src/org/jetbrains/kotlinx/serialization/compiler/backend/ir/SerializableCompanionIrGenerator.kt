@@ -23,8 +23,10 @@ import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationPackages
 
 class SerializableCompanionIrGenerator(
@@ -75,6 +77,23 @@ class SerializableCompanionIrGenerator(
         } else {
             generateSerializerGetter(serializerGetterFunction)
         }
+
+        patchNamedCompanionWithMarkerAnnotation()
+    }
+
+    private fun patchNamedCompanionWithMarkerAnnotation() {
+        if (serializableIrClass.kind == ClassKind.OBJECT || irClass.name == SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT) {
+            return
+        }
+
+        val annotationClass = compilerContext.referenceClass(SerializationAnnotations.namedCompanionClassId) ?: return
+
+        val annotationCtor = annotationClass.constructors.single { it.owner.isPrimary }
+        val annotationType = annotationClass.defaultType
+
+        val annotationCall = IrConstructorCallImpl.fromSymbolOwner(irClass.startOffset, irClass.endOffset, annotationType, annotationCtor)
+
+        compilerContext.annotationsRegistrar.addMetadataVisibleAnnotationsToElement(irClass, annotationCall)
     }
 
     private fun IrBuilderWithScope.patchSerializableClassWithMarkerAnnotation(serializer: IrClass) {

@@ -82,6 +82,9 @@ fun ClassDescriptor.getKSerializer(): ClassDescriptor =
         )
     )!!
 
+fun ClassDescriptor.findNamedCompanionAnnotation(): ClassDescriptor? =
+    module.findClassAcrossModuleDependencies(SerializationAnnotations.namedCompanionClassId)
+
 fun ModuleDescriptor.getJsExportIgnore(): ClassDescriptor? =
     findClassAcrossModuleDependencies(SerializationJsDependenciesClassIds.jsExportIgnore)
 

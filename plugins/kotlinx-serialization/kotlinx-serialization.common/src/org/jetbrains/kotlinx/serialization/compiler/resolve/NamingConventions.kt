@@ -43,6 +43,8 @@ object SerializationAnnotations {
     val polymorphicFqName = FqName("kotlinx.serialization.Polymorphic")
     val additionalSerializersFqName = FqName("kotlinx.serialization.UseSerializers")
 
+    val namedCompanionFqName = FqName("kotlinx.serialization.internal.NamedCompanion")
+
     val serializableAnnotationClassId = ClassId.topLevel(serializableAnnotationFqName)
     val serializerAnnotationClassId = ClassId.topLevel(serializerAnnotationFqName)
     val serialNameAnnotationClassId = ClassId.topLevel(serialNameAnnotationFqName)
@@ -58,6 +60,7 @@ object SerializationAnnotations {
     val contextualOnPropertyClassId = ClassId.topLevel(contextualOnPropertyFqName)
     val polymorphicClassId = ClassId.topLevel(polymorphicFqName)
     val additionalSerializersClassId = ClassId.topLevel(additionalSerializersFqName)
+    val namedCompanionClassId = ClassId.topLevel(namedCompanionFqName)
 }
 
 object SerialEntityNames {
