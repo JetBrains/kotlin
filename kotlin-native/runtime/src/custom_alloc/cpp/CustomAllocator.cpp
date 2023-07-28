@@ -28,19 +28,6 @@
 
 namespace kotlin::alloc {
 
-size_t ObjectAllocatedDataSize(const TypeInfo* typeInfo) noexcept {
-    size_t membersSize = typeInfo->instanceSize_ - sizeof(ObjHeader);
-    return AlignUp(heapObjectHeaderSize + membersSize, kObjectAlignment);
-}
-
-uint64_t ArrayAllocatedDataSize(const TypeInfo* typeInfo, uint32_t count) noexcept {
-    // -(int32_t min) * uint32_t max cannot overflow uint64_t. And are capped
-    // at about half of uint64_t max.
-    uint64_t membersSize = static_cast<uint64_t>(-typeInfo->instanceSize_) * count;
-    // Note: array body is aligned, but for size computation it is enough to align the sum.
-    return AlignUp<uint64_t>(heapArrayHeaderSize + membersSize, kObjectAlignment);
-}
-
 CustomAllocator::CustomAllocator(Heap& heap) noexcept : heap_(heap), nextFitPage_(nullptr), extraObjectPage_(nullptr) {
     CustomAllocInfo("CustomAllocator::CustomAllocator(heap)");
     memset(fixedBlockPages_, 0, sizeof(fixedBlockPages_));
@@ -52,9 +39,9 @@ CustomAllocator::~CustomAllocator() {
 
 ObjHeader* CustomAllocator::CreateObject(const TypeInfo* typeInfo) noexcept {
     RuntimeAssert(!typeInfo->IsArray(), "Must not be an array");
-    size_t allocSize = ObjectAllocatedDataSize(typeInfo);
-    uint8_t* heapObject = Allocate(allocSize);
-    auto* object = reinterpret_cast<ObjHeader*>(heapObject + gcDataSize);
+    auto descriptor = HeapObject::make_descriptor(typeInfo);
+    auto& heapObject = *descriptor.construct(Allocate(descriptor.size()));
+    ObjHeader* object = heapObject.header(descriptor).object();
     if (typeInfo->flags_ & TF_HAS_FINALIZER) {
         auto* extraObject = CreateExtraObject();
         object->typeInfoOrMeta_ = reinterpret_cast<TypeInfo*>(new (extraObject) mm::ExtraObjectData(object, typeInfo));
@@ -69,9 +56,9 @@ ObjHeader* CustomAllocator::CreateObject(const TypeInfo* typeInfo) noexcept {
 ArrayHeader* CustomAllocator::CreateArray(const TypeInfo* typeInfo, uint32_t count) noexcept {
     CustomAllocDebug("CustomAllocator@%p::CreateArray(%d)", this ,count);
     RuntimeAssert(typeInfo->IsArray(), "Must be an array");
-    auto allocSize = ArrayAllocatedDataSize(typeInfo, count);
-    uint8_t* heapArray = Allocate(allocSize);
-    auto* array = reinterpret_cast<ArrayHeader*>(heapArray + gcDataSize);
+    auto descriptor = HeapArray::make_descriptor(typeInfo, count);
+    auto& heapArray = *descriptor.construct(Allocate(descriptor.size()));
+    ArrayHeader* array = heapArray.header(descriptor).array();
     array->typeInfoOrMeta_ = const_cast<TypeInfo*>(typeInfo);
     array->count_ = count;
     return array;
@@ -121,9 +108,9 @@ size_t CustomAllocator::GetAllocatedHeapSize(ObjHeader* object) noexcept {
     RuntimeAssert(object->heap(), "Object must be a heap object");
     const auto* typeInfo = object->type_info();
     if (typeInfo->IsArray()) {
-        return ArrayAllocatedDataSize(typeInfo, object->array()->count_);
+        return HeapArray::make_descriptor(typeInfo, object->array()->count_).size();
     } else {
-        return ObjectAllocatedDataSize(typeInfo);
+        return HeapObject::make_descriptor(typeInfo).size();
     }
 }
 
@@ -131,16 +118,13 @@ uint8_t* CustomAllocator::Allocate(uint64_t size) noexcept {
     RuntimeAssert(size, "CustomAllocator::Allocate cannot allocate 0 bytes");
     CustomAllocDebug("CustomAllocator::Allocate(%" PRIu64 ")", size);
     uint64_t cellCount = (size + sizeof(Cell) - 1) / sizeof(Cell);
-    uint8_t* ptr;
     if (cellCount <= FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE) {
-        ptr = AllocateInFixedBlockPage(cellCount);
+        return AllocateInFixedBlockPage(cellCount);
     } else if (cellCount > NEXT_FIT_PAGE_MAX_BLOCK_SIZE) {
-        ptr = AllocateInSingleObjectPage(cellCount);
+        return AllocateInSingleObjectPage(cellCount);
     } else {
-        ptr = AllocateInNextFitPage(cellCount);
+        return AllocateInNextFitPage(cellCount);
     }
-    RuntimeAssert(ptr[0] == 0 && memcmp(ptr, ptr + 1, size - 1) == 0, "CustomAllocator::Allocate: memory not zero!");
-    return ptr;
 }
 
 uint8_t* CustomAllocator::AllocateInSingleObjectPage(uint64_t cellCount) noexcept {

@@ -7,18 +7,11 @@
 
 #include "GC.hpp"
 
+#include "AllocatorImpl.hpp"
 #include "SameThreadMarkAndSweep.hpp"
-
-#ifdef CUSTOM_ALLOCATOR
-#include "CustomAllocator.hpp"
-#else
-#include "ExtraObjectDataFactory.hpp"
-#endif
 
 namespace kotlin {
 namespace gc {
-
-using GCImpl = SameThreadMarkAndSweep;
 
 class GC::Impl : private Pinned {
 public:
@@ -27,17 +20,17 @@ public:
 #else
     explicit Impl(gcScheduler::GCScheduler& gcScheduler) noexcept : gc_(objectFactory_, extraObjectDataFactory_, gcScheduler) {}
 
-    mm::ObjectFactory<gc::GCImpl>& objectFactory() noexcept { return objectFactory_; }
+    ObjectFactory& objectFactory() noexcept { return objectFactory_; }
     mm::ExtraObjectDataFactory& extraObjectDataFactory() noexcept { return extraObjectDataFactory_; }
 #endif
-    GCImpl& gc() noexcept { return gc_; }
+    SameThreadMarkAndSweep& gc() noexcept { return gc_; }
 
 private:
 #ifndef CUSTOM_ALLOCATOR
-    mm::ObjectFactory<gc::GCImpl> objectFactory_;
+    ObjectFactory objectFactory_;
     mm::ExtraObjectDataFactory extraObjectDataFactory_;
 #endif
-    GCImpl gc_;
+    SameThreadMarkAndSweep gc_;
 };
 
 class GC::ThreadData::Impl : private Pinned {
@@ -48,25 +41,26 @@ public:
         alloc_(gc.impl_->gc().heap()) {
     }
 #else
-        objectFactoryThreadQueue_(gc.impl_->objectFactory(), gc_.CreateAllocator()),
+        objectFactoryThreadQueue_(gc.impl_->objectFactory(), objectFactoryTraits_.CreateAllocator()),
         extraObjectDataFactoryThreadQueue_(gc.impl_->extraObjectDataFactory()) {
     }
 #endif
 
-    GCImpl::ThreadData& gc() noexcept { return gc_; }
+    SameThreadMarkAndSweep::ThreadData& gc() noexcept { return gc_; }
 #ifndef CUSTOM_ALLOCATOR
-    mm::ObjectFactory<GCImpl>::ThreadQueue& objectFactoryThreadQueue() noexcept { return objectFactoryThreadQueue_; }
+    ObjectFactory::ThreadQueue& objectFactoryThreadQueue() noexcept { return objectFactoryThreadQueue_; }
     mm::ExtraObjectDataFactory::ThreadQueue& extraObjectDataFactoryThreadQueue() noexcept { return extraObjectDataFactoryThreadQueue_; }
 #else
     alloc::CustomAllocator& alloc() noexcept { return alloc_; }
 #endif
 
 private:
-    GCImpl::ThreadData gc_;
+    SameThreadMarkAndSweep::ThreadData gc_;
 #ifdef CUSTOM_ALLOCATOR
     alloc::CustomAllocator alloc_;
 #else
-    mm::ObjectFactory<GCImpl>::ThreadQueue objectFactoryThreadQueue_;
+    [[no_unique_address]] ObjectFactoryTraits objectFactoryTraits_;
+    ObjectFactory::ThreadQueue objectFactoryThreadQueue_;
     mm::ExtraObjectDataFactory::ThreadQueue extraObjectDataFactoryThreadQueue_;
 #endif
 };

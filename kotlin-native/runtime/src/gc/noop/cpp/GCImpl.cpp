@@ -7,11 +7,12 @@
 
 #include "Common.h"
 #include "GC.hpp"
+#include "GCStatistics.hpp"
 #include "NoOpGC.hpp"
+#include "ObjectAlloc.hpp"
+#include "ObjectOps.hpp"
 #include "ThreadData.hpp"
 #include "std_support/Memory.hpp"
-#include "GCStatistics.hpp"
-#include "ObjectOps.hpp"
 
 using namespace kotlin;
 
@@ -79,7 +80,7 @@ gc::GC::~GC() = default;
 // static
 size_t gc::GC::GetAllocatedHeapSize(ObjHeader* object) noexcept {
 #ifndef CUSTOM_ALLOCATOR
-    return mm::ObjectFactory<GCImpl>::GetAllocatedHeapSize(object);
+    return ObjectFactory::GetAllocatedHeapSize(object);
 #else
     return alloc::CustomAllocator::GetAllocatedHeapSize(object);
 #endif
@@ -133,11 +134,8 @@ ALWAYS_INLINE OBJ_GETTER(gc::tryRef, std::atomic<ObjHeader*>& object) noexcept {
     RETURN_OBJ(object.load(std::memory_order_relaxed));
 }
 
-// static
-const size_t gc::GC::objectDataSize = 0; // sizeof(NoOpGC::ObjectData) with [[no_unique_address]]
-
-// static
-ALWAYS_INLINE bool gc::GC::SweepObject(void *objectData) noexcept {
+ALWAYS_INLINE bool gc::tryResetMark(GC::ObjectData& objectData) noexcept {
+    RuntimeAssert(false, "Should not reach here");
     return true;
 }
 
@@ -151,4 +149,19 @@ ALWAYS_INLINE void gc::GC::DestroyExtraObjectData(mm::ExtraObjectData& extraObje
     extraObject.ReleaseAssociatedObject();
     extraObject.setFlag(mm::ExtraObjectData::FLAGS_FINALIZED);
 #endif
+}
+
+// static
+ALWAYS_INLINE uint64_t type_layout::descriptor<gc::GC::ObjectData>::type::size() noexcept {
+    return 0;
+}
+
+// static
+ALWAYS_INLINE size_t type_layout::descriptor<gc::GC::ObjectData>::type::alignment() noexcept {
+    return 1;
+}
+
+// static
+ALWAYS_INLINE gc::GC::ObjectData* type_layout::descriptor<gc::GC::ObjectData>::type::construct(uint8_t* ptr) noexcept {
+    return reinterpret_cast<gc::GC::ObjectData*>(ptr);
 }

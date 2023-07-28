@@ -1,6 +1,5 @@
 #include "ParallelMark.hpp"
 
-#include "MarkStack.hpp"
 #include "MarkAndSweepUtils.hpp"
 #include "GCStatistics.hpp"
 #include "Utils.hpp"
