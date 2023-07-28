@@ -203,16 +203,16 @@ abstract class AbstractKotlinNativeCompile<
     @get:Input
     abstract val additionalCompilerOptions: Provider<Collection<String>>
 
+    @Deprecated("Use implementations compilerOptions")
     @get:Internal
-    val languageSettings: LanguageSettings by project.provider {
-        compilation.languageSettings
-    }
+    val languageSettings: LanguageSettings
+        get() = compilation.languageSettings
 
     @Suppress("DeprecatedCallableAddReplaceWith")
     @get:Deprecated("Replaced with 'compilerOptions.progressiveMode'")
     @get:Internal
     val progressiveMode: Boolean
-        get() = languageSettings.progressiveMode
+        get() = compilation.compilerOptions.options.progressiveMode.get()
     // endregion.
 
     @Suppress("DeprecatedCallableAddReplaceWith")
@@ -371,17 +371,21 @@ internal constructor(
         replaceWith = ReplaceWith("kotlinOptions.languageVersion")
     )
     val languageVersion: String?
-        @Optional @Input get() = languageSettings.languageVersion
+        @Optional @Input get() = compilerOptions.languageVersion.orNull?.version
 
     @Deprecated(
         message = "Replaced with kotlinOptions.apiVersion",
         replaceWith = ReplaceWith("kotlinOptions.apiVersion")
     )
     val apiVersion: String?
-        @Optional @Input get() = languageSettings.apiVersion
+        @Optional @Input get() = compilerOptions.apiVersion.orNull?.version
 
+    @Deprecated("Language features is internal Kotlin compiler flags and should not be used directly")
     val enabledLanguageFeatures: Set<String>
-        @Input get() = languageSettings.enabledLanguageFeatures
+        @Internal get() = compilerOptions
+            .freeCompilerArgs.get()
+            .filter { it.startsWith("-XXLanguage:+") }
+            .toSet()
 
     @Deprecated(
         message = "Replaced with compilerOptions.optIn",

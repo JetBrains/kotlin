@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.gradle.utils.*
 import javax.inject.Inject
 
 internal open class DefaultLanguageSettingsBuilder @Inject constructor(
-    private val project: Project
+    @Transient private val project: Project
 ) : LanguageSettingsBuilder {
     internal var compilationCompilerOptions: CompletableFuture<KotlinCommonCompilerOptions> = CompletableFuture()
 
