@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.ir.backend.js.dce
 
+import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.lower.PrimaryConstructorLowering
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
@@ -16,15 +18,17 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import java.io.File
 
-internal fun IrDeclaration.fqNameForDceDump(): String {
-    val signature = this.symbol.signature?.render() ?: let {
-        val fqn = (this as? IrDeclarationWithName)?.fqNameWhenAvailable?.asString() ?: "<unknown>"
-        val signature = when (this is IrFunction) {
-            true -> this.valueParameters.joinToString(prefix = "(", postfix = ")") { it.type.dumpKotlinLike() }
-            else -> ""
-        }
-        (fqn + signature)
+private fun IrDeclaration.fallbackFqName(): String {
+    val fqn = (this as? IrDeclarationWithName)?.fqNameWhenAvailable?.asString() ?: "<unknown>"
+    val signature = when (this is IrFunction) {
+        true -> this.valueParameters.joinToString(prefix = "(", postfix = ")") { it.type.dumpKotlinLike() }
+        else -> ""
     }
+    return (fqn + signature)
+}
+
+private fun IrDeclaration.getNameByGetter(getter: (IrDeclaration) -> String?): String {
+    val signature = getter(this) ?: fallbackFqName()
     val instanceSignature = when (this.origin == IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE) {
         true -> "[for ${(this as? IrField)?.type?.classOrNull?.signature ?: "<unknown>"}]"
         else -> ""
@@ -36,7 +40,18 @@ internal fun IrDeclaration.fqNameForDceDump(): String {
     return signature + synthetic + instanceSignature
 }
 
-private data class IrDeclarationDumpInfo(val fqName: String, val type: String, val size: Int)
+internal fun IrDeclaration.fqNameForDceDump(): String = getNameByGetter { it.symbol.signature?.render() }
+
+private val publicIdSignatureComputer = PublicIdSignatureComputer(JsManglerIr)
+internal fun IrDeclaration.fqNameForDisplayDceDump(): String = getNameByGetter {
+    try {
+        publicIdSignatureComputer.computeSignature(it).render()
+    } catch (err: RuntimeException) {
+        null
+    }
+}
+
+private data class IrDeclarationDumpInfo(val fqName: String, val displayName: String, val type: String, val size: Int)
 
 fun dumpDeclarationIrSizesIfNeed(path: String?, allModules: List<IrModuleFragment>, dceDumpNameCache: DceDumpNameCache) {
     if (path == null) return
@@ -61,6 +76,7 @@ fun dumpDeclarationIrSizesIfNeed(path: String?, allModules: List<IrModuleFragmen
                     declarations.add(
                         IrDeclarationDumpInfo(
                             fqName = dceDumpNameCache.getOrPut(declaration).removeQuotes(),
+                            displayName = declaration.fqNameForDisplayDceDump().removeQuotes(),
                             type = it,
                             size = declaration.dumpKotlinLike().length
                         )
@@ -82,7 +98,8 @@ fun dumpDeclarationIrSizesIfNeed(path: String?, allModules: List<IrModuleFragmen
     val value = declarations.joinToString(separator, prefix, postfix) { declaration ->
         """$indent"${declaration.fqName}": {
                 |$indent$indent"size": ${declaration.size},
-                |$indent$indent"type": "${declaration.type}"
+                |$indent$indent"type": "${declaration.type}",
+                |$indent$indent"displayName": "${declaration.displayName}"
                 |$indent}
             """.trimMargin()
     }
