@@ -27,7 +27,7 @@ object FirConflictsDeclarationChecker : FirBasicDeclarationChecker() {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         when (declaration) {
             is FirFile -> {
-                val inspector = FirDeclarationInspector(context.sessionHolder.session)
+                val inspector = FirDeclarationInspector(context)
                 checkFile(declaration, inspector, context)
                 reportConflicts(reporter, context, inspector.declarationConflictingSymbols)
             }
@@ -35,7 +35,7 @@ object FirConflictsDeclarationChecker : FirBasicDeclarationChecker() {
                 if (declaration.source?.kind !is KtFakeSourceElementKind) {
                     checkForLocalRedeclarations(declaration.typeParameters, context, reporter)
                 }
-                val inspector = FirDeclarationInspector(context.sessionHolder.session)
+                val inspector = FirDeclarationInspector(context)
                 inspector.collectClassMembers(declaration)
                 reportConflicts(reporter, context, inspector.declarationConflictingSymbols)
             }

@@ -129,8 +129,10 @@ private fun groupTopLevelByName(declarations: List<FirDeclaration>): Map<Name, D
  * Collects FirDeclarations for further analysis.
  */
 class FirDeclarationInspector(
-    private val session: FirSession,
+    private val context: CheckerContext,
 ) {
+    private val session: FirSession get() = context.sessionHolder.session
+
     val declarationConflictingSymbols: HashMap<FirDeclaration, SmartSet<FirBasedSymbol<*>>> = hashMapOf()
 
     fun collectClassMembers(klass: FirRegularClass) {
@@ -184,6 +186,7 @@ class FirDeclarationInspector(
      * | constructors of classes | X               |              |            |            |                     |
      * | properties              |                 |              | X          | X          | X                   |
      */
+    @OptIn(SymbolInternals::class)
     @Suppress("GrazieInspection")
     fun collectTopLevel(file: FirFile, packageMemberScope: FirPackageMemberScope) {
 
@@ -224,11 +227,10 @@ class FirDeclarationInspector(
                     if (conflictingSymbol.classKind == ClassKind.OBJECT || conflictingSymbol.classKind == ClassKind.ENUM_ENTRY) return
 
                     conflictingSymbol.lazyResolveToPhase(FirResolvePhase.STATUS)
-                    @OptIn(SymbolInternals::class)
                     val classWithSameName = conflictingSymbol.fir
-                    classWithSameName.declarations.filterIsInstance<FirConstructor>().forEach { constructor ->
-                        val ctorRepresentation = FirRedeclarationPresenter.represent(constructor, classWithSameName)
-                        collect(group.simpleFunctions, conflictingSymbol = constructor.symbol, conflictingPresentation = ctorRepresentation)
+                    classWithSameName.unsubstitutedScope(context).processDeclaredConstructors { constructor ->
+                        val ctorRepresentation = FirRedeclarationPresenter.represent(constructor.fir, classWithSameName)
+                        collect(group.simpleFunctions, conflictingSymbol = constructor, conflictingPresentation = ctorRepresentation)
                     }
                 }
             }
