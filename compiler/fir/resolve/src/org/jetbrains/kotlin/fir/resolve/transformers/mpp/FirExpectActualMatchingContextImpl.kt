@@ -357,6 +357,8 @@ class FirExpectActualMatchingContextImpl private constructor(
     }
 
     private inner class AnnotationCallInfoImpl(val annotation: FirAnnotation) : AnnotationCallInfo {
+        override val annotationSymbol: FirAnnotation = annotation
+
         override val classId: ClassId?
             get() = annotation.toAnnotationClassId(actualSession)
 

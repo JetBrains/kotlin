@@ -3540,6 +3540,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
         ActualAnnotationsNotMatchExpectImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
             firSymbolBuilder.buildSymbol(firDiagnostic.b),
+            firDiagnostic.c,
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

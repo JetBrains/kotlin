@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
@@ -103,6 +104,7 @@ import org.jetbrains.kotlin.psi.KtWhenEntry
 import org.jetbrains.kotlin.psi.KtWhenExpression
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualAnnotationsIncompatibilityType
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.Incompatible
 import org.jetbrains.kotlin.types.Variance
@@ -635,7 +637,7 @@ object FirErrors {
     val NOT_A_MULTIPLATFORM_COMPILATION by error0<PsiElement>()
     val EXPECT_ACTUAL_OPT_IN_ANNOTATION by error0<KtNamedDeclaration>(SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER)
     val ACTUAL_TYPEALIAS_TO_SPECIAL_ANNOTATION by error1<KtTypeAlias, ClassId>(SourceElementPositioningStrategies.TYPEALIAS_TYPE_REFERENCE)
-    val ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT by warning2<KtElement, FirBasedSymbol<*>, FirBasedSymbol<*>>(SourceElementPositioningStrategies.DECLARATION_NAME_ONLY)
+    val ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT by warning3<KtElement, FirBasedSymbol<*>, FirBasedSymbol<*>, ExpectActualAnnotationsIncompatibilityType<FirAnnotation>>(SourceElementPositioningStrategies.DECLARATION_NAME_ONLY)
 
     // Destructuring declaration
     val INITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION by error0<KtDestructuringDeclaration>()

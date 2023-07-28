@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.backend.common.lower.parentsWithSelf
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
@@ -45,6 +46,7 @@ internal class IrExpectActualAnnotationMatchingChecker(
             diagnosticsReporter.reportActualAnnotationsNotMatchExpect(
                 incompatibility.expectSymbol as IrSymbol,
                 incompatibility.actualSymbol as IrSymbol,
+                incompatibility.type.mapAnnotationType { it.annotationSymbol as IrConstructorCall },
                 reportOn,
             )
         }

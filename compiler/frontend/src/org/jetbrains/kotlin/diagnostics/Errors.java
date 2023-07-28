@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.diagnostics.rendering.DeclarationWithDiagnosticComponents;
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticFactoryToRendererMap;
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability;
 import org.jetbrains.kotlin.resolve.calls.tower.WrongResolutionToClassifier;
 import org.jetbrains.kotlin.resolve.calls.util.BuilderLambdaLabelingInfo;
 import org.jetbrains.kotlin.resolve.deprecation.DescriptorBasedDeprecationInfo;
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualAnnotationsIncompatibilityType;
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.Incompatible;
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -844,8 +846,9 @@ public interface Errors {
     DiagnosticFactory0<KtNamedDeclaration> EXPECT_ACTUAL_OPT_IN_ANNOTATION = DiagnosticFactory0.create(ERROR, EXPECT_ACTUAL_MODIFIER);
     DiagnosticFactory1<KtTypeAlias, ClassId> ACTUAL_TYPEALIAS_TO_SPECIAL_ANNOTATION =
             DiagnosticFactory1.create(ERROR, TYPEALIAS_TYPE_REFERENCE);
-    DiagnosticFactory2<KtNamedDeclaration, DeclarationDescriptor, DeclarationDescriptor> ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT
-            = DiagnosticFactory2.create(WARNING, DECLARATION_NAME_ONLY);
+    DiagnosticFactory3<KtNamedDeclaration, DeclarationDescriptor, DeclarationDescriptor,
+            ExpectActualAnnotationsIncompatibilityType<AnnotationDescriptor>> ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT =
+            DiagnosticFactory3.create(WARNING, DECLARATION_NAME_ONLY);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

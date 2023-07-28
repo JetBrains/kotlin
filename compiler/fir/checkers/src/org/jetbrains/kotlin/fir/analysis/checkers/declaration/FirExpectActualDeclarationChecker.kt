@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isExternal
 import org.jetbrains.kotlin.fir.declarations.utils.isTailRec
 import org.jetbrains.kotlin.fir.expectActualMatchingContextFactory
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.scopes.collectAllFunctions
 import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
@@ -263,6 +264,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
             actualSymbol.source, FirErrors.ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT,
             incompatibility.expectSymbol as FirBasedSymbol<*>,
             incompatibility.actualSymbol as FirBasedSymbol<*>,
+            incompatibility.type.mapAnnotationType { it.annotationSymbol as FirAnnotation },
             context
         )
     }

@@ -472,6 +472,8 @@ internal abstract class IrExpectActualMatchingContext(
     }
 
     private inner class AnnotationCallInfoImpl(val irElement: IrConstructorCall) : AnnotationCallInfo {
+        override val annotationSymbol: IrConstructorCall = irElement
+
         override val classId: ClassId?
             get() = getAnnotationClass()?.classId
 

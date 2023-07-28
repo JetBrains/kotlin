@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.*
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualAnnotationsIncompatibilityType
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.Incompatible
 import org.jetbrains.kotlin.types.Variance
@@ -1195,8 +1197,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
 
         val ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT by warning<KtElement>(PositioningStrategy.DECLARATION_NAME_ONLY) {
-            parameter<Symbol>("expect")
-            parameter<Symbol>("actual")
+            parameter<Symbol>("expectSymbol")
+            parameter<Symbol>("actualSymbol")
+            parameter<ExpectActualAnnotationsIncompatibilityType<FirAnnotation>>("incompatibilityType")
         }
     }
 

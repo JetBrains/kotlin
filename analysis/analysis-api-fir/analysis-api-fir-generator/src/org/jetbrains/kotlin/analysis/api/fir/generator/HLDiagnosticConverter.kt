@@ -30,13 +30,14 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualAnnotationsIncompatibilityType
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.types.Variance
 import kotlin.reflect.KClass
@@ -363,6 +364,7 @@ internal object FirToKtConversionCreator {
         FirModuleData::class,
         ExpectActualCompatibility::class,
         ExpectActualCompatibility.Incompatible::class,
+        ExpectActualAnnotationsIncompatibilityType::class,
         DeprecationInfo::class,
         ApiVersion::class,
         CallableId::class,

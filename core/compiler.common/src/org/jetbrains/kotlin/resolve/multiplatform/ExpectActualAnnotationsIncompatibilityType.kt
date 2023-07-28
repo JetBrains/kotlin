@@ -16,4 +16,11 @@ sealed class ExpectActualAnnotationsIncompatibilityType<out A> {
         override val expectAnnotation: A,
         val actualAnnotation: A
     ) : ExpectActualAnnotationsIncompatibilityType<A>()
+
+    fun <A2> mapAnnotationType(mapper: (A) -> A2): ExpectActualAnnotationsIncompatibilityType<A2> {
+        return when (this) {
+            is MissingOnActual -> MissingOnActual(mapper(expectAnnotation))
+            is DifferentOnActual<A> -> DifferentOnActual(mapper(expectAnnotation), mapper(actualAnnotation))
+        }
+    }
 }

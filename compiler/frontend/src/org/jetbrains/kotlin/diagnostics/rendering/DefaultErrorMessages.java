@@ -407,7 +407,7 @@ public class DefaultErrorMessages {
                 "All annotations from `expect` must be presented with same arguments on `actual`, otherwise they have no effect.\n" +
                 "    Expected: {0}\n" +
                 "    Actual: {1}",
-                DESCRIPTOR_WITH_ANNOTATIONS, DESCRIPTOR_WITH_ANNOTATIONS);
+                DESCRIPTOR_WITH_ANNOTATIONS, DESCRIPTOR_WITH_ANNOTATIONS, TO_STRING);
 
         MAP.put(PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT, "Projections are not allowed on type arguments of functions and properties");
         MAP.put(SUPERTYPE_NOT_INITIALIZED, "This type has a constructor, and thus must be initialized here");

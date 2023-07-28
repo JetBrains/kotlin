@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.calls.mpp.AbstractExpectActualCompatibilityChecker
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualAnnotationsIncompatibilityType
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.OptionalAnnotationUtil
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -125,12 +127,14 @@ internal fun KtDiagnosticReporterWithImplicitIrBasedContext.reportIncompatibleEx
 internal fun KtDiagnosticReporterWithImplicitIrBasedContext.reportActualAnnotationsNotMatchExpect(
     expectSymbol: IrSymbol,
     actualSymbol: IrSymbol,
+    incompatibilityType: ExpectActualAnnotationsIncompatibilityType<IrConstructorCall>,
     reportOn: IrSymbol,
 ) {
     at(reportOn.owner as IrDeclaration).report(
         CommonBackendErrors.ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT,
         expectSymbol,
         actualSymbol,
+        incompatibilityType,
     )
 }
 

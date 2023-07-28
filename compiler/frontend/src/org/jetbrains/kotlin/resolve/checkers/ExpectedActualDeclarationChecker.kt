@@ -21,6 +21,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.mpp.MppJavaImplicitActualizatorMarker
@@ -490,7 +491,8 @@ class ExpectedActualDeclarationChecker(
             Errors.ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT.on(
                 reportOn,
                 incompatibility.expectSymbol as DeclarationDescriptor,
-                incompatibility.actualSymbol as DeclarationDescriptor
+                incompatibility.actualSymbol as DeclarationDescriptor,
+                incompatibility.type.mapAnnotationType { it.annotationSymbol as AnnotationDescriptor }
             )
         )
     }

@@ -1889,7 +1889,8 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "All annotations from `expect` must be presented with same arguments on `actual`, otherwise they have no effect.\n" +
                     "Expected: {0}\n" +
                     "Actual: {1}",
-            FirDiagnosticRenderers.SYMBOL_WITH_ANNOTATIONS, FirDiagnosticRenderers.SYMBOL_WITH_ANNOTATIONS
+            FirDiagnosticRenderers.SYMBOL_WITH_ANNOTATIONS, FirDiagnosticRenderers.SYMBOL_WITH_ANNOTATIONS,
+            TO_STRING
         )
 
         // Destructuring declaration

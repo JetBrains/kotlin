@@ -355,6 +355,8 @@ class ClassicExpectActualMatchingContext(val platformModule: ModuleDescriptor) :
     private class AnnotationCallInfoImpl(
         val annotationDescriptor: AnnotationDescriptor,
     ) : AnnotationCallInfo {
+        override val annotationSymbol: AnnotationDescriptor = annotationDescriptor
+
         override val classId: ClassId?
             get() = annotationDescriptor.annotationClass?.classId
 
