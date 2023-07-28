@@ -1,3 +1,5 @@
+// FIR_IDENTICAL
+
 import kotlin.reflect.*
 
 class Foo(val prop: Any) {

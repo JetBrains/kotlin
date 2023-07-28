@@ -11,7 +11,8 @@ import org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression.*
 object JvmExpressionCheckers : ExpressionCheckers() {
     override val basicExpressionCheckers: Set<FirBasicExpressionChecker>
         get() = setOf(
-            FirJvmProtectedInSuperClassCompanionCallChecker
+            FirJvmProtectedInSuperClassCompanionCallChecker,
+            FirJvmReflectionApiCallChecker,
         )
 
     override val qualifiedAccessExpressionCheckers: Set<FirQualifiedAccessExpressionChecker>

@@ -3523,6 +3523,10 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = JavaSamInterfaceConstructorReference::class
     }
 
+    interface NoReflectionInClassPath : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = NoReflectionInClassPath::class
+    }
+
     interface ImplementingFunctionInterface : KtFirDiagnostic<KtClassOrObject> {
         override val diagnosticClass get() = ImplementingFunctionInterface::class
     }

@@ -167,6 +167,17 @@ public final class FqNameUnsafe {
         return fqName.regionMatches(0, segmentAsString, 0, firstDot == -1 ? Math.max(fqName.length(), segmentAsString.length()) : firstDot);
     }
 
+    public boolean startsWith(@NotNull FqNameUnsafe other) {
+        if (isRoot()) return false;
+
+        int thisLength = fqName.length();
+        int otherLength = other.fqName.length();
+        if (thisLength < otherLength) return false;
+
+        return (thisLength == otherLength || fqName.charAt(otherLength) == '.') &&
+               fqName.regionMatches(0, other.fqName, 0, otherLength);
+    }
+
     @NotNull
     public static FqNameUnsafe topLevel(@NotNull Name shortName) {
         return new FqNameUnsafe(shortName.asString(), FqName.ROOT.toUnsafe(), shortName);

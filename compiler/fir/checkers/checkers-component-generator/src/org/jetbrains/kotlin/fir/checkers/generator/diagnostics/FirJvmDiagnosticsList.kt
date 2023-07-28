@@ -173,5 +173,6 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
             PositioningStrategy.SPREAD_OPERATOR
         )
         val JAVA_SAM_INTERFACE_CONSTRUCTOR_REFERENCE by error<PsiElement>()
+        val NO_REFLECTION_IN_CLASS_PATH by warning<PsiElement>()
     }
 }
