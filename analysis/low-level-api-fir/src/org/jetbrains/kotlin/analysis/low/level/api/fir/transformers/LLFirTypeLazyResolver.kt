@@ -123,7 +123,8 @@ private class LLFirTypeTargetResolver(
 
                 target.accept(transformer, null)
             }
-            is FirDanglingModifierList, is FirFileAnnotationsContainer, is FirCallableDeclaration, is FirTypeAlias, is FirScript -> {
+            is FirScript -> {}
+            is FirDanglingModifierList, is FirFileAnnotationsContainer, is FirCallableDeclaration, is FirTypeAlias -> {
                 target.accept(transformer, null)
             }
             is FirRegularClass -> {

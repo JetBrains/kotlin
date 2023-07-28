@@ -1,15 +1,15 @@
 RAW_FIR:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameterScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] a: R|kotlin/Boolean|, [ResolvedTo(STATUS)] param: R|kotlin/Int| = Int(1), [ResolvedTo(STATUS)] c: R|kotlin/Long|): R|A| {
+        public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] a: Boolean, [ResolvedTo(RAW_FIR)] param: Int = IntegerLiteral(1), [ResolvedTo(RAW_FIR)] c: Long): R|A| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/String| {
+            public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> {
                 ^foo String(str)
             }
 
@@ -18,16 +18,16 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameterScript.kts
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameterScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] a: R|kotlin/Boolean|, [ResolvedTo(STATUS)] param: R|kotlin/Int| = Int(1), [ResolvedTo(STATUS)] c: R|kotlin/Long|): R|A| {
+        public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] a: Boolean, [ResolvedTo(RAW_FIR)] param: Int = IntegerLiteral(1), [ResolvedTo(RAW_FIR)] c: Long): R|A| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/String| {
+            public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> {
                 ^foo String(str)
             }
 
@@ -36,16 +36,16 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameterScript.kts
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameterScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] a: R|kotlin/Boolean|, [ResolvedTo(STATUS)] param: R|kotlin/Int| = Int(1), [ResolvedTo(STATUS)] c: R|kotlin/Long|): R|A| {
+        public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] a: Boolean, [ResolvedTo(RAW_FIR)] param: Int = IntegerLiteral(1), [ResolvedTo(RAW_FIR)] c: Long): R|A| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/String| {
+            public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> {
                 ^foo String(str)
             }
 
@@ -54,16 +54,16 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameterScript.kts
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameterScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] a: R|kotlin/Boolean|, [ResolvedTo(STATUS)] param: R|kotlin/Int| = Int(1), [ResolvedTo(STATUS)] c: R|kotlin/Long|): R|A| {
+        public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] a: Boolean, [ResolvedTo(RAW_FIR)] param: Int = IntegerLiteral(1), [ResolvedTo(RAW_FIR)] c: Long): R|A| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/String| {
+            public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> {
                 ^foo String(str)
             }
 
@@ -72,16 +72,16 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameterScript.kts
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameterScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] a: R|kotlin/Boolean|, [ResolvedTo(STATUS)] param: R|kotlin/Int| = Int(1), [ResolvedTo(STATUS)] c: R|kotlin/Long|): R|A| {
+        public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] a: Boolean, [ResolvedTo(RAW_FIR)] param: Int = IntegerLiteral(1), [ResolvedTo(RAW_FIR)] c: Long): R|A| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/String| {
+            public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> {
                 ^foo String(str)
             }
 
@@ -90,16 +90,16 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameterScript.kts
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameterScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] a: R|kotlin/Boolean|, [ResolvedTo(STATUS)] param: R|kotlin/Int| = Int(1), [ResolvedTo(STATUS)] c: R|kotlin/Long|): R|A| {
+        public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] a: Boolean, [ResolvedTo(RAW_FIR)] param: Int = IntegerLiteral(1), [ResolvedTo(RAW_FIR)] c: Long): R|A| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/String| {
+            public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> {
                 ^foo String(str)
             }
 
@@ -108,16 +108,16 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameterScript.kts
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameterScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] a: R|kotlin/Boolean|, [ResolvedTo(STATUS)] param: R|kotlin/Int| = Int(1), [ResolvedTo(STATUS)] c: R|kotlin/Long|): R|A| {
+        public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] a: Boolean, [ResolvedTo(RAW_FIR)] param: Int = IntegerLiteral(1), [ResolvedTo(RAW_FIR)] c: Long): R|A| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/String| {
+            public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> {
                 ^foo String(str)
             }
 
@@ -126,16 +126,16 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameterScript.kts
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameterScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] a: R|kotlin/Boolean|, [ResolvedTo(STATUS)] param: R|kotlin/Int| = Int(1), [ResolvedTo(STATUS)] c: R|kotlin/Long|): R|A| {
+        public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] a: Boolean, [ResolvedTo(RAW_FIR)] param: Int = IntegerLiteral(1), [ResolvedTo(RAW_FIR)] c: Long): R|A| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/String| {
+            public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> {
                 ^foo String(str)
             }
 
@@ -144,16 +144,16 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameterScript.kts
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameterScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] a: R|kotlin/Boolean|, [ResolvedTo(STATUS)] param: R|kotlin/Int| = Int(1), [ResolvedTo(STATUS)] c: R|kotlin/Long|): R|A| {
+        public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] a: Boolean, [ResolvedTo(RAW_FIR)] param: Int = IntegerLiteral(1), [ResolvedTo(RAW_FIR)] c: Long): R|A| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/String| {
+            public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> {
                 ^foo String(str)
             }
 
@@ -162,16 +162,16 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameterScript.kts
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameterScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] a: R|kotlin/Boolean|, [ResolvedTo(STATUS)] param: R|kotlin/Int| = Int(1), [ResolvedTo(STATUS)] c: R|kotlin/Long|): R|A| {
+        public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] a: Boolean, [ResolvedTo(RAW_FIR)] param: Int = IntegerLiteral(1), [ResolvedTo(RAW_FIR)] c: Long): R|A| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/String| {
+            public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> {
                 ^foo String(str)
             }
 
@@ -180,16 +180,16 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameterScript.kts
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameterScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] a: R|kotlin/Boolean|, [ResolvedTo(STATUS)] param: R|kotlin/Int| = Int(1), [ResolvedTo(STATUS)] c: R|kotlin/Long|): R|A| {
+        public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] a: Boolean, [ResolvedTo(RAW_FIR)] param: Int = IntegerLiteral(1), [ResolvedTo(RAW_FIR)] c: Long): R|A| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/String| {
+            public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> {
                 ^foo String(str)
             }
 
@@ -198,16 +198,16 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameterScript.kts
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameterScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] a: R|kotlin/Boolean|, [ResolvedTo(STATUS)] param: R|kotlin/Int| = Int(1), [ResolvedTo(STATUS)] c: R|kotlin/Long|): R|A| {
+        public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] a: Boolean, [ResolvedTo(RAW_FIR)] param: Int = IntegerLiteral(1), [ResolvedTo(RAW_FIR)] c: Long): R|A| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/String| {
+            public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> {
                 ^foo String(str)
             }
 
@@ -216,16 +216,16 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameterScript.kts
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameterScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] a: R|kotlin/Boolean|, [ResolvedTo(STATUS)] param: R|kotlin/Int| = Int(1), [ResolvedTo(STATUS)] c: R|kotlin/Long|): R|A| {
+        public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] a: Boolean, [ResolvedTo(RAW_FIR)] param: Int = IntegerLiteral(1), [ResolvedTo(RAW_FIR)] c: Long): R|A| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/String| {
+            public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> {
                 ^foo String(str)
             }
 
@@ -234,16 +234,16 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameterScript.kts
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameterScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] a: R|kotlin/Boolean|, [ResolvedTo(STATUS)] param: R|kotlin/Int| = Int(1), [ResolvedTo(STATUS)] c: R|kotlin/Long|): R|A| {
+        public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] a: Boolean, [ResolvedTo(RAW_FIR)] param: Int = IntegerLiteral(1), [ResolvedTo(RAW_FIR)] c: Long): R|A| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/String| {
+            public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> {
                 ^foo String(str)
             }
 

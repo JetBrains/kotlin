@@ -3,13 +3,13 @@ FIR element: FirTypeParameterImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-[ResolvedTo(RAW_FIR)] From : R|To|
+[ResolvedTo(RAW_FIR)] From : To
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] whereClause1Script.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] From : R|To|, [ResolvedTo(RAW_FIR)] To : R|kotlin/Any|> copyNotNull([ResolvedTo(RAW_FIR)] from: R|kotlin/collections/List<From>|, [ResolvedTo(RAW_FIR)] to: R|kotlin/collections/List<To>|): R|kotlin/Unit| {
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] From : To, [ResolvedTo(RAW_FIR)] To : Any> copyNotNull([ResolvedTo(RAW_FIR)] from: List<From>, [ResolvedTo(RAW_FIR)] to: List<To>): R|kotlin/Unit| {
         }

@@ -1,35 +1,35 @@
 RAW_FIR:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunctionScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class UnusedClass : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
+        public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public abstract [ResolvedTo(STATUS)] interface UsedInterface : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] interface UsedInterface : R|kotlin/Any| {
         }
 
-        public final [ResolvedTo(STATUS)] class UsedClass : R|one/two/UsedInterface| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=UsedClass] constructor(): R|one/two/UsedClass| {
-                super<R|kotlin/Any|>()
+        public? final? [ResolvedTo(RAW_FIR)] class UsedClass : UsedInterface {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UsedClass] constructor(): R|one/two/UsedClass| {
+                super<<implicit>>()
             }
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            local final [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
-                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|one/two/Local| {
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            local final? [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|one/two/Local| {
                     super<R|kotlin/Any|>()
                 }
 
             }
 
-            local final [ResolvedTo(RAW_FIR)] fun localFunction([ResolvedTo(RAW_FIR)] usedClass: R|one/two/UsedClass|, [ResolvedTo(RAW_FIR)] local: R|one/two/Local|): R|kotlin/Unit| {
+            local final? [ResolvedTo(RAW_FIR)] fun localFunction([ResolvedTo(RAW_FIR)] usedClass: UsedClass, [ResolvedTo(RAW_FIR)] local: Local): R|kotlin/Unit| {
             }
 
         }
@@ -37,36 +37,36 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunctionScript.kts
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunctionScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class UnusedClass : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
+        public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public abstract [ResolvedTo(STATUS)] interface UsedInterface : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] interface UsedInterface : R|kotlin/Any| {
         }
 
-        public final [ResolvedTo(STATUS)] class UsedClass : R|one/two/UsedInterface| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=UsedClass] constructor(): R|one/two/UsedClass| {
-                super<R|kotlin/Any|>()
+        public? final? [ResolvedTo(RAW_FIR)] class UsedClass : UsedInterface {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UsedClass] constructor(): R|one/two/UsedClass| {
+                super<<implicit>>()
             }
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            local final [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
-                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|one/two/Local| {
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            local final? [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|one/two/Local| {
                     super<R|kotlin/Any|>()
                 }
 
             }
 
-            local final [ResolvedTo(RAW_FIR)] fun localFunction([ResolvedTo(RAW_FIR)] usedClass: R|one/two/UsedClass|, [ResolvedTo(RAW_FIR)] local: R|one/two/Local|): R|kotlin/Unit| {
+            local final? [ResolvedTo(RAW_FIR)] fun localFunction([ResolvedTo(RAW_FIR)] usedClass: UsedClass, [ResolvedTo(RAW_FIR)] local: Local): R|kotlin/Unit| {
             }
 
         }
@@ -74,36 +74,36 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunctionScript.kts
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunctionScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class UnusedClass : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
+        public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public abstract [ResolvedTo(STATUS)] interface UsedInterface : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] interface UsedInterface : R|kotlin/Any| {
         }
 
-        public final [ResolvedTo(STATUS)] class UsedClass : R|one/two/UsedInterface| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=UsedClass] constructor(): R|one/two/UsedClass| {
-                super<R|kotlin/Any|>()
+        public? final? [ResolvedTo(RAW_FIR)] class UsedClass : UsedInterface {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UsedClass] constructor(): R|one/two/UsedClass| {
+                super<<implicit>>()
             }
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            local final [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
-                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|one/two/Local| {
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            local final? [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|one/two/Local| {
                     super<R|kotlin/Any|>()
                 }
 
             }
 
-            local final [ResolvedTo(RAW_FIR)] fun localFunction([ResolvedTo(RAW_FIR)] usedClass: R|one/two/UsedClass|, [ResolvedTo(RAW_FIR)] local: R|one/two/Local|): R|kotlin/Unit| {
+            local final? [ResolvedTo(RAW_FIR)] fun localFunction([ResolvedTo(RAW_FIR)] usedClass: UsedClass, [ResolvedTo(RAW_FIR)] local: Local): R|kotlin/Unit| {
             }
 
         }
@@ -111,36 +111,36 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunctionScript.kts
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunctionScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class UnusedClass : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
+        public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public abstract [ResolvedTo(STATUS)] interface UsedInterface : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] interface UsedInterface : R|kotlin/Any| {
         }
 
-        public final [ResolvedTo(STATUS)] class UsedClass : R|one/two/UsedInterface| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=UsedClass] constructor(): R|one/two/UsedClass| {
-                super<R|kotlin/Any|>()
+        public? final? [ResolvedTo(RAW_FIR)] class UsedClass : UsedInterface {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UsedClass] constructor(): R|one/two/UsedClass| {
+                super<<implicit>>()
             }
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            local final [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
-                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|one/two/Local| {
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            local final? [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|one/two/Local| {
                     super<R|kotlin/Any|>()
                 }
 
             }
 
-            local final [ResolvedTo(RAW_FIR)] fun localFunction([ResolvedTo(RAW_FIR)] usedClass: R|one/two/UsedClass|, [ResolvedTo(RAW_FIR)] local: R|one/two/Local|): R|kotlin/Unit| {
+            local final? [ResolvedTo(RAW_FIR)] fun localFunction([ResolvedTo(RAW_FIR)] usedClass: UsedClass, [ResolvedTo(RAW_FIR)] local: Local): R|kotlin/Unit| {
             }
 
         }
@@ -148,36 +148,36 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunctionScript.kts
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunctionScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class UnusedClass : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
+        public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public abstract [ResolvedTo(STATUS)] interface UsedInterface : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] interface UsedInterface : R|kotlin/Any| {
         }
 
-        public final [ResolvedTo(STATUS)] class UsedClass : R|one/two/UsedInterface| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=UsedClass] constructor(): R|one/two/UsedClass| {
-                super<R|kotlin/Any|>()
+        public? final? [ResolvedTo(RAW_FIR)] class UsedClass : UsedInterface {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UsedClass] constructor(): R|one/two/UsedClass| {
+                super<<implicit>>()
             }
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            local final [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
-                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|one/two/Local| {
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            local final? [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|one/two/Local| {
                     super<R|kotlin/Any|>()
                 }
 
             }
 
-            local final [ResolvedTo(RAW_FIR)] fun localFunction([ResolvedTo(RAW_FIR)] usedClass: R|one/two/UsedClass|, [ResolvedTo(RAW_FIR)] local: R|one/two/Local|): R|kotlin/Unit| {
+            local final? [ResolvedTo(RAW_FIR)] fun localFunction([ResolvedTo(RAW_FIR)] usedClass: UsedClass, [ResolvedTo(RAW_FIR)] local: Local): R|kotlin/Unit| {
             }
 
         }
@@ -185,36 +185,36 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunctionScript.kts
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunctionScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class UnusedClass : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
+        public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public abstract [ResolvedTo(STATUS)] interface UsedInterface : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] interface UsedInterface : R|kotlin/Any| {
         }
 
-        public final [ResolvedTo(STATUS)] class UsedClass : R|one/two/UsedInterface| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=UsedClass] constructor(): R|one/two/UsedClass| {
-                super<R|kotlin/Any|>()
+        public? final? [ResolvedTo(RAW_FIR)] class UsedClass : UsedInterface {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UsedClass] constructor(): R|one/two/UsedClass| {
+                super<<implicit>>()
             }
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            local final [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
-                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|one/two/Local| {
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            local final? [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|one/two/Local| {
                     super<R|kotlin/Any|>()
                 }
 
             }
 
-            local final [ResolvedTo(RAW_FIR)] fun localFunction([ResolvedTo(RAW_FIR)] usedClass: R|one/two/UsedClass|, [ResolvedTo(RAW_FIR)] local: R|one/two/Local|): R|kotlin/Unit| {
+            local final? [ResolvedTo(RAW_FIR)] fun localFunction([ResolvedTo(RAW_FIR)] usedClass: UsedClass, [ResolvedTo(RAW_FIR)] local: Local): R|kotlin/Unit| {
             }
 
         }
@@ -222,36 +222,36 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunctionScript.kts
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunctionScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class UnusedClass : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
+        public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public abstract [ResolvedTo(STATUS)] interface UsedInterface : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] interface UsedInterface : R|kotlin/Any| {
         }
 
-        public final [ResolvedTo(STATUS)] class UsedClass : R|one/two/UsedInterface| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=UsedClass] constructor(): R|one/two/UsedClass| {
-                super<R|kotlin/Any|>()
+        public? final? [ResolvedTo(RAW_FIR)] class UsedClass : UsedInterface {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UsedClass] constructor(): R|one/two/UsedClass| {
+                super<<implicit>>()
             }
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            local final [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
-                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|one/two/Local| {
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            local final? [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|one/two/Local| {
                     super<R|kotlin/Any|>()
                 }
 
             }
 
-            local final [ResolvedTo(RAW_FIR)] fun localFunction([ResolvedTo(RAW_FIR)] usedClass: R|one/two/UsedClass|, [ResolvedTo(RAW_FIR)] local: R|one/two/Local|): R|kotlin/Unit| {
+            local final? [ResolvedTo(RAW_FIR)] fun localFunction([ResolvedTo(RAW_FIR)] usedClass: UsedClass, [ResolvedTo(RAW_FIR)] local: Local): R|kotlin/Unit| {
             }
 
         }
@@ -259,36 +259,36 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunctionScript.kts
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunctionScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class UnusedClass : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
+        public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public abstract [ResolvedTo(STATUS)] interface UsedInterface : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] interface UsedInterface : R|kotlin/Any| {
         }
 
-        public final [ResolvedTo(STATUS)] class UsedClass : R|one/two/UsedInterface| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=UsedClass] constructor(): R|one/two/UsedClass| {
-                super<R|kotlin/Any|>()
+        public? final? [ResolvedTo(RAW_FIR)] class UsedClass : UsedInterface {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UsedClass] constructor(): R|one/two/UsedClass| {
+                super<<implicit>>()
             }
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            local final [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
-                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|one/two/Local| {
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            local final? [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|one/two/Local| {
                     super<R|kotlin/Any|>()
                 }
 
             }
 
-            local final [ResolvedTo(RAW_FIR)] fun localFunction([ResolvedTo(RAW_FIR)] usedClass: R|one/two/UsedClass|, [ResolvedTo(RAW_FIR)] local: R|one/two/Local|): R|kotlin/Unit| {
+            local final? [ResolvedTo(RAW_FIR)] fun localFunction([ResolvedTo(RAW_FIR)] usedClass: UsedClass, [ResolvedTo(RAW_FIR)] local: Local): R|kotlin/Unit| {
             }
 
         }
@@ -296,36 +296,36 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunctionScript.kts
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunctionScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class UnusedClass : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
+        public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public abstract [ResolvedTo(STATUS)] interface UsedInterface : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] interface UsedInterface : R|kotlin/Any| {
         }
 
-        public final [ResolvedTo(STATUS)] class UsedClass : R|one/two/UsedInterface| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=UsedClass] constructor(): R|one/two/UsedClass| {
-                super<R|kotlin/Any|>()
+        public? final? [ResolvedTo(RAW_FIR)] class UsedClass : UsedInterface {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UsedClass] constructor(): R|one/two/UsedClass| {
+                super<<implicit>>()
             }
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            local final [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
-                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|one/two/Local| {
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            local final? [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|one/two/Local| {
                     super<R|kotlin/Any|>()
                 }
 
             }
 
-            local final [ResolvedTo(RAW_FIR)] fun localFunction([ResolvedTo(RAW_FIR)] usedClass: R|one/two/UsedClass|, [ResolvedTo(RAW_FIR)] local: R|one/two/Local|): R|kotlin/Unit| {
+            local final? [ResolvedTo(RAW_FIR)] fun localFunction([ResolvedTo(RAW_FIR)] usedClass: UsedClass, [ResolvedTo(RAW_FIR)] local: Local): R|kotlin/Unit| {
             }
 
         }
@@ -333,36 +333,36 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunctionScript.kts
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunctionScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class UnusedClass : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
+        public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public abstract [ResolvedTo(STATUS)] interface UsedInterface : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] interface UsedInterface : R|kotlin/Any| {
         }
 
-        public final [ResolvedTo(STATUS)] class UsedClass : R|one/two/UsedInterface| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=UsedClass] constructor(): R|one/two/UsedClass| {
-                super<R|kotlin/Any|>()
+        public? final? [ResolvedTo(RAW_FIR)] class UsedClass : UsedInterface {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UsedClass] constructor(): R|one/two/UsedClass| {
+                super<<implicit>>()
             }
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            local final [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
-                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|one/two/Local| {
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            local final? [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|one/two/Local| {
                     super<R|kotlin/Any|>()
                 }
 
             }
 
-            local final [ResolvedTo(RAW_FIR)] fun localFunction([ResolvedTo(RAW_FIR)] usedClass: R|one/two/UsedClass|, [ResolvedTo(RAW_FIR)] local: R|one/two/Local|): R|kotlin/Unit| {
+            local final? [ResolvedTo(RAW_FIR)] fun localFunction([ResolvedTo(RAW_FIR)] usedClass: UsedClass, [ResolvedTo(RAW_FIR)] local: Local): R|kotlin/Unit| {
             }
 
         }
@@ -370,36 +370,36 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunctionScript.kts
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunctionScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class UnusedClass : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
+        public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public abstract [ResolvedTo(STATUS)] interface UsedInterface : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] interface UsedInterface : R|kotlin/Any| {
         }
 
-        public final [ResolvedTo(STATUS)] class UsedClass : R|one/two/UsedInterface| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=UsedClass] constructor(): R|one/two/UsedClass| {
-                super<R|kotlin/Any|>()
+        public? final? [ResolvedTo(RAW_FIR)] class UsedClass : UsedInterface {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UsedClass] constructor(): R|one/two/UsedClass| {
+                super<<implicit>>()
             }
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            local final [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
-                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|one/two/Local| {
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            local final? [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|one/two/Local| {
                     super<R|kotlin/Any|>()
                 }
 
             }
 
-            local final [ResolvedTo(RAW_FIR)] fun localFunction([ResolvedTo(RAW_FIR)] usedClass: R|one/two/UsedClass|, [ResolvedTo(RAW_FIR)] local: R|one/two/Local|): R|kotlin/Unit| {
+            local final? [ResolvedTo(RAW_FIR)] fun localFunction([ResolvedTo(RAW_FIR)] usedClass: UsedClass, [ResolvedTo(RAW_FIR)] local: Local): R|kotlin/Unit| {
             }
 
         }
@@ -407,36 +407,36 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunctionScript.kts
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunctionScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class UnusedClass : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
+        public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public abstract [ResolvedTo(STATUS)] interface UsedInterface : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] interface UsedInterface : R|kotlin/Any| {
         }
 
-        public final [ResolvedTo(STATUS)] class UsedClass : R|one/two/UsedInterface| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=UsedClass] constructor(): R|one/two/UsedClass| {
-                super<R|kotlin/Any|>()
+        public? final? [ResolvedTo(RAW_FIR)] class UsedClass : UsedInterface {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UsedClass] constructor(): R|one/two/UsedClass| {
+                super<<implicit>>()
             }
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            local final [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
-                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|one/two/Local| {
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            local final? [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|one/two/Local| {
                     super<R|kotlin/Any|>()
                 }
 
             }
 
-            local final [ResolvedTo(RAW_FIR)] fun localFunction([ResolvedTo(RAW_FIR)] usedClass: R|one/two/UsedClass|, [ResolvedTo(RAW_FIR)] local: R|one/two/Local|): R|kotlin/Unit| {
+            local final? [ResolvedTo(RAW_FIR)] fun localFunction([ResolvedTo(RAW_FIR)] usedClass: UsedClass, [ResolvedTo(RAW_FIR)] local: Local): R|kotlin/Unit| {
             }
 
         }
@@ -444,36 +444,36 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunctionScript.kts
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunctionScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class UnusedClass : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
+        public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public abstract [ResolvedTo(STATUS)] interface UsedInterface : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] interface UsedInterface : R|kotlin/Any| {
         }
 
-        public final [ResolvedTo(STATUS)] class UsedClass : R|one/two/UsedInterface| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=UsedClass] constructor(): R|one/two/UsedClass| {
-                super<R|kotlin/Any|>()
+        public? final? [ResolvedTo(RAW_FIR)] class UsedClass : UsedInterface {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UsedClass] constructor(): R|one/two/UsedClass| {
+                super<<implicit>>()
             }
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            local final [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
-                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|one/two/Local| {
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            local final? [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|one/two/Local| {
                     super<R|kotlin/Any|>()
                 }
 
             }
 
-            local final [ResolvedTo(RAW_FIR)] fun localFunction([ResolvedTo(RAW_FIR)] usedClass: R|one/two/UsedClass|, [ResolvedTo(RAW_FIR)] local: R|one/two/Local|): R|kotlin/Unit| {
+            local final? [ResolvedTo(RAW_FIR)] fun localFunction([ResolvedTo(RAW_FIR)] usedClass: UsedClass, [ResolvedTo(RAW_FIR)] local: Local): R|kotlin/Unit| {
             }
 
         }
@@ -481,36 +481,36 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunctionScript.kts
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunctionScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class UnusedClass : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
+        public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public abstract [ResolvedTo(STATUS)] interface UsedInterface : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] interface UsedInterface : R|kotlin/Any| {
         }
 
-        public final [ResolvedTo(STATUS)] class UsedClass : R|one/two/UsedInterface| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=UsedClass] constructor(): R|one/two/UsedClass| {
-                super<R|kotlin/Any|>()
+        public? final? [ResolvedTo(RAW_FIR)] class UsedClass : UsedInterface {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UsedClass] constructor(): R|one/two/UsedClass| {
+                super<<implicit>>()
             }
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            local final [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
-                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|one/two/Local| {
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            local final? [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|one/two/Local| {
                     super<R|kotlin/Any|>()
                 }
 
             }
 
-            local final [ResolvedTo(RAW_FIR)] fun localFunction([ResolvedTo(RAW_FIR)] usedClass: R|one/two/UsedClass|, [ResolvedTo(RAW_FIR)] local: R|one/two/Local|): R|kotlin/Unit| {
+            local final? [ResolvedTo(RAW_FIR)] fun localFunction([ResolvedTo(RAW_FIR)] usedClass: UsedClass, [ResolvedTo(RAW_FIR)] local: Local): R|kotlin/Unit| {
             }
 
         }

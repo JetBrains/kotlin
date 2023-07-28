@@ -3,32 +3,32 @@ FIR element: FirAnnotationCallImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-@PROPERTY_DELEGATE_FIELD:R|Ann|[Types]()
+@PROPERTY_DELEGATE_FIELD:Ann[Unresolved]()
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] delegateScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] annotation class Ann : R|kotlin/Annotation| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Ann] constructor(): R|Ann| {
+        public? final? [ResolvedTo(RAW_FIR)] annotation class Ann : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|Ann| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
+        public? final? [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
                 super<R|kotlin/Any|>()
             }
 
-            field:@PROPERTY_DELEGATE_FIELD:R|Ann|[Types]() public final [ResolvedTo(STATUS)] val a: <ERROR TYPE REF: Unresolved name: getValue>by <Unresolved name: lazy>#(<L> = [ResolvedTo(RAW_FIR)] lazy@fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
-                ^ Int(1)
+            field:@PROPERTY_DELEGATE_FIELD:Ann[Unresolved]() public? final? [ResolvedTo(RAW_FIR)] val a: <implicit>by lazy#(<L> = [ResolvedTo(RAW_FIR)] lazy@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+                IntegerLiteral(1)
             }
             )
-                public [ResolvedTo(STATUS)] [ContainingClassKey=X] get(): <ERROR TYPE REF: Unresolved name: getValue> {
-                    ^ this@R|/X|.D|/X.a|.<Unresolved name: getValue>#(this@R|/X|, ::R|/X.a|)
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] get(): <implicit> {
+                    ^ this@R|/X|.D|/X.a|.getValue#(this@R|/X|, ::R|/X.a|)
                 }
 
         }

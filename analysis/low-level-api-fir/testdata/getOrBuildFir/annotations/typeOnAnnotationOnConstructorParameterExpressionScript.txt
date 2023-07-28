@@ -7,23 +7,23 @@ String(abc)
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] typeOnAnnotationOnConstructorParameterExpressionScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class ResolveMe : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] constructor([ResolvedTo(STATUS)] addCommaWarning: R|@R|Anno|(s = String(abc))  kotlin/Boolean| = Boolean(false)): R|ResolveMe| {
+        public? final? [ResolvedTo(RAW_FIR)] class ResolveMe : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor([ResolvedTo(RAW_FIR)] addCommaWarning: @Anno[Unresolved](String(abc)) Boolean = Boolean(false)): R|ResolveMe| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+        @Target[Unresolved](AnnotationTarget#.TYPE#) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
         }

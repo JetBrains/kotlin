@@ -1,139 +1,139 @@
 RAW_FIR:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunctionScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] resolveMe> ddd(): R|kotlin/Unit| {
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] resolveMe> ddd(): R|kotlin/Unit| {
         }
 
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunctionScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] resolveMe> ddd(): R|kotlin/Unit| {
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] resolveMe> ddd(): R|kotlin/Unit| {
         }
 
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunctionScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] resolveMe> ddd(): R|kotlin/Unit| {
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] resolveMe> ddd(): R|kotlin/Unit| {
         }
 
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunctionScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] resolveMe> ddd(): R|kotlin/Unit| {
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] resolveMe> ddd(): R|kotlin/Unit| {
         }
 
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunctionScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] resolveMe> ddd(): R|kotlin/Unit| {
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] resolveMe> ddd(): R|kotlin/Unit| {
         }
 
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunctionScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] resolveMe> ddd(): R|kotlin/Unit| {
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] resolveMe> ddd(): R|kotlin/Unit| {
         }
 
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunctionScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] resolveMe> ddd(): R|kotlin/Unit| {
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] resolveMe> ddd(): R|kotlin/Unit| {
         }
 
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunctionScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] resolveMe> ddd(): R|kotlin/Unit| {
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] resolveMe> ddd(): R|kotlin/Unit| {
         }
 
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunctionScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] resolveMe> ddd(): R|kotlin/Unit| {
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] resolveMe> ddd(): R|kotlin/Unit| {
         }
 
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunctionScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] resolveMe> ddd(): R|kotlin/Unit| {
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] resolveMe> ddd(): R|kotlin/Unit| {
         }
 
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunctionScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] resolveMe> ddd(): R|kotlin/Unit| {
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] resolveMe> ddd(): R|kotlin/Unit| {
         }
 
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunctionScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] resolveMe> ddd(): R|kotlin/Unit| {
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] resolveMe> ddd(): R|kotlin/Unit| {
         }
 
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunctionScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] resolveMe> ddd(): R|kotlin/Unit| {
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] resolveMe> ddd(): R|kotlin/Unit| {
         }
 
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunctionScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] resolveMe> ddd(): R|kotlin/Unit| {
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] resolveMe> ddd(): R|kotlin/Unit| {
         }
 

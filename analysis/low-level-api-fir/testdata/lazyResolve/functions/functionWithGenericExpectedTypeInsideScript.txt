@@ -1,405 +1,405 @@
 RAW_FIR:
 FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(STATUS)] class Foo<[ResolvedTo(STATUS)] T : R|kotlin/CharSequence|> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor<[ResolvedTo(STATUS)] T : R|kotlin/CharSequence|>(): R|Foo<T>| {
+        public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] class Bar : R|Foo<kotlin/String>| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Bar] constructor(): R|Bar| {
-                super<R|Foo<kotlin/String>|>()
+        public? final? [ResolvedTo(RAW_FIR)] class Bar : Foo<String> {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Bar] constructor(): R|Bar| {
+                super<<implicit>>()
             }
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun bar(): R|Bar| {
-            ^bar R|/Bar.Bar|()
+        public? final? [ResolvedTo(RAW_FIR)] fun bar(): <implicit> {
+            ^bar Bar#()
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            [ResolvedTo(RAW_FIR)] lval x: R|Foo<kotlin/String>| = R|/bar|()
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            [ResolvedTo(RAW_FIR)] lval x: Foo<String> = bar#()
         }
 
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(STATUS)] class Foo<[ResolvedTo(STATUS)] T : R|kotlin/CharSequence|> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor<[ResolvedTo(STATUS)] T : R|kotlin/CharSequence|>(): R|Foo<T>| {
+        public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] class Bar : R|Foo<kotlin/String>| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Bar] constructor(): R|Bar| {
-                super<R|Foo<kotlin/String>|>()
+        public? final? [ResolvedTo(RAW_FIR)] class Bar : Foo<String> {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Bar] constructor(): R|Bar| {
+                super<<implicit>>()
             }
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun bar(): R|Bar| {
-            ^bar R|/Bar.Bar|()
+        public? final? [ResolvedTo(RAW_FIR)] fun bar(): <implicit> {
+            ^bar Bar#()
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            [ResolvedTo(RAW_FIR)] lval x: R|Foo<kotlin/String>| = R|/bar|()
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            [ResolvedTo(RAW_FIR)] lval x: Foo<String> = bar#()
         }
 
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(STATUS)] class Foo<[ResolvedTo(STATUS)] T : R|kotlin/CharSequence|> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor<[ResolvedTo(STATUS)] T : R|kotlin/CharSequence|>(): R|Foo<T>| {
+        public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] class Bar : R|Foo<kotlin/String>| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Bar] constructor(): R|Bar| {
-                super<R|Foo<kotlin/String>|>()
+        public? final? [ResolvedTo(RAW_FIR)] class Bar : Foo<String> {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Bar] constructor(): R|Bar| {
+                super<<implicit>>()
             }
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun bar(): R|Bar| {
-            ^bar R|/Bar.Bar|()
+        public? final? [ResolvedTo(RAW_FIR)] fun bar(): <implicit> {
+            ^bar Bar#()
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            [ResolvedTo(RAW_FIR)] lval x: R|Foo<kotlin/String>| = R|/bar|()
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            [ResolvedTo(RAW_FIR)] lval x: Foo<String> = bar#()
         }
 
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(STATUS)] class Foo<[ResolvedTo(STATUS)] T : R|kotlin/CharSequence|> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor<[ResolvedTo(STATUS)] T : R|kotlin/CharSequence|>(): R|Foo<T>| {
+        public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] class Bar : R|Foo<kotlin/String>| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Bar] constructor(): R|Bar| {
-                super<R|Foo<kotlin/String>|>()
+        public? final? [ResolvedTo(RAW_FIR)] class Bar : Foo<String> {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Bar] constructor(): R|Bar| {
+                super<<implicit>>()
             }
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun bar(): R|Bar| {
-            ^bar R|/Bar.Bar|()
+        public? final? [ResolvedTo(RAW_FIR)] fun bar(): <implicit> {
+            ^bar Bar#()
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            [ResolvedTo(RAW_FIR)] lval x: R|Foo<kotlin/String>| = R|/bar|()
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            [ResolvedTo(RAW_FIR)] lval x: Foo<String> = bar#()
         }
 
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(STATUS)] class Foo<[ResolvedTo(STATUS)] T : R|kotlin/CharSequence|> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor<[ResolvedTo(STATUS)] T : R|kotlin/CharSequence|>(): R|Foo<T>| {
+        public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] class Bar : R|Foo<kotlin/String>| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Bar] constructor(): R|Bar| {
-                super<R|Foo<kotlin/String>|>()
+        public? final? [ResolvedTo(RAW_FIR)] class Bar : Foo<String> {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Bar] constructor(): R|Bar| {
+                super<<implicit>>()
             }
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun bar(): R|Bar| {
-            ^bar R|/Bar.Bar|()
+        public? final? [ResolvedTo(RAW_FIR)] fun bar(): <implicit> {
+            ^bar Bar#()
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            [ResolvedTo(RAW_FIR)] lval x: R|Foo<kotlin/String>| = R|/bar|()
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            [ResolvedTo(RAW_FIR)] lval x: Foo<String> = bar#()
         }
 
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(STATUS)] class Foo<[ResolvedTo(STATUS)] T : R|kotlin/CharSequence|> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor<[ResolvedTo(STATUS)] T : R|kotlin/CharSequence|>(): R|Foo<T>| {
+        public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] class Bar : R|Foo<kotlin/String>| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Bar] constructor(): R|Bar| {
-                super<R|Foo<kotlin/String>|>()
+        public? final? [ResolvedTo(RAW_FIR)] class Bar : Foo<String> {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Bar] constructor(): R|Bar| {
+                super<<implicit>>()
             }
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun bar(): R|Bar| {
-            ^bar R|/Bar.Bar|()
+        public? final? [ResolvedTo(RAW_FIR)] fun bar(): <implicit> {
+            ^bar Bar#()
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            [ResolvedTo(RAW_FIR)] lval x: R|Foo<kotlin/String>| = R|/bar|()
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            [ResolvedTo(RAW_FIR)] lval x: Foo<String> = bar#()
         }
 
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(STATUS)] class Foo<[ResolvedTo(STATUS)] T : R|kotlin/CharSequence|> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor<[ResolvedTo(STATUS)] T : R|kotlin/CharSequence|>(): R|Foo<T>| {
+        public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] class Bar : R|Foo<kotlin/String>| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Bar] constructor(): R|Bar| {
-                super<R|Foo<kotlin/String>|>()
+        public? final? [ResolvedTo(RAW_FIR)] class Bar : Foo<String> {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Bar] constructor(): R|Bar| {
+                super<<implicit>>()
             }
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun bar(): R|Bar| {
-            ^bar R|/Bar.Bar|()
+        public? final? [ResolvedTo(RAW_FIR)] fun bar(): <implicit> {
+            ^bar Bar#()
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            [ResolvedTo(RAW_FIR)] lval x: R|Foo<kotlin/String>| = R|/bar|()
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            [ResolvedTo(RAW_FIR)] lval x: Foo<String> = bar#()
         }
 
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(STATUS)] class Foo<[ResolvedTo(STATUS)] T : R|kotlin/CharSequence|> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor<[ResolvedTo(STATUS)] T : R|kotlin/CharSequence|>(): R|Foo<T>| {
+        public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] class Bar : R|Foo<kotlin/String>| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Bar] constructor(): R|Bar| {
-                super<R|Foo<kotlin/String>|>()
+        public? final? [ResolvedTo(RAW_FIR)] class Bar : Foo<String> {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Bar] constructor(): R|Bar| {
+                super<<implicit>>()
             }
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun bar(): R|Bar| {
-            ^bar R|/Bar.Bar|()
+        public? final? [ResolvedTo(RAW_FIR)] fun bar(): <implicit> {
+            ^bar Bar#()
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            [ResolvedTo(RAW_FIR)] lval x: R|Foo<kotlin/String>| = R|/bar|()
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            [ResolvedTo(RAW_FIR)] lval x: Foo<String> = bar#()
         }
 
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(STATUS)] class Foo<[ResolvedTo(STATUS)] T : R|kotlin/CharSequence|> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor<[ResolvedTo(STATUS)] T : R|kotlin/CharSequence|>(): R|Foo<T>| {
+        public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] class Bar : R|Foo<kotlin/String>| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Bar] constructor(): R|Bar| {
-                super<R|Foo<kotlin/String>|>()
+        public? final? [ResolvedTo(RAW_FIR)] class Bar : Foo<String> {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Bar] constructor(): R|Bar| {
+                super<<implicit>>()
             }
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun bar(): R|Bar| {
-            ^bar R|/Bar.Bar|()
+        public? final? [ResolvedTo(RAW_FIR)] fun bar(): <implicit> {
+            ^bar Bar#()
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            [ResolvedTo(RAW_FIR)] lval x: R|Foo<kotlin/String>| = R|/bar|()
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            [ResolvedTo(RAW_FIR)] lval x: Foo<String> = bar#()
         }
 
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(STATUS)] class Foo<[ResolvedTo(STATUS)] T : R|kotlin/CharSequence|> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor<[ResolvedTo(STATUS)] T : R|kotlin/CharSequence|>(): R|Foo<T>| {
+        public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] class Bar : R|Foo<kotlin/String>| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Bar] constructor(): R|Bar| {
-                super<R|Foo<kotlin/String>|>()
+        public? final? [ResolvedTo(RAW_FIR)] class Bar : Foo<String> {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Bar] constructor(): R|Bar| {
+                super<<implicit>>()
             }
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun bar(): R|Bar| {
-            ^bar R|/Bar.Bar|()
+        public? final? [ResolvedTo(RAW_FIR)] fun bar(): <implicit> {
+            ^bar Bar#()
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            [ResolvedTo(RAW_FIR)] lval x: R|Foo<kotlin/String>| = R|/bar|()
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            [ResolvedTo(RAW_FIR)] lval x: Foo<String> = bar#()
         }
 
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(STATUS)] class Foo<[ResolvedTo(STATUS)] T : R|kotlin/CharSequence|> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor<[ResolvedTo(STATUS)] T : R|kotlin/CharSequence|>(): R|Foo<T>| {
+        public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] class Bar : R|Foo<kotlin/String>| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Bar] constructor(): R|Bar| {
-                super<R|Foo<kotlin/String>|>()
+        public? final? [ResolvedTo(RAW_FIR)] class Bar : Foo<String> {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Bar] constructor(): R|Bar| {
+                super<<implicit>>()
             }
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun bar(): R|Bar| {
-            ^bar R|/Bar.Bar|()
+        public? final? [ResolvedTo(RAW_FIR)] fun bar(): <implicit> {
+            ^bar Bar#()
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            [ResolvedTo(RAW_FIR)] lval x: R|Foo<kotlin/String>| = R|/bar|()
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            [ResolvedTo(RAW_FIR)] lval x: Foo<String> = bar#()
         }
 
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(STATUS)] class Foo<[ResolvedTo(STATUS)] T : R|kotlin/CharSequence|> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor<[ResolvedTo(STATUS)] T : R|kotlin/CharSequence|>(): R|Foo<T>| {
+        public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] class Bar : R|Foo<kotlin/String>| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Bar] constructor(): R|Bar| {
-                super<R|Foo<kotlin/String>|>()
+        public? final? [ResolvedTo(RAW_FIR)] class Bar : Foo<String> {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Bar] constructor(): R|Bar| {
+                super<<implicit>>()
             }
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun bar(): R|Bar| {
-            ^bar R|/Bar.Bar|()
+        public? final? [ResolvedTo(RAW_FIR)] fun bar(): <implicit> {
+            ^bar Bar#()
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            [ResolvedTo(RAW_FIR)] lval x: R|Foo<kotlin/String>| = R|/bar|()
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            [ResolvedTo(RAW_FIR)] lval x: Foo<String> = bar#()
         }
 
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(STATUS)] class Foo<[ResolvedTo(STATUS)] T : R|kotlin/CharSequence|> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor<[ResolvedTo(STATUS)] T : R|kotlin/CharSequence|>(): R|Foo<T>| {
+        public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] class Bar : R|Foo<kotlin/String>| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Bar] constructor(): R|Bar| {
-                super<R|Foo<kotlin/String>|>()
+        public? final? [ResolvedTo(RAW_FIR)] class Bar : Foo<String> {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Bar] constructor(): R|Bar| {
+                super<<implicit>>()
             }
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun bar(): R|Bar| {
-            ^bar R|/Bar.Bar|()
+        public? final? [ResolvedTo(RAW_FIR)] fun bar(): <implicit> {
+            ^bar Bar#()
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            [ResolvedTo(RAW_FIR)] lval x: R|Foo<kotlin/String>| = R|/bar|()
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            [ResolvedTo(RAW_FIR)] lval x: Foo<String> = bar#()
         }
 
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInsideScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public open [ResolvedTo(STATUS)] class Foo<[ResolvedTo(STATUS)] T : R|kotlin/CharSequence|> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor<[ResolvedTo(STATUS)] T : R|kotlin/CharSequence|>(): R|Foo<T>| {
+        public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(RAW_FIR)] T : CharSequence>(): R|Foo<T>| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] class Bar : R|Foo<kotlin/String>| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Bar] constructor(): R|Bar| {
-                super<R|Foo<kotlin/String>|>()
+        public? final? [ResolvedTo(RAW_FIR)] class Bar : Foo<String> {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Bar] constructor(): R|Bar| {
+                super<<implicit>>()
             }
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun bar(): R|Bar| {
-            ^bar R|/Bar.Bar|()
+        public? final? [ResolvedTo(RAW_FIR)] fun bar(): <implicit> {
+            ^bar Bar#()
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            [ResolvedTo(RAW_FIR)] lval x: R|Foo<kotlin/String>| = R|/bar|()
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            [ResolvedTo(RAW_FIR)] lval x: Foo<String> = bar#()
         }
 

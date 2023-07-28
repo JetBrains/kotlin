@@ -1,16 +1,16 @@
 KT element: KtValueArgumentList
-FIR element: FirResolvedArgumentListImpl
+FIR element: FirArgumentListImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-Int(1)String(2)
+IntegerLiteral(1)String(2)
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] invokeCallArgumentListScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] f: R|(kotlin/Int, kotlin/String) -> kotlin/Unit|): R|kotlin/Unit| {
-            R|<local>/f|.R|SubstitutionOverride<kotlin/Function2.invoke: R|kotlin/Unit|>|(Int(1), String(2))
+        public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] f: ( (Int, String) -> Unit )): R|kotlin/Unit| {
+            f#(IntegerLiteral(1), String(2))
         }

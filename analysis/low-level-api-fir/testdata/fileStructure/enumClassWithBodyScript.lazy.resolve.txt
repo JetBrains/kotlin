@@ -1,46 +1,46 @@
 FILE: [ResolvedTo(IMPORTS)] enumClassWithBodyScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] enum class A : R|kotlin/Enum<A>| {
-            private [ResolvedTo(STATUS)] constructor(): R|A| {
+        public? final? [ResolvedTo(RAW_FIR)] enum class A : R|kotlin/Enum<A>| {
+            private [ResolvedTo(RAW_FIR)] constructor(): R|A| {
                 super<R|kotlin/Enum<A>|>()
             }
 
-            public final static [ResolvedTo(STATUS)] enum entry X: R|A| = object : R|A| {
+            public final static [ResolvedTo(RAW_FIR)] enum entry X: R|A| = object : R|A| {
                 private [ResolvedTo(RAW_FIR)] constructor(): R|<anonymous>| {
                     super<R|A|>()
                 }
 
-                public final [ResolvedTo(RAW_FIR)] fun localInX(): R|kotlin/Int| {
-                    ^localInX Int(1)
+                public? final? [ResolvedTo(RAW_FIR)] fun localInX(): <implicit> {
+                    ^localInX IntegerLiteral(1)
                 }
 
             }
 
-            public final static [ResolvedTo(STATUS)] enum entry Y: R|A| = object : R|A| {
+            public final static [ResolvedTo(RAW_FIR)] enum entry Y: R|A| = object : R|A| {
                 private [ResolvedTo(RAW_FIR)] constructor(): R|<anonymous>| {
                     super<R|A|>()
                 }
 
-                public open override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
+                public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
                 }
 
             }
 
-            public final static [ResolvedTo(STATUS)] enum entry Z: R|A|
-            public open [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
+            public final static [ResolvedTo(RAW_FIR)] enum entry Z: R|A|
+            public? open [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
             }
 
-            public final static [ResolvedTo(STATUS)] fun values(): R|kotlin/Array<A>| {
+            public final static [ResolvedTo(RAW_FIR)] fun values(): R|kotlin/Array<A>| {
             }
 
-            public final static [ResolvedTo(STATUS)] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|A| {
+            public final static [ResolvedTo(RAW_FIR)] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|A| {
             }
 
-            public final static [ResolvedTo(STATUS)] val entries: R|kotlin/enums/EnumEntries<A>|
-                public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<A>|
+            public final static [ResolvedTo(RAW_FIR)] val entries: R|kotlin/enums/EnumEntries<A>|
+                public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<A>|
 
         }
 

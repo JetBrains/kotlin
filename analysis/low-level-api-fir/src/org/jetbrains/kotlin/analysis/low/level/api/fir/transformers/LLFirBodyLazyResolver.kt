@@ -142,7 +142,7 @@ private class LLFirBodyTargetResolver(
             is FirField -> resolve(target, BodyStateKeepers.FIELD)
             is FirVariable -> resolve(target, BodyStateKeepers.VARIABLE)
             is FirAnonymousInitializer -> resolve(target, BodyStateKeepers.ANONYMOUS_INITIALIZER)
-            is FirScript -> resolve(target, BodyStateKeepers.SCRIPT)
+            is FirScript,
             is FirDanglingModifierList,
             is FirFileAnnotationsContainer,
             is FirTypeAlias,

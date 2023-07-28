@@ -1,18 +1,18 @@
 RAW_FIR:
 FILE: [ResolvedTo(IMPORTS)] functionInValueClassScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Value] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Value.value] value: R|kotlin/Int|): R|Value| {
+        @JvmInline[Unresolved]() public? final? inline [ResolvedTo(RAW_FIR)] class Value : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Value.value] value: Int): R|Value| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Value] get(): R|kotlin/Int|
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] get(): Int
 
-            public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| {
+            public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
             }
 
         }
@@ -20,19 +20,19 @@ FILE: [ResolvedTo(IMPORTS)] functionInValueClassScript.kts
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] functionInValueClassScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Value] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Value.value] value: R|kotlin/Int|): R|Value| {
+        @JvmInline[Unresolved]() public? final? inline [ResolvedTo(RAW_FIR)] class Value : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Value.value] value: Int): R|Value| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Value] get(): R|kotlin/Int|
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] get(): Int
 
-            public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| {
+            public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
             }
 
         }
@@ -40,19 +40,19 @@ FILE: [ResolvedTo(IMPORTS)] functionInValueClassScript.kts
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] functionInValueClassScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Value] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Value.value] value: R|kotlin/Int|): R|Value| {
+        @JvmInline[Unresolved]() public? final? inline [ResolvedTo(RAW_FIR)] class Value : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Value.value] value: Int): R|Value| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Value] get(): R|kotlin/Int|
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] get(): Int
 
-            public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| {
+            public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
             }
 
         }
@@ -60,19 +60,19 @@ FILE: [ResolvedTo(IMPORTS)] functionInValueClassScript.kts
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] functionInValueClassScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Value] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Value.value] value: R|kotlin/Int|): R|Value| {
+        @JvmInline[Unresolved]() public? final? inline [ResolvedTo(RAW_FIR)] class Value : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Value.value] value: Int): R|Value| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Value] get(): R|kotlin/Int|
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] get(): Int
 
-            public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| {
+            public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
             }
 
         }
@@ -80,19 +80,19 @@ FILE: [ResolvedTo(IMPORTS)] functionInValueClassScript.kts
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] functionInValueClassScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Value] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Value.value] value: R|kotlin/Int|): R|Value| {
+        @JvmInline[Unresolved]() public? final? inline [ResolvedTo(RAW_FIR)] class Value : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Value.value] value: Int): R|Value| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Value] get(): R|kotlin/Int|
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] get(): Int
 
-            public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| {
+            public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
             }
 
         }
@@ -100,19 +100,19 @@ FILE: [ResolvedTo(IMPORTS)] functionInValueClassScript.kts
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] functionInValueClassScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Value] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Value.value] value: R|kotlin/Int|): R|Value| {
+        @JvmInline[Unresolved]() public? final? inline [ResolvedTo(RAW_FIR)] class Value : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Value.value] value: Int): R|Value| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Value] get(): R|kotlin/Int|
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] get(): Int
 
-            public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| {
+            public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
             }
 
         }
@@ -120,19 +120,19 @@ FILE: [ResolvedTo(IMPORTS)] functionInValueClassScript.kts
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] functionInValueClassScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Value] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Value.value] value: R|kotlin/Int|): R|Value| {
+        @JvmInline[Unresolved]() public? final? inline [ResolvedTo(RAW_FIR)] class Value : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Value.value] value: Int): R|Value| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Value] get(): R|kotlin/Int|
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] get(): Int
 
-            public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| {
+            public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
             }
 
         }
@@ -140,19 +140,19 @@ FILE: [ResolvedTo(IMPORTS)] functionInValueClassScript.kts
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] functionInValueClassScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Value] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Value.value] value: R|kotlin/Int|): R|Value| {
+        @JvmInline[Unresolved]() public? final? inline [ResolvedTo(RAW_FIR)] class Value : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Value.value] value: Int): R|Value| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Value] get(): R|kotlin/Int|
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] get(): Int
 
-            public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| {
+            public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
             }
 
         }
@@ -160,19 +160,19 @@ FILE: [ResolvedTo(IMPORTS)] functionInValueClassScript.kts
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] functionInValueClassScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Value] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Value.value] value: R|kotlin/Int|): R|Value| {
+        @JvmInline[Unresolved]() public? final? inline [ResolvedTo(RAW_FIR)] class Value : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Value.value] value: Int): R|Value| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Value] get(): R|kotlin/Int|
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] get(): Int
 
-            public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| {
+            public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
             }
 
         }
@@ -180,19 +180,19 @@ FILE: [ResolvedTo(IMPORTS)] functionInValueClassScript.kts
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] functionInValueClassScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Value] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Value.value] value: R|kotlin/Int|): R|Value| {
+        @JvmInline[Unresolved]() public? final? inline [ResolvedTo(RAW_FIR)] class Value : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Value.value] value: Int): R|Value| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Value] get(): R|kotlin/Int|
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] get(): Int
 
-            public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| {
+            public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
             }
 
         }
@@ -200,19 +200,19 @@ FILE: [ResolvedTo(IMPORTS)] functionInValueClassScript.kts
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] functionInValueClassScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Value] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Value.value] value: R|kotlin/Int|): R|Value| {
+        @JvmInline[Unresolved]() public? final? inline [ResolvedTo(RAW_FIR)] class Value : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Value.value] value: Int): R|Value| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Value] get(): R|kotlin/Int|
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] get(): Int
 
-            public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| {
+            public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
             }
 
         }
@@ -220,19 +220,19 @@ FILE: [ResolvedTo(IMPORTS)] functionInValueClassScript.kts
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] functionInValueClassScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Value] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Value.value] value: R|kotlin/Int|): R|Value| {
+        @JvmInline[Unresolved]() public? final? inline [ResolvedTo(RAW_FIR)] class Value : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Value.value] value: Int): R|Value| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Value] get(): R|kotlin/Int|
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] get(): Int
 
-            public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| {
+            public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
             }
 
         }
@@ -240,19 +240,19 @@ FILE: [ResolvedTo(IMPORTS)] functionInValueClassScript.kts
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] functionInValueClassScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Value] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Value.value] value: R|kotlin/Int|): R|Value| {
+        @JvmInline[Unresolved]() public? final? inline [ResolvedTo(RAW_FIR)] class Value : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Value.value] value: Int): R|Value| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Value] get(): R|kotlin/Int|
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] get(): Int
 
-            public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| {
+            public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
             }
 
         }
@@ -260,19 +260,19 @@ FILE: [ResolvedTo(IMPORTS)] functionInValueClassScript.kts
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] functionInValueClassScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/jvm/JvmInline|[Types]() public final inline [ResolvedTo(STATUS)] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Value] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Value.value] value: R|kotlin/Int|): R|Value| {
+        @JvmInline[Unresolved]() public? final? inline [ResolvedTo(RAW_FIR)] class Value : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Value.value] value: Int): R|Value| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Value] get(): R|kotlin/Int|
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Value] get(): Int
 
-            public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| {
+            public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
             }
 
         }

@@ -3,13 +3,13 @@ FIR element: FirStringConcatenationCallImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-<strcat>(String(string ), Int(1).R|kotlin/Int.plus|(Int(2)), String( template))
+<strcat>(String(string ), IntegerLiteral(1).plus#(IntegerLiteral(2)), String( template))
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] wholeStringTemplateScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] val x: R|kotlin/String| = <strcat>(String(string ), Int(1).R|kotlin/Int.plus|(Int(2)), String( template))
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/String|
+        public? final? [ResolvedTo(RAW_FIR)] val x: <implicit> = <strcat>(String(string ), IntegerLiteral(1).plus#(IntegerLiteral(2)), String( template))
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>

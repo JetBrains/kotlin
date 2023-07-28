@@ -1,16 +1,16 @@
 RAW_FIR:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] Type>(): R|MyClass<Type>| {
+        public? final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] Type>(): R|MyClass<Type>| {
                 super<R|kotlin/Any|>()
             }
 
-            public final inner [ResolvedTo(STATUS)] class Second<[ResolvedTo(STATUS)] Type2, [ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Second] MyClass<Type>.constructor<[ResolvedTo(STATUS)] Type2>(): R|MyClass.Second<Type2, Type>| {
+            public? final? inner [ResolvedTo(RAW_FIR)] class Second<[ResolvedTo(RAW_FIR)] Type2, [ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] MyClass<Type>.constructor<[ResolvedTo(RAW_FIR)] Type2>(): R|MyClass.Second<Type2, Type>| {
                     super<R|kotlin/Any|>()
                 }
 
@@ -21,17 +21,17 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] Type>(): R|MyClass<Type>| {
+        public? final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] Type>(): R|MyClass<Type>| {
                 super<R|kotlin/Any|>()
             }
 
-            public final inner [ResolvedTo(STATUS)] class Second<[ResolvedTo(STATUS)] Type2, [ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Second] MyClass<Type>.constructor<[ResolvedTo(STATUS)] Type2>(): R|MyClass.Second<Type2, Type>| {
+            public? final? inner [ResolvedTo(RAW_FIR)] class Second<[ResolvedTo(RAW_FIR)] Type2, [ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] MyClass<Type>.constructor<[ResolvedTo(RAW_FIR)] Type2>(): R|MyClass.Second<Type2, Type>| {
                     super<R|kotlin/Any|>()
                 }
 
@@ -42,17 +42,17 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] Type>(): R|MyClass<Type>| {
+        public? final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] Type>(): R|MyClass<Type>| {
                 super<R|kotlin/Any|>()
             }
 
-            public final inner [ResolvedTo(STATUS)] class Second<[ResolvedTo(STATUS)] Type2, [ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Second] MyClass<Type>.constructor<[ResolvedTo(STATUS)] Type2>(): R|MyClass.Second<Type2, Type>| {
+            public? final? inner [ResolvedTo(RAW_FIR)] class Second<[ResolvedTo(RAW_FIR)] Type2, [ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] MyClass<Type>.constructor<[ResolvedTo(RAW_FIR)] Type2>(): R|MyClass.Second<Type2, Type>| {
                     super<R|kotlin/Any|>()
                 }
 
@@ -63,17 +63,17 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] Type>(): R|MyClass<Type>| {
+        public? final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] Type>(): R|MyClass<Type>| {
                 super<R|kotlin/Any|>()
             }
 
-            public final inner [ResolvedTo(STATUS)] class Second<[ResolvedTo(STATUS)] Type2, [ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Second] MyClass<Type>.constructor<[ResolvedTo(STATUS)] Type2>(): R|MyClass.Second<Type2, Type>| {
+            public? final? inner [ResolvedTo(RAW_FIR)] class Second<[ResolvedTo(RAW_FIR)] Type2, [ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] MyClass<Type>.constructor<[ResolvedTo(RAW_FIR)] Type2>(): R|MyClass.Second<Type2, Type>| {
                     super<R|kotlin/Any|>()
                 }
 
@@ -84,17 +84,17 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] Type>(): R|MyClass<Type>| {
+        public? final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] Type>(): R|MyClass<Type>| {
                 super<R|kotlin/Any|>()
             }
 
-            public final inner [ResolvedTo(STATUS)] class Second<[ResolvedTo(STATUS)] Type2, [ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Second] MyClass<Type>.constructor<[ResolvedTo(STATUS)] Type2>(): R|MyClass.Second<Type2, Type>| {
+            public? final? inner [ResolvedTo(RAW_FIR)] class Second<[ResolvedTo(RAW_FIR)] Type2, [ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] MyClass<Type>.constructor<[ResolvedTo(RAW_FIR)] Type2>(): R|MyClass.Second<Type2, Type>| {
                     super<R|kotlin/Any|>()
                 }
 
@@ -105,17 +105,17 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] Type>(): R|MyClass<Type>| {
+        public? final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] Type>(): R|MyClass<Type>| {
                 super<R|kotlin/Any|>()
             }
 
-            public final inner [ResolvedTo(STATUS)] class Second<[ResolvedTo(STATUS)] Type2, [ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Second] MyClass<Type>.constructor<[ResolvedTo(STATUS)] Type2>(): R|MyClass.Second<Type2, Type>| {
+            public? final? inner [ResolvedTo(RAW_FIR)] class Second<[ResolvedTo(RAW_FIR)] Type2, [ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] MyClass<Type>.constructor<[ResolvedTo(RAW_FIR)] Type2>(): R|MyClass.Second<Type2, Type>| {
                     super<R|kotlin/Any|>()
                 }
 
@@ -126,17 +126,17 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] Type>(): R|MyClass<Type>| {
+        public? final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] Type>(): R|MyClass<Type>| {
                 super<R|kotlin/Any|>()
             }
 
-            public final inner [ResolvedTo(STATUS)] class Second<[ResolvedTo(STATUS)] Type2, [ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Second] MyClass<Type>.constructor<[ResolvedTo(STATUS)] Type2>(): R|MyClass.Second<Type2, Type>| {
+            public? final? inner [ResolvedTo(RAW_FIR)] class Second<[ResolvedTo(RAW_FIR)] Type2, [ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] MyClass<Type>.constructor<[ResolvedTo(RAW_FIR)] Type2>(): R|MyClass.Second<Type2, Type>| {
                     super<R|kotlin/Any|>()
                 }
 
@@ -147,17 +147,17 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] Type>(): R|MyClass<Type>| {
+        public? final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] Type>(): R|MyClass<Type>| {
                 super<R|kotlin/Any|>()
             }
 
-            public final inner [ResolvedTo(STATUS)] class Second<[ResolvedTo(STATUS)] Type2, [ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Second] MyClass<Type>.constructor<[ResolvedTo(STATUS)] Type2>(): R|MyClass.Second<Type2, Type>| {
+            public? final? inner [ResolvedTo(RAW_FIR)] class Second<[ResolvedTo(RAW_FIR)] Type2, [ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] MyClass<Type>.constructor<[ResolvedTo(RAW_FIR)] Type2>(): R|MyClass.Second<Type2, Type>| {
                     super<R|kotlin/Any|>()
                 }
 
@@ -168,17 +168,17 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] Type>(): R|MyClass<Type>| {
+        public? final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] Type>(): R|MyClass<Type>| {
                 super<R|kotlin/Any|>()
             }
 
-            public final inner [ResolvedTo(STATUS)] class Second<[ResolvedTo(STATUS)] Type2, [ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Second] MyClass<Type>.constructor<[ResolvedTo(STATUS)] Type2>(): R|MyClass.Second<Type2, Type>| {
+            public? final? inner [ResolvedTo(RAW_FIR)] class Second<[ResolvedTo(RAW_FIR)] Type2, [ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] MyClass<Type>.constructor<[ResolvedTo(RAW_FIR)] Type2>(): R|MyClass.Second<Type2, Type>| {
                     super<R|kotlin/Any|>()
                 }
 
@@ -189,17 +189,17 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] Type>(): R|MyClass<Type>| {
+        public? final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] Type>(): R|MyClass<Type>| {
                 super<R|kotlin/Any|>()
             }
 
-            public final inner [ResolvedTo(STATUS)] class Second<[ResolvedTo(STATUS)] Type2, [ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Second] MyClass<Type>.constructor<[ResolvedTo(STATUS)] Type2>(): R|MyClass.Second<Type2, Type>| {
+            public? final? inner [ResolvedTo(RAW_FIR)] class Second<[ResolvedTo(RAW_FIR)] Type2, [ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] MyClass<Type>.constructor<[ResolvedTo(RAW_FIR)] Type2>(): R|MyClass.Second<Type2, Type>| {
                     super<R|kotlin/Any|>()
                 }
 
@@ -210,17 +210,17 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] Type>(): R|MyClass<Type>| {
+        public? final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] Type>(): R|MyClass<Type>| {
                 super<R|kotlin/Any|>()
             }
 
-            public final inner [ResolvedTo(STATUS)] class Second<[ResolvedTo(STATUS)] Type2, [ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Second] MyClass<Type>.constructor<[ResolvedTo(STATUS)] Type2>(): R|MyClass.Second<Type2, Type>| {
+            public? final? inner [ResolvedTo(RAW_FIR)] class Second<[ResolvedTo(RAW_FIR)] Type2, [ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] MyClass<Type>.constructor<[ResolvedTo(RAW_FIR)] Type2>(): R|MyClass.Second<Type2, Type>| {
                     super<R|kotlin/Any|>()
                 }
 
@@ -231,17 +231,17 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] Type>(): R|MyClass<Type>| {
+        public? final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] Type>(): R|MyClass<Type>| {
                 super<R|kotlin/Any|>()
             }
 
-            public final inner [ResolvedTo(STATUS)] class Second<[ResolvedTo(STATUS)] Type2, [ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Second] MyClass<Type>.constructor<[ResolvedTo(STATUS)] Type2>(): R|MyClass.Second<Type2, Type>| {
+            public? final? inner [ResolvedTo(RAW_FIR)] class Second<[ResolvedTo(RAW_FIR)] Type2, [ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] MyClass<Type>.constructor<[ResolvedTo(RAW_FIR)] Type2>(): R|MyClass.Second<Type2, Type>| {
                     super<R|kotlin/Any|>()
                 }
 
@@ -252,17 +252,17 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] Type>(): R|MyClass<Type>| {
+        public? final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] Type>(): R|MyClass<Type>| {
                 super<R|kotlin/Any|>()
             }
 
-            public final inner [ResolvedTo(STATUS)] class Second<[ResolvedTo(STATUS)] Type2, [ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Second] MyClass<Type>.constructor<[ResolvedTo(STATUS)] Type2>(): R|MyClass.Second<Type2, Type>| {
+            public? final? inner [ResolvedTo(RAW_FIR)] class Second<[ResolvedTo(RAW_FIR)] Type2, [ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] MyClass<Type>.constructor<[ResolvedTo(RAW_FIR)] Type2>(): R|MyClass.Second<Type2, Type>| {
                     super<R|kotlin/Any|>()
                 }
 
@@ -273,17 +273,17 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass2Script.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] Type>(): R|MyClass<Type>| {
+        public? final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] Type>(): R|MyClass<Type>| {
                 super<R|kotlin/Any|>()
             }
 
-            public final inner [ResolvedTo(STATUS)] class Second<[ResolvedTo(STATUS)] Type2, [ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Second] MyClass<Type>.constructor<[ResolvedTo(STATUS)] Type2>(): R|MyClass.Second<Type2, Type>| {
+            public? final? inner [ResolvedTo(RAW_FIR)] class Second<[ResolvedTo(RAW_FIR)] Type2, [ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Second] MyClass<Type>.constructor<[ResolvedTo(RAW_FIR)] Type2>(): R|MyClass.Second<Type2, Type>| {
                     super<R|kotlin/Any|>()
                 }
 

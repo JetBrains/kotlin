@@ -3,14 +3,14 @@ FIR element: FirPropertyImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-[ResolvedTo(RAW_FIR)] lval x: R|kotlin/String| = String()
+[ResolvedTo(RAW_FIR)] lval x: String = String()
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] localPropertyScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun y(): R|kotlin/Unit| {
-            [ResolvedTo(RAW_FIR)] lval x: R|kotlin/String| = String()
+        public? final? [ResolvedTo(RAW_FIR)] fun y(): R|kotlin/Unit| {
+            [ResolvedTo(RAW_FIR)] lval x: String = String()
         }

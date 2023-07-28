@@ -173,6 +173,7 @@ private class LLFirStatusTargetResolver(
             is FirRegularClass -> {
                 error("should be resolved in doResolveWithoutLock")
             }
+            is FirScript -> {}
             else -> {
                 target.transformSingle(transformer, data = null)
             }

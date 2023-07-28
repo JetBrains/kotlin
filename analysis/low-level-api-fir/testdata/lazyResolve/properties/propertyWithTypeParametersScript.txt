@@ -1,167 +1,167 @@
 RAW_FIR:
 FILE: [ResolvedTo(IMPORTS)] propertyWithTypeParametersScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] val <[ResolvedTo(RAW_FIR)] T : R|kotlin/Int|, [ResolvedTo(RAW_FIR)] K> R|T|.resolveMe: R|K|
-            public [ResolvedTo(RAW_FIR)] get(): R|K| {
-                ^ R|kotlin/TODO|()
+        public? final? [ResolvedTo(RAW_FIR)] val <[ResolvedTo(RAW_FIR)] T : Int, [ResolvedTo(RAW_FIR)] K> T.resolveMe: K
+            public? [ResolvedTo(RAW_FIR)] get(): K {
+                ^ TODO#()
             }
 
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] propertyWithTypeParametersScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] val <[ResolvedTo(RAW_FIR)] T : R|kotlin/Int|, [ResolvedTo(RAW_FIR)] K> R|T|.resolveMe: R|K|
-            public [ResolvedTo(RAW_FIR)] get(): R|K| {
-                ^ R|kotlin/TODO|()
+        public? final? [ResolvedTo(RAW_FIR)] val <[ResolvedTo(RAW_FIR)] T : Int, [ResolvedTo(RAW_FIR)] K> T.resolveMe: K
+            public? [ResolvedTo(RAW_FIR)] get(): K {
+                ^ TODO#()
             }
 
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] propertyWithTypeParametersScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] val <[ResolvedTo(RAW_FIR)] T : R|kotlin/Int|, [ResolvedTo(RAW_FIR)] K> R|T|.resolveMe: R|K|
-            public [ResolvedTo(RAW_FIR)] get(): R|K| {
-                ^ R|kotlin/TODO|()
+        public? final? [ResolvedTo(RAW_FIR)] val <[ResolvedTo(RAW_FIR)] T : Int, [ResolvedTo(RAW_FIR)] K> T.resolveMe: K
+            public? [ResolvedTo(RAW_FIR)] get(): K {
+                ^ TODO#()
             }
 
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] propertyWithTypeParametersScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] val <[ResolvedTo(RAW_FIR)] T : R|kotlin/Int|, [ResolvedTo(RAW_FIR)] K> R|T|.resolveMe: R|K|
-            public [ResolvedTo(RAW_FIR)] get(): R|K| {
-                ^ R|kotlin/TODO|()
+        public? final? [ResolvedTo(RAW_FIR)] val <[ResolvedTo(RAW_FIR)] T : Int, [ResolvedTo(RAW_FIR)] K> T.resolveMe: K
+            public? [ResolvedTo(RAW_FIR)] get(): K {
+                ^ TODO#()
             }
 
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] propertyWithTypeParametersScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] val <[ResolvedTo(RAW_FIR)] T : R|kotlin/Int|, [ResolvedTo(RAW_FIR)] K> R|T|.resolveMe: R|K|
-            public [ResolvedTo(RAW_FIR)] get(): R|K| {
-                ^ R|kotlin/TODO|()
+        public? final? [ResolvedTo(RAW_FIR)] val <[ResolvedTo(RAW_FIR)] T : Int, [ResolvedTo(RAW_FIR)] K> T.resolveMe: K
+            public? [ResolvedTo(RAW_FIR)] get(): K {
+                ^ TODO#()
             }
 
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] propertyWithTypeParametersScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] val <[ResolvedTo(RAW_FIR)] T : R|kotlin/Int|, [ResolvedTo(RAW_FIR)] K> R|T|.resolveMe: R|K|
-            public [ResolvedTo(RAW_FIR)] get(): R|K| {
-                ^ R|kotlin/TODO|()
+        public? final? [ResolvedTo(RAW_FIR)] val <[ResolvedTo(RAW_FIR)] T : Int, [ResolvedTo(RAW_FIR)] K> T.resolveMe: K
+            public? [ResolvedTo(RAW_FIR)] get(): K {
+                ^ TODO#()
             }
 
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] propertyWithTypeParametersScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] val <[ResolvedTo(RAW_FIR)] T : R|kotlin/Int|, [ResolvedTo(RAW_FIR)] K> R|T|.resolveMe: R|K|
-            public [ResolvedTo(RAW_FIR)] get(): R|K| {
-                ^ R|kotlin/TODO|()
+        public? final? [ResolvedTo(RAW_FIR)] val <[ResolvedTo(RAW_FIR)] T : Int, [ResolvedTo(RAW_FIR)] K> T.resolveMe: K
+            public? [ResolvedTo(RAW_FIR)] get(): K {
+                ^ TODO#()
             }
 
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] propertyWithTypeParametersScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] val <[ResolvedTo(RAW_FIR)] T : R|kotlin/Int|, [ResolvedTo(RAW_FIR)] K> R|T|.resolveMe: R|K|
-            public [ResolvedTo(RAW_FIR)] get(): R|K| {
-                ^ R|kotlin/TODO|()
+        public? final? [ResolvedTo(RAW_FIR)] val <[ResolvedTo(RAW_FIR)] T : Int, [ResolvedTo(RAW_FIR)] K> T.resolveMe: K
+            public? [ResolvedTo(RAW_FIR)] get(): K {
+                ^ TODO#()
             }
 
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] propertyWithTypeParametersScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] val <[ResolvedTo(RAW_FIR)] T : R|kotlin/Int|, [ResolvedTo(RAW_FIR)] K> R|T|.resolveMe: R|K|
-            public [ResolvedTo(RAW_FIR)] get(): R|K| {
-                ^ R|kotlin/TODO|()
+        public? final? [ResolvedTo(RAW_FIR)] val <[ResolvedTo(RAW_FIR)] T : Int, [ResolvedTo(RAW_FIR)] K> T.resolveMe: K
+            public? [ResolvedTo(RAW_FIR)] get(): K {
+                ^ TODO#()
             }
 
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] propertyWithTypeParametersScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] val <[ResolvedTo(RAW_FIR)] T : R|kotlin/Int|, [ResolvedTo(RAW_FIR)] K> R|T|.resolveMe: R|K|
-            public [ResolvedTo(RAW_FIR)] get(): R|K| {
-                ^ R|kotlin/TODO|()
+        public? final? [ResolvedTo(RAW_FIR)] val <[ResolvedTo(RAW_FIR)] T : Int, [ResolvedTo(RAW_FIR)] K> T.resolveMe: K
+            public? [ResolvedTo(RAW_FIR)] get(): K {
+                ^ TODO#()
             }
 
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] propertyWithTypeParametersScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] val <[ResolvedTo(RAW_FIR)] T : R|kotlin/Int|, [ResolvedTo(RAW_FIR)] K> R|T|.resolveMe: R|K|
-            public [ResolvedTo(RAW_FIR)] get(): R|K| {
-                ^ R|kotlin/TODO|()
+        public? final? [ResolvedTo(RAW_FIR)] val <[ResolvedTo(RAW_FIR)] T : Int, [ResolvedTo(RAW_FIR)] K> T.resolveMe: K
+            public? [ResolvedTo(RAW_FIR)] get(): K {
+                ^ TODO#()
             }
 
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] propertyWithTypeParametersScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] val <[ResolvedTo(RAW_FIR)] T : R|kotlin/Int|, [ResolvedTo(RAW_FIR)] K> R|T|.resolveMe: R|K|
-            public [ResolvedTo(RAW_FIR)] get(): R|K| {
-                ^ R|kotlin/TODO|()
+        public? final? [ResolvedTo(RAW_FIR)] val <[ResolvedTo(RAW_FIR)] T : Int, [ResolvedTo(RAW_FIR)] K> T.resolveMe: K
+            public? [ResolvedTo(RAW_FIR)] get(): K {
+                ^ TODO#()
             }
 
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] propertyWithTypeParametersScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] val <[ResolvedTo(RAW_FIR)] T : R|kotlin/Int|, [ResolvedTo(RAW_FIR)] K> R|T|.resolveMe: R|K|
-            public [ResolvedTo(RAW_FIR)] get(): R|K| {
-                ^ R|kotlin/TODO|()
+        public? final? [ResolvedTo(RAW_FIR)] val <[ResolvedTo(RAW_FIR)] T : Int, [ResolvedTo(RAW_FIR)] K> T.resolveMe: K
+            public? [ResolvedTo(RAW_FIR)] get(): K {
+                ^ TODO#()
             }
 
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] propertyWithTypeParametersScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] val <[ResolvedTo(RAW_FIR)] T : R|kotlin/Int|, [ResolvedTo(RAW_FIR)] K> R|T|.resolveMe: R|K|
-            public [ResolvedTo(RAW_FIR)] get(): R|K| {
-                ^ R|kotlin/TODO|()
+        public? final? [ResolvedTo(RAW_FIR)] val <[ResolvedTo(RAW_FIR)] T : Int, [ResolvedTo(RAW_FIR)] K> T.resolveMe: K
+            public? [ResolvedTo(RAW_FIR)] get(): K {
+                ^ TODO#()
             }
 

@@ -1,195 +1,195 @@
 RAW_FIR:
 FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            <Unresolved name: receive>#(R|/property|)
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            receive#(property#)
         }
 
-        public final [ResolvedTo(RAW_FIR)] val property: R|kotlin/Int| = Int(10)
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int|
+        public? final? [ResolvedTo(RAW_FIR)] val property: Int = IntegerLiteral(10)
+            public? [ResolvedTo(RAW_FIR)] get(): Int
 
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            <Unresolved name: receive>#(R|/property|)
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            receive#(property#)
         }
 
-        public final [ResolvedTo(RAW_FIR)] val property: R|kotlin/Int| = Int(10)
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int|
+        public? final? [ResolvedTo(RAW_FIR)] val property: Int = IntegerLiteral(10)
+            public? [ResolvedTo(RAW_FIR)] get(): Int
 
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            <Unresolved name: receive>#(R|/property|)
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            receive#(property#)
         }
 
-        public final [ResolvedTo(RAW_FIR)] val property: R|kotlin/Int| = Int(10)
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int|
+        public? final? [ResolvedTo(RAW_FIR)] val property: Int = IntegerLiteral(10)
+            public? [ResolvedTo(RAW_FIR)] get(): Int
 
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            <Unresolved name: receive>#(R|/property|)
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            receive#(property#)
         }
 
-        public final [ResolvedTo(RAW_FIR)] val property: R|kotlin/Int| = Int(10)
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int|
+        public? final? [ResolvedTo(RAW_FIR)] val property: Int = IntegerLiteral(10)
+            public? [ResolvedTo(RAW_FIR)] get(): Int
 
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            <Unresolved name: receive>#(R|/property|)
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            receive#(property#)
         }
 
-        public final [ResolvedTo(RAW_FIR)] val property: R|kotlin/Int| = Int(10)
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int|
+        public? final? [ResolvedTo(RAW_FIR)] val property: Int = IntegerLiteral(10)
+            public? [ResolvedTo(RAW_FIR)] get(): Int
 
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            <Unresolved name: receive>#(R|/property|)
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            receive#(property#)
         }
 
-        public final [ResolvedTo(RAW_FIR)] val property: R|kotlin/Int| = Int(10)
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int|
+        public? final? [ResolvedTo(RAW_FIR)] val property: Int = IntegerLiteral(10)
+            public? [ResolvedTo(RAW_FIR)] get(): Int
 
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            <Unresolved name: receive>#(R|/property|)
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            receive#(property#)
         }
 
-        public final [ResolvedTo(RAW_FIR)] val property: R|kotlin/Int| = Int(10)
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int|
+        public? final? [ResolvedTo(RAW_FIR)] val property: Int = IntegerLiteral(10)
+            public? [ResolvedTo(RAW_FIR)] get(): Int
 
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            <Unresolved name: receive>#(R|/property|)
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            receive#(property#)
         }
 
-        public final [ResolvedTo(RAW_FIR)] val property: R|kotlin/Int| = Int(10)
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int|
+        public? final? [ResolvedTo(RAW_FIR)] val property: Int = IntegerLiteral(10)
+            public? [ResolvedTo(RAW_FIR)] get(): Int
 
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            <Unresolved name: receive>#(R|/property|)
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            receive#(property#)
         }
 
-        public final [ResolvedTo(RAW_FIR)] val property: R|kotlin/Int| = Int(10)
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int|
+        public? final? [ResolvedTo(RAW_FIR)] val property: Int = IntegerLiteral(10)
+            public? [ResolvedTo(RAW_FIR)] get(): Int
 
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            <Unresolved name: receive>#(R|/property|)
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            receive#(property#)
         }
 
-        public final [ResolvedTo(RAW_FIR)] val property: R|kotlin/Int| = Int(10)
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int|
+        public? final? [ResolvedTo(RAW_FIR)] val property: Int = IntegerLiteral(10)
+            public? [ResolvedTo(RAW_FIR)] get(): Int
 
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            <Unresolved name: receive>#(R|/property|)
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            receive#(property#)
         }
 
-        public final [ResolvedTo(RAW_FIR)] val property: R|kotlin/Int| = Int(10)
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int|
+        public? final? [ResolvedTo(RAW_FIR)] val property: Int = IntegerLiteral(10)
+            public? [ResolvedTo(RAW_FIR)] get(): Int
 
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            <Unresolved name: receive>#(R|/property|)
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            receive#(property#)
         }
 
-        public final [ResolvedTo(RAW_FIR)] val property: R|kotlin/Int| = Int(10)
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int|
+        public? final? [ResolvedTo(RAW_FIR)] val property: Int = IntegerLiteral(10)
+            public? [ResolvedTo(RAW_FIR)] get(): Int
 
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            <Unresolved name: receive>#(R|/property|)
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            receive#(property#)
         }
 
-        public final [ResolvedTo(RAW_FIR)] val property: R|kotlin/Int| = Int(10)
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int|
+        public? final? [ResolvedTo(RAW_FIR)] val property: Int = IntegerLiteral(10)
+            public? [ResolvedTo(RAW_FIR)] get(): Int
 
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            <Unresolved name: receive>#(R|/property|)
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            receive#(property#)
         }
 
-        public final [ResolvedTo(RAW_FIR)] val property: R|kotlin/Int| = Int(10)
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int|
+        public? final? [ResolvedTo(RAW_FIR)] val property: Int = IntegerLiteral(10)
+            public? [ResolvedTo(RAW_FIR)] get(): Int
 

@@ -3,28 +3,28 @@ FIR element: FirAnnotationCallImpl
 FIR source kind: FromUseSiteTarget
 
 FIR element rendered:
-@SETTER_PARAMETER:R|Ann|[Types]()
+@SETTER_PARAMETER:Ann[Unresolved]()
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] setParamScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] annotation class Ann : R|kotlin/Annotation| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Ann] constructor(): R|Ann| {
+        public? final? [ResolvedTo(RAW_FIR)] annotation class Ann : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|Ann| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/X.x] x: R|kotlin/Int|): R|X| {
+        public? final? [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/X.x] x: Int): R|X| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] var x: R|kotlin/Int| = R|<local>/x|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=X] get(): R|kotlin/Int|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=X] set([ResolvedTo(STATUS)] @SETTER_PARAMETER:R|Ann|[Types]() value: R|kotlin/Int|): R|kotlin/Unit|
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] var x: Int = R|<local>/x|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] get(): Int
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] set([ResolvedTo(RAW_FIR)] @SETTER_PARAMETER:Ann[Unresolved]() value: Int): R|kotlin/Unit|
 
         }

@@ -1,17 +1,17 @@
 FILE: [ResolvedTo(IMPORTS)] initBlockScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] constructor(): R|A| {
+        public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] constructor(): R|A| {
                 super<R|kotlin/Any|>()
             }
 
             init {
-                [ResolvedTo(RAW_FIR)] lval x: R|kotlin/Int| = Int(10)
-                local final [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
-                    public [ResolvedTo(RAW_FIR)] constructor(): R|A.B| {
+                [ResolvedTo(RAW_FIR)] lval x: <implicit> = IntegerLiteral(10)
+                local final? [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
+                    public? [ResolvedTo(RAW_FIR)] constructor(): R|A.B| {
                         super<R|kotlin/Any|>()
                     }
 

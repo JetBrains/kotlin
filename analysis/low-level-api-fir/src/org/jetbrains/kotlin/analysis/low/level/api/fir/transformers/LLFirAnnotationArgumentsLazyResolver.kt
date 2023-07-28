@@ -113,6 +113,8 @@ internal fun LLFirAbstractBodyTargetResolver.transformAnnotations(target: FirEle
             target.transformSingle(transformer, ResolutionMode.ContextIndependent)
         }
 
+        target is FirScript -> {}
+
         else -> throwUnexpectedFirElementError(target)
     }
 }
@@ -124,7 +126,6 @@ internal val FirElementWithResolveState.isRegularDeclarationWithAnnotation: Bool
         is FirDanglingModifierList,
         is FirFileAnnotationsContainer,
         is FirTypeAlias,
-        is FirScript,
         -> true
         else -> false
     }

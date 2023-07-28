@@ -1,29 +1,29 @@
 RAW_FIR:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCallScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
-            public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] param: R|kotlin/String|): R|kotlin/Unit|
+        public? final? [ResolvedTo(RAW_FIR)] interface Interface : R|kotlin/Any| {
+            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: String): R|kotlin/Unit|
 
         }
 
-        public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|one/Interface|): R|one/ClassWithParameter| {
+        public? open [ResolvedTo(RAW_FIR)] class ClassWithParameter : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(RAW_FIR)] i: Interface): R|one/ClassWithParameter| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] class TopLevelClass : R|one/ClassWithParameter| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
-                super<R|one/ClassWithParameter|>(object : R|one/Interface| {
+        public? final? [ResolvedTo(RAW_FIR)] class TopLevelClass : ClassWithParameter {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+                super<ClassWithParameter>(object : Interface {
                     private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
-                        super<R|kotlin/Any|>()
+                        super<<implicit>>()
                     }
 
-                    public open override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/String|): R|kotlin/Unit| {
+                    public? open? override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: String): R|kotlin/Unit| {
                     }
 
                 }
@@ -35,30 +35,30 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCallScript.kts
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCallScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
-            public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] param: R|kotlin/String|): R|kotlin/Unit|
+        public? final? [ResolvedTo(RAW_FIR)] interface Interface : R|kotlin/Any| {
+            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: String): R|kotlin/Unit|
 
         }
 
-        public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|one/Interface|): R|one/ClassWithParameter| {
+        public? open [ResolvedTo(RAW_FIR)] class ClassWithParameter : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(RAW_FIR)] i: Interface): R|one/ClassWithParameter| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] class TopLevelClass : R|one/ClassWithParameter| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
-                super<R|one/ClassWithParameter|>(object : R|one/Interface| {
+        public? final? [ResolvedTo(RAW_FIR)] class TopLevelClass : ClassWithParameter {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+                super<ClassWithParameter>(object : Interface {
                     private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
-                        super<R|kotlin/Any|>()
+                        super<<implicit>>()
                     }
 
-                    public open override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/String|): R|kotlin/Unit| {
+                    public? open? override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: String): R|kotlin/Unit| {
                     }
 
                 }
@@ -70,30 +70,30 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCallScript.kts
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCallScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
-            public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] param: R|kotlin/String|): R|kotlin/Unit|
+        public? final? [ResolvedTo(RAW_FIR)] interface Interface : R|kotlin/Any| {
+            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: String): R|kotlin/Unit|
 
         }
 
-        public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|one/Interface|): R|one/ClassWithParameter| {
+        public? open [ResolvedTo(RAW_FIR)] class ClassWithParameter : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(RAW_FIR)] i: Interface): R|one/ClassWithParameter| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] class TopLevelClass : R|one/ClassWithParameter| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
-                super<R|one/ClassWithParameter|>(object : R|one/Interface| {
+        public? final? [ResolvedTo(RAW_FIR)] class TopLevelClass : ClassWithParameter {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+                super<ClassWithParameter>(object : Interface {
                     private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
-                        super<R|kotlin/Any|>()
+                        super<<implicit>>()
                     }
 
-                    public open override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/String|): R|kotlin/Unit| {
+                    public? open? override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: String): R|kotlin/Unit| {
                     }
 
                 }
@@ -105,30 +105,30 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCallScript.kts
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCallScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
-            public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] param: R|kotlin/String|): R|kotlin/Unit|
+        public? final? [ResolvedTo(RAW_FIR)] interface Interface : R|kotlin/Any| {
+            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: String): R|kotlin/Unit|
 
         }
 
-        public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|one/Interface|): R|one/ClassWithParameter| {
+        public? open [ResolvedTo(RAW_FIR)] class ClassWithParameter : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(RAW_FIR)] i: Interface): R|one/ClassWithParameter| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] class TopLevelClass : R|one/ClassWithParameter| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
-                super<R|one/ClassWithParameter|>(object : R|one/Interface| {
+        public? final? [ResolvedTo(RAW_FIR)] class TopLevelClass : ClassWithParameter {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+                super<ClassWithParameter>(object : Interface {
                     private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
-                        super<R|kotlin/Any|>()
+                        super<<implicit>>()
                     }
 
-                    public open override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/String|): R|kotlin/Unit| {
+                    public? open? override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: String): R|kotlin/Unit| {
                     }
 
                 }
@@ -140,30 +140,30 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCallScript.kts
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCallScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
-            public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] param: R|kotlin/String|): R|kotlin/Unit|
+        public? final? [ResolvedTo(RAW_FIR)] interface Interface : R|kotlin/Any| {
+            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: String): R|kotlin/Unit|
 
         }
 
-        public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|one/Interface|): R|one/ClassWithParameter| {
+        public? open [ResolvedTo(RAW_FIR)] class ClassWithParameter : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(RAW_FIR)] i: Interface): R|one/ClassWithParameter| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] class TopLevelClass : R|one/ClassWithParameter| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
-                super<R|one/ClassWithParameter|>(object : R|one/Interface| {
+        public? final? [ResolvedTo(RAW_FIR)] class TopLevelClass : ClassWithParameter {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+                super<ClassWithParameter>(object : Interface {
                     private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
-                        super<R|kotlin/Any|>()
+                        super<<implicit>>()
                     }
 
-                    public open override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/String|): R|kotlin/Unit| {
+                    public? open? override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: String): R|kotlin/Unit| {
                     }
 
                 }
@@ -175,30 +175,30 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCallScript.kts
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCallScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
-            public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] param: R|kotlin/String|): R|kotlin/Unit|
+        public? final? [ResolvedTo(RAW_FIR)] interface Interface : R|kotlin/Any| {
+            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: String): R|kotlin/Unit|
 
         }
 
-        public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|one/Interface|): R|one/ClassWithParameter| {
+        public? open [ResolvedTo(RAW_FIR)] class ClassWithParameter : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(RAW_FIR)] i: Interface): R|one/ClassWithParameter| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] class TopLevelClass : R|one/ClassWithParameter| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
-                super<R|one/ClassWithParameter|>(object : R|one/Interface| {
+        public? final? [ResolvedTo(RAW_FIR)] class TopLevelClass : ClassWithParameter {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+                super<ClassWithParameter>(object : Interface {
                     private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
-                        super<R|kotlin/Any|>()
+                        super<<implicit>>()
                     }
 
-                    public open override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/String|): R|kotlin/Unit| {
+                    public? open? override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: String): R|kotlin/Unit| {
                     }
 
                 }
@@ -210,30 +210,30 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCallScript.kts
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCallScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
-            public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] param: R|kotlin/String|): R|kotlin/Unit|
+        public? final? [ResolvedTo(RAW_FIR)] interface Interface : R|kotlin/Any| {
+            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: String): R|kotlin/Unit|
 
         }
 
-        public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|one/Interface|): R|one/ClassWithParameter| {
+        public? open [ResolvedTo(RAW_FIR)] class ClassWithParameter : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(RAW_FIR)] i: Interface): R|one/ClassWithParameter| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] class TopLevelClass : R|one/ClassWithParameter| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
-                super<R|one/ClassWithParameter|>(object : R|one/Interface| {
+        public? final? [ResolvedTo(RAW_FIR)] class TopLevelClass : ClassWithParameter {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+                super<ClassWithParameter>(object : Interface {
                     private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
-                        super<R|kotlin/Any|>()
+                        super<<implicit>>()
                     }
 
-                    public open override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/String|): R|kotlin/Unit| {
+                    public? open? override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: String): R|kotlin/Unit| {
                     }
 
                 }
@@ -245,30 +245,30 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCallScript.kts
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCallScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
-            public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] param: R|kotlin/String|): R|kotlin/Unit|
+        public? final? [ResolvedTo(RAW_FIR)] interface Interface : R|kotlin/Any| {
+            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: String): R|kotlin/Unit|
 
         }
 
-        public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|one/Interface|): R|one/ClassWithParameter| {
+        public? open [ResolvedTo(RAW_FIR)] class ClassWithParameter : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(RAW_FIR)] i: Interface): R|one/ClassWithParameter| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] class TopLevelClass : R|one/ClassWithParameter| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
-                super<R|one/ClassWithParameter|>(object : R|one/Interface| {
+        public? final? [ResolvedTo(RAW_FIR)] class TopLevelClass : ClassWithParameter {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+                super<ClassWithParameter>(object : Interface {
                     private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
-                        super<R|kotlin/Any|>()
+                        super<<implicit>>()
                     }
 
-                    public open override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/String|): R|kotlin/Unit| {
+                    public? open? override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: String): R|kotlin/Unit| {
                     }
 
                 }
@@ -280,30 +280,30 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCallScript.kts
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCallScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
-            public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] param: R|kotlin/String|): R|kotlin/Unit|
+        public? final? [ResolvedTo(RAW_FIR)] interface Interface : R|kotlin/Any| {
+            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: String): R|kotlin/Unit|
 
         }
 
-        public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|one/Interface|): R|one/ClassWithParameter| {
+        public? open [ResolvedTo(RAW_FIR)] class ClassWithParameter : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(RAW_FIR)] i: Interface): R|one/ClassWithParameter| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] class TopLevelClass : R|one/ClassWithParameter| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
-                super<R|one/ClassWithParameter|>(object : R|one/Interface| {
+        public? final? [ResolvedTo(RAW_FIR)] class TopLevelClass : ClassWithParameter {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+                super<ClassWithParameter>(object : Interface {
                     private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
-                        super<R|kotlin/Any|>()
+                        super<<implicit>>()
                     }
 
-                    public open override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/String|): R|kotlin/Unit| {
+                    public? open? override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: String): R|kotlin/Unit| {
                     }
 
                 }
@@ -315,30 +315,30 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCallScript.kts
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCallScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
-            public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] param: R|kotlin/String|): R|kotlin/Unit|
+        public? final? [ResolvedTo(RAW_FIR)] interface Interface : R|kotlin/Any| {
+            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: String): R|kotlin/Unit|
 
         }
 
-        public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|one/Interface|): R|one/ClassWithParameter| {
+        public? open [ResolvedTo(RAW_FIR)] class ClassWithParameter : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(RAW_FIR)] i: Interface): R|one/ClassWithParameter| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] class TopLevelClass : R|one/ClassWithParameter| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
-                super<R|one/ClassWithParameter|>(object : R|one/Interface| {
+        public? final? [ResolvedTo(RAW_FIR)] class TopLevelClass : ClassWithParameter {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+                super<ClassWithParameter>(object : Interface {
                     private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
-                        super<R|kotlin/Any|>()
+                        super<<implicit>>()
                     }
 
-                    public open override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/String|): R|kotlin/Unit| {
+                    public? open? override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: String): R|kotlin/Unit| {
                     }
 
                 }
@@ -350,30 +350,30 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCallScript.kts
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCallScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
-            public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] param: R|kotlin/String|): R|kotlin/Unit|
+        public? final? [ResolvedTo(RAW_FIR)] interface Interface : R|kotlin/Any| {
+            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: String): R|kotlin/Unit|
 
         }
 
-        public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|one/Interface|): R|one/ClassWithParameter| {
+        public? open [ResolvedTo(RAW_FIR)] class ClassWithParameter : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(RAW_FIR)] i: Interface): R|one/ClassWithParameter| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] class TopLevelClass : R|one/ClassWithParameter| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
-                super<R|one/ClassWithParameter|>(object : R|one/Interface| {
+        public? final? [ResolvedTo(RAW_FIR)] class TopLevelClass : ClassWithParameter {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+                super<ClassWithParameter>(object : Interface {
                     private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
-                        super<R|kotlin/Any|>()
+                        super<<implicit>>()
                     }
 
-                    public open override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/String|): R|kotlin/Unit| {
+                    public? open? override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: String): R|kotlin/Unit| {
                     }
 
                 }
@@ -385,30 +385,30 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCallScript.kts
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCallScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
-            public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] param: R|kotlin/String|): R|kotlin/Unit|
+        public? final? [ResolvedTo(RAW_FIR)] interface Interface : R|kotlin/Any| {
+            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: String): R|kotlin/Unit|
 
         }
 
-        public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|one/Interface|): R|one/ClassWithParameter| {
+        public? open [ResolvedTo(RAW_FIR)] class ClassWithParameter : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(RAW_FIR)] i: Interface): R|one/ClassWithParameter| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] class TopLevelClass : R|one/ClassWithParameter| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
-                super<R|one/ClassWithParameter|>(object : R|one/Interface| {
+        public? final? [ResolvedTo(RAW_FIR)] class TopLevelClass : ClassWithParameter {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+                super<ClassWithParameter>(object : Interface {
                     private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
-                        super<R|kotlin/Any|>()
+                        super<<implicit>>()
                     }
 
-                    public open override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/String|): R|kotlin/Unit| {
+                    public? open? override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: String): R|kotlin/Unit| {
                     }
 
                 }
@@ -420,30 +420,30 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCallScript.kts
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCallScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
-            public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] param: R|kotlin/String|): R|kotlin/Unit|
+        public? final? [ResolvedTo(RAW_FIR)] interface Interface : R|kotlin/Any| {
+            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: String): R|kotlin/Unit|
 
         }
 
-        public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|one/Interface|): R|one/ClassWithParameter| {
+        public? open [ResolvedTo(RAW_FIR)] class ClassWithParameter : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(RAW_FIR)] i: Interface): R|one/ClassWithParameter| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] class TopLevelClass : R|one/ClassWithParameter| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
-                super<R|one/ClassWithParameter|>(object : R|one/Interface| {
+        public? final? [ResolvedTo(RAW_FIR)] class TopLevelClass : ClassWithParameter {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+                super<ClassWithParameter>(object : Interface {
                     private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
-                        super<R|kotlin/Any|>()
+                        super<<implicit>>()
                     }
 
-                    public open override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/String|): R|kotlin/Unit| {
+                    public? open? override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: String): R|kotlin/Unit| {
                     }
 
                 }
@@ -455,30 +455,30 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCallScript.kts
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCallScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
-            public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] param: R|kotlin/String|): R|kotlin/Unit|
+        public? final? [ResolvedTo(RAW_FIR)] interface Interface : R|kotlin/Any| {
+            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: String): R|kotlin/Unit|
 
         }
 
-        public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|one/Interface|): R|one/ClassWithParameter| {
+        public? open [ResolvedTo(RAW_FIR)] class ClassWithParameter : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(RAW_FIR)] i: Interface): R|one/ClassWithParameter| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] class TopLevelClass : R|one/ClassWithParameter| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
-                super<R|one/ClassWithParameter|>(object : R|one/Interface| {
+        public? final? [ResolvedTo(RAW_FIR)] class TopLevelClass : ClassWithParameter {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+                super<ClassWithParameter>(object : Interface {
                     private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
-                        super<R|kotlin/Any|>()
+                        super<<implicit>>()
                     }
 
-                    public open override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/String|): R|kotlin/Unit| {
+                    public? open? override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: String): R|kotlin/Unit| {
                     }
 
                 }

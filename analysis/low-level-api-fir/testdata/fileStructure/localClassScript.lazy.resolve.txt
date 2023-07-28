@@ -1,11 +1,11 @@
 FILE: [ResolvedTo(IMPORTS)] localClassScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun a(): R|kotlin/Unit| {
-            local final [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
-                public [ResolvedTo(RAW_FIR)] constructor(): R|X| {
+        public? final? [ResolvedTo(RAW_FIR)] fun a(): R|kotlin/Unit| {
+            local final? [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] constructor(): R|X| {
                     super<R|kotlin/Any|>()
                 }
 
@@ -13,14 +13,14 @@ FILE: [ResolvedTo(IMPORTS)] localClassScript.kts
 
         }
 
-        public final [ResolvedTo(STATUS)] class Y : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] constructor(): R|Y| {
+        public? final? [ResolvedTo(RAW_FIR)] class Y : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] constructor(): R|Y| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] fun b(): R|kotlin/Unit| {
-                local final [ResolvedTo(RAW_FIR)] class Z : R|kotlin/Any| {
-                    public [ResolvedTo(RAW_FIR)] constructor(): R|Y.Z| {
+            public? final? [ResolvedTo(RAW_FIR)] fun b(): R|kotlin/Unit| {
+                local final? [ResolvedTo(RAW_FIR)] class Z : R|kotlin/Any| {
+                    public? [ResolvedTo(RAW_FIR)] constructor(): R|Y.Z| {
                         super<R|kotlin/Any|>()
                     }
 

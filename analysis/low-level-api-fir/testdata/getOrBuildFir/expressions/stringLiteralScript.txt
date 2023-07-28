@@ -7,9 +7,9 @@ String(string)
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] stringLiteralScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] val x: R|kotlin/String| = String(string)
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/String|
+        public? final? [ResolvedTo(RAW_FIR)] val x: <implicit> = String(string)
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>

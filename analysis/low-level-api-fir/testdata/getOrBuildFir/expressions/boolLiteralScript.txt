@@ -7,9 +7,9 @@ Boolean(true)
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] boolLiteralScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] val x: R|kotlin/Boolean| = Boolean(true)
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Boolean|
+        public? final? [ResolvedTo(RAW_FIR)] val x: <implicit> = Boolean(true)
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>

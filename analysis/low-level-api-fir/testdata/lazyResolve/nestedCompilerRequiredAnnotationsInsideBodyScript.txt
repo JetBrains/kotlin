@@ -1,47 +1,47 @@
 RAW_FIR:
 FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+        public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun test(): R|kotlin/Unit| {
-            @R|kotlin/Deprecated|[Types](message = String(FirstClass)) @R|Anno|[Types](s = String(FirstClass)) local final [ResolvedTo(RAW_FIR)] class FirstClass : R|kotlin/Any| {
-                @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/a] @R|Anno|[Types](s = String(constructorProperty)) a: R|kotlin/Int|): R|FirstClass| {
+        public? final? [ResolvedTo(RAW_FIR)] fun test(): R|kotlin/Unit| {
+            @Deprecated[Unresolved](String(FirstClass)) @Anno[Unresolved](String(FirstClass)) local final? [ResolvedTo(RAW_FIR)] class FirstClass : R|kotlin/Any| {
+                @Deprecated[Unresolved](String(constructor)) @Anno[Unresolved](String(constructor)) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/a] @Deprecated[Unresolved](String(constructorProperty)) @Anno[Unresolved](String(constructorProperty)) a: Int): R|FirstClass| {
                     super<R|kotlin/Any|>()
                 }
 
-                @R|kotlin/Deprecated|[Types](message = String(constructorProperty)) public final [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
-                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): R|kotlin/Int|
+                @Deprecated[Unresolved](String(constructorProperty)) @Anno[Unresolved](String(constructorProperty)) public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): Int
 
-                @R|kotlin/Deprecated|[Types](message = String(memberFunction)) @R|Anno|[Types](s = String(memberFunction)) public final [ResolvedTo(RAW_FIR)] fun memberFunction(): R|kotlin/Unit| {
+                @Deprecated[Unresolved](String(memberFunction)) @Anno[Unresolved](String(memberFunction)) public? final? [ResolvedTo(RAW_FIR)] fun memberFunction(): R|kotlin/Unit| {
                 }
 
-                @R|kotlin/Deprecated|[Types](message = String(memberProperty)) @R|Anno|[Types](s = String(memberProperty)) public final [ResolvedTo(RAW_FIR)] val memberProperty: R|kotlin/Int| = Int(32)
-                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): R|kotlin/Int|
+                @Deprecated[Unresolved](String(memberProperty)) @Anno[Unresolved](String(memberProperty)) public? final? [ResolvedTo(RAW_FIR)] val memberProperty: <implicit> = IntegerLiteral(32)
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): <implicit>
 
             }
 
-            @R|kotlin/Deprecated|[Types](message = String(anotherFunction)) @R|Anno|[Types](s = String(anotherFunction)) local final [ResolvedTo(RAW_FIR)] fun anotherFunction(): R|kotlin/Unit| {
+            @Deprecated[Unresolved](String(anotherFunction)) @Anno[Unresolved](String(anotherFunction)) local final? [ResolvedTo(RAW_FIR)] fun anotherFunction(): R|kotlin/Unit| {
             }
 
         }
 
-        @R|kotlin/Deprecated|[Types](message = String(AnotherClass)) @R|Anno|[Types](s = String(AnotherClass)) public final [ResolvedTo(STATUS)] class AnotherClass : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherClass] constructor(): R|AnotherClass| {
+        @Deprecated[Unresolved](String(AnotherClass)) @Anno[Unresolved](String(AnotherClass)) public? final? [ResolvedTo(RAW_FIR)] class AnotherClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherClass] constructor(): R|AnotherClass| {
                 super<R|kotlin/Any|>()
             }
 
-            @R|kotlin/Deprecated|[Types](message = String(memberFunction)) @R|Anno|[Types](s = String(memberFunction)) public final [ResolvedTo(STATUS)] fun memberFunction(): R|kotlin/Unit| {
+            @Deprecated[Unresolved](String(memberFunction)) @Anno[Unresolved](String(memberFunction)) public? final? [ResolvedTo(RAW_FIR)] fun memberFunction(): R|kotlin/Unit| {
             }
 
         }
@@ -49,48 +49,48 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kt
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+        public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun test(): R|kotlin/Unit| {
-            @R|kotlin/Deprecated|[Types](message = String(FirstClass)) @R|Anno|[Types](s = String(FirstClass)) local final [ResolvedTo(RAW_FIR)] class FirstClass : R|kotlin/Any| {
-                @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/a] @R|Anno|[Types](s = String(constructorProperty)) a: R|kotlin/Int|): R|FirstClass| {
+        public? final? [ResolvedTo(RAW_FIR)] fun test(): R|kotlin/Unit| {
+            @Deprecated[Unresolved](String(FirstClass)) @Anno[Unresolved](String(FirstClass)) local final? [ResolvedTo(RAW_FIR)] class FirstClass : R|kotlin/Any| {
+                @Deprecated[Unresolved](String(constructor)) @Anno[Unresolved](String(constructor)) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/a] @Deprecated[Unresolved](String(constructorProperty)) @Anno[Unresolved](String(constructorProperty)) a: Int): R|FirstClass| {
                     super<R|kotlin/Any|>()
                 }
 
-                @R|kotlin/Deprecated|[Types](message = String(constructorProperty)) public final [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
-                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): R|kotlin/Int|
+                @Deprecated[Unresolved](String(constructorProperty)) @Anno[Unresolved](String(constructorProperty)) public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): Int
 
-                @R|kotlin/Deprecated|[Types](message = String(memberFunction)) @R|Anno|[Types](s = String(memberFunction)) public final [ResolvedTo(RAW_FIR)] fun memberFunction(): R|kotlin/Unit| {
+                @Deprecated[Unresolved](String(memberFunction)) @Anno[Unresolved](String(memberFunction)) public? final? [ResolvedTo(RAW_FIR)] fun memberFunction(): R|kotlin/Unit| {
                 }
 
-                @R|kotlin/Deprecated|[Types](message = String(memberProperty)) @R|Anno|[Types](s = String(memberProperty)) public final [ResolvedTo(RAW_FIR)] val memberProperty: R|kotlin/Int| = Int(32)
-                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): R|kotlin/Int|
+                @Deprecated[Unresolved](String(memberProperty)) @Anno[Unresolved](String(memberProperty)) public? final? [ResolvedTo(RAW_FIR)] val memberProperty: <implicit> = IntegerLiteral(32)
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): <implicit>
 
             }
 
-            @R|kotlin/Deprecated|[Types](message = String(anotherFunction)) @R|Anno|[Types](s = String(anotherFunction)) local final [ResolvedTo(RAW_FIR)] fun anotherFunction(): R|kotlin/Unit| {
+            @Deprecated[Unresolved](String(anotherFunction)) @Anno[Unresolved](String(anotherFunction)) local final? [ResolvedTo(RAW_FIR)] fun anotherFunction(): R|kotlin/Unit| {
             }
 
         }
 
-        @R|kotlin/Deprecated|[Types](message = String(AnotherClass)) @R|Anno|[Types](s = String(AnotherClass)) public final [ResolvedTo(STATUS)] class AnotherClass : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherClass] constructor(): R|AnotherClass| {
+        @Deprecated[Unresolved](String(AnotherClass)) @Anno[Unresolved](String(AnotherClass)) public? final? [ResolvedTo(RAW_FIR)] class AnotherClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherClass] constructor(): R|AnotherClass| {
                 super<R|kotlin/Any|>()
             }
 
-            @R|kotlin/Deprecated|[Types](message = String(memberFunction)) @R|Anno|[Types](s = String(memberFunction)) public final [ResolvedTo(STATUS)] fun memberFunction(): R|kotlin/Unit| {
+            @Deprecated[Unresolved](String(memberFunction)) @Anno[Unresolved](String(memberFunction)) public? final? [ResolvedTo(RAW_FIR)] fun memberFunction(): R|kotlin/Unit| {
             }
 
         }
@@ -98,48 +98,48 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+        public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun test(): R|kotlin/Unit| {
-            @R|kotlin/Deprecated|[Types](message = String(FirstClass)) @R|Anno|[Types](s = String(FirstClass)) local final [ResolvedTo(RAW_FIR)] class FirstClass : R|kotlin/Any| {
-                @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/a] @R|Anno|[Types](s = String(constructorProperty)) a: R|kotlin/Int|): R|FirstClass| {
+        public? final? [ResolvedTo(RAW_FIR)] fun test(): R|kotlin/Unit| {
+            @Deprecated[Unresolved](String(FirstClass)) @Anno[Unresolved](String(FirstClass)) local final? [ResolvedTo(RAW_FIR)] class FirstClass : R|kotlin/Any| {
+                @Deprecated[Unresolved](String(constructor)) @Anno[Unresolved](String(constructor)) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/a] @Deprecated[Unresolved](String(constructorProperty)) @Anno[Unresolved](String(constructorProperty)) a: Int): R|FirstClass| {
                     super<R|kotlin/Any|>()
                 }
 
-                @R|kotlin/Deprecated|[Types](message = String(constructorProperty)) public final [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
-                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): R|kotlin/Int|
+                @Deprecated[Unresolved](String(constructorProperty)) @Anno[Unresolved](String(constructorProperty)) public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): Int
 
-                @R|kotlin/Deprecated|[Types](message = String(memberFunction)) @R|Anno|[Types](s = String(memberFunction)) public final [ResolvedTo(RAW_FIR)] fun memberFunction(): R|kotlin/Unit| {
+                @Deprecated[Unresolved](String(memberFunction)) @Anno[Unresolved](String(memberFunction)) public? final? [ResolvedTo(RAW_FIR)] fun memberFunction(): R|kotlin/Unit| {
                 }
 
-                @R|kotlin/Deprecated|[Types](message = String(memberProperty)) @R|Anno|[Types](s = String(memberProperty)) public final [ResolvedTo(RAW_FIR)] val memberProperty: R|kotlin/Int| = Int(32)
-                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): R|kotlin/Int|
+                @Deprecated[Unresolved](String(memberProperty)) @Anno[Unresolved](String(memberProperty)) public? final? [ResolvedTo(RAW_FIR)] val memberProperty: <implicit> = IntegerLiteral(32)
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): <implicit>
 
             }
 
-            @R|kotlin/Deprecated|[Types](message = String(anotherFunction)) @R|Anno|[Types](s = String(anotherFunction)) local final [ResolvedTo(RAW_FIR)] fun anotherFunction(): R|kotlin/Unit| {
+            @Deprecated[Unresolved](String(anotherFunction)) @Anno[Unresolved](String(anotherFunction)) local final? [ResolvedTo(RAW_FIR)] fun anotherFunction(): R|kotlin/Unit| {
             }
 
         }
 
-        @R|kotlin/Deprecated|[Types](message = String(AnotherClass)) @R|Anno|[Types](s = String(AnotherClass)) public final [ResolvedTo(STATUS)] class AnotherClass : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherClass] constructor(): R|AnotherClass| {
+        @Deprecated[Unresolved](String(AnotherClass)) @Anno[Unresolved](String(AnotherClass)) public? final? [ResolvedTo(RAW_FIR)] class AnotherClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherClass] constructor(): R|AnotherClass| {
                 super<R|kotlin/Any|>()
             }
 
-            @R|kotlin/Deprecated|[Types](message = String(memberFunction)) @R|Anno|[Types](s = String(memberFunction)) public final [ResolvedTo(STATUS)] fun memberFunction(): R|kotlin/Unit| {
+            @Deprecated[Unresolved](String(memberFunction)) @Anno[Unresolved](String(memberFunction)) public? final? [ResolvedTo(RAW_FIR)] fun memberFunction(): R|kotlin/Unit| {
             }
 
         }
@@ -147,48 +147,48 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kt
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+        public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun test(): R|kotlin/Unit| {
-            @R|kotlin/Deprecated|[Types](message = String(FirstClass)) @R|Anno|[Types](s = String(FirstClass)) local final [ResolvedTo(RAW_FIR)] class FirstClass : R|kotlin/Any| {
-                @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/a] @R|Anno|[Types](s = String(constructorProperty)) a: R|kotlin/Int|): R|FirstClass| {
+        public? final? [ResolvedTo(RAW_FIR)] fun test(): R|kotlin/Unit| {
+            @Deprecated[Unresolved](String(FirstClass)) @Anno[Unresolved](String(FirstClass)) local final? [ResolvedTo(RAW_FIR)] class FirstClass : R|kotlin/Any| {
+                @Deprecated[Unresolved](String(constructor)) @Anno[Unresolved](String(constructor)) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/a] @Deprecated[Unresolved](String(constructorProperty)) @Anno[Unresolved](String(constructorProperty)) a: Int): R|FirstClass| {
                     super<R|kotlin/Any|>()
                 }
 
-                @R|kotlin/Deprecated|[Types](message = String(constructorProperty)) public final [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
-                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): R|kotlin/Int|
+                @Deprecated[Unresolved](String(constructorProperty)) @Anno[Unresolved](String(constructorProperty)) public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): Int
 
-                @R|kotlin/Deprecated|[Types](message = String(memberFunction)) @R|Anno|[Types](s = String(memberFunction)) public final [ResolvedTo(RAW_FIR)] fun memberFunction(): R|kotlin/Unit| {
+                @Deprecated[Unresolved](String(memberFunction)) @Anno[Unresolved](String(memberFunction)) public? final? [ResolvedTo(RAW_FIR)] fun memberFunction(): R|kotlin/Unit| {
                 }
 
-                @R|kotlin/Deprecated|[Types](message = String(memberProperty)) @R|Anno|[Types](s = String(memberProperty)) public final [ResolvedTo(RAW_FIR)] val memberProperty: R|kotlin/Int| = Int(32)
-                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): R|kotlin/Int|
+                @Deprecated[Unresolved](String(memberProperty)) @Anno[Unresolved](String(memberProperty)) public? final? [ResolvedTo(RAW_FIR)] val memberProperty: <implicit> = IntegerLiteral(32)
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): <implicit>
 
             }
 
-            @R|kotlin/Deprecated|[Types](message = String(anotherFunction)) @R|Anno|[Types](s = String(anotherFunction)) local final [ResolvedTo(RAW_FIR)] fun anotherFunction(): R|kotlin/Unit| {
+            @Deprecated[Unresolved](String(anotherFunction)) @Anno[Unresolved](String(anotherFunction)) local final? [ResolvedTo(RAW_FIR)] fun anotherFunction(): R|kotlin/Unit| {
             }
 
         }
 
-        @R|kotlin/Deprecated|[Types](message = String(AnotherClass)) @R|Anno|[Types](s = String(AnotherClass)) public final [ResolvedTo(STATUS)] class AnotherClass : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherClass] constructor(): R|AnotherClass| {
+        @Deprecated[Unresolved](String(AnotherClass)) @Anno[Unresolved](String(AnotherClass)) public? final? [ResolvedTo(RAW_FIR)] class AnotherClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherClass] constructor(): R|AnotherClass| {
                 super<R|kotlin/Any|>()
             }
 
-            @R|kotlin/Deprecated|[Types](message = String(memberFunction)) @R|Anno|[Types](s = String(memberFunction)) public final [ResolvedTo(STATUS)] fun memberFunction(): R|kotlin/Unit| {
+            @Deprecated[Unresolved](String(memberFunction)) @Anno[Unresolved](String(memberFunction)) public? final? [ResolvedTo(RAW_FIR)] fun memberFunction(): R|kotlin/Unit| {
             }
 
         }
@@ -196,48 +196,48 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kt
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+        public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun test(): R|kotlin/Unit| {
-            @R|kotlin/Deprecated|[Types](message = String(FirstClass)) @R|Anno|[Types](s = String(FirstClass)) local final [ResolvedTo(RAW_FIR)] class FirstClass : R|kotlin/Any| {
-                @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/a] @R|Anno|[Types](s = String(constructorProperty)) a: R|kotlin/Int|): R|FirstClass| {
+        public? final? [ResolvedTo(RAW_FIR)] fun test(): R|kotlin/Unit| {
+            @Deprecated[Unresolved](String(FirstClass)) @Anno[Unresolved](String(FirstClass)) local final? [ResolvedTo(RAW_FIR)] class FirstClass : R|kotlin/Any| {
+                @Deprecated[Unresolved](String(constructor)) @Anno[Unresolved](String(constructor)) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/a] @Deprecated[Unresolved](String(constructorProperty)) @Anno[Unresolved](String(constructorProperty)) a: Int): R|FirstClass| {
                     super<R|kotlin/Any|>()
                 }
 
-                @R|kotlin/Deprecated|[Types](message = String(constructorProperty)) public final [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
-                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): R|kotlin/Int|
+                @Deprecated[Unresolved](String(constructorProperty)) @Anno[Unresolved](String(constructorProperty)) public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): Int
 
-                @R|kotlin/Deprecated|[Types](message = String(memberFunction)) @R|Anno|[Types](s = String(memberFunction)) public final [ResolvedTo(RAW_FIR)] fun memberFunction(): R|kotlin/Unit| {
+                @Deprecated[Unresolved](String(memberFunction)) @Anno[Unresolved](String(memberFunction)) public? final? [ResolvedTo(RAW_FIR)] fun memberFunction(): R|kotlin/Unit| {
                 }
 
-                @R|kotlin/Deprecated|[Types](message = String(memberProperty)) @R|Anno|[Types](s = String(memberProperty)) public final [ResolvedTo(RAW_FIR)] val memberProperty: R|kotlin/Int| = Int(32)
-                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): R|kotlin/Int|
+                @Deprecated[Unresolved](String(memberProperty)) @Anno[Unresolved](String(memberProperty)) public? final? [ResolvedTo(RAW_FIR)] val memberProperty: <implicit> = IntegerLiteral(32)
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): <implicit>
 
             }
 
-            @R|kotlin/Deprecated|[Types](message = String(anotherFunction)) @R|Anno|[Types](s = String(anotherFunction)) local final [ResolvedTo(RAW_FIR)] fun anotherFunction(): R|kotlin/Unit| {
+            @Deprecated[Unresolved](String(anotherFunction)) @Anno[Unresolved](String(anotherFunction)) local final? [ResolvedTo(RAW_FIR)] fun anotherFunction(): R|kotlin/Unit| {
             }
 
         }
 
-        @R|kotlin/Deprecated|[Types](message = String(AnotherClass)) @R|Anno|[Types](s = String(AnotherClass)) public final [ResolvedTo(STATUS)] class AnotherClass : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherClass] constructor(): R|AnotherClass| {
+        @Deprecated[Unresolved](String(AnotherClass)) @Anno[Unresolved](String(AnotherClass)) public? final? [ResolvedTo(RAW_FIR)] class AnotherClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherClass] constructor(): R|AnotherClass| {
                 super<R|kotlin/Any|>()
             }
 
-            @R|kotlin/Deprecated|[Types](message = String(memberFunction)) @R|Anno|[Types](s = String(memberFunction)) public final [ResolvedTo(STATUS)] fun memberFunction(): R|kotlin/Unit| {
+            @Deprecated[Unresolved](String(memberFunction)) @Anno[Unresolved](String(memberFunction)) public? final? [ResolvedTo(RAW_FIR)] fun memberFunction(): R|kotlin/Unit| {
             }
 
         }
@@ -245,48 +245,48 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kt
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+        public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun test(): R|kotlin/Unit| {
-            @R|kotlin/Deprecated|[Types](message = String(FirstClass)) @R|Anno|[Types](s = String(FirstClass)) local final [ResolvedTo(RAW_FIR)] class FirstClass : R|kotlin/Any| {
-                @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/a] @R|Anno|[Types](s = String(constructorProperty)) a: R|kotlin/Int|): R|FirstClass| {
+        public? final? [ResolvedTo(RAW_FIR)] fun test(): R|kotlin/Unit| {
+            @Deprecated[Unresolved](String(FirstClass)) @Anno[Unresolved](String(FirstClass)) local final? [ResolvedTo(RAW_FIR)] class FirstClass : R|kotlin/Any| {
+                @Deprecated[Unresolved](String(constructor)) @Anno[Unresolved](String(constructor)) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/a] @Deprecated[Unresolved](String(constructorProperty)) @Anno[Unresolved](String(constructorProperty)) a: Int): R|FirstClass| {
                     super<R|kotlin/Any|>()
                 }
 
-                @R|kotlin/Deprecated|[Types](message = String(constructorProperty)) public final [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
-                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): R|kotlin/Int|
+                @Deprecated[Unresolved](String(constructorProperty)) @Anno[Unresolved](String(constructorProperty)) public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): Int
 
-                @R|kotlin/Deprecated|[Types](message = String(memberFunction)) @R|Anno|[Types](s = String(memberFunction)) public final [ResolvedTo(RAW_FIR)] fun memberFunction(): R|kotlin/Unit| {
+                @Deprecated[Unresolved](String(memberFunction)) @Anno[Unresolved](String(memberFunction)) public? final? [ResolvedTo(RAW_FIR)] fun memberFunction(): R|kotlin/Unit| {
                 }
 
-                @R|kotlin/Deprecated|[Types](message = String(memberProperty)) @R|Anno|[Types](s = String(memberProperty)) public final [ResolvedTo(RAW_FIR)] val memberProperty: R|kotlin/Int| = Int(32)
-                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): R|kotlin/Int|
+                @Deprecated[Unresolved](String(memberProperty)) @Anno[Unresolved](String(memberProperty)) public? final? [ResolvedTo(RAW_FIR)] val memberProperty: <implicit> = IntegerLiteral(32)
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): <implicit>
 
             }
 
-            @R|kotlin/Deprecated|[Types](message = String(anotherFunction)) @R|Anno|[Types](s = String(anotherFunction)) local final [ResolvedTo(RAW_FIR)] fun anotherFunction(): R|kotlin/Unit| {
+            @Deprecated[Unresolved](String(anotherFunction)) @Anno[Unresolved](String(anotherFunction)) local final? [ResolvedTo(RAW_FIR)] fun anotherFunction(): R|kotlin/Unit| {
             }
 
         }
 
-        @R|kotlin/Deprecated|[Types](message = String(AnotherClass)) @R|Anno|[Types](s = String(AnotherClass)) public final [ResolvedTo(STATUS)] class AnotherClass : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherClass] constructor(): R|AnotherClass| {
+        @Deprecated[Unresolved](String(AnotherClass)) @Anno[Unresolved](String(AnotherClass)) public? final? [ResolvedTo(RAW_FIR)] class AnotherClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherClass] constructor(): R|AnotherClass| {
                 super<R|kotlin/Any|>()
             }
 
-            @R|kotlin/Deprecated|[Types](message = String(memberFunction)) @R|Anno|[Types](s = String(memberFunction)) public final [ResolvedTo(STATUS)] fun memberFunction(): R|kotlin/Unit| {
+            @Deprecated[Unresolved](String(memberFunction)) @Anno[Unresolved](String(memberFunction)) public? final? [ResolvedTo(RAW_FIR)] fun memberFunction(): R|kotlin/Unit| {
             }
 
         }
@@ -294,48 +294,48 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kt
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+        public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun test(): R|kotlin/Unit| {
-            @R|kotlin/Deprecated|[Types](message = String(FirstClass)) @R|Anno|[Types](s = String(FirstClass)) local final [ResolvedTo(RAW_FIR)] class FirstClass : R|kotlin/Any| {
-                @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/a] @R|Anno|[Types](s = String(constructorProperty)) a: R|kotlin/Int|): R|FirstClass| {
+        public? final? [ResolvedTo(RAW_FIR)] fun test(): R|kotlin/Unit| {
+            @Deprecated[Unresolved](String(FirstClass)) @Anno[Unresolved](String(FirstClass)) local final? [ResolvedTo(RAW_FIR)] class FirstClass : R|kotlin/Any| {
+                @Deprecated[Unresolved](String(constructor)) @Anno[Unresolved](String(constructor)) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/a] @Deprecated[Unresolved](String(constructorProperty)) @Anno[Unresolved](String(constructorProperty)) a: Int): R|FirstClass| {
                     super<R|kotlin/Any|>()
                 }
 
-                @R|kotlin/Deprecated|[Types](message = String(constructorProperty)) public final [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
-                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): R|kotlin/Int|
+                @Deprecated[Unresolved](String(constructorProperty)) @Anno[Unresolved](String(constructorProperty)) public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): Int
 
-                @R|kotlin/Deprecated|[Types](message = String(memberFunction)) @R|Anno|[Types](s = String(memberFunction)) public final [ResolvedTo(RAW_FIR)] fun memberFunction(): R|kotlin/Unit| {
+                @Deprecated[Unresolved](String(memberFunction)) @Anno[Unresolved](String(memberFunction)) public? final? [ResolvedTo(RAW_FIR)] fun memberFunction(): R|kotlin/Unit| {
                 }
 
-                @R|kotlin/Deprecated|[Types](message = String(memberProperty)) @R|Anno|[Types](s = String(memberProperty)) public final [ResolvedTo(RAW_FIR)] val memberProperty: R|kotlin/Int| = Int(32)
-                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): R|kotlin/Int|
+                @Deprecated[Unresolved](String(memberProperty)) @Anno[Unresolved](String(memberProperty)) public? final? [ResolvedTo(RAW_FIR)] val memberProperty: <implicit> = IntegerLiteral(32)
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): <implicit>
 
             }
 
-            @R|kotlin/Deprecated|[Types](message = String(anotherFunction)) @R|Anno|[Types](s = String(anotherFunction)) local final [ResolvedTo(RAW_FIR)] fun anotherFunction(): R|kotlin/Unit| {
+            @Deprecated[Unresolved](String(anotherFunction)) @Anno[Unresolved](String(anotherFunction)) local final? [ResolvedTo(RAW_FIR)] fun anotherFunction(): R|kotlin/Unit| {
             }
 
         }
 
-        @R|kotlin/Deprecated|[Types](message = String(AnotherClass)) @R|Anno|[Types](s = String(AnotherClass)) public final [ResolvedTo(STATUS)] class AnotherClass : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherClass] constructor(): R|AnotherClass| {
+        @Deprecated[Unresolved](String(AnotherClass)) @Anno[Unresolved](String(AnotherClass)) public? final? [ResolvedTo(RAW_FIR)] class AnotherClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherClass] constructor(): R|AnotherClass| {
                 super<R|kotlin/Any|>()
             }
 
-            @R|kotlin/Deprecated|[Types](message = String(memberFunction)) @R|Anno|[Types](s = String(memberFunction)) public final [ResolvedTo(STATUS)] fun memberFunction(): R|kotlin/Unit| {
+            @Deprecated[Unresolved](String(memberFunction)) @Anno[Unresolved](String(memberFunction)) public? final? [ResolvedTo(RAW_FIR)] fun memberFunction(): R|kotlin/Unit| {
             }
 
         }
@@ -343,48 +343,48 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+        public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun test(): R|kotlin/Unit| {
-            @R|kotlin/Deprecated|[Types](message = String(FirstClass)) @R|Anno|[Types](s = String(FirstClass)) local final [ResolvedTo(RAW_FIR)] class FirstClass : R|kotlin/Any| {
-                @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/a] @R|Anno|[Types](s = String(constructorProperty)) a: R|kotlin/Int|): R|FirstClass| {
+        public? final? [ResolvedTo(RAW_FIR)] fun test(): R|kotlin/Unit| {
+            @Deprecated[Unresolved](String(FirstClass)) @Anno[Unresolved](String(FirstClass)) local final? [ResolvedTo(RAW_FIR)] class FirstClass : R|kotlin/Any| {
+                @Deprecated[Unresolved](String(constructor)) @Anno[Unresolved](String(constructor)) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/a] @Deprecated[Unresolved](String(constructorProperty)) @Anno[Unresolved](String(constructorProperty)) a: Int): R|FirstClass| {
                     super<R|kotlin/Any|>()
                 }
 
-                @R|kotlin/Deprecated|[Types](message = String(constructorProperty)) public final [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
-                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): R|kotlin/Int|
+                @Deprecated[Unresolved](String(constructorProperty)) @Anno[Unresolved](String(constructorProperty)) public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): Int
 
-                @R|kotlin/Deprecated|[Types](message = String(memberFunction)) @R|Anno|[Types](s = String(memberFunction)) public final [ResolvedTo(RAW_FIR)] fun memberFunction(): R|kotlin/Unit| {
+                @Deprecated[Unresolved](String(memberFunction)) @Anno[Unresolved](String(memberFunction)) public? final? [ResolvedTo(RAW_FIR)] fun memberFunction(): R|kotlin/Unit| {
                 }
 
-                @R|kotlin/Deprecated|[Types](message = String(memberProperty)) @R|Anno|[Types](s = String(memberProperty)) public final [ResolvedTo(RAW_FIR)] val memberProperty: R|kotlin/Int| = Int(32)
-                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): R|kotlin/Int|
+                @Deprecated[Unresolved](String(memberProperty)) @Anno[Unresolved](String(memberProperty)) public? final? [ResolvedTo(RAW_FIR)] val memberProperty: <implicit> = IntegerLiteral(32)
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): <implicit>
 
             }
 
-            @R|kotlin/Deprecated|[Types](message = String(anotherFunction)) @R|Anno|[Types](s = String(anotherFunction)) local final [ResolvedTo(RAW_FIR)] fun anotherFunction(): R|kotlin/Unit| {
+            @Deprecated[Unresolved](String(anotherFunction)) @Anno[Unresolved](String(anotherFunction)) local final? [ResolvedTo(RAW_FIR)] fun anotherFunction(): R|kotlin/Unit| {
             }
 
         }
 
-        @R|kotlin/Deprecated|[Types](message = String(AnotherClass)) @R|Anno|[Types](s = String(AnotherClass)) public final [ResolvedTo(STATUS)] class AnotherClass : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherClass] constructor(): R|AnotherClass| {
+        @Deprecated[Unresolved](String(AnotherClass)) @Anno[Unresolved](String(AnotherClass)) public? final? [ResolvedTo(RAW_FIR)] class AnotherClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherClass] constructor(): R|AnotherClass| {
                 super<R|kotlin/Any|>()
             }
 
-            @R|kotlin/Deprecated|[Types](message = String(memberFunction)) @R|Anno|[Types](s = String(memberFunction)) public final [ResolvedTo(STATUS)] fun memberFunction(): R|kotlin/Unit| {
+            @Deprecated[Unresolved](String(memberFunction)) @Anno[Unresolved](String(memberFunction)) public? final? [ResolvedTo(RAW_FIR)] fun memberFunction(): R|kotlin/Unit| {
             }
 
         }
@@ -392,48 +392,48 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kt
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+        public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun test(): R|kotlin/Unit| {
-            @R|kotlin/Deprecated|[Types](message = String(FirstClass)) @R|Anno|[Types](s = String(FirstClass)) local final [ResolvedTo(RAW_FIR)] class FirstClass : R|kotlin/Any| {
-                @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/a] @R|Anno|[Types](s = String(constructorProperty)) a: R|kotlin/Int|): R|FirstClass| {
+        public? final? [ResolvedTo(RAW_FIR)] fun test(): R|kotlin/Unit| {
+            @Deprecated[Unresolved](String(FirstClass)) @Anno[Unresolved](String(FirstClass)) local final? [ResolvedTo(RAW_FIR)] class FirstClass : R|kotlin/Any| {
+                @Deprecated[Unresolved](String(constructor)) @Anno[Unresolved](String(constructor)) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/a] @Deprecated[Unresolved](String(constructorProperty)) @Anno[Unresolved](String(constructorProperty)) a: Int): R|FirstClass| {
                     super<R|kotlin/Any|>()
                 }
 
-                @R|kotlin/Deprecated|[Types](message = String(constructorProperty)) public final [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
-                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): R|kotlin/Int|
+                @Deprecated[Unresolved](String(constructorProperty)) @Anno[Unresolved](String(constructorProperty)) public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): Int
 
-                @R|kotlin/Deprecated|[Types](message = String(memberFunction)) @R|Anno|[Types](s = String(memberFunction)) public final [ResolvedTo(RAW_FIR)] fun memberFunction(): R|kotlin/Unit| {
+                @Deprecated[Unresolved](String(memberFunction)) @Anno[Unresolved](String(memberFunction)) public? final? [ResolvedTo(RAW_FIR)] fun memberFunction(): R|kotlin/Unit| {
                 }
 
-                @R|kotlin/Deprecated|[Types](message = String(memberProperty)) @R|Anno|[Types](s = String(memberProperty)) public final [ResolvedTo(RAW_FIR)] val memberProperty: R|kotlin/Int| = Int(32)
-                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): R|kotlin/Int|
+                @Deprecated[Unresolved](String(memberProperty)) @Anno[Unresolved](String(memberProperty)) public? final? [ResolvedTo(RAW_FIR)] val memberProperty: <implicit> = IntegerLiteral(32)
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): <implicit>
 
             }
 
-            @R|kotlin/Deprecated|[Types](message = String(anotherFunction)) @R|Anno|[Types](s = String(anotherFunction)) local final [ResolvedTo(RAW_FIR)] fun anotherFunction(): R|kotlin/Unit| {
+            @Deprecated[Unresolved](String(anotherFunction)) @Anno[Unresolved](String(anotherFunction)) local final? [ResolvedTo(RAW_FIR)] fun anotherFunction(): R|kotlin/Unit| {
             }
 
         }
 
-        @R|kotlin/Deprecated|[Types](message = String(AnotherClass)) @R|Anno|[Types](s = String(AnotherClass)) public final [ResolvedTo(STATUS)] class AnotherClass : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherClass] constructor(): R|AnotherClass| {
+        @Deprecated[Unresolved](String(AnotherClass)) @Anno[Unresolved](String(AnotherClass)) public? final? [ResolvedTo(RAW_FIR)] class AnotherClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherClass] constructor(): R|AnotherClass| {
                 super<R|kotlin/Any|>()
             }
 
-            @R|kotlin/Deprecated|[Types](message = String(memberFunction)) @R|Anno|[Types](s = String(memberFunction)) public final [ResolvedTo(STATUS)] fun memberFunction(): R|kotlin/Unit| {
+            @Deprecated[Unresolved](String(memberFunction)) @Anno[Unresolved](String(memberFunction)) public? final? [ResolvedTo(RAW_FIR)] fun memberFunction(): R|kotlin/Unit| {
             }
 
         }
@@ -441,48 +441,48 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kt
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+        public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun test(): R|kotlin/Unit| {
-            @R|kotlin/Deprecated|[Types](message = String(FirstClass)) @R|Anno|[Types](s = String(FirstClass)) local final [ResolvedTo(RAW_FIR)] class FirstClass : R|kotlin/Any| {
-                @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/a] @R|Anno|[Types](s = String(constructorProperty)) a: R|kotlin/Int|): R|FirstClass| {
+        public? final? [ResolvedTo(RAW_FIR)] fun test(): R|kotlin/Unit| {
+            @Deprecated[Unresolved](String(FirstClass)) @Anno[Unresolved](String(FirstClass)) local final? [ResolvedTo(RAW_FIR)] class FirstClass : R|kotlin/Any| {
+                @Deprecated[Unresolved](String(constructor)) @Anno[Unresolved](String(constructor)) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/a] @Deprecated[Unresolved](String(constructorProperty)) @Anno[Unresolved](String(constructorProperty)) a: Int): R|FirstClass| {
                     super<R|kotlin/Any|>()
                 }
 
-                @R|kotlin/Deprecated|[Types](message = String(constructorProperty)) public final [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
-                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): R|kotlin/Int|
+                @Deprecated[Unresolved](String(constructorProperty)) @Anno[Unresolved](String(constructorProperty)) public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): Int
 
-                @R|kotlin/Deprecated|[Types](message = String(memberFunction)) @R|Anno|[Types](s = String(memberFunction)) public final [ResolvedTo(RAW_FIR)] fun memberFunction(): R|kotlin/Unit| {
+                @Deprecated[Unresolved](String(memberFunction)) @Anno[Unresolved](String(memberFunction)) public? final? [ResolvedTo(RAW_FIR)] fun memberFunction(): R|kotlin/Unit| {
                 }
 
-                @R|kotlin/Deprecated|[Types](message = String(memberProperty)) @R|Anno|[Types](s = String(memberProperty)) public final [ResolvedTo(RAW_FIR)] val memberProperty: R|kotlin/Int| = Int(32)
-                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): R|kotlin/Int|
+                @Deprecated[Unresolved](String(memberProperty)) @Anno[Unresolved](String(memberProperty)) public? final? [ResolvedTo(RAW_FIR)] val memberProperty: <implicit> = IntegerLiteral(32)
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): <implicit>
 
             }
 
-            @R|kotlin/Deprecated|[Types](message = String(anotherFunction)) @R|Anno|[Types](s = String(anotherFunction)) local final [ResolvedTo(RAW_FIR)] fun anotherFunction(): R|kotlin/Unit| {
+            @Deprecated[Unresolved](String(anotherFunction)) @Anno[Unresolved](String(anotherFunction)) local final? [ResolvedTo(RAW_FIR)] fun anotherFunction(): R|kotlin/Unit| {
             }
 
         }
 
-        @R|kotlin/Deprecated|[Types](message = String(AnotherClass)) @R|Anno|[Types](s = String(AnotherClass)) public final [ResolvedTo(STATUS)] class AnotherClass : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherClass] constructor(): R|AnotherClass| {
+        @Deprecated[Unresolved](String(AnotherClass)) @Anno[Unresolved](String(AnotherClass)) public? final? [ResolvedTo(RAW_FIR)] class AnotherClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherClass] constructor(): R|AnotherClass| {
                 super<R|kotlin/Any|>()
             }
 
-            @R|kotlin/Deprecated|[Types](message = String(memberFunction)) @R|Anno|[Types](s = String(memberFunction)) public final [ResolvedTo(STATUS)] fun memberFunction(): R|kotlin/Unit| {
+            @Deprecated[Unresolved](String(memberFunction)) @Anno[Unresolved](String(memberFunction)) public? final? [ResolvedTo(RAW_FIR)] fun memberFunction(): R|kotlin/Unit| {
             }
 
         }
@@ -490,48 +490,48 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+        public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun test(): R|kotlin/Unit| {
-            @R|kotlin/Deprecated|[Types](message = String(FirstClass)) @R|Anno|[Types](s = String(FirstClass)) local final [ResolvedTo(RAW_FIR)] class FirstClass : R|kotlin/Any| {
-                @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/a] @R|Anno|[Types](s = String(constructorProperty)) a: R|kotlin/Int|): R|FirstClass| {
+        public? final? [ResolvedTo(RAW_FIR)] fun test(): R|kotlin/Unit| {
+            @Deprecated[Unresolved](String(FirstClass)) @Anno[Unresolved](String(FirstClass)) local final? [ResolvedTo(RAW_FIR)] class FirstClass : R|kotlin/Any| {
+                @Deprecated[Unresolved](String(constructor)) @Anno[Unresolved](String(constructor)) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/a] @Deprecated[Unresolved](String(constructorProperty)) @Anno[Unresolved](String(constructorProperty)) a: Int): R|FirstClass| {
                     super<R|kotlin/Any|>()
                 }
 
-                @R|kotlin/Deprecated|[Types](message = String(constructorProperty)) public final [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
-                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): R|kotlin/Int|
+                @Deprecated[Unresolved](String(constructorProperty)) @Anno[Unresolved](String(constructorProperty)) public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): Int
 
-                @R|kotlin/Deprecated|[Types](message = String(memberFunction)) @R|Anno|[Types](s = String(memberFunction)) public final [ResolvedTo(RAW_FIR)] fun memberFunction(): R|kotlin/Unit| {
+                @Deprecated[Unresolved](String(memberFunction)) @Anno[Unresolved](String(memberFunction)) public? final? [ResolvedTo(RAW_FIR)] fun memberFunction(): R|kotlin/Unit| {
                 }
 
-                @R|kotlin/Deprecated|[Types](message = String(memberProperty)) @R|Anno|[Types](s = String(memberProperty)) public final [ResolvedTo(RAW_FIR)] val memberProperty: R|kotlin/Int| = Int(32)
-                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): R|kotlin/Int|
+                @Deprecated[Unresolved](String(memberProperty)) @Anno[Unresolved](String(memberProperty)) public? final? [ResolvedTo(RAW_FIR)] val memberProperty: <implicit> = IntegerLiteral(32)
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): <implicit>
 
             }
 
-            @R|kotlin/Deprecated|[Types](message = String(anotherFunction)) @R|Anno|[Types](s = String(anotherFunction)) local final [ResolvedTo(RAW_FIR)] fun anotherFunction(): R|kotlin/Unit| {
+            @Deprecated[Unresolved](String(anotherFunction)) @Anno[Unresolved](String(anotherFunction)) local final? [ResolvedTo(RAW_FIR)] fun anotherFunction(): R|kotlin/Unit| {
             }
 
         }
 
-        @R|kotlin/Deprecated|[Types](message = String(AnotherClass)) @R|Anno|[Types](s = String(AnotherClass)) public final [ResolvedTo(STATUS)] class AnotherClass : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherClass] constructor(): R|AnotherClass| {
+        @Deprecated[Unresolved](String(AnotherClass)) @Anno[Unresolved](String(AnotherClass)) public? final? [ResolvedTo(RAW_FIR)] class AnotherClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherClass] constructor(): R|AnotherClass| {
                 super<R|kotlin/Any|>()
             }
 
-            @R|kotlin/Deprecated|[Types](message = String(memberFunction)) @R|Anno|[Types](s = String(memberFunction)) public final [ResolvedTo(STATUS)] fun memberFunction(): R|kotlin/Unit| {
+            @Deprecated[Unresolved](String(memberFunction)) @Anno[Unresolved](String(memberFunction)) public? final? [ResolvedTo(RAW_FIR)] fun memberFunction(): R|kotlin/Unit| {
             }
 
         }
@@ -539,48 +539,48 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kt
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+        public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun test(): R|kotlin/Unit| {
-            @R|kotlin/Deprecated|[Types](message = String(FirstClass)) @R|Anno|[Types](s = String(FirstClass)) local final [ResolvedTo(RAW_FIR)] class FirstClass : R|kotlin/Any| {
-                @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/a] @R|Anno|[Types](s = String(constructorProperty)) a: R|kotlin/Int|): R|FirstClass| {
+        public? final? [ResolvedTo(RAW_FIR)] fun test(): R|kotlin/Unit| {
+            @Deprecated[Unresolved](String(FirstClass)) @Anno[Unresolved](String(FirstClass)) local final? [ResolvedTo(RAW_FIR)] class FirstClass : R|kotlin/Any| {
+                @Deprecated[Unresolved](String(constructor)) @Anno[Unresolved](String(constructor)) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/a] @Deprecated[Unresolved](String(constructorProperty)) @Anno[Unresolved](String(constructorProperty)) a: Int): R|FirstClass| {
                     super<R|kotlin/Any|>()
                 }
 
-                @R|kotlin/Deprecated|[Types](message = String(constructorProperty)) public final [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
-                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): R|kotlin/Int|
+                @Deprecated[Unresolved](String(constructorProperty)) @Anno[Unresolved](String(constructorProperty)) public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): Int
 
-                @R|kotlin/Deprecated|[Types](message = String(memberFunction)) @R|Anno|[Types](s = String(memberFunction)) public final [ResolvedTo(RAW_FIR)] fun memberFunction(): R|kotlin/Unit| {
+                @Deprecated[Unresolved](String(memberFunction)) @Anno[Unresolved](String(memberFunction)) public? final? [ResolvedTo(RAW_FIR)] fun memberFunction(): R|kotlin/Unit| {
                 }
 
-                @R|kotlin/Deprecated|[Types](message = String(memberProperty)) @R|Anno|[Types](s = String(memberProperty)) public final [ResolvedTo(RAW_FIR)] val memberProperty: R|kotlin/Int| = Int(32)
-                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): R|kotlin/Int|
+                @Deprecated[Unresolved](String(memberProperty)) @Anno[Unresolved](String(memberProperty)) public? final? [ResolvedTo(RAW_FIR)] val memberProperty: <implicit> = IntegerLiteral(32)
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): <implicit>
 
             }
 
-            @R|kotlin/Deprecated|[Types](message = String(anotherFunction)) @R|Anno|[Types](s = String(anotherFunction)) local final [ResolvedTo(RAW_FIR)] fun anotherFunction(): R|kotlin/Unit| {
+            @Deprecated[Unresolved](String(anotherFunction)) @Anno[Unresolved](String(anotherFunction)) local final? [ResolvedTo(RAW_FIR)] fun anotherFunction(): R|kotlin/Unit| {
             }
 
         }
 
-        @R|kotlin/Deprecated|[Types](message = String(AnotherClass)) @R|Anno|[Types](s = String(AnotherClass)) public final [ResolvedTo(STATUS)] class AnotherClass : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherClass] constructor(): R|AnotherClass| {
+        @Deprecated[Unresolved](String(AnotherClass)) @Anno[Unresolved](String(AnotherClass)) public? final? [ResolvedTo(RAW_FIR)] class AnotherClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherClass] constructor(): R|AnotherClass| {
                 super<R|kotlin/Any|>()
             }
 
-            @R|kotlin/Deprecated|[Types](message = String(memberFunction)) @R|Anno|[Types](s = String(memberFunction)) public final [ResolvedTo(STATUS)] fun memberFunction(): R|kotlin/Unit| {
+            @Deprecated[Unresolved](String(memberFunction)) @Anno[Unresolved](String(memberFunction)) public? final? [ResolvedTo(RAW_FIR)] fun memberFunction(): R|kotlin/Unit| {
             }
 
         }
@@ -588,48 +588,48 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kt
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+        public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun test(): R|kotlin/Unit| {
-            @R|kotlin/Deprecated|[Types](message = String(FirstClass)) @R|Anno|[Types](s = String(FirstClass)) local final [ResolvedTo(RAW_FIR)] class FirstClass : R|kotlin/Any| {
-                @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/a] @R|Anno|[Types](s = String(constructorProperty)) a: R|kotlin/Int|): R|FirstClass| {
+        public? final? [ResolvedTo(RAW_FIR)] fun test(): R|kotlin/Unit| {
+            @Deprecated[Unresolved](String(FirstClass)) @Anno[Unresolved](String(FirstClass)) local final? [ResolvedTo(RAW_FIR)] class FirstClass : R|kotlin/Any| {
+                @Deprecated[Unresolved](String(constructor)) @Anno[Unresolved](String(constructor)) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/a] @Deprecated[Unresolved](String(constructorProperty)) @Anno[Unresolved](String(constructorProperty)) a: Int): R|FirstClass| {
                     super<R|kotlin/Any|>()
                 }
 
-                @R|kotlin/Deprecated|[Types](message = String(constructorProperty)) public final [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
-                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): R|kotlin/Int|
+                @Deprecated[Unresolved](String(constructorProperty)) @Anno[Unresolved](String(constructorProperty)) public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): Int
 
-                @R|kotlin/Deprecated|[Types](message = String(memberFunction)) @R|Anno|[Types](s = String(memberFunction)) public final [ResolvedTo(RAW_FIR)] fun memberFunction(): R|kotlin/Unit| {
+                @Deprecated[Unresolved](String(memberFunction)) @Anno[Unresolved](String(memberFunction)) public? final? [ResolvedTo(RAW_FIR)] fun memberFunction(): R|kotlin/Unit| {
                 }
 
-                @R|kotlin/Deprecated|[Types](message = String(memberProperty)) @R|Anno|[Types](s = String(memberProperty)) public final [ResolvedTo(RAW_FIR)] val memberProperty: R|kotlin/Int| = Int(32)
-                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): R|kotlin/Int|
+                @Deprecated[Unresolved](String(memberProperty)) @Anno[Unresolved](String(memberProperty)) public? final? [ResolvedTo(RAW_FIR)] val memberProperty: <implicit> = IntegerLiteral(32)
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): <implicit>
 
             }
 
-            @R|kotlin/Deprecated|[Types](message = String(anotherFunction)) @R|Anno|[Types](s = String(anotherFunction)) local final [ResolvedTo(RAW_FIR)] fun anotherFunction(): R|kotlin/Unit| {
+            @Deprecated[Unresolved](String(anotherFunction)) @Anno[Unresolved](String(anotherFunction)) local final? [ResolvedTo(RAW_FIR)] fun anotherFunction(): R|kotlin/Unit| {
             }
 
         }
 
-        @R|kotlin/Deprecated|[Types](message = String(AnotherClass)) @R|Anno|[Types](s = String(AnotherClass)) public final [ResolvedTo(STATUS)] class AnotherClass : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherClass] constructor(): R|AnotherClass| {
+        @Deprecated[Unresolved](String(AnotherClass)) @Anno[Unresolved](String(AnotherClass)) public? final? [ResolvedTo(RAW_FIR)] class AnotherClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherClass] constructor(): R|AnotherClass| {
                 super<R|kotlin/Any|>()
             }
 
-            @R|kotlin/Deprecated|[Types](message = String(memberFunction)) @R|Anno|[Types](s = String(memberFunction)) public final [ResolvedTo(STATUS)] fun memberFunction(): R|kotlin/Unit| {
+            @Deprecated[Unresolved](String(memberFunction)) @Anno[Unresolved](String(memberFunction)) public? final? [ResolvedTo(RAW_FIR)] fun memberFunction(): R|kotlin/Unit| {
             }
 
         }
@@ -637,48 +637,48 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kt
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+        public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun test(): R|kotlin/Unit| {
-            @R|kotlin/Deprecated|[Types](message = String(FirstClass)) @R|Anno|[Types](s = String(FirstClass)) local final [ResolvedTo(RAW_FIR)] class FirstClass : R|kotlin/Any| {
-                @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/a] @R|Anno|[Types](s = String(constructorProperty)) a: R|kotlin/Int|): R|FirstClass| {
+        public? final? [ResolvedTo(RAW_FIR)] fun test(): R|kotlin/Unit| {
+            @Deprecated[Unresolved](String(FirstClass)) @Anno[Unresolved](String(FirstClass)) local final? [ResolvedTo(RAW_FIR)] class FirstClass : R|kotlin/Any| {
+                @Deprecated[Unresolved](String(constructor)) @Anno[Unresolved](String(constructor)) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/a] @Deprecated[Unresolved](String(constructorProperty)) @Anno[Unresolved](String(constructorProperty)) a: Int): R|FirstClass| {
                     super<R|kotlin/Any|>()
                 }
 
-                @R|kotlin/Deprecated|[Types](message = String(constructorProperty)) public final [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: R|kotlin/Int| = R|<local>/a|
-                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): R|kotlin/Int|
+                @Deprecated[Unresolved](String(constructorProperty)) @Anno[Unresolved](String(constructorProperty)) public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): Int
 
-                @R|kotlin/Deprecated|[Types](message = String(memberFunction)) @R|Anno|[Types](s = String(memberFunction)) public final [ResolvedTo(RAW_FIR)] fun memberFunction(): R|kotlin/Unit| {
+                @Deprecated[Unresolved](String(memberFunction)) @Anno[Unresolved](String(memberFunction)) public? final? [ResolvedTo(RAW_FIR)] fun memberFunction(): R|kotlin/Unit| {
                 }
 
-                @R|kotlin/Deprecated|[Types](message = String(memberProperty)) @R|Anno|[Types](s = String(memberProperty)) public final [ResolvedTo(RAW_FIR)] val memberProperty: R|kotlin/Int| = Int(32)
-                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): R|kotlin/Int|
+                @Deprecated[Unresolved](String(memberProperty)) @Anno[Unresolved](String(memberProperty)) public? final? [ResolvedTo(RAW_FIR)] val memberProperty: <implicit> = IntegerLiteral(32)
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): <implicit>
 
             }
 
-            @R|kotlin/Deprecated|[Types](message = String(anotherFunction)) @R|Anno|[Types](s = String(anotherFunction)) local final [ResolvedTo(RAW_FIR)] fun anotherFunction(): R|kotlin/Unit| {
+            @Deprecated[Unresolved](String(anotherFunction)) @Anno[Unresolved](String(anotherFunction)) local final? [ResolvedTo(RAW_FIR)] fun anotherFunction(): R|kotlin/Unit| {
             }
 
         }
 
-        @R|kotlin/Deprecated|[Types](message = String(AnotherClass)) @R|Anno|[Types](s = String(AnotherClass)) public final [ResolvedTo(STATUS)] class AnotherClass : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherClass] constructor(): R|AnotherClass| {
+        @Deprecated[Unresolved](String(AnotherClass)) @Anno[Unresolved](String(AnotherClass)) public? final? [ResolvedTo(RAW_FIR)] class AnotherClass : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherClass] constructor(): R|AnotherClass| {
                 super<R|kotlin/Any|>()
             }
 
-            @R|kotlin/Deprecated|[Types](message = String(memberFunction)) @R|Anno|[Types](s = String(memberFunction)) public final [ResolvedTo(STATUS)] fun memberFunction(): R|kotlin/Unit| {
+            @Deprecated[Unresolved](String(memberFunction)) @Anno[Unresolved](String(memberFunction)) public? final? [ResolvedTo(RAW_FIR)] fun memberFunction(): R|kotlin/Unit| {
             }
 
         }

@@ -1,27 +1,27 @@
 KT element: KtBinaryExpression
-FIR element: FirFunctionCallImpl
-FIR source kind: DesugaredCompoundAssignment
+FIR element: FirAugmentedArraySetCallImpl
+FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-R|<local>/m|.R|SubstitutionOverride</MyMap.get: R|A|>|(String(a)).R|/A.plusAssign|(Int(1))
+ArraySet:[m#.get#(String(a)) += IntegerLiteral(1)]
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] compoundAssignWithArrayGetConventionScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] interface A : R|kotlin/Any| {
-            public abstract operator [ResolvedTo(STATUS)] fun plusAssign([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
+        public? final? [ResolvedTo(RAW_FIR)] interface A : R|kotlin/Any| {
+            public? final? operator [ResolvedTo(RAW_FIR)] fun plusAssign([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit|
 
         }
 
-        public abstract [ResolvedTo(STATUS)] interface MyMap<[ResolvedTo(STATUS)] K, [ResolvedTo(STATUS)] V> : R|kotlin/Any| {
-            public abstract operator [ResolvedTo(STATUS)] fun get([ResolvedTo(STATUS)] k: R|K|): R|V|
+        public? final? [ResolvedTo(RAW_FIR)] interface MyMap<[ResolvedTo(RAW_FIR)] K, [ResolvedTo(RAW_FIR)] V> : R|kotlin/Any| {
+            public? final? operator [ResolvedTo(RAW_FIR)] fun get([ResolvedTo(RAW_FIR)] k: K): V
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun test([ResolvedTo(RAW_FIR)] m: R|MyMap<kotlin/String, A>|): R|kotlin/Unit| {
-            R|<local>/m|.R|SubstitutionOverride</MyMap.get: R|A|>|(String(a)).R|/A.plusAssign|(Int(1))
+        public? final? [ResolvedTo(RAW_FIR)] fun test([ResolvedTo(RAW_FIR)] m: MyMap<String, A>): R|kotlin/Unit| {
+            ArraySet:[m#.get#(String(a)) += IntegerLiteral(1)]
             Unit
         }

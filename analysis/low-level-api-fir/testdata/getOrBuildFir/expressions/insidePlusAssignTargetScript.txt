@@ -3,17 +3,17 @@ FIR element: FirFunctionCallImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-R|kotlin/collections/mutableListOf|<R|kotlin/String|>()
+mutableListOf#<String>()
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] insidePlusAssignTargetScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] x: R|kotlin/collections/MutableMap<kotlin/Int, kotlin/collections/MutableList<kotlin/String>>|): R|kotlin/Unit| {
-            R|<local>/x|.R|kotlin/collections/getOrPut|<R|kotlin/Int|, R|kotlin/collections/MutableList<kotlin/String>|>(Int(1), <L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<V>] getOrPut@fun <anonymous>(): R|kotlin/collections/MutableList<kotlin/String>| <inline=Inline, kind=UNKNOWN>  {
-                ^ R|kotlin/collections/mutableListOf|<R|kotlin/String|>()
+        public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] x: MutableMap<Int, MutableList<String>>): R|kotlin/Unit| {
+            +=(x#.getOrPut#(IntegerLiteral(1), <L> = [ResolvedTo(RAW_FIR)] getOrPut@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+                mutableListOf#<String>()
             }
-            ).R|kotlin/collections/plusAssign|<R|kotlin/String|>(String(str))
+            ), String(str))
         }

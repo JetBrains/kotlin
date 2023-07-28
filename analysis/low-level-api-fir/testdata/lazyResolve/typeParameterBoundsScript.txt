@@ -1,293 +1,293 @@
 RAW_FIR:
 FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe([ResolvedTo(RAW_FIR)] foo: R|Foo|): R|kotlin/Unit| {
-            R|<local>/foo|.R|/util|<R|Foo|, R|Bar<Foo>|>()
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe([ResolvedTo(RAW_FIR)] foo: Foo): R|kotlin/Unit| {
+            foo#.util#()
         }
 
-        public abstract [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
         }
 
-        public abstract [ResolvedTo(STATUS)] interface Bar<[ResolvedTo(STATUS)] T : R|Foo|> : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] interface Bar<[ResolvedTo(RAW_FIR)] T : Foo> : R|kotlin/Any| {
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : R|Foo|, [ResolvedTo(RAW_FIR)] B : R|Bar<F>|> R|F|.util(): R|B| {
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : Foo, [ResolvedTo(RAW_FIR)] B : Bar<F>> F.util(): B {
             ^util Null(null)!!
         }
 
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe([ResolvedTo(RAW_FIR)] foo: R|Foo|): R|kotlin/Unit| {
-            R|<local>/foo|.R|/util|<R|Foo|, R|Bar<Foo>|>()
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe([ResolvedTo(RAW_FIR)] foo: Foo): R|kotlin/Unit| {
+            foo#.util#()
         }
 
-        public abstract [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
         }
 
-        public abstract [ResolvedTo(STATUS)] interface Bar<[ResolvedTo(STATUS)] T : R|Foo|> : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] interface Bar<[ResolvedTo(RAW_FIR)] T : Foo> : R|kotlin/Any| {
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : R|Foo|, [ResolvedTo(RAW_FIR)] B : R|Bar<F>|> R|F|.util(): R|B| {
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : Foo, [ResolvedTo(RAW_FIR)] B : Bar<F>> F.util(): B {
             ^util Null(null)!!
         }
 
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe([ResolvedTo(RAW_FIR)] foo: R|Foo|): R|kotlin/Unit| {
-            R|<local>/foo|.R|/util|<R|Foo|, R|Bar<Foo>|>()
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe([ResolvedTo(RAW_FIR)] foo: Foo): R|kotlin/Unit| {
+            foo#.util#()
         }
 
-        public abstract [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
         }
 
-        public abstract [ResolvedTo(STATUS)] interface Bar<[ResolvedTo(STATUS)] T : R|Foo|> : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] interface Bar<[ResolvedTo(RAW_FIR)] T : Foo> : R|kotlin/Any| {
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : R|Foo|, [ResolvedTo(RAW_FIR)] B : R|Bar<F>|> R|F|.util(): R|B| {
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : Foo, [ResolvedTo(RAW_FIR)] B : Bar<F>> F.util(): B {
             ^util Null(null)!!
         }
 
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe([ResolvedTo(RAW_FIR)] foo: R|Foo|): R|kotlin/Unit| {
-            R|<local>/foo|.R|/util|<R|Foo|, R|Bar<Foo>|>()
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe([ResolvedTo(RAW_FIR)] foo: Foo): R|kotlin/Unit| {
+            foo#.util#()
         }
 
-        public abstract [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
         }
 
-        public abstract [ResolvedTo(STATUS)] interface Bar<[ResolvedTo(STATUS)] T : R|Foo|> : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] interface Bar<[ResolvedTo(RAW_FIR)] T : Foo> : R|kotlin/Any| {
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : R|Foo|, [ResolvedTo(RAW_FIR)] B : R|Bar<F>|> R|F|.util(): R|B| {
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : Foo, [ResolvedTo(RAW_FIR)] B : Bar<F>> F.util(): B {
             ^util Null(null)!!
         }
 
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe([ResolvedTo(RAW_FIR)] foo: R|Foo|): R|kotlin/Unit| {
-            R|<local>/foo|.R|/util|<R|Foo|, R|Bar<Foo>|>()
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe([ResolvedTo(RAW_FIR)] foo: Foo): R|kotlin/Unit| {
+            foo#.util#()
         }
 
-        public abstract [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
         }
 
-        public abstract [ResolvedTo(STATUS)] interface Bar<[ResolvedTo(STATUS)] T : R|Foo|> : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] interface Bar<[ResolvedTo(RAW_FIR)] T : Foo> : R|kotlin/Any| {
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : R|Foo|, [ResolvedTo(RAW_FIR)] B : R|Bar<F>|> R|F|.util(): R|B| {
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : Foo, [ResolvedTo(RAW_FIR)] B : Bar<F>> F.util(): B {
             ^util Null(null)!!
         }
 
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe([ResolvedTo(RAW_FIR)] foo: R|Foo|): R|kotlin/Unit| {
-            R|<local>/foo|.R|/util|<R|Foo|, R|Bar<Foo>|>()
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe([ResolvedTo(RAW_FIR)] foo: Foo): R|kotlin/Unit| {
+            foo#.util#()
         }
 
-        public abstract [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
         }
 
-        public abstract [ResolvedTo(STATUS)] interface Bar<[ResolvedTo(STATUS)] T : R|Foo|> : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] interface Bar<[ResolvedTo(RAW_FIR)] T : Foo> : R|kotlin/Any| {
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : R|Foo|, [ResolvedTo(RAW_FIR)] B : R|Bar<F>|> R|F|.util(): R|B| {
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : Foo, [ResolvedTo(RAW_FIR)] B : Bar<F>> F.util(): B {
             ^util Null(null)!!
         }
 
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe([ResolvedTo(RAW_FIR)] foo: R|Foo|): R|kotlin/Unit| {
-            R|<local>/foo|.R|/util|<R|Foo|, R|Bar<Foo>|>()
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe([ResolvedTo(RAW_FIR)] foo: Foo): R|kotlin/Unit| {
+            foo#.util#()
         }
 
-        public abstract [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
         }
 
-        public abstract [ResolvedTo(STATUS)] interface Bar<[ResolvedTo(STATUS)] T : R|Foo|> : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] interface Bar<[ResolvedTo(RAW_FIR)] T : Foo> : R|kotlin/Any| {
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : R|Foo|, [ResolvedTo(RAW_FIR)] B : R|Bar<F>|> R|F|.util(): R|B| {
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : Foo, [ResolvedTo(RAW_FIR)] B : Bar<F>> F.util(): B {
             ^util Null(null)!!
         }
 
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe([ResolvedTo(RAW_FIR)] foo: R|Foo|): R|kotlin/Unit| {
-            R|<local>/foo|.R|/util|<R|Foo|, R|Bar<Foo>|>()
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe([ResolvedTo(RAW_FIR)] foo: Foo): R|kotlin/Unit| {
+            foo#.util#()
         }
 
-        public abstract [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
         }
 
-        public abstract [ResolvedTo(STATUS)] interface Bar<[ResolvedTo(STATUS)] T : R|Foo|> : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] interface Bar<[ResolvedTo(RAW_FIR)] T : Foo> : R|kotlin/Any| {
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : R|Foo|, [ResolvedTo(RAW_FIR)] B : R|Bar<F>|> R|F|.util(): R|B| {
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : Foo, [ResolvedTo(RAW_FIR)] B : Bar<F>> F.util(): B {
             ^util Null(null)!!
         }
 
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe([ResolvedTo(RAW_FIR)] foo: R|Foo|): R|kotlin/Unit| {
-            R|<local>/foo|.R|/util|<R|Foo|, R|Bar<Foo>|>()
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe([ResolvedTo(RAW_FIR)] foo: Foo): R|kotlin/Unit| {
+            foo#.util#()
         }
 
-        public abstract [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
         }
 
-        public abstract [ResolvedTo(STATUS)] interface Bar<[ResolvedTo(STATUS)] T : R|Foo|> : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] interface Bar<[ResolvedTo(RAW_FIR)] T : Foo> : R|kotlin/Any| {
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : R|Foo|, [ResolvedTo(RAW_FIR)] B : R|Bar<F>|> R|F|.util(): R|B| {
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : Foo, [ResolvedTo(RAW_FIR)] B : Bar<F>> F.util(): B {
             ^util Null(null)!!
         }
 
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe([ResolvedTo(RAW_FIR)] foo: R|Foo|): R|kotlin/Unit| {
-            R|<local>/foo|.R|/util|<R|Foo|, R|Bar<Foo>|>()
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe([ResolvedTo(RAW_FIR)] foo: Foo): R|kotlin/Unit| {
+            foo#.util#()
         }
 
-        public abstract [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
         }
 
-        public abstract [ResolvedTo(STATUS)] interface Bar<[ResolvedTo(STATUS)] T : R|Foo|> : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] interface Bar<[ResolvedTo(RAW_FIR)] T : Foo> : R|kotlin/Any| {
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : R|Foo|, [ResolvedTo(RAW_FIR)] B : R|Bar<F>|> R|F|.util(): R|B| {
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : Foo, [ResolvedTo(RAW_FIR)] B : Bar<F>> F.util(): B {
             ^util Null(null)!!
         }
 
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe([ResolvedTo(RAW_FIR)] foo: R|Foo|): R|kotlin/Unit| {
-            R|<local>/foo|.R|/util|<R|Foo|, R|Bar<Foo>|>()
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe([ResolvedTo(RAW_FIR)] foo: Foo): R|kotlin/Unit| {
+            foo#.util#()
         }
 
-        public abstract [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
         }
 
-        public abstract [ResolvedTo(STATUS)] interface Bar<[ResolvedTo(STATUS)] T : R|Foo|> : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] interface Bar<[ResolvedTo(RAW_FIR)] T : Foo> : R|kotlin/Any| {
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : R|Foo|, [ResolvedTo(RAW_FIR)] B : R|Bar<F>|> R|F|.util(): R|B| {
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : Foo, [ResolvedTo(RAW_FIR)] B : Bar<F>> F.util(): B {
             ^util Null(null)!!
         }
 
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe([ResolvedTo(RAW_FIR)] foo: R|Foo|): R|kotlin/Unit| {
-            R|<local>/foo|.R|/util|<R|Foo|, R|Bar<Foo>|>()
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe([ResolvedTo(RAW_FIR)] foo: Foo): R|kotlin/Unit| {
+            foo#.util#()
         }
 
-        public abstract [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
         }
 
-        public abstract [ResolvedTo(STATUS)] interface Bar<[ResolvedTo(STATUS)] T : R|Foo|> : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] interface Bar<[ResolvedTo(RAW_FIR)] T : Foo> : R|kotlin/Any| {
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : R|Foo|, [ResolvedTo(RAW_FIR)] B : R|Bar<F>|> R|F|.util(): R|B| {
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : Foo, [ResolvedTo(RAW_FIR)] B : Bar<F>> F.util(): B {
             ^util Null(null)!!
         }
 
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe([ResolvedTo(RAW_FIR)] foo: R|Foo|): R|kotlin/Unit| {
-            R|<local>/foo|.R|/util|<R|Foo|, R|Bar<Foo>|>()
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe([ResolvedTo(RAW_FIR)] foo: Foo): R|kotlin/Unit| {
+            foo#.util#()
         }
 
-        public abstract [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
         }
 
-        public abstract [ResolvedTo(STATUS)] interface Bar<[ResolvedTo(STATUS)] T : R|Foo|> : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] interface Bar<[ResolvedTo(RAW_FIR)] T : Foo> : R|kotlin/Any| {
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : R|Foo|, [ResolvedTo(RAW_FIR)] B : R|Bar<F>|> R|F|.util(): R|B| {
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : Foo, [ResolvedTo(RAW_FIR)] B : Bar<F>> F.util(): B {
             ^util Null(null)!!
         }
 
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe([ResolvedTo(RAW_FIR)] foo: R|Foo|): R|kotlin/Unit| {
-            R|<local>/foo|.R|/util|<R|Foo|, R|Bar<Foo>|>()
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe([ResolvedTo(RAW_FIR)] foo: Foo): R|kotlin/Unit| {
+            foo#.util#()
         }
 
-        public abstract [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
         }
 
-        public abstract [ResolvedTo(STATUS)] interface Bar<[ResolvedTo(STATUS)] T : R|Foo|> : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] interface Bar<[ResolvedTo(RAW_FIR)] T : Foo> : R|kotlin/Any| {
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : R|Foo|, [ResolvedTo(RAW_FIR)] B : R|Bar<F>|> R|F|.util(): R|B| {
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : Foo, [ResolvedTo(RAW_FIR)] B : Bar<F>> F.util(): B {
             ^util Null(null)!!
         }
 

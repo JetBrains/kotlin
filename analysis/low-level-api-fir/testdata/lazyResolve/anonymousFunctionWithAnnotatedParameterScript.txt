@@ -1,28 +1,28 @@
 RAW_FIR:
 FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.message] message: R|kotlin/String|): R|Anno| {
+        @Target[Unresolved](AnnotationTarget#.TYPE#) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.message] message: String): R|Anno| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val message: R|kotlin/String| = R|<local>/message|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val message: String = R|<local>/message|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] val nullablePropertyWithAnnotatedType: R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>?|
-            public [ResolvedTo(RAW_FIR)] get(): R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>?| {
+        public? final? [ResolvedTo(RAW_FIR)] val nullablePropertyWithAnnotatedType: @Anno[Unresolved](String(outer)) List<@Anno[Unresolved](String(middle)) List<@Anno[Unresolved](String(inner)) Int>>?
+            public? [ResolvedTo(RAW_FIR)] get(): @Anno[Unresolved](String(outer)) List<@Anno[Unresolved](String(middle)) List<@Anno[Unresolved](String(inner)) Int>>? {
                 ^ Null(null)
             }
 
-        public final [ResolvedTo(RAW_FIR)] val propertyToResolve: R|kotlin/String|
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/String| {
-                ^ R|/nullablePropertyWithAnnotatedType|?.{ $subj$.R|kotlin/let|<R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>|, R|kotlin/String|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function1<T, R>] let@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>|): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
-                    ^ <strcat>(String( (), R|<local>/it|, String()))
+        public? final? [ResolvedTo(RAW_FIR)] val propertyToResolve: String
+            public? [ResolvedTo(RAW_FIR)] get(): String {
+                ^ nullablePropertyWithAnnotatedType#?.{ $subj$.let#(<L> = [ResolvedTo(RAW_FIR)] let@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+                    <strcat>(String( (), it#, String()))
                 }
                 ) } ?: String()
             }
@@ -30,29 +30,29 @@ FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterScript.kts
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.message] message: R|kotlin/String|): R|Anno| {
+        @Target[Unresolved](AnnotationTarget#.TYPE#) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.message] message: String): R|Anno| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val message: R|kotlin/String| = R|<local>/message|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val message: String = R|<local>/message|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] val nullablePropertyWithAnnotatedType: R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>?|
-            public [ResolvedTo(RAW_FIR)] get(): R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>?| {
+        public? final? [ResolvedTo(RAW_FIR)] val nullablePropertyWithAnnotatedType: @Anno[Unresolved](String(outer)) List<@Anno[Unresolved](String(middle)) List<@Anno[Unresolved](String(inner)) Int>>?
+            public? [ResolvedTo(RAW_FIR)] get(): @Anno[Unresolved](String(outer)) List<@Anno[Unresolved](String(middle)) List<@Anno[Unresolved](String(inner)) Int>>? {
                 ^ Null(null)
             }
 
-        public final [ResolvedTo(RAW_FIR)] val propertyToResolve: R|kotlin/String|
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/String| {
-                ^ R|/nullablePropertyWithAnnotatedType|?.{ $subj$.R|kotlin/let|<R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>|, R|kotlin/String|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function1<T, R>] let@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>|): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
-                    ^ <strcat>(String( (), R|<local>/it|, String()))
+        public? final? [ResolvedTo(RAW_FIR)] val propertyToResolve: String
+            public? [ResolvedTo(RAW_FIR)] get(): String {
+                ^ nullablePropertyWithAnnotatedType#?.{ $subj$.let#(<L> = [ResolvedTo(RAW_FIR)] let@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+                    <strcat>(String( (), it#, String()))
                 }
                 ) } ?: String()
             }
@@ -60,29 +60,29 @@ FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterScript.kts
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.message] message: R|kotlin/String|): R|Anno| {
+        @Target[Unresolved](AnnotationTarget#.TYPE#) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.message] message: String): R|Anno| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val message: R|kotlin/String| = R|<local>/message|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val message: String = R|<local>/message|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] val nullablePropertyWithAnnotatedType: R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>?|
-            public [ResolvedTo(RAW_FIR)] get(): R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>?| {
+        public? final? [ResolvedTo(RAW_FIR)] val nullablePropertyWithAnnotatedType: @Anno[Unresolved](String(outer)) List<@Anno[Unresolved](String(middle)) List<@Anno[Unresolved](String(inner)) Int>>?
+            public? [ResolvedTo(RAW_FIR)] get(): @Anno[Unresolved](String(outer)) List<@Anno[Unresolved](String(middle)) List<@Anno[Unresolved](String(inner)) Int>>? {
                 ^ Null(null)
             }
 
-        public final [ResolvedTo(RAW_FIR)] val propertyToResolve: R|kotlin/String|
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/String| {
-                ^ R|/nullablePropertyWithAnnotatedType|?.{ $subj$.R|kotlin/let|<R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>|, R|kotlin/String|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function1<T, R>] let@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>|): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
-                    ^ <strcat>(String( (), R|<local>/it|, String()))
+        public? final? [ResolvedTo(RAW_FIR)] val propertyToResolve: String
+            public? [ResolvedTo(RAW_FIR)] get(): String {
+                ^ nullablePropertyWithAnnotatedType#?.{ $subj$.let#(<L> = [ResolvedTo(RAW_FIR)] let@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+                    <strcat>(String( (), it#, String()))
                 }
                 ) } ?: String()
             }
@@ -90,29 +90,29 @@ FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterScript.kts
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.message] message: R|kotlin/String|): R|Anno| {
+        @Target[Unresolved](AnnotationTarget#.TYPE#) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.message] message: String): R|Anno| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val message: R|kotlin/String| = R|<local>/message|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val message: String = R|<local>/message|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] val nullablePropertyWithAnnotatedType: R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>?|
-            public [ResolvedTo(RAW_FIR)] get(): R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>?| {
+        public? final? [ResolvedTo(RAW_FIR)] val nullablePropertyWithAnnotatedType: @Anno[Unresolved](String(outer)) List<@Anno[Unresolved](String(middle)) List<@Anno[Unresolved](String(inner)) Int>>?
+            public? [ResolvedTo(RAW_FIR)] get(): @Anno[Unresolved](String(outer)) List<@Anno[Unresolved](String(middle)) List<@Anno[Unresolved](String(inner)) Int>>? {
                 ^ Null(null)
             }
 
-        public final [ResolvedTo(RAW_FIR)] val propertyToResolve: R|kotlin/String|
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/String| {
-                ^ R|/nullablePropertyWithAnnotatedType|?.{ $subj$.R|kotlin/let|<R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>|, R|kotlin/String|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function1<T, R>] let@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>|): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
-                    ^ <strcat>(String( (), R|<local>/it|, String()))
+        public? final? [ResolvedTo(RAW_FIR)] val propertyToResolve: String
+            public? [ResolvedTo(RAW_FIR)] get(): String {
+                ^ nullablePropertyWithAnnotatedType#?.{ $subj$.let#(<L> = [ResolvedTo(RAW_FIR)] let@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+                    <strcat>(String( (), it#, String()))
                 }
                 ) } ?: String()
             }
@@ -120,29 +120,29 @@ FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterScript.kts
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.message] message: R|kotlin/String|): R|Anno| {
+        @Target[Unresolved](AnnotationTarget#.TYPE#) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.message] message: String): R|Anno| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val message: R|kotlin/String| = R|<local>/message|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val message: String = R|<local>/message|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] val nullablePropertyWithAnnotatedType: R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>?|
-            public [ResolvedTo(RAW_FIR)] get(): R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>?| {
+        public? final? [ResolvedTo(RAW_FIR)] val nullablePropertyWithAnnotatedType: @Anno[Unresolved](String(outer)) List<@Anno[Unresolved](String(middle)) List<@Anno[Unresolved](String(inner)) Int>>?
+            public? [ResolvedTo(RAW_FIR)] get(): @Anno[Unresolved](String(outer)) List<@Anno[Unresolved](String(middle)) List<@Anno[Unresolved](String(inner)) Int>>? {
                 ^ Null(null)
             }
 
-        public final [ResolvedTo(RAW_FIR)] val propertyToResolve: R|kotlin/String|
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/String| {
-                ^ R|/nullablePropertyWithAnnotatedType|?.{ $subj$.R|kotlin/let|<R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>|, R|kotlin/String|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function1<T, R>] let@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>|): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
-                    ^ <strcat>(String( (), R|<local>/it|, String()))
+        public? final? [ResolvedTo(RAW_FIR)] val propertyToResolve: String
+            public? [ResolvedTo(RAW_FIR)] get(): String {
+                ^ nullablePropertyWithAnnotatedType#?.{ $subj$.let#(<L> = [ResolvedTo(RAW_FIR)] let@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+                    <strcat>(String( (), it#, String()))
                 }
                 ) } ?: String()
             }
@@ -150,29 +150,29 @@ FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterScript.kts
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.message] message: R|kotlin/String|): R|Anno| {
+        @Target[Unresolved](AnnotationTarget#.TYPE#) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.message] message: String): R|Anno| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val message: R|kotlin/String| = R|<local>/message|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val message: String = R|<local>/message|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] val nullablePropertyWithAnnotatedType: R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>?|
-            public [ResolvedTo(RAW_FIR)] get(): R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>?| {
+        public? final? [ResolvedTo(RAW_FIR)] val nullablePropertyWithAnnotatedType: @Anno[Unresolved](String(outer)) List<@Anno[Unresolved](String(middle)) List<@Anno[Unresolved](String(inner)) Int>>?
+            public? [ResolvedTo(RAW_FIR)] get(): @Anno[Unresolved](String(outer)) List<@Anno[Unresolved](String(middle)) List<@Anno[Unresolved](String(inner)) Int>>? {
                 ^ Null(null)
             }
 
-        public final [ResolvedTo(RAW_FIR)] val propertyToResolve: R|kotlin/String|
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/String| {
-                ^ R|/nullablePropertyWithAnnotatedType|?.{ $subj$.R|kotlin/let|<R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>|, R|kotlin/String|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function1<T, R>] let@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>|): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
-                    ^ <strcat>(String( (), R|<local>/it|, String()))
+        public? final? [ResolvedTo(RAW_FIR)] val propertyToResolve: String
+            public? [ResolvedTo(RAW_FIR)] get(): String {
+                ^ nullablePropertyWithAnnotatedType#?.{ $subj$.let#(<L> = [ResolvedTo(RAW_FIR)] let@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+                    <strcat>(String( (), it#, String()))
                 }
                 ) } ?: String()
             }
@@ -180,29 +180,29 @@ FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterScript.kts
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.message] message: R|kotlin/String|): R|Anno| {
+        @Target[Unresolved](AnnotationTarget#.TYPE#) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.message] message: String): R|Anno| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val message: R|kotlin/String| = R|<local>/message|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val message: String = R|<local>/message|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] val nullablePropertyWithAnnotatedType: R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>?|
-            public [ResolvedTo(RAW_FIR)] get(): R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>?| {
+        public? final? [ResolvedTo(RAW_FIR)] val nullablePropertyWithAnnotatedType: @Anno[Unresolved](String(outer)) List<@Anno[Unresolved](String(middle)) List<@Anno[Unresolved](String(inner)) Int>>?
+            public? [ResolvedTo(RAW_FIR)] get(): @Anno[Unresolved](String(outer)) List<@Anno[Unresolved](String(middle)) List<@Anno[Unresolved](String(inner)) Int>>? {
                 ^ Null(null)
             }
 
-        public final [ResolvedTo(RAW_FIR)] val propertyToResolve: R|kotlin/String|
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/String| {
-                ^ R|/nullablePropertyWithAnnotatedType|?.{ $subj$.R|kotlin/let|<R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>|, R|kotlin/String|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function1<T, R>] let@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>|): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
-                    ^ <strcat>(String( (), R|<local>/it|, String()))
+        public? final? [ResolvedTo(RAW_FIR)] val propertyToResolve: String
+            public? [ResolvedTo(RAW_FIR)] get(): String {
+                ^ nullablePropertyWithAnnotatedType#?.{ $subj$.let#(<L> = [ResolvedTo(RAW_FIR)] let@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+                    <strcat>(String( (), it#, String()))
                 }
                 ) } ?: String()
             }
@@ -210,29 +210,29 @@ FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterScript.kts
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.message] message: R|kotlin/String|): R|Anno| {
+        @Target[Unresolved](AnnotationTarget#.TYPE#) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.message] message: String): R|Anno| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val message: R|kotlin/String| = R|<local>/message|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val message: String = R|<local>/message|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] val nullablePropertyWithAnnotatedType: R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>?|
-            public [ResolvedTo(RAW_FIR)] get(): R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>?| {
+        public? final? [ResolvedTo(RAW_FIR)] val nullablePropertyWithAnnotatedType: @Anno[Unresolved](String(outer)) List<@Anno[Unresolved](String(middle)) List<@Anno[Unresolved](String(inner)) Int>>?
+            public? [ResolvedTo(RAW_FIR)] get(): @Anno[Unresolved](String(outer)) List<@Anno[Unresolved](String(middle)) List<@Anno[Unresolved](String(inner)) Int>>? {
                 ^ Null(null)
             }
 
-        public final [ResolvedTo(RAW_FIR)] val propertyToResolve: R|kotlin/String|
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/String| {
-                ^ R|/nullablePropertyWithAnnotatedType|?.{ $subj$.R|kotlin/let|<R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>|, R|kotlin/String|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function1<T, R>] let@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>|): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
-                    ^ <strcat>(String( (), R|<local>/it|, String()))
+        public? final? [ResolvedTo(RAW_FIR)] val propertyToResolve: String
+            public? [ResolvedTo(RAW_FIR)] get(): String {
+                ^ nullablePropertyWithAnnotatedType#?.{ $subj$.let#(<L> = [ResolvedTo(RAW_FIR)] let@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+                    <strcat>(String( (), it#, String()))
                 }
                 ) } ?: String()
             }
@@ -240,29 +240,29 @@ FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterScript.kts
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.message] message: R|kotlin/String|): R|Anno| {
+        @Target[Unresolved](AnnotationTarget#.TYPE#) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.message] message: String): R|Anno| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val message: R|kotlin/String| = R|<local>/message|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val message: String = R|<local>/message|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] val nullablePropertyWithAnnotatedType: R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>?|
-            public [ResolvedTo(RAW_FIR)] get(): R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>?| {
+        public? final? [ResolvedTo(RAW_FIR)] val nullablePropertyWithAnnotatedType: @Anno[Unresolved](String(outer)) List<@Anno[Unresolved](String(middle)) List<@Anno[Unresolved](String(inner)) Int>>?
+            public? [ResolvedTo(RAW_FIR)] get(): @Anno[Unresolved](String(outer)) List<@Anno[Unresolved](String(middle)) List<@Anno[Unresolved](String(inner)) Int>>? {
                 ^ Null(null)
             }
 
-        public final [ResolvedTo(RAW_FIR)] val propertyToResolve: R|kotlin/String|
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/String| {
-                ^ R|/nullablePropertyWithAnnotatedType|?.{ $subj$.R|kotlin/let|<R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>|, R|kotlin/String|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function1<T, R>] let@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>|): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
-                    ^ <strcat>(String( (), R|<local>/it|, String()))
+        public? final? [ResolvedTo(RAW_FIR)] val propertyToResolve: String
+            public? [ResolvedTo(RAW_FIR)] get(): String {
+                ^ nullablePropertyWithAnnotatedType#?.{ $subj$.let#(<L> = [ResolvedTo(RAW_FIR)] let@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+                    <strcat>(String( (), it#, String()))
                 }
                 ) } ?: String()
             }
@@ -270,29 +270,29 @@ FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterScript.kts
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.message] message: R|kotlin/String|): R|Anno| {
+        @Target[Unresolved](AnnotationTarget#.TYPE#) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.message] message: String): R|Anno| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val message: R|kotlin/String| = R|<local>/message|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val message: String = R|<local>/message|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] val nullablePropertyWithAnnotatedType: R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>?|
-            public [ResolvedTo(RAW_FIR)] get(): R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>?| {
+        public? final? [ResolvedTo(RAW_FIR)] val nullablePropertyWithAnnotatedType: @Anno[Unresolved](String(outer)) List<@Anno[Unresolved](String(middle)) List<@Anno[Unresolved](String(inner)) Int>>?
+            public? [ResolvedTo(RAW_FIR)] get(): @Anno[Unresolved](String(outer)) List<@Anno[Unresolved](String(middle)) List<@Anno[Unresolved](String(inner)) Int>>? {
                 ^ Null(null)
             }
 
-        public final [ResolvedTo(RAW_FIR)] val propertyToResolve: R|kotlin/String|
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/String| {
-                ^ R|/nullablePropertyWithAnnotatedType|?.{ $subj$.R|kotlin/let|<R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>|, R|kotlin/String|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function1<T, R>] let@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>|): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
-                    ^ <strcat>(String( (), R|<local>/it|, String()))
+        public? final? [ResolvedTo(RAW_FIR)] val propertyToResolve: String
+            public? [ResolvedTo(RAW_FIR)] get(): String {
+                ^ nullablePropertyWithAnnotatedType#?.{ $subj$.let#(<L> = [ResolvedTo(RAW_FIR)] let@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+                    <strcat>(String( (), it#, String()))
                 }
                 ) } ?: String()
             }
@@ -300,29 +300,29 @@ FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterScript.kts
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.message] message: R|kotlin/String|): R|Anno| {
+        @Target[Unresolved](AnnotationTarget#.TYPE#) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.message] message: String): R|Anno| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val message: R|kotlin/String| = R|<local>/message|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val message: String = R|<local>/message|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] val nullablePropertyWithAnnotatedType: R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>?|
-            public [ResolvedTo(RAW_FIR)] get(): R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>?| {
+        public? final? [ResolvedTo(RAW_FIR)] val nullablePropertyWithAnnotatedType: @Anno[Unresolved](String(outer)) List<@Anno[Unresolved](String(middle)) List<@Anno[Unresolved](String(inner)) Int>>?
+            public? [ResolvedTo(RAW_FIR)] get(): @Anno[Unresolved](String(outer)) List<@Anno[Unresolved](String(middle)) List<@Anno[Unresolved](String(inner)) Int>>? {
                 ^ Null(null)
             }
 
-        public final [ResolvedTo(RAW_FIR)] val propertyToResolve: R|kotlin/String|
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/String| {
-                ^ R|/nullablePropertyWithAnnotatedType|?.{ $subj$.R|kotlin/let|<R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>|, R|kotlin/String|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function1<T, R>] let@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>|): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
-                    ^ <strcat>(String( (), R|<local>/it|, String()))
+        public? final? [ResolvedTo(RAW_FIR)] val propertyToResolve: String
+            public? [ResolvedTo(RAW_FIR)] get(): String {
+                ^ nullablePropertyWithAnnotatedType#?.{ $subj$.let#(<L> = [ResolvedTo(RAW_FIR)] let@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+                    <strcat>(String( (), it#, String()))
                 }
                 ) } ?: String()
             }
@@ -330,29 +330,29 @@ FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterScript.kts
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.message] message: R|kotlin/String|): R|Anno| {
+        @Target[Unresolved](AnnotationTarget#.TYPE#) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.message] message: String): R|Anno| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val message: R|kotlin/String| = R|<local>/message|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val message: String = R|<local>/message|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] val nullablePropertyWithAnnotatedType: R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>?|
-            public [ResolvedTo(RAW_FIR)] get(): R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>?| {
+        public? final? [ResolvedTo(RAW_FIR)] val nullablePropertyWithAnnotatedType: @Anno[Unresolved](String(outer)) List<@Anno[Unresolved](String(middle)) List<@Anno[Unresolved](String(inner)) Int>>?
+            public? [ResolvedTo(RAW_FIR)] get(): @Anno[Unresolved](String(outer)) List<@Anno[Unresolved](String(middle)) List<@Anno[Unresolved](String(inner)) Int>>? {
                 ^ Null(null)
             }
 
-        public final [ResolvedTo(RAW_FIR)] val propertyToResolve: R|kotlin/String|
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/String| {
-                ^ R|/nullablePropertyWithAnnotatedType|?.{ $subj$.R|kotlin/let|<R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>|, R|kotlin/String|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function1<T, R>] let@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>|): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
-                    ^ <strcat>(String( (), R|<local>/it|, String()))
+        public? final? [ResolvedTo(RAW_FIR)] val propertyToResolve: String
+            public? [ResolvedTo(RAW_FIR)] get(): String {
+                ^ nullablePropertyWithAnnotatedType#?.{ $subj$.let#(<L> = [ResolvedTo(RAW_FIR)] let@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+                    <strcat>(String( (), it#, String()))
                 }
                 ) } ?: String()
             }
@@ -360,29 +360,29 @@ FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterScript.kts
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.message] message: R|kotlin/String|): R|Anno| {
+        @Target[Unresolved](AnnotationTarget#.TYPE#) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.message] message: String): R|Anno| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val message: R|kotlin/String| = R|<local>/message|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val message: String = R|<local>/message|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] val nullablePropertyWithAnnotatedType: R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>?|
-            public [ResolvedTo(RAW_FIR)] get(): R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>?| {
+        public? final? [ResolvedTo(RAW_FIR)] val nullablePropertyWithAnnotatedType: @Anno[Unresolved](String(outer)) List<@Anno[Unresolved](String(middle)) List<@Anno[Unresolved](String(inner)) Int>>?
+            public? [ResolvedTo(RAW_FIR)] get(): @Anno[Unresolved](String(outer)) List<@Anno[Unresolved](String(middle)) List<@Anno[Unresolved](String(inner)) Int>>? {
                 ^ Null(null)
             }
 
-        public final [ResolvedTo(RAW_FIR)] val propertyToResolve: R|kotlin/String|
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/String| {
-                ^ R|/nullablePropertyWithAnnotatedType|?.{ $subj$.R|kotlin/let|<R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>|, R|kotlin/String|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function1<T, R>] let@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>|): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
-                    ^ <strcat>(String( (), R|<local>/it|, String()))
+        public? final? [ResolvedTo(RAW_FIR)] val propertyToResolve: String
+            public? [ResolvedTo(RAW_FIR)] get(): String {
+                ^ nullablePropertyWithAnnotatedType#?.{ $subj$.let#(<L> = [ResolvedTo(RAW_FIR)] let@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+                    <strcat>(String( (), it#, String()))
                 }
                 ) } ?: String()
             }
@@ -390,29 +390,29 @@ FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterScript.kts
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] anonymousFunctionWithAnnotatedParameterScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.message] message: R|kotlin/String|): R|Anno| {
+        @Target[Unresolved](AnnotationTarget#.TYPE#) public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.message] message: String): R|Anno| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val message: R|kotlin/String| = R|<local>/message|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val message: String = R|<local>/message|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): String
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] val nullablePropertyWithAnnotatedType: R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>?|
-            public [ResolvedTo(RAW_FIR)] get(): R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>?| {
+        public? final? [ResolvedTo(RAW_FIR)] val nullablePropertyWithAnnotatedType: @Anno[Unresolved](String(outer)) List<@Anno[Unresolved](String(middle)) List<@Anno[Unresolved](String(inner)) Int>>?
+            public? [ResolvedTo(RAW_FIR)] get(): @Anno[Unresolved](String(outer)) List<@Anno[Unresolved](String(middle)) List<@Anno[Unresolved](String(inner)) Int>>? {
                 ^ Null(null)
             }
 
-        public final [ResolvedTo(RAW_FIR)] val propertyToResolve: R|kotlin/String|
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/String| {
-                ^ R|/nullablePropertyWithAnnotatedType|?.{ $subj$.R|kotlin/let|<R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>|, R|kotlin/String|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function1<T, R>] let@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|@R|Anno|(message = String(outer))  kotlin/collections/List<@R|Anno|(message = String(middle))  kotlin/collections/List<@R|Anno|(message = String(inner))  kotlin/Int>>|): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
-                    ^ <strcat>(String( (), R|<local>/it|, String()))
+        public? final? [ResolvedTo(RAW_FIR)] val propertyToResolve: String
+            public? [ResolvedTo(RAW_FIR)] get(): String {
+                ^ nullablePropertyWithAnnotatedType#?.{ $subj$.let#(<L> = [ResolvedTo(RAW_FIR)] let@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+                    <strcat>(String( (), it#, String()))
                 }
                 ) } ?: String()
             }

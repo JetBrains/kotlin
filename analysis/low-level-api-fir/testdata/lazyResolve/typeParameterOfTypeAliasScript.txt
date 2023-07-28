@@ -1,223 +1,223 @@
 RAW_FIR:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAliasScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class X<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor<[ResolvedTo(STATUS)] T>(): R|X<T>| {
+        public? final? [ResolvedTo(RAW_FIR)] class X<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(RAW_FIR)] T>(): R|X<T>| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TypeParam> = R|X<TypeParam>|
+        public? final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TypeParam> = X<TypeParam>
 
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAliasScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class X<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor<[ResolvedTo(STATUS)] T>(): R|X<T>| {
+        public? final? [ResolvedTo(RAW_FIR)] class X<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(RAW_FIR)] T>(): R|X<T>| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TypeParam> = R|X<TypeParam>|
+        public? final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TypeParam> = X<TypeParam>
 
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAliasScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class X<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor<[ResolvedTo(STATUS)] T>(): R|X<T>| {
+        public? final? [ResolvedTo(RAW_FIR)] class X<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(RAW_FIR)] T>(): R|X<T>| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TypeParam> = R|X<TypeParam>|
+        public? final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TypeParam> = X<TypeParam>
 
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAliasScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class X<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor<[ResolvedTo(STATUS)] T>(): R|X<T>| {
+        public? final? [ResolvedTo(RAW_FIR)] class X<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(RAW_FIR)] T>(): R|X<T>| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TypeParam> = R|X<TypeParam>|
+        public? final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TypeParam> = X<TypeParam>
 
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAliasScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class X<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor<[ResolvedTo(STATUS)] T>(): R|X<T>| {
+        public? final? [ResolvedTo(RAW_FIR)] class X<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(RAW_FIR)] T>(): R|X<T>| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TypeParam> = R|X<TypeParam>|
+        public? final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TypeParam> = X<TypeParam>
 
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAliasScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class X<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor<[ResolvedTo(STATUS)] T>(): R|X<T>| {
+        public? final? [ResolvedTo(RAW_FIR)] class X<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(RAW_FIR)] T>(): R|X<T>| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TypeParam> = R|X<TypeParam>|
+        public? final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TypeParam> = X<TypeParam>
 
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAliasScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class X<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor<[ResolvedTo(STATUS)] T>(): R|X<T>| {
+        public? final? [ResolvedTo(RAW_FIR)] class X<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(RAW_FIR)] T>(): R|X<T>| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TypeParam> = R|X<TypeParam>|
+        public? final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TypeParam> = X<TypeParam>
 
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAliasScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class X<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor<[ResolvedTo(STATUS)] T>(): R|X<T>| {
+        public? final? [ResolvedTo(RAW_FIR)] class X<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(RAW_FIR)] T>(): R|X<T>| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TypeParam> = R|X<TypeParam>|
+        public? final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TypeParam> = X<TypeParam>
 
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAliasScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class X<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor<[ResolvedTo(STATUS)] T>(): R|X<T>| {
+        public? final? [ResolvedTo(RAW_FIR)] class X<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(RAW_FIR)] T>(): R|X<T>| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TypeParam> = R|X<TypeParam>|
+        public? final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TypeParam> = X<TypeParam>
 
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAliasScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class X<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor<[ResolvedTo(STATUS)] T>(): R|X<T>| {
+        public? final? [ResolvedTo(RAW_FIR)] class X<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(RAW_FIR)] T>(): R|X<T>| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TypeParam> = R|X<TypeParam>|
+        public? final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TypeParam> = X<TypeParam>
 
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAliasScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class X<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor<[ResolvedTo(STATUS)] T>(): R|X<T>| {
+        public? final? [ResolvedTo(RAW_FIR)] class X<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(RAW_FIR)] T>(): R|X<T>| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TypeParam> = R|X<TypeParam>|
+        public? final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TypeParam> = X<TypeParam>
 
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAliasScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class X<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor<[ResolvedTo(STATUS)] T>(): R|X<T>| {
+        public? final? [ResolvedTo(RAW_FIR)] class X<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(RAW_FIR)] T>(): R|X<T>| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TypeParam> = R|X<TypeParam>|
+        public? final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TypeParam> = X<TypeParam>
 
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAliasScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class X<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor<[ResolvedTo(STATUS)] T>(): R|X<T>| {
+        public? final? [ResolvedTo(RAW_FIR)] class X<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(RAW_FIR)] T>(): R|X<T>| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TypeParam> = R|X<TypeParam>|
+        public? final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TypeParam> = X<TypeParam>
 
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAliasScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class X<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor<[ResolvedTo(STATUS)] T>(): R|X<T>| {
+        public? final? [ResolvedTo(RAW_FIR)] class X<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(RAW_FIR)] T>(): R|X<T>| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TypeParam> = R|X<TypeParam>|
+        public? final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TypeParam> = X<TypeParam>
 

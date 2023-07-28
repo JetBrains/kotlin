@@ -1,9 +1,9 @@
 FILE: [ResolvedTo(IMPORTS)] topLevelUnitFunScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-            <Unresolved name: println>#(String())
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
+            println#(String())
         }
 

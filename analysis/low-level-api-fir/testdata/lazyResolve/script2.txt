@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] script2.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)]
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun f([ResolvedTo(RAW_FIR)] p: Int?): Int {
@@ -50,7 +50,7 @@ FILE: [ResolvedTo(RAW_FIR)] script2.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] script2.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)]
+    SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun f([ResolvedTo(RAW_FIR)] p: Int?): Int {
@@ -99,7 +99,7 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] script2.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)]
+    SCRIPT: [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun f([ResolvedTo(RAW_FIR)] p: Int?): Int {
@@ -148,7 +148,7 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] script2.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(COMPANION_GENERATION)]
+    SCRIPT: [ResolvedTo(COMPANION_GENERATION)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun f([ResolvedTo(RAW_FIR)] p: Int?): Int {
@@ -197,7 +197,7 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] script2.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(SUPER_TYPES)]
+    SCRIPT: [ResolvedTo(SUPER_TYPES)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun f([ResolvedTo(RAW_FIR)] p: Int?): Int {
@@ -245,21 +245,21 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] script2.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(TYPES)]
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(TYPES)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun f([ResolvedTo(RAW_FIR)] p: R|kotlin/Int?|): R|kotlin/Int| {
+        public? final? [ResolvedTo(RAW_FIR)] fun f([ResolvedTo(RAW_FIR)] p: Int?): Int {
             [ResolvedTo(RAW_FIR)] lval fy: <implicit> = p#!!
             [ResolvedTo(RAW_FIR)] lval fz: <implicit> = p#.plus#(IntegerLiteral(1))
             ^f fz#
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun consume([ResolvedTo(RAW_FIR)] x: R|kotlin/Int|): R|kotlin/Unit| {
+        public? final? [ResolvedTo(RAW_FIR)] fun consume([ResolvedTo(RAW_FIR)] x: Int): R|kotlin/Unit| {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] val x: R|kotlin/Int?| = IntegerLiteral(1)
-            public? [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int?|
+        public? final? [ResolvedTo(RAW_FIR)] val x: Int? = IntegerLiteral(1)
+            public? [ResolvedTo(RAW_FIR)] get(): Int?
 
         public? final? [ResolvedTo(RAW_FIR)] val y: <implicit> = x#!!
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
@@ -294,39 +294,39 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] script2.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(STATUS)]
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(STATUS)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun f([ResolvedTo(RAW_FIR)] p: R|kotlin/Int?|): R|kotlin/Int| {
+        public? final? [ResolvedTo(RAW_FIR)] fun f([ResolvedTo(RAW_FIR)] p: Int?): Int {
             [ResolvedTo(RAW_FIR)] lval fy: <implicit> = p#!!
             [ResolvedTo(RAW_FIR)] lval fz: <implicit> = p#.plus#(IntegerLiteral(1))
             ^f fz#
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun consume([ResolvedTo(RAW_FIR)] x: R|kotlin/Int|): R|kotlin/Unit| {
+        public? final? [ResolvedTo(RAW_FIR)] fun consume([ResolvedTo(RAW_FIR)] x: Int): R|kotlin/Unit| {
         }
 
-        public final [ResolvedTo(RAW_FIR)] val x: R|kotlin/Int?| = IntegerLiteral(1)
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int?|
+        public? final? [ResolvedTo(RAW_FIR)] val x: Int? = IntegerLiteral(1)
+            public? [ResolvedTo(RAW_FIR)] get(): Int?
 
-        public final [ResolvedTo(RAW_FIR)] val y: <implicit> = x#!!
-            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+        public? final? [ResolvedTo(RAW_FIR)] val y: <implicit> = x#!!
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(RAW_FIR)] val z: <implicit> = x#.plus#(IntegerLiteral(1))
-            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+        public? final? [ResolvedTo(RAW_FIR)] val z: <implicit> = x#.plus#(IntegerLiteral(1))
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(RAW_FIR)] fun foo(): <implicit> {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> {
             ^foo x#.plus#(IntegerLiteral(1))
         }
 
         consume#(x#.plus#(IntegerLiteral(1)))
         x#!!
         consume#(x#.plus#(IntegerLiteral(1)))
-        public final [ResolvedTo(RAW_FIR)] val zz: <implicit> = x#.plus#(IntegerLiteral(1))
-            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+        public? final? [ResolvedTo(RAW_FIR)] val zz: <implicit> = x#.plus#(IntegerLiteral(1))
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 super<R|kotlin/Any|>()
             }
@@ -343,39 +343,39 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] script2.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(EXPECT_ACTUAL_MATCHING)]
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(EXPECT_ACTUAL_MATCHING)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun f([ResolvedTo(RAW_FIR)] p: R|kotlin/Int?|): R|kotlin/Int| {
+        public? final? [ResolvedTo(RAW_FIR)] fun f([ResolvedTo(RAW_FIR)] p: Int?): Int {
             [ResolvedTo(RAW_FIR)] lval fy: <implicit> = p#!!
             [ResolvedTo(RAW_FIR)] lval fz: <implicit> = p#.plus#(IntegerLiteral(1))
             ^f fz#
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun consume([ResolvedTo(RAW_FIR)] x: R|kotlin/Int|): R|kotlin/Unit| {
+        public? final? [ResolvedTo(RAW_FIR)] fun consume([ResolvedTo(RAW_FIR)] x: Int): R|kotlin/Unit| {
         }
 
-        public final [ResolvedTo(RAW_FIR)] val x: R|kotlin/Int?| = IntegerLiteral(1)
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int?|
+        public? final? [ResolvedTo(RAW_FIR)] val x: Int? = IntegerLiteral(1)
+            public? [ResolvedTo(RAW_FIR)] get(): Int?
 
-        public final [ResolvedTo(RAW_FIR)] val y: <implicit> = x#!!
-            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+        public? final? [ResolvedTo(RAW_FIR)] val y: <implicit> = x#!!
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(RAW_FIR)] val z: <implicit> = x#.plus#(IntegerLiteral(1))
-            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+        public? final? [ResolvedTo(RAW_FIR)] val z: <implicit> = x#.plus#(IntegerLiteral(1))
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(RAW_FIR)] fun foo(): <implicit> {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> {
             ^foo x#.plus#(IntegerLiteral(1))
         }
 
         consume#(x#.plus#(IntegerLiteral(1)))
         x#!!
         consume#(x#.plus#(IntegerLiteral(1)))
-        public final [ResolvedTo(RAW_FIR)] val zz: <implicit> = x#.plus#(IntegerLiteral(1))
-            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+        public? final? [ResolvedTo(RAW_FIR)] val zz: <implicit> = x#.plus#(IntegerLiteral(1))
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 super<R|kotlin/Any|>()
             }
@@ -392,39 +392,39 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] script2.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)]
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun f([ResolvedTo(RAW_FIR)] p: R|kotlin/Int?|): R|kotlin/Int| {
+        public? final? [ResolvedTo(RAW_FIR)] fun f([ResolvedTo(RAW_FIR)] p: Int?): Int {
             [ResolvedTo(RAW_FIR)] lval fy: <implicit> = p#!!
             [ResolvedTo(RAW_FIR)] lval fz: <implicit> = p#.plus#(IntegerLiteral(1))
             ^f fz#
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun consume([ResolvedTo(RAW_FIR)] x: R|kotlin/Int|): R|kotlin/Unit| {
+        public? final? [ResolvedTo(RAW_FIR)] fun consume([ResolvedTo(RAW_FIR)] x: Int): R|kotlin/Unit| {
         }
 
-        public final [ResolvedTo(RAW_FIR)] val x: R|kotlin/Int?| = IntegerLiteral(1)
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int?|
+        public? final? [ResolvedTo(RAW_FIR)] val x: Int? = IntegerLiteral(1)
+            public? [ResolvedTo(RAW_FIR)] get(): Int?
 
-        public final [ResolvedTo(RAW_FIR)] val y: <implicit> = x#!!
-            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+        public? final? [ResolvedTo(RAW_FIR)] val y: <implicit> = x#!!
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(RAW_FIR)] val z: <implicit> = x#.plus#(IntegerLiteral(1))
-            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+        public? final? [ResolvedTo(RAW_FIR)] val z: <implicit> = x#.plus#(IntegerLiteral(1))
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(RAW_FIR)] fun foo(): <implicit> {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> {
             ^foo x#.plus#(IntegerLiteral(1))
         }
 
         consume#(x#.plus#(IntegerLiteral(1)))
         x#!!
         consume#(x#.plus#(IntegerLiteral(1)))
-        public final [ResolvedTo(RAW_FIR)] val zz: <implicit> = x#.plus#(IntegerLiteral(1))
-            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+        public? final? [ResolvedTo(RAW_FIR)] val zz: <implicit> = x#.plus#(IntegerLiteral(1))
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 super<R|kotlin/Any|>()
             }
@@ -441,39 +441,39 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] script2.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(CONTRACTS)]
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(CONTRACTS)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun f([ResolvedTo(RAW_FIR)] p: R|kotlin/Int?|): R|kotlin/Int| {
+        public? final? [ResolvedTo(RAW_FIR)] fun f([ResolvedTo(RAW_FIR)] p: Int?): Int {
             [ResolvedTo(RAW_FIR)] lval fy: <implicit> = p#!!
             [ResolvedTo(RAW_FIR)] lval fz: <implicit> = p#.plus#(IntegerLiteral(1))
             ^f fz#
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun consume([ResolvedTo(RAW_FIR)] x: R|kotlin/Int|): R|kotlin/Unit| {
+        public? final? [ResolvedTo(RAW_FIR)] fun consume([ResolvedTo(RAW_FIR)] x: Int): R|kotlin/Unit| {
         }
 
-        public final [ResolvedTo(RAW_FIR)] val x: R|kotlin/Int?| = IntegerLiteral(1)
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int?|
+        public? final? [ResolvedTo(RAW_FIR)] val x: Int? = IntegerLiteral(1)
+            public? [ResolvedTo(RAW_FIR)] get(): Int?
 
-        public final [ResolvedTo(RAW_FIR)] val y: <implicit> = x#!!
-            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+        public? final? [ResolvedTo(RAW_FIR)] val y: <implicit> = x#!!
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(RAW_FIR)] val z: <implicit> = x#.plus#(IntegerLiteral(1))
-            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+        public? final? [ResolvedTo(RAW_FIR)] val z: <implicit> = x#.plus#(IntegerLiteral(1))
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(RAW_FIR)] fun foo(): <implicit> {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> {
             ^foo x#.plus#(IntegerLiteral(1))
         }
 
         consume#(x#.plus#(IntegerLiteral(1)))
         x#!!
         consume#(x#.plus#(IntegerLiteral(1)))
-        public final [ResolvedTo(RAW_FIR)] val zz: <implicit> = x#.plus#(IntegerLiteral(1))
-            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+        public? final? [ResolvedTo(RAW_FIR)] val zz: <implicit> = x#.plus#(IntegerLiteral(1))
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 super<R|kotlin/Any|>()
             }
@@ -490,39 +490,39 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] script2.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)]
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun f([ResolvedTo(RAW_FIR)] p: R|kotlin/Int?|): R|kotlin/Int| {
+        public? final? [ResolvedTo(RAW_FIR)] fun f([ResolvedTo(RAW_FIR)] p: Int?): Int {
             [ResolvedTo(RAW_FIR)] lval fy: <implicit> = p#!!
             [ResolvedTo(RAW_FIR)] lval fz: <implicit> = p#.plus#(IntegerLiteral(1))
             ^f fz#
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun consume([ResolvedTo(RAW_FIR)] x: R|kotlin/Int|): R|kotlin/Unit| {
+        public? final? [ResolvedTo(RAW_FIR)] fun consume([ResolvedTo(RAW_FIR)] x: Int): R|kotlin/Unit| {
         }
 
-        public final [ResolvedTo(RAW_FIR)] val x: R|kotlin/Int?| = IntegerLiteral(1)
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int?|
+        public? final? [ResolvedTo(RAW_FIR)] val x: Int? = IntegerLiteral(1)
+            public? [ResolvedTo(RAW_FIR)] get(): Int?
 
-        public final [ResolvedTo(RAW_FIR)] val y: <implicit> = x#!!
-            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+        public? final? [ResolvedTo(RAW_FIR)] val y: <implicit> = x#!!
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(RAW_FIR)] val z: <implicit> = x#.plus#(IntegerLiteral(1))
-            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+        public? final? [ResolvedTo(RAW_FIR)] val z: <implicit> = x#.plus#(IntegerLiteral(1))
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(RAW_FIR)] fun foo(): <implicit> {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> {
             ^foo x#.plus#(IntegerLiteral(1))
         }
 
         consume#(x#.plus#(IntegerLiteral(1)))
         x#!!
         consume#(x#.plus#(IntegerLiteral(1)))
-        public final [ResolvedTo(RAW_FIR)] val zz: <implicit> = x#.plus#(IntegerLiteral(1))
-            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+        public? final? [ResolvedTo(RAW_FIR)] val zz: <implicit> = x#.plus#(IntegerLiteral(1))
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 super<R|kotlin/Any|>()
             }
@@ -539,39 +539,39 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] script2.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)]
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun f([ResolvedTo(RAW_FIR)] p: R|kotlin/Int?|): R|kotlin/Int| {
+        public? final? [ResolvedTo(RAW_FIR)] fun f([ResolvedTo(RAW_FIR)] p: Int?): Int {
             [ResolvedTo(RAW_FIR)] lval fy: <implicit> = p#!!
             [ResolvedTo(RAW_FIR)] lval fz: <implicit> = p#.plus#(IntegerLiteral(1))
             ^f fz#
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun consume([ResolvedTo(RAW_FIR)] x: R|kotlin/Int|): R|kotlin/Unit| {
+        public? final? [ResolvedTo(RAW_FIR)] fun consume([ResolvedTo(RAW_FIR)] x: Int): R|kotlin/Unit| {
         }
 
-        public final [ResolvedTo(RAW_FIR)] val x: R|kotlin/Int?| = IntegerLiteral(1)
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int?|
+        public? final? [ResolvedTo(RAW_FIR)] val x: Int? = IntegerLiteral(1)
+            public? [ResolvedTo(RAW_FIR)] get(): Int?
 
-        public final [ResolvedTo(RAW_FIR)] val y: <implicit> = x#!!
-            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+        public? final? [ResolvedTo(RAW_FIR)] val y: <implicit> = x#!!
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(RAW_FIR)] val z: <implicit> = x#.plus#(IntegerLiteral(1))
-            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+        public? final? [ResolvedTo(RAW_FIR)] val z: <implicit> = x#.plus#(IntegerLiteral(1))
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(RAW_FIR)] fun foo(): <implicit> {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> {
             ^foo x#.plus#(IntegerLiteral(1))
         }
 
         consume#(x#.plus#(IntegerLiteral(1)))
         x#!!
         consume#(x#.plus#(IntegerLiteral(1)))
-        public final [ResolvedTo(RAW_FIR)] val zz: <implicit> = x#.plus#(IntegerLiteral(1))
-            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+        public? final? [ResolvedTo(RAW_FIR)] val zz: <implicit> = x#.plus#(IntegerLiteral(1))
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 super<R|kotlin/Any|>()
             }
@@ -588,48 +588,48 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] script2.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)]
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun f([ResolvedTo(RAW_FIR)] p: R|kotlin/Int?|): R|kotlin/Int| {
-            [ResolvedTo(RAW_FIR)] lval fy: R|kotlin/Int| = R|<local>/p|!!
-            [ResolvedTo(RAW_FIR)] lval fz: R|kotlin/Int| = R|<local>/p|.R|kotlin/Int.plus|(Int(1))
-            ^f R|<local>/fz|
+        public? final? [ResolvedTo(RAW_FIR)] fun f([ResolvedTo(RAW_FIR)] p: Int?): Int {
+            [ResolvedTo(RAW_FIR)] lval fy: <implicit> = p#!!
+            [ResolvedTo(RAW_FIR)] lval fz: <implicit> = p#.plus#(IntegerLiteral(1))
+            ^f fz#
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun consume([ResolvedTo(RAW_FIR)] x: R|kotlin/Int|): R|kotlin/Unit| {
+        public? final? [ResolvedTo(RAW_FIR)] fun consume([ResolvedTo(RAW_FIR)] x: Int): R|kotlin/Unit| {
         }
 
-        public final [ResolvedTo(RAW_FIR)] val x: R|kotlin/Int?| = Int(1)
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int?|
+        public? final? [ResolvedTo(RAW_FIR)] val x: Int? = IntegerLiteral(1)
+            public? [ResolvedTo(RAW_FIR)] get(): Int?
 
-        public final [ResolvedTo(RAW_FIR)] val y: R|kotlin/Int| = R|/x|!!
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int|
+        public? final? [ResolvedTo(RAW_FIR)] val y: <implicit> = x#!!
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(RAW_FIR)] val z: R|kotlin/Int| = R|/x|.R|kotlin/Int.plus<Inapplicable(UNSAFE_CALL): kotlin/Int.plus>#|(Int(1))
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int|
+        public? final? [ResolvedTo(RAW_FIR)] val z: <implicit> = x#.plus#(IntegerLiteral(1))
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Int| {
-            ^foo R|/x|.R|kotlin/Int.plus<Inapplicable(UNSAFE_CALL): kotlin/Int.plus>#|(Int(1))
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> {
+            ^foo x#.plus#(IntegerLiteral(1))
         }
 
-        R|/consume|(R|/x|.R|kotlin/Int.plus<Inapplicable(UNSAFE_CALL): kotlin/Int.plus>#|(Int(1)))
-        R|/x|!!
-        R|/consume|(R|/x|.R|kotlin/Int.plus|(Int(1)))
-        public final [ResolvedTo(RAW_FIR)] val zz: R|kotlin/Int| = R|/x|.R|kotlin/Int.plus<Inapplicable(UNSAFE_CALL): kotlin/Int.plus>#|(Int(1))
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int|
+        consume#(x#.plus#(IntegerLiteral(1)))
+        x#!!
+        consume#(x#.plus#(IntegerLiteral(1)))
+        public? final? [ResolvedTo(RAW_FIR)] val zz: <implicit> = x#.plus#(IntegerLiteral(1))
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
+        public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] val cz: R|kotlin/Int| = R|/x|.R|kotlin/Int.plus<Inapplicable(UNSAFE_CALL): kotlin/Int.plus>#|(Int(1))
-                public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Int|
+            public? final? [ResolvedTo(RAW_FIR)] val cz: <implicit> = x#.plus#(IntegerLiteral(1))
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] get(): <implicit>
 
-            public final [ResolvedTo(STATUS)] fun bar(): R|kotlin/Int| {
-                ^bar R|/x|.R|kotlin/Int.plus<Inapplicable(UNSAFE_CALL): kotlin/Int.plus>#|(Int(1))
+            public? final? [ResolvedTo(RAW_FIR)] fun bar(): <implicit> {
+                ^bar x#.plus#(IntegerLiteral(1))
             }
 
         }
@@ -637,48 +637,48 @@ FILE: [ResolvedTo(IMPORTS)] script2.kts
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] script2.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)]
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun f([ResolvedTo(RAW_FIR)] p: R|kotlin/Int?|): R|kotlin/Int| {
-            [ResolvedTo(RAW_FIR)] lval fy: R|kotlin/Int| = R|<local>/p|!!
-            [ResolvedTo(RAW_FIR)] lval fz: R|kotlin/Int| = R|<local>/p|.R|kotlin/Int.plus|(Int(1))
-            ^f R|<local>/fz|
+        public? final? [ResolvedTo(RAW_FIR)] fun f([ResolvedTo(RAW_FIR)] p: Int?): Int {
+            [ResolvedTo(RAW_FIR)] lval fy: <implicit> = p#!!
+            [ResolvedTo(RAW_FIR)] lval fz: <implicit> = p#.plus#(IntegerLiteral(1))
+            ^f fz#
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun consume([ResolvedTo(RAW_FIR)] x: R|kotlin/Int|): R|kotlin/Unit| {
+        public? final? [ResolvedTo(RAW_FIR)] fun consume([ResolvedTo(RAW_FIR)] x: Int): R|kotlin/Unit| {
         }
 
-        public final [ResolvedTo(RAW_FIR)] val x: R|kotlin/Int?| = Int(1)
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int?|
+        public? final? [ResolvedTo(RAW_FIR)] val x: Int? = IntegerLiteral(1)
+            public? [ResolvedTo(RAW_FIR)] get(): Int?
 
-        public final [ResolvedTo(RAW_FIR)] val y: R|kotlin/Int| = R|/x|!!
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int|
+        public? final? [ResolvedTo(RAW_FIR)] val y: <implicit> = x#!!
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(RAW_FIR)] val z: R|kotlin/Int| = R|/x|.R|kotlin/Int.plus<Inapplicable(UNSAFE_CALL): kotlin/Int.plus>#|(Int(1))
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int|
+        public? final? [ResolvedTo(RAW_FIR)] val z: <implicit> = x#.plus#(IntegerLiteral(1))
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Int| {
-            ^foo R|/x|.R|kotlin/Int.plus<Inapplicable(UNSAFE_CALL): kotlin/Int.plus>#|(Int(1))
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> {
+            ^foo x#.plus#(IntegerLiteral(1))
         }
 
-        R|/consume|(R|/x|.R|kotlin/Int.plus<Inapplicable(UNSAFE_CALL): kotlin/Int.plus>#|(Int(1)))
-        R|/x|!!
-        R|/consume|(R|/x|.R|kotlin/Int.plus|(Int(1)))
-        public final [ResolvedTo(RAW_FIR)] val zz: R|kotlin/Int| = R|/x|.R|kotlin/Int.plus<Inapplicable(UNSAFE_CALL): kotlin/Int.plus>#|(Int(1))
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int|
+        consume#(x#.plus#(IntegerLiteral(1)))
+        x#!!
+        consume#(x#.plus#(IntegerLiteral(1)))
+        public? final? [ResolvedTo(RAW_FIR)] val zz: <implicit> = x#.plus#(IntegerLiteral(1))
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
+        public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] val cz: R|kotlin/Int| = R|/x|.R|kotlin/Int.plus<Inapplicable(UNSAFE_CALL): kotlin/Int.plus>#|(Int(1))
-                public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Int|
+            public? final? [ResolvedTo(RAW_FIR)] val cz: <implicit> = x#.plus#(IntegerLiteral(1))
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] get(): <implicit>
 
-            public final [ResolvedTo(STATUS)] fun bar(): R|kotlin/Int| {
-                ^bar R|/x|.R|kotlin/Int.plus<Inapplicable(UNSAFE_CALL): kotlin/Int.plus>#|(Int(1))
+            public? final? [ResolvedTo(RAW_FIR)] fun bar(): <implicit> {
+                ^bar x#.plus#(IntegerLiteral(1))
             }
 
         }

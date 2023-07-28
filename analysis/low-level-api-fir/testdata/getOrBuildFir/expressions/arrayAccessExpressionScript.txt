@@ -3,14 +3,14 @@ FIR element: FirFunctionCallImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-R|<local>/x|.R|SubstitutionOverride<kotlin/collections/List.get: R|kotlin/Int|>|(Int(1))
+x#.get#(IntegerLiteral(1))
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] arrayAccessExpressionScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] x: R|kotlin/collections/List<kotlin/Int>|): R|kotlin/Unit| {
-            [ResolvedTo(RAW_FIR)] lval a: R|kotlin/Int| = R|<local>/x|.R|SubstitutionOverride<kotlin/collections/List.get: R|kotlin/Int|>|(Int(1))
+        public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] x: List<Int>): R|kotlin/Unit| {
+            [ResolvedTo(RAW_FIR)] lval a: <implicit> = x#.get#(IntegerLiteral(1))
         }

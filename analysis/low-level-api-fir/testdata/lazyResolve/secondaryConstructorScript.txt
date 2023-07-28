@@ -1,20 +1,20 @@
 RAW_FIR:
 FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            R|/receive|(R|/A.A|(Int(42)))
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            receive#(A#(IntegerLiteral(42)))
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|A|): R|kotlin/Unit| {
+        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: A): R|kotlin/Unit| {
         }
 
-        public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] x: R|kotlin/Int|): R|A| {
+        public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] x: Int): R|A| {
                 super<R|kotlin/Any|>()
-                [ResolvedTo(RAW_FIR)] lval a: R|kotlin/Int| = R|<local>/x|
+                [ResolvedTo(RAW_FIR)] lval a: <implicit> = x#
             }
 
         }
@@ -22,21 +22,21 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            R|/receive|(R|/A.A|(Int(42)))
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            receive#(A#(IntegerLiteral(42)))
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|A|): R|kotlin/Unit| {
+        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: A): R|kotlin/Unit| {
         }
 
-        public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] x: R|kotlin/Int|): R|A| {
+        public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] x: Int): R|A| {
                 super<R|kotlin/Any|>()
-                [ResolvedTo(RAW_FIR)] lval a: R|kotlin/Int| = R|<local>/x|
+                [ResolvedTo(RAW_FIR)] lval a: <implicit> = x#
             }
 
         }
@@ -44,21 +44,21 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            R|/receive|(R|/A.A|(Int(42)))
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            receive#(A#(IntegerLiteral(42)))
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|A|): R|kotlin/Unit| {
+        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: A): R|kotlin/Unit| {
         }
 
-        public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] x: R|kotlin/Int|): R|A| {
+        public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] x: Int): R|A| {
                 super<R|kotlin/Any|>()
-                [ResolvedTo(RAW_FIR)] lval a: R|kotlin/Int| = R|<local>/x|
+                [ResolvedTo(RAW_FIR)] lval a: <implicit> = x#
             }
 
         }
@@ -66,21 +66,21 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            R|/receive|(R|/A.A|(Int(42)))
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            receive#(A#(IntegerLiteral(42)))
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|A|): R|kotlin/Unit| {
+        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: A): R|kotlin/Unit| {
         }
 
-        public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] x: R|kotlin/Int|): R|A| {
+        public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] x: Int): R|A| {
                 super<R|kotlin/Any|>()
-                [ResolvedTo(RAW_FIR)] lval a: R|kotlin/Int| = R|<local>/x|
+                [ResolvedTo(RAW_FIR)] lval a: <implicit> = x#
             }
 
         }
@@ -88,21 +88,21 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            R|/receive|(R|/A.A|(Int(42)))
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            receive#(A#(IntegerLiteral(42)))
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|A|): R|kotlin/Unit| {
+        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: A): R|kotlin/Unit| {
         }
 
-        public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] x: R|kotlin/Int|): R|A| {
+        public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] x: Int): R|A| {
                 super<R|kotlin/Any|>()
-                [ResolvedTo(RAW_FIR)] lval a: R|kotlin/Int| = R|<local>/x|
+                [ResolvedTo(RAW_FIR)] lval a: <implicit> = x#
             }
 
         }
@@ -110,21 +110,21 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            R|/receive|(R|/A.A|(Int(42)))
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            receive#(A#(IntegerLiteral(42)))
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|A|): R|kotlin/Unit| {
+        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: A): R|kotlin/Unit| {
         }
 
-        public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] x: R|kotlin/Int|): R|A| {
+        public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] x: Int): R|A| {
                 super<R|kotlin/Any|>()
-                [ResolvedTo(RAW_FIR)] lval a: R|kotlin/Int| = R|<local>/x|
+                [ResolvedTo(RAW_FIR)] lval a: <implicit> = x#
             }
 
         }
@@ -132,21 +132,21 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            R|/receive|(R|/A.A|(Int(42)))
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            receive#(A#(IntegerLiteral(42)))
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|A|): R|kotlin/Unit| {
+        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: A): R|kotlin/Unit| {
         }
 
-        public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] x: R|kotlin/Int|): R|A| {
+        public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] x: Int): R|A| {
                 super<R|kotlin/Any|>()
-                [ResolvedTo(RAW_FIR)] lval a: R|kotlin/Int| = R|<local>/x|
+                [ResolvedTo(RAW_FIR)] lval a: <implicit> = x#
             }
 
         }
@@ -154,21 +154,21 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            R|/receive|(R|/A.A|(Int(42)))
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            receive#(A#(IntegerLiteral(42)))
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|A|): R|kotlin/Unit| {
+        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: A): R|kotlin/Unit| {
         }
 
-        public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] x: R|kotlin/Int|): R|A| {
+        public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] x: Int): R|A| {
                 super<R|kotlin/Any|>()
-                [ResolvedTo(RAW_FIR)] lval a: R|kotlin/Int| = R|<local>/x|
+                [ResolvedTo(RAW_FIR)] lval a: <implicit> = x#
             }
 
         }
@@ -176,21 +176,21 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            R|/receive|(R|/A.A|(Int(42)))
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            receive#(A#(IntegerLiteral(42)))
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|A|): R|kotlin/Unit| {
+        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: A): R|kotlin/Unit| {
         }
 
-        public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] x: R|kotlin/Int|): R|A| {
+        public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] x: Int): R|A| {
                 super<R|kotlin/Any|>()
-                [ResolvedTo(RAW_FIR)] lval a: R|kotlin/Int| = R|<local>/x|
+                [ResolvedTo(RAW_FIR)] lval a: <implicit> = x#
             }
 
         }
@@ -198,21 +198,21 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            R|/receive|(R|/A.A|(Int(42)))
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            receive#(A#(IntegerLiteral(42)))
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|A|): R|kotlin/Unit| {
+        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: A): R|kotlin/Unit| {
         }
 
-        public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] x: R|kotlin/Int|): R|A| {
+        public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] x: Int): R|A| {
                 super<R|kotlin/Any|>()
-                [ResolvedTo(RAW_FIR)] lval a: R|kotlin/Int| = R|<local>/x|
+                [ResolvedTo(RAW_FIR)] lval a: <implicit> = x#
             }
 
         }
@@ -220,21 +220,21 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            R|/receive|(R|/A.A|(Int(42)))
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            receive#(A#(IntegerLiteral(42)))
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|A|): R|kotlin/Unit| {
+        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: A): R|kotlin/Unit| {
         }
 
-        public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] x: R|kotlin/Int|): R|A| {
+        public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] x: Int): R|A| {
                 super<R|kotlin/Any|>()
-                [ResolvedTo(RAW_FIR)] lval a: R|kotlin/Int| = R|<local>/x|
+                [ResolvedTo(RAW_FIR)] lval a: <implicit> = x#
             }
 
         }
@@ -242,21 +242,21 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            R|/receive|(R|/A.A|(Int(42)))
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            receive#(A#(IntegerLiteral(42)))
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|A|): R|kotlin/Unit| {
+        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: A): R|kotlin/Unit| {
         }
 
-        public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] x: R|kotlin/Int|): R|A| {
+        public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] x: Int): R|A| {
                 super<R|kotlin/Any|>()
-                [ResolvedTo(RAW_FIR)] lval a: R|kotlin/Int| = R|<local>/x|
+                [ResolvedTo(RAW_FIR)] lval a: <implicit> = x#
             }
 
         }
@@ -264,21 +264,21 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            R|/receive|(R|/A.A|(Int(42)))
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            receive#(A#(IntegerLiteral(42)))
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|A|): R|kotlin/Unit| {
+        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: A): R|kotlin/Unit| {
         }
 
-        public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] x: R|kotlin/Int|): R|A| {
+        public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] x: Int): R|A| {
                 super<R|kotlin/Any|>()
-                [ResolvedTo(RAW_FIR)] lval a: R|kotlin/Int| = R|<local>/x|
+                [ResolvedTo(RAW_FIR)] lval a: <implicit> = x#
             }
 
         }
@@ -286,21 +286,21 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] secondaryConstructorScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            R|/receive|(R|/A.A|(Int(42)))
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            receive#(A#(IntegerLiteral(42)))
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|A|): R|kotlin/Unit| {
+        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: A): R|kotlin/Unit| {
         }
 
-        public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] x: R|kotlin/Int|): R|A| {
+        public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] x: Int): R|A| {
                 super<R|kotlin/Any|>()
-                [ResolvedTo(RAW_FIR)] lval a: R|kotlin/Int| = R|<local>/x|
+                [ResolvedTo(RAW_FIR)] lval a: <implicit> = x#
             }
 
         }

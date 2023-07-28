@@ -1,29 +1,24 @@
 KT element: KtBinaryExpression
-FIR element: FirFunctionCallImpl
+FIR element: FirAugmentedArraySetCallImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-R|<local>/<array>|.R|SubstitutionOverride</MyMap.set: R|kotlin/Unit|>|(R|<local>/<index_0>|, R|<local>/<array>|.R|SubstitutionOverride</MyMap.get: R|kotlin/Int|>|(R|<local>/<index_0>|).R|kotlin/Int.plus|(Int(1)))
+ArraySet:[m#.get#(String(a)) += IntegerLiteral(1)]
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] compoundAssignWithArrayAccessConventionScript.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] interface MyMap<[ResolvedTo(STATUS)] K, [ResolvedTo(STATUS)] V> : R|kotlin/Any| {
-            public abstract operator [ResolvedTo(STATUS)] fun get([ResolvedTo(STATUS)] k: R|K|): R|V|
+        public? final? [ResolvedTo(RAW_FIR)] interface MyMap<[ResolvedTo(RAW_FIR)] K, [ResolvedTo(RAW_FIR)] V> : R|kotlin/Any| {
+            public? final? operator [ResolvedTo(RAW_FIR)] fun get([ResolvedTo(RAW_FIR)] k: K): V
 
-            public abstract operator [ResolvedTo(STATUS)] fun set([ResolvedTo(STATUS)] k: R|K|, [ResolvedTo(STATUS)] v: R|V|): R|kotlin/Unit|
+            public? final? operator [ResolvedTo(RAW_FIR)] fun set([ResolvedTo(RAW_FIR)] k: K, [ResolvedTo(RAW_FIR)] v: V): R|kotlin/Unit|
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun test([ResolvedTo(RAW_FIR)] m: R|MyMap<kotlin/String, kotlin/Int>|): R|kotlin/Unit| {
-             {
-                [ResolvedTo(RAW_FIR)] lval <array>: R|MyMap<kotlin/String, kotlin/Int>| = R|<local>/m|
-                [ResolvedTo(RAW_FIR)] lval <index_0>: R|kotlin/String| = String(a)
-                R|<local>/<array>|.R|SubstitutionOverride</MyMap.set: R|kotlin/Unit|>|(R|<local>/<index_0>|, R|<local>/<array>|.R|SubstitutionOverride</MyMap.get: R|kotlin/Int|>|(R|<local>/<index_0>|).R|kotlin/Int.plus|(Int(1)))
-            }
-
+        public? final? [ResolvedTo(RAW_FIR)] fun test([ResolvedTo(RAW_FIR)] m: MyMap<String, Int>): R|kotlin/Unit| {
+            ArraySet:[m#.get#(String(a)) += IntegerLiteral(1)]
             Unit
         }

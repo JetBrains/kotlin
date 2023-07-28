@@ -7,22 +7,22 @@ String(y)
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] annotationApplicationArgumentOnStatement.kts
-    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.EXPRESSION|)) @R|kotlin/annotation/Retention|[Types](value = Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.SOURCE|) public final [ResolvedTo(STATUS)] annotation class Annotation : R|kotlin/Annotation| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Annotation] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Annotation.name] name: R|kotlin/String|): R|Annotation| {
+        @Target[Unresolved](AnnotationTarget#.EXPRESSION#) @Retention[Unresolved](AnnotationRetention#.SOURCE#) public final? [ResolvedTo(RAW_FIR)] annotation class Annotation : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Annotation] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Annotation.name] name: String): R|Annotation| {
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val name: R|kotlin/String| = R|<local>/name|
-                public [ResolvedTo(STATUS)] [ContainingClassKey=Annotation] get(): R|kotlin/String|
+            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val name: String = R|<local>/name|
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Annotation] get(): String
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] fun x(): R|kotlin/Unit| {
+        public? final? [ResolvedTo(RAW_FIR)] fun x(): R|kotlin/Unit| {
         }
 
-        public final [ResolvedTo(RAW_FIR)] val $$result: R|kotlin/Unit| = @R|Annotation|[Types](name = String(y)) R|/x|()
-            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Unit|
+        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = @Annotation[Unresolved](String(y)) x#()
+            public [ResolvedTo(RAW_FIR)] get(): <implicit>
