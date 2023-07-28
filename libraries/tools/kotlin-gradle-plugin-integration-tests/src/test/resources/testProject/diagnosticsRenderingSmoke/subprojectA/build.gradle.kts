@@ -16,9 +16,3 @@ kotlin {
         }
     }
 }
-
-afterEvaluate {
-    // NB: HMPP-flags are reported by the custom code that needs to run directly after plugin application rather than in
-    // afterEvaluate, so this reporting will be missed
-    setProperty("kotlin.native.enableDependencyPropagation", "false")
-}

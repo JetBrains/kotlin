@@ -185,6 +185,5 @@ class MppDiagnosticsIt : KGPBaseTest() {
             "kotlin.mpp.enableCompatibilityMetadataVariant" to "false",
             "kotlin.internal.mpp.hierarchicalStructureByDefault" to "true",
             "kotlin.mpp.hierarchicalStructureSupport" to "true",
-            "kotlin.native.enableDependencyPropagation" to "false",
         )
 }
