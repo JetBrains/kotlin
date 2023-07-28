@@ -75,6 +75,13 @@ class ByteWrapper(@Volatile var x : Byte) : IncWrapper<Byte> {
     override fun getAndAdd(delta: Byte) = this::x.getAndAddFieldLocal(delta)
 }
 
+class BooleanWrapper(@Volatile var x : Boolean) : Wrapper<Boolean> {
+    override fun get(): Boolean = this::x.atomicGetField()
+    override fun set(new: Boolean) = this::x.atomicSetField(new)
+    override fun compareAndSwap(expected: Boolean, new: Boolean) = this::x.compareAndExchangeField(expected, new)
+    override fun compareAndSet(expected: Boolean, new: Boolean) = this::x.compareAndSetField(expected, new)
+    override fun getAndSet(new: Boolean) = this::x.getAndSetField(new)
+}
 
 class StringWrapper(@Volatile var x : String) : RefWrapper<String> {
     override fun get(): String = this::x.atomicGetField()
@@ -137,6 +144,7 @@ fun box() : String {
     test(1, 2, 3, ::LongWrapper)?.let { return "Long: $it" }
     test(1, 2, 3, ::ShortWrapper)?.let { return "Short: $it" }
     test(1, 2, 3, ::ByteWrapper)?.let { return "Byte: $it" }
+    test(true, false, true, ::BooleanWrapper)?.let { return "Boolean: $it" }
     test("1", "2", "3", ::StringWrapper)?.let { return "String: $it" }
     test("1", "2", "3", { GenericWrapper<String>(it) })?.let { return "Generic<String>: $it" }
     test(1, 2, 3, { GenericWrapper<Int>(it) })?.let { return "Generic<Int>: $it" }

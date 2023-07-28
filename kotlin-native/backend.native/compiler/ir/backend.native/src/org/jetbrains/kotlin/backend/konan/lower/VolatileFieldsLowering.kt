@@ -246,6 +246,9 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
                         putValueArgument(index, expression.getValueArgument(index))
                     }
                 }.let {
+                    if (intrinsicType == IntrinsicType.ATOMIC_GET_FIELD || intrinsicType == IntrinsicType.ATOMIC_SET_FIELD) {
+                        return it
+                    }
                     if (backingField.requiresBooleanConversion()) {
                         for (arg in 0 until it.valueArgumentsCount) {
                             it.putValueArgument(arg, builder.irBoolToByte(it.getValueArgument(arg)!!))
