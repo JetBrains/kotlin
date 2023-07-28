@@ -104,6 +104,18 @@ public class ClassicJsLibraryAbiReaderTestGenerated extends AbstractClassicJsLib
     }
 
     @Test
+    @TestMetadata("specific_types_dnn.kt")
+    public void testSpecific_types_dnn() throws Exception {
+        runTest("compiler/util-klib-abi/testData/content/specific_types_dnn.kt");
+    }
+
+    @Test
+    @TestMetadata("specific_types_dynamic.kt")
+    public void testSpecific_types_dynamic() throws Exception {
+        runTest("compiler/util-klib-abi/testData/content/specific_types_dynamic.kt");
+    }
+
+    @Test
     @TestMetadata("type_parameters.kt")
     public void testType_parameters() throws Exception {
         runTest("compiler/util-klib-abi/testData/content/type_parameters.kt");
