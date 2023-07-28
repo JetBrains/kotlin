@@ -6,11 +6,10 @@ import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.*
 import org.gradle.work.NormalizeLineEndings
-import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
+import org.jetbrains.kotlin.gradle.utils.currentBuild
 import org.jetbrains.kotlin.gradle.utils.filesProvider
-import org.jetbrains.kotlin.gradle.utils.isProjectComponentIdentifierInCurrentBuild
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
 internal class MetadataDependencyTransformationTaskInputs(
@@ -18,6 +17,9 @@ internal class MetadataDependencyTransformationTaskInputs(
     kotlinSourceSet: KotlinSourceSet,
     private val keepProjectDependencies: Boolean = true,
 ) {
+
+    private val currentBuild = project.currentBuild
+
     @Suppress("unused") // Gradle input
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
@@ -66,10 +68,11 @@ internal class MetadataDependencyTransformationTaskInputs(
                 .map { listOf(it.group, it.name, it.version) }.toSet()
         }
     }
-}
 
-private fun Configuration.withoutProjectDependencies(): FileCollection {
-    return incoming.artifactView { view ->
-        view.componentFilter { componentIdentifier -> !componentIdentifier.isProjectComponentIdentifierInCurrentBuild }
-    }.files
+    private fun Configuration.withoutProjectDependencies(): FileCollection {
+        return incoming.artifactView { view ->
+            view.componentFilter { componentIdentifier -> componentIdentifier !in currentBuild }
+        }.files
+    }
+
 }

@@ -14,10 +14,8 @@ import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.ide.Idea222Api
 import org.jetbrains.kotlin.gradle.plugin.ide.ideaImportDependsOn
-import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ArtifactMetadataProvider
@@ -27,8 +25,9 @@ import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.withType
+import org.jetbrains.kotlin.gradle.utils.contains
+import org.jetbrains.kotlin.gradle.utils.currentBuild
 import org.jetbrains.kotlin.gradle.utils.filesProvider
-import org.jetbrains.kotlin.gradle.utils.isProjectComponentIdentifierInCurrentBuild
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import java.io.File
@@ -121,6 +120,8 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
     objectFactory: ObjectFactory,
 ) : DefaultTask() {
 
+    private val currentBuild = project.currentBuild
+
     private val parameters = GranularMetadataTransformation.Params(project, sourceSet)
 
     sealed class Cleaning : Serializable {
@@ -195,7 +196,7 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
     private fun Iterable<MetadataDependencyResolution>.resolutionsToTransform(): List<ChooseVisibleSourceSets> {
         return filterIsInstance<ChooseVisibleSourceSets>()
             .applyIf(!transformProjectDependencies) {
-                filterNot { it.dependency.id.isProjectComponentIdentifierInCurrentBuild }
+                filterNot { it.dependency in currentBuild }
             }
     }
 }

@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.component.BuildIdentifier
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.internal.build.BuildState
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.internal.BasePluginConfiguration
 import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactory
 import org.jetbrains.kotlin.project.model.KpmModule
@@ -17,7 +18,7 @@ import org.jetbrains.kotlin.project.model.KpmLocalModuleIdentifier
 fun KpmModule.representsProject(project: Project): Boolean =
     moduleIdentifier.let { it is KpmLocalModuleIdentifier && it.buildId == project.currentBuildId().name && it.projectId == project.path }
 
-// FIXME internal API?
+@InternalKotlinGradlePluginApi
 fun Project.currentBuildId(): BuildIdentifier =
     (project as ProjectInternal).services.get(BuildState::class.java).buildIdentifier
 

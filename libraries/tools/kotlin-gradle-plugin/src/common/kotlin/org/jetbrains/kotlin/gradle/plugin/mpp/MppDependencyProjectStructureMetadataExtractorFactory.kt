@@ -11,10 +11,11 @@ import org.gradle.api.artifacts.result.ResolvedArtifactResult
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toSingleKpmModuleIdentifier
+import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.gradle.utils.CurrentBuildIdentifier
 import org.jetbrains.kotlin.gradle.utils.buildNameCompat
 import org.jetbrains.kotlin.gradle.utils.buildPathCompat
 import org.jetbrains.kotlin.gradle.utils.getOrPut
-import org.jetbrains.kotlin.gradle.utils.isCurrentBuildCompat
 
 internal val Project.kotlinMppDependencyProjectStructureMetadataExtractorFactory: MppDependencyProjectStructureMetadataExtractorFactory
     get() = MppDependencyProjectStructureMetadataExtractorFactory.getOrCreate(this)
@@ -26,6 +27,7 @@ internal data class ProjectPathWithBuildPath(
 
 internal class MppDependencyProjectStructureMetadataExtractorFactory
 private constructor(
+    private val currentBuild: CurrentBuildIdentifier,
     private val includedBuildsProjectStructureMetadataProviders: Lazy<Map<ProjectPathWithBuildPath, Lazy<KotlinProjectStructureMetadata?>>>,
     private val currentBuildProjectStructureMetadataProviders: Map<String, Lazy<KotlinProjectStructureMetadata?>>,
 ) {
@@ -35,7 +37,7 @@ private constructor(
         val moduleId = metadataArtifact.variant.owner
 
         return if (moduleId is ProjectComponentIdentifier) {
-            if (moduleId.build.isCurrentBuildCompat) {
+            if (moduleId in currentBuild) {
                 val projectStructureMetadataProvider = currentBuildProjectStructureMetadataProviders[moduleId.projectPath]
                     ?: error("Project structure metadata not found for project '${moduleId.projectPath}'")
 
@@ -54,8 +56,8 @@ private constructor(
                 */
                 val pre1920Key = ProjectPathWithBuildPath(moduleId.projectPath, moduleId.build.buildNameCompat)
                 val key = ProjectPathWithBuildPath(moduleId.projectPath, moduleId.build.buildPathCompat)
+
                 IncludedBuildMppDependencyProjectStructureMetadataExtractor(
-                    componentId = moduleId,
                     primaryArtifact = metadataArtifact.file,
                     projectStructureMetadataProvider = {
                         includedBuildsProjectStructureMetadataProviders.value[key]?.value
@@ -73,6 +75,7 @@ private constructor(
         fun getOrCreate(project: Project): MppDependencyProjectStructureMetadataExtractorFactory =
             project.rootProject.extraProperties.getOrPut(extensionName) {
                 MppDependencyProjectStructureMetadataExtractorFactory(
+                    currentBuild = project.currentBuild,
                     lazy { GlobalProjectStructureMetadataStorage.getProjectStructureMetadataProvidersFromAllGradleBuilds(project) },
                     collectAllProjectStructureMetadataInCurrentBuild(project)
                 )

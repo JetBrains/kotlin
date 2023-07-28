@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtensionOrNull
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ArtifactMetadataProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.currentBuildId
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.utils.*
 import java.util.*
@@ -95,6 +96,7 @@ internal class GranularMetadataTransformation(
     private val logger = Logging.getLogger("GranularMetadataTransformation[${params.sourceSetName}]")
 
     class Params(
+        val build: CurrentBuildIdentifier,
         val sourceSetName: String,
         val resolvedMetadataConfiguration: LazyResolvedConfiguration,
         val sourceSetVisibilityProvider: SourceSetVisibilityProvider,
@@ -103,6 +105,7 @@ internal class GranularMetadataTransformation(
         val platformCompilationSourceSets: Set<String>,
     ) {
         constructor(project: Project, kotlinSourceSet: KotlinSourceSet) : this(
+            build = project.currentBuild,
             sourceSetName = kotlinSourceSet.name,
             resolvedMetadataConfiguration = LazyResolvedConfiguration(kotlinSourceSet.internal.resolvableMetadataConfiguration),
             sourceSetVisibilityProvider = SourceSetVisibilityProvider(project),
@@ -232,7 +235,7 @@ internal class GranularMetadataTransformation(
             error("Artifacts of dependency ${module.id.displayName} is built by old Kotlin Gradle Plugin and can't be consumed in this way")
         }
 
-        val isResolvedToProject = moduleId is ProjectComponentIdentifier && moduleId.build.isCurrentBuildCompat
+        val isResolvedToProject = moduleId in params.build
 
         val sourceSetVisibility =
             params.sourceSetVisibilityProvider.getVisibleSourceSets(
@@ -300,7 +303,7 @@ internal class GranularMetadataTransformation(
         return when (val componentId = component.id) {
             is ModuleComponentIdentifier -> ModuleDependencyIdentifier(componentId.group, componentId.module)
             is ProjectComponentIdentifier -> {
-                if (componentId.build.isCurrentBuildCompat) {
+                if (componentId in params.build) {
                     params.projectData[componentId.projectPath]?.moduleId?.getOrThrow()
                         ?: error("Cant find project Module ID by ${componentId.projectPath}")
                 } else {
@@ -361,7 +364,8 @@ internal fun MetadataDependencyResolution.projectDependency(currentProject: Proj
     dependency.toProjectOrNull(currentProject)
 
 internal fun ResolvedComponentResult.toProjectOrNull(currentProject: Project): Project? {
-    val projectId = currentBuildProjectIdOrNull ?: return null
+    if (this !in currentProject.currentBuild) return null
+    val projectId = id as? ProjectComponentIdentifier ?: return null
     return currentProject.project(projectId.projectPath)
 }
 

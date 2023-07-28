@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.utils.getOrPutRootProjectProperty
-import org.jetbrains.kotlin.gradle.utils.isCurrentBuildCompat
 import org.jetbrains.kotlin.project.model.*
 
 class GradleKpmModuleDependencyResolver(
@@ -35,8 +34,9 @@ class GradleKpmModuleDependencyResolver(
         //FIXME multiple?
         val classifier = moduleClassifiersFromCapabilities(component?.variants?.flatMap { it.capabilities }.orEmpty()).single()
 
+        @Suppress("DEPRECATION")
         return when {
-            id is ProjectComponentIdentifier && id.build.isCurrentBuildCompat ->
+            id is ProjectComponentIdentifier && id.build.isCurrentBuild ->
                 projectModuleBuilder.buildModulesFromProject(project.project(id.projectPath))
                     .find { it.moduleIdentifier.moduleClassifier == classifier }
             id is ModuleComponentIdentifier -> {

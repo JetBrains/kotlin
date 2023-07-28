@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.gradle.utils
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.artifacts.component.BuildIdentifier
+import org.gradle.api.artifacts.component.ComponentIdentifier
+import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
@@ -56,9 +58,15 @@ internal val BuildIdentifier.buildPathCompat: String
 
 
 /**
- * Will return [BuildIdentifier.isCurrentBuild] for Gradle versions less than 8.2
- * Will use the [BuildIdentifier.getBuildPath] to check if the buildIdentifier is the 'current' build
+ * Will return the [ProjectComponentIdentifier.getBuild] if the component
+ * represents a project.
  */
-internal val BuildIdentifier.isCurrentBuildCompat: Boolean
-    get() = if (GradleVersion.current() >= GradleVersion.version("8.2")) buildPath == ":"
-    else @Suppress("DEPRECATION") isCurrentBuild
+internal val ComponentIdentifier.buildOrNull: BuildIdentifier?
+    get() = (this as? ProjectComponentIdentifier)?.build
+
+/**
+ * Returns the associated 'projectPath' if the component represents a project
+ * null, otherwise
+ */
+internal val ComponentIdentifier.projectPathOrNull: String?
+    get() = (this as? ProjectComponentIdentifier)?.projectPath
