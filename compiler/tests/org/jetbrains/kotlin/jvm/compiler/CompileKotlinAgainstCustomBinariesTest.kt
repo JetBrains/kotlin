@@ -657,10 +657,10 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
 
     fun testAgainstFir() {
         val library = compileLibrary("library", additionalOptions = listOf("-language-version", "2.0"))
-        compileKotlin("source.kt", tmpdir, listOf(library))
+        compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = listOf("-language-version", "1.9"))
 
         val library2 = compileLibrary("library", additionalOptions = listOf("-language-version", "2.0", "-Xabi-stability=unstable"))
-        compileKotlin("source.kt", tmpdir, listOf(library2))
+        compileKotlin("source.kt", tmpdir, listOf(library2), additionalOptions = listOf("-language-version", "1.9"))
     }
 
     fun testAgainstUnstable() {
@@ -670,17 +670,21 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
 
     fun testAgainstFirWithStableAbi() {
         val library = compileLibrary("library", additionalOptions = listOf("-language-version", "2.0", "-Xabi-stability=stable"))
-        compileKotlin("source.kt", tmpdir, listOf(library))
+        compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = listOf("-language-version", "1.9"))
     }
 
     fun testAgainstFirWithStableAbiAndNoPrereleaseCheck() {
         val library = compileLibrary("library", additionalOptions = listOf("-language-version", "2.0", "-Xabi-stability=stable"))
-        compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = listOf("-Xskip-prerelease-check"))
+        compileKotlin(
+            "source.kt", tmpdir, listOf(library), additionalOptions = listOf("-language-version", "1.9", "-Xskip-prerelease-check")
+        )
     }
 
     fun testAgainstFirWithAllowUnstableDependencies() {
         val library = compileLibrary("library", additionalOptions = listOf("-language-version", "2.0"))
-        compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = listOf("-Xallow-unstable-dependencies", "-Xskip-metadata-version-check"))
+        compileKotlin(
+            "source.kt", tmpdir, listOf(library), additionalOptions = listOf("-language-version", "1.9", "-Xallow-unstable-dependencies", "-Xskip-metadata-version-check")
+        )
     }
 
     fun testSealedClassesAndInterfaces() {
@@ -745,7 +749,12 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         )
         val library16 = compileLibrary(
             "library16",
-            additionalOptions = listOf("-language-version", "1.6")
+            additionalOptions = listOf("-language-version", "1.6"),
+            checkKotlinOutput = { result ->
+                KotlinTestUtils.assertEqualsToFile(
+                    File(testDataDirectory, "outputLib.txt"), normalizeOutput(result to ExitCode.OK)
+                )
+            }
         )
         compileKotlin(
             "expectActualLv14.kt",
