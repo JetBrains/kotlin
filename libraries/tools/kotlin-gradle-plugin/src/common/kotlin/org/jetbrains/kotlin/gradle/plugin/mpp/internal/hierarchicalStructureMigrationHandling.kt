@@ -27,7 +27,6 @@ private fun doHandleHierarchicalStructureFlagsMigration(project: Project) {
         if (hierarchicalStructureSupport) {
             if (project === project.rootProject)
                 project.extensions.extraProperties.getOrPut(PropertyNames.KOTLIN_MPP_ENABLE_GRANULAR_SOURCE_SETS_METADATA) { "true" }
-            project.extensions.extraProperties.getOrPut(PropertyNames.KOTLIN_NATIVE_DEPENDENCY_PROPAGATION) { "false" }
             PropertiesProvider(project).mpp13XFlagsSetByPlugin = true
         }
     }
