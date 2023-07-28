@@ -32,7 +32,6 @@ class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
 
     @BeforeTest
     override fun setup() {
-        enableGranularSourceSetsMetadata()
         enableCInteropCommonization()
         super.setup()
     }
