@@ -2,6 +2,7 @@ import java.nio.file.Paths
 
 plugins {
     kotlin("jvm")
+    id("jps-compatible")
 }
 
 dependencies {
