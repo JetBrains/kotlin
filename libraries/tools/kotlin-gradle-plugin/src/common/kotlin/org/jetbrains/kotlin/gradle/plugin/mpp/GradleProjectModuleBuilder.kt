@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.representsProject
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.sources.getVisibleSourceSetsFromAssociateCompilations
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
+import org.jetbrains.kotlin.gradle.utils.buildPathCompat
 import org.jetbrains.kotlin.gradle.utils.getOrPutRootProjectProperty
 import org.jetbrains.kotlin.project.model.*
 
@@ -149,7 +150,7 @@ class GradleProjectModuleBuilder(private val addInferredSourceSetVisibilityAsExp
             val sourceSetsToInclude = compilationsToInclude.flatMapTo(mutableSetOf()) { it.allKotlinSourceSets }
 
             val moduleIdentifier = KpmLocalModuleIdentifier(
-                project.currentBuildId().name,
+                project.currentBuildId().buildPathCompat,
                 project.path,
                 classifier.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME }
             )
@@ -242,7 +243,7 @@ internal fun Dependency.toKpmModuleDependency(
         when (this) {
             is ProjectDependency ->
                 KpmLocalModuleIdentifier(
-                    project.currentBuildId().name,
+                    project.currentBuildId().buildPathCompat,
                     dependencyProject.path,
                     moduleClassifiersFromCapabilities(requestedCapabilities).single() // FIXME multiple capabilities
                 )

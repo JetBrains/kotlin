@@ -12,11 +12,16 @@ import org.gradle.internal.build.BuildState
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.internal.BasePluginConfiguration
 import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactory
+import org.jetbrains.kotlin.gradle.utils.buildPathCompat
 import org.jetbrains.kotlin.project.model.KpmModule
 import org.jetbrains.kotlin.project.model.KpmLocalModuleIdentifier
 
 fun KpmModule.representsProject(project: Project): Boolean =
-    moduleIdentifier.let { it is KpmLocalModuleIdentifier && it.buildId == project.currentBuildId().name && it.projectId == project.path }
+    moduleIdentifier.let {
+        it is KpmLocalModuleIdentifier &&
+                it.buildId == project.currentBuildId().buildPathCompat &&
+                it.projectId == project.path
+    }
 
 @InternalKotlinGradlePluginApi
 fun Project.currentBuildId(): BuildIdentifier =

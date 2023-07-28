@@ -11,6 +11,7 @@ import org.gradle.api.ExtensiblePolymorphicDomainObjectContainer
 import org.gradle.api.NamedDomainObjectSet
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.currentBuildId
+import org.jetbrains.kotlin.gradle.utils.buildPathCompat
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.project.model.*
 import org.jetbrains.kotlin.project.model.utils.variantsContainingFragment
@@ -28,7 +29,7 @@ abstract class GradleKpmModuleInternal(
     )
 
     override val moduleIdentifier: KpmModuleIdentifier =
-        KpmLocalModuleIdentifier(project.currentBuildId().name, project.path, moduleClassifier)
+        KpmLocalModuleIdentifier(project.currentBuildId().buildPathCompat, project.path, moduleClassifier)
 
     override val fragments: ExtensiblePolymorphicDomainObjectContainer<GradleKpmFragment> =
         project.objects.polymorphicDomainObjectContainer(GradleKpmFragment::class.java)

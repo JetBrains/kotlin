@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.PublishedModuleCoordinatesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.ComputedCapability
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.currentBuildId
+import org.jetbrains.kotlin.gradle.utils.buildPathCompat
 import org.jetbrains.kotlin.gradle.utils.currentBuild
 import org.jetbrains.kotlin.gradle.utils.getValue
 import org.jetbrains.kotlin.project.model.KpmLocalModuleIdentifier
@@ -73,7 +74,7 @@ internal object ModuleIds {
     fun lossyFromModuleIdentifier(thisProject: Project, moduleIdentifier: KpmModuleIdentifier): ModuleDependencyIdentifier {
         when (moduleIdentifier) {
             is KpmLocalModuleIdentifier -> {
-                check(moduleIdentifier.buildId == thisProject.currentBuildId().name)
+                check(moduleIdentifier.buildId == thisProject.currentBuildId().buildPathCompat)
                 val dependencyProject = thisProject.project(moduleIdentifier.projectId)
                 val topLevelExtension = dependencyProject.topLevelExtension
                 val getRootPublication: () -> MavenPublication? = when {

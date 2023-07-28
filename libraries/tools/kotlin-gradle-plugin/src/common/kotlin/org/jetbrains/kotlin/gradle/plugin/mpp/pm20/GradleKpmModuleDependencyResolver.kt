@@ -12,16 +12,20 @@ import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.artifacts.result.ResolvedVariantResult
 import org.gradle.api.capabilities.Capability
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
-import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.GradleProjectModuleBuilder
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinProjectStructureMetadata
+import org.jetbrains.kotlin.gradle.plugin.mpp.ProjectStructureMetadataModuleBuilder
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
+import org.jetbrains.kotlin.gradle.utils.buildPathCompat
 import org.jetbrains.kotlin.gradle.utils.getOrPutRootProjectProperty
 import org.jetbrains.kotlin.project.model.*
 
 class GradleKpmModuleDependencyResolver(
     private val gradleComponentResultResolver: GradleKpmComponentResultCachingResolver,
     private val projectStructureMetadataModuleBuilder: ProjectStructureMetadataModuleBuilder,
-    private val projectModuleBuilder: GradleProjectModuleBuilder
+    private val projectModuleBuilder: GradleProjectModuleBuilder,
 ) : KpmModuleDependencyResolver {
 
     override fun resolveDependency(requestingModule: KpmModule, moduleDependency: KpmModuleDependency): KpmModule? {
@@ -99,7 +103,7 @@ internal class GradleKpmExternalPlainModule(private val moduleData: KpmBasicModu
 internal class GradleKpmExternalImportedModule(
     private val moduleData: KpmBasicModule,
     val projectStructureMetadata: KotlinProjectStructureMetadata,
-    val hostSpecificFragments: Set<KpmFragment>
+    val hostSpecificFragments: Set<KpmFragment>,
 ) : KpmModule by moduleData {
     val hasLegacyMetadataModule = !projectStructureMetadata.isPublishedAsRoot
 
@@ -134,7 +138,7 @@ internal fun ResolvedVariantResult.toSingleKpmModuleIdentifier(): KpmModuleIdent
 
 private fun ResolvedComponentResult.toKpmModuleIdentifier(moduleClassifier: String?): KpmModuleIdentifier {
     return when (val id = id) {
-        is ProjectComponentIdentifier -> KpmLocalModuleIdentifier(id.build.name, id.projectPath, moduleClassifier)
+        is ProjectComponentIdentifier -> KpmLocalModuleIdentifier(id.build.buildPathCompat, id.projectPath, moduleClassifier)
         is ModuleComponentIdentifier -> id.toSingleKpmModuleIdentifier()
         else -> KpmMavenModuleIdentifier(moduleVersion?.group.orEmpty(), moduleVersion?.name.orEmpty(), moduleClassifier)
     }
@@ -142,7 +146,7 @@ private fun ResolvedComponentResult.toKpmModuleIdentifier(moduleClassifier: Stri
 
 private fun ResolvedVariantResult.toKpmModuleIdentifier(moduleClassifier: String?): KpmModuleIdentifier {
     return when (val id = owner) {
-        is ProjectComponentIdentifier -> KpmLocalModuleIdentifier(id.build.name, id.projectPath, moduleClassifier)
+        is ProjectComponentIdentifier -> KpmLocalModuleIdentifier(id.build.buildPathCompat, id.projectPath, moduleClassifier)
         is ModuleComponentIdentifier -> id.toSingleKpmModuleIdentifier()
         else -> error("Unexpected component identifier '$id' of type ${id.javaClass}")
     }
@@ -156,7 +160,11 @@ internal fun moduleClassifiersFromCapabilities(capabilities: Iterable<Capability
 internal fun ComponentSelector.toKpmModuleIdentifiers(): Iterable<KpmModuleIdentifier> {
     val moduleClassifiers = moduleClassifiersFromCapabilities(requestedCapabilities)
     return when (this) {
-        is ProjectComponentSelector -> moduleClassifiers.map { KpmLocalModuleIdentifier(buildName, projectPath, it) }
+        is ProjectComponentSelector -> {
+            val buildPath = if (GradleVersion.current() >= GradleVersion.version("8.2")) buildPath
+            else @Suppress("DEPRECATION") ":$buildName"
+            moduleClassifiers.map { KpmLocalModuleIdentifier(buildPath, projectPath, it) }
+        }
         is ModuleComponentSelector -> moduleClassifiers.map { KpmMavenModuleIdentifier(moduleIdentifier.group, moduleIdentifier.name, it) }
         else -> error("unexpected component selector")
     }
@@ -175,7 +183,7 @@ internal fun ComponentIdentifier.matchesModuleIdentifier(id: KpmModuleIdentifier
     when (id) {
         is KpmLocalModuleIdentifier -> {
             val projectId = this as? ProjectComponentIdentifier
-            projectId?.build?.name == id.buildId && projectId.projectPath == id.projectId
+            projectId?.build?.buildPathCompat == id.buildId && projectId.projectPath == id.projectId
         }
         is KpmMavenModuleIdentifier -> {
             val componentId = this as? ModuleComponentIdentifier
@@ -189,7 +197,7 @@ private fun getProjectStructureMetadata(
     project: Project,
     module: ResolvedComponentResult,
     configuration: Configuration,
-    moduleIdentifier: KpmModuleIdentifier? = null
+    moduleIdentifier: KpmModuleIdentifier? = null,
 ): KotlinProjectStructureMetadata? {
     TODO("Implement project structure metadata extractor for KPM")
 }
