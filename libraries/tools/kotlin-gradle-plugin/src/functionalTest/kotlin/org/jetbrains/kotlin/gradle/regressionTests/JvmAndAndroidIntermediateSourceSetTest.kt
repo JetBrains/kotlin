@@ -31,7 +31,6 @@ class JvmAndAndroidIntermediateSourceSetTest {
     fun setup() {
         project = ProjectBuilder.builder().build() as ProjectInternal
         addBuildEventsListenerRegistryMock(project)
-        project.extensions.getByType(ExtraPropertiesExtension::class.java).set("kotlin.mpp.enableGranularSourceSetsMetadata", "true")
 
         project.plugins.apply("kotlin-multiplatform")
         project.plugins.apply("android-library")
