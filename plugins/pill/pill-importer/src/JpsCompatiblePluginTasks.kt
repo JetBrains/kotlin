@@ -42,7 +42,6 @@ class JpsCompatiblePluginTasks(
             ":kotlin-reflect",
             ":kotlin-test:kotlin-test-jvm",
             ":kotlin-test:kotlin-test-junit",
-            ":kotlin-test:kotlin-test-junit5",
             ":kotlin-script-runtime"
         )
 
