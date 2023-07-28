@@ -17,6 +17,7 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.AbstractExecTask
 import org.gradle.api.tasks.TaskProvider
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -210,6 +211,7 @@ abstract class AbstractNativeLibrary(
     /**
      * If dependencies added by the [export] method are resolved transitively or not.
      */
+    @ExperimentalKotlinGradlePluginApi
     var transitiveExport: Boolean
         get() = project.configurations.maybeCreate(exportConfigurationName).isTransitive
         set(value) {
