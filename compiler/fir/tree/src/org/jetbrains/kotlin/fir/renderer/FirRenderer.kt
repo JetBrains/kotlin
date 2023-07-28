@@ -179,6 +179,29 @@ class FirRenderer(
             printer.popIndent()
         }
 
+        override fun visitScript(script: FirScript) {
+            renderContexts(script.contextReceivers)
+            annotationRenderer?.render(script)
+            printer.print("SCRIPT: ")
+            declarationRenderer?.renderPhaseAndAttributes(script) ?: resolvePhaseRenderer?.render(script)
+            printer.newLine()
+
+            printer.pushIndent()
+            script.parameters.forEach {
+                it.accept(this)
+                printer.newLine()
+            }
+
+            printer.newLine()
+
+            script.statements.forEach {
+                it.accept(this)
+                printer.newLine()
+            }
+
+            printer.popIndent()
+        }
+
         override fun visitFileAnnotationsContainer(fileAnnotationsContainer: FirFileAnnotationsContainer) {
             if (fileAnnotationsContainerRenderer != null) {
                 fileAnnotationsContainerRenderer.render(fileAnnotationsContainer)

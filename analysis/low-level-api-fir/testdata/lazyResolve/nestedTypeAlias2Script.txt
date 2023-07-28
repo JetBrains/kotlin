@@ -1,266 +1,349 @@
 RAW_FIR:
 FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2Script.kts
-    public final [ResolvedTo(STATUS)] class OuterClass<[ResolvedTo(STATUS)] T1> : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(STATUS)] T1>(): R|OuterClass<T1>| {
-            super<R|kotlin/Any|>()
-        }
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class NestedClass<[ResolvedTo(STATUS)] T2> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] constructor<[ResolvedTo(STATUS)] T2>(): R|OuterClass.NestedClass<T2>| {
+        public final [ResolvedTo(STATUS)] class OuterClass<[ResolvedTo(STATUS)] T1> : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(STATUS)] T1>(): R|OuterClass<T1>| {
                 super<R|kotlin/Any|>()
             }
 
+            public final [ResolvedTo(STATUS)] class NestedClass<[ResolvedTo(STATUS)] T2> : R|kotlin/Any| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] constructor<[ResolvedTo(STATUS)] T2>(): R|OuterClass.NestedClass<T2>| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+            public? final [ResolvedTo(RAW_FIR)] typealias NestedType<[ResolvedTo(RAW_FIR)] T> = R|OuterClass.NestedClass<T>|
+
         }
 
-        public? final [ResolvedTo(RAW_FIR)] typealias NestedType<[ResolvedTo(RAW_FIR)] T> = R|OuterClass.NestedClass<T>|
+        public final [ResolvedTo(RAW_FIR)] typealias ON3<[ResolvedTo(RAW_FIR)] T2> = R|OuterClass.NestedType<T2>|
 
-    }
-    public final [ResolvedTo(RAW_FIR)] typealias ON3<[ResolvedTo(RAW_FIR)] T2> = R|OuterClass.NestedType<T2>|
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2Script.kts
-    public final [ResolvedTo(STATUS)] class OuterClass<[ResolvedTo(STATUS)] T1> : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(STATUS)] T1>(): R|OuterClass<T1>| {
-            super<R|kotlin/Any|>()
-        }
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class NestedClass<[ResolvedTo(STATUS)] T2> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] constructor<[ResolvedTo(STATUS)] T2>(): R|OuterClass.NestedClass<T2>| {
+        public final [ResolvedTo(STATUS)] class OuterClass<[ResolvedTo(STATUS)] T1> : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(STATUS)] T1>(): R|OuterClass<T1>| {
                 super<R|kotlin/Any|>()
             }
 
+            public final [ResolvedTo(STATUS)] class NestedClass<[ResolvedTo(STATUS)] T2> : R|kotlin/Any| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] constructor<[ResolvedTo(STATUS)] T2>(): R|OuterClass.NestedClass<T2>| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+            public? final [ResolvedTo(RAW_FIR)] typealias NestedType<[ResolvedTo(RAW_FIR)] T> = R|OuterClass.NestedClass<T>|
+
         }
 
-        public? final [ResolvedTo(RAW_FIR)] typealias NestedType<[ResolvedTo(RAW_FIR)] T> = R|OuterClass.NestedClass<T>|
+        public final [ResolvedTo(RAW_FIR)] typealias ON3<[ResolvedTo(RAW_FIR)] T2> = R|OuterClass.NestedType<T2>|
 
-    }
-    public final [ResolvedTo(RAW_FIR)] typealias ON3<[ResolvedTo(RAW_FIR)] T2> = R|OuterClass.NestedType<T2>|
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2Script.kts
-    public final [ResolvedTo(STATUS)] class OuterClass<[ResolvedTo(STATUS)] T1> : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(STATUS)] T1>(): R|OuterClass<T1>| {
-            super<R|kotlin/Any|>()
-        }
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class NestedClass<[ResolvedTo(STATUS)] T2> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] constructor<[ResolvedTo(STATUS)] T2>(): R|OuterClass.NestedClass<T2>| {
+        public final [ResolvedTo(STATUS)] class OuterClass<[ResolvedTo(STATUS)] T1> : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(STATUS)] T1>(): R|OuterClass<T1>| {
                 super<R|kotlin/Any|>()
             }
 
+            public final [ResolvedTo(STATUS)] class NestedClass<[ResolvedTo(STATUS)] T2> : R|kotlin/Any| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] constructor<[ResolvedTo(STATUS)] T2>(): R|OuterClass.NestedClass<T2>| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+            public? final [ResolvedTo(RAW_FIR)] typealias NestedType<[ResolvedTo(RAW_FIR)] T> = R|OuterClass.NestedClass<T>|
+
         }
 
-        public? final [ResolvedTo(RAW_FIR)] typealias NestedType<[ResolvedTo(RAW_FIR)] T> = R|OuterClass.NestedClass<T>|
+        public final [ResolvedTo(RAW_FIR)] typealias ON3<[ResolvedTo(RAW_FIR)] T2> = R|OuterClass.NestedType<T2>|
 
-    }
-    public final [ResolvedTo(RAW_FIR)] typealias ON3<[ResolvedTo(RAW_FIR)] T2> = R|OuterClass.NestedType<T2>|
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2Script.kts
-    public final [ResolvedTo(STATUS)] class OuterClass<[ResolvedTo(STATUS)] T1> : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(STATUS)] T1>(): R|OuterClass<T1>| {
-            super<R|kotlin/Any|>()
-        }
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class NestedClass<[ResolvedTo(STATUS)] T2> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] constructor<[ResolvedTo(STATUS)] T2>(): R|OuterClass.NestedClass<T2>| {
+        public final [ResolvedTo(STATUS)] class OuterClass<[ResolvedTo(STATUS)] T1> : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(STATUS)] T1>(): R|OuterClass<T1>| {
                 super<R|kotlin/Any|>()
             }
 
+            public final [ResolvedTo(STATUS)] class NestedClass<[ResolvedTo(STATUS)] T2> : R|kotlin/Any| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] constructor<[ResolvedTo(STATUS)] T2>(): R|OuterClass.NestedClass<T2>| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+            public? final [ResolvedTo(RAW_FIR)] typealias NestedType<[ResolvedTo(RAW_FIR)] T> = R|OuterClass.NestedClass<T>|
+
         }
 
-        public? final [ResolvedTo(RAW_FIR)] typealias NestedType<[ResolvedTo(RAW_FIR)] T> = R|OuterClass.NestedClass<T>|
+        public final [ResolvedTo(RAW_FIR)] typealias ON3<[ResolvedTo(RAW_FIR)] T2> = R|OuterClass.NestedType<T2>|
 
-    }
-    public final [ResolvedTo(RAW_FIR)] typealias ON3<[ResolvedTo(RAW_FIR)] T2> = R|OuterClass.NestedType<T2>|
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2Script.kts
-    public final [ResolvedTo(STATUS)] class OuterClass<[ResolvedTo(STATUS)] T1> : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(STATUS)] T1>(): R|OuterClass<T1>| {
-            super<R|kotlin/Any|>()
-        }
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class NestedClass<[ResolvedTo(STATUS)] T2> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] constructor<[ResolvedTo(STATUS)] T2>(): R|OuterClass.NestedClass<T2>| {
+        public final [ResolvedTo(STATUS)] class OuterClass<[ResolvedTo(STATUS)] T1> : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(STATUS)] T1>(): R|OuterClass<T1>| {
                 super<R|kotlin/Any|>()
             }
 
+            public final [ResolvedTo(STATUS)] class NestedClass<[ResolvedTo(STATUS)] T2> : R|kotlin/Any| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] constructor<[ResolvedTo(STATUS)] T2>(): R|OuterClass.NestedClass<T2>| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+            public? final [ResolvedTo(RAW_FIR)] typealias NestedType<[ResolvedTo(RAW_FIR)] T> = R|OuterClass.NestedClass<T>|
+
         }
 
-        public? final [ResolvedTo(RAW_FIR)] typealias NestedType<[ResolvedTo(RAW_FIR)] T> = R|OuterClass.NestedClass<T>|
+        public final [ResolvedTo(RAW_FIR)] typealias ON3<[ResolvedTo(RAW_FIR)] T2> = R|OuterClass.NestedType<T2>|
 
-    }
-    public final [ResolvedTo(RAW_FIR)] typealias ON3<[ResolvedTo(RAW_FIR)] T2> = R|OuterClass.NestedType<T2>|
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2Script.kts
-    public final [ResolvedTo(STATUS)] class OuterClass<[ResolvedTo(STATUS)] T1> : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(STATUS)] T1>(): R|OuterClass<T1>| {
-            super<R|kotlin/Any|>()
-        }
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class NestedClass<[ResolvedTo(STATUS)] T2> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] constructor<[ResolvedTo(STATUS)] T2>(): R|OuterClass.NestedClass<T2>| {
+        public final [ResolvedTo(STATUS)] class OuterClass<[ResolvedTo(STATUS)] T1> : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(STATUS)] T1>(): R|OuterClass<T1>| {
                 super<R|kotlin/Any|>()
             }
 
+            public final [ResolvedTo(STATUS)] class NestedClass<[ResolvedTo(STATUS)] T2> : R|kotlin/Any| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] constructor<[ResolvedTo(STATUS)] T2>(): R|OuterClass.NestedClass<T2>| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+            public? final [ResolvedTo(RAW_FIR)] typealias NestedType<[ResolvedTo(RAW_FIR)] T> = R|OuterClass.NestedClass<T>|
+
         }
 
-        public? final [ResolvedTo(RAW_FIR)] typealias NestedType<[ResolvedTo(RAW_FIR)] T> = R|OuterClass.NestedClass<T>|
+        public final [ResolvedTo(RAW_FIR)] typealias ON3<[ResolvedTo(RAW_FIR)] T2> = R|OuterClass.NestedType<T2>|
 
-    }
-    public final [ResolvedTo(RAW_FIR)] typealias ON3<[ResolvedTo(RAW_FIR)] T2> = R|OuterClass.NestedType<T2>|
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2Script.kts
-    public final [ResolvedTo(STATUS)] class OuterClass<[ResolvedTo(STATUS)] T1> : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(STATUS)] T1>(): R|OuterClass<T1>| {
-            super<R|kotlin/Any|>()
-        }
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class NestedClass<[ResolvedTo(STATUS)] T2> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] constructor<[ResolvedTo(STATUS)] T2>(): R|OuterClass.NestedClass<T2>| {
+        public final [ResolvedTo(STATUS)] class OuterClass<[ResolvedTo(STATUS)] T1> : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(STATUS)] T1>(): R|OuterClass<T1>| {
                 super<R|kotlin/Any|>()
             }
 
+            public final [ResolvedTo(STATUS)] class NestedClass<[ResolvedTo(STATUS)] T2> : R|kotlin/Any| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] constructor<[ResolvedTo(STATUS)] T2>(): R|OuterClass.NestedClass<T2>| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+            public? final [ResolvedTo(RAW_FIR)] typealias NestedType<[ResolvedTo(RAW_FIR)] T> = R|OuterClass.NestedClass<T>|
+
         }
 
-        public? final [ResolvedTo(RAW_FIR)] typealias NestedType<[ResolvedTo(RAW_FIR)] T> = R|OuterClass.NestedClass<T>|
+        public final [ResolvedTo(RAW_FIR)] typealias ON3<[ResolvedTo(RAW_FIR)] T2> = R|OuterClass.NestedType<T2>|
 
-    }
-    public final [ResolvedTo(RAW_FIR)] typealias ON3<[ResolvedTo(RAW_FIR)] T2> = R|OuterClass.NestedType<T2>|
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2Script.kts
-    public final [ResolvedTo(STATUS)] class OuterClass<[ResolvedTo(STATUS)] T1> : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(STATUS)] T1>(): R|OuterClass<T1>| {
-            super<R|kotlin/Any|>()
-        }
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class NestedClass<[ResolvedTo(STATUS)] T2> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] constructor<[ResolvedTo(STATUS)] T2>(): R|OuterClass.NestedClass<T2>| {
+        public final [ResolvedTo(STATUS)] class OuterClass<[ResolvedTo(STATUS)] T1> : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(STATUS)] T1>(): R|OuterClass<T1>| {
                 super<R|kotlin/Any|>()
             }
 
+            public final [ResolvedTo(STATUS)] class NestedClass<[ResolvedTo(STATUS)] T2> : R|kotlin/Any| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] constructor<[ResolvedTo(STATUS)] T2>(): R|OuterClass.NestedClass<T2>| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+            public? final [ResolvedTo(RAW_FIR)] typealias NestedType<[ResolvedTo(RAW_FIR)] T> = R|OuterClass.NestedClass<T>|
+
         }
 
-        public? final [ResolvedTo(RAW_FIR)] typealias NestedType<[ResolvedTo(RAW_FIR)] T> = R|OuterClass.NestedClass<T>|
+        public final [ResolvedTo(RAW_FIR)] typealias ON3<[ResolvedTo(RAW_FIR)] T2> = R|OuterClass.NestedType<T2>|
 
-    }
-    public final [ResolvedTo(RAW_FIR)] typealias ON3<[ResolvedTo(RAW_FIR)] T2> = R|OuterClass.NestedType<T2>|
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2Script.kts
-    public final [ResolvedTo(STATUS)] class OuterClass<[ResolvedTo(STATUS)] T1> : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(STATUS)] T1>(): R|OuterClass<T1>| {
-            super<R|kotlin/Any|>()
-        }
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class NestedClass<[ResolvedTo(STATUS)] T2> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] constructor<[ResolvedTo(STATUS)] T2>(): R|OuterClass.NestedClass<T2>| {
+        public final [ResolvedTo(STATUS)] class OuterClass<[ResolvedTo(STATUS)] T1> : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(STATUS)] T1>(): R|OuterClass<T1>| {
                 super<R|kotlin/Any|>()
             }
 
+            public final [ResolvedTo(STATUS)] class NestedClass<[ResolvedTo(STATUS)] T2> : R|kotlin/Any| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] constructor<[ResolvedTo(STATUS)] T2>(): R|OuterClass.NestedClass<T2>| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+            public? final [ResolvedTo(RAW_FIR)] typealias NestedType<[ResolvedTo(RAW_FIR)] T> = R|OuterClass.NestedClass<T>|
+
         }
 
-        public? final [ResolvedTo(RAW_FIR)] typealias NestedType<[ResolvedTo(RAW_FIR)] T> = R|OuterClass.NestedClass<T>|
+        public final [ResolvedTo(RAW_FIR)] typealias ON3<[ResolvedTo(RAW_FIR)] T2> = R|OuterClass.NestedType<T2>|
 
-    }
-    public final [ResolvedTo(RAW_FIR)] typealias ON3<[ResolvedTo(RAW_FIR)] T2> = R|OuterClass.NestedType<T2>|
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2Script.kts
-    public final [ResolvedTo(STATUS)] class OuterClass<[ResolvedTo(STATUS)] T1> : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(STATUS)] T1>(): R|OuterClass<T1>| {
-            super<R|kotlin/Any|>()
-        }
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class NestedClass<[ResolvedTo(STATUS)] T2> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] constructor<[ResolvedTo(STATUS)] T2>(): R|OuterClass.NestedClass<T2>| {
+        public final [ResolvedTo(STATUS)] class OuterClass<[ResolvedTo(STATUS)] T1> : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(STATUS)] T1>(): R|OuterClass<T1>| {
                 super<R|kotlin/Any|>()
             }
 
+            public final [ResolvedTo(STATUS)] class NestedClass<[ResolvedTo(STATUS)] T2> : R|kotlin/Any| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] constructor<[ResolvedTo(STATUS)] T2>(): R|OuterClass.NestedClass<T2>| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+            public? final [ResolvedTo(RAW_FIR)] typealias NestedType<[ResolvedTo(RAW_FIR)] T> = R|OuterClass.NestedClass<T>|
+
         }
 
-        public? final [ResolvedTo(RAW_FIR)] typealias NestedType<[ResolvedTo(RAW_FIR)] T> = R|OuterClass.NestedClass<T>|
+        public final [ResolvedTo(RAW_FIR)] typealias ON3<[ResolvedTo(RAW_FIR)] T2> = R|OuterClass.NestedType<T2>|
 
-    }
-    public final [ResolvedTo(RAW_FIR)] typealias ON3<[ResolvedTo(RAW_FIR)] T2> = R|OuterClass.NestedType<T2>|
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2Script.kts
-    public final [ResolvedTo(STATUS)] class OuterClass<[ResolvedTo(STATUS)] T1> : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(STATUS)] T1>(): R|OuterClass<T1>| {
-            super<R|kotlin/Any|>()
-        }
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class NestedClass<[ResolvedTo(STATUS)] T2> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] constructor<[ResolvedTo(STATUS)] T2>(): R|OuterClass.NestedClass<T2>| {
+        public final [ResolvedTo(STATUS)] class OuterClass<[ResolvedTo(STATUS)] T1> : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(STATUS)] T1>(): R|OuterClass<T1>| {
                 super<R|kotlin/Any|>()
             }
 
+            public final [ResolvedTo(STATUS)] class NestedClass<[ResolvedTo(STATUS)] T2> : R|kotlin/Any| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] constructor<[ResolvedTo(STATUS)] T2>(): R|OuterClass.NestedClass<T2>| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+            public? final [ResolvedTo(RAW_FIR)] typealias NestedType<[ResolvedTo(RAW_FIR)] T> = R|OuterClass.NestedClass<T>|
+
         }
 
-        public? final [ResolvedTo(RAW_FIR)] typealias NestedType<[ResolvedTo(RAW_FIR)] T> = R|OuterClass.NestedClass<T>|
+        public final [ResolvedTo(RAW_FIR)] typealias ON3<[ResolvedTo(RAW_FIR)] T2> = R|OuterClass.NestedType<T2>|
 
-    }
-    public final [ResolvedTo(RAW_FIR)] typealias ON3<[ResolvedTo(RAW_FIR)] T2> = R|OuterClass.NestedType<T2>|
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2Script.kts
-    public final [ResolvedTo(STATUS)] class OuterClass<[ResolvedTo(STATUS)] T1> : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(STATUS)] T1>(): R|OuterClass<T1>| {
-            super<R|kotlin/Any|>()
-        }
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class NestedClass<[ResolvedTo(STATUS)] T2> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] constructor<[ResolvedTo(STATUS)] T2>(): R|OuterClass.NestedClass<T2>| {
+        public final [ResolvedTo(STATUS)] class OuterClass<[ResolvedTo(STATUS)] T1> : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(STATUS)] T1>(): R|OuterClass<T1>| {
                 super<R|kotlin/Any|>()
             }
 
+            public final [ResolvedTo(STATUS)] class NestedClass<[ResolvedTo(STATUS)] T2> : R|kotlin/Any| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] constructor<[ResolvedTo(STATUS)] T2>(): R|OuterClass.NestedClass<T2>| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+            public? final [ResolvedTo(RAW_FIR)] typealias NestedType<[ResolvedTo(RAW_FIR)] T> = R|OuterClass.NestedClass<T>|
+
         }
 
-        public? final [ResolvedTo(RAW_FIR)] typealias NestedType<[ResolvedTo(RAW_FIR)] T> = R|OuterClass.NestedClass<T>|
+        public final [ResolvedTo(RAW_FIR)] typealias ON3<[ResolvedTo(RAW_FIR)] T2> = R|OuterClass.NestedType<T2>|
 
-    }
-    public final [ResolvedTo(RAW_FIR)] typealias ON3<[ResolvedTo(RAW_FIR)] T2> = R|OuterClass.NestedType<T2>|
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2Script.kts
-    public final [ResolvedTo(STATUS)] class OuterClass<[ResolvedTo(STATUS)] T1> : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(STATUS)] T1>(): R|OuterClass<T1>| {
-            super<R|kotlin/Any|>()
-        }
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class NestedClass<[ResolvedTo(STATUS)] T2> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] constructor<[ResolvedTo(STATUS)] T2>(): R|OuterClass.NestedClass<T2>| {
+        public final [ResolvedTo(STATUS)] class OuterClass<[ResolvedTo(STATUS)] T1> : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(STATUS)] T1>(): R|OuterClass<T1>| {
                 super<R|kotlin/Any|>()
             }
 
+            public final [ResolvedTo(STATUS)] class NestedClass<[ResolvedTo(STATUS)] T2> : R|kotlin/Any| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] constructor<[ResolvedTo(STATUS)] T2>(): R|OuterClass.NestedClass<T2>| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+            public? final [ResolvedTo(RAW_FIR)] typealias NestedType<[ResolvedTo(RAW_FIR)] T> = R|OuterClass.NestedClass<T>|
+
         }
 
-        public? final [ResolvedTo(RAW_FIR)] typealias NestedType<[ResolvedTo(RAW_FIR)] T> = R|OuterClass.NestedClass<T>|
+        public final [ResolvedTo(RAW_FIR)] typealias ON3<[ResolvedTo(RAW_FIR)] T2> = R|OuterClass.NestedType<T2>|
 
-    }
-    public final [ResolvedTo(RAW_FIR)] typealias ON3<[ResolvedTo(RAW_FIR)] T2> = R|OuterClass.NestedType<T2>|
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+
 FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2Script.kts
-    public final [ResolvedTo(STATUS)] class OuterClass<[ResolvedTo(STATUS)] T1> : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(STATUS)] T1>(): R|OuterClass<T1>| {
-            super<R|kotlin/Any|>()
-        }
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] class NestedClass<[ResolvedTo(STATUS)] T2> : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] constructor<[ResolvedTo(STATUS)] T2>(): R|OuterClass.NestedClass<T2>| {
+        public final [ResolvedTo(STATUS)] class OuterClass<[ResolvedTo(STATUS)] T1> : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(STATUS)] T1>(): R|OuterClass<T1>| {
                 super<R|kotlin/Any|>()
             }
 
+            public final [ResolvedTo(STATUS)] class NestedClass<[ResolvedTo(STATUS)] T2> : R|kotlin/Any| {
+                public [ResolvedTo(STATUS)] [ContainingClassKey=NestedClass] constructor<[ResolvedTo(STATUS)] T2>(): R|OuterClass.NestedClass<T2>| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+            public? final [ResolvedTo(RAW_FIR)] typealias NestedType<[ResolvedTo(RAW_FIR)] T> = R|OuterClass.NestedClass<T>|
+
         }
 
-        public? final [ResolvedTo(RAW_FIR)] typealias NestedType<[ResolvedTo(RAW_FIR)] T> = R|OuterClass.NestedClass<T>|
+        public final [ResolvedTo(RAW_FIR)] typealias ON3<[ResolvedTo(RAW_FIR)] T2> = R|OuterClass.NestedType<T2>|
 
-    }
-    public final [ResolvedTo(RAW_FIR)] typealias ON3<[ResolvedTo(RAW_FIR)] T2> = R|OuterClass.NestedType<T2>|
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|

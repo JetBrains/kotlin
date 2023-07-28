@@ -1,56 +1,125 @@
 RAW_FIR:
 FILE: [ResolvedTo(IMPORTS)] typeAliasWithTypeParametersScript.kts
-    public final [ResolvedTo(RAW_FIR)] typealias ResolveMe<[ResolvedTo(RAW_FIR)] T : R|kotlin/Int|, [ResolvedTo(RAW_FIR)] K> = R|kotlin/collections/Map<T, K>|
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] typealias ResolveMe<[ResolvedTo(RAW_FIR)] T : R|kotlin/Int|, [ResolvedTo(RAW_FIR)] K> = R|kotlin/collections/Map<T, K>|
+
+
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] typeAliasWithTypeParametersScript.kts
-    public final [ResolvedTo(RAW_FIR)] typealias ResolveMe<[ResolvedTo(RAW_FIR)] T : R|kotlin/Int|, [ResolvedTo(RAW_FIR)] K> = R|kotlin/collections/Map<T, K>|
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] typealias ResolveMe<[ResolvedTo(RAW_FIR)] T : R|kotlin/Int|, [ResolvedTo(RAW_FIR)] K> = R|kotlin/collections/Map<T, K>|
+
+
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] typeAliasWithTypeParametersScript.kts
-    public final [ResolvedTo(RAW_FIR)] typealias ResolveMe<[ResolvedTo(RAW_FIR)] T : R|kotlin/Int|, [ResolvedTo(RAW_FIR)] K> = R|kotlin/collections/Map<T, K>|
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] typealias ResolveMe<[ResolvedTo(RAW_FIR)] T : R|kotlin/Int|, [ResolvedTo(RAW_FIR)] K> = R|kotlin/collections/Map<T, K>|
+
+
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] typeAliasWithTypeParametersScript.kts
-    public final [ResolvedTo(RAW_FIR)] typealias ResolveMe<[ResolvedTo(RAW_FIR)] T : R|kotlin/Int|, [ResolvedTo(RAW_FIR)] K> = R|kotlin/collections/Map<T, K>|
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] typealias ResolveMe<[ResolvedTo(RAW_FIR)] T : R|kotlin/Int|, [ResolvedTo(RAW_FIR)] K> = R|kotlin/collections/Map<T, K>|
+
+
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] typeAliasWithTypeParametersScript.kts
-    public final [ResolvedTo(RAW_FIR)] typealias ResolveMe<[ResolvedTo(RAW_FIR)] T : R|kotlin/Int|, [ResolvedTo(RAW_FIR)] K> = R|kotlin/collections/Map<T, K>|
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] typealias ResolveMe<[ResolvedTo(RAW_FIR)] T : R|kotlin/Int|, [ResolvedTo(RAW_FIR)] K> = R|kotlin/collections/Map<T, K>|
+
+
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] typeAliasWithTypeParametersScript.kts
-    public final [ResolvedTo(RAW_FIR)] typealias ResolveMe<[ResolvedTo(RAW_FIR)] T : R|kotlin/Int|, [ResolvedTo(RAW_FIR)] K> = R|kotlin/collections/Map<T, K>|
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] typealias ResolveMe<[ResolvedTo(RAW_FIR)] T : R|kotlin/Int|, [ResolvedTo(RAW_FIR)] K> = R|kotlin/collections/Map<T, K>|
+
+
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] typeAliasWithTypeParametersScript.kts
-    public final [ResolvedTo(RAW_FIR)] typealias ResolveMe<[ResolvedTo(RAW_FIR)] T : R|kotlin/Int|, [ResolvedTo(RAW_FIR)] K> = R|kotlin/collections/Map<T, K>|
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] typealias ResolveMe<[ResolvedTo(RAW_FIR)] T : R|kotlin/Int|, [ResolvedTo(RAW_FIR)] K> = R|kotlin/collections/Map<T, K>|
+
+
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] typeAliasWithTypeParametersScript.kts
-    public final [ResolvedTo(RAW_FIR)] typealias ResolveMe<[ResolvedTo(RAW_FIR)] T : R|kotlin/Int|, [ResolvedTo(RAW_FIR)] K> = R|kotlin/collections/Map<T, K>|
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] typealias ResolveMe<[ResolvedTo(RAW_FIR)] T : R|kotlin/Int|, [ResolvedTo(RAW_FIR)] K> = R|kotlin/collections/Map<T, K>|
+
+
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] typeAliasWithTypeParametersScript.kts
-    public final [ResolvedTo(RAW_FIR)] typealias ResolveMe<[ResolvedTo(RAW_FIR)] T : R|kotlin/Int|, [ResolvedTo(RAW_FIR)] K> = R|kotlin/collections/Map<T, K>|
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] typealias ResolveMe<[ResolvedTo(RAW_FIR)] T : R|kotlin/Int|, [ResolvedTo(RAW_FIR)] K> = R|kotlin/collections/Map<T, K>|
+
+
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] typeAliasWithTypeParametersScript.kts
-    public final [ResolvedTo(RAW_FIR)] typealias ResolveMe<[ResolvedTo(RAW_FIR)] T : R|kotlin/Int|, [ResolvedTo(RAW_FIR)] K> = R|kotlin/collections/Map<T, K>|
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] typealias ResolveMe<[ResolvedTo(RAW_FIR)] T : R|kotlin/Int|, [ResolvedTo(RAW_FIR)] K> = R|kotlin/collections/Map<T, K>|
+
+
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] typeAliasWithTypeParametersScript.kts
-    public final [ResolvedTo(RAW_FIR)] typealias ResolveMe<[ResolvedTo(RAW_FIR)] T : R|kotlin/Int|, [ResolvedTo(RAW_FIR)] K> = R|kotlin/collections/Map<T, K>|
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] typealias ResolveMe<[ResolvedTo(RAW_FIR)] T : R|kotlin/Int|, [ResolvedTo(RAW_FIR)] K> = R|kotlin/collections/Map<T, K>|
+
+
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] typeAliasWithTypeParametersScript.kts
-    public final [ResolvedTo(RAW_FIR)] typealias ResolveMe<[ResolvedTo(RAW_FIR)] T : R|kotlin/Int|, [ResolvedTo(RAW_FIR)] K> = R|kotlin/collections/Map<T, K>|
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] typealias ResolveMe<[ResolvedTo(RAW_FIR)] T : R|kotlin/Int|, [ResolvedTo(RAW_FIR)] K> = R|kotlin/collections/Map<T, K>|
+
+
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] typeAliasWithTypeParametersScript.kts
-    public final [ResolvedTo(RAW_FIR)] typealias ResolveMe<[ResolvedTo(RAW_FIR)] T : R|kotlin/Int|, [ResolvedTo(RAW_FIR)] K> = R|kotlin/collections/Map<T, K>|
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] typealias ResolveMe<[ResolvedTo(RAW_FIR)] T : R|kotlin/Int|, [ResolvedTo(RAW_FIR)] K> = R|kotlin/collections/Map<T, K>|
+
+
 FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] typeAliasWithTypeParametersScript.kts
-    public final [ResolvedTo(RAW_FIR)] typealias ResolveMe<[ResolvedTo(RAW_FIR)] T : R|kotlin/Int|, [ResolvedTo(RAW_FIR)] K> = R|kotlin/collections/Map<T, K>|
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] typealias ResolveMe<[ResolvedTo(RAW_FIR)] T : R|kotlin/Int|, [ResolvedTo(RAW_FIR)] K> = R|kotlin/collections/Map<T, K>|
+

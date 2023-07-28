@@ -8,13 +8,16 @@ public final [ResolvedTo(STATUS)] val x: R|kotlin/String| = String()
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] memberPropertyScript.kts
-    public final [ResolvedTo(STATUS)] class Y : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Y] constructor(): R|Y| {
-            super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] class Y : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Y] constructor(): R|Y| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] val x: R|kotlin/String| = String()
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Y] get(): R|kotlin/String|
+
         }
-
-        public final [ResolvedTo(STATUS)] val x: R|kotlin/String| = String()
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Y] get(): R|kotlin/String|
-
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|

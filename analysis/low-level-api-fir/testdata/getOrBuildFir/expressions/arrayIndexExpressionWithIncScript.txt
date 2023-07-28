@@ -7,13 +7,16 @@ Int(0)
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] arrayIndexExpressionWithIncScript.kts
-    public final [ResolvedTo(RAW_FIR)] fun main([ResolvedTo(RAW_FIR)] args: R|kotlin/Array<kotlin/String>|): R|kotlin/Unit| {
-        [ResolvedTo(RAW_FIR)] lval a: R|java/util/ArrayList<kotlin/String>| = R|java/util/ArrayList.ArrayList|<R|kotlin/String|>()
-        R|<local>/a|.R|SubstitutionOverride<java/util/ArrayList.add: R|kotlin/Boolean|>|(String())
-        [ResolvedTo(RAW_FIR)] lval <array>: R|java/util/ArrayList<kotlin/String>| = R|<local>/a|
-        [ResolvedTo(RAW_FIR)] lval <index_0>: R|kotlin/Int| = Int(0)
-        [ResolvedTo(RAW_FIR)] lval <unary>: R|kotlin/String| = R|<local>/<array>|.R|SubstitutionOverride<java/util/ArrayList.get: R|@EnhancedNullability kotlin/String|>|(R|<local>/<index_0>|)
-        R|<local>/<array>|.R|SubstitutionOverride<java/util/ArrayList.set: R|@EnhancedNullability kotlin/String|>|(R|<local>/<index_0>|, R|<local>/<unary>|.<Unresolved name: inc>#())
-        R|<local>/<unary>|
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] fun main([ResolvedTo(RAW_FIR)] args: R|kotlin/Array<kotlin/String>|): R|kotlin/Unit| {
+            [ResolvedTo(RAW_FIR)] lval a: R|java/util/ArrayList<kotlin/String>| = R|java/util/ArrayList.ArrayList|<R|kotlin/String|>()
+            R|<local>/a|.R|SubstitutionOverride<java/util/ArrayList.add: R|kotlin/Boolean|>|(String())
+            [ResolvedTo(RAW_FIR)] lval <array>: R|java/util/ArrayList<kotlin/String>| = R|<local>/a|
+            [ResolvedTo(RAW_FIR)] lval <index_0>: R|kotlin/Int| = Int(0)
+            [ResolvedTo(RAW_FIR)] lval <unary>: R|kotlin/String| = R|<local>/<array>|.R|SubstitutionOverride<java/util/ArrayList.get: R|@EnhancedNullability kotlin/String|>|(R|<local>/<index_0>|)
+            R|<local>/<array>|.R|SubstitutionOverride<java/util/ArrayList.set: R|@EnhancedNullability kotlin/String|>|(R|<local>/<index_0>|, R|<local>/<unary>|.<Unresolved name: inc>#())
+            R|<local>/<unary>|
+        }

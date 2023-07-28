@@ -1,23 +1,28 @@
 FILE: [ResolvedTo(IMPORTS)] propertyAccessorsScript.kts
-    public final [ResolvedTo(RAW_FIR)] var x: R|kotlin/Int| = Int(10)
-        public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int| {
-            ^ F|/x|
-        }
-        public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
-            F|/x| = R|<local>/value|
-        }
-    public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] constructor(): R|X| {
-            super<R|kotlin/Any|>()
-        }
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] var y: R|kotlin/Int| = Int(10)
-            public [ResolvedTo(STATUS)] get(): R|kotlin/Int| {
-                ^ this@R|/X|.F|/X.y|
+        public final [ResolvedTo(RAW_FIR)] var x: R|kotlin/Int| = Int(10)
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int| {
+                ^ F|/x|
             }
-            public [ResolvedTo(STATUS)] set([ResolvedTo(STATUS)] value: R|kotlin/Int|): R|kotlin/Unit| {
-                this@R|/X|.F|/X.y| = R|<local>/value|
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
+                F|/x| = R|<local>/value|
             }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] constructor(): R|X| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] var y: R|kotlin/Int| = Int(10)
+                public [ResolvedTo(STATUS)] get(): R|kotlin/Int| {
+                    ^ this@R|/X|.F|/X.y|
+                }
+                public [ResolvedTo(STATUS)] set([ResolvedTo(STATUS)] value: R|kotlin/Int|): R|kotlin/Unit| {
+                    this@R|/X|.F|/X.y| = R|<local>/value|
+                }
+
+        }
+

@@ -1,462 +1,559 @@
 RAW_FIR:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
-    public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
-        public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
+        public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
+            public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
-        public abstract [ResolvedTo(STATUS)] val str: R|kotlin/String|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
+            public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
 
-    }
-    public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
-        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
+            public abstract [ResolvedTo(STATUS)] val str: R|kotlin/String|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
 
-        public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
-
-        public abstract [ResolvedTo(STATUS)] val isBoo: R|kotlin/Boolean|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo2] get(): R|kotlin/Boolean|
-
-    }
-    public abstract [ResolvedTo(STATUS)] class Usage : R|Foo2| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
-            super<R|kotlin/Any|>()
         }
 
-        public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
+        public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
+            public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
+
+            public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
+
+            public abstract [ResolvedTo(STATUS)] val isBoo: R|kotlin/Boolean|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Foo2] get(): R|kotlin/Boolean|
+
         }
 
-        public open override [ResolvedTo(STATUS)] val str: R|kotlin/String| = String()
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] get(): R|kotlin/String|
+        public abstract [ResolvedTo(STATUS)] class Usage : R|Foo2| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
+                super<R|kotlin/Any|>()
+            }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+            public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
+            }
+
+            public open override [ResolvedTo(STATUS)] val str: R|kotlin/String| = String()
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] get(): R|kotlin/String|
+
+        }
+
+
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
-    public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
-        public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
+        public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
+            public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
-        public abstract [ResolvedTo(STATUS)] val str: R|kotlin/String|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
+            public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
 
-    }
-    public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
-        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
+            public abstract [ResolvedTo(STATUS)] val str: R|kotlin/String|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
 
-        public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
-
-        public abstract [ResolvedTo(STATUS)] val isBoo: R|kotlin/Boolean|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo2] get(): R|kotlin/Boolean|
-
-    }
-    public abstract [ResolvedTo(STATUS)] class Usage : R|Foo2| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
-            super<R|kotlin/Any|>()
         }
 
-        public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
+        public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
+            public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
+
+            public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
+
+            public abstract [ResolvedTo(STATUS)] val isBoo: R|kotlin/Boolean|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Foo2] get(): R|kotlin/Boolean|
+
         }
 
-        public open override [ResolvedTo(STATUS)] val str: R|kotlin/String| = String()
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] get(): R|kotlin/String|
+        public abstract [ResolvedTo(STATUS)] class Usage : R|Foo2| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
+                super<R|kotlin/Any|>()
+            }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+            public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
+            }
+
+            public open override [ResolvedTo(STATUS)] val str: R|kotlin/String| = String()
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] get(): R|kotlin/String|
+
+        }
+
+
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
-    public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
-        public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
+        public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
+            public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
-        public abstract [ResolvedTo(STATUS)] val str: R|kotlin/String|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
+            public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
 
-    }
-    public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
-        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
+            public abstract [ResolvedTo(STATUS)] val str: R|kotlin/String|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
 
-        public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
-
-        public abstract [ResolvedTo(STATUS)] val isBoo: R|kotlin/Boolean|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo2] get(): R|kotlin/Boolean|
-
-    }
-    public abstract [ResolvedTo(STATUS)] class Usage : R|Foo2| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
-            super<R|kotlin/Any|>()
         }
 
-        public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
+        public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
+            public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
+
+            public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
+
+            public abstract [ResolvedTo(STATUS)] val isBoo: R|kotlin/Boolean|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Foo2] get(): R|kotlin/Boolean|
+
         }
 
-        public open override [ResolvedTo(STATUS)] val str: R|kotlin/String| = String()
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] get(): R|kotlin/String|
+        public abstract [ResolvedTo(STATUS)] class Usage : R|Foo2| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
+                super<R|kotlin/Any|>()
+            }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+            public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
+            }
+
+            public open override [ResolvedTo(STATUS)] val str: R|kotlin/String| = String()
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] get(): R|kotlin/String|
+
+        }
+
+
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
-    public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
-        public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
+        public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
+            public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
-        public abstract [ResolvedTo(STATUS)] val str: R|kotlin/String|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
+            public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
 
-    }
-    public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
-        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
+            public abstract [ResolvedTo(STATUS)] val str: R|kotlin/String|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
 
-        public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
-
-        public abstract [ResolvedTo(STATUS)] val isBoo: R|kotlin/Boolean|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo2] get(): R|kotlin/Boolean|
-
-    }
-    public abstract [ResolvedTo(STATUS)] class Usage : R|Foo2| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
-            super<R|kotlin/Any|>()
         }
 
-        public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
+        public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
+            public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
+
+            public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
+
+            public abstract [ResolvedTo(STATUS)] val isBoo: R|kotlin/Boolean|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Foo2] get(): R|kotlin/Boolean|
+
         }
 
-        public open override [ResolvedTo(STATUS)] val str: R|kotlin/String| = String()
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] get(): R|kotlin/String|
+        public abstract [ResolvedTo(STATUS)] class Usage : R|Foo2| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
+                super<R|kotlin/Any|>()
+            }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+            public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
+            }
+
+            public open override [ResolvedTo(STATUS)] val str: R|kotlin/String| = String()
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] get(): R|kotlin/String|
+
+        }
+
+
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
-    public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
-        public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
+        public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
+            public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
-        public abstract [ResolvedTo(STATUS)] val str: R|kotlin/String|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
+            public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
 
-    }
-    public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
-        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
+            public abstract [ResolvedTo(STATUS)] val str: R|kotlin/String|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
 
-        public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
-
-        public abstract [ResolvedTo(STATUS)] val isBoo: R|kotlin/Boolean|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo2] get(): R|kotlin/Boolean|
-
-    }
-    public abstract [ResolvedTo(STATUS)] class Usage : R|Foo2| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
-            super<R|kotlin/Any|>()
         }
 
-        public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
+        public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
+            public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
+
+            public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
+
+            public abstract [ResolvedTo(STATUS)] val isBoo: R|kotlin/Boolean|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Foo2] get(): R|kotlin/Boolean|
+
         }
 
-        public open override [ResolvedTo(STATUS)] val str: R|kotlin/String| = String()
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] get(): R|kotlin/String|
+        public abstract [ResolvedTo(STATUS)] class Usage : R|Foo2| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
+                super<R|kotlin/Any|>()
+            }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+            public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
+            }
+
+            public open override [ResolvedTo(STATUS)] val str: R|kotlin/String| = String()
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] get(): R|kotlin/String|
+
+        }
+
+
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
-    public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
-        public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
+        public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
+            public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
-        public abstract [ResolvedTo(STATUS)] val str: R|kotlin/String|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
+            public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
 
-    }
-    public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
-        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
+            public abstract [ResolvedTo(STATUS)] val str: R|kotlin/String|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
 
-        public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
-
-        public abstract [ResolvedTo(STATUS)] val isBoo: R|kotlin/Boolean|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo2] get(): R|kotlin/Boolean|
-
-    }
-    public abstract [ResolvedTo(STATUS)] class Usage : R|Foo2| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
-            super<R|kotlin/Any|>()
         }
 
-        public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
+        public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
+            public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
+
+            public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
+
+            public abstract [ResolvedTo(STATUS)] val isBoo: R|kotlin/Boolean|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Foo2] get(): R|kotlin/Boolean|
+
         }
 
-        public open override [ResolvedTo(STATUS)] val str: R|kotlin/String| = String()
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] get(): R|kotlin/String|
+        public abstract [ResolvedTo(STATUS)] class Usage : R|Foo2| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
+                super<R|kotlin/Any|>()
+            }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+            public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
+            }
+
+            public open override [ResolvedTo(STATUS)] val str: R|kotlin/String| = String()
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] get(): R|kotlin/String|
+
+        }
+
+
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
-    public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
-        public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
+        public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
+            public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
-        public abstract [ResolvedTo(STATUS)] val str: R|kotlin/String|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
+            public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
 
-    }
-    public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
-        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
+            public abstract [ResolvedTo(STATUS)] val str: R|kotlin/String|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
 
-        public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
-
-        public abstract [ResolvedTo(STATUS)] val isBoo: R|kotlin/Boolean|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo2] get(): R|kotlin/Boolean|
-
-    }
-    public abstract [ResolvedTo(STATUS)] class Usage : R|Foo2| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
-            super<R|kotlin/Any|>()
         }
 
-        public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
+        public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
+            public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
+
+            public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
+
+            public abstract [ResolvedTo(STATUS)] val isBoo: R|kotlin/Boolean|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Foo2] get(): R|kotlin/Boolean|
+
         }
 
-        public open override [ResolvedTo(STATUS)] val str: R|kotlin/String| = String()
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] get(): R|kotlin/String|
+        public abstract [ResolvedTo(STATUS)] class Usage : R|Foo2| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
+                super<R|kotlin/Any|>()
+            }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+            public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
+            }
+
+            public open override [ResolvedTo(STATUS)] val str: R|kotlin/String| = String()
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] get(): R|kotlin/String|
+
+        }
+
+
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
-    public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
-        public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
+        public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
+            public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
-        public abstract [ResolvedTo(STATUS)] val str: R|kotlin/String|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
+            public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
 
-    }
-    public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
-        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
+            public abstract [ResolvedTo(STATUS)] val str: R|kotlin/String|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
 
-        public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
-
-        public abstract [ResolvedTo(STATUS)] val isBoo: R|kotlin/Boolean|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo2] get(): R|kotlin/Boolean|
-
-    }
-    public abstract [ResolvedTo(STATUS)] class Usage : R|Foo2| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
-            super<R|kotlin/Any|>()
         }
 
-        public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
+        public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
+            public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
+
+            public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
+
+            public abstract [ResolvedTo(STATUS)] val isBoo: R|kotlin/Boolean|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Foo2] get(): R|kotlin/Boolean|
+
         }
 
-        public open override [ResolvedTo(STATUS)] val str: R|kotlin/String| = String()
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] get(): R|kotlin/String|
+        public abstract [ResolvedTo(STATUS)] class Usage : R|Foo2| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
+                super<R|kotlin/Any|>()
+            }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+            public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
+            }
+
+            public open override [ResolvedTo(STATUS)] val str: R|kotlin/String| = String()
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] get(): R|kotlin/String|
+
+        }
+
+
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
-    public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
-        public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
+        public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
+            public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
-        public abstract [ResolvedTo(STATUS)] val str: R|kotlin/String|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
+            public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
 
-    }
-    public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
-        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
+            public abstract [ResolvedTo(STATUS)] val str: R|kotlin/String|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
 
-        public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
-
-        public abstract [ResolvedTo(STATUS)] val isBoo: R|kotlin/Boolean|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo2] get(): R|kotlin/Boolean|
-
-    }
-    public abstract [ResolvedTo(STATUS)] class Usage : R|Foo2| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
-            super<R|kotlin/Any|>()
         }
 
-        public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
+        public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
+            public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
+
+            public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
+
+            public abstract [ResolvedTo(STATUS)] val isBoo: R|kotlin/Boolean|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Foo2] get(): R|kotlin/Boolean|
+
         }
 
-        public open override [ResolvedTo(STATUS)] val str: R|kotlin/String| = String()
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] get(): R|kotlin/String|
+        public abstract [ResolvedTo(STATUS)] class Usage : R|Foo2| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
+                super<R|kotlin/Any|>()
+            }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+            public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
+            }
+
+            public open override [ResolvedTo(STATUS)] val str: R|kotlin/String| = String()
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] get(): R|kotlin/String|
+
+        }
+
+
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
-    public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
-        public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
+        public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
+            public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
-        public abstract [ResolvedTo(STATUS)] val str: R|kotlin/String|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
+            public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
 
-    }
-    public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
-        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
+            public abstract [ResolvedTo(STATUS)] val str: R|kotlin/String|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
 
-        public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
-
-        public abstract [ResolvedTo(STATUS)] val isBoo: R|kotlin/Boolean|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo2] get(): R|kotlin/Boolean|
-
-    }
-    public abstract [ResolvedTo(STATUS)] class Usage : R|Foo2| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
-            super<R|kotlin/Any|>()
         }
 
-        public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
+        public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
+            public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
+
+            public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
+
+            public abstract [ResolvedTo(STATUS)] val isBoo: R|kotlin/Boolean|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Foo2] get(): R|kotlin/Boolean|
+
         }
 
-        public open override [ResolvedTo(STATUS)] val str: R|kotlin/String| = String()
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] get(): R|kotlin/String|
+        public abstract [ResolvedTo(STATUS)] class Usage : R|Foo2| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
+                super<R|kotlin/Any|>()
+            }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+            public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
+            }
+
+            public open override [ResolvedTo(STATUS)] val str: R|kotlin/String| = String()
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] get(): R|kotlin/String|
+
+        }
+
+
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
-    public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
-        public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
+        public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
+            public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
-        public abstract [ResolvedTo(STATUS)] val str: R|kotlin/String|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
+            public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
 
-    }
-    public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
-        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
+            public abstract [ResolvedTo(STATUS)] val str: R|kotlin/String|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
 
-        public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
-
-        public abstract [ResolvedTo(STATUS)] val isBoo: R|kotlin/Boolean|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo2] get(): R|kotlin/Boolean|
-
-    }
-    public abstract [ResolvedTo(STATUS)] class Usage : R|Foo2| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
-            super<R|kotlin/Any|>()
         }
 
-        public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
+        public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
+            public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
+
+            public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
+
+            public abstract [ResolvedTo(STATUS)] val isBoo: R|kotlin/Boolean|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Foo2] get(): R|kotlin/Boolean|
+
         }
 
-        public open override [ResolvedTo(STATUS)] val str: R|kotlin/String| = String()
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] get(): R|kotlin/String|
+        public abstract [ResolvedTo(STATUS)] class Usage : R|Foo2| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
+                super<R|kotlin/Any|>()
+            }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+            public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
+            }
+
+            public open override [ResolvedTo(STATUS)] val str: R|kotlin/String| = String()
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] get(): R|kotlin/String|
+
+        }
+
+
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
-    public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
-        public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
+        public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
+            public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
-        public abstract [ResolvedTo(STATUS)] val str: R|kotlin/String|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
+            public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
 
-    }
-    public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
-        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
+            public abstract [ResolvedTo(STATUS)] val str: R|kotlin/String|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
 
-        public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
-
-        public abstract [ResolvedTo(STATUS)] val isBoo: R|kotlin/Boolean|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo2] get(): R|kotlin/Boolean|
-
-    }
-    public abstract [ResolvedTo(STATUS)] class Usage : R|Foo2| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
-            super<R|kotlin/Any|>()
         }
 
-        public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
+        public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
+            public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
+
+            public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
+
+            public abstract [ResolvedTo(STATUS)] val isBoo: R|kotlin/Boolean|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Foo2] get(): R|kotlin/Boolean|
+
         }
 
-        public open override [ResolvedTo(STATUS)] val str: R|kotlin/String| = String()
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] get(): R|kotlin/String|
+        public abstract [ResolvedTo(STATUS)] class Usage : R|Foo2| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
+                super<R|kotlin/Any|>()
+            }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+            public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
+            }
+
+            public open override [ResolvedTo(STATUS)] val str: R|kotlin/String| = String()
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] get(): R|kotlin/String|
+
+        }
+
+
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
-    public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
-        public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
+        public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
+            public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
-        public abstract [ResolvedTo(STATUS)] val str: R|kotlin/String|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
+            public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
 
-    }
-    public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
-        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
+            public abstract [ResolvedTo(STATUS)] val str: R|kotlin/String|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
 
-        public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
-
-        public abstract [ResolvedTo(STATUS)] val isBoo: R|kotlin/Boolean|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo2] get(): R|kotlin/Boolean|
-
-    }
-    public abstract [ResolvedTo(STATUS)] class Usage : R|Foo2| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
-            super<R|kotlin/Any|>()
         }
 
-        public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
+        public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
+            public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
+
+            public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
+
+            public abstract [ResolvedTo(STATUS)] val isBoo: R|kotlin/Boolean|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Foo2] get(): R|kotlin/Boolean|
+
         }
 
-        public open override [ResolvedTo(STATUS)] val str: R|kotlin/String| = String()
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] get(): R|kotlin/String|
+        public abstract [ResolvedTo(STATUS)] class Usage : R|Foo2| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
+                super<R|kotlin/Any|>()
+            }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+            public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
+            }
+
+            public open override [ResolvedTo(STATUS)] val str: R|kotlin/String| = String()
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] get(): R|kotlin/String|
+
+        }
+
+
 FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
-    public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
-        public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
+        public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
+            public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
-        public abstract [ResolvedTo(STATUS)] val str: R|kotlin/String|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
+            public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
 
-    }
-    public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
-        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
+            public abstract [ResolvedTo(STATUS)] val str: R|kotlin/String|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
 
-        public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
-
-        public abstract [ResolvedTo(STATUS)] val isBoo: R|kotlin/Boolean|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo2] get(): R|kotlin/Boolean|
-
-    }
-    public abstract [ResolvedTo(STATUS)] class Usage : R|Foo2| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
-            super<R|kotlin/Any|>()
         }
 
-        public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
+        public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
+            public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
+
+            public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
+
+            public abstract [ResolvedTo(STATUS)] val isBoo: R|kotlin/Boolean|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Foo2] get(): R|kotlin/Boolean|
+
         }
 
-        public open override [ResolvedTo(STATUS)] val str: R|kotlin/String| = String()
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] get(): R|kotlin/String|
+        public abstract [ResolvedTo(STATUS)] class Usage : R|Foo2| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
+                super<R|kotlin/Any|>()
+            }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+            public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
+            }
+
+            public open override [ResolvedTo(STATUS)] val str: R|kotlin/String| = String()
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] get(): R|kotlin/String|
+
+        }
+

@@ -1,126 +1,195 @@
 RAW_FIR:
 FILE: [ResolvedTo(IMPORTS)] annotationClassWithJavaTargetScript.kts
-    @R|java/lang/annotation/Target|[Types](value = vararg(Q|java/lang/annotation/ElementType|.<Unresolved name: TYPE_USE>#)) public final [ResolvedTo(STATUS)] annotation class ResolveMe : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] constructor(): R|ResolveMe| {
-            super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        @R|java/lang/annotation/Target|[Types](value = vararg(Q|java/lang/annotation/ElementType|.<Unresolved name: TYPE_USE>#)) public final [ResolvedTo(STATUS)] annotation class ResolveMe : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] constructor(): R|ResolveMe| {
+                super<R|kotlin/Any|>()
+            }
+
         }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] annotationClassWithJavaTargetScript.kts
-    @R|java/lang/annotation/Target|[Types](value = vararg(Q|java/lang/annotation/ElementType|.<Unresolved name: TYPE_USE>#)) public final [ResolvedTo(STATUS)] annotation class ResolveMe : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] constructor(): R|ResolveMe| {
-            super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        @R|java/lang/annotation/Target|[Types](value = vararg(Q|java/lang/annotation/ElementType|.<Unresolved name: TYPE_USE>#)) public final [ResolvedTo(STATUS)] annotation class ResolveMe : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] constructor(): R|ResolveMe| {
+                super<R|kotlin/Any|>()
+            }
+
         }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] annotationClassWithJavaTargetScript.kts
-    @R|java/lang/annotation/Target|[Types](value = vararg(Q|java/lang/annotation/ElementType|.<Unresolved name: TYPE_USE>#)) public final [ResolvedTo(STATUS)] annotation class ResolveMe : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] constructor(): R|ResolveMe| {
-            super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        @R|java/lang/annotation/Target|[Types](value = vararg(Q|java/lang/annotation/ElementType|.<Unresolved name: TYPE_USE>#)) public final [ResolvedTo(STATUS)] annotation class ResolveMe : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] constructor(): R|ResolveMe| {
+                super<R|kotlin/Any|>()
+            }
+
         }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] annotationClassWithJavaTargetScript.kts
-    @R|java/lang/annotation/Target|[Types](value = vararg(Q|java/lang/annotation/ElementType|.<Unresolved name: TYPE_USE>#)) public final [ResolvedTo(STATUS)] annotation class ResolveMe : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] constructor(): R|ResolveMe| {
-            super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        @R|java/lang/annotation/Target|[Types](value = vararg(Q|java/lang/annotation/ElementType|.<Unresolved name: TYPE_USE>#)) public final [ResolvedTo(STATUS)] annotation class ResolveMe : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] constructor(): R|ResolveMe| {
+                super<R|kotlin/Any|>()
+            }
+
         }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] annotationClassWithJavaTargetScript.kts
-    @R|java/lang/annotation/Target|[Types](value = vararg(Q|java/lang/annotation/ElementType|.<Unresolved name: TYPE_USE>#)) public final [ResolvedTo(STATUS)] annotation class ResolveMe : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] constructor(): R|ResolveMe| {
-            super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        @R|java/lang/annotation/Target|[Types](value = vararg(Q|java/lang/annotation/ElementType|.<Unresolved name: TYPE_USE>#)) public final [ResolvedTo(STATUS)] annotation class ResolveMe : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] constructor(): R|ResolveMe| {
+                super<R|kotlin/Any|>()
+            }
+
         }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] annotationClassWithJavaTargetScript.kts
-    @R|java/lang/annotation/Target|[Types](value = vararg(Q|java/lang/annotation/ElementType|.<Unresolved name: TYPE_USE>#)) public final [ResolvedTo(STATUS)] annotation class ResolveMe : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] constructor(): R|ResolveMe| {
-            super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        @R|java/lang/annotation/Target|[Types](value = vararg(Q|java/lang/annotation/ElementType|.<Unresolved name: TYPE_USE>#)) public final [ResolvedTo(STATUS)] annotation class ResolveMe : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] constructor(): R|ResolveMe| {
+                super<R|kotlin/Any|>()
+            }
+
         }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] annotationClassWithJavaTargetScript.kts
-    @R|java/lang/annotation/Target|[Types](value = vararg(Q|java/lang/annotation/ElementType|.<Unresolved name: TYPE_USE>#)) public final [ResolvedTo(STATUS)] annotation class ResolveMe : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] constructor(): R|ResolveMe| {
-            super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        @R|java/lang/annotation/Target|[Types](value = vararg(Q|java/lang/annotation/ElementType|.<Unresolved name: TYPE_USE>#)) public final [ResolvedTo(STATUS)] annotation class ResolveMe : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] constructor(): R|ResolveMe| {
+                super<R|kotlin/Any|>()
+            }
+
         }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] annotationClassWithJavaTargetScript.kts
-    @R|java/lang/annotation/Target|[Types](value = vararg(Q|java/lang/annotation/ElementType|.<Unresolved name: TYPE_USE>#)) public final [ResolvedTo(STATUS)] annotation class ResolveMe : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] constructor(): R|ResolveMe| {
-            super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        @R|java/lang/annotation/Target|[Types](value = vararg(Q|java/lang/annotation/ElementType|.<Unresolved name: TYPE_USE>#)) public final [ResolvedTo(STATUS)] annotation class ResolveMe : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] constructor(): R|ResolveMe| {
+                super<R|kotlin/Any|>()
+            }
+
         }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] annotationClassWithJavaTargetScript.kts
-    @R|java/lang/annotation/Target|[Types](value = vararg(Q|java/lang/annotation/ElementType|.<Unresolved name: TYPE_USE>#)) public final [ResolvedTo(STATUS)] annotation class ResolveMe : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] constructor(): R|ResolveMe| {
-            super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        @R|java/lang/annotation/Target|[Types](value = vararg(Q|java/lang/annotation/ElementType|.<Unresolved name: TYPE_USE>#)) public final [ResolvedTo(STATUS)] annotation class ResolveMe : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] constructor(): R|ResolveMe| {
+                super<R|kotlin/Any|>()
+            }
+
         }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] annotationClassWithJavaTargetScript.kts
-    @R|java/lang/annotation/Target|[Types](value = vararg(Q|java/lang/annotation/ElementType|.<Unresolved name: TYPE_USE>#)) public final [ResolvedTo(STATUS)] annotation class ResolveMe : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] constructor(): R|ResolveMe| {
-            super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        @R|java/lang/annotation/Target|[Types](value = vararg(Q|java/lang/annotation/ElementType|.<Unresolved name: TYPE_USE>#)) public final [ResolvedTo(STATUS)] annotation class ResolveMe : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] constructor(): R|ResolveMe| {
+                super<R|kotlin/Any|>()
+            }
+
         }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationClassWithJavaTargetScript.kts
-    @R|java/lang/annotation/Target|[Types](value = vararg(Q|java/lang/annotation/ElementType|.<Unresolved name: TYPE_USE>#)) public final [ResolvedTo(STATUS)] annotation class ResolveMe : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] constructor(): R|ResolveMe| {
-            super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        @R|java/lang/annotation/Target|[Types](value = vararg(Q|java/lang/annotation/ElementType|.<Unresolved name: TYPE_USE>#)) public final [ResolvedTo(STATUS)] annotation class ResolveMe : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] constructor(): R|ResolveMe| {
+                super<R|kotlin/Any|>()
+            }
+
         }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] annotationClassWithJavaTargetScript.kts
-    @R|java/lang/annotation/Target|[Types](value = vararg(Q|java/lang/annotation/ElementType|.<Unresolved name: TYPE_USE>#)) public final [ResolvedTo(STATUS)] annotation class ResolveMe : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] constructor(): R|ResolveMe| {
-            super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        @R|java/lang/annotation/Target|[Types](value = vararg(Q|java/lang/annotation/ElementType|.<Unresolved name: TYPE_USE>#)) public final [ResolvedTo(STATUS)] annotation class ResolveMe : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] constructor(): R|ResolveMe| {
+                super<R|kotlin/Any|>()
+            }
+
         }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationClassWithJavaTargetScript.kts
-    @R|java/lang/annotation/Target|[Types](value = vararg(Q|java/lang/annotation/ElementType|.<Unresolved name: TYPE_USE>#)) public final [ResolvedTo(STATUS)] annotation class ResolveMe : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] constructor(): R|ResolveMe| {
-            super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        @R|java/lang/annotation/Target|[Types](value = vararg(Q|java/lang/annotation/ElementType|.<Unresolved name: TYPE_USE>#)) public final [ResolvedTo(STATUS)] annotation class ResolveMe : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] constructor(): R|ResolveMe| {
+                super<R|kotlin/Any|>()
+            }
+
         }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+
 FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] annotationClassWithJavaTargetScript.kts
-    @R|java/lang/annotation/Target|[Types](value = vararg(Q|java/lang/annotation/ElementType|.<Unresolved name: TYPE_USE>#)) public final [ResolvedTo(STATUS)] annotation class ResolveMe : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] constructor(): R|ResolveMe| {
-            super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        @R|java/lang/annotation/Target|[Types](value = vararg(Q|java/lang/annotation/ElementType|.<Unresolved name: TYPE_USE>#)) public final [ResolvedTo(STATUS)] annotation class ResolveMe : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] constructor(): R|ResolveMe| {
+                super<R|kotlin/Any|>()
+            }
+
         }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|

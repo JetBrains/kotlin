@@ -14,15 +14,18 @@ when () {
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] ifExpressionScript.kts
-    public final [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] x: R|kotlin/Any|): R|kotlin/String| {
-        ^foo when () {
-            (R|<local>/x| is R|kotlin/String|) ->  {
-                String(1)
-            }
-            else ->  {
-                String(2)
-            }
-        }
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        public final [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] x: R|kotlin/Any|): R|kotlin/String| {
+            ^foo when () {
+                (R|<local>/x| is R|kotlin/String|) ->  {
+                    String(1)
+                }
+                else ->  {
+                    String(2)
+                }
+            }
+
+        }

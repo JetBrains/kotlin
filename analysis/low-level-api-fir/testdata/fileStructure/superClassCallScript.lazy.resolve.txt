@@ -1,65 +1,73 @@
 FILE: [ResolvedTo(IMPORTS)] superClassCallScript.kts
-    public open [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] constructor([ResolvedTo(STATUS)] init: R|A.() -> kotlin/Unit|): R|A| {
-            super<R|kotlin/Any|>()
-        }
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] val prop: R|kotlin/String| = String()
-            public [ResolvedTo(STATUS)] get(): R|kotlin/String|
-
-    }
-    public final [ResolvedTo(STATUS)] class B : R|A| {
-        public [ResolvedTo(STATUS)] constructor(): R|B| {
-            super<R|A|>()
-        }
-
-    }
-    public final [ResolvedTo(STATUS)] object C : R|A| {
-        private [ResolvedTo(STATUS)] constructor(): R|C| {
-            super<R|A|>([ResolvedTo(RAW_FIR)] fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
-                local final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/String| {
-                    ^foo Q|B|.<Unresolved name: prop>#.R|kotlin/toString|()
-                }
-
+        public open [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] constructor([ResolvedTo(STATUS)] init: R|A.() -> kotlin/Unit|): R|A| {
+                super<R|kotlin/Any|>()
             }
-            )
+
+            public final [ResolvedTo(STATUS)] val prop: R|kotlin/String| = String()
+                public [ResolvedTo(STATUS)] get(): R|kotlin/String|
+
         }
 
-    }
-    public final [ResolvedTo(RAW_FIR)] val f: R|A| = object : R|A| {
-        private [ResolvedTo(RAW_FIR)] constructor(): R|<anonymous>| {
-            super<R|A|>([ResolvedTo(RAW_FIR)] fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
-                local final [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/String| {
-                    ^bar Q|B|.<Unresolved name: prop>#.R|kotlin/toString|()
-                }
-
+        public final [ResolvedTo(STATUS)] class B : R|A| {
+            public [ResolvedTo(STATUS)] constructor(): R|B| {
+                super<R|A|>()
             }
-            )
+
         }
 
-    }
+        public final [ResolvedTo(STATUS)] object C : R|A| {
+            private [ResolvedTo(STATUS)] constructor(): R|C| {
+                super<R|A|>([ResolvedTo(RAW_FIR)] fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                    local final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/String| {
+                        ^foo Q|B|.<Unresolved name: prop>#.R|kotlin/toString|()
+                    }
 
-        public [ResolvedTo(RAW_FIR)] get(): R|A|
-    public final [ResolvedTo(STATUS)] class D : R|A| {
-        public [ResolvedTo(STATUS)] error_constructor(): R|D| {
-            super<R|A|>([ResolvedTo(RAW_FIR)] fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
-                local final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/String| {
-                    ^foo Q|B|.<Unresolved name: prop>#.R|kotlin/toString|()
                 }
-
+                )
             }
-            )
+
         }
 
-        public [ResolvedTo(STATUS)] constructor(): R|D| {
-            super<R|A|>([ResolvedTo(RAW_FIR)] fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
-                local final [ResolvedTo(RAW_FIR)] fun boo(): R|kotlin/String| {
-                    ^boo this@R|special/anonymous|.R|/A.prop|.R|kotlin/String.toString|()
+        public final [ResolvedTo(RAW_FIR)] val f: R|A| = object : R|A| {
+            private [ResolvedTo(RAW_FIR)] constructor(): R|<anonymous>| {
+                super<R|A|>([ResolvedTo(RAW_FIR)] fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                    local final [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/String| {
+                        ^bar Q|B|.<Unresolved name: prop>#.R|kotlin/toString|()
+                    }
+
                 }
-
+                )
             }
-            )
+
         }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+            public [ResolvedTo(RAW_FIR)] get(): R|A|
+
+        public final [ResolvedTo(STATUS)] class D : R|A| {
+            public [ResolvedTo(STATUS)] error_constructor(): R|D| {
+                super<R|A|>([ResolvedTo(RAW_FIR)] fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                    local final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/String| {
+                        ^foo Q|B|.<Unresolved name: prop>#.R|kotlin/toString|()
+                    }
+
+                }
+                )
+            }
+
+            public [ResolvedTo(STATUS)] constructor(): R|D| {
+                super<R|A|>([ResolvedTo(RAW_FIR)] fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                    local final [ResolvedTo(RAW_FIR)] fun boo(): R|kotlin/String| {
+                        ^boo this@R|special/anonymous|.R|/A.prop|.R|kotlin/String.toString|()
+                    }
+
+                }
+                )
+            }
+
+        }
+

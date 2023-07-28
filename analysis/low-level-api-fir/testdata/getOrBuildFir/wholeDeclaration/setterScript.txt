@@ -8,8 +8,11 @@ public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/String|):
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] setterScript.kts
-    public final [ResolvedTo(RAW_FIR)] var x: R|kotlin/String|
-        public [ResolvedTo(RAW_FIR)] get(): R|kotlin/String|
-        public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|kotlin/Unit| {
-        }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] var x: R|kotlin/String|
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/String|
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|kotlin/Unit| {
+            }

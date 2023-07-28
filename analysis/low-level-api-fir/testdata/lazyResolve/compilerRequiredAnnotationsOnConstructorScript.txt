@@ -1,294 +1,377 @@
 RAW_FIR:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorScript.kts
-    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
-            super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
         }
 
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+        public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+            @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/A.i] @CONSTRUCTOR_PARAMETER:R|kotlin/Deprecated|[Types](message = String(param)) @CONSTRUCTOR_PARAMETER:R|Anno|[Types](s = String(param)) i: R|kotlin/Int|, [ResolvedTo(STATUS)] @R|kotlin/Deprecated|[Types](message = String(parameter)) @R|Anno|[Types](s = String(parameter)) b: R|kotlin/String|): R|A| {
+                super<R|kotlin/Any|>()
+            }
 
-    }
-    public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-        @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/A.i] @CONSTRUCTOR_PARAMETER:R|kotlin/Deprecated|[Types](message = String(param)) @CONSTRUCTOR_PARAMETER:R|Anno|[Types](s = String(param)) i: R|kotlin/Int|, [ResolvedTo(STATUS)] @R|kotlin/Deprecated|[Types](message = String(parameter)) @R|Anno|[Types](s = String(parameter)) b: R|kotlin/String|): R|A| {
-            super<R|kotlin/Any|>()
+            @PROPERTY:R|kotlin/Deprecated|[Types](message = String(property)) @PROPERTY:R|Anno|[Types](s = String(property)) field:@FIELD:R|kotlin/Deprecated|[Types](message = String(field)) @FIELD:R|Anno|[Types](s = String(field)) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Int|
+
         }
 
-        @PROPERTY:R|kotlin/Deprecated|[Types](message = String(property)) @PROPERTY:R|Anno|[Types](s = String(property)) field:@FIELD:R|kotlin/Deprecated|[Types](message = String(field)) @FIELD:R|Anno|[Types](s = String(field)) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Int|
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorScript.kts
-    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
-            super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
         }
 
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+        public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+            @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/A.i] @CONSTRUCTOR_PARAMETER:R|kotlin/Deprecated|[Types](message = String(param)) @CONSTRUCTOR_PARAMETER:R|Anno|[Types](s = String(param)) i: R|kotlin/Int|, [ResolvedTo(STATUS)] @R|kotlin/Deprecated|[Types](message = String(parameter)) @R|Anno|[Types](s = String(parameter)) b: R|kotlin/String|): R|A| {
+                super<R|kotlin/Any|>()
+            }
 
-    }
-    public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-        @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/A.i] @CONSTRUCTOR_PARAMETER:R|kotlin/Deprecated|[Types](message = String(param)) @CONSTRUCTOR_PARAMETER:R|Anno|[Types](s = String(param)) i: R|kotlin/Int|, [ResolvedTo(STATUS)] @R|kotlin/Deprecated|[Types](message = String(parameter)) @R|Anno|[Types](s = String(parameter)) b: R|kotlin/String|): R|A| {
-            super<R|kotlin/Any|>()
+            @PROPERTY:R|kotlin/Deprecated|[Types](message = String(property)) @PROPERTY:R|Anno|[Types](s = String(property)) field:@FIELD:R|kotlin/Deprecated|[Types](message = String(field)) @FIELD:R|Anno|[Types](s = String(field)) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Int|
+
         }
 
-        @PROPERTY:R|kotlin/Deprecated|[Types](message = String(property)) @PROPERTY:R|Anno|[Types](s = String(property)) field:@FIELD:R|kotlin/Deprecated|[Types](message = String(field)) @FIELD:R|Anno|[Types](s = String(field)) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Int|
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorScript.kts
-    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
-            super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
         }
 
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+        public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+            @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/A.i] @CONSTRUCTOR_PARAMETER:R|kotlin/Deprecated|[Types](message = String(param)) @CONSTRUCTOR_PARAMETER:R|Anno|[Types](s = String(param)) i: R|kotlin/Int|, [ResolvedTo(STATUS)] @R|kotlin/Deprecated|[Types](message = String(parameter)) @R|Anno|[Types](s = String(parameter)) b: R|kotlin/String|): R|A| {
+                super<R|kotlin/Any|>()
+            }
 
-    }
-    public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-        @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/A.i] @CONSTRUCTOR_PARAMETER:R|kotlin/Deprecated|[Types](message = String(param)) @CONSTRUCTOR_PARAMETER:R|Anno|[Types](s = String(param)) i: R|kotlin/Int|, [ResolvedTo(STATUS)] @R|kotlin/Deprecated|[Types](message = String(parameter)) @R|Anno|[Types](s = String(parameter)) b: R|kotlin/String|): R|A| {
-            super<R|kotlin/Any|>()
+            @PROPERTY:R|kotlin/Deprecated|[Types](message = String(property)) @PROPERTY:R|Anno|[Types](s = String(property)) field:@FIELD:R|kotlin/Deprecated|[Types](message = String(field)) @FIELD:R|Anno|[Types](s = String(field)) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Int|
+
         }
 
-        @PROPERTY:R|kotlin/Deprecated|[Types](message = String(property)) @PROPERTY:R|Anno|[Types](s = String(property)) field:@FIELD:R|kotlin/Deprecated|[Types](message = String(field)) @FIELD:R|Anno|[Types](s = String(field)) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Int|
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorScript.kts
-    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
-            super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
         }
 
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+        public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+            @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/A.i] @CONSTRUCTOR_PARAMETER:R|kotlin/Deprecated|[Types](message = String(param)) @CONSTRUCTOR_PARAMETER:R|Anno|[Types](s = String(param)) i: R|kotlin/Int|, [ResolvedTo(STATUS)] @R|kotlin/Deprecated|[Types](message = String(parameter)) @R|Anno|[Types](s = String(parameter)) b: R|kotlin/String|): R|A| {
+                super<R|kotlin/Any|>()
+            }
 
-    }
-    public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-        @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/A.i] @CONSTRUCTOR_PARAMETER:R|kotlin/Deprecated|[Types](message = String(param)) @CONSTRUCTOR_PARAMETER:R|Anno|[Types](s = String(param)) i: R|kotlin/Int|, [ResolvedTo(STATUS)] @R|kotlin/Deprecated|[Types](message = String(parameter)) @R|Anno|[Types](s = String(parameter)) b: R|kotlin/String|): R|A| {
-            super<R|kotlin/Any|>()
+            @PROPERTY:R|kotlin/Deprecated|[Types](message = String(property)) @PROPERTY:R|Anno|[Types](s = String(property)) field:@FIELD:R|kotlin/Deprecated|[Types](message = String(field)) @FIELD:R|Anno|[Types](s = String(field)) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Int|
+
         }
 
-        @PROPERTY:R|kotlin/Deprecated|[Types](message = String(property)) @PROPERTY:R|Anno|[Types](s = String(property)) field:@FIELD:R|kotlin/Deprecated|[Types](message = String(field)) @FIELD:R|Anno|[Types](s = String(field)) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Int|
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorScript.kts
-    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
-            super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
         }
 
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+        public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+            @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/A.i] @CONSTRUCTOR_PARAMETER:R|kotlin/Deprecated|[Types](message = String(param)) @CONSTRUCTOR_PARAMETER:R|Anno|[Types](s = String(param)) i: R|kotlin/Int|, [ResolvedTo(STATUS)] @R|kotlin/Deprecated|[Types](message = String(parameter)) @R|Anno|[Types](s = String(parameter)) b: R|kotlin/String|): R|A| {
+                super<R|kotlin/Any|>()
+            }
 
-    }
-    public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-        @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/A.i] @CONSTRUCTOR_PARAMETER:R|kotlin/Deprecated|[Types](message = String(param)) @CONSTRUCTOR_PARAMETER:R|Anno|[Types](s = String(param)) i: R|kotlin/Int|, [ResolvedTo(STATUS)] @R|kotlin/Deprecated|[Types](message = String(parameter)) @R|Anno|[Types](s = String(parameter)) b: R|kotlin/String|): R|A| {
-            super<R|kotlin/Any|>()
+            @PROPERTY:R|kotlin/Deprecated|[Types](message = String(property)) @PROPERTY:R|Anno|[Types](s = String(property)) field:@FIELD:R|kotlin/Deprecated|[Types](message = String(field)) @FIELD:R|Anno|[Types](s = String(field)) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Int|
+
         }
 
-        @PROPERTY:R|kotlin/Deprecated|[Types](message = String(property)) @PROPERTY:R|Anno|[Types](s = String(property)) field:@FIELD:R|kotlin/Deprecated|[Types](message = String(field)) @FIELD:R|Anno|[Types](s = String(field)) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Int|
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorScript.kts
-    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
-            super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
         }
 
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+        public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+            @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/A.i] @CONSTRUCTOR_PARAMETER:R|kotlin/Deprecated|[Types](message = String(param)) @CONSTRUCTOR_PARAMETER:R|Anno|[Types](s = String(param)) i: R|kotlin/Int|, [ResolvedTo(STATUS)] @R|kotlin/Deprecated|[Types](message = String(parameter)) @R|Anno|[Types](s = String(parameter)) b: R|kotlin/String|): R|A| {
+                super<R|kotlin/Any|>()
+            }
 
-    }
-    public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-        @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/A.i] @CONSTRUCTOR_PARAMETER:R|kotlin/Deprecated|[Types](message = String(param)) @CONSTRUCTOR_PARAMETER:R|Anno|[Types](s = String(param)) i: R|kotlin/Int|, [ResolvedTo(STATUS)] @R|kotlin/Deprecated|[Types](message = String(parameter)) @R|Anno|[Types](s = String(parameter)) b: R|kotlin/String|): R|A| {
-            super<R|kotlin/Any|>()
+            @PROPERTY:R|kotlin/Deprecated|[Types](message = String(property)) @PROPERTY:R|Anno|[Types](s = String(property)) field:@FIELD:R|kotlin/Deprecated|[Types](message = String(field)) @FIELD:R|Anno|[Types](s = String(field)) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Int|
+
         }
 
-        @PROPERTY:R|kotlin/Deprecated|[Types](message = String(property)) @PROPERTY:R|Anno|[Types](s = String(property)) field:@FIELD:R|kotlin/Deprecated|[Types](message = String(field)) @FIELD:R|Anno|[Types](s = String(field)) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Int|
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorScript.kts
-    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
-            super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
         }
 
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+        public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+            @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/A.i] @CONSTRUCTOR_PARAMETER:R|kotlin/Deprecated|[Types](message = String(param)) @CONSTRUCTOR_PARAMETER:R|Anno|[Types](s = String(param)) i: R|kotlin/Int|, [ResolvedTo(STATUS)] @R|kotlin/Deprecated|[Types](message = String(parameter)) @R|Anno|[Types](s = String(parameter)) b: R|kotlin/String|): R|A| {
+                super<R|kotlin/Any|>()
+            }
 
-    }
-    public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-        @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/A.i] @CONSTRUCTOR_PARAMETER:R|kotlin/Deprecated|[Types](message = String(param)) @CONSTRUCTOR_PARAMETER:R|Anno|[Types](s = String(param)) i: R|kotlin/Int|, [ResolvedTo(STATUS)] @R|kotlin/Deprecated|[Types](message = String(parameter)) @R|Anno|[Types](s = String(parameter)) b: R|kotlin/String|): R|A| {
-            super<R|kotlin/Any|>()
+            @PROPERTY:R|kotlin/Deprecated|[Types](message = String(property)) @PROPERTY:R|Anno|[Types](s = String(property)) field:@FIELD:R|kotlin/Deprecated|[Types](message = String(field)) @FIELD:R|Anno|[Types](s = String(field)) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Int|
+
         }
 
-        @PROPERTY:R|kotlin/Deprecated|[Types](message = String(property)) @PROPERTY:R|Anno|[Types](s = String(property)) field:@FIELD:R|kotlin/Deprecated|[Types](message = String(field)) @FIELD:R|Anno|[Types](s = String(field)) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Int|
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorScript.kts
-    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
-            super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
         }
 
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+        public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+            @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/A.i] @CONSTRUCTOR_PARAMETER:R|kotlin/Deprecated|[Types](message = String(param)) @CONSTRUCTOR_PARAMETER:R|Anno|[Types](s = String(param)) i: R|kotlin/Int|, [ResolvedTo(STATUS)] @R|kotlin/Deprecated|[Types](message = String(parameter)) @R|Anno|[Types](s = String(parameter)) b: R|kotlin/String|): R|A| {
+                super<R|kotlin/Any|>()
+            }
 
-    }
-    public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-        @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/A.i] @CONSTRUCTOR_PARAMETER:R|kotlin/Deprecated|[Types](message = String(param)) @CONSTRUCTOR_PARAMETER:R|Anno|[Types](s = String(param)) i: R|kotlin/Int|, [ResolvedTo(STATUS)] @R|kotlin/Deprecated|[Types](message = String(parameter)) @R|Anno|[Types](s = String(parameter)) b: R|kotlin/String|): R|A| {
-            super<R|kotlin/Any|>()
+            @PROPERTY:R|kotlin/Deprecated|[Types](message = String(property)) @PROPERTY:R|Anno|[Types](s = String(property)) field:@FIELD:R|kotlin/Deprecated|[Types](message = String(field)) @FIELD:R|Anno|[Types](s = String(field)) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Int|
+
         }
 
-        @PROPERTY:R|kotlin/Deprecated|[Types](message = String(property)) @PROPERTY:R|Anno|[Types](s = String(property)) field:@FIELD:R|kotlin/Deprecated|[Types](message = String(field)) @FIELD:R|Anno|[Types](s = String(field)) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Int|
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorScript.kts
-    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
-            super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
         }
 
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+        public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+            @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/A.i] @CONSTRUCTOR_PARAMETER:R|kotlin/Deprecated|[Types](message = String(param)) @CONSTRUCTOR_PARAMETER:R|Anno|[Types](s = String(param)) i: R|kotlin/Int|, [ResolvedTo(STATUS)] @R|kotlin/Deprecated|[Types](message = String(parameter)) @R|Anno|[Types](s = String(parameter)) b: R|kotlin/String|): R|A| {
+                super<R|kotlin/Any|>()
+            }
 
-    }
-    public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-        @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/A.i] @CONSTRUCTOR_PARAMETER:R|kotlin/Deprecated|[Types](message = String(param)) @CONSTRUCTOR_PARAMETER:R|Anno|[Types](s = String(param)) i: R|kotlin/Int|, [ResolvedTo(STATUS)] @R|kotlin/Deprecated|[Types](message = String(parameter)) @R|Anno|[Types](s = String(parameter)) b: R|kotlin/String|): R|A| {
-            super<R|kotlin/Any|>()
+            @PROPERTY:R|kotlin/Deprecated|[Types](message = String(property)) @PROPERTY:R|Anno|[Types](s = String(property)) field:@FIELD:R|kotlin/Deprecated|[Types](message = String(field)) @FIELD:R|Anno|[Types](s = String(field)) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Int|
+
         }
 
-        @PROPERTY:R|kotlin/Deprecated|[Types](message = String(property)) @PROPERTY:R|Anno|[Types](s = String(property)) field:@FIELD:R|kotlin/Deprecated|[Types](message = String(field)) @FIELD:R|Anno|[Types](s = String(field)) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Int|
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorScript.kts
-    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
-            super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
         }
 
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+        public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+            @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/A.i] @CONSTRUCTOR_PARAMETER:R|kotlin/Deprecated|[Types](message = String(param)) @CONSTRUCTOR_PARAMETER:R|Anno|[Types](s = String(param)) i: R|kotlin/Int|, [ResolvedTo(STATUS)] @R|kotlin/Deprecated|[Types](message = String(parameter)) @R|Anno|[Types](s = String(parameter)) b: R|kotlin/String|): R|A| {
+                super<R|kotlin/Any|>()
+            }
 
-    }
-    public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-        @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/A.i] @CONSTRUCTOR_PARAMETER:R|kotlin/Deprecated|[Types](message = String(param)) @CONSTRUCTOR_PARAMETER:R|Anno|[Types](s = String(param)) i: R|kotlin/Int|, [ResolvedTo(STATUS)] @R|kotlin/Deprecated|[Types](message = String(parameter)) @R|Anno|[Types](s = String(parameter)) b: R|kotlin/String|): R|A| {
-            super<R|kotlin/Any|>()
+            @PROPERTY:R|kotlin/Deprecated|[Types](message = String(property)) @PROPERTY:R|Anno|[Types](s = String(property)) field:@FIELD:R|kotlin/Deprecated|[Types](message = String(field)) @FIELD:R|Anno|[Types](s = String(field)) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Int|
+
         }
 
-        @PROPERTY:R|kotlin/Deprecated|[Types](message = String(property)) @PROPERTY:R|Anno|[Types](s = String(property)) field:@FIELD:R|kotlin/Deprecated|[Types](message = String(field)) @FIELD:R|Anno|[Types](s = String(field)) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Int|
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorScript.kts
-    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
-            super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
         }
 
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+        public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+            @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/A.i] @CONSTRUCTOR_PARAMETER:R|kotlin/Deprecated|[Types](message = String(param)) @CONSTRUCTOR_PARAMETER:R|Anno|[Types](s = String(param)) i: R|kotlin/Int|, [ResolvedTo(STATUS)] @R|kotlin/Deprecated|[Types](message = String(parameter)) @R|Anno|[Types](s = String(parameter)) b: R|kotlin/String|): R|A| {
+                super<R|kotlin/Any|>()
+            }
 
-    }
-    public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-        @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/A.i] @CONSTRUCTOR_PARAMETER:R|kotlin/Deprecated|[Types](message = String(param)) @CONSTRUCTOR_PARAMETER:R|Anno|[Types](s = String(param)) i: R|kotlin/Int|, [ResolvedTo(STATUS)] @R|kotlin/Deprecated|[Types](message = String(parameter)) @R|Anno|[Types](s = String(parameter)) b: R|kotlin/String|): R|A| {
-            super<R|kotlin/Any|>()
+            @PROPERTY:R|kotlin/Deprecated|[Types](message = String(property)) @PROPERTY:R|Anno|[Types](s = String(property)) field:@FIELD:R|kotlin/Deprecated|[Types](message = String(field)) @FIELD:R|Anno|[Types](s = String(field)) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Int|
+
         }
 
-        @PROPERTY:R|kotlin/Deprecated|[Types](message = String(property)) @PROPERTY:R|Anno|[Types](s = String(property)) field:@FIELD:R|kotlin/Deprecated|[Types](message = String(field)) @FIELD:R|Anno|[Types](s = String(field)) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Int|
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorScript.kts
-    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
-            super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
         }
 
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+        public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+            @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/A.i] @CONSTRUCTOR_PARAMETER:R|kotlin/Deprecated|[Types](message = String(param)) @CONSTRUCTOR_PARAMETER:R|Anno|[Types](s = String(param)) i: R|kotlin/Int|, [ResolvedTo(STATUS)] @R|kotlin/Deprecated|[Types](message = String(parameter)) @R|Anno|[Types](s = String(parameter)) b: R|kotlin/String|): R|A| {
+                super<R|kotlin/Any|>()
+            }
 
-    }
-    public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-        @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/A.i] @CONSTRUCTOR_PARAMETER:R|kotlin/Deprecated|[Types](message = String(param)) @CONSTRUCTOR_PARAMETER:R|Anno|[Types](s = String(param)) i: R|kotlin/Int|, [ResolvedTo(STATUS)] @R|kotlin/Deprecated|[Types](message = String(parameter)) @R|Anno|[Types](s = String(parameter)) b: R|kotlin/String|): R|A| {
-            super<R|kotlin/Any|>()
+            @PROPERTY:R|kotlin/Deprecated|[Types](message = String(property)) @PROPERTY:R|Anno|[Types](s = String(property)) field:@FIELD:R|kotlin/Deprecated|[Types](message = String(field)) @FIELD:R|Anno|[Types](s = String(field)) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Int|
+
         }
 
-        @PROPERTY:R|kotlin/Deprecated|[Types](message = String(property)) @PROPERTY:R|Anno|[Types](s = String(property)) field:@FIELD:R|kotlin/Deprecated|[Types](message = String(field)) @FIELD:R|Anno|[Types](s = String(field)) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Int|
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorScript.kts
-    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
-            super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
         }
 
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+        public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+            @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/A.i] @CONSTRUCTOR_PARAMETER:R|kotlin/Deprecated|[Types](message = String(param)) @CONSTRUCTOR_PARAMETER:R|Anno|[Types](s = String(param)) i: R|kotlin/Int|, [ResolvedTo(STATUS)] @R|kotlin/Deprecated|[Types](message = String(parameter)) @R|Anno|[Types](s = String(parameter)) b: R|kotlin/String|): R|A| {
+                super<R|kotlin/Any|>()
+            }
 
-    }
-    public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-        @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/A.i] @CONSTRUCTOR_PARAMETER:R|kotlin/Deprecated|[Types](message = String(param)) @CONSTRUCTOR_PARAMETER:R|Anno|[Types](s = String(param)) i: R|kotlin/Int|, [ResolvedTo(STATUS)] @R|kotlin/Deprecated|[Types](message = String(parameter)) @R|Anno|[Types](s = String(parameter)) b: R|kotlin/String|): R|A| {
-            super<R|kotlin/Any|>()
+            @PROPERTY:R|kotlin/Deprecated|[Types](message = String(property)) @PROPERTY:R|Anno|[Types](s = String(property)) field:@FIELD:R|kotlin/Deprecated|[Types](message = String(field)) @FIELD:R|Anno|[Types](s = String(field)) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Int|
+
         }
 
-        @PROPERTY:R|kotlin/Deprecated|[Types](message = String(property)) @PROPERTY:R|Anno|[Types](s = String(property)) field:@FIELD:R|kotlin/Deprecated|[Types](message = String(field)) @FIELD:R|Anno|[Types](s = String(field)) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Int|
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
 FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnConstructorScript.kts
-    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
-            super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
         }
 
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+        public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+            @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/A.i] @CONSTRUCTOR_PARAMETER:R|kotlin/Deprecated|[Types](message = String(param)) @CONSTRUCTOR_PARAMETER:R|Anno|[Types](s = String(param)) i: R|kotlin/Int|, [ResolvedTo(STATUS)] @R|kotlin/Deprecated|[Types](message = String(parameter)) @R|Anno|[Types](s = String(parameter)) b: R|kotlin/String|): R|A| {
+                super<R|kotlin/Any|>()
+            }
 
-    }
-    public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
-        @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/A.i] @CONSTRUCTOR_PARAMETER:R|kotlin/Deprecated|[Types](message = String(param)) @CONSTRUCTOR_PARAMETER:R|Anno|[Types](s = String(param)) i: R|kotlin/Int|, [ResolvedTo(STATUS)] @R|kotlin/Deprecated|[Types](message = String(parameter)) @R|Anno|[Types](s = String(parameter)) b: R|kotlin/String|): R|A| {
-            super<R|kotlin/Any|>()
+            @PROPERTY:R|kotlin/Deprecated|[Types](message = String(property)) @PROPERTY:R|Anno|[Types](s = String(property)) field:@FIELD:R|kotlin/Deprecated|[Types](message = String(field)) @FIELD:R|Anno|[Types](s = String(field)) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Int|
+
         }
 
-        @PROPERTY:R|kotlin/Deprecated|[Types](message = String(property)) @PROPERTY:R|Anno|[Types](s = String(property)) field:@FIELD:R|kotlin/Deprecated|[Types](message = String(field)) @FIELD:R|Anno|[Types](s = String(field)) public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Int|
-
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|

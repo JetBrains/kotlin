@@ -7,7 +7,10 @@ FIR element rendered:
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] annotationOnReturnTypeScript.kts
-    public final [ResolvedTo(RAW_FIR)] fun <reified [ResolvedTo(RAW_FIR)] T : R|kotlin/Number|> R|kotlin/String|.collectOfType([ResolvedTo(RAW_FIR)] i: R|kotlin/Int|): <ERROR TYPE REF: Symbol not found for Sequence> {
-        ^collectOfType Int(4)
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] fun <reified [ResolvedTo(RAW_FIR)] T : R|kotlin/Number|> R|kotlin/String|.collectOfType([ResolvedTo(RAW_FIR)] i: R|kotlin/Int|): <ERROR TYPE REF: Symbol not found for Sequence> {
+            ^collectOfType Int(4)
+        }

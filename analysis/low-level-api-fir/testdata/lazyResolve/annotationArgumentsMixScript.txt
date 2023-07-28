@@ -1,644 +1,755 @@
 RAW_FIR:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
-    public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
-            super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
+                super<R|kotlin/Any|>()
+            }
+
         }
 
-    }
-    public final [ResolvedTo(STATUS)] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
-        private [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] constructor(): R|EnumClass| {
-            super<R|kotlin/Enum<EnumClass>|>()
+        public final [ResolvedTo(STATUS)] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] constructor(): R|EnumClass| {
+                super<R|kotlin/Enum<EnumClass>|>()
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry First: R|EnumClass|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry Second: R|EnumClass|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<EnumClass>| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|EnumClass| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
+                public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
+
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry First: R|EnumClass|
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry Second: R|EnumClass|
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<EnumClass>| {
+        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.str] str: R|kotlin/String|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.ann] ann: R|AnotherAnnotation|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.c] c: R|kotlin/reflect/KClass<*>|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.entry] entry: R|EnumClass|): R|Anno| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val str: R|kotlin/String| = R|<local>/str|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val ann: R|AnotherAnnotation| = R|<local>/ann|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|AnotherAnnotation|
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val c: R|kotlin/reflect/KClass<*>| = R|<local>/c|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/reflect/KClass<*>|
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val entry: R|EnumClass| = R|<local>/entry|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|EnumClass|
+
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|EnumClass| {
+        @R|kotlin/Deprecated|[Types](message = <Unresolved name: boo>#()) @R|Anno|[Types](str = String(123), ann = R|/AnotherAnnotation.AnotherAnnotation|(), c = <getClass>(Q|AnotherAnnotation|), entry = Q|EnumClass|.R|/EnumClass.Second|) public final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
-            public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
 
-    }
-    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.str] str: R|kotlin/String|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.ann] ann: R|AnotherAnnotation|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.c] c: R|kotlin/reflect/KClass<*>|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.entry] entry: R|EnumClass|): R|Anno| {
-            super<R|kotlin/Any|>()
-        }
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val str: R|kotlin/String| = R|<local>/str|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val ann: R|AnotherAnnotation| = R|<local>/ann|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|AnotherAnnotation|
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val c: R|kotlin/reflect/KClass<*>| = R|<local>/c|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/reflect/KClass<*>|
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val entry: R|EnumClass| = R|<local>/entry|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|EnumClass|
-
-    }
-    @R|kotlin/Deprecated|[Types](message = <Unresolved name: boo>#()) @R|Anno|[Types](str = String(123), ann = R|/AnotherAnnotation.AnotherAnnotation|(), c = <getClass>(Q|AnotherAnnotation|), entry = Q|EnumClass|.R|/EnumClass.Second|) public final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
-    public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
-            super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
+                super<R|kotlin/Any|>()
+            }
+
         }
 
-    }
-    public final [ResolvedTo(STATUS)] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
-        private [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] constructor(): R|EnumClass| {
-            super<R|kotlin/Enum<EnumClass>|>()
+        public final [ResolvedTo(STATUS)] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] constructor(): R|EnumClass| {
+                super<R|kotlin/Enum<EnumClass>|>()
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry First: R|EnumClass|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry Second: R|EnumClass|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<EnumClass>| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|EnumClass| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
+                public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
+
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry First: R|EnumClass|
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry Second: R|EnumClass|
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<EnumClass>| {
+        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.str] str: R|kotlin/String|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.ann] ann: R|AnotherAnnotation|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.c] c: R|kotlin/reflect/KClass<*>|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.entry] entry: R|EnumClass|): R|Anno| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val str: R|kotlin/String| = R|<local>/str|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val ann: R|AnotherAnnotation| = R|<local>/ann|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|AnotherAnnotation|
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val c: R|kotlin/reflect/KClass<*>| = R|<local>/c|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/reflect/KClass<*>|
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val entry: R|EnumClass| = R|<local>/entry|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|EnumClass|
+
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|EnumClass| {
+        @R|kotlin/Deprecated|[Types](message = <Unresolved name: boo>#()) @R|Anno|[Types](str = String(123), ann = R|/AnotherAnnotation.AnotherAnnotation|(), c = <getClass>(Q|AnotherAnnotation|), entry = Q|EnumClass|.R|/EnumClass.Second|) public final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
-            public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
 
-    }
-    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.str] str: R|kotlin/String|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.ann] ann: R|AnotherAnnotation|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.c] c: R|kotlin/reflect/KClass<*>|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.entry] entry: R|EnumClass|): R|Anno| {
-            super<R|kotlin/Any|>()
-        }
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val str: R|kotlin/String| = R|<local>/str|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val ann: R|AnotherAnnotation| = R|<local>/ann|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|AnotherAnnotation|
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val c: R|kotlin/reflect/KClass<*>| = R|<local>/c|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/reflect/KClass<*>|
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val entry: R|EnumClass| = R|<local>/entry|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|EnumClass|
-
-    }
-    @R|kotlin/Deprecated|[Types](message = <Unresolved name: boo>#()) @R|Anno|[Types](str = String(123), ann = R|/AnotherAnnotation.AnotherAnnotation|(), c = <getClass>(Q|AnotherAnnotation|), entry = Q|EnumClass|.R|/EnumClass.Second|) public final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
-    public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
-            super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
+                super<R|kotlin/Any|>()
+            }
+
         }
 
-    }
-    public final [ResolvedTo(STATUS)] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
-        private [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] constructor(): R|EnumClass| {
-            super<R|kotlin/Enum<EnumClass>|>()
+        public final [ResolvedTo(STATUS)] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] constructor(): R|EnumClass| {
+                super<R|kotlin/Enum<EnumClass>|>()
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry First: R|EnumClass|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry Second: R|EnumClass|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<EnumClass>| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|EnumClass| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
+                public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
+
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry First: R|EnumClass|
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry Second: R|EnumClass|
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<EnumClass>| {
+        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.str] str: R|kotlin/String|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.ann] ann: R|AnotherAnnotation|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.c] c: R|kotlin/reflect/KClass<*>|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.entry] entry: R|EnumClass|): R|Anno| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val str: R|kotlin/String| = R|<local>/str|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val ann: R|AnotherAnnotation| = R|<local>/ann|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|AnotherAnnotation|
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val c: R|kotlin/reflect/KClass<*>| = R|<local>/c|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/reflect/KClass<*>|
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val entry: R|EnumClass| = R|<local>/entry|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|EnumClass|
+
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|EnumClass| {
+        @R|kotlin/Deprecated|[Types](message = <Unresolved name: boo>#()) @R|Anno|[Types](str = String(123), ann = R|/AnotherAnnotation.AnotherAnnotation|(), c = <getClass>(Q|AnotherAnnotation|), entry = Q|EnumClass|.R|/EnumClass.Second|) public final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
-            public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
 
-    }
-    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.str] str: R|kotlin/String|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.ann] ann: R|AnotherAnnotation|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.c] c: R|kotlin/reflect/KClass<*>|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.entry] entry: R|EnumClass|): R|Anno| {
-            super<R|kotlin/Any|>()
-        }
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val str: R|kotlin/String| = R|<local>/str|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val ann: R|AnotherAnnotation| = R|<local>/ann|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|AnotherAnnotation|
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val c: R|kotlin/reflect/KClass<*>| = R|<local>/c|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/reflect/KClass<*>|
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val entry: R|EnumClass| = R|<local>/entry|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|EnumClass|
-
-    }
-    @R|kotlin/Deprecated|[Types](message = <Unresolved name: boo>#()) @R|Anno|[Types](str = String(123), ann = R|/AnotherAnnotation.AnotherAnnotation|(), c = <getClass>(Q|AnotherAnnotation|), entry = Q|EnumClass|.R|/EnumClass.Second|) public final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
-    public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
-            super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
+                super<R|kotlin/Any|>()
+            }
+
         }
 
-    }
-    public final [ResolvedTo(STATUS)] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
-        private [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] constructor(): R|EnumClass| {
-            super<R|kotlin/Enum<EnumClass>|>()
+        public final [ResolvedTo(STATUS)] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] constructor(): R|EnumClass| {
+                super<R|kotlin/Enum<EnumClass>|>()
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry First: R|EnumClass|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry Second: R|EnumClass|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<EnumClass>| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|EnumClass| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
+                public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
+
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry First: R|EnumClass|
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry Second: R|EnumClass|
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<EnumClass>| {
+        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.str] str: R|kotlin/String|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.ann] ann: R|AnotherAnnotation|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.c] c: R|kotlin/reflect/KClass<*>|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.entry] entry: R|EnumClass|): R|Anno| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val str: R|kotlin/String| = R|<local>/str|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val ann: R|AnotherAnnotation| = R|<local>/ann|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|AnotherAnnotation|
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val c: R|kotlin/reflect/KClass<*>| = R|<local>/c|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/reflect/KClass<*>|
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val entry: R|EnumClass| = R|<local>/entry|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|EnumClass|
+
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|EnumClass| {
+        @R|kotlin/Deprecated|[Types](message = <Unresolved name: boo>#()) @R|Anno|[Types](str = String(123), ann = R|/AnotherAnnotation.AnotherAnnotation|(), c = <getClass>(Q|AnotherAnnotation|), entry = Q|EnumClass|.R|/EnumClass.Second|) public final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
-            public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
 
-    }
-    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.str] str: R|kotlin/String|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.ann] ann: R|AnotherAnnotation|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.c] c: R|kotlin/reflect/KClass<*>|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.entry] entry: R|EnumClass|): R|Anno| {
-            super<R|kotlin/Any|>()
-        }
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val str: R|kotlin/String| = R|<local>/str|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val ann: R|AnotherAnnotation| = R|<local>/ann|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|AnotherAnnotation|
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val c: R|kotlin/reflect/KClass<*>| = R|<local>/c|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/reflect/KClass<*>|
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val entry: R|EnumClass| = R|<local>/entry|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|EnumClass|
-
-    }
-    @R|kotlin/Deprecated|[Types](message = <Unresolved name: boo>#()) @R|Anno|[Types](str = String(123), ann = R|/AnotherAnnotation.AnotherAnnotation|(), c = <getClass>(Q|AnotherAnnotation|), entry = Q|EnumClass|.R|/EnumClass.Second|) public final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
-    public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
-            super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
+                super<R|kotlin/Any|>()
+            }
+
         }
 
-    }
-    public final [ResolvedTo(STATUS)] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
-        private [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] constructor(): R|EnumClass| {
-            super<R|kotlin/Enum<EnumClass>|>()
+        public final [ResolvedTo(STATUS)] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] constructor(): R|EnumClass| {
+                super<R|kotlin/Enum<EnumClass>|>()
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry First: R|EnumClass|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry Second: R|EnumClass|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<EnumClass>| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|EnumClass| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
+                public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
+
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry First: R|EnumClass|
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry Second: R|EnumClass|
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<EnumClass>| {
+        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.str] str: R|kotlin/String|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.ann] ann: R|AnotherAnnotation|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.c] c: R|kotlin/reflect/KClass<*>|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.entry] entry: R|EnumClass|): R|Anno| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val str: R|kotlin/String| = R|<local>/str|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val ann: R|AnotherAnnotation| = R|<local>/ann|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|AnotherAnnotation|
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val c: R|kotlin/reflect/KClass<*>| = R|<local>/c|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/reflect/KClass<*>|
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val entry: R|EnumClass| = R|<local>/entry|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|EnumClass|
+
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|EnumClass| {
+        @R|kotlin/Deprecated|[Types](message = <Unresolved name: boo>#()) @R|Anno|[Types](str = String(123), ann = R|/AnotherAnnotation.AnotherAnnotation|(), c = <getClass>(Q|AnotherAnnotation|), entry = Q|EnumClass|.R|/EnumClass.Second|) public final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
-            public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
 
-    }
-    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.str] str: R|kotlin/String|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.ann] ann: R|AnotherAnnotation|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.c] c: R|kotlin/reflect/KClass<*>|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.entry] entry: R|EnumClass|): R|Anno| {
-            super<R|kotlin/Any|>()
-        }
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val str: R|kotlin/String| = R|<local>/str|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val ann: R|AnotherAnnotation| = R|<local>/ann|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|AnotherAnnotation|
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val c: R|kotlin/reflect/KClass<*>| = R|<local>/c|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/reflect/KClass<*>|
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val entry: R|EnumClass| = R|<local>/entry|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|EnumClass|
-
-    }
-    @R|kotlin/Deprecated|[Types](message = <Unresolved name: boo>#()) @R|Anno|[Types](str = String(123), ann = R|/AnotherAnnotation.AnotherAnnotation|(), c = <getClass>(Q|AnotherAnnotation|), entry = Q|EnumClass|.R|/EnumClass.Second|) public final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
-    public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
-            super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
+                super<R|kotlin/Any|>()
+            }
+
         }
 
-    }
-    public final [ResolvedTo(STATUS)] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
-        private [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] constructor(): R|EnumClass| {
-            super<R|kotlin/Enum<EnumClass>|>()
+        public final [ResolvedTo(STATUS)] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] constructor(): R|EnumClass| {
+                super<R|kotlin/Enum<EnumClass>|>()
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry First: R|EnumClass|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry Second: R|EnumClass|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<EnumClass>| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|EnumClass| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
+                public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
+
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry First: R|EnumClass|
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry Second: R|EnumClass|
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<EnumClass>| {
+        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.str] str: R|kotlin/String|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.ann] ann: R|AnotherAnnotation|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.c] c: R|kotlin/reflect/KClass<*>|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.entry] entry: R|EnumClass|): R|Anno| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val str: R|kotlin/String| = R|<local>/str|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val ann: R|AnotherAnnotation| = R|<local>/ann|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|AnotherAnnotation|
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val c: R|kotlin/reflect/KClass<*>| = R|<local>/c|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/reflect/KClass<*>|
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val entry: R|EnumClass| = R|<local>/entry|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|EnumClass|
+
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|EnumClass| {
+        @R|kotlin/Deprecated|[Types](message = <Unresolved name: boo>#()) @R|Anno|[Types](str = String(123), ann = R|/AnotherAnnotation.AnotherAnnotation|(), c = <getClass>(Q|AnotherAnnotation|), entry = Q|EnumClass|.R|/EnumClass.Second|) public final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
-            public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
 
-    }
-    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.str] str: R|kotlin/String|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.ann] ann: R|AnotherAnnotation|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.c] c: R|kotlin/reflect/KClass<*>|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.entry] entry: R|EnumClass|): R|Anno| {
-            super<R|kotlin/Any|>()
-        }
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val str: R|kotlin/String| = R|<local>/str|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val ann: R|AnotherAnnotation| = R|<local>/ann|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|AnotherAnnotation|
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val c: R|kotlin/reflect/KClass<*>| = R|<local>/c|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/reflect/KClass<*>|
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val entry: R|EnumClass| = R|<local>/entry|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|EnumClass|
-
-    }
-    @R|kotlin/Deprecated|[Types](message = <Unresolved name: boo>#()) @R|Anno|[Types](str = String(123), ann = R|/AnotherAnnotation.AnotherAnnotation|(), c = <getClass>(Q|AnotherAnnotation|), entry = Q|EnumClass|.R|/EnumClass.Second|) public final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
-    public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
-            super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
+                super<R|kotlin/Any|>()
+            }
+
         }
 
-    }
-    public final [ResolvedTo(STATUS)] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
-        private [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] constructor(): R|EnumClass| {
-            super<R|kotlin/Enum<EnumClass>|>()
+        public final [ResolvedTo(STATUS)] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] constructor(): R|EnumClass| {
+                super<R|kotlin/Enum<EnumClass>|>()
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry First: R|EnumClass|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry Second: R|EnumClass|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<EnumClass>| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|EnumClass| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
+                public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
+
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry First: R|EnumClass|
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry Second: R|EnumClass|
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<EnumClass>| {
+        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.str] str: R|kotlin/String|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.ann] ann: R|AnotherAnnotation|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.c] c: R|kotlin/reflect/KClass<*>|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.entry] entry: R|EnumClass|): R|Anno| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val str: R|kotlin/String| = R|<local>/str|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val ann: R|AnotherAnnotation| = R|<local>/ann|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|AnotherAnnotation|
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val c: R|kotlin/reflect/KClass<*>| = R|<local>/c|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/reflect/KClass<*>|
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val entry: R|EnumClass| = R|<local>/entry|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|EnumClass|
+
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|EnumClass| {
+        @R|kotlin/Deprecated|[Types](message = <Unresolved name: boo>#()) @R|Anno|[Types](str = String(123), ann = R|/AnotherAnnotation.AnotherAnnotation|(), c = <getClass>(Q|AnotherAnnotation|), entry = Q|EnumClass|.R|/EnumClass.Second|) public final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
-            public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
 
-    }
-    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.str] str: R|kotlin/String|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.ann] ann: R|AnotherAnnotation|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.c] c: R|kotlin/reflect/KClass<*>|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.entry] entry: R|EnumClass|): R|Anno| {
-            super<R|kotlin/Any|>()
-        }
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val str: R|kotlin/String| = R|<local>/str|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val ann: R|AnotherAnnotation| = R|<local>/ann|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|AnotherAnnotation|
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val c: R|kotlin/reflect/KClass<*>| = R|<local>/c|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/reflect/KClass<*>|
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val entry: R|EnumClass| = R|<local>/entry|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|EnumClass|
-
-    }
-    @R|kotlin/Deprecated|[Types](message = <Unresolved name: boo>#()) @R|Anno|[Types](str = String(123), ann = R|/AnotherAnnotation.AnotherAnnotation|(), c = <getClass>(Q|AnotherAnnotation|), entry = Q|EnumClass|.R|/EnumClass.Second|) public final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
-    public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
-            super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
+                super<R|kotlin/Any|>()
+            }
+
         }
 
-    }
-    public final [ResolvedTo(STATUS)] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
-        private [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] constructor(): R|EnumClass| {
-            super<R|kotlin/Enum<EnumClass>|>()
+        public final [ResolvedTo(STATUS)] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] constructor(): R|EnumClass| {
+                super<R|kotlin/Enum<EnumClass>|>()
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry First: R|EnumClass|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry Second: R|EnumClass|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<EnumClass>| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|EnumClass| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
+                public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
+
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry First: R|EnumClass|
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry Second: R|EnumClass|
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<EnumClass>| {
+        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.str] str: R|kotlin/String|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.ann] ann: R|AnotherAnnotation|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.c] c: R|kotlin/reflect/KClass<*>|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.entry] entry: R|EnumClass|): R|Anno| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val str: R|kotlin/String| = R|<local>/str|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val ann: R|AnotherAnnotation| = R|<local>/ann|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|AnotherAnnotation|
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val c: R|kotlin/reflect/KClass<*>| = R|<local>/c|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/reflect/KClass<*>|
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val entry: R|EnumClass| = R|<local>/entry|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|EnumClass|
+
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|EnumClass| {
+        @R|kotlin/Deprecated|[Types](message = <Unresolved name: boo>#()) @R|Anno|[Types](str = String(123), ann = R|/AnotherAnnotation.AnotherAnnotation|(), c = <getClass>(Q|AnotherAnnotation|), entry = Q|EnumClass|.R|/EnumClass.Second|) public final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
-            public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
 
-    }
-    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.str] str: R|kotlin/String|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.ann] ann: R|AnotherAnnotation|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.c] c: R|kotlin/reflect/KClass<*>|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.entry] entry: R|EnumClass|): R|Anno| {
-            super<R|kotlin/Any|>()
-        }
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val str: R|kotlin/String| = R|<local>/str|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val ann: R|AnotherAnnotation| = R|<local>/ann|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|AnotherAnnotation|
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val c: R|kotlin/reflect/KClass<*>| = R|<local>/c|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/reflect/KClass<*>|
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val entry: R|EnumClass| = R|<local>/entry|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|EnumClass|
-
-    }
-    @R|kotlin/Deprecated|[Types](message = <Unresolved name: boo>#()) @R|Anno|[Types](str = String(123), ann = R|/AnotherAnnotation.AnotherAnnotation|(), c = <getClass>(Q|AnotherAnnotation|), entry = Q|EnumClass|.R|/EnumClass.Second|) public final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
-    public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
-            super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
+                super<R|kotlin/Any|>()
+            }
+
         }
 
-    }
-    public final [ResolvedTo(STATUS)] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
-        private [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] constructor(): R|EnumClass| {
-            super<R|kotlin/Enum<EnumClass>|>()
+        public final [ResolvedTo(STATUS)] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] constructor(): R|EnumClass| {
+                super<R|kotlin/Enum<EnumClass>|>()
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry First: R|EnumClass|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry Second: R|EnumClass|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<EnumClass>| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|EnumClass| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
+                public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
+
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry First: R|EnumClass|
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry Second: R|EnumClass|
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<EnumClass>| {
+        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.str] str: R|kotlin/String|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.ann] ann: R|AnotherAnnotation|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.c] c: R|kotlin/reflect/KClass<*>|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.entry] entry: R|EnumClass|): R|Anno| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val str: R|kotlin/String| = R|<local>/str|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val ann: R|AnotherAnnotation| = R|<local>/ann|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|AnotherAnnotation|
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val c: R|kotlin/reflect/KClass<*>| = R|<local>/c|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/reflect/KClass<*>|
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val entry: R|EnumClass| = R|<local>/entry|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|EnumClass|
+
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|EnumClass| {
+        @R|kotlin/Deprecated|[Types](message = <Unresolved name: boo>#()) @R|Anno|[Types](str = String(123), ann = R|/AnotherAnnotation.AnotherAnnotation|(), c = <getClass>(Q|AnotherAnnotation|), entry = Q|EnumClass|.R|/EnumClass.Second|) public final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
-            public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
 
-    }
-    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.str] str: R|kotlin/String|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.ann] ann: R|AnotherAnnotation|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.c] c: R|kotlin/reflect/KClass<*>|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.entry] entry: R|EnumClass|): R|Anno| {
-            super<R|kotlin/Any|>()
-        }
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val str: R|kotlin/String| = R|<local>/str|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val ann: R|AnotherAnnotation| = R|<local>/ann|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|AnotherAnnotation|
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val c: R|kotlin/reflect/KClass<*>| = R|<local>/c|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/reflect/KClass<*>|
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val entry: R|EnumClass| = R|<local>/entry|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|EnumClass|
-
-    }
-    @R|kotlin/Deprecated|[Types](message = <Unresolved name: boo>#()) @R|Anno|[Types](str = String(123), ann = R|/AnotherAnnotation.AnotherAnnotation|(), c = <getClass>(Q|AnotherAnnotation|), entry = Q|EnumClass|.R|/EnumClass.Second|) public final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
-    public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
-            super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
+                super<R|kotlin/Any|>()
+            }
+
         }
 
-    }
-    public final [ResolvedTo(STATUS)] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
-        private [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] constructor(): R|EnumClass| {
-            super<R|kotlin/Enum<EnumClass>|>()
+        public final [ResolvedTo(STATUS)] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] constructor(): R|EnumClass| {
+                super<R|kotlin/Enum<EnumClass>|>()
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry First: R|EnumClass|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry Second: R|EnumClass|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<EnumClass>| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|EnumClass| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
+                public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
+
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry First: R|EnumClass|
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry Second: R|EnumClass|
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<EnumClass>| {
+        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.str] str: R|kotlin/String|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.ann] ann: R|AnotherAnnotation|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.c] c: R|kotlin/reflect/KClass<*>|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.entry] entry: R|EnumClass|): R|Anno| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val str: R|kotlin/String| = R|<local>/str|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val ann: R|AnotherAnnotation| = R|<local>/ann|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|AnotherAnnotation|
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val c: R|kotlin/reflect/KClass<*>| = R|<local>/c|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/reflect/KClass<*>|
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val entry: R|EnumClass| = R|<local>/entry|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|EnumClass|
+
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|EnumClass| {
+        @R|kotlin/Deprecated|[Types](message = <Unresolved name: boo>#()) @R|Anno|[Types](str = String(123), ann = R|/AnotherAnnotation.AnotherAnnotation|(), c = <getClass>(Q|AnotherAnnotation|), entry = Q|EnumClass|.R|/EnumClass.Second|) public final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
-            public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
 
-    }
-    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.str] str: R|kotlin/String|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.ann] ann: R|AnotherAnnotation|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.c] c: R|kotlin/reflect/KClass<*>|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.entry] entry: R|EnumClass|): R|Anno| {
-            super<R|kotlin/Any|>()
-        }
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val str: R|kotlin/String| = R|<local>/str|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val ann: R|AnotherAnnotation| = R|<local>/ann|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|AnotherAnnotation|
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val c: R|kotlin/reflect/KClass<*>| = R|<local>/c|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/reflect/KClass<*>|
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val entry: R|EnumClass| = R|<local>/entry|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|EnumClass|
-
-    }
-    @R|kotlin/Deprecated|[Types](message = <Unresolved name: boo>#()) @R|Anno|[Types](str = String(123), ann = R|/AnotherAnnotation.AnotherAnnotation|(), c = <getClass>(Q|AnotherAnnotation|), entry = Q|EnumClass|.R|/EnumClass.Second|) public final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
-    public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
-            super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
+                super<R|kotlin/Any|>()
+            }
+
         }
 
-    }
-    public final [ResolvedTo(STATUS)] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
-        private [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] constructor(): R|EnumClass| {
-            super<R|kotlin/Enum<EnumClass>|>()
+        public final [ResolvedTo(STATUS)] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] constructor(): R|EnumClass| {
+                super<R|kotlin/Enum<EnumClass>|>()
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry First: R|EnumClass|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry Second: R|EnumClass|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<EnumClass>| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|EnumClass| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
+                public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
+
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry First: R|EnumClass|
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry Second: R|EnumClass|
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<EnumClass>| {
+        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.str] str: R|kotlin/String|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.ann] ann: R|AnotherAnnotation|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.c] c: R|kotlin/reflect/KClass<*>|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.entry] entry: R|EnumClass|): R|Anno| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val str: R|kotlin/String| = R|<local>/str|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val ann: R|AnotherAnnotation| = R|<local>/ann|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|AnotherAnnotation|
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val c: R|kotlin/reflect/KClass<*>| = R|<local>/c|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/reflect/KClass<*>|
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val entry: R|EnumClass| = R|<local>/entry|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|EnumClass|
+
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|EnumClass| {
+        @R|kotlin/Deprecated|[Types](message = <Unresolved name: boo>#()) @R|Anno|[Types](str = String(123), ann = R|/AnotherAnnotation.AnotherAnnotation|(), c = <getClass>(Q|AnotherAnnotation|), entry = Q|EnumClass|.R|/EnumClass.Second|) public final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
-            public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
 
-    }
-    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.str] str: R|kotlin/String|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.ann] ann: R|AnotherAnnotation|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.c] c: R|kotlin/reflect/KClass<*>|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.entry] entry: R|EnumClass|): R|Anno| {
-            super<R|kotlin/Any|>()
-        }
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val str: R|kotlin/String| = R|<local>/str|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val ann: R|AnotherAnnotation| = R|<local>/ann|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|AnotherAnnotation|
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val c: R|kotlin/reflect/KClass<*>| = R|<local>/c|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/reflect/KClass<*>|
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val entry: R|EnumClass| = R|<local>/entry|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|EnumClass|
-
-    }
-    @R|kotlin/Deprecated|[Types](message = <Unresolved name: boo>#()) @R|Anno|[Types](str = String(123), ann = R|/AnotherAnnotation.AnotherAnnotation|(), c = <getClass>(Q|AnotherAnnotation|), entry = Q|EnumClass|.R|/EnumClass.Second|) public final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
-    public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
-            super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
+                super<R|kotlin/Any|>()
+            }
+
         }
 
-    }
-    public final [ResolvedTo(STATUS)] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
-        private [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] constructor(): R|EnumClass| {
-            super<R|kotlin/Enum<EnumClass>|>()
+        public final [ResolvedTo(STATUS)] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] constructor(): R|EnumClass| {
+                super<R|kotlin/Enum<EnumClass>|>()
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry First: R|EnumClass|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry Second: R|EnumClass|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<EnumClass>| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|EnumClass| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
+                public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
+
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry First: R|EnumClass|
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry Second: R|EnumClass|
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<EnumClass>| {
+        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.str] str: R|kotlin/String|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.ann] ann: R|AnotherAnnotation|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.c] c: R|kotlin/reflect/KClass<*>|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.entry] entry: R|EnumClass|): R|Anno| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val str: R|kotlin/String| = R|<local>/str|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val ann: R|AnotherAnnotation| = R|<local>/ann|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|AnotherAnnotation|
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val c: R|kotlin/reflect/KClass<*>| = R|<local>/c|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/reflect/KClass<*>|
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val entry: R|EnumClass| = R|<local>/entry|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|EnumClass|
+
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|EnumClass| {
+        @R|kotlin/Deprecated|[Types](message = <Unresolved name: boo>#()) @R|Anno|[Types](str = String(123), ann = R|/AnotherAnnotation.AnotherAnnotation|(), c = <getClass>(Q|AnotherAnnotation|), entry = Q|EnumClass|.R|/EnumClass.Second|) public final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
-            public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
 
-    }
-    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.str] str: R|kotlin/String|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.ann] ann: R|AnotherAnnotation|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.c] c: R|kotlin/reflect/KClass<*>|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.entry] entry: R|EnumClass|): R|Anno| {
-            super<R|kotlin/Any|>()
-        }
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val str: R|kotlin/String| = R|<local>/str|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val ann: R|AnotherAnnotation| = R|<local>/ann|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|AnotherAnnotation|
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val c: R|kotlin/reflect/KClass<*>| = R|<local>/c|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/reflect/KClass<*>|
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val entry: R|EnumClass| = R|<local>/entry|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|EnumClass|
-
-    }
-    @R|kotlin/Deprecated|[Types](message = <Unresolved name: boo>#()) @R|Anno|[Types](str = String(123), ann = R|/AnotherAnnotation.AnotherAnnotation|(), c = <getClass>(Q|AnotherAnnotation|), entry = Q|EnumClass|.R|/EnumClass.Second|) public final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
-    public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
-            super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
+                super<R|kotlin/Any|>()
+            }
+
         }
 
-    }
-    public final [ResolvedTo(STATUS)] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
-        private [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] constructor(): R|EnumClass| {
-            super<R|kotlin/Enum<EnumClass>|>()
+        public final [ResolvedTo(STATUS)] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] constructor(): R|EnumClass| {
+                super<R|kotlin/Enum<EnumClass>|>()
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry First: R|EnumClass|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry Second: R|EnumClass|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<EnumClass>| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|EnumClass| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
+                public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
+
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry First: R|EnumClass|
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry Second: R|EnumClass|
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<EnumClass>| {
+        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.str] str: R|kotlin/String|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.ann] ann: R|AnotherAnnotation|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.c] c: R|kotlin/reflect/KClass<*>|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.entry] entry: R|EnumClass|): R|Anno| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val str: R|kotlin/String| = R|<local>/str|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val ann: R|AnotherAnnotation| = R|<local>/ann|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|AnotherAnnotation|
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val c: R|kotlin/reflect/KClass<*>| = R|<local>/c|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/reflect/KClass<*>|
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val entry: R|EnumClass| = R|<local>/entry|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|EnumClass|
+
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|EnumClass| {
+        @R|kotlin/Deprecated|[Types](message = <Unresolved name: boo>#()) @R|Anno|[Types](str = String(123), ann = R|/AnotherAnnotation.AnotherAnnotation|(), c = <getClass>(Q|AnotherAnnotation|), entry = Q|EnumClass|.R|/EnumClass.Second|) public final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
-            public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
 
-    }
-    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.str] str: R|kotlin/String|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.ann] ann: R|AnotherAnnotation|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.c] c: R|kotlin/reflect/KClass<*>|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.entry] entry: R|EnumClass|): R|Anno| {
-            super<R|kotlin/Any|>()
-        }
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val str: R|kotlin/String| = R|<local>/str|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val ann: R|AnotherAnnotation| = R|<local>/ann|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|AnotherAnnotation|
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val c: R|kotlin/reflect/KClass<*>| = R|<local>/c|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/reflect/KClass<*>|
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val entry: R|EnumClass| = R|<local>/entry|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|EnumClass|
-
-    }
-    @R|kotlin/Deprecated|[Types](message = <Unresolved name: boo>#()) @R|Anno|[Types](str = String(123), ann = R|/AnotherAnnotation.AnotherAnnotation|(), c = <getClass>(Q|AnotherAnnotation|), entry = Q|EnumClass|.R|/EnumClass.Second|) public final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
 FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
-    public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
-            super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
+                super<R|kotlin/Any|>()
+            }
+
         }
 
-    }
-    public final [ResolvedTo(STATUS)] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
-        private [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] constructor(): R|EnumClass| {
-            super<R|kotlin/Enum<EnumClass>|>()
+        public final [ResolvedTo(STATUS)] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] constructor(): R|EnumClass| {
+                super<R|kotlin/Enum<EnumClass>|>()
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry First: R|EnumClass|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry Second: R|EnumClass|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<EnumClass>| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|EnumClass| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
+                public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
+
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry First: R|EnumClass|
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] enum entry Second: R|EnumClass|
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun values(): R|kotlin/Array<EnumClass>| {
+        public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.str] str: R|kotlin/String|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.ann] ann: R|AnotherAnnotation|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.c] c: R|kotlin/reflect/KClass<*>|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.entry] entry: R|EnumClass|): R|Anno| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val str: R|kotlin/String| = R|<local>/str|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val ann: R|AnotherAnnotation| = R|<local>/ann|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|AnotherAnnotation|
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val c: R|kotlin/reflect/KClass<*>| = R|<local>/c|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/reflect/KClass<*>|
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val entry: R|EnumClass| = R|<local>/entry|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|EnumClass|
+
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|EnumClass| {
+        @R|kotlin/Deprecated|[Types](message = <Unresolved name: boo>#()) @R|Anno|[Types](str = String(123), ann = R|/AnotherAnnotation.AnotherAnnotation|(), c = <getClass>(Q|AnotherAnnotation|), entry = Q|EnumClass|.R|/EnumClass.Second|) public final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] val entries: R|kotlin/enums/EnumEntries<EnumClass>|
-            public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<EnumClass>|
-
-    }
-    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.str] str: R|kotlin/String|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.ann] ann: R|AnotherAnnotation|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.c] c: R|kotlin/reflect/KClass<*>|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.entry] entry: R|EnumClass|): R|Anno| {
-            super<R|kotlin/Any|>()
-        }
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val str: R|kotlin/String| = R|<local>/str|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/String|
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val ann: R|AnotherAnnotation| = R|<local>/ann|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|AnotherAnnotation|
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val c: R|kotlin/reflect/KClass<*>| = R|<local>/c|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|kotlin/reflect/KClass<*>|
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val entry: R|EnumClass| = R|<local>/entry|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): R|EnumClass|
-
-    }
-    @R|kotlin/Deprecated|[Types](message = <Unresolved name: boo>#()) @R|Anno|[Types](str = String(123), ann = R|/AnotherAnnotation.AnotherAnnotation|(), c = <getClass>(Q|AnotherAnnotation|), entry = Q|EnumClass|.R|/EnumClass.Second|) public final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|

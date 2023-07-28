@@ -1,98 +1,167 @@
 RAW_FIR:
 FILE: [ResolvedTo(IMPORTS)] propertySetterScript.kts
-    public final [ResolvedTo(RAW_FIR)] var prop: R|kotlin/Int| = Int(42)
-        public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int|
-        public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
-        }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] var prop: R|kotlin/Int| = Int(42)
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int|
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
+            }
+
+
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] propertySetterScript.kts
-    public final [ResolvedTo(RAW_FIR)] var prop: R|kotlin/Int| = Int(42)
-        public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int|
-        public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
-        }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] var prop: R|kotlin/Int| = Int(42)
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int|
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
+            }
+
+
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] propertySetterScript.kts
-    public final [ResolvedTo(RAW_FIR)] var prop: R|kotlin/Int| = Int(42)
-        public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int|
-        public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
-        }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] var prop: R|kotlin/Int| = Int(42)
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int|
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
+            }
+
+
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] propertySetterScript.kts
-    public final [ResolvedTo(RAW_FIR)] var prop: R|kotlin/Int| = Int(42)
-        public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int|
-        public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
-        }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] var prop: R|kotlin/Int| = Int(42)
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int|
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
+            }
+
+
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] propertySetterScript.kts
-    public final [ResolvedTo(RAW_FIR)] var prop: R|kotlin/Int| = Int(42)
-        public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int|
-        public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
-        }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] var prop: R|kotlin/Int| = Int(42)
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int|
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
+            }
+
+
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] propertySetterScript.kts
-    public final [ResolvedTo(RAW_FIR)] var prop: R|kotlin/Int| = Int(42)
-        public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int|
-        public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
-        }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] var prop: R|kotlin/Int| = Int(42)
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int|
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
+            }
+
+
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] propertySetterScript.kts
-    public final [ResolvedTo(RAW_FIR)] var prop: R|kotlin/Int| = Int(42)
-        public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int|
-        public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
-        }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] var prop: R|kotlin/Int| = Int(42)
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int|
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
+            }
+
+
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] propertySetterScript.kts
-    public final [ResolvedTo(RAW_FIR)] var prop: R|kotlin/Int| = Int(42)
-        public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int|
-        public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
-        }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] var prop: R|kotlin/Int| = Int(42)
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int|
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
+            }
+
+
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] propertySetterScript.kts
-    public final [ResolvedTo(RAW_FIR)] var prop: R|kotlin/Int| = Int(42)
-        public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int|
-        public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
-        }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] var prop: R|kotlin/Int| = Int(42)
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int|
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
+            }
+
+
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] propertySetterScript.kts
-    public final [ResolvedTo(RAW_FIR)] var prop: R|kotlin/Int| = Int(42)
-        public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int|
-        public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
-        }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] var prop: R|kotlin/Int| = Int(42)
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int|
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
+            }
+
+
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] propertySetterScript.kts
-    public final [ResolvedTo(RAW_FIR)] var prop: R|kotlin/Int| = Int(42)
-        public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int|
-        public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
-        }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] var prop: R|kotlin/Int| = Int(42)
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int|
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
+            }
+
+
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] propertySetterScript.kts
-    public final [ResolvedTo(RAW_FIR)] var prop: R|kotlin/Int| = Int(42)
-        public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int|
-        public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
-        }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] var prop: R|kotlin/Int| = Int(42)
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int|
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
+            }
+
+
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] propertySetterScript.kts
-    public final [ResolvedTo(RAW_FIR)] var prop: R|kotlin/Int| = Int(42)
-        public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int|
-        public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
-        }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] var prop: R|kotlin/Int| = Int(42)
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int|
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
+            }
+
+
 FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] propertySetterScript.kts
-    public final [ResolvedTo(RAW_FIR)] var prop: R|kotlin/Int| = Int(42)
-        public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int|
-        public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
-        }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] var prop: R|kotlin/Int| = Int(42)
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int|
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
+            }
+

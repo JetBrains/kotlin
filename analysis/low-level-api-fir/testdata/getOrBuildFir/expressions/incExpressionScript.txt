@@ -7,13 +7,16 @@ R|<local>/nextUnnamedLibraryIndex| = R|<local>/<unary>|.R|kotlin/Int.inc|()
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] incExpressionScript.kts
-    public final [ResolvedTo(RAW_FIR)] fun main([ResolvedTo(RAW_FIR)] args: R|kotlin/Array<kotlin/String>|): R|kotlin/Unit| {
-        [ResolvedTo(RAW_FIR)] lvar nextUnnamedLibraryIndex: R|kotlin/Int| = Int(1)
-        [ResolvedTo(RAW_FIR)] lval originalName: R|kotlin/String| = <strcat>( {
-            [ResolvedTo(RAW_FIR)] lval <unary>: R|kotlin/Int| = R|<local>/nextUnnamedLibraryIndex|
-            R|<local>/nextUnnamedLibraryIndex| = R|<local>/<unary>|.R|kotlin/Int.inc|()
-            R|<local>/<unary>|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] fun main([ResolvedTo(RAW_FIR)] args: R|kotlin/Array<kotlin/String>|): R|kotlin/Unit| {
+            [ResolvedTo(RAW_FIR)] lvar nextUnnamedLibraryIndex: R|kotlin/Int| = Int(1)
+            [ResolvedTo(RAW_FIR)] lval originalName: R|kotlin/String| = <strcat>( {
+                [ResolvedTo(RAW_FIR)] lval <unary>: R|kotlin/Int| = R|<local>/nextUnnamedLibraryIndex|
+                R|<local>/nextUnnamedLibraryIndex| = R|<local>/<unary>|.R|kotlin/Int.inc|()
+                R|<local>/<unary>|
+            }
+            )
         }
-        )
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|

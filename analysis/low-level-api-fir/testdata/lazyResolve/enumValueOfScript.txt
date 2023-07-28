@@ -1,266 +1,335 @@
 RAW_FIR:
 FILE: [ResolvedTo(IMPORTS)] enumValueOfScript.kts
-    public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
-        private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
-            super<R|kotlin/Enum<one/MyEnum>|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
+                super<R|kotlin/Enum<one/MyEnum>|>()
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun values(): R|kotlin/Array<one/MyEnum>| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|one/MyEnum| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] val entries: R|kotlin/enums/EnumEntries<one/MyEnum>|
+                public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<one/MyEnum>|
+
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun values(): R|kotlin/Array<one/MyEnum>| {
-        }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|one/MyEnum| {
-        }
-
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] val entries: R|kotlin/enums/EnumEntries<one/MyEnum>|
-            public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<one/MyEnum>|
-
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] enumValueOfScript.kts
-    public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
-        private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
-            super<R|kotlin/Enum<one/MyEnum>|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
+                super<R|kotlin/Enum<one/MyEnum>|>()
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun values(): R|kotlin/Array<one/MyEnum>| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|one/MyEnum| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] val entries: R|kotlin/enums/EnumEntries<one/MyEnum>|
+                public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<one/MyEnum>|
+
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun values(): R|kotlin/Array<one/MyEnum>| {
-        }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|one/MyEnum| {
-        }
-
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] val entries: R|kotlin/enums/EnumEntries<one/MyEnum>|
-            public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<one/MyEnum>|
-
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] enumValueOfScript.kts
-    public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
-        private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
-            super<R|kotlin/Enum<one/MyEnum>|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
+                super<R|kotlin/Enum<one/MyEnum>|>()
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun values(): R|kotlin/Array<one/MyEnum>| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|one/MyEnum| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] val entries: R|kotlin/enums/EnumEntries<one/MyEnum>|
+                public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<one/MyEnum>|
+
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun values(): R|kotlin/Array<one/MyEnum>| {
-        }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|one/MyEnum| {
-        }
-
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] val entries: R|kotlin/enums/EnumEntries<one/MyEnum>|
-            public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<one/MyEnum>|
-
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] enumValueOfScript.kts
-    public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
-        private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
-            super<R|kotlin/Enum<one/MyEnum>|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
+                super<R|kotlin/Enum<one/MyEnum>|>()
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun values(): R|kotlin/Array<one/MyEnum>| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|one/MyEnum| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] val entries: R|kotlin/enums/EnumEntries<one/MyEnum>|
+                public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<one/MyEnum>|
+
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun values(): R|kotlin/Array<one/MyEnum>| {
-        }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|one/MyEnum| {
-        }
-
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] val entries: R|kotlin/enums/EnumEntries<one/MyEnum>|
-            public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<one/MyEnum>|
-
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] enumValueOfScript.kts
-    public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
-        private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
-            super<R|kotlin/Enum<one/MyEnum>|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
+                super<R|kotlin/Enum<one/MyEnum>|>()
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun values(): R|kotlin/Array<one/MyEnum>| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|one/MyEnum| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] val entries: R|kotlin/enums/EnumEntries<one/MyEnum>|
+                public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<one/MyEnum>|
+
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun values(): R|kotlin/Array<one/MyEnum>| {
-        }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|one/MyEnum| {
-        }
-
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] val entries: R|kotlin/enums/EnumEntries<one/MyEnum>|
-            public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<one/MyEnum>|
-
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] enumValueOfScript.kts
-    public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
-        private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
-            super<R|kotlin/Enum<one/MyEnum>|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
+                super<R|kotlin/Enum<one/MyEnum>|>()
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun values(): R|kotlin/Array<one/MyEnum>| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|one/MyEnum| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] val entries: R|kotlin/enums/EnumEntries<one/MyEnum>|
+                public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<one/MyEnum>|
+
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun values(): R|kotlin/Array<one/MyEnum>| {
-        }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|one/MyEnum| {
-        }
-
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] val entries: R|kotlin/enums/EnumEntries<one/MyEnum>|
-            public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<one/MyEnum>|
-
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] enumValueOfScript.kts
-    public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
-        private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
-            super<R|kotlin/Enum<one/MyEnum>|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
+                super<R|kotlin/Enum<one/MyEnum>|>()
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun values(): R|kotlin/Array<one/MyEnum>| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|one/MyEnum| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] val entries: R|kotlin/enums/EnumEntries<one/MyEnum>|
+                public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<one/MyEnum>|
+
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun values(): R|kotlin/Array<one/MyEnum>| {
-        }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|one/MyEnum| {
-        }
-
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] val entries: R|kotlin/enums/EnumEntries<one/MyEnum>|
-            public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<one/MyEnum>|
-
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] enumValueOfScript.kts
-    public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
-        private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
-            super<R|kotlin/Enum<one/MyEnum>|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
+                super<R|kotlin/Enum<one/MyEnum>|>()
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun values(): R|kotlin/Array<one/MyEnum>| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|one/MyEnum| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] val entries: R|kotlin/enums/EnumEntries<one/MyEnum>|
+                public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<one/MyEnum>|
+
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun values(): R|kotlin/Array<one/MyEnum>| {
-        }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|one/MyEnum| {
-        }
-
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] val entries: R|kotlin/enums/EnumEntries<one/MyEnum>|
-            public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<one/MyEnum>|
-
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] enumValueOfScript.kts
-    public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
-        private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
-            super<R|kotlin/Enum<one/MyEnum>|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
+                super<R|kotlin/Enum<one/MyEnum>|>()
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun values(): R|kotlin/Array<one/MyEnum>| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|one/MyEnum| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] val entries: R|kotlin/enums/EnumEntries<one/MyEnum>|
+                public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<one/MyEnum>|
+
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun values(): R|kotlin/Array<one/MyEnum>| {
-        }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|one/MyEnum| {
-        }
-
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] val entries: R|kotlin/enums/EnumEntries<one/MyEnum>|
-            public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<one/MyEnum>|
-
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] enumValueOfScript.kts
-    public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
-        private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
-            super<R|kotlin/Enum<one/MyEnum>|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
+                super<R|kotlin/Enum<one/MyEnum>|>()
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun values(): R|kotlin/Array<one/MyEnum>| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|one/MyEnum| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] val entries: R|kotlin/enums/EnumEntries<one/MyEnum>|
+                public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<one/MyEnum>|
+
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun values(): R|kotlin/Array<one/MyEnum>| {
-        }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|one/MyEnum| {
-        }
-
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] val entries: R|kotlin/enums/EnumEntries<one/MyEnum>|
-            public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<one/MyEnum>|
-
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] enumValueOfScript.kts
-    public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
-        private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
-            super<R|kotlin/Enum<one/MyEnum>|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
+                super<R|kotlin/Enum<one/MyEnum>|>()
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun values(): R|kotlin/Array<one/MyEnum>| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|one/MyEnum| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] val entries: R|kotlin/enums/EnumEntries<one/MyEnum>|
+                public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<one/MyEnum>|
+
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun values(): R|kotlin/Array<one/MyEnum>| {
-        }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|one/MyEnum| {
-        }
-
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] val entries: R|kotlin/enums/EnumEntries<one/MyEnum>|
-            public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<one/MyEnum>|
-
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] enumValueOfScript.kts
-    public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
-        private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
-            super<R|kotlin/Enum<one/MyEnum>|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
+                super<R|kotlin/Enum<one/MyEnum>|>()
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun values(): R|kotlin/Array<one/MyEnum>| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|one/MyEnum| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] val entries: R|kotlin/enums/EnumEntries<one/MyEnum>|
+                public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<one/MyEnum>|
+
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun values(): R|kotlin/Array<one/MyEnum>| {
-        }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|one/MyEnum| {
-        }
-
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] val entries: R|kotlin/enums/EnumEntries<one/MyEnum>|
-            public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<one/MyEnum>|
-
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] enumValueOfScript.kts
-    public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
-        private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
-            super<R|kotlin/Enum<one/MyEnum>|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
+                super<R|kotlin/Enum<one/MyEnum>|>()
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun values(): R|kotlin/Array<one/MyEnum>| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|one/MyEnum| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] val entries: R|kotlin/enums/EnumEntries<one/MyEnum>|
+                public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<one/MyEnum>|
+
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun values(): R|kotlin/Array<one/MyEnum>| {
-        }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|one/MyEnum| {
-        }
-
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] val entries: R|kotlin/enums/EnumEntries<one/MyEnum>|
-            public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<one/MyEnum>|
-
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
 FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] enumValueOfScript.kts
-    public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
-        private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
-            super<R|kotlin/Enum<one/MyEnum>|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
+                super<R|kotlin/Enum<one/MyEnum>|>()
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun values(): R|kotlin/Array<one/MyEnum>| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|one/MyEnum| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] val entries: R|kotlin/enums/EnumEntries<one/MyEnum>|
+                public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<one/MyEnum>|
+
         }
 
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun values(): R|kotlin/Array<one/MyEnum>| {
-        }
-
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|one/MyEnum| {
-        }
-
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] val entries: R|kotlin/enums/EnumEntries<one/MyEnum>|
-            public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<one/MyEnum>|
-
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|

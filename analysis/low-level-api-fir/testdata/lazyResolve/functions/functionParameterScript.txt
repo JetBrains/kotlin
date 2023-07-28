@@ -1,84 +1,153 @@
 RAW_FIR:
 FILE: [ResolvedTo(IMPORTS)] functionParameterScript.kts
-    public final [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/Int|): R|kotlin/String| {
-        ^foo String(boo)
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/Int|): R|kotlin/String| {
+            ^foo String(boo)
+        }
+
+
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] functionParameterScript.kts
-    public final [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/Int|): R|kotlin/String| {
-        ^foo String(boo)
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/Int|): R|kotlin/String| {
+            ^foo String(boo)
+        }
+
+
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] functionParameterScript.kts
-    public final [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/Int|): R|kotlin/String| {
-        ^foo String(boo)
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/Int|): R|kotlin/String| {
+            ^foo String(boo)
+        }
+
+
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] functionParameterScript.kts
-    public final [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/Int|): R|kotlin/String| {
-        ^foo String(boo)
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/Int|): R|kotlin/String| {
+            ^foo String(boo)
+        }
+
+
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] functionParameterScript.kts
-    public final [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/Int|): R|kotlin/String| {
-        ^foo String(boo)
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/Int|): R|kotlin/String| {
+            ^foo String(boo)
+        }
+
+
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] functionParameterScript.kts
-    public final [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/Int|): R|kotlin/String| {
-        ^foo String(boo)
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/Int|): R|kotlin/String| {
+            ^foo String(boo)
+        }
+
+
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] functionParameterScript.kts
-    public final [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/Int|): R|kotlin/String| {
-        ^foo String(boo)
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/Int|): R|kotlin/String| {
+            ^foo String(boo)
+        }
+
+
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] functionParameterScript.kts
-    public final [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/Int|): R|kotlin/String| {
-        ^foo String(boo)
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/Int|): R|kotlin/String| {
+            ^foo String(boo)
+        }
+
+
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] functionParameterScript.kts
-    public final [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/Int|): R|kotlin/String| {
-        ^foo String(boo)
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/Int|): R|kotlin/String| {
+            ^foo String(boo)
+        }
+
+
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] functionParameterScript.kts
-    public final [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/Int|): R|kotlin/String| {
-        ^foo String(boo)
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/Int|): R|kotlin/String| {
+            ^foo String(boo)
+        }
+
+
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] functionParameterScript.kts
-    public final [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/Int|): R|kotlin/String| {
-        ^foo String(boo)
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/Int|): R|kotlin/String| {
+            ^foo String(boo)
+        }
+
+
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] functionParameterScript.kts
-    public final [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/Int|): R|kotlin/String| {
-        ^foo String(boo)
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/Int|): R|kotlin/String| {
+            ^foo String(boo)
+        }
+
+
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] functionParameterScript.kts
-    public final [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/Int|): R|kotlin/String| {
-        ^foo String(boo)
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/Int|): R|kotlin/String| {
+            ^foo String(boo)
+        }
+
+
 FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] functionParameterScript.kts
-    public final [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/Int|): R|kotlin/String| {
-        ^foo String(boo)
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/Int|): R|kotlin/String| {
+            ^foo String(boo)
+        }
+

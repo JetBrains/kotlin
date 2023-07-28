@@ -7,7 +7,10 @@ FIR element rendered:
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] isExpressionScript.kts
-    public final [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] x: R|kotlin/Any|): R|kotlin/Boolean| {
-        ^foo (R|<local>/x| is R|kotlin/String|)
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] x: R|kotlin/Any|): R|kotlin/Boolean| {
+            ^foo (R|<local>/x| is R|kotlin/String|)
+        }

@@ -7,8 +7,12 @@ public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] destructionWithNoRValueScript.kts
-    [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <ERROR TYPE REF: Initializer required for destructuring declaration> = ERROR_EXPR(Initializer required for destructuring declaration)public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val o: <ERROR TYPE REF: Unresolved name: component1> = R|<local>/<destruct>|.<Unresolved name: component1>#()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-    public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val r: <ERROR TYPE REF: Unresolved name: component2> = R|<local>/<destruct>|.<Unresolved name: component2>#()
+        [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <ERROR TYPE REF: Initializer required for destructuring declaration> = ERROR_EXPR(Initializer required for destructuring declaration)
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val o: <ERROR TYPE REF: Unresolved name: component1> = R|<local>/<destruct>|.<Unresolved name: component1>#()
 
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+
+        public final [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val r: <ERROR TYPE REF: Unresolved name: component2> = R|<local>/<destruct>|.<Unresolved name: component2>#()

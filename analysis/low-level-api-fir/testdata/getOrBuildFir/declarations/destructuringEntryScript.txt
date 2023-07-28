@@ -7,9 +7,12 @@ FIR element rendered:
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] destructuringEntryScript.kts
-    public final [ResolvedTo(RAW_FIR)] fun main(): R|kotlin/Unit| {
-        [ResolvedTo(RAW_FIR)] lval <destruct>: R|kotlin/Pair<kotlin/Int, kotlin/Int>| = Int(1).R|kotlin/to|<R|kotlin/Int|, R|kotlin/Int|>(Int(2))
-        [ResolvedTo(RAW_FIR)] lval a: R|kotlin/Int| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Pair.component1: R|kotlin/Int|>|()
-        [ResolvedTo(RAW_FIR)] lval b: R|kotlin/Int| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Pair.component2: R|kotlin/Int|>|()
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] fun main(): R|kotlin/Unit| {
+            [ResolvedTo(RAW_FIR)] lval <destruct>: R|kotlin/Pair<kotlin/Int, kotlin/Int>| = Int(1).R|kotlin/to|<R|kotlin/Int|, R|kotlin/Int|>(Int(2))
+            [ResolvedTo(RAW_FIR)] lval a: R|kotlin/Int| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Pair.component1: R|kotlin/Int|>|()
+            [ResolvedTo(RAW_FIR)] lval b: R|kotlin/Int| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Pair.component2: R|kotlin/Int|>|()
+        }

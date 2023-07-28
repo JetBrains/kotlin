@@ -9,10 +9,13 @@ FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] fileScript.kts
     @FILE:R|Ann|[Types]()
     [ResolvedTo(BODY_RESOLVE)] annotations container
-    public final [ResolvedTo(RAW_FIR)] annotation class Ann : R|kotlin/Annotation| {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|Ann| {
-            super<R|kotlin/Any|>()
-        }
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(STATUS)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        public final [ResolvedTo(RAW_FIR)] annotation class Ann : R|kotlin/Annotation| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Ann] constructor(): R|Ann| {
+                super<R|kotlin/Any|>()
+            }
+
+        }

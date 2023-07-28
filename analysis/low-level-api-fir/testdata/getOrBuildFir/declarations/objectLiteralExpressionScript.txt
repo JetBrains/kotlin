@@ -12,13 +12,16 @@ object : R|kotlin/Any| {
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] objectLiteralExpressionScript.kts
-    public final [ResolvedTo(RAW_FIR)] fun test(): R|kotlin/Unit| {
-        object : R|kotlin/Any| {
-            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
-                super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] fun test(): R|kotlin/Unit| {
+            object : R|kotlin/Any| {
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                    super<R|kotlin/Any|>()
+                }
+
             }
 
         }
-
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|

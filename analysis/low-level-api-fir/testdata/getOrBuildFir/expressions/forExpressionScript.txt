@@ -12,17 +12,20 @@ while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/IntIterato
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] forExpressionScript.kts
-    public final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-         {
-            [ResolvedTo(RAW_FIR)] lval <iterator>: R|kotlin/collections/IntIterator| = Int(0).R|kotlin/Int.rangeTo|(Int(1)).R|kotlin/ranges/IntProgression.iterator|()
-            while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/IntIterator.hasNext: R|kotlin/Boolean|>|()) {
-                [ResolvedTo(RAW_FIR)] lval x: R|kotlin/Int| = R|<local>/<iterator>|.R|kotlin/collections/IntIterator.next|()
-                 {
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
+             {
+                [ResolvedTo(RAW_FIR)] lval <iterator>: R|kotlin/collections/IntIterator| = Int(0).R|kotlin/Int.rangeTo|(Int(1)).R|kotlin/ranges/IntProgression.iterator|()
+                while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/IntIterator.hasNext: R|kotlin/Boolean|>|()) {
+                    [ResolvedTo(RAW_FIR)] lval x: R|kotlin/Int| = R|<local>/<iterator>|.R|kotlin/collections/IntIterator.next|()
+                     {
+                    }
+
                 }
 
             }
 
         }
-
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|

@@ -14,15 +14,18 @@ local final [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] localClassScript.kts
-    public final [ResolvedTo(RAW_FIR)] fun y(): R|kotlin/Unit| {
-        local final [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
-            public [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
-                super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] fun y(): R|kotlin/Unit| {
+            local final [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
+                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final [ResolvedTo(RAW_FIR)] fun y(): R|kotlin/String|
+
             }
 
-            public final [ResolvedTo(RAW_FIR)] fun y(): R|kotlin/String|
-
         }
-
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|

@@ -1,378 +1,475 @@
 RAW_FIR:
 FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClassScript.kts
-    public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
-            super<R|kotlin/Any|>()
-        }
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-    }
-    public final [ResolvedTo(STATUS)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: R|one/two/AnotherAnnotation|): R|one/two/KotlinAnnotation| {
-            super<R|kotlin/Any|>()
-        }
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|one/two/AnotherAnnotation| = R|<local>/s|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] get(): R|one/two/AnotherAnnotation|
-
-    }
-    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-        @R|one/two/KotlinAnnotation|[Types](s = R|one/two/AnotherAnnotation.AnotherAnnotation|()) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
-            public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
+        public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        public final [ResolvedTo(STATUS)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: R|one/two/AnotherAnnotation|): R|one/two/KotlinAnnotation| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|one/two/AnotherAnnotation| = R|<local>/s|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] get(): R|one/two/AnotherAnnotation|
+
+        }
+
+        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            @R|one/two/KotlinAnnotation|[Types](s = R|one/two/AnotherAnnotation.AnotherAnnotation|()) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
+                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+        }
+
+
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClassScript.kts
-    public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
-            super<R|kotlin/Any|>()
-        }
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-    }
-    public final [ResolvedTo(STATUS)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: R|one/two/AnotherAnnotation|): R|one/two/KotlinAnnotation| {
-            super<R|kotlin/Any|>()
-        }
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|one/two/AnotherAnnotation| = R|<local>/s|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] get(): R|one/two/AnotherAnnotation|
-
-    }
-    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-        @R|one/two/KotlinAnnotation|[Types](s = R|one/two/AnotherAnnotation.AnotherAnnotation|()) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
-            public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
+        public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        public final [ResolvedTo(STATUS)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: R|one/two/AnotherAnnotation|): R|one/two/KotlinAnnotation| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|one/two/AnotherAnnotation| = R|<local>/s|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] get(): R|one/two/AnotherAnnotation|
+
+        }
+
+        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            @R|one/two/KotlinAnnotation|[Types](s = R|one/two/AnotherAnnotation.AnotherAnnotation|()) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
+                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+        }
+
+
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClassScript.kts
-    public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
-            super<R|kotlin/Any|>()
-        }
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-    }
-    public final [ResolvedTo(STATUS)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: R|one/two/AnotherAnnotation|): R|one/two/KotlinAnnotation| {
-            super<R|kotlin/Any|>()
-        }
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|one/two/AnotherAnnotation| = R|<local>/s|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] get(): R|one/two/AnotherAnnotation|
-
-    }
-    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-        @R|one/two/KotlinAnnotation|[Types](s = R|one/two/AnotherAnnotation.AnotherAnnotation|()) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
-            public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
+        public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        public final [ResolvedTo(STATUS)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: R|one/two/AnotherAnnotation|): R|one/two/KotlinAnnotation| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|one/two/AnotherAnnotation| = R|<local>/s|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] get(): R|one/two/AnotherAnnotation|
+
+        }
+
+        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            @R|one/two/KotlinAnnotation|[Types](s = R|one/two/AnotherAnnotation.AnotherAnnotation|()) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
+                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+        }
+
+
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClassScript.kts
-    public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
-            super<R|kotlin/Any|>()
-        }
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-    }
-    public final [ResolvedTo(STATUS)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: R|one/two/AnotherAnnotation|): R|one/two/KotlinAnnotation| {
-            super<R|kotlin/Any|>()
-        }
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|one/two/AnotherAnnotation| = R|<local>/s|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] get(): R|one/two/AnotherAnnotation|
-
-    }
-    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-        @R|one/two/KotlinAnnotation|[Types](s = R|one/two/AnotherAnnotation.AnotherAnnotation|()) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
-            public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
+        public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        public final [ResolvedTo(STATUS)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: R|one/two/AnotherAnnotation|): R|one/two/KotlinAnnotation| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|one/two/AnotherAnnotation| = R|<local>/s|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] get(): R|one/two/AnotherAnnotation|
+
+        }
+
+        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            @R|one/two/KotlinAnnotation|[Types](s = R|one/two/AnotherAnnotation.AnotherAnnotation|()) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
+                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+        }
+
+
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClassScript.kts
-    public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
-            super<R|kotlin/Any|>()
-        }
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-    }
-    public final [ResolvedTo(STATUS)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: R|one/two/AnotherAnnotation|): R|one/two/KotlinAnnotation| {
-            super<R|kotlin/Any|>()
-        }
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|one/two/AnotherAnnotation| = R|<local>/s|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] get(): R|one/two/AnotherAnnotation|
-
-    }
-    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-        @R|one/two/KotlinAnnotation|[Types](s = R|one/two/AnotherAnnotation.AnotherAnnotation|()) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
-            public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
+        public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        public final [ResolvedTo(STATUS)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: R|one/two/AnotherAnnotation|): R|one/two/KotlinAnnotation| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|one/two/AnotherAnnotation| = R|<local>/s|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] get(): R|one/two/AnotherAnnotation|
+
+        }
+
+        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            @R|one/two/KotlinAnnotation|[Types](s = R|one/two/AnotherAnnotation.AnotherAnnotation|()) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
+                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+        }
+
+
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClassScript.kts
-    public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
-            super<R|kotlin/Any|>()
-        }
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-    }
-    public final [ResolvedTo(STATUS)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: R|one/two/AnotherAnnotation|): R|one/two/KotlinAnnotation| {
-            super<R|kotlin/Any|>()
-        }
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|one/two/AnotherAnnotation| = R|<local>/s|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] get(): R|one/two/AnotherAnnotation|
-
-    }
-    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-        @R|one/two/KotlinAnnotation|[Types](s = R|one/two/AnotherAnnotation.AnotherAnnotation|()) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
-            public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
+        public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        public final [ResolvedTo(STATUS)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: R|one/two/AnotherAnnotation|): R|one/two/KotlinAnnotation| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|one/two/AnotherAnnotation| = R|<local>/s|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] get(): R|one/two/AnotherAnnotation|
+
+        }
+
+        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            @R|one/two/KotlinAnnotation|[Types](s = R|one/two/AnotherAnnotation.AnotherAnnotation|()) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
+                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+        }
+
+
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClassScript.kts
-    public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
-            super<R|kotlin/Any|>()
-        }
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-    }
-    public final [ResolvedTo(STATUS)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: R|one/two/AnotherAnnotation|): R|one/two/KotlinAnnotation| {
-            super<R|kotlin/Any|>()
-        }
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|one/two/AnotherAnnotation| = R|<local>/s|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] get(): R|one/two/AnotherAnnotation|
-
-    }
-    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-        @R|one/two/KotlinAnnotation|[Types](s = R|one/two/AnotherAnnotation.AnotherAnnotation|()) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
-            public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
+        public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        public final [ResolvedTo(STATUS)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: R|one/two/AnotherAnnotation|): R|one/two/KotlinAnnotation| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|one/two/AnotherAnnotation| = R|<local>/s|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] get(): R|one/two/AnotherAnnotation|
+
+        }
+
+        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            @R|one/two/KotlinAnnotation|[Types](s = R|one/two/AnotherAnnotation.AnotherAnnotation|()) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
+                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+        }
+
+
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClassScript.kts
-    public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
-            super<R|kotlin/Any|>()
-        }
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-    }
-    public final [ResolvedTo(STATUS)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: R|one/two/AnotherAnnotation|): R|one/two/KotlinAnnotation| {
-            super<R|kotlin/Any|>()
-        }
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|one/two/AnotherAnnotation| = R|<local>/s|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] get(): R|one/two/AnotherAnnotation|
-
-    }
-    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-        @R|one/two/KotlinAnnotation|[Types](s = R|one/two/AnotherAnnotation.AnotherAnnotation|()) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
-            public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
+        public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        public final [ResolvedTo(STATUS)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: R|one/two/AnotherAnnotation|): R|one/two/KotlinAnnotation| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|one/two/AnotherAnnotation| = R|<local>/s|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] get(): R|one/two/AnotherAnnotation|
+
+        }
+
+        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            @R|one/two/KotlinAnnotation|[Types](s = R|one/two/AnotherAnnotation.AnotherAnnotation|()) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
+                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+        }
+
+
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClassScript.kts
-    public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
-            super<R|kotlin/Any|>()
-        }
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-    }
-    public final [ResolvedTo(STATUS)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: R|one/two/AnotherAnnotation|): R|one/two/KotlinAnnotation| {
-            super<R|kotlin/Any|>()
-        }
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|one/two/AnotherAnnotation| = R|<local>/s|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] get(): R|one/two/AnotherAnnotation|
-
-    }
-    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-        @R|one/two/KotlinAnnotation|[Types](s = R|one/two/AnotherAnnotation.AnotherAnnotation|()) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
-            public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
+        public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        public final [ResolvedTo(STATUS)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: R|one/two/AnotherAnnotation|): R|one/two/KotlinAnnotation| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|one/two/AnotherAnnotation| = R|<local>/s|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] get(): R|one/two/AnotherAnnotation|
+
+        }
+
+        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            @R|one/two/KotlinAnnotation|[Types](s = R|one/two/AnotherAnnotation.AnotherAnnotation|()) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
+                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+        }
+
+
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClassScript.kts
-    public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
-            super<R|kotlin/Any|>()
-        }
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-    }
-    public final [ResolvedTo(STATUS)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: R|one/two/AnotherAnnotation|): R|one/two/KotlinAnnotation| {
-            super<R|kotlin/Any|>()
-        }
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|one/two/AnotherAnnotation| = R|<local>/s|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] get(): R|one/two/AnotherAnnotation|
-
-    }
-    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-        @R|one/two/KotlinAnnotation|[Types](s = R|one/two/AnotherAnnotation.AnotherAnnotation|()) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
-            public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
+        public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        public final [ResolvedTo(STATUS)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: R|one/two/AnotherAnnotation|): R|one/two/KotlinAnnotation| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|one/two/AnotherAnnotation| = R|<local>/s|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] get(): R|one/two/AnotherAnnotation|
+
+        }
+
+        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            @R|one/two/KotlinAnnotation|[Types](s = R|one/two/AnotherAnnotation.AnotherAnnotation|()) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
+                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+        }
+
+
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClassScript.kts
-    public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
-            super<R|kotlin/Any|>()
-        }
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-    }
-    public final [ResolvedTo(STATUS)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: R|one/two/AnotherAnnotation|): R|one/two/KotlinAnnotation| {
-            super<R|kotlin/Any|>()
-        }
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|one/two/AnotherAnnotation| = R|<local>/s|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] get(): R|one/two/AnotherAnnotation|
-
-    }
-    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-        @R|one/two/KotlinAnnotation|[Types](s = R|one/two/AnotherAnnotation.AnotherAnnotation|()) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
-            public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
+        public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        public final [ResolvedTo(STATUS)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: R|one/two/AnotherAnnotation|): R|one/two/KotlinAnnotation| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|one/two/AnotherAnnotation| = R|<local>/s|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] get(): R|one/two/AnotherAnnotation|
+
+        }
+
+        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            @R|one/two/KotlinAnnotation|[Types](s = R|one/two/AnotherAnnotation.AnotherAnnotation|()) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
+                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+        }
+
+
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClassScript.kts
-    public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
-            super<R|kotlin/Any|>()
-        }
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-    }
-    public final [ResolvedTo(STATUS)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: R|one/two/AnotherAnnotation|): R|one/two/KotlinAnnotation| {
-            super<R|kotlin/Any|>()
-        }
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|one/two/AnotherAnnotation| = R|<local>/s|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] get(): R|one/two/AnotherAnnotation|
-
-    }
-    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-        @R|one/two/KotlinAnnotation|[Types](s = R|one/two/AnotherAnnotation.AnotherAnnotation|()) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
-            public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
+        public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        public final [ResolvedTo(STATUS)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: R|one/two/AnotherAnnotation|): R|one/two/KotlinAnnotation| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|one/two/AnotherAnnotation| = R|<local>/s|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] get(): R|one/two/AnotherAnnotation|
+
+        }
+
+        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            @R|one/two/KotlinAnnotation|[Types](s = R|one/two/AnotherAnnotation.AnotherAnnotation|()) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
+                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+        }
+
+
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClassScript.kts
-    public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
-            super<R|kotlin/Any|>()
-        }
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-    }
-    public final [ResolvedTo(STATUS)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: R|one/two/AnotherAnnotation|): R|one/two/KotlinAnnotation| {
-            super<R|kotlin/Any|>()
-        }
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|one/two/AnotherAnnotation| = R|<local>/s|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] get(): R|one/two/AnotherAnnotation|
-
-    }
-    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-        @R|one/two/KotlinAnnotation|[Types](s = R|one/two/AnotherAnnotation.AnotherAnnotation|()) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
-            public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
+        public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        public final [ResolvedTo(STATUS)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: R|one/two/AnotherAnnotation|): R|one/two/KotlinAnnotation| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|one/two/AnotherAnnotation| = R|<local>/s|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] get(): R|one/two/AnotherAnnotation|
+
+        }
+
+        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            @R|one/two/KotlinAnnotation|[Types](s = R|one/two/AnotherAnnotation.AnotherAnnotation|()) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
+                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+        }
+
+
 FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClassScript.kts
-    public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
-            super<R|kotlin/Any|>()
-        }
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-    }
-    public final [ResolvedTo(STATUS)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: R|one/two/AnotherAnnotation|): R|one/two/KotlinAnnotation| {
-            super<R|kotlin/Any|>()
-        }
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|one/two/AnotherAnnotation| = R|<local>/s|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] get(): R|one/two/AnotherAnnotation|
-
-    }
-    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-        @R|one/two/KotlinAnnotation|[Types](s = R|one/two/AnotherAnnotation.AnotherAnnotation|()) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
-            public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
+        public final [ResolvedTo(STATUS)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+        public final [ResolvedTo(STATUS)] annotation class KotlinAnnotation : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/two/KotlinAnnotation.s] s: R|one/two/AnotherAnnotation|): R|one/two/KotlinAnnotation| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|one/two/AnotherAnnotation| = R|<local>/s|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=KotlinAnnotation] get(): R|one/two/AnotherAnnotation|
+
+        }
+
+        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            @R|one/two/KotlinAnnotation|[Types](s = R|one/two/AnotherAnnotation.AnotherAnnotation|()) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
+                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+        }
+

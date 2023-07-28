@@ -9,8 +9,11 @@ public [ResolvedTo(RAW_FIR)] get(): R|kotlin/String| {
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] getterScript.kts
-    public final [ResolvedTo(RAW_FIR)] val x: R|kotlin/String|
-        public [ResolvedTo(RAW_FIR)] get(): R|kotlin/String| {
-            ^ String()
-        }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] val x: R|kotlin/String|
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/String| {
+                ^ String()
+            }

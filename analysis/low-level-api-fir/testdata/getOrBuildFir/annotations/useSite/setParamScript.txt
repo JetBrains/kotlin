@@ -7,20 +7,24 @@ FIR element rendered:
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] setParamScript.kts
-    public final [ResolvedTo(STATUS)] annotation class Ann : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Ann] constructor(): R|Ann| {
-            super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] annotation class Ann : R|kotlin/Annotation| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Ann] constructor(): R|Ann| {
+                super<R|kotlin/Any|>()
+            }
+
         }
 
-    }
-    public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/X.x] x: R|kotlin/Int|): R|X| {
-            super<R|kotlin/Any|>()
+        public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/X.x] x: R|kotlin/Int|): R|X| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] var x: R|kotlin/Int| = R|<local>/x|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=X] get(): R|kotlin/Int|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=X] set([ResolvedTo(STATUS)] @SETTER_PARAMETER:R|Ann|[Types]() value: R|kotlin/Int|): R|kotlin/Unit|
+
         }
-
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] var x: R|kotlin/Int| = R|<local>/x|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=X] get(): R|kotlin/Int|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=X] set([ResolvedTo(STATUS)] @SETTER_PARAMETER:R|Ann|[Types]() value: R|kotlin/Int|): R|kotlin/Unit|
-
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|

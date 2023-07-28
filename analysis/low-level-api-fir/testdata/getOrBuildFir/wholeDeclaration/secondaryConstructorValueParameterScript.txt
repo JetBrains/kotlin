@@ -7,14 +7,17 @@ FIR element rendered:
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] secondaryConstructorValueParameterScript.kts
-    public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor([ResolvedTo(STATUS)] x: R|kotlin/Int|): R|X| {
-            super<R|kotlin/Any|>()
-        }
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor([ResolvedTo(STATUS)] y: R|kotlin/String|): R|X| {
-            this<R|X|>(Int(1))
-        }
+        public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor([ResolvedTo(STATUS)] x: R|kotlin/Int|): R|X| {
+                super<R|kotlin/Any|>()
+            }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor([ResolvedTo(STATUS)] y: R|kotlin/String|): R|X| {
+                this<R|X|>(Int(1))
+            }
+
+        }

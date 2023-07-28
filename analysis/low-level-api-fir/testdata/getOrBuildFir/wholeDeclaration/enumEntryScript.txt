@@ -7,20 +7,23 @@ public final static [ResolvedTo(STATUS)] [ContainingClassKey=X] enum entry ENTRY
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] enumEntryScript.kts
-    public final [ResolvedTo(STATUS)] enum class X : R|kotlin/Enum<X>| {
-        private [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
-            super<R|kotlin/Enum<X>|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(STATUS)] enum class X : R|kotlin/Enum<X>| {
+            private [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
+                super<R|kotlin/Enum<X>|>()
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=X] enum entry ENTRY: R|X|
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=X] fun values(): R|kotlin/Array<X>| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=X] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|X| {
+            }
+
+            public final static [ResolvedTo(STATUS)] [ContainingClassKey=X] val entries: R|kotlin/enums/EnumEntries<X>|
+                public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<X>|
+
         }
-
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=X] enum entry ENTRY: R|X|
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=X] fun values(): R|kotlin/Array<X>| {
-        }
-
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=X] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|X| {
-        }
-
-        public final static [ResolvedTo(STATUS)] [ContainingClassKey=X] val entries: R|kotlin/enums/EnumEntries<X>|
-            public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<X>|
-
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|

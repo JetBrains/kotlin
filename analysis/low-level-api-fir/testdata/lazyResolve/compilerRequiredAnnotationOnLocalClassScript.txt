@@ -1,266 +1,335 @@
 RAW_FIR:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
-    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-        @R|kotlin/Deprecated|[Types](message = String(), replaceWith = R|kotlin/ReplaceWith.ReplaceWith|(expression = String(abc)), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.ERROR|) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
-            public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
-                super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            @R|kotlin/Deprecated|[Types](message = String(), replaceWith = R|kotlin/ReplaceWith.ReplaceWith|(expression = String(abc)), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.ERROR|) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
+                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+            @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) local final [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
+                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|one/two/B| {
+                    super<R|kotlin/Any|>()
+                }
+
             }
 
         }
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) local final [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
-            public [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|one/two/B| {
-                super<R|kotlin/Any|>()
-            }
 
-        }
-
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
-    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-        @R|kotlin/Deprecated|[Types](message = String(), replaceWith = R|kotlin/ReplaceWith.ReplaceWith|(expression = String(abc)), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.ERROR|) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
-            public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
-                super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            @R|kotlin/Deprecated|[Types](message = String(), replaceWith = R|kotlin/ReplaceWith.ReplaceWith|(expression = String(abc)), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.ERROR|) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
+                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+            @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) local final [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
+                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|one/two/B| {
+                    super<R|kotlin/Any|>()
+                }
+
             }
 
         }
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) local final [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
-            public [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|one/two/B| {
-                super<R|kotlin/Any|>()
-            }
 
-        }
-
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
-    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-        @R|kotlin/Deprecated|[Types](message = String(), replaceWith = R|kotlin/ReplaceWith.ReplaceWith|(expression = String(abc)), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.ERROR|) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
-            public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
-                super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            @R|kotlin/Deprecated|[Types](message = String(), replaceWith = R|kotlin/ReplaceWith.ReplaceWith|(expression = String(abc)), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.ERROR|) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
+                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+            @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) local final [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
+                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|one/two/B| {
+                    super<R|kotlin/Any|>()
+                }
+
             }
 
         }
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) local final [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
-            public [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|one/two/B| {
-                super<R|kotlin/Any|>()
-            }
 
-        }
-
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
-    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-        @R|kotlin/Deprecated|[Types](message = String(), replaceWith = R|kotlin/ReplaceWith.ReplaceWith|(expression = String(abc)), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.ERROR|) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
-            public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
-                super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            @R|kotlin/Deprecated|[Types](message = String(), replaceWith = R|kotlin/ReplaceWith.ReplaceWith|(expression = String(abc)), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.ERROR|) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
+                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+            @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) local final [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
+                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|one/two/B| {
+                    super<R|kotlin/Any|>()
+                }
+
             }
 
         }
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) local final [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
-            public [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|one/two/B| {
-                super<R|kotlin/Any|>()
-            }
 
-        }
-
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
-    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-        @R|kotlin/Deprecated|[Types](message = String(), replaceWith = R|kotlin/ReplaceWith.ReplaceWith|(expression = String(abc)), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.ERROR|) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
-            public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
-                super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            @R|kotlin/Deprecated|[Types](message = String(), replaceWith = R|kotlin/ReplaceWith.ReplaceWith|(expression = String(abc)), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.ERROR|) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
+                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+            @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) local final [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
+                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|one/two/B| {
+                    super<R|kotlin/Any|>()
+                }
+
             }
 
         }
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) local final [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
-            public [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|one/two/B| {
-                super<R|kotlin/Any|>()
-            }
 
-        }
-
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
-    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-        @R|kotlin/Deprecated|[Types](message = String(), replaceWith = R|kotlin/ReplaceWith.ReplaceWith|(expression = String(abc)), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.ERROR|) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
-            public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
-                super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            @R|kotlin/Deprecated|[Types](message = String(), replaceWith = R|kotlin/ReplaceWith.ReplaceWith|(expression = String(abc)), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.ERROR|) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
+                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+            @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) local final [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
+                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|one/two/B| {
+                    super<R|kotlin/Any|>()
+                }
+
             }
 
         }
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) local final [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
-            public [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|one/two/B| {
-                super<R|kotlin/Any|>()
-            }
 
-        }
-
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
-    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-        @R|kotlin/Deprecated|[Types](message = String(), replaceWith = R|kotlin/ReplaceWith.ReplaceWith|(expression = String(abc)), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.ERROR|) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
-            public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
-                super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            @R|kotlin/Deprecated|[Types](message = String(), replaceWith = R|kotlin/ReplaceWith.ReplaceWith|(expression = String(abc)), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.ERROR|) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
+                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+            @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) local final [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
+                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|one/two/B| {
+                    super<R|kotlin/Any|>()
+                }
+
             }
 
         }
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) local final [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
-            public [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|one/two/B| {
-                super<R|kotlin/Any|>()
-            }
 
-        }
-
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
-    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-        @R|kotlin/Deprecated|[Types](message = String(), replaceWith = R|kotlin/ReplaceWith.ReplaceWith|(expression = String(abc)), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.ERROR|) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
-            public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
-                super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            @R|kotlin/Deprecated|[Types](message = String(), replaceWith = R|kotlin/ReplaceWith.ReplaceWith|(expression = String(abc)), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.ERROR|) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
+                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+            @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) local final [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
+                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|one/two/B| {
+                    super<R|kotlin/Any|>()
+                }
+
             }
 
         }
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) local final [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
-            public [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|one/two/B| {
-                super<R|kotlin/Any|>()
-            }
 
-        }
-
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
-    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-        @R|kotlin/Deprecated|[Types](message = String(), replaceWith = R|kotlin/ReplaceWith.ReplaceWith|(expression = String(abc)), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.ERROR|) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
-            public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
-                super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            @R|kotlin/Deprecated|[Types](message = String(), replaceWith = R|kotlin/ReplaceWith.ReplaceWith|(expression = String(abc)), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.ERROR|) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
+                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+            @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) local final [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
+                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|one/two/B| {
+                    super<R|kotlin/Any|>()
+                }
+
             }
 
         }
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) local final [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
-            public [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|one/two/B| {
-                super<R|kotlin/Any|>()
-            }
 
-        }
-
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
-    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-        @R|kotlin/Deprecated|[Types](message = String(), replaceWith = R|kotlin/ReplaceWith.ReplaceWith|(expression = String(abc)), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.ERROR|) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
-            public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
-                super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            @R|kotlin/Deprecated|[Types](message = String(), replaceWith = R|kotlin/ReplaceWith.ReplaceWith|(expression = String(abc)), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.ERROR|) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
+                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+            @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) local final [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
+                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|one/two/B| {
+                    super<R|kotlin/Any|>()
+                }
+
             }
 
         }
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) local final [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
-            public [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|one/two/B| {
-                super<R|kotlin/Any|>()
-            }
 
-        }
-
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
-    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-        @R|kotlin/Deprecated|[Types](message = String(), replaceWith = R|kotlin/ReplaceWith.ReplaceWith|(expression = String(abc)), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.ERROR|) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
-            public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
-                super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            @R|kotlin/Deprecated|[Types](message = String(), replaceWith = R|kotlin/ReplaceWith.ReplaceWith|(expression = String(abc)), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.ERROR|) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
+                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+            @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) local final [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
+                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|one/two/B| {
+                    super<R|kotlin/Any|>()
+                }
+
             }
 
         }
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) local final [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
-            public [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|one/two/B| {
-                super<R|kotlin/Any|>()
-            }
 
-        }
-
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
-    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-        @R|kotlin/Deprecated|[Types](message = String(), replaceWith = R|kotlin/ReplaceWith.ReplaceWith|(expression = String(abc)), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.ERROR|) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
-            public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
-                super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            @R|kotlin/Deprecated|[Types](message = String(), replaceWith = R|kotlin/ReplaceWith.ReplaceWith|(expression = String(abc)), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.ERROR|) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
+                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+            @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) local final [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
+                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|one/two/B| {
+                    super<R|kotlin/Any|>()
+                }
+
             }
 
         }
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) local final [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
-            public [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|one/two/B| {
-                super<R|kotlin/Any|>()
-            }
 
-        }
-
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
-    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-        @R|kotlin/Deprecated|[Types](message = String(), replaceWith = R|kotlin/ReplaceWith.ReplaceWith|(expression = String(abc)), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.ERROR|) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
-            public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
-                super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            @R|kotlin/Deprecated|[Types](message = String(), replaceWith = R|kotlin/ReplaceWith.ReplaceWith|(expression = String(abc)), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.ERROR|) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
+                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+            @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) local final [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
+                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|one/two/B| {
+                    super<R|kotlin/Any|>()
+                }
+
             }
 
         }
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) local final [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
-            public [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|one/two/B| {
-                super<R|kotlin/Any|>()
-            }
 
-        }
-
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
 FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
-    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-        @R|kotlin/Deprecated|[Types](message = String(), replaceWith = R|kotlin/ReplaceWith.ReplaceWith|(expression = String(abc)), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.ERROR|) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
-            public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
-                super<R|kotlin/Any|>()
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            @R|kotlin/Deprecated|[Types](message = String(), replaceWith = R|kotlin/ReplaceWith.ReplaceWith|(expression = String(abc)), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.ERROR|) local final [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
+                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+            @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) local final [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
+                public [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|one/two/B| {
+                    super<R|kotlin/Any|>()
+                }
+
             }
 
         }
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) local final [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
-            public [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|one/two/B| {
-                super<R|kotlin/Any|>()
-            }
-
-        }
-
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|

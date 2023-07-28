@@ -7,6 +7,9 @@ FIR element rendered:
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] whereClause2Script.kts
-    public final [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] From : R|To|, [ResolvedTo(RAW_FIR)] To : R|kotlin/Any|> copyNotNull([ResolvedTo(RAW_FIR)] from: R|kotlin/collections/List<From>|, [ResolvedTo(RAW_FIR)] to: R|kotlin/collections/List<To>|): R|kotlin/Unit| {
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] From : R|To|, [ResolvedTo(RAW_FIR)] To : R|kotlin/Any|> copyNotNull([ResolvedTo(RAW_FIR)] from: R|kotlin/collections/List<From>|, [ResolvedTo(RAW_FIR)] to: R|kotlin/collections/List<To>|): R|kotlin/Unit| {
+        }

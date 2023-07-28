@@ -1,41 +1,47 @@
 FILE: [ResolvedTo(IMPORTS)] danglingAnnotationClassLevelScript.kts
-    public final [ResolvedTo(STATUS)] class Foo : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] constructor(): R|Foo| {
-            super<R|kotlin/Any|>()
-        }
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/Suppress|[Types](names = vararg(String())) @R|kotlin/annotation/MustBeDocumented|[Types]() <DANGLING MODIFIER: Top level declaration expected>
-    }
-    public final [ResolvedTo(STATUS)] class Bar : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] constructor(): R|Bar| {
-            super<R|kotlin/Any|>()
-        }
-
-        @R|kotlin/Suppress|[Types](names = vararg(String())) @R|kotlin/annotation/MustBeDocumented|[Types]() <DANGLING MODIFIER: Top level declaration expected>
-    }
-    public final [ResolvedTo(STATUS)] class Outer : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] constructor(): R|Outer| {
-            super<R|kotlin/Any|>()
-        }
-
-        public final [ResolvedTo(STATUS)] class Inner : R|kotlin/Any| {
-            public [ResolvedTo(STATUS)] constructor(): R|Outer.Inner| {
+        public final [ResolvedTo(STATUS)] class Foo : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] constructor(): R|Foo| {
                 super<R|kotlin/Any|>()
             }
 
             @R|kotlin/Suppress|[Types](names = vararg(String())) @R|kotlin/annotation/MustBeDocumented|[Types]() <DANGLING MODIFIER: Top level declaration expected>
         }
 
-        public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
-            local final [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
-                public [ResolvedTo(RAW_FIR)] constructor(): R|Outer.Local| {
+        public final [ResolvedTo(STATUS)] class Bar : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] constructor(): R|Bar| {
+                super<R|kotlin/Any|>()
+            }
+
+            @R|kotlin/Suppress|[Types](names = vararg(String())) @R|kotlin/annotation/MustBeDocumented|[Types]() <DANGLING MODIFIER: Top level declaration expected>
+        }
+
+        public final [ResolvedTo(STATUS)] class Outer : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] constructor(): R|Outer| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(STATUS)] class Inner : R|kotlin/Any| {
+                public [ResolvedTo(STATUS)] constructor(): R|Outer.Inner| {
                     super<R|kotlin/Any|>()
                 }
 
                 @R|kotlin/Suppress|[Types](names = vararg(String())) @R|kotlin/annotation/MustBeDocumented|[Types]() <DANGLING MODIFIER: Top level declaration expected>
             }
 
+            public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
+                local final [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
+                    public [ResolvedTo(RAW_FIR)] constructor(): R|Outer.Local| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                    @R|kotlin/Suppress|[Types](names = vararg(String())) @R|kotlin/annotation/MustBeDocumented|[Types]() <DANGLING MODIFIER: Top level declaration expected>
+                }
+
+            }
+
         }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|

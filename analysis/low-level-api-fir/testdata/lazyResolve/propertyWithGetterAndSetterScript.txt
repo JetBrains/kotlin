@@ -1,224 +1,321 @@
 RAW_FIR:
 FILE: [ResolvedTo(IMPORTS)] propertyWithGetterAndSetterScript.kts
-    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-        R|/receive|(R|/withGetterAndSetter|)
-        R|/withGetterAndSetter| = Int(123)
-    }
-    public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
-    }
-    public final [ResolvedTo(RAW_FIR)] [IsReferredViaField=true] var withGetterAndSetter: R|kotlin/Int| = Int(42)
-        public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int| {
-            ^ F|/withGetterAndSetter|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            R|/receive|(R|/withGetterAndSetter|)
+            R|/withGetterAndSetter| = Int(123)
         }
-        public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
-            F|/withGetterAndSetter| = R|<local>/value|
+
+        public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
         }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+
+        public final [ResolvedTo(RAW_FIR)] [IsReferredViaField=true] var withGetterAndSetter: R|kotlin/Int| = Int(42)
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int| {
+                ^ F|/withGetterAndSetter|
+            }
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
+                F|/withGetterAndSetter| = R|<local>/value|
+            }
+
+
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] propertyWithGetterAndSetterScript.kts
-    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-        R|/receive|(R|/withGetterAndSetter|)
-        R|/withGetterAndSetter| = Int(123)
-    }
-    public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
-    }
-    public final [ResolvedTo(RAW_FIR)] [IsReferredViaField=true] var withGetterAndSetter: R|kotlin/Int| = Int(42)
-        public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int| {
-            ^ F|/withGetterAndSetter|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            R|/receive|(R|/withGetterAndSetter|)
+            R|/withGetterAndSetter| = Int(123)
         }
-        public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
-            F|/withGetterAndSetter| = R|<local>/value|
+
+        public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
         }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+
+        public final [ResolvedTo(RAW_FIR)] [IsReferredViaField=true] var withGetterAndSetter: R|kotlin/Int| = Int(42)
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int| {
+                ^ F|/withGetterAndSetter|
+            }
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
+                F|/withGetterAndSetter| = R|<local>/value|
+            }
+
+
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] propertyWithGetterAndSetterScript.kts
-    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-        R|/receive|(R|/withGetterAndSetter|)
-        R|/withGetterAndSetter| = Int(123)
-    }
-    public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
-    }
-    public final [ResolvedTo(RAW_FIR)] [IsReferredViaField=true] var withGetterAndSetter: R|kotlin/Int| = Int(42)
-        public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int| {
-            ^ F|/withGetterAndSetter|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            R|/receive|(R|/withGetterAndSetter|)
+            R|/withGetterAndSetter| = Int(123)
         }
-        public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
-            F|/withGetterAndSetter| = R|<local>/value|
+
+        public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
         }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+
+        public final [ResolvedTo(RAW_FIR)] [IsReferredViaField=true] var withGetterAndSetter: R|kotlin/Int| = Int(42)
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int| {
+                ^ F|/withGetterAndSetter|
+            }
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
+                F|/withGetterAndSetter| = R|<local>/value|
+            }
+
+
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] propertyWithGetterAndSetterScript.kts
-    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-        R|/receive|(R|/withGetterAndSetter|)
-        R|/withGetterAndSetter| = Int(123)
-    }
-    public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
-    }
-    public final [ResolvedTo(RAW_FIR)] [IsReferredViaField=true] var withGetterAndSetter: R|kotlin/Int| = Int(42)
-        public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int| {
-            ^ F|/withGetterAndSetter|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            R|/receive|(R|/withGetterAndSetter|)
+            R|/withGetterAndSetter| = Int(123)
         }
-        public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
-            F|/withGetterAndSetter| = R|<local>/value|
+
+        public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
         }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+
+        public final [ResolvedTo(RAW_FIR)] [IsReferredViaField=true] var withGetterAndSetter: R|kotlin/Int| = Int(42)
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int| {
+                ^ F|/withGetterAndSetter|
+            }
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
+                F|/withGetterAndSetter| = R|<local>/value|
+            }
+
+
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] propertyWithGetterAndSetterScript.kts
-    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-        R|/receive|(R|/withGetterAndSetter|)
-        R|/withGetterAndSetter| = Int(123)
-    }
-    public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
-    }
-    public final [ResolvedTo(RAW_FIR)] [IsReferredViaField=true] var withGetterAndSetter: R|kotlin/Int| = Int(42)
-        public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int| {
-            ^ F|/withGetterAndSetter|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            R|/receive|(R|/withGetterAndSetter|)
+            R|/withGetterAndSetter| = Int(123)
         }
-        public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
-            F|/withGetterAndSetter| = R|<local>/value|
+
+        public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
         }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+
+        public final [ResolvedTo(RAW_FIR)] [IsReferredViaField=true] var withGetterAndSetter: R|kotlin/Int| = Int(42)
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int| {
+                ^ F|/withGetterAndSetter|
+            }
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
+                F|/withGetterAndSetter| = R|<local>/value|
+            }
+
+
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] propertyWithGetterAndSetterScript.kts
-    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-        R|/receive|(R|/withGetterAndSetter|)
-        R|/withGetterAndSetter| = Int(123)
-    }
-    public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
-    }
-    public final [ResolvedTo(RAW_FIR)] [IsReferredViaField=true] var withGetterAndSetter: R|kotlin/Int| = Int(42)
-        public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int| {
-            ^ F|/withGetterAndSetter|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            R|/receive|(R|/withGetterAndSetter|)
+            R|/withGetterAndSetter| = Int(123)
         }
-        public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
-            F|/withGetterAndSetter| = R|<local>/value|
+
+        public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
         }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+
+        public final [ResolvedTo(RAW_FIR)] [IsReferredViaField=true] var withGetterAndSetter: R|kotlin/Int| = Int(42)
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int| {
+                ^ F|/withGetterAndSetter|
+            }
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
+                F|/withGetterAndSetter| = R|<local>/value|
+            }
+
+
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] propertyWithGetterAndSetterScript.kts
-    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-        R|/receive|(R|/withGetterAndSetter|)
-        R|/withGetterAndSetter| = Int(123)
-    }
-    public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
-    }
-    public final [ResolvedTo(RAW_FIR)] [IsReferredViaField=true] var withGetterAndSetter: R|kotlin/Int| = Int(42)
-        public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int| {
-            ^ F|/withGetterAndSetter|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            R|/receive|(R|/withGetterAndSetter|)
+            R|/withGetterAndSetter| = Int(123)
         }
-        public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
-            F|/withGetterAndSetter| = R|<local>/value|
+
+        public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
         }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+
+        public final [ResolvedTo(RAW_FIR)] [IsReferredViaField=true] var withGetterAndSetter: R|kotlin/Int| = Int(42)
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int| {
+                ^ F|/withGetterAndSetter|
+            }
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
+                F|/withGetterAndSetter| = R|<local>/value|
+            }
+
+
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] propertyWithGetterAndSetterScript.kts
-    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-        R|/receive|(R|/withGetterAndSetter|)
-        R|/withGetterAndSetter| = Int(123)
-    }
-    public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
-    }
-    public final [ResolvedTo(RAW_FIR)] [IsReferredViaField=true] var withGetterAndSetter: R|kotlin/Int| = Int(42)
-        public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int| {
-            ^ F|/withGetterAndSetter|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            R|/receive|(R|/withGetterAndSetter|)
+            R|/withGetterAndSetter| = Int(123)
         }
-        public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
-            F|/withGetterAndSetter| = R|<local>/value|
+
+        public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
         }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+
+        public final [ResolvedTo(RAW_FIR)] [IsReferredViaField=true] var withGetterAndSetter: R|kotlin/Int| = Int(42)
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int| {
+                ^ F|/withGetterAndSetter|
+            }
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
+                F|/withGetterAndSetter| = R|<local>/value|
+            }
+
+
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] propertyWithGetterAndSetterScript.kts
-    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-        R|/receive|(R|/withGetterAndSetter|)
-        R|/withGetterAndSetter| = Int(123)
-    }
-    public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
-    }
-    public final [ResolvedTo(RAW_FIR)] [IsReferredViaField=true] var withGetterAndSetter: R|kotlin/Int| = Int(42)
-        public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int| {
-            ^ F|/withGetterAndSetter|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            R|/receive|(R|/withGetterAndSetter|)
+            R|/withGetterAndSetter| = Int(123)
         }
-        public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
-            F|/withGetterAndSetter| = R|<local>/value|
+
+        public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
         }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+
+        public final [ResolvedTo(RAW_FIR)] [IsReferredViaField=true] var withGetterAndSetter: R|kotlin/Int| = Int(42)
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int| {
+                ^ F|/withGetterAndSetter|
+            }
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
+                F|/withGetterAndSetter| = R|<local>/value|
+            }
+
+
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] propertyWithGetterAndSetterScript.kts
-    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-        R|/receive|(R|/withGetterAndSetter|)
-        R|/withGetterAndSetter| = Int(123)
-    }
-    public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
-    }
-    public final [ResolvedTo(RAW_FIR)] [IsReferredViaField=true] var withGetterAndSetter: R|kotlin/Int| = Int(42)
-        public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int| {
-            ^ F|/withGetterAndSetter|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            R|/receive|(R|/withGetterAndSetter|)
+            R|/withGetterAndSetter| = Int(123)
         }
-        public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
-            F|/withGetterAndSetter| = R|<local>/value|
+
+        public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
         }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+
+        public final [ResolvedTo(RAW_FIR)] [IsReferredViaField=true] var withGetterAndSetter: R|kotlin/Int| = Int(42)
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int| {
+                ^ F|/withGetterAndSetter|
+            }
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
+                F|/withGetterAndSetter| = R|<local>/value|
+            }
+
+
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] propertyWithGetterAndSetterScript.kts
-    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-        R|/receive|(R|/withGetterAndSetter|)
-        R|/withGetterAndSetter| = Int(123)
-    }
-    public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
-    }
-    public final [ResolvedTo(RAW_FIR)] [IsReferredViaField=true] var withGetterAndSetter: R|kotlin/Int| = Int(42)
-        public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int| {
-            ^ F|/withGetterAndSetter|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            R|/receive|(R|/withGetterAndSetter|)
+            R|/withGetterAndSetter| = Int(123)
         }
-        public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
-            F|/withGetterAndSetter| = R|<local>/value|
+
+        public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
         }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+
+        public final [ResolvedTo(RAW_FIR)] [IsReferredViaField=true] var withGetterAndSetter: R|kotlin/Int| = Int(42)
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int| {
+                ^ F|/withGetterAndSetter|
+            }
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
+                F|/withGetterAndSetter| = R|<local>/value|
+            }
+
+
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] propertyWithGetterAndSetterScript.kts
-    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-        R|/receive|(R|/withGetterAndSetter|)
-        R|/withGetterAndSetter| = Int(123)
-    }
-    public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
-    }
-    public final [ResolvedTo(RAW_FIR)] [IsReferredViaField=true] var withGetterAndSetter: R|kotlin/Int| = Int(42)
-        public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int| {
-            ^ F|/withGetterAndSetter|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            R|/receive|(R|/withGetterAndSetter|)
+            R|/withGetterAndSetter| = Int(123)
         }
-        public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
-            F|/withGetterAndSetter| = R|<local>/value|
+
+        public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
         }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+
+        public final [ResolvedTo(RAW_FIR)] [IsReferredViaField=true] var withGetterAndSetter: R|kotlin/Int| = Int(42)
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int| {
+                ^ F|/withGetterAndSetter|
+            }
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
+                F|/withGetterAndSetter| = R|<local>/value|
+            }
+
+
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] propertyWithGetterAndSetterScript.kts
-    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-        R|/receive|(R|/withGetterAndSetter|)
-        R|/withGetterAndSetter| = Int(123)
-    }
-    public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
-    }
-    public final [ResolvedTo(RAW_FIR)] [IsReferredViaField=true] var withGetterAndSetter: R|kotlin/Int| = Int(42)
-        public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int| {
-            ^ F|/withGetterAndSetter|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            R|/receive|(R|/withGetterAndSetter|)
+            R|/withGetterAndSetter| = Int(123)
         }
-        public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
-            F|/withGetterAndSetter| = R|<local>/value|
+
+        public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
         }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+
+        public final [ResolvedTo(RAW_FIR)] [IsReferredViaField=true] var withGetterAndSetter: R|kotlin/Int| = Int(42)
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int| {
+                ^ F|/withGetterAndSetter|
+            }
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
+                F|/withGetterAndSetter| = R|<local>/value|
+            }
+
+
 FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] propertyWithGetterAndSetterScript.kts
-    public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-        R|/receive|(R|/withGetterAndSetter|)
-        R|/withGetterAndSetter| = Int(123)
-    }
-    public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
-    }
-    public final [ResolvedTo(RAW_FIR)] [IsReferredViaField=true] var withGetterAndSetter: R|kotlin/Int| = Int(42)
-        public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int| {
-            ^ F|/withGetterAndSetter|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
+            R|/receive|(R|/withGetterAndSetter|)
+            R|/withGetterAndSetter| = Int(123)
         }
-        public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
-            F|/withGetterAndSetter| = R|<local>/value|
+
+        public final [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
         }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+
+        public final [ResolvedTo(RAW_FIR)] [IsReferredViaField=true] var withGetterAndSetter: R|kotlin/Int| = Int(42)
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int| {
+                ^ F|/withGetterAndSetter|
+            }
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit| {
+                F|/withGetterAndSetter| = R|<local>/value|
+            }
+

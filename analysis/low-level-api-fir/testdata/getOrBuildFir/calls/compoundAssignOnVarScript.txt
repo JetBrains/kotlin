@@ -3,14 +3,24 @@ FIR element: FirScriptImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-public final [ResolvedTo(RAW_FIR)] var i: R|kotlin/Int| = Int(1)
-    public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int|
-    public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit|
-R|/i| = R|/i|.R|kotlin/Int.plus|(Int(1))[ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-FIR FILE:
-FILE: [ResolvedTo(IMPORTS)] compoundAssignOnVarScript.kts
     public final [ResolvedTo(RAW_FIR)] var i: R|kotlin/Int| = Int(1)
         public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int|
         public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit|
-    R|/i| = R|/i|.R|kotlin/Int.plus|(Int(1))[ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+
+    R|/i| = R|/i|.R|kotlin/Int.plus|(Int(1))
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] compoundAssignOnVarScript.kts
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(RAW_FIR)] var i: R|kotlin/Int| = Int(1)
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/Int|
+            public [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: R|kotlin/Int|): R|kotlin/Unit|
+
+        R|/i| = R|/i|.R|kotlin/Int.plus|(Int(1))

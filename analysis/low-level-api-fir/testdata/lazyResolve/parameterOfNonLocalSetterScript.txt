@@ -1,210 +1,279 @@
 RAW_FIR:
 FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetterScript.kts
-    public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
-            super<R|kotlin/Any|>()
-        }
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] var x: R|kotlin/Int| = Int(2)
-            public [ResolvedTo(STATUS)] [ContainingClassKey=X] get(): R|kotlin/Int|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=X] set([ResolvedTo(STATUS)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
-                ^ Q|kotlin/Unit|
+        public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
+                super<R|kotlin/Any|>()
             }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+            public final [ResolvedTo(STATUS)] var x: R|kotlin/Int| = Int(2)
+                public [ResolvedTo(STATUS)] [ContainingClassKey=X] get(): R|kotlin/Int|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=X] set([ResolvedTo(STATUS)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+                    ^ Q|kotlin/Unit|
+                }
+
+        }
+
+
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetterScript.kts
-    public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
-            super<R|kotlin/Any|>()
-        }
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] var x: R|kotlin/Int| = Int(2)
-            public [ResolvedTo(STATUS)] [ContainingClassKey=X] get(): R|kotlin/Int|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=X] set([ResolvedTo(STATUS)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
-                ^ Q|kotlin/Unit|
+        public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
+                super<R|kotlin/Any|>()
             }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+            public final [ResolvedTo(STATUS)] var x: R|kotlin/Int| = Int(2)
+                public [ResolvedTo(STATUS)] [ContainingClassKey=X] get(): R|kotlin/Int|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=X] set([ResolvedTo(STATUS)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+                    ^ Q|kotlin/Unit|
+                }
+
+        }
+
+
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetterScript.kts
-    public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
-            super<R|kotlin/Any|>()
-        }
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] var x: R|kotlin/Int| = Int(2)
-            public [ResolvedTo(STATUS)] [ContainingClassKey=X] get(): R|kotlin/Int|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=X] set([ResolvedTo(STATUS)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
-                ^ Q|kotlin/Unit|
+        public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
+                super<R|kotlin/Any|>()
             }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+            public final [ResolvedTo(STATUS)] var x: R|kotlin/Int| = Int(2)
+                public [ResolvedTo(STATUS)] [ContainingClassKey=X] get(): R|kotlin/Int|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=X] set([ResolvedTo(STATUS)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+                    ^ Q|kotlin/Unit|
+                }
+
+        }
+
+
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetterScript.kts
-    public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
-            super<R|kotlin/Any|>()
-        }
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] var x: R|kotlin/Int| = Int(2)
-            public [ResolvedTo(STATUS)] [ContainingClassKey=X] get(): R|kotlin/Int|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=X] set([ResolvedTo(STATUS)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
-                ^ Q|kotlin/Unit|
+        public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
+                super<R|kotlin/Any|>()
             }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+            public final [ResolvedTo(STATUS)] var x: R|kotlin/Int| = Int(2)
+                public [ResolvedTo(STATUS)] [ContainingClassKey=X] get(): R|kotlin/Int|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=X] set([ResolvedTo(STATUS)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+                    ^ Q|kotlin/Unit|
+                }
+
+        }
+
+
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetterScript.kts
-    public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
-            super<R|kotlin/Any|>()
-        }
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] var x: R|kotlin/Int| = Int(2)
-            public [ResolvedTo(STATUS)] [ContainingClassKey=X] get(): R|kotlin/Int|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=X] set([ResolvedTo(STATUS)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
-                ^ Q|kotlin/Unit|
+        public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
+                super<R|kotlin/Any|>()
             }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+            public final [ResolvedTo(STATUS)] var x: R|kotlin/Int| = Int(2)
+                public [ResolvedTo(STATUS)] [ContainingClassKey=X] get(): R|kotlin/Int|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=X] set([ResolvedTo(STATUS)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+                    ^ Q|kotlin/Unit|
+                }
+
+        }
+
+
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetterScript.kts
-    public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
-            super<R|kotlin/Any|>()
-        }
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] var x: R|kotlin/Int| = Int(2)
-            public [ResolvedTo(STATUS)] [ContainingClassKey=X] get(): R|kotlin/Int|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=X] set([ResolvedTo(STATUS)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
-                ^ Q|kotlin/Unit|
+        public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
+                super<R|kotlin/Any|>()
             }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+            public final [ResolvedTo(STATUS)] var x: R|kotlin/Int| = Int(2)
+                public [ResolvedTo(STATUS)] [ContainingClassKey=X] get(): R|kotlin/Int|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=X] set([ResolvedTo(STATUS)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+                    ^ Q|kotlin/Unit|
+                }
+
+        }
+
+
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetterScript.kts
-    public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
-            super<R|kotlin/Any|>()
-        }
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] var x: R|kotlin/Int| = Int(2)
-            public [ResolvedTo(STATUS)] [ContainingClassKey=X] get(): R|kotlin/Int|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=X] set([ResolvedTo(STATUS)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
-                ^ Q|kotlin/Unit|
+        public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
+                super<R|kotlin/Any|>()
             }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+            public final [ResolvedTo(STATUS)] var x: R|kotlin/Int| = Int(2)
+                public [ResolvedTo(STATUS)] [ContainingClassKey=X] get(): R|kotlin/Int|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=X] set([ResolvedTo(STATUS)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+                    ^ Q|kotlin/Unit|
+                }
+
+        }
+
+
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetterScript.kts
-    public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
-            super<R|kotlin/Any|>()
-        }
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] var x: R|kotlin/Int| = Int(2)
-            public [ResolvedTo(STATUS)] [ContainingClassKey=X] get(): R|kotlin/Int|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=X] set([ResolvedTo(STATUS)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
-                ^ Q|kotlin/Unit|
+        public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
+                super<R|kotlin/Any|>()
             }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+            public final [ResolvedTo(STATUS)] var x: R|kotlin/Int| = Int(2)
+                public [ResolvedTo(STATUS)] [ContainingClassKey=X] get(): R|kotlin/Int|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=X] set([ResolvedTo(STATUS)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+                    ^ Q|kotlin/Unit|
+                }
+
+        }
+
+
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetterScript.kts
-    public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
-            super<R|kotlin/Any|>()
-        }
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] var x: R|kotlin/Int| = Int(2)
-            public [ResolvedTo(STATUS)] [ContainingClassKey=X] get(): R|kotlin/Int|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=X] set([ResolvedTo(STATUS)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
-                ^ Q|kotlin/Unit|
+        public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
+                super<R|kotlin/Any|>()
             }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+            public final [ResolvedTo(STATUS)] var x: R|kotlin/Int| = Int(2)
+                public [ResolvedTo(STATUS)] [ContainingClassKey=X] get(): R|kotlin/Int|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=X] set([ResolvedTo(STATUS)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+                    ^ Q|kotlin/Unit|
+                }
+
+        }
+
+
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetterScript.kts
-    public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
-            super<R|kotlin/Any|>()
-        }
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] var x: R|kotlin/Int| = Int(2)
-            public [ResolvedTo(STATUS)] [ContainingClassKey=X] get(): R|kotlin/Int|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=X] set([ResolvedTo(STATUS)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
-                ^ Q|kotlin/Unit|
+        public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
+                super<R|kotlin/Any|>()
             }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+            public final [ResolvedTo(STATUS)] var x: R|kotlin/Int| = Int(2)
+                public [ResolvedTo(STATUS)] [ContainingClassKey=X] get(): R|kotlin/Int|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=X] set([ResolvedTo(STATUS)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+                    ^ Q|kotlin/Unit|
+                }
+
+        }
+
+
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetterScript.kts
-    public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
-            super<R|kotlin/Any|>()
-        }
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] var x: R|kotlin/Int| = Int(2)
-            public [ResolvedTo(STATUS)] [ContainingClassKey=X] get(): R|kotlin/Int|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=X] set([ResolvedTo(STATUS)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
-                ^ Q|kotlin/Unit|
+        public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
+                super<R|kotlin/Any|>()
             }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+            public final [ResolvedTo(STATUS)] var x: R|kotlin/Int| = Int(2)
+                public [ResolvedTo(STATUS)] [ContainingClassKey=X] get(): R|kotlin/Int|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=X] set([ResolvedTo(STATUS)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+                    ^ Q|kotlin/Unit|
+                }
+
+        }
+
+
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetterScript.kts
-    public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
-            super<R|kotlin/Any|>()
-        }
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] var x: R|kotlin/Int| = Int(2)
-            public [ResolvedTo(STATUS)] [ContainingClassKey=X] get(): R|kotlin/Int|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=X] set([ResolvedTo(STATUS)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
-                ^ Q|kotlin/Unit|
+        public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
+                super<R|kotlin/Any|>()
             }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+            public final [ResolvedTo(STATUS)] var x: R|kotlin/Int| = Int(2)
+                public [ResolvedTo(STATUS)] [ContainingClassKey=X] get(): R|kotlin/Int|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=X] set([ResolvedTo(STATUS)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+                    ^ Q|kotlin/Unit|
+                }
+
+        }
+
+
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetterScript.kts
-    public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
-            super<R|kotlin/Any|>()
-        }
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] var x: R|kotlin/Int| = Int(2)
-            public [ResolvedTo(STATUS)] [ContainingClassKey=X] get(): R|kotlin/Int|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=X] set([ResolvedTo(STATUS)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
-                ^ Q|kotlin/Unit|
+        public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
+                super<R|kotlin/Any|>()
             }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+            public final [ResolvedTo(STATUS)] var x: R|kotlin/Int| = Int(2)
+                public [ResolvedTo(STATUS)] [ContainingClassKey=X] get(): R|kotlin/Int|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=X] set([ResolvedTo(STATUS)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+                    ^ Q|kotlin/Unit|
+                }
+
+        }
+
+
 FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetterScript.kts
-    public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
-            super<R|kotlin/Any|>()
-        }
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] var x: R|kotlin/Int| = Int(2)
-            public [ResolvedTo(STATUS)] [ContainingClassKey=X] get(): R|kotlin/Int|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=X] set([ResolvedTo(STATUS)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
-                ^ Q|kotlin/Unit|
+        public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
+                super<R|kotlin/Any|>()
             }
 
-    }
-    [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
+            public final [ResolvedTo(STATUS)] var x: R|kotlin/Int| = Int(2)
+                public [ResolvedTo(STATUS)] [ContainingClassKey=X] get(): R|kotlin/Int|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=X] set([ResolvedTo(STATUS)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+                    ^ Q|kotlin/Unit|
+                }
+
+        }
+
