@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.mpp.DeclarationSymbolMarker
 import org.jetbrains.kotlin.mpp.TypeAliasSymbolMarker
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualAnnotationsIncompatibilityType as IncompatibilityType
 
 object AbstractExpectActualAnnotationMatchChecker {
     private val SKIPPED_CLASS_IDS = setOf(
@@ -21,7 +22,11 @@ object AbstractExpectActualAnnotationMatchChecker {
         StandardClassIds.Annotations.WasExperimental,
     )
 
-    class Incompatibility(val expectSymbol: DeclarationSymbolMarker, val actualSymbol: DeclarationSymbolMarker)
+    class Incompatibility(
+        val expectSymbol: DeclarationSymbolMarker,
+        val actualSymbol: DeclarationSymbolMarker,
+        val type: IncompatibilityType<ExpectActualMatchingContext.AnnotationCallInfo>,
+    )
 
     fun areAnnotationsCompatible(
         expectSymbol: DeclarationSymbolMarker,
@@ -55,11 +60,24 @@ object AbstractExpectActualAnnotationMatchChecker {
                 continue
             }
             val actualAnnotationsWithSameClassId = actualAnnotationsByName[expectClassId] ?: emptyList()
+            if (actualAnnotationsWithSameClassId.isEmpty()) {
+                return Incompatibility(
+                    expectSymbol,
+                    actualSymbol,
+                    IncompatibilityType.MissingOnActual(expectAnnotation)
+                )
+            }
             val collectionCompatibilityChecker = getAnnotationCollectionArgumentsCompatibilityChecker(expectClassId)
             if (actualAnnotationsWithSameClassId.none {
                     areAnnotationArgumentsEqual(expectAnnotation, it, collectionCompatibilityChecker)
                 }) {
-                return Incompatibility(expectSymbol, actualSymbol)
+                val incompatibilityType = if (actualAnnotationsWithSameClassId.size == 1) {
+                    IncompatibilityType.DifferentOnActual(expectAnnotation, actualAnnotationsWithSameClassId.single())
+                } else {
+                    // In the case of repeatable annotations, we can't choose on which to report
+                    IncompatibilityType.MissingOnActual(expectAnnotation)
+                }
+                return Incompatibility(expectSymbol, actualSymbol, incompatibilityType)
             }
         }
         return null
