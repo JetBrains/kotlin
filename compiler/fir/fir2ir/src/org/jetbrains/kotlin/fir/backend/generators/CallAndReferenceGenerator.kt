@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isMethodOfAny
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
@@ -1099,7 +1100,9 @@ class CallAndReferenceGenerator(
                     }
                     typeRef = (typeProjection as? ConeKotlinType)?.let {
                         buildResolvedTypeRef { type = it }
-                    } ?: buildErrorTypeRef { }
+                    } ?: buildErrorTypeRef {
+                        diagnostic = ConeSimpleDiagnostic("Expansion contains unexpected type ${typeProjection.javaClass}")
+                    }
                 }
             }
     }
