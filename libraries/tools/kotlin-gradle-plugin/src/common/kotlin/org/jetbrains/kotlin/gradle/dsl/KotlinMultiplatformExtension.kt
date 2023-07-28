@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinal
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.KotlinHierarchyDslImpl
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import javax.inject.Inject
 
 @Suppress("DEPRECATION")
@@ -118,6 +119,42 @@ abstract class KotlinMultiplatformExtension
     @ExperimentalKotlinGradlePluginApi
     override fun applyHierarchyTemplate(template: KotlinHierarchyBuilder.Root.() -> Unit) {
         hierarchy.applyHierarchyTemplate(template)
+    }
+
+    /**
+     * Will run the [configure] block for all compiler options on all Source Sets / compilations
+     *
+     * #### Example: Setting API version to 1.8 in the whole project
+     * ```kotlin
+     * kotlin {
+     *      compilerOptions {
+     *         apiVersion = KotlinVersion.KOTLIN_1_8
+     *     }
+     * }
+     * ```
+     *
+     * #### Example: Setting jvm specific compiler options:
+     * ```kotlin
+     * kotlin {
+     *   compilerOptions {
+     *         apiVersion = KotlinVersion.KOTLIN_1_8
+     *         languageVersion = KotlinVersion.KOTLIN_1_8
+     *
+     *         if (this is KotlinJvmCompilerOptions) {
+     *             this.jvmTarget = JvmTarget.JVM_11
+     *         }
+     *     }
+     * }
+     * ```
+     */
+    @ExperimentalKotlinGradlePluginApi
+    fun compilerOptions(configure: KotlinCommonCompilerOptions.() -> Unit) {
+        sourceSets.configureEach { sourceSet ->
+            val languageSettings = sourceSet.languageSettings as? DefaultLanguageSettingsBuilder ?: return@configureEach
+            project.launch {
+                languageSettings.compilationCompilerOptions.await().configure()
+            }
+        }
     }
 
     @Suppress("unused") // DSL

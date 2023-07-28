@@ -26,7 +26,7 @@ internal open class DefaultLanguageSettingsBuilder @Inject constructor(
 
     init {
         project.launch {
-            KotlinPluginLifecycle.Stage.AfterFinaliseCompilations.await()
+            KotlinPluginLifecycle.Stage.FinaliseCompilations.await()
             if (!compilationCompilerOptions.isCompleted) {
                 // For shared source sets without any associated compilation, it would be a separate instance of common compiler options
                 compilationCompilerOptions.complete(project.objects.newInstance<KotlinCommonCompilerOptionsDefault>())

@@ -90,7 +90,7 @@ class ExternalKotlinTargetApiTests {
                 "Expected CompilationAssociator.default being set in ${ExternalKotlinCompilationDescriptorBuilder::class.simpleName}"
             )
 
-            defaults(kotlin, "fakeMain")
+            defaults(kotlin)
             compileTaskName = "main"
         }
 
