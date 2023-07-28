@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
+import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
 import org.jetbrains.kotlin.psi.KtElement
 import java.util.concurrent.ConcurrentMap
 import kotlin.reflect.KClass
@@ -47,6 +48,7 @@ class KtFirAnalysisSessionProvider(project: Project) : KtAnalysisSessionProvider
                 CachedValueProvider.Result(
                     KtFirAnalysisSession.createAnalysisSessionByFirResolveSession(firResolveSession, validityToken),
                     firResolveSession.useSiteFirSession.createValidityTracker(),
+                    project.createProjectWideOutOfBlockModificationTracker(),
                 )
             }
         }.value
