@@ -8,12 +8,15 @@ package org.jetbrains.kotlin.gradle.mpp
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.KOTLIN_VERSION
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency.Type.Regular
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.*
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
+import kotlin.test.assertEquals
+import kotlin.test.assertIs
 
 @MppGradlePluginTests
 @DisplayName("Tests for multiplatform with composite builds")
@@ -110,6 +113,31 @@ class MppCompositeBuildIT : KGPBaseTest() {
                 assertTasksUpToDate(":consumerA:compileNativeMainKotlinMetadata")
                 assertTasksUpToDate(":consumerA:compileKotlinLinuxX64")
                 assertTasksUpToDate(":consumerA:compileKotlinJvm")
+            }
+        }
+    }
+
+    /**
+     * Test that verifies that after moving to 'buildPath' and 'buildName' in project coordinates (1.9.20),
+     * the shape of the resolved coordinate are the same across different versions of Gradle.
+     */
+    @GradleTest
+    fun `test - sample0 - buildId buildPath buildName`(gradleVersion: GradleVersion) {
+        val producer = project("mpp-composite-build/sample0/producerBuild", gradleVersion)
+
+        project("mpp-composite-build/sample0/consumerBuild", gradleVersion) {
+            settingsGradleKts.toFile().replaceText("<producer_path>", producer.projectPath.toUri().path)
+            resolveIdeDependencies(":consumerA") { dependencies ->
+                /* Pick some known dependency  and run check on it */
+                val dependency = dependencies["commonMain"].getOrFail(regularSourceDependency(":producerBuild::producerA/commonMain"))
+                assertIs<IdeaKotlinSourceDependency>(dependency)
+                val projectCoordinates = dependency.coordinates.project
+                @Suppress("DEPRECATION")
+                assertEquals("producerBuild", projectCoordinates.buildId)
+                assertEquals("producerBuild", projectCoordinates.buildName)
+                assertEquals(":producerBuild", projectCoordinates.buildPath)
+                assertEquals(":producerA", projectCoordinates.projectPath)
+                assertEquals("producerA", projectCoordinates.projectName)
             }
         }
     }
@@ -315,7 +343,11 @@ class MppCompositeBuildIT : KGPBaseTest() {
                     dependsOnDependency(":consumerA/commonMain"),
                     dependsOnDependency(":consumerA/nativeMain"),
                     dependsOnDependency(":consumerA/linuxMain"),
-                    projectArtifactDependency(Regular, ":producerBuild::producerA", FilePathRegex(".*/linuxX64/main/klib/producerA.klib")),
+                    projectArtifactDependency(
+                        Regular,
+                        ":producerBuild::producerA",
+                        FilePathRegex(".*/linuxX64/main/klib/producerA.klib")
+                    ),
                     kotlinNativeDistributionDependencies,
                 )
             }
@@ -374,7 +406,11 @@ class MppCompositeBuildIT : KGPBaseTest() {
     @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0, maxVersion = TestVersions.Gradle.G_8_2)
     fun `test sample7`(gradleVersion: GradleVersion) {
         val producer = project("mpp-composite-build/sample7-KT-59863-pluginManagement.includeBuild/producerBuild", gradleVersion)
-        project("mpp-composite-build/sample7-KT-59863-pluginManagement.includeBuild/consumerBuild", gradleVersion, defaultBuildOptions) {
+        project(
+            "mpp-composite-build/sample7-KT-59863-pluginManagement.includeBuild/consumerBuild",
+            gradleVersion,
+            defaultBuildOptions
+        ) {
             settingsGradleKts.toFile().replaceText("<producer_path>", producer.projectPath.toUri().path)
             build("projects")
         }
