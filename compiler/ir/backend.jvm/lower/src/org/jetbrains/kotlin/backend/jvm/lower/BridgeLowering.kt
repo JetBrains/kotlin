@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.MemoizedMultiFieldValueClassReplacements
 import org.jetbrains.kotlin.backend.jvm.SpecialBridge
 import org.jetbrains.kotlin.backend.jvm.ir.*
+import org.jetbrains.kotlin.backend.jvm.mapping.mapType
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -169,6 +170,9 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
 
         // None of the methods of Any have type parameters and so we will not need bridges for them.
         if (isMethodOfAny())
+            return false
+
+        if (origin == JvmLoweredDeclarationOrigin.FUNCTION_WITH_EXPOSED_INLINE_CLASS)
             return false
 
         // We don't produce bridges for abstract functions in interfaces.
@@ -552,7 +556,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
             // If the signature of this method will be changed in the output to take a boxed argument instead of a primitive,
             // rewrite the argument so that code will be generated for a boxed argument and not a primitive.
             valueParameters.forEachIndexed { i, p ->
-                if (AsmUtil.isPrimitive(context.defaultTypeMapper.mapType(p.type)) && ourSignature.argumentTypes[i].sort == Type.OBJECT) {
+                if (AsmUtil.isPrimitive(context.defaultTypeMapper.mapType(p)) && ourSignature.argumentTypes[i].sort == Type.OBJECT) {
                     p.type = p.type.makeNullable()
                 }
             }

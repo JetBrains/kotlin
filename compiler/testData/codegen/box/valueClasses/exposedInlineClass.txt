@@ -1,0 +1,115 @@
+@kotlin.annotation.Target(allowedTargets=[CONSTRUCTOR])
+@java.lang.annotation.Retention(value=RUNTIME)
+@java.lang.annotation.Target(value=[CONSTRUCTOR])
+@kotlin.Metadata
+public annotation class example/A {
+    // source: 'Example.kt'
+}
+
+@kotlin.Metadata
+public final class example/ExampleKt {
+    // source: 'Example.kt'
+    public final static method assertEquals(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.Nullable p1: java.lang.Object): void
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static @org.jetbrains.annotations.Nullable method suspendFunction(@org.jetbrains.annotations.NotNull p0: example.StringWrapper, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
+    public final static @org.jetbrains.annotations.Nullable method suspendFunction-gComZGY(@org.jetbrains.annotations.NotNull p0: java.lang.String, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
+    public final static @org.jetbrains.annotations.NotNull method topLevelFunction(@org.jetbrains.annotations.NotNull p0: example.IntWrapper): example.IntWrapper
+    public final static @org.jetbrains.annotations.NotNull method topLevelFunction(@org.jetbrains.annotations.NotNull p0: example.IntWrapper, @org.jetbrains.annotations.NotNull p1: example.IntWrapper): example.IntWrapper
+    public final static @org.jetbrains.annotations.NotNull method topLevelFunction(@org.jetbrains.annotations.NotNull p0: example.StringWrapper): example.StringWrapper
+    public final static method topLevelFunction-JIAth_k(p0: int, p1: int): int
+    public final static method topLevelFunction-OeTM1uU(p0: int): int
+    public final static @org.jetbrains.annotations.NotNull method topLevelFunction-bzFBYxs(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+}
+
+@kotlin.Metadata
+public final class example/HasWrappers {
+    // source: 'Example.kt'
+    private final field i: int
+    private final @org.jetbrains.annotations.NotNull field j: java.lang.String
+    public method <init>(@org.jetbrains.annotations.NotNull p0: example.IntWrapper, @org.jetbrains.annotations.NotNull p1: example.StringWrapper): void
+    private method <init>(p0: int, p1: java.lang.String): void
+    public synthetic method <init>(p0: int, p1: java.lang.String, p2: int, p3: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public synthetic method <init>(p0: int, p1: java.lang.String, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final @org.jetbrains.annotations.NotNull method component1(): example.IntWrapper
+    public final method component1-P7HTv5Y(): int
+    public final @org.jetbrains.annotations.NotNull method component2(): example.StringWrapper
+    public final @org.jetbrains.annotations.NotNull method component2-yiaqiYc(): java.lang.String
+    public final @org.jetbrains.annotations.NotNull method copy(@org.jetbrains.annotations.NotNull p0: example.IntWrapper, @org.jetbrains.annotations.NotNull p1: example.StringWrapper): example.HasWrappers
+    public synthetic static method copy-026PlWA$default(p0: example.HasWrappers, p1: int, p2: java.lang.String, p3: int, p4: java.lang.Object): example.HasWrappers
+    public final @org.jetbrains.annotations.NotNull method copy-026PlWA(p0: int, @org.jetbrains.annotations.NotNull p1: java.lang.String): example.HasWrappers
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final @org.jetbrains.annotations.NotNull method getI(): example.IntWrapper
+    public final method getI-P7HTv5Y(): int
+    public final @org.jetbrains.annotations.NotNull method getJ(): example.StringWrapper
+    public final @org.jetbrains.annotations.NotNull method getJ-yiaqiYc(): java.lang.String
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}
+
+@kotlin.Metadata
+public interface example/I {
+    // source: 'Example.kt'
+    public abstract method virtualFunction(p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+@kotlin.jvm.JvmExposeBoxed
+public final class example/IntWrapper {
+    // source: 'Example.kt'
+    private final field i: int
+    public method <init>(p0: int): void
+    private synthetic method <init>(p0: int, p1: java.lang.Void): void
+    public method <init>(p0: long): void
+    public synthetic final static method box-impl(p0: int): example.IntWrapper
+    public static method constructor-impl(p0: int): int
+    public static method constructor-impl(p0: long): int
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int): boolean
+    public final @org.jetbrains.annotations.NotNull method extensionFunction(@org.jetbrains.annotations.NotNull p0: example.IntWrapper, @org.jetbrains.annotations.NotNull p1: example.IntWrapper): example.IntWrapper
+    public final @org.jetbrains.annotations.NotNull method extensionFunction(@org.jetbrains.annotations.NotNull p0: example.StringWrapper, @org.jetbrains.annotations.NotNull p1: example.IntWrapper): example.IntWrapper
+    public final static method extensionFunction-7sm2r4Y(p0: int, @org.jetbrains.annotations.NotNull p1: java.lang.String, p2: int): int
+    public final static method extensionFunction-ke8FMIE(p0: int, p1: int, p2: int): int
+    public final method getI(): int
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int): int
+    public final @org.jetbrains.annotations.NotNull method plainFunction(@org.jetbrains.annotations.NotNull p0: example.IntWrapper): example.IntWrapper
+    public final static method plainFunction-IkJdR0s(p0: int, p1: int): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: int): java.lang.String
+    public synthetic final method unbox-impl(): int
+    public @org.jetbrains.annotations.NotNull method virtualFunction(@org.jetbrains.annotations.NotNull p0: example.IntWrapper): example.IntWrapper
+    public synthetic bridge method virtualFunction(p0: java.lang.Object): java.lang.Object
+    public method virtualFunction-IkJdR0s(p0: int): int
+    public static method virtualFunction-IkJdR0s(p0: int, p1: int): int
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+@kotlin.jvm.JvmExposeBoxed
+public final class example/StringWrapper {
+    // source: 'Example.kt'
+    private final @org.jetbrains.annotations.NotNull field s: java.lang.String
+    public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    public @example.A method <init>(p0: int): void
+    private synthetic method <init>(p0: java.lang.String, p1: java.lang.Void): void
+    public synthetic final static method box-impl(p0: java.lang.String): example.StringWrapper
+    public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+    public static @example.A @org.jetbrains.annotations.NotNull method constructor-impl(p0: int): java.lang.String
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: java.lang.String, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: java.lang.String, p1: java.lang.String): boolean
+    public final @org.jetbrains.annotations.NotNull method getS(): java.lang.String
+    public method hashCode(): int
+    public static method hashCode-impl(p0: java.lang.String): int
+    public final method plainFunction(): void
+    public final static method plainFunction-impl(p0: java.lang.String): void
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: java.lang.String): java.lang.String
+    public synthetic final method unbox-impl(): java.lang.String
+    public @org.jetbrains.annotations.NotNull method virtualFunction(@org.jetbrains.annotations.NotNull p0: example.StringWrapper): example.StringWrapper
+    public synthetic bridge method virtualFunction(p0: java.lang.Object): java.lang.Object
+    public @org.jetbrains.annotations.NotNull method virtualFunction-cnKg8a0(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+    public static @org.jetbrains.annotations.NotNull method virtualFunction-cnKg8a0(p0: java.lang.String, @org.jetbrains.annotations.NotNull p1: java.lang.String): java.lang.String
+}

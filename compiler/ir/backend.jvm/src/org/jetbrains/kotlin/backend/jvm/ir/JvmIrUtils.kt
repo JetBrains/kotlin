@@ -55,6 +55,7 @@ import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.JvmNames
 import org.jetbrains.kotlin.name.JvmNames.JVM_DEFAULT_FQ_NAME
 import org.jetbrains.kotlin.name.JvmNames.JVM_DEFAULT_NO_COMPATIBILITY_FQ_NAME
 import org.jetbrains.kotlin.name.JvmNames.JVM_DEFAULT_WITH_COMPATIBILITY_FQ_NAME
@@ -68,6 +69,9 @@ import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
 import java.io.File
+
+val IrClass.isExposedSingleFieldValueClass: Boolean
+    get() = isSingleFieldValueClass && hasAnnotation(JvmNames.JVM_EXPOSE_BOXED)
 
 fun IrDeclaration.getJvmNameFromAnnotation(): String? {
     // TODO lower @JvmName?
@@ -316,6 +320,7 @@ val IrClass.isSyntheticSingleton: Boolean
 fun IrSimpleFunction.suspendFunctionOriginal(): IrSimpleFunction =
     if (isSuspend &&
         !isStaticValueClassReplacement &&
+        origin != JvmLoweredDeclarationOrigin.FUNCTION_WITH_EXPOSED_INLINE_CLASS &&
         !isOrOverridesDefaultParameterStub() &&
         parentClassOrNull?.origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS
     )

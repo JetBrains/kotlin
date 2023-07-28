@@ -559,7 +559,7 @@ internal fun addUnboxInlineClassMarkersIfNeeded(v: InstructionAdapter, descripto
 fun generateResumePathUnboxing(v: InstructionAdapter, inlineClass: KotlinTypeMarker, typeMapper: KotlinTypeMapperBase) {
     addBeforeUnboxInlineClassMarker(v)
     StackValue.unboxInlineClass(AsmTypes.OBJECT_TYPE, inlineClass, v, typeMapper)
-    // Suspend functions always returns Any?, but the unboxing disrupts type analysis of the bytecode.
+    // Suspend functions always returns Any?, but   the unboxing disrupts type analysis of the bytecode.
     // For example, if the underlying type is String, CHECKCAST String is removed.
     // However, the unboxing is moved to the resume path, the direct path still has Any?, but now, without the CHECKCAST.
     // Thus, we add CHECKCAST Object, which we remove, after we copy the unboxing to the resume path.

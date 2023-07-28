@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmSymbols
 import org.jetbrains.kotlin.backend.jvm.codegen.*
 import org.jetbrains.kotlin.backend.jvm.ir.isSmartcastFromHigherThanNullable
 import org.jetbrains.kotlin.backend.jvm.ir.receiverAndArgs
+import org.jetbrains.kotlin.backend.jvm.mapping.mapType
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.AsmUtil.comparisonOperandType
@@ -58,7 +59,7 @@ object CompareTo : IntrinsicMethod() {
         val callee = expression.symbol.owner
         val calleeParameter = callee.dispatchReceiverParameter ?: callee.extensionReceiverParameter!!
         val parameterType = comparisonOperandType(
-            classCodegen.typeMapper.mapType(calleeParameter.type),
+            classCodegen.typeMapper.mapType(calleeParameter),
             signature.valueParameters.single().asmType,
         )
         return IntrinsicFunction.create(expression, signature, classCodegen, listOf(parameterType, parameterType)) {

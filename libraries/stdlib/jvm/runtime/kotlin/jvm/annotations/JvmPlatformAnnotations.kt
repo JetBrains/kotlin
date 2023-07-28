@@ -177,3 +177,23 @@ public actual annotation class JvmInline
 @MustBeDocumented
 @SinceKotlin("1.5")
 public actual annotation class JvmRecord
+
+/**
+ * Instructs the compiler
+ * to expose the API related to the annotated [kotlin.jvm.JvmInline] value classes as its boxed variant for effective usage from Java.
+ *
+ * Particularly, it performs the following transformations:
+ *
+ * - For functions and constructors that take or return inline classes,
+ * a wrapper declaration for Java is created where inline classes are boxed.
+ * - Functions declared in the marked class can be called normally from Java.
+ * - Constructor available from Java is added.
+ *
+ * These additions preserve backwards compatibility (both binary and source), so existing inline classes can be marked safely.
+ */
+@Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.BINARY)
+@MustBeDocumented
+@SinceKotlin("1.9")
+@ExperimentalStdlibApi
+public actual annotation class JvmExposeBoxed

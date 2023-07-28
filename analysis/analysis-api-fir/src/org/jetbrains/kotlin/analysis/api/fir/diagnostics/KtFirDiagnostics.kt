@@ -3386,6 +3386,10 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = JvmInlineWithoutValueClass::class
     }
 
+    interface JvmExposeBoxedWithoutInline : KtFirDiagnostic<KtAnnotationEntry> {
+        override val diagnosticClass get() = JvmExposeBoxedWithoutInline::class
+    }
+
     interface JavaTypeMismatch : KtFirDiagnostic<KtExpression> {
         override val diagnosticClass get() = JavaTypeMismatch::class
         val expectedType: KtType

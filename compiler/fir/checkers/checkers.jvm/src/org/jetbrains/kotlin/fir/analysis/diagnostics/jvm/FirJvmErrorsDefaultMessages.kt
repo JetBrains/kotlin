@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JAVA_TYPE_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_DEFAULT_IN_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_DEFAULT_WITH_COMPATIBILITY_IN_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_DEFAULT_WITH_COMPATIBILITY_NOT_ON_INTERFACE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_EXPOSE_BOXED_WITHOUT_INLINE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_INLINE_WITHOUT_VALUE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_PACKAGE_NAME_CANNOT_BE_EMPTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_PACKAGE_NAME_MUST_BE_VALID_NAME
@@ -113,42 +114,42 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             SUPER_CALL_WITH_DEFAULT_PARAMETERS,
-            "Super-calls with default arguments are prohibited. Please specify all arguments of ''super.{0}'' explicitly.",
+            "Super-calls with default arguments are not allowed. Please specify all arguments of ''super.{0}'' explicitly",
             TO_STRING
         )
 
-        map.put(LOCAL_JVM_RECORD, "Local '@JvmRecord' classes are prohibited.")
-        map.put(NON_FINAL_JVM_RECORD, "'@JvmRecord' class should be final.")
-        map.put(ENUM_JVM_RECORD, "'@JvmRecord' class should not be an enum.")
+        map.put(LOCAL_JVM_RECORD, "Local @JvmRecord classes are not allowed")
+        map.put(NON_FINAL_JVM_RECORD, "@JvmRecord class should be final")
+        map.put(ENUM_JVM_RECORD, "@JvmRecord class should not be an enum")
         map.put(
             JVM_RECORD_WITHOUT_PRIMARY_CONSTRUCTOR_PARAMETERS,
-            "Primary constructor with parameters is required for '@JvmRecord' class."
+            "Primary constructor with parameters is required for @JvmRecord class"
         )
-        map.put(JVM_RECORD_NOT_VAL_PARAMETER, "Constructor parameter of '@JvmRecord' class should be a 'val'.")
-        map.put(JVM_RECORD_NOT_LAST_VARARG_PARAMETER, "Only the last constructor parameter of '@JvmRecord' can be a vararg.")
-        map.put(JVM_RECORD_EXTENDS_CLASS, "Record cannot extend a class.", RENDER_TYPE)
-        map.put(INNER_JVM_RECORD, "'@JvmRecord' class should not be inner.")
-        map.put(FIELD_IN_JVM_RECORD, "Non-constructor properties with backing field in '@JvmRecord' class are prohibited.")
-        map.put(DELEGATION_BY_IN_JVM_RECORD, "Delegation is prohibited for '@JvmRecord' classes.")
-        map.put(NON_DATA_CLASS_JVM_RECORD, "Only data classes are allowed to be marked as '@JvmRecord'.")
-        map.put(ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE, "Classes cannot have explicit 'java.lang.Record' supertype.")
+        map.put(JVM_RECORD_NOT_VAL_PARAMETER, "Constructor parameter of @JvmRecord class should be a val")
+        map.put(JVM_RECORD_NOT_LAST_VARARG_PARAMETER, "Only the last constructor parameter of @JvmRecord may be a vararg")
+        map.put(JVM_RECORD_EXTENDS_CLASS, "Record cannot inherit a class", RENDER_TYPE)
+        map.put(INNER_JVM_RECORD, "@JvmRecord class should not be inner")
+        map.put(FIELD_IN_JVM_RECORD, "It's not allowed to have non-constructor properties with backing field in @JvmRecord class")
+        map.put(DELEGATION_BY_IN_JVM_RECORD, "Delegation is not allowed for @JvmRecord classes")
+        map.put(NON_DATA_CLASS_JVM_RECORD, "Only data classes are allowed to be marked as @JvmRecord")
+        map.put(ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE, "Classes cannot have explicit 'java.lang.Record' supertype")
 
-        map.put(OVERRIDE_CANNOT_BE_STATIC, "Override member cannot be '@JvmStatic' in an object.")
+        map.put(OVERRIDE_CANNOT_BE_STATIC, "Override member cannot be '@JvmStatic' in object")
         map.put(
             JVM_STATIC_NOT_IN_OBJECT_OR_CLASS_COMPANION,
-            "Only members in named objects and companion objects of classes can be annotated with '@JvmStatic'."
+            "Only members in named objects and companion objects of classes can be annotated with '@JvmStatic'"
         )
         map.put(
             JVM_STATIC_NOT_IN_OBJECT_OR_COMPANION,
-            "Only members in named objects and companion objects can be annotated with '@JvmStatic'."
+            "Only members in named objects and companion objects can be annotated with '@JvmStatic'"
         )
         map.put(
             JVM_STATIC_ON_NON_PUBLIC_MEMBER,
-            "Only public members in interface companion objects can be annotated with '@JvmStatic'."
+            "Only public members in interface companion objects can be annotated with '@JvmStatic'"
         )
         map.put(
             JVM_STATIC_ON_CONST_OR_JVM_FIELD,
-            "'@JvmStatic' annotation is useless for const or '@JvmField' properties.",
+            "'@JvmStatic' annotation is useless for const or '@JvmField' properties",
         )
         map.put(
             JVM_STATIC_ON_EXTERNAL_IN_INTERFACE,
@@ -162,6 +163,7 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         map.put(VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION, "Value classes without '@JvmInline' annotation are not yet supported.")
         map.put(JVM_INLINE_WITHOUT_VALUE_CLASS, "'@JvmInline' annotation is applicable only to value classes.")
+        map.put(JVM_EXPOSE_BOXED_WITHOUT_INLINE, "'@JvmExposeBoxed' annotation is only applicable to '@JvmInline' value classes.")
 
         map.put(JVM_DEFAULT_IN_DECLARATION, "Usage of ''@{0}'' is only allowed with ''-Xjvm-default'' option.", STRING)
         map.put(

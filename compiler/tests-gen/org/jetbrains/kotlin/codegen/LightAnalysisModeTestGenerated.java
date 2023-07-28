@@ -42977,6 +42977,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/valueClasses/equality.kt");
         }
 
+        @TestMetadata("exposedInlineClass.kt")
+        public void testExposedInlineClass() throws Exception {
+            runTest("compiler/testData/codegen/box/valueClasses/exposedInlineClass.kt");
+        }
+
         @TestMetadata("fakeOverrideCall.kt")
         public void testFakeOverrideCall() throws Exception {
             runTest("compiler/testData/codegen/box/valueClasses/fakeOverrideCall.kt");

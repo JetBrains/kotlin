@@ -40,6 +40,7 @@ internal abstract class JvmValueClassAbstractLowering(
 
         if (replacement == null) {
             if (function is IrConstructor) {
+                handleRegularClassConstructor(function)
                 val constructorReplacement = replacements.getReplacementForRegularClassConstructor(function)
                 if (constructorReplacement != null) {
                     addBindingsFor(function, constructorReplacement)
@@ -77,6 +78,9 @@ internal abstract class JvmValueClassAbstractLowering(
         }
     }
 
+    protected open fun handleRegularClassConstructor(constructor: IrConstructor) {
+    }
+
     private fun transformFlattenedConstructor(function: IrConstructor, replacement: IrConstructor): List<IrDeclaration> {
         replacement.valueParameters.forEach {
             it.defaultValue?.patchDeclarationParents(replacement)
@@ -105,24 +109,7 @@ internal abstract class JvmValueClassAbstractLowering(
         return declaration
     }
 
-    private fun transformSimpleFunctionFlat(function: IrSimpleFunction, replacement: IrSimpleFunction): List<IrDeclaration> {
-        replacement.valueParameters.forEach {
-            it.defaultValue?.patchDeclarationParents(replacement)
-            visitParameter(it)
-        }
-        allScopes.push(createScope(replacement))
-        replacement.body = function.body?.transform(this, null)?.patchDeclarationParents(replacement)
-        allScopes.pop()
-        replacement.copyAttributes(function)
-
-        // Don't create a wrapper for functions which are only used in an unboxed context
-        if (function.overriddenSymbols.isEmpty() || replacement.dispatchReceiverParameter != null)
-            return listOf(replacement)
-
-        val bridgeFunction = createBridgeFunction(function, replacement)
-
-        return listOf(replacement, bridgeFunction)
-    }
+    protected abstract fun transformSimpleFunctionFlat(function: IrSimpleFunction, replacement: IrSimpleFunction): List<IrDeclaration>
 
     final override fun visitReturn(expression: IrReturn): IrExpression {
         (expression.returnTargetSymbol.owner as? IrFunction)?.let { target ->
@@ -177,7 +164,7 @@ internal abstract class JvmValueClassAbstractLowering(
     protected enum class SpecificMangle { Inline, MultiField }
 
     protected abstract val specificMangle: SpecificMangle
-    private fun createBridgeFunction(
+    protected fun createBridgeFunction(
         function: IrSimpleFunction,
         replacement: IrSimpleFunction
     ): IrSimpleFunction {
