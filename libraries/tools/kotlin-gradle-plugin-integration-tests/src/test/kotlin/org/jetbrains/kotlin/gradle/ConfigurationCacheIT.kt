@@ -65,7 +65,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @DisplayName("works with MPP publishing")
     @GradleTestVersions(
         minVersion = TestVersions.Gradle.G_7_4,
-//        additionalVersions = [TestVersions.Gradle.G_7_6],
+        additionalVersions = [TestVersions.Gradle.G_7_6],
         maxVersion = TestVersions.Gradle.G_8_1
     )
     @GradleTest
