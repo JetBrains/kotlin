@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCo
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.util.applyMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.util.enableCInteropCommonization
-import org.jetbrains.kotlin.gradle.util.enableHierarchicalStructureByDefault
 import org.jetbrains.kotlin.gradle.util.propertiesExtension
 import kotlin.test.*
 
@@ -76,18 +75,6 @@ class DisabledCInteropCommonizationWarningTest {
         assertNull(
             project.getWarningMessage(),
             "Expected no error message shown when cinterop commonization is enabled"
-        )
-    }
-
-    @Test
-    fun `test warning is not shown when hierarchical structure is disabled`() {
-        project.enableCInteropCommonization(false)
-        project.enableHierarchicalStructureByDefault(false)
-        project.setupNativeTargetsWithCInterops()
-        project.evaluate()
-        assertNull(
-            project.getWarningMessage(),
-            "Expected no error message shown when hmpp is disabled"
         )
     }
 

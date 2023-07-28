@@ -33,10 +33,6 @@ abstract class MultiplatformExtensionTest {
         kotlin = project.applyMultiplatformPlugin()
     }
 
-    protected fun enableGranularSourceSetsMetadata() {
-        project.enableGranularSourceSetsMetadata()
-    }
-
     protected fun enableCInteropCommonization() {
         project.enableCInteropCommonization()
     }
