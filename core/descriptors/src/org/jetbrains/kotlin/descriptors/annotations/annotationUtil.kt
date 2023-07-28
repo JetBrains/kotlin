@@ -29,7 +29,8 @@ import org.jetbrains.kotlin.types.Variance
 fun KotlinBuiltIns.createDeprecatedAnnotation(
         message: String,
         replaceWith: String = "",
-        level: String = "WARNING"
+        level: String = "WARNING",
+        forcePropagationDeprecationToOverrides: Boolean = false,
 ): AnnotationDescriptor {
     val replaceWithAnnotation = BuiltInAnnotationDescriptor(
         this,
@@ -52,9 +53,21 @@ fun KotlinBuiltIns.createDeprecatedAnnotation(
                         ClassId.topLevel(StandardNames.FqNames.deprecationLevel),
                         Name.identifier(level)
                     )
-            )
+            ),
+        forcePropagationDeprecationToOverrides,
     )
 }
+
+// Temporary workaround for kotlinx-serialization-cbor compilation.
+// We need some kotlinx-serialization components to be resolved to that function instead of one with default argument
+// because for some time, they have a new version at compile time, but the old core in the classpath.
+// Might be removed after K/N version is advanced (KT-60858 to track)
+@Suppress("unused")
+fun KotlinBuiltIns.createDeprecatedAnnotation(
+    message: String,
+    replaceWith: String = "",
+    level: String = "WARNING",
+): AnnotationDescriptor = createDeprecatedAnnotation(message, replaceWith, level, forcePropagationDeprecationToOverrides = false)
 
 private val DEPRECATED_MESSAGE_NAME = Name.identifier("message")
 private val DEPRECATED_REPLACE_WITH_NAME = Name.identifier("replaceWith")

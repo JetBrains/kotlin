@@ -46,7 +46,11 @@ class DeprecationResolver(
                     val inheritedDeprecations = listOfNotNull(deprecationByOverridden(descriptor))
                     when (inheritedDeprecations.isNotEmpty()) {
                         true -> when (languageVersionSettings.supportsFeature(LanguageFeature.StopPropagatingDeprecationThroughOverrides)) {
-                            true -> DeprecationInfo(emptyList(), hasInheritedDeprecations = true, inheritedDeprecations)
+                            true -> DeprecationInfo(
+                                inheritedDeprecations.filter { it.forcePropagationToOverrides },
+                                hasInheritedDeprecations = true,
+                                inheritedDeprecations
+                            )
                             false -> DeprecationInfo(inheritedDeprecations, hasInheritedDeprecations = true)
                         }
                         false -> DeprecationInfo.EMPTY
@@ -167,7 +171,8 @@ class DeprecationResolver(
 
         traverse(root)
 
-        if (hasUndeprecatedOverridden || deprecations.isEmpty()) return null
+        if (deprecations.isEmpty()) return null
+        if (hasUndeprecatedOverridden && deprecations.none { it.forcePropagationToOverrides }) return null
 
         // We might've filtered out not-propagating deprecations already in the initializer of `deprecationsByAnnotation` in the code above.
         // But it would lead to treating Java overridden as not-deprecated at all that works controversially in case of mixed J/K override:
