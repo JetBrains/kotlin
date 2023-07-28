@@ -109,7 +109,7 @@ private fun KotlinTargetContainerWithJsPresetFunctions.jsInternal(
                 "js",
                 if (compilerOrDefault == KotlinJsCompilerType.LEGACY) null else compilerOrDefault.lowerName
             )
-        ) as KotlinTargetPreset<KotlinJsTargetDsl>,
+        ) as InternalKotlinTargetPreset<KotlinJsTargetDsl>,
         configure
     ).also { target ->
         warnAboutDeprecatedCompiler(target.project, compilerOrDefault)

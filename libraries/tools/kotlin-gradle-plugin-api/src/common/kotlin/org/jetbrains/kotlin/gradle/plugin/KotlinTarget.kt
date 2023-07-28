@@ -61,9 +61,6 @@ interface KotlinTarget : Named, HasAttributes, HasProject, HasMutableExtras {
     )
     val preset: KotlinTargetPreset<out KotlinTarget>?
 
-    @InternalKotlinGradlePluginApi
-    fun warnAboutCreationOfTargetFromPreset()
-
     override fun getName(): String = targetName
 }
 

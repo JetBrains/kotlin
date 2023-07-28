@@ -8,11 +8,12 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
 
 @DeprecatedTargetPresetApi
 abstract class KotlinOnlyTargetPreset<R : KotlinOnlyTarget<T>, T : KotlinCompilation<*>>(
     protected val project: Project,
-) : KotlinTargetPreset<R> {
+) : InternalKotlinTargetPreset<R> {
 
     protected abstract fun createKotlinTargetConfigurator(): AbstractKotlinTargetConfigurator<R>
 

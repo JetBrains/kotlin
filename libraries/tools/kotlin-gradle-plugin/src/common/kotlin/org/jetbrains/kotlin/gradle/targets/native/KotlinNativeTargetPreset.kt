@@ -12,6 +12,7 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
 import org.jetbrains.kotlin.gradle.targets.native.internal.*
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
 import org.jetbrains.kotlin.gradle.utils.setupNativeCompiler
@@ -23,7 +24,7 @@ abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>(
     private val name: String,
     val project: Project,
     val konanTarget: KonanTarget
-) : KotlinTargetPreset<T> {
+) : InternalKotlinTargetPreset<T> {
 
     init {
         // This is required to obtain Kotlin/Native home in IDE plugin:
