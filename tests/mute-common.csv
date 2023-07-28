@@ -97,3 +97,8 @@ org.jetbrains.kotlin.jps.build.IncrementalK2FirICLightTreeJvmJpsTestGenerated.In
 org.jetbrains.kotlin.jps.build.IncrementalK2JvmJpsTestGenerated.PureKotlin.testAllConstants, test should be changed and fixed in next commits - KT-54991,,
 org.jetbrains.kotlin.jps.build.IncrementalK2LightTreeJvmJpsTestGenerated.PureKotlin.testAllConstants, test should be changed and fixed in next commits - KT-54991,,
 org.jetbrains.kotlin.jps.build.IncrementalK2FirICLightTreeJvmJpsTestGenerated.PureKotlin.testAllConstants, test should be changed and fixed in next commits - KT-54991,,
+org.jetbrains.kotlin.gradle.Kotlin2JsIrGradlePluginIT.generateDts, org.jetbrains.kotlin.platform.js legacy plugin,,
+org.jetbrains.kotlin.gradle.Kotlin2JsIrGradlePluginIT.testJarIncludesJsOutputSetExplicitly, org.jetbrains.kotlin.platform.js legacy plugin,,
+org.jetbrains.kotlin.gradle.Kotlin2JsIrGradlePluginIT.testCompileTestCouldAccessProduction, org.jetbrains.kotlin.platform.js legacy plugin,,
+org.jetbrains.kotlin.gradle.Kotlin2JsGradlePluginIT.testJarIncludesJsOutputSetExplicitly, org.jetbrains.kotlin.platform.js legacy plugin,,
+org.jetbrains.kotlin.gradle.Kotlin2JsGradlePluginIT.testCompileTestCouldAccessProduction, org.jetbrains.kotlin.platform.js legacy plugin,,
