@@ -9,8 +9,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveT
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
@@ -33,16 +31,6 @@ private class LLFirSealedClassInheritorsDesignatedResolver(
     target: LLFirResolveTarget,
     lockProvider: LLFirLockProvider,
 ) : LLFirTargetResolver(target, lockProvider, FirResolvePhase.SEALED_CLASS_INHERITORS) {
-
-    override fun withFile(firFile: FirFile, action: () -> Unit) {
-        action()
-    }
-
-    @Deprecated("Should never be called directly, only for override purposes, please use withRegularClass", level = DeprecationLevel.ERROR)
-    override fun withRegularClassImpl(firClass: FirRegularClass, action: () -> Unit) {
-        action()
-    }
-
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
         // just update the phase
     }

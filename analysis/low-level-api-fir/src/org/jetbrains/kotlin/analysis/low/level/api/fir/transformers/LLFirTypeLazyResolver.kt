@@ -81,9 +81,7 @@ private class LLFirTypeTargetResolver(
     }
 
     override fun withFile(firFile: FirFile, action: () -> Unit) {
-        transformer.withFileScope(firFile) {
-            action()
-        }
+        transformer.withFileScope(firFile, action)
     }
 
     @Deprecated("Should never be called directly, only for override purposes, please use withRegularClass", level = DeprecationLevel.ERROR)

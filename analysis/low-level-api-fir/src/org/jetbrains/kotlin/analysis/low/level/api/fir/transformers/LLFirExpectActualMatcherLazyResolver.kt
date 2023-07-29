@@ -47,21 +47,11 @@ private class LLFirExpectActualMatchingTargetResolver(
         }
     }
 
-    override fun withFile(firFile: FirFile, action: () -> Unit) {
-        action()
-    }
-
-    @Deprecated("Should never be called directly, only for override purposes, please use withRegularClass", level = DeprecationLevel.ERROR)
-    override fun withRegularClassImpl(firClass: FirRegularClass, action: () -> Unit) {
-        action()
-    }
-
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
         if (target !is FirMemberDeclaration) return
         if (!target.canHaveExpectCounterPart()) return
         transformer.transformMemberDeclaration(target)
     }
-
 }
 
 private fun FirMemberDeclaration.canHaveExpectCounterPart(): Boolean = when (this) {

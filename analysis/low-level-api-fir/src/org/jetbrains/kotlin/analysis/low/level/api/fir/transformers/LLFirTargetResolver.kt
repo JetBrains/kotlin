@@ -28,14 +28,18 @@ internal abstract class LLFirTargetResolver(
 
     val nestedClassesStack: List<FirRegularClass> get() = _nestedClassesStack.toList()
 
-    protected abstract fun withFile(firFile: FirFile, action: () -> Unit)
+    protected open fun withFile(firFile: FirFile, action: () -> Unit) {
+        action()
+    }
 
     protected open fun withScript(firScript: FirScript, action: () -> Unit) {
         action()
     }
 
     @Deprecated("Should never be called directly, only for override purposes, please use withRegularClass", level = DeprecationLevel.ERROR)
-    protected abstract fun withRegularClassImpl(firClass: FirRegularClass, action: () -> Unit)
+    protected open fun withRegularClassImpl(firClass: FirRegularClass, action: () -> Unit) {
+        action()
+    }
 
     @Suppress("DEPRECATION_ERROR")
     protected fun withRegularClass(firClass: FirRegularClass, action: () -> Unit) {

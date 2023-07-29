@@ -91,10 +91,6 @@ private class LLFirStatusTargetResolver(
 ) : LLFirTargetResolver(target, lockProvider, FirResolvePhase.STATUS, isJumpingPhase = false) {
     private val transformer = Transformer(session, scopeSession)
 
-    override fun withFile(firFile: FirFile, action: () -> Unit) {
-        action()
-    }
-
     @Deprecated("Should never be called directly, only for override purposes, please use withRegularClass", level = DeprecationLevel.ERROR)
     override fun withRegularClassImpl(firClass: FirRegularClass, action: () -> Unit) {
         doResolveWithoutLock(firClass)

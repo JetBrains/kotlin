@@ -87,10 +87,6 @@ private class LLFirSuperTypeTargetResolver(
         }
     }
 
-    override fun withFile(firFile: FirFile, action: () -> Unit) {
-        action()
-    }
-
     @Deprecated("Should never be called directly, only for override purposes, please use withRegularClass", level = DeprecationLevel.ERROR)
     override fun withRegularClassImpl(firClass: FirRegularClass, action: () -> Unit) {
         supertypeResolver.withClass(firClass) {
