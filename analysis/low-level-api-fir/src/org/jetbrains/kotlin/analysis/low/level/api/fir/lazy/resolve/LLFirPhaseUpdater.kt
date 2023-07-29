@@ -25,6 +25,7 @@ internal object LLFirPhaseUpdater {
                 is FirFunction -> target.body?.accept(PhaseUpdatingTransformer, newPhase)
                 is FirVariable -> {
                     target.initializer?.accept(PhaseUpdatingTransformer, newPhase)
+                    target.delegate?.accept(PhaseUpdatingTransformer, newPhase)
                     target.getter?.body?.accept(PhaseUpdatingTransformer, newPhase)
                     target.setter?.body?.accept(PhaseUpdatingTransformer, newPhase)
                     target.backingField?.accept(PhaseUpdatingTransformer, newPhase)

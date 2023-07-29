@@ -611,7 +611,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(BODY_RESOLVE)] val resolveMe: R|kotlin/String|by R|kotlin/lazy<Inapplicable(INAPPLICABLE): kotlin/lazy>#|<<ERROR TYPE REF: Type for T is not inferred>>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] lazy@fun <anonymous>(): <ERROR TYPE REF: Type for T is not inferred> <inline=NoInline>  {
+            public final [ResolvedTo(BODY_RESOLVE)] val resolveMe: R|kotlin/String|by R|kotlin/lazy<Inapplicable(INAPPLICABLE): kotlin/lazy>#|<<ERROR TYPE REF: Type for T is not inferred>>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] lazy@fun <anonymous>(): <ERROR TYPE REF: Type for T is not inferred> <inline=NoInline>  {
                 ^ <Unresolved name: materialize>#()
             }
             )
@@ -625,7 +625,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
 FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)]
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] class LazyDelegate<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
@@ -659,7 +659,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(BODY_RESOLVE)] val resolveMe: R|kotlin/String|by R|kotlin/lazy<Inapplicable(INAPPLICABLE): kotlin/lazy>#|<<ERROR TYPE REF: Type for T is not inferred>>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] lazy@fun <anonymous>(): <ERROR TYPE REF: Type for T is not inferred> <inline=NoInline>  {
+            public final [ResolvedTo(BODY_RESOLVE)] val resolveMe: R|kotlin/String|by R|kotlin/lazy<Inapplicable(INAPPLICABLE): kotlin/lazy>#|<<ERROR TYPE REF: Type for T is not inferred>>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] lazy@fun <anonymous>(): <ERROR TYPE REF: Type for T is not inferred> <inline=NoInline>  {
                 ^ <Unresolved name: materialize>#()
             }
             )

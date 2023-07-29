@@ -314,7 +314,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegateScript.
 
         }
 
-        field:@PROPERTY_DELEGATE_FIELD:R|kotlin/Deprecated|[Types](message = String(delegate)) @PROPERTY_DELEGATE_FIELD:R|Anno|[Types](s = String(delegate)) public final [ResolvedTo(BODY_RESOLVE)] val memberProperty: R|kotlin/String|by R|kotlin/lazy|<R|kotlin/String|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
+        field:@PROPERTY_DELEGATE_FIELD:R|kotlin/Deprecated|[Types](message = String(delegate)) @PROPERTY_DELEGATE_FIELD:R|Anno|[Types](s = String(delegate)) public final [ResolvedTo(BODY_RESOLVE)] val memberProperty: R|kotlin/String|by R|kotlin/lazy|<R|kotlin/String|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
             ^ String(42)
         }
         )
@@ -326,7 +326,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegateScript.
 FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegateScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)]
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
@@ -339,7 +339,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyDelegateScript.
 
         }
 
-        field:@PROPERTY_DELEGATE_FIELD:R|kotlin/Deprecated|[Types](message = String(delegate)) @PROPERTY_DELEGATE_FIELD:R|Anno|[Types](s = String(delegate)) public final [ResolvedTo(BODY_RESOLVE)] val memberProperty: R|kotlin/String|by R|kotlin/lazy|<R|kotlin/String|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
+        field:@PROPERTY_DELEGATE_FIELD:R|kotlin/Deprecated|[Types](message = String(delegate)) @PROPERTY_DELEGATE_FIELD:R|Anno|[Types](s = String(delegate)) public final [ResolvedTo(BODY_RESOLVE)] val memberProperty: R|kotlin/String|by R|kotlin/lazy|<R|kotlin/String|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
             ^ String(42)
         }
         )
