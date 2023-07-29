@@ -1,7 +1,7 @@
 BEFORE MODIFICATION:
 public final [ResolvedTo(BODY_RESOLVE)] val x: R|kotlin/Int|
     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] get(): R|kotlin/Int| {
-        ^ <Unresolved name: doSmth>#(String(str))
+        ^ R|/doSmth|(String(str))
     }
 
 AFTER MODIFICATION:

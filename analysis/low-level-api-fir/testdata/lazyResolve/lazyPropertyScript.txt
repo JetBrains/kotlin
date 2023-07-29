@@ -384,8 +384,8 @@ FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] class LazyDelegate<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
@@ -432,8 +432,8 @@ FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] class LazyDelegate<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
@@ -480,25 +480,25 @@ FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] class LazyDelegate<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LazyDelegate] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/LazyDelegate.value] value: T): R|LazyDelegate<T>| {
+        public final [ResolvedTo(STATUS)] class LazyDelegate<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=LazyDelegate] constructor<[ResolvedTo(STATUS)] T>([ResolvedTo(STATUS)] [CorrespondingProperty=/LazyDelegate.value] value: R|T|): R|LazyDelegate<T>| {
                 super<R|kotlin/Any|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: T = R|<local>/value|
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LazyDelegate] get(): T
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val value: R|T| = R|<local>/value|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=LazyDelegate] get(): R|T|
 
-            public? final? operator [ResolvedTo(RAW_FIR)] fun getValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>): T {
+            public final operator [ResolvedTo(CONTRACTS)] fun getValue([ResolvedTo(CONTRACTS)] thisRef: R|kotlin/Any?|, [ResolvedTo(CONTRACTS)] property: R|kotlin/reflect/KProperty<*>|): R|T| {
                 ^getValue value#
             }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> lazy([ResolvedTo(RAW_FIR)] block: ( () -> T )): LazyDelegate<T> {
+        public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> lazy([ResolvedTo(CONTRACTS)] block: R|() -> T|): R|LazyDelegate<T>| {
             ^lazy LazyDelegate#(block#())
         }
 
@@ -506,7 +506,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
             ^getAny Null(null)
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] Q> materialize(): Q {
+        public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] Q> materialize(): R|Q| {
             ^materialize Null(null)!!
         }
 
@@ -515,12 +515,12 @@ FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val resolveMe: R|kotlin/String|by R|kotlin/lazy<Inapplicable(INAPPLICABLE): kotlin/lazy>#|<<ERROR TYPE REF: Type for T is not inferred>>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] lazy@fun <anonymous>(): <ERROR TYPE REF: Type for T is not inferred> <inline=NoInline>  {
-                ^ <Unresolved name: materialize>#()
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val resolveMe: R|kotlin/String|by R|/lazy|<R|kotlin/String|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
+                ^ R|/materialize|<R|kotlin/String|>()
             }
             )
                 public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Test] get(): R|kotlin/String| {
-                    ^ this@R|/Test|.D|/Test.resolveMe|.R|kotlin/getValue|<<ERROR TYPE REF: Type for T is not inferred>>(this@R|/Test|, ::R|/Test.resolveMe|)
+                    ^ this@R|/Test|.D|/Test.resolveMe|.R|SubstitutionOverride</LazyDelegate.getValue: R|Stub (chain inference): TypeVariable(_T)|>|(this@R|/Test|, ::R|/Test.resolveMe|)
                 }
 
         }
@@ -528,25 +528,25 @@ FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] class LazyDelegate<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LazyDelegate] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/LazyDelegate.value] value: T): R|LazyDelegate<T>| {
+        public final [ResolvedTo(STATUS)] class LazyDelegate<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=LazyDelegate] constructor<[ResolvedTo(STATUS)] T>([ResolvedTo(STATUS)] [CorrespondingProperty=/LazyDelegate.value] value: R|T|): R|LazyDelegate<T>| {
                 super<R|kotlin/Any|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: T = R|<local>/value|
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LazyDelegate] get(): T
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val value: R|T| = R|<local>/value|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=LazyDelegate] get(): R|T|
 
-            public? final? operator [ResolvedTo(RAW_FIR)] fun getValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>): T {
+            public final operator [ResolvedTo(CONTRACTS)] fun getValue([ResolvedTo(CONTRACTS)] thisRef: R|kotlin/Any?|, [ResolvedTo(CONTRACTS)] property: R|kotlin/reflect/KProperty<*>|): R|T| {
                 ^getValue value#
             }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> lazy([ResolvedTo(RAW_FIR)] block: ( () -> T )): LazyDelegate<T> {
+        public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> lazy([ResolvedTo(CONTRACTS)] block: R|() -> T|): R|LazyDelegate<T>| {
             ^lazy LazyDelegate#(block#())
         }
 
@@ -554,7 +554,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
             ^getAny Null(null)
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] Q> materialize(): Q {
+        public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] Q> materialize(): R|Q| {
             ^materialize Null(null)!!
         }
 
@@ -563,12 +563,12 @@ FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] val resolveMe: R|kotlin/String|by R|kotlin/lazy<Inapplicable(INAPPLICABLE): kotlin/lazy>#|<<ERROR TYPE REF: Type for T is not inferred>>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] lazy@fun <anonymous>(): <ERROR TYPE REF: Type for T is not inferred> <inline=NoInline>  {
-                ^ <Unresolved name: materialize>#()
+            public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] val resolveMe: R|kotlin/String|by R|/lazy|<R|kotlin/String|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
+                ^ R|/materialize|<R|kotlin/String|>()
             }
             )
                 public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=Test] get(): R|kotlin/String| {
-                    ^ this@R|/Test|.D|/Test.resolveMe|.R|kotlin/getValue|<<ERROR TYPE REF: Type for T is not inferred>>(this@R|/Test|, ::R|/Test.resolveMe|)
+                    ^ this@R|/Test|.D|/Test.resolveMe|.R|SubstitutionOverride</LazyDelegate.getValue: R|Stub (chain inference): TypeVariable(_T)|>|(this@R|/Test|, ::R|/Test.resolveMe|)
                 }
 
         }
@@ -576,25 +576,25 @@ FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] class LazyDelegate<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LazyDelegate] constructor<[ResolvedTo(RAW_FIR)] T>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/LazyDelegate.value] value: T): R|LazyDelegate<T>| {
+        public final [ResolvedTo(STATUS)] class LazyDelegate<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=LazyDelegate] constructor<[ResolvedTo(STATUS)] T>([ResolvedTo(STATUS)] [CorrespondingProperty=/LazyDelegate.value] value: R|T|): R|LazyDelegate<T>| {
                 super<R|kotlin/Any|>()
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: T = R|<local>/value|
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LazyDelegate] get(): T
+            public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val value: R|T| = R|<local>/value|
+                public [ResolvedTo(STATUS)] [ContainingClassKey=LazyDelegate] get(): R|T|
 
-            public? final? operator [ResolvedTo(RAW_FIR)] fun getValue([ResolvedTo(RAW_FIR)] thisRef: Any?, [ResolvedTo(RAW_FIR)] property: KProperty<*>): T {
+            public final operator [ResolvedTo(CONTRACTS)] fun getValue([ResolvedTo(CONTRACTS)] thisRef: R|kotlin/Any?|, [ResolvedTo(CONTRACTS)] property: R|kotlin/reflect/KProperty<*>|): R|T| {
                 ^getValue value#
             }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> lazy([ResolvedTo(RAW_FIR)] block: ( () -> T )): LazyDelegate<T> {
+        public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> lazy([ResolvedTo(CONTRACTS)] block: R|() -> T|): R|LazyDelegate<T>| {
             ^lazy LazyDelegate#(block#())
         }
 
@@ -602,7 +602,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
             ^getAny Null(null)
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] Q> materialize(): Q {
+        public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] Q> materialize(): R|Q| {
             ^materialize Null(null)!!
         }
 
@@ -611,12 +611,12 @@ FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(BODY_RESOLVE)] val resolveMe: R|kotlin/String|by R|kotlin/lazy<Inapplicable(INAPPLICABLE): kotlin/lazy>#|<<ERROR TYPE REF: Type for T is not inferred>>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] lazy@fun <anonymous>(): <ERROR TYPE REF: Type for T is not inferred> <inline=NoInline>  {
-                ^ <Unresolved name: materialize>#()
+            public final [ResolvedTo(BODY_RESOLVE)] val resolveMe: R|kotlin/String|by R|/lazy|<R|kotlin/String|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
+                ^ R|/materialize|<R|kotlin/String|>()
             }
             )
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Test] get(): R|kotlin/String| {
-                    ^ this@R|/Test|.D|/Test.resolveMe|.R|kotlin/getValue|<<ERROR TYPE REF: Type for T is not inferred>>(this@R|/Test|, ::R|/Test.resolveMe|)
+                    ^ this@R|/Test|.D|/Test.resolveMe|.R|SubstitutionOverride</LazyDelegate.getValue: R|Stub (chain inference): TypeVariable(_T)|>|(this@R|/Test|, ::R|/Test.resolveMe|)
                 }
 
         }
@@ -643,7 +643,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
         }
 
         public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T> lazy([ResolvedTo(BODY_RESOLVE)] block: R|() -> T|): R|LazyDelegate<T>| {
-            ^lazy R|/LazyDelegate.LazyDelegate|<R|T|>(R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|())
+            ^lazy R|SubstitutionOverride</LazyDelegate.LazyDelegate>|<R|T|>(R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|())
         }
 
         public final [ResolvedTo(BODY_RESOLVE)] fun getAny(): R|kotlin/Any?| {
@@ -659,12 +659,12 @@ FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(BODY_RESOLVE)] val resolveMe: R|kotlin/String|by R|kotlin/lazy<Inapplicable(INAPPLICABLE): kotlin/lazy>#|<<ERROR TYPE REF: Type for T is not inferred>>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] lazy@fun <anonymous>(): <ERROR TYPE REF: Type for T is not inferred> <inline=NoInline>  {
-                ^ <Unresolved name: materialize>#()
+            public final [ResolvedTo(BODY_RESOLVE)] val resolveMe: R|kotlin/String|by R|/lazy|<R|kotlin/String|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
+                ^ R|/materialize|<R|kotlin/String|>()
             }
             )
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Test] get(): R|kotlin/String| {
-                    ^ this@R|/Test|.D|/Test.resolveMe|.R|kotlin/getValue|<<ERROR TYPE REF: Type for T is not inferred>>(this@R|/Test|, ::R|/Test.resolveMe|)
+                    ^ this@R|/Test|.D|/Test.resolveMe|.R|SubstitutionOverride</LazyDelegate.getValue: R|Stub (chain inference): TypeVariable(_T)|>|(this@R|/Test|, ::R|/Test.resolveMe|)
                 }
 
         }

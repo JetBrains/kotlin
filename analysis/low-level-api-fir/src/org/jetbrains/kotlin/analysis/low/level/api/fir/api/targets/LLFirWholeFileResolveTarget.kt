@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.forEachDeclaration
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isDeclarationContainer
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirScript
 
 /**
  * [LLFirResolveTarget] representing all declarations in file. All of them are going to be resolved.
@@ -18,9 +18,8 @@ class LLFirWholeFileResolveTarget(firFile: FirFile) : LLFirResolveTarget(firFile
     override fun forEachTarget(action: (FirElementWithResolveState) -> Unit) {
         fun goInside(target: FirElementWithResolveState) {
             action(target)
-            when (target) {
-                is FirRegularClass -> target.declarations.forEach(::goInside)
-                is FirScript -> target.forEachDeclaration(::goInside)
+            if (target is FirDeclaration && target.isDeclarationContainer) {
+                target.forEachDeclaration(::goInside)
             }
         }
 

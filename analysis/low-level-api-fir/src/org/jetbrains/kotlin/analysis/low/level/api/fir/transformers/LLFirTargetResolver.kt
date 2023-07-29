@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.forEachDeclaration
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isDeclarationContainer
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -27,6 +29,10 @@ internal abstract class LLFirTargetResolver(
     val nestedClassesStack: List<FirRegularClass> get() = _nestedClassesStack.toList()
 
     protected abstract fun withFile(firFile: FirFile, action: () -> Unit)
+
+    protected open fun withScript(firScript: FirScript, action: () -> Unit) {
+        action()
+    }
 
     @Deprecated("Should never be called directly, only for override purposes, please use withRegularClass", level = DeprecationLevel.ERROR)
     protected abstract fun withRegularClassImpl(firClass: FirRegularClass, action: () -> Unit)
@@ -50,11 +56,15 @@ internal abstract class LLFirTargetResolver(
         }
     }
 
-    private fun goToTargets(iterator: Iterator<FirRegularClass>) {
-        if (iterator.hasNext()) {
-            val firClass = iterator.next()
-            withRegularClass(firClass) {
-                goToTargets(iterator)
+    private fun goToTargets(path: Iterator<FirDeclaration>) {
+        if (path.hasNext()) {
+            when (val firDeclaration = path.next()) {
+                is FirRegularClass -> withRegularClass(firDeclaration) { goToTargets(path) }
+                is FirScript -> withScript(firDeclaration) { goToTargets(path) }
+                else -> errorWithFirSpecificEntries(
+                    "Unexpected declaration in path: ${firDeclaration::class.simpleName}",
+                    fir = firDeclaration,
+                )
             }
         } else {
             when (resolveTarget) {
@@ -94,14 +104,18 @@ internal abstract class LLFirTargetResolver(
 
     private fun resolveTargetWithNestedDeclarations(target: FirElementWithResolveState) {
         performResolve(target)
-        when (target) {
-            is FirRegularClass -> withRegularClass(target) {
-                for (member in target.declarations) {
-                    resolveTargetWithNestedDeclarations(member)
-                }
+        when {
+            target !is FirDeclaration || !target.isDeclarationContainer -> {}
+
+            target is FirRegularClass -> withRegularClass(target) {
+                target.forEachDeclaration(::resolveTargetWithNestedDeclarations)
             }
 
-            is FirScript -> target.forEachDeclaration(::resolveTargetWithNestedDeclarations)
+            target is FirScript -> withScript(target) {
+                target.forEachDeclaration(::resolveTargetWithNestedDeclarations)
+            }
+
+            else -> errorWithFirSpecificEntries("Unexpected declaration: ${target::class.simpleName}", fir = target)
         }
     }
 

@@ -4,13 +4,13 @@ FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
  {
-    ^ <Unresolved name: args>#.<Unresolved name: size>#
+    ^ R|<local>/args|.R|SubstitutionOverride<kotlin/Array.size: R|kotlin/Int|>|
 }
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] argsFromInit.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)]
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
@@ -19,8 +19,8 @@ FILE: [ResolvedTo(IMPORTS)] argsFromInit.kts
             }
 
             init {
-                <Unresolved name: foo>#(<L> = [ResolvedTo(RAW_FIR)] foo@fun <anonymous>(): <ERROR TYPE REF: Unresolved name: size> <inline=Unknown>  {
-                    ^ <Unresolved name: args>#.<Unresolved name: size>#
+                <Unresolved name: foo>#(<L> = [ResolvedTo(RAW_FIR)] foo@fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+                    ^ R|<local>/args|.R|SubstitutionOverride<kotlin/Array.size: R|kotlin/Int|>|
                 }
                 )
             }

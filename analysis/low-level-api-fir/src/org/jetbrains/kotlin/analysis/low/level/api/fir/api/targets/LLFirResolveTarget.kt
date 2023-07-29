@@ -7,10 +7,13 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirResolvableSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.FirScript
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 
@@ -27,9 +30,9 @@ sealed class LLFirResolveTarget(
     val firFile: FirFile,
 
     /**
-     * The list of [FirRegularClass] which are the required to go from file to target declarations in the top-down order.
+     * The list of [FirScript] and [FirRegularClass] which are the required to go from file to target declarations in the top-down order.
      *
-     * If resolve target is [FirRegularClass] itself, it's not included into the [path]
+     * If resolve target is [FirRegularClass] or [FirScript] itself, it's not included into the [path]
      */
     val path: List<FirDeclaration>,
 ) {
@@ -43,7 +46,14 @@ sealed class LLFirResolveTarget(
         append("(")
         buildList {
             add(firFile.name)
-            path.mapTo(this) { it.name.asString() }
+            path.mapTo(this) {
+                when (it) {
+                    is FirRegularClass -> it.name
+                    is FirScript -> it.name
+                    else -> errorWithFirSpecificEntries("Unsupported path declaration: ${it::class.simpleName}", fir = it)
+                }
+            }
+
             add(toStringForTarget())
         }.joinTo(this, separator = " -> ")
         append(")")

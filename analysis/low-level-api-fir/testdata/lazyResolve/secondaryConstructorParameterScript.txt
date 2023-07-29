@@ -232,8 +232,8 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameterScript.kts
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameterScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
@@ -261,8 +261,8 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameterScript.kts
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameterScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
@@ -290,8 +290,8 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameterScript.kts
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameterScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
@@ -319,8 +319,8 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameterScript.kts
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameterScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
@@ -348,8 +348,8 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameterScript.kts
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameterScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
@@ -361,7 +361,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameterScript.kts
                 public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Int|
 
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor([ResolvedTo(BODY_RESOLVE)] str: R|kotlin/String|): R|A| {
-                this<R|A|>(R|<local>/str|.<Unresolved name: myToInt>#(), R|<local>/str|)
+                this<R|A|>(R|<local>/str|.R|/myToInt|(), R|<local>/str|)
             }
 
             public final [ResolvedTo(STATUS)] fun foo(): <implicit> {
@@ -370,7 +370,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameterScript.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun String.myToInt(): Int {
+        public final [ResolvedTo(CONTRACTS)] fun R|kotlin/String|.myToInt(): R|kotlin/Int| {
             ^myToInt IntegerLiteral(42)
         }
 
@@ -390,7 +390,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameterScript.kts
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] get(): R|kotlin/Int|
 
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor([ResolvedTo(BODY_RESOLVE)] str: R|kotlin/String|): R|A| {
-                this<R|A|>(R|<local>/str|.<Unresolved name: myToInt>#(), R|<local>/str|)
+                this<R|A|>(R|<local>/str|.R|/myToInt|(), R|<local>/str|)
             }
 
             public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/String| {

@@ -4,7 +4,7 @@ public final [ResolvedTo(BODY_RESOLVE)] var x: R|kotlin/Int|
         ^ Int(1)
     }
     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit| {
-        ^ <Unresolved name: doSmth>#(R|<local>/value|)
+        ^ R|/doSmth<Inapplicable(INAPPLICABLE): /doSmth>#|(R|<local>/value|)
     }
 
 AFTER MODIFICATION:

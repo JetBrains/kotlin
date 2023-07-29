@@ -7,13 +7,13 @@ Int(1)
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] callArgumentScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun y([ResolvedTo(RAW_FIR)] a: Int): R|kotlin/Unit| {
+        public final [ResolvedTo(CONTRACTS)] fun y([ResolvedTo(CONTRACTS)] a: R|kotlin/Int|): R|kotlin/Unit| {
         }
 
         public final [ResolvedTo(BODY_RESOLVE)] fun x(): R|kotlin/Unit| {
-            <Unresolved name: y>#(Int(1))
+            R|/y|(Int(1))
         }

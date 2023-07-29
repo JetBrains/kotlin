@@ -328,8 +328,8 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T {
@@ -369,8 +369,8 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T {
@@ -410,11 +410,11 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T {
+        public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> magic(): R|T| {
             ^magic Null(null)!!
         }
 
@@ -430,13 +430,13 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
                             super<R|kotlin/Any|>()
                         }
 
-                        public final [ResolvedTo(RAW_FIR)] val e: R|E| = <Unresolved name: magic>#()
+                        public final [ResolvedTo(RAW_FIR)] val e: R|E| = R|/magic|<R|E|>()
                             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|E|
 
-                        public final [ResolvedTo(RAW_FIR)] val f: R|F| = <Unresolved name: magic>#()
+                        public final [ResolvedTo(RAW_FIR)] val f: R|F| = R|/magic|<R|F|>()
                             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|F|
 
-                        public final [ResolvedTo(RAW_FIR)] val g: R|G| = <Unresolved name: magic>#()
+                        public final [ResolvedTo(RAW_FIR)] val g: R|G| = R|/magic|<R|G|>()
                             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|G|
 
                     }
@@ -451,11 +451,11 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T {
+        public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> magic(): R|T| {
             ^magic Null(null)!!
         }
 
@@ -471,13 +471,13 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
                             super<R|kotlin/Any|>()
                         }
 
-                        public final [ResolvedTo(RAW_FIR)] val e: R|E| = <Unresolved name: magic>#()
+                        public final [ResolvedTo(RAW_FIR)] val e: R|E| = R|/magic|<R|E|>()
                             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|E|
 
-                        public final [ResolvedTo(RAW_FIR)] val f: R|F| = <Unresolved name: magic>#()
+                        public final [ResolvedTo(RAW_FIR)] val f: R|F| = R|/magic|<R|F|>()
                             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|F|
 
-                        public final [ResolvedTo(RAW_FIR)] val g: R|G| = <Unresolved name: magic>#()
+                        public final [ResolvedTo(RAW_FIR)] val g: R|G| = R|/magic|<R|G|>()
                             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|G|
 
                     }
@@ -492,11 +492,11 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T {
+        public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> magic(): R|T| {
             ^magic Null(null)!!
         }
 
@@ -512,13 +512,13 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
                             super<R|kotlin/Any|>()
                         }
 
-                        public final [ResolvedTo(BODY_RESOLVE)] val e: R|E| = <Unresolved name: magic>#()
+                        public final [ResolvedTo(BODY_RESOLVE)] val e: R|E| = R|/magic|<R|E|>()
                             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] get(): R|E|
 
-                        public final [ResolvedTo(BODY_RESOLVE)] val f: R|F| = <Unresolved name: magic>#()
+                        public final [ResolvedTo(BODY_RESOLVE)] val f: R|F| = R|/magic|<R|F|>()
                             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] get(): R|F|
 
-                        public final [ResolvedTo(BODY_RESOLVE)] val g: R|G| = <Unresolved name: magic>#()
+                        public final [ResolvedTo(BODY_RESOLVE)] val g: R|G| = R|/magic|<R|G|>()
                             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] get(): R|G|
 
                     }
@@ -553,13 +553,13 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
                             super<R|kotlin/Any|>()
                         }
 
-                        public final [ResolvedTo(BODY_RESOLVE)] val e: R|E| = <Unresolved name: magic>#()
+                        public final [ResolvedTo(BODY_RESOLVE)] val e: R|E| = R|/magic|<R|E|>()
                             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] get(): R|E|
 
-                        public final [ResolvedTo(BODY_RESOLVE)] val f: R|F| = <Unresolved name: magic>#()
+                        public final [ResolvedTo(BODY_RESOLVE)] val f: R|F| = R|/magic|<R|F|>()
                             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] get(): R|F|
 
-                        public final [ResolvedTo(BODY_RESOLVE)] val g: R|G| = <Unresolved name: magic>#()
+                        public final [ResolvedTo(BODY_RESOLVE)] val g: R|G| = R|/magic|<R|G|>()
                             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] get(): R|G|
 
                     }

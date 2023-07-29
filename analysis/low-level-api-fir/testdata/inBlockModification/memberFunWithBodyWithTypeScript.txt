@@ -1,6 +1,6 @@
 BEFORE MODIFICATION:
 public final [ResolvedTo(BODY_RESOLVE)] fun x(): R|kotlin/Int| {
-    ^x <Unresolved name: doSmth>#(String(str))
+    ^x R|/doSmth|(String(str))
 }
 
 AFTER MODIFICATION:

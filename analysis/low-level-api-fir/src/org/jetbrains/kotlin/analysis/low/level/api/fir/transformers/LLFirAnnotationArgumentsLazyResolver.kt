@@ -76,14 +76,16 @@ private class LLFirAnnotationArgumentsTargetResolver(
                     contextCollector.addDeclarationContext(target, bodyResolveContext)
                 }
 
+                is FirScript -> {}
+
                 else -> contextCollector.addDeclarationContext(target, bodyResolveContext)
             }
         }
 
-        if (target is FirRegularClass) {
-            withRegularClass(target) {
-                contextCollector.addDeclarationContext(target, bodyResolveContext)
-            }
+        when (target) {
+            is FirRegularClass -> withRegularClass(target) { contextCollector.addDeclarationContext(target, bodyResolveContext) }
+            is FirScript -> withScript(target) { contextCollector.addDeclarationContext(target, bodyResolveContext) }
+            else -> {}
         }
     }
 

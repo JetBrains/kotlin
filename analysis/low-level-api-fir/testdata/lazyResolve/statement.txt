@@ -38,14 +38,14 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
             this@R|special/anonymous|.R|/Builder.execute|()
         }
         )
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val builder: <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]> = <Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>#(<L> = [ResolvedTo(RAW_FIR)] build@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
-            <Unresolved name: version># = String(321)
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val builder: R|Builder| = R|/build|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<Builder, kotlin/Unit>] build@fun R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|/Builder.version| = String(321)
         }
         )
-            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|Builder|
 
-        R|/builder|.<Unresolved name: execute>#()
-        R|/builder|.<Unresolved name: version># = String()
+        R|/builder|.R|/Builder.execute|()
+        R|/builder|.R|/Builder.version| = String()
 
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] statement.kts
@@ -87,14 +87,14 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
             this@R|special/anonymous|.R|/Builder.execute|()
         }
         )
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val builder: <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]> = <Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>#(<L> = [ResolvedTo(RAW_FIR)] build@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
-            <Unresolved name: version># = String(321)
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val builder: R|Builder| = R|/build|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<Builder, kotlin/Unit>] build@fun R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|/Builder.version| = String(321)
         }
         )
-            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|Builder|
 
-        R|/builder|.<Unresolved name: execute>#()
-        R|/builder|.<Unresolved name: version># = String()
+        R|/builder|.R|/Builder.execute|()
+        R|/builder|.R|/Builder.version| = String()
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] statement.kts
@@ -136,14 +136,14 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
             this@R|special/anonymous|.R|/Builder.execute|()
         }
         )
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val builder: <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]> = <Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>#(<L> = [ResolvedTo(RAW_FIR)] build@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
-            <Unresolved name: version># = String(321)
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val builder: R|Builder| = R|/build|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<Builder, kotlin/Unit>] build@fun R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|/Builder.version| = String(321)
         }
         )
-            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|Builder|
 
-        R|/builder|.<Unresolved name: execute>#()
-        R|/builder|.<Unresolved name: version># = String()
+        R|/builder|.R|/Builder.execute|()
+        R|/builder|.R|/Builder.version| = String()
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] statement.kts
@@ -185,14 +185,14 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
             this@R|special/anonymous|.R|/Builder.execute|()
         }
         )
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val builder: <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]> = <Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>#(<L> = [ResolvedTo(RAW_FIR)] build@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
-            <Unresolved name: version># = String(321)
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val builder: R|Builder| = R|/build|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<Builder, kotlin/Unit>] build@fun R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|/Builder.version| = String(321)
         }
         )
-            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|Builder|
 
-        R|/builder|.<Unresolved name: execute>#()
-        R|/builder|.<Unresolved name: version># = String()
+        R|/builder|.R|/Builder.execute|()
+        R|/builder|.R|/Builder.version| = String()
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] statement.kts
@@ -234,14 +234,14 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
             this@R|special/anonymous|.R|/Builder.execute|()
         }
         )
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val builder: <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]> = <Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>#(<L> = [ResolvedTo(RAW_FIR)] build@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
-            <Unresolved name: version># = String(321)
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val builder: R|Builder| = R|/build|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<Builder, kotlin/Unit>] build@fun R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|/Builder.version| = String(321)
         }
         )
-            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|Builder|
 
-        R|/builder|.<Unresolved name: execute>#()
-        R|/builder|.<Unresolved name: version># = String()
+        R|/builder|.R|/Builder.execute|()
+        R|/builder|.R|/Builder.version| = String()
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] statement.kts
@@ -283,14 +283,14 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
             this@R|special/anonymous|.R|/Builder.execute|()
         }
         )
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val builder: <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]> = <Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>#(<L> = [ResolvedTo(RAW_FIR)] build@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
-            <Unresolved name: version># = String(321)
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val builder: R|Builder| = R|/build|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<Builder, kotlin/Unit>] build@fun R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|/Builder.version| = String(321)
         }
         )
-            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|Builder|
 
-        R|/builder|.<Unresolved name: execute>#()
-        R|/builder|.<Unresolved name: version># = String()
+        R|/builder|.R|/Builder.execute|()
+        R|/builder|.R|/Builder.version| = String()
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] statement.kts
@@ -332,14 +332,14 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
             this@R|special/anonymous|.R|/Builder.execute|()
         }
         )
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val builder: <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]> = <Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>#(<L> = [ResolvedTo(RAW_FIR)] build@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
-            <Unresolved name: version># = String(321)
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val builder: R|Builder| = R|/build|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<Builder, kotlin/Unit>] build@fun R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|/Builder.version| = String(321)
         }
         )
-            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|Builder|
 
-        R|/builder|.<Unresolved name: execute>#()
-        R|/builder|.<Unresolved name: version># = String()
+        R|/builder|.R|/Builder.execute|()
+        R|/builder|.R|/Builder.version| = String()
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] statement.kts
@@ -381,14 +381,14 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
             this@R|special/anonymous|.R|/Builder.execute|()
         }
         )
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val builder: <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]> = <Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>#(<L> = [ResolvedTo(RAW_FIR)] build@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
-            <Unresolved name: version># = String(321)
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val builder: R|Builder| = R|/build|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<Builder, kotlin/Unit>] build@fun R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|/Builder.version| = String(321)
         }
         )
-            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|Builder|
 
-        R|/builder|.<Unresolved name: execute>#()
-        R|/builder|.<Unresolved name: version># = String()
+        R|/builder|.R|/Builder.execute|()
+        R|/builder|.R|/Builder.version| = String()
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] statement.kts
@@ -430,14 +430,14 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
             this@R|special/anonymous|.R|/Builder.execute|()
         }
         )
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val builder: <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]> = <Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>#(<L> = [ResolvedTo(RAW_FIR)] build@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
-            <Unresolved name: version># = String(321)
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val builder: R|Builder| = R|/build|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<Builder, kotlin/Unit>] build@fun R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|/Builder.version| = String(321)
         }
         )
-            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|Builder|
 
-        R|/builder|.<Unresolved name: execute>#()
-        R|/builder|.<Unresolved name: version># = String()
+        R|/builder|.R|/Builder.execute|()
+        R|/builder|.R|/Builder.version| = String()
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] statement.kts
@@ -479,14 +479,14 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
             this@R|special/anonymous|.R|/Builder.execute|()
         }
         )
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val builder: <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]> = <Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>#(<L> = [ResolvedTo(RAW_FIR)] build@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
-            <Unresolved name: version># = String(321)
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val builder: R|Builder| = R|/build|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<Builder, kotlin/Unit>] build@fun R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|/Builder.version| = String(321)
         }
         )
-            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|Builder|
 
-        R|/builder|.<Unresolved name: execute>#()
-        R|/builder|.<Unresolved name: version># = String()
+        R|/builder|.R|/Builder.execute|()
+        R|/builder|.R|/Builder.version| = String()
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] statement.kts
@@ -528,14 +528,14 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
             this@R|special/anonymous|.R|/Builder.execute|()
         }
         )
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val builder: <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]> = <Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>#(<L> = [ResolvedTo(RAW_FIR)] build@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
-            <Unresolved name: version># = String(321)
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val builder: R|Builder| = R|/build|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<Builder, kotlin/Unit>] build@fun R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|/Builder.version| = String(321)
         }
         )
-            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|Builder|
 
-        R|/builder|.<Unresolved name: execute>#()
-        R|/builder|.<Unresolved name: version># = String()
+        R|/builder|.R|/Builder.execute|()
+        R|/builder|.R|/Builder.version| = String()
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] statement.kts
@@ -577,14 +577,14 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
             this@R|special/anonymous|.R|/Builder.execute|()
         }
         )
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val builder: <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]> = <Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>#(<L> = [ResolvedTo(RAW_FIR)] build@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
-            <Unresolved name: version># = String(321)
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val builder: R|Builder| = R|/build|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<Builder, kotlin/Unit>] build@fun R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|/Builder.version| = String(321)
         }
         )
-            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|Builder|
 
-        R|/builder|.<Unresolved name: execute>#()
-        R|/builder|.<Unresolved name: version># = String()
+        R|/builder|.R|/Builder.execute|()
+        R|/builder|.R|/Builder.version| = String()
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] statement.kts
@@ -626,14 +626,14 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
             this@R|special/anonymous|.R|/Builder.execute|()
         }
         )
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val builder: <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]> = <Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>#(<L> = [ResolvedTo(RAW_FIR)] build@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
-            <Unresolved name: version># = String(321)
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val builder: R|Builder| = R|/build|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<Builder, kotlin/Unit>] build@fun R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|/Builder.version| = String(321)
         }
         )
-            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|Builder|
 
-        R|/builder|.<Unresolved name: execute>#()
-        R|/builder|.<Unresolved name: version># = String()
+        R|/builder|.R|/Builder.execute|()
+        R|/builder|.R|/Builder.version| = String()
 
 FILE RAW TO BODY:
 FILE: [ResolvedTo(IMPORTS)] statement.kts
@@ -675,11 +675,11 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
             this@R|special/anonymous|.R|/Builder.execute|()
         }
         )
-        public final [ResolvedTo(BODY_RESOLVE)] val builder: <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]> = <Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>#(<L> = [ResolvedTo(BODY_RESOLVE)] build@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
-            <Unresolved name: version># = String(321)
+        public final [ResolvedTo(BODY_RESOLVE)] val builder: R|Builder| = R|/build|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<Builder, kotlin/Unit>] build@fun R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|/Builder.version| = String(321)
         }
         )
-            public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Ambiguity: build, [kotlin/collections/build, kotlin/collections/build, kotlin/collections/build]>
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|Builder|
 
-        R|/builder|.<Unresolved name: execute>#()
-        R|/builder|.<Unresolved name: version># = String()
+        R|/builder|.R|/Builder.execute|()
+        R|/builder|.R|/Builder.version| = String()

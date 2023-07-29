@@ -176,8 +176,8 @@ FILE: [ResolvedTo(IMPORTS)] functionCallWithGenericResultScript.kts
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] functionCallWithGenericResultScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
@@ -198,8 +198,8 @@ FILE: [ResolvedTo(IMPORTS)] functionCallWithGenericResultScript.kts
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] functionCallWithGenericResultScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
@@ -220,8 +220,8 @@ FILE: [ResolvedTo(IMPORTS)] functionCallWithGenericResultScript.kts
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] functionCallWithGenericResultScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
@@ -242,8 +242,8 @@ FILE: [ResolvedTo(IMPORTS)] functionCallWithGenericResultScript.kts
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] functionCallWithGenericResultScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
@@ -264,8 +264,8 @@ FILE: [ResolvedTo(IMPORTS)] functionCallWithGenericResultScript.kts
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] functionCallWithGenericResultScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? open [ResolvedTo(RAW_FIR)] class Foo<[ResolvedTo(RAW_FIR)] T : CharSequence> : R|kotlin/Any| {
@@ -275,12 +275,12 @@ FILE: [ResolvedTo(IMPORTS)] functionCallWithGenericResultScript.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun bar(): Foo<String>? {
+        public final [ResolvedTo(CONTRACTS)] fun bar(): R|Foo<kotlin/String>?| {
             ^bar Null(null)
         }
 
         public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
-            [ResolvedTo(BODY_RESOLVE)] lval x: <ERROR TYPE REF: Unresolved name: bar> = <Unresolved name: bar>#()
+            [ResolvedTo(BODY_RESOLVE)] lval x: R|Foo<kotlin/String>?| = R|/bar|()
         }
 
 
@@ -302,6 +302,6 @@ FILE: [ResolvedTo(IMPORTS)] functionCallWithGenericResultScript.kts
         }
 
         public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
-            [ResolvedTo(BODY_RESOLVE)] lval x: <ERROR TYPE REF: Unresolved name: bar> = <Unresolved name: bar>#()
+            [ResolvedTo(BODY_RESOLVE)] lval x: R|Foo<kotlin/String>?| = R|/bar|()
         }
 

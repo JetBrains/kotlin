@@ -27,6 +27,7 @@ class LLFirSingleResolveTarget(
         is FirCallableDeclaration -> target.symbol.name.asString()
         is FirAnonymousInitializer -> ("<init-block>")
         is FirFileAnnotationsContainer -> "<file annotations>"
+        is FirScript -> target.name.asString()
         else -> "???"
     }
 }

@@ -112,8 +112,8 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| {
@@ -126,8 +126,8 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(CONTRACTS)] fun resolveMe(): R|kotlin/Unit| {
@@ -140,8 +140,8 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
@@ -154,8 +154,8 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun resolveMe(): R|kotlin/Unit| {
@@ -168,16 +168,16 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
-            <Unresolved name: receive>#(<Unresolved name: property>#)
+            <Unresolved name: receive>#(R|/property|)
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] val property: Int = IntegerLiteral(10)
-            public? [ResolvedTo(RAW_FIR)] get(): Int
+        public final [ResolvedTo(CONTRACTS)] val property: R|kotlin/Int| = IntegerLiteral(10)
+            public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int|
 
 
 FILE RAW TO BODY:
@@ -187,7 +187,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
-            <Unresolved name: receive>#(<Unresolved name: property>#)
+            <Unresolved name: receive>#(R|/property|)
         }
 
         public final [ResolvedTo(BODY_RESOLVE)] val property: R|kotlin/Int| = Int(10)

@@ -168,8 +168,8 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe([ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] foo: R|Foo|): R|kotlin/Unit| {
@@ -189,8 +189,8 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(CONTRACTS)] fun resolveMe([ResolvedTo(CONTRACTS)] foo: R|Foo|): R|kotlin/Unit| {
@@ -210,8 +210,8 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun resolveMe([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] foo: R|Foo|): R|kotlin/Unit| {
@@ -231,8 +231,8 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun resolveMe([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] foo: R|Foo|): R|kotlin/Unit| {
@@ -252,21 +252,21 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe([ResolvedTo(BODY_RESOLVE)] foo: R|Foo|): R|kotlin/Unit| {
-            R|<local>/foo|.<Unresolved name: util>#()
+            R|<local>/foo|.R|/util|<R|Foo|, R|Bar<Foo>|>()
         }
 
         public abstract [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] interface Bar<[ResolvedTo(RAW_FIR)] T : Foo> : R|kotlin/Any| {
+        public? final? [ResolvedTo(TYPES)] interface Bar<[ResolvedTo(TYPES)] T : R|Foo|> : R|kotlin/Any| {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : Foo, [ResolvedTo(RAW_FIR)] B : Bar<F>> F.util(): B {
+        public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] F : R|Foo|, [ResolvedTo(CONTRACTS)] B : R|Bar<F>|> R|F|.util(): R|B| {
             ^util Null(null)!!
         }
 
@@ -278,7 +278,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe([ResolvedTo(BODY_RESOLVE)] foo: R|Foo|): R|kotlin/Unit| {
-            R|<local>/foo|.<Unresolved name: util>#()
+            R|<local>/foo|.R|/util|<R|Foo|, R|Bar<Foo>|>()
         }
 
         public abstract [ResolvedTo(BODY_RESOLVE)] interface Foo : R|kotlin/Any| {

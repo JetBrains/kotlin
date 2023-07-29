@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.resolve.SessionHolder
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValueForScript
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirScriptDeclarationsScope
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.coneType
 
 class TowerElementsForScript(
@@ -19,6 +19,8 @@ class TowerElementsForScript(
 )
 
 fun SessionHolder.collectTowerDataElementsForScript(owner: FirScript): TowerElementsForScript {
+    owner.lazyResolveToPhase(FirResolvePhase.TYPES)
+
     val contextReceivers = owner.contextReceivers.mapIndexed { index, receiver ->
         ImplicitReceiverValueForScript(
             owner.symbol, receiver.typeRef.coneType, receiver.labelName, session, scopeSession,

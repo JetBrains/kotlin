@@ -206,4 +206,18 @@ internal inline fun FirScript.forEachDeclaration(action: (FirDeclaration) -> Uni
     }
 }
 
+internal inline fun FirRegularClass.forEachDeclaration(action: (FirDeclaration) -> Unit) {
+    declarations.forEach(action)
+}
+
+internal val FirDeclaration.isDeclarationContainer: Boolean get() = this is FirRegularClass || this is FirScript
+
+internal inline fun FirDeclaration.forEachDeclaration(action: (FirDeclaration) -> Unit) {
+    when (this) {
+        is FirRegularClass -> forEachDeclaration(action)
+        is FirScript -> forEachDeclaration(action)
+        else -> errorWithFirSpecificEntries("Unsupported declarations container", fir = this)
+    }
+}
+
 internal val FirStatement.isScriptStatement: Boolean get() = this !is FirDeclaration || origin is FirDeclarationOrigin.ScriptCustomization

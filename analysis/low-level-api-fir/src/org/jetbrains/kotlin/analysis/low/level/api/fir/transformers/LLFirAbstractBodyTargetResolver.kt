@@ -45,6 +45,16 @@ internal abstract class LLFirAbstractBodyTargetResolver(
         }
     }
 
+    override fun withScript(firScript: FirScript, action: () -> Unit) {
+        transformer.context.withScopesForScript(firScript, transformer.components) {
+            transformer.firResolveContextCollector?.let { collector ->
+                collector.addDeclarationContext(firScript, transformer.context)
+            }
+
+            action()
+        }
+    }
+
     override fun withFile(firFile: FirFile, action: () -> Unit) {
         transformer.context.withFile(firFile, transformer.components) {
             transformer.firResolveContextCollector?.addFileContext(firFile, transformer.context.towerDataContext)

@@ -41,12 +41,12 @@ FILE: [ResolvedTo(IMPORTS)] script.kts
             this@R|special/anonymous|.R|/Builder.execute|()
         }
         )
-        public final [ResolvedTo(BODY_RESOLVE)] val builder: <ERROR TYPE REF: Unresolved name: build> = <Unresolved name: build>#(<L> = [ResolvedTo(BODY_RESOLVE)] build@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
-            <Unresolved name: version># = String(321)
+        public final [ResolvedTo(BODY_RESOLVE)] val builder: R|Builder| = R|/build|(<L> = [ResolvedTo(BODY_RESOLVE)] build@fun R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|/Builder.version| = String(321)
         }
         )
-            public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: build>
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|Builder|
 
-        public final [ResolvedTo(BODY_RESOLVE)] val $$result: <ERROR TYPE REF: Unresolved name: execute> = R|/builder|.<Unresolved name: execute>#()
-            public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: execute>
+        public final [ResolvedTo(BODY_RESOLVE)] val $$result: R|kotlin/Unit| = R|/builder|.R|/Builder.execute|()
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Unit|
 

@@ -1,6 +1,6 @@
 BEFORE MODIFICATION:
 public final [ResolvedTo(BODY_RESOLVE)] fun <no name provided>(): R|kotlin/Unit| {
-    [ResolvedTo(BODY_RESOLVE)] lval a: <ERROR TYPE REF: Unresolved name: doSmth> = <Unresolved name: doSmth>#(String(str))
+    [ResolvedTo(BODY_RESOLVE)] lval a: R|kotlin/Int| = R|/doSmth|(String(str))
 }
 
 AFTER MODIFICATION:
