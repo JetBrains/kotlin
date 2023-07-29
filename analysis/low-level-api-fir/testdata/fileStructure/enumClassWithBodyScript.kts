@@ -1,4 +1,4 @@
-/* NonReanalyzableNonClassDeclarationStructureElement */enum class A {/* NonReanalyzableClassDeclarationStructureElement */
+/* RootScriptStructureElement */enum class A {/* NonReanalyzableClassDeclarationStructureElement */
     X {/* NonReanalyzableNonClassDeclarationStructureElement */
         fun localInX() = 1
     },

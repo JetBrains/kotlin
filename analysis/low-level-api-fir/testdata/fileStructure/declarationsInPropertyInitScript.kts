@@ -1,4 +1,4 @@
-/* NonReanalyzableNonClassDeclarationStructureElement */class A {/* NonReanalyzableClassDeclarationStructureElement */
+/* RootScriptStructureElement */class A {/* NonReanalyzableClassDeclarationStructureElement */
     val a = run {
         class X()
 

@@ -11,7 +11,9 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveCompone
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.ClassDiagnosticRetriever
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.FileDiagnosticRetriever
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.FileStructureElementDiagnostics
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.ScriptDiagnosticRetriever
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.SingleNonLocalDeclarationDiagnosticRetriever
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isScriptStatement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.*
@@ -21,6 +23,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.psi.*
 
 internal sealed class FileStructureElement(val firFile: FirFile, protected val moduleComponents: LLFirModuleResolveComponents) {
@@ -123,6 +126,38 @@ internal sealed class NonReanalyzableDeclarationStructureElement(
     moduleComponents: LLFirModuleResolveComponents,
 ) : FileStructureElement(firFile, moduleComponents)
 
+internal class RootScriptStructureElement(
+    firFile: FirFile,
+    val script: FirScript,
+    override val psi: KtScript,
+    moduleComponents: LLFirModuleResolveComponents,
+) : NonReanalyzableDeclarationStructureElement(firFile, moduleComponents) {
+    override val mappings: KtToFirMapping = KtToFirMapping(script, Recorder)
+
+    override val diagnostics: FileStructureElementDiagnostics = FileStructureElementDiagnostics(
+        firFile,
+        ScriptDiagnosticRetriever(script),
+        moduleComponents,
+    )
+
+    private object Recorder : FirElementsRecorder() {
+        override fun visitScript(script: FirScript, data: MutableMap<KtElement, FirElement>) {
+            cacheElement(script, data)
+            visitScriptDependentElements(script, this, data)
+        }
+    }
+}
+
+internal fun <T, R> visitScriptDependentElements(script: FirScript, visitor: FirVisitor<T, R>, data: R) {
+    script.annotations.forEach { it.accept(visitor, data) }
+    script.contextReceivers.forEach { it.accept(visitor, data) }
+    script.statements.forEach {
+        if (it.isScriptStatement) {
+            it.accept(visitor, data)
+        }
+    }
+}
+
 internal class NonReanalyzableClassDeclarationStructureElement(
     firFile: FirFile,
     val fir: FirRegularClass,
@@ -217,17 +252,14 @@ internal class RootStructureElement(
     override val psi: KtFile,
     moduleComponents: LLFirModuleResolveComponents,
 ) : FileStructureElement(firFile, moduleComponents) {
-    override val mappings = KtToFirMapping(firFile, recorder)
+    override val mappings = KtToFirMapping(firFile, Recorder)
 
-    override val diagnostics =
-        FileStructureElementDiagnostics(firFile, FileDiagnosticRetriever, moduleComponents)
+    override val diagnostics = FileStructureElementDiagnostics(firFile, FileDiagnosticRetriever, moduleComponents)
 
-    companion object {
-        private val recorder = object : FirElementsRecorder() {
-            override fun visitElement(element: FirElement, data: MutableMap<KtElement, FirElement>) {
-                if (element !is FirDeclaration || element is FirFile) {
-                    super.visitElement(element, data)
-                }
+    private object Recorder : FirElementsRecorder() {
+        override fun visitElement(element: FirElement, data: MutableMap<KtElement, FirElement>) {
+            if (element !is FirDeclaration || element is FirFile) {
+                super.visitElement(element, data)
             }
         }
     }

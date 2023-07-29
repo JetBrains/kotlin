@@ -53,7 +53,12 @@ internal fun KtDeclaration.findSourceNonLocalFirDeclaration(firFile: FirFile, pr
                     } else {
                         if (declaration.containingKtFile.isScript()) {
                             // .kts will have a single [FirScript] as a declaration. We need to unwrap statements in it.
-                            (firFile.declarations.singleOrNull() as? FirScript)?.statements?.filterIsInstance<FirDeclaration>()
+                            val firScript = firFile.declarations.singleOrNull() as? FirScript
+                            if (declaration is KtScript) {
+                                return@findSourceNonLocalFirDeclarationByProvider firScript?.takeIf { it.psi == declaration }
+                            }
+
+                            firScript?.statements?.filterIsInstance<FirDeclaration>()
                         } else {
                             firFile.declarations
                         }

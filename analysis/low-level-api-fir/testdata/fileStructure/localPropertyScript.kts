@@ -1,4 +1,4 @@
-/* NonReanalyzableNonClassDeclarationStructureElement */fun foo() {/* ReanalyzableFunctionStructureElement */
+/* RootScriptStructureElement */fun foo() {/* ReanalyzableFunctionStructureElement */
     var x: Int
 }
 class A {/* NonReanalyzableClassDeclarationStructureElement */

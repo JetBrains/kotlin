@@ -1,4 +1,4 @@
-/* NonReanalyzableNonClassDeclarationStructureElement */open class A
+/* RootScriptStructureElement */open class A
     (init: A.() -> Unit)/* NonReanalyzableNonClassDeclarationStructureElement */
 {/* NonReanalyzableClassDeclarationStructureElement */
     val prop: String = ""/* NonReanalyzableNonClassDeclarationStructureElement */

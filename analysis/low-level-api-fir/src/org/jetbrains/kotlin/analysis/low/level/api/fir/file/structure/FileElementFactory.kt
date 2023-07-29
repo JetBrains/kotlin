@@ -54,6 +54,8 @@ internal object FileElementFactory {
             )
         }
 
+        ktDeclaration is KtScript -> RootScriptStructureElement(firFile, firDeclaration as FirScript, ktDeclaration, moduleComponents)
+
         else -> {
             NonReanalyzableNonClassDeclarationStructureElement(
                 firFile,

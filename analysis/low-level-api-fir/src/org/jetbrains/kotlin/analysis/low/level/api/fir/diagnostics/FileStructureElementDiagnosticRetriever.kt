@@ -9,12 +9,14 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.fir.PersistenceContextCollector
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.fir.PersistentCheckerContextFactory
+import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.visitScriptDependentElements
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContextForProvider
 import org.jetbrains.kotlin.fir.analysis.collectors.DiagnosticCollectorComponents
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirScript
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
@@ -127,6 +129,36 @@ internal object FileDiagnosticRetriever : FileStructureElementDiagnosticRetrieve
                     file.packageDirective.accept(this, data)
                     file.imports.forEach { it.accept(this, data) }
                     // do not visit declarations here
+                }
+            }
+        }
+    }
+}
+
+internal class ScriptDiagnosticRetriever(private val script: FirScript) : FileStructureElementDiagnosticRetriever() {
+    override fun retrieve(
+        firFile: FirFile,
+        collector: FileStructureElementDiagnosticsCollector,
+        moduleComponents: LLFirModuleResolveComponents,
+    ): FileStructureElementDiagnosticList {
+        val sessionHolder = SessionHolderImpl(moduleComponents.session, moduleComponents.scopeSessionProvider.getScopeSession())
+        val context = PersistenceContextCollector.collectContext(sessionHolder, firFile, script)
+        return withSourceCodeAnalysisExceptionUnwrapping {
+            collector.collectForStructureElement(script) { components ->
+                Visitor(context, components)
+            }
+        }
+    }
+
+    private class Visitor(
+        context: CheckerContextForProvider,
+        components: DiagnosticCollectorComponents,
+    ) : LLFirDiagnosticVisitor(context, components) {
+        override fun visitScript(script: FirScript, data: Nothing?) {
+            withAnnotationContainer(script) {
+                checkElement(script)
+                withDeclaration(script) {
+                    visitScriptDependentElements(script, this, data)
                 }
             }
         }

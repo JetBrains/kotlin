@@ -1,4 +1,4 @@
-/* NonReanalyzableNonClassDeclarationStructureElement */fun foo(): Int {/* ReanalyzableFunctionStructureElement */
+/* RootScriptStructureElement */fun foo(): Int {/* ReanalyzableFunctionStructureElement */
     println("")
     return 10
 }

@@ -1,4 +1,4 @@
-/* NonReanalyzableNonClassDeclarationStructureElement */class Foo {/* NonReanalyzableClassDeclarationStructureElement */
+/* RootScriptStructureElement */class Foo {/* NonReanalyzableClassDeclarationStructureElement */
     @Suppress("") @MustBeDocumented
 }
 class Bar {/* NonReanalyzableClassDeclarationStructureElement */

@@ -1,4 +1,4 @@
-/* NonReanalyzableNonClassDeclarationStructureElement */class Builder {/* NonReanalyzableClassDeclarationStructureElement */
+/* RootScriptStructureElement */class Builder {/* NonReanalyzableClassDeclarationStructureElement */
     var version: String = ""/* NonReanalyzableNonClassDeclarationStructureElement */
 
     fun execute() {/* ReanalyzableFunctionStructureElement */

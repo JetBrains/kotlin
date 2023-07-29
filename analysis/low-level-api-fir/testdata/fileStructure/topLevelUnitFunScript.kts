@@ -1,3 +1,3 @@
-/* NonReanalyzableNonClassDeclarationStructureElement */fun foo() {/* ReanalyzableFunctionStructureElement */
+/* RootScriptStructureElement */fun foo() {/* ReanalyzableFunctionStructureElement */
     println("")
 }

@@ -1,4 +1,4 @@
-/* NonReanalyzableNonClassDeclarationStructureElement */class X {/* NonReanalyzableClassDeclarationStructureElement */
+/* RootScriptStructureElement */class X {/* NonReanalyzableClassDeclarationStructureElement */
     var x: Int/* ReanalyzablePropertyStructureElement */
         get() = field
         set(value) {

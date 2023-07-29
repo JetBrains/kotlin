@@ -68,6 +68,7 @@ abstract class AbstractFirContextCollectionTest : AbstractLowLevelApiSingleFileT
         is DanglingTopLevelModifierListStructureElement -> fir
         is NonReanalyzableClassDeclarationStructureElement -> fir
         is NonReanalyzableNonClassDeclarationStructureElement -> fir
+        is RootScriptStructureElement -> script
     }
 
     private class BeforeElementLLFirSessionConfigurator(private val testServices: TestServices) : LLFirSessionConfigurator {

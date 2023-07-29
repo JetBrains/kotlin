@@ -1,4 +1,4 @@
-/* NonReanalyzableNonClassDeclarationStructureElement */fun x() {/* ReanalyzableFunctionStructureElement */
+/* RootScriptStructureElement */fun x() {/* ReanalyzableFunctionStructureElement */
     fun y() {
 
     }

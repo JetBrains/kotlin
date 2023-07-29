@@ -1,4 +1,4 @@
-/* NonReanalyzableNonClassDeclarationStructureElement */fun (a: Int = 1): String = "str"/* ReanalyzableFunctionStructureElement */
+/* RootScriptStructureElement */fun (a: Int = 1): String = "str"/* ReanalyzableFunctionStructureElement */
 
 fun () {/* ReanalyzableFunctionStructureElement */
 

@@ -1,4 +1,4 @@
-/* NonReanalyzableNonClassDeclarationStructureElement */class A
+/* RootScriptStructureElement */class A
 
     (val a: Int)/* NonReanalyzableNonClassDeclarationStructureElement */
 
