@@ -15,7 +15,10 @@ import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer
 import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.currentBuildId
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.representsProject
@@ -140,7 +143,7 @@ class GradleProjectModuleBuilder(private val addInferredSourceSetVisibilityAsExp
         val moduleCompilationCluster = detectModules(targets, extension.sourceSets)
 
         val publishedVariantsByCompilation = targets.flatMap { target ->
-            (target as? AbstractKotlinTarget)?.kotlinComponents.orEmpty()
+            (target as? InternalKotlinTarget)?.kotlinComponents.orEmpty()
                 .flatMap { component -> (component as? KotlinVariant)?.usages.orEmpty() }
         }.groupBy { it.compilation }
 
@@ -325,7 +328,7 @@ class KpmGradleModuleVariantResolver : KpmModuleVariantResolver {
                     project.multiplatformExtensionOrNull?.targets ?: listOf((project.kotlinExtension as KotlinSingleTargetExtension<*>).target)
 
                 val compilation =
-                    targets.filterIsInstance<AbstractKotlinTarget>()
+                    targets.filterIsInstance<InternalKotlinTarget>()
                         .flatMap { it.kotlinComponents.filterIsInstance<KotlinVariant>() }
                         .flatMap { it.usages }
                         .firstOrNull { it.name == requestingVariant.fragmentName }

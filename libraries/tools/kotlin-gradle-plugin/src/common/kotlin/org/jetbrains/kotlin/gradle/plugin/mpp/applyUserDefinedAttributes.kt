@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
  * 1. Output configurations of each target need the corresponding compilation's attributes (and, indirectly, the target's attributes)
  * 2. Resolvable configurations of each compilation need the compilation's attributes
  */
-internal fun applyUserDefinedAttributes(target: AbstractKotlinTarget) {
+internal fun applyUserDefinedAttributes(target: InternalKotlinTarget) {
     val project = target.project
     project.launch {
         KotlinPluginLifecycle.Stage.AfterEvaluateBuildscript.await()
