@@ -20,19 +20,19 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
  * Specifies the path to the resolve targets and resolve targets themselves.
  * Those targets are going to be resolved by [org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirModuleLazyDeclarationResolver]
  */
-sealed class LLFirResolveTarget {
+sealed class LLFirResolveTarget(
     /**
      * [FirFile] where the targets are located
      */
-    abstract val firFile: FirFile
+    val firFile: FirFile,
 
     /**
      * The list of [FirRegularClass] which are the required to go from file to target declarations in the top-down order.
      *
      * If resolve target is [FirRegularClass] itself, it's not included into the [path]
      */
-    abstract val path: List<FirRegularClass>
-
+    val path: List<FirDeclaration>,
+) {
     /**
      * Executions the [action] for each target that this [LLFirResolveTarget] represents.
      */

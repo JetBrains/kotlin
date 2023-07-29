@@ -14,10 +14,10 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
  * All of them are going to be resolved.
  */
 class LLFirWholeClassResolveTarget(
-    override val firFile: FirFile,
-    override val path: List<FirRegularClass>,
-    val target: FirRegularClass,
-) : LLFirResolveTarget() {
+    firFile: FirFile,
+    classPath: List<FirRegularClass>,
+    target: FirRegularClass,
+) : LLFirResolveTargetWithDedicatedElement<FirRegularClass>(firFile, classPath, target) {
     override fun forEachTarget(action: (FirElementWithResolveState) -> Unit) {
         action(target)
 

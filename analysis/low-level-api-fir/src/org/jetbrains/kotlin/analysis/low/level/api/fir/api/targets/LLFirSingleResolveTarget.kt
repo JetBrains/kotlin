@@ -13,11 +13,10 @@ import org.jetbrains.kotlin.fir.declarations.*
  * [LLFirResolveTarget] representing single target to resolve. The [target] can be any of [FirElementWithResolveState]
  */
 class LLFirSingleResolveTarget(
-    override val firFile: FirFile,
-    override val path: List<FirRegularClass>,
-    val target: FirElementWithResolveState,
-) : LLFirResolveTarget() {
-
+    firFile: FirFile,
+    classPath: List<FirRegularClass>,
+    target: FirElementWithResolveState,
+) : LLFirResolveTargetWithDedicatedElement<FirElementWithResolveState>(firFile, classPath, target) {
     override fun forEachTarget(action: (FirElementWithResolveState) -> Unit) {
         action(target)
     }
