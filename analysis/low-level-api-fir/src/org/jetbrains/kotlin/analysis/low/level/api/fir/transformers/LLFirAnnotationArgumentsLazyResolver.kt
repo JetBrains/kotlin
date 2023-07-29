@@ -54,6 +54,38 @@ private class LLFirAnnotationArgumentsTargetResolver(
         firResolveContextCollector = firResolveContextCollector,
     )
 
+    override fun withScript(firScript: FirScript, action: () -> Unit) {
+        super.withScript(firScript) {
+            transformer.firResolveContextCollector?.let { collector ->
+                collector.addDeclarationContext(firScript, transformer.context)
+            }
+
+            action()
+        }
+    }
+
+    override fun withFile(firFile: FirFile, action: () -> Unit) {
+        super.withFile(firFile) {
+            transformer.firResolveContextCollector?.let { collector ->
+                collector.addFileContext(firFile, transformer.context.towerDataContext)
+            }
+
+            action()
+        }
+    }
+
+    @Deprecated("Should never be called directly, only for override purposes, please use withRegularClass", level = DeprecationLevel.ERROR)
+    override fun withRegularClassImpl(firClass: FirRegularClass, action: () -> Unit) {
+        @Suppress("DEPRECATION_ERROR")
+        super.withRegularClassImpl(firClass) {
+            transformer.firResolveContextCollector?.let { collector ->
+                collector.addDeclarationContext(firClass, transformer.context)
+            }
+
+            action()
+        }
+    }
+
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
         collectTowerDataContext(target)
 
@@ -82,9 +114,13 @@ private class LLFirAnnotationArgumentsTargetResolver(
             }
         }
 
+        /**
+         * [withRegularClass] and [withScript] already have [FirResolveContextCollector.addDeclarationContext] call,
+         * so we shouldn't do anything inside
+         */
         when (target) {
-            is FirRegularClass -> withRegularClass(target) { contextCollector.addDeclarationContext(target, bodyResolveContext) }
-            is FirScript -> withScript(target) { contextCollector.addDeclarationContext(target, bodyResolveContext) }
+            is FirRegularClass -> withRegularClass(target) { }
+            is FirScript -> withScript(target) { }
             else -> {}
         }
     }

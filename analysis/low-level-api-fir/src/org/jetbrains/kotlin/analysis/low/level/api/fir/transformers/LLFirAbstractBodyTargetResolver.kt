@@ -46,27 +46,17 @@ internal abstract class LLFirAbstractBodyTargetResolver(
     }
 
     override fun withScript(firScript: FirScript, action: () -> Unit) {
-        transformer.context.withScopesForScript(firScript, transformer.components) {
-            transformer.firResolveContextCollector?.let { collector ->
-                collector.addDeclarationContext(firScript, transformer.context)
-            }
-
-            action()
-        }
+        transformer.context.withScopesForScript(firScript, transformer.components, action)
     }
 
     override fun withFile(firFile: FirFile, action: () -> Unit) {
-        transformer.context.withFile(firFile, transformer.components) {
-            transformer.firResolveContextCollector?.addFileContext(firFile, transformer.context.towerDataContext)
-            action()
-        }
+        transformer.context.withFile(firFile, transformer.components, action)
     }
 
     @Deprecated("Should never be called directly, only for override purposes, please use withRegularClass", level = DeprecationLevel.ERROR)
     override fun withRegularClassImpl(firClass: FirRegularClass, action: () -> Unit) {
         transformer.declarationsTransformer?.context?.withContainingClass(firClass) {
             transformer.declarationsTransformer?.withRegularClass(firClass) {
-                transformer.firResolveContextCollector?.addDeclarationContext(firClass, transformer.context)
                 action()
                 firClass
             }
