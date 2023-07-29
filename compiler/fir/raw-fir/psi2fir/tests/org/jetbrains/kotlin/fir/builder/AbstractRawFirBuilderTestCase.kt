@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -66,7 +66,7 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
         val file = createKtFile(filePath)
         val firFile = file.toFirFile(BodyBuildingMode.NORMAL)
         val firFileDump = FirRenderer.withDeclarationAttributes().renderElementAsString(firFile)
-        val expectedPath = filePath.replace(".kt", ".txt")
+        val expectedPath = filePath.replace(".${myFileExt}", ".txt")
         KotlinTestUtils.assertEqualsToFile(File(expectedPath), firFileDump)
     }
 

@@ -9,6 +9,7 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
+import org.jetbrains.kotlin.fir.extensions.FirExtensionService
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
@@ -115,6 +116,8 @@ object FirSessionFactoryHelper {
                         get() = stub()
                 }
             ))
+
+            register(FirExtensionService::class, FirExtensionService(this))
         }
     }
 }

@@ -1,0 +1,64 @@
+FILE: script.kts
+    SCRIPT:
+
+        public? final? class Builder : R|kotlin/Any| {
+            public? [ContainingClassKey=Builder] constructor(): R|Builder| {
+                super<R|kotlin/Any|>()
+            }
+
+            public? final? var version: String = String()
+                public? [ContainingClassKey=Builder] get(): String
+                public? [ContainingClassKey=Builder] set(value: String): R|kotlin/Unit|
+
+            public? final? fun execute(): R|kotlin/Unit| {
+                println#(version#)
+            }
+
+            public? final? class Nested : R|kotlin/Any| {
+                public? [ContainingClassKey=Nested] constructor(): R|Builder.Nested| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public? final? fun foo(): R|kotlin/Unit| {
+                }
+
+                public? final? fun boo(): R|kotlin/Unit| {
+                }
+
+            }
+
+        }
+
+        public? final? fun build(action: ( Builder.() -> Unit )): <implicit> {
+            ^build Builder#().apply#(action#)
+        }
+
+        public? final? fun build2(action: ( Builder.() -> Unit )): Builder {
+            ^build2 Builder#().apply#(action#)
+        }
+
+        build#(<L> = build@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+            version# = String(123)
+            local final? class A : R|kotlin/Any| {
+                public? [ContainingClassKey=A] constructor(): R|A| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public? final? fun doo(): R|kotlin/Unit| {
+                }
+
+            }
+
+            execute#()
+        }
+        )
+        +=(version#, IntegerLiteral(123))
+        public? final? val builder: <implicit> = build#(<L> = build@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+            version# = String(321)
+        }
+        )
+            public? get(): <implicit>
+
+        println#()
+        builder#.version# = String()
+        builder#.execute#()
