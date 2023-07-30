@@ -31,4 +31,14 @@ internal sealed interface TestCompilationArtifact {
         val headersDir: File get () = frameworkDir.resolve("Headers")
         val mainHeader: File get() = headersDir.resolve("$frameworkName.h")
     }
+
+    data class SwiftArtifact(private val buildDir: File, val artifactName: String) : TestCompilationArtifact {
+        override val logFile: File get() = buildDir.resolveSibling("${buildDir.name}.log")
+
+        val kotlinBinary: File get() = buildDir.resolve("lib${artifactName}.dylib")
+
+        val swiftSources: List<File> get() = buildDir.list()!!
+            .filter { it.endsWith(".swift") }
+            .map { buildDir.resolve(it) }
+    }
 }

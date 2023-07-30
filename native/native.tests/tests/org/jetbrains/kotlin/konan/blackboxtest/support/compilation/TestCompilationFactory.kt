@@ -26,10 +26,12 @@ internal class TestCompilationFactory {
     private val cachedKlibCompilations = ThreadSafeCache<KlibCacheKey, KlibCompilations>()
     private val cachedExecutableCompilations = ThreadSafeCache<ExecutableCacheKey, TestCompilation<Executable>>()
     private val cachedObjCFrameworkCompilations = ThreadSafeCache<ObjCFrameworkCacheKey, ObjCFrameworkCompilation>()
+    private val cachedSwiftArtifactCompilations = ThreadSafeCache<SwiftArtifactCacheKey, SwiftArtifactCompilation>()
 
     private data class KlibCacheKey(val sourceModules: Set<TestModule>, val freeCompilerArgs: TestCompilerArgs)
     private data class ExecutableCacheKey(val sourceModules: Set<TestModule>)
     private data class ObjCFrameworkCacheKey(val sourceModules: Set<TestModule>)
+    private data class SwiftArtifactCacheKey(val sourceModules: Set<TestModule>)
 
     // A pair of compilations for a KLIB itself and for its static cache that are created together.
     private data class KlibCompilations(val klib: TestCompilation<KLIB>, val staticCache: TestCompilation<KLIBStaticCache>?)
@@ -100,6 +102,31 @@ internal class TestCompilationFactory {
                 sourceModules = sourceModules,
                 dependencies = dependencies,
                 expectedArtifact = ObjCFramework(
+                    settings.artifactDirForPackageName(testCase.nominalPackageName),
+                    testCase.nominalPackageName.compressedPackageName
+                )
+            )
+        }
+    }
+
+    fun testCaseToSwiftArtifactCompilation(testCase: TestCase, settings: Settings): SwiftArtifactCompilation {
+        val cacheKey = SwiftArtifactCacheKey(testCase.rootModules)
+        cachedSwiftArtifactCompilations[cacheKey]?.let { return it }
+
+        val (
+            dependencies: Iterable<CompiledDependency<*>>,
+            sourceModules: Set<TestModule.Exclusive>
+        ) = getDependenciesAndSourceModules(settings, testCase.rootModules, testCase.freeCompilerArgs) {
+            ProduceStaticCache.No
+        }
+
+        return cachedSwiftArtifactCompilations.computeIfAbsent(cacheKey) {
+            SwiftArtifactCompilation(
+                settings = settings,
+                freeCompilerArgs = testCase.freeCompilerArgs,
+                sourceModules = sourceModules,
+                dependencies = dependencies,
+                expectedArtifact = SwiftArtifact(
                     settings.artifactDirForPackageName(testCase.nominalPackageName),
                     testCase.nominalPackageName.compressedPackageName
                 )

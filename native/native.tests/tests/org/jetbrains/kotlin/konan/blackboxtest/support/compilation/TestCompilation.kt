@@ -256,6 +256,40 @@ internal class ObjCFrameworkCompilation(
     }
 }
 
+internal class SwiftArtifactCompilation(
+    settings: Settings,
+    freeCompilerArgs: TestCompilerArgs,
+    sourceModules: Collection<TestModule>,
+    dependencies: Iterable<TestCompilationDependency<*>>,
+    expectedArtifact: SwiftArtifact
+) : SourceBasedCompilation<SwiftArtifact>(
+    targets = settings.get(),
+    home = settings.get(),
+    classLoader = settings.get(),
+    optimizationMode = settings.get(),
+    compilerOutputInterceptor = settings.get(),
+    threadStateChecker = settings.get(),
+    sanitizer = settings.get(),
+    gcType = settings.get(),
+    gcScheduler = settings.get(),
+    allocator = settings.get(),
+    pipelineType = settings.getStageDependentPipelineType(),
+    freeCompilerArgs = freeCompilerArgs,
+    sourceModules = sourceModules,
+    dependencies = CategorizedDependencies(dependencies),
+    expectedArtifact = expectedArtifact
+) {
+    override val binaryOptions get() = BinaryOptions.RuntimeAssertionsMode.defaultForTesting
+
+    override fun applySpecificArgs(argsBuilder: ArgsBuilder) = with(argsBuilder) {
+        add(
+            "-produce", "ir_based_swift",
+            "-output", expectedArtifact.kotlinBinary.absolutePath
+        )
+        super.applySpecificArgs(argsBuilder)
+    }
+}
+
 internal class GivenLibraryCompilation(givenArtifact: KLIB) : TestCompilation<KLIB>() {
     override val result = TestCompilationResult.Success(givenArtifact, LoggedData.NoopCompilerCall(givenArtifact.klibFile))
 }
