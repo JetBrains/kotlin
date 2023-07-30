@@ -33,7 +33,19 @@ class IrBasedSwiftGenerator(private val moduleName: String) : IrElementVisitorVo
             .addModifiers(Modifier.PRIVATE)
             .build()
 
-    val functions = mutableListOf<FunctionSpec>(initRuntimeIfNeededSpec)
+    private val switchThreadStateNative = FunctionSpec.abstractBuilder("switchThreadStateNative")
+            // FIXME: _silgen_name only work for as long as swiftcc matches ccc. Switch to c brindging instead.
+            .addAttribute("_silgen_name", "\"Kotlin_mm_switchThreadStateNative\"")
+            .addModifiers(Modifier.PRIVATE)
+            .build()
+
+    private val switchThreadStateRunnable = FunctionSpec.abstractBuilder("switchThreadStateRunnable")
+            // FIXME: _silgen_name only work for as long as swiftcc matches ccc. Switch to c brindging instead.
+            .addAttribute("_silgen_name", "\"Kotlin_mm_switchThreadStateRunnable\"")
+            .addModifiers(Modifier.PRIVATE)
+            .build()
+
+    val functions = mutableListOf<FunctionSpec>(initRuntimeIfNeededSpec, switchThreadStateNative, switchThreadStateRunnable)
 
     fun build(): FileSpec =
         FileSpec.builder(moduleName, moduleName).apply {
@@ -80,7 +92,10 @@ class IrBasedSwiftGenerator(private val moduleName: String) : IrElementVisitorVo
                     }
                 }
                 .addStatement("${initRuntimeIfNeededSpec.name}()")
-                .addStatement("return ${forwardDeclarationSpec.name}(${parametersSpec.map { "${it.parameterName}: ${it.parameterName}" }.joinToString()})")
+                .addStatement("${switchThreadStateRunnable.name}()")
+                .addStatement("let result = ${forwardDeclarationSpec.name}(${parametersSpec.map { "${it.parameterName}: ${it.parameterName}" }.joinToString()})")
+                .addStatement("${switchThreadStateNative.name}()")
+                .addStatement("return result")
                 .build()
 
         functions += forwardDeclarationSpec
