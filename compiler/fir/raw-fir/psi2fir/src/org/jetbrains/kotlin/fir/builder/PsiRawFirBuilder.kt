@@ -1127,19 +1127,23 @@ open class PsiRawFirBuilder(
                     for (declaration in file.declarations) {
                         declarations += when (declaration) {
                             is KtScript -> {
-                                requireWithAttachment(file.declarations.size == 1, message = { "Expect the script to be the only declaration in the file" }) {
-                                withEntry("fileName", file.name)
-                            }
-                            convertScript(declaration, this.name) {
-                                for (configurator in baseSession.extensionService.scriptConfigurators) {
-                                    with(configurator) { configure(this@buildFile) }
+                                requireWithAttachment(
+                                    file.declarations.size == 1,
+                                    message = { "Expect the script to be the only declaration in the file" },
+                                ) {
+                                    withEntry("fileName", file.name)
+                                }
+
+                                convertScript(declaration, name, sourceFile) {
+                                    for (configurator in baseSession.extensionService.scriptConfigurators) {
+                                        with(configurator) { configureContainingFile(this@buildFile) }
+                                    }
                                 }
                             }
+                            is KtDestructuringDeclaration -> buildErrorTopLevelDestructuringDeclaration(declaration.toFirSourceElement())
+                            else -> declaration.convert()
                         }
-                        is KtDestructuringDeclaration -> buildErrorTopLevelDestructuringDeclaration(declaration.toFirSourceElement())
-                        else -> declaration.convert()
                     }
-                }
 
                     for (danglingModifierList in file.danglingModifierLists) {
                         declarations += buildErrorTopLevelDeclarationForDanglingModifierList(danglingModifierList)
@@ -1148,7 +1152,12 @@ open class PsiRawFirBuilder(
             }
         }
 
-        private fun convertScript(script: KtScript, fileName: String, setup: FirScriptBuilder.() -> Unit = {}): FirScript {
+        private fun convertScript(
+            script: KtScript,
+            fileName: String,
+            sourceFile: KtSourceFile?,
+            setup: FirScriptBuilder.() -> Unit = {},
+        ): FirScript {
             return buildScript {
                 source = script.toFirSourceElement()
                 moduleData = baseModuleData
@@ -1193,6 +1202,11 @@ open class PsiRawFirBuilder(
                     }
                 }
                 setup()
+                if (sourceFile != null) {
+                    for (configurator in baseSession.extensionService.scriptConfigurators) {
+                        with(configurator) { configure(sourceFile) }
+                    }
+                }
             }
         }
 
@@ -1212,16 +1226,11 @@ open class PsiRawFirBuilder(
             }
         }
 
-        // TODO: if no original FirScript is passed here, the invalid script could be constructed, consider throwing an error
         override fun visitScript(script: KtScript, data: FirElement?): FirElement {
             val ktFile = script.containingKtFile
             val fileName = ktFile.name
-            return convertScript(script, fileName) {
-                (data as? FirScript)?.let {
-                    contextReceivers.addAll(it.contextReceivers)
-                    parameters.addAll(it.parameters)
-                }
-            }
+            val fileForSource = (data as? FirScript)?.psi?.containingFile as? KtFile ?: ktFile
+            return convertScript(script, fileName, KtPsiSourceFile(fileForSource))
         }
 
         protected fun KtEnumEntry.toFirEnumEntry(

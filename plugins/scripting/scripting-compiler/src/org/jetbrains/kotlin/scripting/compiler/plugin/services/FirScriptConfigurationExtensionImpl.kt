@@ -49,14 +49,35 @@ class FirScriptConfiguratorExtensionImpl(
 ) : FirScriptConfiguratorExtension(session) {
 
     @OptIn(SymbolInternals::class)
-    override fun FirScriptBuilder.configure(fileBuilder: FirFileBuilder) {
+    override fun FirScriptBuilder.configureContainingFile(fileBuilder: FirFileBuilder) {
         val sourceFile = fileBuilder.sourceFile ?: return
+        val configuration = getOrLoadConfiguration(sourceFile) ?: run {
+            log.warn("Configuration for ${sourceFile.asString()} wasn't found. FirScriptBuilder wasn't configured.")
+            return
+        }
 
-        val configuration = getOrLoadConfiguration(sourceFile)
-            ?: run {
-                log.warn("Configuration for ${sourceFile.asString()} wasn't found. FirScriptBuilder wasn't configured.")
-                return
+        configuration[ScriptCompilationConfiguration.defaultImports]?.forEach { defaultImport ->
+            val trimmed = defaultImport.trim()
+            val endsWithStar = trimmed.endsWith("*")
+            val stripped = if (endsWithStar) trimmed.substring(0, trimmed.length - 2) else trimmed
+            val fqName = FqName.fromSegments(stripped.split("."))
+            fileBuilder.imports += buildImport {
+                fileBuilder.sourceFile?.project()?.let {
+                    val dummyElement = KtPsiFactory(it, markGenerated = true).createColon()
+                    source = KtFakeSourceElement(dummyElement, KtFakeSourceElementKind.ImplicitImport)
+                }
+                importedFqName = fqName
+                isAllUnder = endsWithStar
             }
+        }
+    }
+
+    @OptIn(SymbolInternals::class)
+    override fun FirScriptBuilder.configure(sourceFile: KtSourceFile) {
+        val configuration = getOrLoadConfiguration(sourceFile) ?: run {
+            log.warn("Configuration for ${sourceFile.asString()} wasn't found. FirScriptBuilder wasn't configured.")
+            return
+        }
 
         // TODO: rewrite/extract decision logic for clarity
         configuration.getNoDefault(ScriptCompilationConfiguration.baseClass)?.let { baseClass ->
@@ -85,9 +106,11 @@ class FirScriptConfiguratorExtensionImpl(
                 }
             }
         }
+
         configuration[ScriptCompilationConfiguration.implicitReceivers]?.forEach { implicitReceiver ->
             contextReceivers.add(buildContextReceiverWithFqName(FqName.fromSegments(implicitReceiver.typeName.split("."))))
         }
+
         configuration[ScriptCompilationConfiguration.providedProperties]?.forEach { (propertyName, propertyType) ->
             val typeRef = buildUserTypeRef {
                 isMarkedNullable = propertyType.isNullable
@@ -107,24 +130,6 @@ class FirScriptConfiguratorExtensionImpl(
                     isVar = false
                 }
             )
-        }
-        configuration[ScriptCompilationConfiguration.annotationsForSamWithReceivers]?.forEach {
-            _knownAnnotationsForSamWithReceiver.add(it.typeName)
-        }
-
-        configuration[ScriptCompilationConfiguration.defaultImports]?.forEach { defaultImport ->
-            val trimmed = defaultImport.trim()
-            val endsWithStar = trimmed.endsWith("*")
-            val stripped = if (endsWithStar) trimmed.substring(0, trimmed.length - 2) else trimmed
-            val fqName = FqName.fromSegments(stripped.split("."))
-            fileBuilder.imports += buildImport {
-                fileBuilder.sourceFile?.project()?.let {
-                    val dummyElement = KtPsiFactory(it, markGenerated = true).createColon()
-                    source = KtFakeSourceElement(dummyElement, KtFakeSourceElementKind.ImplicitImport)
-                }
-                importedFqName = fqName
-                isAllUnder = endsWithStar
-            }
         }
 
         configuration[ScriptCompilationConfiguration.annotationsForSamWithReceivers]?.forEach {
