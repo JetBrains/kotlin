@@ -6,7 +6,7 @@ FILE: [ResolvedTo(RAW_FIR)] typeParameterOfTypeAliasScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class X<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(RAW_FIR)] T>(): R|X<T>| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }
@@ -22,7 +22,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAliasScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class X<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(RAW_FIR)] T>(): R|X<T>| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }
@@ -38,7 +38,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAliasScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class X<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(RAW_FIR)] T>(): R|X<T>| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }
@@ -54,7 +54,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAliasScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class X<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(RAW_FIR)] T>(): R|X<T>| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }
@@ -70,7 +70,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAliasScript.kts
 
         public? final? [ResolvedTo(SUPER_TYPES)] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|X<T>| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }
@@ -86,7 +86,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAliasScript.kts
 
         public? final? [ResolvedTo(SUPER_TYPES)] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|X<T>| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }
@@ -102,7 +102,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAliasScript.kts
 
         public? final? [ResolvedTo(SUPER_TYPES)] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|X<T>| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }
@@ -118,7 +118,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAliasScript.kts
 
         public? final? [ResolvedTo(SUPER_TYPES)] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|X<T>| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }
@@ -134,7 +134,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAliasScript.kts
 
         public? final? [ResolvedTo(SUPER_TYPES)] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|X<T>| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }
@@ -150,7 +150,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAliasScript.kts
 
         public? final? [ResolvedTo(SUPER_TYPES)] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|X<T>| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }
@@ -166,7 +166,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAliasScript.kts
 
         public? final? [ResolvedTo(SUPER_TYPES)] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|X<T>| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }
@@ -182,7 +182,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAliasScript.kts
 
         public? final? [ResolvedTo(SUPER_TYPES)] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|X<T>| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }
@@ -198,7 +198,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAliasScript.kts
 
         public? final? [ResolvedTo(SUPER_TYPES)] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|X<T>| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }

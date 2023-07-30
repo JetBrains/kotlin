@@ -13,7 +13,7 @@ FILE: [ResolvedTo(IMPORTS)] assignment.kts
 
         public final [ResolvedTo(STATUS)] class Builder : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Builder] constructor(): R|Builder| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public final [ResolvedTo(CONTRACTS)] var version: R|kotlin/String| = String()

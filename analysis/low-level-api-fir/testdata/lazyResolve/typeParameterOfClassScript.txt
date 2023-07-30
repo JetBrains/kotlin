@@ -6,11 +6,10 @@ FILE: [ResolvedTo(RAW_FIR)] typeParameterOfClassScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] Type>(): R|MyClass<Type>| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] t: Type): R|kotlin/Unit| {
-            }
+            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] t: Type): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -23,11 +22,10 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClassScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class MyClass<[ResolvedTo(RAW_FIR)] Type> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(RAW_FIR)] Type>(): R|MyClass<Type>| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] t: Type): R|kotlin/Unit| {
-            }
+            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] t: Type): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -40,11 +38,10 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClassScript.kts
 
         public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class MyClass<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] Type> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] Type>(): R|MyClass<Type>| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] t: Type): R|kotlin/Unit| {
-            }
+            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] t: Type): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -57,11 +54,10 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClassScript.kts
 
         public? final? [ResolvedTo(COMPANION_GENERATION)] class MyClass<[ResolvedTo(COMPANION_GENERATION)] Type> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(COMPANION_GENERATION)] Type>(): R|MyClass<Type>| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] t: Type): R|kotlin/Unit| {
-            }
+            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] t: Type): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -74,11 +70,10 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClassScript.kts
 
         public? final? [ResolvedTo(SUPER_TYPES)] class MyClass<[ResolvedTo(SUPER_TYPES)] Type> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(SUPER_TYPES)] Type>(): R|MyClass<Type>| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] t: Type): R|kotlin/Unit| {
-            }
+            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] t: Type): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -91,11 +86,10 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClassScript.kts
 
         public? final? [ResolvedTo(TYPES)] class MyClass<[ResolvedTo(TYPES)] Type> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(TYPES)] Type>(): R|MyClass<Type>| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] t: Type): R|kotlin/Unit| {
-            }
+            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] t: Type): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -108,11 +102,10 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClassScript.kts
 
         public final [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] Type>(): R|MyClass<Type>| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] t: Type): R|kotlin/Unit| {
-            }
+            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] t: Type): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -125,11 +118,10 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClassScript.kts
 
         public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class MyClass<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] Type> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] Type>(): R|MyClass<Type>| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] t: Type): R|kotlin/Unit| {
-            }
+            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] t: Type): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -142,11 +134,10 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClassScript.kts
 
         public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] class MyClass<[ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] Type> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] Type>(): R|MyClass<Type>| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] t: Type): R|kotlin/Unit| {
-            }
+            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] t: Type): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -159,11 +150,10 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClassScript.kts
 
         public final [ResolvedTo(CONTRACTS)] class MyClass<[ResolvedTo(CONTRACTS)] Type> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(CONTRACTS)] Type>(): R|MyClass<Type>| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] t: Type): R|kotlin/Unit| {
-            }
+            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] t: Type): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -176,11 +166,10 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClassScript.kts
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class MyClass<[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] Type> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] Type>(): R|MyClass<Type>| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] t: Type): R|kotlin/Unit| {
-            }
+            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] t: Type): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -193,11 +182,10 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClassScript.kts
 
         public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class MyClass<[ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] Type> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] Type>(): R|MyClass<Type>| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] t: Type): R|kotlin/Unit| {
-            }
+            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] t: Type): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -213,8 +201,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClassScript.kts
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] t: R|Type|): R|kotlin/Unit| {
-            }
+            public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] t: R|Type|): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 

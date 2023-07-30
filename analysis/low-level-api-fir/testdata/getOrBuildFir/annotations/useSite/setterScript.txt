@@ -13,7 +13,7 @@ FILE: [ResolvedTo(IMPORTS)] setterScript.kts
 
         public final [ResolvedTo(STATUS)] annotation class Ann : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Ann] constructor(): R|Ann| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }

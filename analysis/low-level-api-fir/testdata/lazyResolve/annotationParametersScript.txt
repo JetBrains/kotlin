@@ -6,7 +6,7 @@ FILE: [ResolvedTo(RAW_FIR)] annotationParametersScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] enum class X : R|kotlin/Enum<X>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
-                super<R|kotlin/Enum<X>|>()
+                LAZY_super<R|kotlin/Enum<X>|>
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] enum entry A: R|X|
@@ -23,7 +23,7 @@ FILE: [ResolvedTo(RAW_FIR)] annotationParametersScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val args: A.X = R|<local>/args|
@@ -33,14 +33,12 @@ FILE: [ResolvedTo(RAW_FIR)] annotationParametersScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            @Anno[Unresolved](X#.A#) public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            }
+            @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-            @Anno[Unresolved](X#.A#) public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-            }
+            @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -53,7 +51,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] enum class X : R|kotlin/Enum<X>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
-                super<R|kotlin/Enum<X>|>()
+                LAZY_super<R|kotlin/Enum<X>|>
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] enum entry A: R|X|
@@ -70,7 +68,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val args: A.X = R|<local>/args|
@@ -80,14 +78,12 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            @Anno[Unresolved](X#.A#) public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            }
+            @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-            @Anno[Unresolved](X#.A#) public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-            }
+            @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -100,7 +96,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] enum class X : R|kotlin/Enum<X>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
-                super<R|kotlin/Enum<X>|>()
+                LAZY_super<R|kotlin/Enum<X>|>
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] enum entry A: R|X|
@@ -117,7 +113,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val args: A.X = R|<local>/args|
@@ -127,14 +123,12 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            @Anno[Unresolved](X#.A#) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| {
-            }
+            @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-            @Anno[Unresolved](X#.A#) public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-            }
+            @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -147,7 +141,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] enum class X : R|kotlin/Enum<X>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
-                super<R|kotlin/Enum<X>|>()
+                LAZY_super<R|kotlin/Enum<X>|>
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] enum entry A: R|X|
@@ -164,7 +158,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val args: A.X = R|<local>/args|
@@ -174,14 +168,12 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            @Anno[Unresolved](X#.A#) public? final? [ResolvedTo(COMPANION_GENERATION)] fun resolveMe(): R|kotlin/Unit| {
-            }
+            @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPANION_GENERATION)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-            @Anno[Unresolved](X#.A#) public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-            }
+            @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -194,7 +186,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] enum class X : R|kotlin/Enum<X>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
-                super<R|kotlin/Enum<X>|>()
+                LAZY_super<R|kotlin/Enum<X>|>
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] enum entry A: R|X|
@@ -211,7 +203,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val args: A.X = R|<local>/args|
@@ -221,14 +213,12 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
         public? final? [ResolvedTo(SUPER_TYPES)] class B : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            @Anno[Unresolved](X#.A#) public? final? [ResolvedTo(SUPER_TYPES)] fun resolveMe(): R|kotlin/Unit| {
-            }
+            @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(SUPER_TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-            @Anno[Unresolved](X#.A#) public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-            }
+            @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -241,7 +231,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] enum class X : R|kotlin/Enum<X>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
-                super<R|kotlin/Enum<X>|>()
+                LAZY_super<R|kotlin/Enum<X>|>
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] enum entry A: R|X|
@@ -258,7 +248,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val args: A.X = R|<local>/args|
@@ -268,14 +258,12 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
         public? final? [ResolvedTo(TYPES)] class B : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            @R|Anno|[Types](X#.A#) public? final? [ResolvedTo(TYPES)] fun resolveMe(): R|kotlin/Unit| {
-            }
+            @R|Anno|[Types](LAZY_EXPRESSION) public? final? [ResolvedTo(TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-            @Anno[Unresolved](X#.A#) public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-            }
+            @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -288,7 +276,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] enum class X : R|kotlin/Enum<X>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
-                super<R|kotlin/Enum<X>|>()
+                LAZY_super<R|kotlin/Enum<X>|>
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] enum entry A: R|X|
@@ -305,7 +293,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val args: A.X = R|<local>/args|
@@ -315,14 +303,12 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
         public final [ResolvedTo(STATUS)] class B : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            @R|Anno|[Types](X#.A#) public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| {
-            }
+            @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-            @R|Anno|[Types](X#.A#) public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
-            }
+            @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -335,7 +321,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] enum class X : R|kotlin/Enum<X>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
-                super<R|kotlin/Enum<X>|>()
+                LAZY_super<R|kotlin/Enum<X>|>
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] enum entry A: R|X|
@@ -352,7 +338,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val args: A.X = R|<local>/args|
@@ -362,14 +348,12 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
         public final [ResolvedTo(STATUS)] class B : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            @R|Anno|[Types](X#.A#) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| {
-            }
+            @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-            @R|Anno|[Types](X#.A#) public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
-            }
+            @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -382,7 +366,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
         public final [ResolvedTo(STATUS)] enum class X : R|kotlin/Enum<X>| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
-                super<R|kotlin/Enum<X>|>()
+                LAZY_super<R|kotlin/Enum<X>|>
             }
 
             public final static [ResolvedTo(STATUS)] [ContainingClassKey=X] enum entry A: R|X|
@@ -399,7 +383,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val args: A.X = R|<local>/args|
@@ -409,14 +393,12 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
         public final [ResolvedTo(STATUS)] class B : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            @R|Anno|[Types](Q|X|.R|/X.A|) public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| {
-            }
+            @R|Anno|[Types](Q|X|.R|/X.A|) public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-            @R|Anno|[Types](X#.A#) public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
-            }
+            @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -429,7 +411,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
         public final [ResolvedTo(STATUS)] enum class X : R|kotlin/Enum<X>| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
-                super<R|kotlin/Enum<X>|>()
+                LAZY_super<R|kotlin/Enum<X>|>
             }
 
             public final static [ResolvedTo(STATUS)] [ContainingClassKey=X] enum entry A: R|X|
@@ -446,7 +428,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val args: A.X = R|<local>/args|
@@ -456,14 +438,13 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
         public final [ResolvedTo(STATUS)] class B : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             @R|Anno|[Types](Q|X|.R|/X.A|) public final [ResolvedTo(CONTRACTS)] fun resolveMe(): R|kotlin/Unit| {
             }
 
-            @R|Anno|[Types](X#.A#) public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
-            }
+            @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -476,7 +457,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
         public final [ResolvedTo(STATUS)] enum class X : R|kotlin/Enum<X>| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
-                super<R|kotlin/Enum<X>|>()
+                LAZY_super<R|kotlin/Enum<X>|>
             }
 
             public final static [ResolvedTo(STATUS)] [ContainingClassKey=X] enum entry A: R|X|
@@ -493,7 +474,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val args: A.X = R|<local>/args|
@@ -503,14 +484,13 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
         public final [ResolvedTo(STATUS)] class B : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             @R|Anno|[Types](Q|X|.R|/X.A|) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
             }
 
-            @R|Anno|[Types](X#.A#) public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
-            }
+            @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -523,7 +503,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
         public final [ResolvedTo(STATUS)] enum class X : R|kotlin/Enum<X>| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
-                super<R|kotlin/Enum<X>|>()
+                LAZY_super<R|kotlin/Enum<X>|>
             }
 
             public final static [ResolvedTo(STATUS)] [ContainingClassKey=X] enum entry A: R|X|
@@ -540,7 +520,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
         public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.args] args: <ERROR TYPE REF: Symbol not found for A.X>): R|Anno| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val args: <ERROR TYPE REF: Symbol not found for A.X> = R|<local>/args|
@@ -550,14 +530,13 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
         public final [ResolvedTo(STATUS)] class B : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             @R|Anno|[Types](args = Q|X|.R|/X.A|) public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun resolveMe(): R|kotlin/Unit| {
             }
 
-            @R|Anno|[Types](X#.A#) public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
-            }
+            @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -570,7 +549,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
         public final [ResolvedTo(STATUS)] enum class X : R|kotlin/Enum<X>| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
-                super<R|kotlin/Enum<X>|>()
+                LAZY_super<R|kotlin/Enum<X>|>
             }
 
             public final static [ResolvedTo(STATUS)] [ContainingClassKey=X] enum entry A: R|X|
@@ -587,7 +566,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
         public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.args] args: <ERROR TYPE REF: Symbol not found for A.X>): R|Anno| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val args: <ERROR TYPE REF: Symbol not found for A.X> = R|<local>/args|
@@ -597,14 +576,13 @@ FILE: [ResolvedTo(IMPORTS)] annotationParametersScript.kts
 
         public final [ResolvedTo(STATUS)] class B : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             @R|Anno|[Types](args = Q|X|.R|/X.A|) public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
             }
 
-            @R|Anno|[Types](X#.A#) public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
-            }
+            @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 

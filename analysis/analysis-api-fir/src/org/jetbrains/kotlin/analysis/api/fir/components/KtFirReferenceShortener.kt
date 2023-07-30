@@ -95,15 +95,12 @@ internal class KtFirReferenceShortener(
             kDocQualifiersToShorten = emptyList(),
         )
 
-        val towerContext =
-            if (declarationToVisit !is KtFile || declarationToVisit.isScript()) {
-                LowLevelFirApiFacadeForResolveOnAir.getOnAirGetTowerContextProvider(firResolveSession, declarationToVisit)
-            } else {
-                LowLevelFirApiFacadeForResolveOnAir.getOnAirTowerDataContextProviderForTheWholeFile(
-                    firResolveSession,
-                    declarationToVisit
-                )
-            }
+        val towerContext = if (declarationToVisit is KtFile) {
+            LowLevelFirApiFacadeForResolveOnAir.getOnAirTowerDataContextProviderForTheWholeFile(firResolveSession, declarationToVisit)
+        } else {
+            LowLevelFirApiFacadeForResolveOnAir.getOnAirGetTowerContextProvider(firResolveSession, declarationToVisit)
+        }
+
         //TODO: collect all usages of available symbols in the file and prevent importing symbols that could introduce name clashes, which
         // may alter the meaning of existing code.
         val collector = ElementsToShortenCollector(

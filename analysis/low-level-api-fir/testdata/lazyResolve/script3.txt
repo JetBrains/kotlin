@@ -6,47 +6,30 @@ FILE: [ResolvedTo(RAW_FIR)] script3.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|UnusedClass| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] var version: String = String()
+            public? final? [ResolvedTo(RAW_FIR)] var version: String = LAZY_EXPRESSION
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] get(): String
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] set([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit|
 
-            public? final? [ResolvedTo(RAW_FIR)] fun execute(): R|kotlin/Unit| {
-                println#(version#)
-            }
+            public? final? [ResolvedTo(RAW_FIR)] fun execute(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun unusedFunction(): <implicit> {
-            ^unusedFunction IntegerLiteral(4)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun unusedFunction(): <implicit> { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( () -> Unit )): R|kotlin/Unit| {
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( () -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] var unusedVariable: <implicit> = IntegerLiteral(4)
+        public? final? [ResolvedTo(RAW_FIR)] var unusedVariable: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
 
-        public? final? [ResolvedTo(RAW_FIR)] var variable: <implicit> = String(str)
+        public? final? [ResolvedTo(RAW_FIR)] var variable: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
 
-        build#(<L> = [ResolvedTo(RAW_FIR)] build@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-            local final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
-                    super<R|kotlin/Any|>()
-                }
-
-                public? final? [ResolvedTo(RAW_FIR)] fun doo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| {
-                }
-
-            }
-
-        }
-        )
+        build#(<L> = LAZY_EXPRESSION)
         variable# = String(1)
 
 IMPORTS:
@@ -57,47 +40,30 @@ FILE: [ResolvedTo(IMPORTS)] script3.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|UnusedClass| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] var version: String = String()
+            public? final? [ResolvedTo(RAW_FIR)] var version: String = LAZY_EXPRESSION
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] get(): String
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] set([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit|
 
-            public? final? [ResolvedTo(RAW_FIR)] fun execute(): R|kotlin/Unit| {
-                println#(version#)
-            }
+            public? final? [ResolvedTo(RAW_FIR)] fun execute(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun unusedFunction(): <implicit> {
-            ^unusedFunction IntegerLiteral(4)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun unusedFunction(): <implicit> { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( () -> Unit )): R|kotlin/Unit| {
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( () -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] var unusedVariable: <implicit> = IntegerLiteral(4)
+        public? final? [ResolvedTo(RAW_FIR)] var unusedVariable: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
 
-        public? final? [ResolvedTo(RAW_FIR)] var variable: <implicit> = String(str)
+        public? final? [ResolvedTo(RAW_FIR)] var variable: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
 
-        build#(<L> = [ResolvedTo(RAW_FIR)] build@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-            local final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
-                    super<R|kotlin/Any|>()
-                }
-
-                public? final? [ResolvedTo(RAW_FIR)] fun doo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| {
-                }
-
-            }
-
-        }
-        )
+        build#(<L> = LAZY_EXPRESSION)
         variable# = String(1)
 
 COMPILER_REQUIRED_ANNOTATIONS:
@@ -108,47 +74,30 @@ FILE: [ResolvedTo(IMPORTS)] script3.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|UnusedClass| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] var version: String = String()
+            public? final? [ResolvedTo(RAW_FIR)] var version: String = LAZY_EXPRESSION
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] get(): String
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] set([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit|
 
-            public? final? [ResolvedTo(RAW_FIR)] fun execute(): R|kotlin/Unit| {
-                println#(version#)
-            }
+            public? final? [ResolvedTo(RAW_FIR)] fun execute(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun unusedFunction(): <implicit> {
-            ^unusedFunction IntegerLiteral(4)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun unusedFunction(): <implicit> { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( () -> Unit )): R|kotlin/Unit| {
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( () -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] var unusedVariable: <implicit> = IntegerLiteral(4)
+        public? final? [ResolvedTo(RAW_FIR)] var unusedVariable: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
 
-        public? final? [ResolvedTo(RAW_FIR)] var variable: <implicit> = String(str)
+        public? final? [ResolvedTo(RAW_FIR)] var variable: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
 
-        build#(<L> = [ResolvedTo(RAW_FIR)] build@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-            local final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
-                    super<R|kotlin/Any|>()
-                }
-
-                public? final? [ResolvedTo(RAW_FIR)] fun doo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| {
-                }
-
-            }
-
-        }
-        )
+        build#(<L> = LAZY_EXPRESSION)
         variable# = String(1)
 
 COMPANION_GENERATION:
@@ -159,47 +108,30 @@ FILE: [ResolvedTo(IMPORTS)] script3.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|UnusedClass| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] var version: String = String()
+            public? final? [ResolvedTo(RAW_FIR)] var version: String = LAZY_EXPRESSION
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] get(): String
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] set([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit|
 
-            public? final? [ResolvedTo(RAW_FIR)] fun execute(): R|kotlin/Unit| {
-                println#(version#)
-            }
+            public? final? [ResolvedTo(RAW_FIR)] fun execute(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun unusedFunction(): <implicit> {
-            ^unusedFunction IntegerLiteral(4)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun unusedFunction(): <implicit> { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( () -> Unit )): R|kotlin/Unit| {
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( () -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] var unusedVariable: <implicit> = IntegerLiteral(4)
+        public? final? [ResolvedTo(RAW_FIR)] var unusedVariable: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
 
-        public? final? [ResolvedTo(RAW_FIR)] var variable: <implicit> = String(str)
+        public? final? [ResolvedTo(RAW_FIR)] var variable: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
 
-        build#(<L> = [ResolvedTo(RAW_FIR)] build@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-            local final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
-                    super<R|kotlin/Any|>()
-                }
-
-                public? final? [ResolvedTo(RAW_FIR)] fun doo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| {
-                }
-
-            }
-
-        }
-        )
+        build#(<L> = LAZY_EXPRESSION)
         variable# = String(1)
 
 SUPER_TYPES:
@@ -210,47 +142,30 @@ FILE: [ResolvedTo(IMPORTS)] script3.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|UnusedClass| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] var version: String = String()
+            public? final? [ResolvedTo(RAW_FIR)] var version: String = LAZY_EXPRESSION
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] get(): String
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] set([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit|
 
-            public? final? [ResolvedTo(RAW_FIR)] fun execute(): R|kotlin/Unit| {
-                println#(version#)
-            }
+            public? final? [ResolvedTo(RAW_FIR)] fun execute(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun unusedFunction(): <implicit> {
-            ^unusedFunction IntegerLiteral(4)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun unusedFunction(): <implicit> { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( () -> Unit )): R|kotlin/Unit| {
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( () -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] var unusedVariable: <implicit> = IntegerLiteral(4)
+        public? final? [ResolvedTo(RAW_FIR)] var unusedVariable: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
 
-        public? final? [ResolvedTo(RAW_FIR)] var variable: <implicit> = String(str)
+        public? final? [ResolvedTo(RAW_FIR)] var variable: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
 
-        build#(<L> = [ResolvedTo(RAW_FIR)] build@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-            local final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
-                    super<R|kotlin/Any|>()
-                }
-
-                public? final? [ResolvedTo(RAW_FIR)] fun doo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| {
-                }
-
-            }
-
-        }
-        )
+        build#(<L> = LAZY_EXPRESSION)
         variable# = String(1)
 
 TYPES:
@@ -261,47 +176,30 @@ FILE: [ResolvedTo(IMPORTS)] script3.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|UnusedClass| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] var version: String = String()
+            public? final? [ResolvedTo(RAW_FIR)] var version: String = LAZY_EXPRESSION
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] get(): String
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] set([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit|
 
-            public? final? [ResolvedTo(RAW_FIR)] fun execute(): R|kotlin/Unit| {
-                println#(version#)
-            }
+            public? final? [ResolvedTo(RAW_FIR)] fun execute(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun unusedFunction(): <implicit> {
-            ^unusedFunction IntegerLiteral(4)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun unusedFunction(): <implicit> { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( () -> Unit )): R|kotlin/Unit| {
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( () -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] var unusedVariable: <implicit> = IntegerLiteral(4)
+        public? final? [ResolvedTo(RAW_FIR)] var unusedVariable: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
 
-        public? final? [ResolvedTo(RAW_FIR)] var variable: <implicit> = String(str)
+        public? final? [ResolvedTo(RAW_FIR)] var variable: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
 
-        build#(<L> = [ResolvedTo(RAW_FIR)] build@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-            local final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
-                    super<R|kotlin/Any|>()
-                }
-
-                public? final? [ResolvedTo(RAW_FIR)] fun doo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| {
-                }
-
-            }
-
-        }
-        )
+        build#(<L> = LAZY_EXPRESSION)
         variable# = String(1)
 
 STATUS:
@@ -312,47 +210,30 @@ FILE: [ResolvedTo(IMPORTS)] script3.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|UnusedClass| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] var version: String = String()
+            public? final? [ResolvedTo(RAW_FIR)] var version: String = LAZY_EXPRESSION
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] get(): String
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] set([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit|
 
-            public? final? [ResolvedTo(RAW_FIR)] fun execute(): R|kotlin/Unit| {
-                println#(version#)
-            }
+            public? final? [ResolvedTo(RAW_FIR)] fun execute(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun unusedFunction(): <implicit> {
-            ^unusedFunction IntegerLiteral(4)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun unusedFunction(): <implicit> { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( () -> Unit )): R|kotlin/Unit| {
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( () -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] var unusedVariable: <implicit> = IntegerLiteral(4)
+        public? final? [ResolvedTo(RAW_FIR)] var unusedVariable: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
 
-        public? final? [ResolvedTo(RAW_FIR)] var variable: <implicit> = String(str)
+        public? final? [ResolvedTo(RAW_FIR)] var variable: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
 
-        build#(<L> = [ResolvedTo(RAW_FIR)] build@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-            local final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
-                    super<R|kotlin/Any|>()
-                }
-
-                public? final? [ResolvedTo(RAW_FIR)] fun doo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| {
-                }
-
-            }
-
-        }
-        )
+        build#(<L> = LAZY_EXPRESSION)
         variable# = String(1)
 
 EXPECT_ACTUAL_MATCHING:
@@ -363,47 +244,30 @@ FILE: [ResolvedTo(IMPORTS)] script3.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|UnusedClass| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] var version: String = String()
+            public? final? [ResolvedTo(RAW_FIR)] var version: String = LAZY_EXPRESSION
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] get(): String
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] set([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit|
 
-            public? final? [ResolvedTo(RAW_FIR)] fun execute(): R|kotlin/Unit| {
-                println#(version#)
-            }
+            public? final? [ResolvedTo(RAW_FIR)] fun execute(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun unusedFunction(): <implicit> {
-            ^unusedFunction IntegerLiteral(4)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun unusedFunction(): <implicit> { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( () -> Unit )): R|kotlin/Unit| {
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( () -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] var unusedVariable: <implicit> = IntegerLiteral(4)
+        public? final? [ResolvedTo(RAW_FIR)] var unusedVariable: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
 
-        public? final? [ResolvedTo(RAW_FIR)] var variable: <implicit> = String(str)
+        public? final? [ResolvedTo(RAW_FIR)] var variable: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
 
-        build#(<L> = [ResolvedTo(RAW_FIR)] build@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-            local final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
-                    super<R|kotlin/Any|>()
-                }
-
-                public? final? [ResolvedTo(RAW_FIR)] fun doo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| {
-                }
-
-            }
-
-        }
-        )
+        build#(<L> = LAZY_EXPRESSION)
         variable# = String(1)
 
 ARGUMENTS_OF_ANNOTATIONS:
@@ -414,47 +278,30 @@ FILE: [ResolvedTo(IMPORTS)] script3.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|UnusedClass| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] var version: String = String()
+            public? final? [ResolvedTo(RAW_FIR)] var version: String = LAZY_EXPRESSION
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] get(): String
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] set([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit|
 
-            public? final? [ResolvedTo(RAW_FIR)] fun execute(): R|kotlin/Unit| {
-                println#(version#)
-            }
+            public? final? [ResolvedTo(RAW_FIR)] fun execute(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun unusedFunction(): <implicit> {
-            ^unusedFunction IntegerLiteral(4)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun unusedFunction(): <implicit> { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( () -> Unit )): R|kotlin/Unit| {
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( () -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] var unusedVariable: <implicit> = IntegerLiteral(4)
+        public? final? [ResolvedTo(RAW_FIR)] var unusedVariable: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
 
-        public? final? [ResolvedTo(RAW_FIR)] var variable: <implicit> = String(str)
+        public? final? [ResolvedTo(RAW_FIR)] var variable: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
 
-        build#(<L> = [ResolvedTo(RAW_FIR)] build@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-            local final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
-                    super<R|kotlin/Any|>()
-                }
-
-                public? final? [ResolvedTo(RAW_FIR)] fun doo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| {
-                }
-
-            }
-
-        }
-        )
+        build#(<L> = LAZY_EXPRESSION)
         variable# = String(1)
 
 CONTRACTS:
@@ -465,47 +312,30 @@ FILE: [ResolvedTo(IMPORTS)] script3.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|UnusedClass| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] var version: String = String()
+            public? final? [ResolvedTo(RAW_FIR)] var version: String = LAZY_EXPRESSION
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] get(): String
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] set([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit|
 
-            public? final? [ResolvedTo(RAW_FIR)] fun execute(): R|kotlin/Unit| {
-                println#(version#)
-            }
+            public? final? [ResolvedTo(RAW_FIR)] fun execute(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun unusedFunction(): <implicit> {
-            ^unusedFunction IntegerLiteral(4)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun unusedFunction(): <implicit> { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( () -> Unit )): R|kotlin/Unit| {
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( () -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] var unusedVariable: <implicit> = IntegerLiteral(4)
+        public? final? [ResolvedTo(RAW_FIR)] var unusedVariable: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
 
-        public? final? [ResolvedTo(RAW_FIR)] var variable: <implicit> = String(str)
+        public? final? [ResolvedTo(RAW_FIR)] var variable: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
 
-        build#(<L> = [ResolvedTo(RAW_FIR)] build@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-            local final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
-                    super<R|kotlin/Any|>()
-                }
-
-                public? final? [ResolvedTo(RAW_FIR)] fun doo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| {
-                }
-
-            }
-
-        }
-        )
+        build#(<L> = LAZY_EXPRESSION)
         variable# = String(1)
 
 IMPLICIT_TYPES_BODY_RESOLVE:
@@ -516,47 +346,30 @@ FILE: [ResolvedTo(IMPORTS)] script3.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|UnusedClass| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] var version: String = String()
+            public? final? [ResolvedTo(RAW_FIR)] var version: String = LAZY_EXPRESSION
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] get(): String
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] set([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit|
 
-            public? final? [ResolvedTo(RAW_FIR)] fun execute(): R|kotlin/Unit| {
-                println#(version#)
-            }
+            public? final? [ResolvedTo(RAW_FIR)] fun execute(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun unusedFunction(): <implicit> {
-            ^unusedFunction IntegerLiteral(4)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun unusedFunction(): <implicit> { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( () -> Unit )): R|kotlin/Unit| {
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( () -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] var unusedVariable: <implicit> = IntegerLiteral(4)
+        public? final? [ResolvedTo(RAW_FIR)] var unusedVariable: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
 
-        public? final? [ResolvedTo(RAW_FIR)] var variable: <implicit> = String(str)
+        public? final? [ResolvedTo(RAW_FIR)] var variable: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
 
-        build#(<L> = [ResolvedTo(RAW_FIR)] build@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-            local final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
-                    super<R|kotlin/Any|>()
-                }
-
-                public? final? [ResolvedTo(RAW_FIR)] fun doo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| {
-                }
-
-            }
-
-        }
-        )
+        build#(<L> = LAZY_EXPRESSION)
         variable# = String(1)
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
@@ -567,47 +380,30 @@ FILE: [ResolvedTo(IMPORTS)] script3.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|UnusedClass| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] var version: String = String()
+            public? final? [ResolvedTo(RAW_FIR)] var version: String = LAZY_EXPRESSION
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] get(): String
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] set([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit|
 
-            public? final? [ResolvedTo(RAW_FIR)] fun execute(): R|kotlin/Unit| {
-                println#(version#)
-            }
+            public? final? [ResolvedTo(RAW_FIR)] fun execute(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun unusedFunction(): <implicit> {
-            ^unusedFunction IntegerLiteral(4)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun unusedFunction(): <implicit> { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( () -> Unit )): R|kotlin/Unit| {
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( () -> Unit )): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] var unusedVariable: <implicit> = IntegerLiteral(4)
+        public? final? [ResolvedTo(RAW_FIR)] var unusedVariable: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
 
-        public? final? [ResolvedTo(RAW_FIR)] var variable: <implicit> = String(str)
+        public? final? [ResolvedTo(RAW_FIR)] var variable: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
 
-        build#(<L> = [ResolvedTo(RAW_FIR)] build@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-            local final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
-                    super<R|kotlin/Any|>()
-                }
-
-                public? final? [ResolvedTo(RAW_FIR)] fun doo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| {
-                }
-
-            }
-
-        }
-        )
+        build#(<L> = LAZY_EXPRESSION)
         variable# = String(1)
 
 BODY_RESOLVE:
@@ -618,27 +414,23 @@ FILE: [ResolvedTo(IMPORTS)] script3.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|UnusedClass| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] var version: String = String()
+            public? final? [ResolvedTo(RAW_FIR)] var version: String = LAZY_EXPRESSION
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] get(): String
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] set([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit|
 
-            public? final? [ResolvedTo(RAW_FIR)] fun execute(): R|kotlin/Unit| {
-                println#(version#)
-            }
+            public? final? [ResolvedTo(RAW_FIR)] fun execute(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun unusedFunction(): <implicit> {
-            ^unusedFunction IntegerLiteral(4)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun unusedFunction(): <implicit> { LAZY_BLOCK }
 
         public final [ResolvedTo(CONTRACTS)] fun build([ResolvedTo(CONTRACTS)] action: R|() -> kotlin/Unit|): R|kotlin/Unit| {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] var unusedVariable: <implicit> = IntegerLiteral(4)
+        public? final? [ResolvedTo(RAW_FIR)] var unusedVariable: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -34,22 +34,11 @@ internal class LLFirFileBuilder(val moduleComponents: LLFirModuleResolveComponen
                 it.toString()
             }
         }
-        val bodyBuildingMode = when {
-            ktFile.isScript() -> {
-                // As 'FirScript' content is never transformed, lazy bodies are not replaced with calculated ones even on BODY_RESOLVE.
-                // Such behavior breaks file structure mapping computation.
-                // TODO: remove this clause when proper support for scripts is implemented in K2.
-                BodyBuildingMode.NORMAL
-            }
-            else -> BodyBuildingMode.LAZY_BODIES
-        }
 
         PsiRawFirBuilder(
             moduleComponents.session,
             moduleComponents.scopeProvider,
-            bodyBuildingMode = bodyBuildingMode
+            bodyBuildingMode = BodyBuildingMode.LAZY_BODIES
         ).buildFirFile(ktFile)
     }
 }
-
-

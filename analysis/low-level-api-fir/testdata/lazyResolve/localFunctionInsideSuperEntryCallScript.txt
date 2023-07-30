@@ -11,7 +11,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCallScript.kts
 
         public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|one/Interface|): R|one/ClassWithParameter| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }
@@ -46,7 +46,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCallScript.kts
 
         public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|one/Interface|): R|one/ClassWithParameter| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }
@@ -81,7 +81,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCallScript.kts
 
         public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|one/Interface|): R|one/ClassWithParameter| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }
@@ -116,7 +116,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCallScript.kts
 
         public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|one/Interface|): R|one/ClassWithParameter| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }
@@ -151,7 +151,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCallScript.kts
 
         public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|one/Interface|): R|one/ClassWithParameter| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }
@@ -186,7 +186,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCallScript.kts
 
         public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|one/Interface|): R|one/ClassWithParameter| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }
@@ -221,7 +221,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCallScript.kts
 
         public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|one/Interface|): R|one/ClassWithParameter| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }
@@ -256,7 +256,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCallScript.kts
 
         public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|one/Interface|): R|one/ClassWithParameter| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }
@@ -291,7 +291,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCallScript.kts
 
         public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|one/Interface|): R|one/ClassWithParameter| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }
@@ -326,7 +326,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCallScript.kts
 
         public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|one/Interface|): R|one/ClassWithParameter| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }
@@ -361,7 +361,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCallScript.kts
 
         public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|one/Interface|): R|one/ClassWithParameter| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }
@@ -396,7 +396,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCallScript.kts
 
         public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|one/Interface|): R|one/ClassWithParameter| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }
@@ -431,7 +431,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCallScript.kts
 
         public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|one/Interface|): R|one/ClassWithParameter| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }

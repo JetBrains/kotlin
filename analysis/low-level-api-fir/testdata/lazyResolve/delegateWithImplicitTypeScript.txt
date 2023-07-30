@@ -8,17 +8,15 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
 
         public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|Interface|): R|Aaa| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
-            private final [ResolvedTo(STATUS)] field $$delegate_0: R|Interface| = i#
+            private final [ResolvedTo(STATUS)] field $$delegate_0: R|Interface| = LAZY_EXPRESSION
 
         }
 
         public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
-            public open [ResolvedTo(STATUS)] fun implicitType(): <implicit> {
-                ^implicitType IntegerLiteral(42)
-            }
+            public open [ResolvedTo(STATUS)] fun implicitType(): <implicit> { LAZY_BLOCK }
 
         }
 
@@ -33,17 +31,15 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
 
         public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|Interface|): R|Aaa| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
-            private final [ResolvedTo(STATUS)] field $$delegate_0: R|Interface| = i#
+            private final [ResolvedTo(STATUS)] field $$delegate_0: R|Interface| = LAZY_EXPRESSION
 
         }
 
         public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
-            public open [ResolvedTo(STATUS)] fun implicitType(): <implicit> {
-                ^implicitType IntegerLiteral(42)
-            }
+            public open [ResolvedTo(STATUS)] fun implicitType(): <implicit> { LAZY_BLOCK }
 
         }
 
@@ -58,17 +54,15 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
 
         public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|Interface|): R|Aaa| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
-            private final [ResolvedTo(STATUS)] field $$delegate_0: R|Interface| = i#
+            private final [ResolvedTo(STATUS)] field $$delegate_0: R|Interface| = LAZY_EXPRESSION
 
         }
 
         public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
-            public open [ResolvedTo(STATUS)] fun implicitType(): <implicit> {
-                ^implicitType IntegerLiteral(42)
-            }
+            public open [ResolvedTo(STATUS)] fun implicitType(): <implicit> { LAZY_BLOCK }
 
         }
 
@@ -83,17 +77,15 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
 
         public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|Interface|): R|Aaa| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
-            private final [ResolvedTo(STATUS)] field $$delegate_0: R|Interface| = i#
+            private final [ResolvedTo(STATUS)] field $$delegate_0: R|Interface| = LAZY_EXPRESSION
 
         }
 
         public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
-            public open [ResolvedTo(STATUS)] fun implicitType(): <implicit> {
-                ^implicitType IntegerLiteral(42)
-            }
+            public open [ResolvedTo(STATUS)] fun implicitType(): <implicit> { LAZY_BLOCK }
 
         }
 
@@ -108,17 +100,15 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
 
         public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|Interface|): R|Aaa| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
-            private final [ResolvedTo(STATUS)] field $$delegate_0: R|Interface| = i#
+            private final [ResolvedTo(STATUS)] field $$delegate_0: R|Interface| = LAZY_EXPRESSION
 
         }
 
         public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
-            public open [ResolvedTo(STATUS)] fun implicitType(): <implicit> {
-                ^implicitType IntegerLiteral(42)
-            }
+            public open [ResolvedTo(STATUS)] fun implicitType(): <implicit> { LAZY_BLOCK }
 
         }
 
@@ -133,17 +123,15 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
 
         public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|Interface|): R|Aaa| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
-            private final [ResolvedTo(STATUS)] field $$delegate_0: R|Interface| = i#
+            private final [ResolvedTo(STATUS)] field $$delegate_0: R|Interface| = LAZY_EXPRESSION
 
         }
 
         public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
-            public open [ResolvedTo(STATUS)] fun implicitType(): <implicit> {
-                ^implicitType IntegerLiteral(42)
-            }
+            public open [ResolvedTo(STATUS)] fun implicitType(): <implicit> { LAZY_BLOCK }
 
         }
 
@@ -158,17 +146,15 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
 
         public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|Interface|): R|Aaa| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
-            private final [ResolvedTo(STATUS)] field $$delegate_0: R|Interface| = i#
+            private final [ResolvedTo(STATUS)] field $$delegate_0: R|Interface| = LAZY_EXPRESSION
 
         }
 
         public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
-            public open [ResolvedTo(STATUS)] fun implicitType(): <implicit> {
-                ^implicitType IntegerLiteral(42)
-            }
+            public open [ResolvedTo(STATUS)] fun implicitType(): <implicit> { LAZY_BLOCK }
 
         }
 
@@ -183,17 +169,15 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
 
         public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|Interface|): R|Aaa| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
-            private final [ResolvedTo(STATUS)] field $$delegate_0: R|Interface| = i#
+            private final [ResolvedTo(STATUS)] field $$delegate_0: R|Interface| = LAZY_EXPRESSION
 
         }
 
         public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
-            public open [ResolvedTo(STATUS)] fun implicitType(): <implicit> {
-                ^implicitType IntegerLiteral(42)
-            }
+            public open [ResolvedTo(STATUS)] fun implicitType(): <implicit> { LAZY_BLOCK }
 
         }
 
@@ -208,17 +192,15 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
 
         public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|Interface|): R|Aaa| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
-            private final [ResolvedTo(STATUS)] field $$delegate_0: R|Interface| = i#
+            private final [ResolvedTo(STATUS)] field $$delegate_0: R|Interface| = LAZY_EXPRESSION
 
         }
 
         public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
-            public open [ResolvedTo(STATUS)] fun implicitType(): <implicit> {
-                ^implicitType IntegerLiteral(42)
-            }
+            public open [ResolvedTo(STATUS)] fun implicitType(): <implicit> { LAZY_BLOCK }
 
         }
 
@@ -233,17 +215,15 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
 
         public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|Interface|): R|Aaa| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
-            private final [ResolvedTo(STATUS)] field $$delegate_0: R|Interface| = i#
+            private final [ResolvedTo(STATUS)] field $$delegate_0: R|Interface| = LAZY_EXPRESSION
 
         }
 
         public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
-            public open [ResolvedTo(STATUS)] fun implicitType(): <implicit> {
-                ^implicitType IntegerLiteral(42)
-            }
+            public open [ResolvedTo(STATUS)] fun implicitType(): <implicit> { LAZY_BLOCK }
 
         }
 
@@ -258,10 +238,10 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
 
         public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|Interface|): R|Aaa| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
-            private final [ResolvedTo(STATUS)] field $$delegate_0: R|Interface| = i#
+            private final [ResolvedTo(STATUS)] field $$delegate_0: R|Interface| = LAZY_EXPRESSION
 
         }
 
@@ -283,10 +263,10 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
 
         public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|Interface|): R|Aaa| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
-            private final [ResolvedTo(STATUS)] field $$delegate_0: R|Interface| = i#
+            private final [ResolvedTo(STATUS)] field $$delegate_0: R|Interface| = LAZY_EXPRESSION
 
         }
 
@@ -308,10 +288,10 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitTypeScript.kts
 
         public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|Interface|): R|Aaa| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
-            private final [ResolvedTo(STATUS)] field $$delegate_0: R|Interface| = i#
+            private final [ResolvedTo(STATUS)] field $$delegate_0: R|Interface| = LAZY_EXPRESSION
 
         }
 

@@ -6,7 +6,7 @@ FILE: [ResolvedTo(RAW_FIR)] resolveSuperTypeFromLocalClassScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }
@@ -17,15 +17,7 @@ FILE: [ResolvedTo(RAW_FIR)] resolveSuperTypeFromLocalClassScript.kts
         public? final? [ResolvedTo(RAW_FIR)] interface UsedInterface : UsedInterface2 {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            local final? [ResolvedTo(RAW_FIR)] class Local : UsedInterface {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|one/two/Local| {
-                    super<<implicit>>()
-                }
-
-            }
-
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 IMPORTS:
@@ -36,7 +28,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }
@@ -47,15 +39,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
         public? final? [ResolvedTo(RAW_FIR)] interface UsedInterface : UsedInterface2 {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            local final? [ResolvedTo(RAW_FIR)] class Local : UsedInterface {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|one/two/Local| {
-                    super<<implicit>>()
-                }
-
-            }
-
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 COMPILER_REQUIRED_ANNOTATIONS:
@@ -66,7 +50,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }
@@ -77,15 +61,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
         public? final? [ResolvedTo(RAW_FIR)] interface UsedInterface : UsedInterface2 {
         }
 
-        public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| {
-            local final? [ResolvedTo(RAW_FIR)] class Local : UsedInterface {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|one/two/Local| {
-                    super<<implicit>>()
-                }
-
-            }
-
-        }
+        public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 COMPANION_GENERATION:
@@ -96,7 +72,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }
@@ -107,15 +83,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
         public? final? [ResolvedTo(RAW_FIR)] interface UsedInterface : UsedInterface2 {
         }
 
-        public? final? [ResolvedTo(COMPANION_GENERATION)] fun resolveMe(): R|kotlin/Unit| {
-            local final? [ResolvedTo(RAW_FIR)] class Local : UsedInterface {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|one/two/Local| {
-                    super<<implicit>>()
-                }
-
-            }
-
-        }
+        public? final? [ResolvedTo(COMPANION_GENERATION)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 SUPER_TYPES:
@@ -126,7 +94,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }
@@ -137,15 +105,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
         public? final? [ResolvedTo(RAW_FIR)] interface UsedInterface : UsedInterface2 {
         }
 
-        public? final? [ResolvedTo(SUPER_TYPES)] fun resolveMe(): R|kotlin/Unit| {
-            local final? [ResolvedTo(RAW_FIR)] class Local : UsedInterface {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|one/two/Local| {
-                    super<<implicit>>()
-                }
-
-            }
-
-        }
+        public? final? [ResolvedTo(SUPER_TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 TYPES:
@@ -156,7 +116,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }
@@ -167,15 +127,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
         public? final? [ResolvedTo(RAW_FIR)] interface UsedInterface : UsedInterface2 {
         }
 
-        public? final? [ResolvedTo(TYPES)] fun resolveMe(): R|kotlin/Unit| {
-            local final? [ResolvedTo(RAW_FIR)] class Local : UsedInterface {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|one/two/Local| {
-                    super<<implicit>>()
-                }
-
-            }
-
-        }
+        public? final? [ResolvedTo(TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 STATUS:
@@ -186,7 +138,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }
@@ -197,15 +149,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
         public? final? [ResolvedTo(RAW_FIR)] interface UsedInterface : UsedInterface2 {
         }
 
-        public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| {
-            local final? [ResolvedTo(RAW_FIR)] class Local : UsedInterface {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|one/two/Local| {
-                    super<<implicit>>()
-                }
-
-            }
-
-        }
+        public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 EXPECT_ACTUAL_MATCHING:
@@ -216,7 +160,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }
@@ -227,15 +171,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
         public? final? [ResolvedTo(RAW_FIR)] interface UsedInterface : UsedInterface2 {
         }
 
-        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| {
-            local final? [ResolvedTo(RAW_FIR)] class Local : UsedInterface {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|one/two/Local| {
-                    super<<implicit>>()
-                }
-
-            }
-
-        }
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 ARGUMENTS_OF_ANNOTATIONS:
@@ -246,7 +182,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }
@@ -257,15 +193,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
         public? final? [ResolvedTo(RAW_FIR)] interface UsedInterface : UsedInterface2 {
         }
 
-        public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| {
-            local final? [ResolvedTo(RAW_FIR)] class Local : UsedInterface {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|one/two/Local| {
-                    super<<implicit>>()
-                }
-
-            }
-
-        }
+        public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 CONTRACTS:
@@ -276,7 +204,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }
@@ -306,7 +234,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }
@@ -336,7 +264,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }
@@ -366,7 +294,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }

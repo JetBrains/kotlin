@@ -11,15 +11,15 @@ FILE: [ResolvedTo(IMPORTS)] destructuringScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] var a: <implicit> = IntegerLiteral(-1)
+        public? final? [ResolvedTo(RAW_FIR)] var a: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
 
-        public? final? [ResolvedTo(RAW_FIR)] var b: <implicit> = IntegerLiteral(0)
+        public? final? [ResolvedTo(RAW_FIR)] var b: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit|
 
-        public? final? [ResolvedTo(RAW_FIR)] val pair: <implicit> = Pair#(a#, b#)
+        public? final? [ResolvedTo(RAW_FIR)] val pair: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         [ResolvedTo(RAW_FIR)] [DestructuringDeclarationContainerVariableMarkerKey=true] lval <destruct>: <implicit> = pair#

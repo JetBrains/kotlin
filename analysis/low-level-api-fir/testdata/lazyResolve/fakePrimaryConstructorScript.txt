@@ -6,11 +6,10 @@ FILE: [ResolvedTo(RAW_FIR)] fakePrimaryConstructorScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class Problem : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Problem] constructor(): R|Problem| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| {
-            }
+            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -23,11 +22,10 @@ FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class Problem : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Problem] constructor(): R|Problem| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| {
-            }
+            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -40,11 +38,10 @@ FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class Problem : R|kotlin/Any| {
             public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=Problem] constructor(): R|Problem| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| {
-            }
+            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -57,11 +54,10 @@ FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class Problem : R|kotlin/Any| {
             public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=Problem] constructor(): R|Problem| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| {
-            }
+            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -74,11 +70,10 @@ FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
 
         public? final? [ResolvedTo(SUPER_TYPES)] class Problem : R|kotlin/Any| {
             public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=Problem] constructor(): R|Problem| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| {
-            }
+            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -91,11 +86,10 @@ FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
 
         public? final? [ResolvedTo(TYPES)] class Problem : R|kotlin/Any| {
             public? [ResolvedTo(TYPES)] [ContainingClassKey=Problem] constructor(): R|Problem| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| {
-            }
+            public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -108,11 +102,10 @@ FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
 
         public final [ResolvedTo(STATUS)] class Problem : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Problem] constructor(): R|Problem| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit| {
-            }
+            public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -125,11 +118,10 @@ FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
 
         public final [ResolvedTo(STATUS)] class Problem : R|kotlin/Any| {
             public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=Problem] constructor(): R|Problem| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit| {
-            }
+            public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -142,11 +134,10 @@ FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
 
         public final [ResolvedTo(STATUS)] class Problem : R|kotlin/Any| {
             public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] [ContainingClassKey=Problem] constructor(): R|Problem| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit| {
-            }
+            public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -162,8 +153,7 @@ FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit| {
-            }
+            public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -179,8 +169,7 @@ FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit| {
-            }
+            public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -196,8 +185,7 @@ FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit| {
-            }
+            public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -213,8 +201,7 @@ FILE: [ResolvedTo(IMPORTS)] fakePrimaryConstructorScript.kts
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit| {
-            }
+            public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 

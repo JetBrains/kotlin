@@ -4,9 +4,7 @@ FILE: [ResolvedTo(RAW_FIR)] syntheticResultDeclaration.kts
     SCRIPT: [ResolvedTo(RAW_FIR)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> {
-            ^foo IntegerLiteral(24)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
 
         public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = foo#()
             public [ResolvedTo(RAW_FIR)] get(): <implicit>
@@ -18,9 +16,7 @@ FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclaration.kts
     SCRIPT: [ResolvedTo(RAW_FIR)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> {
-            ^foo IntegerLiteral(24)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
 
         public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = foo#()
             public [ResolvedTo(RAW_FIR)] get(): <implicit>
@@ -32,9 +28,7 @@ FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclaration.kts
     SCRIPT: [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> {
-            ^foo IntegerLiteral(24)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
 
         public final [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val $$result: <implicit> = foo#()
             public [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): <implicit>
@@ -46,9 +40,7 @@ FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclaration.kts
     SCRIPT: [ResolvedTo(COMPANION_GENERATION)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> {
-            ^foo IntegerLiteral(24)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
 
         public final [ResolvedTo(COMPANION_GENERATION)] val $$result: <implicit> = foo#()
             public [ResolvedTo(COMPANION_GENERATION)] get(): <implicit>
@@ -60,9 +52,7 @@ FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclaration.kts
     SCRIPT: [ResolvedTo(SUPER_TYPES)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> {
-            ^foo IntegerLiteral(24)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
 
         public final [ResolvedTo(SUPER_TYPES)] val $$result: <implicit> = foo#()
             public [ResolvedTo(SUPER_TYPES)] get(): <implicit>
@@ -74,9 +64,7 @@ FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclaration.kts
     SCRIPT: [ResolvedTo(TYPES)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> {
-            ^foo IntegerLiteral(24)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
 
         public final [ResolvedTo(TYPES)] val $$result: <implicit> = foo#()
             public [ResolvedTo(TYPES)] get(): <implicit>
@@ -88,9 +76,7 @@ FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclaration.kts
     SCRIPT: [ResolvedTo(STATUS)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> {
-            ^foo IntegerLiteral(24)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
 
         public final [ResolvedTo(STATUS)] val $$result: <implicit> = foo#()
             public [ResolvedTo(STATUS)] get(): <implicit>
@@ -102,9 +88,7 @@ FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclaration.kts
     SCRIPT: [ResolvedTo(EXPECT_ACTUAL_MATCHING)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> {
-            ^foo IntegerLiteral(24)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
 
         public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val $$result: <implicit> = foo#()
             public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): <implicit>
@@ -116,9 +100,7 @@ FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclaration.kts
     SCRIPT: [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> {
-            ^foo IntegerLiteral(24)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
 
         public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] val $$result: <implicit> = foo#()
             public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] get(): <implicit>
@@ -130,9 +112,7 @@ FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclaration.kts
     SCRIPT: [ResolvedTo(CONTRACTS)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> {
-            ^foo IntegerLiteral(24)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
 
         public final [ResolvedTo(CONTRACTS)] val $$result: <implicit> = foo#()
             public [ResolvedTo(CONTRACTS)] get(): <implicit>

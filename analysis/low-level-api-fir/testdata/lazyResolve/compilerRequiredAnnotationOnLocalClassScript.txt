@@ -4,22 +4,7 @@ FILE: [ResolvedTo(RAW_FIR)] compilerRequiredAnnotationOnLocalClassScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            @Deprecated[Unresolved](message = String(), replaceWith = ReplaceWith#(expression = String(abc)), level = DeprecationLevel#.ERROR#) local final? [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
-                    super<R|kotlin/Any|>()
-                }
-
-            }
-
-            @Target[Unresolved](AnnotationTarget#.TYPE#) local final? [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|one/two/B| {
-                    super<R|kotlin/Any|>()
-                }
-
-            }
-
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 IMPORTS:
@@ -28,22 +13,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            @Deprecated[Unresolved](message = String(), replaceWith = ReplaceWith#(expression = String(abc)), level = DeprecationLevel#.ERROR#) local final? [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
-                    super<R|kotlin/Any|>()
-                }
-
-            }
-
-            @Target[Unresolved](AnnotationTarget#.TYPE#) local final? [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|one/two/B| {
-                    super<R|kotlin/Any|>()
-                }
-
-            }
-
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 COMPILER_REQUIRED_ANNOTATIONS:
@@ -52,22 +22,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| {
-            @Deprecated[Unresolved](message = String(), replaceWith = ReplaceWith#(expression = String(abc)), level = DeprecationLevel#.ERROR#) local final? [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
-                    super<R|kotlin/Any|>()
-                }
-
-            }
-
-            @Target[Unresolved](AnnotationTarget#.TYPE#) local final? [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|one/two/B| {
-                    super<R|kotlin/Any|>()
-                }
-
-            }
-
-        }
+        public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 COMPANION_GENERATION:
@@ -76,22 +31,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(COMPANION_GENERATION)] fun resolveMe(): R|kotlin/Unit| {
-            @Deprecated[Unresolved](message = String(), replaceWith = ReplaceWith#(expression = String(abc)), level = DeprecationLevel#.ERROR#) local final? [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
-                    super<R|kotlin/Any|>()
-                }
-
-            }
-
-            @Target[Unresolved](AnnotationTarget#.TYPE#) local final? [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|one/two/B| {
-                    super<R|kotlin/Any|>()
-                }
-
-            }
-
-        }
+        public? final? [ResolvedTo(COMPANION_GENERATION)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 SUPER_TYPES:
@@ -100,22 +40,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(SUPER_TYPES)] fun resolveMe(): R|kotlin/Unit| {
-            @Deprecated[Unresolved](message = String(), replaceWith = ReplaceWith#(expression = String(abc)), level = DeprecationLevel#.ERROR#) local final? [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
-                    super<R|kotlin/Any|>()
-                }
-
-            }
-
-            @Target[Unresolved](AnnotationTarget#.TYPE#) local final? [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|one/two/B| {
-                    super<R|kotlin/Any|>()
-                }
-
-            }
-
-        }
+        public? final? [ResolvedTo(SUPER_TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 TYPES:
@@ -124,22 +49,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(TYPES)] fun resolveMe(): R|kotlin/Unit| {
-            @Deprecated[Unresolved](message = String(), replaceWith = ReplaceWith#(expression = String(abc)), level = DeprecationLevel#.ERROR#) local final? [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
-                    super<R|kotlin/Any|>()
-                }
-
-            }
-
-            @Target[Unresolved](AnnotationTarget#.TYPE#) local final? [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|one/two/B| {
-                    super<R|kotlin/Any|>()
-                }
-
-            }
-
-        }
+        public? final? [ResolvedTo(TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 STATUS:
@@ -148,22 +58,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| {
-            @Deprecated[Unresolved](message = String(), replaceWith = ReplaceWith#(expression = String(abc)), level = DeprecationLevel#.ERROR#) local final? [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
-                    super<R|kotlin/Any|>()
-                }
-
-            }
-
-            @Target[Unresolved](AnnotationTarget#.TYPE#) local final? [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|one/two/B| {
-                    super<R|kotlin/Any|>()
-                }
-
-            }
-
-        }
+        public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 EXPECT_ACTUAL_MATCHING:
@@ -172,22 +67,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| {
-            @Deprecated[Unresolved](message = String(), replaceWith = ReplaceWith#(expression = String(abc)), level = DeprecationLevel#.ERROR#) local final? [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
-                    super<R|kotlin/Any|>()
-                }
-
-            }
-
-            @Target[Unresolved](AnnotationTarget#.TYPE#) local final? [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|one/two/B| {
-                    super<R|kotlin/Any|>()
-                }
-
-            }
-
-        }
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 ARGUMENTS_OF_ANNOTATIONS:
@@ -196,22 +76,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
     SCRIPT: [ResolvedTo(TYPES)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| {
-            @Deprecated[Unresolved](message = String(), replaceWith = ReplaceWith#(expression = String(abc)), level = DeprecationLevel#.ERROR#) local final? [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
-                    super<R|kotlin/Any|>()
-                }
-
-            }
-
-            @Target[Unresolved](AnnotationTarget#.TYPE#) local final? [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|one/two/B| {
-                    super<R|kotlin/Any|>()
-                }
-
-            }
-
-        }
+        public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 CONTRACTS:

@@ -7,29 +7,7 @@ FILE: [ResolvedTo(RAW_FIR)] complexLocalHierarchyScript.kts
         public? final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            local open [ResolvedTo(RAW_FIR)] class A : B {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|one/A| {
-                    super<B>()
-                }
-
-            }
-
-            local final? [ResolvedTo(RAW_FIR)] class B : NonLocalInterface {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|one/B| {
-                    super<<implicit>>()
-                }
-
-                local final? inner [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] class C : A {
-                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] one/B.constructor(): R|one/B.C| {
-                        super<A>()
-                    }
-
-                }
-
-            }
-
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 IMPORTS:
@@ -41,29 +19,7 @@ FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchyScript.kts
         public? final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            local open [ResolvedTo(RAW_FIR)] class A : B {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|one/A| {
-                    super<B>()
-                }
-
-            }
-
-            local final? [ResolvedTo(RAW_FIR)] class B : NonLocalInterface {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|one/B| {
-                    super<<implicit>>()
-                }
-
-                local final? inner [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] class C : A {
-                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] one/B.constructor(): R|one/B.C| {
-                        super<A>()
-                    }
-
-                }
-
-            }
-
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 COMPILER_REQUIRED_ANNOTATIONS:
@@ -75,29 +31,7 @@ FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchyScript.kts
         public? final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
         }
 
-        public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| {
-            local open [ResolvedTo(RAW_FIR)] class A : B {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|one/A| {
-                    super<B>()
-                }
-
-            }
-
-            local final? [ResolvedTo(RAW_FIR)] class B : NonLocalInterface {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|one/B| {
-                    super<<implicit>>()
-                }
-
-                local final? inner [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] class C : A {
-                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] one/B.constructor(): R|one/B.C| {
-                        super<A>()
-                    }
-
-                }
-
-            }
-
-        }
+        public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 COMPANION_GENERATION:
@@ -109,29 +43,7 @@ FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchyScript.kts
         public? final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
         }
 
-        public? final? [ResolvedTo(COMPANION_GENERATION)] fun resolveMe(): R|kotlin/Unit| {
-            local open [ResolvedTo(RAW_FIR)] class A : B {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|one/A| {
-                    super<B>()
-                }
-
-            }
-
-            local final? [ResolvedTo(RAW_FIR)] class B : NonLocalInterface {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|one/B| {
-                    super<<implicit>>()
-                }
-
-                local final? inner [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] class C : A {
-                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] one/B.constructor(): R|one/B.C| {
-                        super<A>()
-                    }
-
-                }
-
-            }
-
-        }
+        public? final? [ResolvedTo(COMPANION_GENERATION)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 SUPER_TYPES:
@@ -143,29 +55,7 @@ FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchyScript.kts
         public? final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
         }
 
-        public? final? [ResolvedTo(SUPER_TYPES)] fun resolveMe(): R|kotlin/Unit| {
-            local open [ResolvedTo(RAW_FIR)] class A : B {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|one/A| {
-                    super<B>()
-                }
-
-            }
-
-            local final? [ResolvedTo(RAW_FIR)] class B : NonLocalInterface {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|one/B| {
-                    super<<implicit>>()
-                }
-
-                local final? inner [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] class C : A {
-                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] one/B.constructor(): R|one/B.C| {
-                        super<A>()
-                    }
-
-                }
-
-            }
-
-        }
+        public? final? [ResolvedTo(SUPER_TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 TYPES:
@@ -177,29 +67,7 @@ FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchyScript.kts
         public? final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
         }
 
-        public? final? [ResolvedTo(TYPES)] fun resolveMe(): R|kotlin/Unit| {
-            local open [ResolvedTo(RAW_FIR)] class A : B {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|one/A| {
-                    super<B>()
-                }
-
-            }
-
-            local final? [ResolvedTo(RAW_FIR)] class B : NonLocalInterface {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|one/B| {
-                    super<<implicit>>()
-                }
-
-                local final? inner [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] class C : A {
-                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] one/B.constructor(): R|one/B.C| {
-                        super<A>()
-                    }
-
-                }
-
-            }
-
-        }
+        public? final? [ResolvedTo(TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 STATUS:
@@ -211,29 +79,7 @@ FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchyScript.kts
         public? final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
         }
 
-        public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| {
-            local open [ResolvedTo(RAW_FIR)] class A : B {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|one/A| {
-                    super<B>()
-                }
-
-            }
-
-            local final? [ResolvedTo(RAW_FIR)] class B : NonLocalInterface {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|one/B| {
-                    super<<implicit>>()
-                }
-
-                local final? inner [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] class C : A {
-                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] one/B.constructor(): R|one/B.C| {
-                        super<A>()
-                    }
-
-                }
-
-            }
-
-        }
+        public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 EXPECT_ACTUAL_MATCHING:
@@ -245,29 +91,7 @@ FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchyScript.kts
         public? final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
         }
 
-        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| {
-            local open [ResolvedTo(RAW_FIR)] class A : B {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|one/A| {
-                    super<B>()
-                }
-
-            }
-
-            local final? [ResolvedTo(RAW_FIR)] class B : NonLocalInterface {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|one/B| {
-                    super<<implicit>>()
-                }
-
-                local final? inner [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] class C : A {
-                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] one/B.constructor(): R|one/B.C| {
-                        super<A>()
-                    }
-
-                }
-
-            }
-
-        }
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 ARGUMENTS_OF_ANNOTATIONS:
@@ -279,29 +103,7 @@ FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchyScript.kts
         public? final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
         }
 
-        public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| {
-            local open [ResolvedTo(RAW_FIR)] class A : B {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|one/A| {
-                    super<B>()
-                }
-
-            }
-
-            local final? [ResolvedTo(RAW_FIR)] class B : NonLocalInterface {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|one/B| {
-                    super<<implicit>>()
-                }
-
-                local final? inner [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] class C : A {
-                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] one/B.constructor(): R|one/B.C| {
-                        super<A>()
-                    }
-
-                }
-
-            }
-
-        }
+        public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 CONTRACTS:

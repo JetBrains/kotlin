@@ -14,7 +14,7 @@ FILE: [ResolvedTo(RAW_FIR)] hierarchyWithOverrideAndNestedClass3Script.kts
 
             public? final? [ResolvedTo(RAW_FIR)] class ClassFromInterface : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassFromInterface] constructor(): R|Foo1.ClassFromInterface| {
-                    super<R|kotlin/Any|>()
+                    LAZY_super<R|kotlin/Any|>
                 }
 
             }
@@ -43,39 +43,36 @@ FILE: [ResolvedTo(RAW_FIR)] hierarchyWithOverrideAndNestedClass3Script.kts
 
         public? abstract [ResolvedTo(RAW_FIR)] class OuterClass : Foo1 {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
             public? final? [ResolvedTo(RAW_FIR)] class SimpleNestedClass : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=SimpleNestedClass] constructor(): R|OuterClass.SimpleNestedClass| {
-                    super<R|kotlin/Any|>()
+                    LAZY_super<R|kotlin/Any|>
                 }
 
-                public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-                }
+                public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
-                private final? [ResolvedTo(RAW_FIR)] val myProp: <implicit> = IntegerLiteral(1)
+                private final? [ResolvedTo(RAW_FIR)] val myProp: <implicit> = LAZY_EXPRESSION
                     private [ResolvedTo(RAW_FIR)] [ContainingClassKey=SimpleNestedClass] get(): <implicit>
 
             }
 
             public? abstract [ResolvedTo(RAW_FIR)] class NestedClass : Foo2 {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|OuterClass.NestedClass| {
-                    super<<implicit>>()
+                    LAZY_super<<implicit>>
                 }
 
-                public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-                }
+                public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
             }
 
             public? abstract [ResolvedTo(RAW_FIR)] class AnotherNestedClass : NestedClass {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherNestedClass] constructor(): R|OuterClass.AnotherNestedClass| {
-                    super<NestedClass>()
+                    LAZY_super<NestedClass>
                 }
 
-                public? open? override [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit| {
-                }
+                public? open? override [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit| { LAZY_BLOCK }
 
             }
 
@@ -98,7 +95,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3Script.kts
 
             public? final? [ResolvedTo(RAW_FIR)] class ClassFromInterface : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassFromInterface] constructor(): R|Foo1.ClassFromInterface| {
-                    super<R|kotlin/Any|>()
+                    LAZY_super<R|kotlin/Any|>
                 }
 
             }
@@ -127,39 +124,36 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3Script.kts
 
         public? abstract [ResolvedTo(RAW_FIR)] class OuterClass : Foo1 {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
             public? final? [ResolvedTo(RAW_FIR)] class SimpleNestedClass : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=SimpleNestedClass] constructor(): R|OuterClass.SimpleNestedClass| {
-                    super<R|kotlin/Any|>()
+                    LAZY_super<R|kotlin/Any|>
                 }
 
-                public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-                }
+                public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
-                private final? [ResolvedTo(RAW_FIR)] val myProp: <implicit> = IntegerLiteral(1)
+                private final? [ResolvedTo(RAW_FIR)] val myProp: <implicit> = LAZY_EXPRESSION
                     private [ResolvedTo(RAW_FIR)] [ContainingClassKey=SimpleNestedClass] get(): <implicit>
 
             }
 
             public? abstract [ResolvedTo(RAW_FIR)] class NestedClass : Foo2 {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|OuterClass.NestedClass| {
-                    super<<implicit>>()
+                    LAZY_super<<implicit>>
                 }
 
-                public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-                }
+                public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
             }
 
             public? abstract [ResolvedTo(RAW_FIR)] class AnotherNestedClass : NestedClass {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherNestedClass] constructor(): R|OuterClass.AnotherNestedClass| {
-                    super<NestedClass>()
+                    LAZY_super<NestedClass>
                 }
 
-                public? open? override [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit| {
-                }
+                public? open? override [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit| { LAZY_BLOCK }
 
             }
 
@@ -182,7 +176,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3Script.kts
 
             public? final? [ResolvedTo(RAW_FIR)] class ClassFromInterface : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassFromInterface] constructor(): R|Foo1.ClassFromInterface| {
-                    super<R|kotlin/Any|>()
+                    LAZY_super<R|kotlin/Any|>
                 }
 
             }
@@ -211,39 +205,36 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3Script.kts
 
         public? abstract [ResolvedTo(RAW_FIR)] class OuterClass : Foo1 {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
             public? final? [ResolvedTo(RAW_FIR)] class SimpleNestedClass : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=SimpleNestedClass] constructor(): R|OuterClass.SimpleNestedClass| {
-                    super<R|kotlin/Any|>()
+                    LAZY_super<R|kotlin/Any|>
                 }
 
-                public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-                }
+                public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
-                private final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val myProp: <implicit> = IntegerLiteral(1)
+                private final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val myProp: <implicit> = LAZY_EXPRESSION
                     private [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=SimpleNestedClass] get(): <implicit>
 
             }
 
             public? abstract [ResolvedTo(RAW_FIR)] class NestedClass : Foo2 {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|OuterClass.NestedClass| {
-                    super<<implicit>>()
+                    LAZY_super<<implicit>>
                 }
 
-                public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-                }
+                public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
             }
 
             public? abstract [ResolvedTo(RAW_FIR)] class AnotherNestedClass : NestedClass {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherNestedClass] constructor(): R|OuterClass.AnotherNestedClass| {
-                    super<NestedClass>()
+                    LAZY_super<NestedClass>
                 }
 
-                public? open? override [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit| {
-                }
+                public? open? override [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit| { LAZY_BLOCK }
 
             }
 
@@ -266,7 +257,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3Script.kts
 
             public? final? [ResolvedTo(RAW_FIR)] class ClassFromInterface : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassFromInterface] constructor(): R|Foo1.ClassFromInterface| {
-                    super<R|kotlin/Any|>()
+                    LAZY_super<R|kotlin/Any|>
                 }
 
             }
@@ -295,39 +286,36 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3Script.kts
 
         public? abstract [ResolvedTo(RAW_FIR)] class OuterClass : Foo1 {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
             public? final? [ResolvedTo(RAW_FIR)] class SimpleNestedClass : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=SimpleNestedClass] constructor(): R|OuterClass.SimpleNestedClass| {
-                    super<R|kotlin/Any|>()
+                    LAZY_super<R|kotlin/Any|>
                 }
 
-                public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-                }
+                public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
-                private final? [ResolvedTo(COMPANION_GENERATION)] val myProp: <implicit> = IntegerLiteral(1)
+                private final? [ResolvedTo(COMPANION_GENERATION)] val myProp: <implicit> = LAZY_EXPRESSION
                     private [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=SimpleNestedClass] get(): <implicit>
 
             }
 
             public? abstract [ResolvedTo(RAW_FIR)] class NestedClass : Foo2 {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|OuterClass.NestedClass| {
-                    super<<implicit>>()
+                    LAZY_super<<implicit>>
                 }
 
-                public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-                }
+                public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
             }
 
             public? abstract [ResolvedTo(RAW_FIR)] class AnotherNestedClass : NestedClass {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherNestedClass] constructor(): R|OuterClass.AnotherNestedClass| {
-                    super<NestedClass>()
+                    LAZY_super<NestedClass>
                 }
 
-                public? open? override [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit| {
-                }
+                public? open? override [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit| { LAZY_BLOCK }
 
             }
 
@@ -350,7 +338,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3Script.kts
 
             public? final? [ResolvedTo(RAW_FIR)] class ClassFromInterface : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassFromInterface] constructor(): R|Foo1.ClassFromInterface| {
-                    super<R|kotlin/Any|>()
+                    LAZY_super<R|kotlin/Any|>
                 }
 
             }
@@ -379,39 +367,36 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3Script.kts
 
         public? abstract [ResolvedTo(SUPER_TYPES)] class OuterClass : R|Foo1| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
             public? final? [ResolvedTo(SUPER_TYPES)] class SimpleNestedClass : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=SimpleNestedClass] constructor(): R|OuterClass.SimpleNestedClass| {
-                    super<R|kotlin/Any|>()
+                    LAZY_super<R|kotlin/Any|>
                 }
 
-                public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-                }
+                public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
-                private final? [ResolvedTo(SUPER_TYPES)] val myProp: <implicit> = IntegerLiteral(1)
+                private final? [ResolvedTo(SUPER_TYPES)] val myProp: <implicit> = LAZY_EXPRESSION
                     private [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=SimpleNestedClass] get(): <implicit>
 
             }
 
             public? abstract [ResolvedTo(RAW_FIR)] class NestedClass : Foo2 {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|OuterClass.NestedClass| {
-                    super<<implicit>>()
+                    LAZY_super<<implicit>>
                 }
 
-                public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-                }
+                public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
             }
 
             public? abstract [ResolvedTo(RAW_FIR)] class AnotherNestedClass : NestedClass {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherNestedClass] constructor(): R|OuterClass.AnotherNestedClass| {
-                    super<NestedClass>()
+                    LAZY_super<NestedClass>
                 }
 
-                public? open? override [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit| {
-                }
+                public? open? override [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit| { LAZY_BLOCK }
 
             }
 
@@ -434,7 +419,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3Script.kts
 
             public? final? [ResolvedTo(RAW_FIR)] class ClassFromInterface : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassFromInterface] constructor(): R|Foo1.ClassFromInterface| {
-                    super<R|kotlin/Any|>()
+                    LAZY_super<R|kotlin/Any|>
                 }
 
             }
@@ -463,39 +448,36 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3Script.kts
 
         public? abstract [ResolvedTo(TYPES)] class OuterClass : R|Foo1| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
             public? final? [ResolvedTo(TYPES)] class SimpleNestedClass : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=SimpleNestedClass] constructor(): R|OuterClass.SimpleNestedClass| {
-                    super<R|kotlin/Any|>()
+                    LAZY_super<R|kotlin/Any|>
                 }
 
-                public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-                }
+                public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
-                private final? [ResolvedTo(TYPES)] val myProp: <implicit> = IntegerLiteral(1)
+                private final? [ResolvedTo(TYPES)] val myProp: <implicit> = LAZY_EXPRESSION
                     private [ResolvedTo(TYPES)] [ContainingClassKey=SimpleNestedClass] get(): <implicit>
 
             }
 
             public? abstract [ResolvedTo(RAW_FIR)] class NestedClass : Foo2 {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|OuterClass.NestedClass| {
-                    super<<implicit>>()
+                    LAZY_super<<implicit>>
                 }
 
-                public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-                }
+                public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
             }
 
             public? abstract [ResolvedTo(RAW_FIR)] class AnotherNestedClass : NestedClass {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherNestedClass] constructor(): R|OuterClass.AnotherNestedClass| {
-                    super<NestedClass>()
+                    LAZY_super<NestedClass>
                 }
 
-                public? open? override [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit| {
-                }
+                public? open? override [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit| { LAZY_BLOCK }
 
             }
 
@@ -518,7 +500,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3Script.kts
 
             public? final? [ResolvedTo(RAW_FIR)] class ClassFromInterface : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassFromInterface] constructor(): R|Foo1.ClassFromInterface| {
-                    super<R|kotlin/Any|>()
+                    LAZY_super<R|kotlin/Any|>
                 }
 
             }
@@ -547,39 +529,36 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3Script.kts
 
         public abstract [ResolvedTo(STATUS)] class OuterClass : R|Foo1| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
             public final [ResolvedTo(STATUS)] class SimpleNestedClass : R|kotlin/Any| {
                 public [ResolvedTo(STATUS)] [ContainingClassKey=SimpleNestedClass] constructor(): R|OuterClass.SimpleNestedClass| {
-                    super<R|kotlin/Any|>()
+                    LAZY_super<R|kotlin/Any|>
                 }
 
-                public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
-                }
+                public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
-                private final [ResolvedTo(STATUS)] val myProp: <implicit> = IntegerLiteral(1)
+                private final [ResolvedTo(STATUS)] val myProp: <implicit> = LAZY_EXPRESSION
                     private [ResolvedTo(STATUS)] [ContainingClassKey=SimpleNestedClass] get(): <implicit>
 
             }
 
             public? abstract [ResolvedTo(RAW_FIR)] class NestedClass : Foo2 {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|OuterClass.NestedClass| {
-                    super<<implicit>>()
+                    LAZY_super<<implicit>>
                 }
 
-                public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-                }
+                public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
             }
 
             public? abstract [ResolvedTo(RAW_FIR)] class AnotherNestedClass : NestedClass {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherNestedClass] constructor(): R|OuterClass.AnotherNestedClass| {
-                    super<NestedClass>()
+                    LAZY_super<NestedClass>
                 }
 
-                public? open? override [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit| {
-                }
+                public? open? override [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit| { LAZY_BLOCK }
 
             }
 
@@ -602,7 +581,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3Script.kts
 
             public? final? [ResolvedTo(RAW_FIR)] class ClassFromInterface : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassFromInterface] constructor(): R|Foo1.ClassFromInterface| {
-                    super<R|kotlin/Any|>()
+                    LAZY_super<R|kotlin/Any|>
                 }
 
             }
@@ -631,39 +610,36 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3Script.kts
 
         public abstract [ResolvedTo(STATUS)] class OuterClass : R|Foo1| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
             public final [ResolvedTo(STATUS)] class SimpleNestedClass : R|kotlin/Any| {
                 public [ResolvedTo(STATUS)] [ContainingClassKey=SimpleNestedClass] constructor(): R|OuterClass.SimpleNestedClass| {
-                    super<R|kotlin/Any|>()
+                    LAZY_super<R|kotlin/Any|>
                 }
 
-                public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
-                }
+                public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
-                private final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val myProp: <implicit> = IntegerLiteral(1)
+                private final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val myProp: <implicit> = LAZY_EXPRESSION
                     private [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=SimpleNestedClass] get(): <implicit>
 
             }
 
             public? abstract [ResolvedTo(RAW_FIR)] class NestedClass : Foo2 {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|OuterClass.NestedClass| {
-                    super<<implicit>>()
+                    LAZY_super<<implicit>>
                 }
 
-                public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-                }
+                public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
             }
 
             public? abstract [ResolvedTo(RAW_FIR)] class AnotherNestedClass : NestedClass {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherNestedClass] constructor(): R|OuterClass.AnotherNestedClass| {
-                    super<NestedClass>()
+                    LAZY_super<NestedClass>
                 }
 
-                public? open? override [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit| {
-                }
+                public? open? override [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit| { LAZY_BLOCK }
 
             }
 
@@ -686,7 +662,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3Script.kts
 
             public? final? [ResolvedTo(RAW_FIR)] class ClassFromInterface : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassFromInterface] constructor(): R|Foo1.ClassFromInterface| {
-                    super<R|kotlin/Any|>()
+                    LAZY_super<R|kotlin/Any|>
                 }
 
             }
@@ -715,39 +691,36 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3Script.kts
 
         public abstract [ResolvedTo(STATUS)] class OuterClass : R|Foo1| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
             public final [ResolvedTo(STATUS)] class SimpleNestedClass : R|kotlin/Any| {
                 public [ResolvedTo(STATUS)] [ContainingClassKey=SimpleNestedClass] constructor(): R|OuterClass.SimpleNestedClass| {
-                    super<R|kotlin/Any|>()
+                    LAZY_super<R|kotlin/Any|>
                 }
 
-                public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
-                }
+                public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
-                private final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] val myProp: <implicit> = IntegerLiteral(1)
+                private final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] val myProp: <implicit> = LAZY_EXPRESSION
                     private [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] [ContainingClassKey=SimpleNestedClass] get(): <implicit>
 
             }
 
             public? abstract [ResolvedTo(RAW_FIR)] class NestedClass : Foo2 {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|OuterClass.NestedClass| {
-                    super<<implicit>>()
+                    LAZY_super<<implicit>>
                 }
 
-                public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-                }
+                public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
             }
 
             public? abstract [ResolvedTo(RAW_FIR)] class AnotherNestedClass : NestedClass {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherNestedClass] constructor(): R|OuterClass.AnotherNestedClass| {
-                    super<NestedClass>()
+                    LAZY_super<NestedClass>
                 }
 
-                public? open? override [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit| {
-                }
+                public? open? override [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit| { LAZY_BLOCK }
 
             }
 
@@ -770,7 +743,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3Script.kts
 
             public? final? [ResolvedTo(RAW_FIR)] class ClassFromInterface : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassFromInterface] constructor(): R|Foo1.ClassFromInterface| {
-                    super<R|kotlin/Any|>()
+                    LAZY_super<R|kotlin/Any|>
                 }
 
             }
@@ -799,16 +772,15 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3Script.kts
 
         public abstract [ResolvedTo(STATUS)] class OuterClass : R|Foo1| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
             public final [ResolvedTo(STATUS)] class SimpleNestedClass : R|kotlin/Any| {
                 public [ResolvedTo(STATUS)] [ContainingClassKey=SimpleNestedClass] constructor(): R|OuterClass.SimpleNestedClass| {
-                    super<R|kotlin/Any|>()
+                    LAZY_super<R|kotlin/Any|>
                 }
 
-                public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
-                }
+                public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
                 private final [ResolvedTo(CONTRACTS)] val myProp: <implicit> = IntegerLiteral(1)
                     private [ResolvedTo(CONTRACTS)] [ContainingClassKey=SimpleNestedClass] get(): <implicit>
@@ -817,21 +789,19 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3Script.kts
 
             public? abstract [ResolvedTo(RAW_FIR)] class NestedClass : Foo2 {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|OuterClass.NestedClass| {
-                    super<<implicit>>()
+                    LAZY_super<<implicit>>
                 }
 
-                public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-                }
+                public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
             }
 
             public? abstract [ResolvedTo(RAW_FIR)] class AnotherNestedClass : NestedClass {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherNestedClass] constructor(): R|OuterClass.AnotherNestedClass| {
-                    super<NestedClass>()
+                    LAZY_super<NestedClass>
                 }
 
-                public? open? override [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit| {
-                }
+                public? open? override [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit| { LAZY_BLOCK }
 
             }
 
@@ -854,7 +824,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3Script.kts
 
             public? final? [ResolvedTo(RAW_FIR)] class ClassFromInterface : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassFromInterface] constructor(): R|Foo1.ClassFromInterface| {
-                    super<R|kotlin/Any|>()
+                    LAZY_super<R|kotlin/Any|>
                 }
 
             }
@@ -883,16 +853,15 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3Script.kts
 
         public abstract [ResolvedTo(STATUS)] class OuterClass : R|Foo1| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
             public final [ResolvedTo(STATUS)] class SimpleNestedClass : R|kotlin/Any| {
                 public [ResolvedTo(STATUS)] [ContainingClassKey=SimpleNestedClass] constructor(): R|OuterClass.SimpleNestedClass| {
-                    super<R|kotlin/Any|>()
+                    LAZY_super<R|kotlin/Any|>
                 }
 
-                public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
-                }
+                public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
                 private final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val myProp: R|kotlin/Int| = Int(1)
                     private [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=SimpleNestedClass] get(): R|kotlin/Int|
@@ -901,21 +870,19 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3Script.kts
 
             public? abstract [ResolvedTo(RAW_FIR)] class NestedClass : Foo2 {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|OuterClass.NestedClass| {
-                    super<<implicit>>()
+                    LAZY_super<<implicit>>
                 }
 
-                public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-                }
+                public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
             }
 
             public? abstract [ResolvedTo(RAW_FIR)] class AnotherNestedClass : NestedClass {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherNestedClass] constructor(): R|OuterClass.AnotherNestedClass| {
-                    super<NestedClass>()
+                    LAZY_super<NestedClass>
                 }
 
-                public? open? override [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit| {
-                }
+                public? open? override [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit| { LAZY_BLOCK }
 
             }
 
@@ -938,7 +905,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3Script.kts
 
             public? final? [ResolvedTo(RAW_FIR)] class ClassFromInterface : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassFromInterface] constructor(): R|Foo1.ClassFromInterface| {
-                    super<R|kotlin/Any|>()
+                    LAZY_super<R|kotlin/Any|>
                 }
 
             }
@@ -967,16 +934,15 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3Script.kts
 
         public abstract [ResolvedTo(STATUS)] class OuterClass : R|Foo1| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
             public final [ResolvedTo(STATUS)] class SimpleNestedClass : R|kotlin/Any| {
                 public [ResolvedTo(STATUS)] [ContainingClassKey=SimpleNestedClass] constructor(): R|OuterClass.SimpleNestedClass| {
-                    super<R|kotlin/Any|>()
+                    LAZY_super<R|kotlin/Any|>
                 }
 
-                public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
-                }
+                public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
                 private final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] val myProp: R|kotlin/Int| = Int(1)
                     private [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=SimpleNestedClass] get(): R|kotlin/Int|
@@ -985,21 +951,19 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3Script.kts
 
             public? abstract [ResolvedTo(RAW_FIR)] class NestedClass : Foo2 {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|OuterClass.NestedClass| {
-                    super<<implicit>>()
+                    LAZY_super<<implicit>>
                 }
 
-                public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-                }
+                public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
             }
 
             public? abstract [ResolvedTo(RAW_FIR)] class AnotherNestedClass : NestedClass {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherNestedClass] constructor(): R|OuterClass.AnotherNestedClass| {
-                    super<NestedClass>()
+                    LAZY_super<NestedClass>
                 }
 
-                public? open? override [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit| {
-                }
+                public? open? override [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit| { LAZY_BLOCK }
 
             }
 
@@ -1022,7 +986,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3Script.kts
 
             public? final? [ResolvedTo(RAW_FIR)] class ClassFromInterface : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ClassFromInterface] constructor(): R|Foo1.ClassFromInterface| {
-                    super<R|kotlin/Any|>()
+                    LAZY_super<R|kotlin/Any|>
                 }
 
             }
@@ -1051,16 +1015,15 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3Script.kts
 
         public abstract [ResolvedTo(STATUS)] class OuterClass : R|Foo1| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
             public final [ResolvedTo(STATUS)] class SimpleNestedClass : R|kotlin/Any| {
                 public [ResolvedTo(STATUS)] [ContainingClassKey=SimpleNestedClass] constructor(): R|OuterClass.SimpleNestedClass| {
-                    super<R|kotlin/Any|>()
+                    LAZY_super<R|kotlin/Any|>
                 }
 
-                public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
-                }
+                public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
                 private final [ResolvedTo(BODY_RESOLVE)] val myProp: R|kotlin/Int| = Int(1)
                     private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SimpleNestedClass] get(): R|kotlin/Int|
@@ -1069,21 +1032,19 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass3Script.kts
 
             public? abstract [ResolvedTo(RAW_FIR)] class NestedClass : Foo2 {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor(): R|OuterClass.NestedClass| {
-                    super<<implicit>>()
+                    LAZY_super<<implicit>>
                 }
 
-                public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-                }
+                public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
             }
 
             public? abstract [ResolvedTo(RAW_FIR)] class AnotherNestedClass : NestedClass {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherNestedClass] constructor(): R|OuterClass.AnotherNestedClass| {
-                    super<NestedClass>()
+                    LAZY_super<NestedClass>
                 }
 
-                public? open? override [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit| {
-                }
+                public? open? override [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit| { LAZY_BLOCK }
 
             }
 

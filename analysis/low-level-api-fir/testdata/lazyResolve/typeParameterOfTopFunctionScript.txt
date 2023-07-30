@@ -4,8 +4,7 @@ FILE: [ResolvedTo(RAW_FIR)] typeParameterOfTopFunctionScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] resolveMe> ddd(): R|kotlin/Unit| {
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 IMPORTS:
@@ -14,8 +13,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunctionScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] resolveMe> ddd(): R|kotlin/Unit| {
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 COMPILER_REQUIRED_ANNOTATIONS:
@@ -24,8 +22,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunctionScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun <[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] resolveMe> ddd(): R|kotlin/Unit| {
-        }
+        public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun <[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 COMPANION_GENERATION:
@@ -34,8 +31,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunctionScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(COMPANION_GENERATION)] fun <[ResolvedTo(COMPANION_GENERATION)] resolveMe> ddd(): R|kotlin/Unit| {
-        }
+        public? final? [ResolvedTo(COMPANION_GENERATION)] fun <[ResolvedTo(COMPANION_GENERATION)] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 SUPER_TYPES:
@@ -44,8 +40,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunctionScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(SUPER_TYPES)] fun <[ResolvedTo(SUPER_TYPES)] resolveMe> ddd(): R|kotlin/Unit| {
-        }
+        public? final? [ResolvedTo(SUPER_TYPES)] fun <[ResolvedTo(SUPER_TYPES)] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 TYPES:
@@ -54,8 +49,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunctionScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(TYPES)] fun <[ResolvedTo(TYPES)] resolveMe> ddd(): R|kotlin/Unit| {
-        }
+        public? final? [ResolvedTo(TYPES)] fun <[ResolvedTo(TYPES)] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 STATUS:
@@ -64,8 +58,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunctionScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] fun <[ResolvedTo(STATUS)] resolveMe> ddd(): R|kotlin/Unit| {
-        }
+        public final [ResolvedTo(STATUS)] fun <[ResolvedTo(STATUS)] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 EXPECT_ACTUAL_MATCHING:
@@ -74,8 +67,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunctionScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun <[ResolvedTo(EXPECT_ACTUAL_MATCHING)] resolveMe> ddd(): R|kotlin/Unit| {
-        }
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun <[ResolvedTo(EXPECT_ACTUAL_MATCHING)] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 ARGUMENTS_OF_ANNOTATIONS:
@@ -84,8 +76,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunctionScript.kts
     SCRIPT: [ResolvedTo(TYPES)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun <[ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] resolveMe> ddd(): R|kotlin/Unit| {
-        }
+        public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun <[ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 CONTRACTS:

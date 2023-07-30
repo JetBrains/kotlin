@@ -13,14 +13,14 @@ FILE: [ResolvedTo(IMPORTS)] delegateScript.kts
 
         public final [ResolvedTo(STATUS)] annotation class Ann : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Ann] constructor(): R|Ann| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }
 
         public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             field:@PROPERTY_DELEGATE_FIELD:R|Ann|[Types]() public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] val a: <ERROR TYPE REF: Unresolved name: getValue>by <Unresolved name: lazy>#(<L> = [ResolvedTo(RAW_FIR)] lazy@fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {

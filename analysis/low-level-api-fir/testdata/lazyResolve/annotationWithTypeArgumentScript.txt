@@ -6,7 +6,7 @@ FILE: [ResolvedTo(RAW_FIR)] annotationWithTypeArgumentScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] annotation class Anno<[ResolvedTo(RAW_FIR)] T : Number> : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor<[ResolvedTo(RAW_FIR)] T : Number>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.value] value: KClass<T>): R|one/Anno<T>| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: KClass<T> = R|<local>/value|
@@ -14,8 +14,7 @@ FILE: [ResolvedTo(RAW_FIR)] annotationWithTypeArgumentScript.kts
 
         }
 
-        @Anno<Int>[Unresolved](<getClass>(Int#)) public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-        }
+        @Anno<Int>[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 IMPORTS:
@@ -26,7 +25,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgumentScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] annotation class Anno<[ResolvedTo(RAW_FIR)] T : Number> : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor<[ResolvedTo(RAW_FIR)] T : Number>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.value] value: KClass<T>): R|one/Anno<T>| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: KClass<T> = R|<local>/value|
@@ -34,8 +33,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgumentScript.kts
 
         }
 
-        @Anno<Int>[Unresolved](<getClass>(Int#)) public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-        }
+        @Anno<Int>[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 COMPILER_REQUIRED_ANNOTATIONS:
@@ -46,7 +44,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgumentScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] annotation class Anno<[ResolvedTo(RAW_FIR)] T : Number> : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor<[ResolvedTo(RAW_FIR)] T : Number>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.value] value: KClass<T>): R|one/Anno<T>| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: KClass<T> = R|<local>/value|
@@ -54,8 +52,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgumentScript.kts
 
         }
 
-        @Anno<Int>[Unresolved](<getClass>(Int#)) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| {
-        }
+        @Anno<Int>[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 COMPANION_GENERATION:
@@ -66,7 +63,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgumentScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] annotation class Anno<[ResolvedTo(RAW_FIR)] T : Number> : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor<[ResolvedTo(RAW_FIR)] T : Number>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.value] value: KClass<T>): R|one/Anno<T>| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: KClass<T> = R|<local>/value|
@@ -74,8 +71,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgumentScript.kts
 
         }
 
-        @Anno<Int>[Unresolved](<getClass>(Int#)) public? final? [ResolvedTo(COMPANION_GENERATION)] fun resolveMe(): R|kotlin/Unit| {
-        }
+        @Anno<Int>[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPANION_GENERATION)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 SUPER_TYPES:
@@ -86,7 +82,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgumentScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] annotation class Anno<[ResolvedTo(RAW_FIR)] T : Number> : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor<[ResolvedTo(RAW_FIR)] T : Number>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.value] value: KClass<T>): R|one/Anno<T>| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: KClass<T> = R|<local>/value|
@@ -94,8 +90,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgumentScript.kts
 
         }
 
-        @Anno<Int>[Unresolved](<getClass>(Int#)) public? final? [ResolvedTo(SUPER_TYPES)] fun resolveMe(): R|kotlin/Unit| {
-        }
+        @Anno<Int>[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(SUPER_TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 TYPES:
@@ -106,7 +101,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgumentScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] annotation class Anno<[ResolvedTo(RAW_FIR)] T : Number> : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor<[ResolvedTo(RAW_FIR)] T : Number>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.value] value: KClass<T>): R|one/Anno<T>| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: KClass<T> = R|<local>/value|
@@ -114,8 +109,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgumentScript.kts
 
         }
 
-        @R|one/Anno<kotlin/Int>|[Types](<getClass>(Int#)) public? final? [ResolvedTo(TYPES)] fun resolveMe(): R|kotlin/Unit| {
-        }
+        @R|one/Anno<kotlin/Int>|[Types](LAZY_EXPRESSION) public? final? [ResolvedTo(TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 STATUS:
@@ -126,7 +120,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgumentScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] annotation class Anno<[ResolvedTo(RAW_FIR)] T : Number> : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor<[ResolvedTo(RAW_FIR)] T : Number>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.value] value: KClass<T>): R|one/Anno<T>| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: KClass<T> = R|<local>/value|
@@ -134,8 +128,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgumentScript.kts
 
         }
 
-        @R|one/Anno<kotlin/Int>|[Types](<getClass>(Int#)) public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| {
-        }
+        @R|one/Anno<kotlin/Int>|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 EXPECT_ACTUAL_MATCHING:
@@ -146,7 +139,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgumentScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] annotation class Anno<[ResolvedTo(RAW_FIR)] T : Number> : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor<[ResolvedTo(RAW_FIR)] T : Number>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.value] value: KClass<T>): R|one/Anno<T>| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: KClass<T> = R|<local>/value|
@@ -154,8 +147,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgumentScript.kts
 
         }
 
-        @R|one/Anno<kotlin/Int>|[Types](<getClass>(Int#)) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| {
-        }
+        @R|one/Anno<kotlin/Int>|[Types](LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 ARGUMENTS_OF_ANNOTATIONS:
@@ -166,7 +158,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgumentScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] annotation class Anno<[ResolvedTo(RAW_FIR)] T : Number> : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor<[ResolvedTo(RAW_FIR)] T : Number>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.value] value: KClass<T>): R|one/Anno<T>| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: KClass<T> = R|<local>/value|
@@ -174,8 +166,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgumentScript.kts
 
         }
 
-        @R|one/Anno<kotlin/Int>|[Types](<getClass>(Q|kotlin/Int|)) public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| {
-        }
+        @R|one/Anno<kotlin/Int>|[Types](<getClass>(Q|kotlin/Int|)) public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 CONTRACTS:
@@ -186,7 +177,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgumentScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] annotation class Anno<[ResolvedTo(RAW_FIR)] T : Number> : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor<[ResolvedTo(RAW_FIR)] T : Number>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.value] value: KClass<T>): R|one/Anno<T>| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: KClass<T> = R|<local>/value|
@@ -206,7 +197,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgumentScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] annotation class Anno<[ResolvedTo(RAW_FIR)] T : Number> : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor<[ResolvedTo(RAW_FIR)] T : Number>([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/Anno.value] value: KClass<T>): R|one/Anno<T>| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: KClass<T> = R|<local>/value|
@@ -226,7 +217,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgumentScript.kts
 
         public final [ResolvedTo(STATUS)] annotation class Anno<[ResolvedTo(STATUS)] T : R|kotlin/Number|> : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor<[ResolvedTo(STATUS)] T : R|kotlin/Number|>([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.value] value: <ERROR TYPE REF: Symbol not found for KClass>): R|one/Anno<T>| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val value: <ERROR TYPE REF: Symbol not found for KClass> = R|<local>/value|
@@ -246,7 +237,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgumentScript.kts
 
         public final [ResolvedTo(STATUS)] annotation class Anno<[ResolvedTo(STATUS)] T : R|kotlin/Number|> : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor<[ResolvedTo(STATUS)] T : R|kotlin/Number|>([ResolvedTo(STATUS)] [CorrespondingProperty=one/Anno.value] value: <ERROR TYPE REF: Symbol not found for KClass>): R|one/Anno<T>| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val value: <ERROR TYPE REF: Symbol not found for KClass> = R|<local>/value|

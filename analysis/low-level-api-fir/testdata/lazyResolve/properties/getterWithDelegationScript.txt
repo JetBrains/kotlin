@@ -4,19 +4,17 @@ FILE: [ResolvedTo(RAW_FIR)] getterWithDelegationScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] val one: Intby Prp#()
-            @Deprecated[Unresolved](String(reason)) public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+        public? final? [ResolvedTo(RAW_FIR)] val one: Intby LAZY_EXPRESSION
+            @Deprecated[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
                 ^ D|/one|.getValue#(Null(null), ::R|/one|)
             }
 
         public? final? [ResolvedTo(RAW_FIR)] class Prp : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Prp] constructor(): R|Prp| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] fun getValue(): <implicit> {
-                ^getValue IntegerLiteral(1)
-            }
+            public? final? [ResolvedTo(RAW_FIR)] fun getValue(): <implicit> { LAZY_BLOCK }
 
         }
 
@@ -27,19 +25,17 @@ FILE: [ResolvedTo(IMPORTS)] getterWithDelegationScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] val one: Intby Prp#()
-            @Deprecated[Unresolved](String(reason)) public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
+        public? final? [ResolvedTo(RAW_FIR)] val one: Intby LAZY_EXPRESSION
+            @Deprecated[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
                 ^ D|/one|.getValue#(Null(null), ::R|/one|)
             }
 
         public? final? [ResolvedTo(RAW_FIR)] class Prp : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Prp] constructor(): R|Prp| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] fun getValue(): <implicit> {
-                ^getValue IntegerLiteral(1)
-            }
+            public? final? [ResolvedTo(RAW_FIR)] fun getValue(): <implicit> { LAZY_BLOCK }
 
         }
 
@@ -50,19 +46,17 @@ FILE: [ResolvedTo(IMPORTS)] getterWithDelegationScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val one: Intby Prp#()
+        public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val one: Intby LAZY_EXPRESSION
             @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(reason)) public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): <implicit> {
                 ^ D|/one|.getValue#(Null(null), ::R|/one|)
             }
 
         public? final? [ResolvedTo(RAW_FIR)] class Prp : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Prp] constructor(): R|Prp| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] fun getValue(): <implicit> {
-                ^getValue IntegerLiteral(1)
-            }
+            public? final? [ResolvedTo(RAW_FIR)] fun getValue(): <implicit> { LAZY_BLOCK }
 
         }
 
@@ -73,19 +67,17 @@ FILE: [ResolvedTo(IMPORTS)] getterWithDelegationScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(COMPANION_GENERATION)] val one: Intby Prp#()
+        public? final? [ResolvedTo(COMPANION_GENERATION)] val one: Intby LAZY_EXPRESSION
             @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(reason)) public? [ResolvedTo(COMPANION_GENERATION)] get(): <implicit> {
                 ^ D|/one|.getValue#(Null(null), ::R|/one|)
             }
 
         public? final? [ResolvedTo(RAW_FIR)] class Prp : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Prp] constructor(): R|Prp| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] fun getValue(): <implicit> {
-                ^getValue IntegerLiteral(1)
-            }
+            public? final? [ResolvedTo(RAW_FIR)] fun getValue(): <implicit> { LAZY_BLOCK }
 
         }
 
@@ -96,19 +88,17 @@ FILE: [ResolvedTo(IMPORTS)] getterWithDelegationScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(SUPER_TYPES)] val one: Intby Prp#()
+        public? final? [ResolvedTo(SUPER_TYPES)] val one: Intby LAZY_EXPRESSION
             @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(reason)) public? [ResolvedTo(SUPER_TYPES)] get(): <implicit> {
                 ^ D|/one|.getValue#(Null(null), ::R|/one|)
             }
 
         public? final? [ResolvedTo(RAW_FIR)] class Prp : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Prp] constructor(): R|Prp| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] fun getValue(): <implicit> {
-                ^getValue IntegerLiteral(1)
-            }
+            public? final? [ResolvedTo(RAW_FIR)] fun getValue(): <implicit> { LAZY_BLOCK }
 
         }
 
@@ -119,19 +109,17 @@ FILE: [ResolvedTo(IMPORTS)] getterWithDelegationScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(TYPES)] val one: R|kotlin/Int|by Prp#()
+        public? final? [ResolvedTo(TYPES)] val one: R|kotlin/Int|by LAZY_EXPRESSION
             @R|kotlin/Deprecated|[Types](String(reason)) public? [ResolvedTo(TYPES)] get(): R|kotlin/Int| {
                 ^ D|/one|.getValue#(Null(null), ::R|/one|)
             }
 
         public? final? [ResolvedTo(RAW_FIR)] class Prp : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Prp] constructor(): R|Prp| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] fun getValue(): <implicit> {
-                ^getValue IntegerLiteral(1)
-            }
+            public? final? [ResolvedTo(RAW_FIR)] fun getValue(): <implicit> { LAZY_BLOCK }
 
         }
 
@@ -142,19 +130,17 @@ FILE: [ResolvedTo(IMPORTS)] getterWithDelegationScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] val one: R|kotlin/Int|by Prp#()
+        public final [ResolvedTo(STATUS)] val one: R|kotlin/Int|by LAZY_EXPRESSION
             @R|kotlin/Deprecated|[Types](String(reason)) public [ResolvedTo(STATUS)] get(): R|kotlin/Int| {
                 ^ D|/one|.getValue#(Null(null), ::R|/one|)
             }
 
         public? final? [ResolvedTo(RAW_FIR)] class Prp : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Prp] constructor(): R|Prp| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] fun getValue(): <implicit> {
-                ^getValue IntegerLiteral(1)
-            }
+            public? final? [ResolvedTo(RAW_FIR)] fun getValue(): <implicit> { LAZY_BLOCK }
 
         }
 
@@ -165,19 +151,17 @@ FILE: [ResolvedTo(IMPORTS)] getterWithDelegationScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val one: R|kotlin/Int|by Prp#()
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val one: R|kotlin/Int|by LAZY_EXPRESSION
             @R|kotlin/Deprecated|[Types](String(reason)) public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): R|kotlin/Int| {
                 ^ D|/one|.getValue#(Null(null), ::R|/one|)
             }
 
         public? final? [ResolvedTo(RAW_FIR)] class Prp : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Prp] constructor(): R|Prp| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] fun getValue(): <implicit> {
-                ^getValue IntegerLiteral(1)
-            }
+            public? final? [ResolvedTo(RAW_FIR)] fun getValue(): <implicit> { LAZY_BLOCK }
 
         }
 
@@ -188,19 +172,17 @@ FILE: [ResolvedTo(IMPORTS)] getterWithDelegationScript.kts
     SCRIPT: [ResolvedTo(TYPES)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] val one: R|kotlin/Int|by Prp#()
+        public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] val one: R|kotlin/Int|by LAZY_EXPRESSION
             @R|kotlin/Deprecated|[Types](String(reason)) public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] get(): R|kotlin/Int| {
                 ^ D|/one|.getValue#(Null(null), ::R|/one|)
             }
 
         public? final? [ResolvedTo(RAW_FIR)] class Prp : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Prp] constructor(): R|Prp| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] fun getValue(): <implicit> {
-                ^getValue IntegerLiteral(1)
-            }
+            public? final? [ResolvedTo(RAW_FIR)] fun getValue(): <implicit> { LAZY_BLOCK }
 
         }
 
@@ -218,12 +200,10 @@ FILE: [ResolvedTo(IMPORTS)] getterWithDelegationScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class Prp : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Prp] constructor(): R|Prp| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] fun getValue(): <implicit> {
-                ^getValue IntegerLiteral(1)
-            }
+            public? final? [ResolvedTo(RAW_FIR)] fun getValue(): <implicit> { LAZY_BLOCK }
 
         }
 
@@ -241,7 +221,7 @@ FILE: [ResolvedTo(IMPORTS)] getterWithDelegationScript.kts
 
         public final [ResolvedTo(STATUS)] class Prp : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Prp] constructor(): R|Prp| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun getValue(): R|kotlin/Int| {
@@ -264,7 +244,7 @@ FILE: [ResolvedTo(IMPORTS)] getterWithDelegationScript.kts
 
         public final [ResolvedTo(STATUS)] class Prp : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Prp] constructor(): R|Prp| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun getValue(): R|kotlin/Int| {
@@ -287,7 +267,7 @@ FILE: [ResolvedTo(IMPORTS)] getterWithDelegationScript.kts
 
         public final [ResolvedTo(STATUS)] class Prp : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Prp] constructor(): R|Prp| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun getValue(): R|kotlin/Int| {

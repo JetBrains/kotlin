@@ -6,12 +6,12 @@ FILE: [ResolvedTo(RAW_FIR)] nestedTypeAlias2Script.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class OuterClass<[ResolvedTo(RAW_FIR)] T1> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(RAW_FIR)] T1>(): R|OuterClass<T1>| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public? final? [ResolvedTo(RAW_FIR)] class NestedClass<[ResolvedTo(RAW_FIR)] T2> : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor<[ResolvedTo(RAW_FIR)] T2>(): R|OuterClass.NestedClass<T2>| {
-                    super<R|kotlin/Any|>()
+                    LAZY_super<R|kotlin/Any|>
                 }
 
             }
@@ -31,12 +31,12 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2Script.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class OuterClass<[ResolvedTo(RAW_FIR)] T1> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(RAW_FIR)] T1>(): R|OuterClass<T1>| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public? final? [ResolvedTo(RAW_FIR)] class NestedClass<[ResolvedTo(RAW_FIR)] T2> : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor<[ResolvedTo(RAW_FIR)] T2>(): R|OuterClass.NestedClass<T2>| {
-                    super<R|kotlin/Any|>()
+                    LAZY_super<R|kotlin/Any|>
                 }
 
             }
@@ -56,12 +56,12 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2Script.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class OuterClass<[ResolvedTo(RAW_FIR)] T1> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(RAW_FIR)] T1>(): R|OuterClass<T1>| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public? final? [ResolvedTo(RAW_FIR)] class NestedClass<[ResolvedTo(RAW_FIR)] T2> : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor<[ResolvedTo(RAW_FIR)] T2>(): R|OuterClass.NestedClass<T2>| {
-                    super<R|kotlin/Any|>()
+                    LAZY_super<R|kotlin/Any|>
                 }
 
             }
@@ -81,12 +81,12 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2Script.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class OuterClass<[ResolvedTo(RAW_FIR)] T1> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(RAW_FIR)] T1>(): R|OuterClass<T1>| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public? final? [ResolvedTo(RAW_FIR)] class NestedClass<[ResolvedTo(RAW_FIR)] T2> : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor<[ResolvedTo(RAW_FIR)] T2>(): R|OuterClass.NestedClass<T2>| {
-                    super<R|kotlin/Any|>()
+                    LAZY_super<R|kotlin/Any|>
                 }
 
             }
@@ -106,12 +106,12 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2Script.kts
 
         public? final? [ResolvedTo(SUPER_TYPES)] class OuterClass<[ResolvedTo(SUPER_TYPES)] T1> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(SUPER_TYPES)] T1>(): R|OuterClass<T1>| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public? final? [ResolvedTo(SUPER_TYPES)] class NestedClass<[ResolvedTo(SUPER_TYPES)] T2> : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor<[ResolvedTo(SUPER_TYPES)] T2>(): R|OuterClass.NestedClass<T2>| {
-                    super<R|kotlin/Any|>()
+                    LAZY_super<R|kotlin/Any|>
                 }
 
             }
@@ -131,12 +131,12 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2Script.kts
 
         public? final? [ResolvedTo(SUPER_TYPES)] class OuterClass<[ResolvedTo(SUPER_TYPES)] T1> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(SUPER_TYPES)] T1>(): R|OuterClass<T1>| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public? final? [ResolvedTo(SUPER_TYPES)] class NestedClass<[ResolvedTo(SUPER_TYPES)] T2> : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor<[ResolvedTo(SUPER_TYPES)] T2>(): R|OuterClass.NestedClass<T2>| {
-                    super<R|kotlin/Any|>()
+                    LAZY_super<R|kotlin/Any|>
                 }
 
             }
@@ -156,12 +156,12 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2Script.kts
 
         public? final? [ResolvedTo(SUPER_TYPES)] class OuterClass<[ResolvedTo(SUPER_TYPES)] T1> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(SUPER_TYPES)] T1>(): R|OuterClass<T1>| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public? final? [ResolvedTo(SUPER_TYPES)] class NestedClass<[ResolvedTo(SUPER_TYPES)] T2> : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor<[ResolvedTo(SUPER_TYPES)] T2>(): R|OuterClass.NestedClass<T2>| {
-                    super<R|kotlin/Any|>()
+                    LAZY_super<R|kotlin/Any|>
                 }
 
             }
@@ -181,12 +181,12 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2Script.kts
 
         public? final? [ResolvedTo(SUPER_TYPES)] class OuterClass<[ResolvedTo(SUPER_TYPES)] T1> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(SUPER_TYPES)] T1>(): R|OuterClass<T1>| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public? final? [ResolvedTo(SUPER_TYPES)] class NestedClass<[ResolvedTo(SUPER_TYPES)] T2> : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor<[ResolvedTo(SUPER_TYPES)] T2>(): R|OuterClass.NestedClass<T2>| {
-                    super<R|kotlin/Any|>()
+                    LAZY_super<R|kotlin/Any|>
                 }
 
             }
@@ -206,12 +206,12 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2Script.kts
 
         public? final? [ResolvedTo(SUPER_TYPES)] class OuterClass<[ResolvedTo(SUPER_TYPES)] T1> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(SUPER_TYPES)] T1>(): R|OuterClass<T1>| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public? final? [ResolvedTo(SUPER_TYPES)] class NestedClass<[ResolvedTo(SUPER_TYPES)] T2> : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor<[ResolvedTo(SUPER_TYPES)] T2>(): R|OuterClass.NestedClass<T2>| {
-                    super<R|kotlin/Any|>()
+                    LAZY_super<R|kotlin/Any|>
                 }
 
             }
@@ -231,12 +231,12 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2Script.kts
 
         public? final? [ResolvedTo(SUPER_TYPES)] class OuterClass<[ResolvedTo(SUPER_TYPES)] T1> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(SUPER_TYPES)] T1>(): R|OuterClass<T1>| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public? final? [ResolvedTo(SUPER_TYPES)] class NestedClass<[ResolvedTo(SUPER_TYPES)] T2> : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor<[ResolvedTo(SUPER_TYPES)] T2>(): R|OuterClass.NestedClass<T2>| {
-                    super<R|kotlin/Any|>()
+                    LAZY_super<R|kotlin/Any|>
                 }
 
             }
@@ -256,12 +256,12 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2Script.kts
 
         public? final? [ResolvedTo(SUPER_TYPES)] class OuterClass<[ResolvedTo(SUPER_TYPES)] T1> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(SUPER_TYPES)] T1>(): R|OuterClass<T1>| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public? final? [ResolvedTo(SUPER_TYPES)] class NestedClass<[ResolvedTo(SUPER_TYPES)] T2> : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor<[ResolvedTo(SUPER_TYPES)] T2>(): R|OuterClass.NestedClass<T2>| {
-                    super<R|kotlin/Any|>()
+                    LAZY_super<R|kotlin/Any|>
                 }
 
             }
@@ -281,12 +281,12 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2Script.kts
 
         public? final? [ResolvedTo(SUPER_TYPES)] class OuterClass<[ResolvedTo(SUPER_TYPES)] T1> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(SUPER_TYPES)] T1>(): R|OuterClass<T1>| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public? final? [ResolvedTo(SUPER_TYPES)] class NestedClass<[ResolvedTo(SUPER_TYPES)] T2> : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor<[ResolvedTo(SUPER_TYPES)] T2>(): R|OuterClass.NestedClass<T2>| {
-                    super<R|kotlin/Any|>()
+                    LAZY_super<R|kotlin/Any|>
                 }
 
             }
@@ -306,12 +306,12 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2Script.kts
 
         public? final? [ResolvedTo(SUPER_TYPES)] class OuterClass<[ResolvedTo(SUPER_TYPES)] T1> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(SUPER_TYPES)] T1>(): R|OuterClass<T1>| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public? final? [ResolvedTo(SUPER_TYPES)] class NestedClass<[ResolvedTo(SUPER_TYPES)] T2> : R|kotlin/Any| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor<[ResolvedTo(SUPER_TYPES)] T2>(): R|OuterClass.NestedClass<T2>| {
-                    super<R|kotlin/Any|>()
+                    LAZY_super<R|kotlin/Any|>
                 }
 
             }

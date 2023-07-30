@@ -7,9 +7,7 @@ FILE: [ResolvedTo(RAW_FIR)] functionWithParameterScript.kts
         public? final? [ResolvedTo(RAW_FIR)] interface I : R|kotlin/Any| {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe([ResolvedTo(RAW_FIR)] param: I): <implicit> {
-            ^resolveMe Unit#
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe([ResolvedTo(RAW_FIR)] param: I): <implicit> { LAZY_BLOCK }
 
 
 IMPORTS:
@@ -21,9 +19,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithParameterScript.kts
         public? final? [ResolvedTo(RAW_FIR)] interface I : R|kotlin/Any| {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe([ResolvedTo(RAW_FIR)] param: I): <implicit> {
-            ^resolveMe Unit#
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe([ResolvedTo(RAW_FIR)] param: I): <implicit> { LAZY_BLOCK }
 
 
 COMPILER_REQUIRED_ANNOTATIONS:
@@ -35,9 +31,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithParameterScript.kts
         public? final? [ResolvedTo(RAW_FIR)] interface I : R|kotlin/Any| {
         }
 
-        public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun resolveMe([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] param: I): <implicit> {
-            ^resolveMe Unit#
-        }
+        public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun resolveMe([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] param: I): <implicit> { LAZY_BLOCK }
 
 
 COMPANION_GENERATION:
@@ -49,9 +43,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithParameterScript.kts
         public? final? [ResolvedTo(RAW_FIR)] interface I : R|kotlin/Any| {
         }
 
-        public? final? [ResolvedTo(COMPANION_GENERATION)] fun resolveMe([ResolvedTo(COMPANION_GENERATION)] param: I): <implicit> {
-            ^resolveMe Unit#
-        }
+        public? final? [ResolvedTo(COMPANION_GENERATION)] fun resolveMe([ResolvedTo(COMPANION_GENERATION)] param: I): <implicit> { LAZY_BLOCK }
 
 
 SUPER_TYPES:
@@ -63,9 +55,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithParameterScript.kts
         public? final? [ResolvedTo(RAW_FIR)] interface I : R|kotlin/Any| {
         }
 
-        public? final? [ResolvedTo(SUPER_TYPES)] fun resolveMe([ResolvedTo(SUPER_TYPES)] param: I): <implicit> {
-            ^resolveMe Unit#
-        }
+        public? final? [ResolvedTo(SUPER_TYPES)] fun resolveMe([ResolvedTo(SUPER_TYPES)] param: I): <implicit> { LAZY_BLOCK }
 
 
 TYPES:
@@ -77,9 +67,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithParameterScript.kts
         public? final? [ResolvedTo(RAW_FIR)] interface I : R|kotlin/Any| {
         }
 
-        public? final? [ResolvedTo(TYPES)] fun resolveMe([ResolvedTo(TYPES)] param: R|I|): <implicit> {
-            ^resolveMe Unit#
-        }
+        public? final? [ResolvedTo(TYPES)] fun resolveMe([ResolvedTo(TYPES)] param: R|I|): <implicit> { LAZY_BLOCK }
 
 
 STATUS:
@@ -91,9 +79,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithParameterScript.kts
         public? final? [ResolvedTo(RAW_FIR)] interface I : R|kotlin/Any| {
         }
 
-        public final [ResolvedTo(STATUS)] fun resolveMe([ResolvedTo(STATUS)] param: R|I|): <implicit> {
-            ^resolveMe Unit#
-        }
+        public final [ResolvedTo(STATUS)] fun resolveMe([ResolvedTo(STATUS)] param: R|I|): <implicit> { LAZY_BLOCK }
 
 
 EXPECT_ACTUAL_MATCHING:
@@ -105,9 +91,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithParameterScript.kts
         public? final? [ResolvedTo(RAW_FIR)] interface I : R|kotlin/Any| {
         }
 
-        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe([ResolvedTo(EXPECT_ACTUAL_MATCHING)] param: R|I|): <implicit> {
-            ^resolveMe Unit#
-        }
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe([ResolvedTo(EXPECT_ACTUAL_MATCHING)] param: R|I|): <implicit> { LAZY_BLOCK }
 
 
 ARGUMENTS_OF_ANNOTATIONS:
@@ -119,9 +103,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithParameterScript.kts
         public? final? [ResolvedTo(RAW_FIR)] interface I : R|kotlin/Any| {
         }
 
-        public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe([ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] param: R|I|): <implicit> {
-            ^resolveMe Unit#
-        }
+        public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe([ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] param: R|I|): <implicit> { LAZY_BLOCK }
 
 
 CONTRACTS:

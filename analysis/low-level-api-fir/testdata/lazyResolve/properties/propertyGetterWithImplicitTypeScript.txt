@@ -5,9 +5,7 @@ FILE: [ResolvedTo(RAW_FIR)] propertyGetterWithImplicitTypeScript.kts
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] val prop: <implicit>
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ IntegerLiteral(42)
-            }
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
 
 
 IMPORTS:
@@ -17,9 +15,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitTypeScript.kts
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] val prop: <implicit>
-            public? [ResolvedTo(RAW_FIR)] get(): <implicit> {
-                ^ IntegerLiteral(42)
-            }
+            public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
 
 
 COMPILER_REQUIRED_ANNOTATIONS:
@@ -29,9 +25,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitTypeScript.kts
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val prop: <implicit>
-            public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): <implicit> {
-                ^ IntegerLiteral(42)
-            }
+            public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): <implicit> { LAZY_BLOCK }
 
 
 COMPANION_GENERATION:
@@ -41,9 +35,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitTypeScript.kts
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(COMPANION_GENERATION)] val prop: <implicit>
-            public? [ResolvedTo(COMPANION_GENERATION)] get(): <implicit> {
-                ^ IntegerLiteral(42)
-            }
+            public? [ResolvedTo(COMPANION_GENERATION)] get(): <implicit> { LAZY_BLOCK }
 
 
 SUPER_TYPES:
@@ -53,9 +45,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitTypeScript.kts
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(SUPER_TYPES)] val prop: <implicit>
-            public? [ResolvedTo(SUPER_TYPES)] get(): <implicit> {
-                ^ IntegerLiteral(42)
-            }
+            public? [ResolvedTo(SUPER_TYPES)] get(): <implicit> { LAZY_BLOCK }
 
 
 TYPES:
@@ -65,9 +55,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitTypeScript.kts
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(TYPES)] val prop: <implicit>
-            public? [ResolvedTo(TYPES)] get(): <implicit> {
-                ^ IntegerLiteral(42)
-            }
+            public? [ResolvedTo(TYPES)] get(): <implicit> { LAZY_BLOCK }
 
 
 STATUS:
@@ -77,9 +65,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitTypeScript.kts
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] val prop: <implicit>
-            public [ResolvedTo(STATUS)] get(): <implicit> {
-                ^ IntegerLiteral(42)
-            }
+            public [ResolvedTo(STATUS)] get(): <implicit> { LAZY_BLOCK }
 
 
 EXPECT_ACTUAL_MATCHING:
@@ -89,9 +75,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitTypeScript.kts
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val prop: <implicit>
-            public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): <implicit> {
-                ^ IntegerLiteral(42)
-            }
+            public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): <implicit> { LAZY_BLOCK }
 
 
 ARGUMENTS_OF_ANNOTATIONS:
@@ -101,9 +85,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyGetterWithImplicitTypeScript.kts
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] val prop: <implicit>
-            public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] get(): <implicit> {
-                ^ IntegerLiteral(42)
-            }
+            public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] get(): <implicit> { LAZY_BLOCK }
 
 
 CONTRACTS:

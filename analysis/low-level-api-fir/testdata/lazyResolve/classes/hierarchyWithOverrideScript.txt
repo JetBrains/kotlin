@@ -26,11 +26,10 @@ FILE: [ResolvedTo(RAW_FIR)] hierarchyWithOverrideScript.kts
 
         public? abstract [ResolvedTo(RAW_FIR)] class Usage : Foo2 {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor(): R|Usage| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
-            public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-            }
+            public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -63,11 +62,10 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
 
         public? abstract [ResolvedTo(RAW_FIR)] class Usage : Foo2 {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor(): R|Usage| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
-            public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-            }
+            public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -100,11 +98,10 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
 
         public? abstract [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Usage : Foo2 {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor(): R|Usage| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
-            public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-            }
+            public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -137,11 +134,10 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
 
         public? abstract [ResolvedTo(COMPANION_GENERATION)] class Usage : Foo2 {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor(): R|Usage| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
-            public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-            }
+            public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -174,11 +170,10 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
 
         public? abstract [ResolvedTo(SUPER_TYPES)] class Usage : R|Foo2| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor(): R|Usage| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
-            public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-            }
+            public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -211,11 +206,10 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
 
         public? abstract [ResolvedTo(TYPES)] class Usage : R|Foo2| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor(): R|Usage| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
-            public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-            }
+            public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -248,11 +242,10 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
 
         public abstract [ResolvedTo(STATUS)] class Usage : R|Foo2| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor(): R|Usage| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
-            public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-            }
+            public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -285,11 +278,10 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
 
         public abstract [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class Usage : R|Foo2| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor(): R|Usage| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
-            public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-            }
+            public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -322,11 +314,10 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
 
         public abstract [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] class Usage : R|Foo2| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor(): R|Usage| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
-            public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-            }
+            public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -359,11 +350,10 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
 
         public abstract [ResolvedTo(CONTRACTS)] class Usage : R|Foo2| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor(): R|Usage| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
-            public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-            }
+            public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -396,11 +386,10 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
 
         public abstract [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class Usage : R|Foo2| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor(): R|Usage| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
-            public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-            }
+            public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -433,11 +422,10 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
 
         public abstract [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class Usage : R|Foo2| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor(): R|Usage| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
-            public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-            }
+            public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 
@@ -473,8 +461,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
                 super<R|kotlin/Any|>()
             }
 
-            public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
-            }
+            public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
         }
 

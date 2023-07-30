@@ -6,7 +6,7 @@ FILE: [ResolvedTo(RAW_FIR)] compilerRequiredAnnotationsOnFunctionScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
@@ -14,8 +14,7 @@ FILE: [ResolvedTo(RAW_FIR)] compilerRequiredAnnotationsOnFunctionScript.kts
 
         }
 
-        @Deprecated[Unresolved](String(function)) @Anno[Unresolved](String(function)) public? final? [ResolvedTo(RAW_FIR)] fun fooo([ResolvedTo(RAW_FIR)] @Deprecated[Unresolved](String(a)) @Anno[Unresolved](String(a)) a: Int): R|kotlin/Unit| {
-        }
+        @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun fooo([ResolvedTo(RAW_FIR)] @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) a: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 IMPORTS:
@@ -26,7 +25,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
@@ -34,8 +33,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
 
         }
 
-        @Deprecated[Unresolved](String(function)) @Anno[Unresolved](String(function)) public? final? [ResolvedTo(RAW_FIR)] fun fooo([ResolvedTo(RAW_FIR)] @Deprecated[Unresolved](String(a)) @Anno[Unresolved](String(a)) a: Int): R|kotlin/Unit| {
-        }
+        @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun fooo([ResolvedTo(RAW_FIR)] @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) a: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 COMPILER_REQUIRED_ANNOTATIONS:
@@ -46,7 +44,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
@@ -54,8 +52,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
 
         }
 
-        @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(function)) @Anno[Unresolved](String(function)) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun fooo([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(a)) @Anno[Unresolved](String(a)) a: Int): R|kotlin/Unit| {
-        }
+        @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(function)) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun fooo([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(a)) @Anno[Unresolved](LAZY_EXPRESSION) a: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 COMPANION_GENERATION:
@@ -66,7 +63,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
@@ -74,8 +71,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
 
         }
 
-        @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(function)) @Anno[Unresolved](String(function)) public? final? [ResolvedTo(COMPANION_GENERATION)] fun fooo([ResolvedTo(COMPANION_GENERATION)] @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(a)) @Anno[Unresolved](String(a)) a: Int): R|kotlin/Unit| {
-        }
+        @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(function)) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPANION_GENERATION)] fun fooo([ResolvedTo(COMPANION_GENERATION)] @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(a)) @Anno[Unresolved](LAZY_EXPRESSION) a: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 SUPER_TYPES:
@@ -86,7 +82,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
@@ -94,8 +90,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
 
         }
 
-        @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(function)) @Anno[Unresolved](String(function)) public? final? [ResolvedTo(SUPER_TYPES)] fun fooo([ResolvedTo(SUPER_TYPES)] @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(a)) @Anno[Unresolved](String(a)) a: Int): R|kotlin/Unit| {
-        }
+        @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(function)) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(SUPER_TYPES)] fun fooo([ResolvedTo(SUPER_TYPES)] @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(a)) @Anno[Unresolved](LAZY_EXPRESSION) a: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 TYPES:
@@ -106,7 +101,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
@@ -114,8 +109,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
 
         }
 
-        @R|kotlin/Deprecated|[Types](String(function)) @R|Anno|[Types](String(function)) public? final? [ResolvedTo(TYPES)] fun fooo([ResolvedTo(TYPES)] @R|kotlin/Deprecated|[Types](String(a)) @R|Anno|[Types](String(a)) a: R|kotlin/Int|): R|kotlin/Unit| {
-        }
+        @R|kotlin/Deprecated|[Types](String(function)) @R|Anno|[Types](LAZY_EXPRESSION) public? final? [ResolvedTo(TYPES)] fun fooo([ResolvedTo(TYPES)] @R|kotlin/Deprecated|[Types](String(a)) @R|Anno|[Types](LAZY_EXPRESSION) a: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 STATUS:
@@ -126,7 +120,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
@@ -134,8 +128,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
 
         }
 
-        @R|kotlin/Deprecated|[Types](String(function)) @R|Anno|[Types](String(function)) public final [ResolvedTo(STATUS)] fun fooo([ResolvedTo(STATUS)] @R|kotlin/Deprecated|[Types](String(a)) @R|Anno|[Types](String(a)) a: R|kotlin/Int|): R|kotlin/Unit| {
-        }
+        @R|kotlin/Deprecated|[Types](String(function)) @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] fun fooo([ResolvedTo(STATUS)] @R|kotlin/Deprecated|[Types](String(a)) @R|Anno|[Types](LAZY_EXPRESSION) a: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 EXPECT_ACTUAL_MATCHING:
@@ -146,7 +139,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
@@ -154,8 +147,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
 
         }
 
-        @R|kotlin/Deprecated|[Types](String(function)) @R|Anno|[Types](String(function)) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun fooo([ResolvedTo(EXPECT_ACTUAL_MATCHING)] @R|kotlin/Deprecated|[Types](String(a)) @R|Anno|[Types](String(a)) a: R|kotlin/Int|): R|kotlin/Unit| {
-        }
+        @R|kotlin/Deprecated|[Types](String(function)) @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun fooo([ResolvedTo(EXPECT_ACTUAL_MATCHING)] @R|kotlin/Deprecated|[Types](String(a)) @R|Anno|[Types](LAZY_EXPRESSION) a: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 ARGUMENTS_OF_ANNOTATIONS:
@@ -166,7 +158,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
@@ -174,8 +166,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
 
         }
 
-        @R|kotlin/Deprecated|[Types](String(function)) @R|Anno|[Types](String(function)) public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun fooo([ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] @R|kotlin/Deprecated|[Types](String(a)) @R|Anno|[Types](String(a)) a: R|kotlin/Int|): R|kotlin/Unit| {
-        }
+        @R|kotlin/Deprecated|[Types](String(function)) @R|Anno|[Types](String(function)) public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun fooo([ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] @R|kotlin/Deprecated|[Types](String(a)) @R|Anno|[Types](String(a)) a: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 CONTRACTS:
@@ -186,7 +177,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
@@ -206,7 +197,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
@@ -226,7 +217,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
 
         public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|
@@ -246,7 +237,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnFunctionScript.kts
 
         public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val s: R|kotlin/String| = R|<local>/s|

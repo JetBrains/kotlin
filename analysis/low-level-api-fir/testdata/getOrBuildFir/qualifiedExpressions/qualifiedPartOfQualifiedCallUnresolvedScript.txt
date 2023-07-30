@@ -13,7 +13,7 @@ FILE: [ResolvedTo(IMPORTS)] qualifiedPartOfQualifiedCallUnresolvedScript.kts
 
         public final [ResolvedTo(STATUS)] class FF : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=FF] constructor(): R|FF| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public final [ResolvedTo(BODY_RESOLVE)] fun handleLeftBracketInFragment(): R|kotlin/Unit| {

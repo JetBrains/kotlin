@@ -6,7 +6,7 @@ FILE: [ResolvedTo(RAW_FIR)] enumValuesScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
-                super<R|kotlin/Enum<one/MyEnum>|>()
+                LAZY_super<R|kotlin/Enum<one/MyEnum>|>
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
@@ -30,7 +30,7 @@ FILE: [ResolvedTo(IMPORTS)] enumValuesScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
-                super<R|kotlin/Enum<one/MyEnum>|>()
+                LAZY_super<R|kotlin/Enum<one/MyEnum>|>
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
@@ -54,7 +54,7 @@ FILE: [ResolvedTo(IMPORTS)] enumValuesScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
-                super<R|kotlin/Enum<one/MyEnum>|>()
+                LAZY_super<R|kotlin/Enum<one/MyEnum>|>
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
@@ -78,7 +78,7 @@ FILE: [ResolvedTo(IMPORTS)] enumValuesScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
-                super<R|kotlin/Enum<one/MyEnum>|>()
+                LAZY_super<R|kotlin/Enum<one/MyEnum>|>
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
@@ -102,7 +102,7 @@ FILE: [ResolvedTo(IMPORTS)] enumValuesScript.kts
 
         public? final? [ResolvedTo(SUPER_TYPES)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
-                super<R|kotlin/Enum<one/MyEnum>|>()
+                LAZY_super<R|kotlin/Enum<one/MyEnum>|>
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
@@ -126,7 +126,7 @@ FILE: [ResolvedTo(IMPORTS)] enumValuesScript.kts
 
         public? final? [ResolvedTo(TYPES)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
-                super<R|kotlin/Enum<one/MyEnum>|>()
+                LAZY_super<R|kotlin/Enum<one/MyEnum>|>
             }
 
             public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
@@ -150,7 +150,7 @@ FILE: [ResolvedTo(IMPORTS)] enumValuesScript.kts
 
         public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
-                super<R|kotlin/Enum<one/MyEnum>|>()
+                LAZY_super<R|kotlin/Enum<one/MyEnum>|>
             }
 
             public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
@@ -174,7 +174,7 @@ FILE: [ResolvedTo(IMPORTS)] enumValuesScript.kts
 
         public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
-                super<R|kotlin/Enum<one/MyEnum>|>()
+                LAZY_super<R|kotlin/Enum<one/MyEnum>|>
             }
 
             public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
@@ -198,7 +198,7 @@ FILE: [ResolvedTo(IMPORTS)] enumValuesScript.kts
 
         public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
-                super<R|kotlin/Enum<one/MyEnum>|>()
+                LAZY_super<R|kotlin/Enum<one/MyEnum>|>
             }
 
             public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
@@ -222,7 +222,7 @@ FILE: [ResolvedTo(IMPORTS)] enumValuesScript.kts
 
         public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
-                super<R|kotlin/Enum<one/MyEnum>|>()
+                LAZY_super<R|kotlin/Enum<one/MyEnum>|>
             }
 
             public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
@@ -246,7 +246,7 @@ FILE: [ResolvedTo(IMPORTS)] enumValuesScript.kts
 
         public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
-                super<R|kotlin/Enum<one/MyEnum>|>()
+                LAZY_super<R|kotlin/Enum<one/MyEnum>|>
             }
 
             public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
@@ -270,7 +270,7 @@ FILE: [ResolvedTo(IMPORTS)] enumValuesScript.kts
 
         public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
-                super<R|kotlin/Enum<one/MyEnum>|>()
+                LAZY_super<R|kotlin/Enum<one/MyEnum>|>
             }
 
             public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
@@ -294,7 +294,7 @@ FILE: [ResolvedTo(IMPORTS)] enumValuesScript.kts
 
         public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
-                super<R|kotlin/Enum<one/MyEnum>|>()
+                LAZY_super<R|kotlin/Enum<one/MyEnum>|>
             }
 
             public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|

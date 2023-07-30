@@ -4,11 +4,9 @@ FILE: [ResolvedTo(RAW_FIR)] parameterOfTopSetterScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] var x: Int = IntegerLiteral(2)
+        public? final? [ResolvedTo(RAW_FIR)] var x: Int = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): Int
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] resolveMe: Int): R|kotlin/Unit| {
-                ^ Unit#
-            }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] resolveMe: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 IMPORTS:
@@ -17,11 +15,9 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfTopSetterScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] var x: Int = IntegerLiteral(2)
+        public? final? [ResolvedTo(RAW_FIR)] var x: Int = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): Int
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] resolveMe: Int): R|kotlin/Unit| {
-                ^ Unit#
-            }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] resolveMe: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 COMPILER_REQUIRED_ANNOTATIONS:
@@ -30,11 +26,9 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfTopSetterScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] var x: Int = IntegerLiteral(2)
+        public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] var x: Int = LAZY_EXPRESSION
             public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): Int
-            public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] set([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] resolveMe: Int): R|kotlin/Unit| {
-                ^ Unit#
-            }
+            public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] set([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] resolveMe: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 COMPANION_GENERATION:
@@ -43,11 +37,9 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfTopSetterScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(COMPANION_GENERATION)] var x: Int = IntegerLiteral(2)
+        public? final? [ResolvedTo(COMPANION_GENERATION)] var x: Int = LAZY_EXPRESSION
             public? [ResolvedTo(COMPANION_GENERATION)] get(): Int
-            public? [ResolvedTo(COMPANION_GENERATION)] set([ResolvedTo(COMPANION_GENERATION)] resolveMe: Int): R|kotlin/Unit| {
-                ^ Unit#
-            }
+            public? [ResolvedTo(COMPANION_GENERATION)] set([ResolvedTo(COMPANION_GENERATION)] resolveMe: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 SUPER_TYPES:
@@ -56,11 +48,9 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfTopSetterScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(SUPER_TYPES)] var x: Int = IntegerLiteral(2)
+        public? final? [ResolvedTo(SUPER_TYPES)] var x: Int = LAZY_EXPRESSION
             public? [ResolvedTo(SUPER_TYPES)] get(): Int
-            public? [ResolvedTo(SUPER_TYPES)] set([ResolvedTo(SUPER_TYPES)] resolveMe: Int): R|kotlin/Unit| {
-                ^ Unit#
-            }
+            public? [ResolvedTo(SUPER_TYPES)] set([ResolvedTo(SUPER_TYPES)] resolveMe: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 TYPES:
@@ -69,11 +59,9 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfTopSetterScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(TYPES)] var x: R|kotlin/Int| = IntegerLiteral(2)
+        public? final? [ResolvedTo(TYPES)] var x: R|kotlin/Int| = LAZY_EXPRESSION
             public? [ResolvedTo(TYPES)] get(): R|kotlin/Int|
-            public? [ResolvedTo(TYPES)] set([ResolvedTo(TYPES)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
-                ^ Unit#
-            }
+            public? [ResolvedTo(TYPES)] set([ResolvedTo(TYPES)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 STATUS:
@@ -82,11 +70,9 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfTopSetterScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] var x: R|kotlin/Int| = IntegerLiteral(2)
+        public final [ResolvedTo(STATUS)] var x: R|kotlin/Int| = LAZY_EXPRESSION
             public [ResolvedTo(STATUS)] get(): R|kotlin/Int|
-            public [ResolvedTo(STATUS)] set([ResolvedTo(STATUS)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
-                ^ Unit#
-            }
+            public [ResolvedTo(STATUS)] set([ResolvedTo(STATUS)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 EXPECT_ACTUAL_MATCHING:
@@ -95,11 +81,9 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfTopSetterScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] var x: R|kotlin/Int| = IntegerLiteral(2)
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] var x: R|kotlin/Int| = LAZY_EXPRESSION
             public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): R|kotlin/Int|
-            public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] set([ResolvedTo(EXPECT_ACTUAL_MATCHING)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
-                ^ Unit#
-            }
+            public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] set([ResolvedTo(EXPECT_ACTUAL_MATCHING)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 ARGUMENTS_OF_ANNOTATIONS:
@@ -108,11 +92,9 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfTopSetterScript.kts
     SCRIPT: [ResolvedTo(TYPES)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] var x: R|kotlin/Int| = IntegerLiteral(2)
+        public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] var x: R|kotlin/Int| = LAZY_EXPRESSION
             public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] get(): R|kotlin/Int|
-            public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] set([ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
-                ^ Unit#
-            }
+            public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] set([ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 CONTRACTS:

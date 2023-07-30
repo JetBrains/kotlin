@@ -13,7 +13,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationApplicationArgumentOnStatement.kts
 
         @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.EXPRESSION|) @R|kotlin/annotation/Retention|[Types](AnnotationRetention#.SOURCE#) public final [ResolvedTo(STATUS)] annotation class Annotation : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Annotation] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Annotation.name] name: R|kotlin/String|): R|Annotation| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val name: R|kotlin/String| = R|<local>/name|

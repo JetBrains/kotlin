@@ -13,7 +13,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntryScript.kts
 
         public final [ResolvedTo(STATUS)] enum class X : R|kotlin/Enum<X>| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
-                super<R|kotlin/Enum<X>|>()
+                LAZY_super<R|kotlin/Enum<X>|>
             }
 
             public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X] enum entry ENTRY: R|X|

@@ -4,21 +4,13 @@ FILE: [ResolvedTo(RAW_FIR)] propertyWithGetterAndSetterScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            receive#(withGetterAndSetter#)
-            withGetterAndSetter# = IntegerLiteral(123)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] var withGetterAndSetter: Int = IntegerLiteral(42)
-            public? [ResolvedTo(RAW_FIR)] get(): Int {
-                ^ field#
-            }
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
-                field# = value#
-            }
+        public? final? [ResolvedTo(RAW_FIR)] var withGetterAndSetter: Int = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): Int { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 IMPORTS:
@@ -27,21 +19,13 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithGetterAndSetterScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            receive#(withGetterAndSetter#)
-            withGetterAndSetter# = IntegerLiteral(123)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] var withGetterAndSetter: Int = IntegerLiteral(42)
-            public? [ResolvedTo(RAW_FIR)] get(): Int {
-                ^ field#
-            }
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
-                field# = value#
-            }
+        public? final? [ResolvedTo(RAW_FIR)] var withGetterAndSetter: Int = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): Int { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 COMPILER_REQUIRED_ANNOTATIONS:
@@ -50,21 +34,13 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithGetterAndSetterScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| {
-            receive#(withGetterAndSetter#)
-            withGetterAndSetter# = IntegerLiteral(123)
-        }
+        public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] var withGetterAndSetter: Int = IntegerLiteral(42)
-            public? [ResolvedTo(RAW_FIR)] get(): Int {
-                ^ field#
-            }
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
-                field# = value#
-            }
+        public? final? [ResolvedTo(RAW_FIR)] var withGetterAndSetter: Int = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): Int { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 COMPANION_GENERATION:
@@ -73,21 +49,13 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithGetterAndSetterScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(COMPANION_GENERATION)] fun resolveMe(): R|kotlin/Unit| {
-            receive#(withGetterAndSetter#)
-            withGetterAndSetter# = IntegerLiteral(123)
-        }
+        public? final? [ResolvedTo(COMPANION_GENERATION)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] var withGetterAndSetter: Int = IntegerLiteral(42)
-            public? [ResolvedTo(RAW_FIR)] get(): Int {
-                ^ field#
-            }
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
-                field# = value#
-            }
+        public? final? [ResolvedTo(RAW_FIR)] var withGetterAndSetter: Int = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): Int { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 SUPER_TYPES:
@@ -96,21 +64,13 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithGetterAndSetterScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(SUPER_TYPES)] fun resolveMe(): R|kotlin/Unit| {
-            receive#(withGetterAndSetter#)
-            withGetterAndSetter# = IntegerLiteral(123)
-        }
+        public? final? [ResolvedTo(SUPER_TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] var withGetterAndSetter: Int = IntegerLiteral(42)
-            public? [ResolvedTo(RAW_FIR)] get(): Int {
-                ^ field#
-            }
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
-                field# = value#
-            }
+        public? final? [ResolvedTo(RAW_FIR)] var withGetterAndSetter: Int = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): Int { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 TYPES:
@@ -119,21 +79,13 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithGetterAndSetterScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(TYPES)] fun resolveMe(): R|kotlin/Unit| {
-            receive#(withGetterAndSetter#)
-            withGetterAndSetter# = IntegerLiteral(123)
-        }
+        public? final? [ResolvedTo(TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] var withGetterAndSetter: Int = IntegerLiteral(42)
-            public? [ResolvedTo(RAW_FIR)] get(): Int {
-                ^ field#
-            }
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
-                field# = value#
-            }
+        public? final? [ResolvedTo(RAW_FIR)] var withGetterAndSetter: Int = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): Int { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 STATUS:
@@ -142,21 +94,13 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithGetterAndSetterScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| {
-            receive#(withGetterAndSetter#)
-            withGetterAndSetter# = IntegerLiteral(123)
-        }
+        public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] var withGetterAndSetter: Int = IntegerLiteral(42)
-            public? [ResolvedTo(RAW_FIR)] get(): Int {
-                ^ field#
-            }
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
-                field# = value#
-            }
+        public? final? [ResolvedTo(RAW_FIR)] var withGetterAndSetter: Int = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): Int { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 EXPECT_ACTUAL_MATCHING:
@@ -165,21 +109,13 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithGetterAndSetterScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| {
-            receive#(withGetterAndSetter#)
-            withGetterAndSetter# = IntegerLiteral(123)
-        }
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] var withGetterAndSetter: Int = IntegerLiteral(42)
-            public? [ResolvedTo(RAW_FIR)] get(): Int {
-                ^ field#
-            }
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
-                field# = value#
-            }
+        public? final? [ResolvedTo(RAW_FIR)] var withGetterAndSetter: Int = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): Int { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 ARGUMENTS_OF_ANNOTATIONS:
@@ -188,21 +124,13 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithGetterAndSetterScript.kts
     SCRIPT: [ResolvedTo(TYPES)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| {
-            receive#(withGetterAndSetter#)
-            withGetterAndSetter# = IntegerLiteral(123)
-        }
+        public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] var withGetterAndSetter: Int = IntegerLiteral(42)
-            public? [ResolvedTo(RAW_FIR)] get(): Int {
-                ^ field#
-            }
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
-                field# = value#
-            }
+        public? final? [ResolvedTo(RAW_FIR)] var withGetterAndSetter: Int = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): Int { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 CONTRACTS:
@@ -216,16 +144,11 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithGetterAndSetterScript.kts
             withGetterAndSetter# = IntegerLiteral(123)
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] var withGetterAndSetter: Int = IntegerLiteral(42)
-            public? [ResolvedTo(RAW_FIR)] get(): Int {
-                ^ field#
-            }
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
-                field# = value#
-            }
+        public? final? [ResolvedTo(RAW_FIR)] var withGetterAndSetter: Int = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): Int { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 IMPLICIT_TYPES_BODY_RESOLVE:
@@ -239,16 +162,11 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithGetterAndSetterScript.kts
             withGetterAndSetter# = IntegerLiteral(123)
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] var withGetterAndSetter: Int = IntegerLiteral(42)
-            public? [ResolvedTo(RAW_FIR)] get(): Int {
-                ^ field#
-            }
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
-                field# = value#
-            }
+        public? final? [ResolvedTo(RAW_FIR)] var withGetterAndSetter: Int = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): Int { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
@@ -262,16 +180,11 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithGetterAndSetterScript.kts
             withGetterAndSetter# = IntegerLiteral(123)
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun receive([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] var withGetterAndSetter: Int = IntegerLiteral(42)
-            public? [ResolvedTo(RAW_FIR)] get(): Int {
-                ^ field#
-            }
-            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| {
-                field# = value#
-            }
+        public? final? [ResolvedTo(RAW_FIR)] var withGetterAndSetter: Int = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): Int { LAZY_BLOCK }
+            public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 BODY_RESOLVE:

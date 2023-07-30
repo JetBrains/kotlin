@@ -13,7 +13,7 @@ FILE: [ResolvedTo(IMPORTS)] memberTypeAliasScript.kts
 
         public final [ResolvedTo(STATUS)] class Y : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Y] constructor(): R|Y| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public final [ResolvedTo(BODY_RESOLVE)] typealias Str = R|kotlin/String|

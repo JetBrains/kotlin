@@ -10,7 +10,7 @@ FILE: [ResolvedTo(RAW_FIR)] nestedClassWithPropertiesOverridesScript.kts
 
             public? final? [ResolvedTo(RAW_FIR)] class ResolveMe : OV {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
-                    super<<implicit>>()
+                    LAZY_super<<implicit>>
                 }
 
                 public? open? override [ResolvedTo(RAW_FIR)] val originalExpressions: A
@@ -22,7 +22,7 @@ FILE: [ResolvedTo(RAW_FIR)] nestedClassWithPropertiesOverridesScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }
@@ -40,7 +40,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 
             public? final? [ResolvedTo(RAW_FIR)] class ResolveMe : OV {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
-                    super<<implicit>>()
+                    LAZY_super<<implicit>>
                 }
 
                 public? open? override [ResolvedTo(RAW_FIR)] val originalExpressions: A
@@ -52,7 +52,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }
@@ -70,7 +70,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 
             public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class ResolveMe : OV {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
-                    super<<implicit>>()
+                    LAZY_super<<implicit>>
                 }
 
                 public? open? override [ResolvedTo(RAW_FIR)] val originalExpressions: A
@@ -82,7 +82,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }
@@ -100,7 +100,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 
             public? final? [ResolvedTo(COMPANION_GENERATION)] class ResolveMe : OV {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
-                    super<<implicit>>()
+                    LAZY_super<<implicit>>
                 }
 
                 public? open? override [ResolvedTo(RAW_FIR)] val originalExpressions: A
@@ -112,7 +112,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }
@@ -130,7 +130,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 
             public? final? [ResolvedTo(SUPER_TYPES)] class ResolveMe : R|OV| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
-                    super<<implicit>>()
+                    LAZY_super<<implicit>>
                 }
 
                 public? open? override [ResolvedTo(RAW_FIR)] val originalExpressions: A
@@ -142,7 +142,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }
@@ -160,7 +160,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 
             public? final? [ResolvedTo(TYPES)] class ResolveMe : R|OV| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
-                    super<<implicit>>()
+                    LAZY_super<<implicit>>
                 }
 
                 public? open? override [ResolvedTo(RAW_FIR)] val originalExpressions: A
@@ -172,7 +172,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }
@@ -190,7 +190,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 
             public final [ResolvedTo(STATUS)] class ResolveMe : R|OV| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
-                    super<<implicit>>()
+                    LAZY_super<<implicit>>
                 }
 
                 public? open? override [ResolvedTo(RAW_FIR)] val originalExpressions: A
@@ -202,7 +202,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }
@@ -220,7 +220,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 
             public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class ResolveMe : R|OV| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
-                    super<<implicit>>()
+                    LAZY_super<<implicit>>
                 }
 
                 public? open? override [ResolvedTo(RAW_FIR)] val originalExpressions: A
@@ -232,7 +232,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }
@@ -250,7 +250,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 
             public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] class ResolveMe : R|OV| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
-                    super<<implicit>>()
+                    LAZY_super<<implicit>>
                 }
 
                 public? open? override [ResolvedTo(RAW_FIR)] val originalExpressions: A
@@ -262,7 +262,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }
@@ -280,7 +280,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 
             public final [ResolvedTo(CONTRACTS)] class ResolveMe : R|OV| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
-                    super<<implicit>>()
+                    LAZY_super<<implicit>>
                 }
 
                 public? open? override [ResolvedTo(RAW_FIR)] val originalExpressions: A
@@ -292,7 +292,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }
@@ -310,7 +310,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 
             public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class ResolveMe : R|OV| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
-                    super<<implicit>>()
+                    LAZY_super<<implicit>>
                 }
 
                 public? open? override [ResolvedTo(RAW_FIR)] val originalExpressions: A
@@ -322,7 +322,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }
@@ -340,7 +340,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 
             public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class ResolveMe : R|OV| {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
-                    super<<implicit>>()
+                    LAZY_super<<implicit>>
                 }
 
                 public? open? override [ResolvedTo(RAW_FIR)] val originalExpressions: A
@@ -352,7 +352,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }
@@ -382,7 +382,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverridesScript.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
         }

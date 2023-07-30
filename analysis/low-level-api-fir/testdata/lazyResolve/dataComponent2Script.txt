@@ -6,7 +6,7 @@ FILE: [ResolvedTo(RAW_FIR)] dataComponent2Script.kts
 
         public? final? data [ResolvedTo(RAW_FIR)] class DataClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/DataClass.i] i: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/DataClass.b] b: Boolean): R|one/DataClass| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
@@ -32,7 +32,7 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
 
         public? final? data [ResolvedTo(RAW_FIR)] class DataClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/DataClass.i] i: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/DataClass.b] b: Boolean): R|one/DataClass| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
@@ -58,7 +58,7 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
 
         public? final? data [ResolvedTo(RAW_FIR)] class DataClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/DataClass.i] i: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/DataClass.b] b: Boolean): R|one/DataClass| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
@@ -84,7 +84,7 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
 
         public? final? data [ResolvedTo(RAW_FIR)] class DataClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/DataClass.i] i: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/DataClass.b] b: Boolean): R|one/DataClass| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
@@ -110,7 +110,7 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
 
         public? final? data [ResolvedTo(SUPER_TYPES)] class DataClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/DataClass.i] i: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/DataClass.b] b: Boolean): R|one/DataClass| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
@@ -136,7 +136,7 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
 
         public? final? data [ResolvedTo(TYPES)] class DataClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/DataClass.i] i: Int, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=one/DataClass.b] b: Boolean): R|one/DataClass| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
@@ -162,7 +162,7 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
 
         public final data [ResolvedTo(STATUS)] class DataClass : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/DataClass.i] i: R|kotlin/Int|, [ResolvedTo(STATUS)] [CorrespondingProperty=one/DataClass.b] b: R|kotlin/Boolean|): R|one/DataClass| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
@@ -188,7 +188,7 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
 
         public final data [ResolvedTo(STATUS)] class DataClass : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/DataClass.i] i: R|kotlin/Int|, [ResolvedTo(STATUS)] [CorrespondingProperty=one/DataClass.b] b: R|kotlin/Boolean|): R|one/DataClass| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
@@ -214,7 +214,7 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
 
         public final data [ResolvedTo(STATUS)] class DataClass : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/DataClass.i] i: R|kotlin/Int|, [ResolvedTo(STATUS)] [CorrespondingProperty=one/DataClass.b] b: R|kotlin/Boolean|): R|one/DataClass| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
@@ -240,7 +240,7 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
 
         public final data [ResolvedTo(STATUS)] class DataClass : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/DataClass.i] i: R|kotlin/Int|, [ResolvedTo(STATUS)] [CorrespondingProperty=one/DataClass.b] b: R|kotlin/Boolean|): R|one/DataClass| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
@@ -266,7 +266,7 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
 
         public final data [ResolvedTo(STATUS)] class DataClass : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/DataClass.i] i: R|kotlin/Int|, [ResolvedTo(STATUS)] [CorrespondingProperty=one/DataClass.b] b: R|kotlin/Boolean|): R|one/DataClass| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
@@ -292,7 +292,7 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
 
         public final data [ResolvedTo(STATUS)] class DataClass : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/DataClass.i] i: R|kotlin/Int|, [ResolvedTo(STATUS)] [CorrespondingProperty=one/DataClass.b] b: R|kotlin/Boolean|): R|one/DataClass| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
@@ -318,7 +318,7 @@ FILE: [ResolvedTo(IMPORTS)] dataComponent2Script.kts
 
         public final data [ResolvedTo(STATUS)] class DataClass : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=one/DataClass.i] i: R|kotlin/Int|, [ResolvedTo(STATUS)] [CorrespondingProperty=one/DataClass.b] b: R|kotlin/Boolean|): R|one/DataClass| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|

@@ -26,13 +26,12 @@ FILE: [ResolvedTo(RAW_FIR)] hierarchyWithOverrideScript.kts
 
         public? abstract [ResolvedTo(RAW_FIR)] class Usage : Foo2 {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor(): R|Usage| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
-            public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-            }
+            public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
-            public? open? override [ResolvedTo(RAW_FIR)] val str: <implicit> = String()
+            public? open? override [ResolvedTo(RAW_FIR)] val str: <implicit> = LAZY_EXPRESSION
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] get(): <implicit>
 
         }
@@ -66,13 +65,12 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
 
         public? abstract [ResolvedTo(RAW_FIR)] class Usage : Foo2 {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor(): R|Usage| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
-            public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-            }
+            public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
-            public? open? override [ResolvedTo(RAW_FIR)] val str: <implicit> = String()
+            public? open? override [ResolvedTo(RAW_FIR)] val str: <implicit> = LAZY_EXPRESSION
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] get(): <implicit>
 
         }
@@ -106,13 +104,12 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
 
         public? abstract [ResolvedTo(RAW_FIR)] class Usage : Foo2 {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor(): R|Usage| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
-            public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-            }
+            public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
-            public? open? override [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val str: <implicit> = String()
+            public? open? override [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val str: <implicit> = LAZY_EXPRESSION
                 public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=Usage] get(): <implicit>
 
         }
@@ -146,13 +143,12 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
 
         public? abstract [ResolvedTo(RAW_FIR)] class Usage : Foo2 {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor(): R|Usage| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
-            public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-            }
+            public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
-            public? open? override [ResolvedTo(COMPANION_GENERATION)] val str: <implicit> = String()
+            public? open? override [ResolvedTo(COMPANION_GENERATION)] val str: <implicit> = LAZY_EXPRESSION
                 public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=Usage] get(): <implicit>
 
         }
@@ -186,13 +182,12 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
 
         public? abstract [ResolvedTo(SUPER_TYPES)] class Usage : R|Foo2| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor(): R|Usage| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
-            public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-            }
+            public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
-            public? open? override [ResolvedTo(SUPER_TYPES)] val str: <implicit> = String()
+            public? open? override [ResolvedTo(SUPER_TYPES)] val str: <implicit> = LAZY_EXPRESSION
                 public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=Usage] get(): <implicit>
 
         }
@@ -226,13 +221,12 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
 
         public? abstract [ResolvedTo(TYPES)] class Usage : R|Foo2| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor(): R|Usage| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
-            public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-            }
+            public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
-            public? open? override [ResolvedTo(TYPES)] val str: <implicit> = String()
+            public? open? override [ResolvedTo(TYPES)] val str: <implicit> = LAZY_EXPRESSION
                 public? [ResolvedTo(TYPES)] [ContainingClassKey=Usage] get(): <implicit>
 
         }
@@ -266,13 +260,12 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
 
         public abstract [ResolvedTo(STATUS)] class Usage : R|Foo2| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
-            public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
-            }
+            public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
-            public open override [ResolvedTo(STATUS)] val str: <implicit> = String()
+            public open override [ResolvedTo(STATUS)] val str: <implicit> = LAZY_EXPRESSION
                 public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] get(): <implicit>
 
         }
@@ -306,13 +299,12 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
 
         public abstract [ResolvedTo(STATUS)] class Usage : R|Foo2| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
-            public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
-            }
+            public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
-            public open override [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val str: <implicit> = String()
+            public open override [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val str: <implicit> = LAZY_EXPRESSION
                 public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=Usage] get(): <implicit>
 
         }
@@ -346,13 +338,12 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
 
         public abstract [ResolvedTo(STATUS)] class Usage : R|Foo2| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
-            public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
-            }
+            public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
-            public open override [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] val str: <implicit> = String()
+            public open override [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] val str: <implicit> = LAZY_EXPRESSION
                 public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] [ContainingClassKey=Usage] get(): <implicit>
 
         }
@@ -386,11 +377,10 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
 
         public abstract [ResolvedTo(STATUS)] class Usage : R|Foo2| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
-            public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
-            }
+            public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
             public open override [ResolvedTo(CONTRACTS)] val str: <implicit> = String()
                 public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Usage] get(): <implicit>
@@ -426,11 +416,10 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
 
         public abstract [ResolvedTo(STATUS)] class Usage : R|Foo2| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
-            public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
-            }
+            public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
             public open override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val str: R|kotlin/String| = String()
                 public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Usage] get(): R|kotlin/String|
@@ -466,11 +455,10 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
 
         public abstract [ResolvedTo(STATUS)] class Usage : R|Foo2| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
-            public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
-            }
+            public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
             public open override [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] val str: R|kotlin/String| = String()
                 public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=Usage] get(): R|kotlin/String|
@@ -506,11 +494,10 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideScript.kts
 
         public abstract [ResolvedTo(STATUS)] class Usage : R|Foo2| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
-            public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| {
-            }
+            public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
             public open override [ResolvedTo(BODY_RESOLVE)] val str: R|kotlin/String| = String()
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Usage] get(): R|kotlin/String|

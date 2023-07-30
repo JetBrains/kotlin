@@ -4,11 +4,9 @@ FILE: [ResolvedTo(RAW_FIR)] propertyWithInitializerScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            receive#(property#)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val property: Int = IntegerLiteral(10)
+        public? final? [ResolvedTo(RAW_FIR)] val property: Int = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): Int
 
 
@@ -18,11 +16,9 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| {
-            receive#(property#)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val property: Int = IntegerLiteral(10)
+        public? final? [ResolvedTo(RAW_FIR)] val property: Int = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): Int
 
 
@@ -32,11 +28,9 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| {
-            receive#(property#)
-        }
+        public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val property: Int = IntegerLiteral(10)
+        public? final? [ResolvedTo(RAW_FIR)] val property: Int = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): Int
 
 
@@ -46,11 +40,9 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(COMPANION_GENERATION)] fun resolveMe(): R|kotlin/Unit| {
-            receive#(property#)
-        }
+        public? final? [ResolvedTo(COMPANION_GENERATION)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val property: Int = IntegerLiteral(10)
+        public? final? [ResolvedTo(RAW_FIR)] val property: Int = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): Int
 
 
@@ -60,11 +52,9 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(SUPER_TYPES)] fun resolveMe(): R|kotlin/Unit| {
-            receive#(property#)
-        }
+        public? final? [ResolvedTo(SUPER_TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val property: Int = IntegerLiteral(10)
+        public? final? [ResolvedTo(RAW_FIR)] val property: Int = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): Int
 
 
@@ -74,11 +64,9 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(TYPES)] fun resolveMe(): R|kotlin/Unit| {
-            receive#(property#)
-        }
+        public? final? [ResolvedTo(TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val property: Int = IntegerLiteral(10)
+        public? final? [ResolvedTo(RAW_FIR)] val property: Int = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): Int
 
 
@@ -88,11 +76,9 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| {
-            receive#(property#)
-        }
+        public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val property: Int = IntegerLiteral(10)
+        public? final? [ResolvedTo(RAW_FIR)] val property: Int = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): Int
 
 
@@ -102,11 +88,9 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| {
-            receive#(property#)
-        }
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val property: Int = IntegerLiteral(10)
+        public? final? [ResolvedTo(RAW_FIR)] val property: Int = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): Int
 
 
@@ -116,11 +100,9 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
     SCRIPT: [ResolvedTo(TYPES)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| {
-            receive#(property#)
-        }
+        public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val property: Int = IntegerLiteral(10)
+        public? final? [ResolvedTo(RAW_FIR)] val property: Int = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): Int
 
 
@@ -134,7 +116,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
             receive#(property#)
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] val property: Int = IntegerLiteral(10)
+        public? final? [ResolvedTo(RAW_FIR)] val property: Int = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): Int
 
 
@@ -148,7 +130,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
             receive#(property#)
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] val property: Int = IntegerLiteral(10)
+        public? final? [ResolvedTo(RAW_FIR)] val property: Int = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): Int
 
 
@@ -162,7 +144,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithInitializerScript.kts
             receive#(property#)
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] val property: Int = IntegerLiteral(10)
+        public? final? [ResolvedTo(RAW_FIR)] val property: Int = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): Int
 
 

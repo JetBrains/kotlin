@@ -6,26 +6,21 @@ FILE: [ResolvedTo(RAW_FIR)] script4.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class Builder : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] var version: String = String()
+            public? final? [ResolvedTo(RAW_FIR)] var version: String = LAZY_EXPRESSION
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] get(): String
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] set([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit|
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> {
-            ^build Builder#().apply#(action#)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = build#(<L> = [ResolvedTo(RAW_FIR)] build@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-            version# = String(321)
-        }
-        )
+        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = @Suppress[Unresolved](String(abc)) @Deprecated[Unresolved](String(it is deprecated)) builder#.execute#()
+        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = @Suppress[Unresolved](LAZY_EXPRESSION) @Deprecated[Unresolved](LAZY_EXPRESSION) builder#.execute#()
             public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
 
@@ -37,26 +32,21 @@ FILE: [ResolvedTo(IMPORTS)] script4.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class Builder : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] var version: String = String()
+            public? final? [ResolvedTo(RAW_FIR)] var version: String = LAZY_EXPRESSION
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] get(): String
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] set([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit|
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> {
-            ^build Builder#().apply#(action#)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = build#(<L> = [ResolvedTo(RAW_FIR)] build@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-            version# = String(321)
-        }
-        )
+        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = @Suppress[Unresolved](String(abc)) @Deprecated[Unresolved](String(it is deprecated)) builder#.execute#()
+        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = @Suppress[Unresolved](LAZY_EXPRESSION) @Deprecated[Unresolved](LAZY_EXPRESSION) builder#.execute#()
             public [ResolvedTo(RAW_FIR)] get(): <implicit>
 
 
@@ -68,26 +58,21 @@ FILE: [ResolvedTo(IMPORTS)] script4.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class Builder : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] var version: String = String()
+            public? final? [ResolvedTo(RAW_FIR)] var version: String = LAZY_EXPRESSION
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] get(): String
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] set([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit|
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> {
-            ^build Builder#().apply#(action#)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = build#(<L> = [ResolvedTo(RAW_FIR)] build@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-            version# = String(321)
-        }
-        )
+        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val $$result: <implicit> = @Suppress[Unresolved](String(abc)) @Deprecated[Unresolved](String(it is deprecated)) builder#.execute#()
+        public final [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val $$result: <implicit> = @Suppress[Unresolved](LAZY_EXPRESSION) @Deprecated[Unresolved](LAZY_EXPRESSION) builder#.execute#()
             public [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): <implicit>
 
 
@@ -99,26 +84,21 @@ FILE: [ResolvedTo(IMPORTS)] script4.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class Builder : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] var version: String = String()
+            public? final? [ResolvedTo(RAW_FIR)] var version: String = LAZY_EXPRESSION
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] get(): String
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] set([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit|
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> {
-            ^build Builder#().apply#(action#)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = build#(<L> = [ResolvedTo(RAW_FIR)] build@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-            version# = String(321)
-        }
-        )
+        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(COMPANION_GENERATION)] val $$result: <implicit> = @Suppress[Unresolved](String(abc)) @Deprecated[Unresolved](String(it is deprecated)) builder#.execute#()
+        public final [ResolvedTo(COMPANION_GENERATION)] val $$result: <implicit> = @Suppress[Unresolved](LAZY_EXPRESSION) @Deprecated[Unresolved](LAZY_EXPRESSION) builder#.execute#()
             public [ResolvedTo(COMPANION_GENERATION)] get(): <implicit>
 
 
@@ -130,26 +110,21 @@ FILE: [ResolvedTo(IMPORTS)] script4.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class Builder : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] var version: String = String()
+            public? final? [ResolvedTo(RAW_FIR)] var version: String = LAZY_EXPRESSION
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] get(): String
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] set([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit|
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> {
-            ^build Builder#().apply#(action#)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = build#(<L> = [ResolvedTo(RAW_FIR)] build@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-            version# = String(321)
-        }
-        )
+        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(SUPER_TYPES)] val $$result: <implicit> = @Suppress[Unresolved](String(abc)) @Deprecated[Unresolved](String(it is deprecated)) builder#.execute#()
+        public final [ResolvedTo(SUPER_TYPES)] val $$result: <implicit> = @Suppress[Unresolved](LAZY_EXPRESSION) @Deprecated[Unresolved](LAZY_EXPRESSION) builder#.execute#()
             public [ResolvedTo(SUPER_TYPES)] get(): <implicit>
 
 
@@ -161,26 +136,21 @@ FILE: [ResolvedTo(IMPORTS)] script4.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class Builder : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] var version: String = String()
+            public? final? [ResolvedTo(RAW_FIR)] var version: String = LAZY_EXPRESSION
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] get(): String
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] set([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit|
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> {
-            ^build Builder#().apply#(action#)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = build#(<L> = [ResolvedTo(RAW_FIR)] build@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-            version# = String(321)
-        }
-        )
+        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(TYPES)] val $$result: <implicit> = @Suppress[Unresolved](String(abc)) @Deprecated[Unresolved](String(it is deprecated)) builder#.execute#()
+        public final [ResolvedTo(TYPES)] val $$result: <implicit> = @Suppress[Unresolved](LAZY_EXPRESSION) @Deprecated[Unresolved](LAZY_EXPRESSION) builder#.execute#()
             public [ResolvedTo(TYPES)] get(): <implicit>
 
 
@@ -192,26 +162,21 @@ FILE: [ResolvedTo(IMPORTS)] script4.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class Builder : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] var version: String = String()
+            public? final? [ResolvedTo(RAW_FIR)] var version: String = LAZY_EXPRESSION
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] get(): String
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] set([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit|
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> {
-            ^build Builder#().apply#(action#)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = build#(<L> = [ResolvedTo(RAW_FIR)] build@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-            version# = String(321)
-        }
-        )
+        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(STATUS)] val $$result: <implicit> = @Suppress[Unresolved](String(abc)) @Deprecated[Unresolved](String(it is deprecated)) builder#.execute#()
+        public final [ResolvedTo(STATUS)] val $$result: <implicit> = @Suppress[Unresolved](LAZY_EXPRESSION) @Deprecated[Unresolved](LAZY_EXPRESSION) builder#.execute#()
             public [ResolvedTo(STATUS)] get(): <implicit>
 
 
@@ -223,26 +188,21 @@ FILE: [ResolvedTo(IMPORTS)] script4.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class Builder : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] var version: String = String()
+            public? final? [ResolvedTo(RAW_FIR)] var version: String = LAZY_EXPRESSION
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] get(): String
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] set([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit|
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> {
-            ^build Builder#().apply#(action#)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = build#(<L> = [ResolvedTo(RAW_FIR)] build@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-            version# = String(321)
-        }
-        )
+        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val $$result: <implicit> = @Suppress[Unresolved](String(abc)) @Deprecated[Unresolved](String(it is deprecated)) builder#.execute#()
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val $$result: <implicit> = @Suppress[Unresolved](LAZY_EXPRESSION) @Deprecated[Unresolved](LAZY_EXPRESSION) builder#.execute#()
             public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): <implicit>
 
 
@@ -254,23 +214,18 @@ FILE: [ResolvedTo(IMPORTS)] script4.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class Builder : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] var version: String = String()
+            public? final? [ResolvedTo(RAW_FIR)] var version: String = LAZY_EXPRESSION
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] get(): String
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] set([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit|
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> {
-            ^build Builder#().apply#(action#)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = build#(<L> = [ResolvedTo(RAW_FIR)] build@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-            version# = String(321)
-        }
-        )
+        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] val $$result: <implicit> = @Suppress[Unresolved](String(abc)) @Deprecated[Unresolved](String(it is deprecated)) builder#.execute#()
@@ -285,23 +240,18 @@ FILE: [ResolvedTo(IMPORTS)] script4.kts
 
         public? final? [ResolvedTo(RAW_FIR)] class Builder : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
-            public? final? [ResolvedTo(RAW_FIR)] var version: String = String()
+            public? final? [ResolvedTo(RAW_FIR)] var version: String = LAZY_EXPRESSION
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] get(): String
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] set([ResolvedTo(RAW_FIR)] value: String): R|kotlin/Unit|
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> {
-            ^build Builder#().apply#(action#)
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = build#(<L> = [ResolvedTo(RAW_FIR)] build@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-            version# = String(321)
-        }
-        )
+        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public final [ResolvedTo(CONTRACTS)] val $$result: <implicit> = @Suppress[Unresolved](String(abc)) @Deprecated[Unresolved](String(it is deprecated)) builder#.execute#()
@@ -316,7 +266,7 @@ FILE: [ResolvedTo(IMPORTS)] script4.kts
 
         public final [ResolvedTo(STATUS)] class Builder : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Builder] constructor(): R|Builder| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public final [ResolvedTo(CONTRACTS)] var version: R|kotlin/String| = String()
@@ -347,7 +297,7 @@ FILE: [ResolvedTo(IMPORTS)] script4.kts
 
         public final [ResolvedTo(STATUS)] class Builder : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Builder] constructor(): R|Builder| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public final [ResolvedTo(CONTRACTS)] var version: R|kotlin/String| = String()
@@ -378,7 +328,7 @@ FILE: [ResolvedTo(IMPORTS)] script4.kts
 
         public final [ResolvedTo(STATUS)] class Builder : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Builder] constructor(): R|Builder| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public final [ResolvedTo(CONTRACTS)] var version: R|kotlin/String| = String()

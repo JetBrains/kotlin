@@ -4,9 +4,7 @@ FILE: [ResolvedTo(RAW_FIR)] typeParameterBoundsScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe([ResolvedTo(RAW_FIR)] foo: Foo): R|kotlin/Unit| {
-            foo#.util#()
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe([ResolvedTo(RAW_FIR)] foo: Foo): R|kotlin/Unit| { LAZY_BLOCK }
 
         public? final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
         }
@@ -14,9 +12,7 @@ FILE: [ResolvedTo(RAW_FIR)] typeParameterBoundsScript.kts
         public? final? [ResolvedTo(RAW_FIR)] interface Bar<[ResolvedTo(RAW_FIR)] T : Foo> : R|kotlin/Any| {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : Foo, [ResolvedTo(RAW_FIR)] B : Bar<F>> F.util(): B {
-            ^util Null(null)!!
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : Foo, [ResolvedTo(RAW_FIR)] B : Bar<F>> F.util(): B { LAZY_BLOCK }
 
 
 IMPORTS:
@@ -25,9 +21,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe([ResolvedTo(RAW_FIR)] foo: Foo): R|kotlin/Unit| {
-            foo#.util#()
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe([ResolvedTo(RAW_FIR)] foo: Foo): R|kotlin/Unit| { LAZY_BLOCK }
 
         public? final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
         }
@@ -35,9 +29,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
         public? final? [ResolvedTo(RAW_FIR)] interface Bar<[ResolvedTo(RAW_FIR)] T : Foo> : R|kotlin/Any| {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : Foo, [ResolvedTo(RAW_FIR)] B : Bar<F>> F.util(): B {
-            ^util Null(null)!!
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : Foo, [ResolvedTo(RAW_FIR)] B : Bar<F>> F.util(): B { LAZY_BLOCK }
 
 
 COMPILER_REQUIRED_ANNOTATIONS:
@@ -46,9 +38,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun resolveMe([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] foo: Foo): R|kotlin/Unit| {
-            foo#.util#()
-        }
+        public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun resolveMe([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] foo: Foo): R|kotlin/Unit| { LAZY_BLOCK }
 
         public? final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
         }
@@ -56,9 +46,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
         public? final? [ResolvedTo(RAW_FIR)] interface Bar<[ResolvedTo(RAW_FIR)] T : Foo> : R|kotlin/Any| {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : Foo, [ResolvedTo(RAW_FIR)] B : Bar<F>> F.util(): B {
-            ^util Null(null)!!
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : Foo, [ResolvedTo(RAW_FIR)] B : Bar<F>> F.util(): B { LAZY_BLOCK }
 
 
 COMPANION_GENERATION:
@@ -67,9 +55,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(COMPANION_GENERATION)] fun resolveMe([ResolvedTo(COMPANION_GENERATION)] foo: Foo): R|kotlin/Unit| {
-            foo#.util#()
-        }
+        public? final? [ResolvedTo(COMPANION_GENERATION)] fun resolveMe([ResolvedTo(COMPANION_GENERATION)] foo: Foo): R|kotlin/Unit| { LAZY_BLOCK }
 
         public? final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
         }
@@ -77,9 +63,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
         public? final? [ResolvedTo(RAW_FIR)] interface Bar<[ResolvedTo(RAW_FIR)] T : Foo> : R|kotlin/Any| {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : Foo, [ResolvedTo(RAW_FIR)] B : Bar<F>> F.util(): B {
-            ^util Null(null)!!
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : Foo, [ResolvedTo(RAW_FIR)] B : Bar<F>> F.util(): B { LAZY_BLOCK }
 
 
 SUPER_TYPES:
@@ -88,9 +72,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(SUPER_TYPES)] fun resolveMe([ResolvedTo(SUPER_TYPES)] foo: Foo): R|kotlin/Unit| {
-            foo#.util#()
-        }
+        public? final? [ResolvedTo(SUPER_TYPES)] fun resolveMe([ResolvedTo(SUPER_TYPES)] foo: Foo): R|kotlin/Unit| { LAZY_BLOCK }
 
         public? final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
         }
@@ -98,9 +80,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
         public? final? [ResolvedTo(RAW_FIR)] interface Bar<[ResolvedTo(RAW_FIR)] T : Foo> : R|kotlin/Any| {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : Foo, [ResolvedTo(RAW_FIR)] B : Bar<F>> F.util(): B {
-            ^util Null(null)!!
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : Foo, [ResolvedTo(RAW_FIR)] B : Bar<F>> F.util(): B { LAZY_BLOCK }
 
 
 TYPES:
@@ -109,9 +89,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(TYPES)] fun resolveMe([ResolvedTo(TYPES)] foo: R|Foo|): R|kotlin/Unit| {
-            foo#.util#()
-        }
+        public? final? [ResolvedTo(TYPES)] fun resolveMe([ResolvedTo(TYPES)] foo: R|Foo|): R|kotlin/Unit| { LAZY_BLOCK }
 
         public? final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
         }
@@ -119,9 +97,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
         public? final? [ResolvedTo(RAW_FIR)] interface Bar<[ResolvedTo(RAW_FIR)] T : Foo> : R|kotlin/Any| {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : Foo, [ResolvedTo(RAW_FIR)] B : Bar<F>> F.util(): B {
-            ^util Null(null)!!
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : Foo, [ResolvedTo(RAW_FIR)] B : Bar<F>> F.util(): B { LAZY_BLOCK }
 
 
 STATUS:
@@ -130,9 +106,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] fun resolveMe([ResolvedTo(STATUS)] foo: R|Foo|): R|kotlin/Unit| {
-            foo#.util#()
-        }
+        public final [ResolvedTo(STATUS)] fun resolveMe([ResolvedTo(STATUS)] foo: R|Foo|): R|kotlin/Unit| { LAZY_BLOCK }
 
         public? final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
         }
@@ -140,9 +114,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
         public? final? [ResolvedTo(RAW_FIR)] interface Bar<[ResolvedTo(RAW_FIR)] T : Foo> : R|kotlin/Any| {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : Foo, [ResolvedTo(RAW_FIR)] B : Bar<F>> F.util(): B {
-            ^util Null(null)!!
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : Foo, [ResolvedTo(RAW_FIR)] B : Bar<F>> F.util(): B { LAZY_BLOCK }
 
 
 EXPECT_ACTUAL_MATCHING:
@@ -151,9 +123,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
     SCRIPT: [ResolvedTo(RAW_FIR)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe([ResolvedTo(EXPECT_ACTUAL_MATCHING)] foo: R|Foo|): R|kotlin/Unit| {
-            foo#.util#()
-        }
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe([ResolvedTo(EXPECT_ACTUAL_MATCHING)] foo: R|Foo|): R|kotlin/Unit| { LAZY_BLOCK }
 
         public? final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
         }
@@ -161,9 +131,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
         public? final? [ResolvedTo(RAW_FIR)] interface Bar<[ResolvedTo(RAW_FIR)] T : Foo> : R|kotlin/Any| {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : Foo, [ResolvedTo(RAW_FIR)] B : Bar<F>> F.util(): B {
-            ^util Null(null)!!
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : Foo, [ResolvedTo(RAW_FIR)] B : Bar<F>> F.util(): B { LAZY_BLOCK }
 
 
 ARGUMENTS_OF_ANNOTATIONS:
@@ -172,9 +140,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
     SCRIPT: [ResolvedTo(TYPES)] 
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe([ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] foo: R|Foo|): R|kotlin/Unit| {
-            foo#.util#()
-        }
+        public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe([ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] foo: R|Foo|): R|kotlin/Unit| { LAZY_BLOCK }
 
         public? final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
         }
@@ -182,9 +148,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
         public? final? [ResolvedTo(RAW_FIR)] interface Bar<[ResolvedTo(RAW_FIR)] T : Foo> : R|kotlin/Any| {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : Foo, [ResolvedTo(RAW_FIR)] B : Bar<F>> F.util(): B {
-            ^util Null(null)!!
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : Foo, [ResolvedTo(RAW_FIR)] B : Bar<F>> F.util(): B { LAZY_BLOCK }
 
 
 CONTRACTS:
@@ -203,9 +167,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
         public? final? [ResolvedTo(RAW_FIR)] interface Bar<[ResolvedTo(RAW_FIR)] T : Foo> : R|kotlin/Any| {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : Foo, [ResolvedTo(RAW_FIR)] B : Bar<F>> F.util(): B {
-            ^util Null(null)!!
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : Foo, [ResolvedTo(RAW_FIR)] B : Bar<F>> F.util(): B { LAZY_BLOCK }
 
 
 IMPLICIT_TYPES_BODY_RESOLVE:
@@ -224,9 +186,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
         public? final? [ResolvedTo(RAW_FIR)] interface Bar<[ResolvedTo(RAW_FIR)] T : Foo> : R|kotlin/Any| {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : Foo, [ResolvedTo(RAW_FIR)] B : Bar<F>> F.util(): B {
-            ^util Null(null)!!
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : Foo, [ResolvedTo(RAW_FIR)] B : Bar<F>> F.util(): B { LAZY_BLOCK }
 
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
@@ -245,9 +205,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterBoundsScript.kts
         public? final? [ResolvedTo(RAW_FIR)] interface Bar<[ResolvedTo(RAW_FIR)] T : Foo> : R|kotlin/Any| {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : Foo, [ResolvedTo(RAW_FIR)] B : Bar<F>> F.util(): B {
-            ^util Null(null)!!
-        }
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] F : Foo, [ResolvedTo(RAW_FIR)] B : Bar<F>> F.util(): B { LAZY_BLOCK }
 
 
 BODY_RESOLVE:

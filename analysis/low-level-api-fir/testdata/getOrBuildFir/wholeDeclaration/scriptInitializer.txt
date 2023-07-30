@@ -9,7 +9,7 @@ SCRIPT: [ResolvedTo(BODY_RESOLVE)]
 
     public open [ResolvedTo(STATUS)] class Builder : R|kotlin/Any| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Builder] constructor(): R|Builder| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
         public final [ResolvedTo(CONTRACTS)] var version: R|kotlin/String| = String()
@@ -22,7 +22,7 @@ SCRIPT: [ResolvedTo(BODY_RESOLVE)]
 
         public? final? [ResolvedTo(RAW_FIR)] class NestedBuilder : Builder {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedBuilder] constructor(): R|Builder.NestedBuilder| {
-                super<Builder>()
+                LAZY_super<Builder>
             }
 
         }
@@ -65,7 +65,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptInitializer.kts
 
         public open [ResolvedTo(STATUS)] class Builder : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Builder] constructor(): R|Builder| {
-                super<R|kotlin/Any|>()
+                LAZY_super<R|kotlin/Any|>
             }
 
             public final [ResolvedTo(CONTRACTS)] var version: R|kotlin/String| = String()
@@ -78,7 +78,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptInitializer.kts
 
             public? final? [ResolvedTo(RAW_FIR)] class NestedBuilder : Builder {
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedBuilder] constructor(): R|Builder.NestedBuilder| {
-                    super<Builder>()
+                    LAZY_super<Builder>
                 }
 
             }
