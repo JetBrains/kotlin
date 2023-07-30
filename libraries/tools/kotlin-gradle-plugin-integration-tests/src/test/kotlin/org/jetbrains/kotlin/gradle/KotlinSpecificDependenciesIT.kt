@@ -280,6 +280,19 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
         }
     }
 
+    @JsGradlePluginTests
+    @DisplayName("Stdlib should be added into wasm compilations")
+    @GradleTest
+    fun testStdlibAddedIntoWasmCompilationDependencies(gradleVersion: GradleVersion) {
+        project("wasm-d8-simple-project", gradleVersion) {
+            checkTaskCompileClasspath(
+                "compileKotlinWasmJs",
+                listOf("kotlin-stdlib-wasm"),
+                isBuildGradleKts = true
+            )
+        }
+    }
+
     @JvmGradlePluginTests
     @DisplayName("KT-41642: adding stdlib should not resolve dependencies eagerly")
     @GradleTest

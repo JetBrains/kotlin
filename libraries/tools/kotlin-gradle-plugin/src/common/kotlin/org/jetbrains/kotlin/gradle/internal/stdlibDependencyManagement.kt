@@ -140,7 +140,7 @@ private fun KotlinTarget.addStdlibDependency(
                 // except standalone compilations which as not using 'common'
                 if (isMppProject &&
                     stdlibVersion >= kotlin1920Version &&
-                    compilation.platformType != KotlinPlatformType.common &&
+                    (compilation.platformType != KotlinPlatformType.common && compilation.platformType != KotlinPlatformType.wasm) &&
                     kotlinSourceSet.hasDependencyOnCommon()
                 ) return@withDependencies
 
