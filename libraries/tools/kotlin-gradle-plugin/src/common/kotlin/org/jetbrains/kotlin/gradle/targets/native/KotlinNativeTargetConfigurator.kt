@@ -404,7 +404,6 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
                 if (propertiesProvider.useK2 == true) {
                     it.compilerOptions.useK2.set(true)
                 }
-                it.compilerOptions.useK2.disallowChanges()
                 it.runViaBuildToolsApi.value(false).disallowChanges() // K/N is not yet supported
 
                 it.explicitApiMode

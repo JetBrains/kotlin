@@ -6,6 +6,8 @@
 @file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationPostConfigure
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationNativeCompilerOptionsFromTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationSourceSetInclusion
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinNativeCompilationAssociator
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinCompilationImplFactory
@@ -14,7 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.NativeKotl
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.NativeKotlinCompilationTaskNamesContainerFactory
 
 open class KotlinNativeCompilationFactory internal constructor(
-    override val target: KotlinNativeTarget
+    final override val target: KotlinNativeTarget
 ) : KotlinCompilationFactory<KotlinNativeCompilation> {
 
     override val itemClass: Class<KotlinNativeCompilation>
@@ -29,6 +31,10 @@ open class KotlinNativeCompilationFactory internal constructor(
             compilationSourceSetInclusion = KotlinCompilationSourceSetInclusion(
                 KotlinCompilationSourceSetInclusion.NativeAddSourcesToCompileTask
             ),
+            postConfigureAction = KotlinCompilationImplFactory.PostConfigure.composite(
+                DefaultKotlinCompilationPostConfigure,
+                KotlinCompilationNativeCompilerOptionsFromTargetConfigurator(target.compilerOptions)
+            )
         )
 
     override fun create(name: String): KotlinNativeCompilation {
