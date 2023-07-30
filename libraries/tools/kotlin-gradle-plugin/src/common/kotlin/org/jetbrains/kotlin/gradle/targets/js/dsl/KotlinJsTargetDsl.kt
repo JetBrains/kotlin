@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.gradle.targets.js.dsl
 import org.gradle.api.Action
 import org.gradle.api.GradleException
 import org.gradle.api.NamedDomainObjectContainer
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
@@ -64,6 +66,19 @@ interface KotlinJsTargetDsl : KotlinTarget, KotlinTargetWithNodeJsDsl {
 
     // Need to compatibility when users use KotlinJsCompilation specific in build script
     override val compilations: NamedDomainObjectContainer<out KotlinJsCompilation>
+
+    @ExperimentalKotlinGradlePluginApi
+    override val compilerOptions: KotlinJsCompilerOptions
+
+    @ExperimentalKotlinGradlePluginApi
+    fun compilerOptions(configure: KotlinJsCompilerOptions.() -> Unit) {
+        configure(compilerOptions)
+    }
+
+    @ExperimentalKotlinGradlePluginApi
+    fun compilerOptions(configure: Action<KotlinJsCompilerOptions>) {
+        configure.execute(compilerOptions)
+    }
 }
 
 interface KotlinTargetWithNodeJsDsl {

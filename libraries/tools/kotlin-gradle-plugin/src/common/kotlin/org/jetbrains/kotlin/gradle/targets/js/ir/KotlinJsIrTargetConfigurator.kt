@@ -14,15 +14,12 @@ import org.jetbrains.kotlin.gradle.dsl.JsSourceMapEmbedMode
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
-import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.libsDirectory
-import org.jetbrains.kotlin.gradle.plugin.mpp.sourcesJarTask
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.testing.testTaskName
 import org.jetbrains.kotlin.gradle.utils.decamelize
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 open class KotlinJsIrTargetConfigurator :
     KotlinOnlyTargetConfigurator<KotlinJsIrCompilation, KotlinJsIrTarget>(true),
@@ -91,31 +88,16 @@ open class KotlinJsIrTargetConfigurator :
     override fun configureCompilations(target: KotlinJsIrTarget) {
         super.configureCompilations(target)
 
+
         target.compilations.all { compilation ->
-            compilation.compilerOptions.configure {
-                configureOptions()
-
-                if (target.platformType == KotlinPlatformType.wasm) {
-                    freeCompilerArgs.add(WASM_BACKEND)
-                }
-
-                freeCompilerArgs.add(DISABLE_PRE_IR)
-            }
-
             compilation.binaries
                 .withType(JsIrBinary::class.java)
                 .all { binary ->
                     binary.linkTask.configure { linkTask ->
-                        linkTask.compilerOptions.configureOptions()
+                        linkTask.compilerOptions.configureJsDefaultOptions()
                     }
                 }
         }
-    }
-
-    private fun KotlinJsCompilerOptions.configureOptions() {
-        moduleKind.set(JsModuleKind.MODULE_UMD)
-        sourceMap.set(true)
-        sourceMapEmbedSources.set(JsSourceMapEmbedMode.SOURCE_MAP_SOURCE_CONTENT_NEVER)
     }
 
     override fun defineConfigurationsForTarget(target: KotlinJsIrTarget) {
@@ -132,6 +114,14 @@ open class KotlinJsIrTargetConfigurator :
             isCanBeConsumed = true
             attributes.attribute<Usage>(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerApiUsage(target))
             attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.common)
+        }
+    }
+
+    internal companion object {
+        internal fun KotlinJsCompilerOptions.configureJsDefaultOptions() {
+            moduleKind.set(JsModuleKind.MODULE_UMD)
+            sourceMap.set(true)
+            sourceMapEmbedSources.set(JsSourceMapEmbedMode.SOURCE_MAP_SOURCE_CONTENT_NEVER)
         }
     }
 }

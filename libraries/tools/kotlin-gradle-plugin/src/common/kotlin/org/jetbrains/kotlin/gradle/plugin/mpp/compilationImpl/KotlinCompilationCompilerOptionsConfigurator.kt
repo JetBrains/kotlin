@@ -5,9 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl
 
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptionsHelper
-import org.jetbrains.kotlin.gradle.dsl.KotlinNativeCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeCompilerOptionsHelper
 import org.jetbrains.kotlin.gradle.plugin.mpp.DecoratedKotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinCompilationImplFactory
@@ -47,6 +46,25 @@ internal class KotlinCompilationNativeCompilerOptionsFromTargetConfigurator(
                 compilation.compilationName,
                 targetCompilerOptions.moduleName
             )
+        )
+    }
+}
+
+internal class KotlinCompilationJsCompilerOptionsFromTargetConfigurator(
+    private val targetCompilerOptions: KotlinJsCompilerOptions
+) : KotlinCompilationImplFactory.PostConfigure {
+    override fun configure(compilation: DecoratedKotlinCompilation<*>) {
+        val jsCompilerOptions = compilation.compilerOptions.options as KotlinJsCompilerOptions
+        KotlinJsCompilerOptionsHelper.syncOptionsAsConvention(
+            targetCompilerOptions,
+            jsCompilerOptions
+        )
+
+        jsCompilerOptions.moduleName.convention(
+            moduleNameForCompilation(
+                compilation.compilationName,
+                targetCompilerOptions.moduleName
+            ).orElse(compilation.moduleNameForCompilation())
         )
     }
 }

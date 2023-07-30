@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
@@ -74,7 +75,56 @@ class ProjectCompilerOptionsTests {
         assertEquals(false, project.kotlinNativeTask("compileKotlinLinuxX64").compilerOptions.progressiveMode.get())
     }
 
+    @Test
+    fun jsTargetCompilerOptionsDsl() {
+        val project = buildProjectWithMPP {
+            with(multiplatformExtension) {
+                js {
+                    compilerOptions {
+                        suppressWarnings.set(true)
+                    }
+                }
+
+                applyDefaultHierarchyTemplate()
+            }
+        }
+
+        project.evaluate()
+
+        assertEquals(true, project.kotlinJsTask("compileKotlinJs").compilerOptions.suppressWarnings.get())
+        assertEquals(true, project.kotlinJsTask("compileTestKotlinJs").compilerOptions.suppressWarnings.get())
+    }
+
+    @Test
+    fun jsTaskOptionsOverridesTargetOptions() {
+        val project = buildProjectWithMPP {
+            tasks.withType<KotlinCompilationTask<*>>().configureEach {
+                if (it.name == "compileKotlinJs") {
+                    it.compilerOptions.suppressWarnings.set(false)
+                }
+            }
+
+            with(multiplatformExtension) {
+                js {
+                    compilerOptions {
+                        suppressWarnings.set(true)
+                    }
+                }
+
+                applyDefaultHierarchyTemplate()
+            }
+        }
+
+        project.evaluate()
+
+        assertEquals(false, project.kotlinJsTask("compileKotlinJs").compilerOptions.suppressWarnings.get())
+    }
+
     private fun Project.kotlinNativeTask(name: String): KotlinCompilationTask<KotlinNativeCompilerOptions> = tasks
         .named<KotlinCompilationTask<KotlinNativeCompilerOptions>>(name)
+        .get()
+
+    private fun Project.kotlinJsTask(name: String): KotlinCompilationTask<KotlinJsCompilerOptions> = tasks
+        .named<KotlinCompilationTask<KotlinJsCompilerOptions>>(name)
         .get()
 }
