@@ -6,6 +6,7 @@
 @file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
+import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
@@ -14,12 +15,14 @@ import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.jvm.tasks.Jar
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessor
 import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactory
 import org.jetbrains.kotlin.gradle.tasks.KOTLIN_BUILD_DIR_NAME
+import org.jetbrains.kotlin.gradle.utils.newInstance
 import java.io.File
 import javax.inject.Inject
 
@@ -58,6 +61,20 @@ abstract class KotlinWithJavaTarget<KotlinOptionsType : KotlinCommonOptions, CO 
         }
 
     internal val buildDir: Provider<Directory> = layout.buildDirectory.dir(KOTLIN_BUILD_DIR_NAME)
+
+    @ExperimentalKotlinGradlePluginApi
+    override val compilerOptions: KotlinJvmCompilerOptions = project.objects
+        .newInstance<KotlinJvmCompilerOptionsDefault>()
+
+    @ExperimentalKotlinGradlePluginApi
+    fun compilerOptions(configure: KotlinJvmCompilerOptions.() -> Unit) {
+        configure(compilerOptions)
+    }
+
+    @ExperimentalKotlinGradlePluginApi
+    fun compilerOptions(configure: Action<KotlinJvmCompilerOptions>) {
+        configure.execute(compilerOptions)
+    }
 }
 
 private fun sanitizeFileName(candidate: String): String = candidate.filter { it.isLetterOrDigit() }

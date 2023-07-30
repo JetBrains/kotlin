@@ -9,7 +9,6 @@ import org.gradle.api.Task
 import org.gradle.api.plugins.JavaBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.moduleNameForCompilation
 import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmTest
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
@@ -25,16 +24,6 @@ open class KotlinJvmTargetConfigurator :
     override fun configurePlatformSpecificModel(target: KotlinJvmTarget) {
         super<KotlinOnlyTargetConfigurator>.configurePlatformSpecificModel(target)
         super<KotlinTargetWithTestsConfigurator>.configurePlatformSpecificModel(target)
-    }
-
-    override fun configureCompilations(target: KotlinJvmTarget) {
-        super.configureCompilations(target)
-
-        target.compilations.configureEach {
-            it.compilerOptions.options.moduleName.convention(
-                it.moduleNameForCompilation()
-            )
-        }
     }
 
     override val testRunClass: Class<KotlinJvmTestRun>

@@ -41,7 +41,7 @@ internal open class KotlinAndroidPlugin(
                     kotlinAndroidExtension.target = target
                     project.configureCompilerOptionsForTarget(
                         kotlinAndroidExtension.compilerOptions,
-                        target.compilations
+                        target.compilerOptions
                     )
                     kotlinAndroidExtension.compilerOptions.noJdk.value(true).disallowChanges()
 

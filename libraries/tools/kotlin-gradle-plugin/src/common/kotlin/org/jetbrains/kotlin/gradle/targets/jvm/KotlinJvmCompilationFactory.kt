@@ -6,19 +6,25 @@
 @file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationPostConfigure
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationJvmCompilerOptionsFromTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinJvmCompilationAssociator
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinCompilationImplFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinJvmCompilerOptionsFactory
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 
 open class KotlinJvmCompilationFactory internal constructor(
-    override val target: KotlinJvmTarget
+    final override val target: KotlinJvmTarget
 ) : KotlinCompilationFactory<KotlinJvmCompilation> {
 
     private val compilationImplFactory: KotlinCompilationImplFactory =
         KotlinCompilationImplFactory(
             compilerOptionsFactory = KotlinJvmCompilerOptionsFactory,
-            compilationAssociator = KotlinJvmCompilationAssociator
+            compilationAssociator = KotlinJvmCompilationAssociator,
+            postConfigureAction = KotlinCompilationImplFactory.PostConfigure.composite(
+                DefaultKotlinCompilationPostConfigure,
+                KotlinCompilationJvmCompilerOptionsFromTargetConfigurator(target.compilerOptions)
+            )
         )
 
     override val itemClass: Class<KotlinJvmCompilation>

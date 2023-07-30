@@ -8,8 +8,13 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationPostConfigure
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationPreConfigure
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationJsCompilerOptionsFromTargetConfigurator
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationJvmCompilerOptionsFromTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinJvmCompilationAssociator
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.JvmWithJavaCompilationDependencyConfigurationsFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.JvmWithJavaCompilationTaskNamesContainerFactory
@@ -57,7 +62,17 @@ class KotlinWithJavaCompilationFactory<KotlinOptionsType : KotlinCommonOptions, 
             preConfigureAction = DefaultKotlinCompilationPreConfigure + { compilation ->
                 compilation.compileDependencyFiles = project.filesProvider { javaSourceSet.compileClasspath }
                 compilation.runtimeDependencyFiles = project.filesProvider { javaSourceSet.runtimeClasspath }
-            }
+            },
+            postConfigureAction = KotlinCompilationImplFactory.PostConfigure.composite(
+                DefaultKotlinCompilationPostConfigure,
+                if (target.platformType == KotlinPlatformType.js || target.platformType == KotlinPlatformType.common) {
+                    // JS/Legacy or Common/legacy (KotlinCommonPlugin) targets uses KotlinWithJavaCompilation,
+                    // but as they are deprecated - we are ignoring it
+                    null
+                } else {
+                    KotlinCompilationJvmCompilerOptionsFromTargetConfigurator(target.compilerOptions)
+                }
+            )
         )
 
         return project.objects.newInstance(

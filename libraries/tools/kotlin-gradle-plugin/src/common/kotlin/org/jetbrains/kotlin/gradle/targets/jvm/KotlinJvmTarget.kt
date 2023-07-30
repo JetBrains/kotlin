@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.jvm
 
+import org.gradle.api.Action
 import org.gradle.api.InvalidUserCodeException
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
@@ -20,6 +21,8 @@ import org.gradle.jvm.tasks.Jar
 import org.gradle.language.jvm.tasks.ProcessResources
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinaliseDsl
@@ -34,8 +37,8 @@ import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmRunDsl
 import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmRunDslImpl
 import org.jetbrains.kotlin.gradle.targets.jvm.tasks.registerMainRunTask
 import org.jetbrains.kotlin.gradle.tasks.withType
+import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.Future
-import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import org.jetbrains.kotlin.gradle.utils.findAppliedAndroidPluginIdOrNull
 import org.jetbrains.kotlin.gradle.utils.future
 import org.jetbrains.kotlin.utils.addToStdlib.cast
@@ -331,5 +334,19 @@ abstract class KotlinJvmTarget @Inject constructor(
      */
     private fun areRuntimeOrCompileConfigurationsAvailable(): Boolean =
         GradleVersion.version(project.gradle.gradleVersion) <= GradleVersion.version("6.8.3")
+
+    @ExperimentalKotlinGradlePluginApi
+    override val compilerOptions: KotlinJvmCompilerOptions = project.objects
+        .newInstance<KotlinJvmCompilerOptionsDefault>()
+
+    @ExperimentalKotlinGradlePluginApi
+    fun compilerOptions(configure: KotlinJvmCompilerOptions.() -> Unit) {
+        configure(compilerOptions)
+    }
+
+    @ExperimentalKotlinGradlePluginApi
+    fun compilerOptions(configure: Action<KotlinJvmCompilerOptions>) {
+        configure.execute(compilerOptions)
+    }
 }
 

@@ -12,8 +12,11 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
+import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.gradle.utils.forAllAndroidVariants
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -327,5 +330,19 @@ abstract class KotlinAndroidTarget @Inject constructor(
     private fun filterOutAndroidAgpVersionAttribute(
         attribute: Attribute<*>,
     ): Boolean = attribute.name != "com.android.build.api.attributes.AgpVersionAttr"
+
+    @ExperimentalKotlinGradlePluginApi
+    override val compilerOptions: KotlinJvmCompilerOptions = project.objects
+        .newInstance<KotlinJvmCompilerOptionsDefault>()
+
+    @ExperimentalKotlinGradlePluginApi
+    fun compilerOptions(configure: KotlinJvmCompilerOptions.() -> Unit) {
+        configure(compilerOptions)
+    }
+
+    @ExperimentalKotlinGradlePluginApi
+    fun compilerOptions(configure: Action<KotlinJvmCompilerOptions>) {
+        configure.execute(compilerOptions)
+    }
 }
 
