@@ -134,6 +134,12 @@ internal fun checkReceiverTypeRefIsResolved(declaration: FirCallableDeclaration,
     checkTypeRefIsResolved(receiverTypeRef, typeRefName = "receiver type", declaration, acceptImplicitTypeRef)
 }
 
+internal fun checkContextReceiverTypeRefIsResolved(declaration: FirCallableDeclaration, acceptImplicitTypeRef: Boolean = false) {
+    for (contextReceiver in declaration.contextReceivers) {
+        val receiverTypeRef = contextReceiver.typeRef
+        checkTypeRefIsResolved(receiverTypeRef, typeRefName = "context receiver type", declaration, acceptImplicitTypeRef)
+    }
+}
 
 internal fun checkContractDescriptionIsResolved(declaration: FirContractDescriptionOwner) {
     val contractDescription = declaration.contractDescription
