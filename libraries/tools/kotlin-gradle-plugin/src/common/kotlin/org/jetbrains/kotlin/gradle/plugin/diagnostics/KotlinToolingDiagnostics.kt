@@ -312,7 +312,8 @@ object KotlinToolingDiagnostics {
             """
                 Inconsistent JVM-target compatibility detected for tasks '$javaTaskName' ($targetCompatibility) and '$kotlinTaskName' ($jvmTarget).
                 ${if (severity == WARNING) "This will become an error in Gradle 8.0." else ""}
-                Read more: https://kotl.in/gradle/jvm/target-validation 
+                Consider using JVM Toolchain: https://kotl.in/gradle/jvm/toolchain
+                Learn more about JVM-target validation: https://kotl.in/gradle/jvm/target-validation 
             """.trimIndent(),
             severity
         )
