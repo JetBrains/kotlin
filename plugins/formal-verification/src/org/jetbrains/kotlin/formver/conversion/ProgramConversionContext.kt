@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.formver.conversion
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.resolved
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.isInt
@@ -135,13 +138,11 @@ class StmtConversionContext(val methodCtx: MethodConversionContext) {
 }
 
 class StmtConversionVisitor : FirVisitor<Exp?, StmtConversionContext>() {
-    override fun visitElement(element: FirElement, data: StmtConversionContext): Exp? {
-        throw Exception("StmtConversionVisitor should only be used to convert statements.")
-    }
-
-    override fun visitStatement(statement: FirStatement, data: StmtConversionContext): Exp? {
-        TODO("Not yet implemented for $statement (${statement.source.text})")
-    }
+    // Note that in some cases we don't expect to ever implement it: we are only
+    // translating statements here, after all.  It isn't 100% clear how best to
+    // communicate this.
+    override fun visitElement(element: FirElement, data: StmtConversionContext): Exp =
+        TODO("Not yet implemented for $element (${element.source.text})")
 
     override fun visitReturnExpression(returnExpression: FirReturnExpression, data: StmtConversionContext): Exp? {
         val expr = returnExpression.result.accept(this, data)
@@ -172,5 +173,13 @@ class StmtConversionVisitor : FirVisitor<Exp?, StmtConversionContext>() {
     ): Exp? {
         System.err.println("Visiting: $propertyAccessExpression")
         return null
+    }
+
+    override fun visitFunctionCall(functionCall: FirFunctionCall, data: StmtConversionContext): Exp? {
+        val resolvedReference = functionCall.calleeReference as FirResolvedNamedReference
+        val symbol = resolvedReference.resolvedSymbol as FirCallableSymbol
+        val id = symbol.callableId
+        if (id.packageName.asString() == "kotlin.contracts" && id.callableName.asString() == "contract") return null
+        TODO("Implement function call visitation")
     }
 }

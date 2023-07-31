@@ -1,9 +1,11 @@
 /simple.kt:(84,100): info: field backing_int: Int
 
 method without_contract()
-
+{
+}
 
 /simple.kt:(148,161): info: field backing_int: Int
 
 method with_contract()
-
+{
+}
