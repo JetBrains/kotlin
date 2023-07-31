@@ -900,7 +900,7 @@ class FakeExpressionEnterNode(owner: ControlFlowGraph, level: Int) : CFGNode<Fir
 
 class SmartCastExpressionExitNode(owner: ControlFlowGraph, override val fir: FirSmartCastExpression, level: Int) : CFGNode<FirSmartCastExpression>(owner, level) {
     override val canThrow: Boolean
-        get() = fir.typeRef.coneType.isNothing
+        get() = fir.coneType.isNothing
 
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitSmartCastExpressionExitNode(this, data)

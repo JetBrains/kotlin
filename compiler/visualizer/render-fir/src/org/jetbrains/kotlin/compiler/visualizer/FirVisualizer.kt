@@ -794,7 +794,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier, data: StringBuilder) {
             val fir = resolvedQualifier.symbol?.fir
             when {
-                fir is FirRegularClass && fir.classKind != ClassKind.ENUM_CLASS && fir.companionObjectSymbol?.defaultType() == resolvedQualifier.typeRef.coneTypeSafe() -> {
+                fir is FirRegularClass && fir.classKind != ClassKind.ENUM_CLASS && fir.companionObjectSymbol?.defaultType() == resolvedQualifier.coneTypeSafe() -> {
                     data.append("companion object ")
                     data.append(resolvedQualifier.typeRef.render()).append(": ")
                     data.append(fir.symbol.classId.asString().removeCurrentFilePackage())
@@ -845,8 +845,8 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         }
 
         override fun visitArrayLiteral(arrayLiteral: FirArrayLiteral, data: StringBuilder) {
-            val name = arrayLiteral.typeRef.coneType.classId!!.shortClassName.asString()
-            val typeArguments = arrayLiteral.typeRef.coneType.typeArguments
+            val name = arrayLiteral.coneType.classId!!.shortClassName.asString()
+            val typeArguments = arrayLiteral.coneType.typeArguments
             val typeParameters = if (typeArguments.isEmpty()) "" else " <T>"
             data.append("fun$typeParameters ${name.replaceFirstChar(Char::lowercaseChar)}Of")
             typeArguments.firstOrNull()?.let {

@@ -447,7 +447,7 @@ internal class AdapterGenerator(
         if (!samType.isSamType) return this
         return IrTypeOperatorCallImpl(
             this.startOffset, this.endOffset, samType, IrTypeOperator.SAM_CONVERSION, samType,
-            castArgumentToFunctionalInterfaceForSamType(this, argument.typeRef.coneType, samFirType)
+            castArgumentToFunctionalInterfaceForSamType(this, argument.coneType, samFirType)
         )
     }
 
@@ -553,7 +553,7 @@ internal class AdapterGenerator(
                 session.typeContext.newTypeCheckerState(
                     errorTypesEqualToAnything = false, stubTypesEqualToAnything = true
                 ),
-                argument.typeRef.coneType,
+                argument.coneType,
                 parameter.returnTypeRef.coneType,
                 isFromNullabilityConstraint = true
             )
@@ -626,7 +626,7 @@ internal class AdapterGenerator(
         expectedFunctionalType: ConeClassLikeType,
         argument: FirExpression
     ): IrSimpleFunctionSymbol? {
-        val argumentType = argument.typeRef.coneType
+        val argumentType = argument.coneType
         val argumentTypeWithInvoke = argumentType.findSubtypeOfBasicFunctionType(session, expectedFunctionalType) ?: return null
 
         return if (argumentTypeWithInvoke.isSomeFunctionType(session)) {

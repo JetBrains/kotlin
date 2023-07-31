@@ -39,7 +39,7 @@ object CanBeReplacedWithOperatorAssignmentChecker : FirVariableAssignmentChecker
         val rValue = expression.rValue as? FirFunctionCall ?: return
         if (rValue.source?.kind is KtFakeSourceElementKind) return
 
-        if (rValue.explicitReceiver?.typeRef?.coneType?.isPrimitive != true) return
+        if (rValue.explicitReceiver?.coneType?.isPrimitive != true) return
         val rValueResolvedSymbol = rValue.toResolvedCallableSymbol() ?: return
         if (rValueResolvedSymbol.dispatchReceiverClassTypeOrNull()?.isPrimitive != true) return
 

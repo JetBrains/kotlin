@@ -36,14 +36,14 @@ object RedundantCallOfConversionMethod : FirQualifiedAccessExpressionChecker() {
 
     private fun FirExpression.isRedundant(qualifiedClassId: ClassId): Boolean {
         val thisType = if (this is FirConstExpression<*>) {
-            this.typeRef.coneType.classId
+            this.coneType.classId
         } else {
             when {
-                typeRef.coneType is ConeFlexibleType -> null
+                coneType is ConeFlexibleType -> null
                 psi?.parent !is KtSafeQualifiedExpression
-                        && (psi is KtSafeQualifiedExpression || typeRef.coneType.isMarkedNullable) -> null
-                this.typeRef.coneType.isMarkedNullable -> null
-                else -> this.typeRef.coneType.classId
+                        && (psi is KtSafeQualifiedExpression || coneType.isMarkedNullable) -> null
+                this.coneType.isMarkedNullable -> null
+                else -> this.coneType.classId
             }
         }
         return thisType == qualifiedClassId

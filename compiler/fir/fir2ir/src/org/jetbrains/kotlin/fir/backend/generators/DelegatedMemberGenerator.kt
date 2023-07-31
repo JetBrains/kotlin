@@ -89,7 +89,7 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
             memberRequiredPhase = null,
         )
 
-        val delegateToScope = firField.initializer!!.typeRef.coneType
+        val delegateToScope = firField.initializer!!.coneType
             .fullyExpandedType(session)
             .lowerBoundIfFlexible()
             .scope(session, scopeSession, FakeOverrideTypeCalculator.DoNothing, null) ?: return

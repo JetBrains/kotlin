@@ -28,7 +28,7 @@ object FirJvmNameChecker : FirBasicDeclarationChecker() {
         val jvmName = declaration.findJvmNameAnnotation() ?: return
         val name = jvmName.findArgumentByName(StandardNames.NAME) ?: return
 
-        if (name.typeRef.coneType != context.session.builtinTypes.stringType.type) {
+        if (name.coneType != context.session.builtinTypes.stringType.type) {
             return
         }
 

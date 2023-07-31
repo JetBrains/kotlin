@@ -50,7 +50,7 @@ abstract class ReceiverValue {
 class ExpressionReceiverValue(override val receiverExpression: FirExpression) : ReceiverValue() {
     override val type: ConeKotlinType
         // NB: safe cast is necessary here
-        get() = receiverExpression.typeRef.coneTypeSafe()
+        get() = receiverExpression.coneTypeSafe()
             ?: ConeErrorType(ConeIntermediateDiagnostic("No type calculated for: ${receiverExpression.renderWithType()}")) // TODO: assert here
 
     override fun scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirTypeScope? {

@@ -66,7 +66,7 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker() {
         val originalDestructuringDeclarationType =
             when (originalDestructuringDeclarationOrInitializer) {
                 is FirVariable -> originalDestructuringDeclarationOrInitializer.returnTypeRef.coneType
-                is FirExpression -> originalDestructuringDeclarationOrInitializer.typeRef.coneType
+                is FirExpression -> originalDestructuringDeclarationOrInitializer.coneType
                 else -> null
             } ?: return
 
@@ -152,7 +152,7 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker() {
                 }
             }
             is ConeConstraintSystemHasContradiction -> {
-                val componentType = componentCall.typeRef.coneType
+                val componentType = componentCall.coneType
                 if (componentType is ConeErrorType) {
                     // There will be other errors on this error type.
                     return

@@ -34,7 +34,7 @@ object FirJsExternalFileChecker : FirBasicDeclarationChecker() {
             reporter.reportOn(
                 declaration.source,
                 FirJsErrors.NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE,
-                targetAnnotations.typeRef.coneType,
+                targetAnnotations.coneType,
                 context
             )
         }

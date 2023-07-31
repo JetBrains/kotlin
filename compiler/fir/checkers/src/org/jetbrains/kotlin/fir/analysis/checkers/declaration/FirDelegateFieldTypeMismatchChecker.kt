@@ -29,13 +29,13 @@ object FirDelegateFieldTypeMismatchChecker : FirRegularClassChecker() {
 
             if (
                 !isReportedByErrorNodeDiagnosticCollector &&
-                !initializer.typeRef.coneType.isSubtypeOf(supertype.coneType, context.session, true)
+                !initializer.coneType.isSubtypeOf(supertype.coneType, context.session, true)
             ) {
                 reporter.reportOn(
                     initializer.source,
                     FirErrors.TYPE_MISMATCH,
                     field.returnTypeRef.coneType,
-                    initializer.typeRef.coneType,
+                    initializer.coneType,
                     false,
                     context,
                 )

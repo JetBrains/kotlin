@@ -50,7 +50,7 @@ internal fun mapAnnotationParameters(annotation: FirAnnotation): Map<Name, FirEx
     checkWithAttachment(annotation.resolved, { "By now the annotations argument mapping should have been resolved" }) {
         withFirEntry("annotation", annotation)
         withClassEntry("annotationTypeRef", annotation.annotationTypeRef)
-        withClassEntry("typeRef", annotation.typeRef)
+        withClassEntry("type", annotation.type)
     }
 
     return annotation.argumentMapping.mapping.mapKeys { (name, _) -> name }

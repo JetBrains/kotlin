@@ -412,7 +412,7 @@ private fun <T : FirExpression> BodyResolveComponents.transformExpressionUsingSm
             SmartcastStability.STABLE_VALUE
         }
 
-    val originalType = expression.resultType.coneType.fullyExpandedType(session)
+    val originalType = expression.coneType.fullyExpandedType(session)
     val allTypes = typesFromSmartCast.also {
         if (originalType !is ConeStubType) {
             it += originalType.fullyExpandedType(session)
@@ -493,7 +493,7 @@ fun FirSafeCallExpression.propagateTypeFromQualifiedAccessAfterNullCheck(
 
     val resultingType = when {
         selector is FirExpression && !selector.isCallToStatementLikeFunction -> {
-            val type = selector.typeRef.coneTypeSafe<ConeKotlinType>() ?: return
+            val type = selector.coneTypeSafe<ConeKotlinType>() ?: return
             type.withNullability(ConeNullability.NULLABLE, session.typeContext)
         }
         // Branch for things that shouldn't be used as expressions.

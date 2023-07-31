@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
 import org.jetbrains.kotlin.fir.analysis.collectors.FirDiagnosticsCollector
-import org.jetbrains.kotlin.fir.analysis.diagnostics.*
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirFunction
@@ -31,8 +30,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.fir.types.coneTypeOrNull
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -183,13 +181,13 @@ abstract class AbstractKtDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
         diagnosedRangesToDiagnosticNames: MutableMap<IntRange, MutableSet<String>>
     ): KtDiagnosticWithParameters1<String>? =
         DebugInfoDiagnosticFactory1.EXPRESSION_TYPE.createDebugInfoDiagnostic(element, diagnosedRangesToDiagnosticNames) {
-            element.typeRef.renderAsString((element as? FirSmartCastExpression)?.originalExpression?.typeRef)
+            element.coneTypeOrNull.renderAsString((element as? FirSmartCastExpression)?.originalExpression?.coneTypeOrNull)
         }
 
-    private fun FirTypeRef.renderAsString(originalTypeRef: FirTypeRef?): String {
-        val type = coneTypeSafe<ConeKotlinType>() ?: return "Type is unknown"
+    private fun ConeKotlinType?.renderAsString(originalType: ConeKotlinType?): String {
+        val type = this ?: return "Type is unknown"
         val rendered = type.renderForDebugInfo()
-        val originalTypeRendered = originalTypeRef?.coneTypeSafe<ConeKotlinType>()?.renderForDebugInfo() ?: return rendered
+        val originalTypeRendered = originalType?.renderForDebugInfo() ?: return rendered
 
         return "$rendered & $originalTypeRendered"
     }

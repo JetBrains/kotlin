@@ -41,7 +41,7 @@ object FirExhaustiveWhenChecker : FirWhenExpressionChecker() {
 
         val source = whenExpression.source ?: return
 
-        val subjectType = whenExpression.subject?.typeRef?.coneType?.lowerBoundIfFlexible()
+        val subjectType = whenExpression.subject?.coneType?.lowerBoundIfFlexible()
         val subjectClassSymbol = subjectType?.fullyExpandedType(context.session)?.toRegularClassSymbol(context.session)
 
         if (whenExpression.usedAsExpression) {

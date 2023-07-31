@@ -45,7 +45,7 @@ internal class OperatorExpressionGenerator(
         val operation = comparisonExpression.operation
         val receiver = comparisonExpression.compareToCall.explicitReceiver
 
-        if (receiver?.typeRef?.coneType is ConeDynamicType) {
+        if (receiver?.coneType is ConeDynamicType) {
             val dynamicOperator = operation.toIrDynamicOperator()
                 ?: throw Exception("Can't convert to the corresponding IrDynamicOperator")
             val argument = comparisonExpression.compareToCall.dynamicVarargArguments?.firstOrNull()
@@ -239,7 +239,7 @@ internal class OperatorExpressionGenerator(
         comparisonInfo: PrimitiveConeNumericComparisonInfo?,
         isLeftType: Boolean
     ): IrExpression {
-        val isOriginalNullable = (this as? FirSmartCastExpression)?.originalExpression?.typeRef?.isMarkedNullable ?: false
+        val isOriginalNullable = (this as? FirSmartCastExpression)?.originalExpression?.coneType?.isMarkedNullable ?: false
         val irExpression = visitor.convertToIrExpression(this)
         val operandType = if (isLeftType) comparisonInfo?.leftType else comparisonInfo?.rightType
         val targetType = comparisonInfo?.comparisonType

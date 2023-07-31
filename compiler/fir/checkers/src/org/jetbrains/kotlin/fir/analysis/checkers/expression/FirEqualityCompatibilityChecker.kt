@@ -352,10 +352,10 @@ private class ArgumentInfo(
 private val FirExpression.mostOriginalTypeIfSmartCast: ConeKotlinType
     get() = when (this) {
         is FirSmartCastExpression -> originalExpression.mostOriginalTypeIfSmartCast
-        else -> typeRef.coneType
+        else -> coneType
     }
 
 private fun FirExpression.toArgumentInfo(context: CheckerContext) =
     ArgumentInfo(
-        this, typeRef.coneType, mostOriginalTypeIfSmartCast.fullyExpandedType(context.session), context.session,
+        this, coneType, mostOriginalTypeIfSmartCast.fullyExpandedType(context.session), context.session,
     )

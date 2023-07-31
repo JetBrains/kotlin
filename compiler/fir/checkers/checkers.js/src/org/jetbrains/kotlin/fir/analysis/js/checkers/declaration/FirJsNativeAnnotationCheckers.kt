@@ -36,7 +36,7 @@ internal abstract class FirJsAbstractNativeAnnotationChecker(private val require
             reporter.reportOn(
                 declaration.source,
                 FirJsErrors.NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN,
-                annotation.typeRef.coneType,
+                annotation.coneType,
                 context
             )
         }

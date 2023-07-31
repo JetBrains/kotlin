@@ -45,7 +45,7 @@ object FirUpperBoundViolatedExpressionChecker : FirQualifiedAccessExpressionChec
         val typeParameters: List<FirTypeParameterSymbol>
 
         if (calleeSymbol is FirConstructorSymbol && calleeSymbol.isTypeAliasedConstructor) {
-            val constructedType = expression.typeRef.coneType.fullyExpandedType(context.session)
+            val constructedType = expression.coneType.fullyExpandedType(context.session)
             // Updating arguments with source information after expanding the type seems extremely brittle as it relies on identity equality
             // of the expression type arguments and the expanded type arguments. This cannot be applied before expanding the type because it
             // seems like the type is already expended.

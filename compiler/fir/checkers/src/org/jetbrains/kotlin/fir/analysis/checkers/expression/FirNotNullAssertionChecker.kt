@@ -30,13 +30,12 @@ object FirNotNullAssertionChecker : FirCheckNotNullCallChecker() {
         }
         // TODO: use of Unit is subject to change.
         //  See BodyResolveComponents.typeForQualifier in ResolveUtils.kt which returns Unit for no value type.
-        @OptIn(UnexpandedTypeCheck::class)
-        if (argument is FirResolvedQualifier && argument.typeRef.isUnit) {
+        if (argument is FirResolvedQualifier && argument.coneType.isUnit) {
             // Would be reported as NO_COMPANION_OBJECT
             return
         }
 
-        val type = argument.typeRef.coneType.fullyExpandedType(context.session)
+        val type = argument.coneType.fullyExpandedType(context.session)
 
         if (!type.canBeNull && context.languageVersionSettings.supportsFeature(LanguageFeature.EnableDfaWarningsInK2)) {
             reporter.reportOn(expression.source, FirErrors.UNNECESSARY_NOT_NULL_ASSERTION, type, context)

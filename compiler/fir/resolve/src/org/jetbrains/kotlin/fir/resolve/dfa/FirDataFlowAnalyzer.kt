@@ -968,7 +968,7 @@ abstract class FirDataFlowAnalyzer(
         if (isAssignment) {
             // `propertyVariable` can be an alias to `initializerVariable`, in which case this will add
             // a redundant type statement which is fine...probably
-            flow.addTypeStatement(flow.unwrapVariable(propertyVariable) typeEq initializer.typeRef.coneType)
+            flow.addTypeStatement(flow.unwrapVariable(propertyVariable) typeEq initializer.coneType)
         }
     }
 

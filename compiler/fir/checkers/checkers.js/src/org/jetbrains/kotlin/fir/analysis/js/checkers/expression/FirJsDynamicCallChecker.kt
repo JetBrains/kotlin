@@ -90,7 +90,7 @@ object FirJsDynamicCallChecker : FirQualifiedAccessExpressionChecker() {
 
     private fun checkSpreadOperator(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         forAllSpreadArgumentsOf(expression) {
-            if (it.typeRef.coneType is ConeDynamicType) {
+            if (it.coneType is ConeDynamicType) {
                 reporter.reportOn(it.source, FirJsErrors.WRONG_OPERATION_WITH_DYNAMIC, "spread operator", context)
             }
         }

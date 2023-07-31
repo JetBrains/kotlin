@@ -1295,7 +1295,7 @@ class ControlFlowGraphBuilder {
         }
 
         val lhsIsNotNullNode = createElvisLhsIsNotNullNode(elvisExpression).also {
-            val lhsIsNull = elvisExpression.lhs.typeRef.coneTypeSafe<ConeKotlinType>()?.isNullableNothing == true
+            val lhsIsNull = elvisExpression.lhs.coneTypeSafe<ConeKotlinType>()?.isNullableNothing == true
             addEdge(lhsExitNode, it, isDead = lhsIsNull)
             addEdge(it, exitNode, propagateDeadness = false)
         }

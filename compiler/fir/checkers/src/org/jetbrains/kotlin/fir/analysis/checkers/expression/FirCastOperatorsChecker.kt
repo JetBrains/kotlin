@@ -24,7 +24,7 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker() {
     override fun check(expression: FirTypeOperatorCall, context: CheckerContext, reporter: DiagnosticReporter) {
         val session = context.session
         val firstArgument = expression.argumentList.arguments[0]
-        val actualType = (firstArgument.unwrapSmartcastExpression().typeRef.coneType).fullyExpandedType(session)
+        val actualType = firstArgument.unwrapSmartcastExpression().coneType.fullyExpandedType(session)
         val conversionTypeRef = expression.conversionTypeRef
         val targetType = conversionTypeRef.coneType.fullyExpandedType(session)
 

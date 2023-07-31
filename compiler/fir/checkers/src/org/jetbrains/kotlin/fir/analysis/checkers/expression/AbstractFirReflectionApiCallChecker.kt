@@ -10,13 +10,14 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.toClassLikeSymbol
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.calleeReference
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.types.classId
+import org.jetbrains.kotlin.fir.types.coneTypeOrNull
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -41,8 +42,7 @@ abstract class AbstractFirReflectionApiCallChecker : FirBasicExpressionChecker()
         val resolvedReference = expression.calleeReference?.resolved ?: return
         val referencedSymbol = resolvedReference.resolvedSymbol as? FirCallableSymbol ?: return
 
-        val containingClassId =
-            (expression as? FirQualifiedAccessExpression)?.dispatchReceiver?.typeRef?.toClassLikeSymbol(context.session)?.classId
+        val containingClassId = (expression as? FirQualifiedAccessExpression)?.dispatchReceiver?.coneTypeOrNull?.classId
         if (containingClassId == null || containingClassId.packageFqName != StandardNames.KOTLIN_REFLECT_FQ_NAME) return
 
         if (!isAllowedReflectionApi(referencedSymbol.name, containingClassId, context)) {

@@ -412,7 +412,7 @@ class FirCallCompletionResultsWriterTransformer(
             qualifiedAccessExpression: FirQualifiedAccessExpression,
             data: Any?
         ): FirStatement {
-            val originalType = qualifiedAccessExpression.typeRef.coneType
+            val originalType = qualifiedAccessExpression.coneType
             val substitutedReceiverType = finallySubstituteOrNull(originalType) ?: return qualifiedAccessExpression
             val resolvedTypeRef = qualifiedAccessExpression.typeRef.resolvedTypeFromPrototype(substitutedReceiverType)
             qualifiedAccessExpression.replaceTypeRef(resolvedTypeRef)
@@ -602,7 +602,7 @@ class FirCallCompletionResultsWriterTransformer(
         // Prefer the expected type over the inferred one - the latter is a subtype of the former in valid code,
         // and there will be ARGUMENT_TYPE_MISMATCH errors on the lambda's return expressions in invalid code.
         val resultReturnType = expectedReturnType
-            ?: session.typeContext.commonSuperTypeOrNull(returnExpressions.map { it.resultType.coneType })
+            ?: session.typeContext.commonSuperTypeOrNull(returnExpressions.map { it.coneType })
             ?: session.builtinTypes.unitType.type
 
         if (initialReturnType != resultReturnType) {
@@ -663,7 +663,7 @@ class FirCallCompletionResultsWriterTransformer(
     }
 
     override fun transformBlock(block: FirBlock, data: ExpectedArgumentType?): FirStatement {
-        val initialType = block.resultType.coneTypeSafe<ConeKotlinType>()
+        val initialType = block.coneTypeSafe<ConeKotlinType>()
         if (initialType != null) {
             val finalType = finallySubstituteOrNull(initialType)
             var resultType = block.resultType.withReplacedConeType(finalType)
@@ -735,7 +735,7 @@ class FirCallCompletionResultsWriterTransformer(
         syntheticCall: D,
         data: ExpectedArgumentType?
     ) where D : FirResolvable, D : FirExpression {
-        val newData = data?.getExpectedType(syntheticCall)?.toExpectedType() ?: syntheticCall.typeRef.coneType.toExpectedType()
+        val newData = data?.getExpectedType(syntheticCall)?.toExpectedType() ?: syntheticCall.coneType.toExpectedType()
 
         if (syntheticCall is FirTryExpression) {
             syntheticCall.transformCalleeReference(this, newData)
@@ -780,7 +780,7 @@ class FirCallCompletionResultsWriterTransformer(
         val expectedArrayElementType = expectedArrayType?.arrayElementType()
         arrayLiteral.transformChildren(this, expectedArrayElementType?.toExpectedType())
         val arrayElementType =
-            session.typeContext.commonSuperTypeOrNull(arrayLiteral.arguments.map { it.typeRef.coneType })?.let {
+            session.typeContext.commonSuperTypeOrNull(arrayLiteral.arguments.map { it.coneType })?.let {
                 typeApproximator.approximateToSuperType(it, TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference)
                     ?: it
             } ?: expectedArrayElementType ?: session.builtinTypes.nullableAnyType.type

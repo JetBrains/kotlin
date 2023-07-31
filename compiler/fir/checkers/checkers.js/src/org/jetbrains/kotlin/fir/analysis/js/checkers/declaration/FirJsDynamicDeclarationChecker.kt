@@ -27,7 +27,7 @@ object FirJsDynamicDeclarationChecker : FirClassChecker() {
             // and it's a shape it couldn't have been accessed directly
             val initializer = delegate.fir.initializer ?: continue
 
-            if (initializer.typeRef.coneType is ConeDynamicType) {
+            if (initializer.coneType is ConeDynamicType) {
                 reporter.reportOn(initializer.source, FirJsErrors.DELEGATION_BY_DYNAMIC, context)
             }
         }

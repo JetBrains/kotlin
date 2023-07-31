@@ -70,7 +70,7 @@ object FirNamedVarargChecker : FirCallChecker() {
 
         if (expression is FirArrayLiteral) {
             // FirArrayLiteral has the `vararg` argument expression pre-flattened and doesn't have an argument mapping.
-            expression.arguments.forEach { checkArgument(it, it is FirNamedArgumentExpression, expression.typeRef.coneTypeOrNull) }
+            expression.arguments.forEach { checkArgument(it, it is FirNamedArgumentExpression, expression.coneTypeOrNull) }
         } else {
             val argumentMap = expression.resolvedArgumentMapping ?: return
             for ((argument, parameter) in argumentMap) {

@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 object FirDelegatedPropertyChecker : FirPropertyChecker() {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
         val delegate = declaration.delegate ?: return
-        val delegateType = delegate.typeRef.coneType
+        val delegateType = delegate.coneType
         val source = delegate.source;
 
         if (delegateType is ConeErrorType) {
@@ -66,7 +66,7 @@ object FirDelegatedPropertyChecker : FirPropertyChecker() {
                 val diagnostic = if (reference.isError()) reference.diagnostic else return false
                 if (reference.source?.kind != KtFakeSourceElementKind.DelegatedPropertyAccessor) return false
                 val expectedFunctionSignature =
-                    (if (isGet) "getValue" else "setValue") + "(${functionCall.arguments.joinToString(", ") { it.typeRef.coneType.renderReadable() }})"
+                    (if (isGet) "getValue" else "setValue") + "(${functionCall.arguments.joinToString(", ") { it.coneType.renderReadable() }})"
                 val delegateDescription = if (isGet) "delegate" else "delegate for var (read-write property)"
 
                 fun reportInapplicableDiagnostics(candidates: Collection<FirBasedSymbol<*>>) {
@@ -124,7 +124,7 @@ object FirDelegatedPropertyChecker : FirPropertyChecker() {
             }
 
             private fun checkReturnType(functionCall: FirFunctionCall) {
-                val returnType = functionCall.typeRef.coneType
+                val returnType = functionCall.coneType
                 val propertyType = declaration.returnTypeRef.coneType
                 if (!AbstractTypeChecker.isSubtypeOf(context.session.typeContext, returnType, propertyType)) {
                     reporter.reportOn(

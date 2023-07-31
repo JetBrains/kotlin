@@ -37,7 +37,7 @@ object FirRecursiveProblemChecker : FirBasicExpressionChecker() {
             }
         }
 
-        checkConeType(expression.typeRef.coneType)
+        checkConeType(expression.coneType)
     }
 
     private val FirStatement.isExpressionWithAlwaysImplicitTypeRef get() = this is FirNoReceiverExpression

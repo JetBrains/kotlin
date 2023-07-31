@@ -330,7 +330,7 @@ class FirExpectActualMatchingContextImpl private constructor(
     }
 
     private fun areFirAnnotationsEqual(annotation1: FirAnnotation, annotation2: FirAnnotation): Boolean {
-        if (!areCompatibleExpectActualTypes(annotation1.typeRef.coneType, annotation2.typeRef.coneType)) {
+        if (!areCompatibleExpectActualTypes(annotation1.coneType, annotation2.coneType)) {
             return false
         }
         val args1 = annotation1.argumentMapping.mapping

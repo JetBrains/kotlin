@@ -26,8 +26,8 @@ object ArrayEqualityCanBeReplacedWithEquals : FirBasicExpressionChecker() {
         val left = arguments.getOrNull(0) ?: return
         val right = arguments.getOrNull(1) ?: return
 
-        if (left.typeRef.coneType.classId != StandardClassIds.Array) return
-        if (right.typeRef.coneType.classId != StandardClassIds.Array) return
+        if (left.coneType.classId != StandardClassIds.Array) return
+        if (right.coneType.classId != StandardClassIds.Array) return
 
         reporter.reportOn(expression.source, ARRAY_EQUALITY_OPERATOR_CAN_BE_REPLACED_WITH_EQUALS, context)
     }

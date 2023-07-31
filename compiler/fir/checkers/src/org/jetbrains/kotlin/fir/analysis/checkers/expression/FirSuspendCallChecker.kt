@@ -165,7 +165,7 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker() {
             expression.computeReceiversInfo(session, calledDeclarationSymbol)
 
         for (receiverExpression in listOfNotNull(dispatchReceiverExpression, extensionReceiverExpression)) {
-            if (!receiverExpression.typeRef.coneType.isRestrictSuspensionReceiver(session)) continue
+            if (!receiverExpression.coneType.isRestrictSuspensionReceiver(session)) continue
             if (sameInstanceOfReceiver(receiverExpression, enclosingSuspendFunctionDispatchReceiverOwnerSymbol)) continue
             if (sameInstanceOfReceiver(receiverExpression, enclosingSuspendFunctionExtensionReceiverOwnerSymbol)) continue
 
@@ -221,10 +221,10 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker() {
         calledDeclarationSymbol: FirCallableSymbol<*>
     ): Triple<FirExpression?, FirExpression?, ConeKotlinType?> {
         if (this is FirImplicitInvokeCall &&
-            dispatchReceiver != FirNoReceiverExpression && dispatchReceiver.typeRef.coneType.isSuspendOrKSuspendFunctionType(session)
+            dispatchReceiver != FirNoReceiverExpression && dispatchReceiver.coneType.isSuspendOrKSuspendFunctionType(session)
         ) {
             val variableForInvoke = dispatchReceiver
-            val variableForInvokeType = variableForInvoke.typeRef.coneType
+            val variableForInvokeType = variableForInvoke.coneType
             if (!variableForInvokeType.isExtensionFunctionType) return Triple(null, null, null)
 
             // `a.foo()` is resolved to invokeExtension, so it's been desugared to `foo.invoke(a)`

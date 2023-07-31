@@ -37,10 +37,10 @@ object UselessCallOnNotNullChecker : FirQualifiedAccessExpressionChecker() {
     }
 
     private fun FirExpression.getPackage(): String {
-        return typeRef.coneType.classId?.packageFqName.toString()
+        return coneType.classId?.packageFqName.toString()
     }
 
-    private fun FirExpression.getNullability() = typeRef.coneType.nullability
+    private fun FirExpression.getNullability() = coneType.nullability
 
 
     private val triggerOn = setOf(

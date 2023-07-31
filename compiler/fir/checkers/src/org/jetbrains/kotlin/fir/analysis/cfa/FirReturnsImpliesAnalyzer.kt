@@ -78,7 +78,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
         val isReturn = node is JumpNode && node.fir is FirReturnExpression
         val resultExpression = if (isReturn) (node.fir as FirReturnExpression).result else node.fir
 
-        val expressionType = (resultExpression as? FirExpression)?.typeRef?.coneType
+        val expressionType = (resultExpression as? FirExpression)?.coneType
         if (expressionType == builtinTypes.nothingType.type) return false
 
         if (isReturn && resultExpression is FirWhenExpression) {

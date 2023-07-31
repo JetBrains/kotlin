@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.UnexpandedTypeCheck
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isUnit
 
 object FirStandaloneQualifierChecker : FirResolvedQualifierChecker() {
@@ -29,8 +30,7 @@ object FirStandaloneQualifierChecker : FirResolvedQualifierChecker() {
         if (lastGetClass?.argument === expression) return
 
         // Note: if it's real Unit, it will be filtered by ClassKind.OBJECT check below in reportErrorOn
-        @OptIn(UnexpandedTypeCheck::class)
-        if (!expression.typeRef.isUnit) return
+        if (!expression.coneType.isUnit) return
 
         expression.symbol.reportErrorOn(expression.source, context, reporter)
     }

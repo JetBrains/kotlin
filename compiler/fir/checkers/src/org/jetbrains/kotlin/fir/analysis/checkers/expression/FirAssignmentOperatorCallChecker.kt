@@ -25,7 +25,7 @@ object FirAssignmentOperatorCallChecker : FirFunctionCallChecker() {
         ) {
             return
         }
-        if (!expression.typeRef.coneType.isUnit) {
+        if (!expression.coneType.isUnit) {
             reporter.reportOn(
                 expression.source,
                 FirErrors.ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT,

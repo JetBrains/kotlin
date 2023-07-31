@@ -245,7 +245,7 @@ private fun FirCallableSymbol<*>.toSymbolForCall(
         }
         // Member fake override or bound callable reference
         dispatchReceiver !is FirNoReceiverExpression -> {
-            val callSiteDispatchReceiverType = dispatchReceiver.typeRef.coneType
+            val callSiteDispatchReceiverType = dispatchReceiver.coneType
             val declarationSiteDispatchReceiverType = dispatchReceiverType
             val type = if (callSiteDispatchReceiverType is ConeDynamicType && declarationSiteDispatchReceiverType != null) {
                 declarationSiteDispatchReceiverType
@@ -295,7 +295,7 @@ private fun FirCallableSymbol<*>.toSymbolForCall(
 
 fun FirConstExpression<*>.getIrConstKind(): IrConstKind<*> = when (kind) {
     ConstantValueKind.IntegerLiteral, ConstantValueKind.UnsignedIntegerLiteral -> {
-        val type = typeRef.coneTypeUnsafe<ConeIntegerLiteralType>()
+        val type = coneTypeUnsafe<ConeIntegerLiteralType>()
         type.getApproximatedType().toConstKind()!!.toIrConstKind()
     }
 

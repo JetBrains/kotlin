@@ -194,7 +194,7 @@ class ConeEffectExtractor(
         val ownerHasReceiver = callableOwner?.receiverParameter != null
         val ownerIsMemberOfDeclaration = callableOwner?.getContainingClass(session) == declaration
         return if (declaration == owner || owner.isAccessorOf(declaration) || ownerIsMemberOfDeclaration && !ownerHasReceiver) {
-            val type = thisReceiverExpression.typeRef.coneType
+            val type = thisReceiverExpression.coneType
             toValueParameterReference(type, -1, "this")
         } else {
             ConeContractDescriptionError.IllegalThis(thisReceiverExpression).asElement()

@@ -72,7 +72,7 @@ class CallAndReferenceGenerator(
         explicitReceiverExpression: IrExpression?,
         isDelegate: Boolean
     ): IrExpression {
-        val type = approximateFunctionReferenceType(callableReferenceAccess.typeRef.coneType).toIrType()
+        val type = approximateFunctionReferenceType(callableReferenceAccess.coneType).toIrType()
 
         val callableSymbol = callableReferenceAccess.calleeReference.toResolvedCallableSymbol()
         if (callableSymbol?.origin == FirDeclarationOrigin.SamConstructor) {
@@ -105,7 +105,7 @@ class CallAndReferenceGenerator(
                     val referencedProperty = symbol.owner
                     val referencedPropertyGetter = referencedProperty.getter
                     val referencedPropertySetterSymbol =
-                        if (callableReferenceAccess.typeRef.coneType.isKMutableProperty(session)) referencedProperty.setter?.symbol
+                        if (callableReferenceAccess.coneType.isKMutableProperty(session)) referencedProperty.setter?.symbol
                         else null
                     val backingFieldSymbol = when {
                         referencedPropertyGetter != null -> null
@@ -162,7 +162,7 @@ class CallAndReferenceGenerator(
                         // Receivers are being applied inside
                         with(adapterGenerator) {
                             // TODO: Figure out why `adaptedType` is different from the `type`?
-                            val adaptedType = callableReferenceAccess.typeRef.coneType.toIrType() as IrSimpleType
+                            val adaptedType = callableReferenceAccess.coneType.toIrType() as IrSimpleType
                             generateAdaptedCallableReference(callableReferenceAccess, explicitReceiverExpression, symbol, adaptedType)
                         }
                     } else {
@@ -775,7 +775,7 @@ class CallAndReferenceGenerator(
         qualifier: FirResolvedQualifier,
         callableReferenceAccess: FirCallableReferenceAccess?
     ): IrExpression? {
-        val classSymbol = (qualifier.typeRef.coneType as? ConeClassLikeType)?.lookupTag?.toSymbol(session)
+        val classSymbol = (qualifier.coneType as? ConeClassLikeType)?.lookupTag?.toSymbol(session)
 
         if (callableReferenceAccess?.isBound == false) {
             return null
