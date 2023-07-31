@@ -754,6 +754,19 @@ class BodyGenerator(
             return
         }
 
+        // Type? -> Nothing? -> ref.cast null (none/noextern)
+        if (actualType.isNullable() && expectedType.isNullableNothing()) {
+            val type =
+                if (expectedType.getClass()?.isExternal == true)
+                    WasmHeapType.Simple.NoExtern
+                else
+                    WasmHeapType.Simple.None
+
+            body.buildInstr(WasmOp.REF_CAST_NULL, location, WasmImmediate.HeapType(type))
+
+            return
+        }
+
         val expectedClassErased = expectedType.getRuntimeClass(irBuiltIns)
 
         // TYPE -> EXTERNAL -> TRUE
@@ -792,7 +805,11 @@ class BodyGenerator(
         // REF -> REF -> REF_CAST
         if (!expectedIsPrimitive) {
             if (expectedClassErased.isSubclassOf(actualClassErased)) {
-                generateRefCast(actualTypeErased, expectedTypeErased, location)
+                if (expectedType.isNullable())
+                    generateRefNullCast(actualTypeErased, expectedTypeErased, location)
+                else
+                    generateRefCast(actualTypeErased, expectedTypeErased, location)
+                body.commentPreviousInstr { "to make verifier happy" }
             } else {
                 body.buildUnreachableForVerifier()
             }
