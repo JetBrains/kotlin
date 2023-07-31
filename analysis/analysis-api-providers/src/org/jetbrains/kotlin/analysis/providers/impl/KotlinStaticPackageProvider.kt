@@ -20,7 +20,7 @@ public class KotlinStaticPackageProvider(
 ) : KotlinPackageProviderBase(project, scope) {
     private val kotlinPackageToSubPackages: Map<FqName, Set<Name>> = run {
         val filesInScope = files.filter { scope.contains(it.virtualFile) }
-        val packages = mutableMapOf<FqName, MutableSet<Name>>()
+        val packages: MutableMap<FqName, MutableSet<Name>> = mutableMapOf() // the explicit type is here to workaround KTIJ-21172
         filesInScope.forEach { file ->
             var currentPackage = FqName.ROOT
             for (subPackage in file.packageFqName.pathSegments()) {
