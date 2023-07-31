@@ -34,7 +34,7 @@ let { exports } = await instantiate(imports, /*runInitializer=*/false);
 if (exports.getInitialized() !== 0) {
     throw "Fail1"
 }
-exports.__init();
+exports._initialize();
 if (exports.getInitialized() !== 100) {
     throw "Fail2"
 }

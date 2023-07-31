@@ -350,7 +350,7 @@ For more information see $d{uri("https://kotl.in/wasm_help/")}.
     
     wasmExports = wasmInstance.exports;
     if (runInitializer) {
-        wasmExports.__init();
+        wasmExports._initialize();
     }
 
     return { instance: wasmInstance,  exports: wasmExports };
