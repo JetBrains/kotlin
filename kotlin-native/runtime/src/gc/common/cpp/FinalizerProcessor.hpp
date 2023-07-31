@@ -72,6 +72,7 @@ public:
         if (finalizerThread_.joinable()) return;
 
         finalizerThread_ = ScopedThread(ScopedThread::attributes().name("GC finalizer processor"), [this] {
+            processingLoop_.initThreadData();
             Kotlin_initRuntimeIfNeeded();
             {
                 std::unique_lock guard(initializedMutex_);
@@ -94,12 +95,8 @@ public:
 
 private:
     // should be called under the finalizerQueueMutex_
-    bool shouldShutdown(int64_t lastProcessedEpoch) noexcept {
-        bool shouldShutdown = FinalizerQueueTraits::isEmpty(finalizerQueue_) && finalizerQueueEpoch_ == lastProcessedEpoch;
-        if (shouldShutdown) {
-            RuntimeAssert(shutdownFlag_, "Nothing to do, but no shutdownFlag_ is set on wakeup");
-        }
-        return shouldShutdown;
+    bool hasNewTasks(int64_t lastProcessedEpoch) noexcept { // FIXME name
+        return !FinalizerQueueTraits::isEmpty(finalizerQueue_) || finalizerQueueEpoch_ != lastProcessedEpoch;
     }
 
     void processSingle(FinalizerQueue&& queue, int64_t currentEpoch) noexcept {
@@ -140,22 +137,24 @@ private:
             CFRunLoopWakeUp(runLoop_);
         }
 
+        void initThreadData() {
+            runLoop_.store(CFRunLoopGetCurrent(), std::memory_order_release);
+        }
+
         void body() {
             konan::AutoreleasePool autoreleasePool;
             auto mode = kCFRunLoopDefaultMode;
             CFRunLoopAddSource(CFRunLoopGetCurrent(), runLoopSource_, mode);
-            runLoop_.store(CFRunLoopGetCurrent(), std::memory_order_release);
 
             CFRunLoopRun();
 
-            runLoop_.store(nullptr, std::memory_order_release);
-
             CFRunLoopRemoveSource(CFRunLoopGetCurrent(), runLoopSource_, mode);
+            runLoop_.store(nullptr, std::memory_order_release);
         }
     private:
         void handleNewFinalizers() {
             std::unique_lock lock(owner_.finalizerQueueMutex_);
-            if (owner_.shouldShutdown(finishedEpoch_)) {
+            if (owner_.shutdownFlag_) {
                 owner_.newTasksAllowed_ = false;
                 CFRunLoopStop(runLoop_.load(std::memory_order_acquire));
                 return;
@@ -183,14 +182,17 @@ private:
             owner_.finalizerQueueCondVar_.notify_all();
         }
 
+        void initThreadData() { /* noop */ }
+
         void body() {
             int64_t finishedEpoch = 0;
             while (true) {
                 std::unique_lock lock(owner_.finalizerQueueMutex_);
                 owner_.finalizerQueueCondVar_.wait(lock, [this, &finishedEpoch] {
-                    return !FinalizerQueueTraits::isEmpty(owner_.finalizerQueue_) || owner_.finalizerQueueEpoch_ != finishedEpoch || owner_.shutdownFlag_;
+                    return owner_.hasNewTasks(finishedEpoch) || owner_.shutdownFlag_;
                 });
-                if (owner_.shouldShutdown(finishedEpoch)) {
+                if (!owner_.hasNewTasks(finishedEpoch)) {
+                    RuntimeAssert(owner_.shutdownFlag_, "Nothing to do, but no shutdownFlag_ is set on wakeup");
                     owner_.newTasksAllowed_ = false;
                     break;
                 }
