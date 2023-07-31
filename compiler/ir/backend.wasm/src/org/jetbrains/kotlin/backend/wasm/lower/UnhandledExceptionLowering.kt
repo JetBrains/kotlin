@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.util.toIrConst
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.js.config.WasmTarget
 import org.jetbrains.kotlin.name.Name
 
 // This pass needed to wrap around unhandled exceptions from JsExport functions and throw JS exception for call from JS site
@@ -47,7 +49,7 @@ import org.jetbrains.kotlin.name.Name
 internal class UnhandledExceptionLowering(val context: WasmBackendContext) : FileLoweringPass {
     private val throwableType = context.irBuiltIns.throwableType
     private val irBooleanType = context.wasmSymbols.irBuiltIns.booleanType
-    private val throwAsJsException = context.wasmSymbols.throwAsJsException
+    private val throwAsJsException get() = context.wasmSymbols.jsRelatedSymbols.throwAsJsException
     private val isNotFirstWasmExportCallGetter = context.wasmSymbols.isNotFirstWasmExportCall.owner.getter!!.symbol
     private val isNotFirstWasmExportCallSetter = context.wasmSymbols.isNotFirstWasmExportCall.owner.setter!!.symbol
 
@@ -131,6 +133,7 @@ internal class UnhandledExceptionLowering(val context: WasmBackendContext) : Fil
     }
 
     override fun lower(irFile: IrFile) {
+        if (context.configuration.get(JSConfigurationKeys.WASM_TARGET, WasmTarget.JS) == WasmTarget.WASI) return
         for (declaration in irFile.declarations) {
             if (declaration is IrFunction && declaration.isExported()) {
                 processExportFunction(declaration)

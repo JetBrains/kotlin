@@ -11,17 +11,24 @@ import org.jetbrains.kotlin.ir.builders.irCallConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.js.config.WasmTarget
 import org.jetbrains.kotlin.name.FqName
 
 /**
  * Mark declarations from [exportedFqNames] with @JsExport annotation
  */
 fun markExportedDeclarations(context: WasmBackendContext, irFile: IrFile, exportedFqNames: Set<FqName>) {
+    val exportConstructor = when (context.configuration.get(JSConfigurationKeys.WASM_TARGET, WasmTarget.JS)) {
+        WasmTarget.WASI -> context.wasmSymbols.wasmExportConstructor
+        else -> context.wasmSymbols.jsRelatedSymbols.jsExportConstructor
+    }
+
     for (declaration in irFile.declarations) {
         if (declaration is IrFunction && declaration.fqNameWhenAvailable in exportedFqNames) {
             val builder = context.createIrBuilder(irFile.symbol)
             declaration.annotations +=
-                builder.irCallConstructor(context.wasmSymbols.jsExportConstructor, typeArguments = emptyList())
+                builder.irCallConstructor(exportConstructor, typeArguments = emptyList())
         }
     }
 }

@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.js.config.WasmTarget
 
 
 class WasmTypeOperatorLowering(val context: WasmBackendContext) : FileLoweringPass {
@@ -34,11 +36,11 @@ class WasmTypeOperatorLowering(val context: WasmBackendContext) : FileLoweringPa
 class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrElementTransformerVoidWithContext() {
     private val symbols = context.wasmSymbols
     private val builtIns = context.irBuiltIns
+    private val jsToKotlinAnyAdapter get() = symbols.jsRelatedSymbols.jsInteropAdapters.jsToKotlinAnyAdapter
+    private val kotlinToJsAnyAdapter get() = symbols.jsRelatedSymbols.jsInteropAdapters.kotlinToJsAnyAdapter
 
     private lateinit var builder: DeclarationIrBuilder
-    override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement {
-        return super.visitSimpleFunction(declaration)
-    }
+
     override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression {
         super.visitTypeOperator(expression)
         builder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol).at(expression)
@@ -213,7 +215,10 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
         }
 
         if (fromClass.isExternal && !toClass.isExternal) {
-            val narrowingToAny = builder.irCall(symbols.jsInteropAdapters.jsToKotlinAnyAdapter).also {
+            if (context.configuration.get(JSConfigurationKeys.WASM_TARGET, WasmTarget.JS) == WasmTarget.WASI) {
+                TODO("Implement externalize adapter for wasi mode")
+            }
+            val narrowingToAny = builder.irCall(jsToKotlinAnyAdapter).also {
                 it.putValueArgument(0, value)
             }
             // Continue narrowing from Any to expected type
@@ -221,7 +226,10 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
         }
 
         if (toClass.isExternal && !fromClass.isExternal) {
-            return builder.irCall(symbols.jsInteropAdapters.kotlinToJsAnyAdapter).also {
+            if (context.configuration.get(JSConfigurationKeys.WASM_TARGET, WasmTarget.JS) == WasmTarget.WASI) {
+                TODO("Implement internalize adapter for wasi mode")
+            }
+            return builder.irCall(kotlinToJsAnyAdapter).also {
                 it.putValueArgument(0, value)
             }
         }

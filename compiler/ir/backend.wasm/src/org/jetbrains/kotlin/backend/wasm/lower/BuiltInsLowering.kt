@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.js.config.WasmTarget
 import org.jetbrains.kotlin.name.parentOrNull
 
 class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
@@ -56,7 +58,13 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
             irBuiltins.eqeqSymbol,
             irBuiltins.eqeqeqSymbol -> {
                 fun callRefIsNull(expr: IrExpression): IrCall {
-                    val refIsNull = if (expr.type.erasedUpperBound?.isExternal == true) symbols.externRefIsNull else symbols.refIsNull
+                    if (
+                        context.configuration.get(JSConfigurationKeys.WASM_TARGET, WasmTarget.JS) == WasmTarget.WASI &&
+                        expr.type.erasedUpperBound?.isExternal == true
+                    ) {
+                        error("Unexpected external refs in wasi mode")
+                    }
+                    val refIsNull = if (expr.type.erasedUpperBound?.isExternal == true) symbols.jsRelatedSymbols.externRefIsNull else symbols.refIsNull
                     return builder.irCall(refIsNull).apply { putValueArgument(0, expr) }
                 }
 
