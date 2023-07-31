@@ -62,7 +62,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
         return context.withWhenExpression(whenExpression, session) with@{
             @Suppress("NAME_SHADOWING")
             var whenExpression = whenExpression.transformSubject(transformer, ResolutionMode.ContextIndependent)
-            val subjectType = whenExpression.subject?.typeRef?.coneType?.fullyExpandedType(session)
+            val subjectType = whenExpression.subject?.coneType?.fullyExpandedType(session)
             var completionNeeded = false
             context.withWhenSubjectType(subjectType, components) {
                 when {
@@ -261,8 +261,8 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
         )
 
         var isLhsNotNull = false
-        if (result.rhs.typeRef.coneTypeSafe<ConeKotlinType>()?.isNothing == true) {
-            val lhsType = result.lhs.typeRef.coneTypeSafe<ConeKotlinType>()
+        if (result.rhs.coneTypeSafe<ConeKotlinType>()?.isNothing == true) {
+            val lhsType = result.lhs.coneTypeSafe<ConeKotlinType>()
             if (lhsType != null) {
                 // Converting to non-raw type is necessary to preserver the K1 semantics (see KT-54526)
                 val newReturnType =
@@ -274,13 +274,13 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
         }
 
         session.typeContext.run {
-            if (result.typeRef.coneTypeSafe<ConeKotlinType>()?.isNullableType() == true
-                && result.rhs.typeRef.coneTypeSafe<ConeKotlinType>()?.isNullableType() == false
+            if (result.coneTypeSafe<ConeKotlinType>()?.isNullableType() == true
+                && result.rhs.coneTypeSafe<ConeKotlinType>()?.isNullableType() == false
             ) {
                 // Sometimes return type for special call for elvis operator might be nullable,
                 // but result is not nullable if the right type is not nullable
                 result.replaceTypeRef(
-                    result.typeRef.withReplacedConeType(result.typeRef.coneType.makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext))
+                    result.typeRef.withReplacedConeType(result.coneType.makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext))
                 )
             }
         }

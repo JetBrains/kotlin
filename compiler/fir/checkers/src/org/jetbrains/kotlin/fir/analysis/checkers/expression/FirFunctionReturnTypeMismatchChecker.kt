@@ -56,7 +56,7 @@ object FirFunctionReturnTypeMismatchChecker : FirReturnExpressionChecker() {
         }
 
         val typeContext = context.session.typeContext
-        val returnExpressionType = resultExpression.typeRef.coneType
+        val returnExpressionType = resultExpression.coneType
 
         if (!isSubtypeForTypeMismatch(typeContext, subtype = returnExpressionType, supertype = functionReturnType)) {
             if (resultExpression.isNullLiteral && functionReturnType.nullability == ConeNullability.NOT_NULL) {

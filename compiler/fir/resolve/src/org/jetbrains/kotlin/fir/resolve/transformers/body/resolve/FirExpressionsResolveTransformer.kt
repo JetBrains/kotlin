@@ -613,13 +613,13 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
         fun operatorReturnTypeMatches(candidate: Candidate): Boolean {
             // After KT-45503, non-assign flavor of operator is checked more strictly: the return type must be assignable to the variable.
-            val operatorCallReturnType = resolvedOperatorCall.typeRef.coneType
+            val operatorCallReturnType = resolvedOperatorCall.coneType
             val substitutor = candidate.system.currentStorage()
                 .buildAbstractResultingSubstitutor(candidate.system.typeSystemContext) as ConeSubstitutor
             return AbstractTypeChecker.isSubtypeOf(
                 session.typeContext,
                 substitutor.substituteOrSelf(operatorCallReturnType),
-                leftArgument.typeRef.coneType
+                leftArgument.coneType
             )
         }
         // following `!!` is safe since `operatorIsSuccessful = true` implies `operatorCallReference != null`
@@ -700,7 +700,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             !assignIsSuccessful && !operatorIsSuccessful -> chooseResolved()
             !assignIsSuccessful && operatorIsSuccessful -> chooseOperator()
             assignIsSuccessful && !operatorIsSuccessful -> chooseAssign()
-            leftArgument.typeRef.coneType is ConeDynamicType -> chooseAssign()
+            leftArgument.coneType is ConeDynamicType -> chooseAssign()
             !operatorReturnTypeMatches -> chooseAssign()
             else -> reportAmbiguity()
         }
@@ -845,7 +845,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         val firClass = type.lookupTag.toSymbol(session)?.fir ?: return this
         if (firClass.typeParameters.isEmpty()) return this
 
-        val originalType = argument.unwrapSmartcastExpression().typeRef.coneTypeSafe<ConeKotlinType>() ?: return this
+        val originalType = argument.unwrapSmartcastExpression().coneTypeSafe<ConeKotlinType>() ?: return this
         val newType = components.computeRepresentativeTypeForBareType(type, originalType)
             ?: if (firClass.isLocal && (operation == FirOperation.AS || operation == FirOperation.SAFE_AS)) {
                 (firClass as FirClass).defaultType()
@@ -1133,7 +1133,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                     )
                     coneType
                 } else {
-                    lhs.resultType.coneType
+                    lhs.coneType
                 }
             }
             is FirResolvedReifiedParameterReference -> {
@@ -1208,7 +1208,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         dataFlowAnalyzer.exitConstExpression(constExpression as FirConstExpression<*>)
         constExpression.resultType = constExpression.resultType.resolvedTypeFromPrototype(type)
 
-        return when (val resolvedType = constExpression.resultType.coneType) {
+        return when (val resolvedType = constExpression.coneType) {
             is ConeErrorType -> buildErrorExpression {
                 expression = constExpression
                 diagnostic = resolvedType.diagnostic
@@ -1306,7 +1306,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             .resolveDelegatingConstructorCall(delegatedConstructorCall, constructorType, containingClass.symbol.toLookupTag())
 
         if (reference is FirThisReference && reference.boundSymbol == null) {
-            resolvedCall.dispatchReceiver.typeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag?.toSymbol(session)?.let {
+            resolvedCall.dispatchReceiver.coneTypeSafe<ConeClassLikeType>()?.lookupTag?.toSymbol(session)?.let {
                 reference.replaceBoundSymbol(it)
             }
         }

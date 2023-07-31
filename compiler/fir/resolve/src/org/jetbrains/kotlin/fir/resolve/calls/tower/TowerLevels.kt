@@ -86,7 +86,7 @@ class MemberScopeTowerLevel(
         val scope = dispatchReceiverValue.scope(session, scopeSession) ?: return ProcessResult.SCOPE_EMPTY
         var (empty, candidates) = scope.collectCandidates(processScopeMembers)
 
-        val scopeWithoutSmartcast = getOriginalReceiverExpressionIfStableSmartCast()?.typeRef
+        val scopeWithoutSmartcast = getOriginalReceiverExpressionIfStableSmartCast()
             ?.coneType
             ?.scope(
                 session,
@@ -384,7 +384,7 @@ class ScopeTowerLevel(
         )
 
         return givenExtensionReceiverOptions.none { extensionReceiver ->
-            val extensionReceiverType = extensionReceiver.resultType.coneType
+            val extensionReceiverType = extensionReceiver.coneType
             // If some receiver is non class like, we should not skip it
             if (extensionReceiverType !is ConeClassLikeType) return@none true
 

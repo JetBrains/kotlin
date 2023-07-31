@@ -287,7 +287,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
 
             val dispatchReceiverParameterClassLookupTag = dispatchReceiverParameterClassSymbol.toLookupTag()
             val dispatchReceiverValueOwnerLookupTag =
-                dispatchReceiver.typeRef.coneType.findClassRepresentation(
+                dispatchReceiver.coneType.findClassRepresentation(
                     dispatchReceiverParameterClassLookupTag.constructClassType(
                         Array(dispatchReceiverParameterClassSymbol.fir.typeParameters.size) { ConeStarProjection },
                         isNullable = true
@@ -364,10 +364,10 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         session: FirSession
     ): Boolean {
         if (dispatchReceiver == null) return true
-        var dispatchReceiverType = dispatchReceiver.typeRef.coneType
+        var dispatchReceiverType = dispatchReceiver.coneType
         if (dispatchReceiver is FirPropertyAccessExpression && dispatchReceiver.calleeReference is FirSuperReference) {
             // Special 'super' case: type of this, not of super, should be taken for the check below
-            dispatchReceiverType = dispatchReceiver.dispatchReceiver.typeRef.coneType
+            dispatchReceiverType = dispatchReceiver.dispatchReceiver.coneType
         }
         val typeCheckerState = session.typeContext.newTypeCheckerState(
             errorTypesEqualToAnything = false,
@@ -394,7 +394,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
 
     private fun FirExpression?.ownerIfCompanion(session: FirSession): ConeClassLikeLookupTag? =
         // TODO: what if there is an intersection type from smartcast?
-        (this?.typeRef?.coneType as? ConeClassLikeType)?.lookupTag?.ownerIfCompanion(session)
+        (this?.coneType as? ConeClassLikeType)?.lookupTag?.ownerIfCompanion(session)
 
     // monitorEnter/monitorExit are the only functions which are accessed "illegally" (see kotlin/util/Synchronized.kt).
     // Since they are intrinsified in the codegen, FIR should treat it as visible.
@@ -508,7 +508,7 @@ private fun FirMemberDeclaration.containingNonLocalClass(
             if (dispatchReceiver != null) {
                 val baseReceiverType = dispatchReceiverClassTypeOrNull()
                 if (baseReceiverType != null) {
-                    dispatchReceiver.typeRef.coneType.findClassRepresentation(baseReceiverType, session)?.toSymbol(session)?.fir?.let {
+                    dispatchReceiver.coneType.findClassRepresentation(baseReceiverType, session)?.toSymbol(session)?.fir?.let {
                         return it
                     }
                 }

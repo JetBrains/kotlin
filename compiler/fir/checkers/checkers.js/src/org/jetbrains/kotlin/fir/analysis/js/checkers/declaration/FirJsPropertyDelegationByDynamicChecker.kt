@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.types.coneTypeOrNull
 
 object FirJsPropertyDelegationByDynamicChecker : FirPropertyChecker() {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (declaration.delegate?.typeRef?.coneTypeOrNull is ConeDynamicType) {
+        if (declaration.delegate?.coneTypeOrNull is ConeDynamicType) {
             reporter.reportOn(declaration.delegate?.source, FirJsErrors.PROPERTY_DELEGATION_BY_DYNAMIC, context)
         }
     }

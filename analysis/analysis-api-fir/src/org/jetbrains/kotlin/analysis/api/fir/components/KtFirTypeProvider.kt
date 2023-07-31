@@ -172,9 +172,9 @@ internal class KtFirTypeProvider(
     override fun getReceiverTypeForDoubleColonExpression(expression: KtDoubleColonExpression): KtType? {
         return when (val fir = expression.getOrBuildFir(firResolveSession)) {
             is FirGetClassCall ->
-                fir.typeRef.coneType.getReceiverOfReflectionType()?.asKtType()
+                fir.coneType.getReceiverOfReflectionType()?.asKtType()
             is FirCallableReferenceAccess ->
-                fir.typeRef.coneType.getReceiverOfReflectionType()?.asKtType()
+                fir.coneType.getReceiverOfReflectionType()?.asKtType()
             else -> throwUnexpectedFirElementError(fir, expression)
         }
     }

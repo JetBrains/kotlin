@@ -35,7 +35,7 @@ object FirOptInUsageAccessChecker : FirBasicExpressionChecker() {
                 reportNotAcceptedExperimentalities(experimentalities, expression.lValue, context, reporter)
             } else if (expression is FirQualifiedAccessExpression) {
                 val dispatchReceiverType =
-                    expression.dispatchReceiver.takeIf { it !is FirNoReceiverExpression }?.typeRef?.coneType?.fullyExpandedType(context.session)
+                    expression.dispatchReceiver.takeIf { it !is FirNoReceiverExpression }?.coneType?.fullyExpandedType(context.session)
 
                 val experimentalities = resolvedSymbol.loadExperimentalities(context, fromSetter = false, dispatchReceiverType) +
                         loadExperimentalitiesFromTypeArguments(context, expression.typeArguments)

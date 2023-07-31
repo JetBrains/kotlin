@@ -85,11 +85,11 @@ private fun removeSmartCastTypeForAttemptToFitVisibility(dispatchReceiver: FirEx
     val expressionWithSmartcastIfStable =
         (dispatchReceiver as? FirSmartCastExpression)?.takeIf { it.isStable } ?: return null
 
-    val receiverType = dispatchReceiver.typeRef.coneType
+    val receiverType = dispatchReceiver.coneType
     if (receiverType.isNullableNothing) return null
 
     val originalExpression = expressionWithSmartcastIfStable.originalExpression
-    val originalType = originalExpression.typeRef.coneType
+    val originalType = originalExpression.coneType
     val originalTypeNotNullable =
         originalType.makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext)
 

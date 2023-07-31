@@ -26,7 +26,7 @@ object FirJsExternalArgumentCallChecker : FirCallChecker() {
         for ((argument, parameter) in arguments) {
             if (parameter.hasAnnotation(JsExternalArgument, context.session)) {
                 val unwrappedArg = argument.unwrapArgument()
-                val type = unwrappedArg.typeRef.coneTypeOrNull ?: continue
+                val type = unwrappedArg.coneTypeOrNull ?: continue
                 val symbol = type.toRegularClassSymbol(context.session)
                 if (symbol?.isEffectivelyExternal(context.session) == false || type is ConeDynamicType) {
                     reporter.reportOn(

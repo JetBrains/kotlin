@@ -274,16 +274,13 @@ class FirResolveBench(val withProgress: Boolean, val listener: BenchListener? = 
                     }
 
                     override fun visitFunctionCall(functionCall: FirFunctionCall) {
-                        val typeRef = functionCall.typeRef
                         val callee = functionCall.calleeReference
-                        if (typeRef is FirResolvedTypeRef) {
-                            val type = typeRef.type
-                            if (type is ConeErrorType) {
-                                errorFunctionCallTypes++
-                                val psi = callee.psi
-                                if (callee.isError() && psi != null) {
-                                    reportProblem(callee.diagnostic.reason, psi)
-                                }
+                        val type = functionCall.coneTypeOrNull
+                        if (type is ConeErrorType) {
+                            errorFunctionCallTypes++
+                            val psi = callee.psi
+                            if (callee.isError() && psi != null) {
+                                reportProblem(callee.diagnostic.reason, psi)
                             }
                         }
 
@@ -291,16 +288,13 @@ class FirResolveBench(val withProgress: Boolean, val listener: BenchListener? = 
                     }
 
                     override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression) {
-                        val typeRef = qualifiedAccessExpression.typeRef
                         val callee = qualifiedAccessExpression.calleeReference
-                        if (typeRef is FirResolvedTypeRef) {
-                            val type = typeRef.type
-                            if (type is ConeErrorType) {
-                                errorQualifiedAccessTypes++
-                                val psi = callee.psi
-                                if (callee.isError() && psi != null) {
-                                    reportProblem(callee.diagnostic.reason, psi)
-                                }
+                        val type = qualifiedAccessExpression.coneTypeOrNull
+                        if (type is ConeErrorType) {
+                            errorQualifiedAccessTypes++
+                            val psi = callee.psi
+                            if (callee.isError() && psi != null) {
+                                reportProblem(callee.diagnostic.reason, psi)
                             }
                         }
 

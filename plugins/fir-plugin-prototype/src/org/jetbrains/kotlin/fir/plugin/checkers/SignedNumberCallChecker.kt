@@ -22,7 +22,7 @@ object SignedNumberCallChecker : FirFunctionCallChecker() {
         val argumentMapping = expression.resolvedArgumentMapping ?: return
         for ((argument, parameter) in argumentMapping.entries) {
             val expectedSign = parameter.returnTypeRef.coneType.attributes.numberSign ?: continue
-            val actualSign = argument.typeRef.coneType.attributes.numberSign
+            val actualSign = argument.coneType.attributes.numberSign
             if (expectedSign != actualSign) {
                 reporter.reportOn(
                     argument.source, PluginErrors.ILLEGAL_NUMBER_SIGN, expectedSign.asString(), actualSign.asString(), context

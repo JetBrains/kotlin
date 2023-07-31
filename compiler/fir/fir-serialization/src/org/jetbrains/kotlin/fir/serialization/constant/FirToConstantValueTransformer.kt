@@ -119,7 +119,7 @@ internal object FirToConstantValueTransformer : FirDefaultVisitor<ConstantValue<
         getClassCall: FirGetClassCall,
         data: FirToConstantValueTransformerData
     ): ConstantValue<*>? {
-        return create(getClassCall.argument.typeRef.coneTypeUnsafe())
+        return create(getClassCall.argument.coneTypeUnsafe())
     }
 
     override fun visitQualifiedAccessExpression(
@@ -158,7 +158,7 @@ internal object FirToConstantValueTransformer : FirDefaultVisitor<ConstantValue<
                         data.constValueProvider
                     )?.addEmptyVarargValuesFor(symbol)
                     ?: return null
-                return AnnotationValue.create(qualifiedAccessExpression.typeRef.coneType, mapping)
+                return AnnotationValue.create(qualifiedAccessExpression.coneType, mapping)
             }
 
             symbol.callableId.packageName.asString() == "kotlin" -> {
@@ -262,7 +262,7 @@ internal object FirToConstantValueChecker : FirDefaultVisitor<Boolean, FirSessio
     override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: FirSession): Boolean = true
 
     override fun visitGetClassCall(getClassCall: FirGetClassCall, data: FirSession): Boolean {
-        return create(getClassCall.argument.typeRef.coneTypeUnsafe()) != null
+        return create(getClassCall.argument.coneTypeUnsafe()) != null
     }
 
     override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression, data: FirSession): Boolean {

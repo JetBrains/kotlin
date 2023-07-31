@@ -966,7 +966,7 @@ class Fir2IrVisitor(
         val receiver = statements.findFirst<FirProperty>() ?: return null
         val receiverValue = receiver.initializer ?: return null
 
-        if (receiverValue.typeRef.coneType !is ConeDynamicType) {
+        if (receiverValue.coneType !is ConeDynamicType) {
             return null
         }
 

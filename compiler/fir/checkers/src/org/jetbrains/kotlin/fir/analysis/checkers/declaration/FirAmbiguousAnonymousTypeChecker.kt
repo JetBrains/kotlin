@@ -40,13 +40,13 @@ object FirAmbiguousAnonymousTypeChecker : FirBasicDeclarationChecker() {
          * 2. `val x = ...`
          * 3. `val x get() = ...`
          */
-        val typeRef = when (declaration) {
-            is FirProperty -> declaration.initializer?.typeRef ?: declaration.getter?.body?.singleExpressionType
+        val type = when (declaration) {
+            is FirProperty -> declaration.initializer?.coneType ?: declaration.getter?.body?.singleExpressionType
             is FirFunction -> declaration.body?.singleExpressionType
             else -> error("Should not be there")
         } ?: return
 
-        checkTypeAndArguments(typeRef.coneType, context, reporter, declaration.source)
+        checkTypeAndArguments(type, context, reporter, declaration.source)
     }
 
     private fun checkTypeAndArguments(
@@ -76,5 +76,5 @@ object FirAmbiguousAnonymousTypeChecker : FirBasicDeclarationChecker() {
     }
 
     private val FirBlock.singleExpressionType
-        get() = ((this as? FirSingleExpressionBlock)?.statement as? FirReturnExpression)?.result?.typeRef
+        get() = ((this as? FirSingleExpressionBlock)?.statement as? FirReturnExpression)?.result?.coneType
 }

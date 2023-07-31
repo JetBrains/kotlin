@@ -212,7 +212,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
                 val calleeDeclaration = element.calleeReference.toResolvedCallableSymbol() ?: return
                 val isInvokeCallWithDynamicReceiver = calleeDeclaration.name == OperatorNameConventions.INVOKE
                         && element is FirQualifiedAccessExpression
-                        && element.dispatchReceiver.typeRef.isFunctionTypeWithDynamicReceiver(firFile.moduleData.session)
+                        && element.dispatchReceiver.coneTypeOrNull?.isFunctionTypeWithDynamicReceiver(firFile.moduleData.session) == true
 
                 if (calleeDeclaration.origin !is FirDeclarationOrigin.DynamicScope && !isInvokeCallWithDynamicReceiver) {
                     return
@@ -293,10 +293,9 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
 
     private fun DebugDiagnosticConsumer.reportExpressionTypeDiagnostic(element: FirExpression) {
         report(DebugInfoDiagnosticFactory1.EXPRESSION_TYPE, element) {
-            val originalTypeRef = (element as? FirSmartCastExpression)?.takeIf { it.isStable }?.originalExpression?.typeRef
 
-            val type = element.typeRef.coneTypeSafe<ConeKotlinType>()
-            val originalType = originalTypeRef?.coneTypeSafe<ConeKotlinType>()
+            val type = element.coneTypeSafe<ConeKotlinType>()
+            val originalType = (element as? FirSmartCastExpression)?.takeIf { it.isStable }?.originalExpression?.coneTypeOrNull
 
             if (type != null && originalType != null) {
                 "${originalType.renderForDebugInfo()} & ${type.renderForDebugInfo()}"
@@ -389,9 +388,6 @@ fun List<KtDiagnostic>.diagnosticCodeMetaInfos(
         forceRenderArguments,
     )
 }
-
-private fun FirTypeRef.isFunctionTypeWithDynamicReceiver(session: FirSession) =
-    coneTypeSafe<ConeKotlinType>()?.isFunctionTypeWithDynamicReceiver(session) == true
 
 private fun ConeKotlinType.isFunctionTypeWithDynamicReceiver(session: FirSession): Boolean {
     val hasExplicitDynamicReceiver = receiverType(session) is ConeDynamicType

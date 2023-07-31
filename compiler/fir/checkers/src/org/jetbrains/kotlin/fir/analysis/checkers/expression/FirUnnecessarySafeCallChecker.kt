@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.types.isUnit
 
 object FirUnnecessarySafeCallChecker : FirSafeCallExpressionChecker() {
     override fun check(expression: FirSafeCallExpression, context: CheckerContext, reporter: DiagnosticReporter) {
-        val receiverType = expression.receiver.typeRef.coneType.fullyExpandedType(context.session)
+        val receiverType = expression.receiver.coneType.fullyExpandedType(context.session)
         if (expression.receiver.source?.elementType == KtNodeTypes.SUPER_EXPRESSION) {
             reporter.reportOn(expression.source, FirErrors.UNEXPECTED_SAFE_CALL, context)
             return

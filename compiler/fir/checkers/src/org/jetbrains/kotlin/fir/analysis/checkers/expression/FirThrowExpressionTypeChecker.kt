@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.types.typeContext
 object FirThrowExpressionTypeChecker : FirThrowExpressionChecker() {
     override fun check(expression: FirThrowExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         val expectedType = context.session.builtinTypes.throwableType.coneType
-        val actualType = expression.exception.typeRef.coneType
+        val actualType = expression.exception.coneType
 
         if (!actualType.isSubtypeOf(expectedType, context.session)) {
             reporter.reportOn(

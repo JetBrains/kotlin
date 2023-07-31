@@ -72,8 +72,8 @@ class FirDelegatedPropertyInferenceSession(
         if (callee.candidate.system.hasContradiction) return true
 
         val hasStubType =
-            callee.candidate.chosenExtensionReceiver?.typeRef?.coneType?.containsStubType() ?: false
-                    || callee.candidate.dispatchReceiver?.typeRef?.coneType?.containsStubType() ?: false
+            callee.candidate.chosenExtensionReceiver?.coneType?.containsStubType() ?: false
+                    || callee.candidate.dispatchReceiver?.coneType?.containsStubType() ?: false
 
         if (!hasStubType) {
             return true

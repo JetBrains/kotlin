@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.fir.declarations.resolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.unwrapAndFlattenArgument
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.types.coneTypeOrNull
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
@@ -50,7 +51,7 @@ internal fun mapAnnotationParameters(annotation: FirAnnotation): Map<Name, FirEx
     checkWithAttachment(annotation.resolved, { "By now the annotations argument mapping should have been resolved" }) {
         withFirEntry("annotation", annotation)
         withClassEntry("annotationTypeRef", annotation.annotationTypeRef)
-        withClassEntry("typeRef", annotation.typeRef)
+        withClassEntry("coneTypeOrNull", annotation.coneTypeOrNull)
     }
 
     return annotation.argumentMapping.mapping.mapKeys { (name, _) -> name }

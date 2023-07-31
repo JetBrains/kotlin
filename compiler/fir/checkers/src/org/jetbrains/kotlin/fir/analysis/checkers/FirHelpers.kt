@@ -452,7 +452,7 @@ fun checkTypeMismatch(
     isInitializer: Boolean
 ) {
     var lValueType = lValueOriginalType
-    var rValueType = rValue.typeRef.coneType
+    var rValueType = rValue.coneType
     if (source.kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement) {
         if (!lValueType.isNullable && rValueType.isNullable) {
             val tempType = rValueType
@@ -512,7 +512,7 @@ fun checkTypeMismatch(
 }
 
 internal fun checkCondition(condition: FirExpression, context: CheckerContext, reporter: DiagnosticReporter) {
-    val coneType = condition.typeRef.coneType.lowerBoundIfFlexible()
+    val coneType = condition.coneType.lowerBoundIfFlexible()
     if (coneType !is ConeErrorType && !coneType.isSubtypeOf(context.session.typeContext, context.session.builtinTypes.booleanType.type)) {
         reporter.reportOn(
             condition.source,

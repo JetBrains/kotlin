@@ -176,7 +176,7 @@ class VariableStorageImpl(private val session: FirSession) : VariableStorage() {
             property.visibility == Visibilities.Private -> PropertyStability.STABLE_VALUE
             property.modality != Modality.FINAL -> {
                 val dispatchReceiver = (originalFir.unwrapElement() as? FirQualifiedAccessExpression)?.dispatchReceiver ?: return null
-                val receiverType = dispatchReceiver.typeRef.coneTypeSafe<ConeClassLikeType>()?.fullyExpandedType(session) ?: return null
+                val receiverType = dispatchReceiver.coneTypeSafe<ConeClassLikeType>()?.fullyExpandedType(session) ?: return null
                 val receiverSymbol = receiverType.lookupTag.toSymbol(session) ?: return null
                 when (val receiverFir = receiverSymbol.fir) {
                     is FirAnonymousObject -> PropertyStability.STABLE_VALUE

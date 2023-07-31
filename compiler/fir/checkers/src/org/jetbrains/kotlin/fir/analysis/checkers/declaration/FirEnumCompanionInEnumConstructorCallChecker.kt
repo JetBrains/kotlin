@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
@@ -26,6 +25,8 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.FunctionCallNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.QualifiedAccessNode
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
@@ -91,7 +92,7 @@ object FirEnumCompanionInEnumConstructorCallChecker : FirClassChecker() {
     private fun FirExpression.getClassSymbol(session: FirSession): FirRegularClassSymbol? {
         return when (this) {
             is FirResolvedQualifier -> {
-                this.typeRef.toRegularClassSymbol(session)
+                this.coneType.toRegularClassSymbol(session)
             }
             else -> (this.toReference() as? FirThisReference)?.boundSymbol
         } as? FirRegularClassSymbol

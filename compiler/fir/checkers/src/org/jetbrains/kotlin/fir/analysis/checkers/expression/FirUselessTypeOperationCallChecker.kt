@@ -21,7 +21,7 @@ object FirUselessTypeOperationCallChecker : FirTypeOperatorCallChecker() {
         if (expression.operation !in FirOperation.TYPES) return
         val arg = expression.argument
 
-        val candidateType = arg.typeRef.coneType.upperBoundIfFlexible().fullyExpandedType(context.session)
+        val candidateType = arg.coneType.upperBoundIfFlexible().fullyExpandedType(context.session)
         if (candidateType is ConeErrorType) return
 
         val targetType = expression.conversionTypeRef.coneType.fullyExpandedType(context.session)

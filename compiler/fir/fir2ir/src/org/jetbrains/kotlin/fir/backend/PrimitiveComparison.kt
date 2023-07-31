@@ -28,8 +28,8 @@ fun FirComparisonExpression.inferPrimitiveNumericComparisonInfo(): PrimitiveCone
     inferPrimitiveNumericComparisonInfo(left, right)
 
 fun inferPrimitiveNumericComparisonInfo(left: FirExpression, right: FirExpression): PrimitiveConeNumericComparisonInfo? {
-    val leftType = left.typeRef.coneType
-    val rightType = right.typeRef.coneType
+    val leftType = left.coneType
+    val rightType = right.coneType
     val leftPrimitiveOrNullableType = leftType.getPrimitiveTypeOrSupertype() ?: return null
     val rightPrimitiveOrNullableType = rightType.getPrimitiveTypeOrSupertype() ?: return null
     val leastCommonType = leastCommonPrimitiveNumericType(leftPrimitiveOrNullableType, rightPrimitiveOrNullableType)

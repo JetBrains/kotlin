@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerC
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.AllCandidatesResolver
 import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildImport
 import org.jetbrains.kotlin.fir.declarations.builder.buildResolvedImport
@@ -326,8 +325,8 @@ private class FirShorteningContext(val analysisSession: KtFirAnalysisSession) {
         }
     }
 
-    fun getRegularClass(typeRef: FirTypeRef): FirRegularClass? {
-        return typeRef.toRegularClassSymbol(firSession)?.fir
+    fun getRegularClass(type: ConeKotlinType?): FirRegularClass? {
+        return type?.toRegularClassSymbol(firSession)?.fir
     }
 
     fun toClassSymbol(classId: ClassId) =

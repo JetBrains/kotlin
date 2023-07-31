@@ -21,9 +21,9 @@ object FirUselessElvisChecker : FirElvisExpressionChecker() {
         // If the overall expression is not resolved/completed, the corresponding error will be reported separately.
         // See [FirControlFlowStatementsResolveTransformer#transformElvisExpression],
         // where an error type is recorded as the expression's return type.
-        if (expression.typeRef.coneType is ConeErrorType) return
+        if (expression.coneType is ConeErrorType) return
 
-        val lhsType = expression.lhs.typeRef.coneType
+        val lhsType = expression.lhs.coneType
         if (lhsType is ConeErrorType) return
         if (!lhsType.canBeNull) {
             if (context.languageVersionSettings.supportsFeature(LanguageFeature.EnableDfaWarningsInK2)) {
