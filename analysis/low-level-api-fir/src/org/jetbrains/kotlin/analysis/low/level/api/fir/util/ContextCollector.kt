@@ -78,8 +78,11 @@ private class ContextCollectorVisitor(
     private val filter: (PsiElement) -> FilterResponse,
     private val interceptor: () -> FirElement?
 ) : FirDefaultVisitorVoid() {
+    private data class ContextKey(val element: PsiElement, val kind: ContextKind)
+
     operator fun get(element: PsiElement, kind: ContextKind): Context? {
-        return result[element to kind]
+        val key = ContextKey(element, kind)
+        return result[key]
     }
 
     private val session: FirSession
@@ -94,7 +97,7 @@ private class ContextCollectorVisitor(
 
     private var smartCasts: PersistentMap<FirBasedSymbol<*>, Set<ConeKotlinType>> = persistentHashMapOf()
 
-    private val result = HashMap<Pair<PsiElement, ContextKind>, Context>()
+    private val result = HashMap<ContextKey, Context>()
 
     fun processTarget(target: LLFirResolveTarget) {
         target.firFile.accept(this)
@@ -115,7 +118,7 @@ private class ContextCollectorVisitor(
             return
         }
 
-        val key = Pair(psi, kind)
+        val key = ContextKey(psi, kind)
         if (key in result) {
             return
         }
