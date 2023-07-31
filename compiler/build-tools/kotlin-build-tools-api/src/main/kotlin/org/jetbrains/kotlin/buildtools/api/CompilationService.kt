@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.api
 
+import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathEntrySnapshot
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmCompilationConfiguration
 import java.io.File
@@ -28,7 +29,7 @@ public interface CompilationService {
     /**
      * TODO KT-57565
      */
-    public fun calculateClasspathSnapshot(classpathEntry: File): ClasspathEntrySnapshot
+    public fun calculateClasspathSnapshot(classpathEntry: File, granularity: ClassSnapshotGranularity): ClasspathEntrySnapshot
 
     /**
      * Provides a default [CompilerExecutionStrategyConfiguration] allowing to use it as is or customizing for specific requirements.

@@ -142,7 +142,7 @@ internal abstract class BuildToolsApiCompilationWork : WorkAction<BuildToolsApiC
 }
 
 @OptIn(ExperimentalBuildToolsApi::class)
-private object SharedApiClassesClassLoaderProvider : ParentClassLoaderProvider {
+internal object SharedApiClassesClassLoaderProvider : ParentClassLoaderProvider {
     override fun getClassLoader() = SharedApiClassesClassLoader()
 
     override fun hashCode() = SharedApiClassesClassLoaderProvider::class.hashCode()

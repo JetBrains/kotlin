@@ -15,7 +15,7 @@ import java.io.File
  */
 @ExperimentalBuildToolsApi
 public interface ClasspathEntrySnapshot {
-    public val classSnapshots: LinkedHashMap<String, ClassSnapshot>
+    public val classSnapshots: Map<String, ClassSnapshot>
 
     public fun saveSnapshot(path: File)
 }
@@ -26,6 +26,18 @@ public interface ClasspathEntrySnapshot {
  * This interface is not intended to be implemented by the API consumers.
  */
 @ExperimentalBuildToolsApi
-public interface ClassSnapshot {
-    // ... TODO: KT-57565, it will expose some part of org.jetbrains.kotlin.incremental.classpathDiff.ClassSnapshot hierarchy
+public sealed interface ClassSnapshot
+
+/**
+ * [ClassSnapshot] of an inaccessible class.
+ *
+ * A class is inaccessible if it can't be referenced from other source files (and therefore any changes in an inaccessible class will not
+ * require recompilation of other source files).
+ */
+@ExperimentalBuildToolsApi
+public interface InaccessibleClassSnapshot : ClassSnapshot
+
+@ExperimentalBuildToolsApi
+public interface AccessibleClassSnapshot : ClassSnapshot {
+    public val classAbiHash: Long
 }

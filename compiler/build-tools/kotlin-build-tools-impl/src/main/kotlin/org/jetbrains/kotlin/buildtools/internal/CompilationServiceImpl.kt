@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.internal
 
+import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
 import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.jvm.*
 import org.jetbrains.kotlin.cli.common.ExitCode
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.daemon.client.BasicCompilerServicesWithResultsFacade
 import org.jetbrains.kotlin.daemon.common.CompilerId
 import org.jetbrains.kotlin.daemon.common.configureDaemonJVMOptions
 import org.jetbrains.kotlin.daemon.common.filterExtractProps
+import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathEntrySnapshotter
 import java.io.File
 import java.net.URLClassLoader
 import java.util.concurrent.ConcurrentHashMap
@@ -36,9 +38,8 @@ private fun getCurrentClasspath() = (CompilationServiceImpl::class.java.classLoa
 internal object CompilationServiceImpl : CompilationService {
     private val buildIdToSessionFlagFile: MutableMap<ProjectId, File> = ConcurrentHashMap()
 
-    override fun calculateClasspathSnapshot(classpathEntry: File): ClasspathEntrySnapshot {
-        TODO("Calculating classpath snapshots via the Build Tools API is not yet implemented: KT-57565")
-    }
+    override fun calculateClasspathSnapshot(classpathEntry: File, granularity: ClassSnapshotGranularity) =
+        ClasspathEntrySnapshotImpl(ClasspathEntrySnapshotter.snapshot(classpathEntry, granularity, DoNothingBuildMetricsReporter))
 
     override fun makeCompilerExecutionStrategyConfiguration() = CompilerExecutionStrategyConfigurationImpl()
 
