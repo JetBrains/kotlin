@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.collectors.DiagnosticCollectorComponent
 import org.jetbrains.kotlin.fir.declarations.FirCodeFragment
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -53,7 +54,9 @@ internal open class LLFirDiagnosticVisitor(
     }
 
     override fun visitCodeFragment(codeFragment: FirCodeFragment, data: Nothing?) {
-        val contextElement = (codeFragment.source.psi as? KtCodeFragment)?.context
+        val ktCodeFragment = codeFragment.psi as KtCodeFragment
+
+        val contextElement = ktCodeFragment.context
         if (contextElement != null) {
             fun process(containingSymbols: List<FirDeclaration>) {
                 if (containingSymbols.isEmpty()) {
