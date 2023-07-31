@@ -331,17 +331,15 @@ private class ContextCollectorVisitor(
         processSignatureAnnotations(anonymousFunction)
 
         context.withAnonymousFunction(anonymousFunction, holder, ResolutionMode.ContextIndependent) {
-            context.forFunctionBody(anonymousFunction, holder) {
-                for (parameter in anonymousFunction.valueParameters) {
-                    process(parameter)
-                    context.storeVariable(parameter, holder.session)
-                }
+            for (parameter in anonymousFunction.valueParameters) {
+                process(parameter)
+                context.storeVariable(parameter, holder.session)
+            }
 
-                dumpContext(anonymousFunction.psi, ContextKind.BODY)
+            dumpContext(anonymousFunction.psi, ContextKind.BODY)
 
-                onActive {
-                    process(anonymousFunction.body)
-                }
+            onActive {
+                process(anonymousFunction.body)
             }
 
             onActive {
