@@ -52,7 +52,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
         else -> true
     }
 
-    private fun PsiElement.getNonLocalContainingOrThisDeclarationCodeFragmentAware(predicate: (KtDeclaration) -> Boolean): KtElement? {
+    private fun PsiElement.getNonLocalContainingOrThisDeclarationCodeFragmentAware(predicate: (KtDeclaration) -> Boolean): KtAnnotated? {
         return getNonLocalContainingOrThisDeclaration(predicate) ?: containingFile as? KtCodeFragment
     }
 
@@ -342,7 +342,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
     }
 
     private fun requiredResolvePhase(
-        container: KtElement,
+        container: KtAnnotated,
         elementToReplace: PsiElement,
     ): FirResolvePhase {
         assert(container is KtDeclaration || container is KtCodeFragment)
