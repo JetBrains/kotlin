@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
+import kotlin.io.path.appendText
 import kotlin.io.path.writeText
 
 @MppGradlePluginTests
@@ -74,7 +75,8 @@ class PreHmppDependenciesDeprecationIT : KGPBaseTest() {
     fun testNoWarningsInPreHmppProjects(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
         publishLibrary("preHmppLibrary", gradleVersion, tempDir)
         checkDiagnostics(gradleVersion, "simpleReport", tempDir) {
-            gradleProperties.writeText("kotlin.internal.mpp.hierarchicalStructureByDefault=false")
+            gradleProperties.appendText("kotlin.internal.mpp.hierarchicalStructureByDefault=false${System.lineSeparator()}")
+            gradleProperties.appendText("kotlin.internal.suppressGradlePluginErrors=PreHMPPFlagsError${System.lineSeparator()}")
         }
     }
 

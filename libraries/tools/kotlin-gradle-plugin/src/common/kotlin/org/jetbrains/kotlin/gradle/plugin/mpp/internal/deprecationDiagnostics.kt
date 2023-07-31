@@ -27,7 +27,6 @@ internal fun runDeprecationDiagnostics(project: Project) {
  */
 private fun checkAndReportDeprecatedMppProperties(project: Project) {
     val projectProperties = project.kotlinPropertiesProvider
-    if (projectProperties.ignoreHmppDeprecationWarnings == true) return
 
     val usedProperties = deprecatedMppProperties.mapNotNull { propertyName ->
         if (propertyName in propertiesSetByPlugin && projectProperties.mpp13XFlagsSetByPlugin)
@@ -41,7 +40,7 @@ private fun checkAndReportDeprecatedMppProperties(project: Project) {
 
     project.kotlinToolingDiagnosticsCollector.reportOncePerGradleBuild(
         project,
-        KotlinToolingDiagnostics.HierarchicalMultiplatformFlagsWarning(usedProperties)
+        KotlinToolingDiagnostics.PreHMPPFlagsError(usedProperties)
     )
 }
 

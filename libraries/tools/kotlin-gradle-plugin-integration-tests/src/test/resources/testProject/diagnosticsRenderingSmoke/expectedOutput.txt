@@ -1,7 +1,7 @@
 > Configure project :
 
 > Configure project :subprojectA
-w: [HierarchicalMultiplatformFlagsWarning | WARNING] The following properties are obsolete and will be removed in Kotlin 1.9.20:
+e: [PreHMPPFlagsError | ERROR] The following properties are obsolete and no longer supported:
 kotlin.mpp.enableCompatibilityMetadataVariant, kotlin.mpp.hierarchicalStructureSupport
 Read the details here: https://kotlinlang.org/docs/multiplatform-compatibility-guide.html#deprecate-hmpp-properties
 #diagnostic-end
