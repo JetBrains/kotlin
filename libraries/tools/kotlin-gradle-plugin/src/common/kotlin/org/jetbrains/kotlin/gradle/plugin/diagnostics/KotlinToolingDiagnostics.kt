@@ -583,7 +583,7 @@ object KotlinToolingDiagnostics {
         )
     }
 
-    object KotlinCompilationSourceDeprecation : ToolingDiagnosticFactory(ERROR) {
+    object KotlinCompilationSourceDeprecation : ToolingDiagnosticFactory(WARNING) {
         operator fun invoke(trace: Throwable?) = build(
             """
                 `KotlinCompilation.source(KotlinSourceSet)` method is deprecated 
