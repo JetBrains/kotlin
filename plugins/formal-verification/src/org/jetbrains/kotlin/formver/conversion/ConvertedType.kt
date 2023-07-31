@@ -22,6 +22,12 @@ object ConvertedUnit : ConvertedOptionalType {
     override val viperType: Type? = null
 }
 
+object ConvertedNothing : ConvertedOptionalType {
+    override val viperType: Type? = null
+
+    override fun preconditions(v: Exp): List<Exp> = listOf(Exp.BoolLit(false))
+}
+
 object ConvertedInt : ConvertedType {
     override val viperType: Type = Type.Int
 }
