@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
+import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.FirResult
 import org.jetbrains.kotlin.fir.pipeline.buildResolveAndCheckFirViaLightTree
@@ -86,6 +87,9 @@ fun compileModulesUsingFrontendIrAndLightTree(
     val performanceManager = compilerConfiguration[CLIConfigurationKeys.PERF_MANAGER]
 
     performanceManager?.notifyCompilerInitialized(0, 0, targetDescription)
+
+    val project = projectEnvironment.project
+    FirAnalysisHandlerExtension.analyze(project, compilerConfiguration)?.let { return it }
 
     val outputs = mutableListOf<GenerationState>()
     var mainClassFqName: FqName? = null
@@ -509,7 +513,7 @@ private fun VirtualFileSystem.findJarRoot(file: File): VirtualFile? =
     findFileByPath("$file${URLUtil.JAR_SEPARATOR}")
 
 private fun VirtualFileSystem.findExistingRoot(
-    root: JvmContentRoot, rootDescription: String, messageCollector: MessageCollector
+    root: JvmContentRoot, rootDescription: String, messageCollector: MessageCollector,
 ): VirtualFile? {
     return findFileByPath(root.file.absolutePath).also {
         if (it == null) {

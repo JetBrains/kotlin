@@ -77,9 +77,7 @@ private fun switchToFallbackModeIfNecessary(arguments: CommonCompilerArguments, 
             arguments.skipPrereleaseCheck = true
             arguments.allowUnstableDependencies = true
         }
-        isK2 && isKaptUsed && arguments.useKapt4 -> warn("Kapt 4 is still experimental. Use with caution.")
         arguments.useKapt4 && !isK2 -> warn("-Xuse-kapt4 flag can be only used with language version 2.0+.")
-        arguments.useKapt4 && !isKaptUsed -> warn("-Xuse-kapt4 flag is present but no Kapt configuration options are provided.")
     }
 }
 
