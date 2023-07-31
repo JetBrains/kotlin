@@ -68,9 +68,13 @@ enum class BooleanMetrics(val type: BooleanOverridePolicy, val anonymization: Bo
     TESTS_EXECUTED(OVERRIDE, SAFE),
     MAVEN_PUBLISH_EXECUTED(OVERRIDE, SAFE),
     BUILD_FAILED(OVERRIDE, SAFE),
-    KOTLIN_COMPILATION_FAILED(OR, SAFE);
+    KOTLIN_COMPILATION_FAILED(OR, SAFE),
+
+    // Other plugins enabled
+    KOTLIN_JS_PLUGIN_ENABLED(OR, SAFE),
+    COCOAPODS_PLUGIN_ENABLED(OR, SAFE);
 
     companion object {
-        const val VERSION = 1
+        const val VERSION = 2
     }
 }

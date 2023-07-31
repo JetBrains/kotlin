@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.statistics
 import org.gradle.api.Project
 import org.gradle.api.artifacts.DependencySet
 import org.gradle.api.logging.Logging
-import org.jetbrains.kotlin.gradle.plugin.internal.isProjectIsolationEnabled
+import org.jetbrains.kotlin.gradle.plugin.statistics.plugins.ObservablePlugins
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.statistics.BuildSessionLogger
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
@@ -23,7 +23,6 @@ import kotlin.system.measureTimeMillis
 
 class KotlinBuildStatHandler {
     companion object {
-        const val DOKKA_PLUGIN = "org.jetbrains.dokka"
 
         @JvmStatic
         internal fun getLogger() = Logging.getLogger(KotlinBuildStatHandler::class.java)
@@ -104,9 +103,8 @@ class KotlinBuildStatHandler {
 
         val statisticOverhead = measureTimeMillis {
             gradle.allprojects { project ->
-                project.plugins.findPlugin(DOKKA_PLUGIN)?.also {
-                    configurationTimeMetrics.put(BooleanMetrics.ENABLED_DOKKA, true)
-                }
+                collectAppliedPluginsStatistics(project, configurationTimeMetrics)
+
                 for (configuration in project.configurations) {
                     try {
                         val configurationName = configuration.name
@@ -174,6 +172,17 @@ class KotlinBuildStatHandler {
         sessionLogger.report(NumericalMetrics.STATISTICS_VISIT_ALL_PROJECTS_OVERHEAD, statisticOverhead)
 
         return configurationTimeMetrics
+    }
+
+    private fun collectAppliedPluginsStatistics(
+        project: Project,
+        configurationTimeMetrics: MetricContainer,
+    ) {
+        for (plugin in ObservablePlugins.values()) {
+            project.plugins.withId(plugin.title) {
+                configurationTimeMetrics.put(plugin.metric, true)
+            }
+        }
     }
 
     private fun reportLibrariesVersions(configurationTimeMetrics: MetricContainer, dependencies: DependencySet?) {
