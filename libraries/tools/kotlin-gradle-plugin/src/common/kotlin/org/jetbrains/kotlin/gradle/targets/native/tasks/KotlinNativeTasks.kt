@@ -796,7 +796,7 @@ internal class CacheBuilder(
     private val partialLinkageMode: String
         get() = settings.toolOptions.freeCompilerArgs.get().mapNotNull { arg ->
             arg.substringAfter("$PARTIAL_LINKAGE_PARAMETER=", missingDelimiterValue = "").takeIf(String::isNotEmpty)
-        }.lastOrNull() ?: PartialLinkageMode.DEFAULT.name
+        }.lastOrNull() ?: PartialLinkageMode.DEFAULT.name.toLowerCase()
 
     private fun getCacheDirectory(
         resolvedConfiguration: LazyResolvedConfiguration,
