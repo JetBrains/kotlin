@@ -29,7 +29,7 @@ import viper.silver.ast.Program
 const val INT_BACKING_FIELD = "backing_int"
 const val RETURN_VARIABLE_NAME = "ret"
 
-class ConvertedVar(val name: String, val type: ConvertedNonUnitType) {
+class ConvertedVar(val name: String, val type: ConvertedType) {
     fun toLocalVarDecl(
         pos: Position = Position.NoPosition,
         info: Info = Info.NoInfo,
@@ -86,11 +86,11 @@ class ProgramConversionContext {
         methods.add(methodCtx.fullMethod)
     }
 
-    fun convertType(type: ConeKotlinType): ConvertedType {
+    fun convertType(type: ConeKotlinType): ConvertedOptionalType {
         if (type.isUnit) {
-            return ConvertedUnit()
+            return ConvertedUnit
         } else if (type.isInt) {
-            return ConvertedInt()
+            return ConvertedInt
         }
         // Otherwise, still need to get to this case.
         throw NotImplementedError()
@@ -107,12 +107,12 @@ class MethodConversionContext(val programCtx: ProgramConversionContext, val decl
     init {
         val retType = (declaration.returnTypeRef as FirResolvedTypeRef).type
         val convertedRetType = programCtx.convertType(retType)
-        returnVar = (if (convertedRetType is ConvertedNonUnitType) ConvertedVar(RETURN_VARIABLE_NAME, convertedRetType) else null)
+        returnVar = (if (convertedRetType is ConvertedType) ConvertedVar(RETURN_VARIABLE_NAME, convertedRetType) else null)
 
         val params = declaration.valueParameters.map {
             ConvertedVar(
                 it.name.toString(),
-                programCtx.convertType((it.returnTypeRef as FirResolvedTypeRef).type) as ConvertedNonUnitType
+                programCtx.convertType((it.returnTypeRef as FirResolvedTypeRef).type) as ConvertedType
             )
         }
         val returns = returnVar?.let { listOf(it) } ?: emptyList()

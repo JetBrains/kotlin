@@ -8,34 +8,26 @@ package org.jetbrains.kotlin.formver.conversion
 import org.jetbrains.kotlin.formver.scala.silicon.ast.Exp
 import org.jetbrains.kotlin.formver.scala.silicon.ast.Type
 
-interface ConvertedType {
+interface ConvertedOptionalType {
     val viperType: Type?
-    fun preconditions(v: Exp.LocalVar): List<Exp>
-    fun postconditions(v: Exp.LocalVar): List<Exp>
+    fun preconditions(v: Exp.LocalVar): List<Exp> = emptyList()
+    fun postconditions(v: Exp.LocalVar): List<Exp> = emptyList()
 }
 
-interface ConvertedNonUnitType : ConvertedType {
+interface ConvertedType : ConvertedOptionalType {
     override val viperType: Type
 }
 
-abstract class ConvertedPrimitive : ConvertedNonUnitType {
-    override fun preconditions(v: Exp.LocalVar): List<Exp> = emptyList()
-    override fun postconditions(v: Exp.LocalVar): List<Exp> = emptyList()
-}
-
-class ConvertedUnit : ConvertedType {
+object ConvertedUnit : ConvertedOptionalType {
     override val viperType: Type? = null
-    override fun preconditions(v: Exp.LocalVar): List<Exp> = emptyList()
-    override fun postconditions(v: Exp.LocalVar): List<Exp> = emptyList()
 }
 
-class ConvertedInt : ConvertedPrimitive() {
+object ConvertedInt : ConvertedType {
     override val viperType: Type = Type.Int
 }
 
-class ConvertedClassType : ConvertedNonUnitType {
+class ConvertedClassType : ConvertedType {
     override val viperType: Type = Type.Ref
 
     override fun preconditions(v: Exp.LocalVar): List<Exp> = listOf(Exp.NeCmp(v, Exp.NullLit()))
-    override fun postconditions(v: Exp.LocalVar): List<Exp> = emptyList()
 }
