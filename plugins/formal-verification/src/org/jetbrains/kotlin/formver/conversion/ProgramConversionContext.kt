@@ -86,14 +86,10 @@ class ProgramConversionContext {
         methods.add(methodCtx.fullMethod)
     }
 
-    fun convertType(type: ConeKotlinType): ConvertedOptionalType {
-        if (type.isUnit) {
-            return ConvertedUnit
-        } else if (type.isInt) {
-            return ConvertedInt
-        }
-        // Otherwise, still need to get to this case.
-        throw NotImplementedError()
+    fun convertType(type: ConeKotlinType): ConvertedOptionalType = when {
+        type.isUnit -> ConvertedUnit
+        type.isInt -> ConvertedInt
+        else -> throw NotImplementedError()
     }
 }
 
@@ -164,12 +160,11 @@ class StmtConversionVisitor : FirVisitor<Exp?, StmtConversionContext>() {
         return null
     }
 
-    override fun <T> visitConstExpression(constExpression: FirConstExpression<T>, data: StmtConversionContext): Exp? {
+    override fun <T> visitConstExpression(constExpression: FirConstExpression<T>, data: StmtConversionContext): Exp =
         when (constExpression.kind) {
-            ConstantValueKind.Int -> return Exp.IntLit((constExpression.value as Long).toInt().toScalaBigInt())
+            ConstantValueKind.Int -> Exp.IntLit((constExpression.value as Long).toInt().toScalaBigInt())
             else -> TODO("Not implemented yet")
         }
-    }
 
     override fun visitPropertyAccessExpression(
         propertyAccessExpression: FirPropertyAccessExpression,
