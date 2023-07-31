@@ -791,8 +791,8 @@ class BodyGenerator(
             return
         }
 
-        val expectedIsPrimitive = expectedTypeErased.isPrimitiveType()
-        val actualIsPrimitive = actualTypeErased.isPrimitiveType()
+        val expectedIsPrimitive = expectedTypeErased.isPrimitiveType() && !expectedType.isNullable()
+        val actualIsPrimitive = actualTypeErased.isPrimitiveType() && !actualType.isNullable()
 
         // PRIMITIVE -> REF -> FALSE
         // REF -> PRIMITIVE -> FALSE
