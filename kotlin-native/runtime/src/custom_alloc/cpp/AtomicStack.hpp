@@ -35,14 +35,21 @@ public:
     // freeing pages during STW.
     T* Pop() noexcept {
         T* elm = stack_.load(std::memory_order_acquire);
-        while (elm && !stack_.compare_exchange_weak(elm, elm->next_, std::memory_order_acq_rel)) {}
-        return elm;
+        while (true) {
+            if (!elm) {
+                return nullptr;
+            }
+            auto* elmNext = elm->next_.load(std::memory_order_relaxed);
+            if (stack_.compare_exchange_weak(elm, elmNext, std::memory_order_acq_rel)) {
+                return elm;
+            }
+        }
     }
 
     void Push(T* elm) noexcept {
         T* head = nullptr;
         do {
-            elm->next_ = head;
+            elm->next_.store(head, std::memory_order_relaxed);
         } while (!stack_.compare_exchange_weak(head, elm, std::memory_order_acq_rel));
     }
 
@@ -58,14 +65,14 @@ public:
         }
         // `this` stack is not empty. Find the tail of `other`. If no deletions are performed, this is safe.
         T* otherTail = otherHead;
-        while (otherTail->next_) otherTail = otherTail->next_;
+        while (auto* next = otherTail->next_.load(std::memory_order_relaxed)) otherTail = next;
         // can't be because of the loop above
-        RuntimeAssert(otherTail->next_ == nullptr, "otherTail->next_ must be a tail");
+        RuntimeAssert(otherTail->next_.load(std::memory_order_relaxed) == nullptr, "otherTail->next_ must be a tail");
         // Now make `otherTail->next_` point to the current head of `this` and
         // simultaneously make `otherHead` the new current head.
         do {
-            otherTail->next_ = thisHead;
-        } while (!stack_.compare_exchange_weak(thisHead, otherHead, std::memory_order_acq_rel));
+            otherTail->next_.store(thisHead, std::memory_order_relaxed);
+        } while (!stack_.compare_exchange_weak(thisHead, otherHead, std::memory_order_release, std::memory_order_relaxed));
     }
 
     bool isEmpty() const noexcept { return stack_.load(std::memory_order_relaxed) == nullptr; }

@@ -21,7 +21,7 @@ struct ExtraObjectCell {
 
     // This is used to simultaneously build two lists: a free list and a finalizers queue.
     // A cell cannot exist in both of them, but can be in neither when it's alive.
-    ExtraObjectCell* next_;
+    std::atomic<ExtraObjectCell*> next_;
     struct alignas(mm::ExtraObjectData) {
         uint8_t data_[sizeof(mm::ExtraObjectData)];
     };
@@ -54,8 +54,8 @@ private:
     ExtraObjectPage() noexcept;
 
     // Used for linking pages together in `pages` queue or in `unswept` queue.
-    ExtraObjectPage* next_;
-    ExtraObjectCell* nextFree_;
+    std::atomic<ExtraObjectPage*> next_;
+    std::atomic<ExtraObjectCell*> nextFree_;
     ExtraObjectCell cells_[];
 };
 

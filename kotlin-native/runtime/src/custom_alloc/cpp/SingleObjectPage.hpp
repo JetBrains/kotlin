@@ -41,7 +41,7 @@ private:
     // Testing method
     std_support::vector<uint8_t*> GetAllocatedBlocks() noexcept;
 
-    SingleObjectPage* next_;
+    std::atomic<SingleObjectPage*> next_;
     bool isAllocated_ = false;
     size_t size_;
     struct alignas(8) {

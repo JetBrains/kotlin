@@ -53,7 +53,7 @@ private:
     friend class AtomicStack<FixedBlockPage>;
 
     // Used for linking pages together in `pages` queue or in `unswept` queue.
-    FixedBlockPage* next_;
+    std::atomic<FixedBlockPage*> next_;
     FixedCellRange nextFree_;
     uint32_t blockSize_;
     uint32_t end_;

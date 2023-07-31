@@ -46,7 +46,7 @@ private:
     void UpdateCurBlock(uint32_t cellsNeeded) noexcept;
 
     friend class AtomicStack<NextFitPage>;
-    NextFitPage* next_;
+    std::atomic<NextFitPage*> next_;
 
     Cell* curBlock_;
     Cell cells_[]; // cells_[0] is reserved for an empty block

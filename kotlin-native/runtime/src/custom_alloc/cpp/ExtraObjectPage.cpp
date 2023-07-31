@@ -25,10 +25,10 @@ ExtraObjectPage* ExtraObjectPage::Create(uint32_t ignored) noexcept {
 
 ExtraObjectPage::ExtraObjectPage() noexcept {
     CustomAllocInfo("ExtraObjectPage(%p)::ExtraObjectPage()", this);
-    nextFree_ = cells_;
+    nextFree_.store(cells_, std::memory_order_relaxed);
     ExtraObjectCell* end = cells_ + EXTRA_OBJECT_COUNT;
-    for (ExtraObjectCell* cell = cells_; cell < end; cell = cell->next_) {
-        cell->next_ = cell + 1;
+    for (ExtraObjectCell* cell = cells_; cell < end; cell = cell->next_.load(std::memory_order_relaxed)) {
+        cell->next_.store(cell + 1, std::memory_order_relaxed);
     }
 }
 
@@ -37,11 +37,12 @@ void ExtraObjectPage::Destroy() noexcept {
 }
 
 mm::ExtraObjectData* ExtraObjectPage::TryAllocate() noexcept {
-    if (nextFree_ >= cells_ + EXTRA_OBJECT_COUNT) {
+    auto* next = nextFree_.load(std::memory_order_relaxed);
+    if (next >= cells_ + EXTRA_OBJECT_COUNT) {
         return nullptr;
     }
-    ExtraObjectCell* freeBlock = nextFree_;
-    nextFree_ = freeBlock->next_;
+    ExtraObjectCell* freeBlock = next;
+    nextFree_.store(freeBlock->next_.load(std::memory_order_relaxed), std::memory_order_relaxed);
     CustomAllocDebug("ExtraObjectPage(%p)::TryAllocate() = %p", this, freeBlock->Data());
     return freeBlock->Data();
 }
@@ -52,10 +53,10 @@ bool ExtraObjectPage::Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizer
     // necessarily match an actual block starting point.
     ExtraObjectCell* end = cells_ + EXTRA_OBJECT_COUNT;
     bool alive = false;
-    ExtraObjectCell** nextFree = &nextFree_;
+    std::atomic<ExtraObjectCell*>* nextFree = &nextFree_;
     for (ExtraObjectCell* cell = cells_; cell < end; ++cell) {
         // If the current cell is free, move on.
-        if (cell == *nextFree) {
+        if (cell == nextFree->load(std::memory_order_relaxed)) {
             nextFree = &cell->next_;
             continue;
         }
@@ -64,8 +65,8 @@ bool ExtraObjectPage::Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizer
             alive = true;
         } else {
             // Free the current block and insert it into the free list.
-            cell->next_ = *nextFree;
-            *nextFree = cell;
+            cell->next_.store(nextFree->load(std::memory_order_relaxed), std::memory_order_relaxed);
+            nextFree->store(cell, std::memory_order_relaxed);
             nextFree = &cell->next_;
         }
     }
