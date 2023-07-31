@@ -75,7 +75,7 @@ class IrLazyClass(
 
     private fun shouldBuildStub(descriptor: DeclarationDescriptor): Boolean =
         descriptor !is DeclarationDescriptorWithVisibility
-                || (!isPrivate(descriptor.visibility) && descriptor.visibility != DescriptorVisibilities.INVISIBLE_FAKE)
+                || (descriptor.visibility != DescriptorVisibilities.INVISIBLE_FAKE)
                 // This exception is needed for K/N caches usage.
                 || isObject && descriptor is ClassConstructorDescriptor
 

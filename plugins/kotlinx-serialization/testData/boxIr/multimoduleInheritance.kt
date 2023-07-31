@@ -22,6 +22,7 @@ abstract class AbstractConstructor(var optional: String = "foo")
 // and serialization proto extension is not available in K2.
 @Serializable
 open class Vehicle {
+    private var targetId: String? = "target1"
     var color: String? = null
     var name: String? = null
 }
@@ -69,7 +70,7 @@ fun test3() {
     car.maxSpeed = 100
     car.name = "ford"
     val s = json.encodeToString(Car.serializer(), car)
-    assertEquals("""{"color":null,"name":"ford","maxSpeed":100}""", s)
+    assertEquals("""{"targetId":"target1","color":null,"name":"ford","maxSpeed":100}""", s)
     val restoredCar = json.decodeFromString(Car.serializer(), s)
     assertEquals(100, restoredCar.maxSpeed)
     assertEquals("ford", restoredCar.name)

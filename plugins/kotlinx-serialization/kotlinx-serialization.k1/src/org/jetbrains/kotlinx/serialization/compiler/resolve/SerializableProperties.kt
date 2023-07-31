@@ -126,5 +126,5 @@ fun <P : ISerializableProperty> restoreCorrectOrderFromClassProtoExtension(descr
     val correctOrder: List<Name> = descriptor.classProto.getExtension(SerializationPluginMetadataExtensions.propertiesNamesInProgramOrder)
         .map { descriptor.c.nameResolver.getName(it) }
     val propsMap = props.associateBy { it.originalDescriptorName }
-    return correctOrder.map { propsMap.getValue(it) }
+    return correctOrder.mapNotNull { propsMap[it] }
 }
