@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.signaturer.FirBasedSignatureComposer
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.util.IdSignatureComposer
@@ -36,4 +38,6 @@ class Fir2IrCommonMemberStorage(
     val propertyCache: ConcurrentHashMap<FirProperty, IrProperty> = ConcurrentHashMap()
 
     val fakeOverridesInClass: MutableMap<IrClass, MutableMap<Fir2IrDeclarationStorage.FakeOverrideKey, FirCallableDeclaration>> = mutableMapOf()
+
+    val irFakeOverridesForRealFirFakeOverrideMap: MutableMap<Fir2IrDeclarationStorage.FakeOverrideIdentifier, IrDeclaration> = mutableMapOf()
 }

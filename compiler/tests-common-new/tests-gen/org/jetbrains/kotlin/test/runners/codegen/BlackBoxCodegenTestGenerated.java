@@ -32204,9 +32204,27 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 }
 
                 @Test
+                @TestMetadata("intersectionOverrideInCommonModule.kt")
+                public void testIntersectionOverrideInCommonModule() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/basic/intersectionOverrideInCommonModule.kt");
+                }
+
+                @Test
                 @TestMetadata("kt-56329.kt")
                 public void testKt_56329() throws Exception {
                     runTest("compiler/testData/codegen/box/multiplatform/k2/basic/kt-56329.kt");
+                }
+
+                @Test
+                @TestMetadata("localIntersectionOverrideInCommonModule.kt")
+                public void testLocalIntersectionOverrideInCommonModule() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/basic/localIntersectionOverrideInCommonModule.kt");
+                }
+
+                @Test
+                @TestMetadata("localSubstitutionOverrideInCommonModule.kt")
+                public void testLocalSubstitutionOverrideInCommonModule() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/basic/localSubstitutionOverrideInCommonModule.kt");
                 }
 
                 @Test
@@ -32231,6 +32249,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 @TestMetadata("removeExpectDeclarationsFromMetadata.kt")
                 public void testRemoveExpectDeclarationsFromMetadata() throws Exception {
                     runTest("compiler/testData/codegen/box/multiplatform/k2/basic/removeExpectDeclarationsFromMetadata.kt");
+                }
+
+                @Test
+                @TestMetadata("substitutionOverrideInCommonModule.kt")
+                public void testSubstitutionOverrideInCommonModule() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/basic/substitutionOverrideInCommonModule.kt");
                 }
 
                 @Test

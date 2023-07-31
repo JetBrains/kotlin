@@ -1,3 +1,5 @@
+// FIR_IGNORE
+// Ignore reason: FIR does not support nested typealiases (especially inside inner classes)
 package test
 
 import dependency.*
