@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.backend.common
 import org.jetbrains.kotlin.AbstractKtSourceElement
 import org.jetbrains.kotlin.KtOffsetsOnlySourceElement
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrFile
 
 fun CommonBackendContext.reportWarning(message: String, irFile: IrFile?, irElement: IrElement) {
@@ -33,5 +32,5 @@ fun <E> MutableList<E>.pop() = this.removeAt(size - 1)
 fun <E> MutableList<E>.peek(): E? = if (size == 0) null else this[size - 1]
 
 fun IrElement.sourceElement(): AbstractKtSourceElement? =
-    if (startOffset != UNDEFINED_OFFSET) KtOffsetsOnlySourceElement(this.startOffset, this.endOffset)
+    if (startOffset >= 0) KtOffsetsOnlySourceElement(this.startOffset, this.endOffset)
     else null
