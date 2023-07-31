@@ -375,20 +375,20 @@ public class DefaultErrorMessages {
                 "Please add the corresponding file to compilation sources");
 
         MAP.put(NO_ACTUAL_FOR_EXPECT, "Expected {0} has no actual declaration in module {1}{2}", DECLARATION_NAME_WITH_KIND,
-                MODULE_WITH_PLATFORM, adaptGenerics1(PlatformIncompatibilityDiagnosticRenderer.TEXT));
+                MODULE_WITH_PLATFORM, PlatformIncompatibilityDiagnosticRenderer.TEXT);
         MAP.put(IMPLICIT_JVM_ACTUALIZATION, "Expected {0} is implicitly actualized by Java declaration in module {1}. " +
                                             "Please migrate to explicit ''actual typealias''. See: https://youtrack.jetbrains.com/issue/KT-58545",
                 DECLARATION_NAME_WITH_KIND,
                 MODULE_WITH_PLATFORM);
         MAP.put(ACTUAL_WITHOUT_EXPECT, "{0} has no corresponding expected declaration{1}", CAPITALIZED_DECLARATION_NAME_WITH_KIND_AND_PLATFORM,
-                adaptGenerics1(PlatformIncompatibilityDiagnosticRenderer.TEXT));
+                PlatformIncompatibilityDiagnosticRenderer.TEXT);
         MAP.put(AMBIGUOUS_ACTUALS, "{0} has several compatible actual declarations in modules {1}", CAPITALIZED_DECLARATION_NAME_WITH_KIND_AND_PLATFORM, CommonRenderers.commaSeparated(
                 MODULE));
         MAP.put(AMBIGUOUS_EXPECTS, "{0} has several compatible expect declarations in modules {1}", CAPITALIZED_DECLARATION_NAME_WITH_KIND_AND_PLATFORM, CommonRenderers.commaSeparated(
                 MODULE));
 
         MAP.put(NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS, "Actual class ''{0}'' has no corresponding members for expected class members:{1}",
-                NAME, adaptGenerics2(IncompatibleExpectedActualClassScopesRenderer.TEXT));
+                NAME, IncompatibleExpectedActualClassScopesRenderer.TEXT);
         MAP.put(ACTUAL_MISSING, "Declaration must be marked with 'actual'");
         MAP.put(EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE,
                 "{0}: expect and corresponding actual are declared in the same module, which will be prohibited in Kotlin 2.0. See https://youtrack.jetbrains.com/issue/KT-55177",
@@ -1276,17 +1276,6 @@ public class DefaultErrorMessages {
                 }
             }
         }
-    }
-
-    // Those methods are needed to fix problems with java type system and kotlin variance
-    @SuppressWarnings("unchecked")
-    public static DiagnosticParameterRenderer<Map<Incompatible<MemberDescriptor>, Collection<MemberDescriptor>>> adaptGenerics1(DiagnosticParameterRenderer<Map<Incompatible<? extends MemberDescriptor>, ? extends Collection<? extends MemberDescriptor>>> renderer) {
-        return (obj, renderingContext) -> renderer.render((Map)obj, renderingContext);
-    }
-
-    @SuppressWarnings("unchecked")
-    public static DiagnosticParameterRenderer<List<Pair<MemberDescriptor, Map<Incompatible<MemberDescriptor>, Collection<MemberDescriptor>>>>> adaptGenerics2(DiagnosticParameterRenderer<List<? extends Pair<? extends MemberDescriptor, ? extends Map<ExpectActualCompatibility.Incompatible<? extends MemberDescriptor>, ? extends Collection<? extends MemberDescriptor>>>>> renderer) {
-        return (obj, renderingContext) -> renderer.render((List)obj, renderingContext);
     }
 
     private DefaultErrorMessages() {
