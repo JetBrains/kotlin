@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.components.KtCompilerTarget
 import org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.impl.base.util.KtCompiledFileForOutputFile
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDiagnosticsForFile
@@ -229,6 +230,7 @@ internal class KtFirCompilerFacility(
         val injectedValueProvider: InjectedSymbolProvider
     )
 
+    @OptIn(LLFirInternals::class)
     private fun computeCodeFragmentMappings(
         mainKtFile: KtFile,
         mainFirFile: FirFile,
