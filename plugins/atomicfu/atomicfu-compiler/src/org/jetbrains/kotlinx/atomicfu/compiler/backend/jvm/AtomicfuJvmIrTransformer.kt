@@ -98,7 +98,7 @@ class AtomicfuJvmIrTransformer(
                  *                                       }
                  * }                                   }
                  */
-                val volatileField = buildVolatileBackingField(from, parentClass, true)
+                val volatileField = buildVolatileBackingField(from, parentClass, castBooleanFieldsToInt)
                 val volatileProperty = if (volatileField.parent == from.parent) {
                     // The index is relevant only if the property belongs to the same class as the original atomic property (not the generated wrapper).
                     parentClass.replacePropertyAtIndex(volatileField, DescriptorVisibilities.PRIVATE, isVar = true, isStatic = false, index)
@@ -270,6 +270,12 @@ class AtomicfuJvmIrTransformer(
             }
         }
     }
+
+    /**
+     * On JVM all Boolean fields are cast to Int, as they only can be updated via AtomicIntegerFieldUpdaters
+     */
+    override val castBooleanFieldsToInt: Boolean
+        get() = true
 
     /**
      * Builds the signature of the transformed atomic extension:

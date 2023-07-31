@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
+import org.jetbrains.kotlin.ir.types.isBoolean
 import org.jetbrains.kotlin.ir.types.isInt
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
@@ -41,11 +42,13 @@ abstract class AbstractAtomicfuIrBuilder(
         }
 
     // atomicArr.get(index)
-    fun atomicGetArrayElement(atomicArrayClass: IrClassSymbol, receiver: IrExpression, index: IrExpression) =
-        irCall(atomicSymbols.getAtomicHandlerFunctionSymbol(atomicArrayClass, "get")).apply {
+    fun atomicGetArrayElement(atomicArrayClass: IrClassSymbol, returnType: IrType, receiver: IrExpression, index: IrExpression): IrCall {
+        val arrayElement = irCall(atomicSymbols.getAtomicHandlerFunctionSymbol(atomicArrayClass, "get")).apply {
             dispatchReceiver = receiver
             putValueArgument(0, index)
         }
+        return if (returnType.isBoolean() && arrayElement.type.isInt()) arrayElement.toBoolean() else arrayElement
+    }
 
     fun irCallWithArgs(symbol: IrSimpleFunctionSymbol, dispatchReceiver: IrExpression?, extensionReceiver: IrExpression?, valueArguments: List<IrExpression?>) =
         irCall(symbol).apply {
@@ -157,7 +160,7 @@ abstract class AbstractAtomicfuIrBuilder(
         }
 
     fun IrExpression.toBoolean() = irNotEquals(this, irInt(0)) as IrCall
-    fun IrExpression.toInt() = irIfThenElse(irBuiltIns.intType, irEquals(this, irBoolean(true)), irInt(1), irInt(0))
+    fun IrExpression.toInt() = irIfThenElse(irBuiltIns.intType, this, irInt(1), irInt(0))
 
     fun irClassWithPrivateConstructor(
         name: String,
@@ -293,7 +296,7 @@ abstract class AbstractAtomicfuIrBuilder(
     }
 
     abstract fun atomicfuLoopBody(valueType: IrType, valueParameters: List<IrValueParameter>): IrBlockBody
-    abstract fun atomicfuArrayLoopBody(atomicArrayClass: IrClassSymbol, valueParameters: List<IrValueParameter>): IrBlockBody
+    abstract fun atomicfuArrayLoopBody(atomicArrayClass: IrClassSymbol, valueType: IrType, valueParameters: List<IrValueParameter>): IrBlockBody
     abstract fun atomicfuUpdateBody(functionName: String, valueType: IrType, valueParameters: List<IrValueParameter>): IrBlockBody
     abstract fun atomicfuArrayUpdateBody(functionName: String, valueType: IrType, atomicArrayClass: IrClassSymbol, valueParameters: List<IrValueParameter>): IrBlockBody
 }

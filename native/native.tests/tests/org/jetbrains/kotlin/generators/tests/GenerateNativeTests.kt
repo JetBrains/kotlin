@@ -305,3 +305,6 @@ private fun frontendFir() = arrayOf(
 
 private fun debugger() = annotation(Tag::class.java, "debugger")
 private fun infrastructure() = annotation(Tag::class.java, "infrastructure")
+private fun k1libContents() = annotation(Tag::class.java, "k1libContents")
+private fun k2libContents() = annotation(Tag::class.java, "k2libContents")
+private fun atomicfu() = annotation(Tag::class.java, "atomicfu")

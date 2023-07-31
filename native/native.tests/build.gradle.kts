@@ -36,6 +36,8 @@ sourceSets {
     }
 }
 
+testsJar {}
+
 // Tasks that run different sorts of tests. Most frequent use case: running specific tests at TeamCity.
 val infrastructureTest = nativeTest("infrastructureTest", "infrastructure")
 val codegenBoxTest = nativeTest("codegenBoxTest", "codegen & !frontend-fir")

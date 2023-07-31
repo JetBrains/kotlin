@@ -112,7 +112,6 @@ class JvmAtomicfuIrBuilder internal constructor(
     }
     */
     // dispatchReceiver: IrValueParameter, atomicHandler: IrValueParameter, action: IrValueParameter
-    // todo this should also be abstracted out
     override fun atomicfuLoopBody(valueType: IrType, valueParameters: List<IrValueParameter>) =
         irBlockBody {
             val dispatchReceiver = valueParameters[0]
@@ -141,7 +140,7 @@ class JvmAtomicfuIrBuilder internal constructor(
         }
     }
     */
-    override fun atomicfuArrayLoopBody(atomicArrayClass: IrClassSymbol, valueParameters: List<IrValueParameter>) =
+    override fun atomicfuArrayLoopBody(atomicArrayClass: IrClassSymbol, valueType: IrType, valueParameters: List<IrValueParameter>) =
         irBlockBody {
             val atomicHandler = valueParameters[0]
             val index = valueParameters[1]
@@ -150,7 +149,7 @@ class JvmAtomicfuIrBuilder internal constructor(
                 condition = irTrue()
                 body = irBlock {
                     val cur = createTmpVariable(
-                        atomicGetArrayElement(atomicArrayClass, irGet(atomicHandler), irGet(index)),
+                        atomicGetArrayElement(atomicArrayClass, valueType, irGet(atomicHandler), irGet(index)),
                         "atomicfu\$cur", false
                     )
                     +irCall(atomicSymbols.invoke1Symbol).apply {
@@ -270,7 +269,7 @@ class JvmAtomicfuIrBuilder internal constructor(
                 condition = irTrue()
                 body = irBlock {
                     val cur = createTmpVariable(
-                        atomicGetArrayElement(atomicArrayClass, irGet(atomicHandler), irGet(index)),
+                        atomicGetArrayElement(atomicArrayClass, valueType, irGet(atomicHandler), irGet(index)),
                         "atomicfu\$cur", false
                     )
                     val upd = createTmpVariable(
