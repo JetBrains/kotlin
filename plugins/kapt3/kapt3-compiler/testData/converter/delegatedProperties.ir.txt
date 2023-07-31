@@ -17,9 +17,9 @@ package test;
  *     public final (* non-default *) get
  *
  *   // field: x$delegate:Lkotlin/Lazy;
- *   // getter: getX()Lerror/NonExistentClass;
+ *   // getter: getX()Lkotlin/Unit;
  *   // synthetic method for annotations: getX$annotations()V
- *   public final (* delegated *) val x: error/NonExistentClass
+ *   public final (* delegated *) val x: kotlin/Unit
  *     public final (* non-default *) get
  *
  *   // field: y$delegate:Ltest/C;
@@ -40,19 +40,20 @@ public final class A {
     @org.jetbrains.annotations.NotNull()
     private final kotlin.Lazy x$delegate = null;
     @org.jetbrains.annotations.NotNull()
-    private final test.C<java.lang.String> z$delegate = null;
+    private final test.C z$delegate = null;
     @org.jetbrains.annotations.NotNull()
-    private final test.C<java.lang.String> y$delegate = null;
+    private final test.C y$delegate = null;
     @org.jetbrains.annotations.NotNull()
-    private final kotlin.Lazy<test.C<java.lang.String>> a$delegate = null;
+    private final kotlin.Lazy a$delegate = null;
     @org.jetbrains.annotations.NotNull()
-    private final kotlin.Lazy<test.C<java.lang.String>> b$delegate = null;
+    private final kotlin.Lazy b$delegate = null;
 
     public A() {
         super();
     }
 
-    public final error.NonExistentClass getX() {
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.Unit getX() {
         return null;
     }
 

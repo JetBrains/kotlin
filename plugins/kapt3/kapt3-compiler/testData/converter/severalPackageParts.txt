@@ -1,5 +1,14 @@
 package test;
 
+/**
+ * package {
+ *
+ *   // signature: foo()V
+ *   public final fun foo(): kotlin/Unit
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class AKt {
 
@@ -15,6 +24,15 @@ public final class AKt {
 
 package test;
 
+/**
+ * package {
+ *
+ *   // signature: bar()V
+ *   public final fun bar(): kotlin/Unit
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class BKt {
 

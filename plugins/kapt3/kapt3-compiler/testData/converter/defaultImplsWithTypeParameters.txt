@@ -1,3 +1,16 @@
+/**
+ * public abstract interface Foo<T#0 (* X *), T#1 (* Y *)> : kotlin/Any {
+ *
+ *   // signature: foo(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)V
+ *   public open fun <T#2 (* Z *)> foo(x: T#0, y: T#1, z: T#2): kotlin/Unit
+ *
+ *   // getter: getX()I
+ *   public open val x: kotlin/Int
+ *     public open (* non-default *) get
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public abstract interface Foo<X extends java.lang.Object, Y extends java.lang.Object> {
 
@@ -5,6 +18,9 @@ public abstract interface Foo<X extends java.lang.Object, Y extends java.lang.Ob
 
     public abstract int getX();
 
+    /**
+     * synthetic class
+     */
     @kotlin.Metadata()
     public static final class DefaultImpls {
 

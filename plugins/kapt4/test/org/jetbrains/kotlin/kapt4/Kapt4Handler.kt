@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.test.utils.withExtension
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import java.io.File
 import java.util.*
+import org.jetbrains.kotlin.kapt3.test.handlers.renderMetadata
 
 internal class Kapt4Handler(testServices: TestServices) : AnalysisHandler<Kapt4ContextBinaryArtifact>(
     testServices,
@@ -115,7 +116,7 @@ internal class Kapt4Handler(testServices: TestServices) : AnalysisHandler<Kapt4C
     ): List<JCTree.JCCompilationUnit> {
         val (kaptContext, kaptStubs) = info
         val convertedFiles = kaptStubs.mapIndexed { index, stub ->
-            val sourceFile = createTempJavaFile("stub$index.java", stub.file.prettyPrint(kaptContext.context))
+            val sourceFile = createTempJavaFile("stub$index.java", stub.file.prettyPrint(kaptContext.context, ::renderMetadata))
             stub.writeMetadataIfNeeded(forSource = sourceFile)
             sourceFile
         }

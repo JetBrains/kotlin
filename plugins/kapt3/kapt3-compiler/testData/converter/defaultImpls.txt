@@ -1,3 +1,17 @@
+/**
+ * public abstract interface Intf : kotlin/Any {
+ *
+ *   // getter: getColor()I
+ *   public open val color: kotlin/Int
+ *     public open (* non-default *) get
+ *
+ *   // companion object: Companion
+ *
+ *   // nested class: Companion
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public abstract interface Intf {
     @org.jetbrains.annotations.NotNull()
@@ -6,6 +20,9 @@ public abstract interface Intf {
 
     public abstract int getColor();
 
+    /**
+     * synthetic class
+     */
     @kotlin.Metadata()
     public static final class DefaultImpls {
 
@@ -19,6 +36,24 @@ public abstract interface Intf {
         }
     }
 
+    /**
+     * public final companion object Intf.Companion : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   private constructor()
+     *
+     *   // field: WHITE:I
+     *   public final const val WHITE: kotlin/Int (* = ... *)
+     *     public final get
+     *
+     *   // field: BLACK:I
+     *   // getter: getBLACK()I
+     *   public final val BLACK: kotlin/Int (* = ... *)
+     *     public final get
+     *
+     *   // module name: main
+     * }
+     */
     @kotlin.Metadata()
     public static final class Companion {
         private static final int BLACK = 1;
@@ -37,11 +72,23 @@ public abstract interface Intf {
 ////////////////////
 
 
+/**
+ * public abstract interface IntfWithDefaultImpls : kotlin/Any {
+ *
+ *   // signature: a()V
+ *   public open fun a(): kotlin/Unit
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public abstract interface IntfWithDefaultImpls {
 
     public abstract void a();
 
+    /**
+     * synthetic class
+     */
     @kotlin.Metadata()
     public static final class DefaultImpls {
 
@@ -58,6 +105,12 @@ public abstract interface IntfWithDefaultImpls {
 ////////////////////
 
 
+/**
+ * public abstract interface IntfWithoutDefaultImpls : kotlin/Any {
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public abstract interface IntfWithoutDefaultImpls {
 }

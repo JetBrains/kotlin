@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.analysis.api
 @RequiresOptIn("Internal Analysis API component which should not be used outside the Analysis API implementation modules as it does not have any compatibility guarantees")
 public annotation class KtAnalysisApiInternals
 
+@RequiresOptIn("Internal Analysis API component which is used from other modules in the Kotlin project and is not supposed to be used anywhere else since it has no compatibility guarantees")
+public annotation class KtAnalysisNonPublicApi
+
 @RequiresOptIn("Analysis should not be allowed to be ran from EDT thread, otherwise it may cause IDE freezes")
 public annotation class KtAllowAnalysisOnEdt
 

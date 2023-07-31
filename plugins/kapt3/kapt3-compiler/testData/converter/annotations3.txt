@@ -1,3 +1,12 @@
+/**
+ * public final class B : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class B {
 
@@ -9,6 +18,15 @@ public final class B {
 ////////////////////
 
 
+/**
+ * public final object BParceler : Parceler<B> {
+ *
+ *   // signature: <init>()V
+ *   private constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class BParceler implements Parceler<B> {
     @org.jetbrains.annotations.NotNull()
@@ -22,6 +40,15 @@ public final class BParceler implements Parceler<B> {
 ////////////////////
 
 
+/**
+ * public final class C : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class C {
 
@@ -33,6 +60,15 @@ public final class C {
 ////////////////////
 
 
+/**
+ * public final object CParceler : Parceler<C> {
+ *
+ *   // signature: <init>()V
+ *   private constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class CParceler implements Parceler<C> {
     @org.jetbrains.annotations.NotNull()
@@ -46,6 +82,12 @@ public final class CParceler implements Parceler<C> {
 ////////////////////
 
 
+/**
+ * public abstract interface Parceler<T#0 (* T *)> : kotlin/Any {
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public abstract interface Parceler<T extends java.lang.Object> {
 }
@@ -53,6 +95,15 @@ public abstract interface Parceler<T extends java.lang.Object> {
 ////////////////////
 
 
+/**
+ * public final class Test : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 @TypeParceler()
 @TypeParceler()
@@ -71,6 +122,15 @@ public final class Test {
 @kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.PROPERTY})
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.SOURCE)
 @java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE})
+/**
+ * public final annotation class TypeParceler<T#0 (* T *), T#1 (* P *) : Parceler<in T#0>> : kotlin/Annotation {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public abstract @interface TypeParceler<T extends java.lang.Object, P extends Parceler<? super T>> extends java.lang.annotation.Annotation {
 }

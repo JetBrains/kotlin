@@ -1,5 +1,18 @@
 package a.b.c;
 
+/**
+ * package {
+ *
+ *   // signature: foo()V
+ *   public final fun foo(): kotlin/Unit
+ *
+ *   // field: bar:I
+ *   public final const val bar: kotlin/Int (* = ... *)
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 @kotlin.jvm.JvmName(name = "FacadeName")
 public final class FacadeName {

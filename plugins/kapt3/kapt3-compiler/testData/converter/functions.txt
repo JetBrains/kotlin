@@ -1,3 +1,24 @@
+/**
+ * public final class FunctionsTest : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: f()Lkotlin/reflect/KProperty1;
+ *   public final fun f(): kotlin/reflect/KProperty1<kotlin/String, kotlin/Int>
+ *
+ *   // signature: f2()Lkotlin/jvm/functions/Function2;
+ *   public final fun f2(): kotlin/Function2<kotlin/Int, kotlin/Int, kotlin/Boolean>
+ *
+ *   // signature: f3()V
+ *   public final fun f3(): kotlin/Unit
+ *
+ *   // signature: f4()I
+ *   public final fun f4(): kotlin/Int
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class FunctionsTest {
 

@@ -16,6 +16,15 @@ public class Impl {
 
 package test;
 
+/**
+ * public final class test/Bar : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 @lib.Anno(impls = {lib.impl.Impl.class, ABC.class})
 public final class Bar {
@@ -29,6 +38,15 @@ public final class Bar {
 
 package test;
 
+/**
+ * public final class test/Boo : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 @lib.Anno(impls = {lib.impl.Impl.class})
 public final class Boo {
@@ -42,6 +60,15 @@ public final class Boo {
 
 package test;
 
+/**
+ * public final class test/Foo : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 @lib.Anno(impls = {lib.impl.Impl.class})
 public final class Foo {
@@ -55,6 +82,14 @@ public final class Foo {
 
 package test;
 
+/**
+ * package {
+ *
+ *   public typealias Joo = lib/impl/Impl (* = lib/impl/Impl *)
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 @kotlin.Suppress(names = {"UNRESOLVED_REFERENCE", "ANNOTATION_ARGUMENT_MUST_BE_CONST", "NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION"})
 public final class TestKt {

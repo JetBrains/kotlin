@@ -1,3 +1,24 @@
+/**
+ * public open class Test : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: getTest(Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+ *   public open suspend fun getTest(text: kotlin/String): kotlin/String
+ *
+ *   // signature: getTestInvalid(Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+ *   public open suspend fun getTestInvalid(te xt: kotlin/String): kotlin/String
+ *
+ *   // signature: getTestNoSuspend(Ljava/lang/String;)Ljava/lang/String;
+ *   public open fun getTestNoSuspend(text: kotlin/String): kotlin/String
+ *
+ *   // signature: getTestNoSuspendInvalid(Ljava/lang/String;)Ljava/lang/String;
+ *   public open fun getTestNoSuspendInvalid(te xt: kotlin/String): kotlin/String
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public class Test {
 

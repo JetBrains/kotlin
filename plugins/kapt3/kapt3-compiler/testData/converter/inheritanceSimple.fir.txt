@@ -1,4 +1,3 @@
-@kotlin.Metadata()
 public abstract class BaseClass {
 
     public BaseClass(@org.jetbrains.annotations.NotNull()
@@ -13,14 +12,12 @@ public abstract class BaseClass {
 ////////////////////
 
 
-@kotlin.Metadata()
 public abstract interface Context {
 }
 
 ////////////////////
 
 
-@kotlin.Metadata()
 public final class Inheritor extends BaseClass {
 
     public Inheritor(@org.jetbrains.annotations.NotNull()
@@ -38,7 +35,6 @@ public final class Inheritor extends BaseClass {
 ////////////////////
 
 
-@kotlin.Metadata()
 public enum Result {
     /*public static final*/ SUCCESS /* = new Result() */,
     /*public static final*/ ERROR /* = new Result() */;

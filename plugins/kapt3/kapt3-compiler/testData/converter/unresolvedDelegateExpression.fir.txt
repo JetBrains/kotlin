@@ -1,10 +1,10 @@
 /**
- * public final class B : kotlin/Any {
+ * public final class B : error/NonExistentClass {
  *
  *   // signature: <init>()V
  *   public constructor()
  *
- *   // field: a$delegate:Lerror/NonExistentClass;
+ *   // field: a$delegate:Ljava/lang/String;
  *   // getter: getA()Ljava/lang/String;
  *   // synthetic method for annotations: getA$annotations()V
  *   public final (* delegated *) val a: kotlin/String
@@ -79,7 +79,7 @@ public final class D implements I {
 
 
 /**
- * public final class E : kotlin/Any {
+ * public final class E : error/NonExistentClass {
  *
  *   // signature: <init>()V
  *   public constructor()

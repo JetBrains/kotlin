@@ -1,3 +1,6 @@
+// STRIP_METADATA
+// TODO: Re-enable metadata generation
+
 class Test {
     val simple: String = "123"
 

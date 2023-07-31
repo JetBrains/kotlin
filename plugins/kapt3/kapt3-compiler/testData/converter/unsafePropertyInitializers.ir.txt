@@ -1,3 +1,20 @@
+/**
+ * public final object Boo : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   private constructor()
+ *
+ *   // signature: foo()Ljava/lang/String;
+ *   public final fun foo(): kotlin/String
+ *
+ *   // field: z:Ljava/lang/String;
+ *   // getter: getZ()Ljava/lang/String;
+ *   public final val z: kotlin/String
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class Boo {
     @org.jetbrains.annotations.NotNull()
@@ -23,6 +40,87 @@ public final class Boo {
 ////////////////////
 
 
+/**
+ * public final object Foo : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   private constructor()
+ *
+ *   // field: aInt:I
+ *   public final const val aInt: kotlin/Int (* = ... *)
+ *     public final get
+ *
+ *   // field: aString:Ljava/lang/String;
+ *   public final const val aString: kotlin/String (* = ... *)
+ *     public final get
+ *
+ *   // field: bInt:I
+ *   // getter: getBInt()I
+ *   public final val bInt: kotlin/Int (* = ... *)
+ *     public final get
+ *
+ *   // field: bString:Ljava/lang/String;
+ *   // getter: getBString()Ljava/lang/String;
+ *   public final val bString: kotlin/String (* = ... *)
+ *     public final get
+ *
+ *   // field: cInt:I
+ *   // getter: getCInt()I
+ *   // setter: setCInt(I)V
+ *   public final var cInt: kotlin/Int
+ *     public final get
+ *     public final set
+ *
+ *   // field: cString:Ljava/lang/String;
+ *   // getter: getCString()Ljava/lang/String;
+ *   // setter: setCString(Ljava/lang/String;)V
+ *   public final var cString: kotlin/String
+ *     public final get
+ *     public final set
+ *
+ *   // field: d:Ljava/lang/String;
+ *   // getter: getD()Ljava/lang/String;
+ *   public final val d: kotlin/String
+ *     public final get
+ *
+ *   // field: e:I
+ *   // getter: getE()I
+ *   public final val e: kotlin/Int
+ *     public final get
+ *
+ *   // field: f:I
+ *   // getter: getF()I
+ *   public final val f: kotlin/Int (* = ... *)
+ *     public final get
+ *
+ *   // field: g:Ljava/lang/String;
+ *   // getter: getG()Ljava/lang/String;
+ *   public final val g: kotlin/String (* = ... *)
+ *     public final get
+ *
+ *   // field: h:I
+ *   // getter: getH()I
+ *   public final val h: kotlin/Int (* = ... *)
+ *     public final get
+ *
+ *   // field: i:I
+ *   // getter: getI()I
+ *   public final val i: kotlin/Int (* = ... *)
+ *     public final get
+ *
+ *   // field: j:Ljava/lang/String;
+ *   // getter: getJ()Ljava/lang/String;
+ *   public final val j: kotlin/String
+ *     public final get
+ *
+ *   // field: k:Ljava/lang/String;
+ *   // getter: getK()Ljava/lang/String;
+ *   public final val k: kotlin/String
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class Foo {
     @org.jetbrains.annotations.NotNull()
@@ -118,6 +216,82 @@ public final class Foo {
 ////////////////////
 
 
+/**
+ * public final class HavingState : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // field: anonymous:Lkotlin/reflect/KClass;
+ *   // getter: getAnonymous()Lkotlin/reflect/KClass;
+ *   public final val anonymous: kotlin/reflect/KClass<out kotlin/Any>
+ *     public final get
+ *
+ *   // field: clazz:Lkotlin/reflect/KClass;
+ *   // getter: getClazz()Lkotlin/reflect/KClass;
+ *   public final val clazz: kotlin/reflect/KClass<State>
+ *     public final get
+ *
+ *   // field: floatArray:[F
+ *   // getter: getFloatArray()[F
+ *   public final val floatArray: kotlin/FloatArray
+ *     public final get
+ *
+ *   // field: intArray:[Ljava/lang/Integer;
+ *   // getter: getIntArray()[Ljava/lang/Integer;
+ *   public final val intArray: kotlin/Array<kotlin/Int>
+ *     public final get
+ *
+ *   // field: intList:Ljava/util/List;
+ *   // getter: getIntList()Ljava/util/List;
+ *   public final val intList: kotlin/collections/List<kotlin/Int>
+ *     public final get
+ *
+ *   // field: javaClass:Ljava/lang/Class;
+ *   // getter: getJavaClass()Ljava/lang/Class;
+ *   public final val javaClass: java/lang/Class<State>
+ *     public final get
+ *
+ *   // field: state:LState;
+ *   // getter: getState()LState;
+ *   public final val state: State
+ *     public final get
+ *
+ *   // field: stateArray:[LState;
+ *   // getter: getStateArray()[LState;
+ *   public final val stateArray: kotlin/Array<State>
+ *     public final get
+ *
+ *   // field: stringArray:[Ljava/lang/String;
+ *   // getter: getStringArray()[Ljava/lang/String;
+ *   public final val stringArray: kotlin/Array<kotlin/String>
+ *     public final get
+ *
+ *   // field: stringList:Ljava/util/List;
+ *   // getter: getStringList()Ljava/util/List;
+ *   public final val stringList: kotlin/collections/List<kotlin/String>
+ *     public final get
+ *
+ *   // requires compiler version 1.4.30 (level=ERROR)
+ *   // requires language version 1.4.0 (level=ERROR)
+ *   // field: uint:I
+ *   // getter: getUint-pVg5ArA()I
+ *   public final val uint: kotlin/UInt (* = ... *)
+ *     public final get
+ *
+ *   // field: uintArray:[Lkotlin/UInt;
+ *   // getter: getUintArray()[Lkotlin/UInt;
+ *   public final val uintArray: kotlin/Array<kotlin/UInt>
+ *     public final get
+ *
+ *   // field: uintList:Ljava/util/List;
+ *   // getter: getUintList()Ljava/util/List;
+ *   public final val uintList: kotlin/collections/List<kotlin/UInt>
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class HavingState {
     @org.jetbrains.annotations.NotNull()
@@ -214,6 +388,21 @@ public final class HavingState {
 ////////////////////
 
 
+/**
+ * public final enum class State : kotlin/Enum<State> {
+ *
+ *   // signature: <init>(Ljava/lang/String;I)V
+ *   private constructor()
+ *
+ *   START,
+ *
+ *   FINISH,
+ *
+ *   // module name: main
+ *
+ *   // has Enum.entries
+ * }
+ */
 @kotlin.Metadata()
 public enum State {
     /*public static final*/ START /* = new State() */,

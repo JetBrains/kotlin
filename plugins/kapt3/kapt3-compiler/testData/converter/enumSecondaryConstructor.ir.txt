@@ -1,4 +1,3 @@
-@kotlin.Metadata()
 public enum Foo {
     /*public static final*/ BLA /* = new Foo() */;
     @org.jetbrains.annotations.NotNull()

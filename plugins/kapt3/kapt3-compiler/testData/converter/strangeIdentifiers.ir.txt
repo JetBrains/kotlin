@@ -1,4 +1,25 @@
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * public final annotation class Anno : kotlin/Annotation {
+ *
+ *   // signature: <init>(LStrangeEnum;Ljava/lang/String;Ljava/lang/String;)V
+ *   public constructor(size: StrangeEnum, name: kotlin/String, A B: kotlin/String)
+ *
+ *   // getter: A B()Ljava/lang/String;
+ *   public final val A B: kotlin/String
+ *     public final get
+ *
+ *   // getter: name()Ljava/lang/String;
+ *   public final val name: kotlin/String
+ *     public final get
+ *
+ *   // getter: size()LStrangeEnum;
+ *   public final val size: StrangeEnum
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public abstract @interface Anno {
 
@@ -10,6 +31,30 @@ public abstract @interface Anno {
 ////////////////////
 
 
+/**
+ * public final enum class StrangeEnum : kotlin/Enum<StrangeEnum> {
+ *
+ *   // signature: <init>(Ljava/lang/String;ILjava/lang/String;)V
+ *   private constructor(size: kotlin/String)
+ *
+ *   // field: size:Ljava/lang/String;
+ *   // getter: getSize()Ljava/lang/String;
+ *   public final val size: kotlin/String
+ *     public final get
+ *
+ *   60x60,
+ *
+ *   70x70,
+ *
+ *   80x80,
+ *
+ *   InvalidFieldName,
+ *
+ *   // module name: main
+ *
+ *   // has Enum.entries
+ * }
+ */
 @kotlin.Metadata()
 public enum StrangeEnum {
     /*public static final*/ InvalidFieldName /* = new StrangeEnum() */;
@@ -33,6 +78,39 @@ public enum StrangeEnum {
 ////////////////////
 
 
+/**
+ * public final class Test : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: simpleFun()V
+ *   public final fun simpleFun(): kotlin/Unit
+ *
+ *   // signature: simpleFun2(Ljava/lang/String;Ljava/lang/String;)V
+ *   public final fun simpleFun2(a: kotlin/String, b: kotlin/String): kotlin/Unit
+ *
+ *   // signature: strange!Fun()V
+ *   public final fun strange!Fun(): kotlin/Unit
+ *
+ *   // signature: strangeFun4(Ljava/lang/String;Ljava/lang/String;)V
+ *   public final fun strangeFun4(a: kotlin/String, A()B(): kotlin/String): kotlin/Unit
+ *
+ *   // field: simpleName:Ljava/lang/String;
+ *   // getter: getSimpleName()Ljava/lang/String;
+ *   public final lateinit val simpleName: kotlin/String
+ *     public final get
+ *
+ *   // field: strange name:Ljava/lang/String;
+ *   // getter: getStrange name()Ljava/lang/String;
+ *   public final lateinit val strange name: kotlin/String
+ *     public final get
+ *
+ *   // nested class: (^_^)
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class Test {
     public final java.lang.String simpleName = null;

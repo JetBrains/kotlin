@@ -22,6 +22,15 @@ public class IOException {
 
 package test;
 
+/**
+ * public final class test/TestA : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class TestA {
 
@@ -34,6 +43,24 @@ public final class TestA {
 
 package test;
 
+/**
+ * public abstract interface test/TestB : kotlin/Any {
+ *
+ *   // signature: a()Ljava/io/File;
+ *   public abstract fun a(): java/io/File
+ *
+ *   // signature: b()Llib/File;
+ *   public abstract fun b(): lib/File
+ *
+ *   // signature: c()Ljava/io/IOException;
+ *   public abstract fun c(): java/io/IOException
+ *
+ *   // signature: d()Llib/IOException;
+ *   public abstract fun d(): lib/IOException
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public abstract interface TestB {
 
@@ -56,6 +83,27 @@ package test;
 
 import lib.FooBar;
 
+/**
+ * public abstract interface test/TestC : kotlin/Any {
+ *
+ *   // signature: a()Ljava/io/File;
+ *   public abstract fun a(): java/io/File
+ *
+ *   // signature: b()Llib/File;
+ *   public abstract fun b(): lib/File
+ *
+ *   // signature: c()Ljava/io/IOException;
+ *   public abstract fun c(): java/io/IOException
+ *
+ *   // signature: d()Llib/IOException;
+ *   public abstract fun d(): lib/IOException
+ *
+ *   // signature: e()Lerror/NonExistentClass;
+ *   public abstract fun e(): error/NonExistentClass
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public abstract interface TestC {
 

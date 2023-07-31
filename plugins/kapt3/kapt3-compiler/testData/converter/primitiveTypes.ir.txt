@@ -1,3 +1,144 @@
+/**
+ * public final object PrimitiveTypes : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   private constructor()
+ *
+ *   // field: booleanFalse:Z
+ *   public final const val booleanFalse: kotlin/Boolean (* = ... *)
+ *     public final get
+ *
+ *   // field: booleanTrue:Z
+ *   public final const val booleanTrue: kotlin/Boolean (* = ... *)
+ *     public final get
+ *
+ *   // field: byte0:B
+ *   public final const val byte0: kotlin/Byte (* = ... *)
+ *     public final get
+ *
+ *   // field: byte50:B
+ *   public final const val byte50: kotlin/Byte (* = ... *)
+ *     public final get
+ *
+ *   // field: char0:C
+ *   public final const val char0: kotlin/Char (* = ... *)
+ *     public final get
+ *
+ *   // field: char10:C
+ *   public final const val char10: kotlin/Char (* = ... *)
+ *     public final get
+ *
+ *   // field: char13:C
+ *   public final const val char13: kotlin/Char (* = ... *)
+ *     public final get
+ *
+ *   // field: charC:C
+ *   public final const val charC: kotlin/Char (* = ... *)
+ *     public final get
+ *
+ *   // field: double54:D
+ *   public final const val double54: kotlin/Double (* = ... *)
+ *     public final get
+ *
+ *   // field: float54:F
+ *   public final const val float54: kotlin/Float (* = ... *)
+ *     public final get
+ *
+ *   // field: doubleMaxValue:D
+ *   // getter: getDoubleMaxValue()D
+ *   public final val doubleMaxValue: kotlin/Double (* = ... *)
+ *     public final get
+ *
+ *   // field: doubleNan:D
+ *   // getter: getDoubleNan()D
+ *   public final val doubleNan: kotlin/Double (* = ... *)
+ *     public final get
+ *
+ *   // field: doubleNegativeInfinity:D
+ *   // getter: getDoubleNegativeInfinity()D
+ *   public final val doubleNegativeInfinity: kotlin/Double (* = ... *)
+ *     public final get
+ *
+ *   // field: doublePositiveInfinity:D
+ *   // getter: getDoublePositiveInfinity()D
+ *   public final val doublePositiveInfinity: kotlin/Double (* = ... *)
+ *     public final get
+ *
+ *   // field: floatMaxValue:F
+ *   // getter: getFloatMaxValue()F
+ *   public final val floatMaxValue: kotlin/Float (* = ... *)
+ *     public final get
+ *
+ *   // field: floatNan:F
+ *   // getter: getFloatNan()F
+ *   public final val floatNan: kotlin/Float (* = ... *)
+ *     public final get
+ *
+ *   // field: floatNegativeInfinity:F
+ *   // getter: getFloatNegativeInfinity()F
+ *   public final val floatNegativeInfinity: kotlin/Float (* = ... *)
+ *     public final get
+ *
+ *   // field: floatPositiveInfinity:F
+ *   // getter: getFloatPositiveInfinity()F
+ *   public final val floatPositiveInfinity: kotlin/Float (* = ... *)
+ *     public final get
+ *
+ *   // field: int0:I
+ *   public final const val int0: kotlin/Int (* = ... *)
+ *     public final get
+ *
+ *   // field: intHex:I
+ *   public final const val intHex: kotlin/Int (* = ... *)
+ *     public final get
+ *
+ *   // field: intMaxValue:I
+ *   public final const val intMaxValue: kotlin/Int (* = ... *)
+ *     public final get
+ *
+ *   // field: intMinValue:I
+ *   public final const val intMinValue: kotlin/Int (* = ... *)
+ *     public final get
+ *
+ *   // field: intMinus1000:I
+ *   public final const val intMinus1000: kotlin/Int (* = ... *)
+ *     public final get
+ *
+ *   // field: long0:J
+ *   public final const val long0: kotlin/Long (* = ... *)
+ *     public final get
+ *
+ *   // field: longHex:J
+ *   public final const val longHex: kotlin/Long (* = ... *)
+ *     public final get
+ *
+ *   // field: longMaxValue:J
+ *   public final const val longMaxValue: kotlin/Long (* = ... *)
+ *     public final get
+ *
+ *   // field: longMinValue:J
+ *   public final const val longMinValue: kotlin/Long (* = ... *)
+ *     public final get
+ *
+ *   // field: short5:S
+ *   public final const val short5: kotlin/Short (* = ... *)
+ *     public final get
+ *
+ *   // field: stringHelloWorld:Ljava/lang/String;
+ *   public final const val stringHelloWorld: kotlin/String (* = ... *)
+ *     public final get
+ *
+ *   // field: stringQuotes:Ljava/lang/String;
+ *   public final const val stringQuotes: kotlin/String (* = ... *)
+ *     public final get
+ *
+ *   // field: stringRN:Ljava/lang/String;
+ *   public final const val stringRN: kotlin/String (* = ... *)
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class PrimitiveTypes {
     public static final boolean booleanFalse = false;

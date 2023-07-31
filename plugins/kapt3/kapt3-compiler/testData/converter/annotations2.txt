@@ -2,6 +2,19 @@ package test;
 
 @Anno(value = "anno-class")
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * public final annotation class test/Anno : kotlin/Annotation {
+ *
+ *   // signature: <init>(Ljava/lang/String;)V
+ *   public constructor(value: kotlin/String)
+ *
+ *   // getter: value()Ljava/lang/String;
+ *   public final val value: kotlin/String
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public abstract @interface Anno {
 
@@ -12,6 +25,20 @@ public abstract @interface Anno {
 
 package test;
 
+/**
+ * package {
+ *
+ *   // signature: topLevelFun(Ljava/lang/String;)V
+ *   public final fun kotlin/String.topLevelFun(): kotlin/Unit
+ *
+ *   // getter: getTopLevelVal(I)Ljava/lang/String;
+ *   // synthetic method for annotations: getTopLevelVal$annotations(I)V
+ *   public final val kotlin/Int.topLevelVal: kotlin/String
+ *     public final (* non-default *) get
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 @kotlin.jvm.JvmName(name = "AnnotationsTest")
 public final class AnnotationsTest {
@@ -43,6 +70,26 @@ public final class AnnotationsTest {
 package test;
 
 @Anno(value = "enum")
+/**
+ * public final enum class test/Enum : kotlin/Enum<test/Enum> {
+ *
+ *   // signature: <init>(Ljava/lang/String;II)V
+ *   private constructor(x: kotlin/Int)
+ *
+ *   // field: x:I
+ *   // getter: getX()I
+ *   public final val x: kotlin/Int
+ *     public final get
+ *
+ *   WHITE,
+ *
+ *   BLACK,
+ *
+ *   // module name: main
+ *
+ *   // has Enum.entries
+ * }
+ */
 @kotlin.Metadata()
 public enum Enum {
     @Anno(value = "white")
@@ -66,6 +113,31 @@ public enum Enum {
 package test;
 
 @Anno(value = "clazz")
+/**
+ * public abstract class test/Test : kotlin/Any {
+ *
+ *   // signature: <init>(Ljava/lang/String;)V
+ *   protected constructor(v: kotlin/String)
+ *
+ *   // signature: abstractMethod()Ljava/lang/String;
+ *   public abstract fun abstractMethod(): kotlin/String
+ *
+ *   // getter: getAbstractVal()Ljava/lang/String;
+ *   // synthetic method for annotations: getAbstractVal$annotations()V
+ *   public abstract val abstractVal: kotlin/String
+ *     public abstract get
+ *
+ *   // field: v:Ljava/lang/String;
+ *   // getter: getV()Ljava/lang/String;
+ *   // setter: setV(Ljava/lang/String;)V
+ *   // synthetic method for annotations: getV$annotations()V
+ *   public final var v: kotlin/String
+ *     public final get
+ *     public final set
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public abstract class Test {
     @org.jetbrains.annotations.NotNull()

@@ -1,6 +1,19 @@
 import kotlin.reflect.KClass;
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * public final annotation class Anno : kotlin/Annotation {
+ *
+ *   // signature: <init>(Lkotlin/reflect/KClass;)V
+ *   public constructor(a: kotlin/reflect/KClass<kotlin/Any>)
+ *
+ *   // getter: a()Ljava/lang/Class;
+ *   public final val a: kotlin/reflect/KClass<kotlin/Any>
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public abstract @interface Anno {
 
@@ -13,6 +26,15 @@ public abstract @interface Anno {
 import kotlin.reflect.KClass;
 
 @Anno(a = ABC.class)
+/**
+ * public final class ErrorInAnnotation : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class ErrorInAnnotation {
 
@@ -26,6 +48,30 @@ public final class ErrorInAnnotation {
 
 import kotlin.reflect.KClass;
 
+/**
+ * public final class ErrorInConstructorParameter : kotlin/Any {
+ *
+ *   // signature: <init>(Ljava/lang/String;Lerror/NonExistentClass;Ljava/util/List;)V
+ *   public constructor(a: kotlin/String, b: error/NonExistentClass, c: kotlin/collections/List<error/NonExistentClass>)
+ *
+ *   // field: a:Ljava/lang/String;
+ *   // getter: getA()Ljava/lang/String;
+ *   public final val a: kotlin/String
+ *     public final get
+ *
+ *   // field: b:Lerror/NonExistentClass;
+ *   // getter: getB()Lerror/NonExistentClass;
+ *   public final val b: error/NonExistentClass
+ *     public final get
+ *
+ *   // field: c:Ljava/util/List;
+ *   // getter: getC()Ljava/util/List;
+ *   public final val c: kotlin/collections/List<error/NonExistentClass>
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class ErrorInConstructorParameter {
     @org.jetbrains.annotations.NotNull()
@@ -63,6 +109,54 @@ public final class ErrorInConstructorParameter {
 
 import kotlin.reflect.KClass;
 
+/**
+ * public final class ErrorInDeclarations : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: f1(Ljava/lang/String;Lerror/NonExistentClass;)V
+ *   public final fun f1(a: kotlin/String, b: error/NonExistentClass): kotlin/Unit
+ *
+ *   // signature: f2()V
+ *   public final fun <T#0 (* T *) : kotlin/String> f2(): kotlin/Unit
+ *
+ *   // signature: f3()V
+ *   public final fun <T#0 (* T *)> f3(): kotlin/Unit
+ *
+ *   // signature: f4()Lerror/NonExistentClass;
+ *   public final fun f4(): error/NonExistentClass
+ *
+ *   // signature: overloads(Lerror/NonExistentClass;)V
+ *   public final fun overloads(a: error/NonExistentClass): kotlin/Unit
+ *
+ *   // signature: overloads(Ljava/lang/String;)V
+ *   public final fun overloads(a: kotlin/String): kotlin/Unit
+ *
+ *   // field: p1:Ljava/lang/String;
+ *   // getter: getP1()Ljava/lang/String;
+ *   // setter: setP1(Ljava/lang/String;)V
+ *   public final lateinit var p1: kotlin/String
+ *     public final get
+ *     public final set
+ *
+ *   // field: p2:Lerror/NonExistentClass;
+ *   // getter: getP2()Lerror/NonExistentClass;
+ *   // setter: setP2(Lerror/NonExistentClass;)V
+ *   public final lateinit var p2: error/NonExistentClass
+ *     public final get
+ *     public final set
+ *
+ *   // field: p3:Lerror/NonExistentClass;
+ *   // getter: getP3()Lerror/NonExistentClass;
+ *   // setter: setP3(Lerror/NonExistentClass;)V
+ *   public final lateinit var p3: error/NonExistentClass
+ *     public final get
+ *     public final set
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class ErrorInDeclarations {
     public java.lang.String p1;
@@ -130,6 +224,15 @@ public final class ErrorInDeclarations {
 
 import kotlin.reflect.KClass;
 
+/**
+ * public final class ErrorInSupertype : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class ErrorInSupertype implements ABC {
 
@@ -143,6 +246,15 @@ public final class ErrorInSupertype implements ABC {
 
 import kotlin.reflect.KClass;
 
+/**
+ * public final class ErrorInSupertype2 : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class ErrorInSupertype2 extends ABC<java.lang.String> {
 

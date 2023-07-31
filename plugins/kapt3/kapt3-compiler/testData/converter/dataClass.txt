@@ -1,3 +1,51 @@
+/**
+ * public final data class User : kotlin/Any {
+ *
+ *   // signature: <init>(Ljava/lang/String;Ljava/lang/String;I)V
+ *   public constructor(firstName: kotlin/String, secondName: kotlin/String, age: kotlin/Int)
+ *
+ *   // signature: component1()Ljava/lang/String;
+ *   public final (* synthesized *) operator fun component1(): kotlin/String
+ *
+ *   // signature: component2()Ljava/lang/String;
+ *   public final (* synthesized *) operator fun component2(): kotlin/String
+ *
+ *   // signature: component3()I
+ *   public final (* synthesized *) operator fun component3(): kotlin/Int
+ *
+ *   // signature: copy(Ljava/lang/String;Ljava/lang/String;I)LUser;
+ *   public final (* synthesized *) fun copy(firstName: kotlin/String (* = ... *), secondName: kotlin/String (* = ... *), age: kotlin/Int (* = ... *)): User
+ *
+ *   // signature: equals(Ljava/lang/Object;)Z
+ *   public open (* synthesized *) operator fun equals(other: kotlin/Any?): kotlin/Boolean
+ *
+ *   // signature: hashCode()I
+ *   public open (* synthesized *) fun hashCode(): kotlin/Int
+ *
+ *   // signature: procedure()V
+ *   public final fun procedure(): kotlin/Unit
+ *
+ *   // signature: toString()Ljava/lang/String;
+ *   public open (* synthesized *) fun toString(): kotlin/String
+ *
+ *   // field: age:I
+ *   // getter: getAge()I
+ *   public final val age: kotlin/Int
+ *     public final get
+ *
+ *   // field: firstName:Ljava/lang/String;
+ *   // getter: getFirstName()Ljava/lang/String;
+ *   public final val firstName: kotlin/String
+ *     public final get
+ *
+ *   // field: secondName:Ljava/lang/String;
+ *   // getter: getSecondName()Ljava/lang/String;
+ *   public final val secondName: kotlin/String
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class User {
     @org.jetbrains.annotations.NotNull()

@@ -1,3 +1,28 @@
+/**
+ * public final class MappedList<out T#0 (* T *), T#1 (* R *)> : kotlin/collections/AbstractList<T#1>, kotlin/collections/List<T#1> {
+ *
+ *   // signature: <init>(Ljava/util/List;Lkotlin/jvm/functions/Function1;)V
+ *   public constructor(list: kotlin/collections/List<T#0>, function: kotlin/Function1<T#0, T#1>)
+ *
+ *   // signature: get(I)Ljava/lang/Object;
+ *   public open operator fun get(index: kotlin/Int): T#1
+ *
+ *   // field: function:Lkotlin/jvm/functions/Function1;
+ *   private final val function: kotlin/Function1<T#0, T#1>
+ *     private final get
+ *
+ *   // field: list:Ljava/util/List;
+ *   // getter: getList()Ljava/util/List;
+ *   public final val list: kotlin/collections/List<T#0>
+ *     public final get
+ *
+ *   // getter: getSize()I
+ *   public open val size: kotlin/Int
+ *     public open (* non-default *) get
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class MappedList<T extends java.lang.Object, R extends java.lang.Object> extends kotlin.collections.AbstractList<R> implements java.util.List<R> {
     @org.jetbrains.annotations.NotNull()
