@@ -151,6 +151,18 @@ public class CodeFragmentCapturingTestGenerated extends AbstractCodeFragmentCapt
     }
 
     @Test
+    @TestMetadata("preferCorrectResolve.kt")
+    public void testPreferCorrectResolve() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/preferCorrectResolve.kt");
+    }
+
+    @Test
+    @TestMetadata("privateMemberCall.kt")
+    public void testPrivateMemberCall() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/privateMemberCall.kt");
+    }
+
+    @Test
     @TestMetadata("valueParameter.kt")
     public void testValueParameter() throws Exception {
         runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/valueParameter.kt");
