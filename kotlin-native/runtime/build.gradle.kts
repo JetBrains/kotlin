@@ -264,20 +264,6 @@ bitcode {
             onlyIf { target.supportsThreads() }
         }
 
-        module("experimental_memory_manager_custom") {
-            srcRoot.set(layout.projectDirectory.dir("src/mm"))
-            headersDirs.from(files("src/gcScheduler/common/cpp", "src/gc/common/cpp", "src/main/cpp", "src/custom_alloc/cpp"))
-            sourceSets {
-                main {}
-                testFixtures {}
-                test {}
-            }
-
-            compilerArgs.add("-DCUSTOM_ALLOCATOR")
-
-            onlyIf { target.supportsThreads() }
-        }
-
         module("common_gc") {
             srcRoot.set(layout.projectDirectory.dir("src/gc/common"))
             headersDirs.from(files("src/gcScheduler/common/cpp", "src/mm/cpp", "src/main/cpp"))
@@ -422,7 +408,7 @@ bitcode {
         }
 
         testsGroup("experimentalMM_custom_alloc_runtime_tests") {
-            testedModules.addAll("experimental_memory_manager_custom", "same_thread_ms_gc_custom")
+            testedModules.addAll("experimental_memory_manager", "same_thread_ms_gc_custom")
             testSupportModules.addAll("main", "common_gc", "common_gcScheduler", "manual_gcScheduler", "custom_alloc", "objc")
         }
 
@@ -435,7 +421,7 @@ bitcode {
         }
 
         testsGroup("experimentalMM_cms_custom_alloc_runtime_tests") {
-            testedModules.addAll("experimental_memory_manager_custom", "concurrent_ms_gc_custom")
+            testedModules.addAll("experimental_memory_manager", "concurrent_ms_gc_custom")
             testSupportModules.addAll("main", "common_gc", "common_gcScheduler", "manual_gcScheduler", "custom_alloc", "objc")
         }
 
@@ -448,7 +434,7 @@ bitcode {
         }
 
         testsGroup("experimentalMM_noop_custom_alloc_runtime_tests") {
-            testedModules.addAll("experimental_memory_manager_custom", "noop_gc_custom")
+            testedModules.addAll("experimental_memory_manager", "noop_gc_custom")
             testSupportModules.addAll("main", "common_gc", "common_gcScheduler", "manual_gcScheduler", "custom_alloc", "objc")
         }
 

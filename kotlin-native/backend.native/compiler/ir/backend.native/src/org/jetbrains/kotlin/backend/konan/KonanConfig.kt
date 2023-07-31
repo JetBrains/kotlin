@@ -281,15 +281,14 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
                 throw IllegalStateException("Deprecated options must have already been handled")
             }
         }
+        add("experimental_memory_manager.bc")
         if (allocationMode == AllocationMode.CUSTOM) {
-            add("experimental_memory_manager_custom.bc")
             when (gc) {
                 GC.STOP_THE_WORLD_MARK_AND_SWEEP -> add("same_thread_ms_gc_custom.bc")
                 GC.NOOP -> add("noop_gc_custom.bc")
                 GC.PARALLEL_MARK_CONCURRENT_SWEEP -> add("concurrent_ms_gc_custom.bc")
             }
         } else {
-            add("experimental_memory_manager.bc")
             when (gc) {
                 GC.STOP_THE_WORLD_MARK_AND_SWEEP -> add("same_thread_ms_gc.bc")
                 GC.NOOP -> add("noop_gc.bc")
