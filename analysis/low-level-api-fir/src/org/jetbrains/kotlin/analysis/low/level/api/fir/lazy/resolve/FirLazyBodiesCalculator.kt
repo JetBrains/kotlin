@@ -87,7 +87,7 @@ private inline fun <reified T : FirDeclaration> revive(
         session = session,
         scopeProvider = session.kotlinScopeProvider,
         designation = designation,
-        rootNonLocalDeclaration = psiFactory(designation) as KtElement,
+        rootNonLocalDeclaration = psiFactory(designation) as KtAnnotated,
     ) as T
 }
 

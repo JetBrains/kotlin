@@ -68,7 +68,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             session: FirSession,
             scopeProvider: FirScopeProvider,
             designation: FirDesignation,
-            rootNonLocalDeclaration: KtElement,
+            rootNonLocalDeclaration: KtAnnotated,
         ): FirDeclaration {
             val functionsToRebind = when (val originalDeclaration = designation.target) {
                 is FirFunction -> setOf(originalDeclaration)

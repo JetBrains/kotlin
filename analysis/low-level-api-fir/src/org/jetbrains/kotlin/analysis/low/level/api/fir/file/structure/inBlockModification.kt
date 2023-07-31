@@ -22,9 +22,9 @@ import org.jetbrains.kotlin.fir.expressions.FirLazyExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildLazyBlock
 import org.jetbrains.kotlin.fir.expressions.builder.buildLazyExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
+import org.jetbrains.kotlin.psi.KtAnnotated
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtElement
 
 @Deprecated(
     "Temporarily left for binary compatibility. Use invalidateAfterInBlockModification(KtElement) instead.",
@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.psi.KtElement
 @LLFirInternals
 @Suppress("unused")
 fun invalidateAfterInBlockModification(declaration: KtDeclaration): Boolean {
-    return invalidateAfterInBlockModification(declaration as KtElement)
+    return invalidateAfterInBlockModification(declaration as KtAnnotated)
 }
 
 /**
@@ -42,7 +42,7 @@ fun invalidateAfterInBlockModification(declaration: KtDeclaration): Boolean {
  * @return **false** if it is not in-block modification
  */
 @LLFirInternals
-fun invalidateAfterInBlockModification(declaration: KtElement): Boolean {
+fun invalidateAfterInBlockModification(declaration: KtAnnotated): Boolean {
     ApplicationManager.getApplication().assertIsWriteThread()
 
     val project = declaration.project
