@@ -65,6 +65,32 @@ class LifecycleAwaitFinalPropertyValueTest {
     }
 
     @Test
+    fun `test - awaitFinalValueOrThrow - throws when no value set`() = project.runLifecycleAwareTest {
+        val property = project.newProperty<Int>()
+        launch {
+            assertFails { property.awaitFinalValueOrThrow() }
+        }
+    }
+
+    @Test
+    fun `test - awaitFinalValueOrThrow - returns when convention value is set`() = project.runLifecycleAwareTest {
+        val property = project.newProperty<Int>()
+        property.convention(1)
+        launch {
+            assertEquals(1, property.awaitFinalValueOrThrow())
+        }
+    }
+
+    @Test
+    fun `test - awaitFinalValueOrThrow - returns when value is set`() = project.runLifecycleAwareTest {
+        val property = project.newProperty<Int>()
+        property.set(1)
+        launch {
+            assertEquals(1, property.awaitFinalValueOrThrow())
+        }
+    }
+
+    @Test
     fun `test - creating a property - after finaliseDsl stage already passed`() = project.runLifecycleAwareTest {
         launchInStage(KotlinPluginLifecycle.Stage.last) {
             val property = project.newProperty<String>()
