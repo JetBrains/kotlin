@@ -105,6 +105,11 @@ abstract class SymbolTableSlice<Key, SymbolOwner, Symbol>(val lock: IrLock)
             }
         }
 
+        @DelicateSymbolTableApi
+        fun remove(key: Key) {
+            signatureToSymbol.remove(key)
+        }
+
         @SymbolTableInternals
         internal fun forEachSymbol(block: (IrSymbol) -> Unit) {
             signatureToSymbol.forEach { (_, symbol) -> block(symbol) }
