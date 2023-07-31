@@ -330,8 +330,8 @@ class VariantAwareDependenciesMppIT : BaseGradleIT() {
 
         projectDir.resolve("gradle.properties").appendText(
             "\n" + """
-                kotlin.mpp.enableGranularSourceSetsMetadata=true
                 kotlin.mpp.enableCompatibilityMetadataVariant=true
+                kotlin.internal.suppressGradlePluginErrors=PreHMPPFlagsError
             """
         )
 

@@ -396,7 +396,9 @@ open class HierarchicalMppIT : KGPBaseTest() {
             beforePublishing()
 
             if (!withGranularMetadata) {
-                projectPath.toFile().resolve("gradle.properties").appendText("kotlin.internal.mpp.hierarchicalStructureByDefault=false")
+                val gradleProperties = projectPath.toFile().resolve("gradle.properties")
+                gradleProperties.appendText("kotlin.internal.mpp.hierarchicalStructureByDefault=false${System.lineSeparator()}")
+                gradleProperties.appendText("kotlin.internal.suppressGradlePluginErrors=PreHMPPFlagsError${System.lineSeparator()}")
             }
             build("publish")
         }
@@ -620,7 +622,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
         "transformCommonMainDependenciesMetadata",
         "transformJvmAndJsMainDependenciesMetadata",
         "transformLinuxAndJsMainDependenciesMetadata",
-        "compileKotlinMetadata",
+        "compileCommonMainKotlinMetadata",
         "compileJvmAndJsMainKotlinMetadata",
         "compileLinuxAndJsMainKotlinMetadata"
     ).map { task -> subprojectPrefix?.let { ":$it" }.orEmpty() + ":" + task }

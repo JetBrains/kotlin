@@ -22,9 +22,16 @@ import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSo
 
 @InternalKotlinGradlePluginApi // used in integration tests
 object KotlinToolingDiagnostics {
-    object HierarchicalMultiplatformFlagsWarning : ToolingDiagnosticFactory(WARNING) {
+    /**
+     * This diagnostic is suppressed in kotlin-test and kotlin-stdlib.
+     * We should migrate the stdlib and kotlin-test from deprecated flags and then completely remove the support.
+     * ETA: 2.0-M1
+     *
+     * P.s. Some tests also suppress this diagnostic -- these tests should be removed together with the flags support
+     */
+    object PreHMPPFlagsError : ToolingDiagnosticFactory(ERROR) {
         operator fun invoke(usedDeprecatedFlags: List<String>) = build(
-            "The following properties are obsolete and will be removed in Kotlin 1.9.20:\n" +
+            "The following properties are obsolete and no longer supported:\n" +
                     "${usedDeprecatedFlags.joinToString()}\n" +
                     "Read the details here: https://kotlinlang.org/docs/multiplatform-compatibility-guide.html#deprecate-hmpp-properties",
         )

@@ -40,6 +40,7 @@ internal class HierarchicalStructureOptInMigrationArtifactContentMppIT : BaseGra
             *buildList {
                 add("clean")
                 add("publish")
+                add("-Pkotlin.internal.suppressGradlePluginErrors=PreHMPPFlagsError")
                 when (mode) {
                     OPT_OUT_HMPP, HMPP_BY_DEFAULT -> {}
                     DISABLE_HMPP_BY_DEFAULT -> { add("-Pkotlin.internal.mpp.hierarchicalStructureByDefault=false") }
