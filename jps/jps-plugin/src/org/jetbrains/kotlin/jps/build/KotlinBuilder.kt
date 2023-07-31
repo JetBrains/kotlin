@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.build.GeneratedJvmClass
 import org.jetbrains.kotlin.build.report.ICReporter.ReportSeverity
 import org.jetbrains.kotlin.build.report.ICReporterBase
 import org.jetbrains.kotlin.build.report.debug
-import org.jetbrains.kotlin.build.report.metrics.BuildTime
 import org.jetbrains.kotlin.build.report.metrics.JpsBuildTime
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
@@ -165,7 +164,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
     override fun buildFinished(context: CompileContext) {
         ensureKotlinContextDisposed(context)
-        reportService.buildFinished(context)
+        reportService.buildFinish(context)
     }
 
     private fun ensureKotlinContextDisposed(context: CompileContext) {
@@ -298,6 +297,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>,
         outputConsumer: OutputConsumer
     ): ExitCode {
+        reportService.moduleBuildStarted(chunk)
         if (chunk.isDummy(context))
             return NOTHING_DONE
 
@@ -322,16 +322,18 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val fsOperations = FSOperationsHelper(context, chunk, kotlinDirtyFilesHolder, LOG)
 
         try {
-            val proposedExitCode =
-                doBuild(chunk, kotlinTarget, context, kotlinDirtyFilesHolder, messageCollector, outputConsumer, fsOperations)
+            return reportService.reportMetrics(chunk, JpsBuildTime.JPS_ITERATION) {
+                val proposedExitCode =
+                    doBuild(chunk, kotlinTarget, context, kotlinDirtyFilesHolder, messageCollector, outputConsumer, fsOperations)
 
-            val actualExitCode =
-                if (proposedExitCode == OK && fsOperations.hasMarkedDirty) ADDITIONAL_PASS_REQUIRED else proposedExitCode
+                val actualExitCode =
+                    if (proposedExitCode == OK && fsOperations.hasMarkedDirty) ADDITIONAL_PASS_REQUIRED else proposedExitCode
 
-            LOG.debug("Build result: $actualExitCode")
+                LOG.debug("Build result: $actualExitCode")
 
-            context.testingContext?.buildLogger?.buildFinished(actualExitCode)
-            return actualExitCode
+                context.testingContext?.buildLogger?.buildFinished(actualExitCode)
+                actualExitCode
+            }
         } catch (e: StopBuildException) {
             LOG.info("Caught exception: $e")
             throw e
@@ -342,6 +344,8 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             LOG.info("Caught exception: $e")
             MessageCollectorUtil.reportException(messageCollector, e)
             return ABORT
+        } finally {
+            reportService.moduleBuildFinished(chunk, context)
         }
     }
 

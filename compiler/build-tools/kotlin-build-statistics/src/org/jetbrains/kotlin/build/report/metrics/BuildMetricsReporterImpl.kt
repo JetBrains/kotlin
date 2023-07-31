@@ -9,7 +9,7 @@ import java.io.Serializable
 import kotlin.collections.HashMap
 
 open class BuildMetricsReporterImpl<B : BuildTime, P : BuildPerformanceMetric> : BuildMetricsReporter<B, P>, Serializable {
-    private val myBuildTimeStartNs = HashMap<BuildTime, Long>()
+    private val myBuildTimeStartNs = HashMap<B, Long>()
     private val myGcPerformance = HashMap<String, GcMetric>()
     private val myBuildTimes = BuildTimes<B>()
     private val myBuildMetrics = BuildPerformanceMetrics<P>()
