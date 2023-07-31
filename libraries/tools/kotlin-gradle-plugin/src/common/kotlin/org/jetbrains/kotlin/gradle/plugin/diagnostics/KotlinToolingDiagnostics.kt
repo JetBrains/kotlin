@@ -148,7 +148,7 @@ object KotlinToolingDiagnostics {
         )
     }
 
-    object IncompatibleAgpVersionTooLowWarning : ToolingDiagnosticFactory(WARNING) {
+    object IncompatibleAgpVersionTooLowWarning : ToolingDiagnosticFactory(FATAL) {
         operator fun invoke(androidGradlePluginVersionString: String, minSupported: String, maxTested: String) = build(
             """
                 Kotlin Multiplatform <-> Android Gradle Plugin compatibility issue:
