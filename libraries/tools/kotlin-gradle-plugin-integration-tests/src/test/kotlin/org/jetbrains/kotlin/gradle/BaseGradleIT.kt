@@ -951,6 +951,12 @@ abstract class BaseGradleIT {
                 add("--${options.stacktraceMode}")
             }
 
+            // temporary suppression for the usage of deprecated pre-HMPP properties.
+            // Should be removed together with the flags support in 2.0
+            if (options.hierarchicalMPPStructureSupport != null || options.enableCompatibilityMetadataVariant != null) {
+                add("-Pkotlin.internal.suppressGradlePluginErrors=PreHMPPFlagsError")
+            }
+
             // Workaround: override a console type set in the user machine gradle.properties (since Gradle 4.3):
             add("--console=plain")
             //The feature of failing the build on deprecation warnings is introduced in gradle 5.6

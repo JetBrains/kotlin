@@ -42,7 +42,7 @@ class MppDiagnosticsIt : KGPBaseTest() {
             this.buildGradleKts.writeText("")
             checkDeprecatedProperties(isDeprecationExpected = true)
 
-            this.gradleProperties.appendText("kotlin.mpp.deprecatedProperties.nowarn=true${System.lineSeparator()}")
+            this.gradleProperties.appendText("kotlin.internal.suppressGradlePluginErrors=PreHMPPFlagsError${System.lineSeparator()}")
             checkDeprecatedProperties(isDeprecationExpected = false)
         }
     }
@@ -196,9 +196,9 @@ class MppDiagnosticsIt : KGPBaseTest() {
     private fun TestProject.checkDeprecatedProperties(isDeprecationExpected: Boolean) {
         build {
             if (isDeprecationExpected)
-                output.assertHasDiagnostic(KotlinToolingDiagnostics.HierarchicalMultiplatformFlagsWarning)
+                output.assertHasDiagnostic(KotlinToolingDiagnostics.PreHMPPFlagsError)
             else
-                output.assertNoDiagnostic(KotlinToolingDiagnostics.HierarchicalMultiplatformFlagsWarning)
+                output.assertNoDiagnostic(KotlinToolingDiagnostics.PreHMPPFlagsError)
         }
     }
 
