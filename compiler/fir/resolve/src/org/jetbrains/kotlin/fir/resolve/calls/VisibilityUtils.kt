@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isNullableNothing
 import org.jetbrains.kotlin.fir.types.makeConeTypeDefinitelyNotNullOrNotNull
 import org.jetbrains.kotlin.fir.types.typeContext
+import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 fun FirVisibilityChecker.isVisible(
@@ -136,3 +137,7 @@ private fun isExplicitReceiverExpression(receiverExpression: FirExpression?): Bo
     val thisReference = receiverExpression.toReference() as? FirThisReference ?: return true
     return !thisReference.isImplicit
 }
+
+internal val Candidate.isCodeFragmentVisibilityError
+    get() = applicability == CandidateApplicability.K2_VISIBILITY_ERROR &&
+            callInfo.containingFile.declarations.singleOrNull() is FirCodeFragment

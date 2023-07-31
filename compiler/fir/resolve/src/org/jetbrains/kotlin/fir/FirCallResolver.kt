@@ -55,6 +55,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.util.CodeFragmentAdjustment
 
 class FirCallResolver(
     private val components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents,
@@ -765,7 +766,13 @@ class FirCallResolver(
 
             !applicability.isSuccess -> {
                 val candidate = candidates.single()
-                createConeDiagnosticForCandidateWithError(applicability, candidate)
+                if (needTreatErrorCandidateAsResolved(candidate)) {
+                    @OptIn(CodeFragmentAdjustment::class)
+                    candidate.resetToResolved()
+                    null
+                } else {
+                    createConeDiagnosticForCandidateWithError(applicability, candidate)
+                }
             }
 
             else -> null
@@ -818,6 +825,13 @@ class FirCallResolver(
             }
         }
         return FirNamedReferenceWithCandidate(source, name, candidate)
+    }
+
+    private fun needTreatErrorCandidateAsResolved(candidate: Candidate): Boolean {
+        return if (candidate.isCodeFragmentVisibilityError) {
+            components.resolutionStageRunner.fullyProcessCandidate(candidate, transformer.resolutionContext)
+            candidate.diagnostics.all { it.applicability.isSuccess || it.applicability == CandidateApplicability.K2_VISIBILITY_ERROR }
+        } else false
     }
 
     private fun createErrorReferenceForSingleCandidate(
