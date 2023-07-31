@@ -46,6 +46,17 @@ internal sealed class WasmVM(val shortName: String) {
             )
         }
     }
+
+    object NodeJs : WasmVM("NodeJs") {
+        override fun run(entryMjs: String, jsFiles: List<String>, workingDirectory: File?, disableExceptionHandlingIfPossible: Boolean) {
+            tool.run(
+                "--experimental-wasm-gc",
+                *jsFiles.flatMap { listOf("-f", it) }.toTypedArray(),
+                entryMjs,
+                workingDirectory = workingDirectory
+            )
+        }
+    }
 }
 
 internal class ExternalTool(val path: String) {

@@ -16,7 +16,7 @@ configureWasmStdLib(
     wasmTargetParameter = "wasm-wasi",
     wasmTargetAttribute = KotlinWasmTargetAttribute.wasi,
     targetDependentSources = targetDependentSources,
-    targetDependentTestSources = emptyList(),
+    targetDependentTestSources = listOf("$rootDir/libraries/stdlib/wasm/wasi/test/"),
     kotlinTestDependencyName = ":kotlin-test:kotlin-test-wasm-wasi"
 ) { extensionBody ->
     kotlin(extensionBody)

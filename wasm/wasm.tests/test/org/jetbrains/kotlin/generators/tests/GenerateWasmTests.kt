@@ -80,6 +80,10 @@ fun main(args: Array<String>) {
             testClass<AbstractK1WasmCodegenWasmJsInteropTest> {
                 model("codegen/boxWasmJsInterop")
             }
+
+            testClass<AbstractK1WasmWasiCodegenBoxTest> {
+                model("codegen/boxWasmWasi")
+            }
         }
     }
 }

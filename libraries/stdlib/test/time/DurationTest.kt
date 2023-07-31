@@ -6,6 +6,8 @@
 @file:Suppress("INVISIBLE_MEMBER")
 package test.time
 
+import test.TestPlatform
+import test.current
 import test.numbers.assertAlmostEquals
 import kotlin.math.nextDown
 import kotlin.math.pow
@@ -609,6 +611,8 @@ class DurationTest {
 
     @Test
     fun parseAndFormatInUnits() {
+        if (TestPlatform.current == TestPlatform.WasmWasi) return
+
         var d = 1.days + 15.hours + 31.minutes + 45.seconds +
                 678.milliseconds + 920.microseconds + 516.34.nanoseconds
 

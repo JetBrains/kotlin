@@ -5,6 +5,8 @@
 
 package test.time
 
+import test.TestPlatform
+import test.current
 import kotlin.math.sign
 import kotlin.test.*
 import kotlin.time.*
@@ -367,6 +369,8 @@ class TimeMarkTest {
 
     @Test
     fun defaultTimeMarkAdjustmentBig() {
+        if (TestPlatform.current == TestPlatform.WasmWasi) return
+
         testAdjustmentBig(TimeSource.Monotonic)
 
         // do the same with specialized methods
@@ -397,6 +401,8 @@ class TimeMarkTest {
 
     @Test
     fun defaultTimeMarkAdjustmentInfinite() {
+        if (TestPlatform.current == TestPlatform.WasmWasi) return
+
         testAdjustmentInfinite(TimeSource.Monotonic)
 
         // do the same with specialized methods

@@ -19,6 +19,7 @@ enum class TargetBackend(
     JS_IR(true, JS),
     JS_IR_ES6(true, JS_IR),
     WASM(true),
+    WASM_WASI(true),
     ANDROID(false, JVM),
     ANDROID_IR(true, JVM_IR),
     NATIVE(true),

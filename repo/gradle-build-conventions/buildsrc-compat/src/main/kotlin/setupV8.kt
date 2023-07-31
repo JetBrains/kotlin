@@ -6,6 +6,8 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.testing.Test
 import org.jetbrains.kotlin.gradle.targets.js.d8.D8RootExtension
 import org.jetbrains.kotlin.gradle.targets.js.d8.D8RootPlugin
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 
 private object V8Utils {
     lateinit var d8Plugin: D8RootExtension
@@ -27,6 +29,30 @@ fun Test.setupV8() {
     }
     doFirst {
         systemProperty("javascript.engine.path.V8", v8ExecutablePath.get())
+    }
+}
+
+
+private object NodeJsUtils {
+    lateinit var nodeJsPlugin: NodeJsRootExtension
+
+    fun useNodeJsPlugin(project: Project) {
+        nodeJsPlugin = NodeJsRootPlugin.apply(project.rootProject)
+        nodeJsPlugin.nodeVersion = project.nodejsVersion
+    }
+}
+
+fun Project.useNodeJsPlugin() {
+    NodeJsUtils.useNodeJsPlugin(this)
+}
+
+fun Test.setupNodeJs() {
+    dependsOn(NodeJsUtils.nodeJsPlugin.nodeJsSetupTaskProvider)
+    val nodeJsExecutablePath = project.provider {
+        NodeJsUtils.nodeJsPlugin.requireConfigured().nodeExecutable
+    }
+    doFirst {
+        systemProperty("javascript.engine.path.NodeJs", nodeJsExecutablePath.get())
     }
 }
 

@@ -14,7 +14,8 @@ public enum class TestPlatform {
     Jvm,
     Js,
     Native,
-    Wasm;
+    WasmJs,
+    WasmWasi;
     companion object
 }
 

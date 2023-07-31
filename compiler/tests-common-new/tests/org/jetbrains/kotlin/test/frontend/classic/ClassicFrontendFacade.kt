@@ -344,10 +344,16 @@ class ClassicFrontendFacade(
         dependencyDescriptors: List<ModuleDescriptor>,
         friendsDescriptors: List<ModuleDescriptor>,
     ): AnalysisResult {
+        val suffix = when (configuration.get(JSConfigurationKeys.WASM_TARGET, WasmTarget.JS)) {
+            WasmTarget.JS -> "-js"
+            WasmTarget.WASI -> "-wasi"
+            else -> error("Unexpected wasi target")
+        }
+
         val runtimeKlibsNames =
             listOfNotNull(
-                System.getProperty("kotlin.wasm.stdlib.path")!!,
-                System.getProperty("kotlin.wasm.kotlin.test.path")!!
+                System.getProperty("kotlin.wasm$suffix.stdlib.path")!!,
+                System.getProperty("kotlin.wasm$suffix.kotlin.test.path")!!
             ).map {
                 File(it).absolutePath
             }

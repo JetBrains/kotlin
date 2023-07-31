@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
 import org.jetbrains.kotlin.fir.session.FirWasmSessionFactory
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.backend.js.resolverLogger
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.js.config.WasmTarget
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.test.model.DependencyRelation
@@ -36,7 +38,11 @@ object TestFirWasmSessionFactory {
         languageVersionSettings: LanguageVersionSettings,
         registerExtraComponents: ((FirSession) -> Unit),
     ): FirSession {
-        val resolvedLibraries = resolveLibraries(configuration, getAllWasmDependenciesPaths(module, testServices))
+        val target = configuration.get(JSConfigurationKeys.WASM_TARGET, WasmTarget.JS)
+        val resolvedLibraries = resolveLibraries(
+            configuration = configuration,
+            paths = getAllWasmDependenciesPaths(module, testServices, target)
+        )
 
         return FirWasmSessionFactory.createLibrarySession(
             mainModuleName,
@@ -72,16 +78,29 @@ fun resolveWasmLibraries(
     testServices: TestServices,
     configuration: CompilerConfiguration
 ): List<KotlinResolvedLibrary> {
-    return resolveLibraries(configuration, getAllWasmDependenciesPaths(module, testServices))
+    val paths = getAllWasmDependenciesPaths(
+        module = module,
+        testServices = testServices,
+        target = configuration.get(JSConfigurationKeys.WASM_TARGET, WasmTarget.JS)
+    )
+    return resolveLibraries(configuration, paths)
 }
 
-fun getAllWasmDependenciesPaths(module: TestModule, testServices: TestServices): List<String> {
-    val (runtimeKlibsPaths, transitiveLibraries, friendLibraries) = getWasmDependencies(module, testServices)
+fun getAllWasmDependenciesPaths(
+    module: TestModule,
+    testServices: TestServices,
+    target: WasmTarget,
+): List<String> {
+    val (runtimeKlibsPaths, transitiveLibraries, friendLibraries) = getWasmDependencies(module, testServices, target)
     return runtimeKlibsPaths + transitiveLibraries.map { it.path } + friendLibraries.map { it.path }
 }
 
-fun getWasmDependencies(module: TestModule, testServices: TestServices): Triple<List<String>, List<File>, List<File>> {
-    val runtimeKlibsPaths = WasmEnvironmentConfigurator.getRuntimePathsForModule()
+fun getWasmDependencies(
+    module: TestModule,
+    testServices: TestServices,
+    target: WasmTarget,
+): Triple<List<String>, List<File>, List<File>> {
+    val runtimeKlibsPaths = WasmEnvironmentConfigurator.getRuntimePathsForModule(target)
     val transitiveLibraries = WasmEnvironmentConfigurator.getKlibDependencies(module, testServices, DependencyRelation.RegularDependency)
     val friendLibraries = WasmEnvironmentConfigurator.getKlibDependencies(module, testServices, DependencyRelation.FriendDependency)
     return Triple(runtimeKlibsPaths, transitiveLibraries, friendLibraries)

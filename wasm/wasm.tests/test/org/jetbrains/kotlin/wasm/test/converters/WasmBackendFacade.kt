@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageConfig
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageLogLevel
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageMode
 import org.jetbrains.kotlin.ir.linkage.partial.setupPartialLinkageConfig
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.js.config.WasmTarget
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.test.DebugMode
@@ -62,9 +64,15 @@ class WasmBackendFacade(
             PhaseConfig(wasmPhases)
         }
 
+        val suffix = when (configuration.get(JSConfigurationKeys.WASM_TARGET, WasmTarget.JS)) {
+            WasmTarget.JS -> "-js"
+            WasmTarget.WASI -> "-wasi"
+            else -> error("Unexpected wasi target")
+        }
+
         val libraries = listOf(
-            System.getProperty("kotlin.wasm.stdlib.path")!!,
-            System.getProperty("kotlin.wasm.kotlin.test.path")!!
+            System.getProperty("kotlin.wasm$suffix.stdlib.path")!!,
+            System.getProperty("kotlin.wasm$suffix.kotlin.test.path")!!
         ) + WasmEnvironmentConfigurator.getAllRecursiveLibrariesFor(module, testServices).map { it.key.libraryFile.canonicalPath }
 
         val friendLibraries = emptyList<String>()

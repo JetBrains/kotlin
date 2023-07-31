@@ -15,6 +15,13 @@ import org.jetbrains.kotlin.test.services.TestServices
 import java.io.File
 import java.io.FileFilter
 
+class WasmWasiBoxTestHelperSourceProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
+    override fun produceAdditionalFiles(globalDirectives: RegisteredDirectives, module: TestModule): List<TestFile> {
+        val boxTestRunFile = File("wasm/wasm.tests/wasiBoxTestRun.kt")
+        return listOf(boxTestRunFile.toTestFile())
+    }
+}
+
 class WasmAdditionalSourceProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
     override fun produceAdditionalFiles(globalDirectives: RegisteredDirectives, module: TestModule): List<TestFile> {
         if (JsEnvironmentConfigurationDirectives.NO_COMMON_FILES in module.directives) return emptyList()
@@ -24,7 +31,7 @@ class WasmAdditionalSourceProvider(testServices: TestServices) : AdditionalSourc
     companion object {
         private const val COMMON_FILES_NAME = "_common"
         private const val COMMON_FILES_DIR = "_commonFiles/"
-        private const val COMMON_FILES_DIR_PATH = "js/js.translator/testData/$COMMON_FILES_DIR"
+        private const val COMMON_FILES_DIR_PATH = "wasm/wasm.tests/$COMMON_FILES_DIR"
 
         private fun getFilesInDirectoryByExtension(directory: String, extension: String): List<String> {
             val dir = File(directory)

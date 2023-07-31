@@ -116,6 +116,7 @@
 /compiler/testData/codegen/boxKlib/ "Kotlin JVM"
 /compiler/testData/codegen/boxModernJdk/ "Kotlin JVM"
 /compiler/testData/codegen/boxWasmJsInterop/ "Kotlin Wasm"
+/compiler/testData/codegen/boxWasmWasi/ "Kotlin Wasm"
 /compiler/testData/codegen/bytecodeListing/ "Kotlin JVM" "Kotlin Compiler Core"
 /compiler/testData/codegen/bytecodeText/ "Kotlin JVM" "Kotlin Compiler Core"
 /compiler/testData/codegen/composeLike/ "Kotlin JVM"

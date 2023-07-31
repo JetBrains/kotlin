@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
 import org.jetbrains.kotlin.fir.session.FirNativeSessionFactory
 import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.js.config.WasmTarget
 import org.jetbrains.kotlin.load.kotlin.PackageAndMetadataPartProvider
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -419,7 +421,9 @@ open class FirFrontendFacade(
                         friendDependencies(friendLibraries.map { it.toPath().toAbsolutePath() })
                     }
                     targetPlatform.isWasm() -> {
-                        val runtimeKlibsPaths = WasmEnvironmentConfigurator.getRuntimePathsForModule()
+                        val runtimeKlibsPaths = WasmEnvironmentConfigurator.getRuntimePathsForModule(
+                            configuration.get(JSConfigurationKeys.WASM_TARGET, WasmTarget.JS)
+                        )
                         val (transitiveLibraries, friendLibraries) = getTransitivesAndFriends(mainModule, testServices)
                         dependencies(runtimeKlibsPaths.map { Paths.get(it).toAbsolutePath() })
                         dependencies(transitiveLibraries.map { it.toPath().toAbsolutePath() })

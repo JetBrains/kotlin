@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfiguratorJs
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 
@@ -37,7 +38,7 @@ abstract class AbstractDiagnosticsWasmTest : AbstractKotlinCompilerTest() {
 
         useConfigurators(
             ::CommonEnvironmentConfigurator,
-            ::WasmEnvironmentConfigurator,
+            ::WasmEnvironmentConfiguratorJs,
         )
 
         useMetaInfoProcessors(::OldNewInferenceMetaInfoProcessor)

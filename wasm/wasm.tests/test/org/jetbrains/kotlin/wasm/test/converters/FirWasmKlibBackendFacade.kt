@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.ir.backend.js.JsFactories
 import org.jetbrains.kotlin.ir.backend.js.resolverLogger
 import org.jetbrains.kotlin.ir.backend.js.serializeModuleIntoKlib
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.js.config.WasmTarget
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.backend.ir.IrBackendFacade
@@ -52,7 +54,8 @@ class FirWasmKlibBackendFacade(
         val outputFile = WasmEnvironmentConfigurator.getWasmKlibArtifactPath(testServices, module.name)
 
         // TODO: consider avoiding repeated libraries resolution
-        val libraries = resolveLibraries(configuration, getAllWasmDependenciesPaths(module, testServices))
+        val target = configuration.get(JSConfigurationKeys.WASM_TARGET, WasmTarget.JS)
+        val libraries = resolveLibraries(configuration, getAllWasmDependenciesPaths(module, testServices, target))
 
         if (firstTimeCompilation) {
             serializeModuleIntoKlib(
@@ -77,7 +80,7 @@ class FirWasmKlibBackendFacade(
 
         // TODO: consider avoiding repeated libraries resolution
         val lib = CommonKLibResolver.resolve(
-            getAllWasmDependenciesPaths(module, testServices) + listOf(outputFile),
+            getAllWasmDependenciesPaths(module, testServices, target) + listOf(outputFile),
             configuration.resolverLogger
         ).getFullResolvedList().last().library
 

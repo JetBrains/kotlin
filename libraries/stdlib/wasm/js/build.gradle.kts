@@ -18,7 +18,7 @@ configureWasmStdLib(
     wasmTargetParameter = "wasm-js",
     wasmTargetAttribute = KotlinWasmTargetAttribute.js,
     targetDependentSources = targetDependentSources,
-    targetDependentTestSources = listOf("$rootDir/libraries/stdlib/wasm/testJs/"),
+    targetDependentTestSources = listOf("$rootDir/libraries/stdlib/wasm/js/test/"),
     kotlinTestDependencyName = ":kotlin-test:kotlin-test-wasm-js"
 ) { extensionBody ->
     kotlin(extensionBody)

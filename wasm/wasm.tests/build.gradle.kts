@@ -76,6 +76,7 @@ dependencies {
 val generationRoot = projectDir.resolve("tests-gen")
 
 useD8Plugin()
+useNodeJsPlugin()
 optInToExperimentalCompilerApi()
 
 sourceSets {
@@ -86,11 +87,11 @@ sourceSets {
     }
 }
 
-fun Test.setupWasmStdlib() {
-    dependsOn(":kotlin-stdlib-wasm-js:compileKotlinWasm")
-    systemProperty("kotlin.wasm.stdlib.path", "libraries/stdlib/wasm/js/build/classes/kotlin/wasm/main")
-    dependsOn(":kotlin-test:kotlin-test-wasm-js:compileKotlinWasm")
-    systemProperty("kotlin.wasm.kotlin.test.path", "libraries/kotlin.test/wasm/js/build/classes/kotlin/wasm/main")
+fun Test.setupWasmStdlib(target: String) {
+    dependsOn(":kotlin-stdlib-wasm-$target:compileKotlinWasm")
+    systemProperty("kotlin.wasm-$target.stdlib.path", "libraries/stdlib/wasm/$target/build/classes/kotlin/wasm/main")
+    dependsOn(":kotlin-test:kotlin-test-wasm-$target:compileKotlinWasm")
+    systemProperty("kotlin.wasm-$target.kotlin.test.path", "libraries/kotlin.test/wasm/$target/build/classes/kotlin/wasm/main")
 }
 
 fun Test.setupGradlePropertiesForwarding() {
@@ -144,9 +145,11 @@ fun Project.wasmProjectTest(
     ) {
         workingDir = rootDir
         setupV8()
+        setupNodeJs()
         setupSpiderMonkey()
         useJUnitPlatform()
-        setupWasmStdlib()
+        setupWasmStdlib("js")
+        setupWasmStdlib("wasi")
         setupGradlePropertiesForwarding()
         systemProperty("kotlin.wasm.test.root.out.dir", "$buildDir/")
         body()

@@ -92,47 +92,12 @@ class WasmBoxRunner(
                 """.trimIndent()
 
         val testJsVerbose = testJsQuiet + """
+            
+            
                     console.log('test passed');
                 """.trimIndent()
 
         val testJs = if (debugMode >= DebugMode.DEBUG) testJsVerbose else testJsQuiet
-
-        fun checkExpectedOutputSize(testFileContent: String, testDir: File) {
-            val expectedSizes =
-                InTextDirectivesUtils.findListWithPrefixes(testFileContent, "// WASM_DCE_EXPECTED_OUTPUT_SIZE: ")
-                    .map {
-                        val i = it.indexOf(' ')
-                        val extension = it.substring(0, i)
-                        val size = it.substring(i + 1)
-                        extension.trim().lowercase() to size.filter(Char::isDigit).toInt()
-                    }
-
-            val filesByExtension = testDir.listFiles()?.groupBy { it.extension }.orEmpty()
-
-            val errors = expectedSizes.mapNotNull { (extension, expectedSize) ->
-                val totalSize = filesByExtension[extension].orEmpty().sumOf { it.length() }
-
-                val thresholdPercent = 1
-                val thresholdInBytes = expectedSize * thresholdPercent / 100
-
-                val expectedMinSize = expectedSize - thresholdInBytes
-                val expectedMaxSize = expectedSize + thresholdInBytes
-
-                val diff = totalSize - expectedSize
-
-                val message = "Total size of $extension files is $totalSize," +
-                        " but expected $expectedSize ∓ $thresholdInBytes [$expectedMinSize .. $expectedMaxSize]." +
-                        " Diff: $diff (${diff * 100 / expectedSize}%)"
-
-                if (debugMode >= DebugMode.DEBUG) {
-                    println(" ------ $message")
-                }
-
-                if (totalSize !in expectedMinSize..expectedMaxSize) message else null
-            }
-
-            if (errors.isNotEmpty()) throw AssertionError(errors.joinToString("\n"))
-        }
 
         fun writeToFilesAndRunTest(mode: String, res: WasmCompilerResult) {
             val dir = File(outputDirBase, mode)
@@ -194,26 +159,15 @@ class WasmBoxRunner(
 
             val disableExceptions = DISABLE_WASM_EXCEPTION_HANDLING in testServices.moduleStructure.allDirectives
 
-            val exceptions = listOf(WasmVM.V8, WasmVM.SpiderMonkey).mapNotNull map@{ vm ->
-                try {
-                    if (debugMode >= DebugMode.DEBUG) {
-                        println(" ------ Run in ${vm.name}" + if (vm.shortName in failsIn) " (expected to fail)" else "")
-                    }
-                    vm.run(
-                        "./${entryMjs}",
-                        jsFilePaths,
-                        workingDirectory = dir,
-                        disableExceptionHandlingIfPossible = disableExceptions
-                    )
-                    if (vm.shortName in failsIn) {
-                        return@map AssertionError("The test expected to fail in ${vm.name}. Please update the testdata.")
-                    }
-                } catch (e: Throwable) {
-                    if (vm.shortName !in failsIn) {
-                        return@map e
-                    }
-                }
-                null
+            val exceptions = listOf(WasmVM.V8, WasmVM.SpiderMonkey).mapNotNull { vm ->
+                vm.runWithCathedExceptions(
+                    debugMode = debugMode,
+                    disableExceptions = disableExceptions,
+                    failsIn = failsIn,
+                    entryMjs = entryMjs,
+                    jsFilePaths = jsFilePaths,
+                    workingDirectory = dir,
+                )
             }
 
             when (exceptions.size) {
@@ -229,7 +183,7 @@ class WasmBoxRunner(
             }
 
             if (mode == "dce") {
-                checkExpectedOutputSize(testFileText, dir)
+                checkExpectedOutputSize(debugMode, testFileText, dir)
             }
         }
 
@@ -238,6 +192,35 @@ class WasmBoxRunner(
     }
 
     private class AdditionalFile(val name: String, val content: String)
+}
+
+internal fun WasmVM.runWithCathedExceptions(
+    debugMode: DebugMode,
+    disableExceptions: Boolean,
+    failsIn: List<String>,
+    entryMjs: String?,
+    jsFilePaths: List<String>,
+    workingDirectory: File,
+): Throwable? {
+    try {
+        if (debugMode >= DebugMode.DEBUG) {
+            println(" ------ Run in ${name}" + if (shortName in failsIn) " (expected to fail)" else "")
+        }
+        run(
+            "./${entryMjs}",
+            jsFilePaths,
+            workingDirectory = workingDirectory,
+            disableExceptionHandlingIfPossible = disableExceptions,
+        )
+        if (shortName in failsIn) {
+            return AssertionError("The test expected to fail in ${name}. Please update the testdata.")
+        }
+    } catch (e: Throwable) {
+        if (shortName !in failsIn) {
+            return e
+        }
+    }
+    return null
 }
 
 fun TestServices.getWasmTestOutputDirectory(): File {
@@ -256,4 +239,41 @@ fun TestServices.getWasmTestOutputDirectory(): File {
         .toList().asReversed()
         .fold(testGroupOutputDir, ::File)
         .let { File(it, originalFile.nameWithoutExtension) }
+}
+
+fun checkExpectedOutputSize(debugMode: DebugMode, testFileContent: String, testDir: File) {
+    val expectedSizes =
+        InTextDirectivesUtils.findListWithPrefixes(testFileContent, "// WASM_DCE_EXPECTED_OUTPUT_SIZE: ")
+            .map {
+                val i = it.indexOf(' ')
+                val extension = it.substring(0, i)
+                val size = it.substring(i + 1)
+                extension.trim().lowercase() to size.filter(Char::isDigit).toInt()
+            }
+
+    val filesByExtension = testDir.listFiles()?.groupBy { it.extension }.orEmpty()
+
+    val errors = expectedSizes.mapNotNull { (extension, expectedSize) ->
+        val totalSize = filesByExtension[extension].orEmpty().sumOf { it.length() }
+
+        val thresholdPercent = 1
+        val thresholdInBytes = expectedSize * thresholdPercent / 100
+
+        val expectedMinSize = expectedSize - thresholdInBytes
+        val expectedMaxSize = expectedSize + thresholdInBytes
+
+        val diff = totalSize - expectedSize
+
+        val message = "Total size of $extension files is $totalSize," +
+                " but expected $expectedSize ∓ $thresholdInBytes [$expectedMinSize .. $expectedMaxSize]." +
+                " Diff: $diff (${diff * 100 / expectedSize}%)"
+
+        if (debugMode >= DebugMode.DEBUG) {
+            println(" ------ $message")
+        }
+
+        if (totalSize !in expectedMinSize..expectedMaxSize) message else null
+    }
+
+    if (errors.isNotEmpty()) throw AssertionError(errors.joinToString("\n"))
 }
