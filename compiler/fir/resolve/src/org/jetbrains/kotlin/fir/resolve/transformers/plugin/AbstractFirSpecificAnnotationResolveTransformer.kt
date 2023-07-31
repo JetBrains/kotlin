@@ -91,7 +91,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
         implicitTypeOnly = false,
     ) {
         override val expressionsTransformer: FirExpressionsResolveTransformer = FirEnumAnnotationArgumentsTransformer(this)
-        override val declarationsTransformer = null
+        override val declarationsTransformer: FirDeclarationsResolveTransformer? = null
     }
 
     /**
@@ -105,14 +105,6 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
             // transform arrayOf arguments to handle `@Foo(bar = arrayOf(X))`
             functionCall.transformChildren(transformer, data)
             return super.transformFunctionCall(functionCall, data)
-        }
-
-        override fun transformAnonymousFunctionExpression(
-            anonymousFunctionExpression: FirAnonymousFunctionExpression,
-            data: ResolutionMode
-        ): FirStatement {
-            dataFlowAnalyzer.enterAnonymousFunctionExpression(anonymousFunctionExpression)
-            return anonymousFunctionExpression
         }
 
         override fun resolveQualifiedAccessAndSelectCandidate(
