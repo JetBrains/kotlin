@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,8 +8,6 @@
 
 
 package kotlin.wasm.internal
-
-import kotlin.wasm.internal.ExternalInterfaceType
 
 @WasmOp(WasmOp.UNREACHABLE)
 internal fun wasm_unreachable(): Nothing =
@@ -495,10 +493,4 @@ internal fun wasm_i64_popcnt(a: Long): Long =
 @PublishedApi
 @WasmOp(WasmOp.I64_CTZ)
 internal fun wasm_i64_ctz(a: Long): Long =
-    implementedAsIntrinsic
-
-// Reference type operators
-
-@WasmOp(WasmOp.REF_IS_NULL)
-internal external fun wasm_externref_is_null(a: ExternalInterfaceType?): Boolean =
     implementedAsIntrinsic

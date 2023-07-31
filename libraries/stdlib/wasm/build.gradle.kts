@@ -1,4 +1,6 @@
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetAttribute
 import org.jetbrains.kotlin.gradle.targets.js.d8.D8RootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
 
@@ -81,14 +83,20 @@ kotlin {
     @Suppress("DEPRECATION")
     @OptIn(org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl::class)
     wasm("wasm") {
-        d8()
+        nodejs()
+    }
+
+    fun KotlinSourceSet.addWasmMainDirs() {
+        kotlin.srcDirs("builtins", "internal", "runtime", "src", "stubs")
+        kotlin.srcDirs("$rootDir/libraries/stdlib/native-wasm/src")
+        kotlin.srcDirs(files(builtInsSources.map { it.destinationDir }))
     }
 
     sourceSets {
         named("wasmMain") {
-            kotlin.srcDirs("builtins", "internal", "runtime", "src", "stubs")
-            kotlin.srcDirs("$rootDir/libraries/stdlib/native-wasm/src")
-            kotlin.srcDirs(files(builtInsSources.map { it.destinationDir }))
+            addWasmMainDirs()
+//            kotlin.srcDirs("js/builtins/kotlin", "js/internal", "js/src/kotlin", "js/src/kotlinx", "js/src/org.w3c")
+       kotlin.srcDirs("wasi/builtins/kotlin", "wasi/internal", "wasi/src/kotlin", "wasi/src/kotlinx")
         }
 
         named("commonMain") {
@@ -153,8 +161,17 @@ val compileTestDevelopmentExecutableKotlinWasm = tasks.named<KotlinJsIrLink>("co
     (this as KotlinCompile<*>).kotlinOptions.freeCompilerArgs += listOf("-Xwasm-enable-array-range-checks")
 }
 
-val runtimeElements by configurations.creating {}
-val apiElements by configurations.creating {}
+val runtimeElements by configurations.creating {
+    attributes {
+        attributes.attribute(KotlinWasmTargetAttribute.wasmTargetAttribute, KotlinWasmTargetAttribute.js)
+    }
+}
+
+val apiElements by configurations.creating {
+    attributes {
+        attributes.attribute(KotlinWasmTargetAttribute.wasmTargetAttribute, KotlinWasmTargetAttribute.js)
+    }
+}
 
 publish(sbom = false) {
     pom.packaging = "klib"

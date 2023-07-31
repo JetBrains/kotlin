@@ -23,7 +23,6 @@ internal actual fun formatToExactDecimals(value: Double, decimals: Int): String 
     } else {
         val pow = (10.0).pow(decimals)
         round(abs(value) * pow) / pow * sign(value)
-        round(abs(value) * pow) / pow * sign(value)
     }
     return if (abs(rounded) < 1e21) {
         // toFixed switches to scientific format after 1e21
