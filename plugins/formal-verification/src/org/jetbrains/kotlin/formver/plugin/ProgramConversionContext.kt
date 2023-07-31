@@ -32,38 +32,6 @@ import viper.silver.ast.*
 const val INT_BACKING_FIELD = "backing_int"
 const val RETURN_VARIABLE_NAME = "ret"
 
-interface ConvertedType {
-    val viperType: Type?
-    fun preconditions(v: Exp.LocalVar): List<Exp>
-    fun postconditions(v: Exp.LocalVar): List<Exp>
-}
-
-interface ConvertedNonUnitType : ConvertedType {
-    override val viperType: Type
-}
-
-abstract class ConvertedPrimitive : ConvertedNonUnitType {
-    override fun preconditions(v: Exp.LocalVar): List<Exp> = emptyList()
-    override fun postconditions(v: Exp.LocalVar): List<Exp> = emptyList()
-}
-
-class ConvertedUnit : ConvertedType {
-    override val viperType: Type? = null
-    override fun preconditions(v: Exp.LocalVar): List<Exp> = emptyList()
-    override fun postconditions(v: Exp.LocalVar): List<Exp> = emptyList()
-}
-
-class ConvertedInt : ConvertedPrimitive() {
-    override val viperType: Type = Type.Int
-}
-
-class ConvertedClassType : ConvertedNonUnitType {
-    override val viperType: Type = Type.Ref
-
-    override fun preconditions(v: Exp.LocalVar): List<Exp> = listOf(Exp.NeCmp(v, Exp.NullLit()))
-    override fun postconditions(v: Exp.LocalVar): List<Exp> = emptyList()
-}
-
 class ConvertedVar(val name: String, val type: ConvertedNonUnitType) {
     fun toLocalVarDecl(
         pos: Position = Position.NoPosition,
@@ -81,7 +49,6 @@ class ConvertedVar(val name: String, val type: ConvertedNonUnitType) {
     fun postconditions(): List<Exp> = type.postconditions(toLocalVar())
 }
 
-// We see a (method) signature as a variable with parameters.
 class ConvertedMethodSignature(val name: String, val params: List<ConvertedVar>, val returns: List<ConvertedVar>) {
     fun toMethod(
         pres: List<Exp>, posts: List<Exp>,
@@ -172,7 +139,6 @@ class StmtConversionContext(val methodCtx: MethodConversionContext) {
     fun convertAndAppend(stmt: FirStatement) {
         stmt.accept(StmtConversionVisitor(), this)
     }
-
 }
 
 class StmtConversionVisitor : FirVisitor<Exp?, StmtConversionContext>() {
