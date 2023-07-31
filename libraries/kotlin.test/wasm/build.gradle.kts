@@ -20,18 +20,19 @@ kotlin {
     }
 
     sourceSets {
-         named("commonMain") {
+        named("commonMain") {
             dependencies {
-                api(project(":kotlin-stdlib-wasm"))
+                api(project(":kotlin-stdlib-wasm-js"))
             }
             kotlin.srcDir(commonMainSources.get().destinationDir)
         }
 
         named("wasmMain") {
             dependencies {
-                api(project(":kotlin-stdlib-wasm"))
+                api(project(":kotlin-stdlib-wasm-js"))
             }
-            kotlin.srcDir("$rootDir/libraries/kotlin.test/wasm/src")
+            kotlin.srcDirs("$rootDir/libraries/kotlin.test/wasm/src")
+            kotlin.srcDirs("$rootDir/libraries/kotlin.test/wasm/js/main/kotlin/kotlin/test")
         }
     }
 }
@@ -40,12 +41,13 @@ tasks.withType<KotlinCompile<*>>().configureEach {
     kotlinOptions.freeCompilerArgs += listOf(
         "-Xallow-kotlin-package",
         "-opt-in=kotlin.ExperimentalMultiplatform",
-        "-opt-in=kotlin.contracts.ExperimentalContracts"
+        "-opt-in=kotlin.contracts.ExperimentalContracts",
+        "-Xwasm-target=wasm-js"
     )
 }
 
-tasks.named("compileKotlinWasm") {
-    (this as KotlinCompile<*>).kotlinOptions.freeCompilerArgs += "-Xir-module-name=kotlin-test"
+tasks.named("compileKotlinWasm", KotlinCompile::class.java) {
+    kotlinOptions.freeCompilerArgs += "-Xir-module-name=kotlin-test"
     dependsOn(commonMainSources)
 }
 

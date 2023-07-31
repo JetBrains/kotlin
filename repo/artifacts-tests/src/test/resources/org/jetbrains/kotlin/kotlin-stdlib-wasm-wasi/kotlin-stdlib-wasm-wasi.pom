@@ -3,11 +3,11 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jetbrains.kotlin</groupId>
-  <artifactId>kotlin-stdlib-wasm</artifactId>
+  <artifactId>kotlin-stdlib-wasm-wasi</artifactId>
   <version>ArtifactsTest.version</version>
   <packaging>klib</packaging>
-  <name>Kotlin Stdlib Wasm</name>
-  <description>Kotlin Standard Library for experimental WebAssembly platform</description>
+  <name>Kotlin Stdlib Wasm Wasi</name>
+  <description>Kotlin Standard Library for experimental WebAssembly WASI platform</description>
   <url>https://kotlinlang.org/</url>
   <licenses>
     <license>

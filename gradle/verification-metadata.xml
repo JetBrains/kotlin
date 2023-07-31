@@ -56,7 +56,8 @@
          <trust group="org.jetbrains.kotlin" name="kotlin-stdlib-jdk8" version="1.9.[2,3]?[0-9](-.+)?" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-stdlib-js" version="1.9.[2,3]?[0-9](-.+)?" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-stdlib-jvm-minimal-for-test" version="1.9.[2,3]?[0-9](-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-stdlib-wasm" version="1.9.[2,3]?[0-9](-.+)?" regex="true"/>
+         <trust group="org.jetbrains.kotlin" name="kotlin-stdlib-wasm-js" version="1.9.[2,3]?[0-9](-.+)?" regex="true"/>
+         <trust group="org.jetbrains.kotlin" name="kotlin-stdlib-wasm-wasi" version="1.9.[2,3]?[0-9](-.+)?" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-test" version="1.9.[2,3]?[0-9](-.+)?" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-test-annotations-common" version="1.9.[2,3]?[0-9](-.+)?" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-test-common" version="1.9.[2,3]?[0-9](-.+)?" regex="true"/>
