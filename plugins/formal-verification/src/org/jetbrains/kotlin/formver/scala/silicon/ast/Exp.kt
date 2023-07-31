@@ -185,7 +185,7 @@ sealed class Exp : IntoViper<viper.silver.ast.Exp> {
     data class NullLit(
         val pos: Position = Position.NoPosition,
         val info: Info = Info.NoInfo,
-        val trafos: Trafos = Trafos.NoTrafos
+        val trafos: Trafos = Trafos.NoTrafos,
     ) : Exp() {
         override fun toViper(): viper.silver.ast.Exp = NullLit(pos.toViper(), info.toViper(), trafos.toViper())
     }

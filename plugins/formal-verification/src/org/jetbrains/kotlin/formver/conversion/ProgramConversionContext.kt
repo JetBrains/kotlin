@@ -16,18 +16,15 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.formver.scala.emptySeq
 import org.jetbrains.kotlin.formver.scala.seqOf
 import org.jetbrains.kotlin.formver.scala.silicon.ast.*
-import org.jetbrains.kotlin.formver.scala.silicon.ast.Exp
-import org.jetbrains.kotlin.formver.scala.silicon.ast.Info
-import org.jetbrains.kotlin.formver.scala.silicon.ast.Position
-import org.jetbrains.kotlin.formver.scala.silicon.ast.Stmt
 import org.jetbrains.kotlin.formver.scala.silicon.ast.Stmt.Seqn
-import org.jetbrains.kotlin.formver.scala.silicon.ast.Trafos
-import org.jetbrains.kotlin.formver.scala.silicon.ast.Type
 import org.jetbrains.kotlin.formver.scala.toScalaBigInt
 import org.jetbrains.kotlin.formver.scala.toScalaSeq
 import org.jetbrains.kotlin.text
 import org.jetbrains.kotlin.types.ConstantValueKind
-import viper.silver.ast.*
+import viper.silver.ast.Declaration
+import viper.silver.ast.LocalVarDecl
+import viper.silver.ast.Method
+import viper.silver.ast.Program
 
 const val INT_BACKING_FIELD = "backing_int"
 const val RETURN_VARIABLE_NAME = "ret"

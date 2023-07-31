@@ -47,7 +47,6 @@ object ViperPoweredDeclarationChecker : FirSimpleFunctionChecker() {
     }
 
 
-
     private fun newVerifier(): DefaultMainVerifier {
         val config = Config(seqOf("--ignoreFile", "dummy.vpr"))
         val verifier = DefaultMainVerifier(

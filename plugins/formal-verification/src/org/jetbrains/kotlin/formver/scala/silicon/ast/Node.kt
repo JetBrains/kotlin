@@ -15,7 +15,7 @@ fun field(
     type: Type,
     pos: Position = Position.NoPosition,
     info: Info = Info.NoInfo,
-    trafos: Trafos = Trafos.NoTrafos
+    trafos: Trafos = Trafos.NoTrafos,
 ): Field = Field(name, type.toViper(), pos.toViper(), info.toViper(), trafos.toViper())
 
 fun localVarDecl(
@@ -23,7 +23,7 @@ fun localVarDecl(
     type: Type,
     pos: Position = Position.NoPosition,
     info: Info = Info.NoInfo,
-    trafos: Trafos = Trafos.NoTrafos
+    trafos: Trafos = Trafos.NoTrafos,
 ): LocalVarDecl = LocalVarDecl(name, type.toViper(), pos.toViper(), info.toViper(), trafos.toViper())
 
 
@@ -36,7 +36,7 @@ fun function(
     body: Exp?,
     pos: Position = Position.NoPosition,
     info: Info = Info.NoInfo,
-    trafos: Trafos = Trafos.NoTrafos
+    trafos: Trafos = Trafos.NoTrafos,
 ): Function = Function(
     name,
     formalArgs.toScalaSeq(),
@@ -58,7 +58,7 @@ fun method(
     body: Stmt.Seqn?,
     pos: Position = Position.NoPosition,
     info: Info = Info.NoInfo,
-    trafos: Trafos = Trafos.NoTrafos
+    trafos: Trafos = Trafos.NoTrafos,
 ) = Method(
     name,
     formalArgs.toScalaSeq(),
