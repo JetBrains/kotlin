@@ -7,6 +7,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationFriendPathsResolver
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationSourceSetInclusion
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationSourceSetsContainer
@@ -17,7 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinNati
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 open class KotlinSharedNativeCompilationFactory internal constructor(
-    override val target: KotlinMetadataTarget,
+    final override val target: KotlinMetadataTarget,
     private val konanTargets: Set<KonanTarget>,
     private val defaultSourceSet: KotlinSourceSet
 ) : KotlinCompilationFactory<KotlinSharedNativeCompilation> {
@@ -51,10 +52,13 @@ open class KotlinSharedNativeCompilationFactory internal constructor(
             Metadata compilations are created *because* of a pre-existing SourceSet.
             We therefore can create the container inline
              */
-            compilationSourceSetsContainerFactory = { _, _ -> KotlinCompilationSourceSetsContainer(defaultSourceSet) }
+            compilationSourceSetsContainerFactory = { _, _ -> KotlinCompilationSourceSetsContainer(defaultSourceSet) },
+            postConfigureAction = KotlinCompilationImplFactory.PostConfigure.composite(
+                DefaultKotlinCompilationPostConfigure,
+                KotlinCompilationCommonCompilerOptionsFromTargetConfigurator(target.compilerOptions)
+            )
         )
 
-    @Suppress("DEPRECATION")
     override fun create(name: String): KotlinSharedNativeCompilation {
         return target.project.objects.newInstance(
             itemClass, konanTargets.toList(), compilationImplFactory.create(target, name)

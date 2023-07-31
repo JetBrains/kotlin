@@ -68,3 +68,15 @@ internal class KotlinCompilationJsCompilerOptionsFromTargetConfigurator(
         )
     }
 }
+
+internal class KotlinCompilationCommonCompilerOptionsFromTargetConfigurator(
+    private val targetCompilerOptions: KotlinCommonCompilerOptions
+) : KotlinCompilationImplFactory.PostConfigure {
+    override fun configure(compilation: DecoratedKotlinCompilation<*>) {
+        val commonCompilerOptions = compilation.compilerOptions.options
+        KotlinCommonCompilerOptionsHelper.syncOptionsAsConvention(
+            targetCompilerOptions,
+            commonCompilerOptions
+        )
+    }
+}

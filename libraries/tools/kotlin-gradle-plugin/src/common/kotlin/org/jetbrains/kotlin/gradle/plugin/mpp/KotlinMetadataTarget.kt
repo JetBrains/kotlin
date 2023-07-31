@@ -5,12 +5,17 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
+import org.gradle.api.Action
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
 import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetConfigurator
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
+import org.jetbrains.kotlin.gradle.utils.newInstance
 import javax.inject.Inject
 
 abstract class KotlinMetadataTarget @Inject constructor(
@@ -30,7 +35,21 @@ abstract class KotlinMetadataTarget @Inject constructor(
         Metadata Target does not have a KotlinTargetComponent on it's own.
         Responsibility is shifted to the root KotlinSoftwareComponent
         */
-        emptySet<KotlinTargetComponent>()
+        emptySet()
+    }
+
+    @ExperimentalKotlinGradlePluginApi
+    override val compilerOptions: KotlinCommonCompilerOptions = project.objects
+        .newInstance<KotlinCommonCompilerOptionsDefault>()
+
+    @ExperimentalKotlinGradlePluginApi
+    fun compilerOptions(configure: KotlinCommonCompilerOptions.() -> Unit) {
+        configure(compilerOptions)
+    }
+
+    @ExperimentalKotlinGradlePluginApi
+    fun compilerOptions(configure: Action<KotlinCommonCompilerOptions>) {
+        configure.execute(compilerOptions)
     }
 }
 

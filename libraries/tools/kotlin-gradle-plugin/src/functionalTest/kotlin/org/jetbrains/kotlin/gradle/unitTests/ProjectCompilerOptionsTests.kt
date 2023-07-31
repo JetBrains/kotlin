@@ -6,9 +6,11 @@
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
@@ -120,11 +122,67 @@ class ProjectCompilerOptionsTests {
         assertEquals(false, project.kotlinJsTask("compileKotlinJs").compilerOptions.suppressWarnings.get())
     }
 
+    @Test
+    fun metadataTargetDsl() {
+        val project = buildProjectWithMPP {
+            with(multiplatformExtension) {
+                linuxX64()
+                iosX64()
+                iosArm64()
+
+                targets.named("metadata", KotlinMetadataTarget::class.java) {
+                    it.compilerOptions {
+                        progressiveMode.set(true)
+                    }
+                }
+
+                applyDefaultHierarchyTemplate()
+            }
+        }
+
+        project.evaluate()
+
+        assertEquals(true, project.kotlinCommonTask("compileKotlinMetadata").compilerOptions.progressiveMode.get())
+    }
+
+    @Test
+    fun metadataTaskOptionsOverrideTargetOptions() {
+        val project = buildProjectWithMPP {
+            tasks.withType<KotlinCompilationTask<*>>().configureEach {
+                if (it.name == "compileKotlinMetadata") {
+                    it.compilerOptions.progressiveMode.set(false)
+                }
+            }
+
+            with(multiplatformExtension) {
+                linuxX64()
+                iosX64()
+                iosArm64()
+
+                targets.named("metadata", KotlinMetadataTarget::class.java) {
+                    it.compilerOptions {
+                        progressiveMode.set(true)
+                    }
+                }
+
+                applyDefaultHierarchyTemplate()
+            }
+        }
+
+        project.evaluate()
+
+        assertEquals(false, project.kotlinCommonTask("compileKotlinMetadata").compilerOptions.progressiveMode.get())
+    }
+
     private fun Project.kotlinNativeTask(name: String): KotlinCompilationTask<KotlinNativeCompilerOptions> = tasks
         .named<KotlinCompilationTask<KotlinNativeCompilerOptions>>(name)
         .get()
 
     private fun Project.kotlinJsTask(name: String): KotlinCompilationTask<KotlinJsCompilerOptions> = tasks
         .named<KotlinCompilationTask<KotlinJsCompilerOptions>>(name)
+        .get()
+
+    private fun Project.kotlinCommonTask(name: String): KotlinCompilationTask<KotlinCommonCompilerOptions> = tasks
+        .named<KotlinCompilationTask<KotlinCommonCompilerOptions>>(name)
         .get()
 }
