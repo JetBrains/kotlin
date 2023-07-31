@@ -19,6 +19,7 @@ object JvmExpressionCheckers : ExpressionCheckers() {
         get() = setOf(
             FirInterfaceDefaultMethodCallChecker,
             FirJavaSamInterfaceConstructorReferenceChecker,
+            FirIncompatibleClassExpressionChecker,
         )
 
     override val callableReferenceAccessCheckers: Set<FirCallableReferenceAccessChecker>

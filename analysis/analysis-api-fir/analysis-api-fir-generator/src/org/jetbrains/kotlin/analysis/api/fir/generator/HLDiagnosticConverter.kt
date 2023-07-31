@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualAnnotationsIncompatibilityType
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
+import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.types.Variance
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
@@ -372,6 +373,7 @@ internal object FirToKtConversionCreator {
         ClassKind::class,
         FunctionTypeKind::class,
         VersionRequirement.Version::class,
+        IncompatibleVersionErrorData::class,
     )
 
     private val KType.kClass: KClass<*>

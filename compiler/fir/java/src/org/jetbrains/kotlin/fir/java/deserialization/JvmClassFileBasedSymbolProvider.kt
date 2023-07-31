@@ -135,7 +135,7 @@ class JvmClassFileBasedSymbolProvider(
 
         val kotlinClass = result.kotlinJvmBinaryClass
         if (kotlinClass.classHeader.kind != KotlinClassHeader.Kind.CLASS || kotlinClass.classId != classId) return null
-        val data = kotlinClass.classHeader.data ?: return null
+        val data = kotlinClass.classHeader.data ?: kotlinClass.classHeader.incompatibleData ?: return null
         val strings = kotlinClass.classHeader.strings ?: return null
         val (nameResolver, classProto) = JvmProtoBufUtil.readClassDataFrom(data, strings)
 
@@ -144,7 +144,7 @@ class JvmClassFileBasedSymbolProvider(
             classProto,
             JvmBinaryAnnotationDeserializer(session, kotlinClass, kotlinClassFinder, result.byteContent),
             moduleDataProvider.getModuleData(kotlinClass.containingLibrary?.toPath()),
-            KotlinJvmBinarySourceElement(kotlinClass),
+            KotlinJvmBinarySourceElement(kotlinClass, kotlinClass.incompatibility),
             classPostProcessor = { loadAnnotationsFromClassFile(result, it) }
         )
     }

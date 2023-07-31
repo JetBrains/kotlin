@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.fir.analysis.diagnostics.jvm
 
+import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.TO_STRING
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.STRING
+import org.jetbrains.kotlin.diagnostics.rendering.Renderer
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.CONCURRENT_HASH_MAP_CONTAINS_OPERATOR
@@ -27,6 +29,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.ILLEGAL_JV
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INAPPLICABLE_JVM_FIELD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INAPPLICABLE_JVM_FIELD_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INAPPLICABLE_JVM_NAME
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INCOMPATIBLE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INNER_JVM_RECORD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JAVA_SAM_INTERFACE_CONSTRUCTOR_REFERENCE
@@ -79,6 +82,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.SYNCHRONIZ
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.SYNCHRONIZED_ON_SUSPEND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.UPPER_BOUND_CANNOT_BE_ARRAY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION
+import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 
 object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
@@ -262,6 +266,18 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             NO_REFLECTION_IN_CLASS_PATH,
             "Call uses reflection API which is not found in compilation classpath. " +
                     "Make sure you have kotlin-reflect.jar in the classpath."
+        )
+        map.put(
+            INCOMPATIBLE_CLASS,
+            "{0} was compiled with an incompatible version of Kotlin. {1}",
+            STRING,
+            Renderer { incompatibility: IncompatibleVersionErrorData<*> ->
+                "The actual metadata version is ${incompatibility.actualVersion}, " +
+                        "but the compiler version ${incompatibility.compilerVersion}" +
+                        (if (incompatibility.languageVersion == incompatibility.compilerVersion) "" else " [with language version " + incompatibility.languageVersion + "]") +
+                        " can read versions up to ${incompatibility.expectedVersion}.\n" +
+                        "The class is loaded from ${FileUtil.toSystemIndependentName(incompatibility.filePath)}"
+            }
         )
     }
 }

@@ -180,9 +180,25 @@ class AnalyzerWithCompilerReport(
             messageCollector: MessageCollector,
             renderInternalDiagnosticName: Boolean
         ): Boolean {
-            val hasErrors = reportDiagnostics(diagnostics, DefaultDiagnosticReporter(messageCollector), renderInternalDiagnosticName)
+            return reportDiagnostics(diagnostics, DefaultDiagnosticReporter(messageCollector), renderInternalDiagnosticName).also {
+                reportSpecialErrors(
+                    diagnostics.any { it.factory == Errors.INCOMPATIBLE_CLASS },
+                    diagnostics.any { it.factory == Errors.PRE_RELEASE_CLASS },
+                    diagnostics.any { it.factory == Errors.IR_WITH_UNSTABLE_ABI_COMPILED_CLASS },
+                    diagnostics.any { it.factory == Errors.FIR_COMPILED_CLASS },
+                    messageCollector,
+                )
+            }
+        }
 
-            if (diagnostics.any { it.factory == Errors.INCOMPATIBLE_CLASS }) {
+        fun reportSpecialErrors(
+            hasIncompatibleClasses: Boolean,
+            hasPrereleaseClasses: Boolean,
+            hasUnstableClasses: Boolean,
+            hasFirUnstableClasses: Boolean,
+            messageCollector: MessageCollector,
+        ) {
+            if (hasIncompatibleClasses) {
                 messageCollector.report(
                     ERROR,
                     "Incompatible classes were found in dependencies. " +
@@ -190,7 +206,7 @@ class AnalyzerWithCompilerReport(
                 )
             }
 
-            if (diagnostics.any { it.factory == Errors.PRE_RELEASE_CLASS }) {
+            if (hasPrereleaseClasses) {
                 messageCollector.report(
                     ERROR,
                     "Pre-release classes were found in dependencies. " +
@@ -199,7 +215,7 @@ class AnalyzerWithCompilerReport(
                 )
             }
 
-            if (diagnostics.any { it.factory == Errors.IR_WITH_UNSTABLE_ABI_COMPILED_CLASS }) {
+            if (hasUnstableClasses) {
                 messageCollector.report(
                     ERROR,
                     "Classes compiled by an unstable version of the Kotlin compiler were found in dependencies. " +
@@ -207,15 +223,13 @@ class AnalyzerWithCompilerReport(
                 )
             }
 
-            if (diagnostics.any { it.factory == Errors.FIR_COMPILED_CLASS }) {
+            if (hasFirUnstableClasses) {
                 messageCollector.report(
                     ERROR,
                     "Classes compiled by the new Kotlin compiler frontend were found in dependencies. " +
                             "Remove them from the classpath or use '-Xallow-unstable-dependencies' to suppress errors"
                 )
             }
-
-            return hasErrors
         }
 
         fun reportSyntaxErrors(file: PsiElement, reporter: DiagnosticMessageReporter): SyntaxErrorReport {

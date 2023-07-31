@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.fir.checkers.generator.diagnostics
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageFeature.*
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticList
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.PositioningStrategy
@@ -19,6 +21,7 @@ import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 
 @Suppress("ClassName", "unused")
 @OptIn(PrivateForInline::class)
@@ -174,5 +177,9 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         )
         val JAVA_SAM_INTERFACE_CONSTRUCTOR_REFERENCE by error<PsiElement>()
         val NO_REFLECTION_IN_CLASS_PATH by warning<PsiElement>()
+        val INCOMPATIBLE_CLASS by error<PsiElement> {
+            parameter<String>("presentableString")
+            parameter<IncompatibleVersionErrorData<*>>("incompatibility")
+        }
     }
 }

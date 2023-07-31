@@ -5298,6 +5298,14 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirJvmErrors.INCOMPATIBLE_CLASS) { firDiagnostic ->
+        IncompatibleClassImpl(
+            firDiagnostic.a,
+            firDiagnostic.b,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJsErrors.IMPLEMENTING_FUNCTION_INTERFACE) { firDiagnostic ->
         ImplementingFunctionInterfaceImpl(
             firDiagnostic as KtPsiDiagnostic,
