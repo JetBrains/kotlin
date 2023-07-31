@@ -6947,6 +6947,12 @@ public class FirJsBoxTestGenerated extends AbstractFirJsBoxTest {
         }
 
         @Test
+        @TestMetadata("inlineEmptyFunction.kt")
+        public void testInlineEmptyFunction() throws Exception {
+            runTest("js/js.translator/testData/box/jsAstOptimizations/inlineEmptyFunction.kt");
+        }
+
+        @Test
         @TestMetadata("tempVarDeclOnAssignment.kt")
         public void testTempVarDeclOnAssignment() throws Exception {
             runTest("js/js.translator/testData/box/jsAstOptimizations/tempVarDeclOnAssignment.kt");

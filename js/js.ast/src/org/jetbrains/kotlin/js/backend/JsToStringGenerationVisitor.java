@@ -828,7 +828,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     private static JsStatement materialize(JsStatement statement) {
-       return statement instanceof JsCompositeBlock && ((JsCompositeBlock) statement).getStatements().size() > 1
+       return statement instanceof JsCompositeBlock
               ? new JsBlock(statement)
               : statement;
     }
