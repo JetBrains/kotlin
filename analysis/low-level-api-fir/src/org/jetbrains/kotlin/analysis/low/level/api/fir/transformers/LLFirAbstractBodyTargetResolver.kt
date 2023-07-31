@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveT
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.LLFirReturnTypeCalculatorWithJump
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isScriptStatement
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
@@ -72,5 +73,19 @@ internal abstract class LLFirAbstractBodyTargetResolver(
 
     protected open fun rawResolve(target: FirElementWithResolveState) {
         target.transformSingle(transformer, ResolutionMode.ContextIndependent)
+    }
+
+    protected fun resolveScript(script: FirScript) {
+        transformer.declarationsTransformer?.withScript(script) {
+            script.parameters.forEach { it.transformSingle(transformer, ResolutionMode.ContextIndependent) }
+            script.statements.forEach {
+                if (it.isScriptStatement) {
+                    transformer.firResolveContextCollector?.addStatementContext(it, transformer.context)
+                    it.transformSingle(transformer, ResolutionMode.ContextIndependent)
+                }
+            }
+
+            script
+        }
     }
 }

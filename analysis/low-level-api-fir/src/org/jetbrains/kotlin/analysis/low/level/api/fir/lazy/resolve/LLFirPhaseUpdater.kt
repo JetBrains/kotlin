@@ -5,11 +5,14 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.forEachDependentDeclaration
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isScriptDependentDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isScriptStatement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
+import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 internal object LLFirPhaseUpdater {
@@ -61,9 +64,8 @@ internal object LLFirPhaseUpdater {
         }
 
         when (element) {
-            is FirFunction -> {
-                element.valueParameters.forEach { updatePhaseForNonLocals(it, newPhase, isTargetDeclaration = false) }
-            }
+            is FirScript -> element.forEachDependentDeclaration { updatePhaseForNonLocals(it, newPhase, isTargetDeclaration = false) }
+            is FirFunction -> element.valueParameters.forEach { updatePhaseForNonLocals(it, newPhase, isTargetDeclaration = false) }
             is FirProperty -> {
                 element.getter?.let { updatePhaseForNonLocals(it, newPhase, isTargetDeclaration = false) }
                 element.setter?.let { updatePhaseForNonLocals(it, newPhase, isTargetDeclaration = false) }
@@ -77,7 +79,10 @@ internal object LLFirPhaseUpdater {
 private object PhaseUpdatingTransformer : FirVisitor<Unit, FirResolvePhase>() {
     override fun visitElement(element: FirElement, data: FirResolvePhase) {
         if (element is FirElementWithResolveState) {
-            if (element.resolvePhase >= data && element !is FirDefaultPropertyAccessor) return
+            if (element.resolvePhase >= data &&
+                element !is FirDefaultPropertyAccessor &&
+                !(element is FirStatement && element.isScriptDependentDeclaration)
+            ) return
 
             @OptIn(ResolveStateAccess::class)
             element.resolveState = data.asResolveState()

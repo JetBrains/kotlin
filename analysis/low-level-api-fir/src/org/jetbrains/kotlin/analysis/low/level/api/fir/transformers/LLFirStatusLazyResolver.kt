@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.asResolveTarg
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.tryCollectDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkDeclarationStatusIsResolved
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.forEachDependentDeclaration
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
@@ -166,13 +167,10 @@ private class LLFirStatusTargetResolver(
 
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
         when (target) {
-            is FirRegularClass -> {
-                error("should be resolved in doResolveWithoutLock")
-            }
-            is FirScript -> {}
-            else -> {
-                target.transformSingle(transformer, data = null)
-            }
+            is FirRegularClass -> error("should be resolved in doResolveWithoutLock")
+            // It is fine to call status transformer under lock, because declarations can't have a containing class
+            is FirScript -> target.forEachDependentDeclaration { it.transformSingle(transformer, data = null) }
+            else -> target.transformSingle(transformer, data = null)
         }
     }
 

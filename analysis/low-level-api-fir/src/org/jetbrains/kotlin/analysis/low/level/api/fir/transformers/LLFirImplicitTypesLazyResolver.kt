@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveT
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkReturnTypeRefIsResolved
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isScriptDependentDeclaration
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.FirSession
@@ -69,9 +70,13 @@ internal class LLFirImplicitBodyTargetResolver(
             is FirFunction -> resolve(target, BodyStateKeepers.FUNCTION)
             is FirProperty -> resolve(target, BodyStateKeepers.PROPERTY)
             is FirVariable -> resolve(target, BodyStateKeepers.VARIABLE)
+            is FirScript -> {
+                if (target.statements.any { it.isScriptDependentDeclaration }) {
+                    resolve(target, BodyStateKeepers.SCRIPT)
+                }
+            }
             is FirRegularClass,
             is FirTypeAlias,
-            is FirScript,
             is FirAnonymousInitializer,
             is FirDanglingModifierList,
             is FirFileAnnotationsContainer,
@@ -82,12 +87,13 @@ internal class LLFirImplicitBodyTargetResolver(
         }
     }
 
-    override fun rawResolve(target: FirElementWithResolveState) {
-        if (target is FirCallableDeclaration && target.attributes.fakeOverrideSubstitution != null) {
+    override fun rawResolve(target: FirElementWithResolveState): Unit = when {
+        target is FirScript -> resolveScript(target)
+        target is FirCallableDeclaration && target.attributes.fakeOverrideSubstitution != null -> {
             transformer.returnTypeCalculator.fakeOverrideTypeCalculator.computeReturnType(target)
-            return
+            Unit
         }
 
-        super.rawResolve(target)
+        else -> super.rawResolve(target)
     }
 }

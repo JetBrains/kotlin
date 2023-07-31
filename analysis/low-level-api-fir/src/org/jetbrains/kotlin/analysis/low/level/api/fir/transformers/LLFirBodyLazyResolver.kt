@@ -155,20 +155,9 @@ private class LLFirBodyTargetResolver(
         }
     }
 
-    override fun rawResolve(target: FirElementWithResolveState) {
-        if (target !is FirScript) return super.rawResolve(target)
-
-        transformer.declarationsTransformer.withScript(target) {
-            target.parameters.forEach { it.transformSingle(transformer, ResolutionMode.ContextIndependent) }
-            target.statements.forEach {
-                if (it.isScriptStatement) {
-                    transformer.firResolveContextCollector?.addStatementContext(it, transformer.context)
-                    it.transformSingle(transformer, ResolutionMode.ContextIndependent)
-                }
-            }
-
-            target
-        }
+    override fun rawResolve(target: FirElementWithResolveState) = when (target) {
+        is FirScript -> resolveScript(target)
+        else -> super.rawResolve(target)
     }
 }
 

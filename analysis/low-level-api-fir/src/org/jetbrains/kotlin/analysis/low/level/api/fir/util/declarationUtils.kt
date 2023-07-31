@@ -220,4 +220,14 @@ internal inline fun FirDeclaration.forEachDeclaration(action: (FirDeclaration) -
     }
 }
 
-internal val FirStatement.isScriptStatement: Boolean get() = this !is FirDeclaration || origin is FirDeclarationOrigin.ScriptCustomization
+internal val FirStatement.isScriptStatement: Boolean get() = this !is FirDeclaration || isScriptDependentDeclaration
+
+internal val FirStatement.isScriptDependentDeclaration: Boolean
+    get() = this is FirDeclaration && origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty
+
+internal inline fun FirScript.forEachDependentDeclaration(action: (FirDeclaration) -> Unit) {
+    for (statement in statements) {
+        if (statement !is FirDeclaration || !statement.isScriptDependentDeclaration) continue
+        action(statement)
+    }
+}

@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.fir.resolve.transformers.plugin.FirCompilerRequiredA
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.FirUserTypeRef
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.forEachDependentDeclaration
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isScriptDependentDeclaration
 
 internal object LLFirCompilerAnnotationsLazyResolver : LLFirLazyResolver(FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS) {
     override fun resolve(
@@ -233,6 +235,8 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
                     target.setter?.let(::publishResult)
                     target.backingField?.let(::publishResult)
                 }
+
+                is FirScript -> target.forEachDependentDeclaration(::publishResult)
             }
         }
     }
@@ -254,6 +258,10 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
                 getter?.annotationsForTransformationTo(map)
                 setter?.annotationsForTransformationTo(map)
                 backingField?.annotationsForTransformationTo(map)
+            }
+
+            is FirScript -> {
+                forEachDependentDeclaration { it.annotationsForTransformationTo(map) }
             }
         }
 
@@ -305,6 +313,7 @@ private fun FirAnnotationContainer.hasAnnotationsToResolve(): Boolean {
                 this.setter?.hasAnnotationsToResolve() == true ||
                 this.backingField?.hasAnnotationsToResolve() == true
 
+        is FirScript -> statements.any { it.isScriptDependentDeclaration && it.hasAnnotationsToResolve() }
         else -> false
     }
 }

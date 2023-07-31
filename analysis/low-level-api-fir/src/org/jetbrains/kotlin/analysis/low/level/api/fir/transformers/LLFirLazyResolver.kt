@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveT
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirPhaseUpdater
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.forEachDependentDeclaration
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
@@ -58,6 +59,7 @@ internal abstract class LLFirLazyResolver(
         checkPropertyAccessorsAreResolved(target)
         checkPropertyBackingFieldIsResolved(target)
         checkTypeParametersAreResolved(target)
+        checkScriptDependentDeclaration(target)
     }
 
     private fun checkPropertyAccessorsAreResolved(declaration: FirDeclaration) {
@@ -91,5 +93,10 @@ internal abstract class LLFirLazyResolver(
                 }
             }
         }
+    }
+
+    private fun checkScriptDependentDeclaration(declaration: FirDeclaration) {
+        if (declaration !is FirScript) return
+        declaration.forEachDependentDeclaration(::checkIsResolved)
     }
 }

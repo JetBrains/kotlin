@@ -22,11 +22,13 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.diagnostics.ConeDestructuringDeclarationsOnTopLevel
+import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isScriptDependentDeclaration
 
 class FirDesignationWithFile(
     path: List<FirRegularClass>,
@@ -274,6 +276,9 @@ fun FirElementWithResolveState.tryCollectDesignationWithFile(): FirDesignationWi
         }
 
         is FirDeclaration -> {
+            val scriptDesignation = scriptDesignation()
+            if (scriptDesignation != null) return scriptDesignation
+
             val path = collectDesignationPath(this) ?: return null
             val firFile = path.lastOrNull()?.getContainingFile() ?: getContainingFile() ?: return null
             FirDesignationWithFile(path, this, firFile)
@@ -281,4 +286,11 @@ fun FirElementWithResolveState.tryCollectDesignationWithFile(): FirDesignationWi
 
         else -> unexpectedElementError<FirElementWithResolveState>(this)
     }
+}
+
+private fun FirDeclaration.scriptDesignation(): FirDesignationWithFile? {
+    if (this !is FirStatement || !isScriptDependentDeclaration) return null
+    val firFile = getContainingFile() ?: return null
+    val firScript = firFile.declarations.singleOrNull() as? FirScript ?: return null
+    return FirDesignationWithFile(path = emptyList(), firScript, firFile)
 }

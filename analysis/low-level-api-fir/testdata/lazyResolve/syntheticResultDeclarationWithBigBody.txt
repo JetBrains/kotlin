@@ -45,14 +45,14 @@ FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)]
+    SCRIPT: [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> foo([ResolvedTo(RAW_FIR)] action: ( () -> T )): T {
             ^foo action#()
         }
 
-        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = foo#(<L> = [ResolvedTo(RAW_FIR)] foo@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+        public final [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val $$result: <implicit> = foo#(<L> = [ResolvedTo(RAW_FIR)] foo@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
             println#(String(foo))
             foo#(<L> = [ResolvedTo(RAW_FIR)] foo@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
                 [ResolvedTo(RAW_FIR)] lval i: <implicit> = IntegerLiteral(1)
@@ -61,20 +61,20 @@ FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
             )
         }
         )
-            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): <implicit>
 
 
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)]
+    SCRIPT: [ResolvedTo(COMPANION_GENERATION)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> foo([ResolvedTo(RAW_FIR)] action: ( () -> T )): T {
             ^foo action#()
         }
 
-        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = foo#(<L> = [ResolvedTo(RAW_FIR)] foo@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+        public final [ResolvedTo(COMPANION_GENERATION)] val $$result: <implicit> = foo#(<L> = [ResolvedTo(RAW_FIR)] foo@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
             println#(String(foo))
             foo#(<L> = [ResolvedTo(RAW_FIR)] foo@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
                 [ResolvedTo(RAW_FIR)] lval i: <implicit> = IntegerLiteral(1)
@@ -83,20 +83,20 @@ FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
             )
         }
         )
-            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public [ResolvedTo(COMPANION_GENERATION)] get(): <implicit>
 
 
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)]
+    SCRIPT: [ResolvedTo(SUPER_TYPES)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> foo([ResolvedTo(RAW_FIR)] action: ( () -> T )): T {
             ^foo action#()
         }
 
-        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = foo#(<L> = [ResolvedTo(RAW_FIR)] foo@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+        public final [ResolvedTo(SUPER_TYPES)] val $$result: <implicit> = foo#(<L> = [ResolvedTo(RAW_FIR)] foo@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
             println#(String(foo))
             foo#(<L> = [ResolvedTo(RAW_FIR)] foo@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
                 [ResolvedTo(RAW_FIR)] lval i: <implicit> = IntegerLiteral(1)
@@ -105,20 +105,20 @@ FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
             )
         }
         )
-            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public [ResolvedTo(SUPER_TYPES)] get(): <implicit>
 
 
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)]
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> foo([ResolvedTo(RAW_FIR)] action: ( () -> T )): T {
             ^foo action#()
         }
 
-        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = foo#(<L> = [ResolvedTo(RAW_FIR)] foo@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+        public final [ResolvedTo(TYPES)] val $$result: <implicit> = foo#(<L> = [ResolvedTo(RAW_FIR)] foo@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
             println#(String(foo))
             foo#(<L> = [ResolvedTo(RAW_FIR)] foo@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
                 [ResolvedTo(RAW_FIR)] lval i: <implicit> = IntegerLiteral(1)
@@ -127,20 +127,20 @@ FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
             )
         }
         )
-            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public [ResolvedTo(TYPES)] get(): <implicit>
 
 
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)]
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(STATUS)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> foo([ResolvedTo(RAW_FIR)] action: ( () -> T )): T {
             ^foo action#()
         }
 
-        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = foo#(<L> = [ResolvedTo(RAW_FIR)] foo@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+        public final [ResolvedTo(STATUS)] val $$result: <implicit> = foo#(<L> = [ResolvedTo(RAW_FIR)] foo@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
             println#(String(foo))
             foo#(<L> = [ResolvedTo(RAW_FIR)] foo@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
                 [ResolvedTo(RAW_FIR)] lval i: <implicit> = IntegerLiteral(1)
@@ -149,20 +149,20 @@ FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
             )
         }
         )
-            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public [ResolvedTo(STATUS)] get(): <implicit>
 
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)]
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(EXPECT_ACTUAL_MATCHING)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> foo([ResolvedTo(RAW_FIR)] action: ( () -> T )): T {
             ^foo action#()
         }
 
-        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = foo#(<L> = [ResolvedTo(RAW_FIR)] foo@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val $$result: <implicit> = foo#(<L> = [ResolvedTo(RAW_FIR)] foo@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
             println#(String(foo))
             foo#(<L> = [ResolvedTo(RAW_FIR)] foo@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
                 [ResolvedTo(RAW_FIR)] lval i: <implicit> = IntegerLiteral(1)
@@ -171,20 +171,20 @@ FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
             )
         }
         )
-            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): <implicit>
 
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)]
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> foo([ResolvedTo(RAW_FIR)] action: ( () -> T )): T {
             ^foo action#()
         }
 
-        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = foo#(<L> = [ResolvedTo(RAW_FIR)] foo@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+        public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] val $$result: <implicit> = foo#(<L> = [ResolvedTo(RAW_FIR)] foo@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
             println#(String(foo))
             foo#(<L> = [ResolvedTo(RAW_FIR)] foo@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
                 [ResolvedTo(RAW_FIR)] lval i: <implicit> = IntegerLiteral(1)
@@ -193,20 +193,20 @@ FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
             )
         }
         )
-            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] get(): <implicit>
 
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)]
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(CONTRACTS)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> foo([ResolvedTo(RAW_FIR)] action: ( () -> T )): T {
             ^foo action#()
         }
 
-        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = foo#(<L> = [ResolvedTo(RAW_FIR)] foo@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+        public final [ResolvedTo(CONTRACTS)] val $$result: <implicit> = foo#(<L> = [ResolvedTo(RAW_FIR)] foo@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
             println#(String(foo))
             foo#(<L> = [ResolvedTo(RAW_FIR)] foo@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
                 [ResolvedTo(RAW_FIR)] lval i: <implicit> = IntegerLiteral(1)
@@ -215,73 +215,73 @@ FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
             )
         }
         )
-            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public [ResolvedTo(CONTRACTS)] get(): <implicit>
 
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)]
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> foo([ResolvedTo(RAW_FIR)] action: ( () -> T )): T {
+        public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> foo([ResolvedTo(CONTRACTS)] action: R|() -> T|): R|T| {
             ^foo action#()
         }
 
-        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = foo#(<L> = [ResolvedTo(RAW_FIR)] foo@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-            println#(String(foo))
-            foo#(<L> = [ResolvedTo(RAW_FIR)] foo@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-                [ResolvedTo(RAW_FIR)] lval i: <implicit> = IntegerLiteral(1)
-                println#(i#)
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val $$result: R|kotlin/Unit| = R|/foo|<R|kotlin/Unit|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            R|kotlin/io/println|(String(foo))
+            R|/foo|<R|kotlin/Unit|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                [ResolvedTo(RAW_FIR)] lval i: R|kotlin/Int| = Int(1)
+                R|kotlin/io/println|(R|<local>/i|)
             }
             )
         }
         )
-            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Unit|
 
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)]
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> foo([ResolvedTo(RAW_FIR)] action: ( () -> T )): T {
+        public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> foo([ResolvedTo(CONTRACTS)] action: R|() -> T|): R|T| {
             ^foo action#()
         }
 
-        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = foo#(<L> = [ResolvedTo(RAW_FIR)] foo@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-            println#(String(foo))
-            foo#(<L> = [ResolvedTo(RAW_FIR)] foo@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-                [ResolvedTo(RAW_FIR)] lval i: <implicit> = IntegerLiteral(1)
-                println#(i#)
+        public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] val $$result: R|kotlin/Unit| = R|/foo|<R|kotlin/Unit|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            R|kotlin/io/println|(String(foo))
+            R|/foo|<R|kotlin/Unit|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                [ResolvedTo(RAW_FIR)] lval i: R|kotlin/Int| = Int(1)
+                R|kotlin/io/println|(R|<local>/i|)
             }
             )
         }
         )
-            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] get(): R|kotlin/Unit|
 
 
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] syntheticResultDeclarationWithBigBody.kts
-    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)]
-        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)]
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> foo([ResolvedTo(RAW_FIR)] action: ( () -> T )): T {
+        public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> foo([ResolvedTo(CONTRACTS)] action: R|() -> T|): R|T| {
             ^foo action#()
         }
 
-        public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = foo#(<L> = [ResolvedTo(RAW_FIR)] foo@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-            println#(String(foo))
-            foo#(<L> = [ResolvedTo(RAW_FIR)] foo@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
-                [ResolvedTo(RAW_FIR)] lval i: <implicit> = IntegerLiteral(1)
-                println#(i#)
+        public final [ResolvedTo(BODY_RESOLVE)] val $$result: R|kotlin/Unit| = R|/foo|<R|kotlin/Unit|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            R|kotlin/io/println|(String(foo))
+            R|/foo|<R|kotlin/Unit|>(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function0<T>] foo@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+                [ResolvedTo(BODY_RESOLVE)] lval i: R|kotlin/Int| = Int(1)
+                R|kotlin/io/println|(R|<local>/i|)
             }
             )
         }
         )
-            public [ResolvedTo(RAW_FIR)] get(): <implicit>
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Unit|
 
 
 FILE RAW TO BODY:
