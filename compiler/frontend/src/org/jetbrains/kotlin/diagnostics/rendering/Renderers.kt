@@ -712,13 +712,6 @@ object Renderers {
     val COMPACT_WITH_MODIFIERS = DescriptorRenderer.COMPACT_WITH_MODIFIERS.asRenderer()
 
     @JvmField
-    val DESCRIPTOR_WITH_ANNOTATIONS = DescriptorRenderer.withOptions {
-        annotationArgumentsRenderingPolicy = AnnotationArgumentsRenderingPolicy.UNLESS_EMPTY
-        modifiers = modifiers.plus(DescriptorRendererModifier.ANNOTATIONS)
-        withDefinedIn = true
-    }.asRenderer()
-
-    @JvmField
     val DEPRECATION_RENDERER = DescriptorRenderer.ONLY_NAMES_WITH_SHORT_TYPES.withOptions {
         withoutTypeParameters = false
         receiverAfterName = false

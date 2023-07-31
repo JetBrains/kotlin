@@ -1886,11 +1886,11 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT,
-            "All annotations from `expect` must be presented with same arguments on `actual`, otherwise they have no effect.\n" +
-                    "Expected: {0}\n" +
-                    "Actual: {1}",
-            FirDiagnosticRenderers.SYMBOL_WITH_ANNOTATIONS, FirDiagnosticRenderers.SYMBOL_WITH_ANNOTATIONS,
-            TO_STRING
+            "{2}.\n" +
+                    "All annotations from expect `{0}` must be present with the same arguments on actual `{1}`, otherwise they might behave incorrectly.",
+            FirExpectActualAnnotationIncompatibilityDiagnosticRenderers.SYMBOL_RENDERER,
+            FirExpectActualAnnotationIncompatibilityDiagnosticRenderers.SYMBOL_RENDERER,
+            FirExpectActualAnnotationIncompatibilityDiagnosticRenderers.INCOMPATIBILITY,
         )
 
         // Destructuring declaration

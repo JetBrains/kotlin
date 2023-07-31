@@ -1,19 +1,20 @@
 // -- Module: <m1-common> --
 
 // -- Module: <m1-jvm> --
-/jvm.kt:23:14: warning: all annotations from `expect` must be presented with same arguments on `actual`, otherwise they have no effect.
-    Expected: @Ann public final expect class OnClass defined in root package in file common.kt
-    Actual: public final actual class OnClass defined in root package in file jvm.kt
+/jvm.kt:27:14: warning: annotation `@Ann` is missing on actual declaration.
+All annotations from expect `class OnClass defined in root package in file common.kt` must be present with the same arguments on actual `class OnClass defined in root package in file jvm.kt`, otherwise they might behave incorrectly.
 actual class OnClass
              ^
-/jvm.kt:26:16: warning: all annotations from `expect` must be presented with same arguments on `actual`, otherwise they have no effect.
-    Expected: @Ann public final expect fun onMember(): Unit defined in OnMember
-    Actual: public final actual fun onMember(): Unit defined in OnMember
+/jvm.kt:30:16: warning: annotation `@Ann` is missing on actual declaration.
+All annotations from expect `fun onMember(): Unit defined in OnMember` must be present with the same arguments on actual `fun onMember(): Unit defined in OnMember`, otherwise they might behave incorrectly.
     actual fun onMember() {}
                ^
-/jvm.kt:33:18: warning: all annotations from `expect` must be presented with same arguments on `actual`, otherwise they have no effect.
-    Expected: @Ann public final expect class ViaTypealias defined in root package in file common.kt
-    Actual: public final class ViaTypealiasImpl defined in root package in file jvm.kt
+/jvm.kt:37:18: warning: annotation `@Ann` is missing on actual declaration.
+All annotations from expect `class ViaTypealias defined in root package in file common.kt` must be present with the same arguments on actual `class ViaTypealiasImpl defined in root package in file jvm.kt`, otherwise they might behave incorrectly.
 actual typealias ViaTypealias = ViaTypealiasImpl
                  ^
+/jvm.kt:40:12: warning: annotation `@WithArg(s = "str")` has different arguments on actual declaration: `@WithArg(s = "other str")`.
+All annotations from expect `fun withDifferentArg(): Unit defined in root package in file common.kt` must be present with the same arguments on actual `fun withDifferentArg(): Unit defined in root package in file jvm.kt`, otherwise they might behave incorrectly.
+actual fun withDifferentArg() {}
+           ^
 

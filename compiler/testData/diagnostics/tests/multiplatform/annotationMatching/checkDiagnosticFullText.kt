@@ -17,6 +17,10 @@ expect class ViaTypealias {
     fun foo()
 }
 
+annotation class WithArg(val s: String)
+
+@WithArg("str")
+expect fun withDifferentArg()
 
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
@@ -31,3 +35,6 @@ class ViaTypealiasImpl {
 }
 
 actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>ViaTypealias<!> = ViaTypealiasImpl
+
+@WithArg("other str")
+actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>withDifferentArg<!>() {}

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.backend.common.BackendDiagnosticRenderers.EXPECT_ACTUAL_ANNOTATION_INCOMPATIBILITY
 import org.jetbrains.kotlin.backend.common.BackendDiagnosticRenderers.INCOMPATIBILITY
 import org.jetbrains.kotlin.backend.common.BackendDiagnosticRenderers.SYMBOL_OWNER_DECLARATION_FQ_NAME
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.types.classFqName
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualAnnotationsIncompatibilityType
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
@@ -64,10 +66,11 @@ object KtDefaultCommonBackendErrorMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             CommonBackendErrors.ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT,
-            "All annotations from expect declaration `{0}` must be present with the same arguments on actual declaration `{1}` otherwise they have no effect",
+            "{2}.\n" +
+                    "All annotations from expect `{0}` must be present with the same arguments on actual `{1}`, otherwise they might behave incorrectly.",
             SYMBOL_OWNER_DECLARATION_FQ_NAME,
             SYMBOL_OWNER_DECLARATION_FQ_NAME,
-            STRING,
+            EXPECT_ACTUAL_ANNOTATION_INCOMPATIBILITY,
         )
         map.put(
             CommonBackendErrors.EVALUATION_ERROR,
@@ -84,4 +87,13 @@ object BackendDiagnosticRenderers {
     val SYMBOL_OWNER_DECLARATION_FQ_NAME = Renderer<IrSymbol> {
         (it.owner as? IrDeclarationWithName)?.fqNameWhenAvailable?.asString() ?: "unknown name"
     }
+    val EXPECT_ACTUAL_ANNOTATION_INCOMPATIBILITY =
+        Renderer { incompatibilityType: ExpectActualAnnotationsIncompatibilityType<IrConstructorCall> ->
+            val expectAnnotationFqName = incompatibilityType.expectAnnotation.type.classFqName ?: "<unknown>"
+            val reason = when (incompatibilityType) {
+                is ExpectActualAnnotationsIncompatibilityType.MissingOnActual -> "is missing on actual declaration"
+                is ExpectActualAnnotationsIncompatibilityType.DifferentOnActual -> "has different arguments on actual declaration"
+            }
+            "Annotation `$expectAnnotationFqName` $reason"
+        }
 }
