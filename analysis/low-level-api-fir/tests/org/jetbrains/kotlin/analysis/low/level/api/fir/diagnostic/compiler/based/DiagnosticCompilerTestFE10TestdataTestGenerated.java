@@ -688,6 +688,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         }
 
         @Test
+        @TestMetadata("missedTypeArgumentsInAnnotationCall.kt")
+        public void testMissedTypeArgumentsInAnnotationCall() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/missedTypeArgumentsInAnnotationCall.kt");
+        }
+
+        @Test
         @TestMetadata("missingIteratorMissing.kt")
         public void testMissingIteratorMissing() throws Exception {
             runTest("compiler/testData/diagnostics/tests/missingIteratorMissing.kt");

@@ -586,7 +586,10 @@ class FirCallResolver(
                 callInfo,
                 if (annotationClassSymbol != null) ConeIllegalAnnotationError(reference.name)
                 //calleeReference and annotationTypeRef are both error nodes so we need to avoid doubling of the diagnostic report
-                else ConeStubDiagnostic(ConeUnresolvedNameError(reference.name)),
+                else ConeStubDiagnostic(
+                    //prefer diagnostic with symbol, e.g. to use the symbol during navigation in IDE
+                    (annotation.typeRef.coneType as? ConeErrorType)?.diagnostic as? ConeDiagnosticWithSymbol<*>
+                        ?: ConeUnresolvedNameError(reference.name)),
                 reference.source
             )
         }

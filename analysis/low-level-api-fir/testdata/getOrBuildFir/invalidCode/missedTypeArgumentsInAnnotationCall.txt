@@ -1,0 +1,23 @@
+KT element: KtNameReferenceExpression
+FIR element: FirErrorNamedReferenceImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+<Wrong number of type arguments>#
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] missedTypeArgumentsInAnnotationCall.kt
+    package usage
+
+    public? final? [ResolvedTo(RAW_FIR)] annotation class B<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor<[ResolvedTo(RAW_FIR)] T>(): R|usage/B<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @<ERROR TYPE REF: Wrong number of type arguments>[Types]() public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|usage/A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }

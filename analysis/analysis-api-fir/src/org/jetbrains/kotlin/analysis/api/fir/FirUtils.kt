@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
@@ -68,6 +69,7 @@ internal fun ConeDiagnostic.getCandidateSymbols(): Collection<FirBasedSymbol<*>>
         }
         is ConeDiagnosticWithCandidates -> candidateSymbols
         is ConeDiagnosticWithSymbol<*> -> listOf(symbol)
+        is ConeStubDiagnostic -> original.getCandidateSymbols()
         else -> emptyList()
     }
 

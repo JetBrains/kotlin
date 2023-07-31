@@ -908,6 +908,12 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
         }
 
         @Test
+        @TestMetadata("missedTypeArgumentsInAnnotationCall.kt")
+        public void testMissedTypeArgumentsInAnnotationCall() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/invalidCode/missedTypeArgumentsInAnnotationCall.kt");
+        }
+
+        @Test
         @TestMetadata("secondaryConstructor.kt")
         public void testSecondaryConstructor() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/invalidCode/secondaryConstructor.kt");
