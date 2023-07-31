@@ -1,3 +1,12 @@
+/**
+ * public final class AnotherRootClass : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class AnotherRootClass {
 
@@ -9,6 +18,15 @@ public final class AnotherRootClass {
 ////////////////////
 
 
+/**
+ * public final class RootClass : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class RootClass {
 
@@ -39,6 +57,21 @@ package test;
 
 import java.lang.Number;
 
+/**
+ * public abstract interface test/PackedClass : kotlin/Any {
+ *
+ *   // signature: oneMoreMethod()LAnotherRootClass;
+ *   public abstract fun oneMoreMethod(): AnotherRootClass
+ *
+ *   // signature: otherMethod()Ljava/lang/Number;
+ *   public abstract fun otherMethod(): java/lang/Number
+ *
+ *   // signature: someMethod()LRootClass;
+ *   public abstract fun someMethod(): RootClass
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public abstract interface PackedClass {
 
@@ -59,6 +92,15 @@ package test;
 import java.lang.Number;
 
 @ClassRefAnnotation(value = {RootClass.class})
+/**
+ * public final class test/PackedWithAnnotation : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class PackedWithAnnotation {
 

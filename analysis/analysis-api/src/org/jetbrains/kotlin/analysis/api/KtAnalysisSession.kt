@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.psi.KtFile
  *
  * To create a [KtAnalysisSession], please use [analyze] or one of its siblings.
  */
-@OptIn(KtAnalysisApiInternals::class)
+@OptIn(KtAnalysisApiInternals::class, KtAnalysisNonPublicApi::class)
 @Suppress("AnalysisApiMissingLifetimeCheck")
 public abstract class KtAnalysisSession(final override val token: KtLifetimeToken) : KtLifetimeOwner,
     KtSmartCastProviderMixIn,
@@ -67,7 +67,8 @@ public abstract class KtAnalysisSession(final override val token: KtLifetimeToke
     KtScopeSubstitutionMixIn,
     KtSymbolProviderByJavaPsiMixIn,
     KtResolveExtensionInfoProviderMixIn,
-    KtCompilerFacilityMixIn {
+    KtCompilerFacilityMixIn,
+    KtMetadataCalculatorMixIn {
 
     public abstract val useSiteModule: KtModule
 
@@ -186,6 +187,8 @@ public abstract class KtAnalysisSession(final override val token: KtLifetimeToke
     @KtAnalysisApiInternals
     protected abstract val symbolProviderByJavaPsiImpl: KtSymbolProviderByJavaPsi
 
+    internal val metadataCalculator: KtMetadataCalculator get() = metadataCalculatorImpl
+    protected abstract val metadataCalculatorImpl: KtMetadataCalculator
 
     @PublishedApi
     internal val typesCreator: KtTypeCreator

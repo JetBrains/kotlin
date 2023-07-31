@@ -1,3 +1,16 @@
+/**
+ * public final class Test : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // companion object: A
+ *
+ *   // nested class: A
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class Test {
     @org.jetbrains.annotations.NotNull()
@@ -14,6 +27,21 @@ public final class Test {
         return null;
     }
 
+    /**
+     * public final companion object Test.A : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   private constructor()
+     *
+     *   // field: test:Ljava/lang/String;
+     *   // getter: getTest()Ljava/lang/String;
+     *   // synthetic method for annotations: getTest$annotations()V
+     *   public final val test: kotlin/String (* = ... *)
+     *     public final get
+     *
+     *   // module name: main
+     * }
+     */
     @kotlin.Metadata()
     public static final class A {
 

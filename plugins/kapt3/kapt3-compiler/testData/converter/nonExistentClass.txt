@@ -1,3 +1,42 @@
+/**
+ * public final object NonExistentType : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   private constructor()
+ *
+ *   // signature: a(Lerror/NonExistentClass;Ljava/lang/String;)Lerror/NonExistentClass;
+ *   public final fun a(a: error/NonExistentClass, s: kotlin/String): error/NonExistentClass
+ *
+ *   // signature: b(Ljava/lang/String;)Lerror/NonExistentClass;
+ *   public final fun b(s: kotlin/String): error/NonExistentClass
+ *
+ *   // field: a:Lerror/NonExistentClass;
+ *   // getter: getA()Lerror/NonExistentClass;
+ *   public final val a: error/NonExistentClass
+ *     public final get
+ *
+ *   // field: b:Ljava/util/List;
+ *   // getter: getB()Ljava/util/List;
+ *   public final val b: kotlin/collections/List<error/NonExistentClass>?
+ *     public final get
+ *
+ *   // field: c:Lkotlin/jvm/functions/Function1;
+ *   // getter: getC()Lkotlin/jvm/functions/Function1;
+ *   public final val c: kotlin/Function1<error/NonExistentClass, kotlin/Unit>
+ *     public final get
+ *
+ *   // field: d:Lerror/NonExistentClass;
+ *   // getter: getD()Lerror/NonExistentClass;
+ *   public final val d: error/NonExistentClass
+ *     public final get
+ *
+ *   // getter: getFoo()Lerror/NonExistentClass;
+ *   public final val foo: error/NonExistentClass
+ *     public final (* non-default *) get
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 @kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
 public final class NonExistentType {

@@ -1,3 +1,19 @@
+/**
+ * public final class Test : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // field: a:LTest$FilterValueDelegate;
+ *   private final var a: Test.FilterValueDelegate<kotlin/Float>
+ *     private final get
+ *     private final set
+ *
+ *   // nested class: FilterValueDelegate
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class Test {
     private Test.FilterValueDelegate<java.lang.Float> a;
@@ -6,6 +22,15 @@ public final class Test {
         super();
     }
 
+    /**
+     * private final inner class Test.FilterValueDelegate<T#0 (* T *)> : kotlin/Any {
+     *
+     *   // signature: <init>(LTest;)V
+     *   public constructor()
+     *
+     *   // module name: main
+     * }
+     */
     @kotlin.Metadata()
     final class FilterValueDelegate<T extends java.lang.Object> {
 
@@ -18,6 +43,17 @@ public final class Test {
 ////////////////////
 
 
+/**
+ * public final class Test2 : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // nested class: FilterValueDelegate
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class Test2 {
 
@@ -25,6 +61,22 @@ public final class Test2 {
         super();
     }
 
+    /**
+     * public final inner class Test2.FilterValueDelegate<T#0 (* T *)> : kotlin/Any {
+     *
+     *   // signature: <init>(LTest2;)V
+     *   public constructor()
+     *
+     *   // field: a:LTest2$FilterValueDelegate$Filter2;
+     *   private final var a: Test2.FilterValueDelegate<T#0>.Filter2<kotlin/String>
+     *     private final get
+     *     private final set
+     *
+     *   // nested class: Filter2
+     *
+     *   // module name: main
+     * }
+     */
     @kotlin.Metadata()
     public final class FilterValueDelegate<T extends java.lang.Object> {
         private Test2.FilterValueDelegate<T>.Filter2<java.lang.String> a;
@@ -33,6 +85,15 @@ public final class Test2 {
             super();
         }
 
+        /**
+         * public final inner class Test2.FilterValueDelegate.Filter2<T#1 (* X *)> : kotlin/Any {
+         *
+         *   // signature: <init>(LTest2$FilterValueDelegate;)V
+         *   public constructor()
+         *
+         *   // module name: main
+         * }
+         */
         @kotlin.Metadata()
         public final class Filter2<X extends java.lang.Object> {
 
@@ -46,6 +107,22 @@ public final class Test2 {
 ////////////////////
 
 
+/**
+ * public final class Test3 : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // field: a:LTest3$FilterValueDelegate;
+ *   private final var a: Test3.FilterValueDelegate<kotlin/Float>
+ *     private final get
+ *     private final set
+ *
+ *   // nested class: FilterValueDelegate
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class Test3 {
     private Test3.FilterValueDelegate<java.lang.Float> a;
@@ -54,6 +131,15 @@ public final class Test3 {
         super();
     }
 
+    /**
+     * private final class Test3.FilterValueDelegate<T#0 (* T *)> : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   public constructor()
+     *
+     *   // module name: main
+     * }
+     */
     @kotlin.Metadata()
     static final class FilterValueDelegate<T extends java.lang.Object> {
 

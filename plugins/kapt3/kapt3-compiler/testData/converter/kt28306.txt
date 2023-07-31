@@ -1,10 +1,22 @@
 package foo;
 
+/**
+ * public abstract interface foo/InterfaceWithDefaults<T#0 (* T *)> : kotlin/Any {
+ *
+ *   // signature: foo()V
+ *   public open fun foo(): kotlin/Unit
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public abstract interface InterfaceWithDefaults<T extends java.lang.Object> {
 
     public abstract void foo();
 
+    /**
+     * synthetic class
+     */
     @kotlin.Metadata()
     public static final class DefaultImpls {
 
@@ -22,9 +34,18 @@ public abstract interface InterfaceWithDefaults<T extends java.lang.Object> {
 
 package foo;
 
+/**
+ * public abstract interface foo/SubInterface<T#0 (* T *)> : foo/InterfaceWithDefaults<T#0> {
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public abstract interface SubInterface<T extends java.lang.Object> extends foo.InterfaceWithDefaults<T> {
 
+    /**
+     * synthetic class
+     */
     @kotlin.Metadata()
     public static final class DefaultImpls {
 

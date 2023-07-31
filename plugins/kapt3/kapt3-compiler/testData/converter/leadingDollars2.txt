@@ -14,6 +14,15 @@ package te.st.a;
 import te.st.a.$Test.Inner;
 import te.st.a.Test$.Inner$;
 
+/**
+ * package {
+ *
+ *   // signature: a(Lerror/NonExistentClass;)V
+ *   public final fun a(a: error/NonExistentClass): kotlin/Unit
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 @kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
 public final class TestKt {

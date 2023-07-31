@@ -1,4 +1,13 @@
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * public final annotation class Anno : kotlin/Annotation {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public abstract @interface Anno {
 }
@@ -9,6 +18,15 @@ public abstract @interface Anno {
 @kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.PROPERTY, kotlin.annotation.AnnotationTarget.CLASS})
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 @java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE})
+/**
+ * public final annotation class Anno2 : kotlin/Annotation {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public abstract @interface Anno2 {
 }
@@ -16,6 +34,21 @@ public abstract @interface Anno2 {
 ////////////////////
 
 
+/**
+ * public final class Test : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // field: prop:Ljava/lang/String;
+ *   // getter: getProp()Ljava/lang/String;
+ *   // synthetic method for annotations: getProp$annotations()V
+ *   public final val prop: kotlin/String (* = ... *)
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class Test {
     @org.jetbrains.annotations.NotNull()

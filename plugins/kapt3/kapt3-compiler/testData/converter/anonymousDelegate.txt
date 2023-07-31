@@ -1,5 +1,18 @@
 import kotlin.reflect.KProperty;
 
+/**
+ * package {
+ *
+ *   // field: delegate$delegate:LAnonymousDelegateKt$delegate$2;
+ *   // getter: getDelegate()Ljava/lang/Object;
+ *   // setter: setDelegate(Ljava/lang/Object;)V
+ *   public final (* delegated *) var delegate: kotlin/Any
+ *     public final (* non-default *) get
+ *     public final (* non-default *) set(<set-?>: kotlin/Any)
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class AnonymousDelegateKt {
 
@@ -24,6 +37,18 @@ public final class AnonymousDelegateKt {
 
 import kotlin.reflect.KProperty;
 
+/**
+ * public final class ConcreteDelegate : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: getValue(Ljava/lang/Object;Lkotlin/reflect/KProperty;)I
+ *   public final operator fun getValue(t: kotlin/Any?, p: kotlin/reflect/KProperty<*>): kotlin/Int
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class ConcreteDelegate {
 
@@ -43,6 +68,39 @@ public final class ConcreteDelegate {
 
 import kotlin.reflect.KProperty;
 
+/**
+ * public final class Test : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // field: broken$delegate:LTest$broken$2;
+ *   // getter: getBroken()Ljava/lang/Object;
+ *   // setter: setBroken(Ljava/lang/Object;)V
+ *   public final (* delegated *) var broken: kotlin/Any
+ *     public final (* non-default *) get
+ *     public final (* non-default *) set(<set-?>: kotlin/Any)
+ *
+ *   // field: concreteDelegate$delegate:LConcreteDelegate;
+ *   // getter: getConcreteDelegate()I
+ *   public final (* delegated *) val concreteDelegate: kotlin/Int
+ *     public final (* non-default *) get
+ *
+ *   // field: lazyProp$delegate:Lkotlin/Lazy;
+ *   // getter: getLazyProp()Ljava/lang/Runnable;
+ *   private final (* delegated *) val lazyProp: java/lang/Runnable
+ *     private final (* non-default *) get
+ *
+ *   // field: overridden$delegate:LTest$overridden$2;
+ *   // getter: getOverridden()Ljava/lang/Object;
+ *   // setter: setOverridden(Ljava/lang/Object;)V
+ *   public final (* delegated *) var overridden: kotlin/Any
+ *     public final (* non-default *) get
+ *     public final (* non-default *) set(<set-?>: kotlin/Any)
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class Test {
     @org.jetbrains.annotations.NotNull()

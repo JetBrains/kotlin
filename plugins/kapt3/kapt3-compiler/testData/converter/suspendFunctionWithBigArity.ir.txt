@@ -1,3 +1,9 @@
+/**
+ * public abstract interface Flow<T#0 (* T *)> : kotlin/Any {
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public abstract interface Flow<T extends java.lang.Object> {
 }
@@ -5,6 +11,15 @@ public abstract interface Flow<T extends java.lang.Object> {
 ////////////////////
 
 
+/**
+ * package {
+ *
+ *   // signature: combine(LFlow;LFlow;LFlow;LFlow;LFlow;LFlow;LFlow;LFlow;LFlow;LFlow;LFlow;LFlow;LFlow;LFlow;LFlow;LFlow;LFlow;LFlow;LFlow;LFlow;LFlow;LFlow;LFlow;Lkotlin/jvm/functions/FunctionN;)LFlow;
+ *   public final fun <T#0 (* T1 *), T#1 (* T2 *), T#2 (* T3 *), T#3 (* T4 *), T#4 (* T5 *), T#5 (* T6 *), T#6 (* T7 *), T#7 (* T8 *), T#8 (* T9 *), T#9 (* T10 *), T#10 (* T11 *), T#11 (* T12 *), T#12 (* T13 *), T#13 (* T14 *), T#14 (* T15 *), T#15 (* T16 *), T#16 (* T17 *), T#17 (* T18 *), T#18 (* T19 *), T#19 (* T20 *), T#20 (* T21 *), T#21 (* T22 *), T#22 (* T23 *), T#23 (* R *)> combine(flow: Flow<T#0>, flow2: Flow<T#1>, flow3: Flow<T#2>, flow4: Flow<T#3>, flow5: Flow<T#4>, flow6: Flow<T#5>, flow7: Flow<T#6>, flow8: Flow<T#7>, flow9: Flow<T#8>, flow10: Flow<T#9>, flow11: Flow<T#10>, flow12: Flow<T#11>, flow13: Flow<T#12>, flow14: Flow<T#13>, flow15: Flow<T#14>, flow16: Flow<T#15>, flow17: Flow<T#16>, flow18: Flow<T#17>, flow19: Flow<T#18>, flow20: Flow<T#19>, flow21: Flow<T#20>, flow22: Flow<T#21>, flow23: Flow<T#22>, transform: suspend kotlin/Function24<T#0, T#1, T#2, T#3, T#4, T#5, T#6, T#7, T#8, T#9, T#10, T#11, T#12, T#13, T#14, T#15, T#16, T#17, T#18, T#19, T#20, T#21, T#22, kotlin/coroutines/Continuation<T#23>, kotlin/Any?>): Flow<T#23>
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class SuspendFunctionWithBigArityKt {
 

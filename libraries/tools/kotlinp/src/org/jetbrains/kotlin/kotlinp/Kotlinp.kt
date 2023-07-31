@@ -11,7 +11,7 @@ import kotlinx.metadata.jvm.UnstableMetadataApi
 import java.io.File
 
 class Kotlinp(private val settings: KotlinpSettings) {
-    internal fun renderClassFile(classFile: KotlinClassMetadata): String =
+    fun renderClassFile(classFile: KotlinClassMetadata): String =
         when (classFile) {
             is KotlinClassMetadata.Class -> ClassPrinter(settings).print(classFile)
             is KotlinClassMetadata.FileFacade -> FileFacadePrinter(settings).print(classFile)

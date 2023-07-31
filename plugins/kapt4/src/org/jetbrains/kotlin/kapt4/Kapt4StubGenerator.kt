@@ -7,6 +7,8 @@
 
 package org.jetbrains.kotlin.kapt4
 
+import com.google.common.collect.HashMultimap
+import com.google.common.collect.Multimap
 import com.intellij.psi.*
 import com.sun.tools.javac.code.Flags
 import com.sun.tools.javac.code.TypeTag
@@ -19,9 +21,12 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
+import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
 import org.jetbrains.kotlin.base.kapt3.KaptFlag
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.kapt3.base.javac.kaptError
 import org.jetbrains.kotlin.kapt3.base.javac.reportKaptError
@@ -29,16 +34,17 @@ import org.jetbrains.kotlin.kapt3.base.stubs.KaptStubLineInformation
 import org.jetbrains.kotlin.kapt3.base.util.TopLevelJava9Aware
 import org.jetbrains.kotlin.kapt3.stubs.MemberData
 import org.jetbrains.kotlin.kapt3.stubs.MembersPositionComparator
+import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForNamedClassLike
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames.*
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.isOneSegmentFQN
-import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtNameReferenceExpression
-import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.util.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
+import org.jetbrains.kotlin.utils.toMetadataVersion
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import java.io.File
@@ -268,16 +274,15 @@ internal class Kapt4StubGenerator {
     }
 
     private fun convertMetadataAnnotation(metadata: Metadata): JCAnnotation {
-        val argumentsWithNames = mapOf(
-            "k" to metadata.kind,
-            "mv" to metadata.metadataVersion.toList(),
-            "bv" to metadata.bytecodeVersion.toList(),
-            "d1" to metadata.data1.toList(),
-            "d2" to metadata.data2.toList(),
-            "xs" to metadata.extraString,
-            "pn" to metadata.packageName,
-            "xi" to metadata.extraInt,
-        )
+        val argumentsWithNames = mutableMapOf<String, Any>()
+        if (metadata.kind != 1) argumentsWithNames[KIND_FIELD_NAME] = metadata.kind
+        argumentsWithNames[METADATA_VERSION_FIELD_NAME] = metadata.metadataVersion.toList()
+        if (metadata.data1.isNotEmpty()) argumentsWithNames[METADATA_DATA_FIELD_NAME] = metadata.data1.toList()
+        if (metadata.data2.isNotEmpty()) argumentsWithNames[METADATA_STRINGS_FIELD_NAME] = metadata.data2.toList()
+        if (metadata.extraString.isNotEmpty()) argumentsWithNames[METADATA_EXTRA_STRING_FIELD_NAME] = metadata.extraString
+        if (metadata.packageName.isNotEmpty()) argumentsWithNames[METADATA_PACKAGE_NAME_FIELD_NAME] = metadata.packageName
+        if (metadata.extraInt != 0) argumentsWithNames[METADATA_EXTRA_INT_FIELD_NAME] = metadata.extraInt
+
         val arguments = argumentsWithNames.map { (name, value) ->
             val jValue = convertLiteralExpression(value)
             treeMaker.Assign(treeMaker.SimpleName(name), jValue)
@@ -904,10 +909,37 @@ internal class Kapt4StubGenerator {
         }
     }
 
-    @Suppress("UNUSED_PARAMETER")
     private fun calculateMetadata(lightClass: PsiClass): Metadata? {
         if (stripMetadata) return null
 
-        return Metadata() // TODO: calculate me
+        return with(analysisSession) {
+            when (lightClass) {
+                is KtLightClassForFacade ->
+                    if (lightClass.multiFileClass)
+                        lightClass.qualifiedName?.let { createMultifileClassMetadata(lightClass, it) }
+                    else
+                        lightClass.files.singleOrNull()?.calculateMetadata(elementMapping(lightClass))
+                is SymbolLightClassForNamedClassLike ->
+                    lightClass.kotlinOrigin?.calculateMetadata(elementMapping(lightClass))
+                else -> null
+            }
+        }
     }
+
+    private fun createMultifileClassMetadata(lightClass: KtLightClassForFacade, qualifiedName: String): Metadata =
+        Metadata(
+            kind = KotlinClassHeader.Kind.MULTIFILE_CLASS.id,
+            metadataVersion = LanguageVersion.KOTLIN_2_0.toMetadataVersion().toArray(),
+            data1 = lightClass.files.map {
+                JvmFileClassUtil.manglePartName(qualifiedName.replace('.', '/'), it.name)
+            }.toTypedArray(),
+            extraInt = METADATA_JVM_IR_FLAG or METADATA_FIR_FLAG or METADATA_JVM_IR_STABLE_ABI_FLAG
+        )
+
+    private fun elementMapping(lightClass: PsiClass): Multimap<KtElement, PsiElement> =
+        HashMultimap.create<KtElement, PsiElement>().apply {
+            (lightClass.methods.asSequence() + lightClass.fields.asSequence() + lightClass.constructors.asSequence()).forEach {
+                put((it as KtLightElement<*, *>).kotlinOrigin, it)
+            }
+        }
 }

@@ -1,5 +1,19 @@
 package test;
 
+/**
+ * public abstract class test/A : kotlin/Any {
+ *
+ *   // signature: <init>(Ljava/lang/String;)V
+ *   public constructor(s: kotlin/String)
+ *
+ *   // field: s:Ljava/lang/String;
+ *   // getter: getS()Ljava/lang/String;
+ *   public final val s: kotlin/String
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public abstract class A {
     @org.jetbrains.annotations.NotNull()
@@ -20,6 +34,15 @@ public abstract class A {
 
 package test;
 
+/**
+ * public final class test/B : test/A {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class B extends test.A {
 

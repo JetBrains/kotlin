@@ -1,3 +1,20 @@
+/**
+ * public final class CrashMe : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: getResources()Ljava/lang/String;
+ *   public final fun getResources(): kotlin/String
+ *
+ *   // field: resources:I
+ *   // getter: getResources()I
+ *   public final val resources: kotlin/Int (* = ... *)
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class CrashMe {
     private final int resources = 1;

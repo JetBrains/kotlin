@@ -1,6 +1,5 @@
 package test;
 
-@kotlin.Metadata()
 public final class Test<T extends java.lang.CharSequence, N extends java.lang.Number> {
     @org.jetbrains.annotations.NotNull()
     private final test.TypedListUpdateCallback<java.lang.String, java.lang.Long> x = null;
@@ -14,7 +13,6 @@ public final class Test<T extends java.lang.CharSequence, N extends java.lang.Nu
 
 package test;
 
-@kotlin.Metadata()
 public abstract interface TypedListUpdateCallback<T extends java.lang.Object, C extends java.lang.Number> {
 
     public abstract void onInserted(@org.jetbrains.annotations.NotNull()

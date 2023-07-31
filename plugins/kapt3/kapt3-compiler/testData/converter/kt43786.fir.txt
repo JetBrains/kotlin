@@ -1,3 +1,23 @@
+/**
+ * public final class Application : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // field: _preferencesDataStore:Lerror/NonExistentClass;
+ *   // getter: get_preferencesDataStore()Lerror/NonExistentClass;
+ *   // setter: set_preferencesDataStore(Lerror/NonExistentClass;)V
+ *   public final lateinit var _preferencesDataStore: error/NonExistentClass
+ *     public final get
+ *     public final set
+ *
+ *   // companion object: Companion
+ *
+ *   // nested class: Companion
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 @kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
 public final class Application {
@@ -30,6 +50,21 @@ public final class Application {
         return null;
     }
 
+    /**
+     * public final companion object Application.Companion : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   private constructor()
+     *
+     *   // signature: get()LApplication;
+     *   public final fun get(): Application
+     *
+     *   // signature: getPreferencesDataStore()Lerror/NonExistentClass;
+     *   public final fun getPreferencesDataStore(): error/NonExistentClass
+     *
+     *   // module name: main
+     * }
+     */
     @kotlin.Metadata()
     public static final class Companion {
 

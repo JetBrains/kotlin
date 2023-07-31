@@ -1,5 +1,15 @@
 package secondary;
 
+/**
+ * public abstract interface secondary/Named : kotlin/Any {
+ *
+ *   // getter: getName()Ljava/lang/String;
+ *   public abstract val name: kotlin/String?
+ *     public abstract get
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public abstract interface Named {
 
@@ -11,6 +21,22 @@ public abstract interface Named {
 
 package secondary;
 
+/**
+ * public final class secondary/Product2 : secondary/Named {
+ *
+ *   // signature: <init>(Ljava/lang/String;)V
+ *   public (* secondary *) constructor(otherName: kotlin/String)
+ *
+ *   // field: name:Ljava/lang/String;
+ *   // getter: getName()Ljava/lang/String;
+ *   // setter: setName(Ljava/lang/String;)V
+ *   public open var name: kotlin/String?
+ *     public open get
+ *     public open set
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class Product2 implements secondary.Named {
     @org.jetbrains.annotations.Nullable()

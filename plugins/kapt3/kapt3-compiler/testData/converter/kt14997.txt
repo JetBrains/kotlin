@@ -1,3 +1,16 @@
+/**
+ * public open class CrashMe : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // field: notReally:Ljava/lang/Runnable;
+ *   private final val notReally: java/lang/Runnable
+ *     private final get
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public class CrashMe {
     private final java.lang.Runnable notReally = null;
@@ -10,6 +23,39 @@ public class CrashMe {
 ////////////////////
 
 
+/**
+ * package {
+ *
+ *   // signature: a()Ljava/lang/Runnable;
+ *   public final fun a(): java/lang/Runnable
+ *
+ *   // signature: b()Ljava/lang/Object;
+ *   public final fun b(): kotlin/Any
+ *
+ *   // signature: c()Ljava/lang/Object;
+ *   public final fun c(): kotlin/Any
+ *
+ *   // signature: d()Ljava/util/List;
+ *   public final fun d(): kotlin/collections/List<java/lang/Runnable>
+ *
+ *   // signature: e()[Ljava/lang/Runnable;
+ *   public final fun e(): kotlin/Array<java/lang/Runnable>
+ *
+ *   // signature: e1([Ljava/lang/CharSequence;)V
+ *   public final fun e1(a: kotlin/Array<kotlin/CharSequence>): kotlin/Unit
+ *
+ *   // signature: e2([Ljava/lang/Object;)V
+ *   public final fun e2(a: kotlin/Array<in kotlin/CharSequence>): kotlin/Unit
+ *
+ *   // signature: e3([Ljava/lang/CharSequence;)V
+ *   public final fun e3(a: kotlin/Array<out kotlin/CharSequence>): kotlin/Unit
+ *
+ *   // signature: e3([Ljava/lang/Object;)V
+ *   public final fun e3(a: kotlin/Array<*>): kotlin/Unit
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 @kotlin.Suppress(names = {"AMBIGUOUS_ANONYMOUS_TYPE_INFERRED"})
 public final class Kt14997Kt {

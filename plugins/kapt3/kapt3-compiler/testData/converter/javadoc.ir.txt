@@ -3,6 +3,15 @@ package javadoc;
 /**
  * Simple
  */
+/**
+ * public final class javadoc/A : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class A {
 
@@ -19,6 +28,61 @@ package javadoc;
  * Multi
  * line
  * comment.
+ */
+/**
+ * public final class javadoc/B : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // field: a:Ljava/lang/String;
+ *   // getter: getA()Ljava/lang/String;
+ *   public final val a: kotlin/String (* = ... *)
+ *     public final get
+ *
+ *   // field: b:Ljava/lang/String;
+ *   // getter: getB()Ljava/lang/String;
+ *   public final val b: kotlin/String (* = ... *)
+ *     public final get
+ *
+ *   // field: c:Ljava/lang/String;
+ *   // getter: getC()Ljava/lang/String;
+ *   public final val c: kotlin/String (* = ... *)
+ *     public final get
+ *
+ *   // field: d:Ljava/lang/String;
+ *   // getter: getD()Ljava/lang/String;
+ *   public final val d: kotlin/String (* = ... *)
+ *     public final get
+ *
+ *   // field: e:Ljava/lang/String;
+ *   // getter: getE()Ljava/lang/String;
+ *   // setter: setE(Ljava/lang/String;)V
+ *   public final var e: kotlin/String
+ *     public final get
+ *     public final set
+ *
+ *   // getter: getF()Ljava/lang/String;
+ *   // setter: setF(Ljava/lang/String;)V
+ *   public final var f: kotlin/String
+ *     public final (* non-default *) get
+ *     public final (* non-default *) set(value: kotlin/String)
+ *
+ *   // field: g:Ljava/lang/String;
+ *   // getter: getG()Ljava/lang/String;
+ *   // setter: setG(Ljava/lang/String;)V
+ *   public final var g: kotlin/String
+ *     public final get
+ *     public final (* non-default *) set(value: kotlin/String)
+ *
+ *   // getter: getH()Ljava/lang/String;
+ *   // setter: setH(Ljava/lang/String;)V
+ *   public final var h: kotlin/String
+ *     public final (* non-default *) get
+ *     public final (* non-default *) set(value: kotlin/String)
+ *
+ *   // module name: main
+ * }
  */
 @kotlin.Metadata()
 public final class B {

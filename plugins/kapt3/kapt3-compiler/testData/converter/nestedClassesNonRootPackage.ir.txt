@@ -1,5 +1,62 @@
 package test;
 
+/**
+ * public final class test/A$B : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // field: c:Ltest/A$B$C;
+ *   public final lateinit var c: test/A$B.C
+ *     public final get
+ *     public final set
+ *
+ *   // field: de:Ltest/A$B$D$E;
+ *   public final lateinit var de: test/A$B.D$E
+ *     public final get
+ *     public final set
+ *
+ *   // field: dee:Ltest/A$B$D$$E;
+ *   public final lateinit var dee: test/A$B.D$$E
+ *     public final get
+ *     public final set
+ *
+ *   // field: deee:Ltest/A$B$D$$$E;
+ *   public final lateinit var deee: test/A$B.D$$$E
+ *     public final get
+ *     public final set
+ *
+ *   // field: jc:Ltest/J$B$C;
+ *   public final lateinit var jc: test/J$B.C
+ *     public final get
+ *     public final set
+ *
+ *   // field: jde:Ltest/J$B$D$E;
+ *   public final lateinit var jde: test/J$B.D$E
+ *     public final get
+ *     public final set
+ *
+ *   // field: jdee:Ltest/J$B$D$$E;
+ *   public final lateinit var jdee: test/J$B.D$$E
+ *     public final get
+ *     public final set
+ *
+ *   // field: jdeee:Ltest/J$B$D$$$E;
+ *   public final lateinit var jdeee: test/J$B.D$$$E
+ *     public final get
+ *     public final set
+ *
+ *   // nested class: C
+ *
+ *   // nested class: D$$$E
+ *
+ *   // nested class: D$$E
+ *
+ *   // nested class: D$E
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class A$B {
     @kotlin.jvm.JvmField()
@@ -23,6 +80,15 @@ public final class A$B {
         super();
     }
 
+    /**
+     * public final class test/A$B.C : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   public constructor()
+     *
+     *   // module name: main
+     * }
+     */
     @kotlin.Metadata()
     public static final class C {
 
@@ -31,6 +97,15 @@ public final class A$B {
         }
     }
 
+    /**
+     * public final class test/A$B.D$$$E : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   public constructor()
+     *
+     *   // module name: main
+     * }
+     */
     @kotlin.Metadata()
     public static final class D$$$E {
 
@@ -39,6 +114,15 @@ public final class A$B {
         }
     }
 
+    /**
+     * public final class test/A$B.D$$E : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   public constructor()
+     *
+     *   // module name: main
+     * }
+     */
     @kotlin.Metadata()
     public static final class D$$E {
 
@@ -47,6 +131,39 @@ public final class A$B {
         }
     }
 
+    /**
+     * public final class test/A$B.D$E : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   public constructor()
+     *
+     *   // field: f:Ltest/A$B$D$E$F;
+     *   public final lateinit var f: test/A$B.D$E.F
+     *     public final get
+     *     public final set
+     *
+     *   // field: fg:Ltest/A$B$D$E$F$G;
+     *   public final lateinit var fg: test/A$B.D$E.F$G
+     *     public final get
+     *     public final set
+     *
+     *   // field: jf:Ltest/J$B$D$E$F;
+     *   public final lateinit var jf: test/J$B.D$E.F
+     *     public final get
+     *     public final set
+     *
+     *   // field: jfg:Ltest/J$B$D$E$F$G;
+     *   public final lateinit var jfg: test/J$B.D$E.F$G
+     *     public final get
+     *     public final set
+     *
+     *   // nested class: F
+     *
+     *   // nested class: F$G
+     *
+     *   // module name: main
+     * }
+     */
     @kotlin.Metadata()
     public static final class D$E {
         @kotlin.jvm.JvmField()
@@ -62,6 +179,15 @@ public final class A$B {
             super();
         }
 
+        /**
+         * public final class test/A$B.D$E.F : kotlin/Any {
+         *
+         *   // signature: <init>()V
+         *   public constructor()
+         *
+         *   // module name: main
+         * }
+         */
         @kotlin.Metadata()
         public static final class F {
 
@@ -70,6 +196,15 @@ public final class A$B {
             }
         }
 
+        /**
+         * public final class test/A$B.D$E.F$G : kotlin/Any {
+         *
+         *   // signature: <init>()V
+         *   public constructor()
+         *
+         *   // module name: main
+         * }
+         */
         @kotlin.Metadata()
         public static final class F$G {
 
@@ -84,6 +219,19 @@ public final class A$B {
 
 package test;
 
+/**
+ * public final class test/Experiment : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // nested class: Group
+ *
+ *   // nested class: Type
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class Experiment {
 
@@ -92,6 +240,35 @@ public final class Experiment {
     }
 
     @test.Experiment.Type()
+    /**
+     * public final data class test/Experiment.Group : kotlin/Any {
+     *
+     *   // signature: <init>(Ljava/lang/String;)V
+     *   public constructor(s: kotlin/String)
+     *
+     *   // signature: component1()Ljava/lang/String;
+     *   public final (* synthesized *) operator fun component1(): kotlin/String
+     *
+     *   // signature: copy(Ljava/lang/String;)Ltest/Experiment$Group;
+     *   public final (* synthesized *) fun copy(s: kotlin/String (* = ... *)): test/Experiment.Group
+     *
+     *   // signature: equals(Ljava/lang/Object;)Z
+     *   public open (* synthesized *) operator fun equals(other: kotlin/Any?): kotlin/Boolean
+     *
+     *   // signature: hashCode()I
+     *   public open (* synthesized *) fun hashCode(): kotlin/Int
+     *
+     *   // signature: toString()Ljava/lang/String;
+     *   public open (* synthesized *) fun toString(): kotlin/String
+     *
+     *   // field: s:Ljava/lang/String;
+     *   // getter: getS()Ljava/lang/String;
+     *   public final val s: kotlin/String
+     *     public final get
+     *
+     *   // module name: main
+     * }
+     */
     @kotlin.Metadata()
     public static final class Group {
         @org.jetbrains.annotations.NotNull()
@@ -137,6 +314,15 @@ public final class Experiment {
     }
 
     @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+    /**
+     * public final annotation class test/Experiment.Type : kotlin/Annotation {
+     *
+     *   // signature: <init>()V
+     *   public constructor()
+     *
+     *   // module name: main
+     * }
+     */
     @kotlin.Metadata()
     public static abstract @interface Type {
     }
@@ -146,6 +332,17 @@ public final class Experiment {
 
 package test;
 
+/**
+ * public final class test/Foo : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // nested class: Bar
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class Foo {
 
@@ -153,6 +350,17 @@ public final class Foo {
         super();
     }
 
+    /**
+     * public open class test/Foo.Bar : kotlin/Any {
+     *
+     *   // signature: <init>()V
+     *   public constructor()
+     *
+     *   // nested class: Zoo
+     *
+     *   // module name: main
+     * }
+     */
     @kotlin.Metadata()
     public static class Bar {
 
@@ -160,6 +368,15 @@ public final class Foo {
             super();
         }
 
+        /**
+         * public final object test/Foo.Bar.Zoo : kotlin/Any {
+         *
+         *   // signature: <init>()V
+         *   private constructor()
+         *
+         *   // module name: main
+         * }
+         */
         @kotlin.Metadata()
         public static final class Zoo {
             @org.jetbrains.annotations.NotNull()
@@ -176,13 +393,44 @@ public final class Foo {
 
 package test;
 
+/**
+ * public abstract interface test/IFoo : kotlin/Any {
+ *
+ *   // nested class: IBar
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public abstract interface IFoo {
 
+    /**
+     * public abstract interface test/IFoo.IBar : kotlin/Any {
+     *
+     *   // nested class: Anno
+     *
+     *   // nested class: IZoo
+     *
+     *   // module name: main
+     * }
+     */
     @kotlin.Metadata()
     public static abstract interface IBar {
 
         @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+        /**
+         * public final annotation class test/IFoo.IBar.Anno : kotlin/Annotation {
+         *
+         *   // signature: <init>(Lkotlin/Array;)V
+         *   public constructor(vararg value: kotlin/reflect/KClass<*> (* kotlin/Array<out kotlin/reflect/KClass<*>> *))
+         *
+         *   // getter: value()[Ljava/lang/Class;
+         *   public final val value: kotlin/Array<out kotlin/reflect/KClass<*>>
+         *     public final get
+         *
+         *   // module name: main
+         * }
+         */
         @kotlin.Metadata()
         public static abstract @interface Anno {
 
@@ -190,6 +438,12 @@ public abstract interface IFoo {
         }
 
         @test.IFoo.IBar.Anno(value = {test.IFoo.IBar.IZoo.class})
+        /**
+         * public abstract interface test/IFoo.IBar.IZoo : kotlin/Any {
+         *
+         *   // module name: main
+         * }
+         */
         @kotlin.Metadata()
         public static abstract interface IZoo {
         }
@@ -279,6 +533,26 @@ class JavaClass {
 package test;
 
 @test.IFoo.IBar.Anno(value = {test.IFoo.IBar.IZoo.class, test.Foo.Bar.class})
+/**
+ * public final class test/Test1 : test/Foo.Bar, test/IFoo.IBar, test/IFoo.IBar.IZoo {
+ *
+ *   // signature: <init>(Ltest/Foo$Bar$Zoo;)V
+ *   public constructor(zoo: test/Foo.Bar.Zoo)
+ *
+ *   // signature: a()Ljava/lang/Thread$State;
+ *   public final fun a(): java/lang/Thread.State
+ *
+ *   // signature: b(Ltest/JavaClass$Foo;Ltest/JavaClass$Foo$Bar;)V
+ *   public final fun b(foo: test/JavaClass.Foo, bar: test/JavaClass.Foo.Bar): kotlin/Unit
+ *
+ *   // field: zoo:Ltest/Foo$Bar$Zoo;
+ *   // getter: getZoo()Ltest/Foo$Bar$Zoo;
+ *   public final val zoo: test/Foo.Bar.Zoo
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class Test1 extends test.Foo.Bar implements test.IFoo.IBar, test.IFoo.IBar.IZoo {
     @org.jetbrains.annotations.NotNull()

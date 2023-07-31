@@ -1,6 +1,15 @@
 package deprecated;
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * public final annotation class deprecated/Anno : kotlin/Annotation {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 @java.lang.Deprecated()
 public abstract @interface Anno {
@@ -11,6 +20,30 @@ public abstract @interface Anno {
 package deprecated;
 
 @Anno()
+/**
+ * public final class deprecated/Foo : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: foo(I)V
+ *   public final fun foo(a: kotlin/Int): kotlin/Unit
+ *
+ *   // getter: getFoo()I
+ *   // setter: setFoo(I)V
+ *   public final var foo: kotlin/Int
+ *     public final (* non-default *) get
+ *     public final (* non-default *) set(value: kotlin/Int)
+ *
+ *   // field: prop:I
+ *   // getter: getProp()I
+ *   // synthetic method for annotations: getProp$annotations()V
+ *   public final val prop: kotlin/Int (* = ... *)
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 @java.lang.Deprecated()
 public final class Foo {

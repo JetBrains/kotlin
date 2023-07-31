@@ -1,5 +1,19 @@
 package test;
 
+/**
+ * public final class test/Bar : kotlin/Any {
+ *
+ *   // signature: <init>(Ltest/Delegate;)V
+ *   public constructor(delegate: test/Delegate)
+ *
+ *   // field: unknown$delegate:Ltest/Delegate;
+ *   // getter: getUnknown()Lerror/NonExistentClass;
+ *   private final (* delegated *) val unknown: error/NonExistentClass
+ *     private final (* non-default *) get
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class Bar {
     @org.jetbrains.annotations.NotNull()
@@ -19,6 +33,18 @@ public final class Bar {
 
 package test;
 
+/**
+ * public final class test/Delegate : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: getValue(Ljava/lang/Object;Lerror/NonExistentClass;)Ljava/lang/Object;
+ *   public final operator fun getValue(thisRef: kotlin/Any, property: error/NonExistentClass): kotlin/Any
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class Delegate {
 

@@ -1,4 +1,17 @@
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * public final annotation class Anno1 : kotlin/Annotation {
+ *
+ *   // signature: <init>(Ljava/lang/String;)V
+ *   public constructor(value: kotlin/String)
+ *
+ *   // getter: value()Ljava/lang/String;
+ *   public final val value: kotlin/String
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public abstract @interface Anno1 {
 
@@ -8,6 +21,21 @@ public abstract @interface Anno1 {
 ////////////////////
 
 
+/**
+ * public final enum class Enum1 : kotlin/Enum<Enum1> {
+ *
+ *   // signature: <init>(Ljava/lang/String;I)V
+ *   private constructor()
+ *
+ *   BLACK,
+ *
+ *   WHITE,
+ *
+ *   // module name: main
+ *
+ *   // has Enum.entries
+ * }
+ */
 @kotlin.Metadata()
 public enum Enum1 {
     /*public static final*/ BLACK /* = new Enum1() */,
@@ -25,6 +53,40 @@ public enum Enum1 {
 ////////////////////
 
 
+/**
+ * public final enum class Enum2 : kotlin/Enum<Enum2> {
+ *
+ *   // signature: <init>(Ljava/lang/String;ILjava/lang/String;I)V
+ *   private constructor(col: kotlin/String, col2: kotlin/Int)
+ *
+ *   // signature: color()Ljava/lang/String;
+ *   public final fun color(): kotlin/String
+ *
+ *   // signature: privateEnumFun()V
+ *   private final fun privateEnumFun(): kotlin/Unit
+ *
+ *   // signature: publicEnumFun()V
+ *   public final fun publicEnumFun(): kotlin/Unit
+ *
+ *   // field: col:Ljava/lang/String;
+ *   // getter: getCol()Ljava/lang/String;
+ *   public final val col: kotlin/String
+ *     public final get
+ *
+ *   // field: col2:I
+ *   // getter: getCol2()I
+ *   public final val col2: kotlin/Int
+ *     public final get
+ *
+ *   RED,
+ *
+ *   WHITE,
+ *
+ *   // module name: main
+ *
+ *   // has Enum.entries
+ * }
+ */
 @kotlin.Metadata()
 public enum Enum2 {
     /*public static final*/ RED /* = new Enum2() */,
@@ -67,9 +129,30 @@ public enum Enum2 {
 ////////////////////
 
 
+/**
+ * public abstract interface I : kotlin/Any {
+ *
+ *   // nested class: Nested
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public abstract interface I {
 
+    /**
+     * public final enum class I.Nested : kotlin/Enum<I.Nested> {
+     *
+     *   // signature: <init>(Ljava/lang/String;I)V
+     *   private constructor()
+     *
+     *   WHITE,
+     *
+     *   // module name: main
+     *
+     *   // has Enum.entries
+     * }
+     */
     @kotlin.Metadata()
     public static enum Nested {
         /*public static final*/ WHITE /* = new Nested() */;
@@ -87,6 +170,19 @@ public abstract interface I {
 ////////////////////
 
 
+/**
+ * public final enum class Nested1 : kotlin/Enum<Nested1> {
+ *
+ *   // signature: <init>(Ljava/lang/String;I)V
+ *   private constructor()
+ *
+ *   WHITE,
+ *
+ *   // module name: main
+ *
+ *   // has Enum.entries
+ * }
+ */
 @kotlin.Metadata()
 public enum Nested1 {
     /*public static final*/ WHITE /* = new Nested1() */;

@@ -2,6 +2,31 @@ import java.util.Calendar;
 import kotlin.reflect.KClass;
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+/**
+ * public final annotation class Anno : kotlin/Annotation {
+ *
+ *   // signature: <init>(Lkotlin/reflect/KClass;Lkotlin/Array;Lkotlin/Array;Lkotlin/Array;)V
+ *   public constructor(a: kotlin/reflect/KClass<*>, b: kotlin/Array<kotlin/reflect/KClass<*>>, c: kotlin/Array<kotlin/reflect/KClass<*>>, vararg d: kotlin/reflect/KClass<*> (* kotlin/Array<out kotlin/reflect/KClass<*>> *))
+ *
+ *   // getter: a()Ljava/lang/Class;
+ *   public final val a: kotlin/reflect/KClass<*>
+ *     public final get
+ *
+ *   // getter: b()[Ljava/lang/Class;
+ *   public final val b: kotlin/Array<kotlin/reflect/KClass<*>>
+ *     public final get
+ *
+ *   // getter: c()[Ljava/lang/Class;
+ *   public final val c: kotlin/Array<kotlin/reflect/KClass<*>>
+ *     public final get
+ *
+ *   // getter: d()[Ljava/lang/Class;
+ *   public final val d: kotlin/Array<out kotlin/reflect/KClass<*>>
+ *     public final get
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public abstract @interface Anno {
 
@@ -20,6 +45,15 @@ public abstract @interface Anno {
 import java.util.Calendar;
 import kotlin.reflect.KClass;
 
+/**
+ * public final class MyType<T#0 (* T *)> : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class MyType<T extends java.lang.Object> {
 
@@ -34,6 +68,22 @@ public final class MyType<T extends java.lang.Object> {
 import java.util.Calendar;
 import kotlin.reflect.KClass;
 
+/**
+ * package {
+ *
+ *   public typealias Coocoo = error/NonExistentClass (* = error/NonExistentClass *)
+ *
+ *   public typealias Coocoo2<T#0 (* T *)> = error/NonExistentClass (* = error/NonExistentClass *)
+ *
+ *   public typealias Coocoo3<T#0 (* X *)> = error/NonExistentClass (* = error/NonExistentClass *)
+ *
+ *   public typealias Nested1 = error/NonExistentClass (* = error/NonExistentClass *)
+ *
+ *   public typealias Nested2 = Nested1^ (* = error/NonExistentClass *)
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 @kotlin.Suppress(names = {"UNRESOLVED_REFERENCE", "ANNOTATION_ARGUMENT_MUST_BE_CONST", "NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION", "UNSUPPORTED_FEATURE"})
 public final class NonExistentClassTypesConversionKt {
@@ -46,6 +96,181 @@ import java.util.Calendar;
 import kotlin.reflect.KClass;
 
 @Anno(a = Blah.class, b = {NoFoo1.class, NoBar1.class}, c = {NoFoo2.class, kotlin.String.class}, d = {kotlin.Boolean.class, NoBar3.class})
+/**
+ * public final class Test<T#0 (* G *)> : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: f1(Lerror/NonExistentClass;)Lerror/NonExistentClass;
+ *   public final fun f1(a: error/NonExistentClass): error/NonExistentClass
+ *
+ *   // signature: f2(Lerror/NonExistentClass;)V
+ *   public final fun <T#1 (* T *)> f2(a: error/NonExistentClass): kotlin/Unit
+ *
+ *   // signature: f3(Lerror/NonExistentClass;I)J
+ *   public final fun <T#1 (* T *)> f3(a: error/NonExistentClass, b: kotlin/Int): kotlin/Long
+ *
+ *   // signature: f4()Lerror/NonExistentClass;
+ *   public final fun f4(): error/NonExistentClass
+ *
+ *   // signature: f5(LMyType;)Ljava/lang/Class;
+ *   public final fun <T#1 (* T *)> MyType<T#1>.f5(): java/lang/Class<kotlin/Enum<*>>?
+ *
+ *   // field: a:Lerror/NonExistentClass;
+ *   // getter: getA()Lerror/NonExistentClass;
+ *   // setter: setA(Lerror/NonExistentClass;)V
+ *   public final lateinit var a: error/NonExistentClass
+ *     public final get
+ *     public final set
+ *
+ *   // field: b:Lerror/NonExistentClass;
+ *   // getter: getB()Lerror/NonExistentClass;
+ *   public final val b: error/NonExistentClass
+ *     public final get
+ *
+ *   // field: c:Ljava/util/List;
+ *   // getter: getC()Ljava/util/List;
+ *   public final val c: kotlin/collections/List<error/NonExistentClass>?
+ *     public final get
+ *
+ *   // field: coocoo:Lerror/NonExistentClass;
+ *   // getter: getCoocoo()Lerror/NonExistentClass;
+ *   // setter: setCoocoo(Lerror/NonExistentClass;)V
+ *   public final lateinit var coocoo: error/NonExistentClass
+ *     public final get
+ *     public final set
+ *
+ *   // field: coocoo2:Lerror/NonExistentClass;
+ *   // getter: getCoocoo2()Lerror/NonExistentClass;
+ *   // setter: setCoocoo2(Lerror/NonExistentClass;)V
+ *   public final lateinit var coocoo2: error/NonExistentClass
+ *     public final get
+ *     public final set
+ *
+ *   // field: coocoo21:Lerror/NonExistentClass;
+ *   // getter: getCoocoo21()Lerror/NonExistentClass;
+ *   // setter: setCoocoo21(Lerror/NonExistentClass;)V
+ *   public final lateinit var coocoo21: error/NonExistentClass
+ *     public final get
+ *     public final set
+ *
+ *   // field: coocoo3:Lerror/NonExistentClass;
+ *   // getter: getCoocoo3()Lerror/NonExistentClass;
+ *   // setter: setCoocoo3(Lerror/NonExistentClass;)V
+ *   public final lateinit var coocoo3: error/NonExistentClass
+ *     public final get
+ *     public final set
+ *
+ *   // field: coocoo31:Lerror/NonExistentClass;
+ *   // getter: getCoocoo31()Lerror/NonExistentClass;
+ *   // setter: setCoocoo31(Lerror/NonExistentClass;)V
+ *   public final lateinit var coocoo31: error/NonExistentClass
+ *     public final get
+ *     public final set
+ *
+ *   // field: d:Ljava/util/List;
+ *   // getter: getD()Ljava/util/List;
+ *   public final val d: kotlin/collections/List<kotlin/collections/Map<error/NonExistentClass, error/NonExistentClass>>?
+ *     public final get
+ *
+ *   // field: e:Ljava/util/List;
+ *   // getter: getE()Ljava/util/List;
+ *   // setter: setE(Ljava/util/List;)V
+ *   public final lateinit var e: kotlin/collections/List<out kotlin/collections/Map<out error/NonExistentClass, out error/NonExistentClass>?>
+ *     public final get
+ *     public final set
+ *
+ *   // field: f:Lerror/NonExistentClass;
+ *   // getter: getF()Lerror/NonExistentClass;
+ *   // setter: setF(Lerror/NonExistentClass;)V
+ *   public final lateinit var f: error/NonExistentClass
+ *     public final get
+ *     public final set
+ *
+ *   // field: g:Ljava/util/List;
+ *   // getter: getG()Ljava/util/List;
+ *   // setter: setG(Ljava/util/List;)V
+ *   public final lateinit var g: kotlin/collections/List<*>
+ *     public final get
+ *     public final set
+ *
+ *   // field: h:Lerror/NonExistentClass;
+ *   // getter: getH()Lerror/NonExistentClass;
+ *   // setter: setH(Lerror/NonExistentClass;)V
+ *   public final lateinit var h: error/NonExistentClass
+ *     public final get
+ *     public final set
+ *
+ *   // field: i:Lkotlin/jvm/functions/Function2;
+ *   // getter: getI()Lkotlin/jvm/functions/Function2;
+ *   // setter: setI(Lkotlin/jvm/functions/Function2;)V
+ *   public final lateinit var i: kotlin/Function2<error/NonExistentClass, kotlin/collections/List<error/NonExistentClass>, error/NonExistentClass>
+ *     public final get
+ *     public final set
+ *
+ *   // field: j:Lkotlin/jvm/functions/Function0;
+ *   // getter: getJ()Lkotlin/jvm/functions/Function0;
+ *   // setter: setJ(Lkotlin/jvm/functions/Function0;)V
+ *   public final lateinit var j: kotlin/Function0<error/NonExistentClass>
+ *     public final get
+ *     public final set
+ *
+ *   // field: k:Lkotlin/jvm/functions/Function2;
+ *   // getter: getK()Lkotlin/jvm/functions/Function2;
+ *   // setter: setK(Lkotlin/jvm/functions/Function2;)V
+ *   public final lateinit var k: @kotlin/ExtensionFunctionType kotlin/Function2<error/NonExistentClass, kotlin/collections/List<error/NonExistentClass>, error/NonExistentClass>
+ *     public final get
+ *     public final set
+ *
+ *   // field: l:Lerror/NonExistentClass;
+ *   // getter: getL()Lerror/NonExistentClass;
+ *   // setter: setL(Lerror/NonExistentClass;)V
+ *   public final lateinit var l: error/NonExistentClass
+ *     public final get
+ *     public final set
+ *
+ *   // field: m:Lerror/NonExistentClass;
+ *   // getter: getM()Lerror/NonExistentClass;
+ *   public final val m: error/NonExistentClass
+ *     public final get
+ *
+ *   // field: n:Ljava/lang/String;
+ *   // getter: getN()Ljava/lang/String;
+ *   public final val n: kotlin/String (* = ... *)
+ *     public final get
+ *
+ *   // field: nested:Lerror/NonExistentClass;
+ *   // getter: getNested()Lerror/NonExistentClass;
+ *   // setter: setNested(Lerror/NonExistentClass;)V
+ *   public final lateinit var nested: error/NonExistentClass
+ *     public final get
+ *     public final set
+ *
+ *   // field: o10:Ljava/util/List;
+ *   // getter: getO10()Ljava/util/List;
+ *   // setter: setO10(Ljava/util/List;)V
+ *   public final lateinit var o10: kotlin/collections/List<kotlin/collections/List<kotlin/collections/List<kotlin/collections/List<kotlin/collections/List<kotlin/collections/List<kotlin/collections/List<kotlin/collections/List<kotlin/collections/List<error/NonExistentClass>>>>>>>>>
+ *     public final get
+ *     public final set
+ *
+ *   // field: o11:Ljava/util/List;
+ *   // getter: getO11()Ljava/util/List;
+ *   // setter: setO11(Ljava/util/List;)V
+ *   public final lateinit var o11: kotlin/collections/List<kotlin/collections/List<kotlin/collections/List<kotlin/collections/List<kotlin/collections/List<kotlin/collections/List<kotlin/collections/List<kotlin/collections/List<kotlin/collections/List<kotlin/collections/List<error/NonExistentClass>>>>>>>>>>
+ *     public final get
+ *     public final set
+ *
+ *   // field: p:Ljava/util/Calendar$Builder;
+ *   // getter: getP()Ljava/util/Calendar$Builder;
+ *   // setter: setP(Ljava/util/Calendar$Builder;)V
+ *   public final lateinit var p: java/util/Calendar.Builder
+ *     public final get
+ *     public final set
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class Test<G extends java.lang.Object> {
     public ABC a;

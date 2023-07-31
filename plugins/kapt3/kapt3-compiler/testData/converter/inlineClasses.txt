@@ -1,4 +1,31 @@
 @kotlin.jvm.JvmInline()
+/**
+ * public final value class Cl : kotlin/Any {
+ *
+ *   // signature: constructor-impl(Ljava/lang/String;)Ljava/lang/String;
+ *   public constructor(a: kotlin/String)
+ *
+ *   // signature: equals(Ljava/lang/Object;)Z
+ *   public open (* synthesized *) operator fun equals(other: kotlin/Any?): kotlin/Boolean
+ *
+ *   // signature: hashCode()I
+ *   public open (* synthesized *) fun hashCode(): kotlin/Int
+ *
+ *   // signature: toString()Ljava/lang/String;
+ *   public open (* synthesized *) fun toString(): kotlin/String
+ *
+ *   // field: a:Ljava/lang/String;
+ *   // getter: getA()Ljava/lang/String;
+ *   public final val a: kotlin/String
+ *     public final get
+ *
+ *   // underlying property: a
+ *
+ *   // underlying type: kotlin/String
+ *
+ *   // module name: main
+ * }
+ */
 @kotlin.Metadata()
 public final class Cl {
 
