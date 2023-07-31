@@ -23,7 +23,7 @@ import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
-import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinaliseCompilations
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinaliseDsl
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.metadata.*
 import org.jetbrains.kotlin.gradle.utils.Future
@@ -43,7 +43,7 @@ abstract class KotlinSoftwareComponent(
     private val metadataTarget get() = project.multiplatformExtension.metadata() as KotlinMetadataTarget
 
     private val _variants = project.future {
-        AfterFinaliseCompilations.await()
+        AfterFinaliseDsl.await() // TODO: pass [kotlinTargets] as future
         kotlinTargets
             .filter { target -> target !is KotlinMetadataTarget }
             .flatMap { target ->
@@ -52,7 +52,7 @@ abstract class KotlinSoftwareComponent(
                     .map { component -> component.name }
                     .toSet()
 
-                target.components.filter { it.name in targetPublishableComponentNames }
+                target.internal.awaitComponents().filter { it.name in targetPublishableComponentNames }
             }.toSet()
     }
 

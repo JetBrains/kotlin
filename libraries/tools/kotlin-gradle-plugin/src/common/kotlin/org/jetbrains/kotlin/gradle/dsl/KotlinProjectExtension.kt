@@ -17,11 +17,8 @@ import org.jetbrains.kotlin.gradle.internal.KOTLIN_BUILD_TOOLS_API_IMPL
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsSingleTargetPreset
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
-import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.targets.js.calculateJsCompilerType
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSingleTargetPreset
@@ -31,7 +28,6 @@ import org.jetbrains.kotlin.gradle.utils.castIsolatedKotlinPluginClassLoaderAwar
 import org.jetbrains.kotlin.gradle.utils.configureExperimentalTryK2
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import javax.inject.Inject
 import kotlin.reflect.KClass
 
@@ -341,7 +337,7 @@ abstract class KotlinJsProjectExtension(project: Project) :
 
             this._target = target
 
-            target.project.components.addAll(target.components)
+            target.project.launch { project.components.addAll(target.internal.awaitComponents()) }
         }
 
         target.run(body)

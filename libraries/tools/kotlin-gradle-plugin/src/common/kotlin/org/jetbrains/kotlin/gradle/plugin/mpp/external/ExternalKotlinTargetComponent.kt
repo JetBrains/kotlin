@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext.MavenScope.COMP
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext.MavenScope.RUNTIME
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinTargetComponent.TargetProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.getCoordinatesFromPublicationDelegateAndProject
+import org.jetbrains.kotlin.gradle.utils.CompletableFuture
+import org.jetbrains.kotlin.gradle.utils.complete
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.gradle.utils.future
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
@@ -99,6 +101,11 @@ internal class ExternalKotlinTargetComponent(
 
     override fun getUsages(): Set<KotlinUsageContext> = kotlinUsagesFuture.getOrThrow()
 
+    private val gradleSoftwareComponentConfigured = CompletableFuture<Unit>()
+
+    suspend fun awaitGradleSoftwareComponent() = gradleSoftwareComponent
+        .also { gradleSoftwareComponentConfigured.await() }
+
     /**
      * Should be used in Gradle's Publication only.
      * See [org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSoftwareComponent.getVariants]
@@ -107,10 +114,7 @@ internal class ExternalKotlinTargetComponent(
         val softwareComponentFactory = (target.project as ProjectInternal).services.get(SoftwareComponentFactory::class.java)
         val adhocSoftwareComponent = softwareComponentFactory.adhoc(target.targetName)
 
-        // try to execute in-place, in case if [gradleSoftwareComponent] requested at late stages.
-        // For example, during configuration cache serialization KotlinPluginLifecycle will be finished and none will execute
-        // this coroutine.
-        project.launch(KotlinPluginLifecycle.CoroutineStart.Undispatched) {
+        project.launch {
             val kotlinUsages = kotlinUsagesFuture.await()
             kotlinUsages.forEach {
                 val configuration = target.project.configurations.getByName(it.dependencyConfigurationName)
@@ -123,9 +127,10 @@ internal class ExternalKotlinTargetComponent(
                     }
                 }
             }
+
+            gradleSoftwareComponentConfigured.complete()
         }
 
         adhocSoftwareComponent
     }
-
 }
