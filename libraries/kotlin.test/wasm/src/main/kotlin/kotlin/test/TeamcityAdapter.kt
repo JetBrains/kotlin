@@ -6,38 +6,13 @@
 package kotlin.test
 
 import kotlin.math.abs
-import kotlin.js.*
 
-// Using 'globalThis.arguments' because 'arguments' can refer to current JS function arguments
-@JsFun("() => globalThis.arguments?.join?.(' ') ?? ''")
-private external fun d8Arguments(): String
-@JsFun("() => (typeof process != 'undefined' && typeof process.argv != 'undefined') ? process.argv.slice(2).join(' ') : ''")
-private external fun nodeArguments(): String
+internal open class TeamcityAdapter : FrameworkAdapter {
+    protected open fun runOrScheduleNext(block: () -> Unit) = block()
+    protected open fun runOrScheduleNextWithResult(block: () -> Any?) = block()
+    protected open fun tryProcessResult(result: Any?, name: String): Any? = null
 
-internal class TeamcityAdapter : FrameworkAdapter {
-
-    private var scheduleNextTaskAfter: Promise<JsAny?>? = null
-    private fun runOrScheduleNext(block: () -> Unit) {
-        if (scheduleNextTaskAfter == null) {
-            block()
-        } else {
-            scheduleNextTaskAfter = scheduleNextTaskAfter!!.finally(block)
-        }
-    }
-
-    private fun runOrScheduleNextWithResult(block: () -> Promise<JsAny?>?) {
-        if (scheduleNextTaskAfter == null) {
-            val result = block()
-            if (result != null)
-                scheduleNextTaskAfter = result
-        } else {
-            scheduleNextTaskAfter = scheduleNextTaskAfter!!.then {
-                block()
-            }
-        }
-    }
-
-    private enum class MessageType(val type: String) {
+    internal enum class MessageType(val type: String) {
         Started("testStarted"),
         Finished("testFinished"),
         Failed("testFailed"),
@@ -61,11 +36,11 @@ internal class TeamcityAdapter : FrameworkAdapter {
 
     private val flowId: String = "flowId='wasmTcAdapter${abs(hashCode())}'"
 
-    private fun MessageType.report(name: String) {
+    internal fun MessageType.report(name: String) {
         println("##teamcity[$type name='${name.tcEscape()}' $flowId]")
     }
 
-    private fun MessageType.report(name: String, e: Throwable) {
+    internal fun MessageType.report(name: String, e: Throwable) {
         if (this == MessageType.Failed) {
             println("##teamcity[$type name='${name.tcEscape()}' message='${e.message.tcEscape()}' details='${e.stackTraceToString().tcEscape()}' $flowId]")
         } else {
@@ -73,7 +48,7 @@ internal class TeamcityAdapter : FrameworkAdapter {
         }
     }
 
-    private fun MessageType.report(name: String, errorMessage: String) {
+    internal fun MessageType.report(name: String, errorMessage: String) {
         println("##teamcity[$type name='${name.tcEscape()}' message='${errorMessage.tcEscape()}' $flowId]")
     }
 
@@ -82,8 +57,7 @@ internal class TeamcityAdapter : FrameworkAdapter {
         get() {
             var value = _testArguments
             if (value == null) {
-                val arguments = d8Arguments().ifEmpty { nodeArguments() }
-                value = FrameworkTestArguments.parse(arguments.split(' '))
+                value = FrameworkTestArguments.parse(getArguments())
                 _testArguments = value
             }
 
@@ -212,24 +186,10 @@ internal class TeamcityAdapter : FrameworkAdapter {
                 } catch (e: Throwable) {
                     MessageType.Failed.report(name, e)
                 }
-                if (result is Promise<*>) {
-                    return@runOrScheduleNextWithResult result.then(
-                        onFulfilled = { value ->
-                            MessageType.Finished.report(name)
-                            value
-                        },
-                        onRejected = { e ->
-                            val throwable = e.toThrowableOrNull()
-                            if (throwable != null) {
-                                MessageType.Failed.report(name, throwable)
-                            } else {
-                                MessageType.Failed.report(name, e.toString())
-                            }
-                            MessageType.Finished.report(name)
-                            null
-                        }
-                    )
-                }
+
+                val processed = tryProcessResult(result, name)
+                if (processed != null) return@runOrScheduleNextWithResult processed
+
                 MessageType.Finished.report(name)
                 return@runOrScheduleNextWithResult null
             }
