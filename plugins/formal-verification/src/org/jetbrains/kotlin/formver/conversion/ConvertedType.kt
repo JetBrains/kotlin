@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.formver.scala.silicon.ast.Type
 
 interface ConvertedOptionalType {
     val viperType: Type?
-    fun preconditions(v: Exp.LocalVar): List<Exp> = emptyList()
-    fun postconditions(v: Exp.LocalVar): List<Exp> = emptyList()
+    fun preconditions(v: Exp): List<Exp> = emptyList()
+    fun postconditions(v: Exp): List<Exp> = emptyList()
 }
 
 interface ConvertedType : ConvertedOptionalType {
@@ -29,5 +29,5 @@ object ConvertedInt : ConvertedType {
 class ConvertedClassType : ConvertedType {
     override val viperType: Type = Type.Ref
 
-    override fun preconditions(v: Exp.LocalVar): List<Exp> = listOf(Exp.NeCmp(v, Exp.NullLit()))
+    override fun preconditions(v: Exp): List<Exp> = listOf(Exp.NeCmp(v, Exp.NullLit()))
 }
