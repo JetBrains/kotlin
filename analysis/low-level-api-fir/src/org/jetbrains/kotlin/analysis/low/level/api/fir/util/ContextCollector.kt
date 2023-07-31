@@ -56,7 +56,7 @@ internal object ContextCollector {
     }
 
     fun process(target: LLFirResolveTarget, holder: SessionHolder, filter: (PsiElement) -> FilterResponse): ContextProvider {
-        val pathIterator = (listOf(target.firFile) + target.path).iterator()
+        val pathIterator = iterator { yield(target.firFile); yieldAll(target.path) }
 
         val visitor = ContextCollectorVisitor(holder, filter) {
             if (pathIterator.hasNext()) pathIterator.next() else null
