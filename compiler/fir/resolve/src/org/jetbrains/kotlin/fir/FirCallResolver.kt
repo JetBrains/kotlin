@@ -338,7 +338,7 @@ class FirCallResolver(
                         qualifiedAccess.explicitReceiver,
                         referencedSymbol,
                         nonFatalDiagnosticFromExpression,
-                        session.languageVersionSettings.apiVersion
+                        session
                     ),
                     annotations = qualifiedAccess.annotations
                 )
