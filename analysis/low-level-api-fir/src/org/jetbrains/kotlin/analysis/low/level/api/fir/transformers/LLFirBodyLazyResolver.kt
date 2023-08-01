@@ -5,15 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirWholeFileResolveTarget
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.asResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.codeFragmentScopeProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
@@ -53,9 +49,8 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
-import org.jetbrains.kotlin.utils.exceptions.buildErrorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 import org.jetbrains.kotlin.utils.findIsInstanceAnd
 
 internal object LLFirBodyLazyResolver : LLFirLazyResolver(FirResolvePhase.BODY_RESOLVE) {
@@ -180,38 +175,17 @@ private class LLFirBodyTargetResolver(
 
         firCodeFragment.codeFragmentContext = if (contextKtFile != null) {
             val contextFirFile = resolveSession.getOrBuildFirFile(contextKtFile)
-            val target = computeCodeFragmentContextResolveTarget(contextFirFile, contextPsiElement)
 
-            val contextParentKtElements = contextPsiElement.parentsWithSelf.toSet()
-
-            val contextProvider = ContextCollector.process(target, transformer.components) { candidate ->
-                when (candidate) {
-                    contextPsiElement -> ContextCollector.FilterResponse.STOP
-                    in contextParentKtElements -> ContextCollector.FilterResponse.CONTINUE
-                    else -> ContextCollector.FilterResponse.SKIP
+            val elementContext = ContextCollector.process(contextFirFile, transformer.components, contextPsiElement, preferBody = true)
+                ?: errorWithAttachment("Cannot find enclosing context for ${contextPsiElement::class}") {
+                    withPsiEntry("contextPsiElement", contextPsiElement)
                 }
-            }
-
-            val elementContext = contextProvider[contextPsiElement, ContextCollector.ContextKind.BODY]
-                ?: contextParentKtElements.firstNotNullOf { contextProvider[it, ContextCollector.ContextKind.SELF] }
 
             LLFirCodeFragmentContext(elementContext.towerDataContext.withExtraScopes(), elementContext.smartCasts)
         } else {
             val towerDataContext = FirTowerDataContext().withExtraScopes()
             LLFirCodeFragmentContext(towerDataContext, emptyMap())
         }
-    }
-
-    private fun computeCodeFragmentContextResolveTarget(contextFirFile: FirFile, contextPsiElement: PsiElement): LLFirResolveTarget {
-        val contextKtDeclaration = contextPsiElement.getNonLocalContainingOrThisDeclaration()
-        if (contextKtDeclaration != null) {
-            val designationPath = FirElementFinder.collectDesignationPath(contextFirFile, contextKtDeclaration)
-            if (designationPath != null) {
-                return FirDesignationWithFile(designationPath.path, designationPath.target, contextFirFile).asResolveTarget()
-            }
-        }
-
-        return LLFirWholeFileResolveTarget(contextFirFile)
     }
 
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
