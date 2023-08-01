@@ -471,9 +471,9 @@ internal abstract class IrExpectActualMatchingContext(
         return expectToActualClassMap[classId]?.classId ?: classId
     }
 
-    private class AnnotationCallInfoImpl(val irElement: IrConstructorCall) : AnnotationCallInfo {
+    private inner class AnnotationCallInfoImpl(val irElement: IrConstructorCall) : AnnotationCallInfo {
         override val classId: ClassId?
-            get() = irElement.type.getClass()?.classId
+            get() = getAnnotationClass()?.classId
 
         override val isRetentionSource: Boolean
             get() = getAnnotationClass()?.getAnnotationRetention() == KotlinRetention.SOURCE
@@ -482,7 +482,8 @@ internal abstract class IrExpectActualMatchingContext(
             get() = getAnnotationClass()?.hasAnnotation(OptInNames.REQUIRES_OPT_IN_FQ_NAME) ?: false
 
         private fun getAnnotationClass(): IrClass? {
-            return irElement.symbol.owner.parent as? IrClass
+            val annotationClass = irElement.type.getClass() ?: return null
+            return expectToActualClassMap[annotationClass.classId]?.owner ?: annotationClass
         }
     }
 

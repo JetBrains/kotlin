@@ -335,6 +335,12 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated extends Abst
         }
 
         @Test
+        @TestMetadata("withAnnotationActualTypealias.kt")
+        public void testWithAnnotationActualTypealias() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/withAnnotationActualTypealias.kt");
+        }
+
+        @Test
         @TestMetadata("withOtherIncomatibilities.kt")
         public void testWithOtherIncomatibilities() throws Exception {
             runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/withOtherIncomatibilities.kt");
