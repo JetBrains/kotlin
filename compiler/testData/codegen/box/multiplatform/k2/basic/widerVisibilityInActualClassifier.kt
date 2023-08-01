@@ -1,6 +1,6 @@
 // IGNORE_BACKEND_K1: ANY
 //   IGNORE_REASON: KT-59355 is fixed only in K2
-// IGNORE_BACKEND_K2: JS_IR, WASM
+// IGNORE_BACKEND_K2: JS_IR, JS_IR_ES6, WASM
 //   IGNORE_REASON: `JsName` in js.translator/testData/_commonFiles/testUtils.kt is invisible for some reason
 // LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-59355

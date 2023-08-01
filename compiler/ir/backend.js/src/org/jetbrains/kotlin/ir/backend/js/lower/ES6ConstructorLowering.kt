@@ -35,6 +35,7 @@ object ES6_SYNTHETIC_EXPORT_CONSTRUCTOR: IrDeclarationOriginImpl("ES6_SYNTHETIC_
 object ES6_PRIMARY_CONSTRUCTOR_REPLACEMENT : IrDeclarationOriginImpl("ES6_PRIMARY_CONSTRUCTOR_REPLACEMENT")
 object ES6_INIT_FUNCTION : IrDeclarationOriginImpl("ES6_INIT_FUNCTION")
 object ES6_DELEGATING_CONSTRUCTOR_REPLACEMENT : IrStatementOriginImpl("ES6_DELEGATING_CONSTRUCTOR_REPLACEMENT")
+object ES6_DELEGATING_CONSTRUCTOR_CALL_REPLACEMENT : IrDeclarationOriginImpl("ES6_DELEGATING_CONSTRUCTOR_CALL_REPLACEMENT")
 
 val IrDeclaration.isEs6ConstructorReplacement: Boolean
     get() = origin == ES6_CONSTRUCTOR_REPLACEMENT || origin == ES6_PRIMARY_CONSTRUCTOR_REPLACEMENT
@@ -53,6 +54,9 @@ val IrFunctionAccessExpression.isInitCall: Boolean
 
 val IrDeclaration.isSyntheticConstructorForExport: Boolean
     get() = origin == ES6_SYNTHETIC_EXPORT_CONSTRUCTOR
+
+val IrDeclaration.isEs6DelegatingConstructorCallReplacement: Boolean
+    get() = origin == ES6_DELEGATING_CONSTRUCTOR_CALL_REPLACEMENT
 
 class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTransformer {
     private var IrConstructor.constructorFactory by context.mapping.secondaryConstructorToFactory
@@ -161,7 +165,7 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
             parent = this,
             name = Namer.SYNTHETIC_RECEIVER_NAME,
             initializer = initializer,
-            origin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE
+            origin = ES6_DELEGATING_CONSTRUCTOR_CALL_REPLACEMENT
         )
     }
 

@@ -266,16 +266,30 @@ fun Test.setUpJsBoxTests(jsEnabled: Boolean, jsIrEnabled: Boolean, firEnabled: B
     }
     if (!jsEnabled) {
         when {
-            firEnabled -> {
+            firEnabled && !es6Enabled -> {
                 include("org/jetbrains/kotlin/js/test/fir/*")
+
+                exclude("org/jetbrains/kotlin/js/test/fir/FirJsES6BoxTestGenerated.class")
+                exclude("org/jetbrains/kotlin/js/test/fir/FirJsES6CodegenBoxTestGenerated.class")
+                exclude("org/jetbrains/kotlin/js/test/fir/FirJsES6CodegenInlineTestGenerated.class")
+                exclude("org/jetbrains/kotlin/js/test/fir/FirJsES6CodegenBoxErrorTestGenerated.class")
+                exclude("org/jetbrains/kotlin/js/test/fir/FirJsES6CodegenWasmJsInteropTestGenerated.class")
             }
             es6Enabled -> {
-                include("org/jetbrains/kotlin/js/test/ir/IrBoxJsES6TestGenerated.class")
-                include("org/jetbrains/kotlin/js/test/ir/IrJsES6CodegenBoxTestGenerated.class")
-                include("org/jetbrains/kotlin/js/test/ir/IrJsES6CodegenInlineTestGenerated.class")
-                include("org/jetbrains/kotlin/js/test/ir/IrJsES6CodegenBoxErrorTestGenerated.class")
+                if (firEnabled) {
+                    include("org/jetbrains/kotlin/js/test/fir/FirJsES6BoxTestGenerated.class")
+                    include("org/jetbrains/kotlin/js/test/fir/FirJsES6CodegenBoxTestGenerated.class")
+                    include("org/jetbrains/kotlin/js/test/fir/FirJsES6CodegenInlineTestGenerated.class")
+                    include("org/jetbrains/kotlin/js/test/fir/FirJsES6CodegenBoxErrorTestGenerated.class")
+                    include("org/jetbrains/kotlin/js/test/fir/FirJsES6CodegenWasmJsInteropTestGenerated.class")
+                } else {
+                    include("org/jetbrains/kotlin/js/test/ir/IrBoxJsES6TestGenerated.class")
+                    include("org/jetbrains/kotlin/js/test/ir/IrJsES6CodegenBoxTestGenerated.class")
+                    include("org/jetbrains/kotlin/js/test/ir/IrJsES6CodegenInlineTestGenerated.class")
+                    include("org/jetbrains/kotlin/js/test/ir/IrJsES6CodegenBoxErrorTestGenerated.class")
 
-                include("org/jetbrains/kotlin/incremental/JsIrES6InvalidationTestGenerated.class")
+                    include("org/jetbrains/kotlin/incremental/JsIrES6InvalidationTestGenerated.class")
+                }
             }
             else -> {
                 include("org/jetbrains/kotlin/js/test/ir/*")
@@ -358,6 +372,7 @@ projectTest("jsIrTest", jUnitMode = JUnitMode.JUnit5) {
     setUpJsBoxTests(jsEnabled = false, jsIrEnabled = true, firEnabled = false, es6Enabled = false)
     useJUnitPlatform()
 }
+
 projectTest("jsIrES6Test", jUnitMode = JUnitMode.JUnit5) {
     setUpJsBoxTests(jsEnabled = false, jsIrEnabled = true, firEnabled = false, es6Enabled = true)
     useJUnitPlatform()
@@ -365,6 +380,11 @@ projectTest("jsIrES6Test", jUnitMode = JUnitMode.JUnit5) {
 
 projectTest("jsFirTest", jUnitMode = JUnitMode.JUnit5) {
     setUpJsBoxTests(jsEnabled = false, jsIrEnabled = true, firEnabled = true, es6Enabled = false)
+    useJUnitPlatform()
+}
+
+projectTest("jsFirES6Test", jUnitMode = JUnitMode.JUnit5) {
+    setUpJsBoxTests(jsEnabled = false, jsIrEnabled = true, firEnabled = true, es6Enabled = true)
     useJUnitPlatform()
 }
 

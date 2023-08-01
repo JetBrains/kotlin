@@ -29,8 +29,9 @@ import java.lang.Boolean.getBoolean
 open class AbstractFirJsTest(
     pathToTestDir: String = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/box/",
     testGroupOutputDirPrefix: String,
+    targetBackend: TargetBackend = TargetBackend.JS_IR
 ) : AbstractJsBlackBoxCodegenTestBase<FirOutputArtifact, IrBackendInput, BinaryArtifacts.KLib>(
-    FrontendKinds.FIR, TargetBackend.JS_IR, pathToTestDir, testGroupOutputDirPrefix, skipMinification = true
+    FrontendKinds.FIR, targetBackend, pathToTestDir, testGroupOutputDirPrefix, skipMinification = true
 ) {
     override val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>
         get() = ::FirFrontendFacade

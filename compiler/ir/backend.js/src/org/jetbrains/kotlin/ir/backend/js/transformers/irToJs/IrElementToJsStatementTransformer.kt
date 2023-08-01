@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 import org.jetbrains.kotlin.ir.util.inlineFunction
 import org.jetbrains.kotlin.ir.util.innerInlinedBlockOrThis
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.lower.ES6_DELEGATING_CONSTRUCTOR_CALL_REPLACEMENT
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
 import org.jetbrains.kotlin.ir.backend.js.utils.isTheLastReturnStatementIn
@@ -171,6 +172,7 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
             is IrDeclarationOrigin.IR_TEMPORARY_VARIABLE -> true
             is IrDeclarationOrigin.IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER -> true
             is IrDeclarationOrigin.IR_TEMPORARY_VARIABLE_FOR_INLINED_EXTENSION_RECEIVER -> true
+            is ES6_DELEGATING_CONSTRUCTOR_CALL_REPLACEMENT -> true
             else -> false
         }
 

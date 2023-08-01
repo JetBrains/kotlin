@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_K2: JS_IR
+// IGNORE_BACKEND_K2: JS_IR, JS_IR_ES6
 // FIR works fine, however it generates another names for the temporary variables, therefore ignore it
 
 fun demo(f: () -> String) = f()

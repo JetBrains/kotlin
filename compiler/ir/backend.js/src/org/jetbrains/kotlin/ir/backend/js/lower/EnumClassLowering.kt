@@ -339,10 +339,10 @@ class EnumEntryInstancesBodyLowering(val context: JsCommonBackendContext) : Body
             if (enum.isInstantiableEnum) {
                 val entry = enum.declarations.findIsInstanceAnd<IrEnumEntry> { it.correspondingClass === entryClass }!!
 
-                //In ES6 using `this` before superCall is unavailable, so
-                //need to find superCall and put `instance = this` after it
+                // In ES6 using `this` before superCall is unavailable, so
+                // need to find superCall and put `instance = this` after it
                 val index = (irBody as IrBlockBody).statements
-                    .indexOfFirst { it is IrTypeOperatorCall && it.argument is IrDelegatingConstructorCall } + 1
+                    .indexOfFirst { it is IrDelegatingConstructorCall || it is IrTypeOperatorCall && it.argument is IrDelegatingConstructorCall } + 1
 
                 irBody.statements.add(index, context.createIrBuilder(container.symbol).run {
                     irSetField(null, entry.correspondingField!!, irGet(entryClass.thisReceiver!!))

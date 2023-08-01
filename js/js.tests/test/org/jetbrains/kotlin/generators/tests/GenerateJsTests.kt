@@ -137,6 +137,10 @@ fun main(args: Array<String>) {
                 model("box/", pattern = "^([^_](.+))\\.kt$", excludeDirs = listOf("es6classes"))
             }
 
+            testClass<AbstractFirJsES6BoxTest> {
+                model("box/", pattern = "^([^_](.+))\\.kt$")
+            }
+
             // see todo on defining class
 //            testClass<AbstractFirJsTypeScriptExportTest> {
 //                model("typescript-export/", pattern = "^([^_](.+))\\.kt$")
@@ -215,6 +219,22 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractFirJsCodegenWasmJsInteropTest> {
+                model("codegen/boxWasmJsInterop")
+            }
+
+            testClass<AbstractFirJsES6CodegenBoxTest> {
+                model("codegen/box", excludeDirs = jvmOnlyBoxTests)
+            }
+
+            testClass<AbstractFirJsES6CodegenBoxErrorTest> {
+                model("codegen/boxError", excludeDirs = jvmOnlyBoxTests)
+            }
+
+            testClass<AbstractFirJsES6CodegenInlineTest> {
+                model("codegen/boxInline")
+            }
+
+            testClass<AbstractFirJsES6CodegenWasmJsInteropTest> {
                 model("codegen/boxWasmJsInterop")
             }
 
