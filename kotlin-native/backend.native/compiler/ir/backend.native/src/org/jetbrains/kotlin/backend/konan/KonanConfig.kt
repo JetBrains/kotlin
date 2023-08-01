@@ -265,6 +265,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     internal val runtimeNativeLibraries: List<String> = mutableListOf<String>().apply {
         if (debug) add("debug.bc")
+        add("experimental_memory_manager.bc")
         add("common_gc.bc")
         add("common_gcScheduler.bc")
         when (gcSchedulerType) {
@@ -281,7 +282,6 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
                 throw IllegalStateException("Deprecated options must have already been handled")
             }
         }
-        add("experimental_memory_manager.bc")
         if (allocationMode == AllocationMode.CUSTOM) {
             when (gc) {
                 GC.STOP_THE_WORLD_MARK_AND_SWEEP -> add("same_thread_ms_gc_custom.bc")
