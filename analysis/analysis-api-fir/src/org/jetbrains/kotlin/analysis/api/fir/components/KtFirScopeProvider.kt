@@ -22,10 +22,11 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithDeclarations
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
 import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector
 import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
-import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -36,6 +37,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.java.JavaScopeProvider
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticPropertiesScope
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.scopeSessionKey
@@ -190,16 +192,23 @@ internal class KtFirScopeProvider(
         return KtScopeContext(ktScopesWithKinds, _implicitReceivers = emptyList(), token)
     }
 
+    @OptIn(LLFirInternals::class)
     override fun getScopeContextForPosition(
         originalFile: KtFile,
         positionInFakeFile: KtElement
     ): KtScopeContext {
-        val towerDataContext =
-            analysisSession.firResolveSession.getTowerContextProvider(originalFile).getClosestAvailableParentContext(positionInFakeFile)
-                ?: errorWithAttachment("Cannot find enclosing declaration for ${positionInFakeFile::class}") {
-                    withPsiEntry("positionInFakeFile", positionInFakeFile)
-                }
-        val towerDataElementsIndexed = towerDataContext.towerDataElements.asReversed().withIndex()
+        val resolveSession = analysisSession.firResolveSession
+        val session = resolveSession.useSiteFirSession
+
+        val firFile = positionInFakeFile.containingKtFile.getOrBuildFirFile(resolveSession)
+        val sessionHolder = SessionHolderImpl(session, session.getScopeSession())
+
+        val elementContext = ContextCollector.process(firFile, sessionHolder, positionInFakeFile, preferBody = false)
+            ?: errorWithAttachment("Cannot find enclosing context for ${positionInFakeFile::class}") {
+                withPsiEntry("positionInFakeFile", positionInFakeFile)
+            }
+
+        val towerDataElementsIndexed = elementContext.towerDataContext.towerDataElements.asReversed().withIndex()
 
         val implicitReceivers = towerDataElementsIndexed.flatMap { (index, towerDataElement) ->
             val receivers = listOfNotNull(towerDataElement.implicitReceiver) + towerDataElement.contextReceiverGroup.orEmpty()
