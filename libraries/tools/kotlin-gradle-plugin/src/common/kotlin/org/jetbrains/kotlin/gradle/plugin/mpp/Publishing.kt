@@ -90,16 +90,18 @@ private fun InternalKotlinTarget.createMavenPublications(publications: Publicati
                 (this as MavenPublicationInternal).publishWithOriginalFileName()
                 artifactId = kotlinComponent.defaultArtifactId
 
-                val pomRewriter = PomDependenciesRewriter(project, kotlinComponent)
-                val shouldRewritePomDependencies =
-                    project.provider { PropertiesProvider(project).keepMppDependenciesIntactInPoms != true }
+                project.launchInStage(KotlinPluginLifecycle.Stage.AfterFinaliseCompilations) {
+                    val mappings = createDependenciesMappings(kotlinComponent)
+                    val shouldRewritePomDependencies =
+                        project.provider { PropertiesProvider(project).keepMppDependenciesIntactInPoms != true }
 
-                rewritePom(
-                    pom,
-                    pomRewriter,
-                    shouldRewritePomDependencies,
-                    dependenciesForPomRewriting(this@createMavenPublications)
-                )
+                    rewritePom(
+                        pom,
+                        mappings,
+                        shouldRewritePomDependencies,
+                        dependenciesForPomRewriting(this@createMavenPublications)
+                    )
+                }
             }
 
             (kotlinComponent as? KotlinTargetComponentWithPublication)?.publicationDelegate = componentPublication
@@ -109,13 +111,13 @@ private fun InternalKotlinTarget.createMavenPublications(publications: Publicati
 
 private fun rewritePom(
     pom: MavenPom,
-    pomRewriter: PomDependenciesRewriter,
+    mappings: Map<ModuleCoordinatesWithMavenScope, ModuleCoordinates>,
     shouldRewritePomDependencies: Provider<Boolean>,
     includeOnlySpecifiedDependencies: Provider<Set<ModuleCoordinates>>?
 ) {
     pom.withXml { xml ->
         if (shouldRewritePomDependencies.get())
-            pomRewriter.rewritePomMppDependenciesToActualTargetModules(xml, includeOnlySpecifiedDependencies)
+            rewritePomMppDependenciesToActualTargetModules(mappings, xml, includeOnlySpecifiedDependencies)
     }
 }
 

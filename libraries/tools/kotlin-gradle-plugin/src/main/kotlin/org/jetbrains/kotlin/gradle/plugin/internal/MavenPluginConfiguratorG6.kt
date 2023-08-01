@@ -13,8 +13,8 @@ import org.gradle.api.artifacts.maven.MavenResolver
 import org.gradle.api.plugins.MavenPluginConvention
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Upload
-import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.PomDependenciesRewriter
+import org.jetbrains.kotlin.gradle.plugin.launch
+import org.jetbrains.kotlin.gradle.plugin.mpp.*
 
 class MavenPluginConfiguratorG6 : MavenPluginConfigurator {
     override fun applyConfiguration(
@@ -25,8 +25,11 @@ class MavenPluginConfiguratorG6 : MavenPluginConfigurator {
         project.pluginManager.withPlugin("maven") {
             project.tasks.withType(Upload::class.java).all { uploadTask ->
                 uploadTask.repositories.withType(MavenResolver::class.java).all { mavenResolver ->
-                    val pomRewriter = PomDependenciesRewriter(project, target.kotlinComponents.single())
-                    rewritePom(mavenResolver.pom, pomRewriter, shouldRewritePoms)
+                    val kotlinComponent = target.kotlinComponents.single()
+                    project.launch {
+                        val mappings = createDependenciesMappings(kotlinComponent)
+                        rewritePom(mavenResolver.pom, mappings, shouldRewritePoms)
+                    }
                 }
             }
 
@@ -38,12 +41,12 @@ class MavenPluginConfiguratorG6 : MavenPluginConfigurator {
 
     private fun rewritePom(
         pom: MavenPom,
-        rewriter: PomDependenciesRewriter,
+        mappings: Map<ModuleCoordinatesWithMavenScope, ModuleCoordinates>,
         shouldRewritePom: Provider<Boolean>
     ) {
         pom.withXml { xml ->
             if (shouldRewritePom.get())
-                rewriter.rewritePomMppDependenciesToActualTargetModules(xml)
+                rewritePomMppDependenciesToActualTargetModules(mappings, xml)
         }
     }
 

@@ -5,22 +5,22 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
-import org.jetbrains.kotlin.gradle.native.GeneralNativeIT.Companion.withNativeCommandLineArguments
-import org.jetbrains.kotlin.gradle.native.GeneralNativeIT.Companion.containsSequentially
-import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
-import org.jetbrains.kotlin.gradle.native.*
+import org.jetbrains.kotlin.gradle.native.GeneralNativeIT.Companion.containsSequentially
+import org.jetbrains.kotlin.gradle.native.GeneralNativeIT.Companion.withNativeCommandLineArguments
 import org.jetbrains.kotlin.gradle.native.MPPNativeTargets
+import org.jetbrains.kotlin.gradle.native.configureJvmMemory
 import org.jetbrains.kotlin.gradle.native.transformNativeTestProject
 import org.jetbrains.kotlin.gradle.native.transformNativeTestProjectWithPluginDsl
 import org.jetbrains.kotlin.gradle.plugin.ProjectLocalConfigurations
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.plugin.sources.METADATA_CONFIGURATION_NAME_SUFFIX
-import org.jetbrains.kotlin.gradle.plugin.sources.UnsatisfiedSourceSetVisibilityException
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
-import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.testbase.TestVersions
+import org.jetbrains.kotlin.gradle.testbase.assertHasDiagnostic
+import org.jetbrains.kotlin.gradle.testbase.assertNoDiagnostic
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -1276,7 +1276,8 @@ open class NewMultiplatformIT : BaseGradleIT() {
                 """.trimIndent()
             )
 
-            build("clean", "publish") {
+            val buildOptions = defaultBuildOptions().copy(configurationCache = true)
+            build("clean", "publish", options = buildOptions) {
                 assertSuccessful()
                 assertFileContains(
                     "repo/com/exampleapp/sample-app-nodejs/1.0/sample-app-nodejs-1.0.pom",
