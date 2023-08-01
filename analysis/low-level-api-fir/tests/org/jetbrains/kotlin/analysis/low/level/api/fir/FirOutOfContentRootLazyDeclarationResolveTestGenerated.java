@@ -724,6 +724,12 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
         }
 
         @Test
+        @TestMetadata("arrayOfCall.kt")
+        public void testArrayOfCall() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/lazyResolve/noRuntime/arrayOfCall.kt");
+        }
+
+        @Test
         @TestMetadata("integerLiteralCall.kt")
         public void testIntegerLiteralCall() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/lazyResolve/noRuntime/integerLiteralCall.kt");
