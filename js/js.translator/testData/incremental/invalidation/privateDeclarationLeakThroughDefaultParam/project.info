@@ -3,7 +3,7 @@ MODULES: main
 STEP 0:
     libs: main
     dirty js modules: main
-    dirty js files:   main/f, main/m, main/m.export
+    dirty js files:   main/f, main/m, main/m.export, main
 STEP 1..2:
     libs: main
     dirty js modules: main

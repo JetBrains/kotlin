@@ -4,7 +4,7 @@ MODULES: lib1, lib2, main
 
 STEP 0:
     libs: lib1, lib2, main
-    dirty js files:   lib1/demo, lib1/JsModuleA, lib1/JsModuleB, lib2/test, main/m, main/m.export
+    dirty js files:   lib1/demo, lib1/JsModuleA, lib1/JsModuleB, lib2/test, main/m, main/m.export, main
 STEP 1:
     libs: lib1, lib2, main
     dirty js files:   lib1/demo, lib1/JsModuleA, lib1/JsModuleB

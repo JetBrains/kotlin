@@ -47,6 +47,12 @@ val String.safeModuleName: String
 val IrModuleFragment.safeName: String
     get() = name.asString().safeModuleName
 
+fun generateProxyIrModuleWith(safeName: String, externalName: String) = JsIrModule(
+    safeName,
+    externalName,
+    listOf(JsIrProgramFragment(safeName, "<proxy-file>"))
+)
+
 enum class JsGenerationGranularity {
     WHOLE_PROGRAM,
     PER_MODULE,
@@ -301,10 +307,9 @@ class IrModuleToJsTransformer(
     }
 
     private fun IrAndExportedDeclarations.toJsIrProxyModule(): JsIrModule {
-        return JsIrModule(
+        return generateProxyIrModuleWith(
             fragment.safeName,
             moduleFragmentToNameMapper.getExternalNameFor(fragment),
-            listOf(JsIrProgramFragment(fragment.safeName, "<proxy-file>"))
         )
     }
 

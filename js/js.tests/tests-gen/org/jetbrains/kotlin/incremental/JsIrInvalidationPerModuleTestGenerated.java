@@ -308,6 +308,12 @@ public class JsIrInvalidationPerModuleTestGenerated extends AbstractJsIrInvalida
     }
 
     @Test
+    @TestMetadata("jsExportWithMultipleFiles")
+    public void testJsExportWithMultipleFiles() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/jsExportWithMultipleFiles/");
+    }
+
+    @Test
     @TestMetadata("jsModuleAnnotation")
     public void testJsModuleAnnotation() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/jsModuleAnnotation/");

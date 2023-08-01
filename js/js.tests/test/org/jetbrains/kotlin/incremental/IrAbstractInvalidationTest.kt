@@ -47,7 +47,7 @@ abstract class AbstractJsIrES6InvalidationPerModuleTest : IrAbstractInvalidation
 
 abstract class AbstractJsIrInvalidationPerFileWithPLTest : AbstractJsIrInvalidationWithPLTest(
     granularity = JsGenerationGranularity.PER_FILE,
-    workingDirPath = "incrementalOut/invalidationWithPL/perModule"
+    workingDirPath = "incrementalOut/invalidationWithPL/perFile"
 )
 
 abstract class AbstractJsIrInvalidationPerModuleWithPLTest : AbstractJsIrInvalidationWithPLTest(

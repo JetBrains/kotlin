@@ -3,7 +3,7 @@ MODULES: lib1, lib2, main
 STEP 0:
     libs: lib1, lib2, main
     dirty js modules: lib1, lib2, main
-    dirty js files:   lib1/InterfaceA, lib1/InterfaceB, lib1/InterfaceC, lib2/MyClass, lib2/GetA, lib2/GetB, lib2/GetC, main/test, main/m, main/m.export
+    dirty js files:   lib1/InterfaceA, lib1/InterfaceB, lib1/InterfaceC, lib2/MyClass, lib2/GetA, lib2/GetB, lib2/GetC, main/test, main/m, main/m.export, main
 STEP 1:
     libs: lib1, lib2, main
     dirty js modules: lib1, lib2, main

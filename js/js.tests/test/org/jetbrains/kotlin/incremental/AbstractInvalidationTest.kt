@@ -261,20 +261,16 @@ abstract class AbstractInvalidationTest(
         }
 
         private fun verifyJsCode(stepId: Int, mainModuleName: String, jsFiles: List<String>) {
-            val testModuleName = "./$mainModuleName${projectInfo.moduleKind.extension}"
             try {
                 V8IrJsTestChecker.checkWithTestFunctionArgs(
                     files = jsFiles,
-                    testModuleName = testModuleName,
+                    testModuleName = "./$mainModuleName${projectInfo.moduleKind.extension}",
                     testPackageName = null,
                     testFunctionName = BOX_FUNCTION_NAME,
                     testFunctionArgs = "$stepId",
                     expectedResult = "OK",
                     withModuleSystem = projectInfo.moduleKind in setOf(ModuleKind.COMMON_JS, ModuleKind.UMD, ModuleKind.AMD),
-                    entryModulePath = when (granularity) {
-                        JsGenerationGranularity.PER_FILE -> jsFiles.find { it.endsWith("m.export.mjs") }
-                        else -> jsFiles.last()
-                    }
+                    entryModulePath = jsFiles.last()
                 )
             } catch (e: ComparisonFailure) {
                 throw ComparisonFailure("Mismatched box out at step $stepId", e.expected, e.actual)
