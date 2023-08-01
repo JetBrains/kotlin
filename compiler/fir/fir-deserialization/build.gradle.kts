@@ -5,7 +5,6 @@ plugins {
 
 dependencies {
     implementation(project(":core:metadata"))
-    implementation(project(":core:metadata.jvm"))
     implementation(project(":core:deserialization.common"))
     implementation(project(":core:compiler.common"))
 

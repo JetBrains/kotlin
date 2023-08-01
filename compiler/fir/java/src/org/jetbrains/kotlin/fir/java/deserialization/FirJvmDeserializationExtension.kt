@@ -14,6 +14,10 @@ import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.toLookupTag
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
+import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.NameResolver
+import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
+import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
@@ -44,6 +48,9 @@ class FirJvmDeserializationExtension(session: FirSession) : FirDeserializationEx
             )
         }
     }
+
+    override fun loadModuleName(classProto: ProtoBuf.Class, nameResolver: NameResolver): String? =
+        classProto.getExtensionOrNull(JvmProtoBuf.classModuleName)?.let(nameResolver::getString)
 
     companion object {
         private val JAVA_IO_SERIALIZABLE = ClassId.topLevel(FqName("java.io.Serializable"))

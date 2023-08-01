@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.fir.deserialization
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.declarations.builder.FirRegularClassBuilder
+import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -20,4 +22,6 @@ abstract class FirDeserializationExtension(val session: FirSession) : FirSession
     ): FirConstDeserializer? = null
 
     open fun FirRegularClassBuilder.configureDeserializedClass(classId: ClassId) {}
+
+    open fun loadModuleName(classProto: ProtoBuf.Class, nameResolver: NameResolver): String? = null
 }

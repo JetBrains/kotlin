@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.fir.types.toLookupTag
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.SerializationPluginMetadataExtensions
 import org.jetbrains.kotlin.metadata.deserialization.*
-import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -232,8 +231,8 @@ fun deserializeClassToSymbol(
 
         replaceDeprecationsProvider(getDeprecationsProvider(session))
 
-        classProto.getExtensionOrNull(JvmProtoBuf.classModuleName)?.let { idx ->
-            moduleName = nameResolver.getString(idx)
+        session.deserializationExtension?.loadModuleName(classProto, nameResolver)?.let {
+            moduleName = it
         }
 
         if (!Flags.HAS_ENUM_ENTRIES.get(flags)) {
