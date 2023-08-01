@@ -24,11 +24,12 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinTargetCompo
 import org.jetbrains.kotlin.gradle.utils.Future
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.gradle.utils.lazyFuture
+import org.jetbrains.kotlin.tooling.core.UnsafeApi
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 internal class ExternalKotlinTargetComponent(
     project: Project, val targetProvider: TargetProvider,
-) : KotlinTargetComponentWithPublication, ComponentWithCoordinates, SoftwareComponentInternal {
+) : InternalKotlinTargetComponent(), KotlinTargetComponentWithPublication, ComponentWithCoordinates {
 
     /*
     Target creation requires this component. We will provide the target once it is required
@@ -70,7 +71,7 @@ internal class ExternalKotlinTargetComponent(
     override fun getCoordinates(): ModuleVersionIdentifier =
         getCoordinatesFromPublicationDelegateAndProject(publicationDelegate, target.project, null)
 
-    val kotlinUsagesFuture = project.lazyFuture {
+    override val kotlinUsagesFuture = project.lazyFuture {
         val compilation = target.compilations.findByName(KotlinCompilation.MAIN_COMPILATION_NAME)
             ?: error("Missing conventional '${KotlinCompilation.MAIN_COMPILATION_NAME}' compilation in '$target'")
 
@@ -91,5 +92,6 @@ internal class ExternalKotlinTargetComponent(
         result
     }
 
+    @UnsafeApi
     override fun getUsages(): Set<KotlinUsageContext> = kotlinUsagesFuture.getOrThrow()
 }

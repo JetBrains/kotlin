@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
 import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.tooling.core.UnsafeApi
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 internal interface KotlinTargetComponentWithPublication : KotlinTargetComponent {
@@ -28,7 +29,7 @@ internal interface KotlinTargetComponentWithPublication : KotlinTargetComponent 
 internal fun getCoordinatesFromPublicationDelegateAndProject(
     publication: MavenPublication?,
     project: Project,
-    target: KotlinTarget?
+    target: KotlinTarget?,
 ): ModuleVersionIdentifier {
     val moduleNameProvider = project.provider { publication?.artifactId ?: dashSeparatedName(project.name, target?.name?.toLowerCase()) }
     val moduleGroupProvider = project.provider { publication?.groupId ?: project.group.toString() }
@@ -51,15 +52,14 @@ internal fun getCoordinatesFromPublicationDelegateAndProject(
 
 private interface KotlinTargetComponentWithCoordinatesAndPublication :
     KotlinTargetComponentWithPublication,
-    ComponentWithCoordinates /* Gradle 4.7+ API, don't use with older versions */
-{
+    ComponentWithCoordinates /* Gradle 4.7+ API, don't use with older versions */ {
     override fun getCoordinates() = getCoordinatesFromPublicationDelegateAndProject(publicationDelegate, target.project, target)
 }
 
 open class KotlinVariant internal constructor(
     val producingCompilation: KotlinCompilation<*>,
-    internal val kotlinUsagesFuture: Future<Set<DefaultKotlinUsageContext>>
-) : KotlinTargetComponentWithPublication, SoftwareComponentInternal {
+    override val kotlinUsagesFuture: Future<Set<DefaultKotlinUsageContext>>,
+) : InternalKotlinTargetComponent(), KotlinTargetComponentWithPublication {
     var componentName: String? = null
 
     var artifactTargetName: String = target.targetName
@@ -67,6 +67,7 @@ open class KotlinVariant internal constructor(
     final override val target: KotlinTarget
         get() = producingCompilation.target
 
+    @UnsafeApi
     override fun getUsages(): Set<KotlinUsageContext> = kotlinUsagesFuture.getOrThrow()
 
     override fun getName(): String = componentName ?: producingCompilation.target.targetName
@@ -78,13 +79,15 @@ open class KotlinVariant internal constructor(
     @Deprecated(
         message = "Sources artifacts are now published as separate variant " +
                 "use target.sourcesElementsConfigurationName to obtain necessary information",
-        replaceWith = ReplaceWith("target.sourcesElementsConfigurationName")    )
-    override val sourcesArtifacts: Set<PublishArtifact> get() = target
-        .project
-        .configurations
-        .findByName(target.sourcesElementsConfigurationName)
-        ?.artifacts
-        ?: emptySet()
+        replaceWith = ReplaceWith("target.sourcesElementsConfigurationName")
+    )
+    override val sourcesArtifacts: Set<PublishArtifact>
+        get() = target
+            .project
+            .configurations
+            .findByName(target.sourcesElementsConfigurationName)
+            ?.artifacts
+            ?: emptySet()
 
     internal var defaultArtifactIdSuffix: String? = null
 
@@ -103,7 +106,7 @@ open class KotlinVariantWithCoordinates internal constructor(
 class KotlinVariantWithMetadataVariant internal constructor(
     producingCompilation: KotlinCompilation<*>,
     kotlinUsagesFuture: Future<Set<DefaultKotlinUsageContext>>,
-    internal val metadataTarget: AbstractKotlinTarget
+    internal val metadataTarget: AbstractKotlinTarget,
 ) : KotlinVariantWithCoordinates(producingCompilation, kotlinUsagesFuture), ComponentWithVariants {
     override fun getVariants() = metadataTarget.components
 }
@@ -111,13 +114,14 @@ class KotlinVariantWithMetadataVariant internal constructor(
 class JointAndroidKotlinTargetComponent(
     override val target: KotlinAndroidTarget,
     private val nestedVariants: Set<KotlinVariant>,
-    val flavorNames: List<String>
-) : KotlinTargetComponentWithCoordinatesAndPublication, SoftwareComponentInternal {
+    val flavorNames: List<String>,
+) : InternalKotlinTargetComponent(), KotlinTargetComponentWithCoordinatesAndPublication {
 
-    internal val kotlinUsagesFuture = target.project.future {
+    override val kotlinUsagesFuture = target.project.future {
         nestedVariants.filter { it.publishable }.flatMap { it.kotlinUsagesFuture.await() }.toSet()
     }
 
+    @UnsafeApi
     override fun getUsages(): Set<KotlinUsageContext> = kotlinUsagesFuture.getOrThrow()
 
     override fun getName(): String = lowerCamelCaseName(target.targetName, *flavorNames.toTypedArray())

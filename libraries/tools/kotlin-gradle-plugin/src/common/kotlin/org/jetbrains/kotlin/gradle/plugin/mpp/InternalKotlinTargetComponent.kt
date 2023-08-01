@@ -5,15 +5,22 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
+import org.gradle.api.internal.component.SoftwareComponentInternal
+import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
-import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinTargetComponent
 import org.jetbrains.kotlin.gradle.utils.Future
+import org.jetbrains.kotlin.tooling.core.UnsafeApi
 
-internal fun KotlinTargetComponent.kotlinUsagesFutureOrNull(): Future<Set<DefaultKotlinUsageContext>>? = when (this) {
-    is KotlinVariant -> kotlinUsagesFuture
-    is JointAndroidKotlinTargetComponent -> kotlinUsagesFuture
-    is ExternalKotlinTargetComponent -> kotlinUsagesFuture
-    else -> null
+@InternalKotlinGradlePluginApi
+abstract class InternalKotlinTargetComponent : KotlinTargetComponent, SoftwareComponentInternal {
+    /**
+     * Use 'kotlinUsagesFuture' instead
+     */
+    @UnsafeApi
+    abstract override fun getUsages(): Set<KotlinUsageContext>
+
+    internal abstract val kotlinUsagesFuture: Future<Set<DefaultKotlinUsageContext>>
 }
 
-internal suspend fun KotlinTargetComponent.awaitKotlinUsagesOrEmpty() = kotlinUsagesFutureOrNull()?.await().orEmpty()
+internal val KotlinTargetComponent.internal: InternalKotlinTargetComponent
+    get() = this as InternalKotlinTargetComponent

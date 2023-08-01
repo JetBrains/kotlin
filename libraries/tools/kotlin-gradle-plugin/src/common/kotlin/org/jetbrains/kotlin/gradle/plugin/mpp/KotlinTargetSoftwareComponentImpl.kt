@@ -29,7 +29,7 @@ internal fun KotlinTargetSoftwareComponent(
     /* Launch configuration */
     val configurationFuture = target.project.future {
         target.applyUserDefinedAttributesJob.await()
-        val usages = kotlinComponent.awaitKotlinUsagesOrEmpty()
+        val usages = kotlinComponent.internal.kotlinUsagesFuture.await()
         usages.forEach { kotlinUsageContext ->
             val publishedConfigurationName = publishedConfigurationName(kotlinUsageContext.name)
             val configuration = project.configurations.findByName(publishedConfigurationName)

@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.KotlinSourceSetTreeClassifier
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.orNull
-import org.jetbrains.kotlin.gradle.plugin.mpp.awaitKotlinUsagesOrEmpty
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinCompilationDescriptor.CompilationAssociator
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinCompilationDescriptor.CompilationFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinCompilationDescriptorBuilder
@@ -205,7 +204,7 @@ class ExternalKotlinTargetApiTests {
         KotlinPluginLifecycle.Stage.AfterFinaliseCompilations.await()
         val component = target.delegate.kotlinComponents.singleOrNull() ?: fail("Expected single 'component' for external target")
 
-        component.awaitKotlinUsagesOrEmpty().find { it.dependencyConfigurationName == target.sourcesElementsPublishedConfiguration.name }
+        component.kotlinUsagesFuture.await().find { it.dependencyConfigurationName == target.sourcesElementsPublishedConfiguration.name }
             ?: fail("Missing sourcesElements usage")
     }
 
@@ -233,7 +232,7 @@ class ExternalKotlinTargetApiTests {
         val gradleComponent = target.delegate.components.singleOrNull()
             ?: fail("Expected single 'component' for external target")
 
-        val kotlinUsagesNames = kotlinComponent.awaitKotlinUsagesOrEmpty().map { it.dependencyConfigurationName }
+        val kotlinUsagesNames = kotlinComponent.kotlinUsagesFuture.await().map { it.dependencyConfigurationName }
         val gradleUsagesNames = (gradleComponent.configured.await() as SoftwareComponentInternal).usages.map { it.name }
 
         if (kotlinUsagesNames.toSet() != gradleUsagesNames.toSet())
@@ -262,8 +261,8 @@ class ExternalKotlinTargetApiTests {
     @Test
     fun `test project structure metadata contains external target variants`() {
         val target = kotlin.createExternalKotlinTarget<FakeTarget> { defaults() }
-        val mainCompilation = target.createCompilation<FakeCompilation>() { defaults(kotlin) }
-        val testCompilation = target.createCompilation<FakeCompilation>() {
+        val mainCompilation = target.createCompilation<FakeCompilation> { defaults(kotlin) }
+        val testCompilation = target.createCompilation<FakeCompilation> {
             defaults(kotlin)
             compilationName = "test"
             defaultSourceSet = kotlin.sourceSets.create("fakeTest")

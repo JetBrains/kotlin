@@ -183,7 +183,7 @@ class KotlinMetadataTargetConfigurator :
 
     private fun createMetadataCompilationsForCommonSourceSets(
         target: KotlinMetadataTarget,
-        allMetadataJar: TaskProvider<out Jar>
+        allMetadataJar: TaskProvider<out Jar>,
     ) = target.project.launchInStage(KotlinPluginLifecycle.Stage.AfterFinaliseDsl) {
         withRestrictedStages(KotlinPluginLifecycle.Stage.upTo(KotlinPluginLifecycle.Stage.FinaliseCompilations)) {
             // Do this after all targets are configured by the user build script
@@ -249,7 +249,7 @@ class KotlinMetadataTargetConfigurator :
     }
 
     private fun exportDependenciesForPublishing(
-        compilation: KotlinCompilation<*>
+        compilation: KotlinCompilation<*>,
     ) {
         val sourceSet = compilation.defaultSourceSet
         val isSharedNativeCompilation = compilation is KotlinSharedNativeCompilation
@@ -289,7 +289,7 @@ class KotlinMetadataTargetConfigurator :
         target: KotlinMetadataTarget,
         sourceSet: KotlinSourceSet,
         allMetadataJar: TaskProvider<out Jar>,
-        isHostSpecific: Boolean
+        isHostSpecific: Boolean,
     ): KotlinCompilation<*> {
         val project = target.project
 
@@ -386,7 +386,7 @@ class KotlinMetadataTargetConfigurator :
 }
 
 internal class NativeSharedCompilationProcessor(
-    private val compilation: KotlinSharedNativeCompilation
+    private val compilation: KotlinSharedNativeCompilation,
 ) : KotlinCompilationProcessor<KotlinNativeCompile>(KotlinCompilationInfo(compilation)) {
 
     override val kotlinTask: TaskProvider<out KotlinNativeCompile> =
@@ -471,11 +471,9 @@ internal suspend fun getPublishedPlatformCompilations(project: Project): Map<Kot
             return@forEach
 
         target.kotlinComponents
-            .forEach { component ->
-                component.awaitKotlinUsagesOrEmpty()
-                    .filter { it.includeIntoProjectStructureMetadata }
-                    .forEach { usage -> result[usage] = usage.compilation }
-            }
+            .flatMap { component -> component.internal.kotlinUsagesFuture.await() }
+            .filter { it.includeIntoProjectStructureMetadata }
+            .forEach { usage -> result[usage] = usage.compilation }
     }
 
     return result

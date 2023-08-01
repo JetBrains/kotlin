@@ -22,7 +22,7 @@ internal val InternalKotlinTarget.applyUserDefinedAttributesJob: Future<Unit> by
         // To copy the attributes to the output configurations, find those output configurations and their producing compilations
         // based on the target's components:
         val outputConfigurationsWithCompilations = kotlinComponents.filterIsInstance<KotlinVariant>().flatMap { kotlinVariant ->
-            kotlinVariant.awaitKotlinUsagesOrEmpty().mapNotNull { usageContext ->
+            kotlinVariant.kotlinUsagesFuture.await().mapNotNull { usageContext ->
                 project.configurations.findByName(usageContext.dependencyConfigurationName)?.let { configuration ->
                     configuration to usageContext.compilation
                 }
@@ -32,7 +32,7 @@ internal val InternalKotlinTarget.applyUserDefinedAttributesJob: Future<Unit> by
         // Add usages of android library when its variants are grouped by flavor
         outputConfigurationsWithCompilations += kotlinComponents
             .filterIsInstance<JointAndroidKotlinTargetComponent>()
-            .flatMap { variant -> variant.awaitKotlinUsagesOrEmpty() }
+            .flatMap { variant -> variant.kotlinUsagesFuture.await() }
             .mapNotNull { usage ->
                 val configuration = project.configurations.findByName(usage.dependencyConfigurationName) ?: return@mapNotNull null
                 configuration to usage.compilation
