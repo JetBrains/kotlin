@@ -33,10 +33,13 @@ internal class JsInlineFunctionResolver(context: JsIrBackendContext) : DefaultIn
     private val inlineFunctionsBeforeInlining = context.mapping.inlineFunctionsBeforeInlining
     private val inlineFunctionsBeforeInliningSymbols = hashMapOf<IrFunction, IrFunctionSymbol>()
 
+    override fun shouldExcludeFunctionFromInlining(symbol: IrFunctionSymbol): Boolean {
+        // TODO: After the expect fun enumEntriesIntrinsic become non-inline function, the code will be removed
+        return symbol == enumEntriesIntrinsic || super.shouldExcludeFunctionFromInlining(symbol)
+    }
+
     override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction {
         val function = super.getFunctionDeclaration(symbol)
-        // TODO: After the expect fun enumEntriesIntrinsic become non-inline function, the code will be removed
-        if (function.symbol == enumEntriesIntrinsic) return function.apply { body = null }
         val functionBeforeInlining = inlineFunctionsBeforeInlining[function] ?: return function
         inlineFunctionsBeforeInliningSymbols[functionBeforeInlining] = function.symbol
         return functionBeforeInlining

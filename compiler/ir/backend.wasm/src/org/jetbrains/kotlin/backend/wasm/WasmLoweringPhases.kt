@@ -169,6 +169,7 @@ private val functionInliningPhase = makeCustomWasmModulePhase(
         FunctionInlining(
             context = context,
             innerClassesSupport = context.innerClassesSupport,
+            inlineFunctionResolver = WasmInlineFunctionResolver(context),
             insertAdditionalImplicitCasts = true,
         ).inline(module)
         module.patchDeclarationParents()

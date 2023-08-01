@@ -45,6 +45,9 @@ fun IrExpression.isAdaptedFunctionReference() =
 interface InlineFunctionResolver {
     fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction
     fun getFunctionSymbol(irFunction: IrFunction): IrFunctionSymbol
+    fun shouldExcludeFunctionFromInlining(symbol: IrFunctionSymbol): Boolean {
+        return Symbols.isLateinitIsInitializedPropertyGetter(symbol) || Symbols.isTypeOfIntrinsic(symbol)
+    }
 }
 
 fun IrFunction.isTopLevelInPackage(name: String, packageName: String): Boolean {
@@ -112,11 +115,7 @@ class FunctionInlining(
             is IrConstructorCall -> expression.symbol.owner
             else -> return expression
         }
-        if (!callee.needsInlining)
-            return expression
-        if (Symbols.isLateinitIsInitializedPropertyGetter(callee.symbol))
-            return expression
-        if (Symbols.isTypeOfIntrinsic(callee.symbol))
+        if (!callee.needsInlining || inlineFunctionResolver.shouldExcludeFunctionFromInlining(callee.symbol))
             return expression
 
         val actualCallee = inlineFunctionResolver.getFunctionDeclaration(callee.symbol)
