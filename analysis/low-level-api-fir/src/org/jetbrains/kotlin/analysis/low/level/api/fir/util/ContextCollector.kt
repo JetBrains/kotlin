@@ -380,6 +380,7 @@ private class ContextCollectorVisitor(
                 try {
                     smartCasts = smartCasts.put(symbol, smartCastExpression.typesFromSmartCast.toSet())
                     super.visitSmartCastExpression(smartCastExpression)
+                    return
                 } finally {
                     smartCasts = previousSmartCasts
                 }
