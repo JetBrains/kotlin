@@ -65,6 +65,69 @@ abstract class KotlinMultiplatformExtension
         configure(presetExtension)
     }
 
+    /**
+     * Add 'project level' dependencies.
+     * Shortcut for `sourceSets.commonMain.dependencies { }`
+     *
+     * #### Example add kotlinx.coroutines dependency to the project
+     * ```kotlin
+     * kotlin {
+     *     dependencies {
+     *         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+     *     }
+     * }
+     * ```
+     *
+     * **Note: More fine-grained dependencies can be added to individual source sets.**
+     * #### Example: Add additional dependencies to 'jvmMain' and 'nativeMain'
+     *
+     * ```kotlin
+     * kotlin {
+     *     jvm()
+     *     iosX64()
+     *     iosArm64()
+     *
+     *     // Available on the whole project
+     *     dependencies {
+     *         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+     *     }
+     *
+     *     // Additional dependencies for jvm
+     *     sourceSets.jvmMain.dependencies {
+     *         implementation("org.jetbrains.exposed:exposed-core:0.42.0")
+     *     }
+     *
+     *     // Additional dependencies for native targets (iosX64, iosArm64 in this example)
+     *     sourceSets.nativeMain.dependencies {
+     *         implementation("com.squareup.okio:okio:3.4.0")
+     *     }
+     * }
+     * ```
+     */
+    fun dependencies(handler: KotlinDependencyHandler.() -> Unit) = sourceSets.commonMain.dependencies(handler)
+
+    /**
+     * Add 'project level' test dependencies
+     * Shortcut for `sourceSets.commonTest.dependencies { }`
+     *
+     * Like: [dependencies], but will only add dependencies to 'test' source sets (commonTest, jvmTest, nativeTest, ...)
+     *
+     * #### Example: Add OKIO dependency with 'fake filestystem' test util for tests:
+     * ```kotlin
+     * kotlin {
+     *     dependencies {
+     *         implementation("com.squareup.okio:okio:3.4.0")
+     *     }
+     *
+     *     testDependencies {
+     *         implementation("com.squareup.okio:okio-fakefilesystem:3.4.0")
+     *     }
+     * }
+     * ```
+     */
+    fun testDependencies(handler: KotlinDependencyHandler.() -> Unit) = sourceSets.commonTest.dependencies(handler)
+
+
     internal val hierarchy by lazy { KotlinHierarchyDslImpl(targets, sourceSets) }
 
     /**
