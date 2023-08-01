@@ -197,7 +197,7 @@ internal suspend fun <T : Any> Property<T>.awaitFinalValue(): T? {
 internal suspend fun <T : Any> Property<T>.awaitFinalValueOrThrow(): T {
     Stage.AfterFinaliseDsl.await()
     finalizeValue()
-    return get()
+    return orNull ?: throw IllegalLifecycleException("Property has no value available: ${currentKotlinPluginLifecycle()}")
 }
 
 /**

@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.IllegalLifecycleException
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.*
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
@@ -68,7 +69,7 @@ class LifecycleAwaitFinalPropertyValueTest {
     fun `test - awaitFinalValueOrThrow - throws when no value set`() = project.runLifecycleAwareTest {
         val property = project.newProperty<Int>()
         launch {
-            assertFails { property.awaitFinalValueOrThrow() }
+            assertFailsWith<IllegalLifecycleException> { property.awaitFinalValueOrThrow() }
         }
     }
 
