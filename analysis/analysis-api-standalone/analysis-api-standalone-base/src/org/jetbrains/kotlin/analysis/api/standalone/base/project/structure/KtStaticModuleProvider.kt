@@ -18,16 +18,18 @@ class KtStaticModuleProvider(
 ) : KtStaticProjectStructureProvider() {
     @OptIn(KtModuleStructureInternals::class)
     override fun getModule(element: PsiElement, contextualModule: KtModule?): KtModule {
-        val containingFileAsPsiFile = element.containingFile
-        val containingFileAsVirtualFile = containingFileAsPsiFile.virtualFile
-        if (containingFileAsVirtualFile.extension == BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION) {
+        // Unwrap context-dependent file copies coming from dependent sessions
+        val containingPsiFile = element.containingFile.originalFile
+
+        val containingVirtualFile = containingPsiFile.virtualFile
+        if (containingVirtualFile.extension == BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION) {
             return builtinsModule
         }
 
-        containingFileAsVirtualFile.analysisExtensionFileContextModule?.let { return it }
+        containingVirtualFile.analysisExtensionFileContextModule?.let { return it }
 
         projectStructure.binaryModules.firstOrNull { binaryModule ->
-            containingFileAsVirtualFile in binaryModule.contentScope
+            containingVirtualFile in binaryModule.contentScope
         }?.let { return it }
 
         return projectStructure.mainModules.firstOrNull { module ->
@@ -35,7 +37,7 @@ class KtStaticModuleProvider(
         }?.ktModule
             ?: throw KotlinExceptionWithAttachments("Cannot find KtModule; see the attachment for more details.")
                 .withAttachment(
-                    containingFileAsVirtualFile.path,
+                    containingVirtualFile.path,
                     allKtModules.joinToString(separator = System.lineSeparator()) { it.asDebugString() }
                 )
     }
