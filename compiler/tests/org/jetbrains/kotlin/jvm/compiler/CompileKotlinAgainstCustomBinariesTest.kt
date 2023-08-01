@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.jvm.compiler
 
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.cli.common.CLICompiler
-import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
@@ -109,7 +108,7 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
     ) {
         // Compiles the library with some non-stable language version, then compiles a usage of this library with stable LV.
         // If there's no non-stable language version yet, the test does nothing.
-        val someNonStableVersion = LanguageVersion.values().firstOrNull { it > LanguageVersion.LATEST_STABLE } ?: return
+        val someNonStableVersion = LanguageVersion.entries.firstOrNull { it > LanguageVersion.LATEST_STABLE } ?: return
 
         val libraryOptions = listOf(
             "-language-version", someNonStableVersion.versionString,
@@ -152,15 +151,15 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         val allDescriptors = analyzeAndGetAllDescriptors(compileLibrary("library"))
         assertEquals(allDescriptors.toString(), 2, allDescriptors.size)
         for (descriptor in allDescriptors) {
-            assertTrue("Wrong name: " + descriptor, descriptor.name.asString() == "Lol")
-            assertTrue("Should be an object: " + descriptor, isObject(descriptor))
+            assertTrue("Wrong name: $descriptor", descriptor.name.asString() == "Lol")
+            assertTrue("Should be an object: $descriptor", isObject(descriptor))
         }
     }
 
     fun testBrokenJarWithNoClassForObject() {
         val brokenJar = copyJarFileWithoutEntry(compileLibrary("library"), "test/Lol.class")
         val allDescriptors = analyzeAndGetAllDescriptors(brokenJar)
-        assertEmpty("No descriptors should be found: " + allDescriptors, allDescriptors)
+        assertEmpty("No descriptors should be found: $allDescriptors", allDescriptors)
     }
 
     fun testSameLibraryTwiceInClasspath() {
@@ -374,7 +373,7 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
     }
 
     fun testMetadataVersionDerivedFromLanguage() {
-        for (languageVersion in LanguageVersion.values()) {
+        for (languageVersion in LanguageVersion.entries) {
             if (languageVersion.isUnsupported) continue
 
             compileKotlin(
@@ -541,7 +540,9 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
 
     fun testInternalFromFriendModuleFir() {
         val library = compileLibrary("library")
-        compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = listOf("-Xfriend-paths=${library.path}", "-language-version", "2.0"))
+        compileKotlin(
+            "source.kt", tmpdir, listOf(library), additionalOptions = listOf("-Xfriend-paths=${library.path}", "-language-version", "2.0")
+        )
     }
 
     fun testJvmDefaultClashWithOld() {
@@ -556,7 +557,9 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
 
     fun testJvmDefaultClashWithNoCompatibility() {
         val library = compileLibrary("library", additionalOptions = listOf("-Xjvm-default=disable"))
-        compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = listOf("-jvm-target", "1.8", "-Xjvm-default=all-compatibility"))
+        compileKotlin(
+            "source.kt", tmpdir, listOf(library), additionalOptions = listOf("-jvm-target", "1.8", "-Xjvm-default=all-compatibility")
+        )
     }
 
     fun testJvmDefaultNonDefaultInheritanceSuperCall() {
@@ -680,7 +683,10 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
 
     fun testAgainstFirWithAllowUnstableDependencies() {
         val library = compileLibrary("library", additionalOptions = listOf("-language-version", "2.0"))
-        compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = listOf("-Xallow-unstable-dependencies", "-Xskip-metadata-version-check"))
+        compileKotlin(
+            "source.kt", tmpdir, listOf(library),
+            additionalOptions = listOf("-Xallow-unstable-dependencies", "-Xskip-metadata-version-check")
+        )
     }
 
     fun testSealedClassesAndInterfaces() {
@@ -730,7 +736,7 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
             listOf("-Xexpect-actual-linker")
         )
     }
-    
+
     fun testActualTypealiasToCompiledInlineClass() {
         val library14 = compileLibrary(
             "library14",
@@ -780,12 +786,6 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
             classpath = listOf(libraryAnnotation, libraryUsingAnnotation),
             additionalOptions = listOf("-language-version", "2.0")
         )
-    }
-
-    private fun loadClassFile(className: String, dir: File, library: File) {
-        val classLoader = URLClassLoader(arrayOf(dir.toURI().toURL(), library.toURI().toURL()))
-        val mainClass = classLoader.loadClass(className)
-        mainClass.getDeclaredMethod("main", Array<String>::class.java).invoke(null, arrayOf<String>())
     }
 
     companion object {
