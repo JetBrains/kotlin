@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.test.TestJdkKind
-import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparatorAdaptor.validateAndCompareDescriptorWithFile
 import org.jetbrains.kotlin.utils.toMetadataVersion
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
@@ -49,14 +48,6 @@ import kotlin.experimental.xor
 class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegrationTest() {
     override val testDataPath: String
         get() = "compiler/testData/compileKotlinAgainstCustomBinaries/"
-
-    private fun doTestWithTxt(vararg extraClassPath: File) {
-        validateAndCompareDescriptorWithFile(
-            analyzeFileToPackageView(*extraClassPath),
-            AbstractLoadJavaTest.COMPARATOR_CONFIGURATION,
-            getTestDataFileWithExtension("txt")
-        )
-    }
 
     private fun analyzeFileToPackageView(vararg extraClassPath: File): PackageViewDescriptor {
         val environment = createEnvironment(extraClassPath.toList())
@@ -163,7 +154,7 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
     }
 
     fun testSameLibraryTwiceInClasspath() {
-        doTestWithTxt(compileLibrary("library-1"), compileLibrary("library-2"))
+        compileKotlin("source.kt", tmpdir, listOf(compileLibrary("library-1"), compileLibrary("library-2")))
     }
 
     fun testMissingEnumReferencedInAnnotationArgument() {
@@ -461,7 +452,7 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         val library1 = compileLibrary("library-1")
         val usage = compileLibrary("usage", extraClassPath = listOf(library1))
         val library2 = compileLibrary("library-2")
-        doTestWithTxt(usage, library2)
+        compileKotlin("source.kt", tmpdir, listOf(usage, library2))
     }
 
     fun testProhibitNestedClassesByDollarName() {
