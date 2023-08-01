@@ -780,7 +780,7 @@ open class NewMultiplatformIT : BaseGradleIT() {
                     |kotlin.sourceSets.jvm6Main.${initialSetupForSourceSets}
                     |kotlin.sourceSets.mingw64Main.${initialSetupForSourceSets}
                     |kotlin.sourceSets.nodeJsMain.${initialSetupForSourceSets}
-                    |kotlin.sourceSets.wasmMain.${initialSetupForSourceSets}
+                    |kotlin.sourceSets.wasmJsMain.${initialSetupForSourceSets}
                     """.trimMargin()
                 )
             }
@@ -798,7 +798,7 @@ open class NewMultiplatformIT : BaseGradleIT() {
                 |kotlin.sourceSets.jvm6Main.${sourceSetConfigurationChange}
                 |kotlin.sourceSets.mingw64Main.${sourceSetConfigurationChange}
                 |kotlin.sourceSets.nodeJsMain.${sourceSetConfigurationChange}
-                |kotlin.sourceSets.wasmMain.${sourceSetConfigurationChange}
+                |kotlin.sourceSets.wasmJsMain.${sourceSetConfigurationChange}
                 """.trimMargin()
             )
             build("tasks") {
