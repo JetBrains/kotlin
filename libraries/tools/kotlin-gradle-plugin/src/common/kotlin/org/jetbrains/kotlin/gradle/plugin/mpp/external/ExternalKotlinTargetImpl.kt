@@ -80,9 +80,10 @@ internal class ExternalKotlinTargetImpl internal constructor(
     @InternalKotlinGradlePluginApi
     override val kotlinComponents: Set<ExternalKotlinTargetComponent> = setOf(kotlinTargetComponent)
 
-    override val components: Set<AdhocComponentWithVariants> get() = kotlinComponents.map { it.gradleSoftwareComponent }.toSet()
+    override val components: Set<AdhocComponentWithVariants>
+        get() = kotlinComponents.map { it.gradleSoftwareComponent.getOrThrow() }.toSet()
 
-    suspend fun awaitComponents(): Set<AdhocComponentWithVariants> = kotlinComponents.map { it.awaitGradleSoftwareComponent() }.toSet()
+    suspend fun awaitComponents(): Set<AdhocComponentWithVariants> = kotlinComponents.map { it.gradleSoftwareComponent.await() }.toSet()
 
     override val compilations: NamedDomainObjectContainer<DecoratedExternalKotlinCompilation> by lazy {
         project.container(DecoratedExternalKotlinCompilation::class.java)

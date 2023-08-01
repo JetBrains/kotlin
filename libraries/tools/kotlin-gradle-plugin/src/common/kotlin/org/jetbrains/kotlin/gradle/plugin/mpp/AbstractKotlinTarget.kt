@@ -111,7 +111,6 @@ abstract class AbstractKotlinTarget(
      */
     override val components: Set<SoftwareComponent> by lazy {
         val softwareComponentFactoryClass = SoftwareComponentFactory::class.java
-        // TODO replace internal API access with injection (not possible until we have this class on the compile classpath)
         val softwareComponentFactory = (project as ProjectInternal).services.get(softwareComponentFactoryClass)
 
         kotlinComponents.map { kotlinComponent ->

@@ -15,15 +15,18 @@ import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.publish.maven.MavenPublication
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
+import org.jetbrains.kotlin.gradle.plugin.await
+import org.jetbrains.kotlin.gradle.plugin.awaitFinalValueOrThrow
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext.MavenScope.COMPILE
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext.MavenScope.RUNTIME
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinTargetComponent.TargetProvider
-import org.jetbrains.kotlin.gradle.utils.CompletableFuture
-import org.jetbrains.kotlin.gradle.utils.complete
+import org.jetbrains.kotlin.gradle.utils.Future
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.gradle.utils.future
+import org.jetbrains.kotlin.gradle.utils.lazyFuture
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 internal class ExternalKotlinTargetComponent(
@@ -98,20 +101,15 @@ internal class ExternalKotlinTargetComponent(
 
     override fun getUsages(): Set<KotlinUsageContext> = kotlinUsagesFuture.getOrThrow()
 
-    private val gradleSoftwareComponentConfigured = CompletableFuture<Unit>()
-
-    suspend fun awaitGradleSoftwareComponent() = gradleSoftwareComponent
-        .also { gradleSoftwareComponentConfigured.await() }
-
     /**
      * Should be used in Gradle's Publication only.
      * See [org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSoftwareComponent.getVariants]
      */
-    val gradleSoftwareComponent: AdhocComponentWithVariants by lazy {
+    val gradleSoftwareComponent: Future<AdhocComponentWithVariants> = project.lazyFuture {
         val softwareComponentFactory = (target.project as ProjectInternal).services.get(SoftwareComponentFactory::class.java)
         val adhocSoftwareComponent = softwareComponentFactory.adhoc(target.targetName)
 
-        project.launch {
+        adhocSoftwareComponent.also {
             target.applyUserDefinedAttributesJob.await()
             val kotlinUsages = kotlinUsagesFuture.await()
             kotlinUsages.forEach {
@@ -125,10 +123,6 @@ internal class ExternalKotlinTargetComponent(
                     }
                 }
             }
-
-            gradleSoftwareComponentConfigured.complete()
         }
-
-        adhocSoftwareComponent
     }
 }
