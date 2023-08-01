@@ -736,6 +736,7 @@ public class org/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKo
 	public fun isSourcesPublishable ()Z
 	public fun mavenPublication (Lkotlin/jvm/functions/Function1;)V
 	public fun mavenPublication (Lorg/gradle/api/Action;)V
+	public fun onPublicationCreated (Lorg/gradle/api/publish/maven/MavenPublication;)V
 	public fun setSourcesPublishable (Z)V
 	public fun withSourcesJar (Z)V
 }
