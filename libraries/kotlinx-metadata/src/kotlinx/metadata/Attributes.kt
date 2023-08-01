@@ -290,17 +290,21 @@ public var KmProperty.kind: MemberKind by memberKindDelegate(KmProperty::flags)
 
 /**
  * Indicates that the corresponding property is `var`.
+ *
+ * Note that setting [KmProperty.isVar] to true does not automatically create [KmProperty.setter] and vice versa. This has to be done explicitly.
  */
 public var KmProperty.isVar: Boolean by propertyBooleanFlag(Flag(ProtoFlags.IS_VAR))
 
 /**
  * Indicates that the corresponding property has a getter.
  */
+@Deprecated("Kotlin properties always have getters", ReplaceWith("true"), DeprecationLevel.WARNING)
 public var KmProperty.hasGetter: Boolean by propertyBooleanFlag(Flag(ProtoFlags.HAS_GETTER))
 
 /**
  * Indicates that the corresponding property has a setter.
  */
+@Deprecated("Check .setter for nullability instead", ReplaceWith("this.setter != null"), DeprecationLevel.WARNING)
 public var KmProperty.hasSetter: Boolean by propertyBooleanFlag(Flag(ProtoFlags.HAS_SETTER))
 
 /**

@@ -165,8 +165,8 @@ public fun WriteContext.writeProperty(kmProperty: KmProperty): ProtoBuf.Property
         t.flags = kmProperty.flags
     }
     // TODO: do not write getterFlags/setterFlags if not needed
-    if (kmProperty.hasGetter) t.getterFlags = kmProperty.getterFlags
-    if (kmProperty.hasSetter) t.setterFlags = kmProperty.setterFlags
+    t.getterFlags = kmProperty.getter.flags
+    if (kmProperty.setter != null) t.setterFlags = kmProperty.setter!!.flags
     return t
 }
 

@@ -7,8 +7,11 @@
 
 package kotlinx.metadata
 
+import kotlinx.metadata.internal.Flag
 import kotlinx.metadata.internal.extensions.*
 import kotlinx.metadata.internal.getDefaultPropertyAccessorFlags
+import kotlinx.metadata.internal.propertyBooleanFlag
+import org.jetbrains.kotlin.metadata.deserialization.Flags
 import kotlin.contracts.ExperimentalContracts
 
 /**
@@ -499,23 +502,29 @@ public class KmProperty @Deprecated(flagsCtorDeprecated) constructor(
 
     public constructor(name: String) : this(0, name, 0, 0)
 
+    // needed for reading/writing flags back to protobuf as a whole pack
+    private var _hasSetter: Boolean by propertyBooleanFlag(Flag(Flags.HAS_SETTER))
+    private var _hasGetter: Boolean by propertyBooleanFlag(Flag(Flags.HAS_GETTER))
+
     /**
      * Attributes of the getter of this property.
      * Attributes can be retrieved with extension properties, such as [KmPropertyAccessorAttributes.visibility] or [KmPropertyAccessorAttributes.isNotDefault].
      *
      * Getter for property is always present, hence return type of this function is non-nullable.
      */
-    public val getter: KmPropertyAccessorAttributes = KmPropertyAccessorAttributes(getterFlags)
+    public val getter: KmPropertyAccessorAttributes = KmPropertyAccessorAttributes(getterFlags).also { _hasGetter = true }
 
     /**
      * Attributes of the setter of this property.
      * Attributes can be retrieved with extension properties, such as [KmPropertyAccessorAttributes.visibility] or [KmPropertyAccessorAttributes.isNotDefault].
      *
      * Returns null if setter is absent, i.e. [KmProperty.isVar] is false.
+     *
+     * Note that setting [KmProperty.isVar] to true does not automatically create [KmProperty.setter] and vice versa. This has to be done explicitly.
      */
-    public var setter: KmPropertyAccessorAttributes? = if (this.hasSetter) KmPropertyAccessorAttributes(setterFlags) else null
+    public var setter: KmPropertyAccessorAttributes? = if (this._hasSetter) KmPropertyAccessorAttributes(setterFlags) else null
         set(new) {
-            this.hasSetter = new != null
+            this._hasSetter = new != null
             field = new
         }
 
@@ -547,7 +556,7 @@ public class KmProperty @Deprecated(flagsCtorDeprecated) constructor(
      * This behavior is for compatibility only and will be removed in future versions.
      */
     @Deprecated("$flagAccessPrefix KmProperty.setter, such as KmProperty.setter.isNotDefault")
-    public var setterFlags: Int = getDefaultPropertyAccessorFlags(flags)
+    public var setterFlags: Int = setterFlags // It's either the correct flags from deserializer, or always 0 in the case of hand-created property
         get() = setter?.flags ?: field
         set(value) {
             setter?.flags = value
