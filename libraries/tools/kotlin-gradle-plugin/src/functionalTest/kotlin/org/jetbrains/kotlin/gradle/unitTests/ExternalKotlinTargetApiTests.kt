@@ -226,13 +226,15 @@ class ExternalKotlinTargetApiTests {
     fun `test gradle usage component contains the same usages as kotlin component`() = project.runLifecycleAwareTest {
         val target = kotlin.createExternalKotlinTarget<FakeTarget> { defaults() }
         target.createCompilation<FakeCompilation> { defaults(kotlin) }
-        val kotlinComponent = target.delegate.kotlinComponents.singleOrNull() ?: fail("Expected single 'kotlinComponent' for external target")
-        val gradleComponent = target.delegate.components.singleOrNull() ?: fail("Expected single 'component' for external target")
 
-        project.configurationResult.await()
+        val kotlinComponent = target.delegate.kotlinComponents.singleOrNull()
+            ?: fail("Expected single 'kotlinComponent' for external target")
+
+        val gradleComponent = target.delegate.components.singleOrNull()
+            ?: fail("Expected single 'component' for external target")
 
         val kotlinUsagesNames = kotlinComponent.awaitKotlinUsagesOrEmpty().map { it.dependencyConfigurationName }
-        val gradleUsagesNames = (gradleComponent as SoftwareComponentInternal).usages.map { it.name }
+        val gradleUsagesNames = (gradleComponent.configured.await() as SoftwareComponentInternal).usages.map { it.name }
 
         if (kotlinUsagesNames.toSet() != gradleUsagesNames.toSet())
             fail("Kotlin Usages ($kotlinUsagesNames) from Kotlin Component didn't match Usages from Gradle Component ($gradleUsagesNames)")

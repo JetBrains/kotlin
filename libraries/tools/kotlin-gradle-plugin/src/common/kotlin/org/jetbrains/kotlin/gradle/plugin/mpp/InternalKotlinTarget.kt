@@ -24,7 +24,6 @@ internal interface InternalKotlinTarget : KotlinTarget, HasMutableExtras {
     @InternalKotlinGradlePluginApi
     override val components: Set<KotlinTargetSoftwareComponent>
 
-    @InternalKotlinGradlePluginApi
     fun onPublicationCreated(publication: MavenPublication)
 }
 

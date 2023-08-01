@@ -8,5 +8,8 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.component.ComponentWithCoordinates
 import org.gradle.api.component.ComponentWithVariants
 import org.gradle.api.internal.component.SoftwareComponentInternal
+import org.jetbrains.kotlin.gradle.utils.Future
 
-abstract class KotlinTargetSoftwareComponent : ComponentWithVariants, ComponentWithCoordinates, SoftwareComponentInternal
+abstract class KotlinTargetSoftwareComponent : ComponentWithVariants, ComponentWithCoordinates, SoftwareComponentInternal {
+    internal abstract val configured: Future<KotlinTargetSoftwareComponent>
+}

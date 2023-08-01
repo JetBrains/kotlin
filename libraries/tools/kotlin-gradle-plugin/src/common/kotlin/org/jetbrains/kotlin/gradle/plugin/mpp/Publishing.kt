@@ -85,7 +85,7 @@ private fun InternalKotlinTarget.createMavenPublications(publications: Publicati
                 // do await for usages since older Gradle versions seem to check the files in the variant eagerly:
                 project.launch {
                     val gradleComponent = components.find { kotlinComponent.name == it.name } ?: return@launch
-                    from(gradleComponent)
+                    from(gradleComponent.configured.await())
                 }
                 (this as MavenPublicationInternal).publishWithOriginalFileName()
                 artifactId = kotlinComponent.defaultArtifactId

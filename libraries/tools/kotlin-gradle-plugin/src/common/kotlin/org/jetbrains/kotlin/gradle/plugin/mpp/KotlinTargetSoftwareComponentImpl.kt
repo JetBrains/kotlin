@@ -13,8 +13,10 @@ import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.internal.project.ProjectInternal
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
-import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
+import org.jetbrains.kotlin.gradle.utils.Future
+import org.jetbrains.kotlin.gradle.utils.future
+import org.jetbrains.kotlin.gradle.utils.map
 import org.jetbrains.kotlin.tooling.core.UnsafeApi
 
 internal fun KotlinTargetSoftwareComponent(
@@ -25,7 +27,7 @@ internal fun KotlinTargetSoftwareComponent(
     val adhocVariant = softwareComponentFactory.adhoc(kotlinComponent.name)
 
     /* Launch configuration */
-    target.project.launch {
+    val configurationFuture = target.project.future {
         target.applyUserDefinedAttributesJob.await()
         val usages = kotlinComponent.awaitKotlinUsagesOrEmpty()
         usages.forEach { kotlinUsageContext ->
@@ -54,7 +56,7 @@ internal fun KotlinTargetSoftwareComponent(
     }
 
     @OptIn(UnsafeApi::class)
-    return KotlinTargetSoftwareComponentImpl(adhocVariant, kotlinComponent)
+    return KotlinTargetSoftwareComponentImpl(adhocVariant, kotlinComponent, configurationFuture)
 }
 
 
@@ -72,7 +74,11 @@ internal fun publishedConfigurationName(originalVariantName: String) = originalV
 internal class KotlinTargetSoftwareComponentImpl @UnsafeApi constructor(
     private val adhocComponent: AdhocComponentWithVariants,
     private val kotlinComponent: KotlinTargetComponent,
+    deferredConfigurationFuture: Future<*>,
 ) : KotlinTargetSoftwareComponent() {
+
+    override val configured: Future<KotlinTargetSoftwareComponent> =
+        deferredConfigurationFuture.map { this }
 
     override fun getCoordinates() =
         (kotlinComponent as? ComponentWithCoordinates)?.coordinates ?: error("kotlinComponent is not ComponentWithCoordinates")

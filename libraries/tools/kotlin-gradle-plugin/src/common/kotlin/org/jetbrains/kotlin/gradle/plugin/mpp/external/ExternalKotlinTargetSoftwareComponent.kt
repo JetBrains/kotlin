@@ -13,9 +13,11 @@ import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.internal.project.ProjectInternal
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinaliseDsl
-import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinTargetSoftwareComponent
+import org.jetbrains.kotlin.gradle.plugin.mpp.isSourcesPublishableFuture
+import org.jetbrains.kotlin.gradle.utils.Future
+import org.jetbrains.kotlin.gradle.utils.future
+import org.jetbrains.kotlin.gradle.utils.map
 import org.jetbrains.kotlin.tooling.core.UnsafeApi
 
 
@@ -33,8 +35,8 @@ internal fun ExternalKotlinTargetSoftwareComponent(
         details.mapToMavenScope("runtime")
     }
 
-    target.project.launchInStage(AfterFinaliseDsl) {
-        if (target.isSourcesPublishable) {
+    val configureFuture = target.project.future {
+        if (target.isSourcesPublishableFuture.await()) {
             adhocSoftwareComponent.addVariantsFromConfiguration(target.sourcesElementsPublishedConfiguration) { details ->
                 details.mapToOptional()
             }
@@ -46,6 +48,7 @@ internal fun ExternalKotlinTargetSoftwareComponent(
         target.project.multiplatformExtension,
         adhocSoftwareComponent as SoftwareComponentInternal,
         target.kotlinTargetComponent,
+        configureFuture
     )
 }
 
@@ -53,7 +56,11 @@ internal class ExternalKotlinTargetSoftwareComponent @UnsafeApi constructor(
     private val multiplatformExtension: KotlinMultiplatformExtension,
     private val adhocSoftwareComponent: SoftwareComponentInternal,
     private val kotlinTargetComponent: ExternalKotlinTargetComponent,
+    deferredConfigurationFuture: Future<*>,
 ) : KotlinTargetSoftwareComponent() {
+
+    override val configured: Future<KotlinTargetSoftwareComponent> =
+        deferredConfigurationFuture.map { this }
 
     override fun getName(): String = adhocSoftwareComponent.name
     override fun getUsages(): Set<UsageContext> = adhocSoftwareComponent.usages
