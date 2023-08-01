@@ -148,7 +148,7 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
         )
     }
 
-    protected fun compileKotlin(
+    protected open fun compileKotlin(
         fileName: String,
         output: File,
         classpath: List<File> = emptyList(),
