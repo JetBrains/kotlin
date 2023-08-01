@@ -36,6 +36,24 @@ class AppleConfigurablesImpl(
         XcodePartsProvider.InternalServer -> absolute(sdkDependency)
     }
 
+    override val osVersionMin: String by lazy {
+        // A hack only for 1.9.10 where we need to keep the old defaults for Xcode 14 (min version 9.0)
+        // and the new ones for Xcode 15 (min version 12.0).
+        if (target.family == Family.IOS || target.family == Family.TVOS) {
+            when (val xcodePartsProvider1 = xcodePartsProvider) {
+                is XcodePartsProvider.Local -> {
+                    if (checkXcodeVersion("15.0.0", xcodePartsProvider1.xcode.version)) {
+                        return@lazy targetString("osVersionMinSinceXcode15")!!
+                    }
+                }
+                is XcodePartsProvider.InternalServer -> {
+                    // Build server case. Here we use Xcode 14, so we don't need a workaround here.
+                }
+            }
+        }
+        super.osVersionMin
+    }
+
     override val absoluteTargetToolchain: String get() = when (val provider = xcodePartsProvider) {
         is XcodePartsProvider.Local -> provider.xcode.toolchain
         XcodePartsProvider.InternalServer -> absolute(toolchainDependency)
@@ -60,7 +78,9 @@ class AppleConfigurablesImpl(
             if (properties.getProperty("ignoreXcodeVersionCheck") != "true") {
                 properties.getProperty("minimalXcodeVersion")?.let { minimalXcodeVersion ->
                     val currentXcodeVersion = xcode.version
-                    checkXcodeVersion(minimalXcodeVersion, currentXcodeVersion)
+                    if (!checkXcodeVersion(minimalXcodeVersion, currentXcodeVersion)) {
+                        error("Unsupported Xcode version $currentXcodeVersion, minimal supported version is $minimalXcodeVersion.")
+                    }
                 }
             }
 
@@ -68,7 +88,15 @@ class AppleConfigurablesImpl(
         }
     }
 
-    private fun checkXcodeVersion(minimalVersion: String, currentVersion: String) {
+    /**
+     * Checks if the current Xcode version meets the minimal version requirement.
+     *
+     * @param minimalVersion The minimal Xcode version to check against.
+     * @param currentVersion The current Xcode version.
+     * @return true if the current Xcode version is greater than or equal to the minimal version,
+     *         false otherwise.
+     */
+    private fun checkXcodeVersion(minimalVersion: String, currentVersion: String): Boolean {
         // Xcode versions contain only numbers (even betas).
         // But we still split by '-' and whitespaces to take into account versions like 11.2-beta.
         val minimalVersionParts = minimalVersion.split("(\\s+|\\.|-)".toRegex()).map { it.toIntOrNull() ?: 0 }
@@ -80,11 +108,11 @@ class AppleConfigurablesImpl(
             val minimalPart = minimalVersionParts.getOrElse(i) { 0 }
 
             when {
-                currentPart > minimalPart -> return
-                currentPart < minimalPart ->
-                    error("Unsupported Xcode version $currentVersion, minimal supported version is $minimalVersion.")
+                currentPart > minimalPart -> return true
+                currentPart < minimalPart -> return false
             }
         }
+        return true
     }
 
     private sealed class XcodePartsProvider {
