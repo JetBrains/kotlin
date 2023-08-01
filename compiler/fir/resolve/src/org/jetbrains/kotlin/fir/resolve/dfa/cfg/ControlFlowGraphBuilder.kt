@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.dfa.cfg
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.contracts.description.*
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
@@ -75,6 +76,7 @@ class ControlFlowGraphBuilder {
     private val catchBlocksInProgress: Stack<CatchClauseEnterNode> = stackOf()
     private val finallyEnterNodes: Stack<FinallyBlockEnterNode> = stackOf()
     private val finallyBlocksInProgress: Stack<FinallyBlockEnterNode> = stackOf()
+    private val finallyBlocksInProgressSet = mutableSetOf<FirElement>()
 
     private val exitSafeCallNodes: Stack<ExitSafeCallNode> = stackOf()
     private val exitElvisExpressionNodes: Stack<ElvisExitNode> = stackOf()
@@ -83,6 +85,10 @@ class ControlFlowGraphBuilder {
     private val notCompletedFunctionCalls: Stack<MutableList<FunctionCallNode>> = stackOf()
 
     // ----------------------------------- Public API -----------------------------------
+
+    fun withinFinallyBlock(element: FirElement): Boolean {
+        return finallyBlocksInProgressSet.contains(element)
+    }
 
     fun returnExpressionsOfAnonymousFunction(function: FirAnonymousFunction): Collection<FirAnonymousFunctionReturnExpressionInfo>? {
         val exitNode = function.controlFlowGraphReference?.controlFlowGraph?.exitNode ?: return null
@@ -964,6 +970,7 @@ class ControlFlowGraphBuilder {
         return finallyEnterNodes.pop().also {
             lastNodes.push(it)
             finallyBlocksInProgress.push(it)
+            finallyBlocksInProgressSet.add(it.fir)
         }
     }
 
@@ -1030,6 +1037,8 @@ class ControlFlowGraphBuilder {
         val node = tryExitNodes.pop()
         if (node.fir.finallyBlock != null) {
             val enterFinallyNode = finallyBlocksInProgress.pop()
+            finallyBlocksInProgressSet.remove(enterFinallyNode.fir)
+
             /**
              * If it appears that after completion try main expression returns nothing and try has finally block,
              *   we should make edge from finally exist to try exit a dead (and it may be not dead originally

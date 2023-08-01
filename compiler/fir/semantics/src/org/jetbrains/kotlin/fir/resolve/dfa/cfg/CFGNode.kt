@@ -170,22 +170,17 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
 
 val CFGNode<*>.firstPreviousNode: CFGNode<*> get() = previousNodes[0]
 val CFGNode<*>.lastPreviousNode: CFGNode<*> get() = previousNodes.last()
-val CFGNode<*>.previousDfaNodes: Sequence<Pair<Edge, CFGNode<*>>>
-    get() = previousNodes.asSequence()
-        .map { edgeFrom(it) to it }
-        .filter { (edge, _) -> if (isDead) edge.kind.usedInDeadDfa else edge.kind.usedInDfa }
-val CFGNode<*>.previousLiveNodes: Sequence<CFGNode<*>>
+fun CFGNode<*>.usedInDfa(edge: Edge) = if (isDead) edge.kind.usedInDeadDfa else edge.kind.usedInDfa
+val CFGNode<*>.previousLiveNodes: List<CFGNode<*>>
     get() = when  {
-        this.isDead -> previousNodes.asSequence()
-        else -> previousNodes.asSequence().mapNotNull { it.takeIf { !it.isDead } }
+        this.isDead -> previousNodes
+        else -> previousNodes.filter { !it.isDead }
     }
 
 interface EnterNodeMarker
 interface ExitNodeMarker
 interface GraphEnterNodeMarker : EnterNodeMarker
 interface GraphExitNodeMarker : ExitNodeMarker
-interface AlternateFlowStartMarker
-interface AlternateFlowEndMarker
 
 // ----------------------------------- EnterNode for declaration with CFG -----------------------------------
 
@@ -565,13 +560,13 @@ class CatchClauseExitNode(owner: ControlFlowGraph, override val fir: FirCatch, l
     }
 }
 class FinallyBlockEnterNode(owner: ControlFlowGraph, override val fir: FirTryExpression, level: Int) : CFGNode<FirTryExpression>(owner, level),
-    EnterNodeMarker, AlternateFlowStartMarker {
+    EnterNodeMarker {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitFinallyBlockEnterNode(this, data)
     }
 }
 class FinallyBlockExitNode(owner: ControlFlowGraph, override val fir: FirTryExpression, level: Int) : CFGNode<FirTryExpression>(owner, level),
-    ExitNodeMarker, AlternateFlowEndMarker {
+    ExitNodeMarker {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitFinallyBlockExitNode(this, data)
     }
