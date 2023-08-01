@@ -9,7 +9,6 @@ import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
@@ -22,17 +21,7 @@ import javax.inject.Inject
 internal open class DefaultLanguageSettingsBuilder @Inject constructor(
     @Transient private val project: Project
 ) : LanguageSettingsBuilder {
-    internal var compilationCompilerOptions: CompletableFuture<KotlinCommonCompilerOptions> = CompletableFuture()
-
-    init {
-        project.launch {
-            KotlinPluginLifecycle.Stage.AfterFinaliseCompilations.await()
-            if (!compilationCompilerOptions.isCompleted) {
-                // For shared source sets without any associated compilation, it would be a separate instance of common compiler options
-                compilationCompilerOptions.complete(project.objects.newInstance<KotlinCommonCompilerOptionsDefault>())
-            }
-        }
-    }
+    internal val compilationCompilerOptions: CompletableFuture<KotlinCommonCompilerOptions> = CompletableFuture()
 
     override var languageVersion: String? = null
         get() = if (compilationCompilerOptions.isCompleted) {

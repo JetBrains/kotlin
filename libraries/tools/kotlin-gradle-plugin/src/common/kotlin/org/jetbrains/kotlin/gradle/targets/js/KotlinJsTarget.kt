@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.testing.internal.KotlinTestReport
 import org.jetbrains.kotlin.gradle.testing.testTaskName
-import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.newInstance
@@ -254,5 +253,4 @@ constructor(
     override val compilerOptions: KotlinJsCompilerOptions =
         project.objects
             .newInstance<KotlinJsCompilerOptionsDefault>()
-            .configureExperimentalTryK2(project)
 }

@@ -219,6 +219,95 @@ class ProjectCompilerOptionsTests {
         assertEquals(true, project.kotlinJvmTask("compileTestKotlinFake").compilerOptions.javaParameters.get())
     }
 
+    @Test
+    fun topLevelOptions() {
+        val project = buildProjectWithMPP()
+        project.runLifecycleAwareTest {
+            with(multiplatformExtension) {
+                compilerOptions {
+                    progressiveMode.set(true)
+                }
+
+                jvm()
+                js()
+                iosArm64()
+                linuxX64()
+            }
+        }
+
+        assertEquals(true, project.kotlinCommonTask("compileKotlinMetadata").compilerOptions.progressiveMode.get())
+        assertEquals(true, project.kotlinCommonTask("compileNativeMainKotlinMetadata").compilerOptions.progressiveMode.get())
+        assertEquals(true, project.kotlinCommonTask("compileCommonMainKotlinMetadata").compilerOptions.progressiveMode.get())
+        assertEquals(true, project.kotlinJvmTask("compileKotlinJvm").compilerOptions.progressiveMode.get())
+        assertEquals(true, project.kotlinJvmTask("compileTestKotlinJvm").compilerOptions.progressiveMode.get())
+        assertEquals(true, project.kotlinJsTask("compileKotlinJs").compilerOptions.progressiveMode.get())
+        assertEquals(true, project.kotlinJsTask("compileTestKotlinJs").compilerOptions.progressiveMode.get())
+        assertEquals(true, project.kotlinNativeTask("compileKotlinLinuxX64").compilerOptions.progressiveMode.get())
+        assertEquals(true, project.kotlinNativeTask("compileTestKotlinLinuxX64").compilerOptions.progressiveMode.get())
+        assertEquals(true, project.kotlinNativeTask("compileKotlinIosArm64").compilerOptions.progressiveMode.get())
+        assertEquals(true, project.kotlinNativeTask("compileTestKotlinIosArm64").compilerOptions.progressiveMode.get())
+    }
+
+    @Test
+    fun testTargetDslOverridesTopLevelDsl() {
+        val project = buildProjectWithMPP()
+        project.runLifecycleAwareTest {
+            with(multiplatformExtension) {
+                jvm {
+                    compilerOptions {
+                        languageVersion.set(KotlinVersion.KOTLIN_1_8)
+                    }
+                }
+
+                compilerOptions {
+                    languageVersion.set(KotlinVersion.KOTLIN_2_0)
+                }
+            }
+        }
+
+        assertEquals(KotlinVersion.KOTLIN_1_8, project.kotlinJvmTask("compileKotlinJvm").compilerOptions.languageVersion.orNull)
+        assertEquals(KotlinVersion.KOTLIN_1_8, project.kotlinJvmTask("compileTestKotlinJvm").compilerOptions.languageVersion.orNull)
+    }
+
+    @Test
+    fun testTaskDslOverrideTopLevelDsl() {
+        val project = buildProjectWithMPP()
+        project.runLifecycleAwareTest {
+            tasks.withType<KotlinJvmCompileTask>().configureEach {
+                if (it.name == "compileKotlinJvm") {
+                    it.compilerOptions.languageVersion.set(KotlinVersion.KOTLIN_1_8)
+                }
+            }
+
+            with(multiplatformExtension) {
+                jvm()
+
+                compilerOptions {
+                    languageVersion.set(KotlinVersion.KOTLIN_2_0)
+                }
+            }
+        }
+
+        assertEquals(KotlinVersion.KOTLIN_1_8, project.kotlinJvmTask("compileKotlinJvm").compilerOptions.languageVersion.orNull)
+    }
+
+    @Test
+    fun testTopLevelDslAlsoConfiguresSharedSourceSets() {
+        val project = buildProjectWithMPP()
+        project.runLifecycleAwareTest {
+            with(multiplatformExtension) {
+                jvm()
+                js()
+
+                compilerOptions {
+                    languageVersion.set(KotlinVersion.KOTLIN_2_0)
+                }
+            }
+        }
+
+        assertEquals("2.0", project.multiplatformExtension.sourceSets.getByName("commonTest").languageSettings.languageVersion)
+    }
+
     private fun Project.kotlinNativeTask(name: String): KotlinCompilationTask<KotlinNativeCompilerOptions> = tasks
         .named<KotlinCompilationTask<KotlinNativeCompilerOptions>>(name)
         .get()

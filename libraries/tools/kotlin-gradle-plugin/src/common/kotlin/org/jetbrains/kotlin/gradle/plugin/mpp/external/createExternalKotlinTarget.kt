@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.mpp.configureSourcesPublicationAttributes
 import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
-import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.markConsumable
 import org.jetbrains.kotlin.gradle.utils.named
@@ -68,7 +67,7 @@ fun <T : DecoratedExternalKotlinTarget> KotlinMultiplatformExtension.createExter
         KotlinPlatformType.js -> project.objects.newInstance<KotlinJsCompilerOptionsDefault>()
         KotlinPlatformType.common -> project.objects.newInstance<KotlinCommonCompilerOptionsDefault>()
         KotlinPlatformType.native -> project.objects.newInstance<KotlinNativeCompilerOptionsDefault>()
-    }.configureExperimentalTryK2(project)
+    }
 
     val target = ExternalKotlinTargetImpl(
         project = project,
