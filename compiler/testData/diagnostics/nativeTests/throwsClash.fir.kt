@@ -33,7 +33,7 @@ fun foo7(x: <!DEPRECATION!>kotlin.native.Throws<!>) {}
 // FILE: main2.kt
 package abc2
 
-import kotlin.native.Throws
+import <!DEPRECATION!>kotlin.native.Throws<!>
 
 @<!DEPRECATION!>Throws<!>(Throwable::class)
 fun foo1() {}
@@ -70,7 +70,7 @@ fun foo7(x: <!DEPRECATION!>kotlin.native.Throws<!>) {}
 package abc4
 
 import kotlin.<!CONFLICTING_IMPORT!>Throws<!>
-import kotlin.native.<!CONFLICTING_IMPORT!>Throws<!>
+import <!DEPRECATION!>kotlin.native.<!CONFLICTING_IMPORT!>Throws<!><!>
 
 @<!OVERLOAD_RESOLUTION_AMBIGUITY!>Throws<!>(Throwable::class)
 fun foo1() {}
@@ -144,7 +144,7 @@ fun foo7(x: <!DEPRECATION!>kotlin.native.Throws<!>) {}
 package abc8
 
 import kotlin.*
-import kotlin.native.Throws
+import <!DEPRECATION!>kotlin.native.Throws<!>
 
 @<!DEPRECATION!>Throws<!>(Throwable::class)
 fun foo1() {}

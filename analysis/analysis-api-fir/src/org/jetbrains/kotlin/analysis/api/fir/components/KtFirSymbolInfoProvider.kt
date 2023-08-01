@@ -44,13 +44,13 @@ internal class KtFirSymbolInfoProvider(
 
         return when (val firSymbol = symbol.firSymbol) {
             is FirPropertySymbol -> {
-                firSymbol.getDeprecationForCallSite(apiVersion, AnnotationUseSiteTarget.PROPERTY)
+                firSymbol.getDeprecationForCallSite(analysisSession.useSiteSession, AnnotationUseSiteTarget.PROPERTY)
             }
             is FirBackingFieldSymbol -> {
-                firSymbol.getDeprecationForCallSite(apiVersion, AnnotationUseSiteTarget.FIELD)
+                firSymbol.getDeprecationForCallSite(analysisSession.useSiteSession, AnnotationUseSiteTarget.FIELD)
             }
             else -> {
-                firSymbol.getDeprecationForCallSite(apiVersion)
+                firSymbol.getDeprecationForCallSite(analysisSession.useSiteSession)
             }
         }
     }
@@ -67,9 +67,9 @@ internal class KtFirSymbolInfoProvider(
     override fun getDeprecation(symbol: KtSymbol, annotationUseSiteTarget: AnnotationUseSiteTarget?): DeprecationInfo? {
         require(symbol is KtFirSymbol<*>)
         return if (annotationUseSiteTarget != null) {
-            symbol.firSymbol.getDeprecationForCallSite(apiVersion, annotationUseSiteTarget)
+            symbol.firSymbol.getDeprecationForCallSite(analysisSession.useSiteSession, annotationUseSiteTarget)
         } else {
-            symbol.firSymbol.getDeprecationForCallSite(apiVersion)
+            symbol.firSymbol.getDeprecationForCallSite(analysisSession.useSiteSession)
         }
 
     }
@@ -77,7 +77,7 @@ internal class KtFirSymbolInfoProvider(
     override fun getGetterDeprecation(symbol: KtPropertySymbol): DeprecationInfo? {
         require(symbol is KtFirSymbol<*>)
         return symbol.firSymbol.getDeprecationForCallSite(
-            apiVersion,
+            analysisSession.useSiteSession,
             AnnotationUseSiteTarget.PROPERTY_GETTER,
             AnnotationUseSiteTarget.PROPERTY,
         )
@@ -87,7 +87,7 @@ internal class KtFirSymbolInfoProvider(
     override fun getSetterDeprecation(symbol: KtPropertySymbol): DeprecationInfo? {
         require(symbol is KtFirSymbol<*>)
         return symbol.firSymbol.getDeprecationForCallSite(
-            apiVersion,
+            analysisSession.useSiteSession,
             AnnotationUseSiteTarget.PROPERTY_SETTER,
             AnnotationUseSiteTarget.PROPERTY,
         )

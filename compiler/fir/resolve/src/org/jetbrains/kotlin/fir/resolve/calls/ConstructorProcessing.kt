@@ -103,7 +103,7 @@ private fun FirDeclaration.isInvisibleOrHidden(session: FirSession, bodyResolveC
         }
     }
 
-    val deprecation = symbol.getDeprecationForCallSite(session.languageVersionSettings.apiVersion)
+    val deprecation = symbol.getDeprecationForCallSite(session)
     return deprecation != null && deprecation.deprecationLevel == DeprecationLevelValue.HIDDEN
 }
 

@@ -40,7 +40,7 @@ object FirOptInLanguageVersionSettingsChecker : FirLanguageVersionSettingsChecke
             rawReport(false, "Class $fqNameAsString is not an opt-in requirement marker")
             return
         }
-        val deprecationInfo = symbol.getDeprecation(context.languageVersionSettings.apiVersion)?.all ?: return
+        val deprecationInfo = symbol.getOwnDeprecation(context.languageVersionSettings.apiVersion)?.all ?: return
         rawReport(
             deprecationInfo.deprecationLevel != DeprecationLevelValue.WARNING,
             "Opt-in requirement marker $fqNameAsString is deprecated" + deprecationInfo.message?.let { ". $it" }.orEmpty()

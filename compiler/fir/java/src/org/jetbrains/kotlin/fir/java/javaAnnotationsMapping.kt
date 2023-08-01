@@ -245,7 +245,7 @@ private fun JavaAnnotation.toFirAnnotationCall(session: FirSession): FirAnnotati
     }
 
     /**
-     * This is required to avoid contract violation during [org.jetbrains.kotlin.fir.declarations.getDeprecationForCallSite]
+     * This is required to avoid contract violation during [org.jetbrains.kotlin.fir.declarations.getOwnDeprecationForCallSite]
      * Because argument transformation may lead to [org.jetbrains.kotlin.fir.declarations.FirResolvePhase.TYPES]+ lazy resolution
      * See KT-59342
      * TODO: KT-60520

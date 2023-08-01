@@ -14,7 +14,10 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 object FirDeprecatedQualifierChecker : FirResolvedQualifierChecker() {
     override fun check(expression: FirResolvedQualifier, context: CheckerContext, reporter: DiagnosticReporter) {
         expression.nonFatalDiagnostics.filterIsInstance<ConeDeprecated>().forEach { diagnostic ->
-            FirDeprecationChecker.reportApiStatus(diagnostic.source, diagnostic.symbol, null, diagnostic.deprecationInfo, reporter, context)
+            FirDeprecationChecker.reportApiStatus(
+                diagnostic.source, diagnostic.symbol, isTypealiasExpansion = false,
+                diagnostic.deprecationInfo, reporter, context
+            )
         }
         if (expression.resolvedToCompanionObject) {
             val companionSymbol = (expression.symbol as? FirRegularClassSymbol)?.companionObjectSymbol ?: return
