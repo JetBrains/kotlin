@@ -26,24 +26,22 @@ class MppDiagnosticsIt : KGPBaseTest() {
 
     @GradleTest
     fun testDeprecatedMppProperties(gradleVersion: GradleVersion) {
-        project("mppDeprecatedProperties", gradleVersion) {
-            checkDeprecatedProperties(isDeprecationExpected = false)
+        for (deprecatedProperty in this.deprecatedFlags) {
+            project("mppDeprecatedProperties", gradleVersion) {
+                checkDeprecatedProperties(isDeprecationExpected = false)
 
-            this.gradleProperties.appendText(
-                defaultFlags.entries.joinToString(
-                    prefix = System.lineSeparator(),
-                    postfix = System.lineSeparator(),
-                    separator = System.lineSeparator(),
-                ) { (prop, value) -> "$prop=$value" }
-            )
-            checkDeprecatedProperties(isDeprecationExpected = true)
+                this.gradleProperties.appendText(
+                    "${deprecatedProperty.key}=${deprecatedProperty.value}${System.lineSeparator()}"
+                )
+                checkDeprecatedProperties(isDeprecationExpected = true)
 
-            // remove the MPP plugin from the top-level project and check the warnings are still reported in subproject
-            this.buildGradleKts.writeText("")
-            checkDeprecatedProperties(isDeprecationExpected = true)
+                // remove the MPP plugin from the top-level project and check the warnings are still reported in subproject
+                this.buildGradleKts.writeText("")
+                checkDeprecatedProperties(isDeprecationExpected = true)
 
-            this.gradleProperties.appendText("kotlin.internal.suppressGradlePluginErrors=PreHMPPFlagsError${System.lineSeparator()}")
-            checkDeprecatedProperties(isDeprecationExpected = false)
+                this.gradleProperties.appendText("kotlin.internal.suppressGradlePluginErrors=PreHMPPFlagsError${System.lineSeparator()}")
+                checkDeprecatedProperties(isDeprecationExpected = false)
+            }
         }
     }
 
@@ -179,7 +177,7 @@ class MppDiagnosticsIt : KGPBaseTest() {
         }
     }
 
-    private val defaultFlags: Map<String, String>
+    private val deprecatedFlags: Map<String, String>
         get() = mapOf(
             "kotlin.mpp.enableGranularSourceSetsMetadata" to "true",
             "kotlin.mpp.enableCompatibilityMetadataVariant" to "false",
