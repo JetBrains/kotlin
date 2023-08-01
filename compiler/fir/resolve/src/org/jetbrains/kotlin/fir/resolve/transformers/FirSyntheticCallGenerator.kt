@@ -34,15 +34,13 @@ import org.jetbrains.kotlin.fir.references.builder.buildResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirStubReference
 import org.jetbrains.kotlin.fir.references.isError
-import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
-import org.jetbrains.kotlin.fir.resolve.ResolutionMode
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
-import org.jetbrains.kotlin.fir.resolve.createErrorReferenceWithExistingCandidate
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
-import org.jetbrains.kotlin.fir.resolve.toErrorReference
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.symbols.SyntheticCallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
@@ -176,9 +174,10 @@ class FirSyntheticCallGenerator(
         context: ResolutionContext
     ): FirFunctionCall {
         val argumentList = arrayLiteral.argumentList
+        val arrayOfSymbol = calculateArrayOfSymbol(expectedTypeRef)
         return buildFunctionCall {
             this.argumentList = argumentList
-            calleeReference = calculateArrayOfSymbol(expectedTypeRef)?.let {
+            calleeReference = arrayOfSymbol?.let {
                 generateCalleeReferenceWithCandidate(
                     arrayLiteral,
                     it.fir,
@@ -191,6 +190,10 @@ class FirSyntheticCallGenerator(
                 diagnostic = ConeUnresolvedNameError(ArrayFqNames.ARRAY_OF_FUNCTION)
             }
             source = arrayLiteral.source
+        }.also {
+            if (arrayOfSymbol == null) {
+                it.resultType = components.typeFromCallee(it)
+            }
         }
     }
 
