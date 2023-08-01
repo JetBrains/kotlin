@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.symbols.Fir2IrConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.Fir2IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyDeclarationResolver
+import org.jetbrains.kotlin.fir.types.coneTypeOrNull
 import org.jetbrains.kotlin.ir.PsiIrFileEntry
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
@@ -274,7 +275,7 @@ class Fir2IrConverter(
 
         val irFragmentFunction = symbolTable.declareSimpleFunction(signature, { Fir2IrSimpleFunctionSymbol(signature) }) { irSymbol ->
             val lastStatement = codeFragment.block.statements.lastOrNull()
-            val returnType = (lastStatement as? FirExpression)?.typeRef?.toIrType(typeConverter) ?: irBuiltIns.unitType
+            val returnType = (lastStatement as? FirExpression)?.coneTypeOrNull?.toIrType(typeConverter) ?: irBuiltIns.unitType
 
             irFactory.createSimpleFunction(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,
