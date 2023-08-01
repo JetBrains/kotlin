@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.test.framework.services
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModuleProvider
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.util.PrivateForInline
@@ -15,6 +16,8 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
@@ -153,6 +156,27 @@ class ExpressionMarkerProvider : TestService {
                 current.children.singleOrNull()?.takeIf { it.textRange == current.textRange }
             }.firstIsInstance()
         }
+    }
+
+    /**
+     * Find the bottommost element of an [elementType] or its subtype located precisely in the [range].
+     */
+    private fun <T : PsiElement> getBottommostElementOfTypeInRange(file: KtFile, range: TextRange, elementType: Class<T>): T {
+        var candidate = PsiTreeUtil.findElementOfClassAtOffset(file, range.startOffset, elementType, true)
+        while (candidate != null && candidate.endOffset < range.endOffset) {
+            candidate = PsiTreeUtil.getParentOfType(candidate, elementType)?.takeIf { it.startOffset == range.startOffset }
+        }
+
+        return candidate?.takeIf { it.endOffset == range.endOffset }
+            ?: error("Cannot find '${elementType.name}' in range $range")
+    }
+
+    /**
+     * Find the bottommost element of [E] or its subtype wrapped in an '<expr>' selection tag.
+     */
+    fun <E : KtElement> getBottommostSelectedElementOfType(file: KtFile, elementType: Class<E>): E {
+        val range = selected[file.name] ?: error("No selected expression found in file")
+        return getBottommostElementOfTypeInRange(file, range, elementType)
     }
 
     private fun List<PsiElement>.trimWhitespaces(): List<PsiElement> =
