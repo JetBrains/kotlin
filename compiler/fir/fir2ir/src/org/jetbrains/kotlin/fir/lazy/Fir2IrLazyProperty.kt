@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.Fir2IrPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.Fir2IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
@@ -97,7 +98,7 @@ class Fir2IrLazyProperty(
             containingClass?.classKind?.isAnnotationClass == true -> initializer?.asCompileTimeIrInitializer(components)
             // Setting initializers to every other class causes some cryptic errors in lowerings
             initializer is FirConstExpression<*> -> {
-                val constType = with(typeConverter) { initializer.typeRef.toIrType() }
+                val constType = with(typeConverter) { initializer.coneType.toIrType() }
                 factory.createExpressionBody(initializer.toIrConst(constType))
             }
             else -> null
