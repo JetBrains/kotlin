@@ -9,7 +9,6 @@ dependencies {
     implementation(project(":core:deserialization.common"))
     implementation(project(":core:deserialization.common.jvm"))
     implementation(project(":core:compiler.common"))
-    implementation(project(":core:compiler.common.jvm"))
 
     api(project(":compiler:fir:cones"))
     api(project(":compiler:fir:tree"))

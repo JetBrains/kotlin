@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.deserialization
 
-import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
@@ -37,7 +36,10 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.SerializationPluginMetadataExtensions
 import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
-import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -203,8 +205,8 @@ fun deserializeClassToSymbol(
         }
 
         addCloneForArrayIfNeeded(classId, context.dispatchReceiver, session)
-        session.deserializedClassConfigurator?.run {
-            configure(classId)
+        session.deserializationExtension?.run {
+            configureDeserializedClass(classId)
         }
 
         companionObjectSymbol = (declarations.firstOrNull { it is FirRegularClass && it.isCompanion } as FirRegularClass?)?.symbol
@@ -237,9 +239,6 @@ fun deserializeClassToSymbol(
         classProto.getExtensionOrNull(JvmProtoBuf.classModuleName)?.let { idx ->
             moduleName = nameResolver.getString(idx)
         }
-        session.deserializedClassConfigurator?.run {
-            configure(classId)
-        }
 
         if (!Flags.HAS_ENUM_ENTRIES.get(flags)) {
             hasNoEnumEntriesAttr = true
@@ -261,19 +260,6 @@ private val ARRAY_CLASSES: Set<Name> = setOf(
     Name.identifier("DoubleArray"),
     Name.identifier("BooleanArray"),
 )
-
-private val JAVA_IO_SERIALIZABLE = ClassId.topLevel(FqName("java.io.Serializable"))
-
-private fun FirRegularClassBuilder.addSerializableIfNeeded(classId: ClassId) {
-    if (!JvmBuiltInsSignatures.isSerializableInJava(classId.asSingleFqName().toUnsafe())) return
-    superTypeRefs += buildResolvedTypeRef {
-        type = ConeClassLikeTypeImpl(
-            JAVA_IO_SERIALIZABLE.toLookupTag(),
-            typeArguments = emptyArray(),
-            isNullable = false
-        )
-    }
-}
 
 fun FirRegularClassBuilder.addCloneForArrayIfNeeded(classId: ClassId, dispatchReceiver: ConeClassLikeType?, session: FirSession) {
     if (classId.packageFqName != StandardClassIds.BASE_KOTLIN_PACKAGE) return
@@ -315,18 +301,6 @@ fun FirRegularClassBuilder.addCloneForArrayIfNeeded(classId: ClassId, dispatchRe
     }
 }
 
-abstract class DeserializedClassConfigurator(val session: FirSession) : FirSessionComponent {
-    open fun FirRegularClassBuilder.configure(classId: ClassId) {}
-
-    open fun FirRegularClass.configure(classId: ClassId) {}
-}
-
-class JvmDeserializedClassConfigurator(session: FirSession) : DeserializedClassConfigurator(session) {
-    override fun FirRegularClassBuilder.configure(classId: ClassId) {
-        addSerializableIfNeeded(classId)
-    }
-}
-
 private fun ProtoBuf.ClassOrBuilder.propertiesInOrder(context: FirDeserializationContext): List<ProtoBuf.Property> {
     val properties = propertyList
     val versionRequirements = VersionRequirement.create(this, context.nameResolver, context.versionRequirementTable)
@@ -345,4 +319,4 @@ private fun ProtoBuf.ClassOrBuilder.propertiesInOrder(context: FirDeserializatio
     }
 }
 
-val FirSession.deserializedClassConfigurator: DeserializedClassConfigurator? by FirSession.nullableSessionComponentAccessor()
+val FirSession.deserializationExtension: FirDeserializationExtension? by FirSession.nullableSessionComponentAccessor()
