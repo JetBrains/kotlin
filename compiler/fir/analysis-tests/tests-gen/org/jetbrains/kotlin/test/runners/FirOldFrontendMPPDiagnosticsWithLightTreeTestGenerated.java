@@ -293,6 +293,18 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated extends Abst
         }
 
         @Test
+        @TestMetadata("repeatableNoArg.kt")
+        public void testRepeatableNoArg() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/repeatableNoArg.kt");
+        }
+
+        @Test
+        @TestMetadata("repeatableWithArg.kt")
+        public void testRepeatableWithArg() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/repeatableWithArg.kt");
+        }
+
+        @Test
         @TestMetadata("skippedAnnotations.kt")
         public void testSkippedAnnotations() throws Exception {
             runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/skippedAnnotations.kt");
