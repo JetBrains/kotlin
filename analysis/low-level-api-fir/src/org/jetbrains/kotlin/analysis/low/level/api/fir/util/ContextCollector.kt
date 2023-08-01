@@ -9,7 +9,11 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiElement
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.persistentHashMapOf
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirWholeFileResolveTarget
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.asResolveTarget
+import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector.ContextKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector.Context
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector.FilterResponse
@@ -29,6 +33,7 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 
 internal object ContextCollector {
     enum class ContextKind {
@@ -55,6 +60,45 @@ internal object ContextCollector {
         SKIP
     }
 
+    /**
+     * Process the [file], collecting contexts for the [targetElement] and all its PSI tree parents.
+     */
+    fun process(file: FirFile, holder: SessionHolder, targetElement: PsiElement, preferBody: Boolean): Context? {
+        val acceptedElements = targetElement.parentsWithSelf.toSet()
+
+        val contextProvider = process(computeResolveTarget(file, targetElement), holder) { candidate ->
+            when (candidate) {
+                targetElement -> FilterResponse.STOP
+                in acceptedElements -> FilterResponse.CONTINUE
+                else -> FilterResponse.SKIP
+            }
+        }
+
+        if (preferBody) {
+            val bodyContext = contextProvider[targetElement, ContextKind.BODY]
+            if (bodyContext != null) {
+                return bodyContext
+            }
+        }
+
+        return acceptedElements.firstNotNullOfOrNull { contextProvider[it, ContextKind.SELF] }
+    }
+
+    private fun computeResolveTarget(file: FirFile, targetElement: PsiElement): LLFirResolveTarget {
+        val contextKtDeclaration = targetElement.getNonLocalContainingOrThisDeclaration()
+        if (contextKtDeclaration != null) {
+            val designationPath = FirElementFinder.collectDesignationPath(file, contextKtDeclaration)
+            if (designationPath != null) {
+                return FirDesignationWithFile(designationPath.path, designationPath.target, file).asResolveTarget()
+            }
+        }
+
+        return LLFirWholeFileResolveTarget(file)
+    }
+
+    /**
+     * Processes the [FirFile] that owns the [target], collecting contexts for elements matching the [filter].
+     */
     fun process(target: LLFirResolveTarget, holder: SessionHolder, filter: (PsiElement) -> FilterResponse): ContextProvider {
         val pathIterator = target.path.iterator()
 
@@ -67,10 +111,10 @@ internal object ContextCollector {
 
         return ContextProvider { element, kind -> visitor[element, kind] }
     }
-}
 
-internal fun interface ContextProvider {
-    operator fun get(element: PsiElement, kind: ContextKind): Context?
+    fun interface ContextProvider {
+        operator fun get(element: PsiElement, kind: ContextKind): Context?
+    }
 }
 
 private class ContextCollectorVisitor(
