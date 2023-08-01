@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.createErrorReferenceWithExistingCandidate
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateError
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toErrorReference
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
@@ -71,7 +72,7 @@ class FirSyntheticCallGenerator(
     private val idFunction: FirSimpleFunction = generateSyntheticSelectFunction(SyntheticCallableId.ID)
     private val checkNotNullFunction: FirSimpleFunction = generateSyntheticCheckNotNullFunction()
     private val elvisFunction: FirSimpleFunction = generateSyntheticElvisFunction()
-    private val arrayOfSymbolCache: FirCache<Name, FirNamedFunctionSymbol, Nothing?> = session.firCachesFactory.createCache(::getArrayOfSymbol)
+    private val arrayOfSymbolCache: FirCache<Name, FirNamedFunctionSymbol?, Nothing?> = session.firCachesFactory.createCache(::getArrayOfSymbol)
 
     private fun assertSyntheticResolvableReferenceIsNotResolved(resolvable: FirResolvable) {
         // All synthetic calls (FirWhenExpression, FirTryExpression, FirElvisExpression, FirCheckNotNullCall)
@@ -177,19 +178,23 @@ class FirSyntheticCallGenerator(
         val argumentList = arrayLiteral.argumentList
         return buildFunctionCall {
             this.argumentList = argumentList
-            calleeReference = generateCalleeReferenceWithCandidate(
-                arrayLiteral,
-                calculateArrayOfSymbol(expectedTypeRef).fir,
-                argumentList,
-                ArrayFqNames.ARRAY_OF_FUNCTION,
-                callKind = CallKind.Function,
-                context = context,
-            )
+            calleeReference = calculateArrayOfSymbol(expectedTypeRef)?.let {
+                generateCalleeReferenceWithCandidate(
+                    arrayLiteral,
+                    it.fir,
+                    argumentList,
+                    ArrayFqNames.ARRAY_OF_FUNCTION,
+                    callKind = CallKind.Function,
+                    context = context,
+                )
+            } ?: buildErrorNamedReference {
+                diagnostic = ConeUnresolvedNameError(ArrayFqNames.ARRAY_OF_FUNCTION)
+            }
             source = arrayLiteral.source
         }
     }
 
-    private fun calculateArrayOfSymbol(expectedTypeRef: FirTypeRef): FirNamedFunctionSymbol {
+    private fun calculateArrayOfSymbol(expectedTypeRef: FirTypeRef): FirNamedFunctionSymbol? {
         val coneType = expectedTypeRef.coneType
         val arrayCallName = when {
             coneType.isPrimitiveArray -> {
@@ -208,10 +213,10 @@ class FirSyntheticCallGenerator(
         return arrayOfSymbolCache.getValue(arrayCallName)
     }
 
-    private fun getArrayOfSymbol(arrayOfName: Name): FirNamedFunctionSymbol {
+    private fun getArrayOfSymbol(arrayOfName: Name): FirNamedFunctionSymbol? {
         return session.symbolProvider
             .getTopLevelFunctionSymbols(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, arrayOfName)
-            .single()
+            .firstOrNull() // TODO: it should be single() after KTIJ-26465 is fixed
     }
 
     fun resolveCallableReferenceWithSyntheticOuterCall(
