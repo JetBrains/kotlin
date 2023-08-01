@@ -1267,6 +1267,18 @@ public class FirJsES6CodegenInlineTestGenerated extends AbstractFirJsES6CodegenI
         }
 
         @Test
+        @TestMetadata("nestedCallsWithGeneric.kt")
+        public void testNestedCallsWithGeneric() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/complex/nestedCallsWithGeneric.kt");
+        }
+
+        @Test
+        @TestMetadata("nestedCallsWithGenericToInt.kt")
+        public void testNestedCallsWithGenericToInt() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/complex/nestedCallsWithGenericToInt.kt");
+        }
+
+        @Test
         @TestMetadata("swapAndWith.kt")
         public void testSwapAndWith() throws Exception {
             runTest("compiler/testData/codegen/boxInline/complex/swapAndWith.kt");
