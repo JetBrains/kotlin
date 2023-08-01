@@ -92,28 +92,4 @@ internal class ExternalKotlinTargetComponent(
     }
 
     override fun getUsages(): Set<KotlinUsageContext> = kotlinUsagesFuture.getOrThrow()
-
-    /**
-     * Should be used in Gradle's Publication only.
-     * See [org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSoftwareComponent.getVariants]
-     */
-    val gradleSoftwareComponentFuture: Future<AdhocComponentWithVariants> = project.lazyFuture {
-        val softwareComponentFactory = (target.project as ProjectInternal).services.get(SoftwareComponentFactory::class.java)
-        val adhocSoftwareComponent = softwareComponentFactory.adhoc(target.targetName)
-
-        adhocSoftwareComponent.also {
-            target.applyUserDefinedAttributesJob.await()
-            kotlinUsagesFuture.await().forEach { kotlinUsage ->
-                val configuration = target.project.configurations.getByName(kotlinUsage.dependencyConfigurationName)
-                val mavenScope = kotlinUsage.mavenScope
-                adhocSoftwareComponent.addVariantsFromConfiguration(configuration) { details ->
-                    if (mavenScope != null) {
-                        details.mapToMavenScope(mavenScope.name.toLowerCaseAsciiOnly())
-                    } else {
-                        details.mapToOptional()
-                    }
-                }
-            }
-        }
-    }
 }
