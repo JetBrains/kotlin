@@ -7,7 +7,6 @@ dependencies {
     implementation(project(":core:metadata"))
     implementation(project(":core:metadata.jvm"))
     implementation(project(":core:deserialization.common"))
-    implementation(project(":core:deserialization.common.jvm"))
     implementation(project(":core:compiler.common"))
 
     api(project(":compiler:fir:cones"))

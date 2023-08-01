@@ -8,14 +8,28 @@ package org.jetbrains.kotlin.fir.java.deserialization
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.builder.FirRegularClassBuilder
+import org.jetbrains.kotlin.fir.deserialization.FirConstDeserializer
 import org.jetbrains.kotlin.fir.deserialization.FirDeserializationExtension
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.toLookupTag
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 class FirJvmDeserializationExtension(session: FirSession) : FirDeserializationExtension(session) {
+    override fun createConstDeserializer(
+        containerSource: DeserializedContainerSource?,
+        session: FirSession,
+        serializerExtensionProtocol: SerializerExtensionProtocol,
+    ): FirConstDeserializer? =
+        if (containerSource is KotlinJvmBinarySourceElement)
+            FirJvmConstDeserializer(session, containerSource.binaryClass, serializerExtensionProtocol)
+        else
+            null
+
     override fun FirRegularClassBuilder.configureDeserializedClass(classId: ClassId) {
         addSerializableIfNeeded(classId)
     }

@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.toLookupTag
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.SerializationPluginMetadataExtensions
 import org.jetbrains.kotlin.metadata.deserialization.*
@@ -81,12 +80,9 @@ fun deserializeClassToSymbol(
     }
     val isSealed = modality == Modality.SEALED
     val annotationDeserializer = defaultAnnotationDeserializer ?: FirBuiltinAnnotationDeserializer(session)
-    val jvmBinaryClass = (containerSource as? KotlinJvmBinarySourceElement)?.binaryClass
-    val constDeserializer = if (jvmBinaryClass != null) {
-        FirJvmConstDeserializer(session, jvmBinaryClass, serializerExtensionProtocol)
-    } else {
-        FirConstDeserializer(session, serializerExtensionProtocol)
-    }
+    val platformConstDeserializer =
+        session.deserializationExtension?.createConstDeserializer(containerSource, session, serializerExtensionProtocol)
+    val constDeserializer = platformConstDeserializer ?: FirConstDeserializer(session, serializerExtensionProtocol)
     val context =
         parentContext?.childContext(
             classProto.typeParameterList,
@@ -98,8 +94,8 @@ fun deserializeClassToSymbol(
             outerClassSymbol = symbol,
             annotationDeserializer,
             when {
-                status.isCompanion || jvmBinaryClass == null -> parentContext.constDeserializer
-                else -> constDeserializer // jvmBinaryClass != null => FirJvmConstDeserializer will be used
+                status.isCompanion || platformConstDeserializer == null -> parentContext.constDeserializer
+                else -> constDeserializer // platformConstDeserializer != null => FirJvmConstDeserializer will be used on JVM
             },
             status.isInner
         ) ?: FirDeserializationContext.createForClass(

@@ -9,7 +9,15 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.declarations.builder.FirRegularClassBuilder
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 abstract class FirDeserializationExtension(val session: FirSession) : FirSessionComponent {
+    open fun createConstDeserializer(
+        containerSource: DeserializedContainerSource?,
+        session: FirSession,
+        serializerExtensionProtocol: SerializerExtensionProtocol,
+    ): FirConstDeserializer? = null
+
     open fun FirRegularClassBuilder.configureDeserializedClass(classId: ClassId) {}
 }
