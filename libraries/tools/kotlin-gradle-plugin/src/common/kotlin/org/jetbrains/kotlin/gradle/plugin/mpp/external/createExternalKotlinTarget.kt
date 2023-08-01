@@ -48,8 +48,7 @@ fun <T : DecoratedExternalKotlinTarget> KotlinMultiplatformExtension.createExter
         project.configurations.maybeCreate(lowerCamelCaseName(descriptor.targetName, "sourcesElements-published"))
 
     val kotlinTargetComponent = ExternalKotlinTargetComponent(
-        project,
-        ExternalKotlinTargetComponent.TargetProvider.byTargetName(this, descriptor.targetName)
+        project, ExternalKotlinTargetComponent.TargetProvider.byTargetName(this, descriptor.targetName)
     )
 
     val artifactsTaskLocator = ExternalKotlinTargetImpl.ArtifactsTaskLocator { target ->
