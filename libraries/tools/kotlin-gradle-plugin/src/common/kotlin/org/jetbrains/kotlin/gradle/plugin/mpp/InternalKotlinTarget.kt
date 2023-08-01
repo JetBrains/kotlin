@@ -5,21 +5,18 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
-import org.gradle.api.provider.Property
 import org.gradle.api.publish.maven.MavenPublication
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
+import org.jetbrains.kotlin.gradle.plugin.await
+import org.jetbrains.kotlin.gradle.utils.futureExtension
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
 
 internal interface InternalKotlinTarget : KotlinTarget, HasMutableExtras {
     @InternalKotlinGradlePluginApi
-    val isSourcesPublishableProperty: Property<Boolean>
-
-    @InternalKotlinGradlePluginApi
     var isSourcesPublishable: Boolean
-        get() = isSourcesPublishableProperty.get()
-        set(value) = isSourcesPublishableProperty.set(value)
 
     @InternalKotlinGradlePluginApi
     val kotlinComponents: Set<KotlinTargetComponent>
@@ -35,3 +32,9 @@ internal val KotlinTarget.internal: InternalKotlinTarget
     get() = (this as? InternalKotlinTarget) ?: throw IllegalArgumentException(
         "KotlinTarget($name) ${this::class} does not implement ${InternalKotlinTarget::class}"
     )
+
+
+internal val InternalKotlinTarget.isSourcesPublishableFuture by futureExtension("isSourcesPublishableFuture") {
+    KotlinPluginLifecycle.Stage.AfterFinaliseDsl.await()
+    isSourcesPublishable
+}

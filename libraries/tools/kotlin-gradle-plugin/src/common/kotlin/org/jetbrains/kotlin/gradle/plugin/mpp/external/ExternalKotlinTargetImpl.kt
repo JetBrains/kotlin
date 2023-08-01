@@ -10,7 +10,6 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
-import org.gradle.api.provider.Property
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
@@ -18,7 +17,6 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.HierarchyAttributeContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinTarget
-import org.jetbrains.kotlin.gradle.utils.propertyWithConvention
 import org.jetbrains.kotlin.tooling.core.MutableExtras
 import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 
@@ -58,10 +56,10 @@ internal class ExternalKotlinTargetImpl internal constructor(
         artifactsTaskLocator.locate(this)
     }
 
-    override val isSourcesPublishableProperty: Property<Boolean> = project.objects.propertyWithConvention(true)
+    override var isSourcesPublishable: Boolean = true
 
     override fun withSourcesJar(publish: Boolean) {
-        isSourcesPublishableProperty.set(publish)
+        isSourcesPublishable = publish
     }
 
     override val artifactsTaskName: String

@@ -209,7 +209,7 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
             isCanBeResolved = false
             isCanBeConsumed = true
             configureSourcesPublicationAttributes(target)
-            project.launch { isCanBeConsumed = target.internal.isSourcesPublishableProperty.awaitFinalValueOrThrow() }
+            project.launch { isCanBeConsumed = target.internal.isSourcesPublishableFuture.await() }
         }
 
         if (createTestCompilation) {

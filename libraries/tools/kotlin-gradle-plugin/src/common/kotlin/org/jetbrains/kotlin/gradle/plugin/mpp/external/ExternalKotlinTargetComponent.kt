@@ -79,7 +79,7 @@ internal class ExternalKotlinTargetComponent(
             DefaultKotlinUsageContext(compilation, RUNTIME, target.runtimeElementsPublishedConfiguration.name),
         )
 
-        if (target.isSourcesPublishableProperty.awaitFinalValueOrThrow()) {
+        if (target.isSourcesPublishableFuture.await()) {
             result += DefaultKotlinUsageContext(
                 compilation = compilation,
                 mavenScope = null,

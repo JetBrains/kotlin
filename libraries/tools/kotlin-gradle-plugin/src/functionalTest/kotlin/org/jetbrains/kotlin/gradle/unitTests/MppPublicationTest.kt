@@ -19,6 +19,7 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
+import org.jetbrains.kotlin.gradle.plugin.mpp.isSourcesPublishableFuture
 import org.jetbrains.kotlin.gradle.util.addBuildEventsListenerRegistryMock
 import org.jetbrains.kotlin.gradle.util.disableLegacyWarning
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
@@ -165,7 +166,7 @@ class MppPublicationTest {
         kotlin.withSourcesJar(publish = false)
 
         for (target in kotlin.targets) {
-            assertFalse(target.internal.isSourcesPublishableProperty.get())
+            assertFalse(target.internal.isSourcesPublishable)
         }
     }
 
@@ -177,9 +178,9 @@ class MppPublicationTest {
 
         for (target in kotlin.targets) {
             if (target.name == "linux") {
-                assertFalse(target.internal.isSourcesPublishableProperty.get())
+                assertFalse(target.internal.isSourcesPublishable)
             } else {
-                assertTrue(target.internal.isSourcesPublishableProperty.get())
+                assertTrue(target.internal.isSourcesPublishable)
             }
         }
     }

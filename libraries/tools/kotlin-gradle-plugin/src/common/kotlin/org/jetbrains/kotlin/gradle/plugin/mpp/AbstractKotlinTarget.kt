@@ -62,12 +62,9 @@ abstract class AbstractKotlinTarget(
     override val publishable: Boolean
         get() = true
 
-    override val isSourcesPublishableProperty: Property<Boolean> = project
-        .objects
-        .propertyWithConvention(true)
-
+    override var isSourcesPublishable: Boolean = true
     override fun withSourcesJar(publish: Boolean) {
-        isSourcesPublishableProperty.set(publish)
+        isSourcesPublishable = publish
     }
 
     @InternalKotlinGradlePluginApi
@@ -154,7 +151,7 @@ abstract class AbstractKotlinTarget(
         // We want to create task anyway, even if sources are not going to be published by KGP
         // So users or other plugins can still use it
         val sourcesJarTask = sourcesJarTask(producingCompilation, componentName, artifactNameAppendix)
-        if (!isSourcesPublishableProperty.awaitFinalValueOrThrow()) return null
+        if (!isSourcesPublishableFuture.await()) return null
 
         // If sourcesElements configuration not found, don't create artifact.
         // This can happen in pure JVM plugin where source publication is delegated to Java Gradle Plugin.
