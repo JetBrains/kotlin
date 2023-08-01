@@ -37,8 +37,7 @@ internal class PomDependenciesRewriter(
 
     // Get the dependencies mapping according to the component's UsageContexts:
     private val dependenciesMappingForEachUsageContext by project.provider {
-        if (component !is SoftwareComponentInternal) return@provider emptyList()
-        component.usages.filterIsInstance<KotlinUsageContext>().mapNotNull { usage ->
+        component.internal.usages.toList().mapNotNull { usage ->
             // When maven scope is not set, we can shortcut immediately here, since no dependencies from that usage context
             // will be present in maven pom, e.g. from sourcesElements
             val mavenScope = usage.mavenScope ?: return@mapNotNull null
@@ -162,8 +161,8 @@ private fun associateDependenciesWithActualModuleDependencies(
 
                     val resolvedToConfiguration = resolved.configuration
                     val dependencyTargetComponent: KotlinTargetComponent = run {
-                        dependencyProjectKotlinExtension.targets.withType(InternalKotlinTarget::class.java).forEach { target ->
-                            target.kotlinComponents.forEach { component ->
+                        dependencyProjectKotlinExtension.targets.forEach { target ->
+                            target.internal.kotlinComponents.forEach { component ->
                                 if (component.findUsageContext(resolvedToConfiguration) != null)
                                     return@run component
                             }
