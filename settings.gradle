@@ -854,3 +854,4 @@ if (buildProperties.isKotlinNativeEnabled) {
     include ':kotlin-native-shared'
     project(":kotlin-native-shared").projectDir = "$rootDir/kotlin-native/shared" as File
 }
+// test
