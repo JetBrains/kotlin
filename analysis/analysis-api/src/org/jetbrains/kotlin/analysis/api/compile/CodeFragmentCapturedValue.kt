@@ -17,7 +17,7 @@ public sealed class CodeFragmentCapturedValue(
         get() = name
 
     override fun toString(): String {
-        return javaClass.simpleName + "[name: " + name + "; isMutated: " + isMutated + "; displayText: " + displayText + "]"
+        return this::class.simpleName + "[name: " + name + "; isMutated: " + isMutated + "; displayText: " + displayText + "]"
     }
 
     /** Represents a local variable or a parameter. */
