@@ -8,9 +8,11 @@ package org.jetbrains.kotlin.gradle.mpp
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.condition.OS
 
 @MppGradlePluginTests
 @DisplayName("Broken task configuration avoidance doesn't lead to build failures at least with simple setups")
+@OsCondition(enabledOnCI = [OS.LINUX, OS.MAC, OS.WINDOWS])
 class BrokenLazyConfigurationIT : KGPBaseTest() {
     @GradleTest
     @DisplayName("works in JVM")

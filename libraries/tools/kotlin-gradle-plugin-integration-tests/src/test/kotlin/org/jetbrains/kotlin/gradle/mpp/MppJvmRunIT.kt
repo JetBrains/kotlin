@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.appendText
 
 @MppGradlePluginTests
+@OsCondition(enabledOnCI = [OS.LINUX, OS.MAC, OS.WINDOWS])
 class MppJvmRunIT : KGPBaseTest() {
 
     @GradleTest

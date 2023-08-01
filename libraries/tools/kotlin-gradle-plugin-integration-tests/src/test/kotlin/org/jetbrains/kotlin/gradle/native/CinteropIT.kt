@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.gradle.native
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.junit.jupiter.api.condition.OS
 
 @MppGradlePluginTests
+@OsCondition(enabledOnCI = [OS.LINUX, OS.MAC, OS.WINDOWS])
 class CinteropIT : KGPBaseTest() {
 
     @GradleTest

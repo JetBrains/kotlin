@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.incremental.testingUtils.assertEqualDirectories
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.*
 import kotlin.test.assertTrue
 import kotlin.test.fail
@@ -24,6 +25,7 @@ import kotlin.test.fail
 
 @DisplayName("K/N tests for commonizer")
 @NativeGradlePluginTests
+@OsCondition(enabledOnCI = [OS.LINUX, OS.MAC, OS.WINDOWS])
 open class CommonizerIT : KGPBaseTest() {
 
     companion object {

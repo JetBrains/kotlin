@@ -12,8 +12,10 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.capitalize
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.condition.OS
 
 @MppGradlePluginTests
+@OsCondition(enabledOnCI = [OS.LINUX, OS.MAC, OS.WINDOWS])
 @DisplayName("Tests for aggregating kotlin test reports")
 class AggregatingKotlinTestReportIT : KGPBaseTest() {
     @DisplayName("KT-54506: `allTests` is not false positively up-to-date after failure")

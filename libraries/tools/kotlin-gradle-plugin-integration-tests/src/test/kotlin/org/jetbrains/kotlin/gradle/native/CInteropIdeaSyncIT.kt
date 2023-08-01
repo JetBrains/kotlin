@@ -9,10 +9,12 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.konan.file.File
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.writeText
 
 @DisplayName("Tests for the K/N CInterop tool during IDEA project import")
 @NativeGradlePluginTests
+@OsCondition(enabledOnCI = [OS.LINUX, OS.MAC, OS.WINDOWS])
 class CInteropIdeaSyncIT : KGPBaseTest() {
 
     private val ideaSyncBuildOptions = defaultBuildOptions.copy(freeArgs = listOf("-Didea.sync.active=true"))

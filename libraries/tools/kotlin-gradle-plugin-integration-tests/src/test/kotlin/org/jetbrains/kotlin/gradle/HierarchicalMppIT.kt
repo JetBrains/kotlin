@@ -31,6 +31,7 @@ import kotlin.test.fail
 
 @MppGradlePluginTests
 @DisplayName("Hierarchical multiplatform")
+@OsCondition(enabledOnCI = [OS.LINUX, OS.MAC, OS.WINDOWS])
 open class HierarchicalMppIT : KGPBaseTest() {
 
     private val String.withPrefix get() = "hierarchical-mpp-published-modules/$this"

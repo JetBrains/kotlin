@@ -9,10 +9,12 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.AGPVersion
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.condition.OS
 import kotlin.test.assertNull
 
 @MppGradlePluginTests
 @DisplayName("Multiplatform Android Source Set Layout 2")
+@OsCondition(enabledOnCI = [OS.LINUX, OS.MAC, OS.WINDOWS])
 class MultiplatformAndroidSourceSetLayoutV2IT : KGPBaseTest() {
 
     @GradleAndroidTest

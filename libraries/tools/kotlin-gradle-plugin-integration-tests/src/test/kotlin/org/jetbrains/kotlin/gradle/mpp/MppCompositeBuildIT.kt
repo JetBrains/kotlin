@@ -25,6 +25,7 @@ import kotlin.test.assertIs
  We can remove this, once MAX_SUPPORTED is higher or equal to 8.2
  */
 @GradleTestVersions(maxVersion = TestVersions.Gradle.G_8_2)
+@OsCondition(enabledOnCI = [OS.LINUX, OS.MAC, OS.WINDOWS])
 class MppCompositeBuildIT : KGPBaseTest() {
     @GradleTest
     fun `test - sample0 - ide dependencies`(gradleVersion: GradleVersion) {

@@ -9,9 +9,11 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.native.MPPNativeTargets
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.condition.OS
 
 @MppGradlePluginTests
 @DisplayName("Tests for multiplatform testing")
+@OsCondition(enabledOnCI = [OS.LINUX, OS.MAC, OS.WINDOWS])
 class MppTestsIT : KGPBaseTest() {
     @DisplayName("KT-54634: MPP testing logic is compatible with API changes in Gradle 7.6")
     @GradleTestVersions(additionalVersions = [TestVersions.Gradle.G_7_5, TestVersions.Gradle.G_7_6])

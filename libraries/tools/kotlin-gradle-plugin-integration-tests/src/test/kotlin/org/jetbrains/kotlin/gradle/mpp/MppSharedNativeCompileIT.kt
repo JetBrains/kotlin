@@ -13,10 +13,12 @@ import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
 import org.jetbrains.kotlin.library.unresolvedDependencies
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.fail
 
 @MppGradlePluginTests
 @DisplayName("Tests for multiplatform | shared native compilations")
+@OsCondition(enabledOnCI = [OS.LINUX, OS.MAC, OS.WINDOWS])
 class MppSharedNativeCompileIT : KGPBaseTest() {
     /**
      * https://youtrack.jetbrains.com/issue/KT-56205/Shared-Native-Compilation-False-positive-w-Could-not-find-warnings-on-metadata-klibs

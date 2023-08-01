@@ -17,6 +17,7 @@ import kotlin.test.fail
 
 @MppGradlePluginTests
 @DisplayName("Multiplatform Build Reproducibility")
+@OsCondition(enabledOnCI = [OS.LINUX, OS.MAC, OS.WINDOWS])
 class MPPBuildReproducibilityIT : KGPBaseTest() {
 
     @GradleTest
