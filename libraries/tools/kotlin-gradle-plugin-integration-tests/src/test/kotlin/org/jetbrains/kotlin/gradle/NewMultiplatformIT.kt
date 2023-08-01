@@ -1426,7 +1426,7 @@ open class NewMultiplatformIT : BaseGradleIT() {
             }
 
             val expectedDefaultSourceSets = listOf(
-                "jvm6", "nodeJs", "mingw64", "linux64", "macos64", "wasm"
+                "jvm6", "nodeJs", "mingw64", "linux64", "macos64", "wasmJs"
             ).flatMapTo(mutableSetOf()) { target ->
                 listOf("main", "test").map { compilation ->
                     Triple(
@@ -1805,7 +1805,7 @@ open class NewMultiplatformIT : BaseGradleIT() {
         build("build") {
             assertSuccessful()
             assertTasksExecuted(":compileKotlinJs")
-            assertTasksExecuted(":compileKotlinWasm")
+            assertTasksExecuted(":compileKotlinWasmJs")
 
             val outputPrefix = "build/js/packages/"
 
@@ -1827,17 +1827,17 @@ open class NewMultiplatformIT : BaseGradleIT() {
                 .replace("<JsEngine>", engine)
                 .replace("<ApplyBinaryen>", if (useBinaryen) "applyBinaryen()" else "")
         }
-        build(":wasm${name}Test") {
-            assertTasksExecuted(":compileKotlinWasm")
+        build(":wasmJs${name}Test") {
+            assertTasksExecuted(":compileKotlinWasmJs")
             if (useBinaryen) {
-                assertTasksExecuted(":compileTestDevelopmentExecutableKotlinWasmOptimize")
+                assertTasksExecuted(":compileTestDevelopmentExecutableKotlinWasmJsOptimize")
             } else {
-                assertTasksNotExecuted(":compileTestDevelopmentExecutableKotlinWasmOptimize")
+                assertTasksNotExecuted(":compileTestDevelopmentExecutableKotlinWasmJsOptimize")
             }
-            assertTasksFailed(":wasm${name}Test")
+            assertTasksFailed(":wasmJs${name}Test")
             assertTestResults(
                 "testProject/new-mpp-wasm-test/TEST-${engine}.xml",
-                "wasm${name}Test"
+                "wasmJs${name}Test"
             )
         }
     }

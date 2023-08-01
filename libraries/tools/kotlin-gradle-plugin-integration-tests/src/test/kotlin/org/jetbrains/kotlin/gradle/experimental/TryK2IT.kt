@@ -155,10 +155,10 @@ class TryK2IT : KGPBaseTest() {
                 assertCompilerArgument(":compileKotlinJs", "-language-version 2.0")
             }
 
-            build(":compileKotlinWasm") {
-                assertTasksExecuted(":compileKotlinWasm")
+            build(":compileKotlinWasmJs") {
+                assertTasksExecuted(":compileKotlinWasmJs")
 
-                assertCompilerArgument(":compileKotlinWasm", "-language-version 2.0")
+                assertCompilerArgument(":compileKotlinWasmJs", "-language-version 2.0")
             }
 
             build(":compileKotlinLinuxX64") {

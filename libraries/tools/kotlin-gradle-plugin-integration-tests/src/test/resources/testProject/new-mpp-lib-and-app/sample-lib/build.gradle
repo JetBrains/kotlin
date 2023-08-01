@@ -29,7 +29,7 @@ kotlin {
 
             }
         }
-        wasm()
+        wasmJs()
     }
     targetFromPreset(presets.jvm, 'jvm6') { println targetName } // access existing target
 

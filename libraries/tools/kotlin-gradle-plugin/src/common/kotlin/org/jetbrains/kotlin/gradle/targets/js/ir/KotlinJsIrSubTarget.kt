@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlatformTestRun
+import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalDistributionDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
@@ -33,7 +34,7 @@ import org.jetbrains.kotlin.gradle.utils.newFileProperty
 
 abstract class KotlinJsIrSubTarget(
     val target: KotlinJsIrTarget,
-    private val disambiguationClassifier: String
+    private val disambiguationClassifier: String,
 ) : KotlinJsSubTargetDsl {
     val project get() = target.project
 
@@ -121,8 +122,8 @@ abstract class KotlinJsIrSubTarget(
                 KotlinJsBinaryMode.DEVELOPMENT
             ).single()
 
-            testJs.dependsOn(binary.linkSyncTask)
-            testJs.inputFileProperty.fileProvider(
+            val inputFileProperty = if (target.wasmTargetType != KotlinWasmTargetType.WASI) {
+                testJs.dependsOn(binary.linkSyncTask)
                 binary.linkSyncTask.flatMap { linkSyncTask ->
                     binary.linkTask.flatMap { linkTask ->
                         linkTask.outputFileProperty.map { file ->
@@ -130,6 +131,15 @@ abstract class KotlinJsIrSubTarget(
                         }
                     }
                 }
+            } else {
+                testJs.dependsOn(binary.linkTask)
+                binary.linkTask.flatMap { linkTask ->
+                    linkTask.outputFileProperty
+                }
+            }
+
+            testJs.inputFileProperty.fileProvider(
+                inputFileProperty
             )
 
             configureTestDependencies(testJs)
@@ -238,7 +248,7 @@ abstract class KotlinJsIrSubTarget(
     internal inline fun <reified T : Task> registerSubTargetTask(
         name: String,
         args: List<Any> = emptyList(),
-        noinline body: (T) -> (Unit)
+        noinline body: (T) -> (Unit),
     ): TaskProvider<T> =
         project.registerTask(name, args) {
             it.group = taskGroupName

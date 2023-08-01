@@ -21,7 +21,7 @@ kotlin {
     } else null
     linuxX64("linux64")
     if (shouldBeJs)
-        wasm()
+        wasmJs()
 
     targets.all {
         mavenPublication(Action<MavenPublication> {

@@ -24,7 +24,7 @@ kotlin {
     }
 	val linux64 = linuxX64("linux64")
 
-    wasm {
+    wasmJs {
     }
 
     configure(listOf(linux64)) {

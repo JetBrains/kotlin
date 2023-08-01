@@ -13,13 +13,16 @@ import org.jetbrains.kotlin.gradle.dsl.JsModuleKind
 import org.jetbrains.kotlin.gradle.dsl.JsSourceMapEmbedMode
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.internal.BasePluginConfiguration
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
+import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.libsDirectory
+import org.jetbrains.kotlin.gradle.plugin.mpp.sourcesJarTask
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.testing.testTaskName
+import org.jetbrains.kotlin.gradle.utils.decamelize
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 open class KotlinJsIrTargetConfigurator :
     KotlinOnlyTargetConfigurator<KotlinJsIrCompilation, KotlinJsIrTarget>(true),
@@ -73,6 +76,14 @@ open class KotlinJsIrTargetConfigurator :
             configure {
                 it.archiveExtension.set(KLIB_TYPE)
                 it.destinationDirectory.set(libsDirectory)
+
+                if (target.platformType == KotlinPlatformType.wasm) {
+                    if (target.wasmDecamelizedDefaultNameOrNull() != null) {
+                        target.disambiguationClassifier?.let { classifier ->
+                            it.archiveAppendix.set(classifier.decamelize())
+                        }
+                    }
+                }
             }
         }
     }

@@ -2,11 +2,6 @@ plugins {
     kotlin("multiplatform").version("<pluginMarkerVersion>")
 }
 
-repositories {
-    mavenLocal()
-    mavenCentral()
-}
-
 with(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.apply(rootProject)) {
     nodeVersion = "20.2.0"
 }
@@ -28,16 +23,15 @@ tasks.named<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockCopyTask>("kotli
     inputFile.fileValue(projectDir.resolve("yarnLockStub"))
 }
 
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
 kotlin {
-    wasmJs {
-        <JsEngine> {
-            testTask {
-                filter.apply {
-                    excludeTest("WasmTest", "testShouldBeExcluded")
-                }
-            }
-        }
-        <ApplyBinaryen>
+
+    wasmWasi {
+        nodejs {}
     }
 
     sourceSets {

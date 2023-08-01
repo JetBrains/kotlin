@@ -37,8 +37,10 @@ open class NpmProject(@Transient val compilation: KotlinJsCompilation) : Seriali
         buildNpmProjectName()
     }
 
-    @Transient
-    val nodeJs = project.rootProject.kotlinNodeJsExtension
+    @delegate:Transient
+    val nodeJs by lazy {
+        project.rootProject.kotlinNodeJsExtension
+    }
 
     val dir: File by lazy {
         nodeJs.projectPackagesDir.resolve(name)
@@ -75,7 +77,9 @@ open class NpmProject(@Transient val compilation: KotlinJsCompilation) : Seriali
     val publicPackageJsonTaskName: String
         get() = compilation.disambiguateName(PublicPackageJsonTask.NAME)
 
-    internal val modules = NpmProjectModules(dir)
+    internal val modules by lazy {
+        NpmProjectModules(dir)
+    }
 
     private val nodeExecutable by lazy {
         nodeJs.requireConfigured().nodeExecutable

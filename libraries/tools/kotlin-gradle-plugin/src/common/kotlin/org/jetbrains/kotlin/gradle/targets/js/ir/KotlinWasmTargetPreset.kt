@@ -8,13 +8,16 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCompilationFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTargetPreset
+import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 @DeprecatedTargetPresetApi
 class KotlinWasmTargetPreset(
     project: Project,
+    private val targetType: KotlinWasmTargetType
 ) : KotlinOnlyTargetPreset<KotlinJsIrTarget, KotlinJsIrCompilation>(project) {
     override val platformType: KotlinPlatformType = KotlinPlatformType.wasm
 
@@ -25,6 +28,7 @@ class KotlinWasmTargetPreset(
 
         val irTarget = project.objects.newInstance(KotlinJsIrTarget::class.java, project, KotlinPlatformType.wasm, false)
         irTarget.isMpp = true
+        irTarget.wasmTargetType = targetType
 
         return irTarget
     }
@@ -32,7 +36,7 @@ class KotlinWasmTargetPreset(
     override fun createKotlinTargetConfigurator(): AbstractKotlinTargetConfigurator<KotlinJsIrTarget> =
         KotlinJsIrTargetConfigurator()
 
-    override fun getName(): String = WASM_PRESET_NAME
+    override fun getName(): String = WASM_PRESET_NAME + targetType.name.toLowerCaseAsciiOnly().capitalizeAsciiOnly()
 
     public override fun createCompilationFactory(
         forTarget: KotlinJsIrTarget
@@ -40,6 +44,6 @@ class KotlinWasmTargetPreset(
         KotlinJsIrCompilationFactory(forTarget)
 
     companion object {
-        private const val WASM_PRESET_NAME = "wasm"
+        internal const val WASM_PRESET_NAME = "wasm"
     }
 }

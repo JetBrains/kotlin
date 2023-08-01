@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.tasks.configuration
 import org.gradle.api.InvalidUserDataException
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.ir.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
@@ -98,6 +99,10 @@ internal open class KotlinJsIrLinkConfig(
 
         if (compilation.platformType == KotlinPlatformType.wasm) {
             add(WASM_BACKEND)
+            val wasmTargetType = ((compilation.origin as KotlinJsIrCompilation).target as KotlinJsIrTarget).wasmTargetType!!
+            if (wasmTargetType == KotlinWasmTargetType.WASI) {
+                add(WASM_WASI_MODE)
+            }
         }
     }
 }

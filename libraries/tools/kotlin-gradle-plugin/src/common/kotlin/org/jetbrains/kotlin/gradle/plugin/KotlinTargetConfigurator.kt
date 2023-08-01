@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetAttribute
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
+import org.jetbrains.kotlin.gradle.targets.js.toAttribute
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
@@ -314,6 +315,10 @@ abstract class KotlinOnlyTargetConfigurator<KotlinCompilationType : KotlinCompil
             it.from(target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).output.allOutputs)
             it.isPreserveFileTimestamps = false
             it.isReproducibleFileOrder = true
+
+            target.disambiguationClassifier?.let { classifier ->
+                it.archiveAppendix.set(classifier.toLowerCaseAsciiOnly())
+            }
         }
     }
 
@@ -323,12 +328,6 @@ abstract class KotlinOnlyTargetConfigurator<KotlinCompilationType : KotlinCompil
         val mainCompilation = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
 
         val task = createArchiveTasks(target)
-
-        target.disambiguationClassifier?.let { classifier ->
-            task.configure { taskInstance ->
-                taskInstance.archiveAppendix.set(classifier.toLowerCaseAsciiOnly())
-            }
-        }
 
         // Workaround: adding the artifact during configuration seems to interfere with the Java plugin, which results into missing
         // task dependency 'assemble -> jar' if the Java plugin is applied after this steps
@@ -440,7 +439,7 @@ fun Configuration.usesPlatformOf(target: KotlinTarget): Configuration {
         if (target.platformType == KotlinPlatformType.js) {
             attributes.attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir)
         } else {
-            attributes.attribute(KotlinWasmTargetAttribute.wasmTargetAttribute, KotlinWasmTargetAttribute.js)
+            attributes.attribute(KotlinWasmTargetAttribute.wasmTargetAttribute, target.wasmTargetType!!.toAttribute())
         }
     }
 

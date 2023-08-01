@@ -16,7 +16,7 @@ kotlin {
     jvm() 
     js()
     linuxX64()
-    wasm()
+    wasmJs()
 
     sourceSets {
         val commonMain by getting {

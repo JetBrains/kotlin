@@ -33,21 +33,13 @@ interface KotlinJsSubTargetContainerDsl : KotlinTarget {
     fun whenBrowserConfigured(body: KotlinJsBrowserDsl.() -> Unit)
 }
 
-interface KotlinJsTargetDsl : KotlinTarget {
+interface KotlinJsTargetDsl : KotlinTarget, KotlinTargetWithNodeJsDsl {
     var moduleName: String?
 
     fun browser() = browser { }
     fun browser(body: KotlinJsBrowserDsl.() -> Unit)
     fun browser(fn: Action<KotlinJsBrowserDsl>) {
         browser {
-            fn.execute(this)
-        }
-    }
-
-    fun nodejs() = nodejs { }
-    fun nodejs(body: KotlinJsNodeDsl.() -> Unit)
-    fun nodejs(fn: Action<KotlinJsNodeDsl>) {
-        nodejs {
             fn.execute(this)
         }
     }
@@ -72,6 +64,16 @@ interface KotlinJsTargetDsl : KotlinTarget {
 
     // Need to compatibility when users use KotlinJsCompilation specific in build script
     override val compilations: NamedDomainObjectContainer<out KotlinJsCompilation>
+}
+
+interface KotlinTargetWithNodeJsDsl {
+    fun nodejs() = nodejs { }
+    fun nodejs(body: KotlinJsNodeDsl.() -> Unit)
+    fun nodejs(fn: Action<KotlinJsNodeDsl>) {
+        nodejs {
+            fn.execute(this)
+        }
+    }
 }
 
 interface KotlinJsSubTargetDsl {

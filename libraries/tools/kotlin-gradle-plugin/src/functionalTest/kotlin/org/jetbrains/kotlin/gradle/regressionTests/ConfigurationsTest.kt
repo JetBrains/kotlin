@@ -163,7 +163,7 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
             js("nodeJs", KotlinJsCompilerType.IR) { attributes { attribute(jsAttribute, "nodeJs") } }
             js("browser", KotlinJsCompilerType.IR) { attributes { attribute(jsAttribute, "browser") } }
             @OptIn(ExperimentalWasmDsl::class)
-            wasm()
+            wasmJs()
 
             val allJs = sourceSets.create("allJs")
             targets.getByName("nodeJs").compilations.getByName("main").defaultSourceSet.dependsOn(allJs)
@@ -187,7 +187,7 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
 
         // WASM
         val actualWasmConfigurations = targetSpecificConfigurationsToCheck
-            .map { project.configurations.getByName("wasm$it") }
+            .map { project.configurations.getByName("wasmJs$it") }
             .filter { it.attributes.contains(KotlinJsCompilerAttribute.jsCompilerAttribute) }
 
         assertEquals(

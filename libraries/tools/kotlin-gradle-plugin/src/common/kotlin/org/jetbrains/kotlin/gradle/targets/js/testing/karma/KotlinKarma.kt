@@ -36,10 +36,12 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.*
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 import org.jetbrains.kotlin.gradle.utils.appendLine
+import org.jetbrains.kotlin.gradle.utils.getValue
 import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.slf4j.Logger
 import java.io.File
+import java.nio.file.Path
 
 class KotlinKarma(
     @Transient override val compilation: KotlinJsCompilation,
@@ -70,8 +72,13 @@ class KotlinKarma(
     }
     private val isTeamCity = project.providers.gradleProperty(TCServiceMessagesTestExecutor.TC_PROJECT_PROPERTY)
 
+    private val npmProjectDir by project.provider { npmProject.dir }
+
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency>
         get() = requiredDependencies + webpackConfig.getRequiredDependencies(versions)
+
+    override val workingDir: Path
+        get() = npmProjectDir.toPath()
 
     override fun getPath() = "$basePath:kotlinKarma"
 

@@ -8,7 +8,7 @@ repositories {
 }
 
 kotlin {
-    wasm {
+    wasmJs {
         binaries.executable()
         d8 {
         }

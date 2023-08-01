@@ -324,7 +324,7 @@ class KotlinHierarchyDslTest {
             }
         }
 
-        kotlin.wasm()
+        kotlin.wasmJs()
         kotlin.js()
 
         assertEquals(
@@ -333,7 +333,7 @@ class KotlinHierarchyDslTest {
         )
 
         assertEquals(
-            stringSetOf("jsMain", "wasmMain"),
+            stringSetOf("jsMain", "wasmJsMain"),
             kotlin.dependingSourceSetNames("webMain")
         )
     }
@@ -353,7 +353,7 @@ class KotlinHierarchyDslTest {
             }
         }
 
-        kotlin.wasm()
+        kotlin.wasmJs()
         kotlin.js()
         kotlin.jvm()
         kotlin.linuxX64()
@@ -369,7 +369,7 @@ class KotlinHierarchyDslTest {
         )
 
         assertEquals(
-            stringSetOf("wasmMain", "linuxX64Main"),
+            stringSetOf("wasmJsMain", "linuxX64Main"),
             kotlin.dependingSourceSetNames("wasmAndLinuxMain")
         )
     }

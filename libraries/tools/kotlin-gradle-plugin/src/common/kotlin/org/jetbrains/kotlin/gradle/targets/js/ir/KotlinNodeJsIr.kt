@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Action
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsExtension
@@ -31,6 +32,12 @@ abstract class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
         project.tasks.withType<NodeJsExec>().named(runTaskName).configure(body)
     }
 
+    override fun configureRun(compilation: KotlinJsIrCompilation) {
+        if (target.wasmTargetType != KotlinWasmTargetType.WASI) {
+            super.configureRun(compilation)
+        }
+    }
+
     override fun locateOrRegisterRunTask(binary: JsIrBinary, name: String) {
         if (project.locateTask<NodeJsExec>(name) != null) return
 
@@ -51,11 +58,13 @@ abstract class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
     }
 
     override fun configureTestDependencies(test: KotlinJsTest) {
-        test.dependsOn(
-            nodeJsTaskProviders.npmInstallTaskProvider,
-            nodeJsTaskProviders.storeYarnLockTaskProvider,
-            nodeJsTaskProviders.nodeJsSetupTaskProvider
-        )
+        if (target.wasmTargetType != KotlinWasmTargetType.WASI) {
+            test.dependsOn(
+                nodeJsTaskProviders.npmInstallTaskProvider,
+                nodeJsTaskProviders.storeYarnLockTaskProvider,
+                nodeJsTaskProviders.nodeJsSetupTaskProvider
+            )
+        }
     }
 
     override fun configureDefaultTestFramework(test: KotlinJsTest) {

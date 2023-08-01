@@ -2,13 +2,13 @@
 <results>
   <testsuite name="my.pack.name.WasmTest" tests="3" skipped="1" failures="2" errors="0" timestamp="..." hostname="..." time="...">
     <properties />
-    <testcase name="test1[wasm, d8]" classname="my.pack.name.WasmTest" time="...">
+    <testcase name="test1[wasmJs, d8]" classname="my.pack.name.WasmTest" time="...">
       <failure message="..." type="AssertionError">...</failure>
     </testcase>
-    <testcase name="test2[wasm, d8]" classname="my.pack.name.WasmTest" time="...">
+    <testcase name="test2[wasmJs, d8]" classname="my.pack.name.WasmTest" time="...">
       <skipped />
     </testcase>
-    <testcase name="test3[wasm, d8]" classname="my.pack.name.WasmTest" time="...">
+    <testcase name="test3[wasmJs, d8]" classname="my.pack.name.WasmTest" time="...">
       <failure message="..." type="AssertionError">...</failure>
     </testcase>
     <system-out />
@@ -16,13 +16,13 @@
   </testsuite>
   <testsuite name="my.pack.name.WasmTest.InnerIgnored" tests="3" skipped="3" failures="0" errors="0" timestamp="..." hostname="..." time="...">
     <properties />
-    <testcase name="test4[wasm, d8]" classname="my.pack.name.WasmTest.InnerIgnored" time="...">
+    <testcase name="test4[wasmJs, d8]" classname="my.pack.name.WasmTest.InnerIgnored" time="...">
       <skipped />
     </testcase>
-    <testcase name="test5[wasm, d8]" classname="my.pack.name.WasmTest.InnerIgnored" time="...">
+    <testcase name="test5[wasmJs, d8]" classname="my.pack.name.WasmTest.InnerIgnored" time="...">
       <skipped />
     </testcase>
-    <testcase name="test6[wasm, d8]" classname="my.pack.name.WasmTest.InnerIgnored" time="...">
+    <testcase name="test6[wasmJs, d8]" classname="my.pack.name.WasmTest.InnerIgnored" time="...">
       <skipped />
     </testcase>
     <system-out />

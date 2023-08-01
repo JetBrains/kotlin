@@ -12,7 +12,8 @@ import java.io.Serializable
 // For Gradle attributes
 @Suppress("EnumEntryName")
 enum class KotlinWasmTargetAttribute : Named, Serializable {
-    js, wasi;
+    wasi,
+    js;
 
     override fun getName(): String =
         name

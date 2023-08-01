@@ -13,8 +13,9 @@ val commonMainSources by task<Sync> {
 }
 
 kotlin {
+    @Suppress("DEPRECATION")
     @OptIn(org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl::class)
-    wasm {
+    wasm("wasm") {
         nodejs()
     }
 

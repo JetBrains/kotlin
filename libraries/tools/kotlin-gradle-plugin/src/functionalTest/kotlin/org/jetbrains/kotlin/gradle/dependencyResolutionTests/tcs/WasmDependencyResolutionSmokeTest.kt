@@ -33,17 +33,17 @@ class WasmDependencyResolutionSmokeTest {
             project.repositories.mavenLocal()
             project.repositories.mavenCentralCacheRedirector()
         }
-        
+
         producer.multiplatformExtension.apply {
             jvm()
             js(IR) { browser() }
-            wasm()
+            wasmJs()
         }
 
         consumer.multiplatformExtension.apply {
             jvm()
             js(IR) { browser() }
-            wasm()
+            wasmJs()
 
             sourceSets.commonMain.dependencies {
                 implementation(producer)
@@ -59,17 +59,17 @@ class WasmDependencyResolutionSmokeTest {
             binaryCoordinates(Regex(".*stdlib-common.*"))
         )
 
-        consumer.kotlinIdeMultiplatformImport.resolveDependencies("wasmMain").assertMatches(
+        consumer.kotlinIdeMultiplatformImport.resolveDependencies("wasmJsMain").assertMatches(
             dependsOnDependency(":consumer/commonMain"),
-            projectArtifactDependency(type = Regular, ":producer", FilePathRegex(".*/producer-wasm.klib")),
+            projectArtifactDependency(type = Regular, ":producer", FilePathRegex(".*/producer-wasm-js.klib")),
             binaryCoordinates(Regex(".*stdlib-wasm.*"))
         )
 
-        consumer.kotlinIdeMultiplatformImport.resolveDependencies("wasmTest").assertMatches(
+        consumer.kotlinIdeMultiplatformImport.resolveDependencies("wasmJsTest").assertMatches(
             friendSourceDependency(":consumer/commonMain"),
-            friendSourceDependency(":consumer/wasmMain"),
+            friendSourceDependency(":consumer/wasmJsMain"),
             dependsOnDependency(":consumer/commonTest"),
-            projectArtifactDependency(type = Regular, ":producer", FilePathRegex(".*/producer-wasm.klib")),
+            projectArtifactDependency(type = Regular, ":producer", FilePathRegex(".*/producer-wasm-js.klib")),
             binaryCoordinates(Regex(".*stdlib-wasm.*"))
         )
     }

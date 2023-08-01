@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinTestRunnerCliArgs
+import org.jetbrains.kotlin.gradle.utils.getValue
+import java.nio.file.Path
 
 class KotlinMocha(@Transient override val compilation: KotlinJsCompilation, private val basePath: String) :
     KotlinJsTestFramework {
@@ -28,6 +30,10 @@ class KotlinMocha(@Transient override val compilation: KotlinJsCompilation, priv
     private val npmProject = compilation.npmProject
     private val versions = project.rootProject.kotlinNodeJsExtension.versions
     private val isTeamCity = project.providers.gradleProperty(TCServiceMessagesTestExecutor.TC_PROJECT_PROPERTY)
+    private val npmProjectDir by project.provider { npmProject.dir }
+
+    override val workingDir: Path
+        get() = npmProjectDir.toPath()
 
     override val settingsState: String
         get() = "mocha"

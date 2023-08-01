@@ -22,7 +22,7 @@ kotlin {
 	// Check the new preset functions:
 	jvm('jvm6') { }
     js('nodeJs')
-    wasm()
+    wasmJs()
     targetFromPreset(presets.jvm, 'jvm6') { println targetName } // access existing target
     
     targets {

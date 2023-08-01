@@ -52,7 +52,7 @@ kotlin {
         }
     }
 
-    wasm()
+    wasmJs()
 
     targets {
         fromPreset(presets.jvm, 'jvm6') {
