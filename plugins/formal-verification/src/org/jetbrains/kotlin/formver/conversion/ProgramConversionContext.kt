@@ -68,6 +68,11 @@ class ConvertedMethodSignature(val name: String, val params: List<ConvertedVar>,
         )
 }
 
+/**
+ * Tracks the top-level information about the program.
+ * Conversions for global entities like types should generally be
+ * performed via this context to ensure they can be deduplicated.
+ */
 class ProgramConversionContext {
     private val methods: MutableList<Method> = mutableListOf()
 
@@ -96,6 +101,13 @@ class ProgramConversionContext {
     }
 }
 
+/**
+ * Contains the metadata for converting a single (specific) Kotlin method;
+ * create a new instance for each method if you want to convert multiple.
+ * Note that by default we do not convert the whole method: we expect to
+ * only need the signature in most methods, as we verify methods one at a
+ * time.
+ */
 class MethodConversionContext(val programCtx: ProgramConversionContext, val declaration: FirSimpleFunction) {
     val fullMethod: Method get() = signature.toMethod(listOf(), listOf(), convertedBody)
     val headerOnlyMethod: Method get() = signature.toMethod(listOf(), listOf(), null)
@@ -127,6 +139,13 @@ class MethodConversionContext(val programCtx: ProgramConversionContext, val decl
         }
 }
 
+/**
+ * Tracks the results of converting a block of statements.
+ * Kotlin statements, declarations, and expressions do not map to Viper ones one-to-one.
+ * Converting a statement with multiple function calls may require storing the
+ * intermediate results, which requires introducing new names.  We thus need a
+ * shared context for finding fresh variable names.
+ */
 class StmtConversionContext(val methodCtx: MethodConversionContext) {
     val statements: MutableList<Stmt> = mutableListOf()
     val declarations: MutableList<Declaration> = mutableListOf()
@@ -137,6 +156,12 @@ class StmtConversionContext(val methodCtx: MethodConversionContext) {
     }
 }
 
+/**
+ * Convert a statement, emitting the resulting Viper statements and
+ * declarations into the context, returning a reference to the
+ * expression containing the result.  Note that in the FIR, expressions
+ * are a subtype of statements.
+ */
 class StmtConversionVisitor : FirVisitor<Exp?, StmtConversionContext>() {
     // Note that in some cases we don't expect to ever implement it: we are only
     // translating statements here, after all.  It isn't 100% clear how best to
