@@ -1,0 +1,42 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirDefaultSimpleImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirPackageMemberScope
+    Element 6
+        Scope: FirExplicitSimpleImportingScope
+    Element 7
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol F
+    Element 8
+        Scope: FirNestedClassifierScopeImpl
+            Classifiers:
+                FirRegularClassSymbol public final inner class Bar<B, F> : R|kotlin/Any|
+    Element 9
+        Implicit receiver:
+            FirRegularClassSymbol public final class Foo<F> : R|kotlin/Any|
+                Type: test/Foo<F>
+    Element 10
+        Scope: FirMemberTypeParameterScope
+            Classifiers:
+                FirTypeParameterSymbol B
+    Element 11
+        Implicit receiver:
+            FirRegularClassSymbol public final inner class Bar<B, F> : R|kotlin/Any|
+                Type: test/Foo.Bar<B, F>
+    Element 12
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol b: R|B|
+                FirValueParameterSymbol f: R|F|
+    Element 13
+        Scope: FirLocalScope

@@ -1,0 +1,30 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirDefaultSimpleImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirPackageMemberScope
+    Element 6
+        Scope: FirExplicitSimpleImportingScope
+    Element 7
+        Implicit receiver:
+            FirRegularClassSymbol context(R|Foo|)
+            public final class Test : R|kotlin/Any|
+                Type: Test
+    Element 8
+        Context receivers:
+            FirRegularClassSymbol context(R|Foo|)
+            public final class Test : R|kotlin/Any|
+                Type: Foo
+                Label: Foo
+    Element 9
+        Scope: FirLocalScope
+    Element 10
+        Scope: FirLocalScope
