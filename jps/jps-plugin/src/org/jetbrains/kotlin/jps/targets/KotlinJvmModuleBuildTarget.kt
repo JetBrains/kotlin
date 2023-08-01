@@ -326,16 +326,16 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
     }
 
     private fun findSourceRoots(context: CompileContext): List<JvmSourceRoot> {
-        val roots = context.projectDescriptor.buildRootIndex.getTargetRoots(jpsModuleBuildTarget, context)
-        val result = mutableListOf<JvmSourceRoot>()
-        for (root in roots) {
-            val file = root.rootFile
-            val prefix = root.packagePrefix
-            if (Files.exists(file.toPath())) {
-                result.add(JvmSourceRoot(file, prefix.ifEmpty { null }))
-            }
-        }
-        return result
+//        val roots = context.projectDescriptor.buildRootIndex.getTargetRoots(jpsModuleBuildTarget, context)
+//        val result = mutableListOf<JvmSourceRoot>()
+//        for (root in roots) {
+//            val file = root.rootFile
+//            val prefix = root.packagePrefix
+//            if (Files.exists(file.toPath())) {
+//                result.add(JvmSourceRoot(file, prefix.ifEmpty { null }))
+//            }
+//        }
+        return mutableListOf<JvmSourceRoot>()
     }
 
     override fun updateCaches(
