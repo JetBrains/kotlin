@@ -48,6 +48,16 @@ val jsIrMainSources = "${buildDir}/src/jsMainSources"
 lateinit var jsIrTarget: KotlinJsTargetDsl
 lateinit var jsV1Target: KotlinJsTargetDsl
 
+val commonOptIns = listOf(
+    "kotlin.ExperimentalMultiplatform",
+    "kotlin.contracts.ExperimentalContracts",
+)
+val commonTestOptIns = listOf(
+    "kotlin.ExperimentalUnsignedTypes",
+    "kotlin.ExperimentalStdlibApi",
+    "kotlin.io.encoding.ExperimentalEncodingApi",
+)
+
 kotlin {
     metadata {
         compilations {
@@ -59,6 +69,9 @@ kotlin {
                             "-module-name", "kotlin-stdlib-common"
                         )
                     }
+                    // workaround for compiling legacy MPP metadata, remove when this compilation is not needed anymore
+                    // restate the list of opt-ins
+                    compilerOptions.optIn.addAll(commonOptIns)
                 }
             }
         }
@@ -179,6 +192,9 @@ kotlin {
                     // proper caching
                     // source map paths are sensitive to relative source location
                     inputs.property("relativeSrcPath", file(jsV1Dir).relativeTo(projectDir).invariantSeparatorsPath)
+                    // workaround for compiling legacy JS target, remove when this compilation is not needed anymore
+                    // restate the list of opt-ins
+                    compilerOptions.optIn.addAll(commonOptIns)
                 }
             }
             val main by getting
@@ -432,13 +448,10 @@ kotlin {
                     return@languageSettings
                 }
                 if (this@sourceSet != jsV1Runtime) {
-                    optIn("kotlin.ExperimentalMultiplatform")
-                    optIn("kotlin.contracts.ExperimentalContracts")
+                    commonOptIns.forEach { optIn(it) }
                 }
                 if (this@sourceSet.name.endsWith("Test")) {
-                    optIn("kotlin.ExperimentalUnsignedTypes")
-                    optIn("kotlin.ExperimentalStdlibApi")
-                    optIn("kotlin.io.encoding.ExperimentalEncodingApi")
+                    commonTestOptIns.forEach { optIn(it) }
                 }
             }
         }
