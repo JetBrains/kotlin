@@ -84,7 +84,7 @@ private fun InternalKotlinTarget.createMavenPublications(publications: Publicati
             val componentPublication = publications.create(kotlinComponent.name, MavenPublication::class.java).apply {
                 // do await for usages since older Gradle versions seem to check the files in the variant eagerly:
                 project.launch {
-                    val gradleComponent = awaitComponents().find { kotlinComponent.name == it.name } ?: return@launch
+                    val gradleComponent = components.find { kotlinComponent.name == it.name } ?: return@launch
                     from(gradleComponent)
                 }
                 (this as MavenPublicationInternal).publishWithOriginalFileName()

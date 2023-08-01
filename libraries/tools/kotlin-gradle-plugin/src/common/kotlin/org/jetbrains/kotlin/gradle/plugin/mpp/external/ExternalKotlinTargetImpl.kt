@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.external
 import org.gradle.api.*
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.AttributeContainer
-import org.gradle.api.component.AdhocComponentWithVariants
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.api.provider.Property
@@ -80,10 +79,10 @@ internal class ExternalKotlinTargetImpl internal constructor(
     @InternalKotlinGradlePluginApi
     override val kotlinComponents: Set<ExternalKotlinTargetComponent> = setOf(kotlinTargetComponent)
 
-    override val components: Set<AdhocComponentWithVariants>
-        get() = kotlinComponents.map { it.gradleSoftwareComponentFuture.getOrThrow() }.toSet()
-
-    suspend fun awaitComponents(): Set<AdhocComponentWithVariants> = kotlinComponents.map { it.gradleSoftwareComponentFuture.await() }.toSet()
+    override val components: Set<ExternalKotlinTargetSoftwareComponent> by lazy {
+        logger.debug("Creating SoftwareComponent")
+        setOf(ExternalKotlinTargetSoftwareComponent(this))
+    }
 
     override val compilations: NamedDomainObjectContainer<DecoratedExternalKotlinCompilation> by lazy {
         project.container(DecoratedExternalKotlinCompilation::class.java)

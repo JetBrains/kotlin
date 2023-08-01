@@ -337,7 +337,7 @@ abstract class KotlinJsProjectExtension(project: Project) :
 
             this._target = target
 
-            target.project.launch { project.components.addAll(target.internal.awaitComponents()) }
+            target.project.components.addAll(target.components)
         }
 
         target.run(body)

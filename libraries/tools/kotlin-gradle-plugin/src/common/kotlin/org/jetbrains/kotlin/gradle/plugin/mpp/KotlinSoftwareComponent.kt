@@ -43,7 +43,7 @@ abstract class KotlinSoftwareComponent(
     private val metadataTarget get() = project.multiplatformExtension.metadata() as KotlinMetadataTarget
 
     private val _variants = project.future {
-        AfterFinaliseDsl.await() // TODO: pass [kotlinTargets] as future
+        AfterFinaliseDsl.await()
         kotlinTargets
             .filter { target -> target !is KotlinMetadataTarget }
             .flatMap { target ->
@@ -52,7 +52,7 @@ abstract class KotlinSoftwareComponent(
                     .map { component -> component.name }
                     .toSet()
 
-                target.internal.awaitComponents().filter { it.name in targetPublishableComponentNames }
+                target.internal.components.filter { it.name in targetPublishableComponentNames }
             }.toSet()
     }
 

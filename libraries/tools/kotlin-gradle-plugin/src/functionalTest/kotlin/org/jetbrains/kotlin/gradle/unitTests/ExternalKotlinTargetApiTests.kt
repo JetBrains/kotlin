@@ -213,10 +213,9 @@ class ExternalKotlinTargetApiTests {
     fun `test - sourcesElements - publication - withSourcesJar set to false`() = project.runLifecycleAwareTest {
         val target = kotlin.createExternalKotlinTarget<FakeTarget> { defaults() }
         target.withSourcesJar(false)
-        target.createCompilation<FakeCompilation>() { defaults(kotlin) }
+        target.createCompilation<FakeCompilation> { defaults(kotlin) }
 
-        val component = target.delegate.awaitComponents().singleOrNull() ?: fail("Expected single 'component' for external target")
-        if (component !is SoftwareComponentInternal) fail("ExternalTarget.component expected to implement SoftwareComponentInternal")
+        val component = target.delegate.components.singleOrNull() ?: fail("Expected single 'component' for external target")
         val sourcesUsage = component.usages.find { it.name.contains("sources", true) }
         if (sourcesUsage != null) {
             fail("Unexpected usage '${sourcesUsage.name} in target publication")
@@ -226,9 +225,11 @@ class ExternalKotlinTargetApiTests {
     @Test
     fun `test gradle usage component contains the same usages as kotlin component`() = project.runLifecycleAwareTest {
         val target = kotlin.createExternalKotlinTarget<FakeTarget> { defaults() }
-        target.createCompilation<FakeCompilation>() { defaults(kotlin) }
+        target.createCompilation<FakeCompilation> { defaults(kotlin) }
         val kotlinComponent = target.delegate.kotlinComponents.singleOrNull() ?: fail("Expected single 'kotlinComponent' for external target")
-        val gradleComponent = target.delegate.awaitComponents().singleOrNull() ?: fail("Expected single 'component' for external target")
+        val gradleComponent = target.delegate.components.singleOrNull() ?: fail("Expected single 'component' for external target")
+
+        project.configurationResult.await()
 
         val kotlinUsagesNames = kotlinComponent.awaitKotlinUsagesOrEmpty().map { it.dependencyConfigurationName }
         val gradleUsagesNames = (gradleComponent as SoftwareComponentInternal).usages.map { it.name }
@@ -247,7 +248,6 @@ class ExternalKotlinTargetApiTests {
         val gradleComponent = target.components.singleOrNull() ?: fail("Expected single 'component' for external target")
 
         if (kotlinComponent !is SoftwareComponentInternal) error("Expected 'kotlinComponent' to be 'SoftwareComponentInternal'")
-        if (gradleComponent !is SoftwareComponentInternal) error("Expected 'gradleComponent' to be 'SoftwareComponentInternal'")
 
         // When kotlin usages is available corresponding gradle component usages should be also available
         val kotlinUsagesNames = kotlinComponent.usages.map { it.name }

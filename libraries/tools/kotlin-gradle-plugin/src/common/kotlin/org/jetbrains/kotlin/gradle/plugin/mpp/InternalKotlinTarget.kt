@@ -5,25 +5,29 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
-import org.gradle.api.component.SoftwareComponent
 import org.gradle.api.provider.Property
 import org.gradle.api.publish.maven.MavenPublication
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
-import org.jetbrains.kotlin.gradle.plugin.mpp.external.DecoratedExternalKotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinTargetImpl
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
 
 internal interface InternalKotlinTarget : KotlinTarget, HasMutableExtras {
     @InternalKotlinGradlePluginApi
     val isSourcesPublishableProperty: Property<Boolean>
+
+    @InternalKotlinGradlePluginApi
     var isSourcesPublishable: Boolean
         get() = isSourcesPublishableProperty.get()
         set(value) = isSourcesPublishableProperty.set(value)
 
+    @InternalKotlinGradlePluginApi
     val kotlinComponents: Set<KotlinTargetComponent>
 
+    @InternalKotlinGradlePluginApi
+    override val components: Set<KotlinTargetSoftwareComponent>
+
+    @InternalKotlinGradlePluginApi
     fun onPublicationCreated(publication: MavenPublication)
 }
 
@@ -31,10 +35,3 @@ internal val KotlinTarget.internal: InternalKotlinTarget
     get() = (this as? InternalKotlinTarget) ?: throw IllegalArgumentException(
         "KotlinTarget($name) ${this::class} does not implement ${InternalKotlinTarget::class}"
     )
-
-internal suspend fun InternalKotlinTarget.awaitComponents(): Set<SoftwareComponent> = when (this) {
-    is AbstractKotlinTarget -> awaitComponents()
-    is ExternalKotlinTargetImpl -> awaitComponents()
-    is DecoratedExternalKotlinTarget -> delegate.awaitComponents()
-    else -> components.also { kotlinComponents.forEach { it.awaitKotlinUsagesOrEmpty() } }
-}

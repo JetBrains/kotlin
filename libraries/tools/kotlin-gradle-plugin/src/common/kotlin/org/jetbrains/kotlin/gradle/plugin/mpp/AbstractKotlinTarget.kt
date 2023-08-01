@@ -9,10 +9,6 @@ import org.gradle.api.DomainObjectSet
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ConfigurablePublishArtifact
 import org.gradle.api.attributes.AttributeContainer
-import org.gradle.api.component.*
-import org.gradle.api.internal.component.SoftwareComponentInternal
-import org.gradle.api.internal.component.UsageContext
-import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.provider.Property
 import org.gradle.api.publish.maven.MavenPublication
 import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
@@ -23,7 +19,6 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext.MavenScope.COMPILE
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext.MavenScope.RUNTIME
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.tooling.core.MutableExtras
 import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
@@ -33,7 +28,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 internal const val PRIMARY_SINGLE_COMPONENT_NAME = "kotlin"
 
 abstract class AbstractKotlinTarget(
-    final override val project: Project
+    final override val project: Project,
 ) : InternalKotlinTarget {
 
     final override val extras: MutableExtras = mutableExtrasOf()
@@ -102,27 +97,19 @@ abstract class AbstractKotlinTarget(
         setOf(result)
     }
 
-    internal suspend fun awaitComponents(): Set<SoftwareComponent> = components
-        .onEach { (it as? DecoratedAdhocSoftwareComponent)?.awaitReady() }
 
     /**
      * Returns, potentially not configured (e.g. without some usages), Gradle SoftwareComponent's for this target
      * For final version of components use [awaitComponents]
      */
-    override val components: Set<SoftwareComponent> by lazy {
-        val softwareComponentFactoryClass = SoftwareComponentFactory::class.java
-        val softwareComponentFactory = (project as ProjectInternal).services.get(softwareComponentFactoryClass)
-
-        kotlinComponents.map { kotlinComponent ->
-            val adhocVariant = softwareComponentFactory.adhoc(kotlinComponent.name)
-            DecoratedAdhocSoftwareComponent(project, this, adhocVariant, kotlinComponent)
-        }.toSet()
+    override val components: Set<KotlinTargetSoftwareComponent> by lazy {
+        kotlinComponents.map { kotlinComponent -> KotlinTargetSoftwareComponent(this, kotlinComponent) }.toSet()
     }
 
     internal open fun createKotlinVariant(
         componentName: String,
         compilation: KotlinCompilation<*>,
-        usageContexts: Future<Set<DefaultKotlinUsageContext>>
+        usageContexts: Future<Set<DefaultKotlinUsageContext>>,
     ): KotlinVariant {
         val kotlinExtension = project.kotlinExtension
 
@@ -141,7 +128,7 @@ abstract class AbstractKotlinTarget(
     }
 
     internal open fun createUsageContexts(
-        producingCompilation: KotlinCompilation<*>
+        producingCompilation: KotlinCompilation<*>,
     ): Set<DefaultKotlinUsageContext> {
         return listOfNotNull(
             COMPILE to apiElementsConfigurationName,
@@ -208,60 +195,6 @@ abstract class AbstractKotlinTarget(
         internal set
 }
 
-private val publishedConfigurationNameSuffix = "-published"
-
-internal fun publishedConfigurationName(originalVariantName: String) = originalVariantName + publishedConfigurationNameSuffix
-internal fun originalVariantNameFromPublished(publishedConfigurationName: String): String? =
-    publishedConfigurationName.takeIf { it.endsWith(publishedConfigurationNameSuffix) }?.removeSuffix(publishedConfigurationNameSuffix)
-
 internal fun KotlinTarget.disambiguateName(simpleName: String) =
     lowerCamelCaseName(targetName, simpleName)
 
-internal fun javaApiUsageForMavenScoping() = "java-api-jars"
-
-private class DecoratedAdhocSoftwareComponent(
-    project: Project,
-    target: AbstractKotlinTarget,
-    private val adhocComponent: AdhocComponentWithVariants,
-    private val kotlinComponent: KotlinTargetComponent,
-) : ComponentWithVariants, ComponentWithCoordinates, SoftwareComponentInternal {
-
-    private val variantsConfigurationJob = project.future {
-        target.applyUserDefinedAttributesJob.await()
-        val usages = kotlinComponent.awaitKotlinUsagesOrEmpty()
-        usages.forEach { kotlinUsageContext ->
-            val publishedConfigurationName = publishedConfigurationName(kotlinUsageContext.name)
-            val configuration = project.configurations.findByName(publishedConfigurationName)
-                ?: project.configurations.create(publishedConfigurationName).also { configuration ->
-                    configuration.isCanBeConsumed = false
-                    configuration.isCanBeResolved = false
-                    configuration.extendsFrom(project.configurations.getByName(kotlinUsageContext.dependencyConfigurationName))
-                    configuration.artifacts.addAll(kotlinUsageContext.artifacts)
-
-                    copyAttributes(from = kotlinUsageContext.attributes, to = configuration.attributes)
-                }
-
-            adhocComponent.addVariantsFromConfiguration(configuration) { configurationVariantDetails ->
-                val mavenScope = kotlinUsageContext.mavenScope
-                if (mavenScope != null) {
-                    val mavenScopeString = when (mavenScope) {
-                        COMPILE -> "compile"
-                        RUNTIME -> "runtime"
-                    }
-                    configurationVariantDetails.mapToMavenScope(mavenScopeString)
-                }
-            }
-        }
-    }
-
-    suspend fun awaitReady() = variantsConfigurationJob.await()
-
-    override fun getCoordinates() =
-        (kotlinComponent as? ComponentWithCoordinates)?.coordinates ?: error("kotlinComponent is not ComponentWithCoordinates")
-
-    override fun getVariants(): Set<SoftwareComponent> =
-        (kotlinComponent as? KotlinVariantWithMetadataVariant)?.variants.orEmpty()
-
-    override fun getName(): String = adhocComponent.name
-    override fun getUsages(): MutableSet<out UsageContext> = (adhocComponent as SoftwareComponentInternal).usages
-}
