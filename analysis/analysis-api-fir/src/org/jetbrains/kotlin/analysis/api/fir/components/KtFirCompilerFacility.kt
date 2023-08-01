@@ -159,7 +159,8 @@ internal class KtFirCompilerFacility(
             Fir2IrJvmSpecialAnnotationSymbolProvider(),
             DefaultBuiltIns.Instance,
             Fir2IrCommonMemberStorage(signatureComposerForJvmFir2Ir(false), FirJvmKotlinMangler()),
-            initializedIrBuiltIns = null
+            initializedIrBuiltIns = null,
+            ::JvmIrTypeSystemContext,
         )
 
         patchCodeFragmentIr(fir2IrResult)

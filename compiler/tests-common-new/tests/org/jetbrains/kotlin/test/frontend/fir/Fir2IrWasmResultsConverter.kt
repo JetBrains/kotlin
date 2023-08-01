@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.ir.backend.js.incrementalDataProvider
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.library.unresolvedDependencies
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
@@ -176,7 +177,8 @@ fun ModuleCompilerAnalyzedOutput.convertToWasmIr(
         irBuiltIns,
         JsManglerIr,
         Fir2IrVisibilityConverter.Default,
-        builtIns ?: DefaultBuiltIns.Instance // TODO: consider passing externally,
+        builtIns ?: DefaultBuiltIns.Instance, // TODO: consider passing externally
+        typeContextProvider = ::IrTypeSystemContextImpl,
     ).also {
         (it.irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = dependencies }
     }

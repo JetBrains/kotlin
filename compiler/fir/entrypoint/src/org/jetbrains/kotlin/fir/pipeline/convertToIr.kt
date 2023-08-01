@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.backend.jvm.Fir2IrJvmSpecialAnnotationSymbolProv
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmKotlinMangler
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmVisibilityConverter
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmDescriptorMangler
@@ -44,6 +45,7 @@ data class ModuleCompilerAnalyzedOutput(
         irMangler: KotlinMangler.IrMangler,
         visibilityConverter: Fir2IrVisibilityConverter,
         kotlinBuiltIns: KotlinBuiltIns,
+        typeContextProvider: (IrBuiltIns) -> IrTypeSystemContext,
     ): Fir2IrResult {
         return Fir2IrConverter.createIrModuleFragment(
             session, scopeSession, fir,
@@ -52,7 +54,8 @@ data class ModuleCompilerAnalyzedOutput(
             Fir2IrJvmSpecialAnnotationSymbolProvider(), // TODO KT-60526: replace with appropriate (probably empty) implementation for other backends.
             kotlinBuiltIns = kotlinBuiltIns,
             commonMemberStorage = commonMemberStorage,
-            initializedIrBuiltIns = irBuiltIns
+            initializedIrBuiltIns = irBuiltIns,
+            typeContextProvider = typeContextProvider
         )
     }
 }
@@ -117,6 +120,7 @@ fun FirResult.convertToIrAndActualize(
                 irMangler,
                 visibilityConverter,
                 kotlinBuiltIns,
+                actualizerTypeContextProvider,
             ).also { result ->
                 fir2IrResultPostCompute(result)
             }
@@ -129,12 +133,15 @@ fun FirResult.convertToIrAndActualize(
             val commonIrOutputs = commonOutputs.map {
                 it.convertToIr(
                     fir2IrExtensions,
-                    fir2IrConfiguration,
+                    // We need to build all modules before rebuilding fake overrides
+                    // to avoid fixing declaration storages
+                    fir2IrConfiguration.copy(useIrFakeOverrideBuilder = false),
                     commonMemberStorage = commonMemberStorage,
                     irBuiltIns = irBuiltIns,
                     irMangler,
                     visibilityConverter,
                     kotlinBuiltIns,
+                    actualizerTypeContextProvider,
                 ).also { result ->
                     fir2IrResultPostCompute(result)
                     if (irBuiltIns == null) {
@@ -150,6 +157,7 @@ fun FirResult.convertToIrAndActualize(
                 irMangler,
                 visibilityConverter,
                 kotlinBuiltIns,
+                actualizerTypeContextProvider,
             ).also {
                 fir2IrResultPostCompute(it)
             }
@@ -159,7 +167,11 @@ fun FirResult.convertToIrAndActualize(
                 commonIrOutputs.map { it.irModuleFragment },
                 fir2IrConfiguration.diagnosticReporter,
                 actualizerTypeContextProvider(fir2IrResult.irModuleFragment.irBuiltins),
-                fir2IrConfiguration.languageVersionSettings
+                fir2IrConfiguration.languageVersionSettings,
+                commonMemberStorage.symbolTable,
+                irMangler,
+                Fir2IrConverter.friendModulesMap(outputs.last().session),
+                fir2IrConfiguration.useIrFakeOverrideBuilder
             )
         }
     }

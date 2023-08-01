@@ -12,7 +12,9 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.fir.pipeline.applyIrGenerationExtensions
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
+import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.platform.jvm.isJvm
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
@@ -33,7 +35,11 @@ class IrActualizerAndPluginsFacade(
                 inputArtifact.dependentIrModuleFragments,
                 inputArtifact.diagnosticReporter,
                 typeSystemContext,
-                testServices.compilerConfigurationProvider.getCompilerConfiguration(module).languageVersionSettings
+                testServices.compilerConfigurationProvider.getCompilerConfiguration(module).languageVersionSettings,
+                inputArtifact.irPluginContext.symbolTable as SymbolTable, // TODO: it's strange place to get it.
+                inputArtifact.irMangler,
+                mapOf(module.name to module.friendDependencies.map { it.moduleName }),
+                useIrFakeOverrideBuilder = false,
             )
             inputArtifact.irActualizerResult = result
         }

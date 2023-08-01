@@ -27,6 +27,8 @@ import org.jetbrains.kotlin.incremental.components.InlineConstTracker
  *  It means asking for an IR element of a non-cached declaration is a sign of inconsistent state.
  *  Code generation in the IDE is trickier, though, as declarations from any module can be potentially referenced.
  *  For such a scenario, there is a flag that relaxes consistency checks.
+ *
+ *  @param useIrFakeOverrideBuilder enables creation of fake-overrides using IR f/o generator instead of FIR2IR one. KT-61514
  */
 data class Fir2IrConfiguration(
     val languageVersionSettings: LanguageVersionSettings,
@@ -35,4 +37,5 @@ data class Fir2IrConfiguration(
     val evaluatedConstTracker: EvaluatedConstTracker,
     val inlineConstTracker: InlineConstTracker?,
     val allowNonCachedDeclarations: Boolean,
+    val useIrFakeOverrideBuilder: Boolean = false
 )

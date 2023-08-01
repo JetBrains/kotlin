@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtPsiSourceFileLinesMapping
 import org.jetbrains.kotlin.KtSourceFileLinesMappingFromLineStartOffsets
 import org.jetbrains.kotlin.backend.common.CommonBackendErrors
+import org.jetbrains.kotlin.backend.common.actualizer.FakeOverrideRebuilder
 import org.jetbrains.kotlin.backend.common.sourceElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.fir.extensions.generatedNestedClassifiers
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.symbols.lazyDeclarationResolver
 import org.jetbrains.kotlin.ir.PsiIrFileEntry
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
@@ -40,6 +42,7 @@ import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterEnvironment
 import org.jetbrains.kotlin.ir.interpreter.checker.EvaluationMode
 import org.jetbrains.kotlin.ir.interpreter.transformer.transformConst
+import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorPublicSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionPublicSymbolImpl
 import org.jetbrains.kotlin.ir.util.KotlinMangler
@@ -530,6 +533,13 @@ class Fir2IrConverter(
             }
         }
 
+        // TODO: drop this function in favor of using [IrModuleDescriptor::shouldSeeInternalsOf] in FakeOverrideBuilder KT-61384
+        fun friendModulesMap(session: FirSession) = mapOf(
+            session.moduleData.name.asStringStripSpecialMarkers() to session.moduleData.friendDependencies.map {
+                it.name.asStringStripSpecialMarkers()
+            }
+        )
+
         fun createIrModuleFragment(
             session: FirSession,
             scopeSession: ScopeSession,
@@ -542,7 +552,8 @@ class Fir2IrConverter(
             specialSymbolProvider: Fir2IrSpecialSymbolProvider,
             kotlinBuiltIns: KotlinBuiltIns,
             commonMemberStorage: Fir2IrCommonMemberStorage,
-            initializedIrBuiltIns: IrBuiltInsOverFir?
+            initializedIrBuiltIns: IrBuiltInsOverFir?,
+            typeContextProvider: (IrBuiltIns) -> IrTypeSystemContext
         ): Fir2IrResult {
             session.lazyDeclarationResolver.disableLazyResolveContractChecks()
             val moduleDescriptor = FirModuleDescriptor(session, kotlinBuiltIns)
@@ -563,6 +574,16 @@ class Fir2IrConverter(
             components.converter.runSourcesConversion(
                 allFirFiles, irModuleFragment, components.fir2IrVisitor, runPreCacheBuiltinClasses = initializedIrBuiltIns == null
             )
+
+            if (fir2IrConfiguration.useIrFakeOverrideBuilder) {
+                FakeOverrideRebuilder(
+                    commonMemberStorage.symbolTable,
+                    irMangler,
+                    typeContextProvider(components.irBuiltIns),
+                    irModuleFragment,
+                    friendModulesMap(session)
+                ).rebuildFakeOverrides()
+            }
 
             return Fir2IrResult(irModuleFragment, components, moduleDescriptor)
         }

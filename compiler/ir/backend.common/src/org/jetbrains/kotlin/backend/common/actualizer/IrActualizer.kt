@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
-import org.jetbrains.kotlin.ir.util.DeepCopyTypeRemapper
+import org.jetbrains.kotlin.ir.util.*
 
 data class IrActualizedResult(val actualizedExpectDeclarations: List<IrDeclaration>)
 
@@ -21,7 +21,12 @@ object IrActualizer {
         dependentFragments: List<IrModuleFragment>,
         diagnosticReporter: DiagnosticReporter,
         typeSystemContext: IrTypeSystemContext,
-        languageVersionSettings: LanguageVersionSettings
+        languageVersionSettings: LanguageVersionSettings,
+        symbolTable: SymbolTable,
+        mangler: KotlinMangler.IrMangler,
+        // TODO: drop this argument in favor of using [IrModuleDescriptor::shouldSeeInternalsOf] in FakeOverrideBuilder KT-61384
+        friendModules: Map<String, List<String>>,
+        useIrFakeOverrideBuilder: Boolean
     ): IrActualizedResult {
         val ktDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter, languageVersionSettings)
 
@@ -40,18 +45,20 @@ object IrActualizer {
         //      Also, it doesn't remove unactualized expect declarations marked with @OptionalExpectation
         val removedExpectDeclarations = removeExpectDeclarations(dependentFragments, expectActualMap)
 
-        //   3. Actualize expect fake overrides in non-expect classes inside common or multi-platform module.
-        //      It's probably important to run FakeOverridesActualizer before ActualFakeOverridesAdder
-        FakeOverridesActualizer(expectActualMap).apply { dependentFragments.forEach { visitModuleFragment(it) } }
+        if (!useIrFakeOverrideBuilder) {
+            //   3. Actualize expect fake overrides in non-expect classes inside common or multi-platform module.
+            //      It's probably important to run FakeOverridesActualizer before ActualFakeOverridesAdder
+            FakeOverridesActualizer(expectActualMap).apply { dependentFragments.forEach { visitModuleFragment(it) } }
 
-        //   4. Add fake overrides to non-expect classes inside common or multi-platform module,
-        //      taken from these non-expect classes actualized super classes.
-        ActualFakeOverridesAdder(
-            expectActualMap,
-            actualDeclarations.actualClasses,
-            ktDiagnosticReporter,
-            typeSystemContext
-        ).apply { dependentFragments.forEach { visitModuleFragment(it) } }
+            //   4. Add fake overrides to non-expect classes inside common or multi-platform module,
+            //      taken from these non-expect classes actualized super classes.
+            ActualFakeOverridesAdder(
+                expectActualMap,
+                actualDeclarations.actualClasses,
+                ktDiagnosticReporter,
+                typeSystemContext
+            ).apply { dependentFragments.forEach { visitModuleFragment(it) } }
+        }
 
         //   5. Copy and actualize function parameter default values from expect functions
         val symbolRemapper = ActualizerSymbolRemapper(expectActualMap)
@@ -64,6 +71,11 @@ object IrActualizer {
 
         //   7. Merge dependent fragments into the main one
         mergeIrFragments(mainFragment, dependentFragments)
+
+        if (useIrFakeOverrideBuilder) {
+            //   8. Rebuild fake overrides from stretch, as they could become invalid during actualization
+            FakeOverrideRebuilder(symbolTable, mangler, typeSystemContext, mainFragment, friendModules).rebuildFakeOverrides()
+        }
 
         return IrActualizedResult(removedExpectDeclarations)
     }
@@ -98,3 +110,4 @@ object IrActualizer {
         mainFragment.files.addAll(0, dependentFragments.flatMap { it.files })
     }
 }
+

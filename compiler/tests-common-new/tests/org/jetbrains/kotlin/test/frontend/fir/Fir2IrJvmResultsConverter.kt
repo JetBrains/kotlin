@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.frontend.fir
 
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.JvmIrDeserializerImpl
+import org.jetbrains.kotlin.backend.jvm.JvmIrTypeSystemContext
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
@@ -113,8 +114,9 @@ class Fir2IrJvmResultsConverter(
                 irBuiltIns,
                 irMangler,
                 FirJvmVisibilityConverter,
-                DefaultBuiltIns.Instance
-            )
+                DefaultBuiltIns.Instance,
+                typeContextProvider = ::JvmIrTypeSystemContext,
+                )
             irBuiltIns = components.irBuiltIns
 
             if (index < inputArtifact.partsForDependsOnModules.size - 1) {

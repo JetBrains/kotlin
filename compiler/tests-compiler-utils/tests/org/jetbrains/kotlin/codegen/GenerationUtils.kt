@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.JvmIrDeserializerImpl
+import org.jetbrains.kotlin.backend.jvm.JvmIrTypeSystemContext
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -149,7 +150,8 @@ object GenerationUtils {
             irBuiltIns = null,
             JvmIrMangler,
             FirJvmVisibilityConverter,
-            DefaultBuiltIns.Instance
+            DefaultBuiltIns.Instance,
+            ::JvmIrTypeSystemContext
         )
         val dummyBindingContext = NoScopeRecordCliBindingTrace().bindingContext
 
