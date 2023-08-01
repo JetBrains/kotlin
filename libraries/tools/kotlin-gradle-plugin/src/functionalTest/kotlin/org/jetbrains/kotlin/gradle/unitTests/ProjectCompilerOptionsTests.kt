@@ -6,14 +6,15 @@
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinNativeCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.external.createCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.external.createExternalKotlinTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile as KotlinJvmCompileTask
 import org.jetbrains.kotlin.gradle.tasks.withType
-import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
+import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.utils.named
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -174,12 +175,60 @@ class ProjectCompilerOptionsTests {
         assertEquals(false, project.kotlinCommonTask("compileKotlinMetadata").compilerOptions.progressiveMode.get())
     }
 
+    @Test
+    fun externalTargetDsl() {
+        val project = buildProjectWithMPP()
+        project.runLifecycleAwareTest {
+            with(multiplatformExtension) {
+                val target = createExternalKotlinTarget<FakeTarget> { defaults() }
+                target.createCompilation<FakeCompilation> { defaults(this@with) }
+                target.createCompilation<FakeCompilation> { defaults(this@with, "test") }
+
+                target.compilerOptions {
+                    javaParameters.set(true)
+                }
+            }
+        }
+
+        assertEquals(true, project.kotlinJvmTask("compileFakeKotlinFake").compilerOptions.javaParameters.get())
+        assertEquals(true, project.kotlinJvmTask("compileTestKotlinFake").compilerOptions.javaParameters.get())
+    }
+
+    @Test
+    fun externalTaskOptionsOverridesTargetOptions() {
+        val project = buildProjectWithMPP()
+        project.runLifecycleAwareTest {
+            tasks.withType<KotlinJvmCompileTask>().configureEach {
+                if (it.name == "compileFakeKotlinFake") {
+                    it.compilerOptions.javaParameters.set(false)
+                }
+            }
+
+            with(multiplatformExtension) {
+                val target = createExternalKotlinTarget<FakeTarget> { defaults() }
+                target.createCompilation<FakeCompilation> { defaults(this@with) }
+                target.createCompilation<FakeCompilation> { defaults(this@with, "test") }
+
+                target.compilerOptions {
+                    javaParameters.set(true)
+                }
+            }
+        }
+
+        assertEquals(false, project.kotlinJvmTask("compileFakeKotlinFake").compilerOptions.javaParameters.get())
+        assertEquals(true, project.kotlinJvmTask("compileTestKotlinFake").compilerOptions.javaParameters.get())
+    }
+
     private fun Project.kotlinNativeTask(name: String): KotlinCompilationTask<KotlinNativeCompilerOptions> = tasks
         .named<KotlinCompilationTask<KotlinNativeCompilerOptions>>(name)
         .get()
 
     private fun Project.kotlinJsTask(name: String): KotlinCompilationTask<KotlinJsCompilerOptions> = tasks
         .named<KotlinCompilationTask<KotlinJsCompilerOptions>>(name)
+        .get()
+
+    private fun Project.kotlinJvmTask(name: String): KotlinCompilationTask<KotlinJvmCompilerOptions> = tasks
+        .named<KotlinCompilationTask<KotlinJvmCompilerOptions>>(name)
         .get()
 
     private fun Project.kotlinCommonTask(name: String): KotlinCompilationTask<KotlinCommonCompilerOptions> = tasks

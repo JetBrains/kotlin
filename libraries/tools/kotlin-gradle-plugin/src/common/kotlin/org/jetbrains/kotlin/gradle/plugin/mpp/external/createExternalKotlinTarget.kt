@@ -12,7 +12,11 @@ import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptionsDefault
+import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptionsDefault
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptionsDefault
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
@@ -22,6 +26,7 @@ import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.markConsumable
 import org.jetbrains.kotlin.gradle.utils.named
+import org.jetbrains.kotlin.gradle.utils.newInstance
 
 /**
  * Creates an adhoc/external Kotlin Target which can be maintained and evolved outside the kotlin.git repository.
@@ -55,11 +60,21 @@ fun <T : DecoratedExternalKotlinTarget> KotlinMultiplatformExtension.createExter
         target.project.locateOrRegisterTask<Jar>(lowerCamelCaseName(descriptor.targetName, "jar"))
     }
 
+    val compilerOptions = when (descriptor.platformType) {
+        KotlinPlatformType.androidJvm,
+        KotlinPlatformType.jvm -> project.objects.newInstance<KotlinJvmCompilerOptionsDefault>()
+        KotlinPlatformType.wasm,
+        KotlinPlatformType.js -> project.objects.newInstance<KotlinJsCompilerOptionsDefault>()
+        KotlinPlatformType.common -> project.objects.newInstance<KotlinCommonCompilerOptionsDefault>()
+        KotlinPlatformType.native -> project.objects.newInstance<KotlinNativeCompilerOptionsDefault>()
+    }
+
     val target = ExternalKotlinTargetImpl(
         project = project,
         targetName = descriptor.targetName,
         platformType = descriptor.platformType,
         publishable = true,
+        compilerOptions = compilerOptions,
         apiElementsConfiguration = apiElementsConfiguration,
         runtimeElementsConfiguration = runtimeElementsConfiguration,
         sourcesElementsConfiguration = sourcesElementsConfiguration,
@@ -69,6 +84,8 @@ fun <T : DecoratedExternalKotlinTarget> KotlinMultiplatformExtension.createExter
         kotlinTargetComponent = kotlinTargetComponent,
         artifactsTaskLocator = artifactsTaskLocator
     )
+
+    target.wireCompilerOptionsToCompilations(descriptor.platformType)
 
     target.setupApiElements(apiElementsConfiguration)
     target.setupApiElements(apiElementsPublishedConfiguration)
@@ -129,4 +146,43 @@ private fun ExternalKotlinTargetImpl.setupRuntimeElements(configuration: Configu
 
 private fun ExternalKotlinTargetImpl.setupSourcesElements(configuration: Configuration) {
     configuration.configureSourcesPublicationAttributes(this)
+}
+
+private fun ExternalKotlinTargetImpl.wireCompilerOptionsToCompilations(platformType: KotlinPlatformType) {
+    when (platformType) {
+        KotlinPlatformType.androidJvm,
+        KotlinPlatformType.jvm -> {
+            compilations.configureEach {
+                KotlinJvmCompilerOptionsHelper.syncOptionsAsConvention(
+                    compilerOptions as KotlinJvmCompilerOptions,
+                    it.compilerOptions.options as KotlinJvmCompilerOptions
+                )
+            }
+        }
+        KotlinPlatformType.wasm,
+        KotlinPlatformType.js -> {
+            compilations.configureEach {
+                KotlinJsCompilerOptionsHelper.syncOptionsAsConvention(
+                    compilerOptions as KotlinJsCompilerOptions,
+                    it.compilerOptions.options as KotlinJsCompilerOptions
+                )
+            }
+        }
+        KotlinPlatformType.common -> {
+            compilations.configureEach {
+                KotlinCommonCompilerOptionsHelper.syncOptionsAsConvention(
+                    compilerOptions,
+                    it.compilerOptions.options
+                )
+            }
+        }
+        KotlinPlatformType.native -> {
+            compilations.configureEach {
+                KotlinNativeCompilerOptionsHelper.syncOptionsAsConvention(
+                    compilerOptions as KotlinNativeCompilerOptions,
+                    it.compilerOptions.options as KotlinNativeCompilerOptions
+                )
+            }
+        }
+    }
 }
