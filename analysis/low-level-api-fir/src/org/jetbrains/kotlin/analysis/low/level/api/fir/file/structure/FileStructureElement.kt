@@ -87,10 +87,12 @@ internal class ReanalyzableCodeFragmentStructureElement(
     firFile: FirFile,
     override val psi: KtCodeFragment,
     firSymbol: FirCodeFragmentSymbol,
-    override val timestamp: Long,
     moduleComponents: LLFirModuleResolveComponents,
 ) : ReanalyzableStructureElement<KtCodeFragment, FirCodeFragmentSymbol>(firFile, firSymbol, moduleComponents) {
     override val mappings = KtToFirMapping(firSymbol.fir, recorder)
+
+    override val timestamp: Long
+        get() = psi.modificationStamp
 
     override fun reanalyze(): ReanalyzableStructureElement<KtCodeFragment, FirCodeFragmentSymbol> {
         val originalCodeFragment = firSymbol.fir
@@ -112,13 +114,7 @@ internal class ReanalyzableCodeFragmentStructureElement(
         val newCodeFragment = firFile.codeFragment
         newCodeFragment.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
 
-        return ReanalyzableCodeFragmentStructureElement(
-            firFile,
-            psi,
-            newCodeFragment.symbol,
-            psi.modificationStamp,
-            moduleComponents
-        )
+        return ReanalyzableCodeFragmentStructureElement(firFile, psi, newCodeFragment.symbol, moduleComponents)
     }
 }
 
