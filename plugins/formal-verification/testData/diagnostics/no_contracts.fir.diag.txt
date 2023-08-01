@@ -23,3 +23,10 @@ method take_int_return_int(x: Int) returns (ret: Int)
 {
   ret := x
 }
+
+/no_contracts.kt:(176,200): info: field backing_int: Int
+
+method take_int_return_int_expr(x: Int) returns (ret: Int)
+{
+  ret := x
+}
