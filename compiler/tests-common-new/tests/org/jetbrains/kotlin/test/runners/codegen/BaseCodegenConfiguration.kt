@@ -165,7 +165,9 @@ fun HandlersStepBuilder<BinaryArtifacts.Jvm, ArtifactKinds.Jvm>.dumpHandlersForB
 }
 
 fun HandlersStepBuilder<BinaryArtifacts.Jvm, ArtifactKinds.Jvm>.boxHandlersForBackendStep() {
-    useHandlers(::JvmBoxRunner)
+    useHandlers(
+        ::JvmBoxRunner
+    )
 }
 
 fun HandlersStepBuilder<BinaryArtifacts.Jvm, ArtifactKinds.Jvm>.steppingHandlersForBackendStep() {
@@ -190,6 +192,7 @@ fun HandlersStepBuilder<FirOutputArtifact, FrontendKinds.FIR>.commonFirHandlersF
 
 fun HandlersStepBuilder<BinaryArtifacts.Jvm, ArtifactKinds.Jvm>.commonBackendHandlersForCodegenTest() {
     useHandlers(
+        ::JvmBackendDiagnosticsHandler,
         ::NoJvmSpecificCompilationErrorsHandler,
         ::DxCheckerHandler,
     )
