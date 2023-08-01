@@ -21,4 +21,5 @@ method take_int_return_unit(x: Int)
 
 method take_int_return_int(x: Int) returns (ret: Int)
 {
+  ret := x
 }

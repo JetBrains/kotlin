@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.isInt
@@ -176,7 +177,6 @@ class StmtConversionVisitor : FirVisitor<Exp?, StmtConversionContext>() {
             val returnVar = data.methodCtx.returnVar ?: throw Exception("Expression returned in void function")
             data.statements.add(Stmt.LocalVarAssign(returnVar.toLocalVar(), expr))
         }
-        System.err.println("Visiting: $returnExpression")
         return null
     }
 
@@ -195,9 +195,17 @@ class StmtConversionVisitor : FirVisitor<Exp?, StmtConversionContext>() {
     override fun visitPropertyAccessExpression(
         propertyAccessExpression: FirPropertyAccessExpression,
         data: StmtConversionContext,
-    ): Exp? {
-        System.err.println("Visiting: $propertyAccessExpression")
-        return null
+    ): Exp {
+        val resolvedReference = propertyAccessExpression.calleeReference as FirResolvedNamedReference
+        val symbol = resolvedReference.resolvedSymbol
+        val resolvedTypeRef = propertyAccessExpression.typeRef as FirResolvedTypeRef
+        return when (symbol) {
+            is FirValueParameterSymbol -> ConvertedVar(
+                symbol.callableId.callableName.asString(),
+                data.methodCtx.programCtx.convertType(resolvedTypeRef.type) as ConvertedType
+            ).toLocalVar()
+            else -> TODO("Implement other property accesses")
+        }
     }
 
     override fun visitFunctionCall(functionCall: FirFunctionCall, data: StmtConversionContext): Exp? {
