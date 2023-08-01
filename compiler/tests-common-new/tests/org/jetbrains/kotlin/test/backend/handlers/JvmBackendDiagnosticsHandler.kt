@@ -24,11 +24,9 @@ import org.jetbrains.kotlin.test.frontend.classic.handlers.withNewInferenceModeE
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticCodeMetaInfo
 import org.jetbrains.kotlin.test.frontend.fir.handlers.toMetaInfos
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
+import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.assertions
-import org.jetbrains.kotlin.test.services.globalMetadataInfoHandler
-import org.jetbrains.kotlin.test.services.sourceFileProvider
+import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.junit.jupiter.api.fail
 import java.io.File
@@ -63,13 +61,25 @@ class JvmBackendDiagnosticsHandler(testServices: TestServices) : JvmBinaryArtifa
         val firParser = module.directives.singleOrZeroValue(FirDiagnosticsDirectives.FIR_PARSER)
         val lightTreeComparingModeEnabled = firParser != null && FirDiagnosticsDirectives.COMPARE_WITH_LIGHT_TREE in module.directives
         val lightTreeEnabled = firParser == FirParser.LightTree
-        for (testFile in module.files) {
-            val ktDiagnostics = ktDiagnosticReporter.diagnosticsByFilePath["/${testFile.name}"] ?: continue
-            ktDiagnostics.forEach {
-                val metaInfos = it.toMetaInfos(module, testFile, globalMetadataInfoHandler, lightTreeEnabled, lightTreeComparingModeEnabled)
-                globalMetadataInfoHandler.addMetadataInfosForFile(testFile, metaInfos)
+
+        val processedModules = mutableSetOf<TestModule>()
+
+        fun processModule(module: TestModule) {
+            if (!processedModules.add(module)) return
+            for (testFile in module.files) {
+                val ktDiagnostics = ktDiagnosticReporter.diagnosticsByFilePath["/${testFile.name}"] ?: continue
+                ktDiagnostics.forEach {
+                    val metaInfos = it.toMetaInfos(module, testFile, globalMetadataInfoHandler, lightTreeEnabled, lightTreeComparingModeEnabled)
+                    globalMetadataInfoHandler.addMetadataInfosForFile(testFile, metaInfos)
+                }
+            }
+            for ((moduleName, _, _) in module.dependsOnDependencies) {
+                val dependantModule = testServices.dependencyProvider.getTestModule(moduleName)
+                processModule(dependantModule)
             }
         }
+
+        processModule(module)
     }
 
     private fun checkFullDiagnosticRender(module: TestModule) {
