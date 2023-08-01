@@ -19,6 +19,10 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.forEachType
+import org.jetbrains.kotlin.fir.types.toSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.ParameterNames
@@ -71,24 +75,33 @@ inline fun buildDeprecationAnnotationInfoPerUseSiteStorage(builder: DeprecationA
     return DeprecationAnnotationInfoPerUseSiteStorageBuilder().apply(builder).build()
 }
 
-fun FirBasedSymbol<*>.getDeprecation(session: FirSession, callSite: FirElement?): DeprecationInfo? {
-    return getDeprecation(session.languageVersionSettings.apiVersion, callSite)
+private fun FirBasedSymbol<*>.getUseSitesForCallSite(callSite: FirElement?): Array<AnnotationUseSiteTarget> {
+    return when (this) {
+        is FirPropertySymbol -> when (callSite) {
+            is FirVariableAssignment -> arrayOf(AnnotationUseSiteTarget.PROPERTY_SETTER, AnnotationUseSiteTarget.PROPERTY)
+            is FirPropertyAccessExpression -> arrayOf(AnnotationUseSiteTarget.PROPERTY_GETTER, AnnotationUseSiteTarget.PROPERTY)
+            else -> arrayOf(AnnotationUseSiteTarget.PROPERTY)
+        }
+        else -> arrayOf()
+    }
 }
 
-fun FirBasedSymbol<*>.getDeprecation(apiVersion: ApiVersion, callSite: FirElement?): DeprecationInfo? {
-    return when (this) {
-        is FirPropertySymbol ->
-            when (callSite) {
-                is FirVariableAssignment ->
-                    getDeprecationForCallSite(apiVersion, AnnotationUseSiteTarget.PROPERTY_SETTER, AnnotationUseSiteTarget.PROPERTY)
-                is FirPropertyAccessExpression ->
-                    getDeprecationForCallSite(apiVersion, AnnotationUseSiteTarget.PROPERTY_GETTER, AnnotationUseSiteTarget.PROPERTY)
-                else ->
-                    getDeprecationForCallSite(apiVersion, AnnotationUseSiteTarget.PROPERTY)
-            }
-        else ->
-            getDeprecationForCallSite(apiVersion)
-    }
+/**
+ * Returns deprecation that is declared on the
+ * corresponding declaration.
+ */
+fun FirBasedSymbol<*>.getOwnDeprecation(session: FirSession, callSite: FirElement?): DeprecationInfo? {
+    return getOwnDeprecationForCallSite(session.languageVersionSettings.apiVersion, *getUseSitesForCallSite(callSite))
+}
+
+/**
+ * Returns deprecation that is declared on
+ * the corresponding declaration directly
+ * or, in case of a typealias, on any of
+ * its expansions.
+ */
+fun FirBasedSymbol<*>.getDeprecation(session: FirSession, callSite: FirElement?): DeprecationInfo? {
+    return getDeprecationForCallSite(session, *getUseSitesForCallSite(callSite))
 }
 
 fun FirAnnotationContainer.getDeprecationsProvider(session: FirSession): DeprecationsProvider {
@@ -162,16 +175,56 @@ fun List<FirAnnotation>.getDeprecationsProviderFromAnnotations(
     return deprecationAnnotationByUseSite.toDeprecationsProvider(session.firCachesFactory)
 }
 
-fun FirBasedSymbol<*>.getDeprecationForCallSite(
+/**
+ * Returns deprecation that is declared on the
+ * corresponding declaration.
+ */
+private fun FirBasedSymbol<*>.getOwnDeprecationForCallSite(
     apiVersion: ApiVersion,
     vararg sites: AnnotationUseSiteTarget
 ): DeprecationInfo? {
     val deprecations = when (this) {
         is FirCallableSymbol<*> -> getDeprecation(apiVersion)
-        is FirClassLikeSymbol<*> -> getDeprecation(apiVersion)
+        is FirClassLikeSymbol<*> -> getOwnDeprecation(apiVersion)
         else -> null
     }
     return (deprecations ?: EmptyDeprecationsPerUseSite).forUseSite(*sites)
+}
+
+/**
+ * Returns deprecation that is declared on
+ * the corresponding declaration directly
+ * or, in case of a typealias, on any of
+ * its expansions.
+ */
+fun FirBasedSymbol<*>.getDeprecationForCallSite(
+    session: FirSession,
+    vararg sites: AnnotationUseSiteTarget,
+): DeprecationInfo? {
+    val apiVersion = session.languageVersionSettings.apiVersion
+
+    return when (this) {
+        !is FirTypeAliasSymbol -> getOwnDeprecationForCallSite(apiVersion, *sites)
+        else -> {
+            var worstDeprecationInfo = getOwnDeprecationForCallSite(apiVersion, *sites)
+            val visited = mutableMapOf<ConeKotlinType, DeprecationInfo?>()
+
+            resolvedExpandedTypeRef.type.forEachType {
+                val deprecationInfo = visited.getOrPut(it) {
+                    val symbol = it.toSymbol(session) ?: return@forEachType
+                    symbol.getDeprecationForCallSite(session, *sites)
+                } ?: return@forEachType
+
+                val currentWorstDeprecation = worstDeprecationInfo
+
+                if (currentWorstDeprecation == null || deprecationInfo > currentWorstDeprecation) {
+                    worstDeprecationInfo = deprecationInfo
+                }
+            }
+
+            worstDeprecationInfo
+        }
+    }
 }
 
 private fun FirAnnotation.getVersionFromArgument(name: Name): ApiVersion? =

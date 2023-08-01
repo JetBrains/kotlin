@@ -12,18 +12,18 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FutureApiDeprecationInfo
 import org.jetbrains.kotlin.fir.analysis.checkers.isLhsOfAssignment
-import org.jetbrains.kotlin.fir.analysis.checkers.type.FirDeprecatedTypeChecker
 import org.jetbrains.kotlin.fir.declarations.getDeprecation
+import org.jetbrains.kotlin.fir.declarations.getOwnDeprecation
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.resolve.firClassLike
 import org.jetbrains.kotlin.fir.resolve.typeAliasForConstructor
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
@@ -43,31 +43,18 @@ object FirDeprecationChecker : FirBasicExpressionChecker() {
 
         val calleeReference = expression.calleeReference ?: return
         val resolvedReference = calleeReference.resolved ?: return
-        val source = resolvedReference.source
         val referencedSymbol = resolvedReference.resolvedSymbol
-
-        // If this is a constructor call through a typealias, we want to check deprecations on the typealias itself as well as any
-        // intermediary expansions.
-        // However, we'll already check the final expansion below, so we don't want to do it here as well to prevent duplicate diagnostics.
-        val typeAliasForConstructor = (referencedSymbol as? FirConstructorSymbol)?.typeAliasForConstructor
-        if (typeAliasForConstructor != null && expression is FirQualifiedAccessExpression) {
-            FirDeprecatedTypeChecker.reportDeprecationsRecursively(
-                typeAliasForConstructor,
-                source,
-                context,
-                reporter,
-                // We pass the containing class symbol to ignore the final expansion.
-                symbolToIgnore = referencedSymbol.getContainingClassSymbol(context.session)
-            )
-        }
 
         if (expression is FirDelegatedConstructorCall) {
             // Report deprecations on the constructor itself, not on the declaring class as that will be handled by FirDeprecatedTypeChecker
             val constructorOnlyDeprecation = referencedSymbol.getDeprecation(context.session, expression) ?: return
-            val typealiasSymbol = expression.constructedTypeRef.firClassLike(context.session)?.symbol as? FirTypeAliasSymbol
-            reportApiStatus(source, referencedSymbol, typealiasSymbol, constructorOnlyDeprecation, reporter, context)
+            val isTypealiasExpansion = expression.constructedTypeRef.firClassLike(context.session)?.symbol is FirTypeAliasSymbol
+            reportApiStatus(
+                resolvedReference.source, referencedSymbol, isTypealiasExpansion,
+                constructorOnlyDeprecation, reporter, context
+            )
         } else {
-            reportApiStatusIfNeeded(source, referencedSymbol, context, reporter, typeAliasForConstructor, callSite = expression)
+            reportApiStatusIfNeeded(resolvedReference.source, referencedSymbol, context, reporter, callSite = expression)
         }
     }
 
@@ -76,17 +63,36 @@ object FirDeprecationChecker : FirBasicExpressionChecker() {
         referencedSymbol: FirBasedSymbol<*>,
         context: CheckerContext,
         reporter: DiagnosticReporter,
-        typealiasSymbol: FirTypeAliasSymbol? = null,
         callSite: FirElement? = null,
     ) {
         val deprecation = getWorstDeprecation(callSite, referencedSymbol, context) ?: return
-        reportApiStatus(source, referencedSymbol, typealiasSymbol, deprecation, reporter, context)
+        val isTypealiasExpansion = deprecation.isTypealiasExpansionOf(referencedSymbol, callSite, context)
+        reportApiStatus(source, referencedSymbol, isTypealiasExpansion, deprecation, reporter, context)
+    }
+
+    private fun DeprecationInfo.isTypealiasExpansionOf(
+        referencedSymbol: FirBasedSymbol<*>,
+        callSite: FirElement?,
+        context: CheckerContext,
+    ): Boolean = when (referencedSymbol) {
+        is FirConstructorSymbol -> referencedSymbol.typeAliasForConstructor
+            ?.let { isTypealiasExpansionOf(it, callSite, context) }
+            ?: false
+        !is FirTypeAliasSymbol -> false
+        else -> referencedSymbol.getOwnDeprecation(context.session, callSite).let {
+            // If 2 deprecations along a typealias "expansion chain"
+            // are equivalent (a <= b && a >= b), then getDeprecation()
+            // has returned the first of them.
+            // When calling getWorstDeprecation(), deprecations
+            // from typealiases should come first.
+            it == null || it < this
+        }
     }
 
     internal fun reportApiStatus(
         source: KtSourceElement?,
         referencedSymbol: FirBasedSymbol<*>,
-        typealiasSymbol: FirTypeAliasSymbol?,
+        isTypealiasExpansion: Boolean,
         deprecationInfo: DeprecationInfo,
         reporter: DiagnosticReporter,
         context: CheckerContext,
@@ -94,19 +100,19 @@ object FirDeprecationChecker : FirBasicExpressionChecker() {
         if (deprecationInfo is FutureApiDeprecationInfo) {
             reportApiNotAvailable(source, deprecationInfo, reporter, context)
         } else {
-            reportDeprecation(source, referencedSymbol, typealiasSymbol, deprecationInfo, reporter, context)
+            reportDeprecation(source, referencedSymbol, isTypealiasExpansion, deprecationInfo, reporter, context)
         }
     }
 
     private fun reportDeprecation(
         source: KtSourceElement?,
         referencedSymbol: FirBasedSymbol<*>,
-        typealiasSymbol: FirTypeAliasSymbol?,
+        isTypealiasExpansion: Boolean,
         deprecationInfo: DeprecationInfo,
         reporter: DiagnosticReporter,
-        context: CheckerContext,
+        context: CheckerContext
     ) {
-        if (typealiasSymbol == null) {
+        if (!isTypealiasExpansion) {
             val diagnostic = when (deprecationInfo.deprecationLevel) {
                 DeprecationLevelValue.ERROR, DeprecationLevelValue.HIDDEN -> FirErrors.DEPRECATION_ERROR
                 DeprecationLevelValue.WARNING -> FirErrors.DEPRECATION
@@ -117,7 +123,7 @@ object FirDeprecationChecker : FirBasicExpressionChecker() {
                 DeprecationLevelValue.ERROR, DeprecationLevelValue.HIDDEN -> FirErrors.TYPEALIAS_EXPANSION_DEPRECATION_ERROR
                 DeprecationLevelValue.WARNING -> FirErrors.TYPEALIAS_EXPANSION_DEPRECATION
             }
-            reporter.reportOn(source, diagnostic, typealiasSymbol, referencedSymbol, deprecationInfo.message ?: "", context)
+            reporter.reportOn(source, diagnostic, referencedSymbol, referencedSymbol, deprecationInfo.message ?: "", context)
         }
     }
 
@@ -139,15 +145,18 @@ object FirDeprecationChecker : FirBasicExpressionChecker() {
     private fun getWorstDeprecation(
         callSite: FirElement?,
         symbol: FirBasedSymbol<*>,
-        context: CheckerContext,
+        context: CheckerContext
     ): DeprecationInfo? {
         val deprecationInfos = listOfNotNull(
-            symbol.getDeprecation(context.session, callSite),
             (symbol as? FirConstructorSymbol)
-                ?.resolvedReturnTypeRef
-                ?.toRegularClassSymbol(context.session)
-                ?.getDeprecation(context.session, callSite)
+                ?.classSymbolItIsCalledThrough(context)
+                ?.getDeprecation(context.session, callSite),
+            symbol.getDeprecation(context.session, callSite),
         )
         return deprecationInfos.maxOrNull()
+    }
+
+    private fun FirConstructorSymbol.classSymbolItIsCalledThrough(context: CheckerContext): FirClassLikeSymbol<*>? {
+        return typeAliasForConstructor ?: (resolvedReturnTypeRef.toRegularClassSymbol(context.session))
     }
 }

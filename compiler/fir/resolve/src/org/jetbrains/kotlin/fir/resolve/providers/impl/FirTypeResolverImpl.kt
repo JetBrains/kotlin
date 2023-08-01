@@ -103,7 +103,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             }
 
             if (resolveDeprecations) {
-                val deprecation = symbol.getDeprecation(session, useSiteFile)
+                val deprecation = symbol.getOwnDeprecation(session, useSiteFile)
                 if (deprecation != null && deprecation.deprecationLevel == DeprecationLevelValue.HIDDEN) {
                     symbolApplicability = minOf(CandidateApplicability.HIDDEN, symbolApplicability)
                     diagnostic = null
