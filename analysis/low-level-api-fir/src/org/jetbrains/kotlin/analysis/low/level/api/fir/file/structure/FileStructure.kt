@@ -194,8 +194,7 @@ internal class FileStructure private constructor(
             val firCodeFragment = firFile.codeFragment
             firCodeFragment.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
 
-            val timestamp = container.modificationStamp
-            ReanalyzableCodeFragmentStructureElement(firFile, container, firCodeFragment.symbol, timestamp, moduleComponents)
+            ReanalyzableCodeFragmentStructureElement(firFile, container, firCodeFragment.symbol, moduleComponents)
         }
         container is KtFile -> {
             val firFile = moduleComponents.firFileBuilder.buildRawFirFileWithCaching(ktFile)
