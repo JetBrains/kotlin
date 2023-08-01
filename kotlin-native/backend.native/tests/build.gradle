@@ -5616,6 +5616,9 @@ if (isAppleTarget(project)) {
             sources = ['framework/kt56233']
         }
         swiftSources = ['framework/kt56233']
+        if (isAggressiveGC) {
+            swiftExtraOpts += ["-D", "AGGRESSIVE_GC"]
+        }
     }
 
     frameworkTest("testKt57791Framework") {

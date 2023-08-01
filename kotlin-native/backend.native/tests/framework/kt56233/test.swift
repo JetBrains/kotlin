@@ -27,8 +27,13 @@ func launchThreads(
 }
 
 func kt56233() {
+#if AGGRESSIVE_GC
+    let count = 50_000
+#else
+    let count = 50_000_000
+#endif
     // Stress testing for race conditions.
-    for _ in 0..<50000000 {
+    for _ in 0..<count {
         _ = Kt56233.SimpleEnum.two.ordinal
     }
 }
