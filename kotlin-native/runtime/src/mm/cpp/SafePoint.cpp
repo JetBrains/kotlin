@@ -81,17 +81,17 @@ mm::SafePointActivator::~SafePointActivator() {
     }
 }
 
-ALWAYS_INLINE void mm::safePoint() noexcept {
+ALWAYS_INLINE void mm::safePoint(std::memory_order fastPathOrder) noexcept {
     AssertThreadState(ThreadState::kRunnable);
-    auto action = safePointAction.load(std::memory_order_relaxed);
+    auto action = safePointAction.load(fastPathOrder);
     if (__builtin_expect(action != nullptr, false)) {
         slowPath();
     }
 }
 
-ALWAYS_INLINE void mm::safePoint(mm::ThreadData& threadData) noexcept {
+ALWAYS_INLINE void mm::safePoint(mm::ThreadData& threadData, std::memory_order fastPathOrder) noexcept {
     AssertThreadState(&threadData, ThreadState::kRunnable);
-    auto action = safePointAction.load(std::memory_order_relaxed);
+    auto action = safePointAction.load(fastPathOrder);
     if (__builtin_expect(action != nullptr, false)) {
         slowPath(threadData);
     }

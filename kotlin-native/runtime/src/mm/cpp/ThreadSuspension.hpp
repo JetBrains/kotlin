@@ -22,7 +22,8 @@ extern std::atomic<bool> gSuspensionRequested;
 } // namespace internal
 
 inline bool IsThreadSuspensionRequested() noexcept {
-    // TODO: Consider using a more relaxed memory order.
+    // Must use seq_cst ordering for synchronization with GC
+    // in native->runnable transition.
     return internal::gSuspensionRequested.load();
 }
 
