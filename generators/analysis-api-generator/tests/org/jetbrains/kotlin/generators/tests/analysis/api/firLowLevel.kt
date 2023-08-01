@@ -179,6 +179,10 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
         testClass<AbstractCompilationPeerAnalysisTest> {
             model("compilationPeers")
         }
+
+        testClass<AbstractContextCollectorTest> {
+            model("contextCollector")
+        }
     }
 
     testGroup("analysis/low-level-api-fir/tests", "analysis/analysis-api/testData") {
