@@ -16,8 +16,6 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.publish.maven.MavenPublication
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
-import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.plugin.awaitFinalValueOrThrow
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext.MavenScope.COMPILE
@@ -25,13 +23,11 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext.MavenScope.RUNT
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinTargetComponent.TargetProvider
 import org.jetbrains.kotlin.gradle.utils.Future
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
-import org.jetbrains.kotlin.gradle.utils.future
 import org.jetbrains.kotlin.gradle.utils.lazyFuture
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 internal class ExternalKotlinTargetComponent(
-    project: Project,
-    val targetProvider: TargetProvider,
+    project: Project, val targetProvider: TargetProvider,
 ) : KotlinTargetComponentWithPublication, ComponentWithCoordinates, SoftwareComponentInternal {
 
     /*
@@ -74,12 +70,8 @@ internal class ExternalKotlinTargetComponent(
     override fun getCoordinates(): ModuleVersionIdentifier =
         getCoordinatesFromPublicationDelegateAndProject(publicationDelegate, target.project, null)
 
-    val kotlinUsagesFuture = project.future {
-        KotlinPluginLifecycle.Stage.FinaliseCompilations.await()
-
-        val compilation = target
-            .compilations
-            .findByName(KotlinCompilation.MAIN_COMPILATION_NAME)
+    val kotlinUsagesFuture = project.lazyFuture {
+        val compilation = target.compilations.findByName(KotlinCompilation.MAIN_COMPILATION_NAME)
             ?: error("Missing conventional '${KotlinCompilation.MAIN_COMPILATION_NAME}' compilation in '$target'")
 
         val result = mutableSetOf(
