@@ -16,13 +16,10 @@ import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.publish.maven.MavenPublication
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinUsageContext
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinTargetComponentWithPublication
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext
+import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext.MavenScope.COMPILE
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext.MavenScope.RUNTIME
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinTargetComponent.TargetProvider
-import org.jetbrains.kotlin.gradle.plugin.mpp.getCoordinatesFromPublicationDelegateAndProject
 import org.jetbrains.kotlin.gradle.utils.CompletableFuture
 import org.jetbrains.kotlin.gradle.utils.complete
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
@@ -115,6 +112,7 @@ internal class ExternalKotlinTargetComponent(
         val adhocSoftwareComponent = softwareComponentFactory.adhoc(target.targetName)
 
         project.launch {
+            target.applyUserDefinedAttributesJob.await()
             val kotlinUsages = kotlinUsagesFuture.await()
             kotlinUsages.forEach {
                 val configuration = target.project.configurations.getByName(it.dependencyConfigurationName)

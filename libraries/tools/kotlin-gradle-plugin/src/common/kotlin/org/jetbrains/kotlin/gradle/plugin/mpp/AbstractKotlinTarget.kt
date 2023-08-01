@@ -222,12 +222,15 @@ internal fun javaApiUsageForMavenScoping() = "java-api-jars"
 
 private class DecoratedAdhocSoftwareComponent(
     project: Project,
+    target: AbstractKotlinTarget,
     private val adhocComponent: AdhocComponentWithVariants,
     private val kotlinComponent: KotlinTargetComponent,
 ) : ComponentWithVariants, ComponentWithCoordinates, SoftwareComponentInternal {
 
     private val variantsConfigurationJob = project.future {
-        kotlinComponent.awaitKotlinUsagesOrEmpty().forEach { kotlinUsageContext ->
+        target.applyUserDefinedAttributesJob.await()
+        val usages = kotlinComponent.awaitKotlinUsagesOrEmpty()
+        usages.forEach { kotlinUsageContext ->
             val publishedConfigurationName = publishedConfigurationName(kotlinUsageContext.name)
             val configuration = project.configurations.findByName(publishedConfigurationName)
                 ?: project.configurations.create(publishedConfigurationName).also { configuration ->

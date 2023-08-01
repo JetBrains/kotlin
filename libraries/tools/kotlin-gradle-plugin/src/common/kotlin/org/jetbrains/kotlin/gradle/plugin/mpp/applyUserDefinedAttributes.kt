@@ -8,22 +8,20 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.await
-import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
+import org.jetbrains.kotlin.gradle.utils.Future
+import org.jetbrains.kotlin.gradle.utils.future
+import org.jetbrains.kotlin.tooling.core.extrasKeyOf
+import org.jetbrains.kotlin.tooling.core.extrasLazyProperty
 
+private val applyUserDefinedAttributesJobExtrasKey = extrasKeyOf<Future<Unit>>("applyUserDefinedAttributes")
 
-/**
- * The attributes attached to the targets and compilations need to be propagated to the relevant Gradle configurations:
- * 1. Output configurations of each target need the corresponding compilation's attributes (and, indirectly, the target's attributes)
- * 2. Resolvable configurations of each compilation need the compilation's attributes
- */
-internal fun applyUserDefinedAttributes(target: InternalKotlinTarget) {
-    val project = target.project
-    project.launch {
+internal val InternalKotlinTarget.applyUserDefinedAttributesJob: Future<Unit> by extrasLazyProperty(applyUserDefinedAttributesJobExtrasKey) {
+    project.future {
         KotlinPluginLifecycle.Stage.AfterEvaluateBuildscript.await()
         // To copy the attributes to the output configurations, find those output configurations and their producing compilations
         // based on the target's components:
-        val outputConfigurationsWithCompilations = target.kotlinComponents.filterIsInstance<KotlinVariant>().flatMap { kotlinVariant ->
+        val outputConfigurationsWithCompilations = kotlinComponents.filterIsInstance<KotlinVariant>().flatMap { kotlinVariant ->
             kotlinVariant.awaitKotlinUsagesOrEmpty().mapNotNull { usageContext ->
                 project.configurations.findByName(usageContext.dependencyConfigurationName)?.let { configuration ->
                     configuration to usageContext.compilation
@@ -32,7 +30,7 @@ internal fun applyUserDefinedAttributes(target: InternalKotlinTarget) {
         }.toMutableList()
 
         // Add usages of android library when its variants are grouped by flavor
-        outputConfigurationsWithCompilations += target.kotlinComponents
+        outputConfigurationsWithCompilations += kotlinComponents
             .filterIsInstance<JointAndroidKotlinTargetComponent>()
             .flatMap { variant -> variant.awaitKotlinUsagesOrEmpty() }
             .mapNotNull { usage ->
@@ -44,24 +42,33 @@ internal fun applyUserDefinedAttributes(target: InternalKotlinTarget) {
             copyAttributes(compilation.attributes, configuration.attributes)
         }
 
-        target.compilations.all { compilation ->
+        compilations.all { compilation ->
             val compilationAttributes = compilation.attributes
 
             compilation.allOwnedConfigurationsNames
-                .mapNotNull { configurationName -> target.project.configurations.findByName(configurationName) }
+                .mapNotNull { configurationName -> project.configurations.findByName(configurationName) }
                 .forEach { configuration ->
                     copyAttributes(compilationAttributes, configuration.attributes)
                 }
         }
 
         // Copy to host-specific metadata elements configurations
-        if (target is KotlinNativeTarget) {
-            val hostSpecificMetadataElements = project.configurations.findByName(target.hostSpecificMetadataElementsConfigurationName)
+        if (this@extrasLazyProperty is KotlinNativeTarget) {
+            val hostSpecificMetadataElements = project.configurations.findByName(hostSpecificMetadataElementsConfigurationName)
             if (hostSpecificMetadataElements != null) {
-                copyAttributes(from = target.attributes, to = hostSpecificMetadataElements.attributes)
+                copyAttributes(from = attributes, to = hostSpecificMetadataElements.attributes)
             }
         }
     }
+}
+
+/**
+ * The attributes attached to the targets and compilations need to be propagated to the relevant Gradle configurations:
+ * 1. Output configurations of each target need the corresponding compilation's attributes (and, indirectly, the target's attributes)
+ * 2. Resolvable configurations of each compilation need the compilation's attributes
+ */
+internal fun applyUserDefinedAttributes(target: InternalKotlinTarget) {
+    target.applyUserDefinedAttributesJob // trigger the job
 }
 
 private val KotlinCompilation<*>.allOwnedConfigurationsNames
