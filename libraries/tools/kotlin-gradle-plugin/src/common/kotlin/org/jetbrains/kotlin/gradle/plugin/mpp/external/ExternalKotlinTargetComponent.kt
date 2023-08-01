@@ -105,16 +105,15 @@ internal class ExternalKotlinTargetComponent(
      * Should be used in Gradle's Publication only.
      * See [org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSoftwareComponent.getVariants]
      */
-    val gradleSoftwareComponent: Future<AdhocComponentWithVariants> = project.lazyFuture {
+    val gradleSoftwareComponentFuture: Future<AdhocComponentWithVariants> = project.lazyFuture {
         val softwareComponentFactory = (target.project as ProjectInternal).services.get(SoftwareComponentFactory::class.java)
         val adhocSoftwareComponent = softwareComponentFactory.adhoc(target.targetName)
 
         adhocSoftwareComponent.also {
             target.applyUserDefinedAttributesJob.await()
-            val kotlinUsages = kotlinUsagesFuture.await()
-            kotlinUsages.forEach {
-                val configuration = target.project.configurations.getByName(it.dependencyConfigurationName)
-                val mavenScope = it.mavenScope
+            kotlinUsagesFuture.await().forEach { kotlinUsage ->
+                val configuration = target.project.configurations.getByName(kotlinUsage.dependencyConfigurationName)
+                val mavenScope = kotlinUsage.mavenScope
                 adhocSoftwareComponent.addVariantsFromConfiguration(configuration) { details ->
                     if (mavenScope != null) {
                         details.mapToMavenScope(mavenScope.name.toLowerCaseAsciiOnly())
