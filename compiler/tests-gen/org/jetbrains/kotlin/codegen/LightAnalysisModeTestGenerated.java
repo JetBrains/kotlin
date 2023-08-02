@@ -2087,6 +2087,26 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/bridges/innerClassTypeParameters.kt");
         }
 
+        @TestMetadata("internalMethodOverrideInFriendModule.kt")
+        public void testInternalMethodOverrideInFriendModule() throws Exception {
+            runTest("compiler/testData/codegen/box/bridges/internalMethodOverrideInFriendModule.kt");
+        }
+
+        @TestMetadata("internalMethodOverrideInOtherModule.kt")
+        public void testInternalMethodOverrideInOtherModule() throws Exception {
+            runTest("compiler/testData/codegen/box/bridges/internalMethodOverrideInOtherModule.kt");
+        }
+
+        @TestMetadata("internalMethodOverrideMultipleInheritance.kt")
+        public void testInternalMethodOverrideMultipleInheritance() throws Exception {
+            runTest("compiler/testData/codegen/box/bridges/internalMethodOverrideMultipleInheritance.kt");
+        }
+
+        @TestMetadata("internalMethodOverridePublishedApi.kt")
+        public void testInternalMethodOverridePublishedApi() throws Exception {
+            runTest("compiler/testData/codegen/box/bridges/internalMethodOverridePublishedApi.kt");
+        }
+
         @TestMetadata("kt12416.kt")
         public void testKt12416() throws Exception {
             runTest("compiler/testData/codegen/box/bridges/kt12416.kt");

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
+import org.jetbrains.kotlin.utils.toSmartList
 
 /**
  * Constructs bridges for inherited generic functions
@@ -148,7 +149,10 @@ abstract class BridgesConstruction<T : JsCommonBackendContext>(val context: T) :
             annotations = annotations memoryOptimizedPlus bridge.annotations
             // the js function signature building process (jsFunctionSignature()) uses dfs throught overriddenSymbols for getting js name,
             // therefore it is very important to put bridge symbol at the beginning, it allows to get correct js function name
-            overriddenSymbols = overriddenSymbols memoryOptimizedPlus bridge.symbol memoryOptimizedPlus delegateTo.overriddenSymbols
+            overriddenSymbols = mutableSetOf(bridge.symbol).also {
+                it.addAll(overriddenSymbols)
+                it.addAll(delegateTo.overriddenSymbols)
+            }.toSmartList()
         }
 
         irFunction.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
