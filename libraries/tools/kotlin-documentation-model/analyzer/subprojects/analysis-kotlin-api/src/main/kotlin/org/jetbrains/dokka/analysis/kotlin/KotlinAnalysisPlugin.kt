@@ -1,4 +1,4 @@
-package org.jetbrains.kotlin.analysis.kotlin
+package org.jetbrains.dokka.analysis.kotlin
 
 import org.jetbrains.dokka.plugability.DokkaPlugin
 import org.jetbrains.dokka.plugability.DokkaPluginApiPreview
