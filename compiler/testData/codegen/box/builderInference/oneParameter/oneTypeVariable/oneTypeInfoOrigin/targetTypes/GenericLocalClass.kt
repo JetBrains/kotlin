@@ -1,3 +1,8 @@
+// IGNORE_BACKEND: JVM
+/* ^ code compiled by legacy JVM backend fails in run-time with
+ * NoSuchMethodError: GenericLocalClassKt$testYield$3$buildee$1$Local: method <init>()V not found
+ */
+
 // IGNORE_BACKEND: NATIVE
 // IGNORE_BACKEND: WASM
 // IGNORE_BACKEND: JS, JS_IR, JS_IR_ES6
