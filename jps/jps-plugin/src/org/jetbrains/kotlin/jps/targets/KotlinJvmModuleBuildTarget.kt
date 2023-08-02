@@ -326,6 +326,7 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
     }
 
     private fun findSourceRoots(context: CompileContext): List<JvmSourceRoot> {
+        println(context)
 //        val roots = context.projectDescriptor.buildRootIndex.getTargetRoots(jpsModuleBuildTarget, context)
 //        val result = mutableListOf<JvmSourceRoot>()
 //        for (root in roots) {
