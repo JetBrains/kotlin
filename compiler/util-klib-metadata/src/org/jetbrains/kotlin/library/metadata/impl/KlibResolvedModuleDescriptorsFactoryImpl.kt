@@ -187,22 +187,35 @@ class ForwardDeclarationsPackageFragmentDescriptor(
             findCinteropClass(supertypeName).defaultType
         }
 
-        private val experimentalAnnotationType by storageManager.createLazyValue {
-            findCinteropClass(NativeStandardInteropNames.ExperimentalForeignApi).defaultType
+        /**
+         * Normally, this can't be null. But it's possible inside IDE, if one uses new IDE with
+         * old compiler in a project. In that case, IDE would try to generate synthetic declaration
+         * but would fail to find annotation class.
+         *
+         * A better way to do this would be introducing language feature, but unfortunately, we can't
+         * do it between 1.9.0 and 1.9.20.
+         */
+        private val experimentalAnnotationType by storageManager.createNullableLazyValue {
+            findCinteropClassOrNull(NativeStandardInteropNames.ExperimentalForeignApi)?.defaultType
         }
 
-        private fun findCinteropClass(name: Name): ClassDescriptor {
+        private fun findCinteropClass(name: Name): ClassDescriptor = findCinteropClassOrNull(name) ?:
+          error("Class $name is not found")
+
+        private fun findCinteropClassOrNull(name: Name): ClassDescriptor? {
             return builtIns.builtInsModule.getPackage(NativeStandardInteropNames.cInteropPackage)
                 .memberScope
-                .getContributedClassifier(name, NoLookupLocation.FROM_BACKEND) as ClassDescriptor
+                .getContributedClassifier(name, NoLookupLocation.FROM_BACKEND) as ClassDescriptor?
         }
 
         private fun createDeclaration(name: Name): ClassDescriptor {
-            val experimentalAnnotation = AnnotationDescriptorImpl(
-                experimentalAnnotationType,
-                emptyMap(),
-                SourceElement.NO_SOURCE
-            )
+            val experimentalAnnotation = experimentalAnnotationType?.let {
+                AnnotationDescriptorImpl(
+                    it,
+                    emptyMap(),
+                    SourceElement.NO_SOURCE
+                )
+            }
 
             return object : ClassDescriptorImpl(
                 this@ForwardDeclarationsPackageFragmentDescriptor,
@@ -215,7 +228,7 @@ class ForwardDeclarationsPackageFragmentDescriptor(
                 LockBasedStorageManager.NO_LOCKS
             ) {
                 override fun isExpect(): Boolean = isExpect
-                override val annotations: Annotations = Annotations.create(listOf(experimentalAnnotation))
+                override val annotations: Annotations = Annotations.create(listOfNotNull(experimentalAnnotation))
             }.apply {
                 this.initialize(MemberScope.Empty, emptySet(), null)
             }
