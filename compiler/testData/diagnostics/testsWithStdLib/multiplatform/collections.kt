@@ -5,10 +5,10 @@
 // FILE: common.kt
 // TARGET_PLATFORM: Common
 
-import kotlin.collections.listOf
+import kotlin.collections.<!UNRESOLVED_IMPORT!>listOf<!>
 
 fun common() {
-    listOf("foo", "bar").map { it }
+    <!UNRESOLVED_REFERENCE!>listOf<!>("foo", "bar").map { <!UNRESOLVED_REFERENCE!>it<!> }
 }
 
 // MODULE: jvm
