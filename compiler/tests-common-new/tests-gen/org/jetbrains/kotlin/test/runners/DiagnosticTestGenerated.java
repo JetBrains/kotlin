@@ -23922,6 +23922,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("valueParameters.kt")
+                public void testValueParameters() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/valueParameters.kt");
+                }
+
+                @Test
                 @TestMetadata("withAnnotationActualTypealias.kt")
                 public void testWithAnnotationActualTypealias() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/withAnnotationActualTypealias.kt");

@@ -1,14 +1,17 @@
-/jvm.kt:(88,95): warning: Annotation `@Ann()` is missing on actual declaration.
+/jvm.kt:(90,97): warning: Annotation `@Ann()` is missing on actual declaration.
 All annotations from expect 'class OnClass : Any' must be present with the same arguments on actual 'class OnClass : Any', otherwise they might behave incorrectly.
 
-/jvm.kt:(136,144): warning: Annotation `@Ann()` is missing on actual declaration.
+/jvm.kt:(138,146): warning: Annotation `@Ann()` is missing on actual declaration.
 All annotations from expect 'fun onMember(): Unit' must be present with the same arguments on actual 'fun onMember(): Unit', otherwise they might behave incorrectly.
 
-/jvm.kt:(194,206): warning: Annotation `@Ann()` is missing on actual declaration.
+/jvm.kt:(196,208): warning: Annotation `@Ann()` is missing on actual declaration.
 All annotations from expect 'class ViaTypealias : Any' must be present with the same arguments on actual 'class ViaTypealiasImpl : Any', otherwise they might behave incorrectly.
 
-/jvm.kt:(299,322): warning: Annotation `@Ann()` is missing on actual declaration.
+/jvm.kt:(301,324): warning: Annotation `@Ann()` is missing on actual declaration.
 All annotations from expect 'fun foo(): Unit' must be present with the same arguments on actual 'fun foo(): Unit', otherwise they might behave incorrectly.
 
-/jvm.kt:(387,403): warning: Annotation `@WithArg(s = String(str))` has different arguments on actual declaration: `@WithArg(s = String(other str))`.
+/jvm.kt:(389,405): warning: Annotation `@WithArg(s = String(str))` has different arguments on actual declaration: `@WithArg(s = String(other str))`.
 All annotations from expect 'fun withDifferentArg(): Unit' must be present with the same arguments on actual 'fun withDifferentArg(): Unit', otherwise they might behave incorrectly.
+
+/jvm.kt:(423,435): warning: Annotation `@Ann()` is missing on actual declaration.
+All annotations from expect 'fun inValueParam(arg: String): Unit' must be present with the same arguments on actual 'fun inValueParam(arg: String): Unit', otherwise they might behave incorrectly.

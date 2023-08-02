@@ -24,6 +24,8 @@ annotation class WithArg(val s: String)
 @WithArg("str")
 expect fun withDifferentArg()
 
+expect fun inValueParam(@Ann arg: String)
+
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
 actual class <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>OnClass<!>
@@ -43,3 +45,5 @@ actual typealias <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>MemberScopeViaTypealias<
 
 @WithArg("other str")
 actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>withDifferentArg<!>() {}
+
+actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>inValueParam<!>(arg: String) {}

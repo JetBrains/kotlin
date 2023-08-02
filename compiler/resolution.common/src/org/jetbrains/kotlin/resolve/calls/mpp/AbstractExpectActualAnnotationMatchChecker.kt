@@ -28,6 +28,14 @@ object AbstractExpectActualAnnotationMatchChecker {
     )
 
     class Incompatibility(
+        /**
+         * [expectSymbol] and [actualSymbol] are declaration symbols where annotation been mismatched.
+         * They are needed for writing whole declarations in diagnostic text.
+         * They are not the same as symbols passed to checker as arguments in [areAnnotationsCompatible] in following cases:
+         * 1. If [actualSymbol] is typealias, it will be expanded.
+         * 2. If problem is in class member, [expectSymbol] will be mismatched member, not the original class.
+         * 3. If annotation mismatched on function value parameter, symbols will be whole functions, not value parameter symbols.
+         */
         val expectSymbol: DeclarationSymbolMarker,
         val actualSymbol: DeclarationSymbolMarker,
         val type: IncompatibilityType<ExpectActualMatchingContext.AnnotationCallInfo>,
@@ -63,6 +71,7 @@ object AbstractExpectActualAnnotationMatchChecker {
         actualSymbol: CallableSymbolMarker,
     ): Incompatibility? {
         commonForClassAndCallableChecks(expectSymbol, actualSymbol)?.let { return it }
+        areAnnotationsOnValueParametersCompatible(expectSymbol, actualSymbol)?.let { return it }
 
         return null
     }
@@ -98,6 +107,24 @@ object AbstractExpectActualAnnotationMatchChecker {
         areAnnotationsSetOnDeclarationsCompatible(expectSymbol, actualSymbol)?.let { return it }
 
         return null
+    }
+
+    context (ExpectActualMatchingContext<*>)
+    private fun areAnnotationsOnValueParametersCompatible(
+        expectSymbol: CallableSymbolMarker,
+        actualSymbol: CallableSymbolMarker,
+    ): Incompatibility? {
+        val expectParams = expectSymbol.valueParameters
+        val actualParams = actualSymbol.valueParameters
+
+        if (expectParams.size != actualParams.size) return null
+
+        return expectParams.zip(actualParams).firstNotNullOfOrNull { (expectParam, actualParam) ->
+            areAnnotationsSetOnDeclarationsCompatible(expectParam, actualParam)?.let {
+                // Write containing declarations into diagnostic
+                Incompatibility(expectSymbol, actualSymbol, it.type)
+            }
+        }
     }
 
     context (ExpectActualMatchingContext<*>)
