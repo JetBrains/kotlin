@@ -288,10 +288,6 @@ object AbstractExpectActualCompatibilityChecker {
             "This function should be invoked only for declarations in the same kind of container (both members or both top level): $expectDeclaration, $actualDeclaration"
         }
 
-        if (expectDeclaration is FunctionSymbolMarker != actualDeclaration is FunctionSymbolMarker) {
-            return Incompatible.CallableKind
-        }
-
         if (
             enumConstructorsAreAlwaysCompatible &&
             expectContainingClass?.classKind == ClassKind.ENUM_CLASS &&
@@ -300,6 +296,10 @@ object AbstractExpectActualCompatibilityChecker {
             actualDeclaration is ConstructorSymbolMarker
         ) {
             return ExpectActualCompatibility.Compatible
+        }
+
+        if (expectDeclaration is FunctionSymbolMarker != actualDeclaration is FunctionSymbolMarker) {
+            return Incompatible.CallableKind
         }
 
         val expectedReceiverType = expectDeclaration.extensionReceiverType
