@@ -61,9 +61,17 @@ internal object ContextCollector {
     }
 
     /**
-     * Process the [file], collecting contexts for the [targetElement] and all its PSI tree parents.
+     * Get the most precise context available for the [targetElement] in the [file].
+     *
+     * @param file The file to process.
+     * @param holder A [SessionHolder] for the session that owns a [file].
+     * @param targetElement The most precise element for which the context is required.
+     * @param bodyElement An element for which the [ContextKind.BODY] context is preferred.
+     *
+     * Returns the context of the [targetElement] if available, or of one of its tree parents.
+     * Returns `null` if the context was not collected.
      */
-    fun process(file: FirFile, holder: SessionHolder, targetElement: PsiElement, preferBody: Boolean): Context? {
+    fun process(file: FirFile, holder: SessionHolder, targetElement: PsiElement, bodyElement: PsiElement? = targetElement): Context? {
         val acceptedElements = targetElement.parentsWithSelf.toSet()
 
         val contextProvider = process(computeResolveTarget(file, targetElement), holder) { candidate ->
@@ -74,14 +82,21 @@ internal object ContextCollector {
             }
         }
 
-        if (preferBody) {
-            val bodyContext = contextProvider[targetElement, ContextKind.BODY]
-            if (bodyContext != null) {
-                return bodyContext
+        for (acceptedElement in acceptedElements) {
+            if (acceptedElement === bodyElement) {
+                val bodyContext = contextProvider[acceptedElement, ContextKind.BODY]
+                if (bodyContext != null) {
+                    return bodyContext
+                }
+            }
+
+            val elementContext = contextProvider[acceptedElement, ContextKind.SELF]
+            if (elementContext != null) {
+                return elementContext
             }
         }
 
-        return acceptedElements.firstNotNullOfOrNull { contextProvider[it, ContextKind.SELF] }
+        return null
     }
 
     private fun computeResolveTarget(file: FirFile, targetElement: PsiElement): LLFirResolveTarget {
