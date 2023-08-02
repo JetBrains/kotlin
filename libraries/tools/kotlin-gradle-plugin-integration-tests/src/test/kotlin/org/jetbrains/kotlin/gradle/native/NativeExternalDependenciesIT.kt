@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.native
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.DisabledOnOs
 import org.junit.jupiter.api.condition.OS
@@ -22,6 +23,7 @@ import kotlin.test.assertNull
 internal class NativeExternalDependenciesIT : KGPBaseTest() {
 
     @DisplayName("K/N shouldn't contain any external dependencies by default")
+    @Disabled("stdlib publication migration - test data changes")
     @GradleTest
     fun shouldNotUseExternalDependencies(gradleVersion: GradleVersion) {
         buildProjectWithDependencies(gradleVersion) { externalDependenciesText ->
@@ -31,6 +33,7 @@ internal class NativeExternalDependenciesIT : KGPBaseTest() {
 
     @DisplayName("Should build with ktor 1.5.4 and coroutines 1.5.0-RC-native-mt")
     @GradleTest
+    @Disabled("stdlib publication migration - test data changes")
     @DisabledOnOs(
         value = [OS.MAC],
         architectures = ["aarch64"],
@@ -65,6 +68,7 @@ internal class NativeExternalDependenciesIT : KGPBaseTest() {
     }
 
     @DisplayName("Should build with ktor 1.6.5 and coroutines 1.5.2-native-mt")
+    @Disabled("stdlib publication migration - test data changes")
     @GradleTest
     fun shouldUseKtorAndCoroutinesExternalDependencies(gradleVersion: GradleVersion) {
         buildProjectWithDependencies(

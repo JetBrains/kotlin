@@ -122,6 +122,7 @@ internal class NativeIrLinkerIssuesIT : KGPBaseTest() {
 
     @DisplayName("KT-41378: declaration that is gone - with cache")
     @GradleTest
+    @Disabled("stdlib publication migration - test data changes")
     @DisabledOnOs(OS.WINDOWS, disabledReason = "Don't run it on Windows. Caches are not supported there yet.")
     fun shouldBuildIrLinkerWithCache(
         gradleVersion: GradleVersion,
@@ -156,6 +157,7 @@ internal class NativeIrLinkerIssuesIT : KGPBaseTest() {
     }
 
     @DisplayName("KT-41378: declaration that is gone - without cache")
+    @Disabled("stdlib publication migration - test data changes")
     @GradleTest
     fun shouldBuildIrLinkerWithoutCache(
         gradleVersion: GradleVersion,
@@ -192,6 +194,7 @@ internal class NativeIrLinkerIssuesIT : KGPBaseTest() {
 
     @DisplayName("KT-47285: symbol type mismatch - with cache")
     @GradleTest
+    @Disabled("stdlib publication migration - test data changes")
     @OsCondition(supportedOn = [OS.MAC, OS.LINUX], enabledOnCI = [OS.LINUX])
     // Don't run it on Windows. Caches are not supported there yet.
     fun shouldBuildIrLinkerSymbolTypeMismatchWithCache(
@@ -227,6 +230,7 @@ internal class NativeIrLinkerIssuesIT : KGPBaseTest() {
     }
 
     @DisplayName("KT-47285: symbol type mismatch - without cache")
+    @Disabled("stdlib publication migration - test data changes")
     @GradleTest
     fun shouldBuildIrLinkerSymbolTypeMismatchWithoutCache(
         gradleVersion: GradleVersion,

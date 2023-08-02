@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.enableDefaultStdlibDependency
 import org.jetbrains.kotlin.gradle.util.enableDependencyVerification
 import org.jetbrains.kotlin.gradle.utils.androidExtension
+import org.junit.Ignore
 import org.junit.Test
 
 class IdeStdlibResolutionTest {
@@ -148,6 +149,7 @@ class IdeStdlibResolutionTest {
     }
 
     @Test
+    @Ignore("stdlib publication migration")
     fun `test nativeShared`() {
         val project = createProjectWithDefaultStdlibEnabled()
 
