@@ -66,16 +66,11 @@ PsiJetFileStubImpl[package=test]
               REFERENCE_EXPRESSION[referencedName=io]
             REFERENCE_EXPRESSION[referencedName=Serializable]
     CLASS_BODY
-      PROPERTY[fqName=test.TypeParams.withOwnParam, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=false, isVar=false, name=withOwnParam]
+      PROPERTY[fqName=test.TypeParams.useSomeParam, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=useSomeParam]
         MODIFIER_LIST[public final]
-        TYPE_PARAMETER_LIST
-          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=G1]
         TYPE_REFERENCE
           USER_TYPE
-            REFERENCE_EXPRESSION[referencedName=G1]
-        TYPE_REFERENCE
-          USER_TYPE
-            REFERENCE_EXPRESSION[referencedName=G1]
+            REFERENCE_EXPRESSION[referencedName=T2]
         PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true]
           MODIFIER_LIST[public final]
       PROPERTY[fqName=test.TypeParams.withOwnBoundedParam, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=false, isVar=false, name=withOwnBoundedParam]
@@ -111,13 +106,44 @@ PsiJetFileStubImpl[package=test]
             REFERENCE_EXPRESSION[referencedName=G1]
         PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true]
           MODIFIER_LIST[public final]
-      PROPERTY[fqName=test.TypeParams.useSomeParam, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=useSomeParam]
+      PROPERTY[fqName=test.TypeParams.withOwnParam, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=false, isVar=false, name=withOwnParam]
         MODIFIER_LIST[public final]
+        TYPE_PARAMETER_LIST
+          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=G1]
         TYPE_REFERENCE
           USER_TYPE
-            REFERENCE_EXPRESSION[referencedName=T2]
+            REFERENCE_EXPRESSION[referencedName=G1]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=G1]
         PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true]
           MODIFIER_LIST[public final]
+      FUN[fqName=test.TypeParams.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
+        MODIFIER_LIST[public final inline]
+        TYPE_PARAMETER_LIST
+          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=G]
+            MODIFIER_LIST[reified]
+          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+            MODIFIER_LIST[reified]
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=g]
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=G]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=body]
+            TYPE_REFERENCE
+              FUNCTION_TYPE
+                VALUE_PARAMETER_LIST
+                  VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=G]
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=T]
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=T]
       FUN[fqName=test.TypeParams.useParams, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=useParams]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
@@ -396,29 +422,3 @@ PsiJetFileStubImpl[package=test]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
-      FUN[fqName=test.TypeParams.f, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
-        MODIFIER_LIST[public final inline]
-        TYPE_PARAMETER_LIST
-          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=G]
-            MODIFIER_LIST[reified]
-          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
-            MODIFIER_LIST[reified]
-        VALUE_PARAMETER_LIST
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=g]
-            TYPE_REFERENCE
-              USER_TYPE
-                REFERENCE_EXPRESSION[referencedName=G]
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=body]
-            TYPE_REFERENCE
-              FUNCTION_TYPE
-                VALUE_PARAMETER_LIST
-                  VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
-                    TYPE_REFERENCE
-                      USER_TYPE
-                        REFERENCE_EXPRESSION[referencedName=G]
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION[referencedName=T]
-        TYPE_REFERENCE
-          USER_TYPE
-            REFERENCE_EXPRESSION[referencedName=T]
