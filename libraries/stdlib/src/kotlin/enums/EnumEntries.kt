@@ -26,10 +26,9 @@ public sealed interface EnumEntries<E : Enum<E>> : List<E>
 /**
  * Returns [EnumEntries] list containing all enum entries for the given enum type [T].
  */
-@PublishedApi
 @ExperimentalStdlibApi
 @SinceKotlin("1.9")
-internal inline fun <reified T : Enum<T>> enumEntries(): EnumEntries<T> = enumEntriesIntrinsic()
+public inline fun <reified T : Enum<T>> enumEntries(): EnumEntries<T> = enumEntriesIntrinsic()
 
 @PublishedApi
 @ExperimentalStdlibApi
