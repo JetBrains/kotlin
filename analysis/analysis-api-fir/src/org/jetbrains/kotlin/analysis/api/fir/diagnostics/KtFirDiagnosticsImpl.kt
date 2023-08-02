@@ -3053,6 +3053,11 @@ internal class ActualAnnotationsNotMatchExpectImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.ActualAnnotationsNotMatchExpect
 
+internal class OptionalDeclarationOutsideOfAnnotationEntryImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.OptionalDeclarationOutsideOfAnnotationEntry
+
 internal class InitializerRequiredForDestructuringDeclarationImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,

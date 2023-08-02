@@ -8,7 +8,7 @@
 @OptionalExpectation
 expect annotation class A()
 
-fun useInSignature(a: A) = a.toString()
+fun useInSignature(a: <!OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY!>A<!>) = a.toString()
 
 <!NO_ACTUAL_FOR_EXPECT{JVM}!><!WRONG_ANNOTATION_TARGET!>@OptionalExpectation<!>
 expect class NotAnAnnotationClass<!>
@@ -16,9 +16,9 @@ expect class NotAnAnnotationClass<!>
 @OptionalExpectation
 annotation class NotAnExpectedClass
 
-annotation class InOtherAnnotation(val a: A)
+annotation class InOtherAnnotation(val a: <!OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY!>A<!>)
 
-@InOtherAnnotation(A())
+@InOtherAnnotation(<!OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY!>A()<!>)
 fun useInOtherAnnotation() {}
 
 expect class C {
@@ -29,11 +29,11 @@ expect class C {
 // MODULE: platform()()(common)
 // FILE: platform.kt
 
-fun useInReturnType(): A? = null
+fun useInReturnType(): <!OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY!>A?<!> = null
 
-annotation class AnotherAnnotation(val a: A)
+annotation class AnotherAnnotation(val a: <!OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY!>A<!>)
 
-@AnotherAnnotation(A())
+@AnotherAnnotation(<!OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY!>A()<!>)
 fun useInAnotherAnnotation() {}
 
 actual class C {

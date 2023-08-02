@@ -2533,6 +2533,10 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val incompatibilityType: ExpectActualAnnotationsIncompatibilityType<FirAnnotation>
     }
 
+    interface OptionalDeclarationOutsideOfAnnotationEntry : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = OptionalDeclarationOutsideOfAnnotationEntry::class
+    }
+
     interface InitializerRequiredForDestructuringDeclaration : KtFirDiagnostic<KtDestructuringDeclaration> {
         override val diagnosticClass get() = InitializerRequiredForDestructuringDeclaration::class
     }
