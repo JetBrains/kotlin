@@ -28,10 +28,10 @@ import org.jetbrains.kotlin.fir.analysis.jvm.checkers.JvmExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.JvmTypeCheckers
 import org.jetbrains.kotlin.fir.analysis.native.checkers.NativeDeclarationCheckers
 import org.jetbrains.kotlin.fir.extensions.extensionService
-import org.jetbrains.kotlin.platform.isJs
-import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.platform.jvm.isJvm
-import org.jetbrains.kotlin.platform.konan.isNative
+import org.jetbrains.kotlin.platform.SimplePlatform
+import org.jetbrains.kotlin.platform.jvm.JvmPlatform
+import org.jetbrains.kotlin.platform.JsPlatform
+import org.jetbrains.kotlin.platform.konan.NativePlatform
 
 internal abstract class AbstractLLFirDiagnosticsCollector(
     session: FirSession,
@@ -51,7 +51,7 @@ private object CheckersFactory {
         useExtendedCheckers: Boolean
     ): DiagnosticCollectorComponents {
         val module = session.llFirModuleData.ktModule
-        val platform = module.platform
+        val platform = module.platform.componentPlatforms.first()
         val extensionCheckers = session.extensionService.additionalCheckers
         val declarationCheckers = createDeclarationCheckers(useExtendedCheckers, platform, extensionCheckers)
         val expressionCheckers = createExpressionCheckers(useExtendedCheckers, platform, extensionCheckers)
@@ -72,7 +72,7 @@ private object CheckersFactory {
 
     private fun createDeclarationCheckers(
         useExtendedCheckers: Boolean,
-        platform: TargetPlatform,
+        platform: SimplePlatform,
         extensionCheckers: List<FirAdditionalCheckersExtension>
     ): DeclarationCheckers {
         return if (useExtendedCheckers) {
@@ -80,10 +80,10 @@ private object CheckersFactory {
         } else {
             createDeclarationCheckers {
                 add(CommonDeclarationCheckers)
-                when {
-                    platform.isJvm() -> add(JvmDeclarationCheckers)
-                    platform.isJs() -> add(JsDeclarationCheckers)
-                    platform.isNative() -> add(NativeDeclarationCheckers)
+                when (platform) {
+                    is JvmPlatform -> add(JvmDeclarationCheckers)
+                    is JsPlatform -> add(JsDeclarationCheckers)
+                    is NativePlatform -> add(NativeDeclarationCheckers)
                     else -> {}
                 }
                 addAll(extensionCheckers.map { it.declarationCheckers })
@@ -93,7 +93,7 @@ private object CheckersFactory {
 
     private fun createExpressionCheckers(
         useExtendedCheckers: Boolean,
-        platform: TargetPlatform,
+        platform: SimplePlatform,
         extensionCheckers: List<FirAdditionalCheckersExtension>
     ): ExpressionCheckers {
         return if (useExtendedCheckers) {
@@ -101,9 +101,9 @@ private object CheckersFactory {
         } else {
             createExpressionCheckers {
                 add(CommonExpressionCheckers)
-                when {
-                    platform.isJvm() -> add(JvmExpressionCheckers)
-                    platform.isJs() -> add(JsExpressionCheckers)
+                when (platform) {
+                    is JvmPlatform -> add(JvmExpressionCheckers)
+                    is JsPlatform -> add(JsExpressionCheckers)
                     else -> {
                     }
                 }
@@ -112,16 +112,12 @@ private object CheckersFactory {
         }
     }
 
-    private fun createTypeCheckers(
-        useExtendedCheckers: Boolean,
-        platform: TargetPlatform,
-        extensionCheckers: List<FirAdditionalCheckersExtension>,
-    ): TypeCheckers {
+    private fun createTypeCheckers(useExtendedCheckers: Boolean, platform: SimplePlatform, extensionCheckers: List<FirAdditionalCheckersExtension>): TypeCheckers {
         if (useExtendedCheckers) return ExtendedTypeCheckers
         return createTypeCheckers {
             add(CommonTypeCheckers)
-            when {
-                platform.isJvm() -> add(JvmTypeCheckers)
+            when (platform) {
+                is JvmPlatform -> add(JvmTypeCheckers)
                 else -> {}
             }
             addAll(extensionCheckers.map { it.typeCheckers })
