@@ -22921,6 +22921,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("optionalExpectationDiagnostics.kt")
+            public void testOptionalExpectationDiagnostics() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/multiplatform/optionalExpectationDiagnostics.kt");
+            }
+
+            @Test
             @TestMetadata("privateTopLevelDeclarations.kt")
             public void testPrivateTopLevelDeclarations() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/multiplatform/privateTopLevelDeclarations.kt");
