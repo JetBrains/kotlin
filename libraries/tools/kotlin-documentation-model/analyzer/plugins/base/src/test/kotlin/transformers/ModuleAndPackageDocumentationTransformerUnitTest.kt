@@ -12,7 +12,7 @@ import org.jetbrains.dokka.model.doc.CustomDocTag
 import org.jetbrains.dokka.model.doc.Description
 import org.jetbrains.dokka.model.doc.DocumentationNode
 import org.jetbrains.dokka.model.doc.Text
-import org.jetbrains.kotlin.analysis.kotlin.internal.ModuleAndPackageDocumentationReader
+import org.jetbrains.dokka.analysis.kotlin.internal.ModuleAndPackageDocumentationReader
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import testApi.testRunner.dPackage

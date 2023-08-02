@@ -1,4 +1,4 @@
-package org.jetbrains.kotlin.analysis.kotlin.internal
+package org.jetbrains.dokka.analysis.kotlin.internal
 
 import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.InternalDokkaApi
