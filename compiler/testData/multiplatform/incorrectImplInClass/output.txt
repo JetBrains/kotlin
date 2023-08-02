@@ -14,6 +14,6 @@ compiler/testData/multiplatform/incorrectImplInClass/jvm.kt:2:5: error: actual c
 compiler/testData/multiplatform/incorrectImplInClass/jvm.kt:4:16: error: actual fun nonPlatformFun(): Unit has no corresponding expected declaration
     actual fun nonPlatformFun() {}
                ^
-compiler/testData/multiplatform/incorrectImplInClass/jvm.kt:6:16: error: actual val nonPlatformVal: String = String() has no corresponding expected declaration
+compiler/testData/multiplatform/incorrectImplInClass/jvm.kt:6:16: error: actual val nonPlatformVal: String has no corresponding expected declaration
     actual val nonPlatformVal = ""
                ^
