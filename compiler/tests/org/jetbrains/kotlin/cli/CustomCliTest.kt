@@ -106,7 +106,8 @@ class CustomCliTest : TestCaseWithTmpdir() {
 
     private fun compileAndCheckMainClass(sourceFiles: List<File>, expectedMainClass: String?) {
         val jarFile = tmpdir.resolve("output.jar")
-        val args = listOf("-include-runtime", "-d", jarFile.absolutePath) + sourceFiles.map { it.absolutePath }
+        // TODO: remove explicit verion after implementing main fun detector (KT-44557)
+        val args = listOf("-language-version", "1.9", "-include-runtime", "-d", jarFile.absolutePath) + sourceFiles.map { it.absolutePath }
         CompilerTestUtil.executeCompilerAssertSuccessful(K2JVMCompiler(), args)
 
         JarFile(jarFile).use {
