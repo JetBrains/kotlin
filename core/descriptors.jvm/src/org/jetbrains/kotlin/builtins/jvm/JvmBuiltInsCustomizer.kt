@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.LazyWrappedType
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.SmartSet
-import java.util.*
 
 // This class is worth splitting into two implementations of AdditionalClassPartsProvider and PlatformDependentDeclarationFilter
 // But currently, they shares a piece of code and probably it's better to postpone it
@@ -232,8 +231,14 @@ class JvmBuiltInsCustomizer(
                 // Search through mapped supertypes to determine that Set.toArray should be invisible, while we have only
                 // Collection.toArray there explicitly
                 // Note, that we can't find j.u.Collection.toArray within overriddenDescriptors of j.u.Set.toArray
-                it.typeConstructor.supertypes.mapNotNull {
-                    (it.constructor.declarationDescriptor?.original as? ClassDescriptor)?.getJavaAnalogue()
+                it.typeConstructor.supertypes.mapNotNull { supertype ->
+                    val superClassDescriptor =
+                        supertype.constructor.declarationDescriptor?.original as? ClassDescriptor ?: return@mapNotNull null
+
+                    // j.u.List in JDK 8 from Kotlin POV has a supertype kotlin.collections.MutableCollection
+                    // that actually has JavaAnalogue, but since JDK 21 it has j.u.SequencedCollection as a supertype
+                    // so `getJavaAnalogue()` might return null, but we still should continue traversing the supertypes
+                    superClassDescriptor.getJavaAnalogue() ?: superClassDescriptor
                 }
             },
             object : DFS.AbstractNodeHandler<ClassDescriptor, JDKMemberStatus>() {

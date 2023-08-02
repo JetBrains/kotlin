@@ -29,4 +29,10 @@ public class Jdk21DiagnosticTestGenerated extends AbstractJdk21DiagnosticTest {
     public void testNewListMethods() throws Exception {
         runTest("compiler/testData/diagnostics/testsWithJdk21/newListMethods.kt");
     }
+
+    @Test
+    @TestMetadata("noFalsePositiveAbstractToArray.kt")
+    public void testNoFalsePositiveAbstractToArray() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithJdk21/noFalsePositiveAbstractToArray.kt");
+    }
 }
