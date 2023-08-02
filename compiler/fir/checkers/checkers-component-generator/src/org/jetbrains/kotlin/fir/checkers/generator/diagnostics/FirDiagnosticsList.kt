@@ -1236,6 +1236,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<Symbol>("actualSymbol")
             parameter<ExpectActualAnnotationsIncompatibilityType<FirAnnotation>>("incompatibilityType")
         }
+
+        val OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY by error<PsiElement>()
     }
 
     val DESTRUCTING_DECLARATION by object : DiagnosticGroup("Destructuring declaration") {
