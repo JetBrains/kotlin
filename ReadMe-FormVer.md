@@ -108,6 +108,8 @@ sync with [JetBrains/kotlin][0], and `formal-verification` is
 the de facto master branch for our work.  Every team member
 then has their own work branch.
 
+### Workflow
+
 To work in this style, ensure that `pull.rebase` is set to
 `true`.  Then:
 
@@ -121,12 +123,15 @@ To work in this style, ensure that `pull.rebase` is set to
    You will need to force push after this.
 4. To move changes from a personal branch, make sure your branch is 
    up-to-date with `formal-verification` and make a pull request
-   via GitHub for `formal-verification`.  This should be a
-   fast-forward merge.
+   via GitHub for `formal-verification`.  You can choose between rebasing
+   your change onto `formal-verification` or squashing your changes into a
+   single commit.
 
 Due to the large number of force pushes, it doesn't really work here
 to share branches amongst multiple people; if the other person does
 a force push, your work will be left in a weird state.
+
+### Merging upstream
 
 Upstream changes may need to be merged multiple times, as
 merging them into `formal-verification` isn't enough to make
@@ -134,5 +139,18 @@ them compatible with other branches.  You can work around this
 by applying your changes to the new `formal-verification` tip
 as a cherry-pick.  TODO: document this process once we've
 successfully done it some time.
+
+### Code review
+
+When you've finished work on a branch, open a pull request on
+GitHub against the `formal-verification` branch in `jesyspa/kotlin`
+(**not** `JetBrains/kotlin`! unfortunately that's the default) and
+add someone else as a reviewer.  Some tips:
+- Anyone can do reviews: don't worry about whom you ask.
+- That said, if someone is most familiar with the part you're changing, they may be the best choice.
+- Keeping your changes small and focused can make reviewing (and merging!) easier.
+- Reviewing isn't just about catching bugs: use it as a chance to make
+  sure you understand the code and ask for clarification if necessary.
+- Don't forget to comment on good things, too!
 
 [0]: https://github.com/JetBrains/kotlin
