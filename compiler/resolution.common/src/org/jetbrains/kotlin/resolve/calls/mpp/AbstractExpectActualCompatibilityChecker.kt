@@ -298,8 +298,18 @@ object AbstractExpectActualCompatibilityChecker {
             return ExpectActualCompatibility.Compatible
         }
 
-        // ALL THE FOLLOWING ARE STRONG INCOMPATIBILITIES
+        // We must prioritize to return STRONG incompatible over WEAK incompatible (because STRONG incompatibility allows to search for overloads)
+        return getCallablesStrongIncompatibility(expectDeclaration, actualDeclaration, parentSubstitutor)
+            ?: getCallablesWeakIncompatibility(expectDeclaration, actualDeclaration, expectContainingClass, actualContainingClass)
+            ?: ExpectActualCompatibility.Compatible
+    }
 
+    context(ExpectActualMatchingContext<*>)
+    private fun getCallablesStrongIncompatibility(
+        expectDeclaration: CallableSymbolMarker,
+        actualDeclaration: CallableSymbolMarker,
+        parentSubstitutor: TypeSubstitutorMarker?,
+    ): Incompatible.StrongIncompatible<*>? {
         if (expectDeclaration is FunctionSymbolMarker != actualDeclaration is FunctionSymbolMarker) {
             return Incompatible.CallableKind
         }
@@ -347,9 +357,22 @@ object AbstractExpectActualCompatibilityChecker {
             }
         }
 
-        areStrongIncompatibleTypeParameters(expectedTypeParameters, actualTypeParameters, substitutor)?.let { return it }
+        getTypeParametersStrongIncompatibility(expectedTypeParameters, actualTypeParameters, substitutor)?.let { return it }
 
-        // ALL THE FOLLOWING ARE WEAK INCOMPATIBILITIES
+        return null
+    }
+
+    context(ExpectActualMatchingContext<*>)
+    private fun getCallablesWeakIncompatibility(
+        expectDeclaration: CallableSymbolMarker,
+        actualDeclaration: CallableSymbolMarker,
+        expectContainingClass: RegularClassSymbolMarker?,
+        actualContainingClass: RegularClassSymbolMarker?,
+    ): Incompatible.WeakIncompatible<*>? {
+        val expectedTypeParameters = expectDeclaration.typeParameters
+        val actualTypeParameters = actualDeclaration.typeParameters
+        val expectedValueParameters = expectDeclaration.valueParameters
+        val actualValueParameters = actualDeclaration.valueParameters
 
         if (actualDeclaration.hasStableParameterNames && !equalsBy(expectedValueParameters, actualValueParameters) { it.name }) {
             return Incompatible.ParameterNames
@@ -376,7 +399,7 @@ object AbstractExpectActualCompatibilityChecker {
             return Incompatible.Visibility
         }
 
-        areWeakIncompatibleTypeParameters(expectedTypeParameters, actualTypeParameters)?.let { return it }
+        getTypeParametersWeakIncompatibility(expectedTypeParameters, actualTypeParameters)?.let { return it }
 
         if (shouldCheckAbsenceOfDefaultParamsInActual) {
             // "Default parameters in actual" check is required only for functions, because only functions can have parameters
@@ -409,15 +432,11 @@ object AbstractExpectActualCompatibilityChecker {
         }
 
         when {
-            expectDeclaration is FunctionSymbolMarker && actualDeclaration is FunctionSymbolMarker -> areCompatibleFunctions(
-                expectDeclaration,
-                actualDeclaration
-            ).let { if (it != ExpectActualCompatibility.Compatible) return it }
+            expectDeclaration is FunctionSymbolMarker && actualDeclaration is FunctionSymbolMarker ->
+                getFunctionsIncompatibility(expectDeclaration, actualDeclaration)?.let { return it }
 
-            expectDeclaration is PropertySymbolMarker && actualDeclaration is PropertySymbolMarker -> areCompatibleProperties(
-                expectDeclaration,
-                actualDeclaration
-            ).let { if (it != ExpectActualCompatibility.Compatible) return it }
+            expectDeclaration is PropertySymbolMarker && actualDeclaration is PropertySymbolMarker ->
+                getPropertiesIncompatibility(expectDeclaration, actualDeclaration)?.let { return it }
 
             expectDeclaration is EnumEntrySymbolMarker && actualDeclaration is EnumEntrySymbolMarker -> {
                 // do nothing, entries are matched only by name
@@ -426,7 +445,7 @@ object AbstractExpectActualCompatibilityChecker {
             else -> error("Unsupported declarations: $expectDeclaration, $actualDeclaration")
         }
 
-        return ExpectActualCompatibility.Compatible
+        return null
     }
 
     context(ExpectActualMatchingContext<*>)
@@ -539,16 +558,16 @@ object AbstractExpectActualCompatibilityChecker {
         substitutor: TypeSubstitutorMarker,
     ): ExpectActualCompatibility<*> =
         // We must prioritize to return STRONG incompatible over WEAK incompatible (because STRONG incompatibility allows to search for overloads)
-        areStrongIncompatibleTypeParameters(expectTypeParameterSymbols, actualTypeParameterSymbols, substitutor)
-            ?: areWeakIncompatibleTypeParameters(expectTypeParameterSymbols, actualTypeParameterSymbols)
+        getTypeParametersStrongIncompatibility(expectTypeParameterSymbols, actualTypeParameterSymbols, substitutor)
+            ?: getTypeParametersWeakIncompatibility(expectTypeParameterSymbols, actualTypeParameterSymbols)
             ?: ExpectActualCompatibility.Compatible
 
     context(ExpectActualMatchingContext<*>)
-    private fun areStrongIncompatibleTypeParameters(
+    private fun getTypeParametersStrongIncompatibility(
         expectTypeParameterSymbols: List<TypeParameterSymbolMarker>,
         actualTypeParameterSymbols: List<TypeParameterSymbolMarker>,
         substitutor: TypeSubstitutorMarker,
-    ): Incompatible<*>? {
+    ): Incompatible.StrongIncompatible<*>? {
         for (i in expectTypeParameterSymbols.indices) {
             val expectBounds = expectTypeParameterSymbols[i].bounds
             val actualBounds = actualTypeParameterSymbols[i].bounds
@@ -564,10 +583,10 @@ object AbstractExpectActualCompatibilityChecker {
     }
 
     context(ExpectActualMatchingContext<*>)
-    private fun areWeakIncompatibleTypeParameters(
+    private fun getTypeParametersWeakIncompatibility(
         expectTypeParameterSymbols: List<TypeParameterSymbolMarker>,
         actualTypeParameterSymbols: List<TypeParameterSymbolMarker>,
-    ): Incompatible<*>? {
+    ): Incompatible.WeakIncompatible<*>? {
         if (!equalsBy(expectTypeParameterSymbols, actualTypeParameterSymbols) { it.variance }) {
             return Incompatible.TypeParameterVariance
         }
@@ -585,10 +604,10 @@ object AbstractExpectActualCompatibilityChecker {
     }
 
     context(ExpectActualMatchingContext<*>)
-    private fun areCompatibleFunctions(
+    private fun getFunctionsIncompatibility(
         expectFunction: CallableSymbolMarker,
         actualFunction: CallableSymbolMarker,
-    ): ExpectActualCompatibility<*> {
+    ): Incompatible.WeakIncompatible<*>? {
         if (!equalBy(expectFunction, actualFunction) { f -> f.isSuspend }) {
             return Incompatible.FunctionModifiersDifferent
         }
@@ -601,20 +620,20 @@ object AbstractExpectActualCompatibilityChecker {
             return Incompatible.FunctionModifiersNotSubset
         }
 
-        return ExpectActualCompatibility.Compatible
+        return null
     }
 
     context(ExpectActualMatchingContext<*>)
-    private fun areCompatibleProperties(
+    private fun getPropertiesIncompatibility(
         expected: PropertySymbolMarker,
         actual: PropertySymbolMarker,
-    ): ExpectActualCompatibility<*> {
+    ): Incompatible.WeakIncompatible<*>? {
         return when {
             !equalBy(expected, actual) { p -> p.isVar } -> Incompatible.PropertyKind
             !equalBy(expected, actual) { p -> p.isLateinit } -> Incompatible.PropertyLateinitModifier
             expected.isConst && !actual.isConst -> Incompatible.PropertyConstModifier
             !arePropertySettersWithCompatibleVisibilities(expected, actual) -> Incompatible.PropertySetterVisibility
-            else -> ExpectActualCompatibility.Compatible
+            else -> null
         }
     }
 

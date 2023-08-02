@@ -274,12 +274,11 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
     }
 
     fun Map<out ExpectActualCompatibility<*>, *>.allStrongIncompatibilities(): Boolean {
-        return keys.all { it is Incompatible && it.kind == IncompatibilityKind.STRONG }
+        return keys.all { it is Incompatible.StrongIncompatible }
     }
 
     private fun ExpectActualCompatibility<FirBasedSymbol<*>>.isCompatibleOrWeakCompatible(): Boolean {
-        return this is Compatible ||
-                this is Incompatible && kind == IncompatibilityKind.WEAK
+        return this is Compatible || this is Incompatible.WeakIncompatible
     }
 
     // we don't require `actual` modifier on
