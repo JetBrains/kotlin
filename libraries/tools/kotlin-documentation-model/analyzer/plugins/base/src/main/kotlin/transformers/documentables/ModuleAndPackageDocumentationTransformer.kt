@@ -8,8 +8,8 @@ import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.plugability.plugin
 import org.jetbrains.dokka.plugability.querySingle
 import org.jetbrains.dokka.transformers.documentation.PreMergeDocumentableTransformer
-import org.jetbrains.kotlin.analysis.kotlin.internal.InternalKotlinAnalysisPlugin
-import org.jetbrains.kotlin.analysis.kotlin.internal.ModuleAndPackageDocumentationReader
+import org.jetbrains.dokka.analysis.kotlin.internal.InternalKotlinAnalysisPlugin
+import org.jetbrains.dokka.analysis.kotlin.internal.ModuleAndPackageDocumentationReader
 
 internal class ModuleAndPackageDocumentationTransformer(
     private val moduleAndPackageDocumentationReader: ModuleAndPackageDocumentationReader
