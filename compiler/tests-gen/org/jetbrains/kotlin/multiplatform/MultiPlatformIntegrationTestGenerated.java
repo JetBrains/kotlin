@@ -119,11 +119,6 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
         runTest("compiler/testData/multiplatform/optionalExpectation/");
     }
 
-    @TestMetadata("optionalExpectationIncorrectUse")
-    public void testOptionalExpectationIncorrectUse() throws Exception {
-        runTest("compiler/testData/multiplatform/optionalExpectationIncorrectUse/");
-    }
-
     @TestMetadata("simple")
     public void testSimple() throws Exception {
         runTest("compiler/testData/multiplatform/simple/");
@@ -697,19 +692,6 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
 
         public void testAllFilesPresentInOptionalExpectation() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/optionalExpectation"), Pattern.compile("^([^\\.]+)$"), null, true);
-        }
-    }
-
-    @TestMetadata("compiler/testData/multiplatform/optionalExpectationIncorrectUse")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class OptionalExpectationIncorrectUse extends AbstractMultiPlatformIntegrationTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInOptionalExpectationIncorrectUse() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/multiplatform/optionalExpectationIncorrectUse"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
     }
 
