@@ -206,6 +206,12 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
     }
 
     @Test
+    @TestMetadata("kt60902.kt")
+    public void testKt60902() throws Exception {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/kt60902.kt");
+    }
+
+    @Test
     @TestMetadata("manyImplMemberNotImplemented.kt")
     public void testManyImplMemberNotImplemented() throws Exception {
         runTest("compiler/testData/diagnostics/tests/multiplatform/manyImplMemberNotImplemented.kt");
