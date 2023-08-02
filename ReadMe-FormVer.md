@@ -3,15 +3,12 @@
 ## Running the plugin
 
 To execute the plugin, build the `dist` target and then
-specify the plugin `.jar` with `-Xcompiler-plugin=`:
+specify the plugin `.jar` with `-Xplugin=`:
 
 ```sh
 ./gradlew dist
-dist/kotlinc/bin/kotlinc -language-version 2.0 -Xcompiler-plugin=dist/kotlinc/lib/formver-compiler-plugin.jar myfile.kt
+dist/kotlinc/bin/kotlinc -language-version 2.0 -Xplugin=dist/kotlinc/lib/formver-compiler-plugin.jar,$HOME/.m2/repository/viper/silicon/1.1-SNAPSHOT/silicon-1.1-SNAPSHOT.jar myfile.kt
 ```
-
-**NOTE:** This currently doesn't work, it's blocked on us making a fat jar
-of the plugin.  For now, if you want to run the plugin, use the test suite.
 
 ## Viper dependency
 
