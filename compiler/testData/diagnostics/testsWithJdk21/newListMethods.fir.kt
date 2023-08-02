@@ -1,5 +1,6 @@
 // ISSUE: KT-58371
 // WITH_STDLIB
+// RENDER_DIAGNOSTICS_FULL_TEXT
 
 class A<T> : ArrayList<T>() {
     override fun addFirst(t: T) {

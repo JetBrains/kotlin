@@ -67,6 +67,14 @@ object JvmBuiltInsSignatures {
             }
         }
 
+    val DEPRECATED_LIST_METHODS: Set<String> =
+        signatures {
+            inJavaUtil(
+                "List",
+                "getFirst()Ljava/lang/Object;",
+                "getLast()Ljava/lang/Object;",
+            )
+        }
 
     val VISIBLE_METHOD_SIGNATURES: Set<String> =
         signatures {
