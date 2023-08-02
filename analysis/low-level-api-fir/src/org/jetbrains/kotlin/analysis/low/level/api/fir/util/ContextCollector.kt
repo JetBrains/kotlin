@@ -300,7 +300,7 @@ private class ContextCollectorVisitor(
         processSignatureAnnotations(valueParameter)
 
         context.withValueParameter(valueParameter, session) {
-            dumpContext(valueParameter.psi, ContextKind.SELF)
+            dumpContext(valueParameter.psi, ContextKind.BODY)
 
             onActive {
                 processChildren(valueParameter)
