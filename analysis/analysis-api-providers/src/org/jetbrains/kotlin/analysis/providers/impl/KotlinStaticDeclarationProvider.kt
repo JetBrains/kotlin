@@ -260,7 +260,6 @@ public class KotlinStaticDeclarationProviderFactory(
     init {
         val recorder = KtDeclarationRecorder()
 
-        // Indexing built-ins
         fun indexStub(stub: StubElement<*>) {
             when (stub) {
                 is KotlinClassStubImpl -> {
@@ -301,6 +300,7 @@ public class KotlinStaticDeclarationProviderFactory(
             ktFileStub.childrenStubs.forEach(::indexStub)
         }
 
+        // Indexing built-ins
         val builtins = mutableSetOf<String>()
         if (!skipBuiltins) {
             loadBuiltIns().forEach { stub ->
