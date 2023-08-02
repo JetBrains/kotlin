@@ -338,6 +338,7 @@ abstract class KotlinJvmTarget @Inject constructor(
     @ExperimentalKotlinGradlePluginApi
     override val compilerOptions: KotlinJvmCompilerOptions = project.objects
         .newInstance<KotlinJvmCompilerOptionsDefault>()
+        .configureExperimentalTryK2(project)
 
     @ExperimentalKotlinGradlePluginApi
     fun compilerOptions(configure: KotlinJvmCompilerOptions.() -> Unit) {

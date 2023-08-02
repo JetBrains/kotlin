@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
 import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetConfigurator
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
+import org.jetbrains.kotlin.gradle.utils.configureExperimentalTryK2
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import javax.inject.Inject
 
@@ -41,6 +42,7 @@ abstract class KotlinMetadataTarget @Inject constructor(
     @ExperimentalKotlinGradlePluginApi
     override val compilerOptions: KotlinCommonCompilerOptions = project.objects
         .newInstance<KotlinCommonCompilerOptionsDefault>()
+        .configureExperimentalTryK2(project)
 
     @ExperimentalKotlinGradlePluginApi
     fun compilerOptions(configure: KotlinCommonCompilerOptions.() -> Unit) {
