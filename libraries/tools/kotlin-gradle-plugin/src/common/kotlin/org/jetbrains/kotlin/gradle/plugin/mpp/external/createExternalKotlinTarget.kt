@@ -86,8 +86,6 @@ fun <T : DecoratedExternalKotlinTarget> KotlinMultiplatformExtension.createExter
         artifactsTaskLocator = artifactsTaskLocator
     )
 
-    target.wireCompilerOptionsToCompilations(descriptor.platformType)
-
     target.setupApiElements(apiElementsConfiguration)
     target.setupApiElements(apiElementsPublishedConfiguration)
     target.setupRuntimeElements(runtimeElementsConfiguration)
@@ -147,43 +145,4 @@ private fun ExternalKotlinTargetImpl.setupRuntimeElements(configuration: Configu
 
 private fun ExternalKotlinTargetImpl.setupSourcesElements(configuration: Configuration) {
     configuration.configureSourcesPublicationAttributes(this)
-}
-
-private fun ExternalKotlinTargetImpl.wireCompilerOptionsToCompilations(platformType: KotlinPlatformType) {
-    when (platformType) {
-        KotlinPlatformType.androidJvm,
-        KotlinPlatformType.jvm -> {
-            compilations.configureEach {
-                KotlinJvmCompilerOptionsHelper.syncOptionsAsConvention(
-                    compilerOptions as KotlinJvmCompilerOptions,
-                    it.compilerOptions.options as KotlinJvmCompilerOptions
-                )
-            }
-        }
-        KotlinPlatformType.wasm,
-        KotlinPlatformType.js -> {
-            compilations.configureEach {
-                KotlinJsCompilerOptionsHelper.syncOptionsAsConvention(
-                    compilerOptions as KotlinJsCompilerOptions,
-                    it.compilerOptions.options as KotlinJsCompilerOptions
-                )
-            }
-        }
-        KotlinPlatformType.common -> {
-            compilations.configureEach {
-                KotlinCommonCompilerOptionsHelper.syncOptionsAsConvention(
-                    compilerOptions,
-                    it.compilerOptions.options
-                )
-            }
-        }
-        KotlinPlatformType.native -> {
-            compilations.configureEach {
-                KotlinNativeCompilerOptionsHelper.syncOptionsAsConvention(
-                    compilerOptions as KotlinNativeCompilerOptions,
-                    it.compilerOptions.options as KotlinNativeCompilerOptions
-                )
-            }
-        }
-    }
 }

@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationFriendPathsResolver
-import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationPostConfigure
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationSourceSetInclusion
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationSourceSetsContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.DefaultKotlinCompilationDependencyConfigurationsFactory
@@ -46,10 +44,6 @@ class KotlinCommonCompilationFactory internal constructor(
             We therefore can create the container inline
             */
             compilationSourceSetsContainerFactory = { _, _ -> KotlinCompilationSourceSetsContainer(defaultSourceSet) },
-            postConfigureAction = KotlinCompilationImplFactory.PostConfigure.composite(
-                DefaultKotlinCompilationPostConfigure,
-                KotlinCompilationCommonCompilerOptionsFromTargetConfigurator(target.compilerOptions)
-            )
         )
 
     override fun create(name: String): KotlinCommonCompilation = target.project.objects.newInstance(

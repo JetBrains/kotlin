@@ -9,14 +9,33 @@ import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptionsHelper
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeCompilerOptionsHelper
 import org.jetbrains.kotlin.gradle.plugin.mpp.DecoratedKotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinCompilationImplFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.moduleNameForCompilation
 
-internal class KotlinCompilationJvmCompilerOptionsFromTargetConfigurator(
-    private val targetCompilerOptions: KotlinJvmCompilerOptions
-) : KotlinCompilationImplFactory.PostConfigure {
+internal object KotlinCompilationCompilerOptionsFromTargetConfigurator : KotlinCompilationImplFactory.PostConfigure {
     override fun configure(compilation: DecoratedKotlinCompilation<*>) {
-        val jvmCompilerOptions = compilation.compilerOptions.options as KotlinJvmCompilerOptions
+        when (val compilationCompilerOptions = compilation.compilerOptions.options) {
+            is KotlinJvmCompilerOptions -> compilation.configureJvmCompilerOptions(compilationCompilerOptions)
+            is KotlinJsCompilerOptions -> compilation.configureJsCompilerOptions(compilationCompilerOptions)
+            is KotlinNativeCompilerOptions -> {
+                if (compilation.target is KotlinMetadataTarget) {
+                    // Shared native compilation, for example, 'appleMain'
+                    compilation.configureCommonCompilerOptions(compilationCompilerOptions)
+                } else {
+                    compilation.configureNativeCompilerOptions(compilationCompilerOptions)
+                }
+            }
+            else -> compilation.configureCommonCompilerOptions(compilationCompilerOptions)
+        }
+    }
+
+    private fun DecoratedKotlinCompilation<*>.configureJvmCompilerOptions(
+        jvmCompilerOptions: KotlinJvmCompilerOptions
+    ) {
+        val targetCompilerOptions = requireTargetCompilerOptionsType<KotlinJvmCompilerOptions>()
+
         KotlinJvmCompilerOptionsHelper.syncOptionsAsConvention(
             targetCompilerOptions,
             jvmCompilerOptions
@@ -24,37 +43,20 @@ internal class KotlinCompilationJvmCompilerOptionsFromTargetConfigurator(
 
         jvmCompilerOptions.moduleName.convention(
             moduleNameForCompilation(
-                compilation.compilationName,
+                compilationName,
                 targetCompilerOptions.moduleName
-            ).orElse(compilation.moduleNameForCompilation())
+            ).orElse(moduleNameForCompilation())
         )
     }
-}
 
-internal class KotlinCompilationNativeCompilerOptionsFromTargetConfigurator(
-    private val targetCompilerOptions: KotlinNativeCompilerOptions
-) : KotlinCompilationImplFactory.PostConfigure {
-    override fun configure(compilation: DecoratedKotlinCompilation<*>) {
-        val nativeCompilerOptions = compilation.compilerOptions.options as KotlinNativeCompilerOptions
-        KotlinNativeCompilerOptionsHelper.syncOptionsAsConvention(
-            targetCompilerOptions,
-            nativeCompilerOptions
-        )
+    private fun DecoratedKotlinCompilation<*>.configureJsCompilerOptions(
+        jsCompilerOptions: KotlinJsCompilerOptions
+    ) {
+        // Ignoring legacy JS target
+        if (target is KotlinWithJavaTarget<*, *>) return
 
-        nativeCompilerOptions.moduleName.convention(
-            moduleNameForCompilation(
-                compilation.compilationName,
-                targetCompilerOptions.moduleName
-            )
-        )
-    }
-}
+        val targetCompilerOptions = requireTargetCompilerOptionsType<KotlinJsCompilerOptions>()
 
-internal class KotlinCompilationJsCompilerOptionsFromTargetConfigurator(
-    private val targetCompilerOptions: KotlinJsCompilerOptions
-) : KotlinCompilationImplFactory.PostConfigure {
-    override fun configure(compilation: DecoratedKotlinCompilation<*>) {
-        val jsCompilerOptions = compilation.compilerOptions.options as KotlinJsCompilerOptions
         KotlinJsCompilerOptionsHelper.syncOptionsAsConvention(
             targetCompilerOptions,
             jsCompilerOptions
@@ -62,21 +64,46 @@ internal class KotlinCompilationJsCompilerOptionsFromTargetConfigurator(
 
         jsCompilerOptions.moduleName.convention(
             moduleNameForCompilation(
-                compilation.compilationName,
+                compilationName,
                 targetCompilerOptions.moduleName
-            ).orElse(compilation.moduleNameForCompilation())
+            ).orElse(moduleNameForCompilation())
         )
     }
-}
 
-internal class KotlinCompilationCommonCompilerOptionsFromTargetConfigurator(
-    private val targetCompilerOptions: KotlinCommonCompilerOptions
-) : KotlinCompilationImplFactory.PostConfigure {
-    override fun configure(compilation: DecoratedKotlinCompilation<*>) {
-        val commonCompilerOptions = compilation.compilerOptions.options
-        KotlinCommonCompilerOptionsHelper.syncOptionsAsConvention(
+    private fun DecoratedKotlinCompilation<*>.configureNativeCompilerOptions(
+        nativeCompilerOptions: KotlinNativeCompilerOptions
+    ) {
+        val targetCompilerOptions = requireTargetCompilerOptionsType<KotlinNativeCompilerOptions>()
+
+        KotlinNativeCompilerOptionsHelper.syncOptionsAsConvention(
             targetCompilerOptions,
+            nativeCompilerOptions
+        )
+
+        nativeCompilerOptions.moduleName.convention(
+            moduleNameForCompilation(
+                compilationName,
+                targetCompilerOptions.moduleName
+            )
+        )
+    }
+
+    private fun DecoratedKotlinCompilation<*>.configureCommonCompilerOptions(
+        commonCompilerOptions: KotlinCommonCompilerOptions
+    ) {
+        KotlinCommonCompilerOptionsHelper.syncOptionsAsConvention(
+            target.compilerOptions,
             commonCompilerOptions
         )
+    }
+
+    private inline fun <reified T : KotlinCommonCompilerOptions> DecoratedKotlinCompilation<*>.requireTargetCompilerOptionsType(): T {
+        val targetCompilerOptions = compilation.target.compilerOptions
+        require(targetCompilerOptions is T) {
+            "${compilation.compilationName} target ${compilation.target.name}:${compilation.target::class.qualifiedName} has incorrect 'compilerOptions' type " +
+                    "${targetCompilerOptions::class.qualifiedName}"
+        }
+
+        return targetCompilerOptions
     }
 }

@@ -15,8 +15,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.sourcesJarTask
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.JsIrCompilationSourceSetsContainerFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.JsKotlinCompilationDependencyConfigurationsFactory
-import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationPostConfigure
-import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationJsCompilerOptionsFromTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinCompilationImplFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinJsCompilerOptionsFactory
 
@@ -42,10 +40,6 @@ class KotlinJsIrCompilationFactory internal constructor(
                 sourcesJarTask(compilation, compilation.target.targetName, artifactNameAppendix)
             }
         },
-        postConfigureAction = KotlinCompilationImplFactory.PostConfigure.composite(
-            DefaultKotlinCompilationPostConfigure,
-            KotlinCompilationJsCompilerOptionsFromTargetConfigurator(target.compilerOptions)
-        )
     )
 
     override fun create(name: String): KotlinJsIrCompilation = target.project.objects.newInstance(
