@@ -222,7 +222,7 @@ private class ContextCollectorVisitor(
     override fun visitSimpleFunction(simpleFunction: FirSimpleFunction) = withProcessor {
         dumpContext(simpleFunction.psi, ContextKind.SELF)
 
-        simpleFunction.lazyResolveToPhase(FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING)
+        simpleFunction.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
 
         processSignatureAnnotations(simpleFunction)
 
@@ -233,7 +233,6 @@ private class ContextCollectorVisitor(
                 dumpContext(simpleFunction.psi, ContextKind.BODY)
 
                 onActive {
-                    simpleFunction.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
                     process(simpleFunction.body)
                 }
             }
