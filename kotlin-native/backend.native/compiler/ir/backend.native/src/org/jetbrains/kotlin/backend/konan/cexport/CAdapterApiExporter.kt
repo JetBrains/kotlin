@@ -289,7 +289,6 @@ internal class CAdapterApiExporter(
     |}  // extern "C"
     |
     |struct ${prefix}_FrameOverlay {
-    |  void* arena;
     |  ${prefix}_FrameOverlay* previous;
     |  ${prefix}_KInt parameters;
     |  ${prefix}_KInt count;

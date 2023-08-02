@@ -1022,10 +1022,6 @@ inline void traverseContainerReferredObjects(ContainerHeader* container, func pr
   });
 }
 
-inline FrameOverlay* asFrameOverlay(ObjHeader** slot) {
-  return reinterpret_cast<FrameOverlay*>(slot);
-}
-
 inline void lock(KInt* spinlock) {
   while (compareAndSwap(spinlock, 0, 1) != 0) {}
 }
@@ -1762,39 +1758,6 @@ inline void releaseHeapRef(const ObjHeader* header) {
   if (container != nullptr)
     releaseHeapRef<Strict, CanCollect>(const_cast<ContainerHeader*>(container));
 }
-
-
-// TODO: Consider removing this unused stuff.
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-function"
-
-// We use first slot as place to store frame-local arena container.
-// TODO: create ArenaContainer object on the stack, so that we don't
-// do two allocations per frame (ArenaContainer + actual container).
-inline ArenaContainer* initedArena(ObjHeader** auxSlot) {
-  auto frame = asFrameOverlay(auxSlot);
-  auto arena = reinterpret_cast<ArenaContainer*>(frame->arena);
-  if (!arena) {
-    arena = std_support::allocator_new<ArenaContainer>(objectAllocator);
-    MEMORY_LOG("Initializing arena in %p\n", frame)
-    arena->Init();
-    frame->arena = arena;
-  }
-  return arena;
-}
-
-inline container_size_t containerSize(const ContainerHeader* container) {
-  container_size_t result = 0;
-  const ObjHeader* obj = reinterpret_cast<const ObjHeader*>(container + 1);
-  for (uint32_t object = 0; object < container->objectCount(); object++) {
-    container_size_t size = objectSize(obj);
-    result += size;
-    obj = reinterpret_cast<ObjHeader*>(reinterpret_cast<uintptr_t>(obj) + size);
-  }
-  return result;
-}
-
-#pragma clang diagnostic pop
 
 #if USE_GC
 void incrementStack(MemoryState* state) {

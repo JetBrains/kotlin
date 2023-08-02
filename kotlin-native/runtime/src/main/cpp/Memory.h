@@ -362,7 +362,6 @@ RUNTIME_NOTHROW void DisposeRegularWeakReferenceImpl(ObjHeader* counter);
 #endif
 
 struct FrameOverlay {
-  void* arena;
   FrameOverlay* previous;
   // As they go in pair, sizeof(FrameOverlay) % sizeof(void*) == 0 is always held.
   int32_t parameters;
