@@ -40,7 +40,7 @@ internal object LLFirLibraryProviderFactory {
                 builtinTypes,
                 scope
             ),
-            LLFirDependenciesSymbolProvider(session, listOf(builtinSymbolProvider)),
+            LLFirDependenciesSymbolProvider(session) { listOf(builtinSymbolProvider) },
         )
     }
 
