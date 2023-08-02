@@ -24630,6 +24630,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
                 public void testKotlinInheritsJava() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/override/parameterNames/kotlinInheritsJava.kt");
                 }
+
+                @Test
+                @TestMetadata("noWarningOnJavaKotlinInheritance.kt")
+                public void testNoWarningOnJavaKotlinInheritance() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/override/parameterNames/noWarningOnJavaKotlinInheritance.kt");
+                }
             }
 
             @Nested

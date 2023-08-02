@@ -8,9 +8,6 @@ package org.jetbrains.kotlin.jvm.compiler
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
-import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
-import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -129,15 +126,6 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         compileKotlin("main.kt", tmpdir, listOf(compileLibrary("library")))
     }
 
-    fun testSuspensionPointInMonitor() {
-        compileKotlin(
-            "source.kt",
-            tmpdir,
-            listOf(compileLibrary("library", additionalOptions = listOf("-Xskip-metadata-version-check"))),
-            additionalOptions = listOf("-Xskip-metadata-version-check")
-        )
-    }
-
     fun testDuplicateObjectInBinaryAndSources() {
         val allDescriptors = analyzeAndGetAllDescriptors(compileLibrary("library"))
         assertEquals(allDescriptors.toString(), 2, allDescriptors.size)
@@ -159,26 +147,6 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
 
     fun testMissingEnumReferencedInAnnotationArgument() {
         doTestBrokenLibrary("library", "a/E.class")
-    }
-
-    fun testNoWarningsOnJavaKotlinInheritance() {
-        // This test checks that there are no PARAMETER_NAME_CHANGED_ON_OVERRIDE or DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES
-        // warnings when subclassing in Kotlin from Java binaries (in case when no parameter names are available for Java classes)
-
-        val library = compileLibrary("library")
-        val environment = createEnvironment(listOf(library))
-
-        val ktFile = KotlinTestUtils.loadKtFile(environment.project, getTestDataFileWithExtension("kt"))
-        val result = JvmResolveUtil.analyze(ktFile, environment)
-        result.throwIfError()
-
-        AnalyzerWithCompilerReport.reportDiagnostics(
-            result.bindingContext.diagnostics,
-            PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, false),
-            renderInternalDiagnosticName = false
-        )
-
-        assertEquals("There should be no diagnostics", 0, result.bindingContext.diagnostics.count())
     }
 
     fun testIncompleteHierarchyInJava() {

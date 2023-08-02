@@ -73,6 +73,12 @@ public class DiagnosticsTestWithJvmIrBackendGenerated extends AbstractDiagnostic
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/suspendInlineCycle.kt");
     }
 
+    @Test
+    @TestMetadata("suspensionPointInMonitor.kt")
+    public void testSuspensionPointInMonitor() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/suspensionPointInMonitor.kt");
+    }
+
     @Nested
     @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature")
     @TestDataPath("$PROJECT_ROOT")
