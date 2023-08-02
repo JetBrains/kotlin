@@ -111,7 +111,7 @@ public class StandaloneAnalysisAPISessionBuilder(
 
     @OptIn(KtAnalysisApiInternals::class)
     private fun registerProjectServices(
-        ktFiles: List<KtFile>,
+        sourceKtFiles: List<KtFile>,
         packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
     ) {
         val project = kotlinCoreProjectEnvironment.project
@@ -126,11 +126,11 @@ public class StandaloneAnalysisAPISessionBuilder(
             registerService(KotlinGlobalModificationService::class.java, KotlinStaticGlobalModificationService::class.java)
 
             registerService(KtModuleScopeProvider::class.java, KtModuleScopeProviderImpl())
-            registerService(KotlinAnnotationsResolverFactory::class.java, KotlinStaticAnnotationsResolverFactory(ktFiles))
+            registerService(KotlinAnnotationsResolverFactory::class.java, KotlinStaticAnnotationsResolverFactory(sourceKtFiles))
             registerService(KotlinResolutionScopeProvider::class.java, KotlinByModulesResolutionScopeProvider::class.java)
             val declarationProviderFactory = KotlinStaticDeclarationProviderFactory(
                 this,
-                ktFiles,
+                sourceKtFiles,
                 kotlinCoreProjectEnvironment.environment.jarFileSystem as CoreJarFileSystem
             )
             registerService(
@@ -140,7 +140,7 @@ public class StandaloneAnalysisAPISessionBuilder(
             registerService(KotlinDeclarationProviderMerger::class.java, KotlinStaticDeclarationProviderMerger(this))
             registerService(
                 KotlinPackageProviderFactory::class.java,
-                KotlinStaticPackageProviderFactory(project, ktFiles + declarationProviderFactory.getAdditionalCreatedKtFiles())
+                KotlinStaticPackageProviderFactory(project, sourceKtFiles + declarationProviderFactory.getAdditionalCreatedKtFiles())
             )
 
             registerService(
@@ -195,7 +195,7 @@ public class StandaloneAnalysisAPISessionBuilder(
             projectStructureProvider,
         )
         val project = kotlinCoreProjectEnvironment.project
-        val ktFiles = projectStructureProvider.allSourceFiles.filterIsInstance<KtFile>()
+        val sourceKtFiles = projectStructureProvider.allSourceFiles.filterIsInstance<KtFile>()
         val libraryRoots = StandaloneProjectFactory.getAllBinaryRoots(
             projectStructureProvider.allKtModules,
             kotlinCoreProjectEnvironment,
@@ -206,7 +206,7 @@ public class StandaloneAnalysisAPISessionBuilder(
                 libraryRoots,
             )
         registerProjectServices(
-            ktFiles,
+            sourceKtFiles,
             createPackagePartProvider,
         )
         if (withPsiDeclarationFromBinaryModuleProvider) {

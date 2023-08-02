@@ -68,14 +68,14 @@ object AnalysisApiBaseTestServiceRegistrar: AnalysisApiTestServiceRegistrar()  {
 
     override fun registerProjectModelServices(project: MockProject, testServices: TestServices) {
         val moduleStructure = testServices.ktModuleProvider.getModuleStructure()
-        val allKtFiles = moduleStructure.mainModules.flatMap { it.files.filterIsInstance<KtFile>() }
+        val allSourceKtFiles = moduleStructure.mainModules.flatMap { it.files.filterIsInstance<KtFile>() }
         val roots = StandaloneProjectFactory.getVirtualFilesForLibraryRoots(
             moduleStructure.binaryModules.flatMap { binary -> binary.getBinaryRoots() },
             testServices.environmentManager.getProjectEnvironment()
         ).distinct()
         project.apply {
             registerService(KtModuleScopeProvider::class.java, KtModuleScopeProviderImpl())
-            registerService(KotlinAnnotationsResolverFactory::class.java, KotlinStaticAnnotationsResolverFactory(allKtFiles))
+            registerService(KotlinAnnotationsResolverFactory::class.java, KotlinStaticAnnotationsResolverFactory(allSourceKtFiles))
 
             val filter = BuiltInDefinitionFile.FILTER_OUT_CLASSES_EXISTING_AS_JVM_CLASS_FILES
             val ktFilesForBinaries: List<KtFile>
@@ -83,7 +83,7 @@ object AnalysisApiBaseTestServiceRegistrar: AnalysisApiTestServiceRegistrar()  {
                 BuiltInDefinitionFile.FILTER_OUT_CLASSES_EXISTING_AS_JVM_CLASS_FILES = false
                 val declarationProviderFactory = KotlinStaticDeclarationProviderFactory(
                     project,
-                    allKtFiles,
+                    allSourceKtFiles,
                     additionalRoots = roots,
                     skipBuiltins = testServices.moduleStructure.allDirectives.contains(NO_RUNTIME),
                 )
@@ -97,7 +97,7 @@ object AnalysisApiBaseTestServiceRegistrar: AnalysisApiTestServiceRegistrar()  {
             registerService(KotlinDeclarationProviderMerger::class.java, KotlinStaticDeclarationProviderMerger(project))
             registerService(
                 KotlinPackageProviderFactory::class.java,
-                KotlinStaticPackageProviderFactory(project, allKtFiles + ktFilesForBinaries)
+                KotlinStaticPackageProviderFactory(project, allSourceKtFiles + ktFilesForBinaries)
             )
             registerService(KotlinResolutionScopeProvider::class.java, KotlinByModulesResolutionScopeProvider::class.java)
         }
