@@ -35,7 +35,7 @@ import java.util.ArrayList
 typealias DeserializedTypeAliasPostProcessor = (FirTypeAliasSymbol) -> Unit
 
 /**
- * [StubBasedFirDeserializedSymbolProvider] works over existing stubs,
+ * [JvmStubBasedFirDeserializedSymbolProvider] works over existing stubs,
  * retrieving them by classId/callableId from [KotlinDeclarationProvider].
  *
  * It works in IDE only, in standalone mode works [JvmClassFileBasedSymbolProvider].
@@ -46,7 +46,7 @@ typealias DeserializedTypeAliasPostProcessor = (FirTypeAliasSymbol) -> Unit
  *
  * Same as [JvmClassFileBasedSymbolProvider], resulting fir elements are already resolved.
  */
-internal open class StubBasedFirDeserializedSymbolProvider(
+internal open class JvmStubBasedFirDeserializedSymbolProvider(
     session: FirSession,
     moduleDataProvider: SingleModuleDataProvider,
     private val kotlinScopeProvider: FirKotlinScopeProvider,

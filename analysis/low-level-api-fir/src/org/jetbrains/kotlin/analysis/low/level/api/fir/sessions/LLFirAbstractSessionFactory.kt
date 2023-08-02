@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.analysis.utils.errors.withKtModuleEntry
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
-import org.jetbrains.kotlin.fir.BuiltinTypes
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.analysis.checkersComponent
@@ -60,38 +59,6 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
     abstract fun createSourcesSession(module: KtSourceModule): LLFirSourcesSession
     abstract fun createLibrarySession(module: KtModule): LLFirLibraryOrLibrarySourceResolvableModuleSession
     abstract fun createBinaryLibrarySession(module: KtBinaryModule): LLFirLibrarySession
-
-    private fun createLibraryProvidersForScope(
-        session: LLFirSession,
-        moduleData: LLFirModuleData,
-        kotlinScopeProvider: FirKotlinScopeProvider,
-        project: Project,
-        builtinTypes: BuiltinTypes,
-        scope: GlobalSearchScope,
-        builtinSymbolProvider: FirSymbolProvider,
-    ): LLFirModuleWithDependenciesSymbolProvider {
-        return LLFirModuleWithDependenciesSymbolProvider(
-            session,
-            providers = createProjectLibraryProvidersForScope(
-                session,
-                moduleData,
-                kotlinScopeProvider,
-                project,
-                builtinTypes,
-                scope
-            ),
-            LLFirDependenciesSymbolProvider(session) { listOf(builtinSymbolProvider) },
-        )
-    }
-
-    abstract fun createProjectLibraryProvidersForScope(
-        session: LLFirSession,
-        moduleData: LLFirModuleData,
-        kotlinScopeProvider: FirKotlinScopeProvider,
-        project: Project,
-        builtinTypes: BuiltinTypes,
-        scope: GlobalSearchScope,
-    ): List<FirSymbolProvider>
 
     fun createScriptSession(module: KtScriptModule): LLFirScriptSession {
         val platform = module.platform
@@ -383,7 +350,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
                         val librariesSearchScope = ProjectScope.getLibrariesScope(project)
                             .intersectWith(GlobalSearchScope.notScope(libraryModule.contentScope))
 
-                        val restLibrariesProvider = createProjectLibraryProvidersForScope(
+                        val restLibrariesProvider = LLFirLibraryProviderFactory.createProjectLibraryProvidersForScope(
                             session, moduleData, scopeProvider,
                             project, builtinTypes, librariesSearchScope
                         )
@@ -433,7 +400,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             val kotlinScopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
             register(FirKotlinScopeProvider::class, kotlinScopeProvider)
 
-            val symbolProvider = createLibraryProvidersForScope(
+            val symbolProvider = LLFirLibraryProviderFactory.createLibraryProvidersForScope(
                 this,
                 moduleData,
                 kotlinScopeProvider,
