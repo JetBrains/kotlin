@@ -4,60 +4,6 @@ PsiJetFileStubImpl[package=foo.TopLevelMembers]
       REFERENCE_EXPRESSION[referencedName=foo]
       REFERENCE_EXPRESSION[referencedName=TopLevelMembers]
   IMPORT_LIST
-  PROPERTY[fqName=foo.TopLevelMembers.immutable, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=immutable]
-    MODIFIER_LIST[public]
-    TYPE_REFERENCE
-      USER_TYPE
-        USER_TYPE
-          REFERENCE_EXPRESSION[referencedName=kotlin]
-        REFERENCE_EXPRESSION[referencedName=Double]
-  PROPERTY[fqName=foo.TopLevelMembers.mutable, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=true, name=mutable]
-    MODIFIER_LIST[public]
-    TYPE_REFERENCE
-      USER_TYPE
-        USER_TYPE
-          REFERENCE_EXPRESSION[referencedName=kotlin]
-        REFERENCE_EXPRESSION[referencedName=Float]
-  PROPERTY[fqName=foo.TopLevelMembers.ext, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=ext]
-    MODIFIER_LIST[public]
-    TYPE_REFERENCE
-      USER_TYPE
-        USER_TYPE
-          REFERENCE_EXPRESSION[referencedName=kotlin]
-        REFERENCE_EXPRESSION[referencedName=String]
-    TYPE_REFERENCE
-      USER_TYPE
-        USER_TYPE
-          REFERENCE_EXPRESSION[referencedName=kotlin]
-        REFERENCE_EXPRESSION[referencedName=String]
-    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true]
-      MODIFIER_LIST[public final]
-  PROPERTY[fqName=foo.TopLevelMembers.certainlyNothing, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=certainlyNothing]
-    MODIFIER_LIST[private]
-    TYPE_REFERENCE
-      USER_TYPE
-        USER_TYPE
-          REFERENCE_EXPRESSION[referencedName=kotlin]
-        REFERENCE_EXPRESSION[referencedName=Nothing]
-  PROPERTY[fqName=foo.TopLevelMembers.Main, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=Main]
-    MODIFIER_LIST[public]
-    TYPE_REFERENCE
-      USER_TYPE
-        USER_TYPE
-          USER_TYPE
-            REFERENCE_EXPRESSION[referencedName=foo]
-          REFERENCE_EXPRESSION[referencedName=TopLevelMembers]
-        REFERENCE_EXPRESSION[referencedName=D]
-    TYPE_REFERENCE
-      NULLABLE_TYPE
-        USER_TYPE
-          USER_TYPE
-            USER_TYPE
-              REFERENCE_EXPRESSION[referencedName=foo]
-            REFERENCE_EXPRESSION[referencedName=TopLevelMembers]
-          REFERENCE_EXPRESSION[referencedName=D]
-    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true]
-      MODIFIER_LIST[public final]
   PROPERTY[fqName=foo.TopLevelMembers.Main, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=Main]
     MODIFIER_LIST[internal]
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
@@ -78,6 +24,60 @@ PsiJetFileStubImpl[package=foo.TopLevelMembers]
               REFERENCE_EXPRESSION[referencedName=foo]
             REFERENCE_EXPRESSION[referencedName=TopLevelMembers]
           REFERENCE_EXPRESSION[referencedName=D]
+  PROPERTY[fqName=foo.TopLevelMembers.certainlyNothing, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=certainlyNothing]
+    MODIFIER_LIST[private]
+    TYPE_REFERENCE
+      USER_TYPE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=kotlin]
+        REFERENCE_EXPRESSION[referencedName=Nothing]
+  PROPERTY[fqName=foo.TopLevelMembers.immutable, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=immutable]
+    MODIFIER_LIST[public]
+    TYPE_REFERENCE
+      USER_TYPE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=kotlin]
+        REFERENCE_EXPRESSION[referencedName=Double]
+  PROPERTY[fqName=foo.TopLevelMembers.mutable, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=true, name=mutable]
+    MODIFIER_LIST[public]
+    TYPE_REFERENCE
+      USER_TYPE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=kotlin]
+        REFERENCE_EXPRESSION[referencedName=Float]
+  PROPERTY[fqName=foo.TopLevelMembers.Main, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=Main]
+    MODIFIER_LIST[public]
+    TYPE_REFERENCE
+      USER_TYPE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=foo]
+          REFERENCE_EXPRESSION[referencedName=TopLevelMembers]
+        REFERENCE_EXPRESSION[referencedName=D]
+    TYPE_REFERENCE
+      NULLABLE_TYPE
+        USER_TYPE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=foo]
+            REFERENCE_EXPRESSION[referencedName=TopLevelMembers]
+          REFERENCE_EXPRESSION[referencedName=D]
+    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true]
+      MODIFIER_LIST[public final]
+  PROPERTY[fqName=foo.TopLevelMembers.ext, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=ext]
+    MODIFIER_LIST[public]
+    TYPE_REFERENCE
+      USER_TYPE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=kotlin]
+        REFERENCE_EXPRESSION[referencedName=String]
+    TYPE_REFERENCE
+      USER_TYPE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=kotlin]
+        REFERENCE_EXPRESSION[referencedName=String]
+    PROPERTY_ACCESSOR[hasBlockBody=true, hasBody=false, isGetter=true]
+      MODIFIER_LIST[public final]
   FUN[fqName=foo.TopLevelMembers.funWithBlockBody, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=funWithBlockBody]
     MODIFIER_LIST[public]
     VALUE_PARAMETER_LIST
@@ -108,26 +108,6 @@ PsiJetFileStubImpl[package=foo.TopLevelMembers]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Unit]
-  FUN[fqName=foo.TopLevelMembers.ext, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=ext]
-    MODIFIER_LIST[public]
-    TYPE_REFERENCE
-      USER_TYPE
-        USER_TYPE
-          REFERENCE_EXPRESSION[referencedName=kotlin]
-        REFERENCE_EXPRESSION[referencedName=Int]
-    VALUE_PARAMETER_LIST
-      VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=i]
-        TYPE_REFERENCE
-          USER_TYPE
-            USER_TYPE
-              REFERENCE_EXPRESSION[referencedName=kotlin]
-            REFERENCE_EXPRESSION[referencedName=Int]
-        REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
-    TYPE_REFERENCE
-      USER_TYPE
-        USER_TYPE
-          REFERENCE_EXPRESSION[referencedName=kotlin]
-        REFERENCE_EXPRESSION[referencedName=Int]
   FUN[fqName=foo.TopLevelMembers.funWithVarargParam, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=funWithVarargParam]
     MODIFIER_LIST[private]
     VALUE_PARAMETER_LIST
@@ -159,6 +139,26 @@ PsiJetFileStubImpl[package=foo.TopLevelMembers]
             REFERENCE_EXPRESSION[referencedName=foo]
           REFERENCE_EXPRESSION[referencedName=TopLevelMembers]
         REFERENCE_EXPRESSION[referencedName=Nothing]
+  FUN[fqName=foo.TopLevelMembers.ext, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=ext]
+    MODIFIER_LIST[public]
+    TYPE_REFERENCE
+      USER_TYPE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=kotlin]
+        REFERENCE_EXPRESSION[referencedName=Int]
+    VALUE_PARAMETER_LIST
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=i]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Int]
+        REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
+    TYPE_REFERENCE
+      USER_TYPE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=kotlin]
+        REFERENCE_EXPRESSION[referencedName=Int]
   TYPEALIAS[classId=foo/TopLevelMembers/Alias, fqName=foo.TopLevelMembers.Alias, isTopLevel=true, name=Alias]
     MODIFIER_LIST[private]
     TYPE_PARAMETER_LIST
