@@ -102,6 +102,15 @@ abstract class IrBuiltIns {
     abstract val primitiveIrTypesWithComparisons: List<IrType>
     abstract val primitiveFloatingPointIrTypes: List<IrType>
 
+    abstract val byteIterator: IrClassSymbol
+    abstract val charIterator: IrClassSymbol
+    abstract val shortIterator: IrClassSymbol
+    abstract val intIterator: IrClassSymbol
+    abstract val longIterator: IrClassSymbol
+    abstract val floatIterator: IrClassSymbol
+    abstract val doubleIterator: IrClassSymbol
+    abstract val booleanIterator: IrClassSymbol
+
     abstract val byteArray: IrClassSymbol
     abstract val charArray: IrClassSymbol
     abstract val shortArray: IrClassSymbol

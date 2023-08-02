@@ -334,23 +334,32 @@ class IrBuiltInsOverFir(
     private fun primitiveIterator(primitiveType: PrimitiveType) =
         loadClass(ClassId(StandardClassIds.BASE_COLLECTIONS_PACKAGE, Name.identifier("${primitiveType.typeName}Iterator")))
 
-    private val booleanIterator by primitiveIterator(PrimitiveType.BOOLEAN)
-    private val charIterator by primitiveIterator(PrimitiveType.CHAR)
-    private val byteIterator by primitiveIterator(PrimitiveType.BYTE)
-    private val shortIterator by primitiveIterator(PrimitiveType.SHORT)
-    private val intIterator by primitiveIterator(PrimitiveType.INT)
-    private val longIterator by primitiveIterator(PrimitiveType.LONG)
-    private val floatIterator by primitiveIterator(PrimitiveType.FLOAT)
-    private val doubleIterator by primitiveIterator(PrimitiveType.DOUBLE)
+    private val _booleanIterator by primitiveIterator(PrimitiveType.BOOLEAN)
+    private val _charIterator by primitiveIterator(PrimitiveType.CHAR)
+    private val _byteIterator by primitiveIterator(PrimitiveType.BYTE)
+    private val _shortIterator by primitiveIterator(PrimitiveType.SHORT)
+    private val _intIterator by primitiveIterator(PrimitiveType.INT)
+    private val _longIterator by primitiveIterator(PrimitiveType.LONG)
+    private val _floatIterator by primitiveIterator(PrimitiveType.FLOAT)
+    private val _doubleIterator by primitiveIterator(PrimitiveType.DOUBLE)
 
-    private val _booleanArray by createPrimitiveArrayClass(kotlinIrPackage, PrimitiveType.BOOLEAN, booleanIterator)
-    private val _charArray by createPrimitiveArrayClass(kotlinIrPackage, PrimitiveType.CHAR, charIterator)
-    private val _byteArray by createPrimitiveArrayClass(kotlinIrPackage, PrimitiveType.BYTE, byteIterator)
-    private val _shortArray by createPrimitiveArrayClass(kotlinIrPackage, PrimitiveType.SHORT, shortIterator)
-    private val _intArray by createPrimitiveArrayClass(kotlinIrPackage, PrimitiveType.INT, intIterator)
-    private val _longArray by createPrimitiveArrayClass(kotlinIrPackage, PrimitiveType.LONG, longIterator)
-    private val _floatArray by createPrimitiveArrayClass(kotlinIrPackage, PrimitiveType.FLOAT, floatIterator)
-    private val _doubleArray by createPrimitiveArrayClass(kotlinIrPackage, PrimitiveType.DOUBLE, doubleIterator)
+    override val booleanIterator: IrClassSymbol get() = _booleanIterator.klass
+    override val charIterator: IrClassSymbol get() = _charIterator.klass
+    override val byteIterator: IrClassSymbol get() = _byteIterator.klass
+    override val shortIterator: IrClassSymbol get() = _shortIterator.klass
+    override val intIterator: IrClassSymbol get() = _intIterator.klass
+    override val longIterator: IrClassSymbol get() = _longIterator.klass
+    override val floatIterator: IrClassSymbol get() = _floatIterator.klass
+    override val doubleIterator: IrClassSymbol get() = _doubleIterator.klass
+
+    private val _booleanArray by createPrimitiveArrayClass(kotlinIrPackage, PrimitiveType.BOOLEAN, _booleanIterator)
+    private val _charArray by createPrimitiveArrayClass(kotlinIrPackage, PrimitiveType.CHAR, _charIterator)
+    private val _byteArray by createPrimitiveArrayClass(kotlinIrPackage, PrimitiveType.BYTE, _byteIterator)
+    private val _shortArray by createPrimitiveArrayClass(kotlinIrPackage, PrimitiveType.SHORT, _shortIterator)
+    private val _intArray by createPrimitiveArrayClass(kotlinIrPackage, PrimitiveType.INT, _intIterator)
+    private val _longArray by createPrimitiveArrayClass(kotlinIrPackage, PrimitiveType.LONG, _longIterator)
+    private val _floatArray by createPrimitiveArrayClass(kotlinIrPackage, PrimitiveType.FLOAT, _floatIterator)
+    private val _doubleArray by createPrimitiveArrayClass(kotlinIrPackage, PrimitiveType.DOUBLE, _doubleIterator)
 
     override val booleanArray: IrClassSymbol get() = _booleanArray.klass
     override val charArray: IrClassSymbol get() = _charArray.klass

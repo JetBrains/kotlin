@@ -425,6 +425,27 @@ class IrBuiltInsOverDescriptors(
     override val primitiveIrTypesWithComparisons = listOf(charType, byteType, shortType, intType, floatType, longType, doubleType)
     override val primitiveFloatingPointIrTypes = listOf(floatType, doubleType)
 
+    override val byteIterator = getPrimitiveIterator(PrimitiveType.BYTE)
+    override val charIterator = getPrimitiveIterator(PrimitiveType.CHAR)
+    override val shortIterator = getPrimitiveIterator(PrimitiveType.SHORT)
+    override val intIterator = getPrimitiveIterator(PrimitiveType.INT)
+    override val longIterator = getPrimitiveIterator(PrimitiveType.LONG)
+    override val floatIterator = getPrimitiveIterator(PrimitiveType.FLOAT)
+    override val doubleIterator = getPrimitiveIterator(PrimitiveType.DOUBLE)
+    override val booleanIterator = getPrimitiveIterator(PrimitiveType.BOOLEAN)
+
+    private fun getPrimitiveIterator(kind: PrimitiveType): IrClassSymbol {
+        val iteratorName = FqName("kotlin.collections.${kind.typeName}Iterator")
+        return builtIns.getBuiltInClassByFqName(iteratorName).let {
+            val iteratorIrSymbol = it.toIrSymbol()
+            it.unsubstitutedMemberScope
+                .getContributedFunctions(Name.identifier("next"), NoLookupLocation.FROM_BACKEND)
+                .single()
+                .toIrSymbol()
+            iteratorIrSymbol
+        }
+    }
+
     override val byteArray = builtIns.getPrimitiveArrayClassDescriptor(PrimitiveType.BYTE).toIrSymbol()
     override val charArray = builtIns.getPrimitiveArrayClassDescriptor(PrimitiveType.CHAR).toIrSymbol()
     override val shortArray = builtIns.getPrimitiveArrayClassDescriptor(PrimitiveType.SHORT).toIrSymbol()
