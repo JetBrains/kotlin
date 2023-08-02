@@ -1,6 +1,12 @@
 // RENDER_DIAGNOSTICS_FULL_TEXT
 // MODULE: m1-common
 // FILE: common.kt
+@Target(
+    AnnotationTarget.FUNCTION,
+    AnnotationTarget.CLASS,
+    AnnotationTarget.VALUE_PARAMETER,
+    AnnotationTarget.TYPE_PARAMETER,
+)
 annotation class Ann
 
 @Ann
@@ -26,6 +32,8 @@ expect fun withDifferentArg()
 
 expect fun inValueParam(@Ann arg: String)
 
+expect fun <@Ann T> inTypeParam()
+
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
 <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual class <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>OnClass<!><!>
@@ -47,3 +55,5 @@ class MemberScopeViaTypealiasImpl {
 actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>withDifferentArg<!>() {}<!>
 
 <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>inValueParam<!>(arg: String) {}<!>
+
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual fun <T> <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>inTypeParam<!>() {}<!>

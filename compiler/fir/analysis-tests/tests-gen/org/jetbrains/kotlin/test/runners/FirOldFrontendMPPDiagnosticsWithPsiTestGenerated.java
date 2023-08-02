@@ -909,6 +909,12 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
         }
 
         @Test
+        @TestMetadata("typeParameters.kt")
+        public void testTypeParameters() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/typeParameters.kt");
+        }
+
+        @Test
         @TestMetadata("typealias.kt")
         public void testTypealias() throws Exception {
             runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/typealias.kt");
