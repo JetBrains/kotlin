@@ -14657,6 +14657,12 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
             }
 
             @Test
+            @TestMetadata("intersectionInLocal.kt")
+            public void testIntersectionInLocal() throws Exception {
+                runTest("compiler/testData/codegen/box/fakeOverride/intersectionInLocal.kt");
+            }
+
+            @Test
             @TestMetadata("kt49371.kt")
             public void testKt49371() throws Exception {
                 runTest("compiler/testData/codegen/box/fakeOverride/kt49371.kt");
@@ -14684,6 +14690,12 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
             @TestMetadata("propertySetter.kt")
             public void testPropertySetter() throws Exception {
                 runTest("compiler/testData/codegen/box/fakeOverride/propertySetter.kt");
+            }
+
+            @Test
+            @TestMetadata("substitutionInLocal.kt")
+            public void testSubstitutionInLocal() throws Exception {
+                runTest("compiler/testData/codegen/box/fakeOverride/substitutionInLocal.kt");
             }
 
             @Test
@@ -26664,6 +26676,12 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
                     }
 
                     @Test
+                    @TestMetadata("intersectionOverrideWithDefaultParameterInCommonModule.kt")
+                    public void testIntersectionOverrideWithDefaultParameterInCommonModule() throws Exception {
+                        runTest("compiler/testData/codegen/box/multiplatform/k2/basic/intersectionOverrideWithDefaultParameterInCommonModule.kt");
+                    }
+
+                    @Test
                     @TestMetadata("kt-56329.kt")
                     public void testKt_56329() throws Exception {
                         runTest("compiler/testData/codegen/box/multiplatform/k2/basic/kt-56329.kt");
@@ -26673,6 +26691,12 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
                     @TestMetadata("localIntersectionOverrideInCommonModule.kt")
                     public void testLocalIntersectionOverrideInCommonModule() throws Exception {
                         runTest("compiler/testData/codegen/box/multiplatform/k2/basic/localIntersectionOverrideInCommonModule.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("localIntersectionOverrideWithDefaultParameterInCommonModule.kt")
+                    public void testLocalIntersectionOverrideWithDefaultParameterInCommonModule() throws Exception {
+                        runTest("compiler/testData/codegen/box/multiplatform/k2/basic/localIntersectionOverrideWithDefaultParameterInCommonModule.kt");
                     }
 
                     @Test
