@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -31,26 +30,25 @@ import viper.silver.ast.Method
 import viper.silver.ast.Program
 
 const val INT_BACKING_FIELD = "backing_int"
-const val RETURN_VARIABLE_NAME = "ret"
 
-class ConvertedVar(val name: String, val type: ConvertedType) {
+class ConvertedVar(val name: ConvertedName, val type: ConvertedType) {
     fun toLocalVarDecl(
         pos: Position = Position.NoPosition,
         info: Info = Info.NoInfo,
         trafos: Trafos = Trafos.NoTrafos,
-    ): LocalVarDecl = localVarDecl(name, type.viperType, pos, info, trafos)
+    ): LocalVarDecl = localVarDecl(name.asString, type.viperType, pos, info, trafos)
 
     fun toLocalVar(
         pos: Position = Position.NoPosition,
         info: Info = Info.NoInfo,
         trafos: Trafos = Trafos.NoTrafos,
-    ): Exp.LocalVar = Exp.LocalVar(name, type.viperType, pos, info, trafos)
+    ): Exp.LocalVar = Exp.LocalVar(name.asString, type.viperType, pos, info, trafos)
 
     fun preconditions(): List<Exp> = type.preconditions(toLocalVar())
     fun postconditions(): List<Exp> = type.postconditions(toLocalVar())
 }
 
-class ConvertedMethodSignature(val name: String, val params: List<ConvertedVar>, val returns: List<ConvertedVar>) {
+class ConvertedMethodSignature(val name: ConvertedName, val params: List<ConvertedVar>, val returns: List<ConvertedVar>) {
     fun toMethod(
         pres: List<Exp>, posts: List<Exp>,
         body: Seqn?,
@@ -59,7 +57,7 @@ class ConvertedMethodSignature(val name: String, val params: List<ConvertedVar>,
         trafos: Trafos = Trafos.NoTrafos,
     ): Method =
         method(
-            name,
+            name.asString,
             params.map { it.toLocalVarDecl() },
             returns.map { it.toLocalVarDecl() },
             params.flatMap { it.preconditions() } + pres,
@@ -119,16 +117,16 @@ class MethodConversionContext(val programCtx: ProgramConversionContext, val decl
     init {
         val retType = (declaration.returnTypeRef as FirResolvedTypeRef).type
         val convertedRetType = programCtx.convertType(retType)
-        returnVar = (if (convertedRetType is ConvertedType) ConvertedVar(RETURN_VARIABLE_NAME, convertedRetType) else null)
+        returnVar = (if (convertedRetType is ConvertedType) ConvertedVar(ReturnVariableName, convertedRetType) else null)
 
         val params = declaration.valueParameters.map {
             ConvertedVar(
-                it.name.toString(),
+                it.convertName(),
                 programCtx.convertType((it.returnTypeRef as FirResolvedTypeRef).type) as ConvertedType
             )
         }
         val returns = returnVar?.let { listOf(it) } ?: emptyList()
-        signature = ConvertedMethodSignature(declaration.name.asString(), params, returns)
+        signature = ConvertedMethodSignature(declaration.symbol.callableId.convertName(), params, returns)
     }
 
     private val convertedBody: Seqn
@@ -201,7 +199,7 @@ class StmtConversionVisitor : FirVisitor<Exp?, StmtConversionContext>() {
         val resolvedTypeRef = propertyAccessExpression.typeRef as FirResolvedTypeRef
         return when (symbol) {
             is FirValueParameterSymbol -> ConvertedVar(
-                symbol.callableId.callableName.asString(),
+                symbol.callableId.convertName(),
                 data.methodCtx.programCtx.convertType(resolvedTypeRef.type) as ConvertedType
             ).toLocalVar()
             else -> TODO("Implement other property accesses")

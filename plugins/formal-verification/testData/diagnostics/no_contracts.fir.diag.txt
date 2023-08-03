@@ -1,32 +1,33 @@
 /no_contracts.kt:(4,15): info: field backing_int: Int
 
-method return_unit()
+method global$pkg_$return_unit()
 {
 }
 
 /no_contracts.kt:(25,35): info: field backing_int: Int
 
-method return_int() returns (ret: Int)
+method global$pkg_$return_int() returns (ret$: Int)
 {
-  ret := 0
+  ret$ := 0
 }
 
 /no_contracts.kt:(60,80): info: field backing_int: Int
 
-method take_int_return_unit(x: Int)
+method global$pkg_$take_int_return_unit(local$x: Int)
 {
 }
 
 /no_contracts.kt:(126,145): info: field backing_int: Int
 
-method take_int_return_int(x: Int) returns (ret: Int)
+method global$pkg_$take_int_return_int(local$x: Int) returns (ret$: Int)
 {
-  ret := x
+  ret$ := local$x
 }
 
 /no_contracts.kt:(176,200): info: field backing_int: Int
 
-method take_int_return_int_expr(x: Int) returns (ret: Int)
+method global$pkg_$take_int_return_int_expr(local$x: Int)
+  returns (ret$: Int)
 {
-  ret := x
+  ret$ := local$x
 }

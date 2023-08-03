@@ -1,11 +1,11 @@
 /simple.kt:(84,100): info: field backing_int: Int
 
-method without_contract()
+method global$pkg_$without_contract()
 {
 }
 
 /simple.kt:(148,161): info: field backing_int: Int
 
-method with_contract()
+method global$pkg_$with_contract()
 {
 }
