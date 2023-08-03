@@ -1855,9 +1855,12 @@ internal class CodeGeneratorVisitor(
      *
      * So for now, we would just normalize all NaN constants. At least this leads to predictable result
      * useful in almost all cases.
+     *
+     * Also, java.lang classes are used here to avoid unexpected NaN values if a compiler and stdlib
+     * are built in an arm64 architecture environment.
      */
-    private fun Float.normalizeNan() = if (isNaN()) Float.NaN else this
-    private fun Double.normalizeNan() = if (isNaN()) Double.NaN else this
+    private fun Float.normalizeNan() = if (isNaN()) java.lang.Float.NaN else this
+    private fun Double.normalizeNan() = if (isNaN()) java.lang.Double.NaN else this
 
     private fun evaluateConst(value: IrConst<*>): ConstValue {
         context.log{"evaluateConst                  : ${ir2string(value)}"}
