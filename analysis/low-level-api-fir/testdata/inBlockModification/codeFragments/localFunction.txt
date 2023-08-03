@@ -1,0 +1,14 @@
+BEFORE MODIFICATION:
+CODE FRAGMENT: {
+    local final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
+    }
+
+    local final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit| {
+        R|/foo|()
+    }
+
+    R|/bar|()
+}
+
+AFTER MODIFICATION:
+CODE FRAGMENT: { LAZY_BLOCK }

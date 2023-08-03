@@ -16,7 +16,8 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.Analys
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
-import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtAnnotated
+import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.test.services.TestModuleStructure
@@ -32,43 +33,51 @@ abstract class AbstractInBlockModificationTest : AbstractLowLevelApiSingleFileTe
 
         val declaration = selectedElement.getNonLocalReanalyzableContainingDeclaration()
         val actual = if (declaration != null) {
-            resolveWithCaches(ktFile) { firSession ->
-                val firDeclarationBefore = declaration.getOrBuildFirOfType<FirDeclaration>(firSession)
-                val declarationTextBefore = firDeclarationBefore.render()
-
-                declaration.modifyBody()
-                invalidateAfterInBlockModification(declaration)
-
-                val declarationTextAfterModification = firDeclarationBefore.render()
-                testServices.assertions.assertNotEquals(declarationTextBefore, declarationTextAfterModification) {
-                    "The declaration before and after modification must be in different state"
-                }
-
-                val firDeclarationAfter = declaration.getOrBuildFirOfType<FirDeclaration>(firSession)
-                testServices.assertions.assertEquals(firDeclarationBefore, firDeclarationAfter) {
-                    "The declaration before and after must be the same"
-                }
-
-                val declarationTextAfter = firDeclarationAfter.render()
-                testServices.assertions.assertEquals(declarationTextBefore, declarationTextAfter) {
-                    "The declaration must have the same in the resolved state"
-                }
-
-                "BEFORE MODIFICATION:\n$declarationTextBefore\nAFTER MODIFICATION:\n$declarationTextAfterModification"
-            }
+            val (before, after) = testInBlockModification(ktFile, declaration, testServices)
+            "BEFORE MODIFICATION:\n$before\nAFTER MODIFICATION:\n$after"
         } else {
             "IN-BLOCK MODIFICATION IS NOT APPLICABLE FOR THIS PLACE"
         }
 
         testServices.assertions.assertEqualsToTestDataFileSibling(actual)
     }
+}
 
-    /**
-     * Emulate modification inside the body
-     */
-    private fun KtDeclaration.modifyBody() {
-        parentsWithSelf.filterIsInstance<ASTDelegatePsiElement>().forEach {
-            it.subtreeChanged()
+internal fun testInBlockModification(file: KtFile, declaration: KtAnnotated, testServices: TestServices): Pair<String, String> {
+    return resolveWithCaches(file) { firSession ->
+        val firDeclarationBefore = declaration.getOrBuildFirOfType<FirDeclaration>(firSession)
+        val declarationTextBefore = firDeclarationBefore.render()
+
+        declaration.modifyBody()
+        invalidateAfterInBlockModification(declaration)
+
+        val declarationTextAfterModification = firDeclarationBefore.render()
+        testServices.assertions.assertNotEquals(declarationTextBefore, declarationTextAfterModification) {
+            "The declaration before and after modification must be in different state"
+        }
+
+        val firDeclarationAfter = declaration.getOrBuildFirOfType<FirDeclaration>(firSession)
+        testServices.assertions.assertEquals(firDeclarationBefore, firDeclarationAfter) {
+            "The declaration before and after must be the same"
+        }
+
+        val declarationTextAfter = firDeclarationAfter.render()
+        testServices.assertions.assertEquals(declarationTextBefore, declarationTextAfter) {
+            "The declaration must have the same in the resolved state"
+        }
+
+        Pair(declarationTextBefore, declarationTextAfterModification)
+    }
+}
+
+/**
+ * Emulate modification inside the body
+ */
+private fun KtAnnotated.modifyBody() {
+    for (parent in parentsWithSelf) {
+        when (parent) {
+            is ASTDelegatePsiElement -> parent.subtreeChanged()
+            is KtCodeFragment -> parent.subtreeChanged()
         }
     }
 }

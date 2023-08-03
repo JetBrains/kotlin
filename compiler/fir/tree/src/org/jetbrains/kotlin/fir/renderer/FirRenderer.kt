@@ -202,6 +202,11 @@ class FirRenderer(
             printer.popIndent()
         }
 
+        override fun visitCodeFragment(codeFragment: FirCodeFragment) {
+            printer.print("CODE FRAGMENT:")
+            bodyRenderer?.renderBody(codeFragment.block)
+        }
+
         override fun visitFileAnnotationsContainer(fileAnnotationsContainer: FirFileAnnotationsContainer) {
             if (fileAnnotationsContainerRenderer != null) {
                 fileAnnotationsContainerRenderer.render(fileAnnotationsContainer)
