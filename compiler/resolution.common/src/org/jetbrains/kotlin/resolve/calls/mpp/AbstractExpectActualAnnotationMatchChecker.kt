@@ -47,7 +47,7 @@ object AbstractExpectActualAnnotationMatchChecker {
         // TODO(Roman.Efremov, KT-58551): fix actual typealias class members not checked in FE checkers
         // TODO(Roman.Efremov, KT-58551): check annotations on fake overrides in case of implicit actualization
 
-        val skipSourceAnnotations = !actualSymbol.hasSourceAnnotationsErased
+        val skipSourceAnnotations = actualSymbol.hasSourceAnnotationsErased
         val actualAnnotationsByName = actualSymbol.annotations.groupBy { it.classId }
 
         for (expectAnnotation in expectSymbol.annotations) {

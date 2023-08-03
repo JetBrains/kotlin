@@ -369,8 +369,8 @@ class ClassicExpectActualMatchingContext(val platformModule: ModuleDescriptor) :
 
     override val DeclarationSymbolMarker.hasSourceAnnotationsErased: Boolean
         get() {
-            return DescriptorUtils.getContainingSourceFile(asDescriptor()) != SourceFile.NO_SOURCE_FILE ||
-                    this is K1SyntheticClassifierSymbolMarker ||
-                    this is CallableMemberDescriptor && kind == CallableMemberDescriptor.Kind.SYNTHESIZED
+            return DescriptorUtils.getContainingSourceFile(asDescriptor()) == SourceFile.NO_SOURCE_FILE &&
+                    this !is K1SyntheticClassifierSymbolMarker &&
+                    !(this is CallableMemberDescriptor && kind == CallableMemberDescriptor.Kind.SYNTHESIZED)
         }
 }

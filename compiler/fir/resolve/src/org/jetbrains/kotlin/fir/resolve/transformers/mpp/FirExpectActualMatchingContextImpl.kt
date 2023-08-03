@@ -375,7 +375,7 @@ class FirExpectActualMatchingContextImpl private constructor(
     override val DeclarationSymbolMarker.hasSourceAnnotationsErased: Boolean
         get() {
             val symbol = asSymbol()
-            return symbol.source != null || symbol.origin is FirDeclarationOrigin.Plugin
+            return symbol.source == null && symbol.origin !is FirDeclarationOrigin.Plugin
         }
 
     object Factory : FirExpectActualMatchingContextFactory {

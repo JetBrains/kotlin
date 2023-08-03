@@ -491,6 +491,6 @@ internal abstract class IrExpectActualMatchingContext(
     override val DeclarationSymbolMarker.hasSourceAnnotationsErased: Boolean
         get() {
             val ir = asIr()
-            return ir.sourceElement() != null || ir.origin is IrDeclarationOrigin.GeneratedByPlugin
+            return ir.sourceElement() == null && ir.origin !is IrDeclarationOrigin.GeneratedByPlugin
         }
 }
