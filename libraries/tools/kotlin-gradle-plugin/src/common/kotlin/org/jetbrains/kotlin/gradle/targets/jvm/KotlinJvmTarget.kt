@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
 import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmRunDsl
 import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmRunDslImpl
 import org.jetbrains.kotlin.gradle.targets.jvm.tasks.registerMainRunTask
+import org.jetbrains.kotlin.gradle.tasks.DefaultKotlinJavaToolchain
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.Future
@@ -338,6 +339,12 @@ abstract class KotlinJvmTarget @Inject constructor(
     @ExperimentalKotlinGradlePluginApi
     override val compilerOptions: KotlinJvmCompilerOptions = project.objects
         .newInstance<KotlinJvmCompilerOptionsDefault>()
+        .apply {
+            DefaultKotlinJavaToolchain.wireJvmTargetToToolchain(
+                this,
+                project
+            )
+        }
 
     @ExperimentalKotlinGradlePluginApi
     fun compilerOptions(configure: KotlinJvmCompilerOptions.() -> Unit) {

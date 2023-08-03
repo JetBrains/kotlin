@@ -71,21 +71,6 @@ internal abstract class DefaultToolchainSupport @Inject constructor(
                     (it.kotlinJavaToolchain.toolchain as DefaultKotlinJavaToolchain.DefaultJavaToolchainSetter)
                         .useAsConvention(javaLauncher)
                 }
-
-            if (kotlinExtension !is KotlinJvmProjectExtension &&
-                kotlinExtension !is KotlinAndroidProjectExtension
-            ) {
-                tasks
-                    .withType<UsesKotlinJavaToolchain>()
-                    .configureEach { task ->
-                        if (task is KotlinJvmCompile) {
-                            DefaultKotlinJavaToolchain.wireJvmTargetToJvm(
-                                task.compilerOptions,
-                                (task.kotlinJavaToolchain as DefaultKotlinJavaToolchain).providedJvm
-                            )
-                        }
-                    }
-            }
         }
     }
 }
