@@ -8,18 +8,14 @@ package org.jetbrains.kotlin.formver.conversion
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.references.toResolvedBaseSymbol
+import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.isInt
-import org.jetbrains.kotlin.fir.types.isUnit
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.formver.scala.emptySeq
 import org.jetbrains.kotlin.formver.scala.seqOf
 import org.jetbrains.kotlin.formver.scala.silicon.ast.*
-import org.jetbrains.kotlin.formver.scala.silicon.ast.Stmt.Seqn
 import org.jetbrains.kotlin.formver.scala.toScalaBigInt
 import org.jetbrains.kotlin.formver.scala.toScalaSeq
 import org.jetbrains.kotlin.text
@@ -51,7 +47,7 @@ class ConvertedVar(val name: ConvertedName, val type: ConvertedType) {
 class ConvertedMethodSignature(val name: ConvertedName, val params: List<ConvertedVar>, val returns: List<ConvertedVar>) {
     fun toMethod(
         pres: List<Exp>, posts: List<Exp>,
-        body: Seqn?,
+        body: Stmt.Seqn?,
         pos: Position = Position.NoPosition,
         info: Info = Info.NoInfo,
         trafos: Trafos = Trafos.NoTrafos,
@@ -89,7 +85,7 @@ class ProgramConversionContext {
         )
 
     fun addWithBody(declaration: FirSimpleFunction) {
-        val methodCtx = MethodConversionContext(this, declaration);
+        val methodCtx = MethodConversionContext(this, declaration)
         methods.add(methodCtx.fullMethod)
     }
 
@@ -129,7 +125,7 @@ class MethodConversionContext(val programCtx: ProgramConversionContext, val decl
         signature = ConvertedMethodSignature(declaration.symbol.callableId.convertName(), params, returns)
     }
 
-    private val convertedBody: Seqn
+    private val convertedBody: Stmt.Seqn
         get() {
             val body = declaration.body ?: throw Exception("Functions without a body are not supported yet.")
             val ctx = StmtConversionContext(this)
@@ -148,7 +144,7 @@ class MethodConversionContext(val programCtx: ProgramConversionContext, val decl
 class StmtConversionContext(val methodCtx: MethodConversionContext) {
     val statements: MutableList<Stmt> = mutableListOf()
     val declarations: MutableList<Declaration> = mutableListOf()
-    val block = Seqn(statements, declarations)
+    val block = Stmt.Seqn(statements, declarations)
 
     fun convertAndAppend(stmt: FirStatement) {
         stmt.accept(StmtConversionVisitor(), this)
@@ -194,22 +190,20 @@ class StmtConversionVisitor : FirVisitor<Exp?, StmtConversionContext>() {
         propertyAccessExpression: FirPropertyAccessExpression,
         data: StmtConversionContext,
     ): Exp {
-        val resolvedReference = propertyAccessExpression.calleeReference as FirResolvedNamedReference
-        val symbol = resolvedReference.resolvedSymbol
-        val resolvedTypeRef = propertyAccessExpression.typeRef as FirResolvedTypeRef
+        val symbol = propertyAccessExpression.calleeReference.toResolvedBaseSymbol()!!
+        val type = propertyAccessExpression.typeRef.coneTypeOrNull!!
         return when (symbol) {
             is FirValueParameterSymbol -> ConvertedVar(
                 symbol.callableId.convertName(),
-                data.methodCtx.programCtx.convertType(resolvedTypeRef.type) as ConvertedType
+                data.methodCtx.programCtx.convertType(type) as ConvertedType
             ).toLocalVar()
             else -> TODO("Implement other property accesses")
         }
     }
 
     override fun visitFunctionCall(functionCall: FirFunctionCall, data: StmtConversionContext): Exp? {
-        val resolvedReference = functionCall.calleeReference as FirResolvedNamedReference
-        val symbol = resolvedReference.resolvedSymbol as FirCallableSymbol
-        val id = symbol.callableId
+        val id = functionCall.calleeReference.toResolvedCallableSymbol()!!.callableId
+        // TODO: figure out a more structured way of doing this
         if (id.packageName.asString() == "kotlin.contracts" && id.callableName.asString() == "contract") return null
         TODO("Implement function call visitation")
     }
