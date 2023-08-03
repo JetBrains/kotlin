@@ -152,16 +152,16 @@ ALWAYS_INLINE void gc::GC::DestroyExtraObjectData(mm::ExtraObjectData& extraObje
 }
 
 // static
-ALWAYS_INLINE uint64_t type_layout::descriptor_type<gc::GC::ObjectData>::type::size() noexcept {
+ALWAYS_INLINE uint64_t type_layout::descriptor<gc::GC::ObjectData>::type::size() noexcept {
     return 0;
 }
 
 // static
-ALWAYS_INLINE size_t type_layout::descriptor_type<gc::GC::ObjectData>::type::alignment() noexcept {
+ALWAYS_INLINE size_t type_layout::descriptor<gc::GC::ObjectData>::type::alignment() noexcept {
     return 1;
 }
 
 // static
-ALWAYS_INLINE gc::GC::ObjectData* type_layout::descriptor_type<gc::GC::ObjectData>::type::construct(uint8_t* ptr) noexcept {
+ALWAYS_INLINE gc::GC::ObjectData* type_layout::descriptor<gc::GC::ObjectData>::type::construct(uint8_t* ptr) noexcept {
     return reinterpret_cast<gc::GC::ObjectData*>(ptr);
 }

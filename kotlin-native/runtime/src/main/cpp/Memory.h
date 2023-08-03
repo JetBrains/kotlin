@@ -152,7 +152,7 @@ struct ObjectBody;
 struct ArrayBody;
 
 template <>
-struct type_layout::descriptor_type<ObjectBody> {
+struct type_layout::descriptor<ObjectBody> {
     class type {
     public:
         using value_type = ObjectBody;
@@ -173,7 +173,7 @@ struct type_layout::descriptor_type<ObjectBody> {
 };
 
 template <>
-struct type_layout::descriptor_type<ArrayBody> {
+struct type_layout::descriptor<ArrayBody> {
     class type {
     public:
         using value_type = ArrayBody;

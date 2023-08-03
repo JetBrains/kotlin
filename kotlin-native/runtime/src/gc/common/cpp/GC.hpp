@@ -52,7 +52,7 @@ public:
     };
 
     // Header to be placed before each heap object. GC will use this to keep its data if needed.
-    // This is used via `type_layout::descriptor_type_t`, which is specialized below.
+    // This is used via `type_layout::descriptor_t`, which is specialized below.
     // If GC doesn't need any data, it can make `size()` return 0 and `alignment()`
     // return 1.
     // Note: GC does not deinitialize `ObjectData`, so the implementations must ensure that
@@ -101,7 +101,7 @@ inline constexpr bool kSupportsMultipleMutators = true;
 } // namespace gc
 
 template <>
-struct type_layout::descriptor_type<gc::GC::ObjectData> {
+struct type_layout::descriptor<gc::GC::ObjectData> {
     struct type {
         using value_type = gc::GC::ObjectData;
 

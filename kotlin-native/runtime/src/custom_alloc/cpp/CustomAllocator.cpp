@@ -35,7 +35,7 @@ CustomAllocator::CustomAllocator(Heap& heap) noexcept : heap_(heap), nextFitPage
 
 ObjHeader* CustomAllocator::CreateObject(const TypeInfo* typeInfo) noexcept {
     RuntimeAssert(!typeInfo->IsArray(), "Must not be an array");
-    auto descriptor = HeapObject::descriptor(typeInfo);
+    auto descriptor = HeapObject::make_descriptor(typeInfo);
     auto& heapObject = *descriptor.construct(Allocate(descriptor.size()));
     ObjHeader* object = heapObject.header(descriptor).object();
     if (typeInfo->flags_ & TF_HAS_FINALIZER) {
@@ -52,7 +52,7 @@ ObjHeader* CustomAllocator::CreateObject(const TypeInfo* typeInfo) noexcept {
 ArrayHeader* CustomAllocator::CreateArray(const TypeInfo* typeInfo, uint32_t count) noexcept {
     CustomAllocDebug("CustomAllocator@%p::CreateArray(%d)", this ,count);
     RuntimeAssert(typeInfo->IsArray(), "Must be an array");
-    auto descriptor = HeapArray::descriptor(typeInfo, count);
+    auto descriptor = HeapArray::make_descriptor(typeInfo, count);
     auto& heapArray = *descriptor.construct(Allocate(descriptor.size()));
     ArrayHeader* array = heapArray.header(descriptor).array();
     array->typeInfoOrMeta_ = const_cast<TypeInfo*>(typeInfo);
@@ -104,9 +104,9 @@ size_t CustomAllocator::GetAllocatedHeapSize(ObjHeader* object) noexcept {
     RuntimeAssert(object->heap(), "Object must be a heap object");
     const auto* typeInfo = object->type_info();
     if (typeInfo->IsArray()) {
-        return HeapArray::descriptor(typeInfo, object->array()->count_).size();
+        return HeapArray::make_descriptor(typeInfo, object->array()->count_).size();
     } else {
-        return HeapObject::descriptor(typeInfo).size();
+        return HeapObject::make_descriptor(typeInfo).size();
     }
 }
 

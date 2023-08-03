@@ -23,15 +23,15 @@
 namespace kotlin::alloc {
 
 struct HeapObjHeader {
-    using descriptor_type = type_layout::Composite<HeapObjHeader, gc::GC::ObjectData, ObjHeader>;
+    using descriptor = type_layout::Composite<HeapObjHeader, gc::GC::ObjectData, ObjHeader>;
 
-    static HeapObjHeader& from(gc::GC::ObjectData& objectData) noexcept { return *descriptor_type().fromField<0>(&objectData); }
+    static HeapObjHeader& from(gc::GC::ObjectData& objectData) noexcept { return *descriptor().fromField<0>(&objectData); }
 
-    static HeapObjHeader& from(ObjHeader* object) noexcept { return *descriptor_type().fromField<1>(object); }
+    static HeapObjHeader& from(ObjHeader* object) noexcept { return *descriptor().fromField<1>(object); }
 
-    gc::GC::ObjectData& objectData() noexcept { return *descriptor_type().field<0>(this).second; }
+    gc::GC::ObjectData& objectData() noexcept { return *descriptor().field<0>(this).second; }
 
-    ObjHeader* object() noexcept { return descriptor_type().field<1>(this).second; }
+    ObjHeader* object() noexcept { return descriptor().field<1>(this).second; }
 
 private:
     HeapObjHeader() = delete;
@@ -39,13 +39,13 @@ private:
 };
 
 struct HeapObject {
-    using descriptor_type = type_layout::Composite<HeapObject, HeapObjHeader, ObjectBody>;
+    using descriptor = type_layout::Composite<HeapObject, HeapObjHeader, ObjectBody>;
 
-    static descriptor_type descriptor(const TypeInfo* typeInfo) noexcept {
-        return descriptor_type{{}, type_layout::descriptor_type_t<ObjectBody>{typeInfo}};
+    static descriptor make_descriptor(const TypeInfo* typeInfo) noexcept {
+        return descriptor{{}, type_layout::descriptor_t<ObjectBody>{typeInfo}};
     }
 
-    HeapObjHeader& header(descriptor_type descriptor) noexcept { return *descriptor.field<0>(this).second; }
+    HeapObjHeader& header(descriptor descriptor) noexcept { return *descriptor.field<0>(this).second; }
 
 private:
     HeapObject() = delete;
@@ -55,15 +55,15 @@ private:
 // Needs to be kept compatible with `HeapObjHeader` just like `ArrayHeader` is compatible
 // with `ObjHeader`: the former can always be casted to the other.
 struct HeapArrayHeader {
-    using descriptor_type = type_layout::Composite<HeapArrayHeader, gc::GC::ObjectData, ArrayHeader>;
+    using descriptor = type_layout::Composite<HeapArrayHeader, gc::GC::ObjectData, ArrayHeader>;
 
-    static HeapArrayHeader& from(gc::GC::ObjectData& objectData) noexcept { return *descriptor_type().fromField<0>(&objectData); }
+    static HeapArrayHeader& from(gc::GC::ObjectData& objectData) noexcept { return *descriptor().fromField<0>(&objectData); }
 
-    static HeapArrayHeader& from(ArrayHeader* array) noexcept { return *descriptor_type().fromField<1>(array); }
+    static HeapArrayHeader& from(ArrayHeader* array) noexcept { return *descriptor().fromField<1>(array); }
 
-    gc::GC::ObjectData& objectData() noexcept { return *descriptor_type().field<0>(this).second; }
+    gc::GC::ObjectData& objectData() noexcept { return *descriptor().field<0>(this).second; }
 
-    ArrayHeader* array() noexcept { return descriptor_type().field<1>(this).second; }
+    ArrayHeader* array() noexcept { return descriptor().field<1>(this).second; }
 
 private:
     HeapArrayHeader() = delete;
@@ -71,13 +71,13 @@ private:
 };
 
 struct HeapArray {
-    using descriptor_type = type_layout::Composite<HeapArray, HeapArrayHeader, ArrayBody>;
+    using descriptor = type_layout::Composite<HeapArray, HeapArrayHeader, ArrayBody>;
 
-    static descriptor_type descriptor(const TypeInfo* typeInfo, uint32_t size) noexcept {
-        return descriptor_type{{}, type_layout::descriptor_type_t<ArrayBody>{typeInfo, size}};
+    static descriptor make_descriptor(const TypeInfo* typeInfo, uint32_t size) noexcept {
+        return descriptor{{}, type_layout::descriptor_t<ArrayBody>{typeInfo, size}};
     }
 
-    HeapArrayHeader& header(descriptor_type descriptor) noexcept { return *descriptor.field<0>(this).second; }
+    HeapArrayHeader& header(descriptor descriptor) noexcept { return *descriptor.field<0>(this).second; }
 
 private:
     HeapArray() = delete;

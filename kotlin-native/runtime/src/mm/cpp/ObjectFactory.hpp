@@ -443,15 +443,15 @@ class ObjectFactory : private Pinned {
     using ObjectData = typename Traits::ObjectData;
 
     struct HeapObjHeader {
-        using descriptor_type = type_layout::Composite<HeapObjHeader, ObjectData, ObjHeader>;
+        using descriptor = type_layout::Composite<HeapObjHeader, ObjectData, ObjHeader>;
 
-        static HeapObjHeader& from(ObjectData& objectData) noexcept { return *descriptor_type().template fromField<0>(&objectData); }
+        static HeapObjHeader& from(ObjectData& objectData) noexcept { return *descriptor().template fromField<0>(&objectData); }
 
-        static HeapObjHeader& from(ObjHeader* object) noexcept { return *descriptor_type().template fromField<1>(object); }
+        static HeapObjHeader& from(ObjHeader* object) noexcept { return *descriptor().template fromField<1>(object); }
 
-        ObjectData& objectData() noexcept { return *descriptor_type().template field<0>(this).second; }
+        ObjectData& objectData() noexcept { return *descriptor().template field<0>(this).second; }
 
-        ObjHeader* object() noexcept { return descriptor_type().template field<1>(this).second; }
+        ObjHeader* object() noexcept { return descriptor().template field<1>(this).second; }
 
     private:
         HeapObjHeader() = delete;
@@ -459,13 +459,13 @@ class ObjectFactory : private Pinned {
     };
 
     struct HeapObject {
-        using descriptor_type = type_layout::Composite<HeapObject, HeapObjHeader, ObjectBody>;
+        using descriptor = type_layout::Composite<HeapObject, HeapObjHeader, ObjectBody>;
 
-        static descriptor_type descriptor(const TypeInfo* typeInfo) noexcept {
-            return descriptor_type{{}, type_layout::descriptor_type_t<ObjectBody>{typeInfo}};
+        static descriptor make_descriptor(const TypeInfo* typeInfo) noexcept {
+            return descriptor{{}, type_layout::descriptor_t<ObjectBody>{typeInfo}};
         }
 
-        HeapObjHeader& header(descriptor_type descriptor) noexcept { return *descriptor.template field<0>(this).second; }
+        HeapObjHeader& header(descriptor descriptor) noexcept { return *descriptor.template field<0>(this).second; }
 
     private:
         HeapObject() = delete;
@@ -475,15 +475,15 @@ class ObjectFactory : private Pinned {
     // Needs to be kept compatible with `HeapObjHeader` just like `ArrayHeader` is compatible
     // with `ObjHeader`: the former can always be casted to the other.
     struct HeapArrayHeader {
-        using descriptor_type = type_layout::Composite<HeapArrayHeader, ObjectData, ArrayHeader>;
+        using descriptor = type_layout::Composite<HeapArrayHeader, ObjectData, ArrayHeader>;
 
-        static HeapArrayHeader& from(ObjectData& objectData) noexcept { return *descriptor_type().template fromField<0>(&objectData); }
+        static HeapArrayHeader& from(ObjectData& objectData) noexcept { return *descriptor().template fromField<0>(&objectData); }
 
-        static HeapArrayHeader& from(ArrayHeader* array) noexcept { return *descriptor_type().template fromField<1>(array); }
+        static HeapArrayHeader& from(ArrayHeader* array) noexcept { return *descriptor().template fromField<1>(array); }
 
-        ObjectData& objectData() noexcept { return *descriptor_type().template field<0>(this).second; }
+        ObjectData& objectData() noexcept { return *descriptor().template field<0>(this).second; }
 
-        ArrayHeader* array() noexcept { return descriptor_type().template field<1>(this).second; }
+        ArrayHeader* array() noexcept { return descriptor().template field<1>(this).second; }
 
     private:
         HeapArrayHeader() = delete;
@@ -491,13 +491,13 @@ class ObjectFactory : private Pinned {
     };
 
     struct HeapArray {
-        using descriptor_type = type_layout::Composite<HeapArray, HeapArrayHeader, ArrayBody>;
+        using descriptor = type_layout::Composite<HeapArray, HeapArrayHeader, ArrayBody>;
 
-        static descriptor_type descriptor(const TypeInfo* typeInfo, uint32_t size) noexcept {
-            return descriptor_type{{}, type_layout::descriptor_type_t<ArrayBody>{typeInfo, size}};
+        static descriptor make_descriptor(const TypeInfo* typeInfo, uint32_t size) noexcept {
+            return descriptor{{}, type_layout::descriptor_t<ArrayBody>{typeInfo, size}};
         }
 
-        HeapArrayHeader& header(descriptor_type descriptor) noexcept { return *descriptor.template field<0>(this).second; }
+        HeapArrayHeader& header(descriptor descriptor) noexcept { return *descriptor.template field<0>(this).second; }
 
     private:
         HeapArray() = delete;
@@ -509,9 +509,9 @@ class ObjectFactory : private Pinned {
         RuntimeAssert(object->heap(), "Object must be a heap object");
         const auto* typeInfo = object->type_info();
         if (typeInfo->IsArray()) {
-            return HeapArray::descriptor(typeInfo, object->array()->count_).size();
+            return HeapArray::make_descriptor(typeInfo, object->array()->count_).size();
         } else {
-            return HeapObject::descriptor(typeInfo).size();
+            return HeapObject::make_descriptor(typeInfo).size();
         }
     }
 
@@ -583,7 +583,7 @@ public:
 
         ObjHeader* CreateObject(const TypeInfo* typeInfo) noexcept {
             RuntimeAssert(!typeInfo->IsArray(), "Must not be an array");
-            auto descriptor = HeapObject::descriptor(typeInfo);
+            auto descriptor = HeapObject::make_descriptor(typeInfo);
             auto& heapObject = *descriptor.construct(producer_.Insert(descriptor.size()).Data());
             ObjHeader* object = heapObject.header(descriptor).object();
             object->typeInfoOrMeta_ = const_cast<TypeInfo*>(typeInfo);
@@ -593,7 +593,7 @@ public:
 
         ArrayHeader* CreateArray(const TypeInfo* typeInfo, uint32_t count) noexcept {
             RuntimeAssert(typeInfo->IsArray(), "Must be an array");
-            auto descriptor = HeapArray::descriptor(typeInfo, count);
+            auto descriptor = HeapArray::make_descriptor(typeInfo, count);
             auto& heapArray = *descriptor.construct(producer_.Insert(descriptor.size()).Data());
             ArrayHeader* array = heapArray.header(descriptor).array();
             array->typeInfoOrMeta_ = const_cast<TypeInfo*>(typeInfo);
