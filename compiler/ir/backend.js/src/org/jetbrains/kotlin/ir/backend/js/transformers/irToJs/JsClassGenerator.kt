@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.butIf
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
+import org.jetbrains.kotlin.utils.memoryOptimizedMapNotNull
 import org.jetbrains.kotlin.utils.toSmartList
 
 class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationContext) {
@@ -537,8 +538,14 @@ private fun IrOverridableDeclaration<*>.overridesExternal(): Boolean {
 
 private val IrClassifierSymbol.isInterface get() = (owner as? IrClass)?.isInterface == true
 
+private fun IrClassSymbol.existsInRuntime(): Boolean {
+    return !owner.isEffectivelyExternal() || !owner.isInterface
+}
+
 class JsIrClassModel(val klass: IrClass) {
-    val superClasses = klass.superTypes.memoryOptimizedMap { it.classifierOrNull as IrClassSymbol }
+    val superClasses = klass.superTypes.memoryOptimizedMapNotNull {
+        (it.classifierOrNull as IrClassSymbol).takeIf(IrClassSymbol::existsInRuntime)
+    }
 
     val preDeclarationBlock = JsCompositeBlock()
     val postDeclarationBlock = JsCompositeBlock()
