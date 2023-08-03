@@ -17,7 +17,6 @@ import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationToRunnableFiles
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext.MavenScope
@@ -31,9 +30,7 @@ internal data class ModuleCoordinates(
 
 internal class PomDependenciesRewriter(
     project: Project,
-
-    @field:Transient
-    private val component: KotlinTargetComponent
+    component: KotlinTargetComponent
 ) {
 
     // Get the dependencies mapping according to the component's UsageContexts:
@@ -52,9 +49,6 @@ internal class PomDependenciesRewriter(
         pomXml: XmlProvider,
         includeOnlySpecifiedDependencies: Provider<Set<ModuleCoordinates>>? = null
     ) {
-        if (component !is SoftwareComponentInternal)
-            return
-
         val dependenciesNode = (pomXml.asNode().get("dependencies") as NodeList).filterIsInstance<Node>().singleOrNull() ?: return
 
         val dependencyNodes = (dependenciesNode.get("dependency") as? NodeList).orEmpty().filterIsInstance<Node>()

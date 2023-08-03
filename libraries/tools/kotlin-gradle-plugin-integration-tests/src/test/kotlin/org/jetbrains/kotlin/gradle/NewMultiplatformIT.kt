@@ -1257,7 +1257,7 @@ open class NewMultiplatformIT : BaseGradleIT() {
                 """.trimIndent()
             )
 
-            build("clean", "publish") {
+            build("clean", "publish", options = defaultBuildOptions().copy(configurationCache = true)) {
                 assertSuccessful()
                 assertFileContains(
                     "repo/com/exampleapp/sample-app-nodejs/1.0/sample-app-nodejs-1.0.pom",
