@@ -49,12 +49,6 @@ var <T> T.danglingTypeConstraints: List<DanglingTypeConstraint>?
 
 // ----------------------------------- Utils -----------------------------------
 
-val FirMemberDeclaration.containerSource: SourceElement?
-    get() = when (this) {
-        is FirCallableDeclaration -> containerSource
-        is FirClassLikeDeclaration -> sourceElement
-    }
-
 val FirProperty.hasExplicitBackingField: Boolean
     get() = backingField != null && backingField !is FirDefaultPropertyBackingField
 

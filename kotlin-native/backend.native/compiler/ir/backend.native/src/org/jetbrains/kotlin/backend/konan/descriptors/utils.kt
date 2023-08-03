@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.backend.konan.descriptors
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
-import org.jetbrains.kotlin.fir.declarations.utils.containerSource
+import org.jetbrains.kotlin.fir.declarations.utils.sourceElement
 import org.jetbrains.kotlin.fir.lazy.AbstractFir2IrLazyDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -62,8 +64,11 @@ private fun DeclarationDescriptor.isFromFirDeserializedInteropLibrary(): Boolean
     //  - K2 metadata deserializer doesn't set containerSource for property accessors.
     val topLevelDeclaration = declaration.findTopLevelDeclaration().propertyIfAccessor()
 
-    val firDeclaration = (topLevelDeclaration as? AbstractFir2IrLazyDeclaration<*>)?.fir ?: return false
-    val containerSource = (firDeclaration as? FirMemberDeclaration)?.containerSource
+    val firDeclaration = (topLevelDeclaration as? AbstractFir2IrLazyDeclaration<*>)?.fir as? FirMemberDeclaration ?: return false
+    val containerSource = when (firDeclaration) {
+        is FirCallableDeclaration -> firDeclaration.containerSource
+        is FirClassLikeDeclaration -> firDeclaration.sourceElement
+    }
 
     return containerSource is KlibDeserializedContainerSource && containerSource.isFromNativeInteropLibrary
 }
