@@ -15,7 +15,6 @@
 #include "Logging.hpp"
 #include "MarkAndSweepUtils.hpp"
 #include "Memory.h"
-#include "ObjectAlloc.hpp"
 #include "ThreadData.hpp"
 #include "ThreadSuspension.hpp"
 #include "GCState.hpp"
@@ -104,7 +103,8 @@ gc::ConcurrentMarkAndSweep::ConcurrentMarkAndSweep(
         ObjectFactory& objectFactory,
         mm::ExtraObjectDataFactory& extraObjectDataFactory,
         gcScheduler::GCScheduler& gcScheduler,
-        bool mutatorsCooperate, std::size_t auxGCThreads) noexcept :
+        bool mutatorsCooperate,
+        std::size_t auxGCThreads) noexcept :
     objectFactory_(objectFactory),
     extraObjectDataFactory_(extraObjectDataFactory),
 #else
@@ -118,8 +118,7 @@ gc::ConcurrentMarkAndSweep::ConcurrentMarkAndSweep(
         state_.finalized(epoch);
     }),
     markDispatcher_(mutatorsCooperate),
-    mainThread_(createGCThread("Main GC thread", [this] { mainGCThreadBody(); }))
-{
+    mainThread_(createGCThread("Main GC thread", [this] { mainGCThreadBody(); })) {
     for (std::size_t i = 0; i < auxGCThreads; ++i) {
         auxThreads_.emplace_back(createGCThread("Auxiliary GC thread", [this] { auxiliaryGCThreadBody(); }));
     }

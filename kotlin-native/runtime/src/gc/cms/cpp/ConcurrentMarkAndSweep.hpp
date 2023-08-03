@@ -70,7 +70,8 @@ public:
             ObjectFactory& objectFactory,
             mm::ExtraObjectDataFactory& extraObjectDataFactory,
             gcScheduler::GCScheduler& scheduler,
-            bool mutatorsCooperate, std::size_t auxGCThreads) noexcept;
+            bool mutatorsCooperate,
+            std::size_t auxGCThreads) noexcept;
 #endif
     ~ConcurrentMarkAndSweep();
 
