@@ -14,11 +14,13 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitAnyTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitNullableAnyTypeRef
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.load.java.structure.JavaPrimitiveType
 import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 fun FirFunction.computeJvmSignature(typeConversion: (FirTypeRef) -> ConeKotlinType? = FirTypeRef::coneTypeSafe): String? {
     val containingClass = containingClassLookupTag() ?: return null
@@ -45,7 +47,25 @@ fun FirFunction.computeJvmDescriptor(
 
     append("(")
     for (parameter in valueParameters) {
-        typeConversion(parameter.returnTypeRef)?.let { appendConeType(it, typeConversion, mutableSetOf()) }
+        typeConversion(parameter.returnTypeRef)?.let { coneType ->
+            try {
+                appendConeType(coneType, typeConversion, mutableSetOf())
+            } catch (e: ConcurrentModificationException) {
+                errorWithAttachment("CME from appendConeType", cause = e) {
+                    withEntry("typeClass", coneType::class.simpleName)
+                    withEntry("type", coneType) {
+                        try {
+                            it.renderForDebugging()
+                        } catch (e: Throwable) {
+                            "Render is failed due to ${e::class}"
+                        }
+                    }
+
+                    withFirEntry("parameter", parameter)
+                    withFirEntry("function", this@computeJvmDescriptor)
+                }
+            }
+        }
     }
     append(")")
 

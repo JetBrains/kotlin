@@ -23,7 +23,9 @@ import org.jetbrains.kotlin.fir.scopes.jvm.computeJvmDescriptorRepresentation
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 class JavaOverrideChecker internal constructor(
     private val session: FirSession,
@@ -148,7 +150,16 @@ class JavaOverrideChecker internal constructor(
 
     private fun Collection<FirTypeParameterRef>.buildErasure() = associate {
         val symbol = it.symbol
-        val firstBound = symbol.fir.bounds.first() // Note that in Java type parameter typed arguments always erased to first bound
+        val firstBound = symbol.fir.bounds.firstOrNull() // Note that in Java type parameter typed arguments always erased to first bound
+        if (firstBound == null) {
+            errorWithAttachment("Bound element is not found") {
+                withFirEntry("typeParameterRef", it)
+                val firTypeParameter = it.symbol.fir
+                withFirEntry("typeParameter", firTypeParameter)
+                withFirEntry("containingDeclaration", firTypeParameter.containingDeclarationSymbol.fir)
+            }
+        }
+
         symbol to firstBound.toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack)
     }
 
