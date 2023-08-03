@@ -395,7 +395,7 @@ object FirErrors {
     val NO_CONTEXT_RECEIVER by error1<KtElement, ConeKotlinType>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
     val MULTIPLE_ARGUMENTS_APPLICABLE_FOR_CONTEXT_RECEIVER by error1<KtElement, ConeKotlinType>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
     val AMBIGUOUS_CALL_WITH_IMPLICIT_CONTEXT_RECEIVER by error0<KtElement>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)
-    val UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL by error0<KtElement>()
+    val UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL by error0<KtElement>(SourceElementPositioningStrategies.NAME_IDENTIFIER)
 
     // Types & type parameters
     val RECURSION_IN_IMPLICIT_TYPES by error0<PsiElement>()
