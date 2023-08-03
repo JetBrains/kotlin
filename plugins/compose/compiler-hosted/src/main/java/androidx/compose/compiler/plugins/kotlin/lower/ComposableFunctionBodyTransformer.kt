@@ -926,7 +926,7 @@ class ComposableFunctionBodyTransformer(
                         irSourceInformationMarkerEnd(body, scope)
                     else -> null
                 },
-                returnVar?.let { irReturn(declaration.symbol, irGet(it)) }
+                returnVar?.let { irReturnVar(declaration.symbol, it) }
             )
         )
         if (elideGroups && !hasExplicitGroups) {
@@ -1090,7 +1090,7 @@ class ComposableFunctionBodyTransformer(
                     *skipPreamble.statements.toTypedArray(),
                     *bodyPreamble.statements.toTypedArray(),
                     transformedBody,
-                    returnVar?.let { irReturn(declaration.symbol, irGet(it)) }
+                    returnVar?.let { irReturnVar(declaration.symbol, it) }
                 )
             )
         } else {
@@ -1105,7 +1105,7 @@ class ComposableFunctionBodyTransformer(
                     *bodyPreamble.statements.toTypedArray(),
                     transformed,
                     *bodyEpilogue.statements.toTypedArray(),
-                    returnVar?.let { irReturn(declaration.symbol, irGet(it)) }
+                    returnVar?.let { irReturnVar(declaration.symbol, it) }
                 )
             )
         }
@@ -1279,7 +1279,7 @@ class ComposableFunctionBodyTransformer(
                 *skipPreamble.statements.toTypedArray(),
                 transformedBody,
                 if (returnVar == null) end() else null,
-                returnVar?.let { irReturn(declaration.symbol, irGet(it)) }
+                returnVar?.let { irReturnVar(declaration.symbol, it) }
             )
         )
 
@@ -2398,10 +2398,12 @@ class ComposableFunctionBodyTransformer(
         after: List<IrExpression> = emptyList()
     ): IrExpression {
         return if (after.isEmpty() || type.isNothing() || type.isUnit()) {
-            wrap(type, before, after)
+            wrap(startOffset, endOffset, type, before, after)
         } else {
             val tmpVar = irTemporary(this, nameHint = "group")
             tmpVar.wrap(
+                startOffset,
+                endOffset,
                 type,
                 before,
                 after + irGet(tmpVar)
@@ -2410,6 +2412,8 @@ class ComposableFunctionBodyTransformer(
     }
 
     private fun IrStatement.wrap(
+        startOffset: Int,
+        endOffset: Int,
         type: IrType,
         before: List<IrExpression> = emptyList(),
         after: List<IrExpression> = emptyList()
@@ -3460,6 +3464,8 @@ class ComposableFunctionBodyTransformer(
         } else {
             val tempVar = irTemporary(expression.value, nameHint = "return")
             tempVar.wrap(
+                expression.startOffset,
+                expression.endOffset,
                 expression.type,
                 after = listOf(
                     endBlock,
