@@ -10,18 +10,18 @@ package org.jetbrains.kotlin.gradle.unitTests
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.DocsType
+import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.KotlinSourceSetTreeClassifier
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.orNull
-import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinCompilationDescriptor.CompilationAssociator
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinCompilationDescriptor.CompilationFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinCompilationDescriptorBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.createCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.createExternalKotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.internal
+import org.jetbrains.kotlin.gradle.plugin.mpp.kotlinProjectStructureMetadata
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.gradle.utils.toMap
@@ -35,15 +35,21 @@ class ExternalKotlinTargetApiTests {
 
 
     @Test
-    fun `test - sourceSetClassifier - default`() = buildProjectWithMPP().runLifecycleAwareTest {
+    fun `test - sourceSetClassifier - default`() = project.runLifecycleAwareTest {
         val target = kotlin.createExternalKotlinTarget<FakeTarget> { defaults() }
-        val compilation = target.createCompilation<FakeCompilation> { defaults(kotlin) }
+        val mainCompilation = target.createCompilation<FakeCompilation> { defaults(kotlin) }
+        val fakeCompilation = target.createCompilation<FakeCompilation> {
+            defaults(kotlin)
+            compilationName = "fake"
+            defaultSourceSet = kotlin.sourceSets.create("fake")
+        }
 
-        assertEquals(KotlinSourceSetTree("fake"), KotlinSourceSetTree.orNull(compilation))
+        assertEquals(KotlinSourceSetTree.main, KotlinSourceSetTree.orNull(mainCompilation))
+        assertEquals(KotlinSourceSetTree("fake"), KotlinSourceSetTree.orNull(fakeCompilation))
     }
 
     @Test
-    fun `test - sourceSetClassifier - custom name`() = buildProjectWithMPP().runLifecycleAwareTest {
+    fun `test - sourceSetClassifier - custom name`() = project.runLifecycleAwareTest {
         val target = kotlin.createExternalKotlinTarget<FakeTarget> { defaults() }
         val compilation = target.createCompilation<FakeCompilation> {
             defaults(kotlin)
@@ -54,7 +60,8 @@ class ExternalKotlinTargetApiTests {
     }
 
     @Test
-    fun `test - sourceSetClassifier - custom property`() = buildProjectWithMPP().runLifecycleAwareTest {
+    fun `test - sourceSetClassifier - custom property`() = project.runLifecycleAwareTest {
+        val kotlin = multiplatformExtension
         val myProperty = project.objects.property<KotlinSourceSetTree>()
         val nullProperty = project.objects.property<KotlinSourceSetTree>()
 
@@ -132,8 +139,9 @@ class ExternalKotlinTargetApiTests {
     }
 
     @Test
-    fun `test - sourcesElements - default configuration`() = buildProjectWithMPP().runLifecycleAwareTest {
+    fun `test - sourcesElements - default configuration`() = project.runLifecycleAwareTest {
         val target = kotlin.createExternalKotlinTarget<FakeTarget> { defaults() }
+        target.createCompilation<FakeCompilation> { defaults(kotlin) }
 
         assertNotEquals(target.sourcesElementsConfiguration, target.sourcesElementsPublishedConfiguration)
 
@@ -165,7 +173,7 @@ class ExternalKotlinTargetApiTests {
     }
 
     @Test
-    fun `test - sourcesElements - configure`() = buildProjectWithMPP().runLifecycleAwareTest {
+    fun `test - sourcesElements - configure`() = project.runLifecycleAwareTest {
         val testAttribute = Attribute.of("for.test", String::class.java)
 
         val target = kotlin.createExternalKotlinTarget<FakeTarget> {
@@ -180,6 +188,7 @@ class ExternalKotlinTargetApiTests {
                 configuration.attributes.attribute(testAttribute, "sourcesElements-published")
             }
         }
+        target.createCompilation<FakeCompilation> { defaults(kotlin) }
 
         /* Check traces left before */
         assertEquals("sourcesElements", target.sourcesElementsConfiguration.attributes.getAttribute(testAttribute))
@@ -187,22 +196,125 @@ class ExternalKotlinTargetApiTests {
     }
 
     @Test
-    fun `test - sourcesElements - publication`() = buildProjectWithMPP().runLifecycleAwareTest {
+    fun `test - sourcesElements - publication`() = project.runLifecycleAwareTest {
         val target = kotlin.createExternalKotlinTarget<FakeTarget> { defaults() }
-        val component = target.delegate.components.singleOrNull() ?: fail("Expected single 'component' for external target")
 
-        component.usages.find { it.name == target.sourcesElementsPublishedConfiguration.name }
+        // Main/publishable compilation is required to have usages
+        target.createCompilation<FakeCompilation> { defaults(kotlin) }
+
+        KotlinPluginLifecycle.Stage.AfterFinaliseCompilations.await()
+        val component = target.delegate.kotlinComponents.singleOrNull() ?: fail("Expected single 'component' for external target")
+
+        component.internal.usages.find { it.dependencyConfigurationName == target.sourcesElementsPublishedConfiguration.name }
             ?: fail("Missing sourcesElements usage")
     }
 
     @Test
-    fun `test - sourcesElements - publication - withSourcesJar set to false`() = buildProjectWithMPP().runLifecycleAwareTest {
+    fun `test - sourcesElements - publication - withSourcesJar set to false`() = project.runLifecycleAwareTest {
         val target = kotlin.createExternalKotlinTarget<FakeTarget> { defaults() }
         target.withSourcesJar(false)
+        target.createCompilation<FakeCompilation> { defaults(kotlin) }
+
         val component = target.delegate.components.singleOrNull() ?: fail("Expected single 'component' for external target")
         val sourcesUsage = component.usages.find { it.name.contains("sources", true) }
         if (sourcesUsage != null) {
             fail("Unexpected usage '${sourcesUsage.name} in target publication")
+        }
+    }
+
+    @Test
+    fun `test - gradle usage component contains the same usages as kotlin component`() = project.runLifecycleAwareTest {
+        val target = kotlin.createExternalKotlinTarget<FakeTarget> { defaults() }
+        target.createCompilation<FakeCompilation> { defaults(kotlin) }
+
+        val kotlinComponent = target.delegate.kotlinComponents.singleOrNull()
+            ?: fail("Expected single 'kotlinComponent' for external target")
+
+        val gradleComponent = target.delegate.components.singleOrNull()
+            ?: fail("Expected single 'component' for external target")
+
+        configurationResult.await()
+
+        val kotlinUsagesNames = kotlinComponent.internal.usages.map { it.dependencyConfigurationName }
+        val gradleUsagesNames = (gradleComponent as SoftwareComponentInternal).usages.map { it.name }
+
+        if (kotlinUsagesNames.toSet() != gradleUsagesNames.toSet())
+            fail("Kotlin Usages ($kotlinUsagesNames) from Kotlin Component didn't match Usages from Gradle Component ($gradleUsagesNames)")
+    }
+
+    @Test
+    fun `test - gradle usage component contains the same usages as kotlin component after project evaluation`() {
+        val target = kotlin.createExternalKotlinTarget<FakeTarget> { defaults() }
+        target.createCompilation<FakeCompilation> { defaults(kotlin) }
+        project.evaluate()
+
+        val kotlinComponent = target.kotlinComponents.singleOrNull() ?: fail("Expected single 'kotlinComponent' for external target")
+        val gradleComponent = target.components.singleOrNull() ?: fail("Expected single 'component' for external target")
+
+        if (kotlinComponent !is SoftwareComponentInternal) error("Expected 'kotlinComponent' to be 'SoftwareComponentInternal'")
+
+        // When kotlin usages is available corresponding gradle component usages should be also available
+        val kotlinUsagesNames = kotlinComponent.usages.map { it.name }
+        val gradleUsagesNames = gradleComponent.usages.map { it.name }
+
+        if (kotlinUsagesNames.toSet() != gradleUsagesNames.toSet())
+            fail("Kotlin Usages ($kotlinUsagesNames) from Kotlin Component didn't match Usages from Gradle Component ($gradleUsagesNames)")
+    }
+
+    @Test
+    fun `test - project structure metadata contains external target variants`() {
+        val target = kotlin.createExternalKotlinTarget<FakeTarget> { defaults() }
+        val mainCompilation = target.createCompilation<FakeCompilation> { defaults(kotlin) }
+        val testCompilation = target.createCompilation<FakeCompilation> {
+            defaults(kotlin)
+            compilationName = "test"
+            defaultSourceSet = kotlin.sourceSets.create("fakeTest")
+        }
+
+        kotlin.linuxX64()
+        kotlin.macosX64()
+
+        fun KotlinHierarchyBuilder.withFakeTarget() = withCompilations { it == mainCompilation || it == testCompilation }
+        kotlin.applyHierarchyTemplate {
+            sourceSetTrees(KotlinSourceSetTree.main, KotlinSourceSetTree.test)
+            common {
+                group("linuxAndFake") {
+                    withLinux()
+                    withFakeTarget()
+                }
+
+                withMacos()
+            }
+        }
+
+        project.evaluate()
+
+        val projectStructureMetadata = kotlin.kotlinProjectStructureMetadata
+
+        val fakeApiElementsSourceSets = projectStructureMetadata.sourceSetNamesByVariantName["fakeApiElements"]
+            ?: fail("Expected 'fakeApiElements' variant")
+        assertEquals(setOf("commonMain", "linuxAndFakeMain"), fakeApiElementsSourceSets)
+
+        val fakeRuntimeElementsSourceSets = projectStructureMetadata.sourceSetNamesByVariantName["fakeRuntimeElements"]
+            ?: fail("Expected 'fakeRuntimeElements' variant")
+        assertEquals(setOf("commonMain", "linuxAndFakeMain"), fakeRuntimeElementsSourceSets)
+    }
+
+    @Test
+    fun `test - published component contain user defined attributes`() {
+        val userAttribute = Attribute.of("userAttribute", String::class.java)
+
+        val target = kotlin.createExternalKotlinTarget<FakeTarget> { defaults() }
+        target.createCompilation<FakeCompilation> { defaults(kotlin) }
+        target.attributes.attribute(userAttribute, "foo")
+
+        project.evaluate()
+
+        val component = target.internal.components.singleOrNull() ?: fail("Expected single component")
+        if (component.usages.isEmpty()) fail("Expected at least one usage")
+        component.usages.forEach { usage ->
+            if (!usage.attributes.contains(userAttribute)) fail("Usage '${usage.name}' does not contain user attribute")
+            assertEquals("foo", usage.attributes.getAttribute(userAttribute))
         }
     }
 }
