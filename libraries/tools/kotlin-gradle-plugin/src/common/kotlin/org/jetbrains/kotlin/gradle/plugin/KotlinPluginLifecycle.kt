@@ -191,6 +191,16 @@ internal suspend fun <T : Any> Property<T>.awaitFinalValue(): T? {
 }
 
 /**
+ * Will suspend until [Stage.FinaliseDsl], finalise the value using [Property.finalizeValue] and return the
+ * final value or throw if value wasn't set.
+ */
+internal suspend fun <T : Any> Property<T>.awaitFinalValueOrThrow(): T {
+    Stage.AfterFinaliseDsl.await()
+    finalizeValue()
+    return orNull ?: throw IllegalLifecycleException("Property has no value available: ${currentKotlinPluginLifecycle()}")
+}
+
+/**
  * See also [withRestrictedStages]
  *
  * Will ensure that the given [block] can only execute in the given [stage]
