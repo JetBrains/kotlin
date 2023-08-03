@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeSubstitutor
 import java.util.*
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -41,33 +42,6 @@ object ActualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker : 
         checkExpectActualScopeDiff(expect, actual, context, declaration, descriptor)
     }
 }
-
-//data class ExpectActualMemberDiff(val kind: Kind, val actualMember: CallableMemberDescriptor, val expectClass: ClassDescriptor) {
-//    /**
-//     * Diff kinds that are legal for fake-overrides in final `expect class`, but illegal for non-final `expect class`
-//     */
-//    enum class Kind(val rawMessage: String) {
-//        NonPrivateCallableAdded(
-//            "{0}: Non-private member must be declared in the expect class as well. " +
-//                    "This error happens because the expect class ''{1}'' is non-final."
-//        ),
-//
-//        ReturnTypeCovariantOverride(
-//            "{0}: The return type of this member must be the same in the expect class and the actual class. " +
-//                    "This error happens because the expect class ''{1}'' is non-final."
-//        ),
-//
-//        ModalityChangedInOverride(
-//            "{0}: The modality of this member must be the same in the expect class and the actual class. " +
-//                    "This error happens because the expect class ''{1}'' is non-final."
-//        ),
-//
-//        VisibilityChangedInOverride(
-//            "{0}: The visibility of this member must be the same in the expect class and the actual class. " +
-//                    "This error happens because the expect class ''{1}'' is non-final."
-//        ),
-//    }
-//}
 
 private fun checkSupertypes(
     actual: ClassDescriptor,
@@ -181,6 +155,7 @@ private fun MemberScope.extractNonPrivateCallables(): Set<Callable> {
         getVariableNames().asSequence().flatMap { getContributedVariables(it, NoLookupLocation.FROM_FRONTEND_CHECKER) }
     return (functions + properties).filter { !Visibilities.isPrivate(it.visibility.delegate) }
         .map { descriptor ->
+            val returnType = descriptor.returnType
             Callable(
                 descriptor.name,
                 when (descriptor) {
@@ -191,7 +166,7 @@ private fun MemberScope.extractNonPrivateCallables(): Set<Callable> {
                 descriptor.extensionReceiverParameter?.type,
                 descriptor.contextReceiverParameters.map(ValueDescriptor::getType),
                 descriptor.valueParameters.map { Parameter(it.name, it.type) },
-                descriptor.returnType ?: error("Can't get return type"),
+                returnType ?: error("Can't get return type"),
                 descriptor.modality,
                 descriptor.visibility.delegate,
                 descriptor,

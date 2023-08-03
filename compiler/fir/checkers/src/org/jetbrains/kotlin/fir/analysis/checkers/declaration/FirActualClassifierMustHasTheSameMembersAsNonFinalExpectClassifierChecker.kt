@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.firClassLike
 import org.jetbrains.kotlin.fir.resolve.fqName
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.getFunctions
 import org.jetbrains.kotlin.fir.scopes.getProperties
@@ -32,10 +34,14 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.areCompatibleExpectActualTypes
+import org.jetbrains.kotlin.fir.types.createExpectActualTypeParameterSubstitutor
+import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMemberDiff
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 import java.util.*
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -147,78 +153,116 @@ private fun calculateExpectActualScopeDiff(
     context: CheckerContext,
 ): Set<ExpectActualMemberDiff<FirCallableSymbol<*>, FirClassSymbol<*>>> {
     // todo memberRequiredPhase = null
-    val expectScope = expect.unsubstitutedScope(context.session, context.scopeSession, withForcedTypeCalculator = false, memberRequiredPhase = null)
-    val actualScope = actual.unsubstitutedScope(context.session, context.scopeSession, withForcedTypeCalculator = false, memberRequiredPhase = null)
-    val expectClassCallables = expectScope.extractNonPrivateCallables(context)
+    val expectScope =
+        expect.unsubstitutedScope(context.session, context.scopeSession, withForcedTypeCalculator = false, memberRequiredPhase = null)
+    val actualScope =
+        actual.unsubstitutedScope(context.session, context.scopeSession, withForcedTypeCalculator = false, memberRequiredPhase = null)
+    val classSubstitutor =
+        createExpectActualTypeParameterSubstitutor(expect.typeParameterSymbols, actual.typeParameterSymbols, context.session)
+    val expectClassCallables = expectScope.extractNonPrivateCallables(context, classSubstitutor, ExpectActual.EXPECT)
     val nameAndKindToExpectCallable = expectClassCallables.groupBy { it.name to it.kind }
-    return (actualScope.extractNonPrivateCallables(context) - expectClassCallables).asSequence()
+    return (actualScope.extractNonPrivateCallables(context, classSubstitutor, ExpectActual.ACTUAL) - expectClassCallables).asSequence()
         .flatMap { unmatchedActualCallable ->
             when (val expectCallablesWithTheSameName =
                 nameAndKindToExpectCallable[unmatchedActualCallable.name to unmatchedActualCallable.kind]) {
                 null -> listOf(ExpectActualMemberDiff.Kind.NonPrivateCallableAdded)
                 else -> expectCallablesWithTheSameName.map {
-                    calculateDiffKind(expect = it, actual = unmatchedActualCallable) ?: error("Not equal callables can't have zero diff")
+                    calculateExpectActualMemberDiffKind(expect = it, actual = unmatchedActualCallable) ?: error("Not equal callables can't have zero diff")
                 }
             }.map { kind -> ExpectActualMemberDiff(kind, unmatchedActualCallable.symbol, expect) }
         }
         .toSet()
 }
 
-private fun FirContainingNamesAwareScope.extractNonPrivateCallables(context: CheckerContext): Set<Callable> =
+private fun FirContainingNamesAwareScope.extractNonPrivateCallables(
+    context: CheckerContext,
+    classSubstitutor: ConeSubstitutor,
+    expectActual: ExpectActual,
+): Set<Callable> =
     getCallableNames().asSequence<Name>()
         .flatMap { getFunctions(it) + getProperties(it) }
         .filter { !Visibilities.isPrivate(it.visibility) }
-        .map { symbol ->
-            Callable(
-                symbol.name,
-                when (symbol) {
-                    is FirVariableSymbol -> Kind.PROPERTY
-                    is FirFunctionSymbol -> Kind.FUNCTION
-                    else -> error("Unknown kind $symbol")
-                },
-                symbol.receiverParameter?.typeRef?.firClassLike(context.session),
-                symbol.resolvedContextReceivers.map { it.typeRef.firClassLike(context.session) ?: error("can't get type") },
-                when (symbol) {
-                    is FirVariableSymbol -> emptyList()
-                    is FirFunctionSymbol -> symbol.valueParameterSymbols.map { Parameter(it.name, it.resolvedReturnType) }
-                    else -> error("Unknown kind $symbol")
-                },
-                symbol.resolvedReturnType,
-                symbol.modality ?: error("Can't get modality"),
-                symbol.visibility,
-                symbol,
-            )
-        }
+        .map { Callable(it, expectActual, context) }
         .toSet()
 
 private data class Parameter(val name: Name, val type: ConeKotlinType)
 private enum class Kind { FUNCTION, PROPERTY }
+private enum class ExpectActual { EXPECT, ACTUAL }
 private class Callable(
-    val name: Name,
-    val kind: Kind,
-    val extensionReceiverType: FirClassLikeDeclaration?,
-    val contextReceiverTypes: List<FirClassLikeDeclaration>,
-    val parameters: List<Parameter>,
-    val returnType: ConeKotlinType,
-    val modality: Modality,
-    val visibility: Visibility,
     val symbol: FirCallableSymbol<*>,
+    val expectActual: ExpectActual,
+    val classTypeSubstitutor: ConeSubstitutor,
+    context: CheckerContext,
 ) {
-    override fun equals(other: Any?): Boolean = other is Callable && calculateDiffKind(this, other) == null
+    val name: Name = symbol.name
+    val kind: Kind = when (symbol) {
+        is FirVariableSymbol -> Kind.PROPERTY
+        is FirFunctionSymbol -> Kind.FUNCTION
+        else -> error("Unknown kind $symbol")
+    }
+    val extensionReceiverType: FirClassLikeDeclaration? = symbol.receiverParameter?.typeRef?.firClassLike(context.session)
+    val contextReceiverTypes: List<FirClassLikeDeclaration> =
+        symbol.resolvedContextReceivers.map { it.typeRef.firClassLike(context.session) ?: error("can't get type") }
+    val parameters: List<Parameter> = when (symbol) {
+        is FirVariableSymbol -> emptyList()
+        is FirFunctionSymbol -> symbol.valueParameterSymbols.map { Parameter(it.name, it.resolvedReturnType) }
+        else -> error("Unknown kind $symbol")
+    }
+    val returnType: ConeKotlinType = symbol.resolvedReturnType
+    val modality: Modality = symbol.modality ?: error("Can't get modality")
+    val visibility: Visibility = symbol.visibility
+
+    override fun equals(other: Any?): Boolean {
+        if (other !is Callable) return false
+        check(classTypeSubstitutor === other.classTypeSubstitutor)
+        return if (expectActual == other.expectActual) {
+            name == other.name &&
+                    kind == other.kind &&
+                    extensionReceiverType == other.extensionReceiverType &&
+                    contextReceiverTypes == other.contextReceiverTypes &&
+                    parameters == other.parameters &&
+                    returnType == other.returnType &&
+                    modality == other.modality &&
+                    visibility == other.visibility
+        } else {
+            val (expect, actual) = if (expectActual == ExpectActual.EXPECT) this to other else other to this
+            calculateExpectActualMemberDiffKind(expect, actual) == null
+        }
+    }
+
     override fun hashCode(): Int =
         Objects.hash(name, kind, extensionReceiverType, contextReceiverTypes, parameters, returnType, modality, visibility)
 }
 
-private fun calculateDiffKind(expect: Callable, actual: Callable): ExpectActualMemberDiff.Kind? = when {
-    expect.name != actual.name ||
-            expect.kind != actual.kind ||
-            expect.extensionReceiverType != actual.extensionReceiverType ||
-            expect.contextReceiverTypes != actual.contextReceiverTypes ||
-            expect.parameters != actual.parameters -> ExpectActualMemberDiff.Kind.NonPrivateCallableAdded
-    expect.returnType != actual.returnType -> ExpectActualMemberDiff.Kind.ReturnTypeCovariantOverride
-    expect.modality != actual.modality -> ExpectActualMemberDiff.Kind.ModalityChangedInOverride
-    expect.visibility != actual.visibility -> ExpectActualMemberDiff.Kind.VisibilityChangedInOverride
-    else -> null
+private fun areEqualsExpectActualTypes(
+    expect: ConeKotlinType,
+    actual: ConeKotlinType,
+    actualSession: FirSession,
+    substitutor: ConeSubstitutor,
+): Boolean = AbstractTypeChecker.equalTypes(actualSession.typeContext, substitutor.substituteOrSelf(expect), actual)
+
+private fun calculateExpectActualMemberDiffKind(expect: Callable, actual: Callable): ExpectActualMemberDiff.Kind? {
+    check(expect.expectActual == ExpectActual.EXPECT)
+    check(actual.expectActual == ExpectActual.ACTUAL)
+    check(expect.classTypeSubstitutor === actual.classTypeSubstitutor)
+    val substitutor = createExpectActualTypeParameterSubstitutor(
+        expect.symbol.typeParameterSymbols,
+        actual.symbol.typeParameterSymbols,
+        actual.symbol.moduleData.session,
+        expect.classTypeSubstitutor
+    )
+    return when {
+        expect.name != actual.name ||
+                expect.kind != actual.kind ||
+                expect.extensionReceiverType != actual.extensionReceiverType ||
+                expect.contextReceiverTypes != actual.contextReceiverTypes ||
+                expect.parameters != actual.parameters -> ExpectActualMemberDiff.Kind.NonPrivateCallableAdded
+        !areEqualsExpectActualTypes(expect.returnType, actual.returnType, actual.symbol.moduleData.session, substitutor) ->
+            ExpectActualMemberDiff.Kind.ReturnTypeCovariantOverride
+        expect.modality != actual.modality -> ExpectActualMemberDiff.Kind.ModalityChangedInOverride
+        expect.visibility != actual.visibility -> ExpectActualMemberDiff.Kind.VisibilityChangedInOverride
+        else -> null
+    }
 }
 
 private val ExpectActualMemberDiff.Kind.factory: KtDiagnosticFactory1<ExpectActualMemberDiff<FirCallableSymbol<*>, FirClassSymbol<*>>>

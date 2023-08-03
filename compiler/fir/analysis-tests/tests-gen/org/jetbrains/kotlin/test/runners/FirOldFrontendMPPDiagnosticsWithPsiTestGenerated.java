@@ -959,6 +959,12 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
         }
 
         @Test
+        @TestMetadata("changeGenericName.kt")
+        public void testChangeGenericName() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/injectIntoExpectOpenClassDuringActualization/changeGenericName.kt");
+        }
+
+        @Test
         @TestMetadata("changeModalityInOverride.kt")
         public void testChangeModalityInOverride() throws Exception {
             runTest("compiler/testData/diagnostics/tests/multiplatform/injectIntoExpectOpenClassDuringActualization/changeModalityInOverride.kt");
@@ -992,6 +998,18 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
         @TestMetadata("covariantFunctionOverride.kt")
         public void testCovariantFunctionOverride() throws Exception {
             runTest("compiler/testData/diagnostics/tests/multiplatform/injectIntoExpectOpenClassDuringActualization/covariantFunctionOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("covariantOverrideGenericUpperBound.kt")
+        public void testCovariantOverrideGenericUpperBound() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/injectIntoExpectOpenClassDuringActualization/covariantOverrideGenericUpperBound.kt");
+        }
+
+        @Test
+        @TestMetadata("covariantOverrideGenerics.kt")
+        public void testCovariantOverrideGenerics() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/injectIntoExpectOpenClassDuringActualization/covariantOverrideGenerics.kt");
         }
 
         @Test
