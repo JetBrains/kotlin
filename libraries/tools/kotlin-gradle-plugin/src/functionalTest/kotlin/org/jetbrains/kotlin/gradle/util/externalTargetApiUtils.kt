@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.util
 import org.gradle.api.NamedDomainObjectContainer
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinCompilationDescriptor.CompilationFactory
@@ -18,6 +19,7 @@ class FakeCompilation(delegate: Delegate) : DecoratedExternalKotlinCompilation(d
     override val compilerOptions: HasCompilerOptions<KotlinJvmCompilerOptions>
         get() = super.compilerOptions as HasCompilerOptions<KotlinJvmCompilerOptions>
 }
+
 class FakeTarget(delegate: Delegate) : DecoratedExternalKotlinTarget(delegate) {
 
     @Suppress("UNCHECKED_CAST")
@@ -40,7 +42,7 @@ fun ExternalKotlinTargetDescriptorBuilder<FakeTarget>.defaults() {
 
 fun ExternalKotlinCompilationDescriptorBuilder<FakeCompilation>.defaults(
     kotlin: KotlinMultiplatformExtension,
-    name: String = "fake"
+    name: String = KotlinCompilation.MAIN_COMPILATION_NAME,
 ) {
     compilationName = name
     compilationFactory = CompilationFactory(::FakeCompilation)

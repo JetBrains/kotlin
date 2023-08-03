@@ -59,7 +59,7 @@ private interface KotlinTargetComponentWithCoordinatesAndPublication :
 open class KotlinVariant(
     val producingCompilation: KotlinCompilation<*>,
     private val usages: Set<DefaultKotlinUsageContext>
-) : KotlinTargetComponentWithPublication, SoftwareComponentInternal {
+) : InternalKotlinTargetComponent(), KotlinTargetComponentWithPublication {
     var componentName: String? = null
 
     var artifactTargetName: String = target.targetName
@@ -112,7 +112,7 @@ class JointAndroidKotlinTargetComponent(
     override val target: KotlinAndroidTarget,
     private val nestedVariants: Set<KotlinVariant>,
     val flavorNames: List<String>
-) : KotlinTargetComponentWithCoordinatesAndPublication, SoftwareComponentInternal {
+) : InternalKotlinTargetComponent(), KotlinTargetComponentWithCoordinatesAndPublication {
 
     override fun getUsages(): Set<KotlinUsageContext> = nestedVariants.filter { it.publishable }.flatMap { it.usages }.toSet()
 

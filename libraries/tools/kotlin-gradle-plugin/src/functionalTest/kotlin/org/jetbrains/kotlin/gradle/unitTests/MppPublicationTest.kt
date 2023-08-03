@@ -124,7 +124,7 @@ class MppPublicationTest {
 
         for ((targetName, sourceElements) in sourcesElements) {
             assertTrue(
-                message = "Sources Elements of target $targetName doesn't have 'userAttribute'"
+                message = "$sourceElements of target $targetName doesn't have 'userAttribute'"
             ) { sourceElements.attributes.toMapOfStrings().containsKey("userAttribute") }
         }
     }
@@ -143,6 +143,7 @@ class MppPublicationTest {
     @Test
     fun `sourcesJar task should be available during configuration time`() {
         kotlin.linuxX64("linux")
+        project.evaluate()
 
         val sourcesJars = listOf(
             "sourcesJar", // sources of common source sets i.e. root module
@@ -187,6 +188,7 @@ class MppPublicationTest {
     fun `test that sourcesJar tasks still exist even if sources should not be published`() {
         kotlin.linuxX64("linux")
         kotlin.withSourcesJar(publish = false)
+        project.evaluate()
 
         val sourcesJars = listOf(
             "sourcesJar", // sources of common source sets i.e. root module

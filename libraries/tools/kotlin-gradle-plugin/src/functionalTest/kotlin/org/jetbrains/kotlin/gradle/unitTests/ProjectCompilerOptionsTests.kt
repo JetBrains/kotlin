@@ -190,7 +190,7 @@ class ProjectCompilerOptionsTests {
             }
         }
 
-        assertEquals(true, project.kotlinJvmTask("compileFakeKotlinFake").compilerOptions.javaParameters.get())
+        assertEquals(true, project.kotlinJvmTask("compileKotlinFake").compilerOptions.javaParameters.get())
         assertEquals(true, project.kotlinJvmTask("compileTestKotlinFake").compilerOptions.javaParameters.get())
     }
 
@@ -199,7 +199,7 @@ class ProjectCompilerOptionsTests {
         val project = buildProjectWithMPP()
         project.runLifecycleAwareTest {
             tasks.withType<KotlinJvmCompileTask>().configureEach {
-                if (it.name == "compileFakeKotlinFake") {
+                if (it.name == "compileKotlinFake") {
                     it.compilerOptions.javaParameters.set(false)
                 }
             }
@@ -215,7 +215,7 @@ class ProjectCompilerOptionsTests {
             }
         }
 
-        assertEquals(false, project.kotlinJvmTask("compileFakeKotlinFake").compilerOptions.javaParameters.get())
+        assertEquals(false, project.kotlinJvmTask("compileKotlinFake").compilerOptions.javaParameters.get())
         assertEquals(true, project.kotlinJvmTask("compileTestKotlinFake").compilerOptions.javaParameters.get())
     }
 

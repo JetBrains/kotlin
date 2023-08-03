@@ -8,24 +8,17 @@ import org.gradle.api.Action
 import org.gradle.api.DomainObjectSet
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ConfigurablePublishArtifact
-import org.gradle.api.attributes.*
-import org.gradle.api.component.ComponentWithCoordinates
-import org.gradle.api.component.ComponentWithVariants
-import org.gradle.api.component.SoftwareComponent
-import org.gradle.api.component.SoftwareComponentFactory
-import org.gradle.api.internal.component.SoftwareComponentInternal
-import org.gradle.api.internal.component.UsageContext
-import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.publish.maven.MavenPublication
+import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.PRESETS_API_IS_DEPRECATED_MESSAGE
-import org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext.MavenScope.*
-import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
-import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext.MavenScope.COMPILE
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext.MavenScope.RUNTIME
+import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.tooling.core.MutableExtras
 import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
@@ -34,7 +27,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 internal const val PRIMARY_SINGLE_COMPONENT_NAME = "kotlin"
 
 abstract class AbstractKotlinTarget(
-    final override val project: Project
+    final override val project: Project,
 ) : InternalKotlinTarget {
 
     final override val extras: MutableExtras = mutableExtrasOf()
@@ -96,8 +89,13 @@ abstract class AbstractKotlinTarget(
         setOf(result)
     }
 
-    override val components: Set<SoftwareComponent> by lazy {
-        project.buildAdhocComponentsFromKotlinVariants(kotlinComponents)
+
+    /**
+     * Returns, potentially not configured (e.g. without some usages), Gradle SoftwareComponent's for this target
+     * For final version of components use [awaitComponents]
+     */
+    override val components: Set<KotlinTargetSoftwareComponent> by lazy {
+        kotlinComponents.map { kotlinComponent -> KotlinTargetSoftwareComponent(this, kotlinComponent) }.toSet()
     }
 
     protected open fun createKotlinVariant(
@@ -190,69 +188,6 @@ abstract class AbstractKotlinTarget(
         internal set
 }
 
-private val publishedConfigurationNameSuffix = "-published"
-
-internal fun publishedConfigurationName(originalVariantName: String) = originalVariantName + publishedConfigurationNameSuffix
-internal fun originalVariantNameFromPublished(publishedConfigurationName: String): String? =
-    publishedConfigurationName.takeIf { it.endsWith(publishedConfigurationNameSuffix) }?.removeSuffix(publishedConfigurationNameSuffix)
-
 internal fun KotlinTarget.disambiguateName(simpleName: String) =
     lowerCamelCaseName(targetName, simpleName)
 
-internal fun javaApiUsageForMavenScoping() = "java-api-jars"
-
-internal fun Project.buildAdhocComponentsFromKotlinVariants(kotlinVariants: Set<KotlinTargetComponent>): Set<SoftwareComponent> {
-    val softwareComponentFactoryClass = SoftwareComponentFactory::class.java
-    // TODO replace internal API access with injection (not possible until we have this class on the compile classpath)
-    val softwareComponentFactory = (project as ProjectInternal).services.get(softwareComponentFactoryClass)
-
-    return kotlinVariants.map { kotlinVariant ->
-        val adhocVariant = softwareComponentFactory.adhoc(kotlinVariant.name)
-
-        project.launchInStage(KotlinPluginLifecycle.Stage.AfterFinaliseCompilations) {
-            (kotlinVariant as SoftwareComponentInternal).usages.filterIsInstance<KotlinUsageContext>().forEach { kotlinUsageContext ->
-                val publishedConfigurationName = publishedConfigurationName(kotlinUsageContext.name)
-                val configuration = project.configurations.findByName(publishedConfigurationName)
-                    ?: project.configurations.create(publishedConfigurationName).also { configuration ->
-                        configuration.isCanBeConsumed = false
-                        configuration.isCanBeResolved = false
-                        configuration.extendsFrom(project.configurations.getByName(kotlinUsageContext.dependencyConfigurationName))
-                        configuration.artifacts.addAll(kotlinUsageContext.artifacts)
-
-                        val attributes = kotlinUsageContext.attributes
-                        attributes.keySet().forEach {
-                            // capture type parameter T
-                            fun <T> copyAttribute(key: Attribute<T>, from: AttributeContainer, to: AttributeContainer) {
-                                to.attribute(key, from.getAttribute(key)!!)
-                            }
-                            copyAttribute(it, attributes, configuration.attributes)
-                        }
-                    }
-
-                adhocVariant.addVariantsFromConfiguration(configuration) { configurationVariantDetails ->
-                    val mavenScope = kotlinUsageContext.mavenScope
-                    if (mavenScope != null) {
-                        val mavenScopeString = when (mavenScope) {
-                            COMPILE -> "compile"
-                            RUNTIME -> "runtime"
-                        }
-                        configurationVariantDetails.mapToMavenScope(mavenScopeString)
-                    }
-                }
-            }
-        }
-
-        adhocVariant as SoftwareComponent
-
-        object : ComponentWithVariants, ComponentWithCoordinates, SoftwareComponentInternal {
-            override fun getCoordinates() =
-                (kotlinVariant as? ComponentWithCoordinates)?.coordinates ?: error("kotlinVariant is not ComponentWithCoordinates")
-
-            override fun getVariants(): Set<SoftwareComponent> =
-                (kotlinVariant as? KotlinVariantWithMetadataVariant)?.variants.orEmpty()
-
-            override fun getName(): String = adhocVariant.name
-            override fun getUsages(): MutableSet<out UsageContext> = (adhocVariant as SoftwareComponentInternal).usages
-        }
-    }.toSet()
-}
