@@ -78,7 +78,7 @@ fun Project.configureCommonPublicationSettingsForGradle(
                 .withType<MavenPublication>()
                 .configureEach {
                     configureKotlinPomAttributes(project)
-                    if (sbom) {
+                    if (sbom && project.name !in testPlugins) {
                         if (name == "pluginMaven") {
                             val sbomTask = configureSbom(target = "PluginMaven")
                             artifact("$buildDir/spdx/PluginMaven/PluginMaven.spdx.json") {
