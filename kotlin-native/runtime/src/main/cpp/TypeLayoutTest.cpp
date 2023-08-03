@@ -28,50 +28,50 @@ namespace {
     CHECK_FIELD_DESCRIPTOR(DESCRIPTOR, F2)
 
 struct TEmpty {
-    using descriptor_type = type_layout::Composite<TEmpty>;
+    using descriptor = type_layout::Composite<TEmpty>;
 };
 
-static_assert(type_layout::descriptor_type_t<TEmpty>().alignment() == alignof(TEmpty));
-static_assert(type_layout::descriptor_type_t<TEmpty>().size() == 0);
+static_assert(type_layout::descriptor_t<TEmpty>().alignment() == alignof(TEmpty));
+static_assert(type_layout::descriptor_t<TEmpty>().size() == 0);
 
 struct T323232 {
-    using descriptor_type = type_layout::Composite<T323232, int32_t, int32_t, int32_t>;
+    using descriptor = type_layout::Composite<T323232, int32_t, int32_t, int32_t>;
 
     int32_t f0;
     int32_t f1;
     int32_t f2;
 };
-CHECK_DESCRIPTOR(type_layout::descriptor_type_t<T323232>, 0, 1, 2);
+CHECK_DESCRIPTOR(type_layout::descriptor_t<T323232>, 0, 1, 2);
 
 struct T643232 {
-    using descriptor_type = type_layout::Composite<T643232, int64_t, int32_t, int32_t>;
+    using descriptor = type_layout::Composite<T643232, int64_t, int32_t, int32_t>;
 
     int64_t f0;
     int32_t f1;
     int32_t f2;
 };
-CHECK_DESCRIPTOR(type_layout::descriptor_type_t<T643232>, 0, 1, 2);
+CHECK_DESCRIPTOR(type_layout::descriptor_t<T643232>, 0, 1, 2);
 
 struct T326432 {
-    using descriptor_type = type_layout::Composite<T326432, int32_t, int64_t, int32_t>;
+    using descriptor = type_layout::Composite<T326432, int32_t, int64_t, int32_t>;
 
     int32_t f0;
     int64_t f1;
     int32_t f2;
 };
-CHECK_DESCRIPTOR(type_layout::descriptor_type_t<T326432>, 0, 1, 2);
+CHECK_DESCRIPTOR(type_layout::descriptor_t<T326432>, 0, 1, 2);
 
 struct T323264 {
-    using descriptor_type = type_layout::Composite<T323264, int32_t, int32_t, int64_t>;
+    using descriptor = type_layout::Composite<T323264, int32_t, int32_t, int64_t>;
 
     int32_t f0;
     int32_t f1;
     int64_t f2;
 };
-CHECK_DESCRIPTOR(type_layout::descriptor_type_t<T323264>, 0, 1, 2);
+CHECK_DESCRIPTOR(type_layout::descriptor_t<T323264>, 0, 1, 2);
 
 struct TEmpty326432 {
-    using descriptor_type = type_layout::Composite<TEmpty326432, TEmpty, int32_t, int64_t, int32_t>;
+    using descriptor = type_layout::Composite<TEmpty326432, TEmpty, int32_t, int64_t, int32_t>;
 
     [[no_unique_address]] TEmpty f0;
     int32_t f1;
@@ -79,10 +79,10 @@ struct TEmpty326432 {
     int32_t f3;
 };
 // Offset of an empty field serves no purpose, skipping it.
-CHECK_DESCRIPTOR(type_layout::descriptor_type_t<TEmpty326432>, 1, 2, 3);
+CHECK_DESCRIPTOR(type_layout::descriptor_t<TEmpty326432>, 1, 2, 3);
 
 struct T32Empty6432 {
-    using descriptor_type = type_layout::Composite<T32Empty6432, int32_t, TEmpty, int64_t, int32_t>;
+    using descriptor = type_layout::Composite<T32Empty6432, int32_t, TEmpty, int64_t, int32_t>;
 
     int32_t f0;
     [[no_unique_address]] TEmpty f1;
@@ -90,10 +90,10 @@ struct T32Empty6432 {
     int32_t f3;
 };
 // Offset of an empty field serves no purpose, skipping it.
-CHECK_DESCRIPTOR(type_layout::descriptor_type_t<T32Empty6432>, 0, 2, 3);
+CHECK_DESCRIPTOR(type_layout::descriptor_t<T32Empty6432>, 0, 2, 3);
 
 struct T3264Empty32 {
-    using descriptor_type = type_layout::Composite<T3264Empty32, int32_t, int64_t, TEmpty, int32_t>;
+    using descriptor = type_layout::Composite<T3264Empty32, int32_t, int64_t, TEmpty, int32_t>;
 
     int32_t f0;
     int64_t f1;
@@ -101,10 +101,10 @@ struct T3264Empty32 {
     int32_t f3;
 };
 // Offset of an empty field serves no purpose, skipping it.
-CHECK_DESCRIPTOR(type_layout::descriptor_type_t<T3264Empty32>, 0, 1, 3);
+CHECK_DESCRIPTOR(type_layout::descriptor_t<T3264Empty32>, 0, 1, 3);
 
 struct T326432Empty {
-    using descriptor_type = type_layout::Composite<T326432Empty, int32_t, int64_t, int32_t, TEmpty>;
+    using descriptor = type_layout::Composite<T326432Empty, int32_t, int64_t, int32_t, TEmpty>;
 
     int32_t f0;
     int64_t f1;
@@ -112,12 +112,12 @@ struct T326432Empty {
     [[no_unique_address]] TEmpty f3;
 };
 // Offset of an empty field serves no purpose, skipping it.
-CHECK_DESCRIPTOR(type_layout::descriptor_type_t<T326432Empty>, 0, 1, 2);
+CHECK_DESCRIPTOR(type_layout::descriptor_t<T326432Empty>, 0, 1, 2);
 
 struct TUndefined {
     static testing::MockFunction<void(uint8_t*)>* ctorMock;
 
-    struct descriptor_type {
+    struct descriptor {
         using value_type = TUndefined;
 
         static constexpr size_t alignment() noexcept { return 2 * alignof(uint64_t); }
@@ -140,10 +140,10 @@ testing::MockFunction<void(uint8_t*)>* TUndefined::ctorMock = nullptr;
 struct TDynamic {
     static testing::MockFunction<void(uint8_t*)>* ctorMock;
 
-    struct descriptor_type {
+    struct descriptor {
         using value_type = TDynamic;
 
-        descriptor_type(uint64_t size, size_t alignment) noexcept : size_(size), alignment_(alignment) {}
+        descriptor(uint64_t size, size_t alignment) noexcept : size_(size), alignment_(alignment) {}
 
         size_t alignment() noexcept { return alignment_; }
         uint64_t size() noexcept { return size_; }
@@ -158,7 +158,7 @@ struct TDynamic {
         size_t alignment_;
     };
 
-    static descriptor_type descriptor(uint64_t size, size_t alignment) noexcept { return descriptor_type(size, alignment); }
+    static descriptor make_descriptor(uint64_t size, size_t alignment) noexcept { return descriptor(size, alignment); }
 
 private:
     TDynamic() = delete;
@@ -169,13 +169,13 @@ private:
 testing::MockFunction<void(uint8_t*)>* TDynamic::ctorMock = nullptr;
 
 struct THeader {
-    using descriptor_type = type_layout::Composite<THeader, T323232, TUndefined>;
+    using descriptor = type_layout::Composite<THeader, T323232, TUndefined>;
 
-    T323232* flags() noexcept { return descriptor_type().field<0>(this).second; }
-    TUndefined* header() noexcept { return descriptor_type().field<1>(this).second; }
+    T323232* flags() noexcept { return descriptor().field<0>(this).second; }
+    TUndefined* header() noexcept { return descriptor().field<1>(this).second; }
 
-    static THeader* fromFlags(T323232* flags) noexcept { return descriptor_type().fromField<0>(flags); }
-    static THeader* fromHeader(TUndefined* header) noexcept { return descriptor_type().fromField<1>(header); }
+    static THeader* fromFlags(T323232* flags) noexcept { return descriptor().fromField<0>(flags); }
+    static THeader* fromHeader(TUndefined* header) noexcept { return descriptor().fromField<1>(header); }
 
 private:
     THeader() = delete;
@@ -183,19 +183,19 @@ private:
 };
 
 struct TVLA {
-    using descriptor_type = type_layout::Composite<TVLA, THeader, TDynamic, T326432>;
+    using descriptor = type_layout::Composite<TVLA, THeader, TDynamic, T326432>;
 
-    static descriptor_type descriptor(uint64_t size, size_t alignment) noexcept {
-        return descriptor_type({}, TDynamic::descriptor(size, alignment), {});
+    static descriptor make_descriptor(uint64_t size, size_t alignment) noexcept {
+        return descriptor({}, TDynamic::descriptor(size, alignment), {});
     }
 
-    THeader* dataHeader(descriptor_type descriptor) noexcept { return descriptor.field<0>(this).second; }
-    TDynamic* data(descriptor_type descriptor) noexcept { return descriptor.field<1>(this).second; }
-    T326432* footer(descriptor_type descriptor) noexcept { return descriptor.field<2>(this).second; }
+    THeader* dataHeader(descriptor descriptor) noexcept { return descriptor.field<0>(this).second; }
+    TDynamic* data(descriptor descriptor) noexcept { return descriptor.field<1>(this).second; }
+    T326432* footer(descriptor descriptor) noexcept { return descriptor.field<2>(this).second; }
 
-    static TVLA* fromDataHeader(descriptor_type descriptor, THeader* header) noexcept { return descriptor.fromField<0>(header); }
-    static TVLA* fromData(descriptor_type descriptor, TDynamic* data) noexcept { return descriptor.fromField<1>(data); }
-    static TVLA* fromFooter(descriptor_type descriptor, T326432* footer) noexcept { return descriptor.fromField<2>(footer); }
+    static TVLA* fromDataHeader(descriptor descriptor, THeader* header) noexcept { return descriptor.fromField<0>(header); }
+    static TVLA* fromData(descriptor descriptor, TDynamic* data) noexcept { return descriptor.fromField<1>(data); }
+    static TVLA* fromFooter(descriptor descriptor, T326432* footer) noexcept { return descriptor.fromField<2>(footer); }
 
 private:
     TVLA() = delete;
@@ -232,7 +232,7 @@ TEST_F(TypeLayoutTest, VLA) {
     constexpr size_t expectedFooterOffset = AlignUp(expectedDataOffset + vlaSize, alignof(T326432));
     constexpr size_t expectedAlignment = 16;
     constexpr size_t expectedSize = AlignUp(expectedFooterOffset + sizeof(T326432), expectedAlignment);
-    auto vlaDescriptor = TVLA::descriptor(vlaSize, vlaAlignment);
+    auto vlaDescriptor = TVLA::make_descriptor(vlaSize, vlaAlignment);
     EXPECT_THAT(vlaDescriptor.size(), expectedSize);
     EXPECT_THAT(vlaDescriptor.alignment(), expectedAlignment);
 
@@ -275,7 +275,7 @@ TEST_F(TypeLayoutTest, VLAVeryLarge) {
     constexpr size_t vlaAlignment = 1;
     constexpr uint64_t vlaSize = std::numeric_limits<uint64_t>::max() / 2;
 
-    auto vlaDescriptor = TVLA::descriptor(vlaSize, vlaAlignment);
+    auto vlaDescriptor = TVLA::make_descriptor(vlaSize, vlaAlignment);
     // Checking that no unsigned integer overflow happened.
     EXPECT_THAT(vlaDescriptor.size(), testing::Gt(std::numeric_limits<uint32_t>::max()));
 }

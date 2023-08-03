@@ -66,20 +66,20 @@ constexpr void construct(uint8_t* ptr, FieldDescriptors... fieldDescriptors) noe
 }
 
 template <typename T, typename = void>
-struct has_descriptor_type : std::false_type {};
+struct has_descriptor : std::false_type {};
 
 template <typename T>
-struct has_descriptor_type<T, std::void_t<typename T::descriptor_type>> : std::true_type {};
+struct has_descriptor<T, std::void_t<typename T::descriptor>> : std::true_type {};
 
 } // namespace internal
 
-template <typename T, bool = internal::has_descriptor_type<T>::value>
-struct descriptor_type {
-    using type = typename T::descriptor_type;
+template <typename T, bool = internal::has_descriptor<T>::value>
+struct descriptor {
+    using type = typename T::descriptor;
 };
 
 template <typename T>
-struct descriptor_type<T, false> {
+struct descriptor<T, false> {
     struct type {
         using value_type = T;
 
@@ -91,16 +91,16 @@ struct descriptor_type<T, false> {
 };
 
 // Get descriptor of type `T`.
-// If `T` has `descriptor_type` member type, it'll be used as a descriptor.
-// Implementations may also add their own specializations of `descriptor_type<T>`.
+// If `T` has `descriptor` member type, it'll be used as a descriptor.
+// Implementations may also add their own specializations of `descriptor<T>`.
 template <typename T>
-using descriptor_type_t = typename descriptor_type<T>::type;
+using descriptor_t = typename descriptor<T>::type;
 
 // Descriptor for a composite type `T` consisting of `Fields...`.
 // Common usage would be:
 // ```
 // struct MyClass {
-//     using descriptor_type = Composite<MyClass, Fields...>;
+//     using descriptor = Composite<MyClass, Fields...>;
 //     // Helper methods for accessing fields and constructing from fields
 //     // that forward to Composite::field and Composite::fromField
 // private:
@@ -115,11 +115,11 @@ public:
 
     constexpr Composite() noexcept = default;
 
-    constexpr explicit Composite(descriptor_type_t<Fields>... fields) noexcept : fields_(fields...) {}
+    constexpr explicit Composite(descriptor_t<Fields>... fields) noexcept : fields_(fields...) {}
 
     // This will be the maximum alignment across all fields.
     // Alignment of an empty composite type is 1.
-    constexpr size_t alignment() const noexcept { return std::apply(internal::alignment<descriptor_type_t<Fields>...>, fields_); }
+    constexpr size_t alignment() const noexcept { return std::apply(internal::alignment<descriptor_t<Fields>...>, fields_); }
 
     // The size of an empty composite type will be 0, unlike C++ where it's 1.
     constexpr uint64_t size() const noexcept {
@@ -131,7 +131,7 @@ public:
 
     // Construct this at address `ptr`.
     constexpr value_type* construct(uint8_t* ptr) noexcept {
-        std::apply(internal::construct<descriptor_type_t<Fields>...>, std::tuple_cat(std::make_tuple(ptr), fields_));
+        std::apply(internal::construct<descriptor_t<Fields>...>, std::tuple_cat(std::make_tuple(ptr), fields_));
         return reinterpret_cast<value_type*>(ptr);
     }
 
@@ -141,11 +141,11 @@ public:
     template <size_t index>
     constexpr uint64_t fieldOffset() const noexcept {
         return std::apply(
-                internal::fieldOffsetFromBase<index, descriptor_type_t<Fields>...>, std::tuple_cat(std::make_tuple<uint64_t>(0), fields_));
+                internal::fieldOffsetFromBase<index, descriptor_t<Fields>...>, std::tuple_cat(std::make_tuple<uint64_t>(0), fields_));
     }
 
     template <size_t index>
-    using FieldDescriptor = std::tuple_element_t<index, std::tuple<descriptor_type_t<Fields>...>>;
+    using FieldDescriptor = std::tuple_element_t<index, std::tuple<descriptor_t<Fields>...>>;
 
     // Get descriptor of field at `index` and its address given address of this.
     template <size_t index>
@@ -163,7 +163,7 @@ public:
     }
 
 private:
-    std::tuple<descriptor_type_t<Fields>...> fields_;
+    std::tuple<descriptor_t<Fields>...> fields_;
 };
 
 template <typename T>
