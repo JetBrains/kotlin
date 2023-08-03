@@ -542,6 +542,19 @@ abstract class AbstractComposeLowering(
         )
     }
 
+    protected fun irReturnVar(
+        target: IrReturnTargetSymbol,
+        value: IrVariable,
+    ): IrExpression {
+        return IrReturnImpl(
+            value.initializer?.startOffset ?: UNDEFINED_OFFSET,
+            value.initializer?.endOffset ?: UNDEFINED_OFFSET,
+            value.type,
+            target,
+            irGet(value)
+        )
+    }
+
     protected fun irEqual(lhs: IrExpression, rhs: IrExpression): IrExpression {
         return irCall(
             this.context.irBuiltIns.eqeqeqSymbol,

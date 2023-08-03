@@ -175,6 +175,23 @@ class ComposerParamSignatureTests(useFir: Boolean) : AbstractCodegenSignatureTes
     )
 
     @Test
+    fun testConstantReturn() = validateBytecode(
+        """
+            @Composable
+            fun Test(): Int {
+                return 123 // line 12
+            }
+        """
+    ) {
+        val lines = it.split("\n").map { it.trim() }
+        val lineNumberIndex = lines.indexOfFirst { it.startsWith("LINENUMBER 12") }
+        // Line 12, which has the return statement, needs to be present in the bytecode
+        assert(lineNumberIndex >= 0)
+        // The return statement should be right after this
+        assert(lines[lineNumberIndex + 1] == "IRETURN")
+    }
+
+    @Test
     fun testForLoopIssue2() = codegen(
         """
             @Composable
