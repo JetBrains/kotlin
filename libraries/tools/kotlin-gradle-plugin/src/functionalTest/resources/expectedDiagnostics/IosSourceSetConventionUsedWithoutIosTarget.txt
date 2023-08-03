@@ -5,7 +5,7 @@
      iosArm64()
      iosSimulatorArm64()
 
-     /* Use convention
+     /* Use convention */
      sourceSets.iosMain.dependencies {
 
      }
@@ -18,7 +18,7 @@
      iosArm64()
      iosSimulatorArm64()
 
-     /* Use convention
+     /* Use convention */
      sourceSets.iosTest.dependencies {
 
      }
