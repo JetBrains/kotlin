@@ -4,8 +4,6 @@
 // !OPT_IN: kotlin.ExperimentalStdlibApi
 // FILE: 1.kt
 
-@file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE") // TODO: remove once KT-53154 is fixed.
-
 package test
 
 import kotlin.enums.enumEntries

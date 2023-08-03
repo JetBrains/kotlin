@@ -9,8 +9,6 @@ public enum Z {
 
 // FILE: box.kt
 
-@file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE") // TODO: remove once KT-53154 is fixed.
-
 import kotlin.enums.*
 
 fun callFromOtherFunctionInTheSameFile(): EnumEntries<Z> = enumEntries<Z>()

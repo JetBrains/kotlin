@@ -29,8 +29,6 @@ public enum Z {
 // !OPT_IN: kotlin.ExperimentalStdlibApi
 // FILE: box.kt
 
-@file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE") // TODO: remove once KT-53154 is fixed.
-
 import kotlin.enums.enumEntries
 
 fun box(): String {

@@ -9,7 +9,6 @@ enum MyEnum {
 
 // FILE: 1.kt
 
-@file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE") // TODO: remove once KT-53154 is fixed.
 import kotlin.enums.*
 
 inline fun <reified T : Enum<T>> enumEntries2(): EnumEntries<T> = enumEntries<T>()
