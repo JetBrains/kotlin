@@ -53,6 +53,7 @@ abstract class AbstractNativeSwiftExportTest : AbstractNativeSimpleTest() {
             sources = swiftSources + swiftArtifact.resultingArtifact.swiftSources,
             output = outputFile,
             libraries = listOf(swiftArtifact.resultingArtifact.artifactName),
+            importedHeaders = swiftArtifact.resultingArtifact.cBridgingHeaders,
             libraryDirectories = listOf(swiftArtifact.resultingArtifact.kotlinBinary.parentFile),
         )
         if (swiftCompilationResult != 0) {
@@ -92,6 +93,7 @@ abstract class AbstractNativeSwiftExportTest : AbstractNativeSimpleTest() {
      * @param sources the list of Swift source files to be compiled
      * @param output the output file to generate after compilation
      * @param libraries the list of libraries to link during compilation (default is empty)
+     * @param importedHeaders the list of c headers to import as bridging headers (default is empty)
      * @param libraryDirectories the list of directories to search for libraries (default is empty)
      * @return the exit code of the compilation process
      */
@@ -99,6 +101,7 @@ abstract class AbstractNativeSwiftExportTest : AbstractNativeSimpleTest() {
         sources: List<File>,
         output: File,
         libraries: List<String> = emptyList(),
+        importedHeaders: List<File> = emptyList(),
         libraryDirectories: List<File> = emptyList(),
     ): Int {
         val process = ProcessBuilder(
@@ -106,6 +109,7 @@ abstract class AbstractNativeSwiftExportTest : AbstractNativeSimpleTest() {
             "swiftc",
             *libraryDirectories.flatMap { listOf("-L", it.absolutePath) }.toTypedArray(),
             *libraries.map { "-l$it" }.toTypedArray(),
+            *importedHeaders.flatMap { listOf("-import-objc-header", it.absolutePath) }.toTypedArray(),
             "-o", output.absolutePath,
             *sources.map { it.absolutePath }.toTypedArray(),
         )

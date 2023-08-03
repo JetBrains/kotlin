@@ -5,14 +5,12 @@
 
 package org.jetbrains.kotlin.backend.konan.swift
 
-import io.outfoxx.swiftpoet.*
 import org.jetbrains.kotlin.backend.konan.llvm.KonanBinaryInterface
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.allParameters
 import org.jetbrains.kotlin.ir.util.explicitParameters
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -26,33 +24,36 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
  *
  */
 class IrBasedSwiftGenerator(private val moduleName: String) : IrElementVisitorVoid {
+    companion object {
+        private val initRuntimeIfNeeded = CCode.build {
+            function(void, "initRuntimeIfNeeded", attributes = listOf(asm("_Kotlin_initRuntimeIfNeeded")))
+        }
 
-    private val initRuntimeIfNeededSpec = FunctionSpec.abstractBuilder("initRuntimeIfNeeded")
-            // FIXME: _silgen_name only work for as long as swiftcc matches ccc. Switch to c brindging instead.
-            .addAttribute("_silgen_name", "\"Kotlin_initRuntimeIfNeeded\"")
-            .addModifiers(Modifier.PRIVATE)
-            .build()
+        private val switchThreadStateToNative = CCode.build {
+            function(void, "switchThreadStateToNative", attributes = listOf(asm("_Kotlin_mm_switchThreadStateNative")))
+        }
 
-    private val switchThreadStateNative = FunctionSpec.abstractBuilder("switchThreadStateNative")
-            // FIXME: _silgen_name only work for as long as swiftcc matches ccc. Switch to c brindging instead.
-            .addAttribute("_silgen_name", "\"Kotlin_mm_switchThreadStateNative\"")
-            .addModifiers(Modifier.PRIVATE)
-            .build()
+        private val switchThreadStateToRunnable = CCode.build {
+            function(void, "switchThreadStateToRunnable", attributes = listOf(asm("_Kotlin_mm_switchThreadStateRunnable")))
+        }
+    }
 
-    private val switchThreadStateRunnable = FunctionSpec.abstractBuilder("switchThreadStateRunnable")
-            // FIXME: _silgen_name only work for as long as swiftcc matches ccc. Switch to c brindging instead.
-            .addAttribute("_silgen_name", "\"Kotlin_mm_switchThreadStateRunnable\"")
-            .addModifiers(Modifier.PRIVATE)
-            .build()
+    private val swiftImports = mutableListOf<SwiftCode.Import>(SwiftCode.Import.Module("Foundation"))
+    private val swiftDeclarations = mutableListOf<SwiftCode.Declaration>()
 
-    val functions = mutableListOf<FunctionSpec>(initRuntimeIfNeededSpec, switchThreadStateNative, switchThreadStateRunnable)
+    // FIXME: we shouldn't manually generate c headers for our existing code, but here we are.
+    private val cDeclarations = CCode.build {
+        mutableListOf<CCode>(
+                include("stdint.h"),
+                declare(initRuntimeIfNeeded),
+                declare(switchThreadStateToRunnable),
+                declare(switchThreadStateToNative),
+        )
+    }
 
-    fun build(): FileSpec =
-        FileSpec.builder(moduleName, moduleName).apply {
-            functions.forEach { topLevelFunction ->
-                addFunction(topLevelFunction)
-            }
-        }.build()
+    fun buildSwiftShimFile() = SwiftCode.File(swiftImports, swiftDeclarations)
+
+    fun buildSwiftBridgingHeader() = CCode.File(cDeclarations)
 
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
@@ -64,42 +65,36 @@ class IrBasedSwiftGenerator(private val moduleName: String) : IrElementVisitorVo
         }
 
         val name = declaration.name.identifier
-        val symbolName = with(KonanBinaryInterface) { declaration.symbolName }
+        val cName = "__kn_${name}"
+        val symbolName = "_" + with(KonanBinaryInterface) { declaration.symbolName }
 
-        val returnTypeSpec = mapType(declaration.returnType) ?: return
-        val parametersSpec = declaration.explicitParameters.map {
-            ParameterSpec.builder(it.name.asString(), mapType(it.type) ?: return).build()
-        }
+        cDeclarations.add(CCode.build {
+            declare(function(
+                    returnType = mapTypeToC(declaration.returnType) ?: return,
+                    name = cName,
+                    arguments = declaration.explicitParameters.map {
+                        variable(mapTypeToC(it.type) ?: return, it.name.asString())
+                    },
+                    attributes = listOf(asm(symbolName))
+            ))
+        })
 
-        val forwardDeclarationSpec = FunctionSpec.abstractBuilder("${name}_bridge")
-                // FIXME: _silgen_name only work for as long as swiftcc matches ccc. Switch to c brindging instead.
-                .addAttribute("_silgen_name", "\"${symbolName}\"")
-                .addModifiers(Modifier.PRIVATE)
-                .returns(returnTypeSpec)
-                .apply {
-                    for (parameter in parametersSpec) {
-                        addParameter(parameter)
-                    }
-                }
-                .build()
-
-        val shimFunctionSpec = FunctionSpec.builder(name)
-                .addModifiers(Modifier.PUBLIC)
-                .returns(returnTypeSpec)
-                .apply {
-                    for (parameter in parametersSpec) {
-                        addParameter(parameter)
-                    }
-                }
-                .addStatement("${initRuntimeIfNeededSpec.name}()")
-                .addStatement("${switchThreadStateRunnable.name}()")
-                .addStatement("let result = ${forwardDeclarationSpec.name}(${parametersSpec.map { "${it.parameterName}: ${it.parameterName}" }.joinToString()})")
-                .addStatement("${switchThreadStateNative.name}()")
-                .addStatement("return result")
-                .build()
-
-        functions += forwardDeclarationSpec
-        functions += shimFunctionSpec
+        swiftDeclarations.add(SwiftCode.build {
+            function(
+                    name,
+                    parameters = declaration.explicitParameters.map {
+                        parameter(it.name.asString(), type = mapTypeToSwift(it.type) ?: return)
+                    },
+                    type = mapTypeToSwift(declaration.returnType) ?: return,
+                    visibility = SwiftCode.Declaration.Visibility.PUBLIC
+            ) {
+                +initRuntimeIfNeeded.name!!.identifier.call()
+                +switchThreadStateToRunnable.name!!.identifier.call()
+                val result = +let("result", value = cName.identifier.call(declaration.explicitParameters.map { it.name.asString().identifier }))
+                +switchThreadStateToNative.name!!.identifier.call()
+                +`return`(result.name.identifier)
+            }
+        })
     }
 
     private fun isSupported(declaration: IrFunction): Boolean {
@@ -112,31 +107,53 @@ class IrBasedSwiftGenerator(private val moduleName: String) : IrElementVisitorVo
                 && !declaration.isInline
     }
 
-    private fun mapType(declaration: IrType): TypeName? {
-        val swiftPrimitiveTypeName: String? = declaration.getPrimitiveType().takeUnless { declaration.isNullable() }?.let {
-            when (it) {
+    private fun mapTypeToC(declaration: IrType): CCode.Type? {
+        return CCode.build {
+            when {
+                declaration.isPrimitiveType() -> if (declaration.isNullable()) null else when(declaration.getPrimitiveType()!!) {
+                    PrimitiveType.BYTE -> int8()
+                    PrimitiveType.BOOLEAN -> bool
+                    PrimitiveType.CHAR -> null // TODO: implement alongside with strings
+                    PrimitiveType.SHORT -> int16()
+                    PrimitiveType.INT -> int32()
+                    PrimitiveType.LONG -> int64()
+                    PrimitiveType.FLOAT -> float
+                    PrimitiveType.DOUBLE -> double
+                }
+                declaration.isUnsignedType() -> if (declaration.isNullable()) null else when(declaration.getUnsignedType()!!) {
+                    UnsignedType.UBYTE -> int8(isUnsigned = true)
+                    UnsignedType.USHORT -> int16(isUnsigned = true)
+                    UnsignedType.UINT -> int32(isUnsigned = true)
+                    UnsignedType.ULONG -> int64(isUnsigned = true)
+                }
+                declaration.isUnit() -> if (declaration.isNullable()) null else void
+                else -> null
+            }
+        }
+    }
+
+    private fun mapTypeToSwift(declaration: IrType): SwiftCode.Type? {
+        return when {
+            declaration.isPrimitiveType() -> if (declaration.isNullable()) null else when(declaration.getPrimitiveType()!!) {
                 PrimitiveType.BYTE -> "Int8"
                 PrimitiveType.BOOLEAN -> "Bool"
-                PrimitiveType.CHAR -> null
+                PrimitiveType.CHAR -> null // TODO: implement alongside with strings
                 PrimitiveType.SHORT -> "Int16"
                 PrimitiveType.INT -> "Int32"
                 PrimitiveType.LONG -> "Int64"
                 PrimitiveType.FLOAT -> "Float"
                 PrimitiveType.DOUBLE -> "Double"
             }
-        } ?: declaration.getUnsignedType().takeUnless { declaration.isNullable() }?.let {
-            when (it) {
+            declaration.isUnsignedType() -> if (declaration.isNullable()) null else when(declaration.getUnsignedType()!!) {
                 UnsignedType.UBYTE -> "UInt8"
                 UnsignedType.USHORT -> "UInt16"
                 UnsignedType.UINT -> "UInt32"
                 UnsignedType.ULONG -> "UInt64"
             }
-        } ?: if (declaration.isUnit()) "Void" else null
-
-        if (swiftPrimitiveTypeName == null) {
-            println("Failed to bridge ${declaration.classFqName}")
-        }
-
-        return swiftPrimitiveTypeName?.let { DeclaredTypeName.typeName("Swift.$it") }
+            declaration.isUnit() -> if (declaration.isNullable()) null else "Void"
+            else -> null
+        }?.let { SwiftCode.Type.Nominal("Swift.$it") }
     }
 }
+
+private fun CCode.Builder.asm(name: String) = rawAttribute("asm".identifier.call(name.literal))

@@ -70,7 +70,6 @@
          <trust group="org.jetbrains.kotlin" name="kotlin-util-klib" version="1.9.2?[0-9](-.+)?" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlinx-serialization-compiler-plugin" version="1.9.2?[0-9](-.+)?" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlinx-serialization-compiler-plugin-embeddable" version="1.9.2?[0-9](-.+)?" regex="true"/>
-         <trust group="io.outfoxx" name="swiftpoet" version="1.5.0" regex="true"/>
       </trusted-artifacts>
    </configuration>
    <components>
