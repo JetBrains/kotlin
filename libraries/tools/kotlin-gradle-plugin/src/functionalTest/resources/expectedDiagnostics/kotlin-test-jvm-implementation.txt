@@ -1,0 +1,3 @@
+[KotlinTestFrameworkInferenceFailed | WARNING] kotlin-test was added to a non-testing configuration "implementation" where test framework couldn't be inferred.
+
+Learn how to configure kotlin-test at: https://kotl.in/kotlin-test-frameworks

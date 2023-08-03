@@ -1,0 +1,7 @@
+[KotlinTestFrameworkInferenceFailed | WARNING] kotlin-test was added to a non-testing configuration "jvmMainImplementation" where test framework couldn't be inferred.
+
+Learn how to configure kotlin-test at: https://kotl.in/kotlin-test-frameworks
+----
+[KotlinTestFrameworkInferenceFailed | WARNING] kotlin-test was added to a non-testing configuration "jvmCompilationImplementation" where test framework couldn't be inferred.
+
+Learn how to configure kotlin-test at: https://kotl.in/kotlin-test-frameworks
