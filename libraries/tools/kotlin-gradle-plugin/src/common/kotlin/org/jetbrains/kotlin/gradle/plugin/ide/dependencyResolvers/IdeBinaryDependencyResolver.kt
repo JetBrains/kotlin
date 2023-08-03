@@ -15,9 +15,8 @@ import org.gradle.internal.resolve.ModuleVersionResolveException
 import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
 import org.jetbrains.kotlin.gradle.idea.tcs.*
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.artifactsClasspath
-import org.jetbrains.kotlin.gradle.idea.tcs.extras.isOpaqueFileDependency
+import org.jetbrains.kotlin.gradle.idea.tcs.extras.isIdeaProjectLevel
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.KotlinOutputDependencyIdentifier
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.*
@@ -33,7 +32,6 @@ import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.InternalKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.utils.markResolvable
-import org.jetbrains.kotlin.gradle.utils.relativeOrAbsolute
 import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 
 /**
@@ -173,24 +171,8 @@ class IdeBinaryDependencyResolver @JvmOverloads constructor(
 
                 is OpaqueComponentArtifactIdentifier -> {
                     /* Such dependencies *would* require implementing a resolver */
-                    IdeaKotlinResolvedBinaryDependency(
-                        binaryType = binaryType, coordinates = IdeaKotlinBinaryCoordinates(
-                            group = "<file>",
-                            module = componentId.file.relativeOrAbsolute(sourceSet.project.rootDir),
-                            version = null,
-                            sourceSetName = null
-                        ),
-                        classpath = IdeaKotlinClasspath(componentId.file)
-                    ).also { dependency ->
-                        dependency.isOpaqueFileDependency = true
-                    }
+                    null
                 }
-
-                /*
-                Such dependencies (e.g. associate compilations, cinterops, ...)
-                Will have dedicated resolvers implemented
-                 */
-                is KotlinOutputDependencyIdentifier -> null
 
                 else -> {
                     logger.warn("Unhandled componentId: ${componentId.javaClass}")
@@ -198,6 +180,9 @@ class IdeBinaryDependencyResolver @JvmOverloads constructor(
                 }
             }?.also { dependency ->
                 dependency.gradleArtifact = artifact
+                if (dependency is IdeaKotlinResolvedBinaryDependency) {
+                    dependency.isIdeaProjectLevel = false
+                }
             }
         }.toSet()
 
@@ -250,7 +235,11 @@ class IdeBinaryDependencyResolver @JvmOverloads constructor(
 
     private fun ArtifactResolutionStrategy.createArtifactViewFromConfiguration(
         sourceSet: KotlinSourceSet, configuration: Configuration,
-    ): ArtifactView = (if (dependencyFilter != null) configuration.copyRecursive(dependencyFilter) else configuration).incoming
+    ): ArtifactView = configuration.incoming
+        .apply {
+            val dependencyFilter = dependencyFilter
+            if (dependencyFilter != null) dependencies.removeIf { dependency -> !dependencyFilter.invoke(dependency) }
+        }
         .artifactView { view ->
             view.isLenient = true
             view.attributes.setupArtifactViewAttributes(sourceSet)

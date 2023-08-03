@@ -24,5 +24,4 @@ val kotlinExtrasSerialization = IdeaKotlinExtrasSerializationExtension {
     register(sourcesClasspathKey, IdeaKotlinClasspathSerializer)
     register(documentationClasspathKey, IdeaKotlinClasspathSerializer)
     register(projectArtifactsClasspathKey, IdeaKotlinClasspathSerializer)
-    register(isOpaqueFileDependencyKey, IdeaKotlinBooleanExtrasSerializer)
 }
