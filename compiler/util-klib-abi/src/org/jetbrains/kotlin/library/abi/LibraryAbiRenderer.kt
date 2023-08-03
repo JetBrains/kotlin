@@ -10,14 +10,29 @@ import org.jetbrains.kotlin.library.abi.impl.AbiRendererImpl
 /** The default rendering implementation. */
 @ExperimentalLibraryAbiReader
 object LibraryAbiRenderer {
+    /**
+     * Render the [LibraryAbi] to the string representation.
+     *
+     * @param libraryAbi The [LibraryAbi] instance previously read by [LibraryAbiReader].
+     * @param settings The rendering settings.
+     */
     fun render(libraryAbi: LibraryAbi, settings: AbiRenderingSettings): String =
         buildString { render(libraryAbi, this, settings) }
 
+    /**
+     * Render the [LibraryAbi] to the string representation.
+     *
+     * @param libraryAbi The [LibraryAbi] instance previously read by [LibraryAbiReader].
+     * @param output The output to write the rendered text to.
+     * @param settings The rendering settings.
+     */
     fun render(libraryAbi: LibraryAbi, output: Appendable, settings: AbiRenderingSettings): Unit =
         AbiRendererImpl(libraryAbi, settings, output).render()
 }
 
 /**
+ * The settings applied during rendering of [LibraryAbi].
+ *
  * @param renderedSignatureVersion The IR signature version to render. This should be a version among the versions
  *   listed in [LibraryAbi.signatureVersions].
  * @param renderManifest Whether KLIB manifest properties should be rendered.
