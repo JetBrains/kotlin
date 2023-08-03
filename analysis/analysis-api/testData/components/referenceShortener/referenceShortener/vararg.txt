@@ -1,0 +1,7 @@
+Before shortening: dependency.Foo
+with DO_NOT_SHORTEN:
+with SHORTEN_IF_ALREADY_IMPORTED:
+with SHORTEN_AND_IMPORT:
+[type] dependency.Foo
+with SHORTEN_AND_STAR_IMPORT:
+[type] dependency.Foo

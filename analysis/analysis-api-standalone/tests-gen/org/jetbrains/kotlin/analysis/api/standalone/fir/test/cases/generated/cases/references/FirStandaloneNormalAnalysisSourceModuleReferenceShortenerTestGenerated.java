@@ -419,6 +419,12 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceShortenerTestGenera
     }
 
     @Test
+    @TestMetadata("vararg.kt")
+    public void testVararg() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/vararg.kt");
+    }
+
+    @Test
     @TestMetadata("variable.kt")
     public void testVariable() throws Exception {
         runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/variable.kt");
