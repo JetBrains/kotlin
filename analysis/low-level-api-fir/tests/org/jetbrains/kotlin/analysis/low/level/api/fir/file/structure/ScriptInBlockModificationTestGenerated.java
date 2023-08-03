@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 public class ScriptInBlockModificationTestGenerated extends AbstractScriptInBlockModificationTest {
     @Test
     public void testAllFilesPresentInInBlockModification() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/inBlockModification"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/inBlockModification"), Pattern.compile("^(.+)\\.(kts)$"), null, false);
     }
 
     @Test

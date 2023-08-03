@@ -15,12 +15,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.AbstractSource
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.AbstractDiagnosticCompilerTestDataTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.AbstractLLFirPreresolvedReversedDiagnosticCompilerTestDataSpecTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.AbstractLLFirPreresolvedReversedDiagnosticCompilerTestDataTest
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.AbstractOutOfContentRootFileStructureTest
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.AbstractOutOfContentRootInBlockModificationTest
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.AbstractScriptFileStructureTest
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.AbstractScriptInBlockModificationTest
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.AbstractSourceFileStructureTest
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.AbstractSourceInBlockModificationTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.AbstractErrorResistanceTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.AbstractOutOfContentRootWholeFileResolvePhaseTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.AbstractScriptWholeFileResolvePhaseTest
@@ -69,15 +64,19 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
         }
 
         testClass<AbstractSourceInBlockModificationTest> {
-            model("inBlockModification", pattern = TestGeneratorUtil.KT)
+            model("inBlockModification", recursive = false, pattern = TestGeneratorUtil.KT)
         }
 
         testClass<AbstractOutOfContentRootInBlockModificationTest> {
-            model("inBlockModification", pattern = TestGeneratorUtil.KT)
+            model("inBlockModification", recursive = false, pattern = TestGeneratorUtil.KT)
         }
 
         testClass<AbstractScriptInBlockModificationTest> {
-            model("inBlockModification", pattern = TestGeneratorUtil.KTS)
+            model("inBlockModification", recursive = false, pattern = TestGeneratorUtil.KTS)
+        }
+
+        testClass<AbstractCodeFragmentInBlockModificationTest> {
+            model("inBlockModification/codeFragments", recursive = false, pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
         }
 
         testClass<AbstractSourceFileStructureTest> {
