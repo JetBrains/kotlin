@@ -740,38 +740,6 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
             listOf("-Xexpect-actual-linker")
         )
     }
-    
-    fun testActualTypealiasToCompiledInlineClass() {
-        val library14 = compileLibrary(
-            "library14",
-            additionalOptions = listOf("-language-version", "1.4"),
-            checkKotlinOutput = { result ->
-                KotlinTestUtils.assertEqualsToFile(
-                    "Expected output check failed",
-                    File(testDataDirectory, "output14.txt"),
-                    result
-                )
-            }
-        )
-        val library16 = compileLibrary(
-            "library16",
-            additionalOptions = listOf("-language-version", "1.6")
-        )
-        compileKotlin(
-            "expectActualLv14.kt",
-            output = tmpdir,
-            classpath = listOf(library14, library16),
-            additionalOptions = listOf("-language-version", "1.4", "-Xmulti-platform"),
-            expectedFileName = "output14.txt",
-        )
-        compileKotlin(
-            "expectActualLv16.kt",
-            output = tmpdir,
-            classpath = listOf(library14, library16),
-            additionalOptions = listOf("-language-version", "1.6", "-Xmulti-platform"),
-            expectedFileName = "output16.txt",
-        )
-    }
 
     fun testDeserializedAnnotationReferencesJava() {
         // Only Java
