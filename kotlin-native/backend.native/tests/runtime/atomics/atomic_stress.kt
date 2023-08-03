@@ -86,7 +86,12 @@ fun testAtomicReferenceStress(workers: Array<Worker>) {
 fun runStressTest() {
     val COUNT = 20
     val workers = Array(COUNT, { _ -> Worker.start()})
+
     testAtomicIntStress(workers)
     testAtomicLongStress(workers)
     testAtomicReferenceStress(workers)
+
+    workers.forEach {
+        it.requestTermination().result
+    }
 }

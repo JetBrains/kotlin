@@ -31,7 +31,7 @@ public:
     const T* operator->() const noexcept { return impl(); }
 
 private:
-    T* impl() noexcept { return reinterpret_cast<T*>(implStorage_); }
+    __attribute__((used)) T* impl() noexcept { return reinterpret_cast<T*>(implStorage_); }
     const T* impl() const noexcept { return reinterpret_cast<const T*>(implStorage_); }
 
     alignas(T) char implStorage_[sizeof(T)];

@@ -12,7 +12,7 @@
 #include "ThreadData.hpp"
 #include "std_support/Optional.hpp"
 #include <cinttypes>
-#include <mutex>
+#include <limits>
 
 using namespace kotlin;
 
@@ -153,15 +153,18 @@ GCHandle GCHandle::create(uint64_t epoch) {
     current.epoch = static_cast<KLong>(epoch);
     current.startTime = static_cast<KLong>(konan::getTimeNanos());
     if (last.endTime) {
-        GCLogInfo(epoch, "Started. Time since last GC %" PRIu64 " microseconds.", *current.startTime - *last.endTime);
+        auto time = (*current.startTime - *last.endTime) / 1000;
+        GCLogInfo(epoch, "Started. Time since last GC %" PRIu64 " microseconds.", time);
     } else {
         GCLogInfo(epoch, "Started.");
     }
     current.memoryUsageBefore.heap = currentHeapUsage();
     return getByEpoch(epoch);
 }
-GCHandle GCHandle::createFakeForTests() { return getByEpoch(std::numeric_limits<uint64_t>::max()); }
+GCHandle GCHandle::createFakeForTests() { return getByEpoch(invalid().getEpoch() - 1); }
 GCHandle GCHandle::getByEpoch(uint64_t epoch) {
+    GCHandle handle{epoch};
+    RuntimeAssert(handle.isValid(), "Must be valid");
     return GCHandle{epoch};
 }
 
@@ -174,10 +177,16 @@ std::optional<gc::GCHandle> gc::GCHandle::currentEpoch() noexcept {
     return std::nullopt;
 }
 
+GCHandle GCHandle::invalid() {
+    return GCHandle{std::numeric_limits<uint64_t>::max()};
+}
 void GCHandle::ClearForTests() {
     std::lock_guard guard(lock);
     current = {};
     last = {};
+}
+bool GCHandle::isValid() const {
+    return epoch_ != GCHandle::invalid().epoch_;
 }
 void GCHandle::finished() {
     std::lock_guard guard(lock);

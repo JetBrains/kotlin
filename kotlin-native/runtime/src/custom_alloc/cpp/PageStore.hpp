@@ -44,18 +44,25 @@ public:
         }
     }
 
-    T* GetPage(uint32_t cellCount, FinalizerQueue& finalizerQueue) noexcept {
+    T* GetPage(uint32_t cellCount, FinalizerQueue& finalizerQueue, std::atomic<std::size_t>& concurrentSweepersCount_) noexcept {
         T* page;
         if ((page = ready_.Pop())) {
             used_.Push(page);
             return page;
         }
-        auto handle = gc::GCHandle::currentEpoch();
-        if ((page = unswept_.Pop())) {
-            // If there're unswept_ pages, the GC is in progress.
-            GCSweepScope sweepHandle = T::currentGCSweepScope(*handle);
-            if ((page = SweepSingle(sweepHandle, page, unswept_, used_, finalizerQueue))) {
-                return page;
+        {
+            auto handle = gc::GCHandle::currentEpoch();
+            ScopeGuard counterGuard(
+                    [&]() { ++concurrentSweepersCount_; },
+                    [&]() { --concurrentSweepersCount_; }
+            );
+
+            if ((page = unswept_.Pop())) {
+                // If there're unswept_ pages, the GC is in progress.
+                GCSweepScope sweepHandle = T::currentGCSweepScope(*handle);
+                if ((page = SweepSingle(sweepHandle, page, unswept_, used_, finalizerQueue))) {
+                    return page;
+                }
             }
         }
         if ((page = empty_.Pop())) {

@@ -143,11 +143,40 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         } ?: arg
     }
 
-    val gcMarkSingleThreaded: Boolean
-        get() = configuration.get(BinaryOptions.gcMarkSingleThreaded) ?: false
+    private val defaultGcMarkSingleThreaded get() = target.family == Family.MINGW
+
+    val gcMarkSingleThreaded: Boolean by lazy {
+        configuration.get(BinaryOptions.gcMarkSingleThreaded) ?: defaultGcMarkSingleThreaded
+    }
 
     val concurrentWeakSweep: Boolean
         get() = configuration.get(BinaryOptions.concurrentWeakSweep) ?: false
+
+    val gcMutatorsCooperate: Boolean by lazy {
+        val mutatorsCooperate = configuration.get(BinaryOptions.gcMutatorsCooperate)
+        if (gcMarkSingleThreaded) {
+            if (mutatorsCooperate == true) {
+                configuration.report(CompilerMessageSeverity.STRONG_WARNING,
+                        "Mutators cooperation is not supported during single threaded mark")
+            }
+            false
+        } else {
+            mutatorsCooperate ?: true
+        }
+    }
+
+    val auxGCThreads: UInt by lazy {
+        val auxGCThreads = configuration.get(BinaryOptions.auxGCThreads)
+        if (gcMarkSingleThreaded) {
+            if (auxGCThreads != null && auxGCThreads != 0U) {
+                configuration.report(CompilerMessageSeverity.STRONG_WARNING,
+                        "Auxiliary GC workers are not supported during single threaded mark")
+            }
+            0U
+        } else {
+            auxGCThreads ?: 0U
+        }
+    }
 
     val irVerificationMode: IrVerificationMode
         get() = configuration.getNotNull(KonanConfigKeys.VERIFY_IR)
@@ -408,6 +437,8 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             append("-runtime_asserts=${runtimeAssertsMode.name}")
         if (disableMmap != defaultDisableMmap)
             append("-disable_mmap=${disableMmap}")
+        if (gcMarkSingleThreaded != defaultGcMarkSingleThreaded)
+            append("-gc_mark_single_threaded=${gcMarkSingleThreaded}")
     }
 
     private val userCacheFlavorString = buildString {

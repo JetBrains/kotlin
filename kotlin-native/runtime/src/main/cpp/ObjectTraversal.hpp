@@ -17,6 +17,23 @@ namespace kotlin {
 // TODO: Consider an iterator/ranges based approaches for traversals.
 
 template <typename F>
+ALWAYS_INLINE void traverseClassObjectFields(ObjHeader* object, F process) noexcept(noexcept(process(std::declval<ObjHeader**>()))) {
+    const TypeInfo* typeInfo = object->type_info();
+    RuntimeAssert(typeInfo != theArrayTypeInfo, "Must not be an array of objects");
+    for (int index = 0; index < typeInfo->objOffsetsCount_; index++) {
+        process(reinterpret_cast<ObjHeader**>(reinterpret_cast<uintptr_t>(object) + typeInfo->objOffsets_[index]));
+    }
+}
+
+template <typename F>
+ALWAYS_INLINE void traverseArrayOfObjectsElements(ArrayHeader* array, F process) noexcept(noexcept(process(std::declval<ObjHeader**>()))) {
+    RuntimeAssert(array->type_info() == theArrayTypeInfo, "Must be an array of objects");
+    for (uint32_t index = 0; index < array->count_; index++) {
+        process(ArrayAddressOfElementAt(array, index));
+    }
+}
+
+template <typename F>
 void traverseObjectFields(ObjHeader* object, F process) noexcept(noexcept(process(std::declval<ObjHeader**>()))) {
     const TypeInfo* typeInfo = object->type_info();
     // Only consider arrays of objects, not arrays of primitives.

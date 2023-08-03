@@ -52,6 +52,8 @@ private:
 bool RequestThreadsSuspension() noexcept;
 void WaitForThreadsSuspension() noexcept;
 
+bool isSuspendedOrNative(kotlin::mm::ThreadData& thread) noexcept;
+
 /**
  * Suspends all threads registered in ThreadRegistry except threads that are in the Native state.
  * Blocks until all such threads are suspended. Threads that are in the Native state on the moment

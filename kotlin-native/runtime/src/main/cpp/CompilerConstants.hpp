@@ -38,6 +38,7 @@ extern "C" const int32_t Kotlin_runtimeAssertsMode;
 extern "C" const int32_t Kotlin_disableMmap;
 extern "C" const char* const Kotlin_runtimeLogs;
 extern "C" const int32_t Kotlin_concurrentWeakSweep;
+extern "C" const int32_t Kotlin_gcMarkSingleThreaded;
 extern "C" const int32_t Kotlin_freezingEnabled;
 extern "C" const int32_t Kotlin_freezingChecksEnabled;
 
@@ -103,9 +104,15 @@ ALWAYS_INLINE inline bool concurrentWeakSweep() noexcept {
     return Kotlin_concurrentWeakSweep != 0;
 }
 
+ALWAYS_INLINE inline bool gcMarkSingleThreaded() noexcept {
+    return Kotlin_gcMarkSingleThreaded != 0;
+}
+
+
 WorkerExceptionHandling workerExceptionHandling() noexcept;
 DestroyRuntimeMode destroyRuntimeMode() noexcept;
-bool gcMarkSingleThreaded() noexcept;
+bool gcMutatorsCooperate() noexcept;
+uint32_t auxGCThreads() noexcept;
 bool suspendFunctionsFromAnyThreadFromObjCEnabled() noexcept;
 AppStateTracking appStateTracking() noexcept;
 int getSourceInfo(void* addr, SourceInfo *result, int result_size) noexcept;

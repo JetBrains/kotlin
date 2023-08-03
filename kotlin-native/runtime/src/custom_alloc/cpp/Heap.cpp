@@ -50,18 +50,22 @@ FinalizerQueue Heap::Sweep(gc::GCHandle gcHandle) noexcept {
         auto sweepHandle = gcHandle.sweepExtraObjects();
         extraObjectPages_.Sweep(sweepHandle, finalizerQueue);
     }
+    // wait for concurrent assistants to finish sweeping the last popped page
+    while (concurrentSweepersCount_.load(std::memory_order_acquire) > 0) {
+        std::this_thread::yield();
+    }
     CustomAllocDebug("Heap::Sweep done");
     return finalizerQueue;
 }
 
 NextFitPage* Heap::GetNextFitPage(uint32_t cellCount, FinalizerQueue& finalizerQueue) noexcept {
     CustomAllocDebug("Heap::GetNextFitPage()");
-    return nextFitPages_.GetPage(cellCount, finalizerQueue);
+    return nextFitPages_.GetPage(cellCount, finalizerQueue, concurrentSweepersCount_);
 }
 
 FixedBlockPage* Heap::GetFixedBlockPage(uint32_t cellCount, FinalizerQueue& finalizerQueue) noexcept {
     CustomAllocDebug("Heap::GetFixedBlockPage()");
-    return fixedBlockPages_[cellCount].GetPage(cellCount, finalizerQueue);
+    return fixedBlockPages_[cellCount].GetPage(cellCount, finalizerQueue, concurrentSweepersCount_);
 }
 
 SingleObjectPage* Heap::GetSingleObjectPage(uint64_t cellCount, FinalizerQueue& finalizerQueue) noexcept {
@@ -71,7 +75,7 @@ SingleObjectPage* Heap::GetSingleObjectPage(uint64_t cellCount, FinalizerQueue& 
 
 ExtraObjectPage* Heap::GetExtraObjectPage(FinalizerQueue& finalizerQueue) noexcept {
     CustomAllocInfo("CustomAllocator::GetExtraObjectPage()");
-    return extraObjectPages_.GetPage(0, finalizerQueue);
+    return extraObjectPages_.GetPage(0, finalizerQueue, concurrentSweepersCount_);
 }
 
 std_support::vector<ObjHeader*> Heap::GetAllocatedObjects() noexcept {

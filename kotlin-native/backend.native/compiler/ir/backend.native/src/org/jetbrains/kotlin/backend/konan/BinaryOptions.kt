@@ -41,6 +41,10 @@ object BinaryOptions : BinaryOptionRegistry() {
 
     val concurrentWeakSweep by booleanOption()
 
+    val gcMutatorsCooperate by booleanOption()
+
+    val auxGCThreads by uintOption()
+
     val linkRuntime by option<RuntimeLinkageStrategyBinaryOption>()
 
     val bundleId by stringOption()
@@ -95,6 +99,15 @@ open class BinaryOptionRegistry {
                 }
             }
 
+    protected fun uintOption(): PropertyDelegateProvider<Any?, ReadOnlyProperty<Any?, CompilerConfigurationKey<UInt>>> =
+            PropertyDelegateProvider { _, property ->
+                val option = BinaryOption(property.name, UIntValueParser)
+                register(option)
+                ReadOnlyProperty { _, _ ->
+                    option.compilerConfigurationKey
+                }
+            }
+
     protected fun stringOption(): PropertyDelegateProvider<Any?, ReadOnlyProperty<Any?, CompilerConfigurationKey<String>>> =
             PropertyDelegateProvider { _, property ->
                 val option = BinaryOption(property.name, StringValueParser)
@@ -119,6 +132,13 @@ private object BooleanValueParser : BinaryOption.ValueParser<Boolean> {
 
     override val validValuesHint: String?
         get() = "true|false"
+}
+
+private object UIntValueParser : BinaryOption.ValueParser<UInt> {
+    override fun parse(value: String): UInt? = value.toUIntOrNull()
+
+    override val validValuesHint: String?
+        get() = "non-negative-number"
 }
 
 private object StringValueParser : BinaryOption.ValueParser<String> {
