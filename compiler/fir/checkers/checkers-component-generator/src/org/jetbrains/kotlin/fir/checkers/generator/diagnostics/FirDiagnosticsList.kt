@@ -19,6 +19,9 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.*
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -35,6 +38,7 @@ import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.Incompatible
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMemberDiff
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.PrivateForInline
 import kotlin.properties.PropertyDelegateProvider
@@ -1184,7 +1188,29 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
         val ACTUAL_MISSING by error<KtNamedDeclaration>(PositioningStrategy.ACTUAL_DECLARATION_NAME)
 
-        val EXPECT_AND_ACTUAL_DIFFERENT_MEMBERS by error<KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME)
+        val ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER by error<KtClassLikeDeclaration>(PositioningStrategy.DECLARATION_NAME) {
+            parameter<FirClassLikeSymbol<*>>("actualClassOrTypealias")
+            parameter<Set<ExpectActualMemberDiff<FirCallableSymbol<*>, FirClassSymbol<*>>>>("scopeDiff")
+        }
+        val NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION by error<KtCallableDeclaration>(PositioningStrategy.DECLARATION_NAME) {
+            parameter<ExpectActualMemberDiff<FirCallableSymbol<*>, FirClassSymbol<*>>>("diff")
+        }
+        val RETURN_TYPE_COVARIANT_OVERRIDE_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION by error<KtCallableDeclaration>(PositioningStrategy.DECLARATION_RETURN_TYPE) {
+            parameter<ExpectActualMemberDiff<FirCallableSymbol<*>, FirClassSymbol<*>>>("diff")
+        }
+        val MODALITY_OVERRIDE_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION by error<KtCallableDeclaration>(PositioningStrategy.MODALITY_MODIFIER) {
+            parameter<ExpectActualMemberDiff<FirCallableSymbol<*>, FirClassSymbol<*>>>("diff")
+        }
+        val VISIBILITY_OVERRIDE_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION by error<KtCallableDeclaration>(PositioningStrategy.VISIBILITY_MODIFIER) {
+            parameter<ExpectActualMemberDiff<FirCallableSymbol<*>, FirClassSymbol<*>>>("diff")
+        }
+
+        val ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER by error<KtClassLikeDeclaration>(
+            PositioningStrategy.DECLARATION_NAME
+        ) {
+            parameter<FirClassLikeSymbol<*>>("actualClassOrTypealias")
+            parameter<List<ConeKotlinType>>("supertypes")
+        }
 
         val NOT_A_MULTIPLATFORM_COMPILATION by error<PsiElement>()
 

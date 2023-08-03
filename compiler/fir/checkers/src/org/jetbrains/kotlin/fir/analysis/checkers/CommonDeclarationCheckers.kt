@@ -26,7 +26,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirExposedVisibilityDeclarationChecker,
             FirCyclicTypeBoundsChecker,
             FirExpectActualDeclarationChecker,
-            FirNonFinalExpectClassifierHasTheSameMembersAsActualClassifierChecker,
+            FirActualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker,
             FirAmbiguousAnonymousTypeChecker,
             FirExplicitApiDeclarationChecker,
             FirAnnotationChecker,

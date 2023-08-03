@@ -14,7 +14,7 @@ open class InjectedEmptySuperClass()
 
 // Hypothetically, it's more restricting than necessary. But technically, actual and expect scopes don't match (from some perspective).
 // If it wasn't reported, it wouldn't be cool that once you add a member to InjectedSuperClass, Foo would become red
-actual open <!NON_FINAL_EXPECT_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_ACTUAL_CLASSIFIER!>class Foo<!> : InjectedEmptySuperClass() {
+actual open <!ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER!>class Foo<!> : InjectedEmptySuperClass() {
     actual fun existingMethod() {}
     actual val existingParam: Int = 904
 }

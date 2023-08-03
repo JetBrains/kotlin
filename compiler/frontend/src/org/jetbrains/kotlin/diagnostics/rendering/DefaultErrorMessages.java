@@ -391,7 +391,7 @@ public class DefaultErrorMessages {
                 "{0}: expect and corresponding actual are declared in the same module, which will be prohibited in Kotlin 2.0. See https://youtrack.jetbrains.com/issue/KT-55177",
                 CAPITALIZED_DECLARATION_NAME_WITH_KIND_AND_PLATFORM);
 
-        MAP.put(NON_FINAL_EXPECT_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_ACTUAL_CLASSIFIER,
+        MAP.put(ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER,
                 "{0}: non-final expect class and its actual class must declare exactly the same non-private members. The following non-private members in actual class are mismatched:{1}",
                 CAPITALIZED_DECLARATION_NAME_WITH_KIND_AND_PLATFORM,
                 ExpectActualScopeDiffsRenderer.TEXT);
@@ -400,7 +400,7 @@ public class DefaultErrorMessages {
         MAP.put(MODALITY_OVERRIDE_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION, "{0}", ExpectActualScopeDiffRenderer.INSTANCE);
         MAP.put(VISIBILITY_OVERRIDE_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION, "{0}", ExpectActualScopeDiffRenderer.INSTANCE);
 
-        MAP.put(NON_FINAL_EXPECT_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_ACTUAL_CLASSIFIER,
+        MAP.put(ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER,
                 "{0}: Non-final expect class and its actual class must declare exactly the same supertypes. " +
                 "Actual class declares the following supertypes that are not presented in expect class: {1}",
                 CAPITALIZED_DECLARATION_NAME_WITH_KIND_AND_PLATFORM,

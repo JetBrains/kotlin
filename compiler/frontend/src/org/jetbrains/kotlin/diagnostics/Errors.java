@@ -32,9 +32,9 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability;
 import org.jetbrains.kotlin.resolve.calls.tower.WrongResolutionToClassifier;
 import org.jetbrains.kotlin.resolve.calls.util.BuilderLambdaLabelingInfo;
-import org.jetbrains.kotlin.resolve.checkers.ExpectActualMemberDiff;
 import org.jetbrains.kotlin.resolve.deprecation.DescriptorBasedDeprecationInfo;
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.Incompatible;
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMemberDiff;
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData;
 import org.jetbrains.kotlin.types.KotlinType;
 
@@ -838,20 +838,20 @@ public interface Errors {
 
     DiagnosticFactory1<KtNamedDeclaration, MemberDescriptor> EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE = DiagnosticFactory1.create(WARNING, DECLARATION_NAME);
 
-    DiagnosticFactory2<KtClassLikeDeclaration, ClassifierDescriptorWithTypeParameters, Set<ExpectActualMemberDiff>>
-            NON_FINAL_EXPECT_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_ACTUAL_CLASSIFIER =
+    DiagnosticFactory2<KtClassLikeDeclaration, ClassifierDescriptorWithTypeParameters, Set<ExpectActualMemberDiff<CallableMemberDescriptor, ClassDescriptor>>>
+            ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER =
             DiagnosticFactory2.create(ERROR, DECLARATION_NAME);
-    DiagnosticFactory1<KtCallableDeclaration, ExpectActualMemberDiff>
+    DiagnosticFactory1<KtCallableDeclaration, ExpectActualMemberDiff<CallableMemberDescriptor, ClassDescriptor>>
             NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION = DiagnosticFactory1.create(ERROR, DECLARATION_NAME);
-    DiagnosticFactory1<KtCallableDeclaration, ExpectActualMemberDiff>
+    DiagnosticFactory1<KtCallableDeclaration, ExpectActualMemberDiff<CallableMemberDescriptor, ClassDescriptor>>
             RETURN_TYPE_COVARIANT_OVERRIDE_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION = DiagnosticFactory1.create(ERROR, DECLARATION_RETURN_TYPE);
-    DiagnosticFactory1<KtCallableDeclaration, ExpectActualMemberDiff>
+    DiagnosticFactory1<KtCallableDeclaration, ExpectActualMemberDiff<CallableMemberDescriptor, ClassDescriptor>>
             MODALITY_OVERRIDE_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION = DiagnosticFactory1.create(ERROR, MODALITY_MODIFIER);
-    DiagnosticFactory1<KtCallableDeclaration, ExpectActualMemberDiff>
+    DiagnosticFactory1<KtCallableDeclaration, ExpectActualMemberDiff<CallableMemberDescriptor, ClassDescriptor>>
             VISIBILITY_OVERRIDE_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION = DiagnosticFactory1.create(ERROR, VISIBILITY_MODIFIER);
 
-    DiagnosticFactory2<KtClassLikeDeclaration, MemberDescriptor, List<Name>>
-            NON_FINAL_EXPECT_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_ACTUAL_CLASSIFIER =
+    DiagnosticFactory2<KtClassLikeDeclaration, ClassifierDescriptorWithTypeParameters, List<Name>>
+            ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER =
             DiagnosticFactory2.create(ERROR, DECLARATION_NAME);
 
     DiagnosticFactory0<PsiElement> OPTIONAL_EXPECTATION_NOT_ON_EXPECTED = DiagnosticFactory0.create(ERROR);

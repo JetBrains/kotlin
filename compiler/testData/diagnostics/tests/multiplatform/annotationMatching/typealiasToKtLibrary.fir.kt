@@ -40,4 +40,4 @@ expect abstract class MyAbstractIterator<T> {
 
 actual typealias MyDeprecatedMatch = kotlin.Deprecated
 
-<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual typealias MyAbstractIterator<T> = AbstractIterator<T><!>
+<!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>actual typealias <!ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER, ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER!>MyAbstractIterator<!><T> = AbstractIterator<T><!>

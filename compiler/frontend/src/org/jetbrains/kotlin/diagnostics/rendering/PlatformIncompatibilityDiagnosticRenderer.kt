@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.diagnostics.rendering
 
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
-import org.jetbrains.kotlin.resolve.checkers.ExpectActualMemberDiff
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.Incompatible
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMemberDiff
 import java.text.MessageFormat
 
 class PlatformIncompatibilityDiagnosticRenderer(
@@ -66,8 +68,11 @@ class IncompatibleExpectedActualClassScopesRenderer(
 
 class ExpectActualScopeDiffsRenderer(
     private val mode: MultiplatformDiagnosticRenderingMode,
-) : DiagnosticParameterRenderer<Set<ExpectActualMemberDiff>> {
-    override fun render(obj: Set<ExpectActualMemberDiff>, renderingContext: RenderingContext): String {
+) : DiagnosticParameterRenderer<Set<ExpectActualMemberDiff<CallableMemberDescriptor, ClassDescriptor>>> {
+    override fun render(
+        obj: Set<ExpectActualMemberDiff<CallableMemberDescriptor, ClassDescriptor>>,
+        renderingContext: RenderingContext,
+    ): String {
         check(obj.isNotEmpty())
         return buildString {
             mode.renderList(this, obj.toList().map { diff ->
@@ -93,8 +98,11 @@ class ListRenderer<T>(
         obj.joinToString { elemProcessor(elementRenderer.render(it, renderingContext)) }
 }
 
-object ExpectActualScopeDiffRenderer : DiagnosticParameterRenderer<ExpectActualMemberDiff> {
-    override fun render(obj: ExpectActualMemberDiff, renderingContext: RenderingContext): String = MessageFormat.format(
+object ExpectActualScopeDiffRenderer : DiagnosticParameterRenderer<ExpectActualMemberDiff<CallableMemberDescriptor, ClassDescriptor>> {
+    override fun render(
+        obj: ExpectActualMemberDiff<CallableMemberDescriptor, ClassDescriptor>,
+        renderingContext: RenderingContext,
+    ): String = MessageFormat.format(
         obj.kind.rawMessage,
         Renderers.DECLARATION_NAME_WITH_KIND.render(obj.actualMember, renderingContext),
         Renderers.NAME.render(obj.expectClass)

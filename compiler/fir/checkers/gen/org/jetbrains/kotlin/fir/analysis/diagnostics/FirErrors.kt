@@ -63,7 +63,9 @@ import org.jetbrains.kotlin.psi.KtBackingField
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtBinaryExpressionWithTypeRHS
 import org.jetbrains.kotlin.psi.KtCallExpression
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtClassLikeDeclaration
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtConstructor
 import org.jetbrains.kotlin.psi.KtConstructorDelegationCall
@@ -105,6 +107,7 @@ import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.Incompatible
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMemberDiff
 import org.jetbrains.kotlin.types.Variance
 
 /*
@@ -631,7 +634,12 @@ object FirErrors {
     val AMBIGUOUS_EXPECTS by error2<KtNamedDeclaration, FirBasedSymbol<*>, Collection<FirModuleData>>(SourceElementPositioningStrategies.INCOMPATIBLE_DECLARATION)
     val NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS by error2<KtNamedDeclaration, FirBasedSymbol<*>, List<Pair<FirBasedSymbol<*>, Map<Incompatible<FirBasedSymbol<*>>, Collection<FirBasedSymbol<*>>>>>>(SourceElementPositioningStrategies.ACTUAL_DECLARATION_NAME)
     val ACTUAL_MISSING by error0<KtNamedDeclaration>(SourceElementPositioningStrategies.ACTUAL_DECLARATION_NAME)
-    val EXPECT_AND_ACTUAL_DIFFERENT_MEMBERS by error0<KtNamedDeclaration>(SourceElementPositioningStrategies.DECLARATION_NAME)
+    val ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER by error2<KtClassLikeDeclaration, FirClassLikeSymbol<*>, Set<ExpectActualMemberDiff<FirCallableSymbol<*>, FirClassSymbol<*>>>>(SourceElementPositioningStrategies.DECLARATION_NAME)
+    val NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION by error1<KtCallableDeclaration, ExpectActualMemberDiff<FirCallableSymbol<*>, FirClassSymbol<*>>>(SourceElementPositioningStrategies.DECLARATION_NAME)
+    val RETURN_TYPE_COVARIANT_OVERRIDE_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION by error1<KtCallableDeclaration, ExpectActualMemberDiff<FirCallableSymbol<*>, FirClassSymbol<*>>>(SourceElementPositioningStrategies.DECLARATION_RETURN_TYPE)
+    val MODALITY_OVERRIDE_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION by error1<KtCallableDeclaration, ExpectActualMemberDiff<FirCallableSymbol<*>, FirClassSymbol<*>>>(SourceElementPositioningStrategies.MODALITY_MODIFIER)
+    val VISIBILITY_OVERRIDE_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION by error1<KtCallableDeclaration, ExpectActualMemberDiff<FirCallableSymbol<*>, FirClassSymbol<*>>>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
+    val ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER by error2<KtClassLikeDeclaration, FirClassLikeSymbol<*>, List<ConeKotlinType>>(SourceElementPositioningStrategies.DECLARATION_NAME)
     val NOT_A_MULTIPLATFORM_COMPILATION by error0<PsiElement>()
     val EXPECT_ACTUAL_OPT_IN_ANNOTATION by error0<KtNamedDeclaration>(SourceElementPositioningStrategies.EXPECT_ACTUAL_MODIFIER)
     val ACTUAL_TYPEALIAS_TO_SPECIAL_ANNOTATION by error1<KtTypeAlias, ClassId>(SourceElementPositioningStrategies.TYPEALIAS_TYPE_REFERENCE)

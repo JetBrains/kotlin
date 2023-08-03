@@ -14,7 +14,7 @@ expect class Outer {
 // FILE: jvm.kt
 
 actual class Outer {
-    actual open <!NON_FINAL_EXPECT_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_ACTUAL_CLASSIFIER!>class Foo<!> {
+    actual open <!ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER!>class Foo<!> {
         actual fun existingMethod() {}
         actual val existingParam: Int = 904
 

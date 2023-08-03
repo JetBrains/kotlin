@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperInterfaces
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMemberDiff
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
@@ -26,9 +27,9 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
 /**
- * [K2 counterpart checker][org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirNonFinalExpectClassifierHasTheSameMembersAsActualClassifierChecker]
+ * [K2 counterpart checker][org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirActualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker]
  */
-object NonFinalExpectClassifierHasTheSameMembersAsActualClassifierChecker : DeclarationChecker {
+object ActualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         val (actual, expect) = matchActualWithNonFinalExpect(declaration, descriptor, context) ?: return
 
@@ -41,32 +42,32 @@ object NonFinalExpectClassifierHasTheSameMembersAsActualClassifierChecker : Decl
     }
 }
 
-data class ExpectActualMemberDiff(val kind: Kind, val actualMember: CallableMemberDescriptor, val expectClass: ClassDescriptor) {
-    /**
-     * Diff kinds that are legal for fake-overrides in final `expect class`, but illegal for non-final `expect class`
-     */
-    enum class Kind(val rawMessage: String) {
-        NonPrivateCallableAdded(
-            "{0}: Non-private member must be declared in the expect class as well. " +
-                    "This error happens because the expect class ''{1}'' is non-final."
-        ),
-
-        ReturnTypeCovariantOverride(
-            "{0}: The return type of this member must be the same in the expect class and the actual class. " +
-                    "This error happens because the expect class ''{1}'' is non-final."
-        ),
-
-        ModalityChangedInOverride(
-            "{0}: The modality of this member must be the same in the expect class and the actual class. " +
-                    "This error happens because the expect class ''{1}'' is non-final."
-        ),
-
-        VisibilityChangedInOverride(
-            "{0}: The visibility of this member must be the same in the expect class and the actual class. " +
-                    "This error happens because the expect class ''{1}'' is non-final."
-        ),
-    }
-}
+//data class ExpectActualMemberDiff(val kind: Kind, val actualMember: CallableMemberDescriptor, val expectClass: ClassDescriptor) {
+//    /**
+//     * Diff kinds that are legal for fake-overrides in final `expect class`, but illegal for non-final `expect class`
+//     */
+//    enum class Kind(val rawMessage: String) {
+//        NonPrivateCallableAdded(
+//            "{0}: Non-private member must be declared in the expect class as well. " +
+//                    "This error happens because the expect class ''{1}'' is non-final."
+//        ),
+//
+//        ReturnTypeCovariantOverride(
+//            "{0}: The return type of this member must be the same in the expect class and the actual class. " +
+//                    "This error happens because the expect class ''{1}'' is non-final."
+//        ),
+//
+//        ModalityChangedInOverride(
+//            "{0}: The modality of this member must be the same in the expect class and the actual class. " +
+//                    "This error happens because the expect class ''{1}'' is non-final."
+//        ),
+//
+//        VisibilityChangedInOverride(
+//            "{0}: The visibility of this member must be the same in the expect class and the actual class. " +
+//                    "This error happens because the expect class ''{1}'' is non-final."
+//        ),
+//    }
+//}
 
 private fun checkSupertypes(
     actual: ClassDescriptor,
@@ -80,7 +81,7 @@ private fun checkSupertypes(
 
     if (addedSupertypes.isNotEmpty()) {
         context.trace.report(
-            Errors.NON_FINAL_EXPECT_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_ACTUAL_CLASSIFIER
+            Errors.ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_SUPERTYPES_AS_NON_FINAL_EXPECT_CLASSIFIER
                 .on(declaration, descriptor, addedSupertypes.map(FqName::shortName))
         )
     }
@@ -96,7 +97,7 @@ private fun checkExpectActualScopeDiff(
     val scopeDiff = calculateExpectActualScopeDiff(expect, actual)
     if (scopeDiff.isNotEmpty()) {
         context.trace.report(
-            Errors.NON_FINAL_EXPECT_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_ACTUAL_CLASSIFIER.on(declaration, descriptor, scopeDiff)
+            Errors.ACTUAL_CLASSIFIER_MUST_HAVE_THE_SAME_MEMBERS_AS_NON_FINAL_EXPECT_CLASSIFIER.on(declaration, descriptor, scopeDiff)
         )
     }
     if (descriptor !is TypeAliasDescriptor) {
@@ -155,7 +156,7 @@ internal fun matchActualWithNonFinalExpect(
 private fun calculateExpectActualScopeDiff(
     expect: ClassDescriptor,
     actual: ClassDescriptor,
-): Set<ExpectActualMemberDiff> {
+): Set<ExpectActualMemberDiff<CallableMemberDescriptor, ClassDescriptor>> {
     val expectScope = expect.unsubstitutedMemberScope
     val actualScope = actual.unsubstitutedMemberScope
     val expectClassCallables = expectScope.extractNonPrivateCallables()
@@ -178,7 +179,6 @@ private fun MemberScope.extractNonPrivateCallables(): Set<Callable> {
         getFunctionNames().asSequence().flatMap { getContributedFunctions(it, NoLookupLocation.FROM_FRONTEND_CHECKER) }
     val properties =
         getVariableNames().asSequence().flatMap { getContributedVariables(it, NoLookupLocation.FROM_FRONTEND_CHECKER) }
-    // Cases described in ExpectActualScopeDiff are only possible for non-private methods
     return (functions + properties).filter { !Visibilities.isPrivate(it.visibility.delegate) }
         .map { descriptor ->
             Callable(
@@ -233,7 +233,7 @@ private fun calculateDiffKind(expect: Callable, actual: Callable): ExpectActualM
     else -> null
 }
 
-private val ExpectActualMemberDiff.Kind.factory: DiagnosticFactory1<KtCallableDeclaration, ExpectActualMemberDiff>
+private val ExpectActualMemberDiff.Kind.factory: DiagnosticFactory1<KtCallableDeclaration, ExpectActualMemberDiff<CallableMemberDescriptor, ClassDescriptor>>
     get() = when (this) {
         ExpectActualMemberDiff.Kind.NonPrivateCallableAdded -> Errors.NON_ACTUAL_MEMBER_DECLARED_IN_EXPECT_NON_FINAL_CLASSIFIER_ACTUALIZATION
         ExpectActualMemberDiff.Kind.ReturnTypeCovariantOverride -> Errors.RETURN_TYPE_COVARIANT_OVERRIDE_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION
