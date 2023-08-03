@@ -125,6 +125,12 @@ public class FirIdeNormalAnalysisSourceModuleAnalysisApiImportOptimizerTestGener
     }
 
     @Test
+    @TestMetadata("unusedTypeAsVarargType.kt")
+    public void testUnusedTypeAsVarargType() throws Exception {
+        runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/unusedTypeAsVarargType.kt");
+    }
+
+    @Test
     @TestMetadata("usedAliasedAndRegularImportsFromSamePackage.kt")
     public void testUsedAliasedAndRegularImportsFromSamePackage() throws Exception {
         runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedAliasedAndRegularImportsFromSamePackage.kt");
@@ -218,6 +224,12 @@ public class FirIdeNormalAnalysisSourceModuleAnalysisApiImportOptimizerTestGener
     @TestMetadata("usedTypeAsTypeParameter.kt")
     public void testUsedTypeAsTypeParameter() throws Exception {
         runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedTypeAsTypeParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("usedTypeAsVarargType.kt")
+    public void testUsedTypeAsVarargType() throws Exception {
+        runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedTypeAsVarargType.kt");
     }
 
     @Nested

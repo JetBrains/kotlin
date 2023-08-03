@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.analysis.api.components.KtImportOptimizer
 import org.jetbrains.kotlin.analysis.api.components.KtImportOptimizerResult
@@ -490,8 +491,11 @@ private sealed interface TypeQualifier {
     }
 
     companion object {
+        val FirResolvedQualifier.isPresentInSource: Boolean
+            get() = source?.kind is KtRealSourceElementKind
+
         fun createFor(qualifier: FirResolvedQualifier): TypeQualifier? {
-            if (qualifier.source?.kind !is KtRealSourceElementKind) return null
+            if (!qualifier.isPresentInSource) return null
 
             val wholeClassId = qualifier.classId ?: return null
             val psi = qualifier.psi as? KtExpression ?: return null
@@ -505,8 +509,16 @@ private sealed interface TypeQualifier {
             return KtDotExpressionTypeQualifier(wholeClassId, wholeQualifier)
         }
 
+        private val FirResolvedTypeRef.isPresentInSource: Boolean
+            get() = when (source?.kind) {
+                is KtRealSourceElementKind -> true
+                is KtFakeSourceElementKind.ArrayTypeFromVarargParameter -> true
+
+                else -> false
+            }
+
         fun createFor(typeRef: FirResolvedTypeRef): TypeQualifier? {
-            if (typeRef.source?.kind !is KtRealSourceElementKind) return null
+            if (!typeRef.isPresentInSource) return null
 
             val wholeClassId = typeRef.resolvedClassId ?: return null
             val psi = typeRef.psi as? KtTypeReference ?: return null
