@@ -29,11 +29,11 @@ fun useWithContextReceivers() {
     with(42) {
         with("") {
             f({}, 42)
-            sameAsFWithoutNonContextualCounterpart({}, 42)
-            p
-            val a = A()
-            a.p
-            a.m()
+            <!UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL!>sameAsFWithoutNonContextualCounterpart<!>({}, 42)
+            <!UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL!>p<!>
+            val a = <!UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL!>A<!>()
+            a.<!UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL!>p<!>
+            a.<!UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL!>m<!>()
         }
     }
 }

@@ -1,3 +1,5 @@
+// !LANGUAGE: +ContextReceivers
+
 interface Context1
 
 interface Context2<A> {

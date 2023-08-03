@@ -268,6 +268,8 @@ private fun mapInapplicableCandidateError(
                     rootCause.expectedContextReceiverType.removeTypeVariableTypes(typeContext)
                 )
 
+            is UnsupportedContextualDeclarationCall -> FirErrors.UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL.createOn(source)
+
             is AmbiguousValuesForContextReceiverParameter ->
                 FirErrors.MULTIPLE_ARGUMENTS_APPLICABLE_FOR_CONTEXT_RECEIVER.createOn(
                     qualifiedAccessSource ?: source,

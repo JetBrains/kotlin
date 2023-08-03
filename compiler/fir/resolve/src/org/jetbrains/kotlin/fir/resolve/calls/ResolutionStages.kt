@@ -202,6 +202,11 @@ object CheckContextReceivers : ResolutionStage() {
             candidate.substitutor.substituteOrSelf(it.typeRef.coneType)
         }?.takeUnless { it.isEmpty() } ?: return
 
+        if (!context.session.languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)) {
+            sink.reportDiagnostic(UnsupportedContextualDeclarationCall)
+            return
+        }
+
         val receiverGroups: List<List<FirExpression>> =
             context.bodyResolveContext.towerDataContext.towerDataElements.asReversed().mapNotNull { towerDataElement ->
                 towerDataElement.implicitReceiver?.receiverExpression?.let(::listOf)
