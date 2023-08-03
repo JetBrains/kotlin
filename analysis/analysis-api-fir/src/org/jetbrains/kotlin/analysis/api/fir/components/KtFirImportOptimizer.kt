@@ -510,12 +510,7 @@ private sealed interface TypeQualifier {
         }
 
         private val FirResolvedTypeRef.isPresentInSource: Boolean
-            get() = when (source?.kind) {
-                is KtRealSourceElementKind -> true
-                is KtFakeSourceElementKind.ArrayTypeFromVarargParameter -> true
-
-                else -> false
-            }
+            get() = source?.kind is KtRealSourceElementKind
 
         fun createFor(typeRef: FirResolvedTypeRef): TypeQualifier? {
             if (!typeRef.isPresentInSource) return null
