@@ -93,28 +93,29 @@ private fun KotlinTarget.configureKotlinTestDependency(
         if (platformType in jvmPlatforms) {
             // Checking dependencies which were added via dependsOn(KotlinSourceSet) call
             // Compilation has own configurations for these that are different from KotlinSourceSet configurations
-            KotlinDependencyScope.values()
-                .map { configurations.sourceSetDependencyConfigurationByScope(compilation, it) }
-                .forEach {
-                    it.maybeAddTestDependencyCapability(
-                        compilation,
-                        coreLibrariesVersion,
-                        dependencyHandler,
-                        tasks
-                    )
-                }
 
-            compilation.kotlinSourceSets.forEach { sourceSet ->
+            val configurationsToAddTestDependencyTo = linkedSetOf<Configuration>()
+
+            configurationsToAddTestDependencyTo.addAll(
                 KotlinDependencyScope.values()
-                    .map { configurations.sourceSetDependencyConfigurationByScope(sourceSet, it) }
-                    .forEach {
-                        it.maybeAddTestDependencyCapability(
-                            compilation,
-                            coreLibrariesVersion,
-                            dependencyHandler,
-                            tasks
-                        )
+                    .map { configurations.sourceSetDependencyConfigurationByScope(compilation, it) }
+            )
+
+            configurationsToAddTestDependencyTo.addAll(
+                compilation.kotlinSourceSets.flatMap { sourceSet ->
+                    KotlinDependencyScope.values().map {
+                        configurations.sourceSetDependencyConfigurationByScope(sourceSet, it)
                     }
+                }
+            )
+
+            configurationsToAddTestDependencyTo.forEach {
+                it.maybeAddTestDependencyCapability(
+                    compilation,
+                    coreLibrariesVersion,
+                    dependencyHandler,
+                    tasks
+                )
             }
         }
     }
