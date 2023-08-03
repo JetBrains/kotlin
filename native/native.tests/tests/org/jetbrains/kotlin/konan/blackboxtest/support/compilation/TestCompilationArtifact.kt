@@ -40,5 +40,9 @@ internal sealed interface TestCompilationArtifact {
         val swiftSources: List<File> get() = buildDir.list()!!
             .filter { it.endsWith(".swift") }
             .map { buildDir.resolve(it) }
+
+        val cBridgingHeaders: List<File> get() = buildDir.list()!!
+            .filter { it.endsWith(".h") }
+            .map { buildDir.resolve(it) }
     }
 }
