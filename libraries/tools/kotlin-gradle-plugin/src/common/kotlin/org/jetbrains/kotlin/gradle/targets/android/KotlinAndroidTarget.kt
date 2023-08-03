@@ -150,6 +150,7 @@ abstract class KotlinAndroidTarget @Inject constructor(
     }
 
     private fun AndroidProjectHandler.doCreateComponents(): Set<KotlinTargetComponent> {
+        assert(project.state.executed) { "Android: doCreateComponents requires 'afterEvaluate' based project state" }
 
         val publishableVariants = mutableListOf<BaseVariant>()
             .apply { project.forAllAndroidVariants { add(it) } }
