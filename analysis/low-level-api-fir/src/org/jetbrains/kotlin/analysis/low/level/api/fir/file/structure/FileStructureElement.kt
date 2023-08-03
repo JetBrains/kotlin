@@ -147,26 +147,8 @@ internal class ReanalyzableCodeFragmentStructureElement(
     override val timestamp = psi.modificationStamp
 
     override fun reanalyze(): ReanalyzableStructureElement<KtCodeFragment, FirCodeFragmentSymbol> {
-        val originalCodeFragment = firSymbol.fir
-        val originalDesignation = originalCodeFragment.collectDesignation()
-
-        firFile.transformDeclarations(object : FirTransformer<Nothing?>() {
-            override fun <E : FirElement> transformElement(element: E, data: Nothing?): E = element
-
-            override fun transformCodeFragment(codeFragment: FirCodeFragment, data: Nothing?): FirCodeFragment {
-                return RawFirNonLocalDeclarationBuilder.build(
-                    session = originalCodeFragment.moduleData.session,
-                    scopeProvider = originalCodeFragment.moduleData.session.kotlinScopeProvider,
-                    designation = originalDesignation,
-                    rootNonLocalDeclaration = psi,
-                ) as FirCodeFragment
-            }
-        }, null)
-
-        val newCodeFragment = firFile.codeFragment
-        newCodeFragment.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
-
-        return ReanalyzableCodeFragmentStructureElement(firFile, psi, newCodeFragment.symbol, moduleComponents)
+        firSymbol.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+        return ReanalyzableCodeFragmentStructureElement(firFile, psi, firSymbol, moduleComponents)
     }
 }
 
