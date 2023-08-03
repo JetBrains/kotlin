@@ -43,7 +43,7 @@ import kotlin.coroutines.suspendCoroutine
  * }
  * ```
  */
-internal interface Future<T> {
+internal interface Future<out T> {
     suspend fun await(): T
     fun getOrThrow(): T
 }
