@@ -85,6 +85,7 @@ dependencies {
 }
 
 optInToExperimentalCompilerApi()
+optInToIrSymbolInternals()
 
 sourceSets {
     "main" { }

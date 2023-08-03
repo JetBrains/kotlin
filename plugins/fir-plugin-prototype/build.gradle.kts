@@ -45,6 +45,7 @@ dependencies {
 }
 
 optInToExperimentalCompilerApi()
+optInToIrSymbolInternals()
 
 val generationRoot = projectDir.resolve("tests-gen")
 

@@ -13,6 +13,8 @@ dependencies {
     implementation(kotlinStdlib())
 }
 
+optInToIrSymbolInternals()
+
 sourceSets {
     "main" { projectDefault() }
     "test" { none() }

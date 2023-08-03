@@ -48,6 +48,8 @@ dependencies {
     testRuntimeOnly(jpsModelImpl())
 }
 
+optInToIrSymbolInternals()
+
 val generationRoot = projectDir.resolve("tests-gen")
 
 sourceSets {

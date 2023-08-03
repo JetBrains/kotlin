@@ -16,6 +16,8 @@ dependencies {
     compileOnly(intellijCore())
 }
 
+optInToIrSymbolInternals()
+
 sourceSets {
     "main" { projectDefault() }
     "test" {}

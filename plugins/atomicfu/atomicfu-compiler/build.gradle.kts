@@ -156,13 +156,12 @@ dependencies {
 }
 
 optInToExperimentalCompilerApi()
+optInToIrSymbolInternals()
 
 sourceSets {
     "main" { projectDefault() }
     "test" { projectDefault() }
 }
-
-optInToExperimentalCompilerApi()
 
 testsJar()
 useD8Plugin()

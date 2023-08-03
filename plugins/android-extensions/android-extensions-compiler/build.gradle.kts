@@ -50,6 +50,7 @@ dependencies {
 }
 
 optInToExperimentalCompilerApi()
+optInToIrSymbolInternals()
 
 sourceSets {
     "main" { projectDefault() }

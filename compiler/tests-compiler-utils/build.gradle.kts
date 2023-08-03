@@ -37,6 +37,8 @@ dependencies {
     testApi(commonDependency("org.jetbrains.intellij.deps:jdom"))
 }
 
+optInToIrSymbolInternals()
+
 sourceSets {
     "main" { none() }
     "test" { projectDefault() }

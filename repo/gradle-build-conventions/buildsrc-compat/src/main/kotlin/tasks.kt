@@ -402,11 +402,18 @@ fun Project.confugureFirPluginAnnotationsDependency(testTask: TaskProvider<Test>
     }
 }
 
-fun Project.optInToExperimentalCompilerApi() {
-    @Suppress("DEPRECATION")
+private fun Project.optInTo(annotationFqName: String) {
     tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>>().configureEach {
         kotlinOptions {
-            freeCompilerArgs += "-opt-in=org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi"
+            freeCompilerArgs += "-opt-in=$annotationFqName"
         }
     }
+}
+
+fun Project.optInToExperimentalCompilerApi() {
+    optInTo("org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi")
+}
+
+fun Project.optInToIrSymbolInternals() {
+    optInTo("org.jetbrains.kotlin.ir.symbols.IrSymbolInternals")
 }
