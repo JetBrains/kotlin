@@ -10,8 +10,6 @@ import org.gradle.api.Project
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.dsl.explicitApiModeAsCompilerArg
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.customizeKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.hierarchy.orNull
@@ -62,7 +60,7 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
 
         configurePublishingWithMavenPublish(project)
 
-        kotlinMultiplatformExtension.targets.withType(AbstractKotlinTarget::class.java).all { applyUserDefinedAttributes(it) }
+        kotlinMultiplatformExtension.targets.withType(InternalKotlinTarget::class.java).all { applyUserDefinedAttributes(it) }
 
         // propagate compiler plugin options to the source set language settings
         setupAdditionalCompilerArguments(project)

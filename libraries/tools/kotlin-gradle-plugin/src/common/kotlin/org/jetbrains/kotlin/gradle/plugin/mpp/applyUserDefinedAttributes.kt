@@ -6,8 +6,9 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterEvaluateBuildscript
+import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
-import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 
 
 /**
@@ -15,37 +16,18 @@ import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
  * 1. Output configurations of each target need the corresponding compilation's attributes (and, indirectly, the target's attributes)
  * 2. Resolvable configurations of each compilation need the compilation's attributes
  */
-internal fun applyUserDefinedAttributes(target: AbstractKotlinTarget) {
-    val project = target.project
-    project.whenEvaluated {
-        // To copy the attributes to the output configurations, find those output configurations and their producing compilations
-        // based on the target's components:
-        val outputConfigurationsWithCompilations = target.kotlinComponents.filterIsInstance<KotlinVariant>().flatMap { kotlinVariant ->
-            kotlinVariant.usages.mapNotNull { usageContext ->
-                project.configurations.findByName(usageContext.dependencyConfigurationName)?.let { configuration ->
-                    configuration to usageContext.compilation
-                }
-            }
-        }.toMutableList()
-
-        // Add usages of android library when its variants are grouped by flavor
-        outputConfigurationsWithCompilations += target.kotlinComponents
-            .filterIsInstance<JointAndroidKotlinTargetComponent>()
-            .flatMap { variant -> variant.usages }
-            .mapNotNull { usage ->
-                val configuration = project.configurations.findByName(usage.dependencyConfigurationName) ?: return@mapNotNull null
-                configuration to usage.compilation
-            }
-
-        outputConfigurationsWithCompilations.forEach { (configuration, compilation) ->
-            copyAttributes(compilation.attributes, configuration.attributes)
+internal fun applyUserDefinedAttributes(target: InternalKotlinTarget) {
+    target.project.launchInStage(AfterEvaluateBuildscript) {
+        target.kotlinComponents.flatMap { it.internal.usages }.forEach { usage ->
+            val dependencyConfiguration = target.project.configurations.findByName(usage.dependencyConfigurationName) ?: return@forEach
+            copyAttributes(usage.compilation.attributes, dependencyConfiguration.attributes)
         }
 
         target.compilations.all { compilation ->
             val compilationAttributes = compilation.attributes
 
             compilation.allOwnedConfigurationsNames
-                .mapNotNull { configurationName -> target.project.configurations.findByName(configurationName) }
+                .mapNotNull { configurationName -> project.configurations.findByName(configurationName) }
                 .forEach { configuration -> copyAttributes(compilationAttributes, configuration.attributes) }
         }
 
