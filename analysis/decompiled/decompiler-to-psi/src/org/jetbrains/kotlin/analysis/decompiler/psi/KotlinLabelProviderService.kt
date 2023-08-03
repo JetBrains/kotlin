@@ -9,6 +9,7 @@ import com.intellij.openapi.application.ApplicationManager
 
 abstract class KotlinLabelProviderService {
     abstract fun getLabelForBuiltInFileType(): String
+    abstract fun getLabelForKlibMetaFileType(): String
 
     companion object {
         fun getService(): KotlinLabelProviderService? =
