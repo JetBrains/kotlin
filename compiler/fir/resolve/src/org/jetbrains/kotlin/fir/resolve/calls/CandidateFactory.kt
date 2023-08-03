@@ -36,7 +36,7 @@ class CandidateFactory private constructor(
     companion object {
         private fun buildBaseSystem(context: ResolutionContext, callInfo: CallInfo): ConstraintStorage {
             val system = context.inferenceComponents.createConstraintSystem()
-            system.addOtherSystem(context.bodyResolveContext.outerConstraintStorage)
+            system.addOuterSystem(context.bodyResolveContext.outerConstraintStorage)
             callInfo.arguments.forEach {
                 system.addSubsystemFromExpression(it)
             }

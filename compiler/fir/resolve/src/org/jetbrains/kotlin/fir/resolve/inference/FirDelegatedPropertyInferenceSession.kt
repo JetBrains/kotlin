@@ -54,8 +54,7 @@ class FirDelegatedPropertyInferenceSession(
         runCompletionCallback: (ConstraintSystemCompletionMode) -> Unit,
     ): Boolean where T : FirResolvable, T : FirStatement {
         val candidate = call.candidate
-        val isProvideDelegateOperator = call.isOperatorCallWithName { it == OperatorNameConventions.PROVIDE_DELEGATE }
-        if (!candidate.isSuccessful && isProvideDelegateOperator) return false
+
 
         // Do not run completion for provideDelegate/getValue/setValue because they might affect each other
         if (completionMode == ConstraintSystemCompletionMode.FULL && resolutionMode == ResolutionMode.ContextDependent.Delegate) return false
@@ -63,15 +62,8 @@ class FirDelegatedPropertyInferenceSession(
         if (resolutionMode != ResolutionMode.ContextDependent.Delegate && !call.isAnyOfDelegateOperators()) return false
 
         val candidateSystem = call.candidate.system
-        if (isProvideDelegateOperator) {
-            val allTypeVariables = candidateSystem.currentStorage().allTypeVariables.keys.toList()
-            val typeVariablesRelatedToProvideDelegate =
-                allTypeVariables.subList(currentConstraintStorage.allTypeVariables.size, allTypeVariables.size).toSet()
-
-            candidateSystem.withDisallowingOnlyThisTypeVariablesForProperTypes(typeVariablesRelatedToProvideDelegate) {
-                runCompletionCallback(ConstraintSystemCompletionMode.FULL)
-            }
-        } else {
+        val isProvideDelegateOperator = call.isOperatorCallWithName { it == OperatorNameConventions.PROVIDE_DELEGATE }
+        if (!isProvideDelegateOperator) {
             runCompletionCallback(ConstraintSystemCompletionMode.PARTIAL)
         }
 

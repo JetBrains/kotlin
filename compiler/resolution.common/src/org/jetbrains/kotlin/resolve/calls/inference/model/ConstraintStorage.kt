@@ -48,6 +48,7 @@ interface ConstraintStorage {
     val builtFunctionalTypesForPostponedArgumentsByTopLevelTypeVariables: Map<Pair<TypeConstructorMarker, List<Pair<TypeConstructorMarker, Int>>>, KotlinTypeMarker>
     val builtFunctionalTypesForPostponedArgumentsByExpectedTypeVariables: Map<TypeConstructorMarker, KotlinTypeMarker>
     val constraintsFromAllForkPoints: List<Pair<IncorporationConstraintPosition, ForkPointData>>
+    val outerSystemVariablesPrefixSize: Int
 
     object Empty : ConstraintStorage {
         override val allTypeVariables: Map<TypeConstructorMarker, TypeVariableMarker> get() = emptyMap()
@@ -63,6 +64,8 @@ interface ConstraintStorage {
         override val builtFunctionalTypesForPostponedArgumentsByTopLevelTypeVariables: Map<Pair<TypeConstructorMarker, List<Pair<TypeConstructorMarker, Int>>>, KotlinTypeMarker> = emptyMap()
         override val builtFunctionalTypesForPostponedArgumentsByExpectedTypeVariables: Map<TypeConstructorMarker, KotlinTypeMarker> = emptyMap()
         override val constraintsFromAllForkPoints: List<Pair<IncorporationConstraintPosition, ForkPointData>> = emptyList()
+
+        override val outerSystemVariablesPrefixSize: Int get() = 0
     }
 }
 

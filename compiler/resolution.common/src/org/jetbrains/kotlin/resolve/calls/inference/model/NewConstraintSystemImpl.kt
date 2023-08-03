@@ -297,6 +297,16 @@ class NewConstraintSystemImpl(
             )
         }
 
+    fun addOuterSystem(outerSystem: ConstraintStorage) {
+        addOtherSystem(outerSystem)
+        storage.outerSystemVariablesPrefixSize = outerSystem.allTypeVariables.size
+    }
+
+    fun setBaseSystem(outerSystem: ConstraintStorage) {
+        addOtherSystem(outerSystem)
+        storage.outerSystemVariablesPrefixSize = outerSystem.outerSystemVariablesPrefixSize
+    }
+
     override fun addOtherSystem(otherSystem: ConstraintStorage) {
         if (otherSystem.allTypeVariables.isNotEmpty()) {
             otherSystem.allTypeVariables.forEach {
@@ -510,14 +520,6 @@ class NewConstraintSystemImpl(
         }
 
         storage.fixedTypeVariables[freshTypeConstructor] = resultType
-
-        val substitutorForFixedVariables = typeSubstitutorByTypeConstructor(mapOf(freshTypeConstructor to resultType))
-
-        storage.typeVariablesThatMightNeedResultsRefinement.forEach { otherVariable ->
-            storage.fixedTypeVariables[otherVariable]?.let {
-                storage.fixedTypeVariables[otherVariable] = substitutorForFixedVariables.safeSubstitute(it)
-            }
-        }
 
         // Substitute freshly fixed type variable into missed constraints
         substituteMissedConstraints()

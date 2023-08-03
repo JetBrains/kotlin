@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate
 import org.jetbrains.kotlin.fir.resolve.dfa.FirControlFlowGraphReferenceImpl
@@ -50,6 +51,9 @@ import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.resolve.calls.inference.buildCurrentSubstitutor
+import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator
+import org.jetbrains.kotlin.resolve.calls.inference.model.ProvideDelegateFixationPosition
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 
 open class FirDeclarationsResolveTransformer(
     transformer: FirAbstractBodyResolveTransformerDispatcher
@@ -366,20 +370,17 @@ open class FirDeclarationsResolveTransformer(
         val provideDelegateCall = wrappedDelegateExpression.delegateProvider as FirFunctionCall
         provideDelegateCall.replaceExplicitReceiver(delegateExpression)
 
-        // Resolve call for provideDelegate, without completion
-        // TODO: this generates some nodes in the control flow graph which we don't want if we
-        //  end up not selecting this option, KT-59684
-        transformer.expressionsTransformer.transformFunctionCallInternal(
-            provideDelegateCall, ResolutionMode.ContextIndependent, skipExplicitReceiverTransformation = true
-        )
+        resolveAndCompleteProvideDelegateCall(provideDelegateCall)
 
         // If we got successful candidate for provideDelegate, let's select it
         val provideDelegateCandidate = provideDelegateCall.candidate()
         if (provideDelegateCandidate != null && provideDelegateCandidate.isSuccessful) {
+            val additionalBindings = fixInnerVariablesForProvideDelegateIfNeeded(provideDelegateCall, provideDelegateCandidate)
+
             val substitutor = ChainedSubstitutor(
                 provideDelegateCandidate.substitutor,
                 (context.inferenceSession as FirDelegatedPropertyInferenceSession).currentConstraintStorage.buildCurrentSubstitutor(
-                    session.typeContext, emptyMap()
+                    session.typeContext, additionalBindings
                 ) as ConeSubstitutor
             )
 
@@ -397,6 +398,58 @@ open class FirDeclarationsResolveTransformer(
 
         // Select delegate expression otherwise
         return delegateExpression
+    }
+
+    private fun fixInnerVariablesForProvideDelegateIfNeeded(
+        call: FirFunctionCall,
+        candidate: Candidate
+    ): Map<TypeConstructorMarker, ConeKotlinType> {
+        val returnTypeBasedOnVariable =
+            components.typeFromCallee(call).type
+                .let(candidate.substitutor::substituteOrSelf)
+                .lowerBoundIfFlexible() as? ConeTypeVariableType ?: return emptyMap()
+        val typeVariable = returnTypeBasedOnVariable.lookupTag
+
+        val candidateSystem = candidate.system
+        val candidateStorage = candidateSystem.currentStorage()
+        val allTypeVariables = candidateStorage.allTypeVariables.keys.toList()
+        val typeVariablesRelatedToProvideDelegate =
+            allTypeVariables.subList(candidateStorage.outerSystemVariablesPrefixSize, allTypeVariables.size).toSet()
+
+        if (typeVariable !in typeVariablesRelatedToProvideDelegate) return emptyMap()
+
+        var resultType: ConeKotlinType? = null
+
+        candidateSystem.withDisallowingOnlyThisTypeVariablesForProperTypes(typeVariablesRelatedToProvideDelegate) {
+            val variableWithConstraints =
+                candidateSystem.notFixedTypeVariables[typeVariable] ?: error("Not found type variable $typeVariable")
+
+            resultType = inferenceComponents.resultTypeResolver.findResultTypeOrNull(
+                candidateSystem, variableWithConstraints, TypeVariableDirectionCalculator.ResolveDirection.UNKNOWN
+            ) as? ConeKotlinType ?: return@withDisallowingOnlyThisTypeVariablesForProperTypes
+
+            candidateSystem.addEqualityConstraint(returnTypeBasedOnVariable, resultType!!, ProvideDelegateFixationPosition)
+        }
+
+        resultType?.let {
+            return mapOf(typeVariable to it)
+        }
+
+        return emptyMap()
+    }
+
+    private fun resolveAndCompleteProvideDelegateCall(provideDelegateCall: FirFunctionCall) {
+        // TODO: this generates some nodes in the control flow graph which we don't want if we
+        //  end up not selecting this option, KT-59684
+
+        val resultExpression = context.inferenceSession.onCandidatesResolution(provideDelegateCall) {
+            callResolver.resolveCallAndSelectCandidate(provideDelegateCall)
+        }
+
+/**/        val candidate = resultExpression.candidate() ?: return
+        if (!candidate.isSuccessful) return
+
+        callCompleter.completeCall(provideDelegateCall, ResolutionMode.ContextDependent)
     }
 
     private fun transformLocalVariable(variable: FirProperty): FirProperty = whileAnalysing(session, variable) {
