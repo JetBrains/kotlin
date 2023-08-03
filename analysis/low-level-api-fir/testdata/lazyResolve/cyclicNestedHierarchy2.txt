@@ -285,7 +285,7 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] cyclicNestedHierarchy2.kt
     public open [ResolvedTo(BODY_RESOLVE)] class C : <ERROR TYPE REF: Loop in supertype: /C -> /D> {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] constructor(): R|C| {
             super<R|D|>()

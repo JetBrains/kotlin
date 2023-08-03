@@ -245,7 +245,7 @@ FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] localConstructor.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T> magic(): R|T| {
         ^magic Null(null)!!
     }

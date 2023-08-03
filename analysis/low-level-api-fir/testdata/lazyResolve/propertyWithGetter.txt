@@ -101,7 +101,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithGetter.kt
         }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] propertyWithGetter.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] propertyWithGetter.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
         R|/receive|(R|/withGetter|)
     }

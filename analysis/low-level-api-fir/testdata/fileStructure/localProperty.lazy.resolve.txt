@@ -1,4 +1,4 @@
-FILE: [ResolvedTo(IMPORTS)] localProperty.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] localProperty.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
         [ResolvedTo(BODY_RESOLVE)] lvar x: R|kotlin/Int|
     }

@@ -81,7 +81,7 @@ FILE: [ResolvedTo(IMPORTS)] annotations.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] annotations.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] annotations.kt
     @FILE:R|kotlin/Suppress|[Types](names = vararg(String(1)))
     [ResolvedTo(BODY_RESOLVE)] annotations container
     @R|kotlin/Suppress|[Types](names = vararg(String(2))) public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {

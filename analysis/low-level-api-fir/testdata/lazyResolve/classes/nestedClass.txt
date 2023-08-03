@@ -363,7 +363,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClass.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] nestedClass.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] nestedClass.kt
     public open [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
             super<R|kotlin/Any|>()

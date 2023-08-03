@@ -85,7 +85,7 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfTopSetter.kt
         }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] parameterOfTopSetter.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] parameterOfTopSetter.kt
     public final [ResolvedTo(BODY_RESOLVE)] var x: R|kotlin/Int| = Int(2)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
         public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {

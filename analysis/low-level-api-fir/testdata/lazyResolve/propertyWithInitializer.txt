@@ -85,7 +85,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithInitializer.kt
         public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int|
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] propertyWithInitializer.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] propertyWithInitializer.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
         <Unresolved name: receive>#(R|/property|)
     }

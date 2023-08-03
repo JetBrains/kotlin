@@ -59,7 +59,7 @@ FILE: [ResolvedTo(IMPORTS)] integerLiteralCall.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] integerLiteralCall.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] integerLiteralCall.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
         IntegerLiteral(1).<Unresolved name: toInt>#()
     }

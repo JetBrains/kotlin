@@ -7,14 +7,13 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirSingleResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
-import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
@@ -36,27 +35,41 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractFirLazyDeclaratio
 
     override fun doTestByFileStructure(ktFile: KtFile, moduleStructure: TestModuleStructure, testServices: TestServices) {
         doLazyResolveTest(ktFile, testServices) { firResolveSession ->
-            if (Directives.RESOLVE_FILE_ANNOTATIONS in moduleStructure.allDirectives) {
-                val annotationContainer = firResolveSession.getOrBuildFirFile(ktFile).annotationsContainer!!
-                val session = annotationContainer.moduleData.session as LLFirResolvableModuleSession
-                annotationContainer to fun(phase: FirResolvePhase) {
-                    session.moduleComponents.firModuleLazyDeclarationResolver.lazyResolve(
-                        annotationContainer,
-                        session.getScopeSession(),
-                        phase,
-                    )
+            when {
+                Directives.RESOLVE_FILE_ANNOTATIONS in moduleStructure.allDirectives -> {
+                    val annotationContainer = firResolveSession.getOrBuildFirFile(ktFile).annotationsContainer!!
+                    val session = annotationContainer.moduleData.session as LLFirResolvableModuleSession
+                    annotationContainer to fun(phase: FirResolvePhase) {
+                        session.moduleComponents.firModuleLazyDeclarationResolver.lazyResolve(
+                            annotationContainer,
+                            session.getScopeSession(),
+                            phase,
+                        )
+                    }
                 }
-            } else {
-                val ktDeclaration = if (Directives.RESOLVE_SCRIPT in moduleStructure.allDirectives) {
-                    ktFile.script!!
-                } else {
-                    testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtDeclaration>(ktFile)
+                Directives.RESOLVE_FILE in moduleStructure.allDirectives -> {
+                    val session = firResolveSession.useSiteFirSession as LLFirResolvableModuleSession
+                    val file = session.moduleComponents.firFileBuilder.buildRawFirFileWithCaching(ktFile)
+                    file to fun(phase: FirResolvePhase) {
+                        session.moduleComponents.firModuleLazyDeclarationResolver.lazyResolveTarget(
+                            LLFirSingleResolveTarget(file, emptyList(), file),
+                            phase,
+                            towerDataContextCollector = null,
+                        )
+                    }
                 }
+                else -> {
+                    val ktDeclaration = if (Directives.RESOLVE_SCRIPT in moduleStructure.allDirectives) {
+                        ktFile.script!!
+                    } else {
+                        testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtDeclaration>(ktFile)
+                    }
 
-                val declarationSymbol = ktDeclaration.resolveToFirSymbol(firResolveSession)
-                val firDeclaration = chooseMemberDeclarationIfNeeded(declarationSymbol, moduleStructure, firResolveSession)
-                firDeclaration.fir to fun(phase: FirResolvePhase) {
-                    firDeclaration.lazyResolveToPhase(phase)
+                    val declarationSymbol = ktDeclaration.resolveToFirSymbol(firResolveSession)
+                    val firDeclaration = chooseMemberDeclarationIfNeeded(declarationSymbol, moduleStructure, firResolveSession)
+                    firDeclaration.fir to fun(phase: FirResolvePhase) {
+                        firDeclaration.lazyResolveToPhase(phase)
+                    }
                 }
             }
         }
@@ -84,6 +97,7 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractFirLazyDeclaratio
     private object Directives : SimpleDirectivesContainer() {
         val RESOLVE_FILE_ANNOTATIONS by directive("Resolve file annotations instead of declaration at caret")
         val RESOLVE_SCRIPT by directive("Resolve script instead of declaration at caret")
+        val RESOLVE_FILE by directive("Resolve file instead of declaration at caret")
     }
 }
 

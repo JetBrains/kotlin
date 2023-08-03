@@ -152,7 +152,7 @@ FILE: [ResolvedTo(IMPORTS)] functionCallWithGenericResult.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] functionCallWithGenericResult.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] functionCallWithGenericResult.kt
     public open [ResolvedTo(BODY_RESOLVE)] class Foo<[ResolvedTo(BODY_RESOLVE)] T : R|kotlin/CharSequence|> : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo] constructor<[ResolvedTo(BODY_RESOLVE)] T : R|kotlin/CharSequence|>(): R|Foo<T>| {
             super<R|kotlin/Any|>()

@@ -1,4 +1,4 @@
-FILE: [ResolvedTo(IMPORTS)] lambda.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] lambda.kt
     public final [ResolvedTo(BODY_RESOLVE)] val x: R|kotlin/Int| = R|/myRun|<R|kotlin/Int|>(<L> = [ResolvedTo(BODY_RESOLVE)] myRun@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=UNKNOWN>  {
         [ResolvedTo(BODY_RESOLVE)] lval inLambda: R|kotlin/Int| = Int(10)
         R|/println|(R|<local>/inLambda|)

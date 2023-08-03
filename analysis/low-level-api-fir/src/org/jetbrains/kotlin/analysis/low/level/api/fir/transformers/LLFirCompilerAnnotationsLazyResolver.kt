@@ -102,6 +102,7 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
     }
 
     override fun doResolveWithoutLock(target: FirElementWithResolveState): Boolean {
+        if (target is FirFile) return false
         when {
             target is FirRegularClass || target is FirScript || target.isRegularDeclarationWithAnnotation -> {}
             else -> throwUnexpectedFirElementError(target)
@@ -111,6 +112,11 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
         resolveTargetDeclaration(target)
 
         return true
+    }
+
+    override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
+        if (target is FirFile) return
+        throwUnexpectedFirElementError(target)
     }
 
     private fun <T> resolveTargetDeclaration(target: T) where T : FirAnnotationContainer, T : FirElementWithResolveState {
@@ -297,10 +303,6 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
         if (hasApplicableAnnotation) {
             map[this] = containerForAnnotations
         }
-    }
-
-    override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
-        throwUnexpectedFirElementError(target)
     }
 }
 

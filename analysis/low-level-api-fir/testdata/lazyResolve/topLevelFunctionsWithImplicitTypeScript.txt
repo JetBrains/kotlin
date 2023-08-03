@@ -179,7 +179,7 @@ FILE: [ResolvedTo(IMPORTS)] topLevelFunctionsWithImplicitTypeScript.kts
 
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] topLevelFunctionsWithImplicitTypeScript.kts
+FILE: [ResolvedTo(BODY_RESOLVE)] topLevelFunctionsWithImplicitTypeScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|

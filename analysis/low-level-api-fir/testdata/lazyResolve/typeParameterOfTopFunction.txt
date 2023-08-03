@@ -55,6 +55,6 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunction.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] typeParameterOfTopFunction.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] typeParameterOfTopFunction.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] resolveMe> ddd(): R|kotlin/Unit| {
     }

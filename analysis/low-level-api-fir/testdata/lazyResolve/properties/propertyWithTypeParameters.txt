@@ -72,7 +72,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithTypeParameters.kt
         }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] propertyWithTypeParameters.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] propertyWithTypeParameters.kt
     public final [ResolvedTo(BODY_RESOLVE)] val <[ResolvedTo(BODY_RESOLVE)] T : R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] K> R|T|.resolveMe: R|K|
         public [ResolvedTo(BODY_RESOLVE)] get(): R|K| {
             ^ R|kotlin/TODO|()

@@ -1,4 +1,4 @@
-FILE: [ResolvedTo(IMPORTS)] callInsideLambdaInsideSuperCallFromSingleSecondaryConstructor.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] callInsideLambdaInsideSuperCallFromSingleSecondaryConstructor.kt
     public open [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] x: R|() -> kotlin/Unit|): R|A| {
             super<R|kotlin/Any|>()

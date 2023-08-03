@@ -77,6 +77,7 @@ internal class LLFirImplicitBodyTargetResolver(
             }
             is FirRegularClass,
             is FirTypeAlias,
+            is FirFile,
             is FirAnonymousInitializer,
             is FirDanglingModifierList,
             is FirFileAnnotationsContainer,

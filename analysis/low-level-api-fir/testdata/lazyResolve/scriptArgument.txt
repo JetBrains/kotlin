@@ -90,7 +90,7 @@ FILE: [ResolvedTo(RAW_FIR)] scriptArgument.kts
 
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] scriptArgument.kts
+FILE: [ResolvedTo(BODY_RESOLVE)] scriptArgument.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)]
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|

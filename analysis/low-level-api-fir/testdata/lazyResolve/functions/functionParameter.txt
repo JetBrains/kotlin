@@ -59,7 +59,7 @@ FILE: [ResolvedTo(IMPORTS)] functionParameter.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] functionParameter.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] functionParameter.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] param: R|kotlin/Int|): R|kotlin/String| {
         ^foo String(boo)
     }

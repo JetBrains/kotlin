@@ -105,7 +105,7 @@ FILE: [ResolvedTo(IMPORTS)] contract.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] contract.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] contract.kt
     public final inline [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] block: R|() -> kotlin/Unit|): R|kotlin/Unit|
         [Contract description] <
             Q|kotlin|.<Unresolved name: contracts>#.<Unresolved name: contract>#(<L> = [ResolvedTo(RAW_FIR)] contract@fun <anonymous>(): <ERROR TYPE REF: Unresolved name: callsInPlace> <inline=Unknown>  {

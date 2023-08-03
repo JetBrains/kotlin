@@ -1195,7 +1195,7 @@ FILE: [ResolvedTo(IMPORTS)] complexRedeclaration.kt
     public? final? [ResolvedTo(RAW_FIR)] fun test(): R|kotlin/Unit| { LAZY_BLOCK }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] complexRedeclaration.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] complexRedeclaration.kt
     public sealed [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
         protected [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()

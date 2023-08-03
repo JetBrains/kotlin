@@ -497,7 +497,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationParameters.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] annotationParameters.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] annotationParameters.kt
     public final [ResolvedTo(BODY_RESOLVE)] enum class X : R|kotlin/Enum<X>| {
         private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X] constructor(): R|X| {
             super<R|kotlin/Enum<X>|>()

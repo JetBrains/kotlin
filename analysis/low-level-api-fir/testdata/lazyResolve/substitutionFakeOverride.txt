@@ -272,7 +272,7 @@ FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverride.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] substitutionFakeOverride.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] substitutionFakeOverride.kt
     public abstract [ResolvedTo(BODY_RESOLVE)] class SubClass : R|AbstractClass<kotlin/Int>| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SubClass] constructor(): R|SubClass| {
             super<R|AbstractClass<kotlin/Int>|>()

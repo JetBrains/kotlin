@@ -1,4 +1,4 @@
-FILE: [ResolvedTo(IMPORTS)] nestedClasses.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] nestedClasses.kt
     public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] constructor(): R|A| {
             super<R|kotlin/Any|>()

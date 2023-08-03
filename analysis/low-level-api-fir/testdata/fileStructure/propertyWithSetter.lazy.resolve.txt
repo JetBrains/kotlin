@@ -1,4 +1,4 @@
-FILE: [ResolvedTo(IMPORTS)] propertyWithSetter.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] propertyWithSetter.kt
     public abstract [ResolvedTo(BODY_RESOLVE)] class Foo : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] constructor(): R|Foo| {
             super<R|kotlin/Any|>()

@@ -142,7 +142,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] typeParameterOfClass.kt
     public final [ResolvedTo(BODY_RESOLVE)] class MyClass<[ResolvedTo(BODY_RESOLVE)] Type> : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(BODY_RESOLVE)] Type>(): R|MyClass<Type>| {
             super<R|kotlin/Any|>()

@@ -410,7 +410,7 @@ FILE: [ResolvedTo(IMPORTS)] delegates.kt
         }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] delegates.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] delegates.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
         R|/receive|(R|/valueWithExplicitType|)
         R|/receive|(R|/valueWithImplicitType|)

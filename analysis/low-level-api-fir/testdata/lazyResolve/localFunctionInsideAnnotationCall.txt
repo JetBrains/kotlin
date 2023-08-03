@@ -259,7 +259,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCall.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] localFunctionInsideAnnotationCall.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] localFunctionInsideAnnotationCall.kt
     public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=one/Anno.s] s: R|kotlin/String|): R|one/Anno| {
             super<R|kotlin/Any|>()

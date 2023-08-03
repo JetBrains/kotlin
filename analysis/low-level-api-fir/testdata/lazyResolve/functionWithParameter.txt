@@ -85,7 +85,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithParameter.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] functionWithParameter.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] functionWithParameter.kt
     public abstract [ResolvedTo(BODY_RESOLVE)] interface I : R|kotlin/Any| {
     }
     public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe([ResolvedTo(BODY_RESOLVE)] param: R|I|): R|kotlin/Unit| {

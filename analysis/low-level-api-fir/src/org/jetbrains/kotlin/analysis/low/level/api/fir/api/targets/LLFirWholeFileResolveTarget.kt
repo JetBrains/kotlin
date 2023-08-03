@@ -23,6 +23,7 @@ class LLFirWholeFileResolveTarget(firFile: FirFile) : LLFirResolveTarget(firFile
             }
         }
 
+        action(firFile)
         forEachTopLevelDeclaration(::goInside)
     }
 

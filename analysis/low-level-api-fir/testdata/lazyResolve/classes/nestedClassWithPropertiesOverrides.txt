@@ -311,7 +311,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] nestedClassWithPropertiesOverrides.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] nestedClassWithPropertiesOverrides.kt
     public abstract [ResolvedTo(BODY_RESOLVE)] interface OV : R|kotlin/Any| {
         public abstract [ResolvedTo(BODY_RESOLVE)] val originalExpressions: R|A|
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=OV] get(): R|A|

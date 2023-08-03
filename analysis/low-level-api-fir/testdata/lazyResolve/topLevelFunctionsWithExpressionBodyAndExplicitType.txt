@@ -88,7 +88,7 @@ FILE: [ResolvedTo(IMPORTS)] topLevelFunctionsWithExpressionBodyAndExplicitType.k
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] topLevelFunctionsWithExpressionBodyAndExplicitType.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] topLevelFunctionsWithExpressionBodyAndExplicitType.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
         R|/receive|(R|/functionWithLazyBody|())
     }

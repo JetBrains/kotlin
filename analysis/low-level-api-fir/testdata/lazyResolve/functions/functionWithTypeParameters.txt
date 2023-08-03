@@ -55,6 +55,6 @@ FILE: [ResolvedTo(IMPORTS)] functionWithTypeParameters.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] functionWithTypeParameters.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] functionWithTypeParameters.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T : R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] K> resolveMe(): R|kotlin/Unit| {
     }

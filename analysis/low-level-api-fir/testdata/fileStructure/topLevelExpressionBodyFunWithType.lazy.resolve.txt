@@ -1,4 +1,4 @@
-FILE: [ResolvedTo(IMPORTS)] topLevelExpressionBodyFunWithType.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] topLevelExpressionBodyFunWithType.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Int| {
         ^foo Int(42)
     }

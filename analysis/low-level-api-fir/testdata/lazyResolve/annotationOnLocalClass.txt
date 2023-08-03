@@ -278,7 +278,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClass.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] annotationOnLocalClass.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] annotationOnLocalClass.kt
     public final [ResolvedTo(BODY_RESOLVE)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AnotherAnnotation] constructor(): R|one/two/AnotherAnnotation| {
             super<R|kotlin/Any|>()

@@ -1,4 +1,4 @@
-FILE: [ResolvedTo(IMPORTS)] propertyAccessors.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] propertyAccessors.kt
     public final [ResolvedTo(BODY_RESOLVE)] var x: R|kotlin/Int| = Int(10)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
             ^ F|/x|

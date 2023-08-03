@@ -194,7 +194,7 @@ FILE: [ResolvedTo(IMPORTS)] fileAnnotations.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] fileAnnotations.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] fileAnnotations.kt
     @FILE:R|kotlin/Deprecated|[Types](message = String())
     @FILE:R|one/Anno|[Types](s = String(anno))
     [ResolvedTo(BODY_RESOLVE)] annotations container

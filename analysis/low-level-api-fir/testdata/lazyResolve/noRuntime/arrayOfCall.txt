@@ -155,7 +155,7 @@ FILE: [ResolvedTo(IMPORTS)] arrayOfCall.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] arrayOfCall.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] arrayOfCall.kt
     public final [ResolvedTo(BODY_RESOLVE)] annotation class Ann : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Ann] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Ann.a] vararg a: R|kotlin/Array<out java/lang/String>| = <Unresolved name: arrayOf>#(ERROR_EXPR(Missing stdlib class: kotlin/String))): R|Ann| {
             super<R|kotlin/Any|>()

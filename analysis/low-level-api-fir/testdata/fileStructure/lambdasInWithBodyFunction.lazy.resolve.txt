@@ -1,4 +1,4 @@
-FILE: [ResolvedTo(IMPORTS)] lambdasInWithBodyFunction.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] lambdasInWithBodyFunction.kt
     public final inline [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T, [ResolvedTo(BODY_RESOLVE)] R> with([ResolvedTo(BODY_RESOLVE)] receiver: R|T|, [ResolvedTo(BODY_RESOLVE)] block: R|T.() -> R|): R|R| {
         ^with R|<local>/block|.R|SubstitutionOverride<kotlin/Function1.invoke: R|R|>|(R|<local>/receiver|)
     }

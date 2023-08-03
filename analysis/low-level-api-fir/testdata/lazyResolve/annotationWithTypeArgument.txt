@@ -172,7 +172,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgument.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] annotationWithTypeArgument.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] annotationWithTypeArgument.kt
     public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno<[ResolvedTo(BODY_RESOLVE)] T : R|kotlin/Number|> : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor<[ResolvedTo(BODY_RESOLVE)] T : R|kotlin/Number|>([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=one/Anno.value] value: <ERROR TYPE REF: Symbol not found for KClass>): R|one/Anno<T>| {
             super<R|kotlin/Any|>()

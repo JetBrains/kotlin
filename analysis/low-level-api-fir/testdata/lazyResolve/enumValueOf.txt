@@ -246,7 +246,7 @@ FILE: [ResolvedTo(IMPORTS)] enumValueOf.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] enumValueOf.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] enumValueOf.kt
     public final [ResolvedTo(BODY_RESOLVE)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
         private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
             super<R|kotlin/Enum<one/MyEnum>|>()

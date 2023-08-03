@@ -531,7 +531,7 @@ FILE: [ResolvedTo(IMPORTS)] fakeOverride.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] fakeOverride.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] fakeOverride.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun expression([ResolvedTo(BODY_RESOLVE)] expression: R|IrConst<*>|): R|kotlin/Unit| {
         when ([ResolvedTo(BODY_RESOLVE)] lval kind: R|Kind<out kotlin/Any?>| = R|<local>/expression|.R|SubstitutionOverride</IrConst.kind: R|Kind<CapturedType(*)>|>|) {
             ($subj$ is R|Kind.Null|) ->  {

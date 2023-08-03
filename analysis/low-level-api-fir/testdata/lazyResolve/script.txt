@@ -735,7 +735,7 @@ FILE: [ResolvedTo(IMPORTS)] script.kts
         R|/builder|.R|/Builder.version| = String()
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] script.kts
+FILE: [ResolvedTo(BODY_RESOLVE)] script.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)]
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|

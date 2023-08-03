@@ -1,10 +1,9 @@
-FILE: [ResolvedTo(IMPORTS)] topLevelFunWithTypeScript.kts
+FILE: [ResolvedTo(BODY_RESOLVE)] topLevelFunWithTypeScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)]
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Int| {
             <Unresolved name: println>#(String())
             ^foo Int(10)
         }
-

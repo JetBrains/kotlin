@@ -389,7 +389,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] nestedTypeAlias.kt
     public final [ResolvedTo(BODY_RESOLVE)] class OuterClass<[ResolvedTo(BODY_RESOLVE)] T1> : R|SuperForOuter| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(BODY_RESOLVE)] T1>(): R|OuterClass<T1>| {
             super<R|SuperForOuter|>()

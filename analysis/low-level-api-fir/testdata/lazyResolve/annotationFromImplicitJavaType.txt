@@ -59,7 +59,7 @@ FILE: [ResolvedTo(IMPORTS)] main.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] main.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] main.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe([ResolvedTo(BODY_RESOLVE)] i: R|JavaInterface|): R|@R|KotlinAnnotation|()  kotlin/Int| {
         ^resolveMe R|<local>/i|.R|/JavaInterface.id|
     }

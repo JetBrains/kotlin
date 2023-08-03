@@ -226,7 +226,7 @@ FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitType.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] delegateWithImplicitType.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] delegateWithImplicitType.kt
     public final [ResolvedTo(BODY_RESOLVE)] [DelegateFieldsMapKey={0=FirFieldSymbol /Aaa.$$delegate_0}] class Aaa : R|Interface| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Aaa] constructor([ResolvedTo(BODY_RESOLVE)] i: R|Interface|): R|Aaa| {
             super<R|kotlin/Any|>()

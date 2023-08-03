@@ -150,7 +150,7 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfTopSetterScript.kts
 
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] parameterOfTopSetterScript.kts
+FILE: [ResolvedTo(BODY_RESOLVE)] parameterOfTopSetterScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|

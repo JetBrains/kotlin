@@ -176,7 +176,7 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetter.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetter.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] parameterOfNonLocalSetter.kt
     public final [ResolvedTo(BODY_RESOLVE)] class X : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X] constructor(): R|X| {
             super<R|kotlin/Any|>()

@@ -779,7 +779,7 @@ FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] TypeReference.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] TypeReference.kt
     @R|kotlin/SinceKotlin|[Types](version = String(1.4)) public final [ResolvedTo(BODY_RESOLVE)] class TypeReference : R|kotlin/reflect/KType| {
         @R|kotlin/SinceKotlin|[Types](version = String(1.6)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TypeReference] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.classifier] classifier: R|kotlin/reflect/KClassifier|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.arguments] arguments: R|kotlin/collections/List<kotlin/reflect/KTypeProjection>|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.platformTypeUpperBound] platformTypeUpperBound: R|kotlin/reflect/KType?|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=kotlin/jvm/internal/TypeReference.flags] flags: R|kotlin/Int|): R|kotlin/jvm/internal/TypeReference| {
             super<R|kotlin/Any|>()

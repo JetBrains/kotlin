@@ -1,4 +1,4 @@
-FILE: [ResolvedTo(IMPORTS)] localFunctionWithImplicitType.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] localFunctionWithImplicitType.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
         local final [ResolvedTo(BODY_RESOLVE)] fun local(): R|kotlin/Int| {
             ^local Int(0)

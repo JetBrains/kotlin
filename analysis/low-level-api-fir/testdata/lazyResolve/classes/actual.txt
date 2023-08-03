@@ -298,7 +298,7 @@ FILE: [ResolvedTo(IMPORTS)] actual.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] actual.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] actual.kt
     public final actual [ResolvedTo(BODY_RESOLVE)] [ExpectForActualAttributeKey={}] class Actual : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Actual] constructor(): R|Actual| {
             super<R|kotlin/Any|>()

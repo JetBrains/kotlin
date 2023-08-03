@@ -454,7 +454,7 @@ FILE: [ResolvedTo(IMPORTS)] script3.kts
         R|/variable| = String(1)
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] script3.kts
+FILE: [ResolvedTo(BODY_RESOLVE)] script3.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)]
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|

@@ -142,7 +142,7 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructor.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] primaryConstructor.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] primaryConstructor.kt
     public final [ResolvedTo(BODY_RESOLVE)] class Problem : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Problem] constructor(): R|Problem| {
             super<R|kotlin/Any|>()

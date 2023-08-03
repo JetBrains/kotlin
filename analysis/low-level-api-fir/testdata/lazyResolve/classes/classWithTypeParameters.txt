@@ -116,7 +116,7 @@ FILE: [ResolvedTo(IMPORTS)] classWithTypeParameters.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] classWithTypeParameters.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] classWithTypeParameters.kt
     public final [ResolvedTo(BODY_RESOLVE)] class ResolveMe<[ResolvedTo(BODY_RESOLVE)] T : R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] K> : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ResolveMe] constructor<[ResolvedTo(BODY_RESOLVE)] T : R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] K>(): R|ResolveMe<T, K>| {
             super<R|kotlin/Any|>()

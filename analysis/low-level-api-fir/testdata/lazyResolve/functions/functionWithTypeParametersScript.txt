@@ -120,7 +120,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithTypeParametersScript.kts
 
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] functionWithTypeParametersScript.kts
+FILE: [ResolvedTo(BODY_RESOLVE)] functionWithTypeParametersScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|

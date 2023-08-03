@@ -1,4 +1,4 @@
-FILE: [ResolvedTo(IMPORTS)] localDeclarationsInAccessor.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] localDeclarationsInAccessor.kt
     public final [ResolvedTo(BODY_RESOLVE)] class Outer : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] constructor(): R|Outer| {
             super<R|kotlin/Any|>()

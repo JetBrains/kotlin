@@ -1,4 +1,4 @@
-FILE: [ResolvedTo(IMPORTS)] classMemberProperty.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] classMemberProperty.kt
     public final [ResolvedTo(BODY_RESOLVE)] class X : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] constructor(): R|X| {
             super<R|kotlin/Any|>()

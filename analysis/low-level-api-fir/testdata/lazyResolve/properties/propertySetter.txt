@@ -81,7 +81,7 @@ FILE: [ResolvedTo(IMPORTS)] propertySetter.kt
         }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] propertySetter.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] propertySetter.kt
     public final [ResolvedTo(BODY_RESOLVE)] var prop: R|kotlin/Int| = Int(42)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
         public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit| {

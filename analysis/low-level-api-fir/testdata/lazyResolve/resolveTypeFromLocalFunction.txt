@@ -277,7 +277,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunction.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalFunction.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] resolveTypeFromLocalFunction.kt
     public final [ResolvedTo(BODY_RESOLVE)] class UnusedClass : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
             super<R|kotlin/Any|>()

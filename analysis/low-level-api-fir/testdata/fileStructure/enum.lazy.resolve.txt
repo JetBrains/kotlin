@@ -1,4 +1,4 @@
-FILE: [ResolvedTo(IMPORTS)] enum.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] enum.kt
     public final [ResolvedTo(BODY_RESOLVE)] enum class Enum : R|kotlin/Enum<Enum>| {
         private [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/Int|): R|Enum| {
             super<R|kotlin/Enum<Enum>|>()

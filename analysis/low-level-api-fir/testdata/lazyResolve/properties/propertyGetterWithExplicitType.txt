@@ -72,7 +72,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyGetterWithExplicitType.kt
         }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] propertyGetterWithExplicitType.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] propertyGetterWithExplicitType.kt
     public final [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/Int|
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
             ^ Int(42)

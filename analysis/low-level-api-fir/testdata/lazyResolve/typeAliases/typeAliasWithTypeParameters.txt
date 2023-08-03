@@ -51,5 +51,5 @@ FILE: [ResolvedTo(IMPORTS)] typeAliasWithTypeParameters.kt
     public final [ResolvedTo(BODY_RESOLVE)] typealias ResolveMe<[ResolvedTo(BODY_RESOLVE)] T : R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] K> = R|kotlin/collections/Map<T, K>|
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] typeAliasWithTypeParameters.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] typeAliasWithTypeParameters.kt
     public final [ResolvedTo(BODY_RESOLVE)] typealias ResolveMe<[ResolvedTo(BODY_RESOLVE)] T : R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] K> = R|kotlin/collections/Map<T, K>|

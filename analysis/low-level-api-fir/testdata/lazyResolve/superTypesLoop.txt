@@ -350,7 +350,7 @@ FILE: [ResolvedTo(IMPORTS)] superTypesLoop.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] superTypesLoop.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] superTypesLoop.kt
     public open [ResolvedTo(BODY_RESOLVE)] class resolveMe : R|C| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<R|C|>()

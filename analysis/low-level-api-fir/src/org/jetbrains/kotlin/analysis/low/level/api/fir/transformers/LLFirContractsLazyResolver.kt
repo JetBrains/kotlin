@@ -63,6 +63,7 @@ private class LLFirContractsTargetResolver(
             is FirVariable,
             is FirFunction,
             is FirAnonymousInitializer,
+            is FirFile,
             is FirScript,
             is FirFileAnnotationsContainer,
             is FirDanglingModifierList,

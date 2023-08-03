@@ -122,7 +122,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationWithNamedFunctionArgument.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] annotationWithNamedFunctionArgument.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] annotationWithNamedFunctionArgument.kt
     @<ERROR TYPE REF: Symbol not found for Anno>[Types]() public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
             super<R|kotlin/Any|>()

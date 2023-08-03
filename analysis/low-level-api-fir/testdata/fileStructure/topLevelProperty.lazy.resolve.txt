@@ -1,4 +1,4 @@
-FILE: [ResolvedTo(IMPORTS)] topLevelProperty.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] topLevelProperty.kt
     public final [ResolvedTo(BODY_RESOLVE)] var x: R|kotlin/Int|
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
             ^ F|/x|

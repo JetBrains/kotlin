@@ -948,7 +948,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass2.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClass2.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] hierarchyWithOverrideAndNestedClass2.kt
     public abstract [ResolvedTo(BODY_RESOLVE)] interface Foo1 : R|kotlin/Any| {
         public abstract [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit|
 

@@ -259,7 +259,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteral.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] localFunctionInsideFunctionLiteral.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] localFunctionInsideFunctionLiteral.kt
     public open [ResolvedTo(BODY_RESOLVE)] class ClassWithParameter : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(BODY_RESOLVE)] i: R|() -> kotlin/Unit|): R|one/ClassWithParameter| {
             super<R|kotlin/Any|>()

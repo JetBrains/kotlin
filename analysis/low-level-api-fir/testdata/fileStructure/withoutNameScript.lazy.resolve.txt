@@ -1,6 +1,6 @@
-FILE: [ResolvedTo(IMPORTS)] withoutNameScript.kts
+FILE: [ResolvedTo(BODY_RESOLVE)] withoutNameScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)]
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] fun <no name provided>([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/Int| = Int(1)): R|kotlin/String| {

@@ -246,7 +246,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2.kt
     public final [ResolvedTo(BODY_RESOLVE)] typealias ON3<[ResolvedTo(BODY_RESOLVE)] T2> = R|OuterClass.NestedType<T2>|
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias2.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] nestedTypeAlias2.kt
     public final [ResolvedTo(BODY_RESOLVE)] class OuterClass<[ResolvedTo(BODY_RESOLVE)] T1> : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(BODY_RESOLVE)] T1>(): R|OuterClass<T1>| {
             super<R|kotlin/Any|>()

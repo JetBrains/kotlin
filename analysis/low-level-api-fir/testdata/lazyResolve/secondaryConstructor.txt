@@ -125,7 +125,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructor.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] secondaryConstructor.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] secondaryConstructor.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
         R|/receive|(R|/A.A|(Int(42)))
     }

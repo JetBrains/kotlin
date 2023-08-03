@@ -155,7 +155,7 @@ FILE: [ResolvedTo(IMPORTS)] SubClass.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] SubClass.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] SubClass.kt
     public abstract [ResolvedTo(BODY_RESOLVE)] class SubClass : R|AbstractClass<kotlin/Int>| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=SubClass] constructor(): R|SubClass| {
             super<R|AbstractClass<kotlin/Int>|>()

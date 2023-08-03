@@ -126,7 +126,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterBounds.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] typeParameterBounds.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] typeParameterBounds.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe([ResolvedTo(BODY_RESOLVE)] foo: R|Foo|): R|kotlin/Unit| {
         R|<local>/foo|.R|/util|<R|Foo|, R|Bar<Foo>|>()
     }

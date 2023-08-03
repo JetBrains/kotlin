@@ -165,7 +165,7 @@ FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchy.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchy.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] complexLocalHierarchy.kt
     public abstract [ResolvedTo(BODY_RESOLVE)] interface NonLocalInterface : R|kotlin/Any| {
     }
     public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {

@@ -55,6 +55,13 @@ internal abstract class LLFirTargetResolver(
 
     fun resolveDesignation() {
         checkResolveConsistency()
+        if (resolveTarget is LLFirSingleResolveTarget && resolveTarget.target is FirFile) {
+            performResolve(resolveTarget.firFile)
+            return
+        }
+        if (resolveTarget is LLFirWholeFileResolveTarget) {
+            performResolve(resolveTarget.firFile)
+        }
         withFile(resolveTarget.firFile) {
             goToTargets(resolveTarget.path.iterator())
         }

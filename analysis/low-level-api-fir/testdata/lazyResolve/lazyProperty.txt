@@ -393,7 +393,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyProperty.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] lazyProperty.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] lazyProperty.kt
     public final [ResolvedTo(BODY_RESOLVE)] class LazyDelegate<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LazyDelegate] constructor<[ResolvedTo(BODY_RESOLVE)] T>([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/LazyDelegate.value] value: R|T|): R|LazyDelegate<T>| {
             super<R|kotlin/Any|>()

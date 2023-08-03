@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLeve
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder.findElementIn
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.renderer.FirDeclarationRendererWithFilteredAttributes
 import org.jetbrains.kotlin.fir.renderer.FirErrorExpressionExtendedRenderer
@@ -52,7 +53,7 @@ abstract class AbstractFirLazyDeclarationResolveTestCase : AbstractLowLevelApiSi
             val (elementToResolve, resolver) = resolverProvider(firResolveSession)
             val designations = LLFirResolveMultiDesignationCollector.getDesignationsToResolve(elementToResolve)
             val filesToRender = listOf(firFile).plus(designations.map { it.firFile }).distinct()
-            val shouldRenderDeclaration = filesToRender.all { file ->
+            val shouldRenderDeclaration = elementToResolve !is FirFile && filesToRender.all { file ->
                 findElementIn<FirElementWithResolveState>(file) {
                     it == elementToResolve
                 } == null

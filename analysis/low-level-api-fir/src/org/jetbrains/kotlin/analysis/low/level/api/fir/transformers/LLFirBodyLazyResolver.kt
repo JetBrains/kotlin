@@ -149,6 +149,7 @@ private class LLFirBodyTargetResolver(
             is FirDanglingModifierList,
             is FirFileAnnotationsContainer,
             is FirTypeAlias,
+            is FirFile,
             -> {
                 // No bodies here
             }

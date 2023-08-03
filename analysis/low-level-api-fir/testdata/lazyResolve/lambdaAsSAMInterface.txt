@@ -215,7 +215,7 @@ FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterface.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterface.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] lambdaAsSAMInterface.kt
     public final [ResolvedTo(BODY_RESOLVE)] class Arg : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
             super<R|kotlin/Any|>()

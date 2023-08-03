@@ -389,7 +389,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedFieldScript.kts
 
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] delegatedFieldScript.kts
+FILE: [ResolvedTo(BODY_RESOLVE)] delegatedFieldScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|

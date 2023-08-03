@@ -272,7 +272,7 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] dataClassCopy.kt
     public final data [ResolvedTo(BODY_RESOLVE)] class DataClass : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=DataClass] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=one/DataClass.i] i: R|kotlin/Int|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=one/DataClass.b] b: R|kotlin/Boolean|): R|one/DataClass| {
             super<R|kotlin/Any|>()

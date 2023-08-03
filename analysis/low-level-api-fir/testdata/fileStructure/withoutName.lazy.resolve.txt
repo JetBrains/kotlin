@@ -1,4 +1,4 @@
-FILE: [ResolvedTo(IMPORTS)] withoutName.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] withoutName.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun <no name provided>([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/Int| = Int(1)): R|kotlin/String| {
         ^<no name provided> String(str)
     }

@@ -146,7 +146,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunction.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] typeParameterOfNonLocalFunction.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] typeParameterOfNonLocalFunction.kt
     public final [ResolvedTo(BODY_RESOLVE)] class X : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X] constructor(): R|X| {
             super<R|kotlin/Any|>()

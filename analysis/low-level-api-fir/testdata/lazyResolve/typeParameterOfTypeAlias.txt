@@ -129,7 +129,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAlias.kt
     public final [ResolvedTo(BODY_RESOLVE)] typealias Alias<[ResolvedTo(BODY_RESOLVE)] TypeParam> = R|X<TypeParam>|
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAlias.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] typeParameterOfTypeAlias.kt
     public final [ResolvedTo(BODY_RESOLVE)] class X<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X] constructor<[ResolvedTo(BODY_RESOLVE)] T>(): R|X<T>| {
             super<R|kotlin/Any|>()

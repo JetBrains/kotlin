@@ -1,4 +1,4 @@
-FILE: [ResolvedTo(IMPORTS)] propertyWithGetterAndSetter.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] propertyWithGetterAndSetter.kt
     public final [ResolvedTo(BODY_RESOLVE)] var withGetterAndSetter: R|kotlin/Int| = Int(42)
         public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
             ^ F|/withGetterAndSetter|

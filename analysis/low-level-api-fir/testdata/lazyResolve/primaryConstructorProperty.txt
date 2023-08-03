@@ -181,7 +181,7 @@ FILE: [ResolvedTo(IMPORTS)] primaryConstructorProperty.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] primaryConstructorProperty.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] primaryConstructorProperty.kt
     public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor([ResolvedTo(BODY_RESOLVE)] a: R|kotlin/Boolean|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/A.prop] prop: R|kotlin/Int| = Int(42)): R|A| {
             super<R|kotlin/Any|>()

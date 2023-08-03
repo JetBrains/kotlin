@@ -152,7 +152,7 @@ FILE: [ResolvedTo(IMPORTS)] anonymousObjectInInvalidPosition.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] anonymousObjectInInvalidPosition.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] anonymousObjectInInvalidPosition.kt
     private final [ResolvedTo(BODY_RESOLVE)] val resolveMe: <ERROR TYPE REF: Wrong number of type arguments> = ERROR_EXPR(Should have initializer)Null(null) = object : R|A<kotlin/Int>| {
         private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
             super<R|kotlin/Any|>()

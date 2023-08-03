@@ -1,4 +1,4 @@
-FILE: [ResolvedTo(IMPORTS)] localFun.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] localFun.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun x(): R|kotlin/Unit| {
         local final [ResolvedTo(BODY_RESOLVE)] fun y(): R|kotlin/Unit| {
         }

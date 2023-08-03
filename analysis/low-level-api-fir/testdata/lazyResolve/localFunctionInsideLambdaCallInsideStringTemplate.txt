@@ -285,7 +285,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideLambdaCallInsideStringTemplate.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] localFunctionInsideLambdaCallInsideStringTemplate.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] localFunctionInsideLambdaCallInsideStringTemplate.kt
     public open [ResolvedTo(BODY_RESOLVE)] class ClassWithParameter : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(BODY_RESOLVE)] s: R|kotlin/String|): R|one/ClassWithParameter| {
             super<R|kotlin/Any|>()

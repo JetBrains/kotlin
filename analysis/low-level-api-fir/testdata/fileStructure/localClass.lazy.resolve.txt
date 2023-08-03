@@ -1,4 +1,4 @@
-FILE: [ResolvedTo(IMPORTS)] localClass.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] localClass.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun a(): R|kotlin/Unit| {
         local final [ResolvedTo(BODY_RESOLVE)] class X : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] constructor(): R|X| {

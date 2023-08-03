@@ -415,7 +415,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] hierarchyWithOverride.kt
     public abstract [ResolvedTo(BODY_RESOLVE)] interface Foo1 : R|kotlin/Any| {
         public abstract [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit|
 

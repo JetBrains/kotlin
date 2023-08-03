@@ -194,7 +194,7 @@ FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] cyclicHierarchy.kt
     public abstract [ResolvedTo(BODY_RESOLVE)] interface B : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /B -> /ResolveMe> {
     }
     public abstract [ResolvedTo(BODY_RESOLVE)] interface C : <ERROR TYPE REF: Loop in supertype: /C -> /B> {

@@ -1,4 +1,4 @@
-FILE: [ResolvedTo(IMPORTS)] functionWithImplicitType.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] functionWithImplicitType.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T> checkSubtype([ResolvedTo(BODY_RESOLVE)] t: R|T|): R|T| {
         ^checkSubtype R|<local>/t|
     }

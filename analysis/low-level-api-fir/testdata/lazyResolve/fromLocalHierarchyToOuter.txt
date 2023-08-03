@@ -369,7 +369,7 @@ FILE: [ResolvedTo(IMPORTS)] fromLocalHierarchyToOuter.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] fromLocalHierarchyToOuter.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] fromLocalHierarchyToOuter.kt
     public open [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
             super<R|kotlin/Any|>()

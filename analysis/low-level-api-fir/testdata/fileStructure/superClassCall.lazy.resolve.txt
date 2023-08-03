@@ -1,4 +1,4 @@
-FILE: [ResolvedTo(IMPORTS)] superClassCall.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] superClassCall.kt
     public open [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] init: R|A.() -> kotlin/Unit|): R|A| {
             super<R|kotlin/Any|>()

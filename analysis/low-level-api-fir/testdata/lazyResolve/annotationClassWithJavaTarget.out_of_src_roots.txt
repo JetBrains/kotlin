@@ -116,7 +116,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationClassWithJavaTarget.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] annotationClassWithJavaTarget.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] annotationClassWithJavaTarget.kt
     @<ERROR TYPE REF: Symbol not found for java.lang.annotation.Target>[Types]() public final [ResolvedTo(BODY_RESOLVE)] annotation class ResolveMe : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ResolveMe] constructor(): R|ResolveMe| {
             super<R|kotlin/Any|>()

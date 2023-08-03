@@ -1,4 +1,4 @@
-FILE: [ResolvedTo(IMPORTS)] qualifiedCallInsideSuperCall.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] qualifiedCallInsideSuperCall.kt
     public open [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] init: R|A.() -> kotlin/Unit|): R|A| {
             super<R|kotlin/Any|>()

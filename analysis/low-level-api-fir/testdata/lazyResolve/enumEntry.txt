@@ -342,7 +342,7 @@ FILE: [ResolvedTo(IMPORTS)] enumEntry.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] enumEntry.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] enumEntry.kt
     public final [ResolvedTo(BODY_RESOLVE)] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor(): R|Anno| {
             super<R|kotlin/Any|>()

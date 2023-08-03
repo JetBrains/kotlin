@@ -1,4 +1,4 @@
-FILE: [ResolvedTo(IMPORTS)] multipleTopLevelFunctionsWithImplicitTypes.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] multipleTopLevelFunctionsWithImplicitTypes.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun foo1(): R|kotlin/Int| {
         ^foo1 Int(1)
     }

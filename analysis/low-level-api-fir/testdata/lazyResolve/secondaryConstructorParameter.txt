@@ -248,7 +248,7 @@ FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameter.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameter.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] secondaryConstructorParameter.kt
     public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/A.prop] prop: R|kotlin/Int| = Int(42), [ResolvedTo(BODY_RESOLVE)] c: R|kotlin/String|): R|A| {
             super<R|kotlin/Any|>()

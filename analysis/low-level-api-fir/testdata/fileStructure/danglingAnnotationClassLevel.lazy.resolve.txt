@@ -1,4 +1,4 @@
-FILE: [ResolvedTo(IMPORTS)] danglingAnnotationClassLevel.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] danglingAnnotationClassLevel.kt
     public final [ResolvedTo(BODY_RESOLVE)] class Foo : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] constructor(): R|Foo| {
             super<R|kotlin/Any|>()

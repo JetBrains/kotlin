@@ -1,6 +1,6 @@
-FILE: [ResolvedTo(IMPORTS)] topLevelPropertyScript.kts
+FILE: [ResolvedTo(BODY_RESOLVE)] topLevelPropertyScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)]
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] var x: R|kotlin/Int|
@@ -17,4 +17,3 @@ FILE: [ResolvedTo(IMPORTS)] topLevelPropertyScript.kts
         public final [ResolvedTo(BODY_RESOLVE)] var z: R|kotlin/Int| = Int(15)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
             public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
-

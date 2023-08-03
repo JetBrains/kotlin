@@ -363,7 +363,7 @@ FILE: [ResolvedTo(IMPORTS)] localParameterInsideSuperEntryCall.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] localParameterInsideSuperEntryCall.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] localParameterInsideSuperEntryCall.kt
     public abstract [ResolvedTo(BODY_RESOLVE)] interface Interface : R|kotlin/Any| {
         public abstract [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] param: R|kotlin/String|): R|kotlin/Unit|
 

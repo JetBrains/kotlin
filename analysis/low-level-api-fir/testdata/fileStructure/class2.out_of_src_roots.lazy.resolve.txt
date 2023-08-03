@@ -1,4 +1,4 @@
-FILE: [ResolvedTo(IMPORTS)] class2.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] class2.kt
     public final [ResolvedTo(BODY_RESOLVE)] class B : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] constructor(): R|B| {
             super<R|kotlin/Any|>()

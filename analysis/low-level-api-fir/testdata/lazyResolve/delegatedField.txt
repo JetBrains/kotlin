@@ -298,7 +298,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedField.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] delegatedField.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] delegatedField.kt
     public final [ResolvedTo(BODY_RESOLVE)] class Boo : R|kotlin/Any| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Boo] constructor(): R|one/Boo| {
             super<R|kotlin/Any|>()

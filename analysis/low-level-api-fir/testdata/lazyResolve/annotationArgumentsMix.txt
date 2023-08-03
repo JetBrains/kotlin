@@ -588,7 +588,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMix.kt
     }
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMix.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] annotationArgumentsMix.kt
     public final [ResolvedTo(BODY_RESOLVE)] annotation class AnotherAnnotation : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
             super<R|kotlin/Any|>()
