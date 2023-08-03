@@ -80,7 +80,7 @@ class PartialCacheInfo(val klib: KotlinLibrary, val strategy: CacheDeserializati
 
 class CacheSupport(
         private val configuration: CompilerConfiguration,
-        resolvedLibraries: KotlinLibraryResolveResult,
+        private val resolvedLibraries: KotlinLibraryResolveResult,
         ignoreCacheReason: String?,
         systemCacheDirectory: File,
         autoCacheDirectory: File,
@@ -181,7 +181,7 @@ class CacheSupport(
         fun cacheFileId(fqName: String, filePath: String) = "${if (fqName == "") "ROOT" else fqName}.${filePath.hashCode().toString(Character.MAX_RADIX)}"
     }
 
-    init {
+    fun checkConsistency() {
         // Ensure dependencies of every cached library are cached too:
         resolvedLibraries.getFullList { libraries ->
             libraries.map { library ->

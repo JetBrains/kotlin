@@ -75,6 +75,8 @@ class KonanDriver(
             konanConfig = KonanConfig(project, configuration) // TODO: Just set freshly built caches.
         }
 
+        konanConfig.cacheSupport.checkConsistency()
+
         DynamicCompilerDriver().run(konanConfig, environment)
     }
 
