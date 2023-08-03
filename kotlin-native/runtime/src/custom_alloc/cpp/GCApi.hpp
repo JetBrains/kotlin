@@ -13,12 +13,12 @@
 
 #include "Alignment.hpp"
 #include "AtomicStack.hpp"
-#include "TypeLayout.hpp"
 #include "ExtraObjectData.hpp"
 #include "ExtraObjectPage.hpp"
 #include "GC.hpp"
 #include "GCStatistics.hpp"
 #include "Memory.h"
+#include "TypeLayout.hpp"
 
 namespace kotlin::alloc {
 

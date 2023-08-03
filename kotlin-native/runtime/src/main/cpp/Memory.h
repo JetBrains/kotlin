@@ -19,10 +19,11 @@
 
 #include <utility>
 
+#include "Alignment.hpp"
 #include "KAssert.h"
 #include "Common.h"
-#include "TypeLayout.hpp"
 #include "TypeInfo.h"
+#include "TypeLayout.hpp"
 #include "Atomic.h"
 #include "PointerBits.h"
 #include "Utils.hpp"
@@ -144,6 +145,7 @@ struct ArrayHeader {
 };
 static_assert(alignof(ArrayHeader) <= kotlin::kObjectAlignment);
 
+#ifndef KONAN_WASM
 namespace kotlin {
 
 struct ObjectBody;
@@ -161,9 +163,7 @@ struct type_layout::descriptor_type<ObjectBody> {
         uint64_t size() const noexcept { return size_; }
 
         value_type* construct(uint8_t* ptr) noexcept {
-            RuntimeAssert(
-                    size_ == 0 || (ptr[0] == 0 && memcmp(ptr, ptr + 1, size_ - 1) == 0),
-                    "ObjectBodyDescriptor::construct@%p memory is not zeroed", ptr);
+            RuntimeAssert(isZeroed(std_support::span<uint8_t>(ptr, size_)), "ObjectBodyDescriptor::construct@%p memory is not zeroed", ptr);
             return reinterpret_cast<value_type*>(ptr);
         }
 
@@ -187,9 +187,7 @@ struct type_layout::descriptor_type<ArrayBody> {
         uint64_t size() const noexcept { return size_; }
 
         value_type* construct(uint8_t* ptr) noexcept {
-            RuntimeAssert(
-                    size_ == 0 || (ptr[0] == 0 && memcmp(ptr, ptr + 1, size_ - 1) == 0),
-                    "ArrayBodyDescriptor::construct@%p memory is not zeroed", ptr);
+            RuntimeAssert(isZeroed(std_support::span<uint8_t>(ptr, size_)), "ArrayBodyDescriptor::construct@%p memory is not zeroed", ptr);
             return reinterpret_cast<ArrayBody*>(ptr);
         }
 
@@ -199,6 +197,7 @@ struct type_layout::descriptor_type<ArrayBody> {
 };
 
 } // namespace kotlin
+#endif
 
 ALWAYS_INLINE bool isPermanentOrFrozen(const ObjHeader* obj);
 ALWAYS_INLINE bool isShareable(const ObjHeader* obj);
