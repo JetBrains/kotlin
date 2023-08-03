@@ -37,6 +37,7 @@ dependencies {
     testApiJUnit5()
     testApi(projectTests(":kotlin-annotation-processing-compiler"))
     testImplementation(project(":analysis:analysis-api-standalone"))
+    testImplementation(projectTests(":kotlin-annotation-processing-cli"))
     testRuntimeOnly(toolsJar())
     testRuntimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))
     testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))

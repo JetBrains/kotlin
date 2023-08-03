@@ -28,7 +28,9 @@ import org.jetbrains.kotlin.gradle.util.testResolveAllConfigurations
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
+import java.io.File
 import java.nio.file.Files
+import java.nio.file.Path
 import java.util.zip.ZipFile
 import java.util.zip.ZipOutputStream
 import kotlin.io.path.appendText
@@ -36,7 +38,10 @@ import kotlin.io.path.deleteExisting
 import kotlin.io.path.outputStream
 import kotlin.test.assertEquals
 
-abstract class Kapt3BaseIT(val languageVersion: String = "1.9") : KGPBaseTest() {
+abstract class Kapt3BaseIT : KGPBaseTest() {
+    open val languageVersion: String
+        get() = "1.9"
+
     companion object {
         private const val KAPT_SUCCESSFUL_MESSAGE = "Annotation processing complete, errors: 0"
     }
@@ -63,6 +68,41 @@ abstract class Kapt3BaseIT(val languageVersion: String = "1.9") : KGPBaseTest() 
     }
 
     protected val String.withPrefix get() = "kapt2/$this"
+
+    @OptIn(EnvironmentalVariablesOverride::class)
+    fun project(
+        projectName: String,
+        gradleVersion: GradleVersion,
+        buildOptions: BuildOptions = defaultBuildOptions,
+        forceOutput: Boolean = false,
+        enableBuildScan: Boolean = false,
+        addHeapDumpOptions: Boolean = true,
+        enableGradleDebug: Boolean = false,
+        projectPathAdditionalSuffix: String = "",
+        buildJdk: File? = null,
+        localRepoDir: Path? = null,
+        environmentVariables: EnvironmentalVariables = EnvironmentalVariables(),
+        test: TestProject.() -> Unit = {},
+    ) {
+        (this as KGPBaseTest).project(
+            projectName = projectName,
+            gradleVersion = gradleVersion,
+            buildOptions = buildOptions,
+            forceOutput = forceOutput,
+            enableBuildScan = enableBuildScan,
+            addHeapDumpOptions = addHeapDumpOptions,
+            enableGradleDebug = enableGradleDebug,
+            projectPathAdditionalSuffix = projectPathAdditionalSuffix,
+            buildJdk = buildJdk,
+            localRepoDir = localRepoDir,
+            environmentVariables = environmentVariables,
+        ) {
+            customizeProject()
+            test()
+        }
+    }
+
+    protected open fun TestProject.customizeProject() {}
 }
 
 /**
@@ -74,8 +114,8 @@ abstract class Kapt3BaseIT(val languageVersion: String = "1.9") : KGPBaseTest() 
  *
  * then override and disable the test here via `@Disabled`.
  */
-@DisplayName("Kapt with classloaders cache")
-class Kapt3ClassLoadersCacheIT : Kapt3IT() {
+@DisplayName("Kapt 3 with classloaders cache")
+open class Kapt3ClassLoadersCacheIT : Kapt3IT() {
     override fun kaptOptions(): BuildOptions.KaptOptions = super.kaptOptions().copy(
         classLoadersCacheSize = 10,
         includeCompileClasspath = false
@@ -138,7 +178,7 @@ class Kapt3ClassLoadersCacheIT : Kapt3IT() {
     }
 }
 
-@DisplayName("Kapt base checks")
+@DisplayName("Kapt 3 base checks")
 @OtherGradlePluginTests
 open class Kapt3IT : Kapt3BaseIT() {
     @DisplayName("Kapt is skipped when no annotation processors are added")
@@ -486,7 +526,7 @@ open class Kapt3IT : Kapt3BaseIT() {
 
     @DisplayName("Should incrementally rebuild on classpath change")
     @GradleTest
-    fun testChangeClasspathICRebuild(gradleVersion: GradleVersion) {
+    open fun testChangeClasspathICRebuild(gradleVersion: GradleVersion) {
         testICRebuild(gradleVersion) { project ->
             project.buildGradle.modify {
                 "$it\ndependencies { implementation 'org.jetbrains.kotlin:kotlin-reflect:' + kotlin_version }"
@@ -1051,7 +1091,7 @@ open class Kapt3IT : Kapt3BaseIT() {
 
     @DisplayName("KT-46651: kapt is tracking source files properly with configuration cache enabled")
     @GradleTest
-    fun kaptGenerateStubsShouldNotCaptureSourcesStateInConfigurationCache(gradleVersion: GradleVersion) {
+    open fun kaptGenerateStubsShouldNotCaptureSourcesStateInConfigurationCache(gradleVersion: GradleVersion) {
         project(
             "incrementalRebuild".withPrefix,
             gradleVersion,
@@ -1208,7 +1248,7 @@ open class Kapt3IT : Kapt3BaseIT() {
 
     @DisplayName("Kapt runs in fallback mode with useK2 = true")
     @GradleTest
-    internal fun fallBackModeWithUseK2(gradleVersion: GradleVersion) {
+    open fun fallBackModeWithUseK2(gradleVersion: GradleVersion) {
         project("simple".withPrefix, gradleVersion) {
             buildGradle.appendText(
                 """
@@ -1237,7 +1277,7 @@ open class Kapt3IT : Kapt3BaseIT() {
 
     @DisplayName("Kapt runs in fallback mode with languageVersion = 2.0")
     @GradleTest
-    internal fun fallBackModeWithLanguageVersion2_0(gradleVersion: GradleVersion) {
+    open fun fallBackModeWithLanguageVersion2_0(gradleVersion: GradleVersion) {
         project("simple".withPrefix, gradleVersion) {
             buildGradle.appendText(
                 """

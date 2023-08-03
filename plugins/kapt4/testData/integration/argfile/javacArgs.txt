@@ -1,0 +1,6 @@
+-cp output/ap
+-d output/javaClasses
+-proc:none
+output/sources/generated/Function.java
+output/sources/generated/Property.java
+output/sources/generated/Test.java
