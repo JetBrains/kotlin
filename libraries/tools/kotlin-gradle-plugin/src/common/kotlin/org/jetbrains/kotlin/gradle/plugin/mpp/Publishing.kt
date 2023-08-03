@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
-import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.tooling.buildKotlinToolingMetadataTask
 
@@ -79,13 +78,14 @@ private fun createTargetPublications(project: Project, publishing: PublishingExt
 }
 
 private fun InternalKotlinTarget.createMavenPublications(publications: PublicationContainer) {
-    components
-        .map { gradleComponent -> gradleComponent to kotlinComponents.single { it.name == gradleComponent.name } }
-        .filter { (_, kotlinComponent) -> kotlinComponent.publishableOnCurrentHost }
-        .forEach { (gradleComponent, kotlinComponent) ->
+    kotlinComponents
+        .filter { kotlinComponent -> kotlinComponent.publishableOnCurrentHost }
+        .forEach { kotlinComponent ->
             val componentPublication = publications.create(kotlinComponent.name, MavenPublication::class.java).apply {
-                // do this in whenEvaluated since older Gradle versions seem to check the files in the variant eagerly:
-                project.whenEvaluated {
+                // do await for usages since older Gradle versions seem to check the files in the variant eagerly:
+                // We are deferring this to 'AfterFinaliseCompilations' as safety measure for now.
+                project.launchInStage(KotlinPluginLifecycle.Stage.AfterFinaliseCompilations) {
+                    val gradleComponent = components.find { kotlinComponent.name == it.name } ?: return@launchInStage
                     from(gradleComponent)
                 }
                 (this as MavenPublicationInternal).publishWithOriginalFileName()
