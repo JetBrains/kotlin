@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinTargetSoftwareComponent
 import org.jetbrains.kotlin.tooling.core.UnsafeApi
+import org.jetbrains.kotlin.gradle.plugin.mpp.isSourcesPublishableFuture
+
 
 
 internal fun ExternalKotlinTargetSoftwareComponent(
@@ -32,8 +34,12 @@ internal fun ExternalKotlinTargetSoftwareComponent(
         details.mapToMavenScope("runtime")
     }
 
-    if (target.isSourcesPublishable) {
-        adhocSoftwareComponent.addVariantsFromConfiguration(target.sourcesElementsPublishedConfiguration) { _ -> }
+    target.project.launch {
+        if (target.isSourcesPublishableFuture.await()) {
+            adhocSoftwareComponent.addVariantsFromConfiguration(target.sourcesElementsPublishedConfiguration) { details ->
+                details.mapToOptional()
+            }
+        }
     }
 
     @OptIn(UnsafeApi::class)
