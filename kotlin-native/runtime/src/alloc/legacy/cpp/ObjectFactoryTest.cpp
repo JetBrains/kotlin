@@ -11,8 +11,8 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
-#include "Allocator.hpp"
 #include "FinalizerHooksTestSupport.hpp"
+#include "ObjectFactoryAllocator.hpp"
 #include "ObjectOps.hpp"
 #include "ObjectTestSupport.hpp"
 #include "ScopedThread.hpp"
@@ -39,7 +39,7 @@ struct DataSizeProvider {
 };
 
 template <size_t DataAlignment>
-using ObjectFactoryStorage = mm::internal::ObjectFactoryStorage<DataAlignment, SimpleAllocator, DataSizeProvider>;
+using ObjectFactoryStorage = alloc::internal::ObjectFactoryStorage<DataAlignment, SimpleAllocator, DataSizeProvider>;
 
 using ObjectFactoryStorageRegular = ObjectFactoryStorage<alignof(void*)>;
 
@@ -848,7 +848,7 @@ public:
     using Allocator = GlobalMockAllocator;
 };
 
-using ObjectFactory = mm::ObjectFactory<ObjectFactoryTraits>;
+using ObjectFactory = alloc::ObjectFactory<ObjectFactoryTraits>;
 
 struct Payload {
     ObjHeader* field1;

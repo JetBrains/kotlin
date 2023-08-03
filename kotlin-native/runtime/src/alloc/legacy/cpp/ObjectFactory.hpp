@@ -3,8 +3,7 @@
  * that can be found in the LICENSE file.
  */
 
-#ifndef RUNTIME_MM_OBJECT_FACTORY_H
-#define RUNTIME_MM_OBJECT_FACTORY_H
+#pragma once
 
 #include <algorithm>
 #include <cinttypes>
@@ -21,8 +20,7 @@
 #include "Types.h"
 #include "Utils.hpp"
 
-namespace kotlin {
-namespace mm {
+namespace kotlin::alloc {
 
 namespace internal {
 
@@ -736,7 +734,4 @@ private:
     Storage storage_;
 };
 
-} // namespace mm
-} // namespace kotlin
-
-#endif // RUNTIME_MM_OBJECT_FACTORY_H
+} // namespace kotlin::alloc

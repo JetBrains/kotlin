@@ -9,14 +9,13 @@
 
 #include "ObjectAlloc.hpp"
 
-namespace kotlin {
-namespace gc {
+namespace kotlin::alloc {
 
 // TODO: Try to move from custom allocator interface to standard one.
 //       Currently Free method is in the way: it is static to avoid keeping allocator state in
 //       unique_ptr's deleter in ObjectFactory.
 
-class Allocator {
+class AllocatorBasic {
 public:
     void* Alloc(size_t size) noexcept { return allocateInObjectPool(size); }
     static void Free(void* instance, size_t size) noexcept { freeInObjectPool(instance, size); }
@@ -43,5 +42,4 @@ private:
     GCThreadData& gc_;
 };
 
-} // namespace gc
-} // namespace kotlin
+} // namespace kotlin::alloc

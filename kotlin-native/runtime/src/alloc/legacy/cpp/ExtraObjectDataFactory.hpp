@@ -3,8 +3,7 @@
  * that can be found in the LICENSE file.
  */
 
-#ifndef RUNTIME_MM_EXTRA_OBJECT_DATA_REGISTRY_H
-#define RUNTIME_MM_EXTRA_OBJECT_DATA_REGISTRY_H
+#pragma once
 
 #include "ExtraObjectData.hpp"
 #include "Memory.h"
@@ -12,8 +11,7 @@
 #include "ObjectAlloc.hpp"
 #include "ThreadRegistry.hpp"
 
-namespace kotlin {
-namespace mm {
+namespace kotlin::alloc {
 
 // Registry for extra data, attached to some kotlin objects: weak refs, associated objects, ...
 class ExtraObjectDataFactory : Pinned {
@@ -24,9 +22,9 @@ public:
     public:
         explicit ThreadQueue(ExtraObjectDataFactory& registry) : Producer(registry.extraObjects_) {}
 
-        ExtraObjectData& CreateExtraObjectDataForObject(ObjHeader* baseObject, const TypeInfo* info) noexcept;
+        mm::ExtraObjectData& CreateExtraObjectDataForObject(ObjHeader* baseObject, const TypeInfo* info) noexcept;
 
-        void DestroyExtraObjectData(ExtraObjectData& data) noexcept;
+        void DestroyExtraObjectData(mm::ExtraObjectData& data) noexcept;
 
         // Collect extra data objects from thread corresponding to `threadData`. Must be called by the thread
         // when it's asked by GC to stop.
@@ -56,7 +54,4 @@ private:
     Queue extraObjects_;
 };
 
-} // namespace mm
-} // namespace kotlin
-
-#endif // RUNTIME_MM_EXTRA_OBJECT_DATA_REGISTRY_H
+} // namespace kotlin::alloc

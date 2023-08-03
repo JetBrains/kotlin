@@ -14,7 +14,6 @@
 #include "Logging.hpp"
 #include "MarkAndSweepUtils.hpp"
 #include "Memory.h"
-#include "ObjectAlloc.hpp"
 #include "RootSet.hpp"
 #include "Runtime.h"
 #include "ThreadData.hpp"
@@ -28,7 +27,7 @@ gc::SameThreadMarkAndSweep::SameThreadMarkAndSweep(
         gcScheduler::GCScheduler& gcScheduler) noexcept :
 #else
 gc::SameThreadMarkAndSweep::SameThreadMarkAndSweep(
-        ObjectFactory& objectFactory, mm::ExtraObjectDataFactory& extraObjectDataFactory, gcScheduler::GCScheduler& gcScheduler) noexcept :
+        ObjectFactory& objectFactory, alloc::ExtraObjectDataFactory& extraObjectDataFactory, gcScheduler::GCScheduler& gcScheduler) noexcept :
 
     objectFactory_(objectFactory),
     extraObjectDataFactory_(extraObjectDataFactory),
@@ -103,11 +102,11 @@ void gc::SameThreadMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
     std::optional extraObjectFactoryIterable = extraObjectDataFactory_.LockForIter();
     std::optional objectFactoryIterable = objectFactory_.LockForIter();
 
-    gc::SweepExtraObjects<DefaultSweepTraits<ObjectFactory>>(gcHandle, *extraObjectFactoryIterable);
+    alloc::SweepExtraObjects<alloc::DefaultSweepTraits<ObjectFactory>>(gcHandle, *extraObjectFactoryIterable);
     extraObjectFactoryIterable = std::nullopt;
-    auto finalizerQueue = gc::Sweep<DefaultSweepTraits<ObjectFactory>>(gcHandle, *objectFactoryIterable);
+    auto finalizerQueue = alloc::Sweep<alloc::DefaultSweepTraits<ObjectFactory>>(gcHandle, *objectFactoryIterable);
     objectFactoryIterable = std::nullopt;
-    kotlin::compactObjectPoolInMainThread();
+    alloc::compactObjectPoolInMainThread();
 #else
     // also sweeps extraObjects
     auto finalizerQueue = heap_.Sweep(gcHandle);
@@ -117,7 +116,7 @@ void gc::SameThreadMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
     finalizerQueue.TransferAllFrom(heap_.ExtractFinalizerQueue());
 #endif
 
-    scheduler.onGCFinish(epoch, allocatedBytes());
+    scheduler.onGCFinish(epoch, mm::GlobalData::Instance().gc().GetTotalHeapObjectsSizeBytes());
 
     resumeTheWorld(gcHandle);
 

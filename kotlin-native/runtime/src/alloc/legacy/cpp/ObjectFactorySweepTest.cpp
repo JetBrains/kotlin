@@ -3,17 +3,18 @@
  * that can be found in the LICENSE file.
  */
 
-#include <TestSupport.hpp>
-#include "MarkAndSweepUtils.hpp"
+#include "ObjectFactorySweep.hpp"
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
-#include "Allocator.hpp"
-#include "FinalizerHooksTestSupport.hpp"
-#include "ObjectFactory.hpp"
-#include "ObjectTestSupport.hpp"
 #include "ExtraObjectDataFactory.hpp"
+#include "FinalizerHooksTestSupport.hpp"
+#include "MarkAndSweepUtils.hpp"
+#include "ObjectFactory.hpp"
+#include "ObjectFactoryAllocator.hpp"
+#include "ObjectTestSupport.hpp"
+#include "TestSupport.hpp"
 #include "WeakRef.hpp"
 
 using namespace kotlin;
@@ -45,11 +46,11 @@ struct ObjectFactoryTraits {
         State state = State::kUnmarked;
     };
 
-    using Allocator = gc::Allocator;
+    using Allocator = alloc::AllocatorBasic;
 };
 
-using ObjectFactory = mm::ObjectFactory<ObjectFactoryTraits>;
-using ExtraObjectsDataFactory = mm::ExtraObjectDataFactory;
+using ObjectFactory = alloc::ObjectFactory<ObjectFactoryTraits>;
+using ExtraObjectsDataFactory = alloc::ExtraObjectDataFactory;
 
 class Object : public test_support::Object<Payload> {
 public:
@@ -134,7 +135,7 @@ ObjectFactoryTraits::ObjectData::State GetWeakReferenceState(test_support::Regul
 
 struct SweepTraits {
     using ObjectFactory = ObjectFactory;
-    using ExtraObjectsFactory = mm::ExtraObjectDataFactory;
+    using ExtraObjectsFactory = alloc::ExtraObjectDataFactory;
 
     static bool IsMarkedByExtraObject(mm::ExtraObjectData &object) noexcept {
         auto& objectData = ObjectFactory::NodeRef::From(object.GetBaseObject()).ObjectData();
@@ -195,8 +196,8 @@ public:
 
     std_support::vector<ObjHeader*> Sweep() {
         gc::processWeaks<ProcessWeakTraits>(gc::GCHandle::getByEpoch(0), specialRefRegistry_);
-        gc::SweepExtraObjects<SweepTraits>(gc::GCHandle::getByEpoch(0), extraObjectFactory_);
-        auto finalizers = gc::Sweep<SweepTraits>(gc::GCHandle::getByEpoch(0), objectFactory_);
+        alloc::SweepExtraObjects<SweepTraits>(gc::GCHandle::getByEpoch(0), extraObjectFactory_);
+        auto finalizers = alloc::Sweep<SweepTraits>(gc::GCHandle::getByEpoch(0), objectFactory_);
         std_support::vector<ObjHeader*> objects;
         for (auto node : finalizers.IterForTests()) {
             objects.push_back(node.GetObjHeader());
@@ -266,7 +267,7 @@ private:
     kotlin::ScopedMemoryInit memoryInit;
     FinalizerHooksTestSupport finalizerHooks_;
     ObjectFactory objectFactory_;
-    ObjectFactory::ThreadQueue objectFactoryThreadQueue_{objectFactory_, gc::Allocator()};
+    ObjectFactory::ThreadQueue objectFactoryThreadQueue_{objectFactory_, alloc::AllocatorBasic()};
     ExtraObjectsDataFactory extraObjectFactory_;
     ExtraObjectsDataFactory::ThreadQueue extraObjectFactoryThreadQueue_{extraObjectFactory_};
     mm::SpecialRefRegistry specialRefRegistry_;

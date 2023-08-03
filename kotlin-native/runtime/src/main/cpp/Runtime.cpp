@@ -11,7 +11,6 @@
 #include "MainQueueProcessor.hpp"
 #include "Memory.h"
 #include "ObjCExportInit.h"
-#include "ObjectAlloc.hpp"
 #include "Porting.h"
 #include "Runtime.h"
 #include "RuntimePrivate.hpp"

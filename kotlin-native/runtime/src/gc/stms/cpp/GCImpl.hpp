@@ -21,14 +21,14 @@ public:
     explicit Impl(gcScheduler::GCScheduler& gcScheduler) noexcept : gc_(objectFactory_, extraObjectDataFactory_, gcScheduler) {}
 
     ObjectFactory& objectFactory() noexcept { return objectFactory_; }
-    mm::ExtraObjectDataFactory& extraObjectDataFactory() noexcept { return extraObjectDataFactory_; }
+    alloc::ExtraObjectDataFactory& extraObjectDataFactory() noexcept { return extraObjectDataFactory_; }
 #endif
     SameThreadMarkAndSweep& gc() noexcept { return gc_; }
 
 private:
 #ifndef CUSTOM_ALLOCATOR
     ObjectFactory objectFactory_;
-    mm::ExtraObjectDataFactory extraObjectDataFactory_;
+    alloc::ExtraObjectDataFactory extraObjectDataFactory_;
 #endif
     SameThreadMarkAndSweep gc_;
 };
@@ -49,7 +49,7 @@ public:
     SameThreadMarkAndSweep::ThreadData& gc() noexcept { return gc_; }
 #ifndef CUSTOM_ALLOCATOR
     ObjectFactory::ThreadQueue& objectFactoryThreadQueue() noexcept { return objectFactoryThreadQueue_; }
-    mm::ExtraObjectDataFactory::ThreadQueue& extraObjectDataFactoryThreadQueue() noexcept { return extraObjectDataFactoryThreadQueue_; }
+    alloc::ExtraObjectDataFactory::ThreadQueue& extraObjectDataFactoryThreadQueue() noexcept { return extraObjectDataFactoryThreadQueue_; }
 #else
     alloc::CustomAllocator& alloc() noexcept { return alloc_; }
 #endif
@@ -61,7 +61,7 @@ private:
 #else
     [[no_unique_address]] ObjectFactoryTraits objectFactoryTraits_;
     ObjectFactory::ThreadQueue objectFactoryThreadQueue_;
-    mm::ExtraObjectDataFactory::ThreadQueue extraObjectDataFactoryThreadQueue_;
+    alloc::ExtraObjectDataFactory::ThreadQueue extraObjectDataFactoryThreadQueue_;
 #endif
 };
 

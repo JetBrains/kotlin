@@ -6,6 +6,7 @@
 #include "Memory.h"
 #include "MemoryPrivate.hpp"
 
+#include "Allocator.hpp"
 #include "Exceptions.h"
 #include "ExtraObjectData.hpp"
 #include "Freezing.hpp"
@@ -635,4 +636,12 @@ RUNTIME_NOTHROW extern "C" void DisposeRegularWeakReferenceImpl(ObjHeader* weakR
 
 void kotlin::OnMemoryAllocation(size_t totalAllocatedBytes) noexcept {
     mm::GlobalData::Instance().gcScheduler().setAllocatedBytes(totalAllocatedBytes);
+}
+
+void kotlin::initObjectPool() noexcept {
+    alloc::initObjectPool();
+}
+
+void kotlin::compactObjectPoolInCurrentThread() noexcept {
+    alloc::compactObjectPoolInCurrentThread();
 }

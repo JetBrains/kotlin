@@ -8,7 +8,7 @@
 #include <cstddef>
 #include <type_traits>
 
-namespace kotlin {
+namespace kotlin::alloc {
 
 void initObjectPool() noexcept;
 void* allocateInObjectPool(size_t size) noexcept;

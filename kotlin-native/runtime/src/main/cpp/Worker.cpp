@@ -32,7 +32,6 @@
 #include "Memory.h"
 #include "Natives.h"
 #include "ObjCMMAPI.h"
-#include "ObjectAlloc.hpp"
 #include "Runtime.h"
 #include "Types.h"
 #include "Worker.h"

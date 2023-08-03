@@ -3,7 +3,7 @@
  * that can be found in the LICENSE file.
  */
 
-#include "Allocator.hpp"
+#include "ObjectFactoryAllocator.hpp"
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
@@ -48,7 +48,7 @@ TEST(AllocatorWithGCTest, AllocateWithoutOOM) {
         EXPECT_CALL(*baseAllocator, Alloc(size)).WillOnce(testing::Return(nonNull));
         EXPECT_CALL(gc, OnOOM(_)).Times(0);
     }
-    gc::AllocatorWithGC<MockAllocatorWrapper, MockGC> allocator(std::move(baseAllocator), gc);
+    alloc::AllocatorWithGC<MockAllocatorWrapper, MockGC> allocator(std::move(baseAllocator), gc);
     void* ptr = allocator.Alloc(size);
     EXPECT_THAT(ptr, nonNull);
 }
@@ -64,7 +64,7 @@ TEST(AllocatorWithGCTest, AllocateWithFixableOOM) {
         EXPECT_CALL(gc, OnOOM(size));
         EXPECT_CALL(*baseAllocator, Alloc(size)).WillOnce(testing::Return(nonNull));
     }
-    gc::AllocatorWithGC<MockAllocatorWrapper, MockGC> allocator(std::move(baseAllocator), gc);
+    alloc::AllocatorWithGC<MockAllocatorWrapper, MockGC> allocator(std::move(baseAllocator), gc);
     void* ptr = allocator.Alloc(size);
     EXPECT_THAT(ptr, nonNull);
 }
@@ -79,7 +79,7 @@ TEST(AllocatorWithGCTest, AllocateWithUnfixableOOM) {
         EXPECT_CALL(gc, OnOOM(size));
         EXPECT_CALL(*baseAllocator, Alloc(size)).WillOnce(testing::Return(nullptr));
     }
-    gc::AllocatorWithGC<MockAllocatorWrapper, MockGC> allocator(std::move(baseAllocator), gc);
+    alloc::AllocatorWithGC<MockAllocatorWrapper, MockGC> allocator(std::move(baseAllocator), gc);
     void* ptr = allocator.Alloc(size);
     EXPECT_THAT(ptr, nullptr);
 }

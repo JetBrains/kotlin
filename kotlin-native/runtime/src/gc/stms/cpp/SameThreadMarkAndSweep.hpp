@@ -45,7 +45,7 @@ public:
 #else
     SameThreadMarkAndSweep(
             ObjectFactory& objectFactory,
-            mm::ExtraObjectDataFactory& extraObjectDataFactory,
+            alloc::ExtraObjectDataFactory& extraObjectDataFactory,
             gcScheduler::GCScheduler& gcScheduler) noexcept;
 #endif
 
@@ -66,7 +66,7 @@ private:
 
 #ifndef CUSTOM_ALLOCATOR
     ObjectFactory& objectFactory_;
-    mm::ExtraObjectDataFactory& extraObjectDataFactory_;
+    alloc::ExtraObjectDataFactory& extraObjectDataFactory_;
 #else
     alloc::Heap heap_;
 #endif

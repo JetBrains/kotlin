@@ -7,26 +7,31 @@
 
 #ifdef CUSTOM_ALLOCATOR
 
+// TODO: Move into alloc/custom/AllocatorImpl.hpp
+
 #include "CustomAllocator.hpp"
+#include "GCApi.hpp"
 #include "Heap.hpp"
 
 #else
 
-#include "Allocator.hpp"
+// TODO: Move into alloc/legacy/AllocatorImpl.hpp
+
 #include "ExtraObjectDataFactory.hpp"
 #include "GC.hpp"
 #include "ObjectFactory.hpp"
+#include "ObjectFactoryAllocator.hpp"
 
 namespace kotlin::gc {
 
 struct ObjectFactoryTraits {
-    using Allocator = Allocator;
+    using Allocator = alloc::AllocatorBasic;
     using ObjectData = gc::GC::ObjectData;
 
     Allocator CreateAllocator() noexcept { return Allocator(); }
 };
 
-using ObjectFactory = mm::ObjectFactory<ObjectFactoryTraits>;
+using ObjectFactory = alloc::ObjectFactory<ObjectFactoryTraits>;
 
 } // namespace kotlin::gc
 

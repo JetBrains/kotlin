@@ -10,14 +10,14 @@
 
 using namespace kotlin;
 
-mm::ExtraObjectData& mm::ExtraObjectDataFactory::ThreadQueue::CreateExtraObjectDataForObject(
+mm::ExtraObjectData& alloc::ExtraObjectDataFactory::ThreadQueue::CreateExtraObjectDataForObject(
         ObjHeader* baseObject, const TypeInfo* info) noexcept {
     return **Emplace(baseObject, info);
 }
 
-void mm::ExtraObjectDataFactory::ThreadQueue::DestroyExtraObjectData(ExtraObjectData& data) noexcept {
+void alloc::ExtraObjectDataFactory::ThreadQueue::DestroyExtraObjectData(mm::ExtraObjectData& data) noexcept {
     Erase(&Queue::Node::fromValue(data));
 }
 
-mm::ExtraObjectDataFactory::ExtraObjectDataFactory() = default;
-mm::ExtraObjectDataFactory::~ExtraObjectDataFactory() = default;
+alloc::ExtraObjectDataFactory::ExtraObjectDataFactory() = default;
+alloc::ExtraObjectDataFactory::~ExtraObjectDataFactory() = default;

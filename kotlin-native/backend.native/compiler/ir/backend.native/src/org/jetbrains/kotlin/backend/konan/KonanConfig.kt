@@ -298,6 +298,8 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     internal val runtimeNativeLibraries: List<String> = mutableListOf<String>().apply {
         if (debug) add("debug.bc")
+        add("mm.bc")
+        add("common_alloc.bc")
         add("common_gc.bc")
         add("common_gcScheduler.bc")
         when (gcSchedulerType) {
@@ -315,14 +317,12 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             }
         }
         if (allocationMode == AllocationMode.CUSTOM) {
-            add("experimental_memory_manager_custom.bc")
             when (gc) {
                 GC.STOP_THE_WORLD_MARK_AND_SWEEP -> add("same_thread_ms_gc_custom.bc")
                 GC.NOOP -> add("noop_gc_custom.bc")
                 GC.PARALLEL_MARK_CONCURRENT_SWEEP -> add("concurrent_ms_gc_custom.bc")
             }
         } else {
-            add("experimental_memory_manager.bc")
             when (gc) {
                 GC.STOP_THE_WORLD_MARK_AND_SWEEP -> add("same_thread_ms_gc.bc")
                 GC.NOOP -> add("noop_gc.bc")
@@ -339,10 +339,12 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         }
         when (allocationMode) {
             AllocationMode.MIMALLOC -> {
-                add("opt_alloc.bc")
+                add("legacy_alloc.bc")
+                add("mimalloc_alloc.bc")
                 add("mimalloc.bc")
             }
             AllocationMode.STD -> {
+                add("legacy_alloc.bc")
                 add("std_alloc.bc")
             }
             AllocationMode.CUSTOM -> {

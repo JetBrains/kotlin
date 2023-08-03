@@ -67,7 +67,7 @@ public:
 #else
     ConcurrentMarkAndSweep(
             ObjectFactory& objectFactory,
-            mm::ExtraObjectDataFactory& extraObjectDataFactory,
+            alloc::ExtraObjectDataFactory& extraObjectDataFactory,
             gcScheduler::GCScheduler& scheduler,
             bool mutatorsCooperate,
             std::size_t auxGCThreads) noexcept;
@@ -93,7 +93,7 @@ private:
 
 #ifndef CUSTOM_ALLOCATOR
     ObjectFactory& objectFactory_;
-    mm::ExtraObjectDataFactory& extraObjectDataFactory_;
+    alloc::ExtraObjectDataFactory& extraObjectDataFactory_;
 #else
     alloc::Heap heap_;
 #endif

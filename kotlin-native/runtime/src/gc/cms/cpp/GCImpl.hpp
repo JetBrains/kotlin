@@ -23,14 +23,14 @@ public:
 
 #ifndef CUSTOM_ALLOCATOR
     ObjectFactory& objectFactory() noexcept { return objectFactory_; }
-    mm::ExtraObjectDataFactory& extraObjectDataFactory() noexcept { return extraObjectDataFactory_; }
+    alloc::ExtraObjectDataFactory& extraObjectDataFactory() noexcept { return extraObjectDataFactory_; }
 #endif
     ConcurrentMarkAndSweep& gc() noexcept { return gc_; }
 
 private:
 #ifndef CUSTOM_ALLOCATOR
     ObjectFactory objectFactory_;
-    mm::ExtraObjectDataFactory extraObjectDataFactory_;
+    alloc::ExtraObjectDataFactory extraObjectDataFactory_;
 #endif
     ConcurrentMarkAndSweep gc_;
 };
@@ -53,7 +53,7 @@ public:
     alloc::CustomAllocator& alloc() noexcept { return alloc_; }
 #else
     ObjectFactory::ThreadQueue& objectFactoryThreadQueue() noexcept { return objectFactoryThreadQueue_; }
-    mm::ExtraObjectDataFactory::ThreadQueue& extraObjectDataFactoryThreadQueue() noexcept { return extraObjectDataFactoryThreadQueue_; }
+    alloc::ExtraObjectDataFactory::ThreadQueue& extraObjectDataFactoryThreadQueue() noexcept { return extraObjectDataFactoryThreadQueue_; }
 #endif
 
 private:
@@ -63,7 +63,7 @@ private:
 #else
     [[no_unique_address]] ObjectFactoryTraits objectFactoryTraits_;
     ObjectFactory::ThreadQueue objectFactoryThreadQueue_;
-    mm::ExtraObjectDataFactory::ThreadQueue extraObjectDataFactoryThreadQueue_;
+    alloc::ExtraObjectDataFactory::ThreadQueue extraObjectDataFactoryThreadQueue_;
 #endif
 };
 

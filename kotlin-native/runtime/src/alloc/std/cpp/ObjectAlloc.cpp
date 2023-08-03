@@ -36,9 +36,9 @@ size_t allocatedBytesCounter = 0;
 
 } // namespace
 
-void kotlin::initObjectPool() noexcept {}
+void alloc::initObjectPool() noexcept {}
 
-void* kotlin::allocateInObjectPool(size_t size) noexcept {
+void* alloc::allocateInObjectPool(size_t size) noexcept {
     // TODO: Check that alignment to kObjectAlignment is satisfied.
     void* result = callocImpl(1, size);
 #ifndef KONAN_NO_THREADS
@@ -52,7 +52,7 @@ void* kotlin::allocateInObjectPool(size_t size) noexcept {
     return result;
 }
 
-void kotlin::freeInObjectPool(void* ptr, size_t size) noexcept {
+void alloc::freeInObjectPool(void* ptr, size_t size) noexcept {
 #ifndef KONAN_NO_THREADS
     allocatedBytesCounter.fetch_sub(size, std::memory_order_relaxed);
 #else
@@ -61,11 +61,11 @@ void kotlin::freeInObjectPool(void* ptr, size_t size) noexcept {
     freeImpl(ptr);
 }
 
-void kotlin::compactObjectPoolInCurrentThread() noexcept {}
+void alloc::compactObjectPoolInCurrentThread() noexcept {}
 
-void kotlin::compactObjectPoolInMainThread() noexcept {}
+void alloc::compactObjectPoolInMainThread() noexcept {}
 
-size_t kotlin::allocatedBytes() noexcept {
+size_t alloc::allocatedBytes() noexcept {
 #ifndef KONAN_NO_THREADS
     return allocatedBytesCounter.load();
 #else

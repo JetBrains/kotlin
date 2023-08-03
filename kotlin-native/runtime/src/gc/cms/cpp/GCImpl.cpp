@@ -9,7 +9,6 @@
 #include "GC.hpp"
 #include "GCStatistics.hpp"
 #include "MarkAndSweepUtils.hpp"
-#include "ObjectAlloc.hpp"
 #include "ObjectOps.hpp"
 #include "std_support/Memory.hpp"
 
@@ -100,7 +99,11 @@ size_t gc::GC::GetAllocatedHeapSize(ObjHeader* object) noexcept {
 }
 
 size_t gc::GC::GetTotalHeapObjectsSizeBytes() const noexcept {
-    return allocatedBytes();
+#ifdef CUSTOM_ALLOCATOR
+    return alloc::GetAllocatedBytes();
+#else
+    return alloc::allocatedBytes();
+#endif
 }
 
 void gc::GC::ClearForTests() noexcept {
