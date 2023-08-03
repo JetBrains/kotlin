@@ -16,7 +16,7 @@ class FunctionCommonizer(
         val functionOrProperty = functionOrPropertyBaseCommonizer(values) ?: return null
         val valueParametersResult = CallableValueParametersCommonizer(typeCommonizer).commonize(values) ?: return null
         return CirFunction(
-            annotations = AnnotationsCommonizer().commonize(values.map { it.annotations })
+            annotations = AnnotationsCommonizer.commonize(values.map { it.annotations.toList() })
                 ?.plus(functionOrProperty.additionalAnnotations)
                 ?: return null,
             name = values.first().name,
