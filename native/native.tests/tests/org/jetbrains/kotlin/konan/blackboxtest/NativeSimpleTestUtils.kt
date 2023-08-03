@@ -78,15 +78,30 @@ internal fun AbstractNativeSimpleTest.cinteropToLibrary(
 
 internal fun AbstractNativeSimpleTest.compileToExecutable(
     sourcesDir: File,
+    tryPassSystemCacheDirectory: Boolean,
     freeCompilerArgs: TestCompilerArgs,
     vararg dependencies: TestCompilationArtifact.KLIB
 ): TestCompilationResult<out TestCompilationArtifact.Executable> {
     val testCase: TestCase = generateTestCaseWithSingleModule(sourcesDir, freeCompilerArgs)
-    return compileToExecutable(testCase, dependencies.map { it.asLibraryDependency() })
+    return compileToExecutable(testCase, tryPassSystemCacheDirectory, dependencies.map { it.asLibraryDependency() })
 }
 
-internal fun AbstractNativeSimpleTest.compileToExecutable(testCase: TestCase, vararg dependencies: TestCompilationDependency<*>) =
-    compileToExecutable(testCase, dependencies.asList())
+internal fun AbstractNativeSimpleTest.compileToExecutable(
+    sourcesDir: File,
+    freeCompilerArgs: TestCompilerArgs,
+    vararg dependencies: TestCompilationArtifact.KLIB
+) = compileToExecutable(sourcesDir, true, freeCompilerArgs, *dependencies)
+
+internal fun AbstractNativeSimpleTest.compileToExecutable(
+    testCase: TestCase,
+    tryPassSystemCacheDirectory: Boolean,
+    vararg dependencies: TestCompilationDependency<*>
+) = compileToExecutable(testCase, tryPassSystemCacheDirectory, dependencies.asList())
+
+internal fun AbstractNativeSimpleTest.compileToExecutable(
+    testCase: TestCase,
+    vararg dependencies: TestCompilationDependency<*>
+) = compileToExecutable(testCase, true, dependencies.asList())
 
 internal fun AbstractNativeSimpleTest.compileToStaticCache(
     klib: TestCompilationArtifact.KLIB,
@@ -188,6 +203,7 @@ private fun AbstractNativeSimpleTest.compileToLibrary(
 
 private fun AbstractNativeSimpleTest.compileToExecutable(
     testCase: TestCase,
+    tryPassSystemCacheDirectory: Boolean,
     dependencies: List<TestCompilationDependency<*>>
 ): TestCompilationResult<out TestCompilationArtifact.Executable> {
     val compilation = ExecutableCompilation(
@@ -196,7 +212,8 @@ private fun AbstractNativeSimpleTest.compileToExecutable(
         sourceModules = testCase.modules,
         extras = testCase.extras,
         dependencies = dependencies,
-        expectedArtifact = getExecutableArtifact()
+        expectedArtifact = getExecutableArtifact(),
+        tryPassSystemCacheDirectory = tryPassSystemCacheDirectory
     )
     return compilation.result
 }

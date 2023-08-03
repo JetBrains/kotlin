@@ -82,6 +82,7 @@ class CachesAutoBuildTest : AbstractNativeSimpleTest() {
     private fun compileToExecutable(sourcesDir: File, autoCacheFrom: File, cacheDirectories: List<File>, vararg dependencies: KLIB) =
         compileToExecutable(
             sourcesDir,
+            tryPassSystemCacheDirectory = false, // With auto-cache mode, the compiler chooses the system cache directory itself.
             freeCompilerArgs = TestCompilerArgs(
                 listOf(
                     "-Xauto-cache-from=${autoCacheFrom.absolutePath}",
