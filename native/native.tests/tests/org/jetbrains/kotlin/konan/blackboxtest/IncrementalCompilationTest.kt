@@ -502,7 +502,7 @@ class IncrementalCompilationTest : AbstractNativeSimpleTest() {
             targetSrc: String,
             vararg dependencies: TestCompilationArtifact.KLIB,
             block: ExecutableBuilder.() -> Unit
-        ) = with(ExecutableBuilder(this@IncrementalCompilationTest, rootDir, targetSrc, dependencies.asList())) {
+        ) = with(ExecutableBuilder(this@IncrementalCompilationTest, rootDir, targetSrc, false, dependencies.asList())) {
             externalLibsDir.mkdirs()
             icCacheDir.mkdirs()
             autoCacheDir.mkdirs()

@@ -302,7 +302,8 @@ internal class ExecutableCompilation(
     sourceModules: Collection<TestModule>,
     private val extras: Extras,
     dependencies: Iterable<TestCompilationDependency<*>>,
-    expectedArtifact: Executable
+    expectedArtifact: Executable,
+    val tryPassSystemCacheDirectory: Boolean = true,
 ) : SourceBasedCompilation<Executable>(
     targets = settings.get(),
     home = settings.get(),
@@ -355,7 +356,9 @@ internal class ExecutableCompilation(
 
     override fun applyDependencies(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
         super.applyDependencies(argsBuilder)
-        cacheMode.staticCacheForDistributionLibrariesRootDir?.let { cacheRootDir -> add("-Xcache-directory=$cacheRootDir") }
+        cacheMode.staticCacheForDistributionLibrariesRootDir
+            ?.takeIf { tryPassSystemCacheDirectory }
+            ?.let { cacheRootDir -> add("-Xcache-directory=$cacheRootDir") }
         add(dependencies.uniqueCacheDirs) { libraryCacheDir -> "-Xcache-directory=${libraryCacheDir.path}" }
     }
 

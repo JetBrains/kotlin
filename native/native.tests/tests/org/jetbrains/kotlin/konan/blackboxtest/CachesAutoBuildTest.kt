@@ -83,6 +83,7 @@ class CachesAutoBuildTest : AbstractNativeSimpleTest() {
         autoCacheDir.mkdirs()
         return compileToExecutable(
             sourcesDir,
+            tryPassSystemCacheDirectory = false, // With auto-cache mode, the compiler chooses the system cache directory itself.
             freeCompilerArgs = TestCompilerArgs(
                 listOf(
                     "-Xauto-cache-from=${autoCacheFrom.absolutePath}",

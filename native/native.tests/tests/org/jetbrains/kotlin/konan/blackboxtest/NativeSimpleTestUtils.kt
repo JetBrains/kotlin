@@ -81,6 +81,7 @@ internal class ExecutableBuilder(
     test: AbstractNativeSimpleTest,
     rootDir: File,
     targetSrc: String,
+    val tryPassSystemCacheDirectory: Boolean,
     dependencies: List<TestCompilationArtifact.KLIB>
 ) : ArtifactBuilder<CompiledExecutable>(test, rootDir, targetSrc, dependencies) {
     private val freeCompilerArgs = mutableListOf<String>()
@@ -92,6 +93,7 @@ internal class ExecutableBuilder(
     override fun build(sourcesDir: File, outputDir: File, dependencies: List<TestCompilationArtifact.KLIB>) =
         test.compileToExecutable(
             sourcesDir,
+            tryPassSystemCacheDirectory,
             freeCompilerArgs = if (freeCompilerArgs.isEmpty()) TestCompilerArgs.EMPTY else TestCompilerArgs(freeCompilerArgs),
             dependencies
         )
@@ -159,22 +161,24 @@ internal class CompiledExecutable(
 
 internal fun AbstractNativeSimpleTest.compileToExecutable(
     sourcesDir: File,
+    tryPassSystemCacheDirectory: Boolean,
     freeCompilerArgs: TestCompilerArgs,
     vararg dependencies: TestCompilationArtifact.KLIB
-) = compileToExecutable(sourcesDir, freeCompilerArgs, dependencies.asList())
+) = compileToExecutable(sourcesDir, tryPassSystemCacheDirectory, freeCompilerArgs, dependencies.asList())
 
 internal fun AbstractNativeSimpleTest.compileToExecutable(
     sourcesDir: File,
+    tryPassSystemCacheDirectory: Boolean,
     freeCompilerArgs: TestCompilerArgs,
     dependencies: List<TestCompilationArtifact.KLIB>
 ): CompiledExecutable {
     val testCase: TestCase = generateTestCaseWithSingleModule(sourcesDir, freeCompilerArgs)
-    val compilationResult = compileToExecutable(testCase, dependencies.map { it.asLibraryDependency() })
+    val compilationResult = compileToExecutable(testCase, tryPassSystemCacheDirectory, dependencies.map { it.asLibraryDependency() })
     return CompiledExecutable(testCase, compilationResult.assertSuccess())
 }
 
 internal fun AbstractNativeSimpleTest.compileToExecutable(testCase: TestCase, vararg dependencies: TestCompilationDependency<*>) =
-    compileToExecutable(testCase, dependencies.asList())
+    compileToExecutable(testCase, true, dependencies.asList())
 
 internal fun AbstractNativeSimpleTest.compileToStaticCache(
     klib: TestCompilationArtifact.KLIB,
@@ -280,6 +284,7 @@ private fun AbstractNativeSimpleTest.compileToLibrary(
 
 private fun AbstractNativeSimpleTest.compileToExecutable(
     testCase: TestCase,
+    tryPassSystemCacheDirectory: Boolean,
     dependencies: List<TestCompilationDependency<*>>
 ): TestCompilationResult<out TestCompilationArtifact.Executable> {
     val compilation = ExecutableCompilation(
@@ -288,7 +293,8 @@ private fun AbstractNativeSimpleTest.compileToExecutable(
         sourceModules = testCase.modules,
         extras = testCase.extras,
         dependencies = dependencies,
-        expectedArtifact = getExecutableArtifact()
+        expectedArtifact = getExecutableArtifact(),
+        tryPassSystemCacheDirectory = tryPassSystemCacheDirectory
     )
     return compilation.result
 }
