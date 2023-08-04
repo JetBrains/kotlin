@@ -7,7 +7,7 @@ gradle-plugin-publish = "1.0.0"
 # Version for foojay should be also synced with version in repo/gradle-settings-conventions/settings.gradle.kts
 gradle-toolchains-foojay-resolver = "0.4.0"
 kotlinx-serialization = "1.5.0"
-shadow = "7.1.2" # should be in sync with versions.properties
+shadow = "7.1.2"
 spdx = "0.1.0-dev-10"
 proguard = "6.2.2"
 ktor = "2.0.2" # should be in sync with versions.properties

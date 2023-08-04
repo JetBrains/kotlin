@@ -16,7 +16,7 @@ dependencies {
     compileOnly(kotlin("stdlib", embeddedKotlinVersion))
     compileOnly(gradleApi())
     compileOnly(gradleKotlinDsl())
-    compileOnly("gradle.plugin.com.github.johnrengelman:shadow:${rootProject.extra["versions.shadow"]}")
+    compileOnly(libs.shadow.gradlePlugin)
 }
 
 sourceSets {
