@@ -46,7 +46,7 @@ fun FirRegularClassBuilder.generateValuesFunction(
         source = sourceElement
         this.origin = origin
         this.moduleData = moduleData
-        returnTypeRef = buildResolvedTypeRef {
+        val returnTypeRef = buildResolvedTypeRef {
             source = sourceElement
             type = ConeClassLikeTypeImpl(
                 StandardClassIds.Array.toLookupTag(),
@@ -60,6 +60,7 @@ fun FirRegularClassBuilder.generateValuesFunction(
                 isNullable = false
             )
         }
+        this.returnTypeRef = returnTypeRef
         name = ENUM_VALUES
         this.status = createStatus(this@generateValuesFunction.status).apply {
             isStatic = true
@@ -68,7 +69,7 @@ fun FirRegularClassBuilder.generateValuesFunction(
         symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, ENUM_VALUES))
         resolvePhase = this@generateValuesFunction.resolvePhase
         body = buildEmptyExpressionBlock().also {
-            it.replaceTypeRef(returnTypeRef)
+            it.replaceType(returnTypeRef.type)
         }
     }.apply {
         containingClassForStaticMemberAttr = this@generateValuesFunction.symbol.toLookupTag()
@@ -87,7 +88,7 @@ fun FirRegularClassBuilder.generateValueOfFunction(
         source = sourceElement
         this.origin = origin
         this.moduleData = moduleData
-        returnTypeRef = buildResolvedTypeRef {
+        val returnTypeRef = buildResolvedTypeRef {
             source = sourceElement
             type = ConeClassLikeTypeImpl(
                 this@generateValueOfFunction.symbol.toLookupTag(),
@@ -95,6 +96,7 @@ fun FirRegularClassBuilder.generateValueOfFunction(
                 isNullable = false
             )
         }
+        this.returnTypeRef = returnTypeRef
         name = ENUM_VALUE_OF
 
         status = createStatus(this@generateValueOfFunction.status).apply {
@@ -107,7 +109,7 @@ fun FirRegularClassBuilder.generateValueOfFunction(
             containingFunctionSymbol = this@buildSimpleFunction.symbol
             this.origin = origin
             this.moduleData = moduleData
-            returnTypeRef = buildResolvedTypeRef {
+            this.returnTypeRef = buildResolvedTypeRef {
                 source = sourceElement
                 type = ConeClassLikeTypeImpl(
                     StandardClassIds.String.toLookupTag(),
@@ -124,7 +126,7 @@ fun FirRegularClassBuilder.generateValueOfFunction(
         }
         resolvePhase = this@generateValueOfFunction.resolvePhase
         body = buildEmptyExpressionBlock().also {
-            it.replaceTypeRef(returnTypeRef)
+            it.replaceType(returnTypeRef.type)
         }
     }.apply {
         containingClassForStaticMemberAttr = this@generateValueOfFunction.symbol.toLookupTag()
