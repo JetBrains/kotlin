@@ -80,6 +80,29 @@ object AbstractExpectActualAnnotationMatchChecker {
         commonForClassAndCallableChecks(expectSymbol, actualSymbol)?.let { return it }
         areAnnotationsOnValueParametersCompatible(expectSymbol, actualSymbol)?.let { return it }
 
+        if (expectSymbol is PropertySymbolMarker && actualSymbol is PropertySymbolMarker) {
+            arePropertyGetterAndSetterAnnotationsCompatible(expectSymbol, actualSymbol)?.let { return it }
+        }
+
+        return null
+    }
+
+    context (ExpectActualMatchingContext<*>)
+    private fun arePropertyGetterAndSetterAnnotationsCompatible(
+        expectSymbol: PropertySymbolMarker,
+        actualSymbol: PropertySymbolMarker,
+    ): Incompatibility? {
+        listOf(
+            expectSymbol.getter to actualSymbol.getter,
+            expectSymbol.setter to actualSymbol.setter,
+        ).forEach { (expectAccessor, actualAccessor) ->
+            if (expectAccessor != null && actualAccessor != null) {
+                areAnnotationsSetOnDeclarationsCompatible(expectAccessor, actualAccessor)?.let {
+                    // Write containing declarations into diagnostic
+                    return Incompatibility(expectSymbol, actualSymbol, actualAccessor.getSourceElement(), it.type)
+                }
+            }
+        }
         return null
     }
 
@@ -165,7 +188,7 @@ object AbstractExpectActualAnnotationMatchChecker {
         expectSymbol: DeclarationSymbolMarker,
         actualSymbol: DeclarationSymbolMarker,
     ): Incompatibility? {
-        // TODO(Roman.Efremov, KT-58551): check other annotation targets (constructors, types, value parameters, etc)
+        // TODO(Roman.Efremov, KT-60671): check annotations set on types
 
         val skipSourceAnnotations = actualSymbol.hasSourceAnnotationsErased
         val actualAnnotationsByName = actualSymbol.annotations.groupBy { it.classId }

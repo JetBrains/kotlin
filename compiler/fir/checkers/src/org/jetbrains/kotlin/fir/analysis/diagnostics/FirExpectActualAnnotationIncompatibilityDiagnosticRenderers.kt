@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualAnnotationsIncompatibilityType
+import org.jetbrains.kotlin.utils.Printer
 
 internal object FirExpectActualAnnotationIncompatibilityDiagnosticRenderers {
     @OptIn(SymbolInternals::class)
@@ -26,6 +27,8 @@ internal object FirExpectActualAnnotationIncompatibilityDiagnosticRenderers {
             modifierRenderer = null,
             contractRenderer = null,
         ).renderElementAsString(it.fir, trim = true)
+            // Write property accessors on the same line as the property
+            .run { replace(Printer.LINE_SEPARATOR, "") }
     }
 
     val INCOMPATIBILITY = Renderer { incompatibilityType: ExpectActualAnnotationsIncompatibilityType<FirAnnotation> ->

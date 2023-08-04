@@ -136,6 +136,10 @@ class ClassicExpectActualMatchingContext(
         get() = asDescriptor().isLateInit
     override val PropertySymbolMarker.isConst: Boolean
         get() = asDescriptor().isConst
+
+    override val PropertySymbolMarker.getter: FunctionSymbolMarker?
+        get() = asDescriptor().getter
+
     override val PropertySymbolMarker.setter: FunctionSymbolMarker?
         get() = asDescriptor().setter
 

@@ -231,6 +231,9 @@ internal abstract class IrExpectActualMatchingContext(
     override val PropertySymbolMarker.isConst: Boolean
         get() = asIr().isConst
 
+    override val PropertySymbolMarker.getter: FunctionSymbolMarker?
+        get() = asIr().getter?.symbol
+
     override val PropertySymbolMarker.setter: FunctionSymbolMarker?
         get() = asIr().setter?.symbol
 

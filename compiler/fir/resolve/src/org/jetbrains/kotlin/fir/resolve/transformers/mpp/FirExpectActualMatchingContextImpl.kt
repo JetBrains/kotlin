@@ -142,6 +142,9 @@ class FirExpectActualMatchingContextImpl private constructor(
     override val PropertySymbolMarker.isConst: Boolean
         get() = asSymbol().resolvedStatus.isConst
 
+    override val PropertySymbolMarker.getter: FunctionSymbolMarker?
+        get() = asSymbol().getterSymbol
+
     override val PropertySymbolMarker.setter: FunctionSymbolMarker?
         get() = asSymbol().setterSymbol
 

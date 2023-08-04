@@ -6,6 +6,8 @@
     AnnotationTarget.CLASS,
     AnnotationTarget.VALUE_PARAMETER,
     AnnotationTarget.TYPE_PARAMETER,
+    AnnotationTarget.PROPERTY_GETTER,
+    AnnotationTarget.PROPERTY_SETTER,
 )
 annotation class Ann
 
@@ -34,6 +36,9 @@ expect fun inValueParam(@Ann arg: String)
 
 expect fun <@Ann T> inTypeParam()
 
+@get:Ann
+expect val onGetter: String
+
 // MODULE: m1-jvm()()(m1-common)
 // FILE: jvm.kt
 actual class <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>OnClass<!>
@@ -57,3 +62,5 @@ actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>withDifferentArg<!>() {}
 actual fun <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>inValueParam<!>(arg: String) {}
 
 actual fun <T> <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>inTypeParam<!>() {}
+
+actual val <!ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT!>onGetter<!>: String = ""

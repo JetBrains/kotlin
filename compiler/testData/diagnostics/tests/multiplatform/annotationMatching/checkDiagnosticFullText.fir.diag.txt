@@ -1,20 +1,23 @@
-/jvm.kt:(98,105): warning: Annotation `@Ann()` is missing on actual declaration.
+/jvm.kt:(103,110): warning: Annotation `@Ann()` is missing on actual declaration.
 All annotations from expect 'class OnClass : Any' must be present with the same arguments on actual 'class OnClass : Any', otherwise they might behave incorrectly.
 
-/jvm.kt:(146,154): warning: Annotation `@Ann()` is missing on actual declaration.
+/jvm.kt:(151,159): warning: Annotation `@Ann()` is missing on actual declaration.
 All annotations from expect 'fun onMember(): Unit' must be present with the same arguments on actual 'fun onMember(): Unit', otherwise they might behave incorrectly.
 
-/jvm.kt:(204,216): warning: Annotation `@Ann()` is missing on actual declaration.
+/jvm.kt:(209,221): warning: Annotation `@Ann()` is missing on actual declaration.
 All annotations from expect 'class ViaTypealias : Any' must be present with the same arguments on actual 'class ViaTypealiasImpl : Any', otherwise they might behave incorrectly.
 
-/jvm.kt:(309,332): warning: Annotation `@Ann()` is missing on actual declaration.
+/jvm.kt:(314,337): warning: Annotation `@Ann()` is missing on actual declaration.
 All annotations from expect 'fun foo(): Unit' must be present with the same arguments on actual 'fun foo(): Unit', otherwise they might behave incorrectly.
 
-/jvm.kt:(397,413): warning: Annotation `@WithArg(s = String(str))` has different arguments on actual declaration: `@WithArg(s = String(other str))`.
+/jvm.kt:(402,418): warning: Annotation `@WithArg(s = String(str))` has different arguments on actual declaration: `@WithArg(s = String(other str))`.
 All annotations from expect 'fun withDifferentArg(): Unit' must be present with the same arguments on actual 'fun withDifferentArg(): Unit', otherwise they might behave incorrectly.
 
-/jvm.kt:(431,443): warning: Annotation `@Ann()` is missing on actual declaration.
+/jvm.kt:(436,448): warning: Annotation `@Ann()` is missing on actual declaration.
 All annotations from expect 'fun inValueParam(arg: String): Unit' must be present with the same arguments on actual 'fun inValueParam(arg: String): Unit', otherwise they might behave incorrectly.
 
-/jvm.kt:(476,487): warning: Annotation `@Ann()` is missing on actual declaration.
+/jvm.kt:(481,492): warning: Annotation `@Ann()` is missing on actual declaration.
 All annotations from expect 'fun <T> inTypeParam(): Unit' must be present with the same arguments on actual 'fun <T> inTypeParam(): Unit', otherwise they might behave incorrectly.
+
+/jvm.kt:(510,518): warning: Annotation `@PROPERTY_GETTER:Ann()` is missing on actual declaration.
+All annotations from expect 'val onGetter: String    get(): String' must be present with the same arguments on actual 'val onGetter: String    get(): String', otherwise they might behave incorrectly.
