@@ -1052,7 +1052,7 @@ private fun IrDeclarationParent.createThisReceiverParameter(
     origin: IrDeclarationOrigin,
     type: IrType
 ): IrValueParameter =
-    context.symbolTable.irFactory.createValueParameter(
+    context.irFactory.createValueParameter(
         startOffset = startOffset,
         endOffset = endOffset,
         origin = origin,
