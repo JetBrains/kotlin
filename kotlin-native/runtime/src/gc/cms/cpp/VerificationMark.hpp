@@ -35,9 +35,15 @@ struct VerificationMarkTraits {
 
     // FIXME copy&pasted
     static void processInMark(MarkQueue& markQueue, ObjHeader* object) noexcept {
+        // just checking
         auto process = object->type_info()->processObjectInMark;
         RuntimeAssert(process != nullptr, "Got null processObjectInMark for object %p", object);
-        process(static_cast<void*>(&markQueue), object);
+
+        if (object->type_info() == theArrayTypeInfo) {
+            internal::processArrayInMark<VerificationMarkTraits>(static_cast<void*>(&markQueue), object->array());
+        } else {
+            internal::processObjectInMark<VerificationMarkTraits>(static_cast<void*>(&markQueue), object);
+        }
     }
 };
 
