@@ -345,7 +345,6 @@ val coreLibProjects by extra {
     listOfNotNull(
         ":kotlin-stdlib",
         ":kotlin-stdlib-common",
-        ":kotlin-stdlib-js".takeIf { !kotlinBuildProperties.kotlinStdlibMpp },
         ":kotlin-stdlib-jdk7",
         ":kotlin-stdlib-jdk8",
         ":kotlin-test",
@@ -360,9 +359,8 @@ val coreLibProjects by extra {
     )
 }
 val mppProjects by extra {
-    listOfNotNull(
-        ":kotlin-stdlib-mpp".takeUnless { kotlinBuildProperties.kotlinStdlibMpp },
-        ":kotlin-stdlib".takeIf { kotlinBuildProperties.kotlinStdlibMpp },
+    listOf(
+        ":kotlin-stdlib",
     )
 }
 
@@ -609,7 +607,6 @@ tasks {
     register("coreLibsTest") {
         (coreLibProjects + listOfNotNull(
             ":kotlin-stdlib:samples",
-            ":kotlin-stdlib-js-ir".takeIf { !kotlinBuildProperties.kotlinStdlibMpp },
             ":kotlin-test:kotlin-test-js-ir".takeIf { !kotlinBuildProperties.isInJpsBuildIdeaSync },
             ":kotlin-test:kotlin-test-js:kotlin-test-js-it".takeIf { !kotlinBuildProperties.isInJpsBuildIdeaSync },
             ":kotlin-test:kotlin-test-js-ir:kotlin-test-js-ir-it".takeIf { !kotlinBuildProperties.isInJpsBuildIdeaSync },

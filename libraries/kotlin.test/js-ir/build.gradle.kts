@@ -30,7 +30,7 @@ kotlin {
     sourceSets {
         named("commonMain") {
             dependencies {
-                api(kotlinStdlib("mpp"))
+                api(kotlinStdlib())
             }
             kotlin.srcDir(commonMainSources)
         }

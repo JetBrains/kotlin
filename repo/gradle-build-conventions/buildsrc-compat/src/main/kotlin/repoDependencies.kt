@@ -56,9 +56,9 @@ fun kotlinDep(artifactBaseName: String, version: String, classifier: String? = n
 @JvmOverloads
 fun Project.kotlinStdlib(suffix: String? = null, classifier: String? = null): Any {
     return if (kotlinBuildProperties.useBootstrapStdlib)
-        kotlinDep(listOfNotNull("stdlib", suffix.takeUnless { kotlinBuildProperties.kotlinStdlibMpp && it == "mpp" }).joinToString("-"), bootstrapKotlinVersion, classifier)
+        kotlinDep(listOfNotNull("stdlib", suffix).joinToString("-"), bootstrapKotlinVersion, classifier)
     else
-        dependencies.project(listOfNotNull(":kotlin-stdlib", suffix.takeUnless { kotlinBuildProperties.kotlinStdlibMpp && it == "mpp" }).joinToString("-"), classifier)
+        dependencies.project(listOfNotNull(":kotlin-stdlib", suffix).joinToString("-"), classifier)
 }
 
 fun Project.kotlinBuiltins(): Any = kotlinBuiltins(forJvm = false)
