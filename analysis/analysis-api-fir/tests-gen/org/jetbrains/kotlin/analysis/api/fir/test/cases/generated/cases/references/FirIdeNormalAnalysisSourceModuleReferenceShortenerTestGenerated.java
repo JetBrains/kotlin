@@ -430,6 +430,24 @@ public class FirIdeNormalAnalysisSourceModuleReferenceShortenerTestGenerated ext
         runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/variable2.kt");
     }
 
+    @Test
+    @TestMetadata("variableAssignment.kt")
+    public void testVariableAssignment() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/variableAssignment.kt");
+    }
+
+    @Test
+    @TestMetadata("variableAssignment_plusAssignOperator.kt")
+    public void testVariableAssignment_plusAssignOperator() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/variableAssignment_plusAssignOperator.kt");
+    }
+
+    @Test
+    @TestMetadata("variableAssignment_plusOperator.kt")
+    public void testVariableAssignment_plusOperator() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/variableAssignment_plusOperator.kt");
+    }
+
     @Nested
     @TestMetadata("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/nestedClasses")
     @TestDataPath("$PROJECT_ROOT")
