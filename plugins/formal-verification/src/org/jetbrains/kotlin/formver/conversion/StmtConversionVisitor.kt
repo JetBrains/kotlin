@@ -6,9 +6,11 @@
 package org.jetbrains.kotlin.formver.conversion
 
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.toResolvedBaseSymbol
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.coneTypeOrNull
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -64,6 +66,10 @@ class StmtConversionVisitor : FirVisitor<Exp?, StmtConversionContext>() {
                 symbol.callableId.convertName(),
                 data.methodCtx.programCtx.convertType(type) as ConvertedType
             ).toLocalVar()
+            is FirPropertySymbol -> ConvertedVar(
+                symbol.callableId.convertName(),
+                data.methodCtx.programCtx.convertType(type) as ConvertedType
+            ).toLocalVar()
             else -> TODO("Implement other property accesses")
         }
     }
@@ -73,5 +79,19 @@ class StmtConversionVisitor : FirVisitor<Exp?, StmtConversionContext>() {
         // TODO: figure out a more structured way of doing this
         if (id.packageName.asString() == "kotlin.contracts" && id.callableName.asString() == "contract") return null
         TODO("Implement function call visitation")
+    }
+
+    override fun visitProperty(property: FirProperty, data: StmtConversionContext): Exp? {
+        val symbol = property.symbol
+        val type = property.returnTypeRef.coneTypeOrNull!!
+        if (!symbol.isLocal) {
+            TODO("Implement non-local properties")
+        }
+        val cvar = ConvertedVar(symbol.callableId.convertName(), data.methodCtx.programCtx.convertType(type) as ConvertedType)
+        val propInitializer = property.initializer
+        val initializer = propInitializer?.accept(this, data)
+        data.declarations.add(cvar.toLocalVarDecl())
+        initializer?.let { data.statements.add(Stmt.LocalVarAssign(cvar.toLocalVar(), it)) }
+        return null
     }
 }

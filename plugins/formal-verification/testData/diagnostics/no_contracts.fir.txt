@@ -12,3 +12,7 @@ FILE: no_contracts.kt
     public final fun take_int_return_int_expr(x: R|kotlin/Int|): R|kotlin/Int| {
         ^take_int_return_int_expr R|<local>/x|
     }
+    public final fun with_int_declaration(): R|kotlin/Int| {
+        lval x: R|kotlin/Int| = Int(0)
+        ^with_int_declaration R|<local>/x|
+    }
