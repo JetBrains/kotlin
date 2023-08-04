@@ -10,8 +10,7 @@ package org.jetbrains.kotlin.fir.expressions.impl
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirEnumEntryDeserializedAccessExpression
-import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.constructClassType
 import org.jetbrains.kotlin.fir.types.toLookupTag
 import org.jetbrains.kotlin.name.ClassId
@@ -31,15 +30,13 @@ internal class FirEnumEntryDeserializedAccessExpressionImpl(
     override val enumEntryName: Name,
 ) : FirEnumEntryDeserializedAccessExpression() {
     override val source: KtSourceElement? get() = null
-    override var typeRef: FirTypeRef = buildResolvedTypeRef { type = enumClassId.toLookupTag().constructClassType(emptyArray(), false) }
+    override var coneTypeOrNull: ConeKotlinType? = enumClassId.toLookupTag().constructClassType(emptyArray(), false)
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        typeRef.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirEnumEntryDeserializedAccessExpressionImpl {
-        typeRef = typeRef.transform(transformer, data)
         transformAnnotations(transformer, data)
         return this
     }
@@ -49,8 +46,8 @@ internal class FirEnumEntryDeserializedAccessExpressionImpl(
         return this
     }
 
-    override fun replaceTypeRef(newTypeRef: FirTypeRef) {
-        typeRef = newTypeRef
+    override fun replaceConeTypeOrNull(newConeTypeOrNull: ConeKotlinType?) {
+        coneTypeOrNull = newConeTypeOrNull
     }
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {

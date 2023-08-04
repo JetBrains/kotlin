@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 @FirBuilderDsl
 interface FirExpressionBuilder {
     abstract var source: KtSourceElement?
-    abstract var typeRef: FirTypeRef
+    abstract var coneTypeOrNull: ConeKotlinType?
     abstract val annotations: MutableList<FirAnnotation>
 
     fun build(): FirExpression

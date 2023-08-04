@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.fir.expressions.FirFunctionCallOrigin
 import org.jetbrains.kotlin.fir.expressions.builder.FirCallBuilder
 import org.jetbrains.kotlin.fir.expressions.builder.FirQualifiedAccessExpressionBuilder
 import org.jetbrains.kotlin.fir.references.FirNamedReference
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
-import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 @FirBuilderDsl
 interface FirAbstractFunctionCallBuilder : FirQualifiedAccessExpressionBuilder, FirCallBuilder {
-    abstract override var typeRef: FirTypeRef
+    abstract override var coneTypeOrNull: ConeKotlinType?
     abstract override val annotations: MutableList<FirAnnotation>
     abstract override val contextReceiverArguments: MutableList<FirExpression>
     abstract override val typeArguments: MutableList<FirTypeProjection>

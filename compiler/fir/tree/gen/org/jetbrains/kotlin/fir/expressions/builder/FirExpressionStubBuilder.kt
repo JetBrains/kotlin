@@ -16,8 +16,7 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
-import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -28,14 +27,14 @@ import org.jetbrains.kotlin.fir.visitors.*
 @FirBuilderDsl
 class FirExpressionStubBuilder : FirAnnotationContainerBuilder {
     override var source: KtSourceElement? = null
-    var typeRef: FirTypeRef = FirImplicitTypeRefImplWithoutSource
+    var coneTypeOrNull: ConeKotlinType? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
 
     @OptIn(FirImplementationDetail::class)
     override fun build(): FirExpression {
         return FirExpressionStub(
             source,
-            typeRef,
+            coneTypeOrNull,
             annotations.toMutableOrEmpty(),
         )
     }

@@ -18,8 +18,7 @@ import org.jetbrains.kotlin.fir.expressions.FirDesugaredAssignmentValueReference
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirDesugaredAssignmentValueReferenceExpressionImpl
-import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -30,24 +29,19 @@ import org.jetbrains.kotlin.fir.visitors.*
 @FirBuilderDsl
 class FirDesugaredAssignmentValueReferenceExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: KtSourceElement? = null
+    override var coneTypeOrNull: ConeKotlinType? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var expressionRef: FirExpressionRef<FirExpression>
 
     override fun build(): FirDesugaredAssignmentValueReferenceExpression {
         return FirDesugaredAssignmentValueReferenceExpressionImpl(
             source,
+            coneTypeOrNull,
             annotations.toMutableOrEmpty(),
             expressionRef,
         )
     }
 
-
-    @Deprecated("Modification of 'typeRef' has no impact for FirDesugaredAssignmentValueReferenceExpressionBuilder", level = DeprecationLevel.HIDDEN)
-    override var typeRef: FirTypeRef
-        get() = throw IllegalStateException()
-        set(_) {
-            throw IllegalStateException()
-        }
 }
 
 @OptIn(ExperimentalContracts::class)

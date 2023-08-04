@@ -16,8 +16,10 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirErrorAnnotationCall
 import org.jetbrains.kotlin.fir.references.FirReference
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.coneTypeOrNull
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.fir.MutableOrEmptyList
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
@@ -37,7 +39,7 @@ internal class FirErrorAnnotationCallImpl(
     override val diagnostic: ConeDiagnostic,
     override var argumentMapping: FirAnnotationArgumentMapping,
 ) : FirErrorAnnotationCall() {
-    override val typeRef: FirTypeRef get() = annotationTypeRef
+    override val coneTypeOrNull: ConeKotlinType? get() = annotationTypeRef.coneTypeOrNull
     override val annotations: List<FirAnnotation> get() = emptyList()
     override var annotationResolvePhase: FirAnnotationResolvePhase = FirAnnotationResolvePhase.Types
 
@@ -75,7 +77,7 @@ internal class FirErrorAnnotationCallImpl(
         return this
     }
 
-    override fun replaceTypeRef(newTypeRef: FirTypeRef) {}
+    override fun replaceConeTypeOrNull(newConeTypeOrNull: ConeKotlinType?) {}
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {}
 

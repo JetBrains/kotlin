@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirSpreadArgumentExpression
-import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.fir.MutableOrEmptyList
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
@@ -26,7 +26,7 @@ internal class FirSpreadArgumentExpressionImpl(
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override var expression: FirExpression,
 ) : FirSpreadArgumentExpression() {
-    override val typeRef: FirTypeRef get() = expression.typeRef
+    override val coneTypeOrNull: ConeKotlinType? get() = expression.coneTypeOrNull
     override val isSpread: Boolean get() = true
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
@@ -45,7 +45,7 @@ internal class FirSpreadArgumentExpressionImpl(
         return this
     }
 
-    override fun replaceTypeRef(newTypeRef: FirTypeRef) {}
+    override fun replaceConeTypeOrNull(newConeTypeOrNull: ConeKotlinType?) {}
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
         annotations = newAnnotations.toMutableOrEmpty()

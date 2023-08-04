@@ -31,8 +31,8 @@ import org.jetbrains.kotlin.types.SmartcastStability
 
 @FirBuilderDsl
 class FirSmartCastExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
+    override var coneTypeOrNull: ConeKotlinType? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
-    override lateinit var typeRef: FirTypeRef
     lateinit var originalExpression: FirExpression
     lateinit var typesFromSmartCast: Collection<ConeKotlinType>
     lateinit var smartcastType: FirTypeRef
@@ -41,8 +41,8 @@ class FirSmartCastExpressionBuilder : FirAnnotationContainerBuilder, FirExpressi
 
     override fun build(): FirSmartCastExpression {
         return FirSmartCastExpressionImpl(
+            coneTypeOrNull,
             annotations.toMutableOrEmpty(),
-            typeRef,
             originalExpression,
             typesFromSmartCast,
             smartcastType,

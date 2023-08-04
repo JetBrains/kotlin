@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
 import org.jetbrains.kotlin.fir.references.FirReference
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
@@ -22,7 +23,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 abstract class FirErrorAnnotationCall : FirAnnotationCall(), FirDiagnosticHolder {
     abstract override val source: KtSourceElement?
-    abstract override val typeRef: FirTypeRef
+    abstract override val coneTypeOrNull: ConeKotlinType?
     abstract override val annotations: List<FirAnnotation>
     abstract override val useSiteTarget: AnnotationUseSiteTarget?
     abstract override val annotationTypeRef: FirTypeRef
@@ -39,7 +40,7 @@ abstract class FirErrorAnnotationCall : FirAnnotationCall(), FirDiagnosticHolder
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformErrorAnnotationCall(this, data) as E
 
-    abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
+    abstract override fun replaceConeTypeOrNull(newConeTypeOrNull: ConeKotlinType?)
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 

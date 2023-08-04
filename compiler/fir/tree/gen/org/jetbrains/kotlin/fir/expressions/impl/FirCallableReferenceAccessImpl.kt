@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirReference
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
-import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.fir.MutableOrEmptyList
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
  */
 
 internal class FirCallableReferenceAccessImpl(
-    override var typeRef: FirTypeRef,
+    override var coneTypeOrNull: ConeKotlinType?,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override var contextReceiverArguments: MutableOrEmptyList<FirExpression>,
     override var typeArguments: MutableOrEmptyList<FirTypeProjection>,
@@ -38,7 +38,6 @@ internal class FirCallableReferenceAccessImpl(
     override var hasQuestionMarkAtLHS: Boolean,
 ) : FirCallableReferenceAccess() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        typeRef.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
         contextReceiverArguments.forEach { it.accept(visitor, data) }
         typeArguments.forEach { it.accept(visitor, data) }
@@ -53,7 +52,6 @@ internal class FirCallableReferenceAccessImpl(
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirCallableReferenceAccessImpl {
-        typeRef = typeRef.transform(transformer, data)
         transformAnnotations(transformer, data)
         contextReceiverArguments.transformInplace(transformer, data)
         transformTypeArguments(transformer, data)
@@ -88,8 +86,8 @@ internal class FirCallableReferenceAccessImpl(
         return this
     }
 
-    override fun replaceTypeRef(newTypeRef: FirTypeRef) {
-        typeRef = newTypeRef
+    override fun replaceConeTypeOrNull(newConeTypeOrNull: ConeKotlinType?) {
+        coneTypeOrNull = newConeTypeOrNull
     }
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
