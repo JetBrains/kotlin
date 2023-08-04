@@ -66,7 +66,7 @@ dependencies {
     val kotlinVersion = project.bootstrapKotlinVersion
     val ktorVersion = "1.2.1"
     val slackApiVersion = "1.2.0"
-    val shadowVersion = "7.1.2"
+    val shadowVersion = "8.1.1"
     val metadataVersion = "0.0.1-dev-10"
 
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
@@ -82,6 +82,6 @@ dependencies {
 
     // Located in <repo root>/shared and always provided by the composite build.
     //api("org.jetbrains.kotlin:kotlin-native-shared:$konanVersion")
-    implementation("gradle.plugin.com.github.johnrengelman:shadow:$shadowVersion")
+    implementation("com.github.johnrengelman:shadow:$shadowVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-metadata-klib:$metadataVersion")
 }

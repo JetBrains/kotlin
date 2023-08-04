@@ -31,7 +31,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'gradle.plugin.com.github.johnrengelman:shadow:7.1.2'
+        classpath 'com.github.johnrengelman:shadow:8.1.1'
         classpath "org.jetbrains.kotlin:kotlin-native-shared:$kotlinVersion"
     }
 }

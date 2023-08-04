@@ -3,9 +3,9 @@ import com.github.jengelman.gradle.plugins.shadow.transformers.CacheableTransfor
 import com.github.jengelman.gradle.plugins.shadow.transformers.Transformer
 import com.github.jengelman.gradle.plugins.shadow.transformers.TransformerContext
 import kotlinx.metadata.jvm.KotlinModuleMetadata
+import org.apache.tools.zip.ZipEntry
+import org.apache.tools.zip.ZipOutputStream
 import org.gradle.kotlin.dsl.support.serviceOf
-import shadow.org.apache.tools.zip.ZipEntry
-import shadow.org.apache.tools.zip.ZipOutputStream
 
 description = "Kotlin Full Reflection Library"
 
@@ -229,7 +229,7 @@ val intermediate = when {
     kotlinBuildProperties.relocation -> stripMetadata
     else -> reflectShadowJar
 }
-    
+
 val result by task<Jar> {
     dependsOn(intermediate)
     from {
