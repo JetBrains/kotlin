@@ -96,7 +96,7 @@ include(
     ":integration-tests:cli",
     ":integration-tests:maven",
 
-    ":mkdocs",
+    ":docs-developer",
 )
 
 val isCiBuild = System.getenv("GITHUB_ACTIONS") != null || System.getenv("TEAMCITY_VERSION") != null
