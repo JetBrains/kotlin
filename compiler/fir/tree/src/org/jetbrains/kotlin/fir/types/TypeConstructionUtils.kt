@@ -38,8 +38,8 @@ fun ClassId.toLookupTag(): ConeClassLikeLookupTagImpl {
 }
 
 fun ClassId.constructClassLikeType(
-    typeArguments: Array<out ConeTypeProjection>,
-    isNullable: Boolean,
+    typeArguments: Array<out ConeTypeProjection> = emptyArray(),
+    isNullable: Boolean = false,
     attributes: ConeAttributes = ConeAttributes.Empty
 ): ConeClassLikeType {
     return ConeClassLikeTypeImpl(this.toLookupTag(), typeArguments, isNullable, attributes)
