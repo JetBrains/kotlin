@@ -75,23 +75,16 @@ class FirCallCompleter(
 
         val completionMode = candidate.computeCompletionMode(
             session.inferenceComponents, resolutionMode, initialType
-        )
+        ).let {
+            if (it == ConstraintSystemCompletionMode.FULL && inferenceSession.shouldAvoidFullCompletion(call))
+                ConstraintSystemCompletionMode.PARTIAL
+            else
+                it
+        }
 
         val analyzer = createPostponedArgumentsAnalyzer(transformer.resolutionContext)
         if (call is FirFunctionCall) {
             call.replaceLambdaArgumentInvocationKinds(session)
-        }
-
-        if (inferenceSession.customCompletionHandling(call, resolutionMode, completionMode) { chosenCompletionMode ->
-                runCompletionForCall(
-                    candidate,
-                    chosenCompletionMode,
-                    call,
-                    initialType
-                )
-            }
-        ) {
-            return call
         }
 
         return when (completionMode) {
@@ -114,13 +107,16 @@ class FirCallCompleter(
                     inferenceSession.addCompletedCall(completedCall, candidate)
                     completedCall
                 } else {
-                    inferenceSession.addPartiallyResolvedCall(call)
+                    inferenceSession.processPartiallyResolvedCall(call, resolutionMode)
                     call
                 }
             }
 
             ConstraintSystemCompletionMode.PARTIAL -> {
                 runCompletionForCall(candidate, completionMode, call, initialType, analyzer)
+                if (inferenceSession is FirDelegatedPropertyInferenceSession) {
+                    inferenceSession.processPartiallyResolvedCall(call, resolutionMode)
+                }
                 call
             }
 

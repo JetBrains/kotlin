@@ -47,30 +47,15 @@ class FirDelegatedPropertyInferenceSession(
             )
     }
 
-    override fun <T> customCompletionHandling(
-        call: T,
-        resolutionMode: ResolutionMode,
-        completionMode: ConstraintSystemCompletionMode,
-        runCompletionCallback: (ConstraintSystemCompletionMode) -> Unit,
-    ): Boolean where T : FirResolvable, T : FirStatement {
-        val candidate = call.candidate
+    override fun <T> shouldAvoidFullCompletion(call: T): Boolean where T : FirResolvable, T : FirStatement = call.isAnyOfDelegateOperators()
 
-
-        // Do not run completion for provideDelegate/getValue/setValue because they might affect each other
-        if (completionMode == ConstraintSystemCompletionMode.FULL && resolutionMode == ResolutionMode.ContextDependent.Delegate) return false
-
-        if (resolutionMode != ResolutionMode.ContextDependent.Delegate && !call.isAnyOfDelegateOperators()) return false
+    override fun <T> processPartiallyResolvedCall(call: T, resolutionMode: ResolutionMode) where T : FirResolvable, T : FirStatement {
+        if (resolutionMode != ResolutionMode.ContextDependent.Delegate && !call.isAnyOfDelegateOperators()) return
 
         val candidateSystem = call.candidate.system
-        val isProvideDelegateOperator = call.isOperatorCallWithName { it == OperatorNameConventions.PROVIDE_DELEGATE }
-        if (!isProvideDelegateOperator) {
-            runCompletionCallback(ConstraintSystemCompletionMode.PARTIAL)
-        }
 
         partiallyResolvedCalls.add(call to call.candidate)
         currentConstraintSystem = candidateSystem
-
-        return true
     }
 
     private fun <T> T.isAnyOfDelegateOperators(): Boolean where T : FirResolvable, T : FirStatement = isOperatorCallWithName {
@@ -148,8 +133,6 @@ class FirDelegatedPropertyInferenceSession(
 
 
     override fun <T> addCompletedCall(call: T, candidate: Candidate) where T : FirResolvable, T : FirStatement {}
-    override fun <T> addPartiallyResolvedCall(call: T) where T : FirResolvable, T : FirStatement {
-        error("")
-    }
+
     override fun <T> shouldRunCompletion(call: T): Boolean where T : FirResolvable, T : FirStatement = true
 }

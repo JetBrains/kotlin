@@ -26,15 +26,9 @@ abstract class FirInferenceSession {
     }
 
     abstract fun <T> shouldRunCompletion(call: T): Boolean where T : FirResolvable, T : FirStatement
+    open fun <T> shouldAvoidFullCompletion(call: T): Boolean where T : FirResolvable, T : FirStatement = false
 
-    open fun <T> customCompletionHandling(
-        call: T,
-        resolutionMode: ResolutionMode,
-        completionMode: ConstraintSystemCompletionMode,
-        runCompletionCallback: (ConstraintSystemCompletionMode) -> Unit,
-    ): Boolean where T : FirResolvable, T : FirStatement = false
-
-    abstract fun <T> addPartiallyResolvedCall(call: T) where T : FirResolvable, T : FirStatement
+    abstract fun <T> processPartiallyResolvedCall(call: T, resolutionMode: ResolutionMode) where T : FirResolvable, T : FirStatement
     abstract fun <T> addCompletedCall(call: T, candidate: Candidate) where T : FirResolvable, T : FirStatement
 
     abstract fun registerStubTypes(map: Map<TypeVariableMarker, StubTypeMarker>)
@@ -54,7 +48,7 @@ abstract class FirInferenceSession {
 abstract class FirStubInferenceSession : FirInferenceSession() {
     override fun <T> shouldRunCompletion(call: T): Boolean where T : FirResolvable, T : FirStatement = true
 
-    override fun <T> addPartiallyResolvedCall(call: T) where T : FirResolvable, T : FirStatement {}
+    override fun <T> processPartiallyResolvedCall(call: T, resolutionMode: ResolutionMode) where T : FirResolvable, T : FirStatement {}
     override fun <T> addCompletedCall(call: T, candidate: Candidate) where T : FirResolvable, T : FirStatement {}
 
     override fun inferPostponedVariables(

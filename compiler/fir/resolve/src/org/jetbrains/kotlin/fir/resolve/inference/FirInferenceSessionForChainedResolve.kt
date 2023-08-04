@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.inference
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
+import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.calls.candidate
@@ -32,7 +33,7 @@ abstract class FirInferenceSessionForChainedResolve(
         // do nothing
     }
 
-    override fun <T> addPartiallyResolvedCall(call: T) where T : FirResolvable, T : FirStatement {
+    override fun <T> processPartiallyResolvedCall(call: T, resolutionMode: ResolutionMode) where T : FirResolvable, T : FirStatement {
         partiallyResolvedCalls += call to call.candidate
     }
 
