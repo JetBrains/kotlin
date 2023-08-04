@@ -567,8 +567,10 @@ internal class DokkaPsiParser(
 
 
     private fun getVariance(type: PsiWildcardType): Projection = when {
+        type.isExtends -> Covariance(getBound(type.extendsBound))
+        type.isSuper -> Contravariance(getBound(type.superBound))
+        // If the type isn't explicitly bounded, it still has an implicit `extends Object` bound
         type.extendsBound != PsiType.NULL -> Covariance(getBound(type.extendsBound))
-        type.superBound != PsiType.NULL -> Contravariance(getBound(type.superBound))
         else -> throw IllegalStateException("${type.presentableText} has incorrect bounds")
     }
 

@@ -10,6 +10,7 @@ import org.jetbrains.dokka.model.doc.Text
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import utils.AbstractModelTest
+import utils.assertContains
 import utils.assertNotNull
 import utils.name
 import kotlin.test.assertEquals
@@ -435,6 +436,50 @@ class JavaTest : AbstractModelTest("/src/main/kotlin/java/Test.java", "java") {
                 assertEquals(expectedDri, annotation?.dri)
                 assertEquals(expectedParams.first, annotation?.params?.entries?.first()?.key)
                 assertEquals(expectedParams.second, annotation?.params?.entries?.first()?.value)
+            }
+        }
+    }
+
+    @Test
+    fun variances() {
+        inlineModelTest(
+            """
+            |public class Foo {
+            |    public void superBound(java.util.List<? super String> param) {}
+            |    public void extendsBound(java.util.List<? extends String> param) {}
+            |    public void unbounded(java.util.List<?> param) {}
+            |}
+            """, configuration = configuration
+        ) {
+            with((this / "java" / "Foo").cast<DClass>()) {
+                val functionNames = functions.map { it.name }
+                assertContains(functionNames, "superBound")
+                assertContains(functionNames, "extendsBound")
+                assertContains(functionNames, "unbounded")
+
+                for (function in functions) {
+                    val param = function.parameters.single()
+                    val type = param.type as GenericTypeConstructor
+                    val variance = type.projections.single()
+
+                    when (function.name) {
+                        "superBound" -> {
+                            assertTrue(variance is Contravariance<*>)
+                            val bound = (variance as Contravariance<*>).inner
+                            assertEquals((bound as GenericTypeConstructor).dri.classNames, "String")
+                        }
+                        "extendsBound" -> {
+                            assertTrue(variance is Covariance<*>)
+                            val bound = (variance as Covariance<*>).inner
+                            assertEquals((bound as GenericTypeConstructor).dri.classNames, "String")
+                        }
+                        "unbounded" -> {
+                            assertTrue(variance is Covariance<*>)
+                            val bound = (variance as Covariance<*>).inner
+                            assertTrue(bound is JavaObject)
+                        }
+                    }
+                }
             }
         }
     }
