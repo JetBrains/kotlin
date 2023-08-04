@@ -166,7 +166,7 @@ private val functionInliningPhase = makeCustomWasmModulePhase(
             innerClassesSupport = context.innerClassesSupport,
             inlineFunctionResolver = WasmInlineFunctionResolver(context),
             insertAdditionalImplicitCasts = true,
-            defaultNonReifiedTypeParameterRemappingMode = NonReifiedTypeParameterRemappingMode.SUBSTITUTE
+            defaultNonReifiedTypeParameterRemappingMode = NonReifiedTypeParameterRemappingMode.ERASE
         ).inline(module)
         module.patchDeclarationParents()
     },
