@@ -29,4 +29,4 @@ internal const val PER_MODULE = "-Xir-per-module"
 internal const val PER_MODULE_OUTPUT_NAME = "-Xir-per-module-output-name"
 
 internal const val WASM_BACKEND = "-Xwasm"
-internal const val WASM_WASI_MODE = "-Xwasm-wasi-mode"
+internal const val WASM_TARGET = "-Xwasm-target"
