@@ -311,7 +311,7 @@ class ComposerParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(use
               }
               if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 print(values)
                 if (isTraceInProgress()) {
@@ -587,7 +587,7 @@ class ComposerParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(use
                   }
                   if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                     if (isTraceInProgress()) {
-                      traceEventStart(<>, %changed, -1, <>)
+                      traceEventStart(<>, %dirty, -1, <>)
                     }
                     used(text)
                     if (isTraceInProgress()) {
@@ -610,7 +610,7 @@ class ComposerParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(use
                   }
                   if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                     if (isTraceInProgress()) {
-                      traceEventStart(<>, %changed, -1, <>)
+                      traceEventStart(<>, %dirty, -1, <>)
                     }
                     %composer.startMovableGroup(<>, value)
                     sourceInformation(%composer, "<Wrappe...>")

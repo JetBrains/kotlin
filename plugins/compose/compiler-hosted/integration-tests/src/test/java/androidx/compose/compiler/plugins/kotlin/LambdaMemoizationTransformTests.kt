@@ -755,7 +755,7 @@ class LambdaMemoizationTransformTests(useFir: Boolean) : AbstractIrTransformTest
               }
               if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 val content = composableLambda(%composer, <>, true) { %composer: Composer?, %changed: Int ->
                   sourceInformation(%composer, "C<Displa...>:Test.kt")
@@ -820,7 +820,7 @@ class LambdaMemoizationTransformTests(useFir: Boolean) : AbstractIrTransformTest
               }
               if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 content()
                 if (isTraceInProgress()) {
@@ -886,7 +886,7 @@ class LambdaMemoizationTransformTests(useFir: Boolean) : AbstractIrTransformTest
           }
           if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
             if (isTraceInProgress()) {
-              traceEventStart(<>, %changed, -1, <>)
+              traceEventStart(<>, %dirty, -1, <>)
             }
             content()
             if (isTraceInProgress()) {

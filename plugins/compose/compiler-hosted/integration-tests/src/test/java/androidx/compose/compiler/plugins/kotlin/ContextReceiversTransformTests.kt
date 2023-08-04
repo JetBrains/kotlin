@@ -287,7 +287,7 @@ class ContextReceiversTransformTests(useFir: Boolean) : AbstractIrTransformTest(
                 }
                 %composer.endDefaults()
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 if (isTraceInProgress()) {
                   traceEventEnd()
@@ -371,7 +371,7 @@ class ContextReceiversTransformTests(useFir: Boolean) : AbstractIrTransformTest(
               }
               if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 with(foo) {
                   A(%this%with, %composer, 0)
@@ -425,7 +425,7 @@ class ContextReceiversTransformTests(useFir: Boolean) : AbstractIrTransformTest(
               }
               if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 with(foo) {
                   A(%this%with, %composer, 0)
@@ -474,7 +474,7 @@ class ContextReceiversTransformTests(useFir: Boolean) : AbstractIrTransformTest(
               }
               if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 with(foo) {
                   "Hello".A(%this%with, 2, null, %composer, 0b000110000110, 0b0100)
@@ -658,7 +658,7 @@ class ContextReceiversTransformTests(useFir: Boolean) : AbstractIrTransformTest(
                   b = 2
                 }
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 val combineParams = a + b
                 if (%context_receiver_0.someString == combineParams) {

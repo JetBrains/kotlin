@@ -116,7 +116,7 @@ class DefaultParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(useF
                   foo = Foo(0)
                 }
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 print(foo)
                 if (isTraceInProgress()) {
@@ -243,7 +243,7 @@ class DefaultParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(useF
                 }
                 %composer.endDefaults()
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 used(x)
                 if (isTraceInProgress()) {
@@ -302,7 +302,7 @@ class DefaultParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(useF
                 }
                 %composer.endDefaults()
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 print(a)
                 print(b)
@@ -650,7 +650,7 @@ class DefaultParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(useF
                   a30 = 0
                 }
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, %changed1, <>)
+                  traceEventStart(<>, %dirty, %dirty1, <>)
                 }
                 used(a00)
                 used(a01)
@@ -1037,7 +1037,7 @@ class DefaultParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(useF
                   a31 = 0
                 }
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, %changed1, <>)
+                  traceEventStart(<>, %dirty, %dirty1, <>)
                 }
                 used(a00)
                 used(a01)
@@ -1436,7 +1436,7 @@ class DefaultParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(useF
                 }
                 %composer.endDefaults()
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, %changed1, <>)
+                  traceEventStart(<>, %dirty, %dirty1, <>)
                 }
                 used(a00)
                 used(a01)

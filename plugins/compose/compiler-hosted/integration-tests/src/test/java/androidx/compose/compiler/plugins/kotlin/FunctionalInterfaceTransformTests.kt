@@ -58,7 +58,7 @@ class FunctionalInterfaceTransformTests(
               }
               if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 with(content) {
                   %this%with.Content(%composer, 0b0110)
@@ -92,7 +92,7 @@ class FunctionalInterfaceTransformTests(
                     }
                     if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                       if (isTraceInProgress()) {
-                        traceEventStart(<>, %changed, -1, <>)
+                        traceEventStart(<>, %dirty, -1, <>)
                       }
                       %this%Test.length
                       if (isTraceInProgress()) {
@@ -150,7 +150,7 @@ class FunctionalInterfaceTransformTests(
               }
               if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 Example(A { it: Int ->
                   a.compute(it)
@@ -258,7 +258,7 @@ class FunctionalInterfaceTransformTests(
                   }
                   if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                     if (isTraceInProgress()) {
-                      traceEventStart(<>, %changed, -1, <>)
+                      traceEventStart(<>, %dirty, -1, <>)
                     }
                     println(string)
                     if (isTraceInProgress()) {

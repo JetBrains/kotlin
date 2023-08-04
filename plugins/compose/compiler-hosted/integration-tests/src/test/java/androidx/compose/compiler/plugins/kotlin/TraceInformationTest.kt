@@ -171,7 +171,7 @@ class TraceInformationTest(useFir: Boolean) : AbstractIrTransformTest(useFir) {
               }
               if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 A(%composer, 0)
                 Wrapper({ %composer: Composer?, %changed: Int ->

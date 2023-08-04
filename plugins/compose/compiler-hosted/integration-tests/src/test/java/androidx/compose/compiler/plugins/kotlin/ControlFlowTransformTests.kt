@@ -298,7 +298,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               }
               if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 A(%composer, 0)
                 M3({ %composer: Composer?, %changed: Int ->
@@ -370,7 +370,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               }
               if (%dirty and 0b01011011 !== 0b00010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 A(%composer, 0)
                 M3({ %composer: Composer?, %changed: Int ->
@@ -447,7 +447,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               }
               if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 A(%composer, 0)
                 M3({ %composer: Composer?, %changed: Int ->
@@ -565,7 +565,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               }
               if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 A(%composer, 0)
                 M3({ %composer: Composer?, %changed: Int ->
@@ -625,7 +625,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               }
               if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 A(%composer, 0)
                 M3({ %composer: Composer?, %changed: Int ->
@@ -690,7 +690,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               }
               if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 A(%composer, 0)
                 M1({ %composer: Composer?, %changed: Int ->
@@ -765,7 +765,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               }
               if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 A(%composer, 0)
                 M3({ %composer: Composer?, %changed: Int ->
@@ -835,7 +835,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               }
               if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 Text("Root - before", %composer, 0b0110)
                 M1({ %composer: Composer?, %changed: Int ->
@@ -961,7 +961,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               }
               if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 if (condition) {
                   if (isTraceInProgress()) {
@@ -1084,7 +1084,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               }
               if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 IW({ %composer: Composer?, %changed: Int ->
                   sourceInformationMarkerStart(%composer, <>, "C<A()>:Test.kt")
@@ -1131,7 +1131,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               }
               if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 Text("Some text", %composer, 0b0110)
                 Identity {
@@ -1185,7 +1185,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               }
               if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 Text("Some text", %composer, 0b0110)
                 M1({ %composer: Composer?, %changed: Int ->
@@ -1243,7 +1243,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               }
               if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 Text("Some text", %composer, 0b0110)
                 M1({ %composer: Composer?, %changed: Int ->
@@ -1328,7 +1328,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               }
               if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 Text("Root - before", %composer, 0b0110)
                 M1({ %composer: Composer?, %changed: Int ->
@@ -3842,7 +3842,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               }
               if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 val tmp0_safe_receiver = x
                 %composer.startReplaceableGroup(<>)
@@ -3904,7 +3904,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               }
               if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 x?.let { it: Int ->
                   if (it > 0) {
@@ -4182,7 +4182,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               }
               if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 used(value)
                 A(%composer, 0)
@@ -4367,7 +4367,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               }
               if (%dirty and 0b0001011011011011 !== 0b010010010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 used(p0)
                 used(p1)
@@ -4402,7 +4402,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               }
               if (%dirty and 0b0001011011011011 !== 0b010010010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 used(p0)
                 used(p1)
@@ -4437,7 +4437,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               }
               if (%dirty and 0b0001011011011011 !== 0b010010010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 used(p0)
                 used(p1)
@@ -4472,7 +4472,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               }
               if (%dirty and 0b0001011011011011 !== 0b010010010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 used(p0)
                 used(p1)
@@ -4507,7 +4507,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               }
               if (%dirty and 0b0001011011011011 !== 0b010010010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 used(p0)
                 used(p1)
@@ -4542,7 +4542,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               }
               if (%dirty and 0b0001011011011011 !== 0b010010010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 used(p0)
                 used(p1)
@@ -4577,7 +4577,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               }
               if (%dirty and 0b0001011011011011 !== 0b010010010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 used(p0)
                 used(p1)
@@ -4612,7 +4612,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               }
               if (%dirty and 0b0001011011011011 !== 0b010010010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 used(p0)
                 used(p1)
@@ -4647,7 +4647,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               }
               if (%dirty and 0b0001011011011011 !== 0b010010010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 used(p0)
                 used(p1)
@@ -4682,7 +4682,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               }
               if (%dirty and 0b0001011011011011 !== 0b010010010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 used(p0)
                 used(p1)
@@ -4717,7 +4717,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               }
               if (%dirty and 0b0001011011011011 !== 0b010010010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 used(p0)
                 used(p1)
@@ -4752,7 +4752,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               }
               if (%dirty and 0b0001011011011011 !== 0b010010010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 used(p0)
                 used(p1)
@@ -4787,7 +4787,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               }
               if (%dirty and 0b0001011011011011 !== 0b010010010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 used(p0)
                 used(p1)
@@ -4822,7 +4822,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               }
               if (%dirty and 0b0001011011011011 !== 0b010010010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 used(p0)
                 used(p1)
@@ -4857,7 +4857,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               }
               if (%dirty and 0b0001011011011011 !== 0b010010010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 used(p0)
                 used(p1)
@@ -4892,7 +4892,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               }
               if (%dirty and 0b0001011011011011 !== 0b010010010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 used(p0)
                 used(p1)
@@ -4927,7 +4927,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               }
               if (%dirty and 0b0001011011011011 !== 0b010010010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 used(p0)
                 used(p1)
@@ -4962,7 +4962,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               }
               if (%dirty and 0b0001011011011011 !== 0b010010010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 used(p0)
                 used(p1)
@@ -4997,7 +4997,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               }
               if (%dirty and 0b0001011011011011 !== 0b010010010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 used(p0)
                 used(p1)
@@ -5032,7 +5032,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               }
               if (%dirty and 0b0001011011011011 !== 0b010010010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 used(p0)
                 used(p1)
@@ -5067,7 +5067,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               }
               if (%dirty and 0b0001011011011011 !== 0b010010010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 used(p0)
                 used(p1)
@@ -5102,7 +5102,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               }
               if (%dirty and 0b0001011011011011 !== 0b010010010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 used(p0)
                 used(p1)
@@ -5137,7 +5137,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               }
               if (%dirty and 0b0001011011011011 !== 0b010010010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 used(p0)
                 used(p1)
@@ -5172,7 +5172,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               }
               if (%dirty and 0b0001011011011011 !== 0b010010010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 used(p0)
                 used(p1)
@@ -5220,7 +5220,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               }
               if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, "androidx.compose.runtime.tests.Test (Test.kt:6)")
+                  traceEventStart(<>, %dirty, -1, "androidx.compose.runtime.tests.Test (Test.kt:6)")
                 }
                 used(value)
                 if (isTraceInProgress()) {
@@ -5795,7 +5795,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               }
               if (%dirty and 0b01011011 !== 0b00010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 val a = remember({
                   A()
@@ -5855,7 +5855,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               }
               if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 Array(n) { it: Int ->
                   val tmp0_return = remember({
@@ -5977,7 +5977,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
                   keyboardActions2 = false
                 }
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 println("t41 insideFunction %isError")
                 println("t41 insideFunction %keyboardActions2")
@@ -6027,7 +6027,7 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
               }
               if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 Test(%composer.startReplaceableGroup(<>)
                 sourceInformation(%composer, "<rememb...>")
