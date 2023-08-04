@@ -9,10 +9,7 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiElement
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.persistentMapOf
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirWholeFileResolveTarget
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.asResolveTarget
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector.ContextKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector.Context
@@ -64,7 +61,7 @@ internal object ContextCollector {
      * Get the most precise context available for the [targetElement] in the [file].
      *
      * @param file The file to process.
-     * @param holder A [SessionHolder] for the session that owns a [file].
+     * @param holder The [SessionHolder] for the session that owns a [file].
      * @param targetElement The most precise element for which the context is required.
      * @param bodyElement An element for which the [ContextKind.BODY] context is preferred.
      *
@@ -75,7 +72,7 @@ internal object ContextCollector {
         val isBodyContextCollected = bodyElement != null
         val acceptedElements = targetElement.parentsWithSelf.toSet()
 
-        val contextProvider = process(computeResolveTarget(file, targetElement), holder, isBodyContextCollected) { candidate ->
+        val contextProvider = process(file, computeDesignation(file, targetElement), holder, isBodyContextCollected) { candidate ->
             when (candidate) {
                 targetElement -> FilterResponse.STOP
                 in acceptedElements -> FilterResponse.CONTINUE
@@ -100,42 +97,50 @@ internal object ContextCollector {
         return null
     }
 
-    private fun computeResolveTarget(file: FirFile, targetElement: PsiElement): LLFirResolveTarget {
+    private fun computeDesignation(file: FirFile, targetElement: PsiElement): FirDesignation? {
         val contextKtDeclaration = targetElement.getNonLocalContainingOrThisDeclaration()
         if (contextKtDeclaration != null) {
             val designationPath = FirElementFinder.collectDesignationPath(file, contextKtDeclaration)
             if (designationPath != null) {
-                return FirDesignationWithFile(designationPath.path, designationPath.target, file).asResolveTarget()
+                return FirDesignation(designationPath.path, designationPath.target)
             }
         }
 
-        return LLFirWholeFileResolveTarget(file)
+        return null
     }
 
     /**
-     * Processes the [FirFile] that owns the [target], collecting contexts for elements matching the [filter].
+     * Processes the [FirFile], collecting contexts for elements matching the [filter].
      *
-     * @param target The target to process.
-     * @param holder The [SessionHolder] for the session that owns a [target].
+     * @param file The file to process.
+     * @param designation The declaration to process. If `null`, all declarations in the [file] are processed.
+     * @param holder The [SessionHolder] for the session that owns a [file].
      * @param shouldCollectBodyContext If `true`, [ContextKind.BODY] is collected where available.
      * @param filter The filter predicate. Context is collected only for [PsiElement]s for which the [filter] returns `true`.
      */
     fun process(
-        target: LLFirResolveTarget,
+        file: FirFile,
+        designation: FirDesignation?,
         holder: SessionHolder,
         shouldCollectBodyContext: Boolean,
         filter: (PsiElement) -> FilterResponse
     ): ContextProvider {
-        val pathIterator = target.path.iterator()
-
-        val visitor = ContextCollectorVisitor(holder, shouldCollectBodyContext, filter) {
-            if (pathIterator.hasNext()) pathIterator.next() else null
-        }
-
-        target.firFile.accept(visitor)
-        visitor.processTarget(target)
+        val interceptor = designation?.let(::DesignationInterceptor) ?: { null }
+        val visitor = ContextCollectorVisitor(holder, shouldCollectBodyContext, filter, interceptor)
+        file.accept(visitor)
 
         return ContextProvider { element, kind -> visitor[element, kind] }
+    }
+
+    private class DesignationInterceptor(private val designation: FirDesignation) : () -> FirElement? {
+        private val targetIterator = iterator {
+            yieldAll(designation.path)
+            yield(designation.target)
+        }
+
+        override fun invoke(): FirElement? {
+            return if (targetIterator.hasNext()) targetIterator.next() else null
+        }
     }
 
     fun interface ContextProvider {
@@ -169,10 +174,6 @@ private class ContextCollectorVisitor(
     private var smartCasts: PersistentMap<FirBasedSymbol<*>, Set<ConeKotlinType>> = persistentMapOf()
 
     private val result = HashMap<ContextKey, Context>()
-
-    fun processTarget(target: LLFirResolveTarget) {
-        target.firFile.accept(this)
-    }
 
     override fun visitElement(element: FirElement) {
         dumpContext(element.psi, ContextKind.SELF)
