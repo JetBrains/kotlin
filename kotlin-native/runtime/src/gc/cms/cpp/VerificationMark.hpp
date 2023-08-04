@@ -18,6 +18,7 @@ struct VerificationMarkTraits {
     }
 
     static ObjHeader* tryDequeue(MarkQueue& queue) noexcept {
+        if (queue.empty()) return nullptr;
         auto top = queue.back();
         queue.pop_back();
         return objectForObjectData(*top);
