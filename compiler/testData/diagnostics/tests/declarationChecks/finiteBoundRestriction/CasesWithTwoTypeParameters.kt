@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UPPER_BOUND_VIOLATED
 
 interface C0<T, S : C0<*, S>>

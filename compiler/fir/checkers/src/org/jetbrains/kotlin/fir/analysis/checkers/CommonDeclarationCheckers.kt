@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.analysis.cfa.FirPropertyInitializationAnalyzer
 import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.*
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirAnonymousFunctionParametersChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirFiniteBoundRestrictionChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.syntax.*
 
 object CommonDeclarationCheckers : DeclarationCheckers() {
@@ -129,6 +130,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirPropertyInitializationChecker,
             FirDelegateFieldTypeMismatchChecker,
             FirMultipleDefaultsInheritedFromSupertypesChecker,
+            FirFiniteBoundRestrictionChecker,
         )
 
     override val constructorCheckers: Set<FirConstructorChecker>

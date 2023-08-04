@@ -1977,6 +1977,17 @@ internal class CyclicGenericUpperBoundImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.CyclicGenericUpperBound
 
+internal class FiniteBoundsViolationImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.FiniteBoundsViolation
+
+internal class FiniteBoundsViolationInJavaImpl(
+    override val containingTypes: List<KtSymbol>,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.FiniteBoundsViolationInJava
+
 internal class DeprecatedTypeParameterSyntaxImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,

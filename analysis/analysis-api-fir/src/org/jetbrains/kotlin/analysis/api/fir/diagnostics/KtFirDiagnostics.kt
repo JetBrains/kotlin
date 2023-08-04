@@ -1644,6 +1644,15 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = CyclicGenericUpperBound::class
     }
 
+    interface FiniteBoundsViolation : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = FiniteBoundsViolation::class
+    }
+
+    interface FiniteBoundsViolationInJava : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = FiniteBoundsViolationInJava::class
+        val containingTypes: List<KtSymbol>
+    }
+
     interface DeprecatedTypeParameterSyntax : KtFirDiagnostic<KtDeclaration> {
         override val diagnosticClass get() = DeprecatedTypeParameterSyntax::class
     }
