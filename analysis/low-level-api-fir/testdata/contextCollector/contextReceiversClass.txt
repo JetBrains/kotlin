@@ -28,3 +28,20 @@ Tower Data Context:
         Scope: FirLocalScope
     Element 10
         Scope: FirLocalScope
+
+FILE: [ResolvedTo(IMPORTS)] contextReceiversClass.kt
+    public abstract [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
+        public abstract [ResolvedTo(CONTRACTS)] fun foo(): R|kotlin/Int|
+
+    }
+    context(R|Foo|)
+    public final [ResolvedTo(STATUS)] class Test : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] constructor(): R|Test| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
+            this@R|/Test|.R|/Foo.foo|()
+        }
+
+    }

@@ -21,3 +21,10 @@ Tower Data Context:
                 Type: kotlin/String
     Element 9
         Scope: FirLocalScope
+
+FILE: [ResolvedTo(IMPORTS)] extensionFunction.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun R|kotlin/String|.test(): R|kotlin/Unit| {
+        R|/consume|(this@R|/test|)
+    }
+    public final [ResolvedTo(CONTRACTS)] fun consume([ResolvedTo(CONTRACTS)] obj: R|kotlin/Any|): R|kotlin/Unit| {
+    }
