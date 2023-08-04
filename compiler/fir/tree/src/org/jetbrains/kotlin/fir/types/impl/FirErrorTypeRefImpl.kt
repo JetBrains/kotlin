@@ -22,18 +22,16 @@ internal class FirErrorTypeRefImpl(
     override val type: ConeKotlinType,
     override var delegatedTypeRef: FirTypeRef?,
     override val diagnostic: ConeDiagnostic,
-    override val isFromStubType: Boolean = false,
     override var partiallyResolvedTypeRef: FirTypeRef? = null,
 ) : FirErrorTypeRef() {
     constructor(
         source: KtSourceElement?, delegatedTypeRef: FirTypeRef?, diagnostic: ConeDiagnostic,
-        isFromStubType: Boolean = false, partiallyResolvedTypeRef: FirTypeRef? = null,
+        partiallyResolvedTypeRef: FirTypeRef? = null,
     ) : this(
         source,
         ConeErrorType(diagnostic),
         delegatedTypeRef,
         diagnostic,
-        isFromStubType,
         partiallyResolvedTypeRef,
     )
 
