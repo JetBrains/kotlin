@@ -511,6 +511,15 @@ object PositioningStrategies {
     }
 
     @JvmField
+    val PARAMETERS_WITH_DEFAULT_VALUE: PositioningStrategy<KtFunction> = object : PositioningStrategy<KtFunction>() {
+        override fun mark(element: KtFunction): List<TextRange> =
+            element.valueParameters.filter(KtParameter::hasDefaultValue).takeIf(List<*>::isNotEmpty)?.flatMap { markNode(it.node) }
+                ?: element.valueParameterList?.let { markNode(it.node) }
+                ?: element.nameIdentifier?.let { markNode(it.node) }
+                ?: markNode(element.node)
+    }
+
+    @JvmField
     val PARAMETER_VARARG_MODIFIER: PositioningStrategy<KtParameter> = object : PositioningStrategy<KtParameter>() {
         override fun mark(element: KtParameter): List<TextRange> {
             val varargModifier = element.modifierList!!.getModifier(KtTokens.VARARG_KEYWORD)!!
