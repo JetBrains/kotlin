@@ -28,9 +28,6 @@ sealed class FirImplicitBuiltinTypeRef(
     override val delegatedTypeRef: FirTypeRef?
         get() = null
 
-    override val isFromStubType: Boolean
-        get() = false
-
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
