@@ -393,15 +393,6 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
     }
 
     override fun transformFunctionCall(functionCall: FirFunctionCall, data: ResolutionMode): FirStatement =
-        transformFunctionCallInternal(functionCall, data, skipExplicitReceiverTransformation = false)
-
-    internal fun transformFunctionCallInternal(
-        functionCall: FirFunctionCall,
-        data: ResolutionMode,
-        // Currently, it's only `true` for provideDelegate calls, because delegateExpression is already resolved as that stage.
-        // See also FirDeclarationsResolveTransformer.transformWrappedDelegateExpression
-        skipExplicitReceiverTransformation: Boolean,
-    ): FirStatement =
         whileAnalysing(session, functionCall) {
             val calleeReference = functionCall.calleeReference
             if (
@@ -424,8 +415,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             functionCall.transformTypeArguments(transformer, ResolutionMode.ContextIndependent)
             val withTransformedArguments = if (!resolvingAugmentedAssignment) {
                 dataFlowAnalyzer.enterCallArguments(functionCall, functionCall.arguments)
-                val withResolvedExplicitReceiver =
-                    if (skipExplicitReceiverTransformation) functionCall else transformExplicitReceiver(functionCall)
+                val withResolvedExplicitReceiver = transformExplicitReceiver(functionCall)
                 withResolvedExplicitReceiver.also {
                     it.replaceArgumentList(it.argumentList.transform(this, ResolutionMode.ContextDependent))
                     dataFlowAnalyzer.exitCallArguments()
@@ -433,7 +423,11 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             } else {
                 functionCall
             }
-            val resultExpression = callResolver.resolveCallAndSelectCandidate(withTransformedArguments)
+
+            val resultExpression = context.inferenceSession.onCandidatesResolution(withTransformedArguments) {
+                callResolver.resolveCallAndSelectCandidate(withTransformedArguments)
+            }
+
             val completeInference = callCompleter.completeCall(resultExpression, data)
             val result = completeInference.transformToIntegerOperatorCallOrApproximateItIfNeeded(data)
             if (!resolvingAugmentedAssignment) {

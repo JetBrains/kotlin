@@ -75,7 +75,20 @@ class FirCallCompleter(
 
         val completionMode = candidate.computeCompletionMode(
             session.inferenceComponents, resolutionMode, initialType
-        )
+        ).let {
+            // The difference between `shouldAvoidFullCompletion` and `!shouldRunCompletion` is very subtle:
+            // we don't run even partial completion for `!inferenceSession.shouldRunCompletion(call)`, while actually
+            // do that for `shouldAvoidFullCompletion`
+            //
+            // As for implementations, `shouldRunCompletion` only works for Builder inference, while `shouldAvoidFullCompletion` is for
+            // delegate inference where it's assumed to have partially completed intermediate calls.
+            //
+            // Ideally, we should get rid of `shouldRunCompletion` once Builder inference is rewritten (see KT-61041 for tracking)
+            if (it == ConstraintSystemCompletionMode.FULL && inferenceSession.shouldAvoidFullCompletion(call))
+                ConstraintSystemCompletionMode.PARTIAL
+            else
+                it
+        }
 
         val analyzer = createPostponedArgumentsAnalyzer(transformer.resolutionContext)
         if (call is FirFunctionCall) {
@@ -90,7 +103,7 @@ class FirCallCompleter(
                         .buildAbstractResultingSubstitutor(session.typeContext) as ConeSubstitutor
                     val completedCall = call.transformSingle(
                         FirCallCompletionResultsWriterTransformer(
-                            session, finalSubstitutor,
+                            session, components.scopeSession, finalSubstitutor,
                             components.returnTypeCalculator,
                             session.typeApproximator,
                             components.dataFlowAnalyzer,
@@ -102,18 +115,15 @@ class FirCallCompleter(
                     inferenceSession.addCompletedCall(completedCall, candidate)
                     completedCall
                 } else {
-                    inferenceSession.addPartiallyResolvedCall(call)
+                    inferenceSession.processPartiallyResolvedCall(call, resolutionMode)
                     call
                 }
             }
 
             ConstraintSystemCompletionMode.PARTIAL -> {
                 runCompletionForCall(candidate, completionMode, call, initialType, analyzer)
-
-                // Add top-level delegate call as partially resolved to inference session
-                if (resolutionMode is ResolutionMode.ContextDependent.Delegate) {
-                    require(inferenceSession is FirDelegatedPropertyInferenceSession)
-                    inferenceSession.addPartiallyResolvedCall(call)
+                if (inferenceSession is FirDelegatedPropertyInferenceSession) {
+                    inferenceSession.processPartiallyResolvedCall(call, resolutionMode)
                 }
 
                 call
@@ -209,7 +219,7 @@ class FirCallCompleter(
         mode: FirCallCompletionResultsWriterTransformer.Mode = FirCallCompletionResultsWriterTransformer.Mode.Normal
     ): FirCallCompletionResultsWriterTransformer {
         return FirCallCompletionResultsWriterTransformer(
-            session, substitutor, components.returnTypeCalculator,
+            session, components.scopeSession, substitutor, components.returnTypeCalculator,
             session.typeApproximator,
             components.dataFlowAnalyzer,
             components.integerLiteralAndOperatorApproximationTransformer,

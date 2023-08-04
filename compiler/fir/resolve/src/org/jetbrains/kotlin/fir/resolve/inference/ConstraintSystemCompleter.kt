@@ -256,17 +256,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
         ) ?: return false
 
         val variableWithConstraints = notFixedTypeVariables.getValue(variableForFixation.variable)
-        if (!variableForFixation.hasProperConstraint) {
-            if (context.inferenceSession.isSyntheticTypeVariable(variableWithConstraints.typeVariable)) {
-                context.inferenceSession.fixSyntheticTypeVariableWithNotEnoughInformation(
-                    variableWithConstraints.typeVariable as ConeTypeVariable,
-                    this
-                )
-                return true
-            }
-
-            return false
-        }
+        if (!variableForFixation.hasProperConstraint) return false
 
         fixVariable(this, variableWithConstraints)
 
@@ -379,16 +369,30 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
             topLevelAtom.collectAllTypeVariables()
         }
 
-        if (context.inferenceSession.hasSyntheticTypeVariables()) {
-            result.addAll(notFixedTypeVariables.filter { context.inferenceSession.isSyntheticTypeVariable(it.value.typeVariable) }.keys.asIterable())
-        }
-
-        require(result.size == notFixedTypeVariables.size) {
-            val notFoundTypeVariables = notFixedTypeVariables.keys.toMutableSet().apply { removeAll(result) }
-            "Not all type variables found: $notFoundTypeVariables"
-        }
+        checkNotFixedTypeVariablesCountConsistency(topLevelAtoms, result)
 
         return result.toList()
+    }
+
+    private fun ConstraintSystemCompletionContext.checkNotFixedTypeVariablesCountConsistency(
+        topLevelAtoms: List<FirStatement>,
+        result: LinkedHashSet<TypeConstructorMarker>,
+    ) {
+        val outerSystemVariablesPrefixSizeToUse = if (topLevelAtoms.size > 1) 0 else outerSystemVariablesPrefixSize
+        val notFixedTypeVariablesToUse =
+            when (outerSystemVariablesPrefixSizeToUse) {
+                0 -> notFixedTypeVariables.keys
+                else -> notFixedTypeVariables.keys.toMutableSet().apply {
+                    removeAll(allTypeVariables.keys.take(outerSystemVariablesPrefixSizeToUse).toSet())
+                }
+            }
+
+        require(result.size == notFixedTypeVariablesToUse.size) {
+            val notFoundTypeVariables = notFixedTypeVariablesToUse.toMutableSet().apply {
+                removeAll(result)
+            }
+            "Not all type variables found: $notFoundTypeVariables"
+        }
     }
 
     private fun fixVariable(
