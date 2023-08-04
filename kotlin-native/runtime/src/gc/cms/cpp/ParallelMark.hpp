@@ -92,6 +92,10 @@ public:
         }
 
         static ALWAYS_INLINE bool tryEnqueue(MarkQueue& queue, ObjHeader* object) noexcept {
+            auto refFieldsCount = object->type_info()->objOffsetsCount_;
+            if (refFieldsCount == 0) {
+                return tryMark(object);
+            }
             auto& objectData = objectDataForObject(object);
             return compiler::gcMarkSingleThreaded() ? queue.tryPushLocal(objectData) : queue.tryPush(objectData);
         }
