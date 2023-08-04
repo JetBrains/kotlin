@@ -74,10 +74,9 @@ dependencies {
     implementation(libs.spdx.gradlePlugin)
     implementation(libs.dexMemberList)
 
-    implementation(libs.shadow.gradlePlugin) {
-        // https://github.com/johnrengelman/shadow/issues/807
-        exclude("org.ow2.asm")
-    }
+    // Keep in mind https://github.com/johnrengelman/shadow/issues/807 issue as shadow plugin brings transitively "org.ow2.asm" dependency,
+    // which could conflict with a version in Kotlin compiler brought by KGP.
+    implementation(libs.shadow.gradlePlugin)
     implementation(libs.proguard.gradlePlugin)
 
     implementation(libs.jetbrains.ideaExt.gradlePlugin)

@@ -1,9 +1,4 @@
-import java.util.stream.Collectors
-import com.github.jengelman.gradle.plugins.shadow.transformers.Transformer
-import com.github.jengelman.gradle.plugins.shadow.transformers.TransformerContext
 import org.gradle.kotlin.dsl.support.serviceOf
-import shadow.org.apache.tools.zip.ZipEntry
-import shadow.org.apache.tools.zip.ZipOutputStream
 
 description = "Kotlin Compiler (embeddable)"
 

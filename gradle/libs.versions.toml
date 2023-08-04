@@ -7,7 +7,7 @@ gradle-plugin-publish = "1.0.0"
 # Version for foojay should be also synced with version in repo/gradle-settings-conventions/settings.gradle.kts
 gradle-toolchains-foojay-resolver = "0.4.0"
 kotlinx-serialization = "1.5.0"
-shadow = "7.1.2"
+shadow = "8.1.1" # Should be in sync with version in kotlin-native/
 spdx = "0.1.0-dev-10"
 proguard = "6.2.2"
 ktor = "2.0.2" # should be in sync with versions.properties
@@ -25,7 +25,7 @@ gradle-pluginPublish-gradlePlugin = { module = "com.gradle.publish:plugin-publis
 gradle-toolchainsFoojayResolver-gradlePlugin = { module = "org.gradle.toolchains:foojay-resolver", version.ref = "gradle-toolchains-foojay-resolver" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 kotlinx-metadataJvm = { module = "org.jetbrains.kotlinx:kotlinx-metadata-jvm", version.ref = "kotlinx-metadataJvm" }
-shadow-gradlePlugin = { module = "gradle.plugin.com.github.johnrengelman:shadow", version.ref = "shadow" }
+shadow-gradlePlugin = { module = "com.github.johnrengelman:shadow", version.ref = "shadow" }
 spdx-gradlePlugin = { module = "org.spdx:spdx-gradle-plugin", version.ref = "spdx" }
 proguard-gradlePlugin = { module = "net.sf.proguard:proguard-gradle", version.ref = "proguard" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
