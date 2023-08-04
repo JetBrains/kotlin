@@ -16,8 +16,10 @@
 namespace kotlin::gc {
 
 class GC::ObjectData {
+    static const std::size_t kNonQueueMark = 1;
+    static const std::size_t kVerificationMark = 2;
 public:
-    bool tryMark() noexcept { return trySetNext(reinterpret_cast<ObjectData*>(1)); }
+    bool tryMark() noexcept { return trySetNext(reinterpret_cast<ObjectData*>(kNonQueueMark)); }
 
     bool marked() const noexcept { return next() != nullptr; }
 
@@ -25,6 +27,15 @@ public:
         if (next() == nullptr) return false;
         next_.store(nullptr, std::memory_order_relaxed);
         return true;
+    }
+
+    bool verified() const noexcept {
+        return reinterpret_cast<std::size_t>(next()) == kVerificationMark;
+    }
+
+    void remarkVerified() noexcept {
+        // TODO assert marked()
+        setNext(reinterpret_cast<ObjectData*>(kVerificationMark));
     }
 
 private:
