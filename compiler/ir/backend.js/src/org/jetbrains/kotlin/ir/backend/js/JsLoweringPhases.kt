@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToLocalSuspendFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToNonLocalSuspendFunctionsLowering
-import org.jetbrains.kotlin.backend.common.lower.inline.FunctionInlining
-import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesExtractionFromInlineFunctionsLowering
-import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineFunctionsLowering
-import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
+import org.jetbrains.kotlin.backend.common.lower.inline.*
 import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.ir.backend.js.lower.*
@@ -300,7 +297,8 @@ private val functionInliningPhase = makeBodyLoweringPhase(
             allowExternalInlining = true,
             useTypeParameterUpperBound = true,
             alwaysCreateTemporaryVariablesForArguments = true,
-            inlineArgumentsWithTheirOriginalTypeAndOffset = true
+            inlineArgumentsWithTheirOriginalTypeAndOffset = true,
+            defaultNonReifiedTypeParameterRemappingMode = NonReifiedTypeParameterRemappingMode.ERASE
         )
     },
     name = "FunctionInliningPhase",
