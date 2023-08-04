@@ -132,7 +132,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         expression.configure {
-            +typeRefField
+            +field("coneTypeOrNull", coneKotlinTypeType, nullable = true, withReplace = true)
             +annotations
         }
 
@@ -146,7 +146,6 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         block.configure {
             +fieldList(statement).withTransform()
-            +typeRefField
             needTransformOtherChildren()
         }
 
@@ -250,6 +249,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         typeOperatorCall.configure {
             +field("operation", operationType)
             +field("conversionTypeRef", typeRef).withTransform()
+            +booleanField("argFromStubType", withReplace = true)
             needTransformOtherChildren()
         }
 
@@ -568,7 +568,6 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         smartCastExpression.configure {
-            +typeRefField
             +field("originalExpression", expression, withReplace = true).withTransform()
             +field("typesFromSmartCast", "Collection<ConeKotlinType>", null, customType = coneKotlinTypeType)
             +field("smartcastType", typeRef)
@@ -618,6 +617,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("symbol", classLikeSymbolType, nullable = true)
             +booleanField("isNullableLHSForCallableReference", withReplace = true)
             +booleanField("resolvedToCompanionObject", withReplace = true)
+            +booleanField("canBeValue", withReplace = true)
             +booleanField("isFullyQualified")
             +fieldList("nonFatalDiagnostics", coneDiagnosticType, useMutableOrEmpty = true)
             +typeArguments.withTransform()
@@ -695,6 +695,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("boundSymbol", firBasedSymbolType, "*", nullable = true, withReplace = true)
             +intField("contextReceiverNumber", withReplace = true)
             +booleanField("isImplicit")
+            +field("diagnostic", coneDiagnosticType, nullable = true, withReplace = true)
         }
 
         typeRef.configure {
@@ -704,7 +705,6 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         resolvedTypeRef.configure {
             +field("type", coneKotlinTypeType)
             +field("delegatedTypeRef", typeRef, nullable = true)
-            +booleanField("isFromStubType")
         }
 
         typeRefWithNullability.configure {
