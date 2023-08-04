@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.utils.*
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -30,13 +31,15 @@ private const val magicPropertyName = "__doNotUseOrImplementIt"
 
 class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespacesForPackages: Boolean) {
     private val transitiveExportCollector = TransitiveExportCollector(context)
+    private val requiredNamespace = hashSetOf(FqName("kotlin.collections"))
 
     fun generateExport(file: IrPackageFragment): List<ExportedDeclaration> {
         val namespaceFqName = file.packageFqName
         val exports = file.declarations.memoryOptimizedFlatMap { declaration -> listOfNotNull(exportDeclaration(declaration)) }
+
         return when {
             exports.isEmpty() -> emptyList()
-            !generateNamespacesForPackages || namespaceFqName.isRoot -> exports
+            (!generateNamespacesForPackages || namespaceFqName.isRoot) && namespaceFqName !in requiredNamespace -> exports
             else -> listOf(ExportedNamespace(namespaceFqName.toString(), exports))
         }
     }

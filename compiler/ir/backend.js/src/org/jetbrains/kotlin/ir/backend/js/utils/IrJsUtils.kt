@@ -44,6 +44,7 @@ fun IrClass.jsConstructorReference(context: JsIrBackendContext): IrExpression {
 
 fun IrDeclaration.isExportedMember(context: JsIrBackendContext) =
     (this is IrDeclarationWithVisibility && visibility.isPublicAPI) &&
+            !isJsExportIgnore() &&
             parentClassOrNull?.isExported(context) == true
 
 fun IrDeclaration?.isExportedClass(context: JsIrBackendContext) =
