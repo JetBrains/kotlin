@@ -623,7 +623,7 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
               }
               if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 A(%composer, 0)
                 if (condition) {
@@ -670,7 +670,7 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
               }
               if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 if (condition) {
                   A(%composer, 0)
@@ -1259,7 +1259,7 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
                 }
                 %composer.endDefaults()
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 val foo = remember({
                   Foo()
@@ -1306,7 +1306,7 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
                   }
                 }
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 used(a)
                 if (isTraceInProgress()) {
@@ -1380,7 +1380,7 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
                 }
                 %composer.endDefaults()
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 used(a)
                 used(b)
@@ -1654,7 +1654,7 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
               }
               if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 val value = %composer.cache(false) {
                   mutableStateOf(
@@ -1732,7 +1732,7 @@ class RememberIntrinsicTransformTests(useFir: Boolean) : AbstractIrTransformTest
               }
               if (%dirty and 0b0001 !== 0 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 val show = remember({
                   mutableStateOf(

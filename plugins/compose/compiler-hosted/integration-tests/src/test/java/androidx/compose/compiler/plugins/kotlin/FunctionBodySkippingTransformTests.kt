@@ -190,7 +190,7 @@ class FunctionBodySkippingTransformTests(
                   overflow = Companion.Clip
                 }
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 used(style)
                 used(onTextLayout)
@@ -239,7 +239,7 @@ class FunctionBodySkippingTransformTests(
                   arrangement = Arrangement.Top
                 }
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 used(arrangement)
                 if (isTraceInProgress()) {
@@ -690,7 +690,7 @@ class FunctionBodySkippingTransformTests(
                   modifier = Companion
                 }
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 used(modifier)
                 if (isTraceInProgress()) {
@@ -741,7 +741,7 @@ class FunctionBodySkippingTransformTests(
                 }
                 %composer.endDefaults()
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 print(a)
                 if (isTraceInProgress()) {
@@ -915,7 +915,7 @@ class FunctionBodySkippingTransformTests(
                 }
                 %composer.endDefaults()
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 used(modifier)
                 used(shape)
@@ -1187,7 +1187,7 @@ class FunctionBodySkippingTransformTests(
               }
               if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 print(values)
                 if (isTraceInProgress()) {
@@ -1233,7 +1233,7 @@ class FunctionBodySkippingTransformTests(
               }
               if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 print(values)
                 if (isTraceInProgress()) {
@@ -1392,7 +1392,7 @@ class FunctionBodySkippingTransformTests(
                 }
                 %composer.endDefaults()
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 used(a)
                 used(b)
@@ -1490,7 +1490,7 @@ class FunctionBodySkippingTransformTests(
                   }
                   if (%dirty and 0b01011011 !== 0b00010010 || !%composer.skipping) {
                     if (isTraceInProgress()) {
-                      traceEventStart(<>, %changed, -1, <>)
+                      traceEventStart(<>, %dirty, -1, <>)
                     }
                     used(it)
                     A(x, 0, %composer, 0b1110 and %dirty@Test, 0b0010)
@@ -1704,7 +1704,7 @@ class FunctionBodySkippingTransformTests(
                 }
                 %composer.endDefaults()
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 used(a)
                 used(b)
@@ -1789,7 +1789,7 @@ class FunctionBodySkippingTransformTests(
                 }
                 %composer.endDefaults()
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 print("Hello World")
                 if (isTraceInProgress()) {
@@ -1942,7 +1942,7 @@ class FunctionBodySkippingTransformTests(
                   color = Companion.Unset
                 }
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 used(text)
                 used(color)
@@ -2699,7 +2699,7 @@ class FunctionBodySkippingTransformTests(
                 }
                 if (%dirty and 0b01011011 !== 0b00010010 || !%composer.skipping) {
                   if (isTraceInProgress()) {
-                    traceEventStart(<>, %changed, -1, <>)
+                    traceEventStart(<>, %dirty, -1, <>)
                   }
                   used(${if (useFir) "x" else "<this>.x"})
                   if (isTraceInProgress()) {
@@ -2731,7 +2731,7 @@ class FunctionBodySkippingTransformTests(
                 }
                 if (%dirty and 0b01011011 !== 0b00010010 || !%composer.skipping) {
                   if (isTraceInProgress()) {
-                    traceEventStart(<>, %changed, -1, <>)
+                    traceEventStart(<>, %dirty, -1, <>)
                   }
                   used(${if (useFir) "x" else "<this>.x"})
                   if (isTraceInProgress()) {
@@ -3615,7 +3615,7 @@ class FunctionBodySkippingTransformTests(
               }
               if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 %composer.startReplaceableGroup(<>)
                 sourceInformation(%composer, "<A()>")
@@ -3688,7 +3688,7 @@ class FunctionBodySkippingTransformTests(
               }
               if (%dirty and 0b01010001 !== 0b00010000 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 used(b)
                 if (isTraceInProgress()) {
@@ -3711,7 +3711,7 @@ class FunctionBodySkippingTransformTests(
               }
               if (%dirty and 0b001010000001 !== 0b10000000 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 used(c)
                 if (isTraceInProgress()) {
@@ -3774,7 +3774,7 @@ class FunctionBodySkippingTransformTests(
               }
               if (%dirty and 0b01011011 !== 0b00010010 || !%composer.skipping) {
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 used(<this>)
                 used(x)
@@ -3801,7 +3801,7 @@ class FunctionBodySkippingTransformTests(
                 }
                 if (%dirty and 0b001011011011 !== 0b10010010 || !%composer.skipping) {
                   if (isTraceInProgress()) {
-                    traceEventStart(<>, %changed, -1, <>)
+                    traceEventStart(<>, %dirty, -1, <>)
                   }
                   used(<this>)
                   used(it)
@@ -3867,7 +3867,7 @@ class FunctionBodySkippingTransformTests(
                 }
                 %composer.endDefaults()
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 state.value
                 if (isTraceInProgress()) {

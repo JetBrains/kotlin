@@ -1059,7 +1059,7 @@ class ClassStabilityTransformTests(useFir: Boolean) : AbstractIrTransformTest(us
                   y = null
                 }
                 if (isTraceInProgress()) {
-                  traceEventStart(<>, %changed, -1, <>)
+                  traceEventStart(<>, %dirty, -1, <>)
                 }
                 used(y)
                 A(null, %composer, 0, 0b0001)

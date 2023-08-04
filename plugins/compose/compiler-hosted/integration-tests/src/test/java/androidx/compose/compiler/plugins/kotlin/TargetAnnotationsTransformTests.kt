@@ -535,7 +535,7 @@ class TargetAnnotationsTransformTests(useFir: Boolean) : AbstractIrTransformTest
           }
           if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
             if (isTraceInProgress()) {
-              traceEventStart(<>, %changed, -1, <>)
+              traceEventStart(<>, %dirty, -1, <>)
             }
             val tmp0_safe_receiver = content
             val tmp1_group = when {
