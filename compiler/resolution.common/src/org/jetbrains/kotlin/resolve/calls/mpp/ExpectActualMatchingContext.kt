@@ -189,4 +189,26 @@ interface ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemC
         val isRetentionSource: Boolean
         val isOptIn: Boolean
     }
+
+    val checkClassScopesForAnnotationCompatibility: Boolean
+
+    /**
+     * Determines whether it is needed to skip checking annotations on class member in [AbstractExpectActualAnnotationMatchChecker].
+     *
+     * This is needed to prevent checking member twice if it is real `actual` member (not fake override or member of
+     * class being typealiased).
+     * Example:
+     * ```
+     * actual class A {
+     *   actual fun foo() {} // 1: checked itself, 2: checked as member of A
+     * }
+     * ```
+     */
+    fun skipCheckingAnnotationsOfActualClassMember(actualMember: DeclarationSymbolMarker): Boolean
+
+    fun findPotentialExpectClassMembersForActual(
+        expectClass: RegularClassSymbolMarker,
+        actualClass: RegularClassSymbolMarker,
+        actualMember: DeclarationSymbolMarker,
+    ): Map<out DeclarationSymbolMarker, ExpectActualCompatibility<*>>
 }

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.mpp.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualAnnotationsIncompatibilityType as IncompatibilityType
 
 object AbstractExpectActualAnnotationMatchChecker {
@@ -33,7 +34,9 @@ object AbstractExpectActualAnnotationMatchChecker {
         expectSymbol: DeclarationSymbolMarker,
         actualSymbol: DeclarationSymbolMarker,
         context: ExpectActualMatchingContext<*>,
-    ): Incompatibility? = with(context) { areAnnotationsCompatible(expectSymbol, actualSymbol) }
+    ): Incompatibility? = with(context) {
+        areAnnotationsCompatible(expectSymbol, actualSymbol)
+    }
 
     context (ExpectActualMatchingContext<*>)
     private fun areAnnotationsCompatible(
@@ -70,9 +73,13 @@ object AbstractExpectActualAnnotationMatchChecker {
             val expanded = actualSymbol.expandToRegularClass() ?: return null
             return areClassAnnotationsCompatible(expectSymbol, expanded)
         }
+        check(actualSymbol is RegularClassSymbolMarker)
+
         commonForClassAndCallableChecks(expectSymbol, actualSymbol)?.let { return it }
-        // TODO(Roman.Efremov, KT-58551): fix actual typealias class members not checked in FE checkers
-        // TODO(Roman.Efremov, KT-58551): check annotations on fake overrides in case of implicit actualization
+
+        if (checkClassScopesForAnnotationCompatibility) {
+            checkAnnotationsInClassMemberScope(expectSymbol, actualSymbol)?.let { return it }
+        }
 
         return null
     }
@@ -136,5 +143,24 @@ object AbstractExpectActualAnnotationMatchChecker {
         } else {
             ExpectActualCollectionArgumentsCompatibilityCheckStrategy.Default
         }
+    }
+
+    context (ExpectActualMatchingContext<*>)
+    private fun checkAnnotationsInClassMemberScope(
+        expectClass: RegularClassSymbolMarker,
+        actualClass: RegularClassSymbolMarker,
+    ): Incompatibility? {
+        for (actualMember in actualClass.collectAllMembers(isActualDeclaration = true)) {
+            if (skipCheckingAnnotationsOfActualClassMember(actualMember)) {
+                continue
+            }
+            val expectToCompatibilityMap = findPotentialExpectClassMembersForActual(expectClass, actualClass, actualMember)
+            val expectMember = expectToCompatibilityMap.filter { it.value == ExpectActualCompatibility.Compatible }.keys.singleOrNull()
+            // Check also incompatible members if only one is found
+                ?: expectToCompatibilityMap.keys.singleOrNull()
+                ?: continue
+            areAnnotationsCompatible(expectMember, actualMember)?.let { return it }
+        }
+        return null
     }
 }

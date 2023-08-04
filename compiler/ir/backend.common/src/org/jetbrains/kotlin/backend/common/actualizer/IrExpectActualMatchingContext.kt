@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualCollectionArgumentsCom
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext.AnnotationCallInfo
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.Variance
@@ -506,4 +507,15 @@ internal abstract class IrExpectActualMatchingContext(
             val ir = asIr()
             return ir.sourceElement() == null && ir.origin !is IrDeclarationOrigin.GeneratedByPlugin
         }
+
+    // IR checker traverses member scope itself and collects mappings
+    override val checkClassScopesForAnnotationCompatibility = false
+
+    override fun skipCheckingAnnotationsOfActualClassMember(actualMember: DeclarationSymbolMarker): Boolean = error("Should not be called")
+
+    override fun findPotentialExpectClassMembersForActual(
+        expectClass: RegularClassSymbolMarker,
+        actualClass: RegularClassSymbolMarker,
+        actualMember: DeclarationSymbolMarker,
+    ): Map<out DeclarationSymbolMarker, ExpectActualCompatibility<*>> = error("Should not be called")
 }

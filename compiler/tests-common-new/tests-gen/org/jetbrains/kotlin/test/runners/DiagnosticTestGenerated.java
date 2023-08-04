@@ -23498,6 +23498,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("classScopeInnerClasses.kt")
+                public void testClassScopeInnerClasses() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/classScopeInnerClasses.kt");
+                }
+
+                @Test
+                @TestMetadata("classScopeViaTypealiasIncompatible.kt")
+                public void testClassScopeViaTypealiasIncompatible() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/classScopeViaTypealiasIncompatible.kt");
+                }
+
+                @Test
                 @TestMetadata("compatibleOverrides.kt")
                 public void testCompatibleOverrides() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/compatibleOverrides.kt");
@@ -23561,6 +23573,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 @TestMetadata("sourceRetentionAnnotationsWhenTypealias.kt")
                 public void testSourceRetentionAnnotationsWhenTypealias() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/sourceRetentionAnnotationsWhenTypealias.kt");
+                }
+
+                @Test
+                @TestMetadata("substitutionOverrideInTwoClasses.kt")
+                public void testSubstitutionOverrideInTwoClasses() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/substitutionOverrideInTwoClasses.kt");
+                }
+
+                @Test
+                @TestMetadata("twoActualTypealiasesToSameClass.kt")
+                public void testTwoActualTypealiasesToSameClass() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/twoActualTypealiasesToSameClass.kt");
                 }
 
                 @Test

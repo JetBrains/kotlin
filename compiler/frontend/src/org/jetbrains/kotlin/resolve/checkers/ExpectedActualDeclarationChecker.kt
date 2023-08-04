@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.resolve.source.PsiSourceFile
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 import java.io.File
 
 private val implicitlyActualizedAnnotationFqn = FqName("kotlin.jvm.ImplicitlyActualizedByJvmDeclaration")

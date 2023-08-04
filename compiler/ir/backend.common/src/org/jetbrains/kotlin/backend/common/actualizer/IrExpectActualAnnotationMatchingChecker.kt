@@ -40,7 +40,7 @@ internal class IrExpectActualAnnotationMatchingChecker(
             if (expectSymbol is IrTypeParameterSymbol) {
                 continue
             }
-            if (expectSymbol.isFakeOverride || actualSymbol.isFakeOverride) {
+            if (expectSymbol.isFakeOverride) {
                 continue
             }
             val incompatibility =
