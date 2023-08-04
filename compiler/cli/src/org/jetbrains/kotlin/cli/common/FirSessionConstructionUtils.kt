@@ -8,11 +8,14 @@ package org.jetbrains.kotlin.cli.common
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.DependencyListForCliModule
+import org.jetbrains.kotlin.fir.FirModuleData
+import org.jetbrains.kotlin.fir.FirModuleDataImpl
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.OptInLanguageVersionSettingsCheckers
 import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirExtensionSyntheticFunctionInterfaceProvider
 import org.jetbrains.kotlin.fir.session.*
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
@@ -24,7 +27,6 @@ import org.jetbrains.kotlin.load.kotlin.PackageAndMetadataPartProvider
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.platform.WasmPlatform
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
@@ -359,7 +361,10 @@ private inline fun <F> createSingleSession(
         analyzerServices
     )
 
-    val session = createFirSession(files, platformModuleData, sessionProvider, sessionConfigurator)
+    val session = createFirSession(files, platformModuleData, sessionProvider) {
+        sessionConfigurator()
+        useCheckers(OptInLanguageVersionSettingsCheckers)
+    }
     return SessionWithSources(session, files)
 }
 
@@ -399,7 +404,12 @@ private inline fun <F> createSessionsForLegacyMppProject(
     }
 
     val commonSession = createFirSession(commonFiles, commonModuleData, sessionProvider, sessionConfigurator)
-    val platformSession = createFirSession(platformFiles, platformModuleData, sessionProvider, sessionConfigurator)
+    val platformSession = createFirSession(platformFiles, platformModuleData, sessionProvider) {
+        sessionConfigurator()
+        // The CLI session might contain an opt-in for an annotation that's defined in the platform module.
+        // Therefore, only run the opt-in LV checker on the platform module.
+        useCheckers(OptInLanguageVersionSettingsCheckers)
+    }
 
     return listOf(
         SessionWithSources(commonSession, commonFiles),
@@ -436,10 +446,17 @@ private inline fun <F> createSessionsForHmppProject(
         moduleDataForHmppModule[module] = moduleData
     }
 
-    return hmppModuleStructure.modules.map { module ->
+    return hmppModuleStructure.modules.mapIndexed { i, module ->
         val moduleData = moduleDataForHmppModule.getValue(module)
         val sources = files.filter { fileBelongsToModule(it, module.name) }
-        val session = createFirSession(sources, moduleData, sessionProvider, sessionConfigurator)
+        val session = createFirSession(sources, moduleData, sessionProvider) {
+            sessionConfigurator()
+            // The CLI session might contain an opt-in for an annotation that's defined in one of the modules.
+            // The only module that's guaranteed to have a dependency on this module is the last one.
+            if (i == hmppModuleStructure.modules.lastIndex) {
+                useCheckers(OptInLanguageVersionSettingsCheckers)
+            }
+        }
         SessionWithSources(session, sources)
     }
 }

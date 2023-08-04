@@ -137,4 +137,22 @@ class CustomK2Tests : KGPBaseTest() {
             }
         }
     }
+
+    @GradleTest
+    @DisplayName("All source sets have opt-in for annotation defined in platform source set. KT-60755")
+    fun kt60755OptInDefinedInPlatform(gradleVersion: GradleVersion) {
+        with(
+            project(
+                "k2-mpp-opt-in-in-platform",
+                gradleVersion,
+                buildOptions = defaultBuildOptions.copy(languageVersion = "2.0"),
+            )
+        ) {
+            val taskToExecute = ":compileKotlinJvm"
+            build(taskToExecute) {
+                assertTasksExecuted(taskToExecute)
+                assertOutputDoesNotContain("Opt-in requirement marker foo.bar.MyOptIn is unresolved")
+            }
+        }
+    }
 }
