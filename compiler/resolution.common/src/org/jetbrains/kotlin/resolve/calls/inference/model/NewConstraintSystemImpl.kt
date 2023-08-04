@@ -42,9 +42,34 @@ class NewConstraintSystemImpl(
     private val properTypesCache: MutableSet<KotlinTypeMarker> = SmartSet.create()
     private val notProperTypesCache: MutableSet<KotlinTypeMarker> = SmartSet.create()
     private val intersectionTypesCache: MutableMap<Collection<KotlinTypeMarker>, EmptyIntersectionTypeInfo?> = mutableMapOf()
+    override var typeVariablesThatAreNotCountedAsProperTypes: Set<TypeConstructorMarker>? = null
+
     private var couldBeResolvedWithUnrestrictedBuilderInference: Boolean = false
 
     override var atCompletionState: Boolean = false
+
+    /**
+     * @see [org.jetbrains.kotlin.resolve.calls.inference.components.VariableFixationFinder.Context.typeVariablesThatAreNotCountedAsProperTypes]
+     * @see [org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclarationsResolveTransformer.fixInnerVariablesForProvideDelegateIfNeeded]
+     */
+    fun withTypeVariablesThatAreNotCountedAsProperTypes(typeVariables: Set<TypeConstructorMarker>, block: () -> Unit) {
+        checkState(State.BUILDING)
+        // Cleaning cache is necessary because temporarily we change the meaning of what does "proper type" mean
+        properTypesCache.clear()
+        notProperTypesCache.clear()
+
+        require(typeVariablesThatAreNotCountedAsProperTypes == null) {
+            "Currently there should be no nested withDisallowingOnlyThisTypeVariablesForProperTypes calls"
+        }
+
+        typeVariablesThatAreNotCountedAsProperTypes = typeVariables
+
+        block()
+
+        typeVariablesThatAreNotCountedAsProperTypes = null
+        properTypesCache.clear()
+        notProperTypesCache.clear()
+    }
 
     private enum class State {
         BUILDING,
@@ -276,6 +301,21 @@ class NewConstraintSystemImpl(
             )
         }
 
+    fun addOuterSystem(outerSystem: ConstraintStorage) {
+        addOtherSystem(outerSystem)
+        storage.outerSystemVariablesPrefixSize = outerSystem.allTypeVariables.size
+    }
+
+    fun setBaseSystem(outerSystem: ConstraintStorage) {
+        addOtherSystem(outerSystem)
+        storage.outerSystemVariablesPrefixSize = outerSystem.outerSystemVariablesPrefixSize
+    }
+
+    fun prepareForGlobalCompletion() {
+        // There's no more separation of outer/inner variables once global completion starts
+        storage.outerSystemVariablesPrefixSize = 0
+    }
+
     override fun addOtherSystem(otherSystem: ConstraintStorage) {
         if (otherSystem.allTypeVariables.isNotEmpty()) {
             otherSystem.allTypeVariables.forEach {
@@ -317,6 +357,9 @@ class NewConstraintSystemImpl(
                 it
 
             if (typeToCheck == null) return@contains false
+            if (typeVariablesThatAreNotCountedAsProperTypes != null) {
+                return@contains typeVariablesThatAreNotCountedAsProperTypes!!.contains(typeToCheck.typeConstructor())
+            }
 
             storage.allTypeVariables.containsKey(typeToCheck.typeConstructor())
         }
@@ -368,6 +411,9 @@ class NewConstraintSystemImpl(
             checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
             return storage.postponedTypeVariables
         }
+
+    override val outerSystemVariablesPrefixSize: Int
+        get() = storage.outerSystemVariablesPrefixSize
 
     override val constraintsFromAllForkPoints: MutableList<Pair<IncorporationConstraintPosition, ForkPointData>>
         get() {

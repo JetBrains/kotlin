@@ -9551,6 +9551,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             }
 
             @Test
+            @TestMetadata("withInvokes.kt")
+            public void testWithInvokes() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/delegatedProperty/withInvokes.kt");
+            }
+
+            @Test
             @TestMetadata("wrongCountOfParametersInGet.kt")
             public void testWrongCountOfParametersInGet() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/delegatedProperty/wrongCountOfParametersInGet.kt");
@@ -9575,6 +9581,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 @Test
                 public void testAllFilesPresentInInference() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/delegatedProperty/inference"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+                }
+
+                @Test
+                @TestMetadata("annotatedAccessor.kt")
+                public void testAnnotatedAccessor() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/annotatedAccessor.kt");
                 }
 
                 @Test
@@ -9626,6 +9638,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 }
 
                 @Test
+                @TestMetadata("fullyCompleteDelegateWhenPossible.kt")
+                public void testFullyCompleteDelegateWhenPossible() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/fullyCompleteDelegateWhenPossible.kt");
+                }
+
+                @Test
                 @TestMetadata("genericMethodInGenericClass.kt")
                 public void testGenericMethodInGenericClass() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/genericMethodInGenericClass.kt");
@@ -9653,6 +9671,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 @TestMetadata("labeledDelegatedExpression.kt")
                 public void testLabeledDelegatedExpression() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/labeledDelegatedExpression.kt");
+                }
+
+                @Test
+                @TestMetadata("lambdaWithMultipleReturns.kt")
+                public void testLambdaWithMultipleReturns() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/lambdaWithMultipleReturns.kt");
                 }
 
                 @Test
@@ -9692,9 +9716,33 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 }
 
                 @Test
+                @TestMetadata("nothingTypeThisRef.kt")
+                public void testNothingTypeThisRef() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/nothingTypeThisRef.kt");
+                }
+
+                @Test
+                @TestMetadata("provideDelegateFixationResultContainsOtherInnerVariable.kt")
+                public void testProvideDelegateFixationResultContainsOtherInnerVariable() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/provideDelegateFixationResultContainsOtherInnerVariable.kt");
+                }
+
+                @Test
+                @TestMetadata("provideDelegateReturningOuterTypeVariable.kt")
+                public void testProvideDelegateReturningOuterTypeVariable() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/provideDelegateReturningOuterTypeVariable.kt");
+                }
+
+                @Test
                 @TestMetadata("resultTypeOfLambdaForConventionMethods.kt")
                 public void testResultTypeOfLambdaForConventionMethods() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/resultTypeOfLambdaForConventionMethods.kt");
+                }
+
+                @Test
+                @TestMetadata("successfulProvideDelegateLeadsToRedGetValue.kt")
+                public void testSuccessfulProvideDelegateLeadsToRedGetValue() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/successfulProvideDelegateLeadsToRedGetValue.kt");
                 }
 
                 @Test
@@ -9707,6 +9755,18 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 @TestMetadata("typeOfLazyDelegatedPropertyWithObject.kt")
                 public void testTypeOfLazyDelegatedPropertyWithObject() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/typeOfLazyDelegatedPropertyWithObject.kt");
+                }
+
+                @Test
+                @TestMetadata("typeVariablesFlow.kt")
+                public void testTypeVariablesFlow() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/typeVariablesFlow.kt");
+                }
+
+                @Test
+                @TestMetadata("typeVariablesFlowComplex.kt")
+                public void testTypeVariablesFlowComplex() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/typeVariablesFlowComplex.kt");
                 }
 
                 @Test
@@ -9831,6 +9891,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 @TestMetadata("provideDelegateResolutionWithStubTypes.kt")
                 public void testProvideDelegateResolutionWithStubTypes() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/delegatedProperty/provideDelegate/provideDelegateResolutionWithStubTypes.kt");
+                }
+
+                @Test
+                @TestMetadata("provideDelegateResolutionWithStubTypesAndExtensionGetValue.kt")
+                public void testProvideDelegateResolutionWithStubTypesAndExtensionGetValue() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/delegatedProperty/provideDelegate/provideDelegateResolutionWithStubTypesAndExtensionGetValue.kt");
                 }
 
                 @Test

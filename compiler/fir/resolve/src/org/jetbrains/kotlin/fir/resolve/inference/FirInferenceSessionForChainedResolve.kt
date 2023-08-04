@@ -8,13 +8,13 @@ package org.jetbrains.kotlin.fir.resolve.inference
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
+import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.calls.candidate
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeBuilderInferenceSubstitutionConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionContext
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.InitialConstraint
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
@@ -23,12 +23,6 @@ import org.jetbrains.kotlin.types.model.*
 abstract class FirInferenceSessionForChainedResolve(
     protected val resolutionContext: ResolutionContext
 ) : FirInferenceSession() {
-    override fun fixSyntheticTypeVariableWithNotEnoughInformation(
-        typeVariable: TypeVariableMarker,
-        completionContext: ConstraintSystemCompletionContext
-    ) {
-    }
-
     protected val partiallyResolvedCalls: MutableList<Pair<FirResolvable, Candidate>> = mutableListOf()
     private val completedCalls: MutableSet<FirResolvable> = mutableSetOf()
 
@@ -39,7 +33,7 @@ abstract class FirInferenceSessionForChainedResolve(
         // do nothing
     }
 
-    override fun <T> addPartiallyResolvedCall(call: T) where T : FirResolvable, T : FirStatement {
+    override fun <T> processPartiallyResolvedCall(call: T, resolutionMode: ResolutionMode) where T : FirResolvable, T : FirStatement {
         partiallyResolvedCalls += call to call.candidate
     }
 

@@ -12455,6 +12455,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/delegatedProperty/genericDelegateUncheckedCast2.kt");
         }
 
+        @TestMetadata("withInvoke.kt")
+        public void ignoreWithInvoke() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/withInvoke.kt");
+        }
+
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
         }
