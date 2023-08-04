@@ -39,6 +39,7 @@ extern "C" const int32_t Kotlin_disableMmap;
 extern "C" const char* const Kotlin_runtimeLogs;
 extern "C" const int32_t Kotlin_concurrentWeakSweep;
 extern "C" const int32_t Kotlin_gcMarkSingleThreaded;
+extern "C" const int32_t Kotlin_gcCheckMarkCorrectness;
 extern "C" const int32_t Kotlin_freezingEnabled;
 extern "C" const int32_t Kotlin_freezingChecksEnabled;
 
@@ -106,6 +107,10 @@ ALWAYS_INLINE inline bool concurrentWeakSweep() noexcept {
 
 ALWAYS_INLINE inline bool gcMarkSingleThreaded() noexcept {
     return Kotlin_gcMarkSingleThreaded != 0;
+}
+
+ALWAYS_INLINE inline bool gcCheckMarkCorrectness() noexcept {
+    return Kotlin_gcCheckMarkCorrectness != 0;
 }
 
 

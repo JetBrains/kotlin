@@ -81,6 +81,7 @@ extern const int32_t Kotlin_gcMarkSingleThreaded = 1;
 #else
 extern const int32_t Kotlin_gcMarkSingleThreaded = 0;
 #endif
+extern const int32_t Kotlin_gcCheckMarkCorrectness = 1;
 extern const int32_t Kotlin_freezingChecksEnabled = 1;
 extern const int32_t Kotlin_freezingEnabled = 1;
 

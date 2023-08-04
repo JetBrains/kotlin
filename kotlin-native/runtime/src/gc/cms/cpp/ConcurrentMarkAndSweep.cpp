@@ -19,6 +19,7 @@
 #include "ThreadSuspension.hpp"
 #include "GCState.hpp"
 #include "GCStatistics.hpp"
+#include "VerificationMark.hpp"
 
 using namespace kotlin;
 
@@ -34,25 +35,6 @@ ScopedThread createGCThread(const char* name, Body&& body) {
         RuntimeLogDebug({kTagGC}, "%s %d finishes execution", name, konan::currentThreadId());
     });
 }
-
-#ifndef CUSTOM_ALLOCATOR
-// TODO move to common
-[[maybe_unused]] inline void checkMarkCorrectness(gc::ObjectFactory::Iterable& heap) {
-    if (compiler::runtimeAssertsMode() == compiler::RuntimeAssertsMode::kIgnore) return;
-    for (auto objRef: heap) {
-        auto obj = objRef.GetObjHeader();
-        auto& objData = objRef.ObjectData();
-        if (objData.marked()) {
-            traverseReferredObjects(obj, [obj](ObjHeader* field) {
-                if (field->heap()) {
-                    auto& fieldObjData = gc::ObjectFactory::NodeRef::From(field).ObjectData();
-                    RuntimeAssert(fieldObjData.marked(), "Field %p of an alive obj %p must be alive", field, obj);
-                }
-            });
-        }
-    }
-}
-#endif
 
 } // namespace
 
@@ -210,6 +192,8 @@ void gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
         DisableWeakRefBarriers();
     }
 
+    checkAllAliveObjectsMarked();
+
     // TODO outline as mark_.isolateMarkedHeapAndFinishMark()
     // By this point all the alive heap must be marked.
     // All the mutations (incl. allocations) after this method will be subject for the next GC.
@@ -229,8 +213,6 @@ void gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
     // would not publish into the global state at an unexpected time.
     std::optional objectFactoryIterable = objectFactory_.LockForIter();
     std::optional extraObjectFactoryIterable = extraObjectDataFactory_.LockForIter();
-
-    checkMarkCorrectness(*objectFactoryIterable);
 #endif
 
     mm::ResumeThreads();

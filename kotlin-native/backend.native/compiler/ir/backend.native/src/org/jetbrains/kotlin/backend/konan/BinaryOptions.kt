@@ -45,6 +45,8 @@ object BinaryOptions : BinaryOptionRegistry() {
 
     val auxGCThreads by uintOption()
 
+    val gcCheckMarkCorrectness by booleanOption()
+
     val linkRuntime by option<RuntimeLinkageStrategyBinaryOption>()
 
     val bundleId by stringOption()
