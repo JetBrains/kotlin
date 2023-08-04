@@ -29,6 +29,10 @@ function box(): string {
     testImmutableSet()
     testImmutableMap()
 
+    testMutableList()
+    testMutableSet()
+    testMutableMap()
+
     return "OK"
 }
 
