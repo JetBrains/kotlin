@@ -312,7 +312,7 @@ class FunctionInlining(
 
             private fun inlinePropertyReference(expression: IrCall, propertyReference: IrPropertyReference): IrExpression {
                 val getterCall = IrCallImpl.fromSymbolOwner(
-                    expression.startOffset, expression.endOffset, expression.type, propertyReference.getter!!,
+                    expression.startOffset, expression.endOffset, propertyReference.getter!!.owner.returnType, propertyReference.getter!!,
                     origin = INLINED_FUNCTION_REFERENCE
                 )
 
