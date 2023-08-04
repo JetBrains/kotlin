@@ -45,7 +45,7 @@ class FirArrayOfCallTransformer : FirDefaultTransformer<FirSession>() {
                     }
                 }
             }
-            typeRef = functionCall.typeRef
+            type = functionCall.type
         }
 
         val calleeReference = functionCall.calleeReference

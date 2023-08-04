@@ -31,7 +31,10 @@ import org.jetbrains.kotlin.fir.scopes.getFunctions
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.ConstantValueKind
@@ -904,7 +907,7 @@ abstract class FirDataFlowAnalyzer(
     }
 
     fun exitConstExpression(constExpression: FirConstExpression<*>) {
-        if (constExpression.resultType is FirResolvedTypeRef) return
+        if (constExpression.type != null) return
         graphBuilder.exitConstExpression(constExpression).mergeIncomingFlow()
     }
 
@@ -1127,7 +1130,7 @@ abstract class FirDataFlowAnalyzer(
             val elvisVariable by lazy { variableStorage.createSynthetic(elvisExpression) }
 
             // If (x ?: null) != null then x != null
-            if (elvisExpression.rhs.resultType.isNullableNothing) {
+            if (elvisExpression.rhs.resultType?.isNullableNothing == true) {
                 val lhsVariable = variableStorage.getOrCreateIfReal(flow, elvisExpression.lhs)
                 if (lhsVariable != null) {
                     flow.addImplication((elvisVariable notEq null) implies (lhsVariable notEq null))
@@ -1135,7 +1138,7 @@ abstract class FirDataFlowAnalyzer(
             }
 
             // If (null ?: x) != null then x != null
-            if (elvisExpression.lhs.resultType.isNullableNothing) {
+            if (elvisExpression.lhs.resultType?.isNullableNothing == true) {
                 val rhsVariable = variableStorage.getOrCreateIfReal(flow, elvisExpression.rhs)
                 if (rhsVariable != null) {
                     flow.addImplication((elvisVariable notEq null) implies (rhsVariable notEq null))

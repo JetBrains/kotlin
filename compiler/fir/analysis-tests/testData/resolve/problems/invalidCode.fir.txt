@@ -6,7 +6,7 @@ FILE: a.kt
 
     public abstract interface I : R|kotlin/Any| {
         public open fun <T> f(): <ERROR TYPE REF: Qualified expression with unexpected selector> {
-            ^f <ERROR TYPE REF: Qualified expression with unexpected selector>ERROR_EXPR(The expression cannot be a selector (occur after a dot))String()
+            ^f ERROR_EXPR(The expression cannot be a selector (occur after a dot))String()
         }
 
         public final class C : R|b/I| {

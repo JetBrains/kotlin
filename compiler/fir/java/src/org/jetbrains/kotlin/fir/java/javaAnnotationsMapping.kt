@@ -90,9 +90,7 @@ internal fun JavaAnnotationArgument.toFirExpression(
         )
         is JavaArrayAnnotationArgument -> buildArrayLiteral {
             val argumentTypeRef = expectedTypeRef?.let {
-                typeRef = if (it is FirJavaTypeRef) buildResolvedTypeRef {
-                    type = it.toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack)
-                } else it
+                type = if (it is FirJavaTypeRef) it.toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack) else it.coneType
                 buildResolvedTypeRef {
                     type = it.coneTypeSafe<ConeKotlinType>()?.lowerBoundIfFlexible()?.arrayElementType()
                         ?: ConeErrorType(ConeSimpleDiagnostic("expected type is not array type"))
@@ -111,10 +109,10 @@ internal fun JavaAnnotationArgument.toFirExpression(
             argumentList = buildUnaryArgumentList(
                 buildClassReferenceExpression {
                     classTypeRef = resolvedClassTypeRef
-                    typeRef = resolvedTypeRef
+                    type = resolvedTypeRef.coneType
                 }
             )
-            typeRef = resolvedTypeRef
+            type = resolvedTypeRef.coneType
         }
         is JavaAnnotationAsAnnotationArgument -> getAnnotation().toFirAnnotationCall(session)
         else -> buildErrorExpression {
@@ -168,13 +166,11 @@ private fun buildEnumCall(session: FirSession, classId: ClassId?, entryName: Nam
                 }
 
         if (classId != null) {
-            this.typeRef = buildResolvedTypeRef {
-                type = ConeClassLikeTypeImpl(
-                    classId.toLookupTag(),
-                    emptyArray(),
-                    isNullable = false
-                )
-            }
+            this.type = ConeClassLikeTypeImpl(
+                classId.toLookupTag(),
+                emptyArray(),
+                isNullable = false
+            )
         }
     }
 }
@@ -194,9 +190,7 @@ private fun List<JavaAnnotationArgument>.mapJavaTargetArguments(session: FirSess
             isNullable = false,
             ConeAttributes.Empty
         )
-        typeRef = buildResolvedTypeRef {
-            type = elementConeType
-        }
+        type = elementConeType
         varargElementType = buildResolvedTypeRef {
             type = elementConeType.createOutArrayType()
         }

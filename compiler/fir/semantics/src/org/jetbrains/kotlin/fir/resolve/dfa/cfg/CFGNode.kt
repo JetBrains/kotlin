@@ -16,13 +16,13 @@ import org.jetbrains.kotlin.fir.resolve.dfa.FlowPath
 import org.jetbrains.kotlin.fir.resolve.dfa.PersistentFlow
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.UnexpandedTypeCheck
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitNothingTypeRef
+import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.fir.types.isNothing
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.SmartList
 
 @RequiresOptIn
@@ -874,16 +874,14 @@ class WhenSubjectExpressionExitNode(owner: ControlFlowGraph, override val fir: F
 
 object FirStub : FirExpression() {
     override val source: KtSourceElement? get() = null
-    override val typeRef: FirTypeRef = FirImplicitNothingTypeRef(null)
+    override val type: ConeKotlinType = StandardClassIds.Nothing.constructClassLikeType()
     override val annotations: List<FirAnnotation> get() = listOf()
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirExpression = this
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement = this
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) { assert(newAnnotations.isEmpty()) }
-
-    @OptIn(UnexpandedTypeCheck::class)
-    override fun replaceTypeRef(newTypeRef: FirTypeRef) { assert(newTypeRef.isNothing) }
+    override fun replaceType(newType: ConeKotlinType?) { assert(newType?.isNothing == true) }
 }
 
 class FakeExpressionEnterNode(owner: ControlFlowGraph, level: Int) : CFGNode<FirStub>(owner, level), GraphEnterNodeMarker, GraphExitNodeMarker {

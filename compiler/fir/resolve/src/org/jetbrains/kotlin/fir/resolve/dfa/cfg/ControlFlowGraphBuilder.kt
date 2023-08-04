@@ -1074,9 +1074,8 @@ class ControlFlowGraphBuilder {
     //  it would be much easier if we could build calls after full completion only, at least for Nothing calls
     //  KT-59726
     // @returns `true` if node actually returned Nothing
-    @OptIn(UnexpandedTypeCheck::class)
     private fun completeFunctionCall(node: FunctionCallNode): Boolean {
-        if (!node.fir.resultType.isNothing) return false
+        if (node.fir.resultType?.isNothing != true) return false
         val stub = StubNode(node.owner, node.level)
         val edges = node.followingNodes.map { it to node.edgeTo(it) }
         CFGNode.removeAllOutgoingEdges(node)
@@ -1092,9 +1091,8 @@ class ControlFlowGraphBuilder {
 
     // ----------------------------------- Resolvable call -----------------------------------
 
-    @OptIn(UnexpandedTypeCheck::class)
     fun exitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression): QualifiedAccessNode {
-        val returnsNothing = qualifiedAccessExpression.resultType.isNothing
+        val returnsNothing = qualifiedAccessExpression.resultType?.isNothing == true
         val node = createQualifiedAccessNode(qualifiedAccessExpression)
         if (returnsNothing) {
             addNonSuccessfullyTerminatingNode(node)
@@ -1104,9 +1102,8 @@ class ControlFlowGraphBuilder {
         return node
     }
 
-    @OptIn(UnexpandedTypeCheck::class)
     fun exitSmartCastExpression(smartCastExpression: FirSmartCastExpression): SmartCastExpressionExitNode {
-        val returnsNothing = smartCastExpression.resultType.isNothing
+        val returnsNothing = smartCastExpression.resultType?.isNothing == true
         val node = createSmartCastExitNode(smartCastExpression)
         if (returnsNothing) {
             addNonSuccessfullyTerminatingNode(node)
@@ -1138,9 +1135,8 @@ class ControlFlowGraphBuilder {
         return argumentListSplitNodes.pop()?.also { addNewSimpleNode(it) }
     }
 
-    @OptIn(UnexpandedTypeCheck::class)
     fun exitFunctionCall(functionCall: FirFunctionCall, callCompleted: Boolean): FunctionCallNode {
-        val returnsNothing = functionCall.resultType.isNothing
+        val returnsNothing = functionCall.resultType?.isNothing == true
         val node = createFunctionCallNode(functionCall)
         unifyDataFlowFromPostponedLambdas(node, callCompleted)
         if (returnsNothing) {
@@ -1184,11 +1180,10 @@ class ControlFlowGraphBuilder {
         return createThrowExceptionNode(throwExpression).also { addNonSuccessfullyTerminatingNode(it) }
     }
 
-    @OptIn(UnexpandedTypeCheck::class)
     fun exitCheckNotNullCall(checkNotNullCall: FirCheckNotNullCall, callCompleted: Boolean): CheckNotNullCallNode {
         val node = createCheckNotNullCallNode(checkNotNullCall)
         unifyDataFlowFromPostponedLambdas(node, callCompleted)
-        if (checkNotNullCall.resultType.isNothing) {
+        if (checkNotNullCall.resultType?.isNothing == true) {
             addNonSuccessfullyTerminatingNode(node)
         } else {
             addNewSimpleNode(node)

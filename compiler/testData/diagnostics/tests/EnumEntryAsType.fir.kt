@@ -17,7 +17,7 @@ class MyColor(val x: Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>, y: Color.<!ENUM_ENTRY_A
         class Local : Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>
         fun local(arg: Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>): Color.<!ENUM_ENTRY_AS_TYPE!>RED<!> = arg
         val temp: Color.<!ENUM_ENTRY_AS_TYPE!>RED<!> = Color.RED
-        temp as? Color.<!ENUM_ENTRY_AS_TYPE, ENUM_ENTRY_AS_TYPE!>RED<!>
+        temp as? Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>
         if (temp is <!IS_ENUM_ENTRY!>Color.RED<!>) {
         return temp as Color.<!ENUM_ENTRY_AS_TYPE!>RED<!>
     }

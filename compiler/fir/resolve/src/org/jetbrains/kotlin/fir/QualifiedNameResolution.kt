@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.config.ApiVersion
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.declarations.getDeprecationForCallSite
@@ -18,8 +20,7 @@ import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.getSingleVisibleClassifier
 import org.jetbrains.kotlin.fir.resolve.createCurrentScopeList
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDeprecated
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
-import org.jetbrains.kotlin.fir.resolve.typeForQualifier
+import org.jetbrains.kotlin.fir.resolve.setTypeOfQualifier
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.name.ClassId
@@ -41,7 +42,7 @@ fun BodyResolveComponents.resolveRootPartOfQualifier(
             packageFqName = FqName.ROOT
             this.nonFatalDiagnostics.addAll(nonFatalDiagnosticsFromExpression.orEmpty())
         }.apply {
-            resultType = typeForQualifier(this)
+            setTypeOfQualifier(session)
         }
     }
 
@@ -76,7 +77,7 @@ fun BodyResolveComponents.resolveRootPartOfQualifier(
                     )
                 )
             }.apply {
-                resultType = typeForQualifier(this)
+                setTypeOfQualifier(session)
             }
         }
     }
@@ -127,7 +128,7 @@ fun FirResolvedQualifier.continueQualifier(
                         )
                     )
                 }.apply {
-                    resultType = components.typeForQualifier(this)
+                    setTypeOfQualifier(components.session)
                 }
             }
     }
@@ -156,7 +157,7 @@ private fun FqName.continueQualifierInPackage(
             this.typeArguments.addAll(typeArguments)
             this.nonFatalDiagnostics.addAll(nonFatalDiagnosticsFromExpression.orEmpty())
         }.apply {
-            resultType = components.typeForQualifier(this)
+            setTypeOfQualifier(components.session)
         }
     }
 
@@ -180,7 +181,7 @@ private fun FqName.continueQualifierInPackage(
         )
         isFullyQualified = true
     }.apply {
-        resultType = components.typeForQualifier(this)
+        setTypeOfQualifier(components.session)
     }
 }
 

@@ -209,11 +209,6 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     // where `Supertype` has a fake source
     object SuperCallImplicitType : KtFakeSourceElementKind()
 
-    // Consider `super<Supertype>.foo()`. The source PSI `Supertype` is referenced by both the qualified access expression
-    // `super<Supertype>` and the calleeExpression `super<Supertype>`. To avoid having two FIR elements sharing the same source, this fake
-    // source is assigned to the qualified access expression.
-    object SuperCallExplicitType : KtFakeSourceElementKind(shouldSkipErrorTypeReporting = true)
-
     // fun foo(vararg args: Int) {}
     // fun bar(1, 2, 3) --> [resolved] fun bar(VarargArgument(1, 2, 3))
     object VarargArgument : KtFakeSourceElementKind()

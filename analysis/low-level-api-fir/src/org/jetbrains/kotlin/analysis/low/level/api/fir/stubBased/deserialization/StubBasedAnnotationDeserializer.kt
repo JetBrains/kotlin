@@ -115,17 +115,15 @@ class StubBasedAnnotationDeserializer(
                 argumentList = buildUnaryArgumentList(
                     buildClassReferenceExpression {
                         classTypeRef = buildResolvedTypeRef { type = referencedType }
-                        typeRef = resolvedTypeRef
+                        type = resolvedTypeRef.type
                     }
                 )
             }
             is ArrayValue -> {
                 buildArrayLiteral {
                     source = KtRealPsiSourceElement(sourceElement)
-                    typeRef = buildResolvedTypeRef {
-                        // Not quite precise, yet doesn't require annotation resolution
-                        type = (inferArrayValueType(value.value) ?: session.builtinTypes.anyType.type).createArrayType()
-                    }
+                    // Not quite precise, yet doesn't require annotation resolution
+                    type = (inferArrayValueType(value.value) ?: session.builtinTypes.anyType.type).createArrayType()
 
                     argumentList = buildArgumentList {
                         value.value.mapTo(arguments) { resolveValue(sourceElement, it) }
@@ -208,7 +206,7 @@ class StubBasedAnnotationDeserializer(
             kind,
             value,
             setType = true
-        ).apply { this.replaceTypeRef(typeRef) }
+        ).apply { this.replaceType(typeRef.type) }
     }
 
     private fun PsiElement.toEnumEntryReferenceExpression(classId: ClassId, entryName: Name): FirExpression {
@@ -228,7 +226,7 @@ class StubBasedAnnotationDeserializer(
                 name = entryName
             }
             if (enumEntrySymbol != null) {
-                typeRef = enumEntrySymbol.returnTypeRef
+                type = enumEntrySymbol.returnTypeRef.coneTypeOrNull
             }
         }
     }

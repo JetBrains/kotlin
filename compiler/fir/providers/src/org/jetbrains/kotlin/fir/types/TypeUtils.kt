@@ -415,7 +415,6 @@ fun FirTypeRef.withReplacedConeType(
             type = newType
             annotations += this@withReplacedConeType.annotations
             delegatedTypeRef = this@withReplacedConeType.delegatedTypeRef
-            isFromStubType = this@withReplacedConeType.type is ConeStubType
         }
     }
 }

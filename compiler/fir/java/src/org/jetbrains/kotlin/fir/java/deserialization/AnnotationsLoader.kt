@@ -42,9 +42,7 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
             val resolvedClassTypeRef = classId.toLookupTag().toDefaultResolvedTypeRef()
             return buildClassReferenceExpression {
                 classTypeRef = resolvedClassTypeRef
-                typeRef = buildResolvedTypeRef {
-                    type = StandardClassIds.KClass.constructClassLikeType(arrayOf(resolvedClassTypeRef.type), false)
-                }
+                type = StandardClassIds.KClass.constructClassLikeType(arrayOf(resolvedClassTypeRef.type), false)
             }
         }
 
@@ -52,7 +50,7 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
             visitExpression(name, buildGetClassCall {
                 val argument = value.toFirClassReferenceExpression()
                 argumentList = buildUnaryArgumentList(argument)
-                typeRef = argument.typeRef
+                type = argument.type
             })
         }
 
@@ -78,7 +76,7 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
                     elements.add(buildGetClassCall {
                         val argument = value.toFirClassReferenceExpression()
                         argumentList = buildUnaryArgumentList(argument)
-                        typeRef = argument.typeRef
+                        type = argument.type
                     })
                 }
 
@@ -96,11 +94,9 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
                 override fun visitEnd() {
                     visitExpression(name, buildArrayLiteral {
                         guessArrayTypeIfNeeded(name, elements)?.let {
-                            typeRef = it
+                            type = it.coneTypeOrNull
                         } ?: elements.firstOrNull()?.coneType?.createOutArrayType()?.let {
-                            typeRef = buildResolvedTypeRef {
-                                type = it
-                            }
+                            type = it
                         }
                         argumentList = buildArgumentList {
                             arguments += elements

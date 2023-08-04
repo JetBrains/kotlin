@@ -108,7 +108,7 @@ class FirTypeDeserializer(
         }
     }
 
-    fun typeRef(proto: ProtoBuf.Type): FirTypeRef {
+    fun typeRef(proto: ProtoBuf.Type): FirResolvedTypeRef {
         return buildResolvedTypeRef {
             annotations += annotationDeserializer.loadTypeAnnotations(proto, nameResolver)
             type = type(proto, annotations.computeTypeAttributes(moduleData.session, shouldExpandTypeAliases = false))

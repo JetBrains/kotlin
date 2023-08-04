@@ -44,12 +44,11 @@ object FirNamedVarargChecker : FirCallChecker() {
                 }
                 return
             }
-            val typeRef = argument.expression.typeRef
-            if (typeRef is FirErrorTypeRef) return
+            val type = argument.expression.type
+            if (type is ConeErrorType) return
             if (argument.expression is FirArrayLiteral) return
 
-            @OptIn(UnexpandedTypeCheck::class)
-            if (allowAssignArray && typeRef.isArrayType) return
+            if (allowAssignArray && type?.isArrayType == true) return
 
             if (isAnnotation) {
                 reporter.reportOn(

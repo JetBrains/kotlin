@@ -399,7 +399,7 @@ private val FirFunction.isCertainlyResolved: Boolean
         }
 
         val body = this.body ?: return false // Not completely sure
-        return body !is FirLazyBlock && body.typeRef is FirResolvedTypeRef
+        return body !is FirLazyBlock && body.type != null
     }
 
 private val FirVariable.initializerIfUnresolved: FirExpression?
@@ -468,6 +468,7 @@ private fun requireSameSize(old: List<FirStatement>, new: List<FirStatement>) {
         }
     }
 }
+
 
 private class LLFirCodeFragmentContext(
     override val towerDataContext: FirTowerDataContext,
