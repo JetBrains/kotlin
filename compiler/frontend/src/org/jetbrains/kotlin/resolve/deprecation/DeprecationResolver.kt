@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.DescriptorDerivedFromTypeAlias
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
-import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.Call
 import org.jetbrains.kotlin.psi.KtElement
@@ -300,29 +299,13 @@ class DeprecationResolver(
         (target as? CallableDescriptor)?.getUserData(DEPRECATED_FUNCTION_KEY)
 
     private fun getDeprecationByVersionRequirement(target: DeclarationDescriptor): List<DeprecatedByVersionRequirement> {
-        fun createVersion(version: String): MavenComparableVersion? = try {
-            MavenComparableVersion(version)
-        } catch (e: Exception) {
-            null
-        }
-
         val versionRequirements =
             (target as? DeserializedMemberDescriptor)?.versionRequirements
                 ?: (target as? DeserializedClassDescriptor)?.versionRequirements
                 ?: return emptyList()
 
         return versionRequirements.mapNotNull { versionRequirement ->
-            val requiredVersion = createVersion(versionRequirement.version.asString())
-            val currentVersion = when (versionRequirement.kind) {
-                ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION ->
-                    MavenComparableVersion(languageVersionSettings.languageVersion.versionString)
-                ProtoBuf.VersionRequirement.VersionKind.API_VERSION ->
-                    languageVersionSettings.apiVersion.version
-                ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION ->
-                    KotlinCompilerVersion.getVersion()?.substringBefore('-')?.let(::createVersion)
-                else -> null
-            }
-            if (currentVersion != null && currentVersion < requiredVersion)
+            if (!versionRequirement.isFulfilled(this.languageVersionSettings))
                 DeprecatedByVersionRequirement(versionRequirement, target)
             else
                 null

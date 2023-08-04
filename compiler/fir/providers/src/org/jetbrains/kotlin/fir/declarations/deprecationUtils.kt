@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.forEachType
 import org.jetbrains.kotlin.fir.types.toSymbol
+import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.ParameterNames
@@ -115,9 +116,14 @@ fun FirAnnotationContainer.extractDeprecationInfoPerUseSite(
     getterAnnotations: List<FirAnnotation>? = null,
     setterAnnotations: List<FirAnnotation>? = null,
 ): DeprecationAnnotationInfoPerUseSiteStorage {
-    val fromJava = this is FirDeclaration && this.isJavaOrEnhancement
+    var fromJava = false
+    var versionRequirements: List<VersionRequirement>? = null
+    if (this is FirDeclaration) {
+        fromJava = this.isJavaOrEnhancement
+        versionRequirements = this.versionRequirements
+    }
     return buildDeprecationAnnotationInfoPerUseSiteStorage {
-        add((customAnnotations ?: annotations).extractDeprecationAnnotationInfoPerUseSite(fromJava))
+        add((customAnnotations ?: annotations).extractDeprecationAnnotationInfoPerUseSite(fromJava, versionRequirements))
         if (this@extractDeprecationInfoPerUseSite is FirProperty) {
             add(
                 getDeprecationsAnnotationInfoByUseSiteFromAccessors(
@@ -170,9 +176,10 @@ fun getDeprecationsAnnotationInfoByUseSiteFromAccessors(
 
 fun List<FirAnnotation>.getDeprecationsProviderFromAnnotations(
     session: FirSession,
-    fromJava: Boolean
+    fromJava: Boolean,
+    versionRequirements: List<VersionRequirement>? = null,
 ): DeprecationsProvider {
-    val deprecationAnnotationByUseSite = extractDeprecationAnnotationInfoPerUseSite(fromJava)
+    val deprecationAnnotationByUseSite = extractDeprecationAnnotationInfoPerUseSite(fromJava, versionRequirements)
     return deprecationAnnotationByUseSite.toDeprecationsProvider(session.firCachesFactory)
 }
 
@@ -251,7 +258,10 @@ val deprecationAnnotationSimpleNames: Set<String> = setOf(
     StandardClassIds.Annotations.SinceKotlin.shortClassName.asString(),
 )
 
-private fun List<FirAnnotation>.extractDeprecationAnnotationInfoPerUseSite(fromJava: Boolean): DeprecationAnnotationInfoPerUseSiteStorage {
+private fun List<FirAnnotation>.extractDeprecationAnnotationInfoPerUseSite(
+    fromJava: Boolean,
+    versionRequirements: List<VersionRequirement>?,
+): DeprecationAnnotationInfoPerUseSiteStorage {
     // NB: We can't expand typealiases (`toAnnotationClassId`), because it
     // requires `lookupTag.tySymbol()`, but we can have cycles in annotations.
     // See the commit message for an example.
@@ -297,6 +307,10 @@ private fun List<FirAnnotation>.extractDeprecationAnnotationInfoPerUseSite(fromJ
                     }
                 add(deprecated.useSiteTarget, deprecatedInfo)
             }
+        }
+
+        versionRequirements?.forEach {
+            add(null, RequireKotlinInfo(it))
         }
     }
 }

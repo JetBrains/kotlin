@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
+import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement.Version
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -161,6 +162,8 @@ object FirErrors {
     val NO_THIS by error0<PsiElement>()
     val DEPRECATION_ERROR by error2<PsiElement, FirBasedSymbol<*>, String>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
     val DEPRECATION by warning2<PsiElement, FirBasedSymbol<*>, String>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
+    val VERSION_REQUIREMENT_DEPRECATION_ERROR by error4<PsiElement, FirBasedSymbol<*>, Version, String, String>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
+    val VERSION_REQUIREMENT_DEPRECATION by warning4<PsiElement, FirBasedSymbol<*>, Version, String, String>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
     val TYPEALIAS_EXPANSION_DEPRECATION_ERROR by error3<PsiElement, FirBasedSymbol<*>, FirBasedSymbol<*>, String>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
     val TYPEALIAS_EXPANSION_DEPRECATION by warning3<PsiElement, FirBasedSymbol<*>, FirBasedSymbol<*>, String>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
     val API_NOT_AVAILABLE by error2<PsiElement, ApiVersion, ApiVersion>(SourceElementPositioningStrategies.SELECTOR_BY_QUALIFIED)

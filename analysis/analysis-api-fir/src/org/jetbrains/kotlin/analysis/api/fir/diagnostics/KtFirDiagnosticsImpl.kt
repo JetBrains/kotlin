@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
+import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement.Version
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -310,6 +311,24 @@ internal class DeprecationImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.Deprecation
+
+internal class VersionRequirementDeprecationErrorImpl(
+    override val reference: KtSymbol,
+    override val version: Version,
+    override val currentVersion: String,
+    override val message: String,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.VersionRequirementDeprecationError
+
+internal class VersionRequirementDeprecationImpl(
+    override val reference: KtSymbol,
+    override val version: Version,
+    override val currentVersion: String,
+    override val message: String,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.VersionRequirementDeprecation
 
 internal class TypealiasExpansionDeprecationErrorImpl(
     override val alias: KtSymbol,

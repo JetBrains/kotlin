@@ -1,0 +1,8 @@
+warning: language version 2.0 is experimental, there are no backwards compatibility guarantees for new language and library features
+compiler/testData/cli/jvm/requireKotlinCompilerVersion.kt:12:8: error: 'class Foo : Any' is only available since Kotlin 9.9.90 and cannot be used in Kotlin $VERSION$.
+import test.access.Foo
+       ^
+compiler/testData/cli/jvm/requireKotlinCompilerVersion.kt:15:5: error: 'constructor(): Foo' is only available since Kotlin 9.9.90 and cannot be used in Kotlin $VERSION$.
+    Foo()
+    ^
+COMPILATION_ERROR

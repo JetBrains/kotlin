@@ -113,6 +113,8 @@ fun deserializeClassToSymbol(
         }
     }
 
+    val versionRequirements = VersionRequirement.create(classProto, context)
+
     buildRegularClass {
         this.moduleData = moduleData
         this.origin = origin
@@ -140,7 +142,7 @@ fun deserializeClassToSymbol(
         )
 
         addDeclarations(
-            classProto.propertiesInOrder(context).map {
+            classProto.propertiesInOrder(versionRequirements).map {
                 classDeserializer.loadProperty(it, classProto, symbol)
             }
         )
@@ -225,7 +227,7 @@ fun deserializeClassToSymbol(
             context.annotationDeserializer.loadClassAnnotations(classProto, context.nameResolver)
         )
 
-        versionRequirementsTable = context.versionRequirementTable
+        this.versionRequirements = versionRequirements
 
         sourceElement = containerSource
 
@@ -296,9 +298,8 @@ fun FirRegularClassBuilder.addCloneForArrayIfNeeded(classId: ClassId, dispatchRe
     }
 }
 
-private fun ProtoBuf.ClassOrBuilder.propertiesInOrder(context: FirDeserializationContext): List<ProtoBuf.Property> {
+private fun ProtoBuf.ClassOrBuilder.propertiesInOrder(versionRequirements: List<VersionRequirement>): List<ProtoBuf.Property> {
     val properties = propertyList
-    val versionRequirements = VersionRequirement.create(this, context.nameResolver, context.versionRequirementTable)
     if (versionRequirements.any { it.version.major >= 2 }) return properties
     val order = getExtension(SerializationPluginMetadataExtensions.propertiesNamesInProgramOrder)
         .takeIf { it.isNotEmpty() }

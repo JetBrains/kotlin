@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
+import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -370,6 +371,7 @@ internal object FirToKtConversionCreator {
         CallableId::class,
         ClassKind::class,
         FunctionTypeKind::class,
+        VersionRequirement.Version::class,
     )
 
     private val KType.kClass: KClass<*>

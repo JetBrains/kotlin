@@ -1100,6 +1100,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/requireKotlinCompilerVersion.args");
         }
 
+        @TestMetadata("requireKotlinCompilerVersionK2.args")
+        public void testRequireKotlinCompilerVersionK2() throws Exception {
+            runTest("compiler/testData/cli/jvm/requireKotlinCompilerVersionK2.args");
+        }
+
         @TestMetadata("resultInReturnTypeSupportedByDefault15.args")
         public void testResultInReturnTypeSupportedByDefault15() throws Exception {
             runTest("compiler/testData/cli/jvm/resultInReturnTypeSupportedByDefault15.args");

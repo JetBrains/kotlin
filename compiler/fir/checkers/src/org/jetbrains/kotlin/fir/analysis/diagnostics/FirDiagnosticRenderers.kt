@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.renderReadableWithFqNames
+import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 
@@ -33,7 +34,8 @@ object FirDiagnosticRenderers {
     val SYMBOL = Renderer { symbol: FirBasedSymbol<*> ->
         when (symbol) {
             is FirClassLikeSymbol<*>,
-            is FirCallableSymbol<*> -> FirRenderer(
+            is FirCallableSymbol<*>,
+            -> FirRenderer(
                 typeRenderer = ConeTypeRenderer(),
                 idRenderer = ConeIdShortRenderer(),
                 classMemberRenderer = FirNoClassMemberRenderer(),
@@ -179,4 +181,12 @@ object FirDiagnosticRenderers {
     }
 
     val FUNCTIONAL_TYPE_KINDS = KtDiagnosticRenderers.COLLECTION(FUNCTIONAL_TYPE_KIND)
+
+    val REQUIRE_KOTLIN_VERSION = Renderer { version: VersionRequirement.Version ->
+        if (version == VersionRequirement.Version.INFINITY) "" else " is only available since Kotlin ${version.asString()} and"
+    }
+
+    val OPTIONAL_SENTENCE = Renderer { it: String? ->
+        if (!it.isNullOrBlank()) " $it." else ""
+    }
 }
