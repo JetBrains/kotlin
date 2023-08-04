@@ -1,0 +1,36 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirDefaultSimpleImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirPackageMemberScope
+    Element 6
+        Scope: FirExplicitSimpleImportingScope
+            Import name:List
+                Qualified name: java.util.List
+                Is all under: false
+
+FILE: [ResolvedTo(IMPORTS)] file.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/reflect/KClass<java/util/List<*>>| {
+        ^test <getClass>(Q|java/util/List|)
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun other(): R|kotlin/Int| {
+        ^other String(foo).R|kotlin/String.length|
+    }
+    public final [ResolvedTo(STATUS)] class Foo : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|test/Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+            <Unresolved name: require>#(==(R|test/other|(), Int(3)))
+        }
+
+    }

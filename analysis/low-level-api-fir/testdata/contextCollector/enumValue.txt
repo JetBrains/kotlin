@@ -1,0 +1,81 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirDefaultSimpleImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirPackageMemberScope
+    Element 6
+        Scope: FirExplicitSimpleImportingScope
+    Element 7
+        Implicit receiver:
+            FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+                Type: kotlin/Enum.Companion
+    Element 8
+        Scope: FirNestedClassifierScopeWithSubstitution
+            Classifiers:
+                FirRegularClassSymbol public final companion object Companion : R|kotlin/Any|
+        Static scope owner symbol: FirRegularClassSymbol public abstract class Enum<E : R|kotlin/Enum<E>|> : R|kotlin/Comparable<E>|, R|java/io/Serializable|
+    Element 9
+        Scope: FirNameAwareOnlyCallablesScope
+            Functions
+                FirNamedFunctionSymbol public final static fun valueOf(value: R|kotlin/String|): R|Direction|
+                FirNamedFunctionSymbol public final static fun values(): R|kotlin/Array<Direction>|
+            Properties:
+                FirEnumEntrySymbol public final static enum entry EAST: R|Direction| = object : R|Direction|
+                FirEnumEntrySymbol public final static enum entry NORTH: R|Direction| = LAZY_EXPRESSION
+                FirEnumEntrySymbol public final static enum entry SOUTH: R|Direction| = LAZY_EXPRESSION
+                FirEnumEntrySymbol public final static enum entry WEST: R|Direction| = LAZY_EXPRESSION
+                FirPropertySymbol public final static val entries: R|kotlin/enums/EnumEntries<Direction>|
+                    public get(): R|kotlin/enums/EnumEntries<Direction>|
+    Element 10
+        Implicit receiver:
+            FirAnonymousObjectSymbol object : R|Direction|
+                Type: <anonymous>
+    Element 11
+        Scope: FirLocalScope
+            Properties:
+                FirBackingFieldSymbol private <explicit backing field>: R|kotlin/Int|
+    Element 12
+        Scope: FirLocalScope
+
+FILE: [ResolvedTo(IMPORTS)] enumValue.kt
+    public final [ResolvedTo(STATUS)] enum class Direction : R|kotlin/Enum<Direction>| {
+        private [ResolvedTo(STATUS)] constructor(): R|Direction| {
+            LAZY_super<R|kotlin/Enum<Direction>|>
+        }
+
+        public final static [ResolvedTo(STATUS)] enum entry NORTH: R|Direction| = LAZY_EXPRESSION
+        public final static [ResolvedTo(BODY_RESOLVE)] enum entry EAST: R|Direction| = object : R|Direction| {
+            private [ResolvedTo(BODY_RESOLVE)] constructor(): R|<anonymous>| {
+                super<R|Direction|>()
+            }
+
+            public open override [ResolvedTo(BODY_RESOLVE)] val code: R|kotlin/Int|
+                public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
+                    ^ Int(2)
+                }
+
+        }
+
+        public final static [ResolvedTo(STATUS)] enum entry SOUTH: R|Direction| = LAZY_EXPRESSION
+        public final static [ResolvedTo(STATUS)] enum entry WEST: R|Direction| = LAZY_EXPRESSION
+        public abstract [ResolvedTo(STATUS)] val code: R|kotlin/Int|
+            public [ResolvedTo(STATUS)] get(): R|kotlin/Int|
+
+        public final static [ResolvedTo(STATUS)] fun values(): R|kotlin/Array<Direction>| {
+        }
+
+        public final static [ResolvedTo(STATUS)] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|Direction| {
+        }
+
+        public final static [ResolvedTo(STATUS)] val entries: R|kotlin/enums/EnumEntries<Direction>|
+            public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<Direction>|
+
+    }

@@ -1,0 +1,36 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirDefaultSimpleImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirPackageMemberScope
+    Element 6
+        Scope: FirExplicitSimpleImportingScope
+    Element 7
+        Implicit receiver:
+            FirRegularClassSymbol public final class Foo : R|kotlin/Any|
+                Type: Foo
+
+FILE: [ResolvedTo(IMPORTS)] primaryConstructorParameter.kt
+    public final [ResolvedTo(STATUS)] class Foo : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] constructor([ResolvedTo(STATUS)] a: R|kotlin/String| = LAZY_EXPRESSION, [ResolvedTo(STATUS)] b: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(STATUS)] c: R|kotlin/Long| = LAZY_EXPRESSION): R|Foo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] val a: R|kotlin/String| = R|<local>/a|
+            public [ResolvedTo(STATUS)] get(): R|kotlin/String|
+
+        public final [ResolvedTo(BODY_RESOLVE)] val b: R|kotlin/Int| = R|<local>/b|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+
+        public final [ResolvedTo(STATUS)] val c: R|kotlin/Long| = R|<local>/c|
+            public [ResolvedTo(STATUS)] get(): R|kotlin/Long|
+
+    }

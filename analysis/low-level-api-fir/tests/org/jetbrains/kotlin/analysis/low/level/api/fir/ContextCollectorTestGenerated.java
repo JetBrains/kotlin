@@ -37,6 +37,12 @@ public class ContextCollectorTestGenerated extends AbstractContextCollectorTest 
     }
 
     @Test
+    @TestMetadata("enumValue.kt")
+    public void testEnumValue() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/contextCollector/enumValue.kt");
+    }
+
+    @Test
     @TestMetadata("extensionFunction.kt")
     public void testExtensionFunction() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/contextCollector/extensionFunction.kt");
@@ -46,6 +52,12 @@ public class ContextCollectorTestGenerated extends AbstractContextCollectorTest 
     @TestMetadata("extensionLambdas.kt")
     public void testExtensionLambdas() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/contextCollector/extensionLambdas.kt");
+    }
+
+    @Test
+    @TestMetadata("file.kt")
+    public void testFile() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/contextCollector/file.kt");
     }
 
     @Test
@@ -64,6 +76,12 @@ public class ContextCollectorTestGenerated extends AbstractContextCollectorTest 
     @TestMetadata("nestedClasses.kt")
     public void testNestedClasses() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/contextCollector/nestedClasses.kt");
+    }
+
+    @Test
+    @TestMetadata("primaryConstructorParameter.kt")
+    public void testPrimaryConstructorParameter() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/contextCollector/primaryConstructorParameter.kt");
     }
 
     @Test
