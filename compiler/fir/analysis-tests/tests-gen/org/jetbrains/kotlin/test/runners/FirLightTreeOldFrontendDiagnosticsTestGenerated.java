@@ -3123,6 +3123,22 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             }
 
             @Nested
+            @TestMetadata("compiler/testData/diagnostics/tests/backingField/prohibitMissedMustBeInitializedWhenThereIsLocalClass")
+            @TestDataPath("$PROJECT_ROOT")
+            public class ProhibitMissedMustBeInitializedWhenThereIsLocalClass {
+                @Test
+                public void testAllFilesPresentInProhibitMissedMustBeInitializedWhenThereIsLocalClass() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/backingField/prohibitMissedMustBeInitializedWhenThereIsLocalClass"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+                }
+
+                @Test
+                @TestMetadata("localClass.kt")
+                public void testLocalClass() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/backingField/prohibitMissedMustBeInitializedWhenThereIsLocalClass/localClass.kt");
+                }
+            }
+
+            @Nested
             @TestMetadata("compiler/testData/diagnostics/tests/backingField/prohibitMissedMustBeInitializedWhenThereIsNoPrimaryConstructor")
             @TestDataPath("$PROJECT_ROOT")
             public class ProhibitMissedMustBeInitializedWhenThereIsNoPrimaryConstructor {
