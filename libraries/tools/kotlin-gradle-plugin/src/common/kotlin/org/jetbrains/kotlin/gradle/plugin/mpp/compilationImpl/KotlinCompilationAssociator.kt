@@ -124,14 +124,10 @@ internal object KotlinAndroidCompilationAssociator : KotlinCompilationAssociator
 private fun String.addAllDependenciesFromOtherConfigurations(project: Project, vararg configurationNames: String) {
     project.configurations.named(this).configure { receiverConfiguration ->
         receiverConfiguration.dependencies.addAllLater(
-            project.objects.listProperty(Dependency::class.java).apply {
-                set(
-                    project.provider {
-                        configurationNames
-                            .map { project.configurations.getByName(it) }
-                            .flatMap { it.allDependencies }
-                    }
-                )
+            project.listProperty<Dependency> {
+                configurationNames
+                    .map { project.configurations.getByName(it) }
+                    .flatMap { it.allDependencies }
             }
         )
     }
