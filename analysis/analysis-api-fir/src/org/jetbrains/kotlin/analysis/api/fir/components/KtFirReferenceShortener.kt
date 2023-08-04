@@ -380,6 +380,8 @@ private class ElementsToShortenCollector(
 
     override fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef) {
         visitResolvedTypeRef(errorTypeRef)
+
+        errorTypeRef.partiallyResolvedTypeRef?.accept(this)
     }
 
     override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
@@ -414,11 +416,7 @@ private class ElementsToShortenCollector(
     }
 
     private fun processTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
-        val nonErrorResolvedTypeRef = if (resolvedTypeRef is FirErrorTypeRef) {
-            resolvedTypeRef.partiallyResolvedTypeRef as? FirResolvedTypeRef ?: resolvedTypeRef
-        } else resolvedTypeRef
-
-        val typeElement = when (val realPsi = nonErrorResolvedTypeRef.realPsi) {
+        val typeElement = when (val realPsi = resolvedTypeRef.realPsi) {
             is KtTypeReference -> realPsi.typeElement
             is KtNameReferenceExpression -> realPsi.parent as? KtTypeElement
             else -> null
@@ -427,7 +425,7 @@ private class ElementsToShortenCollector(
         if (typeElement.referenceExpression?.textRange?.intersects(selection) != true) return
         if (typeElement.qualifier == null) return
 
-        val classifierId = nonErrorResolvedTypeRef.type.lowerBoundIfFlexible().candidateClassId ?: return
+        val classifierId = resolvedTypeRef.type.lowerBoundIfFlexible().candidateClassId ?: return
 
         findTypeToShorten(classifierId, typeElement)?.let(::addElementToShorten)
     }
