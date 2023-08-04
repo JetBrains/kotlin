@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.config.ApiVersion
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
@@ -16,7 +17,7 @@ import org.jetbrains.kotlin.resolve.deprecation.SimpleDeprecationInfo
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
 abstract class DeprecationsProvider {
-    abstract fun getDeprecationsInfo(version: ApiVersion): DeprecationsPerUseSite?
+    abstract fun getDeprecationsInfo(languageVersionSettings: LanguageVersionSettings): DeprecationsPerUseSite?
 }
 
 class DeprecationsProviderImpl(
@@ -24,7 +25,7 @@ class DeprecationsProviderImpl(
     private val all: List<DeprecationAnnotationInfo>?,
     private val bySpecificSite: Map<AnnotationUseSiteTarget, List<DeprecationAnnotationInfo>>?
 ) : DeprecationsProvider() {
-    private val cache: FirCache<ApiVersion, DeprecationsPerUseSite, Nothing?> = firCachesFactory.createCache { version ->
+    private val cache: FirCache<LanguageVersionSettings, DeprecationsPerUseSite, Nothing?> = firCachesFactory.createCache { version ->
         @Suppress("UNCHECKED_CAST")
         DeprecationsPerUseSite(
             all?.computeDeprecationInfoOrNull(version),
@@ -33,29 +34,29 @@ class DeprecationsProviderImpl(
         )
     }
 
-    override fun getDeprecationsInfo(version: ApiVersion): DeprecationsPerUseSite {
-        return cache.getValue(version, null)
+    override fun getDeprecationsInfo(languageVersionSettings: LanguageVersionSettings): DeprecationsPerUseSite {
+        return cache.getValue(languageVersionSettings, null)
     }
 
-    private fun List<DeprecationAnnotationInfo>.computeDeprecationInfoOrNull(version: ApiVersion): DeprecationInfo? {
+    private fun List<DeprecationAnnotationInfo>.computeDeprecationInfoOrNull(version: LanguageVersionSettings): DeprecationInfo? {
         return firstNotNullOfOrNull { it.computeDeprecationInfo(version) }
     }
 }
 
 object EmptyDeprecationsProvider : DeprecationsProvider() {
-    override fun getDeprecationsInfo(version: ApiVersion): DeprecationsPerUseSite {
+    override fun getDeprecationsInfo(languageVersionSettings: LanguageVersionSettings): DeprecationsPerUseSite {
         return EmptyDeprecationsPerUseSite
     }
 }
 
 object UnresolvedDeprecationProvider : DeprecationsProvider() {
-    override fun getDeprecationsInfo(version: ApiVersion): DeprecationsPerUseSite? {
+    override fun getDeprecationsInfo(languageVersionSettings: LanguageVersionSettings): DeprecationsPerUseSite? {
         return null
     }
 }
 
 sealed interface DeprecationAnnotationInfo {
-    fun computeDeprecationInfo(apiVersion: ApiVersion): DeprecationInfo?
+    fun computeDeprecationInfo(languageVersionSettings: LanguageVersionSettings): DeprecationInfo?
 }
 
 data class FutureApiDeprecationInfo(
@@ -67,8 +68,8 @@ data class FutureApiDeprecationInfo(
 }
 
 class SinceKotlinInfo(val sinceVersion: ApiVersion) : DeprecationAnnotationInfo {
-    override fun computeDeprecationInfo(apiVersion: ApiVersion): DeprecationInfo? {
-        return runUnless(sinceVersion <= apiVersion) {
+    override fun computeDeprecationInfo(languageVersionSettings: LanguageVersionSettings): DeprecationInfo? {
+        return runUnless(sinceVersion <= languageVersionSettings.apiVersion) {
             FutureApiDeprecationInfo(
                 deprecationLevel = DeprecationLevelValue.HIDDEN,
                 propagatesToOverrides = true,
@@ -83,7 +84,7 @@ class DeprecatedInfo(
     val propagatesToOverride: Boolean,
     val message: String?
 ) : DeprecationAnnotationInfo {
-    override fun computeDeprecationInfo(apiVersion: ApiVersion): DeprecationInfo {
+    override fun computeDeprecationInfo(languageVersionSettings: LanguageVersionSettings): DeprecationInfo {
         return SimpleDeprecationInfo(
             level,
             propagatesToOverride,
@@ -99,8 +100,8 @@ class DeprecatedSinceKotlinInfo(
     val message: String?,
     val propagatesToOverride: Boolean
 ) : DeprecationAnnotationInfo {
-    override fun computeDeprecationInfo(apiVersion: ApiVersion): DeprecationInfo? {
-        fun ApiVersion.takeLevelIfDeprecated(level: DeprecationLevelValue) = level.takeIf { this <= apiVersion }
+    override fun computeDeprecationInfo(languageVersionSettings: LanguageVersionSettings): DeprecationInfo? {
+        fun ApiVersion.takeLevelIfDeprecated(level: DeprecationLevelValue) = level.takeIf { this <= languageVersionSettings.apiVersion }
 
         val appliedLevel = hiddenVersion?.takeLevelIfDeprecated(DeprecationLevelValue.HIDDEN)
             ?: errorVersion?.takeLevelIfDeprecated(DeprecationLevelValue.ERROR)

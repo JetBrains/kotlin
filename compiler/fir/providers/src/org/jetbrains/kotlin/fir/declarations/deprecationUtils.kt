@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.config.ApiVersion
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
@@ -91,7 +92,7 @@ private fun FirBasedSymbol<*>.getUseSitesForCallSite(callSite: FirElement?): Arr
  * corresponding declaration.
  */
 fun FirBasedSymbol<*>.getOwnDeprecation(session: FirSession, callSite: FirElement?): DeprecationInfo? {
-    return getOwnDeprecationForCallSite(session.languageVersionSettings.apiVersion, *getUseSitesForCallSite(callSite))
+    return getOwnDeprecationForCallSite(session.languageVersionSettings, *getUseSitesForCallSite(callSite))
 }
 
 /**
@@ -180,12 +181,12 @@ fun List<FirAnnotation>.getDeprecationsProviderFromAnnotations(
  * corresponding declaration.
  */
 private fun FirBasedSymbol<*>.getOwnDeprecationForCallSite(
-    apiVersion: ApiVersion,
+    languageVersionSettings: LanguageVersionSettings,
     vararg sites: AnnotationUseSiteTarget
 ): DeprecationInfo? {
     val deprecations = when (this) {
-        is FirCallableSymbol<*> -> getDeprecation(apiVersion)
-        is FirClassLikeSymbol<*> -> getOwnDeprecation(apiVersion)
+        is FirCallableSymbol<*> -> getDeprecation(languageVersionSettings)
+        is FirClassLikeSymbol<*> -> getOwnDeprecation(languageVersionSettings)
         else -> null
     }
     return (deprecations ?: EmptyDeprecationsPerUseSite).forUseSite(*sites)
@@ -201,12 +202,10 @@ fun FirBasedSymbol<*>.getDeprecationForCallSite(
     session: FirSession,
     vararg sites: AnnotationUseSiteTarget,
 ): DeprecationInfo? {
-    val apiVersion = session.languageVersionSettings.apiVersion
-
     return when (this) {
-        !is FirTypeAliasSymbol -> getOwnDeprecationForCallSite(apiVersion, *sites)
+        !is FirTypeAliasSymbol -> getOwnDeprecationForCallSite(session.languageVersionSettings, *sites)
         else -> {
-            var worstDeprecationInfo = getOwnDeprecationForCallSite(apiVersion, *sites)
+            var worstDeprecationInfo = getOwnDeprecationForCallSite(session.languageVersionSettings, *sites)
             val visited = mutableMapOf<ConeKotlinType, DeprecationInfo?>()
 
             resolvedExpandedTypeRef.type.forEachType {

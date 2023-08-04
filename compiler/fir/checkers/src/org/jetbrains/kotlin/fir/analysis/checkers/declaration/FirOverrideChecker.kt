@@ -172,10 +172,10 @@ object FirOverrideChecker : FirClassChecker() {
         overriddenSymbols: List<FirCallableSymbol<*>>,
         context: CheckerContext
     ) {
-        val ownDeprecation = this.getDeprecation(context.session.languageVersionSettings.apiVersion)
+        val ownDeprecation = this.getDeprecation(context.session.languageVersionSettings)
         if (ownDeprecation == null || ownDeprecation.isNotEmpty()) return
         for (overriddenSymbol in overriddenSymbols) {
-            val deprecationInfoFromOverridden = overriddenSymbol.getDeprecation(context.session.languageVersionSettings.apiVersion)
+            val deprecationInfoFromOverridden = overriddenSymbol.getDeprecation(context.session.languageVersionSettings)
                 ?: continue
             val deprecationFromOverriddenSymbol = deprecationInfoFromOverridden.all
                 ?: deprecationInfoFromOverridden.bySpecificSite?.values?.firstOrNull()

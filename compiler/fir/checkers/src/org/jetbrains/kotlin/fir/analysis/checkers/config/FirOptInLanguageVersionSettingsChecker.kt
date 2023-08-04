@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.config
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
+import org.jetbrains.kotlin.fir.declarations.getOwnDeprecation
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.PackageResolutionResult
 import org.jetbrains.kotlin.fir.resolve.transformers.resolveToPackageOrClass
@@ -40,7 +41,7 @@ object FirOptInLanguageVersionSettingsChecker : FirLanguageVersionSettingsChecke
             rawReport(false, "Class $fqNameAsString is not an opt-in requirement marker")
             return
         }
-        val deprecationInfo = symbol.getOwnDeprecation(context.languageVersionSettings.apiVersion)?.all ?: return
+        val deprecationInfo = symbol.getOwnDeprecation(context.languageVersionSettings)?.all ?: return
         rawReport(
             deprecationInfo.deprecationLevel != DeprecationLevelValue.WARNING,
             "Opt-in requirement marker $fqNameAsString is deprecated" + deprecationInfo.message?.let { ". $it" }.orEmpty()
