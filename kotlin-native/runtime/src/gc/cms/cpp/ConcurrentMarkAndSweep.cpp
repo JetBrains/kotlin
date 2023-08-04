@@ -272,6 +272,7 @@ void gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
     for (auto& thread : kotlin::mm::ThreadRegistry::Instance().LockForIter()) {
         finalizerQueue.TransferAllFrom(thread.gc().impl().alloc().ExtractFinalizerQueue());
     }
+    finalizerQueue.TransferAllFrom(heap_.ExtractFinalizerQueue());
 #endif
     scheduler.onGCFinish(epoch, allocatedBytes());
     state_.finish(epoch);

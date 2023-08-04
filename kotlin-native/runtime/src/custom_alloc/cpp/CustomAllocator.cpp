@@ -46,6 +46,10 @@ CustomAllocator::CustomAllocator(Heap& heap) noexcept : heap_(heap), nextFitPage
     memset(fixedBlockPages_, 0, sizeof(fixedBlockPages_));
 }
 
+CustomAllocator::~CustomAllocator() {
+    heap_.AddToFinalizerQueue(std::move(finalizerQueue_));
+}
+
 ObjHeader* CustomAllocator::CreateObject(const TypeInfo* typeInfo) noexcept {
     RuntimeAssert(!typeInfo->IsArray(), "Must not be an array");
     size_t allocSize = ObjectAllocatedDataSize(typeInfo);

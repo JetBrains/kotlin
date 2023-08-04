@@ -153,7 +153,12 @@ void gc::SameThreadMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
     objectFactoryIterable = std::nullopt;
     kotlin::compactObjectPoolInMainThread();
 #else
+    // also sweeps extraObjects
     auto finalizerQueue = heap_.Sweep(gcHandle);
+    for (auto& thread : kotlin::mm::ThreadRegistry::Instance().LockForIter()) {
+        finalizerQueue.TransferAllFrom(thread.gc().impl().alloc().ExtractFinalizerQueue());
+    }
+    finalizerQueue.TransferAllFrom(heap_.ExtractFinalizerQueue());
 #endif
 
     scheduler.onGCFinish(epoch, allocatedBytes());

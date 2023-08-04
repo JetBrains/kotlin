@@ -78,6 +78,16 @@ ExtraObjectPage* Heap::GetExtraObjectPage(FinalizerQueue& finalizerQueue) noexce
     return extraObjectPages_.GetPage(0, finalizerQueue, concurrentSweepersCount_);
 }
 
+void Heap::AddToFinalizerQueue(FinalizerQueue queue) noexcept {
+    std::unique_lock guard(pendingFinalizerQueueMutex_);
+    pendingFinalizerQueue_.TransferAllFrom(std::move(queue));
+}
+
+FinalizerQueue Heap::ExtractFinalizerQueue() noexcept {
+    std::unique_lock guard(pendingFinalizerQueueMutex_);
+    return std::move(pendingFinalizerQueue_);
+}
+
 std_support::vector<ObjHeader*> Heap::GetAllocatedObjects() noexcept {
     std_support::vector<ObjHeader*> allocated;
     for (int blockSize = 0; blockSize <= FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE; ++blockSize) {

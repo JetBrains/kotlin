@@ -25,7 +25,7 @@ public:
     AtomicStack& operator=(AtomicStack&& other) noexcept {
         // Not using swap idiom, because implementing swap of two atomics requires DCAS or locks.
         auto newHead = other.stack_.exchange(nullptr, std::memory_order_acq_rel);
-        stack_.store(newHead, std::memory_order_acq_rel);
+        stack_.store(newHead, std::memory_order_release);
         return *this;
     }
 

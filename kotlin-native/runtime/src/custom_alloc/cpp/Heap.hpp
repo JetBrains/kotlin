@@ -7,6 +7,7 @@
 #define CUSTOM_ALLOC_CPP_HEAP_HPP_
 
 #include <atomic>
+#include <mutex>
 #include <cstring>
 
 #include "AtomicStack.hpp"
@@ -36,6 +37,9 @@ public:
     SingleObjectPage* GetSingleObjectPage(uint64_t cellCount, FinalizerQueue& finalizerQueue) noexcept;
     ExtraObjectPage* GetExtraObjectPage(FinalizerQueue& finalizerQueue) noexcept;
 
+    void AddToFinalizerQueue(FinalizerQueue queue) noexcept;
+    FinalizerQueue ExtractFinalizerQueue() noexcept;
+
     // Test method
     std_support::vector<ObjHeader*> GetAllocatedObjects() noexcept;
     void ClearForTests() noexcept;
@@ -45,6 +49,9 @@ private:
     PageStore<NextFitPage> nextFitPages_;
     PageStore<SingleObjectPage> singleObjectPages_;
     PageStore<ExtraObjectPage> extraObjectPages_;
+
+    FinalizerQueue pendingFinalizerQueue_;
+    std::mutex pendingFinalizerQueueMutex_;
 
     std::atomic<std::size_t> concurrentSweepersCount_ = 0;
 };

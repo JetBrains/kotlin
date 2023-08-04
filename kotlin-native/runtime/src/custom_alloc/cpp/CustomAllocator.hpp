@@ -22,6 +22,8 @@ class CustomAllocator {
 public:
     explicit CustomAllocator(Heap& heap) noexcept;
 
+    ~CustomAllocator();
+
     ObjHeader* CreateObject(const TypeInfo* typeInfo) noexcept;
 
     ArrayHeader* CreateArray(const TypeInfo* typeInfo, uint32_t count) noexcept;
