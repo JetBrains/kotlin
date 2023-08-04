@@ -78,7 +78,7 @@ fun Project.configureCommonPublicationSettingsForGradle(
                 .withType<MavenPublication>()
                 .configureEach {
                     configureKotlinPomAttributes(project)
-                    if (sbom && project.name !in testPlugins) {
+                    if (sbom && project.name !in internalPlugins) {
                         if (name == "pluginMaven") {
                             val sbomTask = configureSbom(target = "PluginMaven")
                             artifact("$buildDir/spdx/PluginMaven/PluginMaven.spdx.json") {
@@ -124,11 +124,14 @@ fun Project.excludeGradleCommonDependencies(sourceSet: SourceSet) {
     configurations[sourceSet.runtimeOnlyConfigurationName].excludeGradleCommonDependencies()
 }
 
-private val testPlugins = setOf(
-    "kotlin-gradle-plugin-api",
+private val internalPlugins = setOf(
     "android-test-fixes",
     "gradle-warnings-detector",
     "kotlin-compiler-args-properties",
+)
+
+private val testPlugins = internalPlugins + setOf(
+    "kotlin-gradle-plugin-api",
     "kotlin-gradle-plugin",
 )
 
