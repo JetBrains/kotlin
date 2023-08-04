@@ -85,9 +85,7 @@ fun buildErrorLoop(source: KtSourceElement?, diagnostic: ConeDiagnostic): FirErr
         this.source = source
         this.diagnostic = diagnostic
     }.also {
-        it.block.replaceTypeRef(buildErrorTypeRef {
-            this.diagnostic = diagnostic
-        })
+        it.block.replaceType(ConeErrorType(diagnostic))
     }
 }
 
