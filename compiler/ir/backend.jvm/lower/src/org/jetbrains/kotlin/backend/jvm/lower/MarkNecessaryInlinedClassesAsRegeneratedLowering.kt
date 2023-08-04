@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.ir.util.inlineDeclaration
-import org.jetbrains.kotlin.ir.util.isFunctionInlining
 import org.jetbrains.kotlin.backend.common.lower.inline.INLINED_FUNCTION_REFERENCE
 import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
@@ -17,11 +15,11 @@ import org.jetbrains.kotlin.backend.jvm.irInlinerIsEnabled
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
-import org.jetbrains.kotlin.ir.types.typeOrNull
 import org.jetbrains.kotlin.ir.util.getAllArgumentsWithIr
+import org.jetbrains.kotlin.ir.util.inlineDeclaration
+import org.jetbrains.kotlin.ir.util.isFunctionInlining
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -100,7 +98,7 @@ class MarkNecessaryInlinedClassesAsRegeneratedLowering(val context: JvmBackendCo
 
             private fun visitAnonymousDeclaration(declaration: IrAttributeContainer) {
                 containersStack += declaration
-                if (declaration.hasReifiedTypeArguments(reifiedArguments)) {
+                if (declaration.hasReifiedTypeArguments()) {
                     saveDeclarationsFromStackIntoRegenerationPool()
                 }
                 if (!processingBeforeInlineDeclaration) {
@@ -169,46 +167,17 @@ class MarkNecessaryInlinedClassesAsRegeneratedLowering(val context: JvmBackendCo
         return classesToRegenerate
     }
 
-    private fun IrAttributeContainer.hasReifiedTypeArguments(reifiedArguments: List<IrType>): Boolean {
-        var hasReified = false
-
-        fun IrType.recursiveWalkDown(visitor: IrElementVisitorVoid) {
-            hasReified = hasReified || this@recursiveWalkDown in reifiedArguments
-            (this@recursiveWalkDown as? IrSimpleType)?.arguments?.forEach { it.typeOrNull?.recursiveWalkDown(visitor) }
-        }
-
+    private fun IrAttributeContainer.hasReifiedTypeArguments(): Boolean {
+        var foundReified = false
         this.acceptVoid(object : IrElementVisitorVoid {
-            private val visitedClasses = mutableSetOf<IrClass>()
-
             override fun visitElement(element: IrElement) {
-                if (hasReified) return
+                if (foundReified) return
+                foundReified = element in context.elementsWithReifiedTypes
+                if (foundReified) return
                 element.acceptChildrenVoid(this)
             }
-
-            override fun visitClass(declaration: IrClass) {
-                if (!visitedClasses.add(declaration)) return
-                declaration.superTypes.forEach { it.recursiveWalkDown(this) }
-                super.visitClass(declaration)
-            }
-
-            override fun visitTypeOperator(expression: IrTypeOperatorCall) {
-                expression.typeOperand.takeIf { it is IrSimpleType }?.recursiveWalkDown(this)
-                super.visitTypeOperator(expression)
-            }
-
-            override fun visitCall(expression: IrCall) {
-                (0 until expression.typeArgumentsCount).forEach {
-                    expression.getTypeArgument(it)?.recursiveWalkDown(this)
-                }
-                super.visitCall(expression)
-            }
-
-            override fun visitClassReference(expression: IrClassReference) {
-                expression.classType.recursiveWalkDown(this)
-                super.visitClassReference(expression)
-            }
         })
-        return hasReified
+        return foundReified
     }
 
     private fun IrElement.setUpCorrectAttributesForAllInnerElements(mustBeRegenerated: Set<IrAttributeContainer>) {

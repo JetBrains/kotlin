@@ -4133,6 +4133,18 @@ public class FirLightTreeBlackBoxInlineCodegenWithIrInlinerTestGenerated extends
         }
 
         @Test
+        @TestMetadata("kt60703.kt")
+        public void testKt60703() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/reified/kt60703.kt");
+        }
+
+        @Test
+        @TestMetadata("kt60906.kt")
+        public void testKt60906() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/reified/kt60906.kt");
+        }
+
+        @Test
         @TestMetadata("kt6988.kt")
         public void testKt6988() throws Exception {
             runTest("compiler/testData/codegen/boxInline/reified/kt6988.kt");

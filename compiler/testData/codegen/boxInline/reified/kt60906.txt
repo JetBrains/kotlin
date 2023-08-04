@@ -1,0 +1,22 @@
+@kotlin.Metadata
+public final class _1Kt {
+    // source: '1.kt'
+    public final static method doNothing(): void
+}
+
+@kotlin.Metadata
+public final class _2Kt$bar$1 {
+    // source: '2.kt'
+    enclosing method _2Kt.bar(Ljava/lang/String;)Ljava/lang/String;
+    inner (anonymous) class _2Kt$bar$1
+    public method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method foo(@org.jetbrains.annotations.NotNull p0: java.lang.String): java.lang.String
+}
+
+@kotlin.Metadata
+public final class _2Kt {
+    // source: '2.kt'
+    inner (anonymous) class _2Kt$bar$1
+    public synthetic final static method bar(p0: java.lang.String): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

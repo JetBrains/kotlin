@@ -188,6 +188,8 @@ class JvmBackendContext(
 
     val visitedDeclarationsForRegenerationLowering: MutableSet<IrDeclaration> = ConcurrentHashMap.newKeySet()
 
+    val elementsWithReifiedTypes = mutableSetOf<IrElement>()
+
     init {
         state.mapInlineClass = { descriptor ->
             defaultTypeMapper.mapType(referenceClass(descriptor).defaultType)

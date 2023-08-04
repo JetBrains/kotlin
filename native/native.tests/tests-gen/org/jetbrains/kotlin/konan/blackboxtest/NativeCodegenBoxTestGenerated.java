@@ -33,6 +33,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
         }
 
+        @Test
+        @TestMetadata("debug.kt")
+        public void testDebug() throws Exception {
+            runTest("compiler/testData/codegen/box/debug.kt");
+        }
+
         @Nested
         @TestMetadata("compiler/testData/codegen/box/annotations")
         @TestDataPath("$PROJECT_ROOT")
@@ -44067,6 +44073,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @TestMetadata("kt46584_2.kt")
             public void testKt46584_2() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/reified/kt46584_2.kt");
+            }
+
+            @Test
+            @TestMetadata("kt60703.kt")
+            public void testKt60703() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/reified/kt60703.kt");
             }
 
             @Test

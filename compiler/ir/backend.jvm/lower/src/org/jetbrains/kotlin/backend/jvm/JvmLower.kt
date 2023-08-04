@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.common.checkDeclarationParents
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.inline.FunctionInlining
 import org.jetbrains.kotlin.backend.common.lower.inline.InlineFunctionResolver
-import org.jetbrains.kotlin.backend.common.lower.inline.NonReifiedTypeParameterRemappingMode
 import org.jetbrains.kotlin.backend.common.lower.loops.forLoopsPhase
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.jvm.ir.constantValue
@@ -317,7 +316,7 @@ internal val functionInliningPhase = makeIrModulePhase(
             alwaysCreateTemporaryVariablesForArguments = true,
             regenerateInlinedAnonymousObjects = true,
             inlineArgumentsWithTheirOriginalTypeAndOffset = true,
-            defaultNonReifiedTypeParameterRemappingMode = NonReifiedTypeParameterRemappingMode.ERASE
+            copierBuilder = { typeArguments, parent -> JvmDeepCopyIrTreeWithSymbolsForInliner(context, typeArguments, parent) }
         )
     },
     name = "FunctionInliningPhase",
