@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.gradle.utils.filesProvider
 
 internal class KotlinJsIrSourceSetProcessor(
     tasksProvider: KotlinTasksProvider,
-    kotlinCompilation: KotlinCompilationInfo
+    kotlinCompilation: KotlinCompilationInfo,
 ) : KotlinSourceSetProcessor<Kotlin2JsCompile>(
     tasksProvider, taskDescription = "Compiles the Kotlin sources in $kotlinCompilation to JavaScript.",
     kotlinCompilation = kotlinCompilation
@@ -47,7 +47,7 @@ internal class KotlinJsIrSourceSetProcessor(
                 val configAction = KotlinJsIrLinkConfig(binary)
                 configAction.configureTask {
                     it.description = taskDescription
-                    it.libraries.from(compilation.runtimeDependencyFiles)
+                    it.libraries.from(project.filesProvider { compilation.runtimeDependencyFiles })
                 }
                 configAction.configureTask { task ->
                     task.modeProperty.set(binary.mode)
