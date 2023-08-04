@@ -101,6 +101,7 @@ class FirCallCompletionResultsWriterTransformer(
         qualifiedAccessExpression: T, calleeReference: FirNamedReferenceWithCandidate,
     ): T {
         val subCandidate = calleeReference.candidate
+
         val declaration = subCandidate.symbol.fir
         val typeArguments = computeTypeArguments(qualifiedAccessExpression, subCandidate)
         val typeRef = if (declaration is FirCallableDeclaration) {
@@ -132,6 +133,12 @@ class FirCallCompletionResultsWriterTransformer(
                         else -> ConeSimpleDiagnostic("Callee reference to candidate without return type: ${declaration.render()}")
                     }
             }
+        }
+
+        if (mode == Mode.DelegatedPropertyCompletion) {
+            // Update type for `$delegateField` in `$$delegateField.get/setValue()` calls inside accessors
+            val typeUpdater = TypeUpdaterForDelegateArguments()
+            qualifiedAccessExpression.transformExplicitReceiver(typeUpdater, null)
         }
 
         var dispatchReceiver = subCandidate.dispatchReceiverExpression()
@@ -169,18 +176,13 @@ class FirCallCompletionResultsWriterTransformer(
         return qualifiedAccessExpression
     }
 
+        )
     override fun transformQualifiedAccessExpression(
         qualifiedAccessExpression: FirQualifiedAccessExpression,
         data: ExpectedArgumentType?,
     ): FirStatement {
         val calleeReference = qualifiedAccessExpression.calleeReference as? FirNamedReferenceWithCandidate
-            ?: return run {
-                if (mode == Mode.DelegatedPropertyCompletion) {
-                    val typeUpdater = TypeUpdaterForDelegateArguments()
-                    qualifiedAccessExpression.transformSingle(typeUpdater, null)
-                }
-                qualifiedAccessExpression
-            }
+            ?: return qualifiedAccessExpression
         val result = prepareQualifiedTransform(qualifiedAccessExpression, calleeReference)
         val typeRef = result.typeRef as FirResolvedTypeRef
         val subCandidate = calleeReference.candidate
@@ -189,11 +191,6 @@ class FirCallCompletionResultsWriterTransformer(
         resultType.ensureResolvedTypeDeclaration(session)
         result.replaceTypeRef(resultType)
         session.lookupTracker?.recordTypeResolveAsLookup(resultType, qualifiedAccessExpression.source, context.file.source)
-
-        if (mode == Mode.DelegatedPropertyCompletion) {
-            val typeUpdater = TypeUpdaterForDelegateArguments()
-            result.transformExplicitReceiver(typeUpdater, null)
-        }
 
         return result
     }
@@ -241,12 +238,6 @@ class FirCallCompletionResultsWriterTransformer(
         result.argumentList.transformArguments(this, expectedArgumentsTypeMapping)
         result.replaceTypeRef(resultType)
         session.lookupTracker?.recordTypeResolveAsLookup(resultType, functionCall.source, context.file.source)
-
-        if (mode == Mode.DelegatedPropertyCompletion) {
-            val typeUpdater = TypeUpdaterForDelegateArguments()
-            result.argumentList.transformArguments(typeUpdater, null)
-            result.transformExplicitReceiver(typeUpdater, null)
-        }
 
         if (enableArrayOfCallTransformation) {
             return arrayOfCallTransformer.transformFunctionCall(result, session)

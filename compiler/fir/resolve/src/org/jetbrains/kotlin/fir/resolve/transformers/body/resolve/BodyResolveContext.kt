@@ -7,13 +7,15 @@ package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitExtensionReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
@@ -38,6 +40,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.util.PrivateForInline
 
 class BodyResolveContext(
@@ -86,6 +89,16 @@ class BodyResolveContext(
 
     @set:PrivateForInline
     var inferenceSession: FirInferenceSession = FirInferenceSession.DEFAULT
+
+    /**
+     * CS for an outer type system if it's relevant, for example, in the case of `val x by myGenericDelegateCall()`,
+     * relevant `getValue` call is expected to be resolved in the context of an outer CS built from `myGenericDelegateCall()` and
+     * probably using its type variables inside `getValue` candidates resolution.
+     *
+     * Note that it's not assumed to modify the storage, but only use it as a base system content for the candidate.
+     */
+    @set:PrivateForInline
+    var outerConstraintStorage: ConstraintStorage = ConstraintStorage.Empty
 
     val anonymousFunctionsAnalyzedInDependentContext: MutableSet<FirFunctionSymbol<*>> = mutableSetOf()
 
@@ -830,6 +843,21 @@ class BodyResolveContext(
             inferenceSession.f()
         }
     }
+
+    @OptIn(PrivateForInline::class)
+    inline fun <T> withOuterConstraintStorage(
+        storage: ConstraintStorage,
+        f: () -> T
+    ): T {
+        val oldStorage = this.outerConstraintStorage
+        this.outerConstraintStorage = storage
+        return try {
+            f()
+        } finally {
+            this.outerConstraintStorage = oldStorage
+        }
+    }
+
 
     @OptIn(PrivateForInline::class)
     inline fun <T> withConstructor(constructor: FirConstructor, f: () -> T): T =

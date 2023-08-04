@@ -599,8 +599,8 @@ class DiagnosticReporterByTrackingStrategy(
             is CallableReferenceConstraintPosition<*>,
             is IncorporationConstraintPosition,
             is InjectedAnotherStubTypeConstraintPosition<*>,
-            is LHSArgumentConstraintPosition<*, *>,
-            SimpleConstraintSystemConstraintPosition -> {
+            is LHSArgumentConstraintPosition<*, *>, SimpleConstraintSystemConstraintPosition, ProvideDelegateFixationPosition
+            -> {
                 if (AbstractTypeChecker.RUN_SLOW_ASSERTIONS) {
                     throw AssertionError("Constraint error in unexpected position: $position")
                 } else if (reportAdditionalErrors) {

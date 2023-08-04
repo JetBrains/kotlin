@@ -28,6 +28,17 @@ class VariableFixationFinder(
         val postponedTypeVariables: List<TypeVariableMarker>
         val constraintsFromAllForkPoints: MutableList<Pair<IncorporationConstraintPosition, ForkPointData>>
 
+        /**
+         * If not null, that property means that we should assume temporary
+         * `allTypeVariables.keys.minus(typeVariablesThatAreNotCountedAsProperTypes)` as proper types when fixating some variables.
+         *
+         * By default, if that property is null, we assume all `allTypeVariables` as not proper.
+         *
+         * Currently, that is only used for `provideDelegate` resolution, see
+         * [org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclarationsResolveTransformer.fixInnerVariablesForProvideDelegateIfNeeded]
+         */
+        val typeVariablesThatAreNotCountedAsProperTypes: Set<TypeConstructorMarker>?
+
         fun isReified(variable: TypeVariableMarker): Boolean
     }
 
@@ -182,7 +193,13 @@ class VariableFixationFinder(
                 && !c.isNullabilityConstraint
 
     private fun Context.isProperType(type: KotlinTypeMarker): Boolean =
-        isProperTypeForFixation(type) { t -> !t.contains { notFixedTypeVariables.containsKey(it.typeConstructor()) } }
+        isProperTypeForFixation(type) { t -> !t.contains { isNotFixedRelevantVariable(it) } }
+
+    private fun Context.isNotFixedRelevantVariable(it: KotlinTypeMarker): Boolean {
+        if (!notFixedTypeVariables.containsKey(it.typeConstructor())) return false
+        if (typeVariablesThatAreNotCountedAsProperTypes == null) return true
+        return typeVariablesThatAreNotCountedAsProperTypes!!.contains(it.typeConstructor())
+    }
 
     private fun Context.isReified(variable: TypeConstructorMarker): Boolean =
         notFixedTypeVariables[variable]?.typeVariable?.let { isReified(it) } ?: false
