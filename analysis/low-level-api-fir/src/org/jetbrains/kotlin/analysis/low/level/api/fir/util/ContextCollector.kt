@@ -274,10 +274,16 @@ private class ContextCollectorVisitor(
     }
 
     override fun visitEnumEntry(enumEntry: FirEnumEntry) {
+        dumpContext(enumEntry.psi, ContextKind.SELF)
+
         enumEntry.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
 
         context.forEnumEntry {
-            super.visitEnumEntry(enumEntry)
+            dumpContext(enumEntry.psi, ContextKind.BODY)
+
+            onActive {
+                super.visitEnumEntry(enumEntry)
+            }
         }
     }
 
