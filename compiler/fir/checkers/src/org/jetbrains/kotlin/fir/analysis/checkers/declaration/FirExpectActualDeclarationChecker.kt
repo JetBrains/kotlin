@@ -169,17 +169,9 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
             }
 
             Compatible !in compatibilityToMembersMap -> {
-                val paramsWithDefaultValues =
-                    when (declaration is FirFunction && compatibilityToMembersMap.keys.any { it is Incompatible.ActualFunctionWithDefaultParameters }) {
-                        true -> declaration.valueParameters.filter { it.defaultValue != null }.map { it.source }
-                        false -> emptyList()
-                    }
                 // A nicer diagnostic for functions with default params
-                if (paramsWithDefaultValues.isNotEmpty() && paramsWithDefaultValues.all { it != null }) {
-                    @Suppress("UNCHECKED_CAST")
-                    for (parameter in paramsWithDefaultValues as List<KtSourceElement>) {
-                        reporter.reportOn(parameter, FirErrors.ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS, context)
-                    }
+                if (declaration is FirFunction && compatibilityToMembersMap.keys.any { it is Incompatible.ActualFunctionWithDefaultParameters }) {
+                    reporter.reportOn(declaration.source, FirErrors.ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS, context)
                 } else if (requireActualModifier(declaration.symbol, context.session)) {
                     reporter.reportOn(
                         source,
