@@ -51,17 +51,22 @@ abstract class AbstractContextCollectorTest : AbstractAnalysisApiBasedSingleModu
         val elementContext = ContextCollector.process(firFile, sessionHolder, targetElement)
             ?: error("Context not found for element $targetElement")
 
-        val actualText = ElementContextRenderer.render(elementContext)
+        val firRenderer = FirRenderer.withResolvePhase()
+
+        val actualText = buildString {
+            ElementContextRenderer.render(elementContext, this)
+            appendLine()
+            append(firRenderer.renderElementAsString(firFile, trim = true))
+        }
+
         testServices.assertions.assertEqualsToTestDataFileSibling(actualText)
     }
 }
 
 private object ElementContextRenderer {
-    fun render(context: ContextCollector.Context): String {
-        return buildString {
-            renderTowerDataContext(context.towerDataContext)
-            renderSmartCasts(context.smartCasts)
-        }.trim()
+    fun render(context: ContextCollector.Context, builder: StringBuilder) = with(builder) {
+        renderTowerDataContext(context.towerDataContext)
+        renderSmartCasts(context.smartCasts)
     }
 
     private fun StringBuilder.renderTowerDataContext(towerDataContext: FirTowerDataContext) {
