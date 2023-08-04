@@ -753,6 +753,11 @@ val emptyJavadocJar by tasks.creating(org.gradle.api.tasks.bundling.Jar::class) 
     archiveClassifier.set("javadoc")
 }
 
+val emptyJsJavadocJar by tasks.creating(org.gradle.api.tasks.bundling.Jar::class) {
+    archiveAppendix.set("js")
+    archiveClassifier.set("javadoc")
+}
+
 publishing {
     val artifactBaseName = base.archivesName.get()
     configureMultiModuleMavenPublishing {
@@ -760,6 +765,7 @@ publishing {
             mavenPublication {
                 artifactId = artifactBaseName
                 configureKotlinPomAttributes(project, "Kotlin Standard Library")
+                artifact(emptyJavadocJar)
             }
 
             // creates a variant from existing configuration or creates new one
@@ -835,6 +841,7 @@ publishing {
             mavenPublication {
                 artifactId = "$artifactBaseName-js"
                 configureKotlinPomAttributes(project, "Kotlin Standard Library for JS")
+                artifact(emptyJsJavadocJar)
             }
             variant("jsApiElements")
             variant("jsRuntimeElements")
@@ -845,12 +852,6 @@ publishing {
 
         // Makes all variants from accompanying artifacts visible through `available-at`
         rootModule.include(js)
-    }
-
-    publications {
-        withType<MavenPublication> {
-            artifact(emptyJavadocJar)
-        }
     }
 }
 
