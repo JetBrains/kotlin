@@ -243,6 +243,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXTENSION_PROPERT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXTENSION_PROPERTY_WITH_BACKING_FIELD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FINAL_SUPERTYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FINAL_UPPER_BOUND
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FINITE_BOUNDS_VIOLATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FINITE_BOUNDS_VIOLATION_IN_JAVA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FLOAT_LITERAL_OUT_OF_RANGE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FORBIDDEN_BINARY_MOD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FORBIDDEN_IDENTITY_EQUALS
@@ -1356,6 +1358,9 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(IMPLICIT_NOTHING_PROPERTY_TYPE, "'Nothing' property type needs to be specified explicitly")
 
         map.put(CYCLIC_GENERIC_UPPER_BOUND, "Type parameter has cyclic upper bounds")
+
+        map.put(FINITE_BOUNDS_VIOLATION, "This type parameter violates the Finite Bound Restriction")
+        map.put(FINITE_BOUNDS_VIOLATION_IN_JAVA, "Violation of Finite Bound Restriction for {0}", commaSeparated(DECLARATION_NAME))
 
         map.put(DEPRECATED_TYPE_PARAMETER_SYNTAX, "Type parameters must be placed before the name of the function")
 

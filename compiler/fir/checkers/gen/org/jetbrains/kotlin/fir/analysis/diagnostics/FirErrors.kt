@@ -448,6 +448,8 @@ object FirErrors {
     val IMPLICIT_NOTHING_RETURN_TYPE by error0<PsiElement>(SourceElementPositioningStrategies.NAME_IDENTIFIER)
     val IMPLICIT_NOTHING_PROPERTY_TYPE by error0<PsiElement>(SourceElementPositioningStrategies.NAME_IDENTIFIER)
     val CYCLIC_GENERIC_UPPER_BOUND by error0<PsiElement>()
+    val FINITE_BOUNDS_VIOLATION by error0<PsiElement>()
+    val FINITE_BOUNDS_VIOLATION_IN_JAVA by error1<PsiElement, List<FirBasedSymbol<*>>>()
     val DEPRECATED_TYPE_PARAMETER_SYNTAX by error0<KtDeclaration>(SourceElementPositioningStrategies.TYPE_PARAMETERS_LIST)
     val MISPLACED_TYPE_PARAMETER_CONSTRAINTS by warning0<KtTypeParameter>()
     val DYNAMIC_SUPERTYPE by error0<KtTypeReference>()

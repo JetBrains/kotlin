@@ -753,6 +753,11 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
         val CYCLIC_GENERIC_UPPER_BOUND by error<PsiElement>()
 
+        val FINITE_BOUNDS_VIOLATION by error<PsiElement>()
+        val FINITE_BOUNDS_VIOLATION_IN_JAVA by error<PsiElement> {
+            parameter<List<Symbol>>("containingTypes")
+        }
+
         val DEPRECATED_TYPE_PARAMETER_SYNTAX by error<KtDeclaration>(PositioningStrategy.TYPE_PARAMETERS_LIST)
 
         val MISPLACED_TYPE_PARAMETER_CONSTRAINTS by warning<KtTypeParameter>()

@@ -2311,6 +2311,21 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.FINITE_BOUNDS_VIOLATION) { firDiagnostic ->
+        FiniteBoundsViolationImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.FINITE_BOUNDS_VIOLATION_IN_JAVA) { firDiagnostic ->
+        FiniteBoundsViolationInJavaImpl(
+            firDiagnostic.a.map { firBasedSymbol ->
+                firSymbolBuilder.buildSymbol(firBasedSymbol)
+            },
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.DEPRECATED_TYPE_PARAMETER_SYNTAX) { firDiagnostic ->
         DeprecatedTypeParameterSyntaxImpl(
             firDiagnostic as KtPsiDiagnostic,
