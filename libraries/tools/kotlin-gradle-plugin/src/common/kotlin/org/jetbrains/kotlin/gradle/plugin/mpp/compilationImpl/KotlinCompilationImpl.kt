@@ -194,9 +194,6 @@ internal class KotlinCompilationImpl constructor(
     override val allAssociatedCompilations: ObservableSet<KotlinCompilation<*>>
         get() = allAssociatedCompilationsImpl
 
-    override val associateWith: List<KotlinCompilation<*>>
-        get() = associatedCompilationsImpl.toList()
-
     override fun associateWith(other: KotlinCompilation<*>) {
         require(other.target == target) { "Only associations between compilations of a single target are supported" }
         if (!associatedCompilationsImpl.add(other)) return

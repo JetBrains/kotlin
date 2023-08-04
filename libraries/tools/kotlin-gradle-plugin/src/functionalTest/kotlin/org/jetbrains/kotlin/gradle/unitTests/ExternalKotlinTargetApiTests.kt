@@ -107,7 +107,7 @@ class ExternalKotlinTargetApiTests {
         }
 
         auxCompilation.associateWith(mainCompilation)
-        assertEquals(setOf(mainCompilation), auxCompilation.associateWith.toSet())
+        assertEquals(setOf(mainCompilation), auxCompilation.associatedCompilations.toSet())
     }
 
     @Test

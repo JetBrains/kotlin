@@ -76,7 +76,7 @@ internal fun Project.getPlatformCinteropDependenciesOrEmpty(
         /* Participating in multiple compilations? -> can't propagate -> should be commonized */
         val compilation = compilations.singleOrNull() as? KotlinNativeCompilation ?: return@files emptySet<File>()
 
-        (compilation.associateWith + compilation)
+        (compilation.associatedCompilations + compilation)
             .filterIsInstance<KotlinNativeCompilation>()
             .filter(compilationFilter)
             .map { relevantCompilation -> getAllCInteropOutputFiles(relevantCompilation) }

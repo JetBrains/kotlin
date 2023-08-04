@@ -6,14 +6,11 @@
 package org.jetbrains.kotlin.gradle.plugin.sources
 
 import org.gradle.api.GradleException
-import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.mpp.associateWithClosure
 
 fun getSourceSetsFromAssociatedCompilations(fromCompilation: KotlinCompilation<*>): Map<KotlinCompilation<*>, Set<KotlinSourceSet>> =
-    fromCompilation.associateWithClosure.associate { it to it.allKotlinSourceSets }
+    fromCompilation.allAssociatedCompilations.associate { it to it.allKotlinSourceSets }
 
 fun getVisibleSourceSetsFromAssociateCompilations(
     sourceSet: KotlinSourceSet
@@ -93,7 +90,7 @@ class UnsatisfiedSourceSetVisibilityException(
                     else "\n"
                 )
 
-                compilation.associateWith.forEach { appendCompilationRecursively(it, depth + 1) }
+                compilation.associatedCompilations.toList().forEach { appendCompilationRecursively(it, depth + 1) }
 
                 if (!isAssociatedCompilation) {
                     val missingRequiredSourceSets = requiredButNotVisible.filter { missingSourceSet ->

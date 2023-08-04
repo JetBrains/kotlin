@@ -208,7 +208,7 @@ class GradleProjectModuleBuilder(private val addInferredSourceSetVisibilityAsExp
 
         targets.flatMap { it.compilations }.forEach { compilation ->
             val variant = fragmentByName(compilation.defaultSourceSetName)
-            compilation.associateWith.forEach { associate ->
+            compilation.associatedCompilations.forEach { associate ->
                 val associateVariant = fragmentByName(associate.defaultSourceSetName)
                 variant.declaredModuleDependencies.add(KpmModuleDependency(associateVariant.containingModule.moduleIdentifier))
             }

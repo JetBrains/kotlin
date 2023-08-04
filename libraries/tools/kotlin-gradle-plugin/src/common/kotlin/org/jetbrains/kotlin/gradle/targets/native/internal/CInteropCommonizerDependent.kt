@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.associateWithClosure
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropIdentifier.Scope
 import org.jetbrains.kotlin.tooling.core.UnsafeApi
@@ -58,7 +57,7 @@ internal fun CInteropCommonizerDependent.Factory.from(
      This relationship should not be declared, but we try to be lenient towards it here.
       */
     val filteredCompilations = compilations.filter { compilation ->
-        compilation.associateWithClosure.none { associateCompilation -> associateCompilation in compilations }
+        compilation.allAssociatedCompilations.none { associatedCompilation -> associatedCompilation in compilations }
     }.ifEmpty { return null }.toSet()
 
     val scopes: Set<Scope> = filteredCompilations
@@ -92,7 +91,7 @@ internal suspend fun CInteropCommonizerDependent.Factory.fromAssociateCompilatio
         target = sourceSet.commonizerTarget.await() as? SharedCommonizerTarget ?: return null,
         compilations = sourceSet.internal.compilations
             .filterIsInstance<KotlinNativeCompilation>()
-            .flatMap { compilation -> compilation.associateWithClosure }
+            .flatMap { compilation -> compilation.allAssociatedCompilations }
             .filterIsInstance<KotlinNativeCompilation>()
             .toSet()
     )

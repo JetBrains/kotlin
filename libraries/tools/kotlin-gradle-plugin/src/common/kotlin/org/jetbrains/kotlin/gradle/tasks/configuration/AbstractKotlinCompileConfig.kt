@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPro
 import org.jetbrains.kotlin.gradle.plugin.internal.BuildIdService
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.associateWithClosure
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.report.BuildMetricsService
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
@@ -127,7 +126,7 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
             task.friendPaths.from({ compilationInfo.friendPaths })
             compilationInfo.tcsOrNull?.compilation?.let { compilation ->
                 task.friendSourceSets
-                    .value(providers.provider { compilation.associateWithClosure.map { it.name } })
+                    .value(providers.provider { compilation.allAssociatedCompilations.map { it.name } })
                     .disallowChanges()
                 task.pluginClasspath.from(
                     compilation.internal.configurations.pluginConfiguration

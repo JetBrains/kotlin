@@ -71,9 +71,6 @@ internal fun addSourcesToKotlinCompileTask(
         }
 }
 
-internal val KotlinCompilation<*>.associateWithClosure: Iterable<KotlinCompilation<*>>
-    get() = this.closure { it.associateWith }
-
 internal fun KotlinCompilation<*>.disambiguateName(simpleName: String): String {
     return lowerCamelCaseName(
         target.disambiguationClassifier,

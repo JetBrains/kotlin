@@ -45,7 +45,7 @@ open class NativePerformanceReport : DefaultTask() {
     // Get compile task and associated with it other compile tasks.
     private fun getAllExecutedTasks(compilation: KotlinCompilation<*>): List<Task> {
         val tasks = mutableListOf(compilation.compileKotlinTask as Task)
-        compilation.associateWith.forEach {
+        compilation.associatedCompilations.toList().forEach {
             tasks += getAllExecutedTasks(it)
         }
         return tasks
