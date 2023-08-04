@@ -160,6 +160,13 @@ class FirRenderer(
         printer.renderSeparated(elements, visitor)
     }
 
+    private fun renderType(type: ConeKotlinType?) {
+        if (type == null) return
+        print("R|")
+        typeRenderer.render(type)
+        print("|")
+    }
+
     inner class Visitor internal constructor() : FirVisitorVoid() {
 
         override fun visitElement(element: FirElement) {
@@ -1189,6 +1196,15 @@ class FirRenderer(
 
         override fun visitPackageDirective(packageDirective: FirPackageDirective) {
             packageDirectiveRenderer?.render(packageDirective)
+        }
+
+        override fun visitResolvedReifiedParameterReference(resolvedReifiedParameterReference: FirResolvedReifiedParameterReference) {
+            renderType(resolvedReifiedParameterReference.coneTypeOrNull)
+        }
+
+        override fun visitInaccessibleReceiverExpression(inaccessibleReceiverExpression: FirInaccessibleReceiverExpression) {
+            renderType(inaccessibleReceiverExpression.coneTypeOrNull)
+            visitElement(inaccessibleReceiverExpression)
         }
     }
 }
