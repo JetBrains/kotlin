@@ -241,4 +241,6 @@ internal class MutableConstraintStorage : ConstraintStorage {
         LinkedHashMap()
 
     override val constraintsFromAllForkPoints: MutableList<Pair<IncorporationConstraintPosition, ForkPointData>> = SmartList()
+
+    override var outerSystemVariablesPrefixSize: Int = 0
 }

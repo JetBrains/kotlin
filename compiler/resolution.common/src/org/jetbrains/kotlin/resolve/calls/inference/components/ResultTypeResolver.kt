@@ -63,7 +63,7 @@ class ResultTypeResolver(
         return c.getDefaultType(direction, variableWithConstraints.constraints, variableWithConstraints.typeVariable)
     }
 
-    private fun findResultTypeOrNull(
+    fun findResultTypeOrNull(
         c: Context,
         variableWithConstraints: VariableWithConstraints,
         direction: ResolveDirection

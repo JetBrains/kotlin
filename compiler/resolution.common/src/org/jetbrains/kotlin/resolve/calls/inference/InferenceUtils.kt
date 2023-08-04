@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.types.model.*
 
 fun ConstraintStorage.buildCurrentSubstitutor(
     context: TypeSystemInferenceExtensionContext,
-    additionalBindings: Map<TypeConstructorMarker, StubTypeMarker>
+    additionalBindings: Map<TypeConstructorMarker, KotlinTypeMarker>
 ): TypeSubstitutorMarker {
     return context.typeSubstitutorByTypeConstructor(fixedTypeVariables.entries.associate { it.key to it.value } + additionalBindings)
 }
