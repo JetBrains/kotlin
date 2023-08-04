@@ -193,8 +193,6 @@ private class ContextCollectorVisitor(
     }
 
     override fun visitFile(file: FirFile) {
-        file.lazyResolveToPhase(FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING)
-
         context.withFile(file, holder) {
             withInterceptor {
                 super.visitFile(file)
@@ -203,19 +201,25 @@ private class ContextCollectorVisitor(
     }
 
     override fun visitAnnotationCall(annotationCall: FirAnnotationCall) {
+        dumpContext(annotationCall.psi, ContextKind.SELF)
+
         context.forAnnotation {
-            super.visitAnnotationCall(annotationCall)
+            dumpContext(annotationCall.psi, ContextKind.BODY)
+
+            // Technically, annotation arguments might contain arbitrary expressions.
+            // However, such cases are very rare, as it's currently forbidden in Kotlin.
+            // Here we ignore declarations that might be inside such expressions, avoiding unnecessary tree traversal.
         }
     }
 
     override fun visitRegularClass(regularClass: FirRegularClass) = withProcessor {
         dumpContext(regularClass.psi, ContextKind.SELF)
 
-        regularClass.lazyResolveToPhase(FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING)
-
         processSignatureAnnotations(regularClass)
 
         context.withContainingClass(regularClass) {
+            regularClass.lazyResolveToPhase(FirResolvePhase.STATUS)
+
             processList(regularClass.typeParameters)
 
             context.withRegularClass(regularClass, holder) {
@@ -237,11 +241,11 @@ private class ContextCollectorVisitor(
     override fun visitConstructor(constructor: FirConstructor) = withProcessor {
         dumpContext(constructor.psi, ContextKind.SELF)
 
-        constructor.lazyResolveToPhase(FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING)
-
         processSignatureAnnotations(constructor)
 
         context.withConstructor(constructor) {
+            constructor.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+
             val owningClass = context.containerIfAny as? FirRegularClass
             context.forConstructorParameters(constructor, owningClass, holder) {
                 processList(constructor.valueParameters)
@@ -253,7 +257,6 @@ private class ContextCollectorVisitor(
                 dumpContext(constructor.psi, ContextKind.BODY)
 
                 onActive {
-                    constructor.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
                     process(constructor.body)
                 }
             }
@@ -304,8 +307,6 @@ private class ContextCollectorVisitor(
 
     override fun visitProperty(property: FirProperty) = withProcessor {
         dumpContext(property.psi, ContextKind.SELF)
-
-        property.lazyResolveToPhase(FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING)
 
         processSignatureAnnotations(property)
 
@@ -368,8 +369,6 @@ private class ContextCollectorVisitor(
 
     override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer) = withProcessor {
         dumpContext(anonymousInitializer.psi, ContextKind.SELF)
-
-        anonymousInitializer.lazyResolveToPhase(FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING)
 
         processSignatureAnnotations(anonymousInitializer)
 
