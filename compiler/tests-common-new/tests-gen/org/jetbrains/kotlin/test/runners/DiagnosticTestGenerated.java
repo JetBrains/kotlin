@@ -23740,6 +23740,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("injectGenericUpperBoundOverload.kt")
+                public void testInjectGenericUpperBoundOverload() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/injectIntoExpectOpenClassDuringActualization/injectGenericUpperBoundOverload.kt");
+                }
+
+                @Test
                 @TestMetadata("injectInnerClass.kt")
                 public void testInjectInnerClass() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/multiplatform/injectIntoExpectOpenClassDuringActualization/injectInnerClass.kt");
@@ -23809,6 +23815,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 @TestMetadata("nestedExpectOpenClass.kt")
                 public void testNestedExpectOpenClass() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/multiplatform/injectIntoExpectOpenClassDuringActualization/nestedExpectOpenClass.kt");
+                }
+
+                @Test
+                @TestMetadata("propertyKindOverride.kt")
+                public void testPropertyKindOverride() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/injectIntoExpectOpenClassDuringActualization/propertyKindOverride.kt");
                 }
 
                 @Test

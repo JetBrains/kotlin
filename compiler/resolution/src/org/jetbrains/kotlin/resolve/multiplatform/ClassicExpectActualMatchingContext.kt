@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext
 import org.jetbrains.kotlin.resolve.calls.mpp.ExpectActualMatchingContext.AnnotationCallInfo
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
 import org.jetbrains.kotlin.resolve.descriptorUtil.*
-import org.jetbrains.kotlin.resolve.findTopMostOverriddenDescriptors
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
@@ -144,20 +143,11 @@ class ClassicExpectActualMatchingContext(
         expectTypeParameters: List<TypeParameterSymbolMarker>,
         actualTypeParameters: List<TypeParameterSymbolMarker>,
         parentSubstitutor: TypeSubstitutorMarker?,
-    ): TypeSubstitutorMarker {
-        val expectParameters = expectTypeParameters.castAll<TypeParameterDescriptor>()
-        val actualParameters = actualTypeParameters.castAll<TypeParameterDescriptor>()
-        val substitutor = TypeSubstitutor.create(
-            TypeConstructorSubstitution.createByParametersMap(expectParameters.keysToMap {
-                actualParameters[it.index].defaultType.asTypeProjection()
-            })
-        )
-        return when (parentSubstitutor) {
-            null -> substitutor
-            is TypeSubstitutor -> TypeSubstitutor.createChainedSubstitutor(parentSubstitutor.substitution, substitutor.substitution)
-            else -> error("Unsupported substitutor type: $parentSubstitutor")
-        }
-    }
+    ): TypeSubstitutorMarker = org.jetbrains.kotlin.resolve.multiplatform.createExpectActualTypeParameterSubstitutor(
+        expectTypeParameters.castAll<TypeParameterDescriptor>(),
+        actualTypeParameters.castAll<TypeParameterDescriptor>(),
+        parentSubstitutor as? TypeSubstitutor ?: error("Unsupported substitutor type: $parentSubstitutor")
+    )
 
     override fun RegularClassSymbolMarker.collectAllMembers(isActualDeclaration: Boolean): List<DeclarationSymbolMarker> {
         return asDescriptor().getMembers(name = null)
@@ -221,15 +211,8 @@ class ClassicExpectActualMatchingContext(
         get() = asDescriptor().isReified
 
     override fun areCompatibleExpectActualTypes(expectType: KotlinTypeMarker?, actualType: KotlinTypeMarker?): Boolean {
-        if (expectType == null) return actualType == null
-        if (actualType == null) return false
-
         require(expectType is KotlinType && actualType is KotlinType)
-        return if (platformModule.isTypeRefinementEnabled()) {
-            areCompatibleTypesViaTypeRefinement(expectType, actualType)
-        } else {
-            areCompatibleTypesViaTypeContext(expectType, actualType)
-        }
+        return areCompatibleExpectActualTypes(expectType, actualType)
     }
 
     override val RegularClassSymbolMarker.defaultType: KotlinTypeMarker
@@ -386,4 +369,31 @@ class ClassicExpectActualMatchingContext(
                     this is K1SyntheticClassifierSymbolMarker ||
                     this is CallableMemberDescriptor && kind == CallableMemberDescriptor.Kind.SYNTHESIZED
         }
+}
+
+fun createExpectActualTypeParameterSubstitutor(
+    expectParameters: List<TypeParameterDescriptor>,
+    actualParameters: List<TypeParameterDescriptor>,
+    parentSubstitutor: TypeSubstitutor?,
+): TypeSubstitutor {
+    val substitutor = TypeSubstitutor.create(
+        TypeConstructorSubstitution.createByParametersMap(expectParameters.keysToMap {
+            actualParameters[it.index].defaultType.asTypeProjection()
+        })
+    )
+    return when (parentSubstitutor) {
+        null -> substitutor
+        else -> TypeSubstitutor.createChainedSubstitutor(parentSubstitutor.substitution, substitutor.substitution)
+    }
+}
+
+fun areCompatibleExpectActualTypes(expectType: KotlinType?, actualType: KotlinType?, platformModule: ModuleDescriptor): Boolean {
+    if (expectType == null) return actualType == null
+    if (actualType == null) return false
+
+    return if (platformModule.isTypeRefinementEnabled()) {
+        areCompatibleTypesViaTypeRefinement(expectType, actualType)
+    } else {
+        areCompatibleTypesViaTypeContext(expectType, actualType)
+    }
 }

@@ -19,9 +19,11 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperInterfaces
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMemberDiff
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
+import org.jetbrains.kotlin.resolve.multiplatform.createExpectActualTypeParameterSubstitutor
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeSubstitutor
 import java.util.*
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -132,82 +134,118 @@ private fun calculateExpectActualScopeDiff(
 ): Set<ExpectActualMemberDiff<CallableMemberDescriptor, ClassDescriptor>> {
     val expectScope = expect.unsubstitutedMemberScope
     val actualScope = actual.unsubstitutedMemberScope
-    val expectClassCallables = expectScope.extractNonPrivateCallables()
+
+    val classTypeSubstitutor = createExpectActualTypeParameterSubstitutor(
+        expect.declaredTypeParameters,
+        actual.declaredTypeParameters,
+        parentSubstitutor = null
+    )
+    val expectClassCallables = expectScope.extractNonPrivateCallables(classTypeSubstitutor, ExpectActual.EXPECT)
     val nameAndKindToExpectCallable = expectClassCallables.groupBy { it.name to it.kind }
-    return (actualScope.extractNonPrivateCallables() - expectClassCallables).asSequence()
+    return (actualScope.extractNonPrivateCallables(classTypeSubstitutor, ExpectActual.ACTUAL) - expectClassCallables).asSequence()
         .flatMap { unmatchedActualCallable ->
             when (val expectCallablesWithTheSameName =
                 nameAndKindToExpectCallable[unmatchedActualCallable.name to unmatchedActualCallable.kind]) {
                 null -> listOf(ExpectActualMemberDiff.Kind.NonPrivateCallableAdded)
                 else -> expectCallablesWithTheSameName.map {
-                    calculateDiffKind(expect = it, actual = unmatchedActualCallable) ?: error("Not equal callables can't have zero diff")
+                    calculateExpectActualMemberDiffKind(expect = it, actual = unmatchedActualCallable)
+                        ?: error("Not equal callables can't have zero diff")
                 }
             }.map { kind -> ExpectActualMemberDiff(kind, unmatchedActualCallable.descriptor, expect) }
         }
         .toSet()
 }
 
-private fun MemberScope.extractNonPrivateCallables(): Set<Callable> {
+private fun MemberScope.extractNonPrivateCallables(
+    classTypeSubstitutor: TypeSubstitutor,
+    expectActual: ExpectActual
+): Set<Callable> {
     val functions =
         getFunctionNames().asSequence().flatMap { getContributedFunctions(it, NoLookupLocation.FROM_FRONTEND_CHECKER) }
     val properties =
         getVariableNames().asSequence().flatMap { getContributedVariables(it, NoLookupLocation.FROM_FRONTEND_CHECKER) }
     return (functions + properties).filter { !Visibilities.isPrivate(it.visibility.delegate) }
-        .map { descriptor ->
-            val returnType = descriptor.returnType
-            Callable(
-                descriptor.name,
-                when (descriptor) {
-                    is PropertyDescriptor -> Kind.PROPERTY
-                    is FunctionDescriptor -> Kind.FUNCTION
-                    else -> error("Unknown kind $descriptor")
-                },
-                descriptor.extensionReceiverParameter?.type,
-                descriptor.contextReceiverParameters.map(ValueDescriptor::getType),
-                descriptor.valueParameters.map { Parameter(it.name, it.type) },
-                returnType ?: error("Can't get return type"),
-                descriptor.modality,
-                descriptor.visibility.delegate,
-                descriptor,
-            )
-        }
+        .map { descriptor -> Callable(descriptor, expectActual, classTypeSubstitutor) }
         .toSet()
 }
 
 private data class Parameter(val name: Name, val type: KotlinType)
 private enum class Kind { FUNCTION, PROPERTY }
+private enum class ExpectActual { EXPECT, ACTUAL }
 private class Callable(
-    val name: Name,
-    val kind: Kind,
-    val extensionReceiverType: KotlinType?,
-    val contextReceiverTypes: List<KotlinType>,
-    val parameters: List<Parameter>,
-    val returnType: KotlinType,
-    val modality: Modality,
-    val visibility: Visibility,
     val descriptor: CallableMemberDescriptor,
+    val expectActual: ExpectActual,
+    val classTypeSubstitutor: TypeSubstitutor,
 ) {
-    override fun equals(other: Any?): Boolean = other is Callable && calculateDiffKind(this, other) == null
-    override fun hashCode(): Int =
-        Objects.hash(name, kind, extensionReceiverType, contextReceiverTypes, parameters, returnType, modality, visibility)
+    val name: Name = descriptor.name
+    val kind: Kind = when (descriptor) {
+        is PropertyDescriptor -> Kind.PROPERTY
+        is FunctionDescriptor -> Kind.FUNCTION
+        else -> error("Unknown kind $descriptor")
+    }
+    val extensionReceiverType: KotlinType? = descriptor.extensionReceiverParameter?.type
+    val contextReceiverTypes: List<KotlinType> = descriptor.contextReceiverParameters.map(ValueDescriptor::getType)
+    val parameters: List<Parameter> = descriptor.valueParameters.map { Parameter(it.name, it.type) }
+    val returnType: KotlinType = descriptor.returnType ?: error("Can't get return type")
+    val modality: Modality = descriptor.modality
+    val visibility: Visibility = descriptor.visibility.delegate
+
+    override fun equals(other: Any?): Boolean {
+        if (other !is Callable) return false
+        check(classTypeSubstitutor === other.classTypeSubstitutor)
+        return if (expectActual == other.expectActual) {
+            name == other.name &&
+                    kind == other.kind &&
+                    extensionReceiverType == other.extensionReceiverType &&
+                    contextReceiverTypes == other.contextReceiverTypes &&
+                    parameters == other.parameters &&
+                    returnType == other.returnType &&
+                    modality == other.modality &&
+                    visibility == other.visibility
+        } else {
+            val (expect, actual) = if (expectActual == ExpectActual.EXPECT) this to other else other to this
+            calculateExpectActualMemberDiffKind(expect, actual) == null
+        }
+    }
+
+    override fun hashCode(): Int = // Don't hash types because type comparison is complicated
+        Objects.hash(
+            name,
+            kind,
+            extensionReceiverType != null,
+            contextReceiverTypes.size,
+            parameters.map(Parameter::name),
+            modality,
+            visibility
+        )
 }
 
 private val CallableMemberDescriptor.psiIfReal: KtCallableDeclaration?
     get() = takeIf { it.kind.isReal }?.source?.let { it as? KotlinSourceElement }?.psi as? KtCallableDeclaration
 
-private fun calculateDiffKind(expect: Callable, actual: Callable): ExpectActualMemberDiff.Kind? = when {
-    expect.name != actual.name ||
-            expect.kind != actual.kind ||
-            expect.extensionReceiverType != actual.extensionReceiverType ||
-            expect.contextReceiverTypes != actual.contextReceiverTypes ||
-            expect.parameters.map(Parameter::type) != actual.parameters.map(Parameter::type) ->
-        ExpectActualMemberDiff.Kind.NonPrivateCallableAdded
-    expect.parameters.map(Parameter::name) != actual.parameters.map(Parameter::name) ->
-        ExpectActualMemberDiff.Kind.ParameterNameChangedInOverride
-    expect.returnType != actual.returnType -> ExpectActualMemberDiff.Kind.ReturnTypeCovariantOverride
-    expect.modality != actual.modality -> ExpectActualMemberDiff.Kind.ModalityChangedInOverride
-    expect.visibility != actual.visibility -> ExpectActualMemberDiff.Kind.VisibilityChangedInOverride
-    else -> null
+private fun calculateExpectActualMemberDiffKind(expect: Callable, actual: Callable): ExpectActualMemberDiff.Kind? {
+    check(expect.expectActual == ExpectActual.EXPECT)
+    check(actual.expectActual == ExpectActual.ACTUAL)
+    check(expect.classTypeSubstitutor === actual.classTypeSubstitutor)
+    val substitutor = createExpectActualTypeParameterSubstitutor(
+        expect.descriptor.typeParameters,
+        actual.descriptor.typeParameters,
+        actual.classTypeSubstitutor
+    )
+    return when {
+        expect.name != actual.name ||
+                expect.kind != actual.kind ||
+                expect.extensionReceiverType != actual.extensionReceiverType ||
+                expect.contextReceiverTypes != actual.contextReceiverTypes ||
+                expect.parameters.map(Parameter::type) != actual.parameters.map(Parameter::type) ->
+            ExpectActualMemberDiff.Kind.NonPrivateCallableAdded
+        expect.parameters.map(Parameter::name) != actual.parameters.map(Parameter::name) ->
+            ExpectActualMemberDiff.Kind.ParameterNameChangedInOverride
+        expect.returnType != actual.returnType -> ExpectActualMemberDiff.Kind.ReturnTypeCovariantOverride
+        expect.modality != actual.modality -> ExpectActualMemberDiff.Kind.ModalityChangedInOverride
+        expect.visibility != actual.visibility -> ExpectActualMemberDiff.Kind.VisibilityChangedInOverride
+        else -> null
+    }
 }
 
 private val ExpectActualMemberDiff.Kind.factory: DiagnosticFactory1<KtCallableDeclaration, ExpectActualMemberDiff<CallableMemberDescriptor, ClassDescriptor>>
@@ -217,4 +255,5 @@ private val ExpectActualMemberDiff.Kind.factory: DiagnosticFactory1<KtCallableDe
         ExpectActualMemberDiff.Kind.ModalityChangedInOverride -> Errors.MODALITY_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION
         ExpectActualMemberDiff.Kind.VisibilityChangedInOverride -> Errors.VISIBILITY_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION
         ExpectActualMemberDiff.Kind.ParameterNameChangedInOverride -> Errors.PARAMETER_NAME_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION
+        ExpectActualMemberDiff.Kind.PropertyKindChangedInOverride -> TODO()
     }

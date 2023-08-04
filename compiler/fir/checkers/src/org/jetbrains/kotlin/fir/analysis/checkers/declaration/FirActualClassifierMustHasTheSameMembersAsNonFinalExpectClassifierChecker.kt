@@ -150,6 +150,7 @@ private fun calculateExpectActualScopeDiff(
         expect.unsubstitutedScope(context.session, context.scopeSession, withForcedTypeCalculator = false, memberRequiredPhase = null)
     val actualScope =
         actual.unsubstitutedScope(context.session, context.scopeSession, withForcedTypeCalculator = false, memberRequiredPhase = null)
+
     val classTypeSubstitutor =
         createExpectActualTypeParameterSubstitutor(expect.typeParameterSymbols, actual.typeParameterSymbols, context.session)
     val expectClassCallables = expectScope.extractNonPrivateCallables(classTypeSubstitutor, ExpectActual.EXPECT)
@@ -292,4 +293,5 @@ private val ExpectActualMemberDiff.Kind.factory: KtDiagnosticFactory1<ExpectActu
         ExpectActualMemberDiff.Kind.ModalityChangedInOverride -> FirErrors.MODALITY_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION
         ExpectActualMemberDiff.Kind.VisibilityChangedInOverride -> FirErrors.VISIBILITY_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION
         ExpectActualMemberDiff.Kind.ParameterNameChangedInOverride -> FirErrors.PARAMETER_NAME_CHANGED_IN_NON_FINAL_EXPECT_CLASSIFIER_ACTUALIZATION
+        ExpectActualMemberDiff.Kind.PropertyKindChangedInOverride -> TODO()
     }

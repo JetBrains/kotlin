@@ -286,6 +286,7 @@ class FirExpectActualMatchingContextImpl private constructor(
     override val TypeParameterSymbolMarker.isReified: Boolean
         get() = asSymbol().isReified
 
+    // note: copy-pasted to: org.jetbrains.kotlin.fir.types.ExpectActualUtilsKt.areCompatibleExpectActualTypes
     override fun areCompatibleExpectActualTypes(
         expectType: KotlinTypeMarker?,
         actualType: KotlinTypeMarker?,
