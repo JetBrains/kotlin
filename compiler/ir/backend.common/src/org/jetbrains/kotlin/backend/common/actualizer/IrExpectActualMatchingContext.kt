@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.resolve.checkers.OptInNames
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.types.model.AnnotationMarker
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
 import org.jetbrains.kotlin.types.model.TypeSystemContext
@@ -440,7 +439,12 @@ internal abstract class IrExpectActualMatchingContext(
             }
         }
 
-    override fun onMatchedMembers(expectSymbol: DeclarationSymbolMarker, actualSymbol: DeclarationSymbolMarker) {
+    override fun onMatchedMembers(
+        expectSymbol: DeclarationSymbolMarker,
+        actualSymbol: DeclarationSymbolMarker,
+        containingExpectClassSymbol: RegularClassSymbolMarker?,
+        containingActualClassSymbol: RegularClassSymbolMarker?,
+    ) {
         require(expectSymbol is IrSymbol)
         require(actualSymbol is IrSymbol)
         when (expectSymbol) {

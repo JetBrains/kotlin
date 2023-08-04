@@ -159,11 +159,18 @@ interface ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemC
 
     val CallableSymbolMarker.hasStableParameterNames: Boolean
 
-    fun onMatchedMembers(expectSymbol: DeclarationSymbolMarker, actualSymbol: DeclarationSymbolMarker) {}
+    fun onMatchedMembers(
+        expectSymbol: DeclarationSymbolMarker,
+        actualSymbol: DeclarationSymbolMarker,
+        containingExpectClassSymbol: RegularClassSymbolMarker?,
+        containingActualClassSymbol: RegularClassSymbolMarker?,
+    ) {}
 
     fun onMismatchedMembersFromClassScope(
         expectSymbol: DeclarationSymbolMarker,
-        actualSymbolsByIncompatibility: Map<ExpectActualCompatibility.Incompatible<*>, List<DeclarationSymbolMarker>>
+        actualSymbolsByIncompatibility: Map<ExpectActualCompatibility.Incompatible<*>, List<DeclarationSymbolMarker>>,
+        containingExpectClassSymbol: RegularClassSymbolMarker?,
+        containingActualClassSymbol: RegularClassSymbolMarker?,
     ) {}
 
     val DeclarationSymbolMarker.annotations: List<AnnotationCallInfo>

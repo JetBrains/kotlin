@@ -264,7 +264,7 @@ object AbstractExpectActualCompatibilityChecker {
         for ((actualMember, compatibility) in mapping) {
             when (compatibility) {
                 ExpectActualCompatibility.Compatible -> {
-                    onMatchedMembers(expectMember, actualMember)
+                    onMatchedMembers(expectMember, actualMember, expectClassSymbol, actualClassSymbol)
                     return
                 }
 
@@ -273,7 +273,7 @@ object AbstractExpectActualCompatibilityChecker {
         }
 
         unfulfilled?.add(expectMember to incompatibilityMap)
-        onMismatchedMembersFromClassScope(expectMember, incompatibilityMap)
+        onMismatchedMembersFromClassScope(expectMember, incompatibilityMap, expectClassSymbol, actualClassSymbol)
     }
 
     context(ExpectActualMatchingContext<*>)
