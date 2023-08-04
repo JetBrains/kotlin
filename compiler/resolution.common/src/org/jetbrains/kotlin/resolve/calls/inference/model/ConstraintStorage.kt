@@ -48,6 +48,20 @@ interface ConstraintStorage {
     val builtFunctionalTypesForPostponedArgumentsByExpectedTypeVariables: Map<TypeConstructorMarker, KotlinTypeMarker>
     val constraintsFromAllForkPoints: List<Pair<IncorporationConstraintPosition, ForkPointData>>
 
+    /**
+     *  In case some candidate's CS is built in the context of some outer CS, first [outerSystemVariablesPrefixSize] in the list
+     *  of [allTypeVariables] belong to the outer CS.
+     *
+     *  That information is very limitedly used in a couple of cases when we need to separate those kinds of variables
+     *   - When completing `provideDelegate` calls, we assume outer variables as proper types
+     *   (see fixInnerVariablesForProvideDelegateIfNeeded).
+     *   - When checking consistency of collected variables for the inner candidate
+     *   (see checkNotFixedTypeVariablesCountConsistency).
+     *
+     *  Also, see docs/fir/delegated_property_inference.md
+     */
+    val outerSystemVariablesPrefixSize: Int
+
     object Empty : ConstraintStorage {
         override val allTypeVariables: Map<TypeConstructorMarker, TypeVariableMarker> get() = emptyMap()
         override val notFixedTypeVariables: Map<TypeConstructorMarker, VariableWithConstraints> get() = emptyMap()
@@ -61,6 +75,8 @@ interface ConstraintStorage {
         override val builtFunctionalTypesForPostponedArgumentsByTopLevelTypeVariables: Map<Pair<TypeConstructorMarker, List<Pair<TypeConstructorMarker, Int>>>, KotlinTypeMarker> = emptyMap()
         override val builtFunctionalTypesForPostponedArgumentsByExpectedTypeVariables: Map<TypeConstructorMarker, KotlinTypeMarker> = emptyMap()
         override val constraintsFromAllForkPoints: List<Pair<IncorporationConstraintPosition, ForkPointData>> = emptyList()
+
+        override val outerSystemVariablesPrefixSize: Int get() = 0
     }
 }
 

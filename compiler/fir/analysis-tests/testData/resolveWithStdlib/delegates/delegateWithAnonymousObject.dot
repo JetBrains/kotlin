@@ -144,7 +144,7 @@ digraph delegateWithAnonymousObject_kt {
             }
             55 [label="Postponed exit from lambda"];
             56 [label="Function call: this@R|/IssuesListUserProfile|.R|/delegate|<R|IssuesListUserProfile|, R|IssuesListUserProfile|, R|IssueListView|>(...)" style="filled" fillcolor=yellow];
-            57 [label="Function call: this@R|/IssuesListUserProfile|.R|/delegate|<R|IssuesListUserProfile|, R|IssuesListUserProfile|, R|IssueListView|>(...).<Unresolved name: provideDelegate>#(...)" style="filled" fillcolor=yellow];
+            57 [label="Function call: this@R|/IssuesListUserProfile|.R|/delegate|<R|IssuesListUserProfile|, R|IssuesListUserProfile|, R|IssueListView|>(...).R?C|special/error|(...)" style="filled" fillcolor=yellow];
             58 [label="Exit property delegate" style="filled" fillcolor=yellow];
             59 [label="Exit property" style="filled" fillcolor=red];
         }

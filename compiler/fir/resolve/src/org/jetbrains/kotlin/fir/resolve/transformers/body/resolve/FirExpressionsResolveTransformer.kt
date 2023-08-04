@@ -427,7 +427,11 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             } else {
                 functionCall
             }
-            val resultExpression = callResolver.resolveCallAndSelectCandidate(withTransformedArguments)
+
+            val resultExpression = context.inferenceSession.onCandidatesResolution(withTransformedArguments) {
+                callResolver.resolveCallAndSelectCandidate(withTransformedArguments)
+            }
+
             val completeInference = callCompleter.completeCall(resultExpression, data)
             val result = completeInference.transformToIntegerOperatorCallOrApproximateItIfNeeded(data)
             if (!resolvingAugmentedAssignment) {

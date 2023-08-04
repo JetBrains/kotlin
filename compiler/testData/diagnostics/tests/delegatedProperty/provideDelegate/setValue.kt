@@ -1,5 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-
+// ISSUE: KT-61077
 class Delegate<T>
 
 operator fun Delegate<*>.getValue(receiver: Any?, p: Any): String = ""

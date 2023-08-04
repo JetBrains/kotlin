@@ -28,14 +28,16 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate
 import org.jetbrains.kotlin.fir.resolve.dfa.FirControlFlowGraphReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeLocalVariableNoTypeOrInitializer
-import org.jetbrains.kotlin.fir.resolve.inference.FirStubTypeTransformer
+import org.jetbrains.kotlin.fir.resolve.inference.FirDelegatedPropertyInferenceSession
 import org.jetbrains.kotlin.fir.resolve.inference.ResolvedLambdaAtom
 import org.jetbrains.kotlin.fir.resolve.inference.extractLambdaInfoFromFunctionType
-import org.jetbrains.kotlin.fir.resolve.substitution.createTypeSubstitutorByTypeConstructor
+import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.FirCallCompletionResultsWriterTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.FirStatusResolver
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.runContractResolveForFunction
@@ -45,8 +47,13 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
+import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.resolve.calls.inference.buildCurrentSubstitutor
+import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator
+import org.jetbrains.kotlin.resolve.calls.inference.model.ProvideDelegateFixationPosition
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 
 open class FirDeclarationsResolveTransformer(
     transformer: FirAbstractBodyResolveTransformerDispatcher
@@ -288,8 +295,7 @@ open class FirDeclarationsResolveTransformer(
 
             val finalSubstitutor = createFinalSubstitutor()
 
-            val stubTypeCompletionResultsWriter = FirStubTypeTransformer(finalSubstitutor)
-            property.transformSingle(stubTypeCompletionResultsWriter, null)
+            property.applyFinalSubstitutor(finalSubstitutor)
             property.replaceReturnTypeRef(
                 property.returnTypeRef.approximateDeclarationType(
                     session,
@@ -315,6 +321,26 @@ open class FirDeclarationsResolveTransformer(
         dataFlowAnalyzer.exitDelegateExpression(delegate)
     }
 
+    private fun FirProperty.applyFinalSubstitutor(
+        finalSubstitutor: ConeSubstitutor,
+    ) {
+        val substitutorTypeRefTransformer = ApplyingSubstitutorTypeRefTransformer(finalSubstitutor)
+
+        transformReturnTypeRef(substitutorTypeRefTransformer, null)
+
+        getter?.transformTypeWithPropertyType(returnTypeRef, forceUpdateForNonImplicitTypes = true)
+        setter?.transformTypeWithPropertyType(returnTypeRef, forceUpdateForNonImplicitTypes = true)
+    }
+
+    private class ApplyingSubstitutorTypeRefTransformer(private val substitutor: ConeSubstitutor) : FirDefaultTransformer<Nothing?>() {
+        override fun <E : FirElement> transformElement(element: E, data: Nothing?): E = element
+
+        override fun transformResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: Nothing?): FirTypeRef =
+            substitutor.substituteOrNull(resolvedTypeRef.type)?.let {
+                resolvedTypeRef.withReplacedConeType(it)
+            } ?: resolvedTypeRef
+    }
+
     override fun transformPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: ResolutionMode): FirStatement {
         return propertyAccessor.also {
             transformProperty(it.propertySymbol.fir, data)
@@ -334,18 +360,10 @@ open class FirDeclarationsResolveTransformer(
         if (delegateExpression is FirResolvable) {
             val calleeReference = delegateExpression.calleeReference
             if (calleeReference is FirNamedReferenceWithCandidate) {
-                val system = calleeReference.candidate.system
-                system.notFixedTypeVariables.forEach {
-                    system.markPostponedVariable(it.value.typeVariable)
-                }
-                val typeVariableTypeToStubType = context.inferenceSession.createSyntheticStubTypes(system)
-
-                val substitutor = createTypeSubstitutorByTypeConstructor(
-                    typeVariableTypeToStubType, session.typeContext, approximateIntegerLiterals = true
-                )
                 val delegateExpressionType = delegateExpression.resolvedType
-                val stubTypeSubstituted = substitutor.substituteOrNull(delegateExpressionType)
-                delegateExpression.replaceConeTypeOrNull(stubTypeSubstituted)
+                val returnTypeSubstitutedWithTypeVariables =
+                    calleeReference.candidate.substitutor.substituteOrNull(delegateExpressionType)
+                delegateExpression.replaceConeTypeOrNull(returnTypeSubstitutedWithTypeVariables)
             }
         }
 
@@ -356,28 +374,25 @@ open class FirDeclarationsResolveTransformer(
         // TODO: this generates some nodes in the control flow graph which we don't want if we
         //  end up not selecting this option, KT-59684
         transformer.expressionsTransformer?.transformFunctionCallInternal(
-            provideDelegateCall, ResolutionMode.ContextIndependent, provideDelegate = true
+            provideDelegateCall, ResolutionMode.ContextDependent, provideDelegate = true
         )
 
         // If we got successful candidate for provideDelegate, let's select it
         val provideDelegateCandidate = provideDelegateCall.candidate()
         if (provideDelegateCandidate != null && provideDelegateCandidate.isSuccessful) {
-            val system = provideDelegateCandidate.system
-            system.notFixedTypeVariables.forEach {
-                system.markPostponedVariable(it.value.typeVariable)
-            }
-            val typeVariableTypeToStubType = context.inferenceSession.createSyntheticStubTypes(system)
-            val substitutor = createTypeSubstitutorByTypeConstructor(
-                typeVariableTypeToStubType, session.typeContext, approximateIntegerLiterals = true
+            val additionalBinding = findResultTypeForInnerVariableIfNeeded(provideDelegateCall, provideDelegateCandidate)
+
+            val substitutor = ChainedSubstitutor(
+                provideDelegateCandidate.substitutor,
+                (context.inferenceSession as FirDelegatedPropertyInferenceSession).currentConstraintStorage.buildCurrentSubstitutor(
+                    session.typeContext, additionalBinding?.let(::mapOf) ?: emptyMap()
+                ) as ConeSubstitutor
             )
 
-            val stubTypeSubstituted = substitutor.substituteOrSelf(
-                provideDelegateCandidate.substitutor.substituteOrSelf(
-                    components.typeFromCallee(provideDelegateCall).type
-                )
-            )
+            val toTypeVariableSubstituted =
+                substitutor.substituteOrSelf(components.typeFromCallee(provideDelegateCall).type)
 
-            provideDelegateCall.replaceConeTypeOrNull(stubTypeSubstituted)
+            provideDelegateCall.replaceConeTypeOrNull(toTypeVariableSubstituted)
             return provideDelegateCall
         }
 
@@ -388,6 +403,73 @@ open class FirDeclarationsResolveTransformer(
 
         // Select delegate expression otherwise
         return delegateExpression
+    }
+
+    /**
+     * For supporting the case when `provideDelegate` has a signature with type variable as a return type, like
+     *  fun <K> K.provideDelegate(receiver: Any?, property: kotlin.reflect.KProperty<*>): K = this
+     *
+     * Here, if delegate expression returns something like `Delegate<Tv>` where Tv is a variable and the `Delegate` class contains
+     * the member `getValue`, we need to fix `K` into `Delegate<Tv>`, so that resulting `provideDelegate()` expression would have the type,
+     * so we could look into its member scope (as we can't look into the member scope of `K` type variable).
+     *
+     * On another hand, we can't just actually fix `K` variable (or just run FULL completion there) as the current result might refer
+     * other not fixed yet type variables, and we would break the contract that fixation results should not contain other type variables.
+     *
+     * Thus, to support exactly the case when we had to look into the member scope of `K`, we just pretend like we fixing it
+     *
+     * @see compiler/testData/diagnostics/tests/delegatedProperty/provideDelegate/provideDelegateResolutionWithStubTypes.kt
+     *
+     * In K1, it was working because we used stub types that are not counted as actual type variables, and we've been completing
+     * `provideDelegate` FULLy in the context where outer type variables were stubs (thus counted as proper types).
+     *
+     * But in K2, we decided to get rid of the stub type concept and just stick to the type variables.
+     *
+     * @return K to Delegate<Tv> or null in case return type of `provideDelegate` is not a type variable.
+     */
+    private fun findResultTypeForInnerVariableIfNeeded(
+        provideDelegate: FirFunctionCall,
+        candidate: Candidate
+    ): Pair<TypeConstructorMarker, ConeKotlinType>? {
+        // We're only interested in the case when `provideDelegate` candidate returns a type variable
+        // because in other cases we could look into the member scope of the type.
+        val returnTypeBasedOnVariable =
+            components.typeFromCallee(provideDelegate).type
+                // Substitut type parameter to type variable
+                .let(candidate.substitutor::substituteOrSelf)
+                .lowerBoundIfFlexible() as? ConeTypeVariableType ?: return null
+        val typeVariable = returnTypeBasedOnVariable.lookupTag
+
+        val candidateSystem = candidate.system
+        val candidateStorage = candidateSystem.currentStorage()
+        val allTypeVariables = candidateStorage.allTypeVariables.keys.toList()
+        // Subset of type variables obtained from the `provideDelegate` call
+        val typeVariablesRelatedToProvideDelegate =
+            allTypeVariables.subList(candidateStorage.outerSystemVariablesPrefixSize, allTypeVariables.size).toSet()
+
+        // If the return type variable is from an outer call, there's no much we can do
+        if (typeVariable !in typeVariablesRelatedToProvideDelegate) return null
+
+        val variableWithConstraints =
+            candidateSystem.notFixedTypeVariables[typeVariable] ?: error("Not found type variable $typeVariable")
+
+        var resultType: ConeKotlinType? = null
+
+        // Temporary declare all the "outer" variables as proper (i.e., all inner variables as improper)
+        // Without that, all variables (both inner and outer ones) would be considered as improper,
+        // while we want to fix to assume `Delegate<Tv>` as proper because `Tv` belongs to the outer system
+        candidateSystem.withTypeVariablesThatAreNotCountedAsProperTypes(typeVariablesRelatedToProvideDelegate) {
+            resultType = inferenceComponents.resultTypeResolver.findResultTypeOrNull(
+                candidateSystem, variableWithConstraints, TypeVariableDirectionCalculator.ResolveDirection.UNKNOWN
+            ) as? ConeKotlinType ?: return@withTypeVariablesThatAreNotCountedAsProperTypes
+
+            // We don't actually fix it, but add an equality constraint as approximation
+            candidateSystem.addEqualityConstraint(returnTypeBasedOnVariable, resultType!!, ProvideDelegateFixationPosition)
+        }
+
+        return resultType?.let {
+            typeVariable to it
+        }
     }
 
     private fun transformLocalVariable(variable: FirProperty): FirProperty = whileAnalysing(session, variable) {
@@ -469,7 +551,7 @@ open class FirDeclarationsResolveTransformer(
             }
             isSetter -> {
                 val valueParameter = valueParameters.firstOrNull() ?: return
-                if (valueParameter.returnTypeRef is FirImplicitTypeRef) {
+                if (valueParameter.returnTypeRef is FirImplicitTypeRef || forceUpdateForNonImplicitTypes) {
                     valueParameter.replaceReturnTypeRef(propertyTypeRef.copyWithNewSource(returnTypeRef.source))
                 }
             }
