@@ -11,16 +11,17 @@ import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.SourceSet
 import org.gradle.kotlin.dsl.extra
 import org.gradle.kotlin.dsl.getByType
+import org.jdom2.Element
+import org.jdom2.Verifier
+import org.jdom2.input.SAXBuilder
+import org.jdom2.output.Format
+import org.jdom2.output.XMLOutputter
 import org.jetbrains.kotlin.pill.artifact.ArtifactDependencyMapper
 import org.jetbrains.kotlin.pill.artifact.ArtifactGenerator
 import org.jetbrains.kotlin.pill.model.PDependency
 import org.jetbrains.kotlin.pill.model.PLibrary
 import org.jetbrains.kotlin.pill.model.POrderRoot
 import org.jetbrains.kotlin.pill.model.PProject
-import shadow.org.jdom2.input.SAXBuilder
-import shadow.org.jdom2.*
-import shadow.org.jdom2.output.Format
-import shadow.org.jdom2.output.XMLOutputter
 import java.io.File
 import java.util.*
 import kotlin.collections.HashMap
@@ -290,7 +291,6 @@ class JpsCompatiblePluginTasks(
         kotlinJunitConfiguration.applyJUnitTemplate()
 
         val output = XMLOutputter().also {
-            @Suppress("UsePropertyAccessSyntax")
             it.format = Format.getPrettyFormat().apply {
                 setEscapeStrategy { c -> Verifier.isHighSurrogate(c) || c == '"' }
                 setIndent("  ")

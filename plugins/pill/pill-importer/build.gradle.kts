@@ -17,6 +17,7 @@ dependencies {
     compileOnly(gradleApi())
     compileOnly(gradleKotlinDsl())
     compileOnly(libs.shadow.gradlePlugin)
+    compileOnly(libs.jdom2)
 }
 
 sourceSets {

@@ -6,6 +6,7 @@ gradle-enterprise = "3.12.4"
 gradle-plugin-publish = "1.0.0"
 # Version for foojay should be also synced with version in repo/gradle-settings-conventions/settings.gradle.kts
 gradle-toolchains-foojay-resolver = "0.4.0"
+jdom2 = "2.0.6.1"
 kotlinx-serialization = "1.5.0"
 shadow = "8.1.1" # Should be in sync with version in kotlin-native/
 spdx = "0.1.0-dev-10"
@@ -32,6 +33,7 @@ ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 jetbrains-ideaExt-gradlePlugin = { module = "gradle.plugin.org.jetbrains.gradle.plugin.idea-ext:gradle-idea-ext", version.ref = "jetbrains-ideaExt" }
+jdom2 = { module = "org.jdom:jdom2", version.ref = "jdom2" }
 
 [plugins]
 jetbrains-ideaExt = { id = "org.jetbrains.gradle.plugin.idea-ext", version.ref = "jetbrains-ideaExt" }
