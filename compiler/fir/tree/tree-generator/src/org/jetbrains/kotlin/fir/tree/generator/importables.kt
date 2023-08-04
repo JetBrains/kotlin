@@ -14,7 +14,9 @@ val resolvedDeclarationStatusImport = ArbitraryImportable("org.jetbrains.kotlin.
 
 val buildResolvedTypeRefImport = ArbitraryImportable("org.jetbrains.kotlin.fir.types.builder", "buildResolvedTypeRef")
 val constructClassTypeImport = ArbitraryImportable("org.jetbrains.kotlin.fir.types", "constructClassType")
+val constructClassLikeTypeImport = ArbitraryImportable("org.jetbrains.kotlin.fir.types", "constructClassLikeType")
 val toLookupTagImport = ArbitraryImportable("org.jetbrains.kotlin.fir.types", "toLookupTag")
+val coneTypeOrNullImport = ArbitraryImportable("org.jetbrains.kotlin.fir.types", "coneTypeOrNull")
 
 val fakeSourceElementKindImport = ArbitraryImportable("org.jetbrains.kotlin", "KtFakeSourceElementKind")
 val fakeElementImport = ArbitraryImportable("org.jetbrains.kotlin", "fakeElement")
