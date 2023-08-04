@@ -37,10 +37,14 @@ One way to do this is as follows:
 ```bash
 export Z3_EXE=/usr/bin/z3 # or a different directory in $PATH
 sudo cp z3-4.8.7-*/bin/z3 $Z3_EXE
-echo "export Z3_EXE=$Z3_EXE" >> ~/.bashrc
+echo "export Z3_EXE=$Z3_EXE" >> ~/.profile
 ```
 
 Make sure that running `$Z3_EXE --version` gives `Z3 version 4.8.7`.
+Check that this is the case when you open a new shell, too!
+You need to (additionally) set `Z3_EXE` in `~/.xprofile` and/or
+`~/.bash_profile` depending on your shell, window manager, display
+manager, operating system, etc.
 
 Now, we can clone `silicon` from its GitHub repository and install it in our local Maven repository. 
 The compilation process, through the command `sbt assembly`, will create a new fat-JAR file containing `Silicon + Silver` and other Scala dependencies.
