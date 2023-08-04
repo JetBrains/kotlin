@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.gradle.idea.tcs.*
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.artifactsClasspath
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.isOpaqueFileDependency
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.KotlinOutputDependencyIdentifier
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.*
@@ -172,11 +171,13 @@ class IdeBinaryDependencyResolver @JvmOverloads constructor(
                 }
 
                 is OpaqueComponentArtifactIdentifier -> {
-                    /* Such dependencies *would* require implementing a resolver */
+                    /* Files within the build directory  still require a custom resolver */
+                    if (artifact.file.absoluteFile.startsWith(sourceSet.project.buildDir.absoluteFile)) return@mapNotNull null
+
                     IdeaKotlinResolvedBinaryDependency(
                         binaryType = binaryType, coordinates = IdeaKotlinBinaryCoordinates(
                             group = "<file>",
-                            module = componentId.file.relativeOrAbsolute(sourceSet.project.rootDir),
+                            module = artifact.file.relativeOrAbsolute(sourceSet.project.rootDir),
                             version = null,
                             sourceSetName = null
                         ),
@@ -185,12 +186,6 @@ class IdeBinaryDependencyResolver @JvmOverloads constructor(
                         dependency.isOpaqueFileDependency = true
                     }
                 }
-
-                /*
-                Such dependencies (e.g. associate compilations, cinterops, ...)
-                Will have dedicated resolvers implemented
-                 */
-                is KotlinOutputDependencyIdentifier -> null
 
                 else -> {
                     logger.warn("Unhandled componentId: ${componentId.javaClass}")

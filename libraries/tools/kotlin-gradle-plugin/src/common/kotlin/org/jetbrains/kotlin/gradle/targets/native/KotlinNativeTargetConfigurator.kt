@@ -158,11 +158,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
 
             val interopOutput = project.files(interopTask.map { it.outputFileProvider })
             with(compilation) {
-                // Register the interop library as a dependency of the compilation to make IDE happy.
-                project.dependencies.add(
-                    compileDependencyConfigurationName,
-                    KotlinOutputDependency(KotlinOutputDependencyIdentifier.CInterop(interop.identifier), interopOutput)
-                )
+                compileDependencyFiles += interopOutput
                 if (isMain()) {
                     // Add interop library to special CInteropApiElements configuration
                     createCInteropApiElementsKlibArtifact(compilation.target, interop, interopTask)
@@ -180,7 +176,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
                     // IDE doesn't see this library in module dependencies. So we have to manually add
                     // main interop libraries in dependencies of the default test compilation.
                     target.compilations.findByName(TEST_COMPILATION_NAME)?.let { testCompilation ->
-                        project.dependencies.add(testCompilation.compileDependencyConfigurationName, interopOutput)
+                        testCompilation.compileDependencyFiles += interopOutput
                         testCompilation.cinterops.all {
                             it.dependencyFiles += interopOutput
                         }

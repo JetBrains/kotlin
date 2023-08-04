@@ -21,6 +21,9 @@ internal interface InternalKotlinCompilation<out T : KotlinCommonOptions> : Kotl
     override val kotlinSourceSets: ObservableSet<KotlinSourceSet>
     override val allKotlinSourceSets: ObservableSet<KotlinSourceSet>
 
+    val associatedCompilations: ObservableSet<KotlinCompilation<*>>
+    val allAssociatedCompilations: ObservableSet<KotlinCompilation<*>>
+
     val configurations: KotlinCompilationConfigurationsContainer
     val friendPaths: Iterable<FileCollection>
     val processResourcesTaskName: String?

@@ -22,12 +22,13 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.gradle.tasks.locateTask
+import org.jetbrains.kotlin.gradle.utils.MutableObservableSetImpl
 import org.jetbrains.kotlin.gradle.utils.ObservableSet
 import org.jetbrains.kotlin.tooling.core.MutableExtras
 import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 
 internal class KotlinCompilationImpl constructor(
-    private val params: Params
+    private val params: Params,
 ) : InternalKotlinCompilation<KotlinCommonOptions> {
 
     //region Params
@@ -44,7 +45,7 @@ internal class KotlinCompilationImpl constructor(
         val kotlinOptions: KotlinCommonOptions,
         val compilationAssociator: KotlinCompilationAssociator,
         val compilationFriendPathsResolver: KotlinCompilationFriendPathsResolver,
-        val compilationSourceSetInclusion: KotlinCompilationSourceSetInclusion
+        val compilationSourceSetInclusion: KotlinCompilationSourceSetInclusion,
     )
 
     //endregion
@@ -182,23 +183,36 @@ internal class KotlinCompilationImpl constructor(
 
     // endregion
 
-    private val associateWithImpl = mutableSetOf<KotlinCompilation<*>>()
+
+    private val associatedCompilationsImpl = MutableObservableSetImpl<KotlinCompilation<*>>()
+
+    private val allAssociatedCompilationsImpl = MutableObservableSetImpl<KotlinCompilation<*>>()
+
+    override val associatedCompilations: ObservableSet<KotlinCompilation<*>>
+        get() = associatedCompilationsImpl
+
+    override val allAssociatedCompilations: ObservableSet<KotlinCompilation<*>>
+        get() = allAssociatedCompilationsImpl
 
     override val associateWith: List<KotlinCompilation<*>>
-        get() = associateWithImpl.toList()
+        get() = associatedCompilationsImpl.toList()
 
     override fun associateWith(other: KotlinCompilation<*>) {
         require(other.target == target) { "Only associations between compilations of a single target are supported" }
-        if (!associateWithImpl.add(other)) return
-        params.compilationAssociator.associate(target, this, other.internal)
+        if (!associatedCompilationsImpl.add(other)) return
+        if (!allAssociatedCompilationsImpl.add(other)) return
+        other.internal.allAssociatedCompilations.forAll { compilation -> allAssociatedCompilationsImpl.add(compilation) }
     }
-
 
     //region final init
 
     init {
         sourceSets.allKotlinSourceSets.forAll { sourceSet ->
             params.compilationSourceSetInclusion.include(this, sourceSet)
+        }
+
+        allAssociatedCompilations.forAll { compilation ->
+            params.compilationAssociator.associate(target, this, compilation.internal)
         }
     }
 
