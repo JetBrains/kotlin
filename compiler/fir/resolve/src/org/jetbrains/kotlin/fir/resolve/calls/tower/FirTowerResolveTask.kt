@@ -15,14 +15,13 @@ import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
 import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedQualifier
-import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
+import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
 import org.jetbrains.kotlin.fir.resolve.calls.*
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
+import org.jetbrains.kotlin.fir.resolve.setTypeOfQualifier
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirWhenSubjectImportingScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.descriptorUtil.HIDES_MEMBERS_NAME_LIST
@@ -113,7 +112,7 @@ internal abstract class FirBaseTowerResolveTask(
                 this.symbol = it
                 this.source = source?.fakeElement(KtFakeSourceElementKind.ImplicitReceiver)
             }.apply {
-                resultType = components.typeForQualifier(this)
+                setTypeOfQualifier(components.session)
             }
             ExpressionReceiverValue(resolvedQualifier)
         }
@@ -231,13 +230,10 @@ internal open class FirTowerResolveTask(
         processClassifierScope(info, qualifierReceiver)
 
         if (resolvedQualifier.symbol != null) {
-            val typeRef = resolvedQualifier.typeRef
             if (info.callKind == CallKind.CallableReference && info.lhs is DoubleColonLHS.Type) {
                 val stubReceiver = buildExpressionStub {
                     source = info.explicitReceiver?.source
-                    this.typeRef = buildResolvedTypeRef {
-                        type = info.lhs.type
-                    }
+                    this.coneTypeOrNull = info.lhs.type
                 }
 
                 val stubReceiverInfo = info.replaceExplicitReceiver(stubReceiver)
@@ -245,8 +241,8 @@ internal open class FirTowerResolveTask(
                 runResolverForExpressionReceiver(stubReceiverInfo, stubReceiver, parentGroup = TowerGroup.QualifierValue)
             }
 
-            // NB: yet built-in Unit is used for "no-value" type
-            if (typeRef !is FirImplicitBuiltinTypeRef) {
+            // NB: canBeValue means it's resolved to an object or companion object
+            if (resolvedQualifier.canBeValue) {
                 runResolverForExpressionReceiver(info, resolvedQualifier, parentGroup = TowerGroup.QualifierValue)
             }
 

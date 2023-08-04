@@ -422,7 +422,7 @@ internal object FirReferenceResolveHelper {
         // accessing the `super` property on `this`, hence this weird looking if condition. In addition, the current class type is available
         // from the dispatch receiver `this`.
         if (expression is KtLabelReferenceExpression && fir is FirPropertyAccessExpression && fir.calleeReference is FirSuperReference) {
-            return listOfNotNull(fir.dispatchReceiver.type?.toTargetSymbol(session, symbolBuilder))
+            return listOfNotNull(fir.dispatchReceiver.coneTypeOrNull?.toTargetSymbol(session, symbolBuilder))
         }
         val receiverOrImplicitInvoke = if (fir is FirImplicitInvokeCall) {
             fir.explicitReceiver?.unwrapSmartcastExpression()
@@ -733,7 +733,7 @@ internal object FirReferenceResolveHelper {
         session: FirSession,
         symbolBuilder: KtSymbolByFirBuilder
     ): Collection<KtSymbol> {
-        val type = fir.type ?: return emptyList()
+        val type = fir.coneTypeOrNull ?: return emptyList()
         return listOfNotNull(type.toTargetSymbol(session, symbolBuilder))
     }
 

@@ -24,20 +24,20 @@ fun <T> buildConstExpression(
     return FirConstExpressionImpl(source, null, annotations.toMutableOrEmpty(), kind, value).also {
         if (setType) {
             when (kind) {
-                ConstantValueKind.Boolean -> it.type = StandardClassIds.Boolean.constructClassLikeType()
-                ConstantValueKind.Byte -> it.type = StandardClassIds.Byte.constructClassLikeType()
-                ConstantValueKind.Char -> it.type = StandardClassIds.Char.constructClassLikeType()
-                ConstantValueKind.Double -> it.type = StandardClassIds.Double.constructClassLikeType()
-                ConstantValueKind.Float -> it.type = StandardClassIds.Float.constructClassLikeType()
-                ConstantValueKind.Int -> it.type = StandardClassIds.Int.constructClassLikeType()
-                ConstantValueKind.Long -> it.type = StandardClassIds.Long.constructClassLikeType()
-                ConstantValueKind.Null -> it.type = StandardClassIds.Any.constructClassLikeType(isNullable = true)
-                ConstantValueKind.Short -> it.type = StandardClassIds.Short.constructClassLikeType()
-                ConstantValueKind.String -> it.type = StandardClassIds.String.constructClassLikeType()
-                ConstantValueKind.UnsignedByte -> it.type = StandardClassIds.UByte.constructClassLikeType()
-                ConstantValueKind.UnsignedInt -> it.type = StandardClassIds.UInt.constructClassLikeType()
-                ConstantValueKind.UnsignedLong -> it.type = StandardClassIds.ULong.constructClassLikeType()
-                ConstantValueKind.UnsignedShort -> it.type = StandardClassIds.UShort.constructClassLikeType()
+                ConstantValueKind.Boolean -> it.coneTypeOrNull = StandardClassIds.Boolean.constructClassLikeType()
+                ConstantValueKind.Byte -> it.coneTypeOrNull = StandardClassIds.Byte.constructClassLikeType()
+                ConstantValueKind.Char -> it.coneTypeOrNull = StandardClassIds.Char.constructClassLikeType()
+                ConstantValueKind.Double -> it.coneTypeOrNull = StandardClassIds.Double.constructClassLikeType()
+                ConstantValueKind.Float -> it.coneTypeOrNull = StandardClassIds.Float.constructClassLikeType()
+                ConstantValueKind.Int -> it.coneTypeOrNull = StandardClassIds.Int.constructClassLikeType()
+                ConstantValueKind.Long -> it.coneTypeOrNull = StandardClassIds.Long.constructClassLikeType()
+                ConstantValueKind.Null -> it.coneTypeOrNull = StandardClassIds.Any.constructClassLikeType(isNullable = true)
+                ConstantValueKind.Short -> it.coneTypeOrNull = StandardClassIds.Short.constructClassLikeType()
+                ConstantValueKind.String -> it.coneTypeOrNull = StandardClassIds.String.constructClassLikeType()
+                ConstantValueKind.UnsignedByte -> it.coneTypeOrNull = StandardClassIds.UByte.constructClassLikeType()
+                ConstantValueKind.UnsignedInt -> it.coneTypeOrNull = StandardClassIds.UInt.constructClassLikeType()
+                ConstantValueKind.UnsignedLong -> it.coneTypeOrNull = StandardClassIds.ULong.constructClassLikeType()
+                ConstantValueKind.UnsignedShort -> it.coneTypeOrNull = StandardClassIds.UShort.constructClassLikeType()
                 ConstantValueKind.IntegerLiteral,
                 ConstantValueKind.UnsignedIntegerLiteral,
                 ConstantValueKind.Error,

@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.providers.getClassDeclaredPropertySymbols
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.types.ConeTypeProjection
-import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.toLookupTag
 
@@ -44,9 +43,7 @@ fun FirEnumEntryDeserializedAccessExpression.toQualifiedPropertyAccessExpression
             }
         }
 
-        typeRef = buildResolvedTypeRef {
-            type = ConeClassLikeTypeImpl(
-                enumClassId.toLookupTag(), ConeTypeProjection.EMPTY_ARRAY, isNullable = false
-            )
-        }
+        coneTypeOrNull = ConeClassLikeTypeImpl(
+            enumClassId.toLookupTag(), ConeTypeProjection.EMPTY_ARRAY, isNullable = false
+        )
     }

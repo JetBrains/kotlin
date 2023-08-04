@@ -118,9 +118,9 @@ class FirCallResolver(
             candidate?.updateSourcesOfReceivers()
             functionCall
         }
-        val typeRef = components.typeFromCallee(resultFunctionCall)
-        if (typeRef.type is ConeErrorType) {
-            resultFunctionCall.resultType = typeRef
+        val type = components.typeFromCallee(resultFunctionCall).type
+        if (type is ConeErrorType) {
+            resultFunctionCall.resultType = type
         }
 
         return resultFunctionCall
@@ -344,7 +344,7 @@ class FirCallResolver(
                 return buildResolvedReifiedParameterReference {
                     source = nameReference.source
                     symbol = referencedSymbol
-                    typeRef = typeForReifiedParameterReference(this)
+                    coneTypeOrNull = typeForReifiedParameterReference(this)
                 }
             }
         }

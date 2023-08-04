@@ -15,11 +15,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
-import org.jetbrains.kotlin.fir.types.isNullable
-import org.jetbrains.kotlin.fir.types.typeContext
 
 internal fun isInsideExpectClass(containingClass: FirClass, context: CheckerContext): Boolean {
     return isInsideSpecificClass(containingClass, context) { klass -> klass is FirRegularClass && klass.isExpect }
@@ -102,8 +99,10 @@ fun FirClassSymbol<*>.primaryConstructorSymbol(session: FirSession): FirConstruc
     return fir.primaryConstructorIfAny(session)
 }
 
-fun FirTypeRef.needsMultiFieldValueClassFlattening(session: FirSession) = with(session.typeContext) {
-    coneType.typeConstructor().isMultiFieldValueClass() && !coneType.isNullable
+fun FirTypeRef.needsMultiFieldValueClassFlattening(session: FirSession): Boolean = coneType.needsMultiFieldValueClassFlattening(session)
+
+fun ConeKotlinType.needsMultiFieldValueClassFlattening(session: FirSession) = with(session.typeContext) {
+    typeConstructor().isMultiFieldValueClass() && !isNullable
 }
 
 val FirCallableSymbol<*>.hasExplicitReturnType: Boolean

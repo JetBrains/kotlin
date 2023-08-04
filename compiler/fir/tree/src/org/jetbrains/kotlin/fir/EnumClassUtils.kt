@@ -69,7 +69,7 @@ fun FirRegularClassBuilder.generateValuesFunction(
         symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, ENUM_VALUES))
         resolvePhase = this@generateValuesFunction.resolvePhase
         body = buildEmptyExpressionBlock().also {
-            it.replaceType(returnTypeRef.type)
+            it.replaceConeTypeOrNull(returnTypeRef.type)
         }
     }.apply {
         containingClassForStaticMemberAttr = this@generateValuesFunction.symbol.toLookupTag()
@@ -126,7 +126,7 @@ fun FirRegularClassBuilder.generateValueOfFunction(
         }
         resolvePhase = this@generateValueOfFunction.resolvePhase
         body = buildEmptyExpressionBlock().also {
-            it.replaceType(returnTypeRef.type)
+            it.replaceConeTypeOrNull(returnTypeRef.type)
         }
     }.apply {
         containingClassForStaticMemberAttr = this@generateValueOfFunction.symbol.toLookupTag()

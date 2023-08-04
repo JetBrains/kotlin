@@ -17,14 +17,10 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.builder.buildNamedArgumentExpression
-import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
-import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
-import org.jetbrains.kotlin.fir.resolve.createFunctionType
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnsupportedCallableReferenceTarget
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.extractInputOutputTypesFromCallableReferenceExpectedType
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
-import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -408,18 +404,18 @@ private fun createFakeArgumentsForReference(
 }
 
 class FirFakeArgumentForCallableReference(
-    val index: Int
+    val index: Int,
 ) : FirExpression() {
     override val source: KtSourceElement?
         get() = null
 
-    override val typeRef: FirTypeRef
+    override val coneTypeOrNull: ConeKotlinType
         get() = shouldNotBeCalled()
 
     override val annotations: List<FirAnnotation>
         get() = shouldNotBeCalled()
 
-    override fun replaceTypeRef(newTypeRef: FirTypeRef) {
+    override fun replaceConeTypeOrNull(newConeTypeOrNull: ConeKotlinType?) {
         shouldNotBeCalled()
     }
 

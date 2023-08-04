@@ -1098,7 +1098,7 @@ class Fir2IrVisitor(
             source = elvisExpression.source
             moduleData = session.moduleData
             origin = FirDeclarationOrigin.Source
-            returnTypeRef = elvisExpression.lhs.typeRef
+            returnTypeRef = elvisExpression.lhs.coneType.toFirResolvedTypeRef()
             name = Name.special("<elvis>")
             initializer = elvisExpression.lhs
             symbol = FirPropertySymbol(name)
@@ -1511,7 +1511,7 @@ class Fir2IrVisitor(
     private fun convertToArrayLiteral(arrayLiteral: FirArrayLiteral): IrVararg {
         return arrayLiteral.convertWithOffsets { startOffset, endOffset ->
             val arrayType = arrayLiteral.coneType.toIrType()
-            val elementType = if (arrayLiteral.typeRef is FirResolvedTypeRef) {
+            val elementType = if (arrayLiteral.coneTypeOrNull != null) {
                 arrayType.getArrayElementType(irBuiltIns)
             } else {
                 createErrorType()

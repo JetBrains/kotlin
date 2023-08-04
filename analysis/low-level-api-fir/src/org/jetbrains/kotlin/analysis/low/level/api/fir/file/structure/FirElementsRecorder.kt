@@ -218,7 +218,7 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
             convertedValue as T,
             setType = false
         ).also {
-            it.replaceTypeRef(original.typeRef)
+            it.replaceConeTypeOrNull(original.coneTypeOrNull)
         }
     }
 

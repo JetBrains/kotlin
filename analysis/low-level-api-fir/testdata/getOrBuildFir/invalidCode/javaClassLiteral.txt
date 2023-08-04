@@ -9,7 +9,7 @@ FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] javaClassLiteral.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun main([ResolvedTo(BODY_RESOLVE)] args: R|kotlin/Array<kotlin/String>|): R|kotlin/Unit| {
         [ResolvedTo(BODY_RESOLVE)] lval anyClass: R|kotlin/Any| = R|kotlin/Any.Any|()
-        R|/funOne|(<ERROR TYPE REF: Qualified expression with unexpected selector>ERROR_EXPR(Incorrect selector expression)R|<local>/anyClass|)
+        R|/funOne|(ERROR_EXPR(Incorrect selector expression)R|<local>/anyClass|)
     }
     public final [ResolvedTo(CONTRACTS)] fun funOne([ResolvedTo(CONTRACTS)] x: R|kotlin/Any|): R|kotlin/Unit| {
     }

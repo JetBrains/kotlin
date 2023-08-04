@@ -310,7 +310,7 @@ private fun BodyResolveComponents.createExplicitReceiverForInvokeByCallable(
             candidate
         )
         dispatchReceiver = candidate.dispatchReceiverExpression()
-        this.typeRef = returnTypeCalculator.tryCalculateReturnType(symbol.fir)
+        coneTypeOrNull = returnTypeCalculator.tryCalculateReturnType(symbol.fir).type
 
         if (!invokeBuiltinExtensionMode) {
             extensionReceiver = extensionReceiverExpression

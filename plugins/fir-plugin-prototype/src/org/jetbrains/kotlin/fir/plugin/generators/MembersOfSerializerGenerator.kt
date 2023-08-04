@@ -57,7 +57,7 @@ class MembersOfSerializerGenerator(session: FirSession) : FirDeclarationGenerati
         val function = createMemberFunction(owner, Key, callableId.callableName, session.builtinTypes.unitType.type) {
             valueParameter(X_NAME, argumentClassId.createConeType(session))
         }.apply {
-            replaceBody(buildBlock {}.apply { replaceTypeRef(session.builtinTypes.unitType) })
+            replaceBody(buildBlock {}.apply { replaceConeTypeOrNull(session.builtinTypes.unitType.type) })
         }
         return listOf(function.symbol)
     }

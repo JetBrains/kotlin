@@ -29,7 +29,7 @@ object FirOptionalExpectationTypeChecker : FirTypeRefChecker() {
         }
 
         val annotationContainer = context.annotationContainers.lastOrNull()
-        if (annotationContainer?.annotations?.any { it.typeRef == typeRef } == true) return
+        if (annotationContainer?.annotations?.any { it.annotationTypeRef == typeRef } == true) return
 
         reporter.reportOn(source, FirErrors.OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY, context)
     }

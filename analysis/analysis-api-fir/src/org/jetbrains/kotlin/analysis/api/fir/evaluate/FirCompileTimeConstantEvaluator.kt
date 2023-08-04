@@ -178,13 +178,13 @@ internal object FirCompileTimeConstantEvaluator {
 
         val opr1 = evaluate(functionCall.explicitReceiver, mode) ?: return null
         opr1.evaluate(function)?.let {
-            return it.adjustType(functionCall.type)
+            return it.adjustType(functionCall.coneTypeOrNull)
         }
 
         val argument = functionCall.arguments.firstOrNull() ?: return null
         val opr2 = evaluate(argument, mode) ?: return null
         opr1.evaluate(function, opr2)?.let {
-            return it.adjustType(functionCall.type)
+            return it.adjustType(functionCall.coneTypeOrNull)
         }
         return null
     }
@@ -207,7 +207,7 @@ internal object FirCompileTimeConstantEvaluator {
             }
         // Lastly, we should preserve the resolved type of the original function call.
         return expression.apply {
-            replaceType(expectedType)
+            replaceConeTypeOrNull(expectedType)
         }
     }
 

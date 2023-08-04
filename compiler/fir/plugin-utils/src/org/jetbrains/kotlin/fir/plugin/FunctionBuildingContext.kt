@@ -88,7 +88,7 @@ public sealed class FunctionBuildingContext<T : FirFunction>(
             symbol = FirValueParameterSymbol(name)
             if (valueParameter.hasDefaultValue) {
                 // TODO: check how it will actually work in fir2ir
-                defaultValue = buildExpressionStub { typeRef = session.builtinTypes.nothingType }
+                defaultValue = buildExpressionStub { coneTypeOrNull = session.builtinTypes.nothingType.type }
             }
             this.containingFunctionSymbol = containingFunctionSymbol
             isCrossinline = valueParameter.isCrossinline

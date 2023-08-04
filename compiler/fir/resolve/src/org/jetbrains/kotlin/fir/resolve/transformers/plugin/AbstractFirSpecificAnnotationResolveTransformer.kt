@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.fir.types.builder.buildStarProjection
 import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.builder.buildUserTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
 import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
@@ -144,7 +143,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
                     source = receiver.source
                     packageFqName = symbol.classId.packageFqName
                     relativeClassFqName = symbol.classId.relativeClassName
-                    typeRef = FirImplicitUnitTypeRef(receiver.typeRef.source)
+                    coneTypeOrNull = session.builtinTypes.unitType.type
                     this.symbol = symbol
                     isFullyQualified = segments.isNotEmpty()
                 }
@@ -190,7 +189,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
 
             calleeSymbol.containingClassLookupTag()
                 ?.let { ConeClassLikeTypeImpl(it, emptyArray(), false) }
-                ?.let { replaceTypeRef(typeRef.resolvedTypeFromPrototype(it)) }
+                ?.let { replaceConeTypeOrNull(it) }
         }
     }
 

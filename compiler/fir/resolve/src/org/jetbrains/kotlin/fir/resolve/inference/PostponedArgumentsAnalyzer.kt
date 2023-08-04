@@ -17,8 +17,6 @@ import org.jetbrains.kotlin.fir.resolve.shouldReturnUnit
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
-import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzerContext
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
@@ -84,20 +82,14 @@ class PostponedArgumentsAnalyzer(
         callableReferenceAccess.apply {
             replaceCalleeReference(namedReference)
             val typeForCallableReference = atom.resultingTypeForCallableReference
-            val resolvedTypeRef = when {
-                typeForCallableReference != null -> buildResolvedTypeRef {
-                    type = typeForCallableReference
-                }
-                namedReference is FirErrorReferenceWithCandidate -> buildErrorTypeRef {
-                    diagnostic = namedReference.diagnostic
-                }
-                else -> buildErrorTypeRef {
-                    diagnostic = ConeUnresolvedReferenceError(callableReferenceAccess.calleeReference.name)
-                }
+            val resolvedType = when {
+                typeForCallableReference != null -> typeForCallableReference
+                namedReference is FirErrorReferenceWithCandidate -> ConeErrorType(namedReference.diagnostic)
+                else -> ConeErrorType(ConeUnresolvedReferenceError(callableReferenceAccess.calleeReference.name))
             }
-            replaceTypeRef(resolvedTypeRef)
+            replaceConeTypeOrNull(resolvedType)
             resolutionContext.session.lookupTracker?.recordTypeResolveAsLookup(
-                resolvedTypeRef, source, resolutionContext.bodyResolveComponents.file.source
+                resolvedType, source, resolutionContext.bodyResolveComponents.file.source
             )
         }
     }

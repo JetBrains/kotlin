@@ -25,10 +25,7 @@ import org.jetbrains.kotlin.fir.references.builder.buildImplicitThisReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -1116,13 +1113,13 @@ fun <TBase, TSource : TBase, TParameter : TBase> FirRegularClassBuilder.createDa
     ) =
         buildPropertyAccessExpression {
             this.source = parameterSource
-            typeRef = firPropertyReturnTypeRefWithCorrectSourceKind
+            coneTypeOrNull = firPropertyReturnTypeRefWithCorrectSourceKind.coneTypeOrNull
             this.dispatchReceiver = buildThisReceiverExpression {
                 this.source = parameterSource
                 calleeReference = buildImplicitThisReference {
                     boundSymbol = this@createDataClassCopyFunction.symbol
                 }
-                typeRef = classTypeRefWithCorrectSourceKind
+                coneTypeOrNull = classTypeRefWithCorrectSourceKind.coneTypeOrNull
             }
             calleeReference = buildResolvedNamedReference {
                 this.source = parameterSource

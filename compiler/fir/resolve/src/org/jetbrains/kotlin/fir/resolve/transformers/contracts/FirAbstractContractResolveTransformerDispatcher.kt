@@ -156,7 +156,7 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
             val resolvedContractCall = withContractModeDisabled {
                 contractDescription.contractCall
                     .transformSingle(transformer, ResolutionMode.ContextIndependent)
-                    .apply { replaceTypeRef(session.builtinTypes.unitType) }
+                    .apply { replaceConeTypeOrNull(session.builtinTypes.unitType.type) }
             }
 
             if (resolvedContractCall.toResolvedCallableSymbol()?.callableId != FirContractsDslNames.CONTRACT) {
