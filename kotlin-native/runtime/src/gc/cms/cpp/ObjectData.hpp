@@ -17,6 +17,7 @@ namespace kotlin::gc {
 
 class GC::ObjectData {
     static constexpr intptr_t kNoQueueMark = 1;
+    static constexpr intptr_t kVerificationMark = 2;
 public:
     bool tryMark() noexcept { return trySetNext(reinterpret_cast<ObjectData*>(kNoQueueMark)); }
 
@@ -35,16 +36,31 @@ public:
         return true;
     }
 
+    bool markIsVerified() const noexcept {
+        return reinterpret_cast<std::size_t>(next()) == kVerificationMark;
+    }
+
+    void remarkVerified() noexcept {
+        RuntimeCheck(marked(), "Verification mark must operate only already marked objects");
+        next_.store(reinterpret_cast<ObjectData*>(kVerificationMark), std::memory_order_relaxed);
+    }
+
 private:
     friend struct DefaultIntrusiveForwardListTraits<ObjectData>;
 
     ObjectData* next() const noexcept { return next_.load(std::memory_order_relaxed); }
     void setNext(ObjectData* next) noexcept {
         RuntimeAssert(next, "next cannot be nullptr");
+        if (compiler::gcCheckMarkCorrectness()) {
+            RuntimeAssert(reinterpret_cast<std::size_t>(next) != kVerificationMark, "Special verification mark tag is used by common marking");
+        }
         next_.store(next, std::memory_order_relaxed);
     }
     bool trySetNext(ObjectData* next) noexcept {
         RuntimeAssert(next, "next cannot be nullptr");
+        if (compiler::gcCheckMarkCorrectness()) {
+            RuntimeAssert(reinterpret_cast<std::size_t>(next) != kVerificationMark, "Special verification mark tag is used by common marking");
+        }
         ObjectData* expected = nullptr;
         return next_.compare_exchange_strong(expected, next, std::memory_order_relaxed);
     }
