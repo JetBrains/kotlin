@@ -16,6 +16,7 @@ plugins {
     signing
 }
 
+description = "Kotlin Standard Library"
 
 // TODO: JS
 //   - ensure npm publishing
@@ -852,6 +853,13 @@ publishing {
 
         // Makes all variants from accompanying artifacts visible through `available-at`
         rootModule.include(js)
+    }
+
+    publications {
+        val rootModule by existing(MavenPublication::class)
+        val jsModule by existing(MavenPublication::class)
+        configureSbom("Main", "kotlin-stdlib", setOf("jvmRuntimeClasspath"), rootModule)
+        configureSbom("Js", "kotlin-stdlib-js", setOf("jsRuntimeClasspath"), jsModule)
     }
 }
 
