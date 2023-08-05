@@ -7,129 +7,90 @@ package org.jetbrains.kotlin.incremental.storage
 
 import org.jetbrains.kotlin.TestWithWorkingDir
 import org.jetbrains.kotlin.incremental.IncrementalCompilationContext
-import org.junit.After
-import org.junit.Assert.assertArrayEquals
 import org.junit.Before
 import org.junit.Test
 import java.io.File
-import kotlin.properties.Delegates
+import kotlin.test.assertFailsWith
 
 class SourceToOutputFilesMapTest : TestWithWorkingDir() {
-    private var stofMap: SourceToOutputFilesMap by Delegates.notNull()
-    private var pathConverter: FileToPathConverter by Delegates.notNull()
+
+    private lateinit var srcDir: File
+    private lateinit var classesDir: File
+
+    private lateinit var stofMap: SourceToOutputFilesMap
+
+    private lateinit var fooDotKt: File
+    private lateinit var fooDotClass: File
 
     @Before
     override fun setUp() {
         super.setUp()
-        val caches = File(workingDir, "caches").apply { mkdirs() }
-        val stofMapFile = File(caches, "stof.tab")
-        pathConverter = IncrementalFileToPathConverter((workingDir.canonicalFile))
-        val icContext = IncrementalCompilationContext(
-            pathConverter = pathConverter
-        )
-        stofMap = SourceToOutputFilesMap(stofMapFile, icContext)
-    }
 
-    @After
-    override fun tearDown() {
-        stofMap.flush(false)
-        stofMap.closeForTest()
-        super.tearDown()
-    }
+        srcDir = workingDir.resolve("src")
+        classesDir = workingDir.resolve("classes")
 
-    @Test
-    fun testEmptyGetReturnsEmpty() {
-        assertTrue(stofMap.get(File("")).isEmpty())
-    }
-
-    @Test
-    fun testSetGetOneReturnsOne() {
-        stofMap.set(
-            File(""),
-            listOf(File("one").canonicalFile))
-        assertEquals(
-            listOf(File("one").canonicalFile),
-            stofMap.get(File("")))
-    }
-
-    @Test
-    fun testSetDupeReturnsUnique() {
-        stofMap.set(
-            File(""),
-            listOf(File("one").canonicalFile, File("one").canonicalFile, File("one").canonicalFile))
-
-        assertEquals(
-            listOf(File("one").canonicalFile),
-            stofMap.get(File("")))
-    }
-
-    @Test
-    fun testSetOverwriteReturnsNew() {
-        stofMap.set(
-            File(""),
-            listOf(File("old").canonicalFile, File("old").canonicalFile, File("old").canonicalFile))
-        stofMap.set(
-            File(""),
-            listOf(File("one").canonicalFile, File("two").canonicalFile, File("three").canonicalFile))
-
-        assertArrayEquals(
-            listOf(File("one").canonicalFile, File("two").canonicalFile, File("three").canonicalFile).toSortedPaths(),
-            stofMap.get(File("")).toSortedPaths())
-    }
-
-    @Test
-    fun testRelativeInReturnsAbsolute() {
-        stofMap.set(
-            File(""),
-            listOf(File("one"), File("two"), File("three")))
-
-        assertArrayEquals(
-            listOf(File("one").canonicalFile, File("two").canonicalFile, File("three").canonicalFile).toSortedPaths(),
-            stofMap.get(File("")).toSortedPaths()
-        )
-    }
-
-    @Test
-    fun testSetRelativeGetAbsolute() {
-        stofMap.set(
-            File("blah"),
-            listOf(File("one"), File("two"), File("three")))
-
-        assertArrayEquals(
-            listOf(File("one").canonicalFile, File("two").canonicalFile, File("three").canonicalFile).toSortedPaths(),
-            stofMap.get(File("blah").canonicalFile).toSortedPaths()
-        )
-    }
-
-    @Test
-    fun testSetRemove() {
-        stofMap.set(
-            File("blah"),
-            listOf(File("one"), File("two"), File("three")))
-
-        assertArrayEquals(
-            listOf(File("one").canonicalFile, File("two").canonicalFile, File("three").canonicalFile).toSortedPaths(),
-            stofMap.remove(File("blah")).toSortedPaths()
-        )
-        assertTrue(stofMap.get(File("blah")).isEmpty())
-    }
-
-    @Test
-    fun testSetRemoveLoop() {
-        repeat(5) {
-            stofMap.set(
-                File("blah"),
-                listOf(File("one"), File("two"), File("three"))
+        stofMap = SourceToOutputFilesMap(
+            storageFile = workingDir.resolve("stof.tab"),
+            icContext = IncrementalCompilationContext(
+                pathConverterForSourceFiles = RelocatableFileToPathConverter(srcDir),
+                pathConverterForClassFiles = RelocatableFileToPathConverter(classesDir),
             )
+        )
 
-            assertArrayEquals(
-                listOf(File("one").canonicalFile, File("two").canonicalFile, File("three").canonicalFile).toSortedPaths(),
-                stofMap.remove(File("blah")).toSortedPaths()
-            )
-            assertTrue(stofMap.get(File("blah")).isEmpty())
+        fooDotKt = srcDir.resolve("Foo.kt")
+        fooDotClass = classesDir.resolve("Foo.class")
+    }
+
+    @Test
+    fun testSetEmptyGetReturnsEmpty() {
+        assertNull(stofMap[fooDotKt])
+    }
+
+    @Test
+    fun testSetOneGetReturnsOne() {
+        stofMap[fooDotKt] = listOf(fooDotClass)
+
+        assertEquals(listOf(fooDotClass), stofMap[fooDotKt])
+    }
+
+    @Test
+    fun testSetDupeGetReturnsTwo() {
+        stofMap[fooDotKt] = listOf(fooDotClass, fooDotClass)
+
+        assertEquals(listOf(fooDotClass, fooDotClass), stofMap[fooDotKt])
+    }
+
+    @Test
+    fun testSetOverwriteGetReturnsNew() {
+        val fooKtDotClass = classesDir.resolve("FooKt.class")
+        stofMap[fooDotKt] = listOf(fooDotClass)
+        stofMap[fooDotKt] = listOf(fooKtDotClass)
+
+        assertEquals(listOf(fooKtDotClass), stofMap[fooDotKt]!!)
+    }
+
+    @Test
+    fun testSetRelativeFails() {
+        assertFailsWith<IllegalStateException> {
+            stofMap[fooDotKt] = listOf(File("relativePath"))
         }
     }
 
-    private fun Iterable<File>.toSortedPaths(): Array<String> =
-        map { it.canonicalPath }.sorted().toTypedArray()
+    @Test
+    fun testGetRelativeFails() {
+        stofMap[fooDotKt] = listOf(fooDotClass)
+
+        assertFailsWith<IllegalStateException> {
+            stofMap[fooDotKt.relativeTo(srcDir)]
+        }
+    }
+
+    @Test
+    fun testGetAndRemove() {
+        stofMap[fooDotKt] = listOf(fooDotClass)
+
+        assertEquals(listOf(fooDotClass), stofMap.getAndRemove(fooDotKt)!!)
+        assertNull(stofMap[fooDotKt])
+    }
+
 }

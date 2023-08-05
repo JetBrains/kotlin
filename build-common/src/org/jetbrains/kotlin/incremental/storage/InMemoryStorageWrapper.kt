@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.incremental.storage
 
 import com.intellij.util.io.DataExternalizer
-import java.util.*
-import kotlin.collections.LinkedHashMap
 
 interface InMemoryStorageWrapper<K, V> : AppendableLazyStorage<K, V> {
     fun resetInMemoryChanges()
@@ -27,6 +25,8 @@ class DefaultInMemoryStorageWrapper<K, V>(
     private val inMemoryStorage = LinkedHashMap<K, ValueWrapper>()
     private val removedKeys = hashSetOf<K>()
     private var isCleanRequested = false
+
+    override val storageFile = origin.storageFile
 
     @get:Synchronized
     override val keys: Collection<K>

@@ -17,21 +17,18 @@
 package org.jetbrains.kotlin.incremental.storage
 
 import com.intellij.util.CommonProcessors
-import com.intellij.util.io.AppendablePersistentMap
-import com.intellij.util.io.DataExternalizer
-import com.intellij.util.io.IOUtil
-import com.intellij.util.io.KeyDescriptor
-import com.intellij.util.io.PersistentHashMap
+import com.intellij.util.io.*
 import org.jetbrains.kotlin.incremental.IncrementalCompilationContext
+import org.jetbrains.kotlin.utils.ThreadSafe
 import java.io.File
 import java.io.IOException
-
 
 /**
  * It's lazy in a sense that PersistentHashMap is created only on write
  */
+@ThreadSafe
 class CachingLazyStorage<K, V>(
-    private val storageFile: File,
+    override val storageFile: File,
     private val keyDescriptor: KeyDescriptor<K>,
     private val valueExternalizer: DataExternalizer<V>
 ) : AppendableLazyStorage<K, V> {
@@ -150,7 +147,7 @@ fun <K, V> createLazyStorage(
     icContext: IncrementalCompilationContext,
 ): LazyStorage<K, V> = createLazyStorageImpl(storageFile, keyDescriptor, valueExternalizer, icContext)
 
-fun <K, V> createLazyStorage(
+fun <K, V> createAppendableLazyStorage(
     storageFile: File,
     keyDescriptor: KeyDescriptor<K>,
     valueExternalizer: AppendableDataExternalizer<V>,

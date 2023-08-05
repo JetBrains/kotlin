@@ -18,18 +18,22 @@ package org.jetbrains.kotlin.incremental.snapshots
 
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.incremental.IncrementalCompilationContext
-import org.jetbrains.kotlin.incremental.storage.BasicStringMap
-import org.jetbrains.kotlin.incremental.storage.PathStringDescriptor
+import org.jetbrains.kotlin.incremental.storage.BasicMap
+import org.jetbrains.kotlin.incremental.storage.FilePathDescriptor
+import org.jetbrains.kotlin.incremental.storage.LazyStorageWrapper
+import org.jetbrains.kotlin.incremental.storage.createLazyStorage
 import java.io.File
-import java.util.*
 
 class FileSnapshotMap(
     storageFile: File,
     icContext: IncrementalCompilationContext,
-) : BasicStringMap<FileSnapshot>(storageFile, PathStringDescriptor, FileSnapshotExternalizer, icContext) {
-
-    override fun dumpValue(value: FileSnapshot): String =
-        value.toString()
+) : LazyStorageWrapper<File, FileSnapshot, String, FileSnapshot>(
+    storage = createLazyStorage(storageFile, FilePathDescriptor, FileSnapshotExternalizer, icContext),
+    publicToInternalKey = icContext.pathConverterForSourceFiles::toPath,
+    internalToPublicKey = icContext.pathConverterForSourceFiles::toFile,
+    publicToInternalValue = { it },
+    internalToPublicValue = { it }
+), BasicMap<File, FileSnapshot> {
 
     @Synchronized
     fun compareAndUpdate(newFiles: Iterable<File>): ChangedFiles.Known {
@@ -37,22 +41,21 @@ class FileSnapshotMap(
         val newOrModified = ArrayList<File>()
         val removed = ArrayList<File>()
 
-        val newPaths = newFiles.mapTo(HashSet(), transform = pathConverter::toPath)
-        for (oldPath in storage.keys) {
-            if (oldPath !in newPaths) {
-                storage.remove(oldPath)
-                removed.add(pathConverter.toFile(oldPath))
+        val newFilesSet = newFiles.toSet()
+        for (oldFile in keys) {
+            if (oldFile !in newFilesSet) {
+                remove(oldFile)
+                removed.add(oldFile)
             }
         }
 
-        for (path in newPaths) {
-            val file = pathConverter.toFile(path)
-            val oldSnapshot = storage[path]
-            val newSnapshot = snapshotProvider[file]
+        for (newFile in newFiles) {
+            val oldSnapshot = this[newFile]
+            val newSnapshot = snapshotProvider[newFile]
 
             if (oldSnapshot == null || oldSnapshot != newSnapshot) {
-                newOrModified.add(file)
-                storage[path] = newSnapshot
+                newOrModified.add(newFile)
+                this[newFile] = newSnapshot
             }
         }
 

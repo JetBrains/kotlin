@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.incremental.storage
 
 import org.jetbrains.kotlin.incremental.IncrementalCompilationContext
-import org.jetbrains.kotlin.incremental.dumpCollection
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.io.File
@@ -36,28 +35,25 @@ internal abstract class AbstractSourceToOutputMap<Name>(
     private val nameTransformer: NameTransformer<Name>,
     storageFile: File,
     icContext: IncrementalCompilationContext,
-) : AppendableBasicStringMap<Collection<String>>(storageFile, PathStringDescriptor, StringCollectionExternalizer, icContext) {
-    fun clearOutputsForSource(sourceFile: File) {
-        remove(pathConverter.toPath(sourceFile))
-    }
+) : AppendableLazyStorageWrapper<File, Collection<Name>, String, Collection<String>>(
+    storage = createAppendableLazyStorage(
+        storageFile,
+        FilePathDescriptor,
+        AppendableStringCollectionExternalizer,
+        icContext
+    ),
+    publicToInternalKey = icContext.pathConverterForSourceFiles::toPath,
+    internalToPublicKey = icContext.pathConverterForSourceFiles::toFile,
+    publicToInternalValue = { it.map(nameTransformer::asString) },
+    internalToPublicValue = { it.map(nameTransformer::asName) },
+), BasicMap<File, Collection<Name>> {
 
-    fun add(sourceFile: File, className: Name) {
-        storage.append(pathConverter.toPath(sourceFile), listOf(nameTransformer.asString(className)))
-    }
+    @Synchronized
+    fun getFqNames(sourceFile: File): Collection<FqName>? =
+        this[sourceFile]?.map { nameTransformer.asFqName(nameTransformer.asString(it)) }
 
-    fun contains(sourceFile: File): Boolean =
-        pathConverter.toPath(sourceFile) in storage
-
-    operator fun get(sourceFile: File): Collection<Name> =
-        storage[pathConverter.toPath(sourceFile)].orEmpty().map(nameTransformer::asName)
-
-    fun getFqNames(sourceFile: File): Collection<FqName> =
-        storage[pathConverter.toPath(sourceFile)].orEmpty().map(nameTransformer::asFqName)
-
-    override fun dumpValue(value: Collection<String>) =
-        value.dumpCollection()
-
-    private fun remove(path: String) {
-        storage.remove(path)
+    @Synchronized
+    fun add(sourceFile: File, value: Name) {
+        append(sourceFile, listOf(value))
     }
 }

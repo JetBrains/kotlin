@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.js.*
 import org.jetbrains.kotlin.incremental.multiproject.EmptyModulesApiHistory
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistory
+import org.jetbrains.kotlin.incremental.storage.FileLocations
 import org.jetbrains.kotlin.library.metadata.KlibMetadataSerializerProtocol
 import org.jetbrains.kotlin.serialization.js.JsSerializerProtocol
 import java.io.File
@@ -51,7 +52,8 @@ fun makeJsIncrementally(
     reporter: ICReporter = DoNothingICReporter,
     scopeExpansion: CompileScopeExpansionMode = CompileScopeExpansionMode.NEVER,
     modulesApiHistory: ModulesApiHistory = EmptyModulesApiHistory,
-    providedChangedFiles: ChangedFiles? = null
+    providedChangedFiles: ChangedFiles? = null,
+    fileLocations: FileLocations? = null,
 ) {
     val allKotlinFiles = sourceRoots.asSequence().flatMap { it.walk() }
         .filter { it.isFile && it.extension.equals("kt", ignoreCase = true) }.toList()
@@ -64,7 +66,7 @@ fun makeJsIncrementally(
             modulesApiHistory = modulesApiHistory,
             scopeExpansion = scopeExpansion
         )
-        compiler.compile(allKotlinFiles, args, messageCollector, providedChangedFiles)
+        compiler.compile(allKotlinFiles, args, messageCollector, providedChangedFiles, fileLocations)
     }
 }
 

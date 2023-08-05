@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.incremental.storage
 
+import com.intellij.util.io.EnumeratorStringDescriptor
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.incremental.IncrementalCompilationContext
 import org.jetbrains.kotlin.incremental.dumpCollection
 import org.jetbrains.kotlin.name.FqName
@@ -24,40 +26,42 @@ import java.io.File
 internal open class ClassOneToManyMap(
     storageFile: File,
     icContext: IncrementalCompilationContext,
-) : AppendableBasicStringMap<Collection<String>>(storageFile, StringCollectionExternalizer, icContext) {
-    override fun dumpValue(value: Collection<String>): String = value.dumpCollection()
+) : AppendableLazyStorageWrapper<FqName, Collection<FqName>, String, Collection<String>>(
+    storage = createAppendableLazyStorage(
+        storageFile,
+        EnumeratorStringDescriptor.INSTANCE,
+        AppendableCollectionExternalizer(StringExternalizer) { linkedSetOf() },
+        icContext
+    ),
+    publicToInternalKey = FqName::asString,
+    internalToPublicKey = ::FqName,
+    publicToInternalValue = { it.mapTo(linkedSetOf(), FqName::asString) },
+    internalToPublicValue = { it.mapTo(linkedSetOf(), ::FqName) },
+), BasicMap<FqName, Collection<FqName>> {
+
+    @Synchronized
+    override operator fun set(key: FqName, value: Collection<FqName>) {
+        if (value.isNotEmpty()) {
+            super.set(key, value)
+        } else {
+            remove(key)
+        }
+    }
 
     @Synchronized
     fun add(key: FqName, value: FqName) {
-        storage.append(key.asString(), listOf(value.asString()))
-    }
-
-    @Synchronized
-    operator fun get(key: FqName): Collection<FqName> =
-        storage[key.asString()]?.map(::FqName) ?: setOf()
-
-    @Synchronized
-    operator fun set(key: FqName, values: Collection<FqName>) {
-        if (values.isEmpty()) {
-            remove(key)
-            return
-        }
-
-        storage[key.asString()] = values.map(FqName::asString)
-    }
-
-    @Synchronized
-    fun remove(key: FqName) {
-        storage.remove(key.asString())
+        append(key, listOf(value))
     }
 
     // Access to caches could be done from multiple threads (e.g. JPS worker and RMI). The underlying collection is already synchronized,
-    // thus we need synchronization of this method and all modification methods.
+    // but we still need synchronization of this method and all read/write methods.
     @Synchronized
     fun removeValues(key: FqName, removed: Set<FqName>) {
-        val notRemoved = this[key].filter { it !in removed }
-        this[key] = notRemoved
+        this[key] = this[key].orEmpty() - removed
     }
+
+    @TestOnly
+    override fun dumpValue(value: Collection<FqName>): String = value.map(FqName::asString).dumpCollection()
 }
 
 internal class SubtypesMap(

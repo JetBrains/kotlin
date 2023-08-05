@@ -20,27 +20,16 @@ import org.jetbrains.kotlin.incremental.IncrementalCompilationContext
 import java.io.File
 
 internal class FileToIdMap(
-    file: File,
+    storageFile: File,
     icContext: IncrementalCompilationContext,
-) : BasicStringMap<Int>(file, IntExternalizer, icContext) {
-    override fun dumpValue(value: Int): String = value.toString()
+) : LazyStorageWrapper<File, Int, String, Int>(
+    storage = createLazyStorage(storageFile, FilePathDescriptor, IntExternalizer, icContext),
+    publicToInternalKey = icContext.pathConverterForSourceFiles::toPath,
+    internalToPublicKey = icContext.pathConverterForSourceFiles::toFile,
+    publicToInternalValue = { it },
+    internalToPublicValue = { it },
+), BasicMap<File, Int> {
 
-    operator fun get(file: File): Int? = storage[pathConverter.toPath(file)]
-
-    operator fun set(file: File, id: Int) {
-        storage[pathConverter.toPath(file)] = id
-    }
-
-    fun remove(file: File) {
-        storage.remove(pathConverter.toPath(file))
-    }
-
-    fun toMap(): Map<File, Int> {
-        val result = HashMap<File, Int>()
-        for (key in storage.keys) {
-            val value = storage[key] ?: continue
-            result[pathConverter.toFile(key)] = value
-        }
-        return result
-    }
+    @Synchronized
+    fun toMap(): Map<File, Int> = keys.associateWith { this[it]!! }
 }

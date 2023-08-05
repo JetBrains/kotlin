@@ -79,7 +79,7 @@ open class IncrementalJsCache(
         removedAndCompiledSources.forEach { sourceFile ->
             sourceToJsOutputsMap.remove(sourceFile)
             // The common prefix of all FQN parents has to be the file package
-            sourceToClassesMap[sourceFile].map { it.parentOrNull()?.asString() ?: "" }.minByOrNull { it.length }?.let {
+            sourceToClassesMap[sourceFile].orEmpty().map { it.parentOrNull()?.asString() ?: "" }.minByOrNull { it.length }?.let {
                 packageMetadata.remove(it)
             }
         }
@@ -99,7 +99,7 @@ open class IncrementalJsCache(
     }
 
     fun getOutputsBySource(sourceFile: File): Collection<File> {
-        return sourceToJsOutputsMap[sourceFile]
+        return sourceToJsOutputsMap[sourceFile].orEmpty()
     }
 
     fun compareAndUpdate(incrementalResults: IncrementalResultsConsumerImpl, changesCollector: ChangesCollector) {
@@ -132,7 +132,7 @@ open class IncrementalJsCache(
         }
 
         for ((packageName, metadata) in incrementalResults.packageMetadata) {
-            packageMetadata.put(packageName, metadata)
+            packageMetadata[packageName] = metadata
         }
 
         for ((srcFile, irData) in incrementalResults.irFileData) {
@@ -159,7 +159,7 @@ open class IncrementalJsCache(
 
     fun nonDirtyPackageParts(): Map<File, TranslationResultValue> =
         hashMapOf<File, TranslationResultValue>().apply {
-            for (file in translationResults.keys()) {
+            for (file in translationResults.keys) {
 
                 if (file !in dirtySources) {
                     put(file, translationResults[file]!!)
@@ -168,14 +168,14 @@ open class IncrementalJsCache(
         }
 
     fun packageMetadata(): Map<String, ByteArray> = hashMapOf<String, ByteArray>().apply {
-        for (fqNameString in packageMetadata.keys()) {
+        for (fqNameString in packageMetadata.keys) {
             put(fqNameString, packageMetadata[fqNameString]!!)
         }
     }
 
     fun nonDirtyIrParts(): Map<File, IrTranslationResultValue> =
         hashMapOf<File, IrTranslationResultValue>().apply {
-            for (file in irTranslationResults.keys()) {
+            for (file in irTranslationResults.keys) {
 
                 if (file !in dirtySources) {
                     put(file, irTranslationResults[file]!!)
@@ -228,34 +228,32 @@ private class TranslationResultMap(
     storageFile: File,
     private val protoData: ProtoDataProvider,
     icContext: IncrementalCompilationContext,
-) :
-    BasicStringMap<TranslationResultValue>(storageFile, TranslationResultValueExternalizer, icContext) {
+) : LazyStorageWrapper<File, TranslationResultValue, String, TranslationResultValue>(
+    storage = createLazyStorage(storageFile, FilePathDescriptor, TranslationResultValueExternalizer, icContext),
+    publicToInternalKey = icContext.pathConverterForSourceFiles::toPath,
+    internalToPublicKey = icContext.pathConverterForSourceFiles::toFile,
+    publicToInternalValue = { it },
+    internalToPublicValue = { it },
+), BasicMap<File, TranslationResultValue> {
+
     override fun dumpValue(value: TranslationResultValue): String =
         "Metadata: ${value.metadata.md5()}, Binary AST: ${value.binaryAst.md5()}, InlineData: ${value.inlineData.md5()}"
 
     @Synchronized
     fun put(sourceFile: File, newMetadata: ByteArray, newBinaryAst: ByteArray, newInlineData: ByteArray) {
-        storage[pathConverter.toPath(sourceFile)] =
+        this[sourceFile] =
             TranslationResultValue(metadata = newMetadata, binaryAst = newBinaryAst, inlineData = newInlineData)
     }
 
     @Synchronized
-    operator fun get(sourceFile: File): TranslationResultValue? =
-        storage[pathConverter.toPath(sourceFile)]
-
-    fun keys(): Collection<File> =
-        storage.keys.map { pathConverter.toFile(it) }
-
-    @Synchronized
     fun remove(sourceFile: File, changesCollector: ChangesCollector) {
-        val path = pathConverter.toPath(sourceFile)
-        val protoBytes = storage[path]!!.metadata
+        val protoBytes = this[sourceFile]!!.metadata
         val protoMap = protoData(sourceFile, protoBytes)
 
         for ((_, protoData) in protoMap) {
             changesCollector.collectProtoChanges(oldData = protoData, newData = null)
         }
-        storage.remove(path)
+        remove(sourceFile)
     }
 }
 
@@ -311,8 +309,14 @@ private object IrTranslationResultValueExternalizer : DataExternalizer<IrTransla
 private class IrTranslationResultMap(
     storageFile: File,
     icContext: IncrementalCompilationContext,
-) :
-    BasicStringMap<IrTranslationResultValue>(storageFile, IrTranslationResultValueExternalizer, icContext) {
+) : LazyStorageWrapper<File, IrTranslationResultValue, String, IrTranslationResultValue>(
+    storage = createLazyStorage(storageFile, FilePathDescriptor, IrTranslationResultValueExternalizer, icContext),
+    publicToInternalKey = icContext.pathConverterForSourceFiles::toPath,
+    internalToPublicKey = icContext.pathConverterForSourceFiles::toFile,
+    publicToInternalValue = { it },
+    internalToPublicValue = { it },
+), BasicMap<File, IrTranslationResultValue> {
+
     override fun dumpValue(value: IrTranslationResultValue): String =
         "Filedata: ${value.fileData.md5()}, " +
                 "Types: ${value.types.md5()}, " +
@@ -321,6 +325,7 @@ private class IrTranslationResultMap(
                 "Declarations: ${value.declarations.md5()}, " +
                 "Bodies: ${value.bodies.md5()}"
 
+    @Synchronized
     fun put(
         sourceFile: File,
         newFiledata: ByteArray,
@@ -332,19 +337,8 @@ private class IrTranslationResultMap(
         fqn: ByteArray,
         debugInfos: ByteArray?
     ) {
-        storage[pathConverter.toPath(sourceFile)] =
+        this[sourceFile] =
             IrTranslationResultValue(newFiledata, newTypes, newSignatures, newStrings, newDeclarations, newBodies, fqn, debugInfos)
-    }
-
-    operator fun get(sourceFile: File): IrTranslationResultValue? =
-        storage[pathConverter.toPath(sourceFile)]
-
-    fun keys(): Collection<File> =
-        storage.keys.map { pathConverter.toFile(it) }
-
-    fun remove(sourceFile: File) {
-        val path = pathConverter.toPath(sourceFile)
-        storage.remove(path)
     }
 }
 
@@ -393,16 +387,22 @@ fun getProtoData(sourceFile: File, metadata: ByteArray): Map<ClassId, ProtoData>
 private class InlineFunctionsMap(
     storageFile: File,
     icContext: IncrementalCompilationContext,
-) : BasicStringMap<Map<String, Long>>(storageFile, StringToLongMapExternalizer, icContext) {
+) : LazyStorageWrapper<File, Map<String, Long>, String, Map<String, Long>>(
+    storage = createLazyStorage(storageFile, FilePathDescriptor, StringToLongMapExternalizer, icContext),
+    publicToInternalKey = icContext.pathConverterForSourceFiles::toPath,
+    internalToPublicKey = icContext.pathConverterForSourceFiles::toFile,
+    publicToInternalValue = { it },
+    internalToPublicValue = { it }
+), BasicMap<File, Map<String, Long>> {
+
     @Synchronized
     fun process(srcFile: File, newMap: Map<String, Long>, changesCollector: ChangesCollector) {
-        val key = pathConverter.toPath(srcFile)
-        val oldMap = storage[key] ?: emptyMap()
+        val oldMap = this[srcFile].orEmpty()
 
         if (newMap.isNotEmpty()) {
-            storage[key] = newMap
+            this[srcFile] = newMap
         } else {
-            storage.remove(key)
+            remove(srcFile)
         }
 
         for (fn in oldMap.keys + newMap.keys) {
@@ -410,11 +410,6 @@ private class InlineFunctionsMap(
             val fqName = FqName.fromSegments(fqNameSegments)
             changesCollector.collectMemberIfValueWasChanged(fqName.parent(), fqName.shortName().asString(), oldMap[fn], newMap[fn])
         }
-    }
-
-    @Synchronized
-    fun remove(sourceFile: File) {
-        storage.remove(pathConverter.toPath(sourceFile))
     }
 
     override fun dumpValue(value: Map<String, Long>): String =
@@ -440,17 +435,6 @@ private class PackageMetadataMap(
     storageFile: File,
     icContext: IncrementalCompilationContext,
 ) : BasicStringMap<ByteArray>(storageFile, ByteArrayExternalizer, icContext) {
-    fun put(packageName: String, newMetadata: ByteArray) {
-        storage[packageName] = newMetadata
-    }
-
-    fun remove(packageName: String) {
-        storage.remove(packageName)
-    }
-
-    fun keys() = storage.keys
-
-    operator fun get(packageName: String) = storage[packageName]
 
     override fun dumpValue(value: ByteArray): String = "Package metadata: ${value.md5()}"
 }

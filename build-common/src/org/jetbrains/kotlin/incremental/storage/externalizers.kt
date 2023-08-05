@@ -252,6 +252,12 @@ object PathStringDescriptor : EnumeratorStringDescriptor() {
     }
 }
 
+// TODO Consider using EnumeratorStringDescriptor instead of PathStringDescriptor because PathStringDescriptor uses File.getCanonicalPath(),
+// which is slow (KT-54579) and probably unnecessary.
+typealias FilePathDescriptor = PathStringDescriptor
+
+object FilePathDescriptors : AppendableCollectionExternalizer<String>(FilePathDescriptor, { ArrayList() })
+
 /** [DataExternalizer] that delegates to another [DataExternalizer] depending on the type of the object to externalize. */
 class DelegateDataExternalizer<T>(
     val types: List<Class<out T>>,
@@ -278,18 +284,8 @@ class DelegateDataExternalizer<T>(
     }
 }
 
-/**
- * [DataExternalizer] for a [Collection].
- *
- * If you need a [DataExternalizer] for a more specific instance of [Collection] (e.g., [List]), use [ListExternalizer] or create another
- * instance of [GenericCollectionExternalizer].
- *
- * Note: The implementations of this class and [GenericCollectionExternalizer] are similar but not exactly the same: the latter reads and
- * writes the size of the collection to avoid resizing the collection when reading. Therefore, if we make this class extend
- * [GenericCollectionExternalizer] to share code, we will need to update some expected files in tests as the serialized data will change
- * slightly.
- */
-open class CollectionExternalizer<T>(
+/** [AppendableDataExternalizer] for a [Collection]. */
+open class AppendableCollectionExternalizer<T>(
     private val elementExternalizer: DataExternalizer<T>,
     private val newCollection: () -> MutableCollection<T>
 ) : AppendableDataExternalizer<Collection<T>> {
@@ -319,9 +315,9 @@ open class CollectionExternalizer<T>(
     }
 }
 
-object StringCollectionExternalizer : CollectionExternalizer<String>(EnumeratorStringDescriptor(), { HashSet() })
+object AppendableStringCollectionExternalizer : AppendableCollectionExternalizer<String>(StringExternalizer, { ArrayList() })
 
-object IntCollectionExternalizer : CollectionExternalizer<Int>(IntExternalizer, { HashSet() })
+object AppendableIntCollectionExternalizer : AppendableCollectionExternalizer<Int>(IntExternalizer, { ArrayList() })
 
 fun DataOutput.writeString(value: String) = StringExternalizer.save(this, value)
 
@@ -358,7 +354,8 @@ object ByteArrayExternalizer : DataExternalizer<ByteArray> {
     }
 }
 
-abstract class GenericCollectionExternalizer<T, C : Collection<T>>(
+/** [DataExternalizer] for a [Collection]. */
+open class CollectionExternalizer<T, C : Collection<T>>(
     private val elementExternalizer: DataExternalizer<T>,
     private val newCollection: (size: Int) -> MutableCollection<T>
 ) : DataExternalizer<C> {
@@ -384,11 +381,13 @@ abstract class GenericCollectionExternalizer<T, C : Collection<T>>(
     }
 }
 
+object StringCollectionExternalizer : CollectionExternalizer<String, Collection<String>>(StringExternalizer, { size -> ArrayList(size) })
+
 class ListExternalizer<T>(elementExternalizer: DataExternalizer<T>) :
-    GenericCollectionExternalizer<T, List<T>>(elementExternalizer, { size -> ArrayList(size) })
+    CollectionExternalizer<T, List<T>>(elementExternalizer, { size -> ArrayList(size) })
 
 class SetExternalizer<T>(elementExternalizer: DataExternalizer<T>) :
-    GenericCollectionExternalizer<T, Set<T>>(elementExternalizer, { size -> LinkedHashSet(size) })
+    CollectionExternalizer<T, Set<T>>(elementExternalizer, { size -> LinkedHashSet(size) })
 
 open class MapExternalizer<K, V, M : Map<K, V>>(
     private val keyExternalizer: DataExternalizer<K>,

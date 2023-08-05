@@ -35,12 +35,12 @@ class InMemoryStorageWrapperTest {
         val storageRoot = workingDir.resolve("storage")
         val key = LookupSymbolKey("a", "a")
         withLookupMapInTransaction(storageRoot, useInMemoryWrapper = true, successful = true) {
-            it[key] = setOf(1, 2)
-            it.append(key, setOf(3))
+            it[key] = listOf(1, 2)
+            it.append(key, listOf(3))
         }
         assertTrue(Files.isDirectory(storageRoot))
         withLookupMapInTransaction(storageRoot, useInMemoryWrapper = false, successful = true) {
-            assertEquals(setOf(1, 2, 3), it[key])
+            assertEquals(listOf(1, 2, 3), it[key])
         }
     }
 
@@ -76,18 +76,18 @@ class InMemoryStorageWrapperTest {
             it.append(key5, setOf(5))
         }
         withLookupMapInTransaction(storageRoot, useInMemoryWrapper = false, successful = true) {
-            assertEquals(setOf(1, 2, 3), it[key1])
+            assertEquals(listOf(1, 2, 3), it[key1])
             assertNull(it[key2])
-            assertEquals(setOf(5), it[key3])
-            assertEquals(setOf(4), it[key4])
-            assertEquals(setOf(5), it[key5])
+            assertEquals(listOf(5), it[key3])
+            assertEquals(listOf(4), it[key4])
+            assertEquals(listOf(5), it[key5])
         }
         withLookupMapInTransaction(storageRoot, useInMemoryWrapper = true, successful = true) {
             it.clean()
             it.append(key1, setOf(4))
         }
         withLookupMapInTransaction(storageRoot, useInMemoryWrapper = false, successful = true) {
-            assertEquals(setOf(4), it[key1])
+            assertEquals(listOf(4), it[key1])
             assertNull(it[key2])
             assertNull(it[key3])
             assertNull(it[key4])
@@ -125,7 +125,7 @@ class InMemoryStorageWrapperTest {
         val storageFile = storageRoot.resolve("lookup").toFile()
         val fileToPathConverter = RelativeFileToPathConverter(storageFile)
         val icContext = IncrementalCompilationContext(
-            pathConverter = fileToPathConverter,
+            pathConverterForSourceFiles = fileToPathConverter,
             keepIncrementalCompilationCachesInMemory = useInMemoryWrapper
         )
         icContext.transaction.runWithin { transaction ->

@@ -6,26 +6,15 @@
 package org.jetbrains.kotlin.incremental.storage
 
 import org.jetbrains.kotlin.incremental.IncrementalCompilationContext
-import org.jetbrains.kotlin.incremental.dumpCollection
 import java.io.File
 
 class ComplementarySourceFilesMap(
     storageFile: File,
     icContext: IncrementalCompilationContext,
-) : BasicStringMap<Collection<String>>(storageFile, PathStringDescriptor, StringCollectionExternalizer, icContext) {
-
-    operator fun set(sourceFile: File, complementaryFiles: Collection<File>) {
-        storage[pathConverter.toPath(sourceFile)] = pathConverter.toPaths(complementaryFiles)
-    }
-
-    operator fun get(sourceFile: File): Collection<File> {
-        val paths = storage[pathConverter.toPath(sourceFile)].orEmpty()
-        return pathConverter.toFiles(paths)
-    }
-
-    override fun dumpValue(value: Collection<String>) =
-        value.dumpCollection()
-
-    fun remove(file: File): Collection<File> =
-        get(file).also { storage.remove(pathConverter.toPath(file)) }
-}
+) : LazyStorageWrapper<File, Collection<File>, String, Collection<String>>(
+    storage = createLazyStorage(storageFile, FilePathDescriptor, FilePathDescriptors, icContext),
+    publicToInternalKey = icContext.pathConverterForSourceFiles::toPath,
+    internalToPublicKey = icContext.pathConverterForSourceFiles::toFile,
+    publicToInternalValue = icContext.pathConverterForSourceFiles::toPaths,
+    internalToPublicValue = icContext.pathConverterForSourceFiles::toFiles,
+), BasicMap<File, Collection<File>>

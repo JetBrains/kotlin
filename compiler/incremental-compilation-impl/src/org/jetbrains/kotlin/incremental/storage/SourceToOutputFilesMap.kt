@@ -6,23 +6,24 @@
 package org.jetbrains.kotlin.incremental.storage
 
 import org.jetbrains.kotlin.incremental.IncrementalCompilationContext
-import org.jetbrains.kotlin.incremental.dumpCollection
 import java.io.File
 
+/** Maps each source file to the .class files that it is compiled into. */
 class SourceToOutputFilesMap(
     storageFile: File,
     icContext: IncrementalCompilationContext,
-) : BasicStringMap<Collection<String>>(storageFile, PathStringDescriptor, StringCollectionExternalizer, icContext) {
-    operator fun set(sourceFile: File, outputFiles: Collection<File>) {
-        storage[pathConverter.toPath(sourceFile)] = outputFiles.map(pathConverter::toPath)
+) : LazyStorageWrapper<File, Collection<File>, String, Collection<String>>(
+    storage = createLazyStorage(storageFile, FilePathDescriptor, FilePathDescriptors, icContext),
+    publicToInternalKey = icContext.pathConverterForSourceFiles::toPath,
+    internalToPublicKey = icContext.pathConverterForSourceFiles::toFile,
+    publicToInternalValue = icContext.pathConverterForClassFiles::toPaths,
+    internalToPublicValue = icContext.pathConverterForClassFiles::toFiles,
+), BasicMap<File, Collection<File>> {
+
+    @Synchronized
+    fun getAndRemove(sourceFile: File): Collection<File>? {
+        return get(sourceFile)?.also {
+            remove(sourceFile)
+        }
     }
-
-    operator fun get(sourceFile: File): Collection<File> =
-        storage[pathConverter.toPath(sourceFile)].orEmpty().map(pathConverter::toFile)
-
-    override fun dumpValue(value: Collection<String>) =
-        value.dumpCollection()
-
-    fun remove(file: File): Collection<File> =
-        get(file).also { storage.remove(pathConverter.toPath(file)) }
 }
