@@ -287,7 +287,8 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
         project("wasm-d8-simple-project", gradleVersion) {
             checkTaskCompileClasspath(
                 "compileKotlinWasmJs",
-                listOf("kotlin-stdlib-wasm"),
+                checkModulesInClasspath = listOf("kotlin-stdlib-wasm-js"),
+                checkModulesNotInClasspath = listOf("kotlin-stdlib-wasm-wasi"),
                 isBuildGradleKts = true
             )
         }
