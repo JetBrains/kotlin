@@ -160,19 +160,4 @@ fun Project.configureWasmStdLib(
     tasks.named("compileTestDevelopmentExecutableKotlinWasm", KotlinJsIrLink::class.java) {
         kotlinOptions.freeCompilerArgs += listOf("-Xwasm-enable-array-range-checks")
     }
-
-    val runtimeElements = configurations.create("runtimeElements") { }
-
-    configurations.create("apiElements") { }
-
-    publish(sbom = false) {
-        pom.packaging = "klib"
-        artifact(tasks.named("wasmJar")) {
-            extension = "klib"
-        }
-    }
-
-    configureSbom(
-        gradleConfigurations = setOf(runtimeElements.name)
-    )
 }

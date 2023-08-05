@@ -5,6 +5,7 @@ import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
+import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetAttribute
 import org.jetbrains.kotlin.gradle.tasks.UsesKotlinJavaToolchain
 import plugins.configureDefaultPublishing
 import plugins.configureKotlinPomAttributes
@@ -23,9 +24,20 @@ description = "Kotlin Standard Library"
 
 configureJvmToolchain(JdkMajorVersion.JDK_1_8)
 
-val configurationBuiltins = configurations.create("builtins") {
-    isCanBeResolved = true
-    isCanBeConsumed = false
+fun resolvingConfiguration(name: String, configure: Action<Configuration> = Action {}) =
+    configurations.create(name) {
+        isCanBeResolved = true
+        isCanBeConsumed = false
+        configure(this)
+    }
+fun outgoingConfiguration(name: String, configure: Action<Configuration> = Action {}) =
+    configurations.create(name) {
+        isCanBeResolved = false
+        isCanBeConsumed = true
+        configure(this)
+    }
+
+val configurationBuiltins = resolvingConfiguration("builtins") {
     attributes.attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, project.objects.named(LibraryElements.JAR))
 }
 dependencies {
@@ -776,6 +788,49 @@ tasks {
 
 }
 
+// republishing artifacts from kotlin-stdlib-wasm-* projects
+// TODO: replace with wasm targets compilation in this project
+fun wasmOutgoingConfigurations(target: KotlinWasmTargetAttribute) {
+    val targetName = target.toString().replaceFirstChar { it.uppercase() }
+    val klib = resolvingConfiguration("wasm${targetName}Klib")
+    val sources = resolvingConfiguration("wasm${targetName}Sources")
+    dependencies {
+        klib(project(":kotlin-stdlib-wasm-$target", configuration = "wasmRuntimeElements"))
+        sources(project(":kotlin-stdlib-wasm-$target", configuration = "wasmSourcesElements"))
+    }
+    listOf(KotlinUsages.KOTLIN_API, KotlinUsages.KOTLIN_RUNTIME).map { usage ->
+        val name = usage.substringAfter("kotlin-")
+        val configuration = outgoingConfiguration("wasm${targetName}${name.replaceFirstChar { it.uppercase() }}Elements") {
+            attributes {
+                attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
+                attribute(TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE, objects.named("non-jvm"))
+                attribute(Usage.USAGE_ATTRIBUTE, objects.named(usage))
+                attribute(KotlinPlatformType.attribute, KotlinPlatformType.wasm)
+                attribute(KotlinWasmTargetAttribute.wasmTargetAttribute, target)
+            }
+        }
+        artifacts.add(configuration.name, provider { klib.singleFile }) {
+            builtBy(klib)
+        }
+    }
+    val outSources = outgoingConfiguration("wasm${targetName}SourcesElements") {
+        attributes {
+            attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.DOCUMENTATION))
+            attribute(DocsType.DOCS_TYPE_ATTRIBUTE, objects.named(DocsType.SOURCES))
+            attribute(TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE, objects.named("non-jvm"))
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_RUNTIME))
+            attribute(KotlinPlatformType.attribute, KotlinPlatformType.wasm)
+            attribute(KotlinWasmTargetAttribute.wasmTargetAttribute, target)
+        }
+    }
+    artifacts.add(outSources.name, provider { sources.singleFile }) {
+        builtBy(sources)
+    }
+}
+
+wasmOutgoingConfigurations(KotlinWasmTargetAttribute.js)
+wasmOutgoingConfigurations(KotlinWasmTargetAttribute.wasi)
+
 
 // region ==== Publishing ====
 
@@ -845,24 +900,6 @@ publishing {
                     attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
                 }
             }
-            // empty variant for wasm
-            // TODO: replace with wasm target
-            variant("wasmApiElements") {
-                attributes {
-                    attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
-                    attribute(TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE, objects.named("non-jvm"))
-                    attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
-                    attribute(KotlinPlatformType.attribute, KotlinPlatformType.wasm)
-                }
-            }
-            variant("wasmRuntimeElements") {
-                attributes {
-                    attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
-                    attribute(TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE, objects.named("non-jvm"))
-                    attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_RUNTIME))
-                    attribute(KotlinPlatformType.attribute, KotlinPlatformType.wasm)
-                }
-            }
         }
 
         // we cannot publish legacy common artifact with metadata in kotlin-stdlib-common
@@ -888,8 +925,27 @@ publishing {
             variant("jsSourcesElements")
         }
 
+        val wasmJs = module("wasmJsModule") {
+            mavenPublication {
+                artifactId = "$artifactBaseName-wasm-js"
+                configureKotlinPomAttributes(project, "Kotlin Standard Library for experimental WebAssembly JS platform", packaging = "klib")
+            }
+            variant("wasmJsApiElements")
+            variant("wasmJsRuntimeElements")
+            variant("wasmJsSourcesElements")
+        }
+        val wasmWasi = module("wasmWasiModule") {
+            mavenPublication {
+                artifactId = "$artifactBaseName-wasm-wasi"
+                configureKotlinPomAttributes(project, "Kotlin Standard Library for experimental WebAssembly WASI platform", packaging = "klib")
+            }
+            variant("wasmWasiApiElements")
+            variant("wasmWasiRuntimeElements")
+            variant("wasmWasiSourcesElements")
+        }
+
         // Makes all variants from accompanying artifacts visible through `available-at`
-        rootModule.include(js)
+        rootModule.include(js, wasmJs, wasmWasi)
     }
 
     publications {
@@ -897,6 +953,13 @@ publishing {
         val jsModule by existing(MavenPublication::class)
         configureSbom("Main", "kotlin-stdlib", setOf("jvmRuntimeClasspath"), rootModule)
         configureSbom("Js", "kotlin-stdlib-js", setOf("jsRuntimeClasspath"), jsModule)
+
+        val wasmJsModule by existing(MavenPublication::class)
+        val wasmWasiModule by existing(MavenPublication::class)
+        // an arbitrary empty classpath configuration is used for the following sboms
+        // TODO: replace with classpath configurations of the corresponding target compilations when they are migrated here (though empty as well)
+        configureSbom("Wasm-Js", "kotlin-stdlib-wasm-js", setOf("metadataCompileClasspath"), wasmJsModule)
+        configureSbom("Wasm-Wasi", "kotlin-stdlib-wasm-wasi", setOf("metadataCompileClasspath"), wasmWasiModule)
     }
 }
 
