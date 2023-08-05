@@ -325,8 +325,6 @@ extra["compilerArtifactsForIde"] = listOfNotNull(
     ":plugins:parcelize:parcelize-runtime",
     ":kotlin-stdlib-common",
     ":kotlin-stdlib",
-    ":kotlin-stdlib-wasm-js",
-    ":kotlin-stdlib-wasm-wasi",
     ":kotlin-test",
     ":kotlin-daemon",
     ":kotlin-compiler",

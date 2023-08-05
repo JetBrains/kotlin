@@ -23,25 +23,3 @@ configureWasmStdLib(
 ) { extensionBody ->
     kotlin(extensionBody)
 }
-
-afterEvaluate {
-    // cleanup default publications
-    // TODO: remove after mpp plugin allows avoiding their creation at all, KT-29273
-    publishing {
-        publications.removeAll { it.name != "Main" }
-    }
-
-    tasks.withType<AbstractPublishToMaven> {
-        if (publication.name != "Main") this.enabled = false
-    }
-
-    tasks.named("publish") {
-        doFirst {
-            publishing.publications {
-                if (singleOrNull()?.name != "Main") {
-                    throw GradleException("kotlin-stdlib-wasm should have only one publication, found $size: ${joinToString { it.name }}")
-                }
-            }
-        }
-    }
-}
