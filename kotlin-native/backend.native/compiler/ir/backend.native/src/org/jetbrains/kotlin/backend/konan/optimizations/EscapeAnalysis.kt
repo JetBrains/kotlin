@@ -344,7 +344,7 @@ internal object EscapeAnalysis {
 
     private data class FunctionBodyWithCallSites(val body: DataFlowIR.FunctionBody, val callSites: List<CallGraphNode.CallSite>)
 
-    private fun FunctionBodyWithCallSites.copy(): FunctionBodyWithCallSites {
+    private fun FunctionBodyWithCallSites.deepCopy(): FunctionBodyWithCallSites {
         val copiedNodes = mutableMapOf<DataFlowIR.Node, DataFlowIR.Node>()
 
         fun DataFlowIR.Node.copy(): DataFlowIR.Node = copiedNodes.getOrPut(this) {
@@ -419,7 +419,14 @@ internal object EscapeAnalysis {
                 },
                 callSites = callSites.map { callSite ->
                     with(callSite) {
-                        CallGraphNode.CallSite(copiedNodes[call]!! as DataFlowIR.Node.Call, copiedNodes[node]!!, isVirtual, actualCallee)
+                        val copiedCall = copiedNodes[call] as? DataFlowIR.Node.Call
+                                ?: DataFlowIR.Node.Call(
+                                        call.callee,
+                                        call.arguments.map { DataFlowIR.Edge(copiedNodes[it.node]!!, it.castToType) },
+                                        call.returnType,
+                                        call.irCallSite,
+                                )
+                        CallGraphNode.CallSite(copiedCall, copiedNodes[node]!!, isVirtual, actualCallee)
                     }
                 }
         )
@@ -1233,7 +1240,7 @@ internal object EscapeAnalysis {
             ) {
                 val callee = moduleDFG.functions[calleeSymbol]!!
                 val bodyWithCallSites = FunctionBodyWithCallSites(callee.body, callGraph.directEdges[calleeSymbol]!!.callSites)
-                val (copiedBody, copiedCallSites) = bodyWithCallSites.copy()
+                val (copiedBody, copiedCallSites) = bodyWithCallSites.deepCopy()
                 val localReturnsNode = newNode()
                 if (startsRecursion) {
                     for (index in copiedBody.parameters.indices) {
