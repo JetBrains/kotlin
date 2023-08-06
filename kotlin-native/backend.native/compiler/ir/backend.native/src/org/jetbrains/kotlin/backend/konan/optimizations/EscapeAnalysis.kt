@@ -344,94 +344,6 @@ internal object EscapeAnalysis {
 
     private data class FunctionBodyWithCallSites(val body: DataFlowIR.FunctionBody, val callSites: List<CallGraphNode.CallSite>)
 
-    private fun FunctionBodyWithCallSites.deepCopy(): FunctionBodyWithCallSites {
-        val copiedNodes = mutableMapOf<DataFlowIR.Node, DataFlowIR.Node>()
-
-        fun DataFlowIR.Node.copy(): DataFlowIR.Node = copiedNodes.getOrPut(this) {
-            when (this) {
-                DataFlowIR.Node.Null -> DataFlowIR.Node.Null
-                is DataFlowIR.Node.Parameter -> DataFlowIR.Node.Parameter(index)
-                is DataFlowIR.Node.SimpleConst<*> -> DataFlowIR.Node.SimpleConst(type, value)
-                is DataFlowIR.Node.Const -> DataFlowIR.Node.Const(type)
-                is DataFlowIR.Node.NewObject -> DataFlowIR.Node.NewObject(callee, arguments.map { DataFlowIR.Edge(it.castToType) }, constructedType, irCallSite)
-                is DataFlowIR.Node.StaticCall -> DataFlowIR.Node.StaticCall(callee, arguments.map { DataFlowIR.Edge(it.castToType) }, receiverType, returnType, irCallSite)
-                is DataFlowIR.Node.VtableCall -> DataFlowIR.Node.VtableCall(callee, receiverType, calleeVtableIndex,
-                        arguments.map { DataFlowIR.Edge(it.castToType) }, returnType, irCallSite)
-                is DataFlowIR.Node.ItableCall -> DataFlowIR.Node.ItableCall(callee, receiverType, interfaceId, calleeItableIndex,
-                        arguments.map { DataFlowIR.Edge(it.castToType) }, returnType, irCallSite)
-                is DataFlowIR.Node.VirtualCall -> DataFlowIR.Node.VirtualCall(callee, arguments.map { DataFlowIR.Edge(it.castToType) }, receiverType, returnType, irCallSite)
-                is DataFlowIR.Node.Call -> DataFlowIR.Node.Call(callee, arguments.map { DataFlowIR.Edge(it.castToType) }, returnType, irCallSite)
-                is DataFlowIR.Node.Singleton -> DataFlowIR.Node.Singleton(type, constructor, arguments?.map { DataFlowIR.Edge(it.castToType) })
-                is DataFlowIR.Node.AllocInstance -> DataFlowIR.Node.AllocInstance(type, irCallSite)
-                is DataFlowIR.Node.FunctionReference -> DataFlowIR.Node.FunctionReference(symbol, type, returnType)
-                is DataFlowIR.Node.FieldRead -> DataFlowIR.Node.FieldRead(receiver?.let { DataFlowIR.Edge(it.castToType) }, field, type, ir)
-                is DataFlowIR.Node.FieldWrite -> DataFlowIR.Node.FieldWrite(receiver?.let { DataFlowIR.Edge(it.castToType) }, field, DataFlowIR.Edge(value.castToType))
-                is DataFlowIR.Node.ArrayRead -> DataFlowIR.Node.ArrayRead(callee, DataFlowIR.Edge(array.castToType), DataFlowIR.Edge(index.castToType), type, irCallSite)
-                is DataFlowIR.Node.ArrayWrite -> DataFlowIR.Node.ArrayWrite(callee, DataFlowIR.Edge(array.castToType), DataFlowIR.Edge(index.castToType), DataFlowIR.Edge(value.castToType), type)
-                is DataFlowIR.Node.Variable -> DataFlowIR.Node.Variable(values.map { DataFlowIR.Edge(it.castToType) }, type, kind)
-                is DataFlowIR.Node.Scope -> DataFlowIR.Node.Scope(depth, emptyList())
-            }
-        }
-
-        for (scope in body.allScopes)
-            (scope.copy() as DataFlowIR.Node.Scope).nodes.addAll(scope.nodes.map { it.copy() })
-        body.forEachNonScopeNode { node ->
-            val copy = copiedNodes[node]!!
-            when (node) {
-                is DataFlowIR.Node.Call -> (copy as DataFlowIR.Node.Call).arguments.forEachIndexed { index, edge ->
-                    edge.node = copiedNodes[node.arguments[index].node]!!
-                }
-                is DataFlowIR.Node.Singleton -> (copy as DataFlowIR.Node.Singleton).arguments?.forEachIndexed { index, edge ->
-                    edge.node = copiedNodes[node.arguments!![index].node]!!
-                }
-                is DataFlowIR.Node.FieldRead -> {
-                    (copy as DataFlowIR.Node.FieldRead).receiver?.node = copiedNodes[node.receiver!!.node]!!
-                }
-                is DataFlowIR.Node.FieldWrite -> {
-                    (copy as DataFlowIR.Node.FieldWrite).receiver?.node = copiedNodes[node.receiver!!.node]!!
-                    copy.value.node = copiedNodes[node.value.node]!!
-                }
-                is DataFlowIR.Node.ArrayRead -> {
-                    (copy as DataFlowIR.Node.ArrayRead).array.node = copiedNodes[node.array.node]!!
-                    copy.index.node = copiedNodes[node.index.node]!!
-                }
-                is DataFlowIR.Node.ArrayWrite -> {
-                    (copy as DataFlowIR.Node.ArrayWrite).array.node = copiedNodes[node.array.node]!!
-                    copy.index.node = copiedNodes[node.index.node]!!
-                    copy.value.node = copiedNodes[node.value.node]!!
-                }
-                is DataFlowIR.Node.Variable -> (copy as DataFlowIR.Node.Variable).values.forEachIndexed { index, edge ->
-                    edge.node = copiedNodes[node.values[index].node]!!
-                }
-                else -> Unit
-            }
-        }
-
-        return FunctionBodyWithCallSites(
-                body = with(body) {
-                    DataFlowIR.FunctionBody(
-                            copiedNodes[rootScope] as DataFlowIR.Node.Scope,
-                            allScopes.map { copiedNodes[it] as DataFlowIR.Node.Scope },
-                            Array(parameters.size) { copiedNodes[parameters[it]] as DataFlowIR.Node.Parameter },
-                            copiedNodes[returns] as DataFlowIR.Node.Variable,
-                            copiedNodes[throws] as DataFlowIR.Node.Variable
-                    )
-                },
-                callSites = callSites.map { callSite ->
-                    with(callSite) {
-                        val copiedCall = copiedNodes[call] as? DataFlowIR.Node.Call
-                                ?: DataFlowIR.Node.Call(
-                                        call.callee,
-                                        call.arguments.map { DataFlowIR.Edge(copiedNodes[it.node]!!, it.castToType) },
-                                        call.returnType,
-                                        call.irCallSite,
-                                )
-                        CallGraphNode.CallSite(copiedCall, copiedNodes[node]!!, isVirtual, actualCallee)
-                    }
-                }
-        )
-    }
-
     private class InterproceduralAnalysis(
             val context: Context,
             val generationState: NativeGenerationState,
@@ -791,7 +703,7 @@ internal object EscapeAnalysis {
             pointsToGraph.log()
             pointsToGraph.logDigraph(false)
 
-            if (!processCalls(callGraph.directEdges[functionSymbol]!!.callSites, pointsToGraph, component,
+            if (!pointsToGraph.processCalls(callGraph.directEdges[functionSymbol]!!.callSites, component,
                             callSitesStartingRecursion, maxAllowedGraphSize)
             ) {
                 return false
@@ -809,31 +721,6 @@ internal object EscapeAnalysis {
             pointsToGraph.logDigraph(true)
 
             escapeAnalysisResults[functionSymbol] = eaResult
-
-            return true
-        }
-
-        private fun processCalls(
-                callSites: List<CallGraphNode.CallSite>,
-                pointsToGraph: PointsToGraph,
-                component: Set<DataFlowIR.FunctionSymbol.Declared>,
-                callSitesStartingRecursion: Map<DataFlowIR.Node.Call, Set<DataFlowIR.FunctionSymbol.Declared>>,
-                maxAllowedGraphSize: Int,
-        ): Boolean {
-            for (callSite in callSites) {
-                val callee = callSite.actualCallee
-                val calleeEAResult = callGraph.directEdges[callee]?.symbol
-                        ?.takeIf { !callSite.isVirtual }
-                        ?.let {
-                            escapeAnalysisResults[it] ?: FunctionEscapeAnalysisResult.pessimistic(it.parameters.size)
-                        }
-                        ?: getExternalFunctionEAResult(callSite)
-                pointsToGraph.processCall(callSite, calleeEAResult, callSitesStartingRecursion[callSite.call]?.contains(callee) == true,
-                        component, callSitesStartingRecursion, maxAllowedGraphSize)
-
-                if (pointsToGraph.allNodes.size > maxAllowedGraphSize)
-                    return false
-            }
 
             return true
         }
@@ -1186,6 +1073,124 @@ internal object EscapeAnalysis {
                 +"}"
             }
 
+            val originalCalls = mutableMapOf<DataFlowIR.Node.Call, DataFlowIR.Node.Call>()
+
+            fun FunctionBodyWithCallSites.deepCopy(): FunctionBodyWithCallSites {
+                val copiedNodes = mutableMapOf<DataFlowIR.Node, DataFlowIR.Node>()
+
+                fun DataFlowIR.Node.copy(): DataFlowIR.Node = copiedNodes.getOrPut(this) {
+                    when (this) {
+                        DataFlowIR.Node.Null -> DataFlowIR.Node.Null
+                        is DataFlowIR.Node.Parameter -> this // Don't copy the parameters, only the body.
+                        is DataFlowIR.Node.SimpleConst<*> -> DataFlowIR.Node.SimpleConst(type, value)
+                        is DataFlowIR.Node.Const -> DataFlowIR.Node.Const(type)
+                        is DataFlowIR.Node.NewObject -> DataFlowIR.Node.NewObject(callee, arguments.map { DataFlowIR.Edge(it.castToType) }, constructedType, irCallSite)
+                        is DataFlowIR.Node.StaticCall -> DataFlowIR.Node.StaticCall(callee, arguments.map { DataFlowIR.Edge(it.castToType) }, receiverType, returnType, irCallSite)
+                        is DataFlowIR.Node.VtableCall -> DataFlowIR.Node.VtableCall(callee, receiverType, calleeVtableIndex,
+                                arguments.map { DataFlowIR.Edge(it.castToType) }, returnType, irCallSite)
+                        is DataFlowIR.Node.ItableCall -> DataFlowIR.Node.ItableCall(callee, receiverType, interfaceId, calleeItableIndex,
+                                arguments.map { DataFlowIR.Edge(it.castToType) }, returnType, irCallSite)
+                        is DataFlowIR.Node.VirtualCall -> DataFlowIR.Node.VirtualCall(callee, arguments.map { DataFlowIR.Edge(it.castToType) }, receiverType, returnType, irCallSite)
+                        is DataFlowIR.Node.Call -> DataFlowIR.Node.Call(callee, arguments.map { DataFlowIR.Edge(it.castToType) }, returnType, irCallSite)
+                        is DataFlowIR.Node.Singleton -> DataFlowIR.Node.Singleton(type, constructor, arguments?.map { DataFlowIR.Edge(it.castToType) })
+                        is DataFlowIR.Node.AllocInstance -> DataFlowIR.Node.AllocInstance(type, irCallSite)
+                        is DataFlowIR.Node.FunctionReference -> DataFlowIR.Node.FunctionReference(symbol, type, returnType)
+                        is DataFlowIR.Node.FieldRead -> DataFlowIR.Node.FieldRead(receiver?.let { DataFlowIR.Edge(it.castToType) }, field, type, ir)
+                        is DataFlowIR.Node.FieldWrite -> DataFlowIR.Node.FieldWrite(receiver?.let { DataFlowIR.Edge(it.castToType) }, field, DataFlowIR.Edge(value.castToType))
+                        is DataFlowIR.Node.ArrayRead -> DataFlowIR.Node.ArrayRead(callee, DataFlowIR.Edge(array.castToType), DataFlowIR.Edge(index.castToType), type, irCallSite)
+                        is DataFlowIR.Node.ArrayWrite -> DataFlowIR.Node.ArrayWrite(callee, DataFlowIR.Edge(array.castToType), DataFlowIR.Edge(index.castToType), DataFlowIR.Edge(value.castToType), type)
+                        is DataFlowIR.Node.Variable -> DataFlowIR.Node.Variable(values.map { DataFlowIR.Edge(it.castToType) }, type, kind)
+                        is DataFlowIR.Node.Scope -> DataFlowIR.Node.Scope(depth, emptyList())
+                    }
+                }
+
+                for (scope in body.allScopes)
+                    (scope.copy() as DataFlowIR.Node.Scope).nodes.addAll(scope.nodes.map { it.copy() })
+                body.forEachNonScopeNode { node ->
+                    val copy = copiedNodes[node]!!
+                    when (node) {
+                        is DataFlowIR.Node.Call -> {
+                            (copy as DataFlowIR.Node.Call).arguments.forEachIndexed { index, edge ->
+                                edge.node = copiedNodes[node.arguments[index].node]!!
+                            }
+                            originalCalls[copy] = node
+                        }
+                        is DataFlowIR.Node.Singleton -> (copy as DataFlowIR.Node.Singleton).arguments?.forEachIndexed { index, edge ->
+                            edge.node = copiedNodes[node.arguments!![index].node]!!
+                        }
+                        is DataFlowIR.Node.FieldRead -> {
+                            (copy as DataFlowIR.Node.FieldRead).receiver?.node = copiedNodes[node.receiver!!.node]!!
+                        }
+                        is DataFlowIR.Node.FieldWrite -> {
+                            (copy as DataFlowIR.Node.FieldWrite).receiver?.node = copiedNodes[node.receiver!!.node]!!
+                            copy.value.node = copiedNodes[node.value.node]!!
+                        }
+                        is DataFlowIR.Node.ArrayRead -> {
+                            (copy as DataFlowIR.Node.ArrayRead).array.node = copiedNodes[node.array.node]!!
+                            copy.index.node = copiedNodes[node.index.node]!!
+                        }
+                        is DataFlowIR.Node.ArrayWrite -> {
+                            (copy as DataFlowIR.Node.ArrayWrite).array.node = copiedNodes[node.array.node]!!
+                            copy.index.node = copiedNodes[node.index.node]!!
+                            copy.value.node = copiedNodes[node.value.node]!!
+                        }
+                        is DataFlowIR.Node.Variable -> (copy as DataFlowIR.Node.Variable).values.forEachIndexed { index, edge ->
+                            edge.node = copiedNodes[node.values[index].node]!!
+                        }
+                        else -> Unit
+                    }
+                }
+
+                return FunctionBodyWithCallSites(
+                        body = with(body) {
+                            DataFlowIR.FunctionBody(
+                                    copiedNodes[rootScope] as DataFlowIR.Node.Scope,
+                                    allScopes.map { copiedNodes[it] as DataFlowIR.Node.Scope },
+                                    Array(parameters.size) { copiedNodes[parameters[it]] as DataFlowIR.Node.Parameter },
+                                    copiedNodes[returns] as DataFlowIR.Node.Variable,
+                                    copiedNodes[throws] as DataFlowIR.Node.Variable
+                            )
+                        },
+                        callSites = callSites.map { callSite ->
+                            with(callSite) {
+                                val copiedCall = copiedNodes[call] as? DataFlowIR.Node.Call
+                                        ?: DataFlowIR.Node.Call(
+                                                call.callee,
+                                                call.arguments.map { DataFlowIR.Edge(copiedNodes[it.node]!!, it.castToType) },
+                                                call.returnType,
+                                                call.irCallSite,
+                                        )
+                                CallGraphNode.CallSite(copiedCall, copiedNodes[node]!!, isVirtual, actualCallee)
+                            }
+                        }
+                )
+            }
+
+            fun processCalls(
+                    callSites: List<CallGraphNode.CallSite>,
+                    component: Set<DataFlowIR.FunctionSymbol.Declared>,
+                    callSitesStartingRecursion: Map<DataFlowIR.Node.Call, Set<DataFlowIR.FunctionSymbol.Declared>>,
+                    maxAllowedGraphSize: Int,
+            ): Boolean {
+                for (callSite in callSites) {
+                    val callee = callSite.actualCallee
+                    val calleeEAResult = callGraph.directEdges[callee]?.symbol
+                            ?.takeIf { !callSite.isVirtual }
+                            ?.let {
+                                escapeAnalysisResults[it] ?: FunctionEscapeAnalysisResult.pessimistic(it.parameters.size)
+                            }
+                            ?: getExternalFunctionEAResult(callSite)
+                    val originalCall = originalCalls[callSite.call] ?: callSite.call
+                    val startsRecursion = callSitesStartingRecursion[originalCall]?.contains(callee) == true
+                    processCall(callSite, calleeEAResult, startsRecursion, component, callSitesStartingRecursion, maxAllowedGraphSize)
+
+                    if (allNodes.size > maxAllowedGraphSize)
+                        return false
+                }
+
+                return true
+            }
+
             fun processCall(
                     callSite: CallGraphNode.CallSite,
                     calleeEscapeAnalysisResult: FunctionEscapeAnalysisResult,
@@ -1261,7 +1266,7 @@ internal object EscapeAnalysis {
                 convertBody(copiedBody, localReturnsNode)
                 if (call !is DataFlowIR.Node.NewObject)
                     arguments[calleeSymbol.parameters.size].toPTGNode()?.addAssignmentEdge(localReturnsNode)
-                processCalls(copiedCallSites, this, component, callSitesStartingRecursion, maxAllowedGraphSize)
+                processCalls(copiedCallSites, component, callSitesStartingRecursion, maxAllowedGraphSize)
 
                 if (startsRecursion) {
                     for (parameter in copiedBody.parameters)
