@@ -173,6 +173,48 @@ public class FirIdeNormalAnalysisSourceModuleCompilerFacilityTestGenerated exten
             }
 
             @Test
+            @TestMetadata("localFunctionContainingClassClosure.kt")
+            public void testLocalFunctionContainingClassClosure() throws Exception {
+                runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/localFunctionContainingClassClosure.kt");
+            }
+
+            @Test
+            @TestMetadata("localFunctionExtensionReceiverClosure.kt")
+            public void testLocalFunctionExtensionReceiverClosure() throws Exception {
+                runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/localFunctionExtensionReceiverClosure.kt");
+            }
+
+            @Test
+            @TestMetadata("localFunctionLambdaParameterClosure.kt")
+            public void testLocalFunctionLambdaParameterClosure() throws Exception {
+                runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/localFunctionLambdaParameterClosure.kt");
+            }
+
+            @Test
+            @TestMetadata("localFunctionLocalClosure.kt")
+            public void testLocalFunctionLocalClosure() throws Exception {
+                runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/localFunctionLocalClosure.kt");
+            }
+
+            @Test
+            @TestMetadata("localFunctionLocalClosureMutating.kt")
+            public void testLocalFunctionLocalClosureMutating() throws Exception {
+                runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/localFunctionLocalClosureMutating.kt");
+            }
+
+            @Test
+            @TestMetadata("localFunctionMultipleCapturing.kt")
+            public void testLocalFunctionMultipleCapturing() throws Exception {
+                runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/localFunctionMultipleCapturing.kt");
+            }
+
+            @Test
+            @TestMetadata("localFunctionParameterClosure.kt")
+            public void testLocalFunctionParameterClosure() throws Exception {
+                runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/localFunctionParameterClosure.kt");
+            }
+
+            @Test
             @TestMetadata("localMutated.kt")
             public void testLocalMutated() throws Exception {
                 runTest("analysis/analysis-api/testData/components/compilerFacility/compilation/codeFragments/capturing/localMutated.kt");

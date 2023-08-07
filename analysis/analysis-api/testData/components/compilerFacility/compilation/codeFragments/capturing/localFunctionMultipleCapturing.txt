@@ -1,0 +1,16 @@
+public final class CodeFragment {
+    // source: 'fragment.kt'
+    public method <init>(): void
+    public final static method run(p0: Foo, p1: java.lang.String, p2: kotlin.jvm.internal.Ref$IntRef): void
+    public final inner class kotlin/jvm/internal/Ref$IntRef
+}
+
+public final class Foo {
+    // source: 'localFunctionMultipleCapturing.kt'
+    public method <init>(): void
+    private final static method test$call(p0: Foo, p1: java.lang.String, p2: kotlin.jvm.internal.Ref$IntRef, p3: int): void
+    public final method test(p0: java.lang.String): void
+    public final inner class kotlin/jvm/internal/Ref$IntRef
+}
+
+public final class LocalFunctionMultipleCapturingKt

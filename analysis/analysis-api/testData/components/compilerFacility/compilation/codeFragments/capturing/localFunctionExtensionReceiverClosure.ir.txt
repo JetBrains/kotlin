@@ -1,0 +1,37 @@
+MODULE_FRAGMENT name:<Sources of main>
+  FILE fqName:<root> fileName:/localFunctionExtensionReceiverClosure.kt
+    FUN name:block visibility:public modality:FINAL <T> (obj:T of <root>.block, block:@[ExtensionFunctionType] kotlin.Function1<T of <root>.block, kotlin.Unit>) returnType:kotlin.Unit
+      TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
+      VALUE_PARAMETER name:obj index:0 type:T of <root>.block
+      VALUE_PARAMETER name:block index:1 type:@[ExtensionFunctionType] kotlin.Function1<T of <root>.block, kotlin.Unit>
+      BLOCK_BODY
+        CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 [operator] declared in kotlin.Function1' type=kotlin.Unit origin=INVOKE
+          $this: GET_VAR 'block: @[ExtensionFunctionType] kotlin.Function1<T of <root>.block, kotlin.Unit> declared in <root>.block' type=@[ExtensionFunctionType] kotlin.Function1<T of <root>.block, kotlin.Unit> origin=VARIABLE_AS_FUNCTION
+          p1: GET_VAR 'obj: T of <root>.block declared in <root>.block' type=T of <root>.block origin=null
+    FUN name:consume visibility:public modality:FINAL <> (text:kotlin.String) returnType:kotlin.Unit
+      VALUE_PARAMETER name:text index:0 type:kotlin.String
+      BLOCK_BODY
+    FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
+      BLOCK_BODY
+        CALL 'public final fun block <T> (obj: T of <root>.block, block: @[ExtensionFunctionType] kotlin.Function1<T of <root>.block, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+          <T>: kotlin.String
+          obj: CONST String type=kotlin.String value="foo"
+          block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<kotlin.String, kotlin.Unit> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:kotlin.String) returnType:kotlin.Unit
+              $receiver: VALUE_PARAMETER name:$this$block type:kotlin.String
+              BLOCK_BODY
+                FUN LOCAL_FUNCTION name:call visibility:local modality:FINAL <> () returnType:kotlin.Unit
+                  BLOCK_BODY
+                    CALL 'public final fun consume (text: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                      text: GET_VAR '$this$block: kotlin.String declared in <root>.test.<anonymous>' type=kotlin.String origin=null
+                CALL 'local final fun call (): kotlin.Unit declared in <root>.test.<anonymous>' type=kotlin.Unit origin=null
+  FILE fqName:<root> fileName:/fragment.kt
+    CLASS CLASS name:CodeFragment modality:FINAL visibility:public superTypes:[kotlin.Any]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CodeFragment
+      CONSTRUCTOR visibility:public <> () returnType:<root>.CodeFragment [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+      FUN name:run visibility:public modality:FINAL <> () returnType:kotlin.Unit
+        EXPRESSION_BODY
+          BLOCK type=kotlin.Unit origin=null
+            CALL 'local final fun call (): kotlin.Unit declared in <root>.test.<anonymous>' type=kotlin.Unit origin=null

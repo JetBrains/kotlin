@@ -1,0 +1,7 @@
+public final class CodeFragment {
+    // source: 'fragment.kt'
+    public method <init>(): void
+    public final static method run(p0: int): void
+}
+
+public final class LocalFunctionLocalClosureKt

@@ -1,0 +1,8 @@
+public final class CodeFragment {
+    // source: 'fragment.kt'
+    inner (anonymous) class LocalFunctionExtensionReceiverClosureKt$test$1
+    public method <init>(): void
+    public final static method run(p0: java.lang.String): void
+}
+
+public final class LocalFunctionExtensionReceiverClosureKt
