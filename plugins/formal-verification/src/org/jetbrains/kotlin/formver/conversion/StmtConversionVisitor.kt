@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.coneTypeOrNull
-import org.jetbrains.kotlin.fir.types.isUnit
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.formver.scala.silicon.ast.Exp
 import org.jetbrains.kotlin.formver.scala.silicon.ast.Stmt
@@ -117,18 +116,24 @@ class StmtConversionVisitor : FirVisitor<Exp?, StmtConversionContext>() {
         val id = functionCall.calleeReference.toResolvedCallableSymbol()!!.callableId
         // TODO: figure out a more structured way of doing this
         if (id.packageName.asString() == "kotlin.contracts" && id.callableName.asString() == "contract") return null
-        when (functionCall.dispatchReceiver) {
+        return when (functionCall.dispatchReceiver) {
             is FirNoReceiverExpression -> {
-                assert(functionCall.argumentList.arguments.isEmpty())
-                assert(functionCall.typeRef.coneTypeOrNull!!.isUnit)
                 val symbol = functionCall.calleeReference.resolved!!.resolvedSymbol as FirNamedFunctionSymbol
-                val calleeName = data.methodCtx.programCtx.add(symbol)
-                val call = Stmt.MethodCall(calleeName.asString, listOf(), listOf())
+                val calleeSig = data.methodCtx.programCtx.add(symbol)
+                val args = functionCall.argumentList.arguments.map {
+                    // Note that this rejects some valid Kotlin code: in Kotlin, you are allowed to explicitly
+                    // pass around Unit values, which is not permitted in Viper.  We'll need to fix this eventually.
+                    it.accept(this, data) ?: throw Exception("Argument evaluated to unit value?")
+                }
+                val returnVar: ConvertedVar? = calleeSig.returnVarType?.let { data.methodCtx.newAnonVar(it) }
+                val returnExp = returnVar?.toLocalVar()
+                val call = Stmt.MethodCall(calleeSig.name.asString, args, listOfNotNull(returnExp))
+                returnVar?.let { data.declarations.add(it.toLocalVarDecl()) }
                 data.statements.add(call)
+                returnExp
             }
             else -> TODO("Implement function call visitation with receiver")
         }
-        return null
     }
 
     override fun visitProperty(property: FirProperty, data: StmtConversionContext): Exp? {

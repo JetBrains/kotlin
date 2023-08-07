@@ -83,3 +83,23 @@ method global$pkg_$function_call()
 {
   global$pkg_$return_unit()
 }
+
+/no_contracts.kt:(327,347): info: field backing_int: Int
+
+method global$pkg_$take_int_return_unit(local$x: Int)
+
+
+method global$pkg_$take_int_return_int(local$x: Int) returns (ret$: Int)
+
+
+method global$pkg_$return_int() returns (ret$: Int)
+
+
+method global$pkg_$function_call_nested()
+{
+  var anonymous$1: Int
+  var anonymous$2: Int
+  anonymous$1 := global$pkg_$return_int()
+  anonymous$2 := global$pkg_$take_int_return_int(anonymous$1)
+  global$pkg_$take_int_return_unit(anonymous$2)
+}

@@ -46,12 +46,12 @@ class ProgramConversionContext {
         methods.add(methodCtx.toMethod)
     }
 
-    fun add(symbol: FirNamedFunctionSymbol): ConvertedName {
+    fun add(symbol: FirNamedFunctionSymbol): ConvertedMethodSignature {
         val signature =
             convertSignature(symbol)
         val methodCtx = MethodConversionContext(this, signature, null)
         methods.add(methodCtx.toMethod)
-        return signature.name
+        return signature
     }
 
     fun convertSignature(symbol: FirNamedFunctionSymbol): ConvertedMethodSignature {

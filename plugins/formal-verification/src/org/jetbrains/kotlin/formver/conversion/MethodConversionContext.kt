@@ -29,4 +29,9 @@ class MethodConversionContext(val programCtx: ProgramConversionContext, val sign
         ctx.convertAndAppend(body)
         return ctx.block
     }
+
+    private var nextAnonVarNumber = 0
+
+    fun newAnonVar(type: ConvertedType): ConvertedVar =
+        ConvertedVar(AnonymousName(++nextAnonVarNumber), type)
 }
