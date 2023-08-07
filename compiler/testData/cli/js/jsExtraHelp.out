@@ -16,6 +16,8 @@ where advanced options include:
   -Xir-base-class-in-metadata Write base class into metadata
   -Xir-build-cache           Use compiler to build cache
   -Xir-dce                   Perform experimental dead code elimination
+  -Xwasm-dump-dce-declaration-ir-sizes-to-file=<path>
+                             Dump the IR size of each declaration **used in DCE dump** to a file. The format will be chosen automatically depending on the file extension. Supported output formats include JSON for .json, JS const initialized with a plain object containing information for .js, and plain text for all other file types.
   -Xir-dump-declaration-ir-sizes-to-file=<path>
                              Dump the IR size of each declaration to a file. The format will be chosen automatically depending on the file extension. Supported output formats include JSON for .json, JS const initialized with a plain object containing information for .js, and plain text for all other file types.
   -Xir-dce-dump-reachability-info-to-file=<path>

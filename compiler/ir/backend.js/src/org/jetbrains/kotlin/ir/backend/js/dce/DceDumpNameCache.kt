@@ -23,4 +23,6 @@ class DceDumpNameCache {
         if (index == 0) fqName
         else "$fqName ($index)"
     }
+
+    public fun getDceDumpNames(): Set<IrDeclaration> = nameCache.keys
 }
