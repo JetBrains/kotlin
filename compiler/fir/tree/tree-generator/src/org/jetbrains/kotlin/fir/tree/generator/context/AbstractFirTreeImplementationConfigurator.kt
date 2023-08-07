@@ -122,7 +122,10 @@ abstract class AbstractFirTreeImplementationConfigurator {
         }
 
         fun defaultBuiltInType(type: String) {
-            default("type", "StandardClassIds.$type.constructClassLikeType()")
+            default("type") {
+                value = "StandardClassIds.$type.constructClassLikeType()"
+                isMutable = false
+            }
             useTypes(standardClassIdsType, constructClassLikeTypeImport)
         }
 

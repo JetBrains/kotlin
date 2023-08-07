@@ -30,7 +30,7 @@ internal class FirBreakExpressionImpl(
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val target: FirTarget<FirLoop>,
 ) : FirBreakExpression() {
-    override var type: ConeKotlinType? = StandardClassIds.Nothing.constructClassLikeType()
+    override val type: ConeKotlinType? = StandardClassIds.Nothing.constructClassLikeType()
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
@@ -46,9 +46,7 @@ internal class FirBreakExpressionImpl(
         return this
     }
 
-    override fun replaceType(newType: ConeKotlinType?) {
-        type = newType
-    }
+    override fun replaceType(newType: ConeKotlinType?) {}
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
         annotations = newAnnotations.toMutableOrEmpty()
