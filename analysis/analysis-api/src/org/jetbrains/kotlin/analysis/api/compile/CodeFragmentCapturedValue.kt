@@ -85,12 +85,6 @@ public sealed class CodeFragmentCapturedValue(
             get() = "this@$name"
     }
 
-    /** Represents a captured named local function. */
-    public class LocalFunction(
-        name: Name,
-        isCrossingInlineBounds: Boolean,
-    ) : CodeFragmentCapturedValue(name.asString(), isMutated = false, isCrossingInlineBounds)
-
     /** Represents an externally provided value. */
     public class ForeignValue(
         name: Name,

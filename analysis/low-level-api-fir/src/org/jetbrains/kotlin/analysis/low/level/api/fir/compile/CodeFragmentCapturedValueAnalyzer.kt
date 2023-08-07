@@ -27,14 +27,12 @@ import org.jetbrains.kotlin.fir.labelName
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
-import org.jetbrains.kotlin.fir.resolve.constructFunctionType
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.specialFunctionTypeKind
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi
@@ -195,12 +193,6 @@ private class CodeFragmentCapturedValueVisitor(
             }
             is FirNamedFunctionSymbol -> {
                 if (symbol.isLocal) {
-                    val isCrossingInlineBounds = isCrossingInlineBounds(element, symbol)
-                    val capturedValue = CodeFragmentCapturedValue.LocalFunction(symbol.name, isCrossingInlineBounds)
-                    val firFunction = symbol.fir
-                    val functionType = firFunction.constructFunctionType(firFunction.specialFunctionTypeKind(session))
-                    val typeRef = buildResolvedTypeRef { type = functionType }
-                    register(symbol, CodeFragmentCapturedSymbol(capturedValue, symbol, typeRef))
                     registerFile(symbol)
                 }
             }
