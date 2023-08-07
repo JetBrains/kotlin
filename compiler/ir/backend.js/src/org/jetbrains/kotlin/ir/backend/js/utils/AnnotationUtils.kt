@@ -35,6 +35,10 @@ object JsAnnotations {
 fun IrConstructorCall.getSingleConstStringArgument() =
     (getValueArgument(0) as IrConst<String>).value
 
+@Suppress("UNCHECKED_CAST")
+fun IrConstructorCall.getSingleConstBooleanArgument() =
+    (getValueArgument(0) as IrConst<Boolean>).value
+
 fun IrAnnotationContainer.getJsModule(): String? =
     getAnnotation(JsAnnotations.jsModuleFqn)?.getSingleConstStringArgument()
 
@@ -61,6 +65,9 @@ fun IrAnnotationContainer.isJsExport(): Boolean =
 
 fun IrAnnotationContainer.isJsImplicitExport(): Boolean =
     hasAnnotation(JsAnnotations.jsImplicitExportFqn)
+
+fun IrAnnotationContainer.couldBeConvertedToExplicitExport(): Boolean? =
+    getAnnotation(JsAnnotations.jsImplicitExportFqn)?.getSingleConstBooleanArgument()
 
 fun IrAnnotationContainer.isJsExportIgnore(): Boolean =
     hasAnnotation(JsAnnotations.jsExportIgnoreFqn)

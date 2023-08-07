@@ -37,10 +37,10 @@ declare namespace JS_TESTS {
         class H /* extends foo.NonExportedGenericType<foo.NonExportedType> */ {
             constructor();
         }
-        function baz(a: number): Promise<number>;
+        function baz(a: number): globalThis.Promise<number>;
         function bar(): Error;
-        const console: Console;
-        const error: WebAssembly.CompileError;
+        const console: globalThis.Console;
+        const error: globalThis.WebAssembly.CompileError;
         function functionWithTypeAliasInside(x: any/* foo.NonExportedGenericInterface<foo.NonExportedType> */): any/* foo.NonExportedGenericInterface<foo.NonExportedType> */;
         class TheNewException extends Error {
             constructor();

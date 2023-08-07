@@ -7,6 +7,12 @@ declare namespace JS_TESTS {
                 readonly "kotlin.collections.List": unique symbol;
             };
         }
+        interface Map<K, V> {
+            asJsMapView(): globalThis.ReadonlyMap<K, V>;
+            readonly __doNotUseOrImplementIt: {
+                readonly "kotlin.collections.Map": unique symbol;
+            };
+        }
         interface MutableList<E> extends kotlin.collections.List<E>/*, kotlin.collections.MutableCollection<E> */ {
             asJsArrayMutableView(): globalThis.Array<E>;
             readonly __doNotUseOrImplementIt: {
@@ -24,12 +30,6 @@ declare namespace JS_TESTS {
             readonly __doNotUseOrImplementIt: {
                 readonly "kotlin.collections.MutableSet": unique symbol;
             } & kotlin.collections.Set<E>["__doNotUseOrImplementIt"];
-        }
-        interface Map<K, V> {
-            asJsMapView(): globalThis.ReadonlyMap<K, V>;
-            readonly __doNotUseOrImplementIt: {
-                readonly "kotlin.collections.Map": unique symbol;
-            };
         }
         interface MutableMap<K, V> extends kotlin.collections.Map<K, V> {
             asJsMapMutableView(): globalThis.Map<K, V>;

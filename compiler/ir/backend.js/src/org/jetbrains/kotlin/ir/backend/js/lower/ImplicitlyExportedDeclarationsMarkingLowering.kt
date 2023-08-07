@@ -14,17 +14,22 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.isPrimitiveArray
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
+import org.jetbrains.kotlin.ir.util.toIrConst
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 
 class ImplicitlyExportedDeclarationsMarkingLowering(private val context: JsIrBackendContext) : DeclarationTransformer {
     private val strictImplicitExport = context.configuration.getBoolean(JSConfigurationKeys.GENERATE_STRICT_IMPLICIT_EXPORT)
+    private val jsImplicitExportCtor by lazy(LazyThreadSafetyMode.NONE) {
+        context.intrinsics.jsImplicitExportAnnotationSymbol.constructors.single()
+    }
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (!strictImplicitExport || !declaration.isExported(context)) return null
@@ -90,8 +95,9 @@ class ImplicitlyExportedDeclarationsMarkingLowering(private val context: JsIrBac
     }
 
     private fun IrDeclaration.markWithJsImplicitExport() {
-        val jsImplicitExportCtor = context.intrinsics.jsImplicitExportAnnotationSymbol.constructors.single()
-        annotations = annotations memoryOptimizedPlus JsIrBuilder.buildConstructorCall(jsImplicitExportCtor)
+        annotations = annotations memoryOptimizedPlus JsIrBuilder.buildConstructorCall(jsImplicitExportCtor).apply {
+            putValueArgument(0, false.toIrConst(context.irBuiltIns.booleanType))
+        }
 
         parentClassOrNull?.takeIf { it.shouldBeMarkedWithImplicitExport() }?.markWithJsImplicitExport()
     }

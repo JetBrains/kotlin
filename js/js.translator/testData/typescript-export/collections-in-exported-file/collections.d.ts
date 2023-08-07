@@ -1,37 +1,53 @@
 declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
-    class ClassWithDefaultCtor {
-        constructor();
-        get x(): string;
+    namespace kotlin.collections {
+        interface List<E> /* extends kotlin.collections.Collection<E> */ {
+            asJsArrayView(): globalThis.ReadonlyArray<E>;
+            readonly __doNotUseOrImplementIt: {
+                readonly "kotlin.collections.List": unique symbol;
+            };
+        }
+        interface Map<K, V> {
+            asJsMapView(): globalThis.ReadonlyMap<K, V>;
+            readonly __doNotUseOrImplementIt: {
+                readonly "kotlin.collections.Map": unique symbol;
+            };
+        }
+        interface MutableList<E> extends kotlin.collections.List<E>/*, kotlin.collections.MutableCollection<E> */ {
+            asJsArrayMutableView(): globalThis.Array<E>;
+            readonly __doNotUseOrImplementIt: {
+                readonly "kotlin.collections.MutableList": unique symbol;
+            } & kotlin.collections.List<E>["__doNotUseOrImplementIt"];
+        }
+        interface Set<E> /* extends kotlin.collections.Collection<E> */ {
+            asJsSetView(): globalThis.ReadonlySet<E>;
+            readonly __doNotUseOrImplementIt: {
+                readonly "kotlin.collections.Set": unique symbol;
+            };
+        }
+        interface MutableSet<E> extends kotlin.collections.Set<E>/*, kotlin.collections.MutableCollection<E> */ {
+            asJsSetMutableView(): globalThis.Set<E>;
+            readonly __doNotUseOrImplementIt: {
+                readonly "kotlin.collections.MutableSet": unique symbol;
+            } & kotlin.collections.Set<E>["__doNotUseOrImplementIt"];
+        }
+        interface MutableMap<K, V> extends kotlin.collections.Map<K, V> {
+            asJsMapMutableView(): globalThis.Map<K, V>;
+            readonly __doNotUseOrImplementIt: {
+                readonly "kotlin.collections.MutableMap": unique symbol;
+            } & kotlin.collections.Map<K, V>["__doNotUseOrImplementIt"];
+        }
     }
-    class ClassWithPrimaryCtor {
-        constructor(x: string);
-        get x(): string;
-    }
-    class ClassWithSecondaryCtor {
-        private constructor();
-        get x(): string;
-        static create(y: string): ClassWithSecondaryCtor;
-    }
-    class ClassWithMultipleSecondaryCtors {
-        private constructor();
-        get x(): string;
-        static createFromString(y: string): ClassWithMultipleSecondaryCtors;
-        static createFromInts(y: number, z: number): ClassWithMultipleSecondaryCtors;
-    }
-    class OpenClassWithMixedConstructors {
-        constructor(x: string);
-        get x(): string;
-        static createFromStrings(y: string, z: string): OpenClassWithMixedConstructors;
-        static createFromInts(y: number, z: number): OpenClassWithMixedConstructors;
-    }
-    class DerivedClassWithSecondaryCtor extends OpenClassWithMixedConstructors {
-        private constructor();
-        static delegateToPrimary(y: string): DerivedClassWithSecondaryCtor;
-        static delegateToCreateFromInts(y: number, z: number): DerivedClassWithSecondaryCtor;
-    }
-    class KotlinGreeter {
-        constructor(greeting?: string);
-        get greeting(): string;
-    }
+    function provideList(): kotlin.collections.List<number>;
+    function provideMutableList(): kotlin.collections.MutableList<number>;
+    function provideSet(): kotlin.collections.Set<number>;
+    function provideMutableSet(): kotlin.collections.MutableSet<number>;
+    function provideMap(): kotlin.collections.Map<string, number>;
+    function provideMutableMap(): kotlin.collections.MutableMap<string, number>;
+    function consumeList(list: kotlin.collections.List<number>): boolean;
+    function consumeMutableList(list: kotlin.collections.MutableList<number>): boolean;
+    function consumeSet(list: kotlin.collections.Set<number>): boolean;
+    function consumeMutableSet(list: kotlin.collections.MutableSet<number>): boolean;
+    function consumeMap(map: kotlin.collections.Map<string, number>): boolean;
+    function consumeMutableMap(map: kotlin.collections.MutableMap<string, number>): boolean;
 }

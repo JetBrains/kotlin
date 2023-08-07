@@ -829,10 +829,25 @@ private val escapedIdentifiersLowering = makeBodyLoweringPhase(
     description = "Convert global variables with invalid names access to globalThis member expression"
 )
 
+private val upgradeImplicitExportToExplicitLowering = makeDeclarationTransformerPhase(
+    ::ConvertImplicitExportToExplicitLowering,
+    name = "ConvertImplicitExportToExplicitLowering",
+    description = "Replace @JsImplicitExport(couldBeConvertedToExplicitExport = true) annotation to @JsExport if the declaration mentioned as a type in another exported declaration"
+)
+
+private val removeImplicitExportIfItsNotReachableLowering = makeDeclarationTransformerPhase(
+    ::RemoveImplicitExportIfItsNotReachableLowering,
+    name = "RemoveImplicitExportIfItsNotReachableLowering",
+    description = "Remove @JsImplicitExport(couldBeConvertedToExplicitExport = true) annotation to @JsExport if the declaration was not mentioned as a type in another exported declaration",
+    prerequisite = setOf(upgradeImplicitExportToExplicitLowering)
+)
+
+
 private val implicitlyExportedDeclarationsMarkingLowering = makeDeclarationTransformerPhase(
     ::ImplicitlyExportedDeclarationsMarkingLowering,
     name = "ImplicitlyExportedDeclarationsMarkingLowering",
-    description = "Add @JsImplicitExport annotation to declarations which are not exported but are used inside other exported declarations as a type"
+    description = "Add @JsImplicitExport annotation to declarations which are not exported but are used inside other exported declarations as a type",
+    prerequisite = setOf(removeImplicitExportIfItsNotReachableLowering)
 )
 
 private val cleanupLoweringPhase = makeBodyLoweringPhase(
@@ -873,6 +888,8 @@ val loweringList = listOf<Lowering>(
     scriptRemoveReceiverLowering,
     validateIrBeforeLowering,
     preventExportOfSyntheticDeclarationsLowering,
+    upgradeImplicitExportToExplicitLowering,
+    removeImplicitExportIfItsNotReachableLowering,
     inventNamesForLocalClassesPhase,
     collectClassIdentifiersLowering,
     annotationInstantiationLowering,
