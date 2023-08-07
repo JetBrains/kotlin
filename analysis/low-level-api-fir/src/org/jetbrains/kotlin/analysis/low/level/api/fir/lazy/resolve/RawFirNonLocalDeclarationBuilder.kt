@@ -47,7 +47,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             scopeProvider: FirScopeProvider,
             file: KtFile,
         ): FirFile {
-            val builder = PsiRawFirBuilder(session, scopeProvider, bodyBuildingMode = BodyBuildingMode.LAZY_BODIES)
+            val builder = PsiRawFirBuilder(session, scopeProvider, bodyBuildingMode = BodyBuildingMode.NORMAL)
             return builder.buildFirFile(file)
         }
 

@@ -249,7 +249,7 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
 
     component("referenceShortener", filter = frontendIs(FrontendKind.Fir) and analysisSessionModeIs(AnalysisSessionMode.Normal)) {
         test(AbstractReferenceShortenerTest::class) {
-            model("referenceShortener")
+            model("referenceShortener", pattern = TestGeneratorUtil.KT_OR_KTS)
         }
         test(AbstractReferenceShortenerForWholeFileTest::class) {
             model("referenceShortenerWholeFile", pattern = TestGeneratorUtil.KT_OR_KTS)

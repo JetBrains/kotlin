@@ -43,13 +43,19 @@ public class FirIdeNormalAnalysisSourceModuleReferenceShortenerTestGenerated ext
 
     @Test
     public void testAllFilesPresentInReferenceShortener() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/referenceShortener"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/referenceShortener"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
     }
 
     @Test
     @TestMetadata("annotaiton.kt")
     public void testAnnotaiton() throws Exception {
         runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/annotaiton.kt");
+    }
+
+    @Test
+    @TestMetadata("callInsideScriptExpression.kts")
+    public void testCallInsideScriptExpression() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/callInsideScriptExpression.kts");
     }
 
     @Test
@@ -460,7 +466,7 @@ public class FirIdeNormalAnalysisSourceModuleReferenceShortenerTestGenerated ext
     public class NestedClasses {
         @Test
         public void testAllFilesPresentInNestedClasses() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/nestedClasses"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/nestedClasses"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
         }
 
         @Test
@@ -505,7 +511,7 @@ public class FirIdeNormalAnalysisSourceModuleReferenceShortenerTestGenerated ext
         public class ClassHeaderPositions {
             @Test
             public void testAllFilesPresentInClassHeaderPositions() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/nestedClasses/classHeaderPositions"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/nestedClasses/classHeaderPositions"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
             }
 
             @Test

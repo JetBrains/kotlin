@@ -47,6 +47,12 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceShortenerForWholeFi
     }
 
     @Test
+    @TestMetadata("callInsideScriptExpression.kts")
+    public void testCallInsideScriptExpression() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortenerWholeFile/callInsideScriptExpression.kts");
+    }
+
+    @Test
     @TestMetadata("fileWithKDoc.kt")
     public void testFileWithKDoc() throws Exception {
         runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortenerWholeFile/fileWithKDoc.kt");
