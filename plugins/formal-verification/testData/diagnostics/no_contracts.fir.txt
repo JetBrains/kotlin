@@ -46,3 +46,6 @@ FILE: no_contracts.kt
         }
 
     }
+    public final fun function_call(): R|kotlin/Unit| {
+        R|/return_unit|()
+    }

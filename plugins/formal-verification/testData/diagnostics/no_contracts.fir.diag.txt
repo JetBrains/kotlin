@@ -73,3 +73,13 @@ method global$pkg_$if_on_parameter(local$b: Bool) returns (ret$: Int)
   } else {
     ret$ := 1}
 }
+
+/no_contracts.kt:(593,606): info: field backing_int: Int
+
+method global$pkg_$return_unit()
+
+
+method global$pkg_$function_call()
+{
+  global$pkg_$return_unit()
+}

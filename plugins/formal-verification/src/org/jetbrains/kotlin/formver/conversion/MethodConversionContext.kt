@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.formver.conversion
 
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.formver.scala.silicon.ast.Stmt
 import viper.silver.ast.Method
 
@@ -17,33 +16,17 @@ import viper.silver.ast.Method
  * only need the signature in most methods, as we verify methods one at a
  * time.
  */
-class MethodConversionContext(val programCtx: ProgramConversionContext, val declaration: FirSimpleFunction) {
-    val fullMethod: Method get() = signature.toMethod(listOf(), listOf(), convertedBody)
-    val headerOnlyMethod: Method get() = signature.toMethod(listOf(), listOf(), null)
+class MethodConversionContext(val programCtx: ProgramConversionContext, val signature: ConvertedMethodSignature, val body: FirBlock?) {
+    val toMethod: Method
+        get() =
+            signature.toMethod(listOf(), listOf(), body?.let { convertBody(it) })
 
     val returnVar: ConvertedVar?
-    val signature: ConvertedMethodSignature
+        get() = signature.returnVar
 
-    init {
-        val retType = (declaration.returnTypeRef as FirResolvedTypeRef).type
-        val convertedRetType = programCtx.convertType(retType)
-        returnVar = (if (convertedRetType is ConvertedType) ConvertedVar(ReturnVariableName, convertedRetType) else null)
-
-        val params = declaration.valueParameters.map {
-            ConvertedVar(
-                it.convertName(),
-                programCtx.convertType((it.returnTypeRef as FirResolvedTypeRef).type) as ConvertedType
-            )
-        }
-        val returns = returnVar?.let { listOf(it) } ?: emptyList()
-        signature = ConvertedMethodSignature(declaration.symbol.callableId.convertName(), params, returns)
+    private fun convertBody(body: FirBlock): Stmt.Seqn {
+        val ctx = StmtConversionContext(this)
+        ctx.convertAndAppend(body)
+        return ctx.block
     }
-
-    private val convertedBody: Stmt.Seqn
-        get() {
-            val body = declaration.body ?: throw Exception("Functions without a body are not supported yet.")
-            val ctx = StmtConversionContext(this)
-            ctx.convertAndAppend(body)
-            return ctx.block
-        }
 }

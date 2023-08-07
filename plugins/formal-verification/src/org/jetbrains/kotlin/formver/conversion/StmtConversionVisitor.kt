@@ -8,11 +8,15 @@ package org.jetbrains.kotlin.formver.conversion
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
+import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.references.toResolvedBaseSymbol
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.coneTypeOrNull
+import org.jetbrains.kotlin.fir.types.isUnit
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.formver.scala.silicon.ast.Exp
 import org.jetbrains.kotlin.formver.scala.silicon.ast.Stmt
@@ -113,7 +117,18 @@ class StmtConversionVisitor : FirVisitor<Exp?, StmtConversionContext>() {
         val id = functionCall.calleeReference.toResolvedCallableSymbol()!!.callableId
         // TODO: figure out a more structured way of doing this
         if (id.packageName.asString() == "kotlin.contracts" && id.callableName.asString() == "contract") return null
-        TODO("Implement function call visitation")
+        when (functionCall.dispatchReceiver) {
+            is FirNoReceiverExpression -> {
+                assert(functionCall.argumentList.arguments.isEmpty())
+                assert(functionCall.typeRef.coneTypeOrNull!!.isUnit)
+                val symbol = functionCall.calleeReference.resolved!!.resolvedSymbol as FirNamedFunctionSymbol
+                val calleeName = data.methodCtx.programCtx.add(symbol)
+                val call = Stmt.MethodCall(calleeName.asString, listOf(), listOf())
+                data.statements.add(call)
+            }
+            else -> TODO("Implement function call visitation with receiver")
+        }
+        return null
     }
 
     override fun visitProperty(property: FirProperty, data: StmtConversionContext): Exp? {

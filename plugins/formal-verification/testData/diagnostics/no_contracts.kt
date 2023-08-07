@@ -28,3 +28,6 @@ fun <!VIPER_TEXT!>if_on_parameter<!>(b: Boolean): Int {
         return 1
     }
 }
+fun <!VIPER_TEXT!>function_call<!>() {
+    return_unit()
+}

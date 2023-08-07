@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.formver.conversion
 
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -51,5 +51,5 @@ data object ReturnVariableName : ConvertedName {
         get() = "ret\$"
 }
 
-fun FirValueParameter.convertName(): LocalName = LocalName(name)
+fun FirValueParameterSymbol.convertName(): LocalName = LocalName(name)
 fun CallableId.convertName(): ConvertedName = if (isLocal) LocalName(callableName) else GlobalName(packageName, callableName)

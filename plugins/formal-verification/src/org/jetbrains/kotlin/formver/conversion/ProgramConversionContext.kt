@@ -6,7 +6,11 @@
 package org.jetbrains.kotlin.formver.conversion
 
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.isBoolean
+import org.jetbrains.kotlin.fir.types.isInt
+import org.jetbrains.kotlin.fir.types.isUnit
 import org.jetbrains.kotlin.formver.scala.emptySeq
 import org.jetbrains.kotlin.formver.scala.seqOf
 import org.jetbrains.kotlin.formver.scala.silicon.ast.*
@@ -38,8 +42,29 @@ class ProgramConversionContext {
         )
 
     fun addWithBody(declaration: FirSimpleFunction) {
-        val methodCtx = MethodConversionContext(this, declaration)
-        methods.add(methodCtx.fullMethod)
+        val methodCtx = MethodConversionContext(this, convertSignature(declaration.symbol), declaration.body)
+        methods.add(methodCtx.toMethod)
+    }
+
+    fun add(symbol: FirNamedFunctionSymbol): ConvertedName {
+        val signature =
+            convertSignature(symbol)
+        val methodCtx = MethodConversionContext(this, signature, null)
+        methods.add(methodCtx.toMethod)
+        return signature.name
+    }
+
+    fun convertSignature(symbol: FirNamedFunctionSymbol): ConvertedMethodSignature {
+        val retType = symbol.resolvedReturnTypeRef.type
+
+        val params = symbol.valueParameterSymbols.map {
+            ConvertedVar(it.convertName(), convertVarType(it.resolvedReturnType))
+        }
+        return ConvertedMethodSignature(
+            symbol.callableId.convertName(),
+            params,
+            convertType(retType)
+        )
     }
 
     fun convertType(type: ConeKotlinType): ConvertedOptionalType = when {
@@ -48,5 +73,8 @@ class ProgramConversionContext {
         type.isBoolean -> ConvertedBoolean
         else -> throw NotImplementedError("The embedding for type $type is not yet implemented.")
     }
+
+    fun convertVarType(type: ConeKotlinType): ConvertedType =
+        convertType(type) as? ConvertedType ?: throw Exception("Type $type was expected to be a valid variable type, but isn't.")
 }
 
