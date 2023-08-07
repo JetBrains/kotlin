@@ -251,6 +251,7 @@ class ScriptingWithCliCompilerTest {
                         arrayOf(
                             "-P", "plugin:kotlin.scripting:disable-script-definitions-autoloading=true",
                             "-cp", getMainKtsClassPath().joinToString(File.pathSeparator), "-d", tmpdir.path,
+                            "-Xuse-fir-lt=false",
                             "-Xallow-any-scripts-in-source-roots", "-verbose", fileArg
                         )
                     )
