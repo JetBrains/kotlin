@@ -53,6 +53,7 @@ projectTest(parallel = true) {
     doFirst {
         systemProperty("testJsr223RuntimeClasspath", testRuntimeProvider.get())
         systemProperty("testCompilationClasspath", testCompilationClasspathProvider.get())
+        systemProperty("kotlin.script.base.compiler.arguments", "-language-version 1.9")
     }
 }
 
@@ -60,4 +61,11 @@ projectTest(taskName = "embeddableTest", parallel = true) {
     workingDir = rootDir
     dependsOn(embeddableTestRuntime)
     classpath = embeddableTestRuntime
+    val testRuntimeProvider = project.provider { embeddableTestRuntime.asPath }
+    val testCompilationClasspathProvider = project.provider { testCompilationClasspath.asPath }
+    doFirst {
+        systemProperty("testJsr223RuntimeClasspath", testRuntimeProvider.get())
+        systemProperty("testCompilationClasspath", testCompilationClasspathProvider.get())
+        systemProperty("kotlin.script.base.compiler.arguments", "-language-version 1.9")
+    }
 }

@@ -59,6 +59,9 @@ tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
 projectTest(parallel = true) {
     dependsOn(":kotlin-compiler:distKotlinc")
     workingDir = rootDir
+    doFirst {
+        systemProperty("kotlin.script.base.compiler.arguments", "-language-version 1.9")
+    }
 }
 
 // This doesn;t work now due to conflicts between embeddable compiler contents and intellij sdk modules
@@ -69,4 +72,7 @@ projectTest(taskName = "embeddableTest", parallel = true) {
     classpath = embeddableTestRuntime
 
     exclude("**/JvmReplIdeTest.class")
+    doFirst {
+        systemProperty("kotlin.script.base.compiler.arguments", "-language-version 1.9")
+    }
 }

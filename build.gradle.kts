@@ -710,24 +710,24 @@ tasks {
         dependsOn(":kotlin-scripting-jvm-host-test:test")
         dependsOn(":kotlin-scripting-dependencies:test")
         dependsOn(":kotlin-scripting-dependencies-maven:test")
-        dependsOn(":kotlin-scripting-jsr223-test:test")
         // see comments on the task in kotlin-scripting-jvm-host-test
 //        dependsOn(":kotlin-scripting-jvm-host-test:embeddableTest")
-        dependsOn(":kotlin-scripting-jsr223-test:embeddableTest")
-        dependsOn(":kotlin-scripting-ide-services-test:test")
-        dependsOn(":kotlin-scripting-ide-services-test:embeddableTest")
         dependsOn(":kotlin-main-kts-test:test")
     }
 
-    register("scriptingK2Test") {
-        dependsOn(":kotlin-scripting-compiler:testWithK2")
-        dependsOn(":kotlin-scripting-jvm-host-test:testWithK2")
-        dependsOn(":kotlin-main-kts-test:testWithK2")
+    register("scriptingK1JvmTest") {
+        dependsOn(":kotlin-scripting-compiler:testWithK1")
+        dependsOn(":kotlin-scripting-jvm-host-test:testWithK1")
+        dependsOn(":kotlin-main-kts-test:testWithK1")
+        dependsOn(":kotlin-scripting-jsr223-test:test")
+        dependsOn(":kotlin-scripting-jsr223-test:embeddableTest")
+        dependsOn(":kotlin-scripting-ide-services-test:test")
+        dependsOn(":kotlin-scripting-ide-services-test:embeddableTest")
     }
 
     register("scriptingTest") {
         dependsOn("scriptingJvmTest")
-        dependsOn("scriptingK2Test")
+        dependsOn("scriptingK1JvmTest")
     }
 
     register("compilerTest") {

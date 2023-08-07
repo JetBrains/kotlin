@@ -25,18 +25,20 @@ sourceSets {
 
 projectTest(parallel = true) {
     dependsOn(":dist", ":kotlinx-serialization-compiler-plugin.embeddable:embeddable")
+    workingDir = rootDir
     val localKotlinxSerializationPluginClasspath: FileCollection = kotlinxSerializationGradlePluginClasspath
     doFirst {
         systemProperty("kotlin.script.test.kotlinx.serialization.plugin.classpath", localKotlinxSerializationPluginClasspath.asPath)
     }
-    workingDir = rootDir
 }
 
-projectTest(taskName = "testWithK2", parallel = true) {
+projectTest(taskName = "testWithK1", parallel = true) {
     dependsOn(":dist", ":kotlinx-serialization-compiler-plugin.embeddable:embeddable")
     workingDir = rootDir
     val localKotlinxSerializationPluginClasspath: FileCollection = kotlinxSerializationGradlePluginClasspath
-    systemProperty("kotlin.script.test.kotlinx.serialization.plugin.classpath", localKotlinxSerializationPluginClasspath.asPath)
-    systemProperty("kotlin.script.base.compiler.arguments", "-language-version 2.0")
-    systemProperty("kotlin.script.test.base.compiler.arguments", "-language-version 2.0")
+    doFirst {
+        systemProperty("kotlin.script.test.kotlinx.serialization.plugin.classpath", localKotlinxSerializationPluginClasspath.asPath)
+        systemProperty("kotlin.script.base.compiler.arguments", "-language-version 1.9")
+        systemProperty("kotlin.script.test.base.compiler.arguments", "-language-version 1.9")
+    }
 }
