@@ -210,7 +210,7 @@ public interface List<out E> : Collection<E> {
     @JsExport.Ignore
     public fun subList(fromIndex: Int, toIndex: Int): List<E>
 
-    public fun asJsArrayView() = JsArrayView(this)
+    public fun asJsArrayView() = jsArrayView(this)
 }
 
 /**
@@ -292,6 +292,8 @@ public interface MutableList<E> : List<E>, MutableCollection<E> {
     // View
     @JsExport.Ignore
     override fun subList(fromIndex: Int, toIndex: Int): MutableList<E>
+
+    public fun asJsArrayMutableView() = jsArrayMutableView(this)
 }
 
 /**
@@ -320,7 +322,7 @@ public interface Set<out E> : Collection<E> {
     @JsExport.Ignore
     override fun containsAll(elements: Collection<@UnsafeVariance E>): Boolean
 
-    public fun asJsSetView() = JsSetView(this)
+    public fun asJsSetView() = jsSetView(this)
 }
 
 /**
@@ -360,6 +362,8 @@ public interface MutableSet<E> : Set<E>, MutableCollection<E> {
 
     @JsExport.Ignore
     override fun clear(): Unit
+
+    public fun asJsSetMutableView() = jsSetMutableView(this)
 }
 
 /**
@@ -439,7 +443,7 @@ public interface Map<K, out V> {
         public val value: V
     }
 
-    public fun asJsMapView() = JsMapView(this)
+    public fun asJsMapView() = jsMapView(this)
 }
 
 /**
@@ -511,4 +515,6 @@ public interface MutableMap<K, V> : Map<K, V> {
          */
         public fun setValue(newValue: V): V
     }
+
+    public fun asJsMapMutableView() = jsMapMutableView(this)
 }

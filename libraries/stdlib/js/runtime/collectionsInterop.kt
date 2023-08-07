@@ -7,29 +7,62 @@ package kotlin.collections
 
 
 @JsName("Array")
-private external abstract class JsMutableArray<E> : JsImmutableArray<E>
+internal external abstract class JsMutableArray<E> : JsImmutableArray<E>
 
 @JsName("ReadonlyArray")
 internal external interface JsImmutableArray<out E>
 
 private class JsArrayView<E> : JsMutableArray<E>()
 
-@Suppress("UNUSED_VARIABLE")
-internal fun <E> JsArrayView(list: List<E>): JsImmutableArray<E> {
+private fun UNSUPPORTED_OPERATION() { throw UnsupportedOperationException() }
+
+internal fun <E> jsArrayView(list: List<E>): JsImmutableArray<E> =
+    jsArrayView(
+        listSize = { list.size },
+        listGet = { i -> list[i] },
+        listSet = ::UNSUPPORTED_OPERATION.asDynamic(),
+        listAdd = ::UNSUPPORTED_OPERATION.asDynamic(),
+        listDecreaseSize = ::UNSUPPORTED_OPERATION.asDynamic()
+    )
+
+internal fun <E> jsArrayMutableView(list: MutableList<E>): JsMutableArray<E> =
+    jsArrayView(
+        listSize = { list.size },
+        listGet = { i -> list[i] },
+        listSet = { i, v -> list[i] = v },
+        listAdd = { v -> list.add(v) },
+        listDecreaseSize = { size -> list.subList(list.size - size, list.size).clear() }
+    )
+
+@Suppress("UNUSED_VARIABLE", "UNUSED_PARAMETER")
+private fun <E> jsArrayView(
+    listSize: () -> Int,
+    listGet: (Int) -> E,
+    listSet: (Int, E) -> Unit,
+    listAdd: (E) -> Unit,
+    listDecreaseSize: (Int) -> Unit,
+): dynamic {
     val arrayView = objectCreate<JsArrayView<*>>()
-    val listSize = { list.size }
-    val listGet = { index: Int -> list[index] }
-    val UNSUPPORTED_OPERATION = { UnsupportedOperationException() }
 
     return js("""
        new Proxy(arrayView, {
            get: function(target, prop, receiver) {
-               if (prop == "length") return listSize();
+               if (prop === "length") return listSize();
                if (typeof prop !== "symbol" && !isNaN(prop)) return listGet(prop);
                return target[prop]
            },
            has: function(target, key) { return !isNaN(key) && key < listSize() },
-           set: function(obj, prop, value) { UNSUPPORTED_OPERATION() },
+           set: function(obj, prop, value) {
+                if (prop === "length") {
+                    var size = listSize();
+                    if (value < size) listDecreaseSize(size - value)
+                } else if (!isNaN(value)) {
+                    var size = listSize();
+                    if (prop >= size) listAdd(value)
+                    else listSet(prop, value)
+                }
+                return true
+           },
        }) 
     """)
 }
@@ -39,20 +72,45 @@ internal fun <E> JsArrayView(list: List<E>): JsImmutableArray<E> {
 internal external interface JsImmutableSet<out E>
 
 @JsName("Set")
-private external abstract class JsMutableSet<E> : JsImmutableArray<E>
+internal external abstract class JsMutableSet<E> : JsImmutableArray<E>
 
 private class JsSetView<E> : JsMutableSet<E>()
 
-@Suppress("UNUSED_VARIABLE")
-internal fun <E> JsSetView(set: Set<E>): JsImmutableSet<E> {
-    val setSize = { set.size }
-    val setContains = { value: E -> set.contains(value) }
+internal fun <E> jsSetView(set: Set<E>): JsImmutableSet<E> =
+    jsSetView<E>(
+        setSize = { set.size },
+        setAdd = ::UNSUPPORTED_OPERATION.asDynamic(),
+        setRemove = ::UNSUPPORTED_OPERATION.asDynamic(),
+        setClear = ::UNSUPPORTED_OPERATION.asDynamic(),
+        setContains = { v -> set.contains(v) },
+        valuesIterator = { JsIterator(set.iterator()) },
+        entriesIterator = { JsIterator(set.iterator()) { arrayOf(it, it) } },
+        forEach = { cb, t -> forEach(cb, t ?: set) }
+    )
 
-    val capturedForEach = { cb: dynamic, self: dynamic -> forEach(cb, self) }
-    val valuesIterator = { JsIterator(set.iterator()) }
-    val entriesIterator = { JsIterator(set.iterator()) { arrayOf(it, it) } }
-    val UNSUPPORTED_OPERATION = { UnsupportedOperationException() }
+internal fun <E> jsSetMutableView(set: MutableSet<E>): JsMutableSet<E> =
+    jsSetView<E>(
+        setSize = { set.size },
+        setAdd = { v -> set.add(v) },
+        setRemove = { v -> set.remove(v) },
+        setClear = { set.clear() },
+        setContains = { v -> set.contains(v) },
+        valuesIterator = { JsIterator(set.iterator()) },
+        entriesIterator = { JsIterator(set.iterator()) { arrayOf(it, it) } },
+        forEach = { cb, t -> forEach(cb, t) }
+    )
 
+@Suppress("UNUSED_VARIABLE", "UNUSED_PARAMETER")
+private fun <E> jsSetView(
+    setSize: () -> Int,
+    setAdd: (E) -> Unit,
+    setRemove: (E) -> Boolean,
+    setClear: () -> Unit,
+    setContains: (E) -> Boolean,
+    valuesIterator: () -> dynamic,
+    entriesIterator: () -> dynamic,
+    forEach: (dynamic, dynamic) -> Unit
+): dynamic {
     val setView = objectCreate<JsSetView<E>>().also {
         js("it[Symbol.iterator] = valuesIterator")
         defineProp(it, "size", setSize, VOID)
@@ -60,14 +118,14 @@ internal fun <E> JsSetView(set: Set<E>): JsImmutableSet<E> {
     
     return js("""
        Object.assign(setView, {
-            add: function(value) { UNSUPPORTED_OPERATION() },
-            'delete': function(value) { UNSUPPORTED_OPERATION()},
-            clear: function() { UNSUPPORTED_OPERATION() },
+            add: function(value) { setAdd(value); return this },
+            'delete': setRemove,
+            clear: setClear,
             has: setContains,
             keys: valuesIterator,
             values: valuesIterator,
             entries: entriesIterator,
-            forEach: function(cb, thisArg) { capturedForEach(cb, thisArg || setView) }
+            forEach: function (cb, thisArg) { forEach(cb, thisArg || setView) }
        })
     """)
 }
@@ -77,21 +135,48 @@ internal fun <E> JsSetView(set: Set<E>): JsImmutableSet<E> {
 internal external interface JsImmutableMap<K, out V>
 
 @JsName("Map")
-private external abstract class JsMutableMap<K, V> : JsImmutableMap<K, V>
+internal external abstract class JsMutableMap<K, V> : JsImmutableMap<K, V>
 
 private class JsMapView<K, V> : JsMutableMap<K, V>()
 
-@Suppress("UNUSED_VARIABLE")
-internal fun <K, V> JsMapView(map: Map<K, V>): JsImmutableMap<K, V> {
-    val mapSize = { map.size }
-    val mapContains = { key: K -> map.containsKey(key) }
+internal fun <K, V> jsMapView(map: Map<K, V>): JsImmutableMap<K, V> =
+    jsMapView<K, V>(
+        mapSize = { map.size },
+        mapContains = { k -> map.containsKey(k) },
+        mapPut = ::UNSUPPORTED_OPERATION.asDynamic(),
+        mapRemove = ::UNSUPPORTED_OPERATION.asDynamic(),
+        mapClear = ::UNSUPPORTED_OPERATION.asDynamic(),
+        keysIterator = { JsIterator(map.keys.iterator()) },
+        valuesIterator = { JsIterator(map.values.iterator()) },
+        entriesIterator = { JsIterator(map.entries.iterator()) { arrayOf(it.key, it.value) } },
+        forEach = { cb, t -> forEach(cb, t ?: map) }
+    )
 
-    val capturedForEach = { cb: dynamic, self: dynamic -> forEach(cb, self) }
-    val keysIterator = { JsIterator(map.keys.iterator()) }
-    val valuesIterator = { JsIterator(map.values.iterator()) }
-    val entriesIterator = { JsIterator(map.entries.iterator(), { arrayOf(it.key, it.value) }) }
-    val UNSUPPORTED_OPERATION = { UnsupportedOperationException() }
-    
+internal fun <K, V> jsMapMutableView(map: MutableMap<K, V>): JsMutableMap<K, V> =
+    jsMapView<K, V>(
+        mapSize = { map.size },
+        mapContains = { k -> map.containsKey(k) },
+        mapPut = { k, v -> map.put(k, v) },
+        mapRemove = { k -> map.remove(k) },
+        mapClear = { map.clear() },
+        keysIterator = { JsIterator(map.keys.iterator()) },
+        valuesIterator = { JsIterator(map.values.iterator()) },
+        entriesIterator = { JsIterator(map.entries.iterator()) { arrayOf(it.key, it.value) } },
+        forEach = { cb, t -> forEach(cb, t) }
+    )
+
+@Suppress("UNUSED_VARIABLE", "UNUSED_PARAMETER")
+private fun <K, V> jsMapView(
+   mapSize: () -> Int,
+   mapContains: (K) -> Boolean,
+   mapPut: (K, V) -> Unit,
+   mapRemove: (K) -> Unit,
+   mapClear: () -> Unit,
+   keysIterator: () -> dynamic,
+   valuesIterator: () -> dynamic,
+   entriesIterator: () -> dynamic,
+   forEach: (dynamic, dynamic) -> Unit
+): dynamic {
     val mapView = objectCreate<JsMapView<K, V>>().also {
         js("it[Symbol.iterator] = entriesIterator")
         defineProp(it, "size", mapSize, VOID)
@@ -99,14 +184,14 @@ internal fun <K, V> JsMapView(map: Map<K, V>): JsImmutableMap<K, V> {
     
     return js("""
        Object.assign(mapView, {
-            set: function(key, value) { UNSUPPORTED_OPERATION() },
-            'delete': function(key) { UNSUPPORTED_OPERATION() },
-            clear: function() { UNSUPPORTED_OPERATION() },
+            set: function(key, value) { mapPut(key, value); return this },
+            'delete': mapRemove,
+            clear: mapClear,
             has: mapContains,
             keys: valuesIterator,
             values: valuesIterator,
             entries: entriesIterator,
-            forEach: function(cb, thisArg) { capturedForEach(cb, thisArg || mapView) }
+            forEach: function (cb, thisArg) { forEach(cb, thisArg || mapView) }
        })
     """)
 }
