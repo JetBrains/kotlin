@@ -412,11 +412,11 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         append("STATIC")
 
         if (memoryModel != defaultMemoryModel)
-            append("-mm=$memoryModel")
+            append("-mm$memoryModel")
         if (freezing != defaultFreezing)
-            append("-freezing=${freezing.name}")
+            append("-freezing${freezing.name}")
         if (propertyLazyInitialization != defaultPropertyLazyInitialization)
-            append("-lazy_init=${if (propertyLazyInitialization) "enable" else "disable"}")
+            append("-lazy_init${if (propertyLazyInitialization) "ENABLE" else "DISABLE"}")
     }
 
     private val systemCacheFlavorString = buildString {
@@ -425,13 +425,13 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         if (useDebugInfoInNativeLibs)
             append("-runtime_debug")
         if (allocationMode != defaultAllocationMode)
-            append("-allocator=${allocationMode.name}")
+            append("-allocator${allocationMode.name}")
         if (memoryModel == MemoryModel.EXPERIMENTAL && gc != defaultGC)
-            append("-gc=${gc.name}")
+            append("-gc${gc.name}")
         if (memoryModel == MemoryModel.EXPERIMENTAL && gcSchedulerType != defaultGCSchedulerType)
-            append("-gc-scheduler=${gcSchedulerType.name}")
+            append("-gc_scheduler${gcSchedulerType.name}")
         if (runtimeAssertsMode != RuntimeAssertsMode.IGNORE)
-            append("-runtime_asserts=${runtimeAssertsMode.name}")
+            append("-runtime_asserts${runtimeAssertsMode.name}")
     }
 
     private val userCacheFlavorString = buildString {
