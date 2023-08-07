@@ -89,14 +89,18 @@ class ExpressionMarkerProvider : TestService {
     }
 
     @OptIn(PrivateForInline::class)
-    fun getCaretPosition(file: KtFile, caretTag: String? = null): Int {
+    fun getCaretPositionOrNull(file: KtFile, caretTag: String? = null): Int? {
         return carets.getCaretOffset(file.name, caretTag)
+    }
+
+    fun getCaretPosition(file: KtFile, caretTag: String? = null): Int {
+        return getCaretPositionOrNull(file, caretTag)
             ?: run {
                 val caretName = "caret${caretTag?.let { "_$it" }.orEmpty()}"
                 error("No <$caretName> found in file")
             }
-
     }
+
 
     inline fun <reified P : KtElement> getElementOfTypeAtCaret(file: KtFile, caretTag: String? = null): P {
         val offset = getCaretPosition(file, caretTag)
@@ -143,13 +147,18 @@ class ExpressionMarkerProvider : TestService {
 
     }
 
-    fun getSelectedElement(file: KtFile): PsiElement {
-        val range = selected[file.name] ?: error("No selected expression found in file")
+    fun getSelectedElementOrNull(file: KtFile): PsiElement? {
+        val range = selected[file.name] ?: return null
         val elements = file.elementsInRange(range).trimWhitespaces()
         if (elements.size != 1) {
             error("Expected one element at rage but found ${elements.size} [${elements.joinToString { it::class.simpleName + ": " + it.text }}]")
         }
         return elements.single()
+    }
+
+    fun getSelectedElement(file: KtFile): PsiElement {
+        return getSelectedElementOrNull(file)
+            ?: error("No selected expression found in file")
     }
 
     fun expectedTypeClass(registeredDirectives: RegisteredDirectives): Class<PsiElement>? {
