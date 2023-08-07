@@ -69,7 +69,8 @@ class ModelParser(private val variant: Variant, private val modulePrefix: String
                     artifacts[output.absolutePath] = listOf(path)
                 }
 
-                val jarTask = project.tasks.findByName(sourceSet.jarTaskName) as? Jar ?: continue
+                val jarTaskNameCandidates = listOf(sourceSet.jarTaskName, "jvmJar")
+                val jarTask = jarTaskNameCandidates.firstNotNullOfOrNull { project.tasks.findByName(it) } as? Jar ?: continue
                 val embeddedTask = findEmbeddableTask(project, sourceSet)
 
                 for (task in listOfNotNull(jarTask, embeddedTask)) {
