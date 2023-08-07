@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkedReplace
 import org.jetbrains.kotlin.gradle.util.modify
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
@@ -37,7 +36,6 @@ open class HierarchicalMppIT : KGPBaseTest() {
     private val String.withPrefix get() = "hierarchical-mpp-published-modules/$this"
 
     @GradleTest
-    @Disabled("stdlib publication migration - test data changes")
     @DisplayName("Check build with published third-party library")
     fun testPublishedModules(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
         val buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
@@ -200,7 +198,6 @@ open class HierarchicalMppIT : KGPBaseTest() {
     }
 
     @GradleTest
-    @Disabled("stdlib publication migration - test data changes")
     @DisplayName("Dependencies in project should be correct with third-party library")
     fun testProjectDependencies(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
         publishThirdPartyLib(withGranularMetadata = false, gradleVersion = gradleVersion, localRepoDir = tempDir)
@@ -222,7 +219,6 @@ open class HierarchicalMppIT : KGPBaseTest() {
     }
 
     @GradleTest
-    @Disabled("stdlib publication migration - test data changes")
     @DisplayName("Check that only composite metadata artifacts are transformed")
     fun testOnlyCompositeMetadataArtifactsTransformed(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
         val buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
@@ -280,11 +276,10 @@ open class HierarchicalMppIT : KGPBaseTest() {
             testDependencyTransformations {
                 assertEquals(
                     setOf(
-                        "my-lib-foo-metadata-1.0-all.jar",
                         "my-lib-bar-metadata-1.0-all.jar",
-                        "third-party-lib-metadata-1.0.jar",
+                        "my-lib-foo-metadata-1.0-all.jar",
                         "kotlin-stdlib-${buildOptions.kotlinVersion}-all.jar",
-                        "kotlin-test-js-${buildOptions.kotlinVersion}.jar",
+                        "third-party-lib-metadata-1.0.jar",
                         "kotlin-dom-api-compat-${buildOptions.kotlinVersion}.klib"
                     ),
                     transformedArtifacts()
@@ -437,9 +432,9 @@ open class HierarchicalMppIT : KGPBaseTest() {
 
             val expectedProjectStructureMetadata = expectedProjectStructureMetadata(
                 sourceSetModuleDependencies = mapOf(
-                    "jvmAndJsMain" to setOf("com.example.thirdparty" to "third-party-lib"),
-                    "linuxAndJsMain" to emptySet(),
-                    "commonMain" to emptySet()
+                    "commonMain" to emptySet(),
+                    "jvmAndJsMain" to setOf("com.example.thirdparty" to "third-party-lib", "org.jetbrains.kotlin" to "kotlin-stdlib"),
+                    "linuxAndJsMain" to setOf("org.jetbrains.kotlin" to "kotlin-stdlib"),
                 )
             )
 
@@ -487,9 +482,9 @@ open class HierarchicalMppIT : KGPBaseTest() {
 
             val expectedProjectStructureMetadata = expectedProjectStructureMetadata(
                 sourceSetModuleDependencies = mapOf(
-                    "jvmAndJsMain" to setOf(),
-                    "linuxAndJsMain" to emptySet(),
-                    "commonMain" to setOf("com.example.foo" to "my-lib-foo")
+                    "commonMain" to setOf("com.example.foo" to "my-lib-foo"),
+                    "jvmAndJsMain" to setOf("org.jetbrains.kotlin" to "kotlin-stdlib"),
+                    "linuxAndJsMain" to setOf("org.jetbrains.kotlin" to "kotlin-stdlib"),
                 )
             )
 
@@ -641,20 +636,20 @@ open class HierarchicalMppIT : KGPBaseTest() {
         sourceSetModuleDependencies: Map<String, Set<Pair<String, String>>>
     ): KotlinProjectStructureMetadata {
 
-        val jvmSourceSets = setOf("commonMain", "jvmAndJsMain")
-        val jsSourceSets = setOf("commonMain", "jvmAndJsMain", "linuxAndJsMain")
+        val jvmSourceSets = setOf("jvmAndJsMain", "commonMain")
+        val jsSourceSets = setOf("jvmAndJsMain", "commonMain", "linuxAndJsMain")
         return KotlinProjectStructureMetadata(
             sourceSetNamesByVariantName = mapOf(
                 "jsApiElements" to jsSourceSets,
                 "jsRuntimeElements" to jsSourceSets,
                 "jvmApiElements" to jvmSourceSets,
                 "jvmRuntimeElements" to jvmSourceSets,
-                "linuxX64ApiElements" to setOf("commonMain", "linuxAndJsMain")
+                "linuxX64ApiElements" to setOf("linuxAndJsMain", "commonMain",)
             ),
             sourceSetsDependsOnRelation = mapOf(
+                "commonMain" to emptySet(),
                 "jvmAndJsMain" to setOf("commonMain"),
                 "linuxAndJsMain" to setOf("commonMain"),
-                "commonMain" to emptySet()
             ),
             sourceSetModuleDependencies = sourceSetModuleDependencies.mapValues { (_, pairs) ->
                 pairs.map {
@@ -664,7 +659,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
             sourceSetCInteropMetadataDirectory = mapOf(),
             hostSpecificSourceSets = emptySet(),
             sourceSetBinaryLayout = sourceSetModuleDependencies.mapValues { SourceSetMetadataLayout.KLIB },
-            sourceSetNames = setOf("commonMain", "jvmAndJsMain", "linuxAndJsMain"),
+            sourceSetNames = setOf("jvmAndJsMain", "commonMain", "linuxAndJsMain"),
             isPublishedAsRoot = true
         )
     }
@@ -1028,12 +1023,14 @@ open class HierarchicalMppIT : KGPBaseTest() {
     }
 
     @GradleTest
-    @Disabled("stdlib publication migration")
     @DisplayName("KT-46417: [UNRESOLVED_REFERENCE] For project to project dependencies of native platform test source sets")
     fun testNativeLeafTestSourceSetsKt46417(gradleVersion: GradleVersion) {
         with(project("kt-46417-ios-test-source-sets", gradleVersion = gradleVersion)) {
             testDependencyTransformations("p2") { reports ->
-                val report = reports.singleOrNull { it.sourceSetName == "iosArm64Test" && it.scope == "implementation" }
+                val report = reports.singleOrNull {
+                    it.sourceSetName == "iosArm64Test" && it.scope == "implementation"
+                            && it.groupAndModule == "kt-46417-ios-test-source-sets:p1"
+                }
                 assertNotNull(report, "No single report for 'iosArm64' and implementation scope")
                 assertEquals(setOf("commonMain", "iosMain"), report.allVisibleSourceSets)
                 assertTrue(report.groupAndModule.endsWith(":p1"))
