@@ -53,8 +53,10 @@ projectTest(parallel = true) {
 //    classpath = embeddableTestRuntime
 //}
 
-projectTest(taskName = "testWithK2", parallel = true) {
+projectTest(taskName = "testWithK1", parallel = true) {
     dependsOn(":dist")
     workingDir = rootDir
-    systemProperty("kotlin.script.base.compiler.arguments", "-language-version 2.0")
+    doFirst {
+        systemProperty("kotlin.script.base.compiler.arguments", "-language-version 1.9")
+    }
 }
