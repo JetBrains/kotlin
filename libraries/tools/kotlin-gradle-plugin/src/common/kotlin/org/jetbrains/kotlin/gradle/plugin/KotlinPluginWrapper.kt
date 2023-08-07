@@ -421,7 +421,6 @@ fun getKotlinPluginVersion(logger: Logger): String {
     return kotlinPluginVersionFromResources.value
 }
 
-@ExperimentalKotlinGradlePluginApi
 val Project.kotlinToolingVersion: KotlinToolingVersion
     get() = extensions.extraProperties.getOrPut("kotlinToolingVersion") {
         KotlinToolingVersion(getKotlinPluginVersion())
