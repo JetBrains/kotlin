@@ -196,6 +196,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         }
 
         @Test
+        @TestMetadata("compilerCrashParameterType.kt")
+        public void testCompilerCrashParameterType() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/compilerCrashParameterType.kt");
+        }
+
+        @Test
         @TestMetadata("Constants.kt")
         public void testConstants() throws Exception {
             runTest("compiler/testData/diagnostics/tests/Constants.kt");

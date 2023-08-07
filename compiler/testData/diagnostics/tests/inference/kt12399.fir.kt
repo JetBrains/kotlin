@@ -1,3 +1,3 @@
 fun foo(a: Any) {
-    foo({ index -> } {  })
+    foo({ <!VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION!>index<!> -> } {  })
 }

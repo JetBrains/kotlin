@@ -5,7 +5,7 @@ fun test(<!VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION!>a<!>, <!VALUE_PARAMETER_WITH
 
 class A(a<!SYNTAX!><!>)
 
-val bar = fun(a){}
+val bar = fun(<!VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION!>a<!>){}
 
-val la = { a -> }
+val la = { <!VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION!>a<!> -> }
 val las = { a: Int -> }
