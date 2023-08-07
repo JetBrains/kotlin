@@ -59,7 +59,9 @@ repositories {
 }
 
 dependencies {
-    testImplementation(project(mapOf("path" to ":native:native.tests")))
+    if (!kotlinBuildProperties.isInIdeaSync) {
+        testImplementation(project(mapOf("path" to ":native:native.tests")))
+    }
     compileOnly(intellijCore())
     compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
 
@@ -90,7 +92,9 @@ dependencies {
     testApi(project(":kotlin-test:kotlin-test-jvm"))
 
     // Dependencies for Kotlin/Native test infra:
-    testImplementation(projectTests(":native:native.tests"))
+    if (!kotlinBuildProperties.isInIdeaSync) {
+        testImplementation(projectTests(":native:native.tests"))
+    }
     testImplementation(project(":native:kotlin-native-utils"))
     testImplementation(commonDependency("org.jetbrains.teamcity:serviceMessages"))
 
