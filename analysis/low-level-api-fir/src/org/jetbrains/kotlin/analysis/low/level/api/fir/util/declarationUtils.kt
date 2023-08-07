@@ -80,7 +80,7 @@ internal fun KtDeclaration.findSourceNonLocalFirDeclaration(firFile: FirFile, pr
     )?.let { return it }
 
     errorWithFirSpecificEntries(
-        "No fir element was found for",
+        "No fir element was found for ${this::class.simpleName}",
         psi = this,
         fir = firFile,
         additionalInfos = { withEntry("isPhysical", isPhysical.toString()) }
