@@ -419,7 +419,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         append("STATIC")
 
         if (propertyLazyInitialization != defaultPropertyLazyInitialization)
-            append("-lazy_init=${if (propertyLazyInitialization) "enable" else "disable"}")
+            append("-lazy_init${if (propertyLazyInitialization) "ENABLE" else "DISABLE"}")
     }
 
     private val systemCacheFlavorString = buildString {
@@ -428,17 +428,17 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         if (useDebugInfoInNativeLibs)
             append("-runtime_debug")
         if (allocationMode != defaultAllocationMode)
-            append("-allocator=${allocationMode.name}")
+            append("-allocator${allocationMode.name}")
         if (gc != defaultGC)
-            append("-gc=${gc.name}")
+            append("-gc${gc.name}")
         if (gcSchedulerType != defaultGCSchedulerType)
-            append("-gc-scheduler=${gcSchedulerType.name}")
+            append("-gc_scheduler${gcSchedulerType.name}")
         if (runtimeAssertsMode != RuntimeAssertsMode.IGNORE)
-            append("-runtime_asserts=${runtimeAssertsMode.name}")
+            append("-runtime_asserts${runtimeAssertsMode.name}")
         if (disableMmap != defaultDisableMmap)
-            append("-disable_mmap=${disableMmap}")
+            append("-disable_mmap${if (disableMmap) "TRUE" else "FALSE"}")
         if (gcMarkSingleThreaded != defaultGcMarkSingleThreaded)
-            append("-gc_mark_single_threaded=${gcMarkSingleThreaded}")
+            append("-gc_mark_single_threaded${if (gcMarkSingleThreaded) "TRUE" else "FALSE"}")
     }
 
     private val userCacheFlavorString = buildString {
