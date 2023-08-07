@@ -48,7 +48,7 @@ internal object CheckCallableReferenceExpectedType : CheckerStage() {
             else -> null
         }
 
-        val fir: FirCallableDeclaration = candidate.symbol.fir
+        val fir: FirCallableDeclaration = candidate.symbol.fir as FirCallableDeclaration
 
         val (rawResultingType, callableReferenceAdaptation) = buildReflectionType(fir, resultingReceiverType, candidate, context)
         val resultingType = candidate.substitutor.substituteOrSelf(rawResultingType)
