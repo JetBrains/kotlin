@@ -118,7 +118,7 @@ private fun ConeDiagnostic.toKtDiagnostic(
     is ConeSyntaxDiagnostic -> FirSyntaxErrors.SYNTAX.createOn(callOrAssignmentSource ?: source, reason)
 
     is ConeSimpleDiagnostic -> when {
-        source?.kind is KtFakeSourceElementKind && source.kind != KtFakeSourceElementKind.ReferenceInAtomicQualifiedAccess -> null
+        (source?.kind as? KtFakeSourceElementKind)?.canBeIgnored == true -> null
         else -> this.getFactory(source).createOn(callOrAssignmentSource ?: source)
     }
 
@@ -154,6 +154,10 @@ private fun ConeDiagnostic.toKtDiagnostic(
     is ConeUnsupportedClassLiteralsWithEmptyLhs -> FirErrors.UNSUPPORTED_CLASS_LITERALS_WITH_EMPTY_LHS.createOn(source)
     else -> throw IllegalArgumentException("Unsupported diagnostic type: ${this.javaClass}")
 }
+
+private val KtFakeSourceElementKind.canBeIgnored: Boolean
+    get() = this != KtFakeSourceElementKind.ReferenceInAtomicQualifiedAccess
+            && this != KtFakeSourceElementKind.ImplicitReturnTypeOfLambdaValueParameter
 
 fun FirBasedSymbol<*>.toInvisibleReferenceDiagnostic(source: KtSourceElement?): KtDiagnostic? = when (val symbol = this) {
     is FirCallableSymbol<*> -> FirErrors.INVISIBLE_REFERENCE.createOn(source, symbol, symbol.visibility, symbol.callableId.classId)

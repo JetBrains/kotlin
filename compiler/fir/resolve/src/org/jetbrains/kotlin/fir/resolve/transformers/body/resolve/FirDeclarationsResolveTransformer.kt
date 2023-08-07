@@ -1077,7 +1077,10 @@ open class FirDeclarationsResolveTransformer(
                                     "No type for parameter",
                                     DiagnosticKind.ValueParameterWithNoTypeAnnotation
                                 )
-                            )
+                            ),
+                            fallbackSource = valueParameter.source?.fakeElement(
+                                KtFakeSourceElementKind.ImplicitReturnTypeOfLambdaValueParameter,
+                            ),
                         )
                     )
                 }

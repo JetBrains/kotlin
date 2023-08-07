@@ -32,5 +32,5 @@ fun testParamCall() {
 }
 
 fun testNoContext() {
-    { it -> it }
+    { <!VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION!>it<!> -> it }
 }

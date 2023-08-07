@@ -1,6 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
-val la = { a -> }
+val la = { <!VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION!>a<!> -> }
 val las = { a: Int -> }
 
-val larg = { a -> }(123)
-val twoarg = { a, b: String, c -> }(123, "asdf", 123)
+val larg = { <!VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION!>a<!> -> }(123)
+val twoarg = { <!VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION!>a<!>, b: String, <!VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION!>c<!> -> }(123, "asdf", 123)

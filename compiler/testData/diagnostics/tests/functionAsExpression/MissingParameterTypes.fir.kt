@@ -1,7 +1,7 @@
 // !CHECK_TYPE
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER -UNUSED_VARIABLE
 
-val a = fun (x) = x
+val a = fun (<!VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION!>x<!>) = x
 
 val b: (Int) -> Int = fun (x) = x + 3
 

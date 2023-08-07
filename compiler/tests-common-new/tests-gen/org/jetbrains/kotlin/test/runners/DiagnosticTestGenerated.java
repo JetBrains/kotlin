@@ -196,6 +196,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("compilerCrashParameterType.kt")
+        public void testCompilerCrashParameterType() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/compilerCrashParameterType.kt");
+        }
+
+        @Test
         @TestMetadata("Constants.kt")
         public void testConstants() throws Exception {
             runTest("compiler/testData/diagnostics/tests/Constants.kt");
