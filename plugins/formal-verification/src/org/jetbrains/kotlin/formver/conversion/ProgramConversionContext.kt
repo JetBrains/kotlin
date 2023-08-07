@@ -45,7 +45,8 @@ class ProgramConversionContext {
     fun convertType(type: ConeKotlinType): ConvertedOptionalType = when {
         type.isUnit -> ConvertedUnit
         type.isInt -> ConvertedInt
-        else -> throw NotImplementedError()
+        type.isBoolean -> ConvertedBoolean
+        else -> throw NotImplementedError("The embedding for type $type is not yet implemented.")
     }
 }
 

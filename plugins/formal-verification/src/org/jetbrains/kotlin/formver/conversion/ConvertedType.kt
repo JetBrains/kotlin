@@ -32,6 +32,10 @@ object ConvertedInt : ConvertedType {
     override val viperType: Type = Type.Int
 }
 
+object ConvertedBoolean : ConvertedType {
+    override val viperType: Type = Type.Bool
+}
+
 class ConvertedClassType : ConvertedType {
     override val viperType: Type = Type.Ref
 
