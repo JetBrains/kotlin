@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.mainKts.MainKtsScript
 import org.jetbrains.kotlin.mainKts.SCRIPT_FILE_LOCATION_DEFAULT_VARIABLE_NAME
 import org.jetbrains.kotlin.mainKts.impl.Directories
 import org.jetbrains.kotlin.scripting.compiler.plugin.assertTrue
+import org.jetbrains.kotlin.scripting.compiler.plugin.expectTestToFailOnK2
 import org.junit.Assert
 import org.junit.Assert.assertEquals
 import org.junit.Ignore
@@ -245,7 +246,7 @@ class MainKtsTest {
     }
 
     @Test
-    fun testHelloSerialization() {
+    fun testHelloSerialization() = expectTestToFailOnK2 {
         // the embeddable plugin is needed for this test, because embeddable compiler is used.
         val serializationPluginClasspath = System.getProperty("kotlin.script.test.kotlinx.serialization.plugin.classpath")!!
         val out = captureOut {
@@ -253,7 +254,7 @@ class MainKtsTest {
                 File("$TEST_DATA_ROOT/hello-kotlinx-serialization.main.kts"),
                 compilation = {
                     compilerOptions(
-                        "-Xplugin", serializationPluginClasspath
+                        "-Xplugin=$serializationPluginClasspath"
                     )
                 }
             )
