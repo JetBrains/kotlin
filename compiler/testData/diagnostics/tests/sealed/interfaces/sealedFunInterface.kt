@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 <!UNSUPPORTED_SEALED_FUN_INTERFACE!>sealed<!> fun interface A { // error
     fun foo()
 }

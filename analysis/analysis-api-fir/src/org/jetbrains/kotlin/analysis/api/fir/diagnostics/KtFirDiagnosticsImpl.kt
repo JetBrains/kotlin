@@ -584,6 +584,11 @@ internal class ClassInheritsJavaSealedClassImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtTypeReference>(firDiagnostic, token), KtFirDiagnostic.ClassInheritsJavaSealedClass
 
+internal class UnsupportedSealedFunInterfaceImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.UnsupportedSealedFunInterface
+
 internal class SupertypeNotAClassOrInterfaceImpl(
     override val reason: String,
     firDiagnostic: KtPsiDiagnostic,

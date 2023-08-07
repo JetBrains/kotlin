@@ -213,6 +213,7 @@ object FirErrors {
     val SEALED_INHERITOR_IN_DIFFERENT_PACKAGE by error0<KtTypeReference>()
     val SEALED_INHERITOR_IN_DIFFERENT_MODULE by error0<KtTypeReference>()
     val CLASS_INHERITS_JAVA_SEALED_CLASS by error0<KtTypeReference>()
+    val UNSUPPORTED_SEALED_FUN_INTERFACE by error0<PsiElement>()
     val SUPERTYPE_NOT_A_CLASS_OR_INTERFACE by error1<KtElement, String>()
     val UNSUPPORTED_INHERITANCE_FROM_JAVA_MEMBER_REFERENCING_KOTLIN_FUNCTION by error1<PsiElement, FirBasedSymbol<*>>(SourceElementPositioningStrategies.DECLARATION_NAME)
     val CYCLIC_INHERITANCE_HIERARCHY by error0<PsiElement>()
