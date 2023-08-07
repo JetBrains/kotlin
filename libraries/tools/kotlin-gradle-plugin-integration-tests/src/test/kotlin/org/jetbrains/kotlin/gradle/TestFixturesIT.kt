@@ -94,6 +94,35 @@ class TestFixturesIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("Test associated 'functionalTest' compilation can compile and run with test and testFixtures in JVM project")
+    @MppGradlePluginTests
+    @GradleTest
+    fun testTestFixturesAndFunctionalTestsInJvmProject(gradleVersion: GradleVersion) {
+        project("jvm-test-fixtures-functionalTest", gradleVersion) {
+            build("functionalTest") {
+                assertOutputContains("src/main OK!")
+                assertOutputContains("src/test OK!")
+                assertOutputContains("src/testFixtures OK!")
+                assertOutputContains("src/functionalTest OK!")
+            }
+        }
+    }
+
+    @DisplayName("Test associated 'functionalTest' compilation can compile and run with test and testFixtures in Multiplatform project")
+    @MppGradlePluginTests
+    @GradleTest
+    fun testTestFixturesAndFunctionalTestsInMppProject(gradleVersion: GradleVersion) {
+        project("mpp-test-fixtures-functionalTest", gradleVersion) {
+            build("functionalTest") {
+                assertOutputContains("src/main OK!")
+                assertOutputContains("src/test OK!")
+                assertOutputContains("src/testFixtures OK!")
+                assertOutputContains("src/functionalTest OK!")
+            }
+        }
+    }
+
+
     companion object {
         private const val JVM_TEST_FIXTURES_PROJECT_NAME = "jvm-test-fixtures"
         private const val MPP_TEST_FIXTURES_PROJECT_NAME = "mpp-test-fixtures"
