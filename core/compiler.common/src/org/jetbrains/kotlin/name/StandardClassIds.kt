@@ -21,6 +21,7 @@ object StandardClassIds {
     val BASE_ENUMS_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("enums"))
     val BASE_CONTRACTS_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("contracts"))
     val BASE_CONCURRENT_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("concurrent"))
+    val BASE_TEST_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("test"))
 
     val builtInsPackages = setOf(
         BASE_KOTLIN_PACKAGE,
@@ -175,6 +176,8 @@ object StandardClassIds {
 
         val Volatile = "Volatile".concurrentId()
 
+        val Test = "Test".testId()
+
         val RawTypeAnnotation = "RawType".internalIrId()
         val FlexibleNullability = "FlexibleNullability".internalIrId()
         val FlexibleMutability = "FlexibleMutability".internalIrId()
@@ -267,6 +270,8 @@ private fun String.internalIrId() = ClassId(StandardClassIds.BASE_INTERNAL_IR_PA
 private fun String.coroutinesId() = ClassId(StandardClassIds.BASE_COROUTINES_PACKAGE, Name.identifier(this))
 private fun String.enumsId() = ClassId(StandardClassIds.BASE_ENUMS_PACKAGE, Name.identifier(this))
 private fun String.concurrentId() = ClassId(StandardClassIds.BASE_CONCURRENT_PACKAGE, Name.identifier(this))
+
+private fun String.testId() = ClassId(StandardClassIds.BASE_TEST_PACKAGE, Name.identifier(this))
 
 private fun String.callableId(packageName: FqName) = CallableId(packageName, Name.identifier(this))
 private fun String.callableId(classId: ClassId) = CallableId(classId, Name.identifier(this))
