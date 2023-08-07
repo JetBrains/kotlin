@@ -116,9 +116,10 @@ class ConeOverloadConflictResolver(
     }
 
     private fun Candidate.overrides(other: Candidate): Boolean {
+        val symbol = symbol
         if (symbol !is FirCallableSymbol || other.symbol !is FirCallableSymbol) return false
 
-        val otherOriginal = other.symbol.unwrapSubstitutionOverrides()
+        val otherOriginal = (other.symbol as FirCallableSymbol).unwrapSubstitutionOverrides()
         if (symbol.unwrapSubstitutionOverrides<FirCallableSymbol<*>>() == otherOriginal) return true
 
         val scope = originScope as? FirTypeScope ?: return false
