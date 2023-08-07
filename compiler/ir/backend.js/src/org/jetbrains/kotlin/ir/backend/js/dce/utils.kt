@@ -5,18 +5,20 @@
 
 package org.jetbrains.kotlin.ir.backend.js.dce
 
+import org.jetbrains.kotlin.backend.common.serialization.mangle.KotlinMangleComputer
+import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleMode
+import org.jetbrains.kotlin.backend.common.serialization.mangle.ir.IrMangleComputer
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.lower.PrimaryConstructorLowering
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.AbstractJsManglerIr
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.util.dumpKotlinLike
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
-import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import java.io.File
+import java.nio.file.Path
 
 private fun IrDeclaration.fallbackFqName(): String {
     val fqn = (this as? IrDeclarationWithName)?.fqNameWhenAvailable?.asString() ?: "<unknown>"
@@ -40,18 +42,28 @@ private fun IrDeclaration.getNameByGetter(getter: (IrDeclaration) -> String?): S
     return signature + synthetic + instanceSignature
 }
 
-internal fun IrDeclaration.fqNameForDceDump(): String = getNameByGetter { it.symbol.signature?.render() }
 
-private val publicIdSignatureComputer = PublicIdSignatureComputer(JsManglerIr)
-internal fun IrDeclaration.fqNameForDisplayDceDump(): String = getNameByGetter {
-    try {
-        publicIdSignatureComputer.computeSignature(it).render()
-    } catch (err: RuntimeException) {
-        null
+private val publicIdSignatureComputer = PublicIdSignatureComputer(object : AbstractJsManglerIr() {
+    override fun getMangleComputer(mode: MangleMode, compatibleMode: Boolean): KotlinMangleComputer<IrDeclaration> {
+        return IrMangleComputer(StringBuilder(256), mode, compatibleMode, allowOutOfScopeTypeParameters = true)
     }
+})
+
+internal fun IrDeclaration.getPublicSignature() = try {
+    var signature: IdSignature? = null
+    publicIdSignatureComputer.inFile(file.symbol) {
+        signature = publicIdSignatureComputer.computeSignature(this)
+    }
+    signature?.render(IdSignatureRenderer.LEGACY)
+} catch (err: RuntimeException) {
+    null
 }
 
-private data class IrDeclarationDumpInfo(val fqName: String, val displayName: String, val type: String, val size: Int)
+internal fun IrDeclaration.fqNameForDceDump(): String = getNameByGetter { it.symbol.signature?.render() ?: it.getPublicSignature() }
+
+internal fun IrDeclaration.fqNameForDisplayDceDump(): String = getNameByGetter(IrDeclaration::fallbackFqName)
+
+internal data class IrDeclarationDumpInfo(val fqName: String, val displayName: String, val type: String, val size: Int)
 
 fun dumpDeclarationIrSizesIfNeed(path: String?, allModules: List<IrModuleFragment>, dceDumpNameCache: DceDumpNameCache) {
     if (path == null) return
