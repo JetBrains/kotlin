@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentsExpression
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.serialization.constant.ConstValueProvider
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -24,6 +25,10 @@ class ConstValueProviderImpl(
     override fun findConstantValueFor(firExpression: FirExpression?): ConstantValue<*>? {
         val firFile = processingFirFile
         if (firExpression == null || firFile == null) return null
+
+        // We can't evaluate vararg expression, only its arguments. We can accidentally find a const result for vararg
+        // when there is only one argument, they both are going to have the same offset.
+        if (firExpression is FirVarargArgumentsExpression) return null
 
         val fileName = firFile.packageFqName.child(Name.identifier(firFile.name)).asString()
         return if (firExpression is FirQualifiedAccessExpression) {

@@ -134,6 +134,11 @@ public class K2KotlinpTestGenerated extends AbstractK2KotlinpTest {
         runTest("libraries/tools/kotlinp/testData/ValueClass.kt");
     }
 
+    @TestMetadata("VarargInAnnotation.kt")
+    public void testVarargInAnnotation() throws Exception {
+        runTest("libraries/tools/kotlinp/testData/VarargInAnnotation.kt");
+    }
+
     @TestMetadata("VersionRequirement.kt")
     public void testVersionRequirement() throws Exception {
         runTest("libraries/tools/kotlinp/testData/VersionRequirement.kt");
