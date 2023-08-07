@@ -121,6 +121,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CAST_NEVER_SUCCEE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CATCH_PARAMETER_WITH_DEFAULT_VALUE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CLASS_CANNOT_BE_EXTENDED_DIRECTLY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CLASS_INHERITS_JAVA_SEALED_CLASS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_SEALED_FUN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CLASS_IN_SUPERTYPE_FOR_ENUM
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CLASS_LITERAL_LHS_NOT_A_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMMA_IN_WHEN_CONDITION_WITHOUT_ARGUMENT
@@ -819,6 +820,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(SEALED_INHERITOR_IN_DIFFERENT_MODULE, "Inheritance of sealed classes or interfaces from different module is prohibited")
         map.put(CLASS_INHERITS_JAVA_SEALED_CLASS, "Inheritance of Java sealed classes is prohibited")
+        map.put(UNSUPPORTED_SEALED_FUN_INTERFACE, "'sealed fun interface' is unsupported")
 
         map.put(SUPERTYPE_NOT_A_CLASS_OR_INTERFACE, "Supertype is not a class or interface", TO_STRING)
         map.put(

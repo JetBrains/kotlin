@@ -245,6 +245,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val SEALED_INHERITOR_IN_DIFFERENT_PACKAGE by error<KtTypeReference>()
         val SEALED_INHERITOR_IN_DIFFERENT_MODULE by error<KtTypeReference>()
         val CLASS_INHERITS_JAVA_SEALED_CLASS by error<KtTypeReference>()
+        val UNSUPPORTED_SEALED_FUN_INTERFACE by error<PsiElement>()
         val SUPERTYPE_NOT_A_CLASS_OR_INTERFACE by error<KtElement> {
             parameter<String>("reason")
         }

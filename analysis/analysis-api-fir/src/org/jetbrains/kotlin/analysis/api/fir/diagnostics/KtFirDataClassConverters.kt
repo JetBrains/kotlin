@@ -650,6 +650,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.UNSUPPORTED_SEALED_FUN_INTERFACE) { firDiagnostic ->
+        UnsupportedSealedFunInterfaceImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.SUPERTYPE_NOT_A_CLASS_OR_INTERFACE) { firDiagnostic ->
         SupertypeNotAClassOrInterfaceImpl(
             firDiagnostic.a,

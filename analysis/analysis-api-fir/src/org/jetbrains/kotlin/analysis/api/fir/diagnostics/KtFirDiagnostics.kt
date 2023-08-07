@@ -497,6 +497,10 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ClassInheritsJavaSealedClass::class
     }
 
+    interface UnsupportedSealedFunInterface : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = UnsupportedSealedFunInterface::class
+    }
+
     interface SupertypeNotAClassOrInterface : KtFirDiagnostic<KtElement> {
         override val diagnosticClass get() = SupertypeNotAClassOrInterface::class
         val reason: String
