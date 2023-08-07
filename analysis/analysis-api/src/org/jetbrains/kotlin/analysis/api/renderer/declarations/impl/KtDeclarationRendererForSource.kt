@@ -74,6 +74,7 @@ public object KtDeclarationRendererForSource {
         anonymousObjectRenderer = KtAnonymousObjectSymbolRenderer.AS_SOURCE
         singleTypeParameterRenderer = KtSingleTypeParameterSymbolRenderer.WITHOUT_BOUNDS
         propertyAccessorsRenderer = KtPropertyAccessorsRenderer.NO_DEFAULT
+        destructuringDeclarationRenderer = KtDestructuringDeclarationRenderer.WITH_ENTRIES
 
         callableReceiverRenderer = KtCallableReceiverRenderer.AS_TYPE_WITH_IN_APPROXIMATION
         returnTypeRenderer = KtCallableReturnTypeRenderer.WITH_OUT_APPROXIMATION

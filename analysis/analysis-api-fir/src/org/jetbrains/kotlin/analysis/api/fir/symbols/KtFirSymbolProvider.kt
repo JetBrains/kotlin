@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
-import org.jetbrains.kotlin.resolve.calls.util.isSingleUnderscore
 
 internal class KtFirSymbolProvider(
     override val analysisSession: KtFirAnalysisSession,
@@ -197,5 +196,10 @@ internal class KtFirSymbolProvider(
                 FirPropertySymbol::class, FirErrorPropertySymbol::class, FirValueParameterSymbol::class
             )
         }
+    }
+
+    override fun getDestructuringDeclarationSymbol(psi: KtDestructuringDeclaration): KtDestructuringDeclarationSymbol {
+        val firSymbol = psi.resolveToFirSymbolOfType<FirVariableSymbol<*>>(firResolveSession)
+        return firSymbolBuilder.buildDestructuringDeclarationSymbol(firSymbol)
     }
 }

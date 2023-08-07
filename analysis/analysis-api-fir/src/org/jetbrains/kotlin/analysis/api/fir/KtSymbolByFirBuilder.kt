@@ -101,6 +101,13 @@ internal class KtSymbolByFirBuilder constructor(
         }
     }
 
+
+    fun buildDestructuringDeclarationSymbol(firSymbol: FirVariableSymbol<*>): KtDestructuringDeclarationSymbol {
+        return symbolsCache.cache(firSymbol) {
+            KtFirDestructuringDeclarationSymbol(firSymbol, analysisSession)
+        }
+    }
+
     fun buildEnumEntrySymbol(firSymbol: FirEnumEntrySymbol) =
         symbolsCache.cache(firSymbol) { KtFirEnumEntrySymbol(firSymbol, analysisSession) }
 

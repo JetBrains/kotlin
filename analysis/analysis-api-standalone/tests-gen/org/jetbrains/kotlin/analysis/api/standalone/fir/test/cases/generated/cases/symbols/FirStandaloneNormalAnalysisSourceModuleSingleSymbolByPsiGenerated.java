@@ -324,6 +324,18 @@ public class FirStandaloneNormalAnalysisSourceModuleSingleSymbolByPsiGenerated e
         }
 
         @Test
+        @TestMetadata("destructuringDeclaration.kt")
+        public void testDestructuringDeclaration() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/destructuringDeclaration.kt");
+        }
+
+        @Test
+        @TestMetadata("destructuringDeclarationInLambda.kt")
+        public void testDestructuringDeclarationInLambda() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/destructuringDeclarationInLambda.kt");
+        }
+
+        @Test
         @TestMetadata("destructuringDeclarationParameterInLambda.kt")
         public void testDestructuringDeclarationParameterInLambda() throws Exception {
             runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/destructuringDeclarationParameterInLambda.kt");
