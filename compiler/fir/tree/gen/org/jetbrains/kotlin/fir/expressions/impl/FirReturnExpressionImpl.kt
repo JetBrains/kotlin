@@ -32,7 +32,7 @@ internal class FirReturnExpressionImpl(
     override val target: FirTarget<FirFunction>,
     override var result: FirExpression,
 ) : FirReturnExpression() {
-    override var coneTypeOrNull: ConeKotlinType? = StandardClassIds.Nothing.constructClassLikeType()
+    override val coneTypeOrNull: ConeKotlinType? = StandardClassIds.Nothing.constructClassLikeType()
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
@@ -60,9 +60,7 @@ internal class FirReturnExpressionImpl(
         return this
     }
 
-    override fun replaceConeTypeOrNull(newConeTypeOrNull: ConeKotlinType?) {
-        coneTypeOrNull = newConeTypeOrNull
-    }
+    override fun replaceConeTypeOrNull(newConeTypeOrNull: ConeKotlinType?) {}
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
         annotations = newAnnotations.toMutableOrEmpty()

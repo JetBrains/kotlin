@@ -29,7 +29,7 @@ internal class FirStringConcatenationCallImpl(
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override var argumentList: FirArgumentList,
 ) : FirStringConcatenationCall() {
-    override var coneTypeOrNull: ConeKotlinType? = StandardClassIds.String.constructClassLikeType()
+    override val coneTypeOrNull: ConeKotlinType? = StandardClassIds.String.constructClassLikeType()
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
@@ -55,7 +55,5 @@ internal class FirStringConcatenationCallImpl(
         argumentList = newArgumentList
     }
 
-    override fun replaceConeTypeOrNull(newConeTypeOrNull: ConeKotlinType?) {
-        coneTypeOrNull = newConeTypeOrNull
-    }
+    override fun replaceConeTypeOrNull(newConeTypeOrNull: ConeKotlinType?) {}
 }

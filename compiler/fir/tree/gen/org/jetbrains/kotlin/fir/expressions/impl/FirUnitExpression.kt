@@ -28,7 +28,7 @@ class FirUnitExpression @FirImplementationDetail constructor(
     override val source: KtSourceElement?,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
 ) : FirExpression() {
-    override var coneTypeOrNull: ConeKotlinType? = StandardClassIds.Unit.constructClassLikeType()
+    override val coneTypeOrNull: ConeKotlinType? = StandardClassIds.Unit.constructClassLikeType()
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
@@ -44,9 +44,7 @@ class FirUnitExpression @FirImplementationDetail constructor(
         return this
     }
 
-    override fun replaceConeTypeOrNull(newConeTypeOrNull: ConeKotlinType?) {
-        coneTypeOrNull = newConeTypeOrNull
-    }
+    override fun replaceConeTypeOrNull(newConeTypeOrNull: ConeKotlinType?) {}
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
         annotations = newAnnotations.toMutableOrEmpty()

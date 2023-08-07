@@ -29,7 +29,7 @@ internal class FirThrowExpressionImpl(
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override var exception: FirExpression,
 ) : FirThrowExpression() {
-    override var coneTypeOrNull: ConeKotlinType? = StandardClassIds.Nothing.constructClassLikeType()
+    override val coneTypeOrNull: ConeKotlinType? = StandardClassIds.Nothing.constructClassLikeType()
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
@@ -52,9 +52,7 @@ internal class FirThrowExpressionImpl(
         return this
     }
 
-    override fun replaceConeTypeOrNull(newConeTypeOrNull: ConeKotlinType?) {
-        coneTypeOrNull = newConeTypeOrNull
-    }
+    override fun replaceConeTypeOrNull(newConeTypeOrNull: ConeKotlinType?) {}
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
         annotations = newAnnotations.toMutableOrEmpty()
