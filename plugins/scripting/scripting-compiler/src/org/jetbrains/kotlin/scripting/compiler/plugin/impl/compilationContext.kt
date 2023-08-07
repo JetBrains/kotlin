@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
+import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -43,6 +44,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.resolve.sam.SamWithReceiverResolver
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigurationComponentRegistrar
+import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingK2CompilerPluginRegistrar
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.ScriptsCompilationDependencies
 import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.collectScriptsCompilationDependencies
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
@@ -280,6 +282,12 @@ private fun createInitialCompilerConfiguration(
             ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS,
             ScriptingCompilerConfigurationComponentRegistrar()
         )
+        if (getBoolean(CommonConfigurationKeys.USE_FIR)) {
+            add(
+                CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS,
+                ScriptingK2CompilerPluginRegistrar()
+            )
+        }
 
         configureJavaModulesContentRoots(baseArguments)
         configureContentRootsFromClassPath(baseArguments)
