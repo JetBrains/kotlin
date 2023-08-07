@@ -11,14 +11,17 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.LLFirRetu
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isScriptStatement
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformerDispatcher
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ImplicitBodyResolveComputationSession
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 
 internal abstract class LLFirAbstractBodyTargetResolver(
@@ -27,7 +30,7 @@ internal abstract class LLFirAbstractBodyTargetResolver(
     private val scopeSession: ScopeSession,
     resolvePhase: FirResolvePhase,
     protected val implicitBodyResolveComputationSession: ImplicitBodyResolveComputationSession = ImplicitBodyResolveComputationSession(),
-    isJumpingPhase: Boolean = false
+    isJumpingPhase: Boolean = false,
 ) : LLFirTargetResolver(resolveTarget, lockProvider, resolvePhase, isJumpingPhase) {
     protected fun createReturnTypeCalculator(
         firResolveContextCollector: FirResolveContextCollector?,
@@ -78,12 +81,17 @@ internal abstract class LLFirAbstractBodyTargetResolver(
     protected fun resolveScript(script: FirScript) {
         transformer.declarationsTransformer?.withScript(script) {
             script.parameters.forEach { it.transformSingle(transformer, ResolutionMode.ContextIndependent) }
-            script.statements.forEach {
-                if (it.isScriptStatement) {
-                    transformer.firResolveContextCollector?.addStatementContext(it, transformer.context)
-                    it.transformSingle(transformer, ResolutionMode.ContextIndependent)
-                }
-            }
+            script.transformStatements(
+                transformer = object : FirTransformer<Any?>() {
+                    override fun <E : FirElement> transformElement(element: E, data: Any?): E {
+                        if (element !is FirStatement || !element.isScriptStatement) return element
+
+                        transformer.firResolveContextCollector?.addStatementContext(element, transformer.context)
+                        return element.transformSingle(transformer, ResolutionMode.ContextIndependent)
+                    }
+                },
+                data = null,
+            )
 
             script
         }

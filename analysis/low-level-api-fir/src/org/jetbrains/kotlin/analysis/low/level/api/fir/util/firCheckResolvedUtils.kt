@@ -64,6 +64,16 @@ internal fun checkBodyIsResolved(function: FirFunction) {
     }
 }
 
+internal fun checkStatementsAreResolved(script: FirScript) {
+    for (statement in script.statements) {
+        if (statement.isScriptStatement && statement is FirExpression) {
+            checkTypeRefIsResolved(statement.typeRef, "script statement", script) {
+                withFirEntry("expression", statement)
+            }
+        }
+    }
+}
+
 internal fun checkExpectForActualIsResolved(memberDeclaration: FirMemberDeclaration) {
     if (!memberDeclaration.isActual) return
 

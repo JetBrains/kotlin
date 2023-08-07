@@ -74,6 +74,7 @@ internal object LLFirBodyLazyResolver : LLFirLazyResolver(FirResolvePhase.BODY_R
                 checkBodyIsResolved(target)
             }
             is FirFunction -> checkBodyIsResolved(target)
+            is FirScript -> checkStatementsAreResolved(target)
         }
     }
 }

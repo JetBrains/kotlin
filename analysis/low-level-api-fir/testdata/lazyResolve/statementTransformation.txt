@@ -1,0 +1,193 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] statementTransformation.kts
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(RAW_FIR)]
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? [ResolvedTo(RAW_FIR)] val myProp: ( () -> Unit ) = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): ( () -> Unit )
+
+        myProp#(<L> = LAZY_EXPRESSION)
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] statementTransformation.kts
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(RAW_FIR)]
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? [ResolvedTo(RAW_FIR)] val myProp: ( () -> Unit ) = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): ( () -> Unit )
+
+        myProp#(<L> = LAZY_EXPRESSION)
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] statementTransformation.kts
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)]
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? [ResolvedTo(RAW_FIR)] val myProp: ( () -> Unit ) = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): ( () -> Unit )
+
+        myProp#(<L> = LAZY_EXPRESSION)
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] statementTransformation.kts
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(COMPANION_GENERATION)]
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? [ResolvedTo(RAW_FIR)] val myProp: ( () -> Unit ) = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): ( () -> Unit )
+
+        myProp#(<L> = LAZY_EXPRESSION)
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] statementTransformation.kts
+    context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
+    SCRIPT: [ResolvedTo(SUPER_TYPES)]
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? [ResolvedTo(RAW_FIR)] val myProp: ( () -> Unit ) = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): ( () -> Unit )
+
+        myProp#(<L> = LAZY_EXPRESSION)
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] statementTransformation.kts
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(TYPES)]
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? [ResolvedTo(RAW_FIR)] val myProp: ( () -> Unit ) = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): ( () -> Unit )
+
+        myProp#(<L> = LAZY_EXPRESSION)
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] statementTransformation.kts
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(STATUS)]
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? [ResolvedTo(RAW_FIR)] val myProp: ( () -> Unit ) = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): ( () -> Unit )
+
+        myProp#(<L> = LAZY_EXPRESSION)
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] statementTransformation.kts
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(EXPECT_ACTUAL_MATCHING)]
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? [ResolvedTo(RAW_FIR)] val myProp: ( () -> Unit ) = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): ( () -> Unit )
+
+        myProp#(<L> = LAZY_EXPRESSION)
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+
+ARGUMENTS_OF_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] statementTransformation.kts
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)]
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? [ResolvedTo(RAW_FIR)] val myProp: ( () -> Unit ) = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): ( () -> Unit )
+
+        myProp#(<L> = LAZY_EXPRESSION)
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] statementTransformation.kts
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(CONTRACTS)]
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? [ResolvedTo(RAW_FIR)] val myProp: ( () -> Unit ) = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): ( () -> Unit )
+
+        myProp#(<L> = LAZY_EXPRESSION)
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] statementTransformation.kts
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)]
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? [ResolvedTo(RAW_FIR)] val myProp: ( () -> Unit ) = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): ( () -> Unit )
+
+        myProp#(<L> = LAZY_EXPRESSION)
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+
+ANNOTATIONS_ARGUMENTS_MAPPING:
+FILE: [ResolvedTo(IMPORTS)] statementTransformation.kts
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)]
+        [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public? final? [ResolvedTo(RAW_FIR)] val myProp: ( () -> Unit ) = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] get(): ( () -> Unit )
+
+        myProp#(<L> = LAZY_EXPRESSION)
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] statementTransformation.kts
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)]
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(CONTRACTS)] val myProp: R|() -> kotlin/Unit| = [ResolvedTo(RAW_FIR)] fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+            ^ Unit
+        }
+
+            public [ResolvedTo(CONTRACTS)] get(): R|() -> kotlin/Unit|
+
+        R|/myProp|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|><Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): kotlin/Function0.invoke>#|(<L> = [ResolvedTo(BODY_RESOLVE)] myProp@fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+            ^ Int(123)
+        }
+        )
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(IMPORTS)] statementTransformation.kts
+    context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)]
+        [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
+
+        public final [ResolvedTo(BODY_RESOLVE)] val myProp: R|() -> kotlin/Unit| = [ResolvedTo(BODY_RESOLVE)] fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            ^ Unit
+        }
+
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|() -> kotlin/Unit|
+
+        R|/myProp|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|><Inapplicable(INAPPLICABLE_ARGUMENTS_MAPPING_ERROR): kotlin/Function0.invoke>#|(<L> = [ResolvedTo(BODY_RESOLVE)] myProp@fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+            ^ Int(123)
+        }
+        )
+        public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+        }

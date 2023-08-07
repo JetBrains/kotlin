@@ -469,6 +469,12 @@ public class FirScriptLazyDeclarationResolveTestGenerated extends AbstractFirScr
     }
 
     @Test
+    @TestMetadata("statementTransformation.kts")
+    public void testStatementTransformation() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/statementTransformation.kts");
+    }
+
+    @Test
     @TestMetadata("substitutionFakeOverrideScript.kts")
     public void testSubstitutionFakeOverrideScript() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/lazyResolve/substitutionFakeOverrideScript.kts");
