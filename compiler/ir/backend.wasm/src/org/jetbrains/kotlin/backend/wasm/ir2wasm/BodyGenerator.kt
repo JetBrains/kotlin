@@ -137,11 +137,21 @@ class BodyGenerator(
 
     override fun visitThrow(expression: IrThrow) {
         generateExpression(expression.value)
+        if (context.backendContext.configuration.getBoolean(JSConfigurationKeys.WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS)) {
+            body.buildUnreachable(SourceLocation.NoLocation("Unreachable is inserted instead of a `throw` instruction"))
+            return
+        }
+
         body.buildThrow(functionContext.tagIdx, expression.getSourceLocation())
     }
 
     override fun visitTry(aTry: IrTry) {
         assert(aTry.isCanonical(irBuiltIns)) { "expected canonical try/catch" }
+
+        if (context.backendContext.configuration.getBoolean(JSConfigurationKeys.WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS)) {
+            generateExpression(aTry.tryResult)
+            return
+        }
 
         val resultType = context.transformBlockResultType(aTry.type)
         body.buildTry(null, resultType)

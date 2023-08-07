@@ -97,7 +97,10 @@ fun compileWasm(
     generateWat: Boolean = false,
     generateSourceMaps: Boolean = false,
 ): WasmCompilerResult {
-    val compiledWasmModule = WasmCompiledModuleFragment(backendContext.irBuiltIns)
+    val compiledWasmModule = WasmCompiledModuleFragment(
+        backendContext.irBuiltIns,
+        backendContext.configuration.getBoolean(JSConfigurationKeys.WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS)
+    )
     val codeGenerator = WasmModuleFragmentGenerator(backendContext, compiledWasmModule, allowIncompleteImplementations = allowIncompleteImplementations)
     allModules.forEach { codeGenerator.collectInterfaceTables(it) }
     allModules.forEach { codeGenerator.generateModule(it) }

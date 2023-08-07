@@ -60,6 +60,8 @@ where advanced options include:
   -Xwasm-generate-wat        Generate wat file
   -Xwasm-kclass-fqn          Enable support for FQ names in KClass
   -Xwasm-target              Set up Wasm target (wasm-js or wasm-wasi)
+  -Xwasm-use-traps-instead-of-exceptions
+                             Trap instead of throwing exceptions
   -Xallow-any-scripts-in-source-roots
                              Allow to compile any scripts along with regular Kotlin sources
   -Xallow-kotlin-package     Allow compiling code in package 'kotlin' and allow not requiring kotlin.stdlib in module-info

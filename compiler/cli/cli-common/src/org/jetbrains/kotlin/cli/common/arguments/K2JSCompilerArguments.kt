@@ -631,6 +631,16 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
         }
 
     @Argument(
+        value = "-Xwasm-use-traps-instead-of-exceptions",
+        description = "Trap instead of throwing exceptions"
+    )
+    var wasmUseTrapsInsteadOfExceptions = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xforce-deprecated-legacy-compiler-usage",
         description = "The flag is used only for our inner infrastructure. It will be removed soon, so it's unsafe to use it nowadays."
     )

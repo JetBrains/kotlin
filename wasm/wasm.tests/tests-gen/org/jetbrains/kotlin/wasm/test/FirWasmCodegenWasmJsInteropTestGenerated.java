@@ -140,6 +140,12 @@ public class FirWasmCodegenWasmJsInteropTestGenerated extends AbstractFirWasmCod
     }
 
     @Test
+    @TestMetadata("noExceptions.kt")
+    public void testNoExceptions() throws Exception {
+        runTest("compiler/testData/codegen/boxWasmJsInterop/noExceptions.kt");
+    }
+
+    @Test
     @TestMetadata("nullableExternRefs.kt")
     public void testNullableExternRefs() throws Exception {
         runTest("compiler/testData/codegen/boxWasmJsInterop/nullableExternRefs.kt");

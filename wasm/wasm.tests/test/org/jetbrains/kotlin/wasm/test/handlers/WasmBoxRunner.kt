@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.js.JavaScript
 import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.DISABLE_WASM_EXCEPTION_HANDLING
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.RUN_UNIT_TESTS
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.services.TestServices
@@ -191,6 +192,8 @@ class WasmBoxRunner(
             val testFileText = originalFile.readText()
             val failsIn: List<String> = InTextDirectivesUtils.findListWithPrefixes(testFileText, "// WASM_FAILS_IN: ")
 
+            val disableExceptions = DISABLE_WASM_EXCEPTION_HANDLING in testServices.moduleStructure.allDirectives
+
             val exceptions = listOf(WasmVM.V8, WasmVM.SpiderMonkey).mapNotNull map@{ vm ->
                 try {
                     if (debugMode >= DebugMode.DEBUG) {
@@ -199,7 +202,8 @@ class WasmBoxRunner(
                     vm.run(
                         "./${entryMjs}",
                         jsFilePaths,
-                        workingDirectory = dir
+                        workingDirectory = dir,
+                        disableExceptionHandlingIfPossible = disableExceptions
                     )
                     if (vm.shortName in failsIn) {
                         return@map AssertionError("The test expected to fail in ${vm.name}. Please update the testdata.")

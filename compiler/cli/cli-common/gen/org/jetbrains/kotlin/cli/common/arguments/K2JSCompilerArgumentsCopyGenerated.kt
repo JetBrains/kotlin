@@ -73,6 +73,7 @@ fun copyK2JSCompilerArguments(from: K2JSCompilerArguments, to: K2JSCompilerArgum
     to.wasmGenerateWat = from.wasmGenerateWat
     to.wasmKClassFqn = from.wasmKClassFqn
     to.wasmTarget = from.wasmTarget
+    to.wasmUseTrapsInsteadOfExceptions = from.wasmUseTrapsInsteadOfExceptions
 
     return to
 }

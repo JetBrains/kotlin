@@ -123,9 +123,11 @@ class WasmIrToBinary(
             }
 
             // tag section
-            appendSection(WasmBinary.Section.TAG) {
-                appendVectorSize(tags.size)
-                tags.forEach { appendTag(it) }
+            if (tags.isNotEmpty()) {
+                appendSection(WasmBinary.Section.TAG) {
+                    appendVectorSize(tags.size)
+                    tags.forEach { appendTag(it) }
+                }
             }
 
             appendSection(WasmBinary.Section.GLOBAL) {
@@ -607,7 +609,7 @@ abstract class ByteWriter {
     fun writeUByte(v: UByte) {
         writeByte(v.toByte())
     }
-    
+
     fun writeUInt32(v: UInt) {
         writeByte(v.toByte())
         writeByte((v shr 8).toByte())

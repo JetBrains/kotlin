@@ -17,10 +17,10 @@ internal sealed class WasmVM(val shortName: String) {
     val name: String = javaClass.simpleName
     protected val tool = ExternalTool(System.getProperty("javascript.engine.path.$name"))
 
-    abstract fun run(entryMjs: String, jsFiles: List<String>, workingDirectory: File?)
+    abstract fun run(entryMjs: String, jsFiles: List<String>, workingDirectory: File?, disableExceptionHandlingIfPossible: Boolean = false)
 
     object V8 : WasmVM("V8") {
-        override fun run(entryMjs: String, jsFiles: List<String>, workingDirectory: File?) {
+        override fun run(entryMjs: String, jsFiles: List<String>, workingDirectory: File?, disableExceptionHandlingIfPossible: Boolean) {
             tool.run(
                 "--experimental-wasm-gc",
                 "--wasm-final-types",
@@ -34,10 +34,11 @@ internal sealed class WasmVM(val shortName: String) {
     }
 
     object SpiderMonkey : WasmVM("SM") {
-        override fun run(entryMjs: String, jsFiles: List<String>, workingDirectory: File?) {
+        override fun run(entryMjs: String, jsFiles: List<String>, workingDirectory: File?, disableExceptionHandlingIfPossible: Boolean) {
             tool.run(
                 "--wasm-verbose",
                 "--wasm-gc",
+                *if (disableExceptionHandlingIfPossible) arrayOf("--no-wasm-exceptions") else emptyArray(),
                 "--wasm-function-references",
                 *jsFiles.flatMap { listOf("-f", it) }.toTypedArray(),
                 "--module=$entryMjs",

@@ -124,6 +124,9 @@ public class JSConfigurationKeys {
     public static final CompilerConfigurationKey<WasmTarget> WASM_TARGET =
             CompilerConfigurationKey.create("wasm target");
 
+    public static final CompilerConfigurationKey<Boolean> WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS =
+            CompilerConfigurationKey.create("use wasm traps instead of throwing exceptions");
+
     public static final CompilerConfigurationKey<ZipFileSystemAccessor> ZIP_FILE_SYSTEM_ACCESSOR =
             CompilerConfigurationKey.create("zip file system accessor, used for klib reading");
 

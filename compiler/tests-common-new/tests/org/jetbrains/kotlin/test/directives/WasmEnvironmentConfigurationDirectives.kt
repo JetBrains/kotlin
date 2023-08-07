@@ -13,6 +13,10 @@ object WasmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         description = "Run kotlin.test unit tests (function marked with @Test)",
     )
 
+    val DISABLE_WASM_EXCEPTION_HANDLING by directive(
+        description = "Generate wasm without EH proposal and test in runtime with EH turned off",
+    )
+
     // Next directives are used only inside test system and must not be present in test file
 
     val PATH_TO_TEST_DIR by stringDirective(

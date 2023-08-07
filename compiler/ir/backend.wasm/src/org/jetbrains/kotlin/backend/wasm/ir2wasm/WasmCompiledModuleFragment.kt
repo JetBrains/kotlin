@@ -15,7 +15,10 @@ import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 
-class WasmCompiledModuleFragment(val irBuiltIns: IrBuiltIns) {
+class WasmCompiledModuleFragment(
+    val irBuiltIns: IrBuiltIns,
+    generateTrapsInsteadOfExceptions: Boolean,
+) {
     val functions =
         ReferencableAndDefinable<IrFunctionSymbol, WasmFunction>()
     val globalFields =
@@ -49,7 +52,7 @@ class WasmCompiledModuleFragment(val irBuiltIns: IrBuiltIns) {
         ),
         emptyList()
     )
-    val tag = WasmTag(tagFuncType)
+    val tags = if (generateTrapsInsteadOfExceptions) emptyList() else listOf(WasmTag(tagFuncType))
 
     val typeInfo = ReferencableAndDefinable<IrClassSymbol, ConstantDataElement>()
 
@@ -238,7 +241,7 @@ class WasmCompiledModuleFragment(val irBuiltIns: IrBuiltIns) {
             elements = emptyList(),
             data = data,
             dataCount = true,
-            tags = listOf(tag)
+            tags = tags
         )
         module.calculateIds()
         return module
