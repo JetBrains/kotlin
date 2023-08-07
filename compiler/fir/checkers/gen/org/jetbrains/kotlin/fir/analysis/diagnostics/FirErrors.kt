@@ -119,6 +119,7 @@ object FirErrors {
     // Meta-errors
     val UNSUPPORTED by error1<PsiElement, String>()
     val UNSUPPORTED_FEATURE by error1<PsiElement, Pair<LanguageFeature, LanguageVersionSettings>>()
+    val UNSUPPORTED_SUSPEND_TEST by error0<PsiElement>()
     val NEW_INFERENCE_ERROR by error1<PsiElement, String>()
 
     // Miscellaneous

@@ -54,6 +54,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val UNSUPPORTED_FEATURE by error<PsiElement> {
             parameter<Pair<LanguageFeature, LanguageVersionSettings>>("unsupportedFeature")
         }
+        val UNSUPPORTED_SUSPEND_TEST by error<PsiElement>()
         val NEW_INFERENCE_ERROR by error<PsiElement> {
             parameter<String>("error")
         }

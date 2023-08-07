@@ -103,6 +103,10 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val unsupportedFeature: Pair<LanguageFeature, LanguageVersionSettings>
     }
 
+    interface UnsupportedSuspendTest : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = UnsupportedSuspendTest::class
+    }
+
     interface NewInferenceError : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = NewInferenceError::class
         val error: String

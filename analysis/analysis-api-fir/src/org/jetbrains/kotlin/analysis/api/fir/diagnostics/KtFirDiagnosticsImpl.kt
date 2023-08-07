@@ -105,6 +105,11 @@ internal class UnsupportedFeatureImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.UnsupportedFeature
 
+internal class UnsupportedSuspendTestImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.UnsupportedSuspendTest
+
 internal class NewInferenceErrorImpl(
     override val error: String,
     firDiagnostic: KtPsiDiagnostic,
