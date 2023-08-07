@@ -460,6 +460,12 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceShortenerTestGenera
         runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/variableAssignment_plusOperator.kt");
     }
 
+    @Test
+    @TestMetadata("variable_invokeOperator.kt")
+    public void testVariable_invokeOperator() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/variable_invokeOperator.kt");
+    }
+
     @Nested
     @TestMetadata("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/nestedClasses")
     @TestDataPath("$PROJECT_ROOT")
