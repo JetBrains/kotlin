@@ -80,12 +80,27 @@ abstract class KotlinDeclarationInCompiledFileSearcher {
                 } else if (JvmAbi.isSetterName(memberName) && PsiType.VOID.equals(member.returnType)) {
                     propertyNamesBySetMethodName(Name.identifier(memberName)).forEach { names.add(it.identifier) }
                     true
-                } else true
+                } else null
                 declarations
                     .firstOrNull { declaration ->
-                        nameMatches(declaration, names) &&
-                                (declaration is KtNamedFunction && doParametersMatch(member, declaration) ||
-                                        declaration is KtProperty && doPropertyMatch(member, declaration, setter))
+                        val declarationName = getJvmName(declaration)
+                        when (declaration) {
+                            is KtNamedFunction -> {
+                                declarationName in names && doParametersMatch(member, declaration)
+                            }
+                            is KtProperty -> {
+                                val getterName = getJvmName(declaration.getter)
+                                val setterName = getJvmName(declaration.setter)
+                                if (setter != null) {
+                                    val accessorName = (if (setter) setterName else getterName) ?: declarationName
+                                    accessorName in names && doPropertyMatch(member, declaration, setter)
+                                } else {
+                                    getterName in names && doPropertyMatch(member, declaration, false) ||
+                                            setterName in names && doPropertyMatch(member, declaration, true)
+                                }
+                            }
+                            else -> false
+                        }
                     }
             }
 
@@ -97,11 +112,6 @@ abstract class KotlinDeclarationInCompiledFileSearcher {
             }
             else -> declarations.singleOrNull { it.name == memberName }
         }
-    }
-
-    private fun nameMatches(declaration: KtDeclaration?, names: MutableList<String>): Boolean {
-        if (getJvmName(declaration) in names) return true
-        return declaration is KtProperty && (getJvmName(declaration.getter) in names || getJvmName(declaration.setter) in names)
     }
 
     private fun getJvmName(declaration: KtDeclaration?): String? {
