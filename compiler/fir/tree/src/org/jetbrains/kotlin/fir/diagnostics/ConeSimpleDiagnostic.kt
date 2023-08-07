@@ -37,6 +37,10 @@ class ConeCannotInferValueParameterType(
     override val reason: String = "Cannot infer type for parameter ${valueParameter.name}"
 ) : ConeDiagnostic
 
+class ConeCannotInferReceiverParameterType(
+    override val reason: String = "Cannot infer type for receiver parameter"
+) : ConeDiagnostic
+
 class ConeTypeVariableTypeIsNotInferred(
     val typeVariableType: ConeTypeVariableType,
     override val reason: String = "Type for ${typeVariableType.lookupTag.debugName} is not inferred"

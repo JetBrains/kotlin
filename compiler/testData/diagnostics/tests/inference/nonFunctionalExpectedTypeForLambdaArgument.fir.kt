@@ -1,4 +1,3 @@
-// IGNORE_LEAKED_INTERNAL_TYPES: KT-54568
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun callAny(arg: Any?) {}
@@ -20,14 +19,14 @@ fun testAnyCall() {
 }
 
 fun testParam() {
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>callParam<!> {
-        param -> param
+    callParam {
+        <!CANNOT_INFER_PARAMETER_TYPE!>param<!> -> param
     }
 }
 
 fun testParamCall() {
     callParam {
-        param -> <!UNRESOLVED_REFERENCE!>param<!>()
+        <!CANNOT_INFER_PARAMETER_TYPE!>param<!> -> <!UNRESOLVED_REFERENCE!>param<!>()
     }
 }
 
