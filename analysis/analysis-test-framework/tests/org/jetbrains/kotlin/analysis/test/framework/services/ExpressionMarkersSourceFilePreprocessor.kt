@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestService
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
+import kotlin.reflect.KClass
 
 internal class ExpressionMarkersSourceFilePreprocessor(testServices: TestServices) : SourceFilePreprocessor(testServices) {
     override fun process(file: TestFile, content: String): String {
@@ -147,6 +148,40 @@ class ExpressionMarkerProvider : TestService {
 
     }
 
+    fun getSelectedElementOrElementAtCaretOfTypeByDirective(
+        ktFile: KtFile,
+        module: TestModule,
+        defaultType: KClass<out PsiElement>? = null,
+        caretTag: String? = null,
+    ): PsiElement {
+        val expectedClass = expectedTypeClass(module.directives) ?: defaultType?.java
+        return getSelectedElementOfClassOrNull(ktFile, expectedClass)
+            ?: getElementOfClassAtCaretOrNull(ktFile, expectedClass, caretTag)
+            ?: error("Neither ${ExpressionMarkersSourceFilePreprocessor.TAGS.OPENING_EXPRESSION_TAG} marker nor <caret> were found in file")
+    }
+
+    private fun getSelectedElementOfClassOrNull(
+        ktFile: KtFile,
+        expectedClass: Class<out PsiElement>?,
+    ): PsiElement? {
+        val selectedElement = getSelectedElementOrNull(ktFile) ?: return null
+        if (expectedClass == null) return selectedElement
+        return findDescendantOfTheSameRangeOfType(selectedElement, expectedClass)
+    }
+
+
+    private fun getElementOfClassAtCaretOrNull(
+        ktFile: KtFile,
+        expectedClass: Class<out PsiElement>?,
+        caretTag: String? = null,
+    ): PsiElement? {
+        val caretPosition = getCaretPositionOrNull(ktFile, caretTag) ?: return null
+        val elementAtPosition = ktFile.findElementAt(caretPosition) ?: return null
+        if (expectedClass == null) return elementAtPosition
+        return PsiTreeUtil.getParentOfType(elementAtPosition, expectedClass, /*strict*/false)
+    }
+
+
     fun getSelectedElementOrNull(file: KtFile): PsiElement? {
         val range = selected[file.name] ?: return null
         val elements = file.elementsInRange(range).trimWhitespaces()
@@ -175,8 +210,12 @@ class ExpressionMarkerProvider : TestService {
         val expectedType = expectedTypeClass(module.directives) ?: return selectedElement
         if (expectedType.isInstance(selectedElement)) return selectedElement
 
+        return findDescendantOfTheSameRangeOfType(selectedElement, expectedType)
+    }
+
+    private fun findDescendantOfTheSameRangeOfType(selectedElement: PsiElement, expectedClass: Class<out PsiElement>): PsiElement {
         return selectedElement.collectDescendantsOfType<PsiElement> {
-            expectedType.isInstance(it)
+            expectedClass.isInstance(it)
         }.single { it.textRange == selectedElement.textRange }
     }
 
