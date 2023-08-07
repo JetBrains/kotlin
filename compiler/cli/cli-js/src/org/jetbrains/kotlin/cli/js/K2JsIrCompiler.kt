@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.dce.DceDumpNameCache
 import org.jetbrains.kotlin.ir.backend.js.dce.dumpDeclarationIrSizesIfNeed
+import org.jetbrains.kotlin.ir.backend.js.dce.dumpExtendedDeclarationsIrSizes
 import org.jetbrains.kotlin.ir.backend.js.ic.*
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
@@ -366,6 +367,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 }
 
                 dumpDeclarationIrSizesIfNeed(arguments.irDceDumpDeclarationIrSizesToFile, allModules, dceDumpNameCache)
+                dumpExtendedDeclarationsIrSizes(arguments.irDceDumpAllDeclarationIrSizesToFile, dceDumpNameCache)
 
                 val generateSourceMaps = configuration.getBoolean(JSConfigurationKeys.SOURCE_MAP)
 
@@ -392,6 +394,9 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 }
                 if (arguments.irDceDumpDeclarationIrSizesToFile != null) {
                     messageCollector.report(STRONG_WARNING, "Dumping the size of declarations to file is supported only for Kotlin/Wasm.")
+                }
+                if (arguments.irDceDumpAllDeclarationIrSizesToFile != null) {
+                    messageCollector.report(STRONG_WARNING, "Dumping the size of all declarations to file is supported only for Kotlin/Wasm.")
                 }
             }
 

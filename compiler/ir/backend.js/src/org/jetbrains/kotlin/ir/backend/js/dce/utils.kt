@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import java.io.File
-import java.nio.file.Path
 
 private fun IrDeclaration.fallbackFqName(): String {
     val fqn = (this as? IrDeclarationWithName)?.fqNameWhenAvailable?.asString() ?: "<unknown>"
@@ -99,9 +98,36 @@ fun dumpDeclarationIrSizesIfNeed(path: String?, allModules: List<IrModuleFragmen
             }
         })
     }
+    dumpIrDeclarationSizes(declarations, File(path))
+}
 
-    val out = File(path)
-    val (prefix, postfix, separator, indent) = when (out.extension) {
+fun dumpExtendedDeclarationsIrSizes(path: String?, dceDumpNameCache: DceDumpNameCache) {
+    if (path == null) {
+        return
+    }
+    val extendedDeclarations = dceDumpNameCache.getDceDumpNames().map {
+        val type = when (it) {
+            is IrFunction -> "function"
+            is IrProperty -> "property"
+            is IrField -> "field"
+            is IrAnonymousInitializer -> "anonymous initializer"
+            is IrVariable -> "variable"
+            is IrValueParameter -> "value parameter"
+            is IrClass -> "class"
+            else -> error("invalid IR declaration type ${it.render()}")
+        }
+        IrDeclarationDumpInfo(
+            fqName = dceDumpNameCache.getOrPut(it).removeQuotes(),
+            displayName = it.fqNameForDisplayDceDump().removeQuotes(),
+            type = type,
+            size = it.dumpKotlinLike().length
+        )
+    }
+    dumpIrDeclarationSizes(extendedDeclarations, File(path))
+}
+
+internal fun dumpIrDeclarationSizes(declarations: Collection<IrDeclarationDumpInfo>, outputFile: File) {
+    val (prefix, postfix, separator, indent) = when (outputFile.extension) {
         "json" -> listOf("{\n", "\n}", ",\n", "    ")
         "js" -> listOf("export const kotlinDeclarationsSize = {\n", "\n};\n", ",\n", "    ")
         else -> listOf("", "", "\n", "")
@@ -115,8 +141,7 @@ fun dumpDeclarationIrSizesIfNeed(path: String?, allModules: List<IrModuleFragmen
                 |$indent}
             """.trimMargin()
     }
-
-    out.writeText(value)
+    outputFile.writeText(value)
 }
 
 internal fun String.removeQuotes() = replace('"'.toString(), "")
