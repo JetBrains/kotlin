@@ -60,11 +60,11 @@ abstract class LibraryPathFilter {
         override fun accepts(path: Path?): Boolean {
             if (path == null) return false
             val isPathAbsolute = path.isAbsolute
-            val absolutePath by lazy(LazyThreadSafetyMode.NONE) { path.toAbsolutePath() }
+            val realPath by lazy(LazyThreadSafetyMode.NONE) { path.toRealPath() }
             return libs.any {
                 when {
-                    it.isAbsolute && !isPathAbsolute -> absolutePath.startsWith(it)
-                    !it.isAbsolute && isPathAbsolute -> path.startsWith(it.toAbsolutePath())
+                    it.isAbsolute && !isPathAbsolute -> realPath.startsWith(it)
+                    !it.isAbsolute && isPathAbsolute -> path.startsWith(it.toRealPath())
                     else -> path.startsWith(it)
                 }
             }
