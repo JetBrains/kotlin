@@ -590,6 +590,12 @@ internal class SupertypeNotAClassOrInterfaceImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KtFirDiagnostic.SupertypeNotAClassOrInterface
 
+internal class UnsupportedInheritanceFromJavaMemberReferencingKotlinFunctionImpl(
+    override val symbol: KtSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.UnsupportedInheritanceFromJavaMemberReferencingKotlinFunction
+
 internal class CyclicInheritanceHierarchyImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,

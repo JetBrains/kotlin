@@ -248,6 +248,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val SUPERTYPE_NOT_A_CLASS_OR_INTERFACE by error<KtElement> {
             parameter<String>("reason")
         }
+        val UNSUPPORTED_INHERITANCE_FROM_JAVA_MEMBER_REFERENCING_KOTLIN_FUNCTION by error<PsiElement>(PositioningStrategy.DECLARATION_NAME) {
+            parameter<FirBasedSymbol<*>>("symbol")
+        }
         val CYCLIC_INHERITANCE_HIERARCHY by error<PsiElement>()
         val EXPANDED_TYPE_CANNOT_BE_INHERITED by error<KtTypeReference> {
             parameter<ConeKotlinType>("type")
