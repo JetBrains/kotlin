@@ -9,8 +9,8 @@ public class A {
 
 // FILE: main.kt
 
-class B : A()
+<!UNSUPPORTED_INHERITANCE_FROM_JAVA_MEMBER_REFERENCING_KOTLIN_FUNCTION!>class B<!> : A()
 
 fun foo() {
-    object : A() {}
+    <!UNSUPPORTED_INHERITANCE_FROM_JAVA_MEMBER_REFERENCING_KOTLIN_FUNCTION!>object<!> : A() {}
 }

@@ -502,6 +502,11 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val reason: String
     }
 
+    interface UnsupportedInheritanceFromJavaMemberReferencingKotlinFunction : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = UnsupportedInheritanceFromJavaMemberReferencingKotlinFunction::class
+        val symbol: KtSymbol
+    }
+
     interface CyclicInheritanceHierarchy : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = CyclicInheritanceHierarchy::class
     }

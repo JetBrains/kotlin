@@ -14,6 +14,7 @@ object StandardClassIds {
     val BASE_RANGES_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("ranges"))
     val BASE_JVM_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("jvm"))
     val BASE_JVM_INTERNAL_PACKAGE = BASE_JVM_PACKAGE.child(Name.identifier("internal"))
+    val BASE_JVM_FUNCTIONS_PACKAGE = BASE_JVM_PACKAGE.child(Name.identifier("functions"))
     val BASE_ANNOTATION_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("annotation"))
     val BASE_INTERNAL_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("internal"))
     val BASE_INTERNAL_IR_PACKAGE = BASE_INTERNAL_PACKAGE.child(Name.identifier("ir"))
@@ -183,6 +184,8 @@ object StandardClassIds {
         val FlexibleMutability = "FlexibleMutability".internalIrId()
         val EnhancedNullability = "EnhancedNullability".jvmInternalId()
 
+        val FunctionN = "FunctionN".jvmFunctionsId()
+
         val InlineOnly = "InlineOnly".internalId()
 
         val OnlyInputTypes = "OnlyInputTypes".internalId()
@@ -265,6 +268,7 @@ private fun String.rangesId() = ClassId(StandardClassIds.BASE_RANGES_PACKAGE, Na
 private fun String.annotationId() = ClassId(StandardClassIds.BASE_ANNOTATION_PACKAGE, Name.identifier(this))
 private fun String.jvmId() = ClassId(StandardClassIds.BASE_JVM_PACKAGE, Name.identifier(this))
 private fun String.jvmInternalId() = ClassId(StandardClassIds.BASE_JVM_INTERNAL_PACKAGE, Name.identifier(this))
+private fun String.jvmFunctionsId() = ClassId(StandardClassIds.BASE_JVM_FUNCTIONS_PACKAGE, Name.identifier(this))
 private fun String.internalId() = ClassId(StandardClassIds.BASE_INTERNAL_PACKAGE, Name.identifier(this))
 private fun String.internalIrId() = ClassId(StandardClassIds.BASE_INTERNAL_IR_PACKAGE, Name.identifier(this))
 private fun String.coroutinesId() = ClassId(StandardClassIds.BASE_COROUTINES_PACKAGE, Name.identifier(this))
