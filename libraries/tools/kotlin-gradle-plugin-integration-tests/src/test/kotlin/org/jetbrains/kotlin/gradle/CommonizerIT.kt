@@ -479,10 +479,10 @@ open class CommonizerIT : KGPBaseTest() {
     @GradleTest
     fun testCommonizationWithTwoCInteropCommonizerGroups(gradleVersion: GradleVersion) {
         nativeProject("commonize-kt-57796-twoCInteropCommonizerGroups", gradleVersion) {
-            build(":app:commonizeCIntero") {
-                assertTasksExecuted(":lib:transformCommonMainCInteropDependenciesMetadata")
+            build(":app:commonizeCInterop") {
+                assertTasksNotExecuted(":lib:transformCommonMainCInteropDependenciesMetadata")
                 assertTasksExecuted(":lib:commonizeCInterop")
-                assertTasksExecuted(":app:transformCommonMainCInteropDependenciesMetadata")
+                assertTasksNotExecuted(":app:transformCommonMainCInteropDependenciesMetadata")
                 assertTasksExecuted(":app:commonizeCInterop")
             }
         }
