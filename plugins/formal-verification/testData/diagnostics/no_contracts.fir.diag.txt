@@ -82,9 +82,10 @@ method global$pkg_$return_unit()
 method global$pkg_$function_call()
 {
   global$pkg_$return_unit()
+  global$pkg_$return_unit()
 }
 
-/no_contracts.kt:(327,347): info: field backing_int: Int
+/no_contracts.kt:(653,673): info: field backing_int: Int
 
 method global$pkg_$take_int_return_unit(local$x: Int)
 

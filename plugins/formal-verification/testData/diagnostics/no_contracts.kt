@@ -30,6 +30,7 @@ fun <!VIPER_TEXT!>if_on_parameter<!>(b: Boolean): Int {
 }
 fun <!VIPER_TEXT!>function_call<!>() {
     return_unit()
+    return_unit()
 }
 fun <!VIPER_TEXT!>function_call_nested<!>() {
     take_int_return_unit(take_int_return_int(return_int()))

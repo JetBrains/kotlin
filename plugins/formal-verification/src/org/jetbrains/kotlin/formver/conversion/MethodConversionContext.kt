@@ -17,12 +17,16 @@ import viper.silver.ast.Method
  * time.
  */
 class MethodConversionContext(val programCtx: ProgramConversionContext, val signature: ConvertedMethodSignature, val body: FirBlock?) {
+    // Converting the body here would be too late; we want this to be a pure method, while
+    // converting the body may involve the program context.
     val toMethod: Method
         get() =
-            signature.toMethod(listOf(), listOf(), body?.let { convertBody(it) })
+            signature.toMethod(listOf(), listOf(), convertedBody)
 
     val returnVar: ConvertedVar?
         get() = signature.returnVar
+
+    private val convertedBody = body?.let { convertBody(it) }
 
     private fun convertBody(body: FirBlock): Stmt.Seqn {
         val ctx = StmtConversionContext(this)

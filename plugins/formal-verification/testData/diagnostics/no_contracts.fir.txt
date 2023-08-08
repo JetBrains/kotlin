@@ -48,6 +48,7 @@ FILE: no_contracts.kt
     }
     public final fun function_call(): R|kotlin/Unit| {
         R|/return_unit|()
+        R|/return_unit|()
     }
     public final fun function_call_nested(): R|kotlin/Unit| {
         R|/take_int_return_unit|(R|/take_int_return_int|(R|/return_int|()))

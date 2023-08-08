@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.formver.scala.emptySeq
 import org.jetbrains.kotlin.formver.scala.seqOf
 import org.jetbrains.kotlin.formver.scala.silicon.ast.*
 import org.jetbrains.kotlin.formver.scala.toScalaSeq
+import org.jetbrains.kotlin.utils.addToStdlib.getOrPut
 import viper.silver.ast.Method
 import viper.silver.ast.Program
 
@@ -26,7 +27,7 @@ const val INT_BACKING_FIELD = "backing_int"
  * performed via this context to ensure they can be deduplicated.
  */
 class ProgramConversionContext {
-    private val methods: MutableList<Method> = mutableListOf()
+    private val methods: MutableMap<ConvertedName, MethodConversionContext> = mutableMapOf()
 
     val program: Program
         get() = Program(
@@ -34,7 +35,7 @@ class ProgramConversionContext {
             seqOf(field(INT_BACKING_FIELD, Type.Int)), /* Fields */
             emptySeq(), /* Functions */
             emptySeq(), /* Predicates */
-            methods.toScalaSeq(), /* Functions */
+            methods.values.map { it.toMethod }.toList().toScalaSeq(), /* Functions */
             emptySeq(), /* Extensions */
             Position.NoPosition.toViper(),
             Info.NoInfo.toViper(),
@@ -42,15 +43,20 @@ class ProgramConversionContext {
         )
 
     fun addWithBody(declaration: FirSimpleFunction) {
-        val methodCtx = MethodConversionContext(this, convertSignature(declaration.symbol), declaration.body)
-        methods.add(methodCtx.toMethod)
+        val signature = convertSignature(declaration.symbol)
+        // NOTE: we have a problem here if we initially specify a method without a body,
+        // and then later decide to add a body anyway.  It's not a problem for now, but
+        // worth being aware of.
+        methods.getOrPut(signature.name) {
+            MethodConversionContext(this, signature, declaration.body)
+        }
     }
 
     fun add(symbol: FirNamedFunctionSymbol): ConvertedMethodSignature {
-        val signature =
-            convertSignature(symbol)
-        val methodCtx = MethodConversionContext(this, signature, null)
-        methods.add(methodCtx.toMethod)
+        val signature = convertSignature(symbol)
+        methods.getOrPut(signature.name) {
+            MethodConversionContext(this, signature, null)
+        }
         return signature
     }
 
