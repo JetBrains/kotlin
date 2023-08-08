@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,11 +9,12 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
-import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.ConstantValueKind
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -29,7 +30,9 @@ inline fun <reified T : ConeKotlinType> FirTypeRef.coneTypeSafe(): T? {
 
 val FirTypeRef.coneType: ConeKotlinType
     get() = coneTypeSafe()
-        ?: error("Expected FirResolvedTypeRef with ConeKotlinType but was ${this::class.simpleName} ${render()}")
+        ?: errorWithAttachment("Expected ${FirResolvedTypeRef::class.simpleName} with ${ConeKotlinType::class.simpleName} but was ${this::class.simpleName}") {
+            withFirEntry("typeRef", this@coneType)
+        }
 
 val FirTypeRef.coneTypeOrNull: ConeKotlinType?
     get() = coneTypeSafe()
@@ -137,15 +140,14 @@ fun ConeClassLikeType.toConstKind(): ConstantValueKind<*>? = when (lookupTag.cla
     else -> null
 }
 
-fun FirTypeProjection.toConeTypeProjection(): ConeTypeProjection =
-    when (this) {
-        is FirStarProjection -> ConeStarProjection
-        is FirTypeProjectionWithVariance -> {
-            val type = typeRef.coneType
-            type.toTypeProjection(this.variance)
-        }
-        else -> error("!")
+fun FirTypeProjection.toConeTypeProjection(): ConeTypeProjection = when (this) {
+    is FirStarProjection -> ConeStarProjection
+    is FirTypeProjectionWithVariance -> {
+        val type = typeRef.coneType
+        type.toTypeProjection(this.variance)
     }
+    else -> errorWithAttachment("Unexpected ${this::class.simpleName}") { withFirEntry("projection", this@toConeTypeProjection) }
+}
 
 val FirTypeRef.canBeNull: Boolean
     get() = coneType.canBeNull
