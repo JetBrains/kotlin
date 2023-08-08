@@ -1,10 +1,9 @@
 plugins {
     id("kotlin-platform-common")
+    id("maven-publish")
 }
 
 description = 'Kotlin Common Standard Library'
-
-RepoArtifacts.publish(project)
 
 JvmToolchain.updateJvmTarget(project, "1.8")
 
@@ -76,3 +75,45 @@ RepoArtifacts.javadocJar(project)
 tasks.named("sourcesJar").configure { it.dependsOn(":prepare:build.version:writeStdlibVersion") }
 
 classes.setDependsOn(classes.dependsOn.findAll { it != "compileJava" })
+
+def stdlibCommonElements = configurations.create("stdlibCommonElements") {
+    canBeResolved = false
+    canBeConsumed = true
+    attributes {
+        attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category, Category.LIBRARY))
+    }
+}
+dependencies {
+    add(stdlibCommonElements.name, project(":kotlin-stdlib"))
+}
+
+class ComponentsFactoryAccess {
+    SoftwareComponentFactory factory
+
+    @javax.inject.Inject
+    ComponentsFactoryAccess(SoftwareComponentFactory factory) {
+        this.factory = factory
+    }
+}
+
+SoftwareComponentFactory componentFactory = objects.newInstance(ComponentsFactoryAccess).factory
+
+def rootComponent = componentFactory.adhoc("root")
+rootComponent.addVariantsFromConfiguration(stdlibCommonElements) {
+    mapToOptional()
+}
+
+plugins.KotlinBuildPublishingPluginKt.configureDefaultPublishing(project)
+
+publishing {
+    publications {
+        def mainPublication = register("main", MavenPublication) {
+            from(rootComponent)
+            artifact(jar)
+            artifact(sourcesJar)
+            artifact(javadocJar)
+            plugins.KotlinBuildPublishingPluginKt.configureKotlinPomAttributes(it, project, "Kotlin Common Standard Library (legacy, use kotlin-stdlib instead)", "jar")
+        }
+        SbomKt.configureSbom(project, "Main", "kotlin-stdlib-common", ["compileClasspath"], mainPublication)
+    }
+}
