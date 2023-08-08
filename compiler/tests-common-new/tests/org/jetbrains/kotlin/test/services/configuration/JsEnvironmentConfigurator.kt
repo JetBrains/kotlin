@@ -295,8 +295,6 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
             JSConfigurationKeys.FILE_PATHS_PREFIX_MAP,
             mapOf(File(".").absolutePath.removeSuffix(".") to "")
         )
-
-        configuration.put(CommonConfigurationKeys.EXPECT_ACTUAL_LINKER, EXPECT_ACTUAL_LINKER in registeredDirectives)
     }
 }
 

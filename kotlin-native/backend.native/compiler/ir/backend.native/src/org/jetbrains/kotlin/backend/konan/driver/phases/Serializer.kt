@@ -35,7 +35,6 @@ internal val SerializerPhase = createSimpleNamedCompilerPhase<PhaseContext, Seri
         outputIfNotEnabled = { _, _, _, _ -> SerializerOutput(null, null, null, emptyList()) }
 ) { context: PhaseContext, input: SerializerInput ->
     val config = context.config
-    val expectActualLinker = config.configuration.get(CommonConfigurationKeys.EXPECT_ACTUAL_LINKER) ?: false
     val messageLogger = config.configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None
     val relativePathBase = config.configuration.get(CommonConfigurationKeys.KLIB_RELATIVE_PATH_BASES) ?: emptyList()
     val normalizeAbsolutePaths = config.configuration.get(CommonConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH) ?: false
@@ -52,11 +51,13 @@ internal val SerializerPhase = createSimpleNamedCompilerPhase<PhaseContext, Seri
     }
 
     val serializer = KlibMetadataMonolithicSerializer(
-            config.configuration.languageVersionSettings,
-            config.configuration.get(CommonConfigurationKeys.METADATA_VERSION)!!,
-            config.project,
+            languageVersionSettings = config.configuration.languageVersionSettings,
+            metadataVersion = config.configuration.get(CommonConfigurationKeys.METADATA_VERSION)!!,
+            project = config.project,
             exportKDoc = context.shouldExportKDoc(),
-            !expectActualLinker, includeOnlyModuleContent = true)
+            skipExpects = true,
+            includeOnlyModuleContent = true
+    )
     val serializedMetadata = serializer.serializeModule(input.moduleDescriptor)
     val neededLibraries = config.librariesWithDependencies()
     SerializerOutput(serializedMetadata, serializedIr, null, neededLibraries)
