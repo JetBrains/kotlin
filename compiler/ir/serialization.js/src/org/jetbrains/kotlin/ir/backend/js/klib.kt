@@ -72,6 +72,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.util.DummyLogger
 import org.jetbrains.kotlin.util.Logger
 import org.jetbrains.kotlin.utils.DFS
+import org.jetbrains.kotlin.utils.addToStdlib.flatGroupBy
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.kotlin.utils.memoryOptimizedFilter
 import java.io.File
@@ -100,6 +101,9 @@ private val CompilerConfiguration.metadataVersion
 
 private val CompilerConfiguration.expectActualLinker: Boolean
     get() = get(CommonConfigurationKeys.EXPECT_ACTUAL_LINKER) ?: false
+
+private val SerializedIrFile.fileMetadata: ByteArray
+    get() = backendSpecificMetadata ?: error("Expect file caches to have backendSpecificMetadata, but '$path' doesn't")
 
 val CompilerConfiguration.resolverLogger: Logger
     get() = when (val messageLogger = this[IrMessageLogger.IR_MESSAGE_LOGGER]) {
@@ -627,6 +631,29 @@ private fun String.parseSerializedIrFileFingerprints(): List<SerializedIrFileFin
     return split(FILE_FINGERPRINTS_SEPARATOR).mapNotNull(SerializedIrFileFingerprint::fromString)
 }
 
+private fun CompilerConfiguration.assertNoExportedNamesClashes(moduleName: String, files: List<KotlinFileSerializedData>) {
+    val allExportedNameClashes = files
+        .flatGroupBy { JsIrFileMetadata.fromByteArray(it.irData.fileMetadata).exportedNames }
+        .filterValues { it.size > 1 }
+
+    if (allExportedNameClashes.isEmpty()) return
+
+    val nameClashesString = buildString {
+        allExportedNameClashes.forEach { (name, files) ->
+            appendLine("  * Next files contain declarations with @JsExport and name '$name'")
+            files.forEach { appendLine("    - ${it.irData.path}") }
+        }
+    }
+
+    val message = """
+              |There are clashes of declaration names that annotated with @JsExport in module '$moduleName'.
+              |${nameClashesString}
+              |Note, that this clash could affect the generated JS code in case of ES module kind usage
+        """.trimMargin()
+
+    irMessageLogger.report(IrMessageLogger.Severity.WARNING, message, null)
+}
+
 fun serializeModuleIntoKlib(
     moduleName: String,
     configuration: CompilerConfiguration,
@@ -674,7 +701,18 @@ fun serializeModuleIntoKlib(
         incrementalResultsConsumer?.run {
             processPackagePart(ioFile, compiledFile.metadata, empty, empty)
             with(compiledFile.irData) {
-                processIrFile(ioFile, fileData, types, signatures, strings, declarations, bodies, fqName.toByteArray(), debugInfo)
+                processIrFile(
+                    ioFile,
+                    fileData,
+                    types,
+                    signatures,
+                    strings,
+                    declarations,
+                    bodies,
+                    fqName.toByteArray(),
+                    fileMetadata,
+                    debugInfo,
+                )
             }
         }
     }
@@ -699,7 +737,11 @@ fun serializeModuleIntoKlib(
         processCompiledFileData(ioFile!!, compiledKotlinFile)
     }
 
-    val compiledKotlinFiles = (cleanFiles + additionalFiles)
+    val compiledKotlinFiles = (cleanFiles + additionalFiles).also {
+        if (builtInsPlatform == BuiltInsPlatform.JS) {
+            configuration.assertNoExportedNamesClashes(moduleName, it)
+        }
+    }
 
     val header = serializeKlibHeader(
         configuration.languageVersionSettings, moduleDescriptor,
@@ -845,7 +887,8 @@ fun IncrementalDataProvider.getSerializedData(newSources: List<KtSourceFile>): L
                 strings,
                 bodies,
                 declarations,
-                debugInfo
+                debugInfo,
+                fileMetadata,
             )
         }
         storage.add(KotlinFileSerializedData(metaFile.metadata, irFile))
