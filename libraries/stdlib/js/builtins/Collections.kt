@@ -145,6 +145,7 @@ public interface MutableCollection<E> : Collection<E>, MutableIterable<E> {
  * read/write access is supported through the [MutableList] interface.
  * @param E the type of elements contained in the list. The list is covariant in its element type.
  */
+@JsName("KotlinList")
 @JsImplicitExport(couldBeConvertedToExplicitExport = true)
 public interface List<out E> : Collection<E> {
     // Query Operations
@@ -217,6 +218,7 @@ public interface List<out E> : Collection<E> {
  * A generic ordered collection of elements that supports adding and removing elements.
  * @param E the type of elements contained in the list. The mutable list is invariant in its element type.
  */
+@JsName("KotlinMutableList")
 @JsImplicitExport(couldBeConvertedToExplicitExport = true)
 public interface MutableList<E> : List<E>, MutableCollection<E> {
     // Modification Operations
@@ -302,6 +304,7 @@ public interface MutableList<E> : List<E>, MutableCollection<E> {
  * read/write access is supported through the [MutableSet] interface.
  * @param E the type of elements contained in the set. The set is covariant in its element type.
  */
+@JsName("KotlinSet")
 @JsImplicitExport(couldBeConvertedToExplicitExport = true)
 public interface Set<out E> : Collection<E> {
     // Query Operations
@@ -330,6 +333,7 @@ public interface Set<out E> : Collection<E> {
  * adding and removing elements.
  * @param E the type of elements contained in the set. The mutable set is invariant in its element type.
  */
+@JsName("KotlinMutableSet")
 @JsImplicitExport(couldBeConvertedToExplicitExport = true)
 public interface MutableSet<E> : Set<E>, MutableCollection<E> {
     // Query Operations
@@ -375,6 +379,7 @@ public interface MutableSet<E> : Set<E>, MutableCollection<E> {
  *          can accept key as a parameter (of [containsKey] for example) and return it in [keys] set.
  * @param V the type of map values. The map is covariant in its value type.
  */
+@JsName("KotlinMap")
 @JsImplicitExport(couldBeConvertedToExplicitExport = true)
 public interface Map<K, out V> {
     // Query Operations
@@ -452,6 +457,7 @@ public interface Map<K, out V> {
  * @param K the type of map keys. The map is invariant in its key type.
  * @param V the type of map values. The mutable map is invariant in its value type.
  */
+@JsName("KotlinMutableMap")
 @JsImplicitExport(couldBeConvertedToExplicitExport = true)
 public interface MutableMap<K, V> : Map<K, V> {
     // Modification Operations

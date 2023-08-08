@@ -31,7 +31,6 @@ private const val magicPropertyName = "__doNotUseOrImplementIt"
 
 class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespacesForPackages: Boolean) {
     private val transitiveExportCollector = TransitiveExportCollector(context)
-    private val requiredNamespace = hashSetOf(FqName("kotlin.collections"))
 
     fun generateExport(file: IrPackageFragment): List<ExportedDeclaration> {
         val namespaceFqName = file.packageFqName
@@ -39,7 +38,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
 
         return when {
             exports.isEmpty() -> emptyList()
-            (!generateNamespacesForPackages || namespaceFqName.isRoot) && namespaceFqName !in requiredNamespace -> exports
+            !generateNamespacesForPackages || namespaceFqName.isRoot -> exports
             else -> listOf(ExportedNamespace(namespaceFqName.toString(), exports))
         }
     }
@@ -609,8 +608,6 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
                 val isImplicitlyExported = !isExported && !klass.isExternal
                 val isNonExportedExternal = klass.isExternal && !isExported
                 val name = klass.getFqNameWithJsNameWhenAvailable(!isNonExportedExternal && generateNamespacesForPackages).asString()
-                // TODO: find another solution for this case (maybe annotation)
-                val qualifiedName = if (isNonExportedExternal) "globalThis.${name}" else name
 
                 val exportedSupertype = runIf(shouldCalculateExportedSupertypeForImplicit && isImplicitlyExported) {
                     val transitiveExportedType = nonNullType.collectSuperTransitiveHierarchy()
@@ -621,15 +618,15 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
                 when (klass.kind) {
                     ClassKind.ANNOTATION_CLASS,
                     ClassKind.ENUM_ENTRY ->
-                        ExportedType.ErrorType("Class $qualifiedName with kind: ${klass.kind}")
+                        ExportedType.ErrorType("Class $name with kind: ${klass.kind}")
 
                     ClassKind.OBJECT ->
-                        ExportedType.TypeOf(qualifiedName)
+                        ExportedType.TypeOf(name)
 
                     ClassKind.CLASS,
                     ClassKind.ENUM_CLASS,
                     ClassKind.INTERFACE -> ExportedType.ClassType(
-                        qualifiedName,
+                        name,
                         type.arguments.memoryOptimizedMap { exportTypeArgument(it) },
                         klass
                     )

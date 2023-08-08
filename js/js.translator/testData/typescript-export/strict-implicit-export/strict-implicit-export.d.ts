@@ -57,11 +57,11 @@ declare namespace JS_TESTS {
             constructor();
             readonly __doNotUseOrImplementIt: foo.NotExportedChildGenericClass<foo.NonExportedType>["__doNotUseOrImplementIt"];
         }
-        function baz(a: number): globalThis.Promise<number>;
+        function baz(a: number): Promise<number>;
         function bar(): Error;
         function pep<T extends foo.NonExportedInterface & foo.NonExportedGenericInterface<number>>(x: T): void;
-        const console: globalThis.Console;
-        const error: globalThis.WebAssembly.CompileError;
+        const console: Console;
+        const error: WebAssembly.CompileError;
         interface IA {
             readonly __doNotUseOrImplementIt: {
                 readonly "foo.IA": unique symbol;

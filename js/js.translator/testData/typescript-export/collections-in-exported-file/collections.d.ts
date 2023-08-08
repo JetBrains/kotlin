@@ -1,53 +1,53 @@
 declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
     namespace kotlin.collections {
-        interface List<E> /* extends kotlin.collections.Collection<E> */ {
-            asJsArrayView(): globalThis.ReadonlyArray<E>;
+        interface KotlinList<E> /* extends kotlin.collections.Collection<E> */ {
+            asJsArrayView(): ReadonlyArray<E>;
             readonly __doNotUseOrImplementIt: {
-                readonly "kotlin.collections.List": unique symbol;
+                readonly "kotlin.collections.KotlinList": unique symbol;
             };
         }
-        interface Map<K, V> {
-            asJsMapView(): globalThis.ReadonlyMap<K, V>;
+        interface KotlinMap<K, V> {
+            asJsMapView(): ReadonlyMap<K, V>;
             readonly __doNotUseOrImplementIt: {
-                readonly "kotlin.collections.Map": unique symbol;
+                readonly "kotlin.collections.KotlinMap": unique symbol;
             };
         }
-        interface MutableList<E> extends kotlin.collections.List<E>/*, kotlin.collections.MutableCollection<E> */ {
-            asJsArrayMutableView(): globalThis.Array<E>;
+        interface KotlinMutableList<E> extends kotlin.collections.KotlinList<E>/*, kotlin.collections.MutableCollection<E> */ {
+            asJsArrayMutableView(): Array<E>;
             readonly __doNotUseOrImplementIt: {
-                readonly "kotlin.collections.MutableList": unique symbol;
-            } & kotlin.collections.List<E>["__doNotUseOrImplementIt"];
+                readonly "kotlin.collections.KotlinMutableList": unique symbol;
+            } & kotlin.collections.KotlinList<E>["__doNotUseOrImplementIt"];
         }
-        interface Set<E> /* extends kotlin.collections.Collection<E> */ {
-            asJsSetView(): globalThis.ReadonlySet<E>;
+        interface KotlinSet<E> /* extends kotlin.collections.Collection<E> */ {
+            asJsSetView(): ReadonlySet<E>;
             readonly __doNotUseOrImplementIt: {
-                readonly "kotlin.collections.Set": unique symbol;
+                readonly "kotlin.collections.KotlinSet": unique symbol;
             };
         }
-        interface MutableSet<E> extends kotlin.collections.Set<E>/*, kotlin.collections.MutableCollection<E> */ {
-            asJsSetMutableView(): globalThis.Set<E>;
+        interface KotlinMutableSet<E> extends kotlin.collections.KotlinSet<E>/*, kotlin.collections.MutableCollection<E> */ {
+            asJsSetMutableView(): Set<E>;
             readonly __doNotUseOrImplementIt: {
-                readonly "kotlin.collections.MutableSet": unique symbol;
-            } & kotlin.collections.Set<E>["__doNotUseOrImplementIt"];
+                readonly "kotlin.collections.KotlinMutableSet": unique symbol;
+            } & kotlin.collections.KotlinSet<E>["__doNotUseOrImplementIt"];
         }
-        interface MutableMap<K, V> extends kotlin.collections.Map<K, V> {
-            asJsMapMutableView(): globalThis.Map<K, V>;
+        interface KotlinMutableMap<K, V> extends kotlin.collections.KotlinMap<K, V> {
+            asJsMapMutableView(): Map<K, V>;
             readonly __doNotUseOrImplementIt: {
-                readonly "kotlin.collections.MutableMap": unique symbol;
-            } & kotlin.collections.Map<K, V>["__doNotUseOrImplementIt"];
+                readonly "kotlin.collections.KotlinMutableMap": unique symbol;
+            } & kotlin.collections.KotlinMap<K, V>["__doNotUseOrImplementIt"];
         }
     }
-    function provideList(): kotlin.collections.List<number>;
-    function provideMutableList(): kotlin.collections.MutableList<number>;
-    function provideSet(): kotlin.collections.Set<number>;
-    function provideMutableSet(): kotlin.collections.MutableSet<number>;
-    function provideMap(): kotlin.collections.Map<string, number>;
-    function provideMutableMap(): kotlin.collections.MutableMap<string, number>;
-    function consumeList(list: kotlin.collections.List<number>): boolean;
-    function consumeMutableList(list: kotlin.collections.MutableList<number>): boolean;
-    function consumeSet(list: kotlin.collections.Set<number>): boolean;
-    function consumeMutableSet(list: kotlin.collections.MutableSet<number>): boolean;
-    function consumeMap(map: kotlin.collections.Map<string, number>): boolean;
-    function consumeMutableMap(map: kotlin.collections.MutableMap<string, number>): boolean;
+    function provideList(): kotlin.collections.KotlinList<number>;
+    function provideMutableList(): kotlin.collections.KotlinMutableList<number>;
+    function provideSet(): kotlin.collections.KotlinSet<number>;
+    function provideMutableSet(): kotlin.collections.KotlinMutableSet<number>;
+    function provideMap(): kotlin.collections.KotlinMap<string, number>;
+    function provideMutableMap(): kotlin.collections.KotlinMutableMap<string, number>;
+    function consumeList(list: kotlin.collections.KotlinList<number>): boolean;
+    function consumeMutableList(list: kotlin.collections.KotlinMutableList<number>): boolean;
+    function consumeSet(list: kotlin.collections.KotlinSet<number>): boolean;
+    function consumeMutableSet(list: kotlin.collections.KotlinMutableSet<number>): boolean;
+    function consumeMap(map: kotlin.collections.KotlinMap<string, number>): boolean;
+    function consumeMutableMap(map: kotlin.collections.KotlinMutableMap<string, number>): boolean;
 }
