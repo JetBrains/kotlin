@@ -53,11 +53,19 @@ class FirDelegatedPropertyInferenceSession(
     override fun <T> processPartiallyResolvedCall(call: T, resolutionMode: ResolutionMode) where T : FirResolvable, T : FirStatement {
         if (resolutionMode != ResolutionMode.ContextDependent.Delegate && !call.isAnyOfDelegateOperators()) return
 
-        val candidateSystem = call.candidate.system
+        val candidate = call.candidate
 
-        partiallyResolvedCalls.add(call to call.candidate)
+        // Ignore unsuccessful `provideDelegate` candidates
+        if (call.isProvideDelegate() && !candidate.isSuccessful) return
+
+        val candidateSystem = candidate.system
+
+        partiallyResolvedCalls.add(call to candidate)
         currentConstraintSystem = candidateSystem
     }
+
+    private fun <T> T.isProvideDelegate() where T : FirResolvable, T : FirStatement =
+        isAnyOfDelegateOperators() && (this as FirFunctionCall).calleeReference.name == OperatorNameConventions.PROVIDE_DELEGATE
 
     private fun <T> T.isAnyOfDelegateOperators(): Boolean where T : FirResolvable {
         if (this !is FirFunctionCall || origin != FirFunctionCallOrigin.Operator) return false

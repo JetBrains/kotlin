@@ -370,7 +370,12 @@ open class FirDeclarationsResolveTransformer(
         val provideDelegateCall = wrappedDelegateExpression.delegateProvider as FirFunctionCall
         provideDelegateCall.replaceExplicitReceiver(delegateExpression)
 
-        resolveAndCompleteProvideDelegateCall(provideDelegateCall)
+        // Resolve call for provideDelegate, without completion
+        // TODO: this generates some nodes in the control flow graph which we don't want if we
+        //  end up not selecting this option, KT-59684
+        transformer.expressionsTransformer?.transformFunctionCallInternal(
+            provideDelegateCall, ResolutionMode.ContextDependent, provideDelegate = true
+        )
 
         // If we got successful candidate for provideDelegate, let's select it
         val provideDelegateCandidate = provideDelegateCall.candidate()
@@ -399,21 +404,6 @@ open class FirDeclarationsResolveTransformer(
         // Select delegate expression otherwise
         return delegateExpression
     }
-
-    // We assume here that arguments and annotations for provideDelegates are already built resolved
-    // Another approach would be just calling `transformFunctionCall`, but that would require having a lot of customizable logic inside
-    //  regular function transforming (like avoiding repeatable explicit receiver transformation).
-    private fun resolveAndCompleteProvideDelegateCall(provideDelegateCall: FirFunctionCall) {
-        val resultExpression = context.inferenceSession.onCandidatesResolution(provideDelegateCall) {
-            callResolver.resolveCallAndSelectCandidate(provideDelegateCall)
-        }
-
-        val candidate = resultExpression.candidate() ?: return
-        if (!candidate.isSuccessful) return
-
-        callCompleter.completeCall(provideDelegateCall, ResolutionMode.ContextDependent)
-    }
-
 
     /**
      * For supporting the case when `provideDelegate` has a signature with type variable as a return type, like
