@@ -26,7 +26,7 @@ enum class PartialLinkageMode(val isEnabled: Boolean) {
         val DEFAULT = ENABLE
 
         fun resolveMode(key: String): PartialLinkageMode? =
-            values().firstOrNull { entry -> key == entry.name.lowercase() }
+            values().firstOrNull { entry -> entry.name.equals(key, ignoreCase = true) }
     }
 }
 
