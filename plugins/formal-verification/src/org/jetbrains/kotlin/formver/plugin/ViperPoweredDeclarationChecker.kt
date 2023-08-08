@@ -28,22 +28,28 @@ object ViperPoweredDeclarationChecker : FirSimpleFunctionChecker() {
     override fun check(declaration: FirSimpleFunction, context: CheckerContext, reporter: DiagnosticReporter) {
         val programConversionContext = ProgramConversionContext()
         programConversionContext.addWithBody(declaration)
+        val program = programConversionContext.program
 
-        val verifier = newVerifier()
-        val results = verifier.verify(programConversionContext.program, emptySeq<SilverCfg>(), Option.None<String>().toScala())
+        reporter.reportOn(declaration.source, PluginErrors.VIPER_TEXT, program.toString(), context)
 
-        var anyErrors = false
-        for (result in results) {
-            if (result.isFatal) {
-                reporter.reportOn(declaration.source, PluginErrors.VIPER_ERROR, result.toString(), context)
-                anyErrors = true
+        try {
+            val verifier = newVerifier()
+            val results = verifier.verify(program, emptySeq<SilverCfg>(), Option.None<String>().toScala())
+
+            var anyErrors = false
+            for (result in results) {
+                if (result.isFatal) {
+                    reporter.reportOn(declaration.source, PluginErrors.VIPER_ERROR, result.toString(), context)
+                    anyErrors = true
+                }
             }
+            if (anyErrors) {
+                reporter.reportOn(declaration.source, PluginErrors.FUNCTION_WITH_UNVERIFIED_CONTRACT, context)
+            }
+        } catch (e: Exception) {
+            System.err.println("Viper verification failed with an exception.  Viper text:\n$program\nException: $e")
+            throw e
         }
-        if (anyErrors) {
-            reporter.reportOn(declaration.source, PluginErrors.FUNCTION_WITH_UNVERIFIED_CONTRACT, context)
-        }
-
-        reporter.reportOn(declaration.source, PluginErrors.VIPER_TEXT, programConversionContext.program.toString(), context)
     }
 
 
