@@ -156,8 +156,8 @@ private fun ConeDiagnostic.toKtDiagnostic(
 }
 
 private val KtFakeSourceElementKind.canBeIgnored: Boolean
-    get() = this != KtFakeSourceElementKind.ReferenceInAtomicQualifiedAccess
-            && this != KtFakeSourceElementKind.ImplicitReturnTypeOfLambdaValueParameter
+    get() = this == KtFakeSourceElementKind.DelegatingConstructorCall
+            || this == KtFakeSourceElementKind.ErrorTypeRef
 
 fun FirBasedSymbol<*>.toInvisibleReferenceDiagnostic(source: KtSourceElement?): KtDiagnostic? = when (val symbol = this) {
     is FirCallableSymbol<*> -> FirErrors.INVISIBLE_REFERENCE.createOn(source, symbol, symbol.visibility, symbol.callableId.classId)
