@@ -10,7 +10,10 @@ import org.gradle.api.Task
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.language.base.plugins.LifecycleBasePlugin
-import org.jetbrains.kotlin.gradle.dsl.*
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerToolOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonToolOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinNativeLibrary
+import org.jetbrains.kotlin.gradle.dsl.KotlinNativeLibraryConfig
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
 import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHost

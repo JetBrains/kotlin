@@ -13,13 +13,14 @@ import org.jetbrains.kotlin.commonizer.CommonizerOutputFileLayout
 import org.jetbrains.kotlin.commonizer.CommonizerOutputFileLayout.base64Hash
 import org.jetbrains.kotlin.commonizer.CommonizerOutputFileLayout.ensureMaxFileNameLength
 import org.jetbrains.kotlin.commonizer.identityString
+import org.jetbrains.kotlin.gradle.report.UsesBuildMetricsService
 import org.jetbrains.kotlin.gradle.utils.changing
 import org.jetbrains.kotlin.gradle.utils.future
 import org.jetbrains.kotlin.gradle.utils.outputFilesProvider
 import java.io.File
 
 @DisableCachingByDefault(because = "Abstract super-class, not to be instantiated directly")
-internal abstract class AbstractCInteropCommonizerTask : DefaultTask() {
+internal abstract class AbstractCInteropCommonizerTask : DefaultTask(), UsesBuildMetricsService {
     @get:OutputDirectory
     abstract val outputDirectory: File
 

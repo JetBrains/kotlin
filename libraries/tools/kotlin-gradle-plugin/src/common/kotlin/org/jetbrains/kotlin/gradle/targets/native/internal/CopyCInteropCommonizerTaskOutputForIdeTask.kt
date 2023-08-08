@@ -5,15 +5,22 @@
 
 package org.jetbrains.kotlin.gradle.targets.native.internal
 
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
+import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
+import org.jetbrains.kotlin.compilerRunner.addBuildMetricsForTaskAction
+import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
+import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
 import javax.inject.Inject
 
 @DisableCachingByDefault
-internal open class CopyCommonizeCInteropForIdeTask @Inject constructor(
+internal abstract class CopyCommonizeCInteropForIdeTask @Inject constructor(
     private val commonizeCInteropTask: TaskProvider<CInteropCommonizerTask>
 ) : AbstractCInteropCommonizerTask() {
 
@@ -32,15 +39,22 @@ internal open class CopyCommonizeCInteropForIdeTask @Inject constructor(
         return commonizeCInteropTask.get().findInteropsGroup(dependent)
     }
 
+    @get:Internal
+    val metrics: Property<BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>> = project.objects
+        .property(GradleBuildMetricsReporter())
+
     @TaskAction
     protected fun copy() {
-        outputDirectory.mkdirs()
-        for (group in commonizeCInteropTask.get().allInteropGroups.getOrThrow()) {
-            val source = commonizeCInteropTask.get().outputDirectory(group)
-            if (!source.exists()) continue
-            val target = outputDirectory(group)
-            if (target.exists()) target.deleteRecursively()
-            source.copyRecursively(target, true)
+        val metricReporter = metrics.get()
+        addBuildMetricsForTaskAction(metricsReporter = metricReporter, languageVersion = null) {
+            outputDirectory.mkdirs()
+            for (group in commonizeCInteropTask.get().allInteropGroups.getOrThrow()) {
+                val source = commonizeCInteropTask.get().outputDirectory(group)
+                if (!source.exists()) continue
+                val target = outputDirectory(group)
+                if (target.exists()) target.deleteRecursively()
+                source.copyRecursively(target, true)
+            }
         }
     }
 }

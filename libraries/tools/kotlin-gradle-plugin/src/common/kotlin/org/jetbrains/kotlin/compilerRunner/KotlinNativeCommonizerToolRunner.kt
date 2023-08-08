@@ -5,12 +5,16 @@
 
 package org.jetbrains.kotlin.compilerRunner
 
+import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import java.io.File
 
 internal class KotlinNativeCommonizerToolRunner(
     context: GradleExecutionContext,
     private val settings: Settings,
-) : KotlinToolRunner(context) {
+    metricsReporter: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>
+) : KotlinToolRunner(context, metricsReporter) {
 
     class Settings(
         val kotlinPluginVersion: String,

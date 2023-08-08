@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.TEST_COMPI
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo.KPM
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.ReadyForExecution
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.KOTLIN_NATIVE_IGNORE_INCORRECT_DEPENDENCIES
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.internal.artifactTypeAttribute
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XcodeVersionTask
@@ -38,10 +37,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.targets.native.*
 import org.jetbrains.kotlin.gradle.targets.native.internal.*
-import org.jetbrains.kotlin.gradle.targets.native.internal.commonizeCInteropTask
-import org.jetbrains.kotlin.gradle.targets.native.internal.createCInteropApiElementsKlibArtifact
-import org.jetbrains.kotlin.gradle.targets.native.internal.locateOrCreateCInteropApiElementsConfiguration
-import org.jetbrains.kotlin.gradle.targets.native.internal.locateOrCreateCInteropDependencyConfiguration
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeHostTest
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeSimulatorTest
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
@@ -415,6 +410,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
                         }
                     )
                     .finalizeValueOnRead()
+
             }
 
             compilationInfo.classesDirs.from(compileTaskProvider.map { it.outputFile })

@@ -288,6 +288,7 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
         fun registerIfAbsent(project: Project) = registerIfAbsentImpl(project)?.also { serviceProvider ->
             SingleActionPerProject.run(project, UsesBuildMetricsService::class.java.name) {
                 project.tasks.withType<UsesBuildMetricsService>().configureEach { task ->
+                    task.buildMetricsService.value(serviceProvider).disallowChanges()
                     task.usesService(serviceProvider)
                 }
             }

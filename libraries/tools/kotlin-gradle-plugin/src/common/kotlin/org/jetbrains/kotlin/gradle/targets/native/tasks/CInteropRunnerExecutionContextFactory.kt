@@ -6,23 +6,30 @@
 package org.jetbrains.kotlin.gradle.targets.native.tasks
 
 import org.gradle.api.Task
+import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
+import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.compilerRunner.KotlinNativeCInteropRunner
 import org.jetbrains.kotlin.compilerRunner.KotlinNativeToolRunner
 import org.jetbrains.kotlin.compilerRunner.KotlinToolRunner
+import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
 
 internal fun KotlinNativeCInteropRunner.Companion.createExecutionContext(
     task: Task,
     isInIdeaSync: Boolean,
     runnerSettings: KotlinNativeToolRunner.Settings,
-    gradleExecutionContext: KotlinToolRunner.GradleExecutionContext
+    gradleExecutionContext: KotlinToolRunner.GradleExecutionContext,
+    metricsReporter: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>
 ): KotlinNativeCInteropRunner.ExecutionContext {
-    return if (isInIdeaSync) IdeaSyncKotlinNativeCInteropRunnerExecutionContext(runnerSettings, gradleExecutionContext, task)
-    else DefaultKotlinNativeCInteropRunnerExecutionContext(runnerSettings, gradleExecutionContext)
+    return if (isInIdeaSync) IdeaSyncKotlinNativeCInteropRunnerExecutionContext(runnerSettings, gradleExecutionContext, task, metricsReporter)
+    else DefaultKotlinNativeCInteropRunnerExecutionContext(runnerSettings, gradleExecutionContext, metricsReporter)
 }
 
 private class DefaultKotlinNativeCInteropRunnerExecutionContext(
     override val runnerSettings: KotlinNativeToolRunner.Settings,
-    override val gradleExecutionContext: KotlinToolRunner.GradleExecutionContext
+    override val gradleExecutionContext: KotlinToolRunner.GradleExecutionContext,
+    override val metricsReporter: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>
 ) : KotlinNativeCInteropRunner.ExecutionContext {
     override fun runWithContext(action: () -> Unit) = action()
 }
@@ -30,7 +37,8 @@ private class DefaultKotlinNativeCInteropRunnerExecutionContext(
 private class IdeaSyncKotlinNativeCInteropRunnerExecutionContext(
     override val runnerSettings: KotlinNativeToolRunner.Settings,
     override val gradleExecutionContext: KotlinToolRunner.GradleExecutionContext,
-    private val task: Task
+    private val task: Task,
+    override val metricsReporter: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>
 ) : KotlinNativeCInteropRunner.ExecutionContext {
 
     override fun runWithContext(action: () -> Unit) {

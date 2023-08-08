@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.parseCompilerArgumentsFromBuildOutput
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
 
@@ -65,7 +66,7 @@ class TryK2IT : KGPBaseTest() {
         ) {
             build("build") {
                 assertOutputDoesNotContain(
-                    "##### 'kotlin.experimental.tryK2' results (Kotlin/Native not checked) #####"
+                    "##### 'kotlin.experimental.tryK2' results #####"
                 )
             }
         }
@@ -85,10 +86,40 @@ class TryK2IT : KGPBaseTest() {
             build("build") {
                 assertOutputContains(
                     """
-                    |##### 'kotlin.experimental.tryK2' results (Kotlin/Native not checked) #####
+                    |##### 'kotlin.experimental.tryK2' results #####
                     |:lib:compileKotlin: 2.0 language version
                     |:app:compileKotlin: 2.0 language version
                     |##### 100% (2/2) tasks have been compiled with Kotlin 2.0 #####
+                    """.trimMargin().normalizeLineEndings()
+                )
+            }
+        }
+    }
+
+    @DisplayName("Native: report is printed at the end of the build")
+    @MppGradlePluginTests
+    @GradleTest
+    fun buildReportForNative(gradleVersion: GradleVersion) {
+        project(
+            "k2-native-intermediate-metadata",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.WARN)
+        ) {
+            enableTryK2()
+
+            build("build") {
+                assertOutputContains(
+                    """
+                    |##### 'kotlin.experimental.tryK2' results #####
+                    |:compileCommonMainKotlinMetadata: 2.0 language version
+                    |:compileNativeMainKotlinMetadata: 2.0 language version
+                    |:compileKotlinLinuxX64: 2.0 language version${
+                        if (HostManager.hostIsMac)
+                            "\n|:compileKotlinMacosArm64: 2.0 language version\n|:compileKotlinMacosX64: 2.0 language version"
+                        else ""
+                    }
+                    |:compileKotlinMingwX64: 2.0 language version
+                    |##### 100% ${if (HostManager.hostIsMac) "(6/6)" else "(4/4)"} tasks have been compiled with Kotlin 2.0 #####
                     """.trimMargin().normalizeLineEndings()
                 )
             }
@@ -116,7 +147,7 @@ class TryK2IT : KGPBaseTest() {
             buildAndFail("build", forceOutput = true) {
                 assertOutputContains(
                     """
-                    |##### 'kotlin.experimental.tryK2' results (Kotlin/Native not checked) #####
+                    |##### 'kotlin.experimental.tryK2' results #####
                     |:lib:compileKotlin: 2.0 language version
                     |:app:compileKotlin: 2.0 language version
                     |##### 100% (2/2) tasks have been compiled with Kotlin 2.0 #####

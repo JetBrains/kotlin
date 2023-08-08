@@ -14,9 +14,13 @@ import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
+import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.gradle.dsl.*
@@ -25,6 +29,8 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.Create
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
+import org.jetbrains.kotlin.gradle.report.UsesBuildMetricsService
 import org.jetbrains.kotlin.gradle.targets.native.UsesKonanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.targets.native.tasks.CompilerPluginData
 import org.jetbrains.kotlin.gradle.utils.*
@@ -49,6 +55,7 @@ constructor(
     private val execOperations: ExecOperations,
 ) : AbstractKotlinCompileTool<K2NativeCompilerArguments>(objectFactory),
     UsesKonanPropertiesBuildService,
+    UsesBuildMetricsService,
     KotlinToolTask<KotlinCommonCompilerToolOptions> {
 
     @Deprecated("Visibility will be lifted to private in the future releases")
@@ -346,52 +353,60 @@ constructor(
 
     @TaskAction
     fun compile() {
-        validatedExportedLibraries()
+        val metricsReporter = metrics.get()
 
-        val output = outputFile.get()
-        output.parentFile.mkdirs()
+        addBuildMetricsForTaskAction(metricsReporter = metricsReporter, languageVersion = parseLanguageVersion(externalDependenciesArgs)) {
+            validatedExportedLibraries()
 
-        val executionContext = KotlinToolRunner.GradleExecutionContext.fromTaskContext(objectFactory, execOperations, logger)
-        val additionalOptions = mutableListOf<String>().apply {
-            addAll(externalDependenciesArgs)
-            when (cacheSettings.orchestration) {
-                NativeCacheOrchestration.Compiler -> {
-                    if (cacheSettings.kind != NativeCacheKind.NONE
-                        && !optimized
-                        && konanPropertiesService.get().cacheWorksFor(konanTarget)
-                    ) {
-                        add("-Xauto-cache-from=${cacheSettings.gradleUserHomeDir}")
-                        add("-Xbackend-threads=${cacheSettings.threads}")
-                        if (cacheSettings.icEnabled) {
-                            val icCacheDir = cacheSettings.gradleBuildDir.resolve("kotlin-native-ic-cache")
-                            icCacheDir.mkdirs()
-                            add("-Xenable-incremental-compilation")
-                            add("-Xic-cache-dir=$icCacheDir")
+            val output = outputFile.get()
+            output.parentFile.mkdirs()
+
+            val executionContext = KotlinToolRunner.GradleExecutionContext.fromTaskContext(objectFactory, execOperations, logger)
+            val additionalOptions = mutableListOf<String>().apply {
+                addAll(externalDependenciesArgs)
+                when (cacheSettings.orchestration) {
+                    NativeCacheOrchestration.Compiler -> {
+                        if (cacheSettings.kind != NativeCacheKind.NONE
+                            && !optimized
+                            && konanPropertiesService.get().cacheWorksFor(konanTarget)
+                        ) {
+                            add("-Xauto-cache-from=${cacheSettings.gradleUserHomeDir}")
+                            add("-Xbackend-threads=${cacheSettings.threads}")
+                            if (cacheSettings.icEnabled) {
+                                val icCacheDir = cacheSettings.gradleBuildDir.resolve("kotlin-native-ic-cache")
+                                icCacheDir.mkdirs()
+                                add("-Xenable-incremental-compilation")
+                                add("-Xic-cache-dir=$icCacheDir")
+                            }
                         }
                     }
-                }
-                NativeCacheOrchestration.Gradle -> {
-                    if (cacheSettings.icEnabled) {
-                        executionContext.logger.warn(
-                            "K/N incremental compilation only works in conjunction with kotlin.native.cacheOrchestration=compiler")
+                    NativeCacheOrchestration.Gradle -> {
+                        if (cacheSettings.icEnabled) {
+                            executionContext.logger.warn(
+                                "K/N incremental compilation only works in conjunction with kotlin.native.cacheOrchestration=compiler"
+                            )
+                        }
+                        val cacheBuilder = CacheBuilder(
+                            executionContext = executionContext,
+                            settings = cacheBuilderSettings,
+                            konanPropertiesService = konanPropertiesService.get(),
+                            metricsReporter = metricsReporter
+                        )
+                        addAll(cacheBuilder.buildCompilerArgs(resolvedConfiguration))
                     }
-                    val cacheBuilder = CacheBuilder(
-                        executionContext = executionContext,
-                        settings = cacheBuilderSettings,
-                        konanPropertiesService = konanPropertiesService.get()
-                    )
-                    addAll(cacheBuilder.buildCompilerArgs(resolvedConfiguration))
                 }
             }
+
+            val arguments = createCompilerArguments()
+            val buildArguments = ArgumentUtils.convertArgumentsToStringList(arguments) + additionalOptions
+
+            KotlinNativeCompilerRunner(
+                settings = runnerSettings,
+                executionContext = executionContext,
+                metricsReporter = metricsReporter
+
+            ).run(buildArguments)
         }
-
-        val arguments = createCompilerArguments()
-        val buildArguments = ArgumentUtils.convertArgumentsToStringList(arguments) + additionalOptions
-
-        KotlinNativeCompilerRunner(
-            settings = runnerSettings,
-            executionContext = executionContext
-        ).run(buildArguments)
     }
 
     private inline fun <reified T : Any> lazyConvention(noinline lazyConventionValue: () -> T): Provider<T> {

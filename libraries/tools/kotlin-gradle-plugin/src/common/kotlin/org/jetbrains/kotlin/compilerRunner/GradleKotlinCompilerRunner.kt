@@ -243,12 +243,6 @@ internal open class GradleCompilerRunner(
         )
     }
 
-    //Copy of CommonCompilerArguments.parseOrConfigureLanguageVersion to avoid direct dependency
-    private fun parseLanguageVersion(languageVersion: String?, useK2: Boolean): KotlinVersion {
-        val explicitVersion = languageVersion?.let { KotlinVersion.fromVersion(languageVersion) } ?: KotlinVersion.DEFAULT
-        return if (useK2 && (explicitVersion < KotlinVersion.KOTLIN_2_0)) KotlinVersion.KOTLIN_2_0 else explicitVersion
-    }
-
     protected open fun runCompilerAsync(
         workArgs: GradleKotlinCompilerWorkArguments,
         taskOutputsBackup: TaskOutputsBackup?

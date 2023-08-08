@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Action
-import org.gradle.api.DomainObjectCollection
 import org.gradle.api.DomainObjectSet
 import org.gradle.api.Task
 import org.gradle.api.provider.Property
@@ -16,9 +15,7 @@ import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.JsModuleKind
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
-import org.jetbrains.kotlin.gradle.report.BuildMetricsService
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalDceDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
@@ -225,9 +222,6 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                     task.description = "build webpack ${mode.name.toLowerCaseAsciiOnly()} bundle"
                     task.outputDirectory.fileValue(binary.distribution.directory).finalizeValueOnRead()
 
-                    BuildMetricsService.registerIfAbsent(project)?.let {
-                        task.buildMetricsService.value(it)
-                    }
 
                     task.dependsOn(
                         distributeResourcesTask

@@ -50,6 +50,9 @@ enum class JpsBuildTime(private val parent: JpsBuildTime? = null, private val re
 
 @Suppress("Reformat")
 enum class GradleBuildTime(private val parent: GradleBuildTime? = null, private val readableString: String) : BuildTime {
+    // We use tabs to organize the hierarchy of metrics,
+    // that's why the formatter is disabled.
+    // @formatter:off
     GRADLE_TASK(readableString = "Total Gradle task time"),
     GRADLE_TASK_PREPARATION(readableString = "Spent time before task action"),
     GRADLE_TASK_ACTION(readableString = "Task action"),
@@ -65,6 +68,9 @@ enum class GradleBuildTime(private val parent: GradleBuildTime? = null, private 
             CONNECT_TO_DAEMON(RUN_COMPILATION_IN_WORKER, "Connect to Kotlin daemon"),
             CALCULATE_OUTPUT_SIZE(RUN_COMPILATION_IN_WORKER, "Calculate output size"),
             RUN_COMPILATION(RUN_COMPILATION_IN_WORKER, "Run compilation"),
+                NATIVE_IN_PROCESS(RUN_COMPILATION, "Run native in process"),
+                    RUN_ENTRY_POINT(NATIVE_IN_PROCESS, "Run entry point"),
+                NATIVE_IN_EXECUTOR(RUN_COMPILATION, "Run native in executor"),
                 NON_INCREMENTAL_COMPILATION_IN_PROCESS(RUN_COMPILATION, "Non incremental inprocess compilation"),
                 NON_INCREMENTAL_COMPILATION_OUT_OF_PROCESS(RUN_COMPILATION, "Non incremental out of process compilation"),
                 NON_INCREMENTAL_COMPILATION_DAEMON(RUN_COMPILATION, "Non incremental compilation in daemon"),
@@ -116,8 +122,8 @@ enum class GradleBuildTime(private val parent: GradleBuildTime? = null, private 
             SNAPSHOT_KOTLIN_CLASSES(parent = SNAPSHOT_CLASSES, "Snapshot Kotlin classes"),
             SNAPSHOT_JAVA_CLASSES(parent = SNAPSHOT_CLASSES, "Snapshot Java classes"),
         SAVE_CLASSPATH_ENTRY_SNAPSHOT(parent = CLASSPATH_ENTRY_SNAPSHOT_TRANSFORM, "Save classpath entry snapshot"),
-
     ;
+    // @formatter:on
 
     override fun getReadableString(): String = readableString
     override fun getParent(): BuildTime? = parent
@@ -130,7 +136,7 @@ enum class GradleBuildTime(private val parent: GradleBuildTime? = null, private 
         return entries
     }
 
-    override fun getName(): String =  this.name
+    override fun getName(): String = this.name
 
     companion object {
         const val serialVersionUID = 1L

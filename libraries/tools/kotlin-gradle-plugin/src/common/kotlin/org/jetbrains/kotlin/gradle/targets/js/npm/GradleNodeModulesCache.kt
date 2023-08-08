@@ -8,14 +8,10 @@ package org.jetbrains.kotlin.gradle.targets.js.npm
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.ArchiveOperations
-import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Internal
-import org.jetbrains.kotlin.gradle.report.BuildMetricsService
-import org.jetbrains.kotlin.gradle.report.UsesBuildMetricsService
-import org.jetbrains.kotlin.gradle.report.reportingSettings
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
 import java.io.File

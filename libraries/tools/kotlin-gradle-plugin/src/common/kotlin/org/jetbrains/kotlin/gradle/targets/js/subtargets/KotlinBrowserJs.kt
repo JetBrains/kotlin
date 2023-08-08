@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.plugin.mpp.isTest
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.distsDirectory
-import org.jetbrains.kotlin.gradle.report.BuildMetricsService
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.*
 import org.jetbrains.kotlin.gradle.targets.js.ir.executeTaskBaseName
@@ -229,10 +228,6 @@ abstract class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
 
                     task.description = "build webpack ${type.name.toLowerCaseAsciiOnly()} bundle"
                     task.outputDirectory.fileValue(distribution.directory).finalizeValueOnRead()
-
-                    BuildMetricsService.registerIfAbsent(project)?.let {
-                        task.buildMetricsService.value(it)
-                    }
 
                     task.commonConfigure(
                         compilation = compilation,
