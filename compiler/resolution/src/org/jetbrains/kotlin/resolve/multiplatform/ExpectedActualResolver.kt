@@ -29,7 +29,7 @@ object ExpectedActualResolver {
                             // TODO: support non-source definitions (e.g. from Java)
                             actual.couldHaveASource
                 }.groupBy { actual ->
-                    AbstractExpectActualCompatibilityChecker.areCompatibleCallables(
+                    AbstractExpectActualCompatibilityChecker.getCallablesCompatibility(
                         expected,
                         actual,
                         parentSubstitutor = null,
@@ -43,7 +43,7 @@ object ExpectedActualResolver {
                 context.findClassifiersFromModule(expected.classId, platformModule, moduleVisibilityFilter).filter { actual ->
                     expected != actual && !actual.isExpect && actual.couldHaveASource
                 }.groupBy { actual ->
-                    AbstractExpectActualCompatibilityChecker.areCompatibleClassifiers(
+                    AbstractExpectActualCompatibilityChecker.getClassifiersCompatibility(
                         expected,
                         actual,
                         context
@@ -100,7 +100,7 @@ object ExpectedActualResolver {
                             }
                             else -> null
                         }
-                    AbstractExpectActualCompatibilityChecker.areCompatibleCallables(
+                    AbstractExpectActualCompatibilityChecker.getCallablesCompatibility(
                         expectDeclaration = declaration,
                         actualDeclaration = actual,
                         parentSubstitutor = substitutor,
@@ -114,7 +114,7 @@ object ExpectedActualResolver {
                 context.findClassifiersFromModule(actual.classId, actual.module, moduleFilter).filter { declaration ->
                     actual != declaration && declaration is ClassDescriptor && declaration.isExpect
                 }.groupBy { expected ->
-                    AbstractExpectActualCompatibilityChecker.areCompatibleClassifiers(
+                    AbstractExpectActualCompatibilityChecker.getClassifiersCompatibility(
                         expected as ClassDescriptor,
                         actual,
                         context
