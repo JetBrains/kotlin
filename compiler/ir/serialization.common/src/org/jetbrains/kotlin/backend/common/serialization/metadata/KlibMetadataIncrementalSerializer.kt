@@ -25,9 +25,15 @@ class KlibMetadataIncrementalSerializer(
     metadataVersion: KlibMetadataVersion,
     project: Project,
     exportKDoc: Boolean,
-    skipExpects: Boolean,
-    allowErrorTypes: Boolean = false
-) : KlibMetadataSerializer(languageVersionSettings, metadataVersion, project, exportKDoc, skipExpects, allowErrorTypes = allowErrorTypes) {
+    allowErrorTypes: Boolean = false,
+) : KlibMetadataSerializer(
+    languageVersionSettings = languageVersionSettings,
+    metadataVersion = metadataVersion,
+    project = project,
+    exportKDoc = exportKDoc,
+    skipExpects = true, // Incremental serializer is not used for serialization of expect declarations.
+    allowErrorTypes = allowErrorTypes
+) {
 
     fun serializePackageFragment(
         module: ModuleDescriptor,

@@ -27,9 +27,16 @@ class KlibMetadataMonolithicSerializer(
     exportKDoc: Boolean,
     skipExpects: Boolean,
     includeOnlyModuleContent: Boolean = false,
-    allowErrorTypes: Boolean = false
-) : KlibMetadataSerializer(languageVersionSettings, metadataVersion, project, exportKDoc, skipExpects, includeOnlyModuleContent, allowErrorTypes) {
-
+    allowErrorTypes: Boolean = false,
+) : KlibMetadataSerializer(
+    languageVersionSettings = languageVersionSettings,
+    metadataVersion = metadataVersion,
+    project = project,
+    exportKDoc = exportKDoc,
+    skipExpects = skipExpects,
+    includeOnlyModuleContent = includeOnlyModuleContent,
+    allowErrorTypes = allowErrorTypes
+) {
     private fun serializePackageFragment(fqName: FqName, module: ModuleDescriptor): List<ProtoBuf.PackageFragment> {
 
         val fragments = if (includeOnlyModuleContent) {
