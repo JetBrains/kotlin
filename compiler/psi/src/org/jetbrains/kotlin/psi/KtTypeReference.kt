@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.psi
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementOrCallableRef
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets
@@ -96,7 +95,7 @@ class KtTypeReference : KtModifierListOwnerStub<KotlinPlaceHolderStub<KtTypeRefe
                 }
                 typeElement.receiverTypeReference?.let { append(getTypeText(it.typeElement)) }
                 append(typeElement.parameters.joinToString(", ", "(", ")") { param ->
-                    param.name + ": " + param.typeReference?.getTypeText()
+                    param.name?.let { "$it: " }.orEmpty() + param.typeReference?.getTypeText()?.orEmpty()
                 })
                 typeElement.returnTypeReference?.let { returnType ->
                     append(" -> ")
