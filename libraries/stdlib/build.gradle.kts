@@ -1,14 +1,14 @@
 @file:Suppress("UNUSED_VARIABLE", "NAME_SHADOWING")
 import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.component.UsageContext
-import java.nio.file.*
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
-import org.jetbrains.kotlin.gradle.tasks.UsesKotlinJavaToolchain
-import plugins.configureDefaultPublishing
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
+import org.jetbrains.kotlin.gradle.tasks.UsesKotlinJavaToolchain
+import plugins.configureDefaultPublishing
 import plugins.configureKotlinPomAttributes
+import java.nio.file.*
 
 plugins {
     id("kotlin-multiplatform")
@@ -461,10 +461,16 @@ kotlin {
 
 dependencies {
     val jvmMainImplementation by configurations.getting
+    val commonMainMetadataElementsWithClassifier by configurations.creating
+    val metadataApiElements by configurations.getting
+    val nativeApiElements by configurations.creating
     constraints {
         // there is no dependency anymore from kotlin-stdlib to kotlin-stdlib-common,
         // but use this constraint to align it if another library brings it transitively
         jvmMainImplementation(project(":kotlin-stdlib-common"))
+        commonMainMetadataElementsWithClassifier(project(":kotlin-stdlib-common"))
+        metadataApiElements(project(":kotlin-stdlib-common"))
+        nativeApiElements(project(":kotlin-stdlib-common"))
         // to avoid split package and duplicate classes on classpath after moving them from these artifacts in 1.8.0
         jvmMainImplementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.0")
         jvmMainImplementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.0")
