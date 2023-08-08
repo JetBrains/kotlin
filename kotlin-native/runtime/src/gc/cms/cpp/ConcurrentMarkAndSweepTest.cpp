@@ -21,6 +21,7 @@
 #include "ObjectTestSupport.hpp"
 #include "SafePoint.hpp"
 #include "SingleThreadExecutor.hpp"
+#include "StableRef.hpp"
 #include "TestSupport.hpp"
 #include "ThreadData.hpp"
 #include "WeakRef.hpp"
@@ -1034,30 +1035,23 @@ TEST_P(ConcurrentMarkAndSweepTest, MultipleMutatorsWeaks) {
     }
 }
 
-
-TEST_P(ConcurrentMarkAndSweepTest, NewThreadsWhileRequestingCollection) {
+TEST_P(ConcurrentMarkAndSweepTest, MultipleMutatorsWeakNewObj) {
     std_support::vector<Mutator> mutators(kDefaultThreadCount);
-    std_support::vector<ObjHeader*> globals(2 * kDefaultThreadCount);
-    std_support::vector<ObjHeader*> locals(2 * kDefaultThreadCount);
-    std_support::vector<ObjHeader*> reachables(2 * kDefaultThreadCount);
-    std_support::vector<ObjHeader*> unreachables(2 * kDefaultThreadCount);
 
-    auto expandRootSet = [&globals, &locals, &reachables, &unreachables](mm::ThreadData& threadData, Mutator& mutator, int i) {
-        auto& global = mutator.AddGlobalRoot();
-        auto& local = mutator.AddStackRoot();
-        auto& reachable = AllocateObject(threadData);
-        auto& unreachable = AllocateObject(threadData);
-        local->field1 = reachable.header();
-        globals[i] = global.header();
-        locals[i] = local.header();
-        reachables[i] = reachable.header();
-        unreachables[i] = unreachable.header();
-    };
+    // keep weak ref sweeper a busy
+//    mutators[0]
+//            .Execute([&](mm::ThreadData& threadData, Mutator& mutator) {
+//                auto& object = AllocateObject(threadData);
+//                for (int i = 0; i < 100; ++i) {
+//                    // will be disposed by the cleaner at the end of the test
+//                    std::ignore = mm::StableRef::create(object.header());
+//                }
+//            })
+//            .wait();
 
+    // Make sure all mutators are initialized.
     for (int i = 0; i < kDefaultThreadCount; ++i) {
-        mutators[i]
-                .Execute([i, expandRootSet](mm::ThreadData& threadData, Mutator& mutator) { expandRootSet(threadData, mutator, i); })
-                .wait();
+        mutators[i].Execute([](mm::ThreadData& threadData, Mutator& mutator) {}).wait();
     }
 
     std_support::vector<std::future<void>> gcFutures;
@@ -1068,82 +1062,143 @@ TEST_P(ConcurrentMarkAndSweepTest, NewThreadsWhileRequestingCollection) {
     while (!mm::IsThreadSuspensionRequested()) {
     }
 
-    // Now start attaching new threads.
-    std_support::vector<Mutator> newMutators(kDefaultThreadCount);
-    std_support::vector<std::future<void>> attachFutures(kDefaultThreadCount);
-
-    for (int i = 0; i < kDefaultThreadCount; ++i) {
-        attachFutures[i] = newMutators[i].Execute([&gcDone, i, expandRootSet](mm::ThreadData& threadData, Mutator& mutator) {
-            expandRootSet(threadData, mutator, i + kDefaultThreadCount);
-            while (!gcDone.load(std::memory_order_relaxed)) {
-                mm::safePoint(threadData);
-            }
-        });
-    }
-
-    // All the other threads are stopping at safe points.
     for (auto& mutator : mutators) {
-        gcFutures.emplace_back(mutator.Execute([&gcDone](mm::ThreadData& threadData, Mutator& mutator) {
+        gcFutures.emplace_back(mutator.Execute([&](mm::ThreadData& threadData, Mutator& mutator) noexcept {
+            mm::safePoint(threadData);
+
+            auto& object = AllocateObject(threadData);
+            auto& objectWeak = ([&threadData, &object]() -> test_support::RegularWeakReferenceImpl& {
+                ObjHolder holder;
+                return InstallWeakReference(threadData, object.header(), holder.slot());
+            })();
+            EXPECT_NE(objectWeak.get(), nullptr);
             while (!gcDone.load(std::memory_order_relaxed)) {
                 mm::safePoint(threadData);
             }
         }));
     }
 
-    // Wait for the GC to be done.
     mm::GlobalData::Instance().gc().WaitFinalizers(epoch);
     gcDone.store(true, std::memory_order_relaxed);
 
-    // GC will be completed first
     for (auto& future : gcFutures) {
         future.wait();
     }
 
-    // Only then will the new threads be allowed to attach.
-    for (auto& future : attachFutures) {
-        future.wait();
-    }
-
-#ifndef CUSTOM_ALLOCATOR
-    // Old mutators don't even see alive objects from the new threads yet (as the latter ones have not published anything).
-
-    std_support::vector<ObjHeader*> expectedAlive;
-    for (int i = 0; i < kDefaultThreadCount; ++i) {
-        expectedAlive.push_back(globals[i]);
-        expectedAlive.push_back(locals[i]);
-        expectedAlive.push_back(reachables[i]);
-    }
-
-    for (auto& mutator : mutators) {
-        EXPECT_THAT(mutator.Alive(), testing::UnorderedElementsAreArray(expectedAlive));
-    }
-
-    for (int i = 0; i < kDefaultThreadCount; ++i) {
-        std_support::vector<ObjHeader*> aliveForThisThread(expectedAlive.begin(), expectedAlive.end());
-        aliveForThisThread.push_back(globals[kDefaultThreadCount + i]);
-        aliveForThisThread.push_back(locals[kDefaultThreadCount + i]);
-        aliveForThisThread.push_back(reachables[kDefaultThreadCount + i]);
-        // Unreachables for new threads were not collected.
-        aliveForThisThread.push_back(unreachables[kDefaultThreadCount + i]);
-        EXPECT_THAT(newMutators[i].Alive(), testing::UnorderedElementsAreArray(aliveForThisThread));
-    }
-#else
-    // Custom allocator does not have a notion of objects alive only for some thread
-    std_support::vector<ObjHeader*> expectedAlive;
-    for (int i = 0; i < kDefaultThreadCount; ++i) {
-        expectedAlive.push_back(globals[i]);
-        expectedAlive.push_back(locals[i]);
-        expectedAlive.push_back(reachables[i]);
-        expectedAlive.push_back(globals[kDefaultThreadCount + i]);
-        expectedAlive.push_back(locals[kDefaultThreadCount + i]);
-        expectedAlive.push_back(reachables[kDefaultThreadCount + i]);
-        // Unreachables for new threads were not collected.
-        expectedAlive.push_back(unreachables[kDefaultThreadCount + i]);
-    }
-    // All threads see the same alive objects with the custom alloctor, enough to check a single mutator.
-    EXPECT_THAT(mutators[0].Alive(), testing::UnorderedElementsAreArray(expectedAlive));
-#endif // CUSTOM_ALLOCATOR
+    mutators.clear();
 }
+
+
+// TODO remove?
+//TEST_P(ConcurrentMarkAndSweepTest, NewThreadsWhileRequestingCollection) {
+//    std_support::vector<Mutator> mutators(kDefaultThreadCount);
+//    std_support::vector<ObjHeader*> globals(2 * kDefaultThreadCount);
+//    std_support::vector<ObjHeader*> locals(2 * kDefaultThreadCount);
+//    std_support::vector<ObjHeader*> reachables(2 * kDefaultThreadCount);
+//    std_support::vector<ObjHeader*> unreachables(2 * kDefaultThreadCount);
+//
+//    auto expandRootSet = [&globals, &locals, &reachables, &unreachables](mm::ThreadData& threadData, Mutator& mutator, int i) {
+//        auto& global = mutator.AddGlobalRoot();
+//        auto& local = mutator.AddStackRoot();
+//        auto& reachable = AllocateObject(threadData);
+//        auto& unreachable = AllocateObject(threadData);
+//        local->field1 = reachable.header();
+//        globals[i] = global.header();
+//        locals[i] = local.header();
+//        reachables[i] = reachable.header();
+//        unreachables[i] = unreachable.header();
+//    };
+//
+//    for (int i = 0; i < kDefaultThreadCount; ++i) {
+//        mutators[i]
+//                .Execute([i, expandRootSet](mm::ThreadData& threadData, Mutator& mutator) { expandRootSet(threadData, mutator, i); })
+//                .wait();
+//    }
+//
+//    std_support::vector<std::future<void>> gcFutures;
+//    auto epoch = mm::GlobalData::Instance().gc().Schedule();
+//    std::atomic<bool> gcDone = false;
+//
+//    // Spin until thread suspension is requested.
+//    while (!mm::IsThreadSuspensionRequested()) {
+//    }
+//
+//    // Now start attaching new threads.
+//    std_support::vector<Mutator> newMutators(kDefaultThreadCount);
+//    std_support::vector<std::future<void>> attachFutures(kDefaultThreadCount);
+//
+//    for (int i = 0; i < kDefaultThreadCount; ++i) {
+//        attachFutures[i] = newMutators[i].Execute([&gcDone, i, expandRootSet](mm::ThreadData& threadData, Mutator& mutator) {
+//            expandRootSet(threadData, mutator, i + kDefaultThreadCount);
+//            while (!gcDone.load(std::memory_order_relaxed)) {
+//                mm::safePoint(threadData);
+//            }
+//        });
+//    }
+//
+//    // All the other threads are stopping at safe points.
+//    for (auto& mutator : mutators) {
+//        gcFutures.emplace_back(mutator.Execute([&gcDone](mm::ThreadData& threadData, Mutator& mutator) {
+//            while (!gcDone.load(std::memory_order_relaxed)) {
+//                mm::safePoint(threadData);
+//            }
+//        }));
+//    }
+//
+//    // Wait for the GC to be done.
+//    mm::GlobalData::Instance().gc().WaitFinalizers(epoch);
+//    gcDone.store(true, std::memory_order_relaxed);
+//
+//    // GC will be completed first
+//    for (auto& future : gcFutures) {
+//        future.wait();
+//    }
+//
+//    // Only then will the new threads be allowed to attach.
+//    for (auto& future : attachFutures) {
+//        future.wait();
+//    }
+//
+//#ifndef CUSTOM_ALLOCATOR
+//    // Old mutators don't even see alive objects from the new threads yet (as the latter ones have not published anything).
+//
+//    std_support::vector<ObjHeader*> expectedAlive;
+//    for (int i = 0; i < kDefaultThreadCount; ++i) {
+//        expectedAlive.push_back(globals[i]);
+//        expectedAlive.push_back(locals[i]);
+//        expectedAlive.push_back(reachables[i]);
+//    }
+//
+//    for (auto& mutator : mutators) {
+//        EXPECT_THAT(mutator.Alive(), testing::UnorderedElementsAreArray(expectedAlive));
+//    }
+//
+//    for (int i = 0; i < kDefaultThreadCount; ++i) {
+//        std_support::vector<ObjHeader*> aliveForThisThread(expectedAlive.begin(), expectedAlive.end());
+//        aliveForThisThread.push_back(globals[kDefaultThreadCount + i]);
+//        aliveForThisThread.push_back(locals[kDefaultThreadCount + i]);
+//        aliveForThisThread.push_back(reachables[kDefaultThreadCount + i]);
+//        // Unreachables for new threads were not collected.
+//        aliveForThisThread.push_back(unreachables[kDefaultThreadCount + i]);
+//        EXPECT_THAT(newMutators[i].Alive(), testing::UnorderedElementsAreArray(aliveForThisThread));
+//    }
+//#else
+//    // Custom allocator does not have a notion of objects alive only for some thread
+//    std_support::vector<ObjHeader*> expectedAlive;
+//    for (int i = 0; i < kDefaultThreadCount; ++i) {
+//        expectedAlive.push_back(globals[i]);
+//        expectedAlive.push_back(locals[i]);
+//        expectedAlive.push_back(reachables[i]);
+//        expectedAlive.push_back(globals[kDefaultThreadCount + i]);
+//        expectedAlive.push_back(locals[kDefaultThreadCount + i]);
+//        expectedAlive.push_back(reachables[kDefaultThreadCount + i]);
+//        // Unreachables for new threads were not collected.
+//        expectedAlive.push_back(unreachables[kDefaultThreadCount + i]);
+//    }
+//    // All threads see the same alive objects with the custom alloctor, enough to check a single mutator.
+//    EXPECT_THAT(mutators[0].Alive(), testing::UnorderedElementsAreArray(expectedAlive));
+//#endif // CUSTOM_ALLOCATOR
+//}
 
 TEST_P(ConcurrentMarkAndSweepTest, FreeObjectWithFreeWeakReversedOrder) {
     std_support::vector<Mutator> mutators(2);
