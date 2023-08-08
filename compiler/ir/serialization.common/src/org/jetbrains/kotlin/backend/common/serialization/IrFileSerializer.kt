@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 import java.io.File
 import org.jetbrains.kotlin.backend.common.serialization.proto.AccessorIdSignature as ProtoAccessorIdSignature
-import org.jetbrains.kotlin.backend.common.serialization.proto.Actual as ProtoActual
 import org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature as ProtoCommonIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.CompositeSignature as ProtoCompositeSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.FieldAccessCommon as ProtoFieldAccessCommon
@@ -115,20 +114,16 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpress
 open class IrFileSerializer(
     val messageLogger: IrMessageLogger,
     private val declarationTable: DeclarationTable,
-    private val expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
+    @Suppress("UNUSED_PARAMETER") expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol> = mutableMapOf(), // TODO: to be removed later
     private val compatibilityMode: CompatibilityMode,
     private val languageVersionSettings: LanguageVersionSettings,
     private val bodiesOnlyForInlines: Boolean = false,
-    private val skipExpects: Boolean = false,
+    @Suppress("UNUSED_PARAMETER") skipExpects: Boolean = true, // TODO: to be removed later
     private val normalizeAbsolutePaths: Boolean = false,
     private val sourceBaseDirs: Collection<String>
 ) {
     private val loopIndex = hashMapOf<IrLoop, Int>()
     private var currentLoopIndex = 0
-
-    // For every actual we keep a corresponding expects' uniqIds.
-    // The linker substitutes actual symbols when asked for an expect uniqId.
-    private val expectActualTable = ExpectActualTable(expectDescriptorToSymbol)
 
     // The same type can be used multiple times in a file
     // so use this index to store type data only once.
@@ -1092,7 +1087,6 @@ open class IrFileSerializer(
     }
 
     private fun serializeIrDeclarationBase(declaration: IrDeclaration, flags: Long?): ProtoDeclarationBase {
-        if (!skipExpects) expectActualTable.findExpectsForActuals(declaration)
         return with(ProtoDeclarationBase.newBuilder()) {
             symbol = serializeIrSymbol((declaration as IrSymbolOwner).symbol)
             coordinates = serializeCoordinates(declaration.startOffset, declaration.endOffset)
@@ -1427,7 +1421,7 @@ open class IrFileSerializer(
             .addAllAnnotation(serializeAnnotations(file.annotations))
 
         file.declarations.forEach {
-            if (skipExpects && it.descriptor.isExpectMember && !it.descriptor.isSerializableExpectClass) {
+            if (it.descriptor.isExpectMember && !it.descriptor.isSerializableExpectClass) {
                 // Skip the declaration unless it is `expect annotation class` marked with `OptionalExpectation`
                 // without the corresponding `actual` counterpart for the current leaf target.
                 return@forEach
@@ -1456,7 +1450,6 @@ open class IrFileSerializer(
             }
 
         fillPlatformExplicitlyExported(file, proto)
-        serializeExpectActualSubstitutionTable(proto)
 
         return SerializedIrFile(
             fileData = proto.build().toByteArray(),
@@ -1494,20 +1487,5 @@ open class IrFileSerializer(
 
         return name.replace(File.separatorChar, '/')
 
-    }
-
-    private fun serializeExpectActualSubstitutionTable(proto: ProtoFile.Builder) {
-        if (skipExpects) return
-
-        expectActualTable.table.forEach next@{ (expect, actualSymbol) ->
-            val expectSymbol = expectDescriptorToSymbol[expect] ?: error("Could not find expect symbol for expect descriptor $expect")
-
-            proto.addActual(
-                ProtoActual.newBuilder()
-                    .setExpectSymbol(serializeIrSymbol(expectSymbol))
-                    .setActualSymbol(serializeIrSymbol(actualSymbol))
-                    .build()
-            )
-        }
     }
 }

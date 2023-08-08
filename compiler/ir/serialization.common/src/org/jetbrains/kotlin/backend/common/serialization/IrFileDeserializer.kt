@@ -70,7 +70,6 @@ class FileDeserializationState(
     val symbolDeserializer =
         IrSymbolDeserializer(
             linker.symbolTable, fileReader, file.symbol,
-            fileProto.actualList,
             ::addIdSignature,
             linker::handleExpectActualMapping,
             symbolProcessor = linker.symbolProcessor,
