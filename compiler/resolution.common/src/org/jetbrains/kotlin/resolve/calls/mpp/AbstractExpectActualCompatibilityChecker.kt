@@ -23,19 +23,19 @@ import org.jetbrains.kotlin.utils.keysToMap
 import java.util.*
 
 object AbstractExpectActualCompatibilityChecker {
-    fun <T : DeclarationSymbolMarker> areCompatibleClassifiers(
+    fun <T : DeclarationSymbolMarker> getClassifiersCompatibility(
         expectClassSymbol: RegularClassSymbolMarker,
         actualClassLikeSymbol: ClassLikeSymbolMarker,
         context: ExpectActualMatchingContext<T>,
     ): ExpectActualCompatibility<T> {
         val result = with(context) {
-            areCompatibleClassifiers(expectClassSymbol, actualClassLikeSymbol, parentSubstitutor = null)
+            getClassifiersCompatibility(expectClassSymbol, actualClassLikeSymbol, parentSubstitutor = null)
         }
         @Suppress("UNCHECKED_CAST")
         return result as ExpectActualCompatibility<T>
     }
 
-    fun <T : DeclarationSymbolMarker> areCompatibleCallables(
+    fun <T : DeclarationSymbolMarker> getCallablesCompatibility(
         expectDeclaration: CallableSymbolMarker,
         actualDeclaration: CallableSymbolMarker,
         parentSubstitutor: TypeSubstitutorMarker?,
@@ -44,7 +44,7 @@ object AbstractExpectActualCompatibilityChecker {
         context: ExpectActualMatchingContext<T>,
     ): ExpectActualCompatibility<T> {
         val result = with(context) {
-            areCompatibleCallables(expectDeclaration, actualDeclaration, parentSubstitutor, expectContainingClass, actualContainingClass)
+            getCallablesCompatibility(expectDeclaration, actualDeclaration, parentSubstitutor, expectContainingClass, actualContainingClass)
         }
         @Suppress("UNCHECKED_CAST")
         return result as ExpectActualCompatibility<T>
@@ -69,7 +69,7 @@ object AbstractExpectActualCompatibilityChecker {
 
     context(ExpectActualMatchingContext<*>)
     @Suppress("warnings")
-    private fun areCompatibleClassifiers(
+    private fun getClassifiersCompatibility(
         expectClassSymbol: RegularClassSymbolMarker,
         actualClassLikeSymbol: ClassLikeSymbolMarker,
         parentSubstitutor: TypeSubstitutorMarker?,
@@ -240,7 +240,7 @@ object AbstractExpectActualCompatibilityChecker {
     ) {
         val mapping = actualMembers.keysToMap { actualMember ->
             when (expectMember) {
-                is CallableSymbolMarker -> areCompatibleCallables(
+                is CallableSymbolMarker -> getCallablesCompatibility(
                     expectMember,
                     actualMember as CallableSymbolMarker,
                     substitutor,
@@ -250,7 +250,7 @@ object AbstractExpectActualCompatibilityChecker {
 
                 is RegularClassSymbolMarker -> {
                     val parentSubstitutor = substitutor?.takeIf { !innerClassesCapturesOuterTypeParameters }
-                    areCompatibleClassifiers(
+                    getClassifiersCompatibility(
                         expectMember,
                         actualMember as ClassLikeSymbolMarker,
                         parentSubstitutor
@@ -277,7 +277,7 @@ object AbstractExpectActualCompatibilityChecker {
     }
 
     context(ExpectActualMatchingContext<*>)
-    private fun areCompatibleCallables(
+    private fun getCallablesCompatibility(
         expectDeclaration: CallableSymbolMarker,
         actualDeclaration: CallableSymbolMarker,
         parentSubstitutor: TypeSubstitutorMarker?,
