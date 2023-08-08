@@ -409,7 +409,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
             }
             )
                 public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Test] get(): R|kotlin/String| {
-                    ^ this@R|/Test|.D|/Test.resolveMe|.R|SubstitutionOverride</LazyDelegate.getValue: R|Stub (chain inference): TypeVariable(+T)|>|(this@R|/Test|, ::R|/Test.resolveMe|)
+                    ^ this@R|/Test|.D|/Test.resolveMe|.R|SubstitutionOverride</LazyDelegate.getValue: R|kotlin/String|>|(this@R|/Test|, ::R|/Test.resolveMe|)
                 }
 
         }
@@ -453,7 +453,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
             }
             )
                 public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=Test] get(): R|kotlin/String| {
-                    ^ this@R|/Test|.D|/Test.resolveMe|.R|SubstitutionOverride</LazyDelegate.getValue: R|Stub (chain inference): TypeVariable(+T)|>|(this@R|/Test|, ::R|/Test.resolveMe|)
+                    ^ this@R|/Test|.D|/Test.resolveMe|.R|SubstitutionOverride</LazyDelegate.getValue: R|kotlin/String|>|(this@R|/Test|, ::R|/Test.resolveMe|)
                 }
 
         }
@@ -497,7 +497,7 @@ FILE: [ResolvedTo(IMPORTS)] lazyPropertyScript.kts
             }
             )
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Test] get(): R|kotlin/String| {
-                    ^ this@R|/Test|.D|/Test.resolveMe|.R|SubstitutionOverride</LazyDelegate.getValue: R|Stub (chain inference): TypeVariable(+T)|>|(this@R|/Test|, ::R|/Test.resolveMe|)
+                    ^ this@R|/Test|.D|/Test.resolveMe|.R|SubstitutionOverride</LazyDelegate.getValue: R|kotlin/String|>|(this@R|/Test|, ::R|/Test.resolveMe|)
                 }
 
         }
@@ -545,7 +545,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] lazyPropertyScript.kts
             }
             )
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Test] get(): R|kotlin/String| {
-                    ^ this@R|/Test|.D|/Test.resolveMe|.R|SubstitutionOverride</LazyDelegate.getValue: R|Stub (chain inference): TypeVariable(+T)|>|(this@R|/Test|, ::R|/Test.resolveMe|)
+                    ^ this@R|/Test|.D|/Test.resolveMe|.R|SubstitutionOverride</LazyDelegate.getValue: R|kotlin/String|>|(this@R|/Test|, ::R|/Test.resolveMe|)
                 }
 
         }

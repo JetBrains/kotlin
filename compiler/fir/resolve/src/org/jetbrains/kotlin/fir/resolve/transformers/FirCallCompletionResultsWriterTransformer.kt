@@ -25,14 +25,15 @@ import org.jetbrains.kotlin.fir.resolve.dfa.FirDataFlowAnalyzer
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.inference.ResolvedLambdaAtom
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.*
+import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.impl.ConvertibleIntegerOperators.binaryOperatorsWithSignedArgument
+import org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope
 import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperator
 import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperatorForUnsignedType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildStarProjection
@@ -52,6 +53,7 @@ import kotlin.collections.component2
 
 class FirCallCompletionResultsWriterTransformer(
     override val session: FirSession,
+    private val scopeSession: ScopeSession,
     private val finalSubstitutor: ConeSubstitutor,
     private val typeCalculator: ReturnTypeCalculator,
     private val typeApproximator: ConeTypeApproximator,
@@ -94,6 +96,8 @@ class FirCallCompletionResultsWriterTransformer(
         qualifiedAccessExpression: T, calleeReference: FirNamedReferenceWithCandidate,
     ): T {
         val subCandidate = calleeReference.candidate
+
+        subCandidate.updateSubstitutedMemberIfReceiverContainsTypeVariable()
 
         val declaration = subCandidate.symbol.fir
         val typeArguments = computeTypeArguments(qualifiedAccessExpression, subCandidate)
@@ -157,6 +161,97 @@ class FirCallCompletionResultsWriterTransformer(
         }
         session.lookupTracker?.recordTypeResolveAsLookup(type, qualifiedAccessExpression.source, context.file.source)
         return qualifiedAccessExpression
+    }
+
+    /**
+     * Currently, it's only necessary for delegate inference, e.g. when the delegate expression returns some generic type
+     * with non-fixed yet type variables and inside its member scope we find the `getValue` function that might still contain
+     * the type variables, too and they even might be used to adding some constraints for them.
+     *
+     * After the completion ends and all the variables are fixed, this member candidate still contains them, so what this function does
+     * is replace the candidate from Delegate<Tv, ...> scope to the same candidate from Delegate<ResultTypeForT, ..>.
+     *
+     * The fun fact is that it wasn't necessary before Delegate Inference refactoring because there were stub types left and FIR2IR
+     * handled them properly as equal-to-anything unlike the type variable types.
+     *
+     * See codegen/box/delegatedProperty/noTypeVariablesLeft.kt
+     *
+     * That all looks a bit ugly, but there are not many options.
+     * In an ideal world, we wouldn't have substitution overrides in FIR, but instead used a pair original symbol and substitution
+     * everywhere, but we're not there yet.
+     */
+    private fun Candidate.updateSubstitutedMemberIfReceiverContainsTypeVariable() {
+        val updatedSymbol = symbol.updateSubstitutedMemberIfReceiverContainsTypeVariable() ?: return
+        val oldSymbol = symbol
+
+        @OptIn(Candidate.UpdatingSymbol::class)
+        updateSymbol(updatedSymbol)
+
+        check(updatedSymbol is FirCallableSymbol<*>)
+
+        substitutor = substitutorByMap(
+            updatedSymbol.typeParameterSymbols.zip(freshVariables).associate { (typeParameter, typeVariable) ->
+                typeParameter to typeVariable.defaultType
+            },
+            session,
+        )
+
+        if (updatedSymbol !is FirFunctionSymbol) return
+        require(oldSymbol is FirFunctionSymbol)
+
+        val oldArgumentMapping = argumentMapping ?: return
+        val oldValueParametersToNewMap = oldSymbol.valueParameterSymbols.zip(updatedSymbol.valueParameterSymbols).toMap()
+
+        argumentMapping = oldArgumentMapping.mapValuesTo(linkedMapOf()) {
+            oldValueParametersToNewMap[it.value.symbol]!!.fir
+        }
+    }
+
+    private fun FirBasedSymbol<*>.updateSubstitutedMemberIfReceiverContainsTypeVariable(): FirBasedSymbol<*>? {
+        // TODO: Add assertion that this function returns not-null only for BI and delegation inference
+        if (mode != Mode.DelegatedPropertyCompletion) return null
+
+        val fir = fir
+        if (fir !is FirCallableDeclaration) return null
+
+        val dispatchReceiverType = fir.dispatchReceiverType ?: return null
+        val updatedDispatchReceiverType = finalSubstitutor.substituteOrNull(dispatchReceiverType) ?: return null
+
+        val scope =
+            updatedDispatchReceiverType.scope(
+                session,
+                scopeSession,
+                FakeOverrideTypeCalculator.DoNothing,
+                FirResolvePhase.STATUS
+            ) as? FirClassSubstitutionScope ?: return null
+
+        val original = fir.originalForSubstitutionOverride ?: return null
+        return findSingleSubstitutedSymbolWithOriginal(original.symbol) { processor ->
+            when (original) {
+                is FirSimpleFunction -> scope.processFunctionsByName(original.name, processor)
+                is FirProperty -> scope.processFunctionsByName(original.name, processor)
+                is FirConstructor -> scope.processDeclaredConstructors(processor)
+                else -> error("Unexpected declaration kind ${original.render()}")
+            }
+        }
+    }
+
+    private fun findSingleSubstitutedSymbolWithOriginal(
+        original: FirBasedSymbol<*>,
+        processCallables: ((FirCallableSymbol<*>) -> Unit) -> Unit,
+    ): FirBasedSymbol<*> {
+        var result: FirBasedSymbol<*>? = null
+
+        processCallables { symbol ->
+            if (symbol.originalForSubstitutionOverride == original) {
+                check(result == null) {
+                    "Expected single, but ${result!!.fir.render()} and ${symbol.fir.render()} found"
+                }
+                result = symbol
+            }
+        }
+
+        return result ?: error("No symbol found for ${original.fir.render()}")
     }
 
     override fun transformQualifiedAccessExpression(
