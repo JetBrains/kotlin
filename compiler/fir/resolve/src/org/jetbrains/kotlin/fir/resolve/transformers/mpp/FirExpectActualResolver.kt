@@ -71,7 +71,7 @@ object FirExpectActualResolver {
                     candidates.filter { expectSymbol ->
                         actualSymbol != expectSymbol && expectSymbol.isExpect
                     }.groupBy { expectDeclaration ->
-                        AbstractExpectActualCompatibilityChecker.areCompatibleCallables(
+                        AbstractExpectActualCompatibilityChecker.getCallablesCompatibility(
                             expectDeclaration,
                             actualSymbol as CallableSymbolMarker,
                             parentSubstitutor,
@@ -90,7 +90,7 @@ object FirExpectActualResolver {
                 is FirClassLikeSymbol<*> -> {
                     val expectClassSymbol = useSiteSession.dependenciesSymbolProvider
                         .getClassLikeSymbolByClassId(actualSymbol.classId) as? FirRegularClassSymbol ?: return null
-                    val compatibility = AbstractExpectActualCompatibilityChecker.areCompatibleClassifiers(expectClassSymbol, actualSymbol, context)
+                    val compatibility = AbstractExpectActualCompatibilityChecker.getClassifiersCompatibility(expectClassSymbol, actualSymbol, context)
                     mapOf(compatibility to listOf(expectClassSymbol))
                 }
                 else -> null
