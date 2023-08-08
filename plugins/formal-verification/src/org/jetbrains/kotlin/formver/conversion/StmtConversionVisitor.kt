@@ -52,8 +52,43 @@ class StmtConversionVisitor : FirVisitor<Exp?, StmtConversionContext>() {
     override fun <T> visitConstExpression(constExpression: FirConstExpression<T>, data: StmtConversionContext): Exp =
         when (constExpression.kind) {
             ConstantValueKind.Int -> Exp.IntLit((constExpression.value as Long).toInt().toScalaBigInt())
-            else -> TODO("Not implemented yet")
+            ConstantValueKind.Boolean -> Exp.BoolLit(constExpression.value as Boolean)
+            else -> TODO("Constant Expression of type ${constExpression.kind} is not yet implemented.")
         }
+
+    override fun visitWhenExpression(whenExpression: FirWhenExpression, data: StmtConversionContext): Exp? {
+        if (whenExpression.usedAsExpression) {
+            // The problem with conditional expressions is that Kotlin conditional expressions can have statements whereas Viper
+            // conditionals can't. These need to be embedded as Viper statements before the IF, however, one has to carefully consider
+            // short-circuiting semantics.
+            TODO("Conditionals used as expressions are not yet implemented.")
+        }
+
+        if (whenExpression.branches.size != 2) {
+            // For now only when expressions with 2 branches are supported so if statements can be encoded.
+            // When expressions with more than 2 branches can be embedded as nested if-else chains.
+            TODO("When expressions with more that two branches are not yet implemented")
+        }
+
+        when (whenExpression.subject) {
+            null -> {
+                val cond = whenExpression.branches[0].condition.accept(this, data)
+                val thenCtx = StmtConversionContext(data.methodCtx)
+                thenCtx.convertAndAppend(whenExpression.branches[0].result)
+                val elseCtx = StmtConversionContext(data.methodCtx)
+                elseCtx.convertAndAppend(whenExpression.branches[1].result)
+                data.statements.add(
+                    Stmt.If(
+                        cond ?: throw Exception("Missing IF condition"),
+                        thenCtx.block,
+                        elseCtx.block
+                    )
+                )
+            }
+            else -> TODO("Can't embed $whenExpression since when expressions with a subject other than null are not yet supported.")
+        }
+        return null
+    }
 
     override fun visitPropertyAccessExpression(
         propertyAccessExpression: FirPropertyAccessExpression,
