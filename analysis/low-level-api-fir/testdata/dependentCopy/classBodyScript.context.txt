@@ -1,0 +1,38 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirDefaultSimpleImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirPackageMemberScope
+    Element 6
+        Scope: FirExplicitSimpleImportingScope
+    Element 7
+        Scope: FirScriptDeclarationsScope
+            Classifiers:
+                FirRegularClassSymbol public? final? class A : R|kotlin/Any|
+    Element 8
+        Scope: FirLocalScope
+            Classifiers:
+                FirRegularClassSymbol public final class A : R|kotlin/Any|
+            Properties:
+                FirPropertySymbol lval args: R|kotlin/Array<kotlin/String>|
+    Element 9
+        Context receivers:
+            FirScriptSymbol context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+            SCRIPT:
+                lval args: R|kotlin/Array<kotlin/String>|
+
+                public? final? class A : R|kotlin/Any|
+                Type: kotlin/script/templates/standard/ScriptTemplateWithArgs
+                Label: <script>
+    Element 10
+        Implicit receiver:
+            FirRegularClassSymbol public final class A : R|kotlin/Any|
+                Type: A

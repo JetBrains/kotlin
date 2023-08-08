@@ -17,8 +17,12 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.parents
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
+import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.SourceFilePreprocessor
@@ -101,6 +105,18 @@ class ExpressionMarkerProvider : TestService {
             ?: error("No expression found at caret")
     }
 
+    inline fun <reified P : KtElement> getElementOfTypeAtCaretByDirective(
+        file: KtFile,
+        registeredDirectives: RegisteredDirectives,
+        caretTag: String? = null,
+    ): P {
+        val elementAtCaret = getElementOfTypeAtCaret<P>(file, caretTag)
+        val expectedType = expectedTypeClass(registeredDirectives) ?: return elementAtCaret
+        return (elementAtCaret as PsiElement).parentsWithSelf.firstNotNullOfOrNull { currentElement ->
+            currentElement.takeIf(expectedType::isInstance) as? P
+        } ?: error("Element of ${P::class.simpleName} & ${expectedType.simpleName} is not found")
+    }
+
     @OptIn(PrivateForInline::class)
     inline fun <reified P : KtElement> getElementsOfTypeAtCarets(
         files: Collection<KtFile>,
@@ -136,16 +152,22 @@ class ExpressionMarkerProvider : TestService {
         return elements.single()
     }
 
-    fun getSelectedElementOfTypeByDirective(ktFile: KtFile, module: TestModule): PsiElement {
-        val selectedElement = getSelectedElement(ktFile)
-        val expectedType = module.directives[Directives.LOOK_UP_FOR_ELEMENT_OF_TYPE].firstOrNull() ?: return selectedElement
+    fun expectedTypeClass(registeredDirectives: RegisteredDirectives): Class<PsiElement>? {
+        val expectedType = registeredDirectives.singleOrZeroValue(Directives.LOOK_UP_FOR_ELEMENT_OF_TYPE) ?: return null
         val ktPsiPackage = "org.jetbrains.kotlin.psi."
         val expectedTypeFqName = ktPsiPackage + expectedType.removePrefix(ktPsiPackage)
-        @Suppress("UNCHECKED_CAST") val expectedClass = Class.forName(expectedTypeFqName) as Class<PsiElement>
-        if (expectedClass.isInstance(selectedElement)) return selectedElement
+
+        @Suppress("UNCHECKED_CAST")
+        return Class.forName(expectedTypeFqName) as Class<PsiElement>
+    }
+
+    fun getSelectedElementOfTypeByDirective(ktFile: KtFile, module: TestModule): PsiElement {
+        val selectedElement = getSelectedElement(ktFile)
+        val expectedType = expectedTypeClass(module.directives) ?: return selectedElement
+        if (expectedType.isInstance(selectedElement)) return selectedElement
 
         return selectedElement.collectDescendantsOfType<PsiElement> {
-            expectedClass.isInstance(it)
+            expectedType.isInstance(it)
         }.single { it.textRange == selectedElement.textRange }
     }
 

@@ -63,7 +63,7 @@ abstract class AbstractContextCollectorTest : AbstractAnalysisApiBasedSingleModu
     }
 }
 
-private object ElementContextRenderer {
+internal object ElementContextRenderer {
     fun render(context: ContextCollector.Context, builder: StringBuilder) = with(builder) {
         renderTowerDataContext(context.towerDataContext)
         renderSmartCasts(context.smartCasts)

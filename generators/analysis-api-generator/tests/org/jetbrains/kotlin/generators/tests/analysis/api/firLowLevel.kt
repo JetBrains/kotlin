@@ -182,6 +182,22 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
         testClass<AbstractContextCollectorTest> {
             model("contextCollector")
         }
+
+        testClass<AbstractSourceDependentCopyContextTest> {
+            model("dependentCopy", pattern = TestGeneratorUtil.KT)
+        }
+
+        testClass<AbstractScriptDependentCopyContextTest> {
+            model("dependentCopy", pattern = TestGeneratorUtil.KTS)
+        }
+
+        testClass<AbstractSourceDependentCopyFirTest> {
+            model("dependentCopy", pattern = TestGeneratorUtil.KT)
+        }
+
+        testClass<AbstractScriptDependentCopyFirTest> {
+            model("dependentCopy", pattern = TestGeneratorUtil.KTS)
+        }
     }
 
     testGroup("analysis/low-level-api-fir/tests", "analysis/analysis-api/testData") {
