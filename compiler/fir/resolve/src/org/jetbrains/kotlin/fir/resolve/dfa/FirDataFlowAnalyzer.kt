@@ -862,6 +862,9 @@ abstract class FirDataFlowAnalyzer(
     private fun processConditionalContract(flow: MutableFlow, qualifiedAccess: FirStatement) {
         // contracts has no effect on non-body resolve stages
         if (!components.transformer.baseTransformerPhase.isBodyResolve) return
+
+        // TODO: Consider using something besides `toResolvedCallableSymbol` as the latter only works
+        //  for completed calls without candidates (KT-61055 for tracking)
         val callee = when (qualifiedAccess) {
             is FirFunctionCall -> qualifiedAccess.toResolvedCallableSymbol()?.fir as? FirSimpleFunction
             is FirQualifiedAccessExpression -> qualifiedAccess.calleeReference.toResolvedPropertySymbol()?.fir?.getter
