@@ -30,7 +30,7 @@ fun <T> buildConstExpression(
                 ConstantValueKind.Float -> it.typeRef = FirImplicitFloatTypeRef(null)
                 ConstantValueKind.Int -> it.typeRef = FirImplicitIntTypeRef(null)
                 ConstantValueKind.Long -> it.typeRef = FirImplicitLongTypeRef(null)
-                ConstantValueKind.Null -> it.typeRef = FirImplicitNullableNothingTypeRef(null)
+                ConstantValueKind.Null -> it.typeRef = FirImplicitNullableAnyTypeRef(null)
                 ConstantValueKind.Short -> it.typeRef = FirImplicitShortTypeRef(null)
                 ConstantValueKind.String -> it.typeRef = FirImplicitStringTypeRef(null)
                 ConstantValueKind.UnsignedByte -> it.typeRef = FirImplicitUByteTypeRef(null)
