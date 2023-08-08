@@ -17,14 +17,13 @@ class KonanIrFileSerializer(
     messageLogger: IrMessageLogger,
     declarationTable: DeclarationTable,
     expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
-    skipExpects: Boolean,
     languageVersionSettings: LanguageVersionSettings,
     bodiesOnlyForInlines: Boolean = false,
     compatibilityMode: CompatibilityMode,
     normalizeAbsolutePaths: Boolean,
     sourceBaseDirs: Collection<String>
 ): IrFileSerializer(messageLogger, declarationTable, expectDescriptorToSymbol, compatibilityMode, languageVersionSettings,
-        bodiesOnlyForInlines, skipExpects, normalizeAbsolutePaths = normalizeAbsolutePaths, sourceBaseDirs = sourceBaseDirs) {
+        bodiesOnlyForInlines, normalizeAbsolutePaths = normalizeAbsolutePaths, sourceBaseDirs = sourceBaseDirs) {
 
     override fun backendSpecificExplicitRoot(node: IrAnnotationContainer): Boolean {
         val fqn = when (node) {

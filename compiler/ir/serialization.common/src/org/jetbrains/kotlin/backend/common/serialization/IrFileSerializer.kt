@@ -118,7 +118,6 @@ open class IrFileSerializer(
     private val compatibilityMode: CompatibilityMode,
     private val languageVersionSettings: LanguageVersionSettings,
     private val bodiesOnlyForInlines: Boolean = false,
-    private val skipExpects: Boolean = false,
     private val normalizeAbsolutePaths: Boolean = false,
     private val sourceBaseDirs: Collection<String>
 ) {
@@ -1421,7 +1420,7 @@ open class IrFileSerializer(
             .addAllAnnotation(serializeAnnotations(file.annotations))
 
         file.declarations.forEach {
-            if (skipExpects && it.descriptor.isExpectMember && !it.descriptor.isSerializableExpectClass) {
+            if (it.descriptor.isExpectMember && !it.descriptor.isSerializableExpectClass) {
                 // Skip the declaration unless it is `expect annotation class` marked with `OptionalExpectation`
                 // without the corresponding `actual` counterpart for the current leaf target.
                 return@forEach

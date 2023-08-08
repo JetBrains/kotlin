@@ -28,7 +28,6 @@ class JsIrFileSerializer(
     declarationTable: DeclarationTable,
     expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
     compatibilityMode: CompatibilityMode,
-    skipExpects: Boolean,
     languageVersionSettings: LanguageVersionSettings,
     bodiesOnlyForInlines: Boolean = false,
     normalizeAbsolutePaths: Boolean,
@@ -40,7 +39,6 @@ class JsIrFileSerializer(
     compatibilityMode,
     languageVersionSettings,
     bodiesOnlyForInlines = bodiesOnlyForInlines,
-    skipExpects = skipExpects,
     normalizeAbsolutePaths = normalizeAbsolutePaths,
     sourceBaseDirs = sourceBaseDirs
 ) {
