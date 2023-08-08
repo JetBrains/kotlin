@@ -157,6 +157,7 @@ private fun KtClassOrObject.containsInHeader(element: PsiElement): Boolean {
         addIfNotNull(getContextReceiverList())
         addIfNotNull(modifierList) // for annotations declared on class
         addIfNotNull(typeParameterList)
+        addIfNotNull(typeConstraintList) // `where` clause type constraints
 
         for (superTypeEntry in superTypeListEntries) {
             addIfNotNull(superTypeEntry.typeReference)
