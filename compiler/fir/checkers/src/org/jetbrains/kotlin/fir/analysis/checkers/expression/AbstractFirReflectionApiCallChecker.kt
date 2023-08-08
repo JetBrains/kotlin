@@ -46,7 +46,7 @@ abstract class AbstractFirReflectionApiCallChecker : FirBasicExpressionChecker()
         if (containingClassId == null || containingClassId.packageFqName != StandardNames.KOTLIN_REFLECT_FQ_NAME) return
 
         if (!isAllowedReflectionApi(referencedSymbol.name, containingClassId, context)) {
-            report(resolvedReference.source, context, reporter)
+            report(resolvedReference.source ?: expression.source, context, reporter)
         }
     }
 

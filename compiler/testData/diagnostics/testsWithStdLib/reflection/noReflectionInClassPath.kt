@@ -21,6 +21,7 @@ fun y01() = Foo::prop.<!NO_REFLECTION_IN_CLASS_PATH!>getter<!>
 fun y02() = Foo::class.<!NO_REFLECTION_IN_CLASS_PATH!>members<!>
 fun y03() = Foo::class.simpleName
 fun y04() = Foo::class.<!UNRESOLVED_REFERENCE!>properties<!>
+fun y05() = Foo::prop.<!NO_REFLECTION_IN_CLASS_PATH!>getter<!>(Foo(42))
 
 fun <T : Any> kclass(k: KClass<*>, kt: KClass<T>) {
     k.simpleName
