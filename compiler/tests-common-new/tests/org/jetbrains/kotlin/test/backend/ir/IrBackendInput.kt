@@ -84,7 +84,6 @@ sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
         override val irPluginContext: IrPluginContext,
         val sourceFiles: List<KtSourceFile>,
         val icData: List<KotlinFileSerializedData>,
-        val expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>, // TODO: abstract from descriptors
         override val diagnosticReporter: BaseDiagnosticsCollector,
         val hasErrors: Boolean,
         override val descriptorMangler: KotlinMangler.DescriptorMangler,
@@ -116,7 +115,6 @@ sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
         override val irPluginContext: IrPluginContext,
         val sourceFiles: List<KtSourceFile>,
         val icData: List<KotlinFileSerializedData>,
-        val expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>, // TODO: abstract from descriptors
         override val diagnosticReporter: BaseDiagnosticsCollector,
         val hasErrors: Boolean,
         override val descriptorMangler: KotlinMangler.DescriptorMangler,

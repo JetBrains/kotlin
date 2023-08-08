@@ -23,12 +23,11 @@ import org.jetbrains.kotlin.synthetic.isVisibleOutside
 class JvmIrSerializerSession(
     messageLogger: IrMessageLogger,
     private val declarationTable: DeclarationTable,
-    expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
     private val mode: JvmSerializeIrMode,
     private val fileClassFqName: FqName,
     languageVersionSettings: LanguageVersionSettings,
 ) : IrFileSerializer(
-    messageLogger, declarationTable, expectDescriptorToSymbol, CompatibilityMode.CURRENT, languageVersionSettings,
+    messageLogger, declarationTable, CompatibilityMode.CURRENT, languageVersionSettings,
     bodiesOnlyForInlines = mode == JvmSerializeIrMode.INLINE,
     normalizeAbsolutePaths = false, sourceBaseDirs = emptyList()
 ) {

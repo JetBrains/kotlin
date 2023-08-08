@@ -318,7 +318,6 @@ fun serializeFirKlib(
         klibPath = outputKlibPath,
         moduleStructure.allDependencies,
         fir2IrActualizedResult.irModuleFragment,
-        expectDescriptorToSymbol = mutableMapOf(),
         cleanFiles = icData ?: emptyList(),
         nopack = true,
         perFile = false,

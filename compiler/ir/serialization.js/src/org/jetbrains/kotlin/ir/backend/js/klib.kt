@@ -129,7 +129,6 @@ fun generateKLib(
     abiVersion: KotlinAbiVersion = KotlinAbiVersion.CURRENT,
     jsOutputName: String?,
     icData: List<KotlinFileSerializedData>,
-    expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
     moduleFragment: IrModuleFragment,
     builtInsPlatform: BuiltInsPlatform = BuiltInsPlatform.JS,
     serializeSingleFile: (KtSourceFile) -> ProtoBuf.PackageFragment
@@ -147,7 +146,6 @@ fun generateKLib(
         outputKlibPath,
         allDependencies,
         moduleFragment,
-        expectDescriptorToSymbol,
         icData,
         nopack,
         perFile = false,
@@ -413,7 +411,6 @@ fun GeneratorContext.generateModuleFragmentWithPlugins(
     files: List<KtFile>,
     irLinker: IrDeserializer,
     messageLogger: IrMessageLogger,
-    expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>? = null,
     stubGenerator: DeclarationStubGenerator? = null
 ): Pair<IrModuleFragment, IrPluginContext> {
     val psi2Ir = Psi2IrTranslator(languageVersionSettings, configuration, messageLogger::checkNoUnboundSymbols)
@@ -449,8 +446,7 @@ fun GeneratorContext.generateModuleFragmentWithPlugins(
         this,
         files,
         listOf(stubGenerator ?: irLinker),
-        extensions,
-        expectDescriptorToSymbol
+        extensions
     ) to pluginContext
 }
 
@@ -662,7 +658,6 @@ fun serializeModuleIntoKlib(
     klibPath: String,
     dependencies: List<KotlinLibrary>,
     moduleFragment: IrModuleFragment,
-    expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
     cleanFiles: List<KotlinFileSerializedData>,
     nopack: Boolean,
     perFile: Boolean,
@@ -683,7 +678,6 @@ fun serializeModuleIntoKlib(
         JsIrModuleSerializer(
             messageLogger,
             moduleFragment.irBuiltins,
-            expectDescriptorToSymbol,
             compatibilityMode,
             normalizeAbsolutePaths = absolutePathNormalization,
             sourceBaseDirs = sourceBaseDirs,

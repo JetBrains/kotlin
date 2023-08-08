@@ -53,8 +53,7 @@ internal sealed class PsiToIrOutput(
     class ForKlib(
             irModule: IrModuleFragment,
             symbols: KonanSymbols,
-            val expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
-    ): PsiToIrOutput(irModule, symbols)
+    ) : PsiToIrOutput(irModule, symbols)
 }
 
 // TODO: Consider component-based approach

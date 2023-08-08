@@ -114,7 +114,6 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpress
 open class IrFileSerializer(
     val messageLogger: IrMessageLogger,
     private val declarationTable: DeclarationTable,
-    private val expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
     private val compatibilityMode: CompatibilityMode,
     private val languageVersionSettings: LanguageVersionSettings,
     private val bodiesOnlyForInlines: Boolean = false,

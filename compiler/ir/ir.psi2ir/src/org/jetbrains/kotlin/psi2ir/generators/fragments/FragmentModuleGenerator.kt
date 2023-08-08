@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.resolve.lazy.descriptors.findPackageFragmentForFile
 class FragmentModuleGenerator(
     override val context: GeneratorContext,
     private val fragmentInfo: EvaluatorFragmentInfo
-) : ModuleGenerator(context, expectDescriptorToSymbol = null) {
+) : ModuleGenerator(context) {
 
     override fun generateModuleFragment(
         ktFiles: Collection<KtFile>,

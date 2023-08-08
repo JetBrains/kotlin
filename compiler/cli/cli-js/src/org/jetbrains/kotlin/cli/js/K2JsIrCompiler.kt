@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -48,7 +47,6 @@ import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
 import org.jetbrains.kotlin.ir.linkage.partial.setupPartialLinkageConfig
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
@@ -442,7 +440,6 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         if (sourceModule.jsFrontEndResult.jsAnalysisResult.shouldGenerateCode && (arguments.irProduceKlibDir || arguments.irProduceKlibFile)) {
             val moduleSourceFiles = (sourceModule.mainModule as MainModule.SourceFiles).files
             val icData = environmentForJS.configuration.incrementalDataProvider?.getSerializedData(moduleSourceFiles) ?: emptyList()
-            val expectDescriptorToSymbol = mutableMapOf<DeclarationDescriptor, IrSymbol>()
 
             val (moduleFragment, _) = generateIrForKlibSerialization(
                 environmentForJS.project,
@@ -451,7 +448,6 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 sourceModule.jsFrontEndResult.jsAnalysisResult,
                 sourceModule.allDependencies,
                 icData,
-                expectDescriptorToSymbol,
                 IrFactoryImpl,
                 verifySignatures = true
             ) {
@@ -471,7 +467,6 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 nopack = arguments.irProduceKlibDir,
                 jsOutputName = arguments.irPerModuleOutputName,
                 icData = icData,
-                expectDescriptorToSymbol = expectDescriptorToSymbol,
                 moduleFragment = moduleFragment,
                 builtInsPlatform = if (arguments.wasm) BuiltInsPlatform.WASM else BuiltInsPlatform.JS
             ) { file ->

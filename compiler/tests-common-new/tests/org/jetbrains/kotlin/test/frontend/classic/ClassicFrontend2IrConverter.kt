@@ -92,7 +92,6 @@ class ClassicFrontend2IrConverter(
 
         val sourceFiles = psiFiles.values.toList()
         val icData = configuration.incrementalDataProvider?.getSerializedData(sourceFiles) ?: emptyList()
-        val expectDescriptorToSymbol = mutableMapOf<DeclarationDescriptor, IrSymbol>()
 
         val (moduleFragment, pluginContext) = generateIrForKlibSerialization(
             project,
@@ -101,7 +100,6 @@ class ClassicFrontend2IrConverter(
             analysisResult,
             sortDependencies(JsEnvironmentConfigurator.getAllDependenciesMappingFor(module, testServices)),
             icData,
-            expectDescriptorToSymbol,
             IrFactoryImpl,
             verifySignatures
         ) {
@@ -118,7 +116,6 @@ class ClassicFrontend2IrConverter(
             pluginContext,
             sourceFiles.map(::KtPsiSourceFile),
             icData,
-            expectDescriptorToSymbol = expectDescriptorToSymbol,
             diagnosticReporter = DiagnosticReporterFactory.createReporter(),
             hasErrors,
             descriptorMangler = (pluginContext.symbolTable as SymbolTable).signaturer.mangler,
@@ -137,7 +134,6 @@ class ClassicFrontend2IrConverter(
 
         val sourceFiles = psiFiles.values.toList()
         val icData = configuration.incrementalDataProvider?.getSerializedData(sourceFiles) ?: emptyList()
-        val expectDescriptorToSymbol = mutableMapOf<DeclarationDescriptor, IrSymbol>()
 
         val (moduleFragment, pluginContext) = generateIrForKlibSerialization(
             project,
@@ -146,7 +142,6 @@ class ClassicFrontend2IrConverter(
             analysisResult,
             sortDependencies(WasmEnvironmentConfigurator.getAllDependenciesMappingFor(module, testServices)),
             icData,
-            expectDescriptorToSymbol,
             IrFactoryImpl,
             verifySignatures
         ) {
@@ -164,7 +159,6 @@ class ClassicFrontend2IrConverter(
             pluginContext,
             sourceFiles.map(::KtPsiSourceFile),
             icData,
-            expectDescriptorToSymbol = expectDescriptorToSymbol,
             diagnosticReporter = DiagnosticReporterFactory.createReporter(),
             hasErrors,
             descriptorMangler = (pluginContext.symbolTable as SymbolTable).signaturer.mangler,

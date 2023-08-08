@@ -264,7 +264,6 @@ open class JvmIrCodegenFactory(
                 input.files,
                 irProviders,
                 pluginExtensions,
-                expectDescriptorToSymbol = null,
                 fragmentInfo = evaluatorFragmentInfoForPsi2Ir
             )
 

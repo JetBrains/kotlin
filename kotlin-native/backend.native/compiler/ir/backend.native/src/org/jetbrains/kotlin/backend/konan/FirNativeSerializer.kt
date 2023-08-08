@@ -72,7 +72,6 @@ internal fun PhaseContext.firSerializerBase(
             fir2IrInput?.irModuleFragment,
             moduleName = fir2IrInput?.irModuleFragment?.descriptor?.name?.asString()
                     ?: firResult.outputs.last().session.moduleData.name.asString(),
-            expectDescriptorToSymbol = mutableMapOf(), // TODO: expect -> actual mapping
             firFilesAndSessionsBySourceFile,
     ) { firFile, session, scopeSession ->
         serializeSingleFirFile(
@@ -111,7 +110,6 @@ internal fun PhaseContext.serializeNativeModule(
         dependencies: List<KonanLibrary>?,
         moduleFragment: IrModuleFragment?,
         moduleName: String,
-        expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
         firFilesAndSessionsBySourceFile: Map<KtSourceFile, Triple<FirFile, FirSession, ScopeSession>>,
         serializeSingleFile: (FirFile, FirSession, ScopeSession) -> ProtoBuf.PackageFragment
 ): SerializerOutput {
@@ -126,7 +124,6 @@ internal fun PhaseContext.serializeNativeModule(
         KonanIrModuleSerializer(
                 messageLogger,
                 moduleFragment.irBuiltins,
-                expectDescriptorToSymbol,
                 CompatibilityMode.CURRENT,
                 normalizeAbsolutePaths = absolutePathNormalization,
                 sourceBaseDirs = sourceBaseDirs,
