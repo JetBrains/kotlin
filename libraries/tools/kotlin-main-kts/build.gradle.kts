@@ -38,6 +38,7 @@ dependencies {
     embedded(project(":kotlin-scripting-common")) { isTransitive = false }
     embedded(project(":kotlin-scripting-jvm")) { isTransitive = false }
     embedded(project(":kotlin-scripting-jvm-host-unshaded")) { isTransitive = false }
+    embedded(project(":kotlin-scripting-dependencies")) { isTransitive = false }
     embedded(project(":kotlin-scripting-dependencies-maven-all")) { isTransitive = false }
     embedded("org.slf4j:slf4j-api:1.7.36")
     embedded("org.slf4j:slf4j-simple:1.7.36")
