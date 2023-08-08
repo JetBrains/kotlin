@@ -1,0 +1,11 @@
+FILE: function_call.kt
+    public final fun f(x: R|kotlin/Int|): R|kotlin/Int| {
+        ^f R|<local>/x|
+    }
+    public final fun function_call(): R|kotlin/Unit| {
+        R|/f|(Int(0))
+        R|/f|(Int(0))
+    }
+    public final fun function_call_nested(): R|kotlin/Unit| {
+        R|/f|(R|/f|(R|/f|(Int(0))))
+    }

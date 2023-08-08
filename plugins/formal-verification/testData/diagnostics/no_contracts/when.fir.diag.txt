@@ -1,0 +1,19 @@
+/when.kt:(4,13): info: field backing_int: Int
+
+method global$pkg_$simple_if() returns (ret$: Int)
+{
+  if (true) {
+    ret$ := 0
+  } else {
+    ret$ := 1}
+}
+
+/when.kt:(98,113): info: field backing_int: Int
+
+method global$pkg_$if_on_parameter(local$b: Bool) returns (ret$: Int)
+{
+  if (local$b) {
+    ret$ := 0
+  } else {
+    ret$ := 1}
+}

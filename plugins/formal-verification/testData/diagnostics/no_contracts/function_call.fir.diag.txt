@@ -1,0 +1,34 @@
+/function_call.kt:(4,5): info: field backing_int: Int
+
+method global$pkg_$f(local$x: Int) returns (ret$: Int)
+{
+  ret$ := local$x
+}
+
+/function_call.kt:(27,40): info: field backing_int: Int
+
+method global$pkg_$f(local$x: Int) returns (ret$: Int)
+
+
+method global$pkg_$function_call()
+{
+  var anonymous$1: Int
+  var anonymous$2: Int
+  anonymous$1 := global$pkg_$f(0)
+  anonymous$2 := global$pkg_$f(0)
+}
+
+/function_call.kt:(69,89): info: field backing_int: Int
+
+method global$pkg_$f(local$x: Int) returns (ret$: Int)
+
+
+method global$pkg_$function_call_nested()
+{
+  var anonymous$1: Int
+  var anonymous$2: Int
+  var anonymous$3: Int
+  anonymous$1 := global$pkg_$f(0)
+  anonymous$2 := global$pkg_$f(anonymous$1)
+  anonymous$3 := global$pkg_$f(anonymous$2)
+}

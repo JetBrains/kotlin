@@ -25,14 +25,42 @@ public class FirLightTreeFormVerPluginDiagnosticsTestGenerated extends AbstractF
     }
 
     @Test
-    @TestMetadata("no_contracts.kt")
-    public void testNo_contracts() throws Exception {
-        runTest("plugins/formal-verification/testData/diagnostics/no_contracts.kt");
-    }
-
-    @Test
     @TestMetadata("simple.kt")
     public void testSimple() throws Exception {
         runTest("plugins/formal-verification/testData/diagnostics/simple.kt");
+    }
+
+    @Nested
+    @TestMetadata("plugins/formal-verification/testData/diagnostics/no_contracts")
+    @TestDataPath("$PROJECT_ROOT")
+    public class No_contracts {
+        @Test
+        public void testAllFilesPresentInNo_contracts() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/formal-verification/testData/diagnostics/no_contracts"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("basic.kt")
+        public void testBasic() throws Exception {
+            runTest("plugins/formal-verification/testData/diagnostics/no_contracts/basic.kt");
+        }
+
+        @Test
+        @TestMetadata("function_call.kt")
+        public void testFunction_call() throws Exception {
+            runTest("plugins/formal-verification/testData/diagnostics/no_contracts/function_call.kt");
+        }
+
+        @Test
+        @TestMetadata("loop.kt")
+        public void testLoop() throws Exception {
+            runTest("plugins/formal-verification/testData/diagnostics/no_contracts/loop.kt");
+        }
+
+        @Test
+        @TestMetadata("when.kt")
+        public void testWhen() throws Exception {
+            runTest("plugins/formal-verification/testData/diagnostics/no_contracts/when.kt");
+        }
     }
 }

@@ -1,0 +1,9 @@
+FILE: loop.kt
+    public final fun while_loop(b: R|kotlin/Boolean|): R|kotlin/Int| {
+        while(R|<local>/b|) {
+            lval a: R|kotlin/Int| = Int(1)
+            lval c: R|kotlin/Int| = Int(2)
+        }
+
+        ^while_loop Int(0)
+    }
