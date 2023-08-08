@@ -20,7 +20,7 @@ import kotlinx.cinterop.*
 
 val timeout = 10.seconds
 
-fun allocCollectable(ctor: () -> ULong): ULong = autoreleasepool {
+fun <T> allocCollectable(ctor: () -> T): T = autoreleasepool {
     ctor()
 }
 

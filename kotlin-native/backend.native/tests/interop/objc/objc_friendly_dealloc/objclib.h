@@ -6,6 +6,6 @@
 -(uintptr_t)identity;
 @end
 
-void retain(uint64_t);
-void release(uint64_t);
-void autorelease(uint64_t);
+void retain(uintptr_t);
+void release(uintptr_t);
+void autorelease(uintptr_t);

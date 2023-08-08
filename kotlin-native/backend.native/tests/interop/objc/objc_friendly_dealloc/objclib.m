@@ -23,14 +23,14 @@
 
 @end
 
-void retain(uint64_t obj) {
+void retain(uintptr_t obj) {
     [((id) obj) retain];
 }
 
-void release(uint64_t obj) {
+void release(uintptr_t obj) {
     [((id) obj) release];
 }
 
-void autorelease(uint64_t obj) {
+void autorelease(uintptr_t obj) {
     [((id) obj) autorelease];
 }

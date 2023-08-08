@@ -4146,9 +4146,9 @@ if (PlatformInfo.isAppleTarget(project)) {
         it.defFile 'interop/objc/kt56402/objclib.def'
         it.headers "$projectDir/interop/objc/kt56402/objclib.h"
     }
-    createInterop("objc_autorelease_from_dealloc") {
-        it.defFile 'interop/objc/autorelease_from_dealloc/objclib.def'
-        it.headers "$projectDir/interop/objc/autorelease_from_dealloc/objclib.h"
+    createInterop("objc_friendly_dealloc") {
+        it.defFile 'interop/objc/objc_friendly_dealloc/objclib.def'
+        it.headers "$projectDir/interop/objc/objc_friendly_dealloc/objclib.h"
     }
     createInterop("objCAction") {
         it.defFile 'interop/objc/objCAction/objclib.def'
@@ -4947,21 +4947,21 @@ if (PlatformInfo.isAppleTarget(project)) {
         }
     }
 
-    interopTest("interop_objc_autorelease_from_dealloc") {
+    interopTest("interop_objc_friendly_dealloc") {
         enabled = !isNoopGC // requires some GC
-        source = 'interop/objc/autorelease_from_dealloc/main.kt'
-        interop = "objc_autorelease_from_dealloc"
+        source = 'interop/objc/objc_friendly_dealloc/main.kt'
+        interop = "objc_friendly_dealloc"
         flags = ["-tr"]
 
         doBeforeBuild {
             mkdir(buildDir)
             project.extensions.execClang.execClangForCompilerTests(project.target) {
-                args "$projectDir/interop/objc/autorelease_from_dealloc/objclib.m"
+                args "$projectDir/interop/objc/objc_friendly_dealloc/objclib.m"
                 args "-lobjc", '-fno-objc-arc'
-                args '-fPIC', '-shared', '-o', "$buildDir/libobjc_autorelease_from_dealloc.dylib"
+                args '-fPIC', '-shared', '-o', "$buildDir/libobjc_friendly_dealloc.dylib"
             }
             if (UtilsKt.isSimulatorTarget(project, project.target)) {
-                UtilsKt.codesign(project, "$buildDir/libobjc_autorelease_from_dealloc.dylib")
+                UtilsKt.codesign(project, "$buildDir/libobjc_friendly_dealloc.dylib")
             }
         }
         UtilsKt.dependsOnPlatformLibs(it)
