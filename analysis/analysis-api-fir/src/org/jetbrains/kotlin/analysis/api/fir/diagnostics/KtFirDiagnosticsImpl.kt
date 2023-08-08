@@ -3063,6 +3063,11 @@ internal class OptionalDeclarationUsageInNonCommonSourceImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.OptionalDeclarationUsageInNonCommonSource
 
+internal class OptionalExpectationNotOnExpectedImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.OptionalExpectationNotOnExpected
+
 internal class InitializerRequiredForDestructuringDeclarationImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,

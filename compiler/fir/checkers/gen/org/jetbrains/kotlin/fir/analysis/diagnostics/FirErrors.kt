@@ -651,6 +651,7 @@ object FirErrors {
     val ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT by warning3<KtElement, FirBasedSymbol<*>, FirBasedSymbol<*>, ExpectActualAnnotationsIncompatibilityType<FirAnnotation>>(SourceElementPositioningStrategies.DECLARATION_NAME_ONLY)
     val OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY by error0<PsiElement>()
     val OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE by error0<PsiElement>()
+    val OPTIONAL_EXPECTATION_NOT_ON_EXPECTED by error0<PsiElement>()
 
     // Destructuring declaration
     val INITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION by error0<KtDestructuringDeclaration>()

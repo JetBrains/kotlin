@@ -3630,6 +3630,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.OPTIONAL_EXPECTATION_NOT_ON_EXPECTED) { firDiagnostic ->
+        OptionalExpectationNotOnExpectedImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.INITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION) { firDiagnostic ->
         InitializerRequiredForDestructuringDeclarationImpl(
             firDiagnostic as KtPsiDiagnostic,
