@@ -2541,6 +2541,10 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = OptionalDeclarationUsageInNonCommonSource::class
     }
 
+    interface OptionalExpectationNotOnExpected : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = OptionalExpectationNotOnExpected::class
+    }
+
     interface InitializerRequiredForDestructuringDeclaration : KtFirDiagnostic<KtDestructuringDeclaration> {
         override val diagnosticClass get() = InitializerRequiredForDestructuringDeclaration::class
     }
