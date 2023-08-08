@@ -12643,6 +12643,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/delegatedProperty/kt9712.kt");
         }
 
+        @TestMetadata("noTypeVariablesLeft.kt")
+        public void testNoTypeVariablesLeft() throws Exception {
+            runTest("compiler/testData/codegen/box/delegatedProperty/noTypeVariablesLeft.kt");
+        }
+
         @TestMetadata("privateInSubClass.kt")
         public void testPrivateInSubClass() throws Exception {
             runTest("compiler/testData/codegen/box/delegatedProperty/privateInSubClass.kt");

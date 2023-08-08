@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.util.CodeFragmentAdjustment
 
 class Candidate(
-    override val symbol: FirBasedSymbol<*>,
+    symbol: FirBasedSymbol<*>,
     // Here we may have an ExpressionReceiverValue
     // - in case a use-site receiver is explicit
     // - in some cases with static entities, no matter is a use-site receiver explicit or not
@@ -48,6 +48,23 @@ class Candidate(
     // It's only true if we're in the member scope of smart cast receiver and this particular candidate came from original type
     val isFromOriginalTypeInPresenceOfSmartCast: Boolean = false,
 ) : AbstractCandidate() {
+
+    override var symbol: FirBasedSymbol<*> = symbol
+        private set
+
+
+    /**
+     * Please avoid updating symbol in the candidate whenever it's possible.
+     * The only case when currently it seems to be unavoidable is at
+     * [org.jetbrains.kotlin.fir.resolve.transformers.FirCallCompletionResultsWriterTransformer.refineSubstitutedMemberIfReceiverContainsTypeVariable]
+     */
+    @RequiresOptIn
+    annotation class UpdatingSymbol
+
+    @UpdatingSymbol
+    fun updateSymbol(symbol: FirBasedSymbol<*>) {
+        this.symbol = symbol
+    }
 
     private var systemInitialized: Boolean = false
     val system: NewConstraintSystemImpl by lazy(LazyThreadSafetyMode.NONE) {
