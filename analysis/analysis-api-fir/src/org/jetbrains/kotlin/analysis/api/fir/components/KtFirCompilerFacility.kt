@@ -78,6 +78,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.util.Collections
 
+
 internal class KtFirCompilerFacility(
     override val analysisSession: KtFirAnalysisSession
 ) : KtCompilerFacility(), KtFirAnalysisSessionComponent {
