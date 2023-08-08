@@ -25,7 +25,12 @@ sealed class ExpectActualCompatibility<out D> {
         object ParameterShape : StrongIncompatible<Nothing>("parameter shapes are different (extension vs non-extension)")
 
         object ParameterCount : StrongIncompatible<Nothing>("number of value parameters is different")
-        object TypeParameterCount : StrongIncompatible<Nothing>("number of type parameters is different")
+
+        // FunctionTypeParameterCount is strong because functions can be overloaded by type parameter count
+        object FunctionTypeParameterCount : StrongIncompatible<Nothing>("number of type parameters is different")
+
+        // ClassTypeParameterCount is weak because classes cannot be overloaded
+        object ClassTypeParameterCount : WeakIncompatible<Nothing>(FunctionTypeParameterCount.reason)
 
         object ParameterTypes : StrongIncompatible<Nothing>("parameter types are different")
         object ReturnType : StrongIncompatible<Nothing>("return type is different")
@@ -79,7 +84,12 @@ sealed class ExpectActualCompatibility<out D> {
         object Modality : WeakIncompatible<Nothing>("modality is different")
         object Visibility : WeakIncompatible<Nothing>("visibility is different")
 
-        object TypeParameterUpperBounds : StrongIncompatible<Nothing>("upper bounds of type parameters are different")
+        // FunctionTypeParameterUpperBounds is weak because functions can be overloaded by type parameter upper bounds
+        object FunctionTypeParameterUpperBounds : StrongIncompatible<Nothing>("upper bounds of type parameters are different")
+
+        // ClassTypeParameterUpperBounds is strong because classes cannot be overloaded
+        object ClassTypeParameterUpperBounds : WeakIncompatible<Nothing>(FunctionTypeParameterUpperBounds.reason)
+
         object TypeParameterVariance : WeakIncompatible<Nothing>("declaration-site variances of type parameters are different")
         object TypeParameterReified : WeakIncompatible<Nothing>(
             "some type parameter is reified in one declaration and non-reified in the other"
