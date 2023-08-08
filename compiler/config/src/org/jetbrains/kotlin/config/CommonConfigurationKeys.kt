@@ -61,9 +61,6 @@ object CommonConfigurationKeys {
     val HMPP_MODULE_STRUCTURE = CompilerConfigurationKey.create<HmppCliModuleStructure>("HMPP module structure")
 
     @JvmField
-    val EXPECT_ACTUAL_LINKER = CompilerConfigurationKey.create<Boolean>("Experimental expect/actual linker")
-
-    @JvmField
     val USE_FIR_EXTENDED_CHECKERS = CompilerConfigurationKey.create<Boolean>("fir extended checkers")
 
     @JvmField

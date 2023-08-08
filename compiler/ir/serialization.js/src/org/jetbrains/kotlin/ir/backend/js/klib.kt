@@ -99,9 +99,6 @@ val KotlinLibrary.serializedKlibFingerprint: SerializedKlibFingerprint?
 private val CompilerConfiguration.metadataVersion
     get() = get(CommonConfigurationKeys.METADATA_VERSION) as? KlibMetadataVersion ?: KlibMetadataVersion.INSTANCE
 
-private val CompilerConfiguration.expectActualLinker: Boolean
-    get() = get(CommonConfigurationKeys.EXPECT_ACTUAL_LINKER) ?: false
-
 private val SerializedIrFile.fileMetadata: ByteArray
     get() = backendSpecificMetadata ?: error("Expect file caches to have backendSpecificMetadata, but '$path' doesn't")
 
