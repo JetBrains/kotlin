@@ -73,6 +73,12 @@ public abstract class KtAnalysisSession(final override val token: KtLifetimeToke
 
     override val analysisSession: KtAnalysisSession get() = this
 
+    /**
+     * Creates a new [KtAnalysisSession] which depends on this analysis session, but additionally provides its own symbols derived from
+     * analyzing [elementToReanalyze].
+     *
+     * @see analyzeInDependedAnalysisSession
+     */
     public abstract fun createContextDependentCopy(originalKtFile: KtFile, elementToReanalyze: KtElement): KtAnalysisSession
 
     internal val smartCastProvider: KtSmartCastProvider get() = smartCastProviderImpl
