@@ -6,25 +6,46 @@
 package org.jetbrains.kotlin.lightTree
 
 import com.intellij.lang.LighterASTNode
+import com.intellij.mock.MockProject
 import com.intellij.openapi.util.Ref
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.cli.common.fir.SequentialPositionFinder
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment.Companion.createForTests
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
 import org.jetbrains.kotlin.readSourceFileWithMapping
+import org.jetbrains.kotlin.test.testFramework.KtPlatformLiteFixture
 import org.junit.Assert
-import org.junit.Test
 import java.io.ByteArrayInputStream
 
-class LightTreeParsingTest {
+class LightTreeParsingTest : KtPlatformLiteFixture() {
 
-    @Test
+    private var myEnvironment: KotlinCoreEnvironment? = null
+
+    override fun setUp() {
+        super.setUp()
+        myEnvironment = createForTests(
+            testRootDisposable, CompilerConfiguration.EMPTY,
+            EnvironmentConfigFiles.JVM_CONFIG_FILES
+        )
+        myProject = myEnvironment!!.project as MockProject
+    }
+
+    override fun tearDown() {
+        super.tearDown()
+        myProject = null
+        myEnvironment = null
+    }
+
     fun testLightTreeReadLineEndings() {
 
         data class LinePos(
             val mappingLine: Int,
             val line: Int,
             val col: Int,
-            val content: String?
+            val content: String?,
         ) {
             override fun toString(): String = "$mappingLine: \"$content\" ($line:$col)"
         }
