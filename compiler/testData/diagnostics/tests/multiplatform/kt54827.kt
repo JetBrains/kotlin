@@ -1,6 +1,6 @@
 // MODULE: m1-common
 // FILE: common.kt
-expect class SomeClass<!NO_ACTUAL_FOR_EXPECT{JVM}!><T><!> {
+expect class SomeClass<T> {
     fun foo()
 }
 
