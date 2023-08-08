@@ -436,6 +436,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ONLY_ONE_CLASS_BO
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPERATOR_MODIFIER_REQUIRED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPERATOR_RENAMED_ON_IMPORT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPT_IN_ARGUMENT_IS_NOT_MARKER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPT_IN_CAN_ONLY_BE_USED_AS_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPT_IN_IS_NOT_ENABLED
@@ -1925,6 +1926,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY,
             "Declaration annotated with '@OptionalExpectation' can only be used inside an annotation entry"
+        )
+        map.put(
+            OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE,
+            "Declaration annotated with '@OptionalExpectation' can only be used in common module sources"
         )
 
         // Destructuring declaration

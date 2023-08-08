@@ -1238,6 +1238,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
 
         val OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY by error<PsiElement>()
+
+        val OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE by error<PsiElement>()
     }
 
     val DESTRUCTING_DECLARATION by object : DiagnosticGroup("Destructuring declaration") {

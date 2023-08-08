@@ -3624,6 +3624,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE) { firDiagnostic ->
+        OptionalDeclarationUsageInNonCommonSourceImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.INITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION) { firDiagnostic ->
         InitializerRequiredForDestructuringDeclarationImpl(
             firDiagnostic as KtPsiDiagnostic,

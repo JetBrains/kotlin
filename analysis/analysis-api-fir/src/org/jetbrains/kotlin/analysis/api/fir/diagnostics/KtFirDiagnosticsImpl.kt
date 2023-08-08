@@ -3058,6 +3058,11 @@ internal class OptionalDeclarationOutsideOfAnnotationEntryImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.OptionalDeclarationOutsideOfAnnotationEntry
 
+internal class OptionalDeclarationUsageInNonCommonSourceImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.OptionalDeclarationUsageInNonCommonSource
+
 internal class InitializerRequiredForDestructuringDeclarationImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,

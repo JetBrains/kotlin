@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isOptionalAnnotationClass
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.references.toResolvedConstructorSymbol
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
@@ -20,6 +21,10 @@ object FirOptionalExpectationExpressionChecker : FirFunctionCallChecker() {
         val constructorSymbol = expression.calleeReference.toResolvedConstructorSymbol() ?: return
         val declarationClass = constructorSymbol.resolvedReturnTypeRef.coneType.toRegularClassSymbol(context.session) ?: return
         if (!declarationClass.isOptionalAnnotationClass(context.session)) return
+
+        if (!context.session.moduleData.isCommon) {
+            reporter.reportOn(expression.source, FirErrors.OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE, context)
+        }
 
         reporter.reportOn(expression.source, FirErrors.OPTIONAL_DECLARATION_OUTSIDE_OF_ANNOTATION_ENTRY, context)
     }
