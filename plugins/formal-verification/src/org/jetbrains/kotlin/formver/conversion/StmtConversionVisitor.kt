@@ -94,4 +94,14 @@ class StmtConversionVisitor : FirVisitor<Exp?, StmtConversionContext>() {
         initializer?.let { data.statements.add(Stmt.LocalVarAssign(cvar.toLocalVar(), it)) }
         return null
     }
+
+    override fun visitWhileLoop(whileLoop: FirWhileLoop, data: StmtConversionContext): Exp? {
+        val cond = whileLoop.condition.accept(this, data)
+        val invariants: List<Exp> = emptyList()
+        val bodyStmtConversionContext = StmtConversionContext(data.methodCtx)
+        bodyStmtConversionContext.convertAndAppend(whileLoop.block)
+        val body = bodyStmtConversionContext.block
+        data.statements.add(Stmt.While(cond!!, invariants, body))
+        return null
+    }
 }
