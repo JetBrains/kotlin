@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isOptionalAnnotationClass
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
@@ -22,6 +23,10 @@ object FirOptionalExpectationTypeChecker : FirTypeRefChecker() {
         if (source?.kind is KtFakeSourceElementKind) return
         val classSymbol = typeRef.coneTypeSafe<ConeClassLikeType>()?.toRegularClassSymbol(context.session) ?: return
         if (!classSymbol.isOptionalAnnotationClass(context.session)) return
+
+        if (!context.session.moduleData.isCommon) {
+            reporter.reportOn(source, FirErrors.OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE, context)
+        }
 
         val annotationContainer = context.annotationContainers.lastOrNull()
         if (annotationContainer?.annotations?.any { it.typeRef == typeRef } == true) return

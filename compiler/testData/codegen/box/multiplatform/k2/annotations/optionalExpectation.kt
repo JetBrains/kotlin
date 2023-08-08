@@ -4,6 +4,7 @@
 // WITH_STDLIB
 
 // MODULE: common
+// TARGET_PLATFORM: Common
 // FILE: expected.kt
 
 package a
@@ -24,17 +25,24 @@ package a
 
 actual annotation class A(actual val x: Int)
 
-// MODULE: main(library)
+// MODULE: common2
+// TARGET_PLATFORM: Common
+// FILE: common2.kt
+
+package usage
+
+import a.B
+
+@B("OK")
+@B.C(true)
+fun ok() = "OK"
+
+// MODULE: main(library)()(common2)
 // FILE: main.kt
 
 package usage
 
 import a.A
-import a.B
 
 @A(42)
-@B("OK")
-@B.C(true)
-fun box(): String {
-    return "OK"
-}
+fun box(): String = ok()
