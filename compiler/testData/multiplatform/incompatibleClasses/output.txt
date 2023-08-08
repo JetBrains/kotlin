@@ -5,24 +5,6 @@ Output:
 -- JVM --
 Exit code: COMPILATION_ERROR
 Output:
-compiler/testData/multiplatform/incompatibleClasses/common.kt:14:16: error: expected class 'C1' has no actual declaration in module <main> for JVM
-The following declaration is incompatible because number of type parameters is different:
-    public final actual class C1<A, Extra>
-
-expect class C1<A>
-               ^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:16:16: error: expected class 'C3' has no actual declaration in module <main> for JVM
-The following declaration is incompatible because upper bounds of type parameters are different:
-    public final actual class C3<D, E : D?>
-
-expect class C3<D, E : D>
-               ^
-compiler/testData/multiplatform/incompatibleClasses/common.kt:18:16: error: expected class 'C4' has no actual declaration in module <main> for JVM
-The following declaration is incompatible because upper bounds of type parameters are different:
-    public actual typealias C4<F> = C4Impl<F>
-
-expect class C4<F>
-               ^
 compiler/testData/multiplatform/incompatibleClasses/jvm.kt:1:8: error: actual interface 'PClass' has no corresponding expected declaration
 The following declaration is incompatible because class kinds are different (class, interface, object, enum, annotation):
     public final expect class PClass

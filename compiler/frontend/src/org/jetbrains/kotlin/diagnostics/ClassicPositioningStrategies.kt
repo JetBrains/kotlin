@@ -64,8 +64,11 @@ object ClassicPositioningStrategies {
                             endElement
                         }
                     }
-                    ExpectActualCompatibility.Incompatible.TypeParameterNames, ExpectActualCompatibility.Incompatible.TypeParameterCount,
-                    ExpectActualCompatibility.Incompatible.TypeParameterUpperBounds,
+                    ExpectActualCompatibility.Incompatible.TypeParameterNames,
+                    ExpectActualCompatibility.Incompatible.FunctionTypeParameterCount,
+                    ExpectActualCompatibility.Incompatible.ClassTypeParameterCount,
+                    ExpectActualCompatibility.Incompatible.FunctionTypeParameterUpperBounds,
+                    ExpectActualCompatibility.Incompatible.ClassTypeParameterUpperBounds,
                     ExpectActualCompatibility.Incompatible.TypeParameterVariance,
                     ExpectActualCompatibility.Incompatible.TypeParameterReified -> {
                         (element as? KtTypeParameterListOwner)?.typeParameterList

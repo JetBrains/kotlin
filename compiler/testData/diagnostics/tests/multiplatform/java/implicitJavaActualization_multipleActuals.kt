@@ -1,7 +1,7 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-expect class <!IMPLICIT_JVM_ACTUALIZATION{JVM}!>Foo<!>(i: Int) {
+expect class <!AMBIGUOUS_ACTUALS{JVM}, IMPLICIT_JVM_ACTUALIZATION{JVM}!>Foo<!>(i: Int) {
     fun <!AMBIGUOUS_ACTUALS{JVM}!>foo<!>()
 }
 
@@ -15,6 +15,6 @@ public class Foo {
 
 // FILE: jvm.kt
 
-class Foo<T>(t: T) {
+class <!ACTUAL_MISSING!>Foo<!><T>(t: T) {
     fun foo() {}
 }
