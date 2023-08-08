@@ -75,13 +75,7 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
         // Ensure that the instance is created and configured during apply
         project.kotlinIdeMultiplatformImport
         project.locateOrRegisterIdeResolveDependenciesTask()
-        // FIXME: This code creates consumable configurations for Commonized CInterops
-        // FIXME: Unfortunately, it also creates [commonizeCInteropTask] eagerly
-        // FIXME: Decouple [allInteropGroups] from task internals and then create configuration without task materialization.
-        project.launch {
-            val task = project.commonizeCInteropTask()?.get() ?: return@launch
-            project.createCommonizedCInteropApiElementsKlibArtifact(task)
-        }
+        project.launch { project.createCommonizedCInteropApiElementsKlibArtifact() }
         project.addBuildListenerForXcode()
         project.whenEvaluated { kotlinMultiplatformExtension.createFatFrameworks() }
     }
