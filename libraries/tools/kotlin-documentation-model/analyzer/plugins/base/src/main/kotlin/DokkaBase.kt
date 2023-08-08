@@ -1,5 +1,3 @@
-@file:Suppress("unused")
-
 package org.jetbrains.dokka.base
 
 import org.jetbrains.dokka.CoreExtensions
@@ -19,6 +17,7 @@ import org.jetbrains.dokka.base.signatures.KotlinSignatureProvider
 import org.jetbrains.dokka.base.signatures.SignatureProvider
 import org.jetbrains.dokka.base.templating.ImmediateHtmlCommandConsumer
 import org.jetbrains.dokka.base.transformers.documentables.*
+import org.jetbrains.dokka.base.transformers.pages.DefaultSamplesTransformer
 import org.jetbrains.dokka.base.transformers.pages.annotations.SinceKotlinTransformer
 import org.jetbrains.dokka.base.transformers.pages.comments.CommentsToContentConverter
 import org.jetbrains.dokka.base.transformers.pages.comments.DocTagToContentConverter
@@ -33,6 +32,7 @@ import org.jetbrains.dokka.plugability.PluginApiPreviewAcknowledgement
 import org.jetbrains.dokka.transformers.documentation.PreMergeDocumentableTransformer
 import org.jetbrains.dokka.transformers.pages.PageTransformer
 
+@Suppress("unused")
 class DokkaBase : DokkaPlugin() {
 
     val preMergeDocumentableTransformer by extensionPoint<PreMergeDocumentableTransformer>()
@@ -149,7 +149,6 @@ class DokkaBase : DokkaPlugin() {
 
     val pageMerger by extending {
         CoreExtensions.pageTransformer providing ::PageMerger order {
-            // TODO [beresnev] make last() or at least after samples transformer
         }
     }
 
@@ -189,6 +188,12 @@ class DokkaBase : DokkaPlugin() {
 
     val rootCreator by extending {
         htmlPreprocessors with RootCreator applyIf { !delayTemplateSubstitution }
+    }
+
+    val defaultSamplesTransformer by extending {
+        CoreExtensions.pageTransformer providing ::DefaultSamplesTransformer order {
+            before(pageMerger)
+        }
     }
 
     val sourceLinksTransformer by extending {
@@ -268,11 +273,6 @@ class DokkaBase : DokkaPlugin() {
     @Suppress("DEPRECATION_ERROR", "DeprecatedCallableAddReplaceWith")
     @Deprecated(message = org.jetbrains.dokka.base.deprecated.ANALYSIS_API_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
     val defaultKotlinAnalysis: org.jetbrains.dokka.plugability.Extension<org.jetbrains.dokka.analysis.KotlinAnalysis, *, *>
-        get() = throw org.jetbrains.dokka.base.deprecated.AnalysisApiDeprecatedError()
-
-    @Suppress("DeprecatedCallableAddReplaceWith")
-    @Deprecated(message = org.jetbrains.dokka.base.deprecated.ANALYSIS_API_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
-    val defaultSamplesTransformer: org.jetbrains.dokka.plugability.Extension<PageTransformer, *, *>
         get() = throw org.jetbrains.dokka.base.deprecated.AnalysisApiDeprecatedError()
 
     @Suppress("DEPRECATION_ERROR", "DeprecatedCallableAddReplaceWith")

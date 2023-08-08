@@ -26,6 +26,8 @@ class InternalKotlinAnalysisPlugin : DokkaPlugin() {
 
     val documentableSourceLanguageParser by extensionPoint<DocumentableSourceLanguageParser>()
 
+    val sampleProviderFactory by extensionPoint<SampleProviderFactory>()
+
     @OptIn(DokkaPluginApiPreview::class)
     override fun pluginApiPreviewAcknowledgement(): PluginApiPreviewAcknowledgement = PluginApiPreviewAcknowledgement
 }
