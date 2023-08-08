@@ -65,7 +65,6 @@ fun deserializeFromByteArray(
         irLibraryFile,
         fileSymbol = dummyIrFile.symbol,
         fileSignature = dummyFileSignature,
-        /* TODO */ actuals = emptyList(),
         enqueueLocalTopLevelDeclaration = {}, // just link to it in symbolTable
         handleExpectActualMapping = { _, symbol -> symbol }, // no expect declarations
         internationService = internationService
