@@ -135,6 +135,9 @@ val Project.signLibraryPublication: Boolean
         ?: project.providers.gradleProperty("isSonatypeRelease").orNull?.toBoolean()
         ?: false
 
+// overload for Groovy
+fun Project.configureDefaultPublishing() = configureDefaultPublishing(signingRequired = signLibraryPublication)
+
 fun Project.configureDefaultPublishing(
     signingRequired: Boolean = signLibraryPublication
 ) {
