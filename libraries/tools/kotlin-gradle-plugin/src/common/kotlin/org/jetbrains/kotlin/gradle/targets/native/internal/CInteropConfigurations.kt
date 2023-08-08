@@ -83,13 +83,6 @@ internal fun Project.locateOrCreateCInteropDependencyConfiguration(
     }
 }
 
-private fun Configuration.applyAttributesForCommonizerTarget(commonizerTarget: SharedCommonizerTarget) {
-    attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
-    // TODO: [KotlinNativeTarget.konanTargetAttribute] is a public attribute. It should be better to introduce dedicated private attribute
-    // TODO: for commonized target
-    attributes.attribute(KotlinNativeTarget.konanTargetAttribute, commonizerTarget.dashedIdentityString())
-}
-
 internal suspend fun Project.locateOrCreateCommonizedCInteropDependencyConfiguration(
     sourceSet: KotlinSourceSet,
 ): Configuration? {
@@ -174,6 +167,11 @@ private fun commonizedCInteropApiElementsConfigurationName(commonizerTarget: Sha
     return commonizerTarget.dashedIdentityString() + "CInteropApiElements"
 }
 
+private fun Configuration.applyAttributesForCommonizerTarget(commonizerTarget: SharedCommonizerTarget) {
+    attributes.attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
+    CommonizerTargetAttribute.apply(attributes, commonizerTarget)
+}
+
 internal object CInteropKlibLibraryElements {
     const val CINTEROP_KLIB = "cinterop-klib"
 
@@ -196,3 +194,12 @@ private class CInteropLibraryElementsCompatibilityRule : AttributeCompatibilityR
     }
 }
 
+private object CommonizerTargetAttribute {
+    private val attribute = Attribute.of("org.jetbrains.kotlin.native.commonizerTarget", String::class.java)
+
+    private val SharedCommonizerTarget.attributeValue get() = dashedIdentityString()
+
+    fun apply(attributeContainer: AttributeContainer, sharedCommonizerTarget: SharedCommonizerTarget) {
+        attributeContainer.attribute(attribute, sharedCommonizerTarget.attributeValue)
+    }
+}
