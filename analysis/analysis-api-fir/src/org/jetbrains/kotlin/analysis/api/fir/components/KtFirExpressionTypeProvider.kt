@@ -27,11 +27,14 @@ import org.jetbrains.kotlin.fir.resolve.constructFunctionType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.psi.psiUtil.getOutermostParenthesizerOrThis
+import org.jetbrains.kotlin.utils.exceptions.rethrowExceptionWithDetails
+import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 internal class KtFirExpressionTypeProvider(
     override val analysisSession: KtFirAnalysisSession,
@@ -39,58 +42,64 @@ internal class KtFirExpressionTypeProvider(
 ) : KtExpressionTypeProvider(), KtFirAnalysisSessionComponent {
 
     override fun getKtExpressionType(expression: KtExpression): KtType? {
-        return when (val fir = expression.unwrap().getOrBuildFir(firResolveSession)) {
-            is FirFunctionCall -> {
-                getReturnTypeForArrayStyleAssignmentTarget(expression, fir)
-                    ?: fir.typeRef.coneType.asKtType()
+        // There are various cases where we have no corresponding fir due to invalid code
+        // Some examples:
+        // ```
+        // when {
+        //   true, false -> {}
+        // }
+        // ```
+        // `false` does not have a corresponding elements on the FIR side and hence the containing `FirWhenBranch` is returned.
+        // ```
+        // @Volatile
+        // private var
+        // ```
+        // Volatile does not have corresponding element, so `FirFileImpl` is returned
+        val fir = expression.unwrap().getOrBuildFir(firResolveSession) ?: return null
+        return try {
+            getKtExpressionType(expression, fir)
+        } catch (e: Exception) {
+            rethrowExceptionWithDetails("Exception during resolving ${expression::class.simpleName}", e) {
+                withPsiEntry("expression", expression)
+                withFirEntry("fir", fir)
             }
-            is FirPropertyAccessExpression -> {
-                // For unresolved `super`, we manually create an intersection type so that IDE features like completion can work correctly.
-                val containingClass =
-                    (fir.dispatchReceiver as? FirThisReceiverExpression)?.calleeReference?.boundSymbol as? FirClassSymbol<*>
-                if (fir.calleeReference is FirSuperReference && fir.typeRef is FirErrorTypeRef && containingClass != null) {
-                    val superTypes = containingClass.resolvedSuperTypes
-                    when (superTypes.size) {
-                        0 -> analysisSession.builtinTypes.ANY
-                        1 -> superTypes.single().asKtType()
-                        else -> ConeIntersectionType(superTypes).asKtType()
-                    }
-                } else {
-                    fir.typeRef.coneType.asKtType()
-                }
-            }
-            is FirVariableAssignment -> {
-                if (fir.lValue.source?.psi == expression) {
-                    fir.lValue.typeRef.coneType.asKtType()
-                } else if (expression is KtUnaryExpression && expression.operationToken in KtTokens.INCREMENT_AND_DECREMENT) {
-                    fir.rValue.typeRef.coneType.asKtType()
-                } else {
-                    analysisSession.builtinTypes.UNIT
-                }
-            }
-            is FirExpression -> fir.typeRef.coneType.asKtType()
-            is FirNamedReference -> fir.getCorrespondingTypeIfPossible()?.asKtType()
-            is FirStatement -> with(analysisSession) { builtinTypes.UNIT }
-            is FirTypeRef, is FirImport, is FirPackageDirective, is FirLabel, is FirTypeParameterRef -> null
-
-            // `listOf<_>(1)` where `expression` is `_`
-            is FirPlaceholderProjection -> null
-
-            // There are various cases where we have no corresponding fir due to invalid code
-            // Some examples:
-            // ```
-            // when {
-            //   true, false -> {}
-            // }
-            // ```
-            // `false` does not have a corresponding elements on the FIR side and hence the containing `FirWhenBranch` is returned.
-            // ```
-            // @Volatile
-            // private var
-            // ```
-            // Volatile does not have corresponding element, so `FirFileImpl` is returned
-            else -> null
         }
+    }
+
+    private fun getKtExpressionType(expression: KtExpression, fir: FirElement): KtType? = when (fir) {
+        is FirFunctionCall -> getReturnTypeForArrayStyleAssignmentTarget(expression, fir) ?: fir.typeRef.coneType.asKtType()
+        is FirPropertyAccessExpression -> {
+            // For unresolved `super`, we manually create an intersection type so that IDE features like completion can work correctly.
+            val containingClass = (fir.dispatchReceiver as? FirThisReceiverExpression)?.calleeReference?.boundSymbol as? FirClassSymbol<*>
+
+            if (fir.calleeReference is FirSuperReference && fir.typeRef is FirErrorTypeRef && containingClass != null) {
+                val superTypes = containingClass.resolvedSuperTypes
+                when (superTypes.size) {
+                    0 -> analysisSession.builtinTypes.ANY
+                    1 -> superTypes.single().asKtType()
+                    else -> ConeIntersectionType(superTypes).asKtType()
+                }
+            } else {
+                fir.typeRef.coneType.asKtType()
+            }
+        }
+        is FirVariableAssignment -> {
+            if (fir.lValue.source?.psi == expression) {
+                fir.lValue.typeRef.coneType.asKtType()
+            } else if (expression is KtUnaryExpression && expression.operationToken in KtTokens.INCREMENT_AND_DECREMENT) {
+                fir.rValue.typeRef.coneType.asKtType()
+            } else {
+                analysisSession.builtinTypes.UNIT
+            }
+        }
+        is FirExpression -> fir.typeRef.coneType.asKtType()
+        is FirNamedReference -> fir.getCorrespondingTypeIfPossible()?.asKtType()
+        is FirStatement -> with(analysisSession) { builtinTypes.UNIT }
+        is FirTypeRef, is FirImport, is FirPackageDirective, is FirLabel, is FirTypeParameterRef -> null
+
+        // `listOf<_>(1)` where `expression` is `_`
+        is FirPlaceholderProjection -> null
+        else -> null
     }
 
     /**
@@ -138,7 +147,7 @@ internal class KtFirExpressionTypeProvider(
 
     private fun getReturnTypeForArrayStyleAssignmentTarget(
         expression: KtExpression,
-        fir: FirFunctionCall
+        fir: FirFunctionCall,
     ): KtType? {
         if (fir.calleeReference !is FirResolvedNamedReference) return null
         if (expression !is KtArrayAccessExpression) return null
