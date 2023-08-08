@@ -252,8 +252,7 @@ class CodeConformanceTest : TestCase() {
                     "native/commonizer/src/org/jetbrains/kotlin/commonizer/mergedtree/CirTypeSignature.kt",
                     "native/commonizer/src/org/jetbrains/kotlin/commonizer/metadata/CirDeserializers.kt",
                     "native/commonizer/src/org/jetbrains/kotlin/commonizer/metadata/CirTypeResolver.kt",
-                    "native/commonizer/src/org/jetbrains/kotlin/commonizer/utils/misc.kt",
-                    "native/native.tests/tests/org/jetbrains/kotlin/konan/blackboxtest/support/settings/SettingsContainers.kt"
+                    "native/commonizer/src/org/jetbrains/kotlin/commonizer/utils/misc.kt"
                 )
             ) { _, source ->
                 "gnu.trove" in source

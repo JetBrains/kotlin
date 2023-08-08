@@ -5,13 +5,12 @@
 
 package org.jetbrains.kotlin.konan.blackboxtest.support.settings
 
-import gnu.trove.THashMap
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import kotlin.reflect.KClass
 
 internal abstract class Settings(private val parent: Settings?, settings: Iterable<Any>) {
-    private val map: Map<KClass<*>, Any> = THashMap<KClass<*>, Any>().apply {
+    private val map: Map<KClass<*>, Any> = buildMap {
         settings.forEach {
             val settingClass: KClass<*>
             val setting: Any
