@@ -41,9 +41,9 @@ internal fun createCInteropApiElementsKlibArtifact(
     }
 }
 
-internal suspend fun Project.createCommonizedCInteropApiElementsKlibArtifact(
-    interopTask: CInteropCommonizerTask
-) {
+internal suspend fun Project.createCommonizedCInteropApiElementsKlibArtifact() {
+    // TODO: Find a way to not materialize task. i.e. initialize only outputDirectory and allInteropGroups
+    val interopTask = project.commonizeCInteropTask()?.get() ?: return
     for (commonizerGroup in interopTask.allInteropGroups.await()) {
         for (sharedCommonizerTargets in commonizerGroup.targets) {
             val configuration = locateOrCreateCommonizedCInteropApiElementsConfiguration(sharedCommonizerTargets)
