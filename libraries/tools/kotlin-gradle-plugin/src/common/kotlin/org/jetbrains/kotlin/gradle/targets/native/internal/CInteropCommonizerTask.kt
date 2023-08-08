@@ -137,6 +137,7 @@ internal abstract class CInteropCommonizerTask
         val sourceSetsByGroup = multiplatformExtension.sourceSets.groupBy { sourceSet ->
             CInteropCommonizerDependent.from(sourceSet)?.let { findInteropsGroup(it) }
         }
+
         allInteropGroups.await().associateWith { group ->
             (group.targets + group.targets.allLeaves()).map { target ->
                 val externalDependencyFiles: List<FileCollection> = when (target) {
@@ -157,7 +158,19 @@ internal abstract class CInteropCommonizerTask
                             will provide the same dependencies (since cinterops are just based upon KonanTarget)
                              */
                             .take(1)
-                            .map { sourceSet -> project.createCInteropMetadataDependencyClasspath(sourceSet) }
+                            .map { sourceSet ->
+                                val configuration = project.locateOrCreateCommonizedCInteropDependencyConfiguration(sourceSet)
+                                if (configuration != null) {
+                                    configuration.incoming
+                                        // Lenient is required since not every dependency exposes commonized CInterop KLibs
+                                        // Only Projects with CInterops would expose their commonization results.
+                                        // See: [createCommonizedCInteropApiElementsKlibArtifact]
+                                        .artifactView { it.isLenient = true }
+                                        .files
+                                } else {
+                                    project.files()
+                                }
+                            }
                     }
                 }
 
@@ -226,6 +239,14 @@ internal abstract class CInteropCommonizerTask
             ?.flatMap { (target, dependencies) ->
                 dependencies.files
                     .filter { file -> file.exists() && (file.isDirectory || file.extension == "klib") }
+                    .flatMap flatMap2@{ dir ->
+                        // FIXME: dir can be either a klib dir or parent dir of few klib dirs
+                        // FIXME: Find a way to expose exact klib-dirs in consumable configuration
+                        if (!dir.isDirectory) return@flatMap2 listOf(dir)
+                        val subDirs = dir.listFiles().orEmpty().toList()
+                        fun List<File>.isKlibDir() = any { it.isDirectory && it.name == "default" }
+                        if (subDirs.isKlibDir()) return@flatMap2 listOf(dir) else subDirs
+                    }
                     .map { file -> TargetedCommonizerDependency(target, file) }
             }
             ?.toSet()

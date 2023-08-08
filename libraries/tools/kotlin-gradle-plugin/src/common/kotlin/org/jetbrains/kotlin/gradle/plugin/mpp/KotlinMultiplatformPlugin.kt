@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTargetPreset
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinWasmTargetPreset
 import org.jetbrains.kotlin.gradle.targets.native.createFatFrameworks
+import org.jetbrains.kotlin.gradle.targets.native.internal.commonizeCInteropTask
+import org.jetbrains.kotlin.gradle.targets.native.internal.createCommonizedCInteropApiElementsKlibArtifact
 import org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.registerKotlinArtifactsExtension
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompileTool
 import org.jetbrains.kotlin.gradle.utils.checkGradleCompatibility
@@ -73,7 +75,13 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
         // Ensure that the instance is created and configured during apply
         project.kotlinIdeMultiplatformImport
         project.locateOrRegisterIdeResolveDependenciesTask()
-
+        // FIXME: This code creates consumable configurations for Commonized CInterops
+        // FIXME: Unfortunately, it also creates [commonizeCInteropTask] eagerly
+        // FIXME: Decouple [allInteropGroups] from task internals and then create configuration without task materialization.
+        project.launch {
+            val task = project.commonizeCInteropTask()?.get() ?: return@launch
+            project.createCommonizedCInteropApiElementsKlibArtifact(task)
+        }
         project.addBuildListenerForXcode()
         project.whenEvaluated { kotlinMultiplatformExtension.createFatFrameworks() }
     }
