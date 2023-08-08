@@ -343,50 +343,50 @@ enum class WasmOp(
     // WIP: https://github.com/WebAssembly/function-references
     CALL_REF("call_ref", 0x14, TYPE_IDX),
     RETURN_CALL_REF("return_call_ref", 0x15, TYPE_IDX),
-    REF_AS_NOT_NULL("ref.as_non_null", 0xD3),
-    BR_ON_NULL("br_on_null", 0xD4, LABEL_IDX),
+    REF_AS_NOT_NULL("ref.as_non_null", 0xD4),
+    BR_ON_NULL("br_on_null", 0xD5, LABEL_IDX),
     BR_ON_NON_NULL("br_on_non_null", 0xD6, LABEL_IDX),
 
 
     // ============================================================
     // GC
     // WIP: https://github.com/WebAssembly/gc
-    STRUCT_NEW("struct.new", 0xFB_07, STRUCT_TYPE_IDX),
-    STRUCT_NEW_DEFAULT("struct.new_default", 0xFB_08, STRUCT_TYPE_IDX),
-    STRUCT_GET("struct.get", 0xFB_03, listOf(STRUCT_TYPE_IDX, STRUCT_FIELD_IDX)),
-    STRUCT_GET_S("struct.get_s", 0xFB_04, listOf(STRUCT_TYPE_IDX, STRUCT_FIELD_IDX)),
-    STRUCT_GET_U("struct.get_u", 0xFB_05, listOf(STRUCT_TYPE_IDX, STRUCT_FIELD_IDX)),
-    STRUCT_SET("struct.set", 0xFB_06, listOf(STRUCT_TYPE_IDX, STRUCT_FIELD_IDX)),
+    STRUCT_NEW("struct.new", 0xFB_00, STRUCT_TYPE_IDX),
+    STRUCT_NEW_DEFAULT("struct.new_default", 0xFB_01, STRUCT_TYPE_IDX),
+    STRUCT_GET("struct.get", 0xFB_02, listOf(STRUCT_TYPE_IDX, STRUCT_FIELD_IDX)),
+    STRUCT_GET_S("struct.get_s", 0xFB_03, listOf(STRUCT_TYPE_IDX, STRUCT_FIELD_IDX)),
+    STRUCT_GET_U("struct.get_u", 0xFB_04, listOf(STRUCT_TYPE_IDX, STRUCT_FIELD_IDX)),
+    STRUCT_SET("struct.set", 0xFB_05, listOf(STRUCT_TYPE_IDX, STRUCT_FIELD_IDX)),
 
-    ARRAY_NEW("array.new", 0xFB_1B, STRUCT_TYPE_IDX),
-    ARRAY_NEW_DEFAULT("array.new_default", 0xFB_1C, STRUCT_TYPE_IDX),
-    ARRAY_GET("array.get", 0xFB_13, listOf(STRUCT_TYPE_IDX)),
-    ARRAY_GET_S("array.get_s", 0xFB_14, listOf(STRUCT_TYPE_IDX)),
-    ARRAY_GET_U("array.get_u", 0xFB_15, listOf(STRUCT_TYPE_IDX)),
-    ARRAY_SET("array.set", 0xFB_16, listOf(STRUCT_TYPE_IDX)),
-    ARRAY_LEN("array.len", 0xFB_19),
-    ARRAY_COPY("array.copy", 0xFB_18, listOf(STRUCT_TYPE_IDX, STRUCT_TYPE_IDX)),
-    ARRAY_NEW_DATA("array.new_data", 0xFB_1D, listOf(STRUCT_TYPE_IDX, DATA_IDX)),
-    ARRAY_NEW_FIXED("array.new_fixed", 0xFB_1A, listOf(STRUCT_TYPE_IDX, CONST_I32)),
-// Not yet supported by Binaryen (supported as 0xFB_10)
-//    ARRAY_NEW_ELEM("array.new_elem", 0xFB_1F, listOf(STRUCT_TYPE_IDX, DATA_IDX)),
+    ARRAY_NEW("array.new", 0xFB_06, STRUCT_TYPE_IDX),
+    ARRAY_NEW_DEFAULT("array.new_default", 0xFB_07, STRUCT_TYPE_IDX),
+    ARRAY_GET("array.get", 0xFB_0B, listOf(STRUCT_TYPE_IDX)),
+    ARRAY_GET_S("array.get_s", 0xFB_0C, listOf(STRUCT_TYPE_IDX)),
+    ARRAY_GET_U("array.get_u", 0xFB_0D, listOf(STRUCT_TYPE_IDX)),
+    ARRAY_SET("array.set", 0xFB_0E, listOf(STRUCT_TYPE_IDX)),
+    ARRAY_LEN("array.len", 0xFB_0F),
+    // ARRAY_FILL,
+    ARRAY_COPY("array.copy", 0xFB_11, listOf(STRUCT_TYPE_IDX, STRUCT_TYPE_IDX)),
+    ARRAY_NEW_DATA("array.new_data", 0xFB_09, listOf(STRUCT_TYPE_IDX, DATA_IDX)),
+    ARRAY_NEW_FIXED("array.new_fixed", 0xFB_08, listOf(STRUCT_TYPE_IDX, CONST_I32)),
+//    ARRAY_NEW_ELEM("array.new_elem", 0xFB_0A, listOf(STRUCT_TYPE_IDX, ELEM_IDX)),
 
-    I31_NEW("i31.new", 0xFB_20),
-    I31_GET_S("i31.get_s", 0xFB_21),
-    I31_GET_U("i31.get_u", 0xFB_22),
+    I31_NEW("i31.new", 0xFB_1C),
+    I31_GET_S("i31.get_s", 0xFB_1D),
+    I31_GET_U("i31.get_u", 0xFB_1E),
 
-    REF_EQ("ref.eq", 0xD5),
-    REF_TEST("ref.test", 0xFB_40, HEAP_TYPE),
-    REF_TEST_NULL("ref.test null", 0xFB_48, HEAP_TYPE),
-    REF_CAST("ref.cast", 0xFB_41, HEAP_TYPE),
-    REF_CAST_NULL("ref.cast null", 0xFB_49, HEAP_TYPE),
+    REF_EQ("ref.eq", 0xD3),
+    REF_TEST("ref.test", 0xFB_14, HEAP_TYPE),
+    REF_TEST_NULL("ref.test null", 0xFB_15, HEAP_TYPE),
+    REF_CAST("ref.cast", 0xFB_16, HEAP_TYPE),
+    REF_CAST_NULL("ref.cast null", 0xFB_17, HEAP_TYPE),
 
 // TODO: KT-60828 Return br_on_cast_fail usages when it's possible
-//    BR_ON_CAST("br_on_cast", 0xFB_4E, listOf(CONST_U8, LABEL_IDX, HEAP_TYPE, HEAP_TYPE)),
-//    BR_ON_CAST_FAIL("br_on_cast_fail", 0xFB_4F, listOf(CONST_U8, LABEL_IDX, HEAP_TYPE, HEAP_TYPE)),
+//    BR_ON_CAST("br_on_cast", 0xFB_18, listOf(CONST_U8, LABEL_IDX, HEAP_TYPE, HEAP_TYPE)),
+//    BR_ON_CAST_FAIL("br_on_cast_fail", 0xFB_19, listOf(CONST_U8, LABEL_IDX, HEAP_TYPE, HEAP_TYPE)),
 
-    EXTERN_INTERNALIZE("extern.internalize", 0xfb70), // externref -> anyref
-    EXTERN_EXTERNALIZE("extern.externalize", 0xfb71), // anyref -> externref
+    EXTERN_INTERNALIZE("extern.internalize", 0xFB_1A), // externref -> anyref
+    EXTERN_EXTERNALIZE("extern.externalize", 0xFB_1B), // anyref -> externref
 
     // ============================================================
     PSEUDO_COMMENT_PREVIOUS_INSTR("<comment-single>", WASM_OP_PSEUDO_OPCODE),
