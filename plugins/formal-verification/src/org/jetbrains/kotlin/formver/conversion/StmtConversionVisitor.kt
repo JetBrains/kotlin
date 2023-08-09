@@ -29,27 +29,25 @@ import org.jetbrains.kotlin.types.ConstantValueKind
  * expression containing the result.  Note that in the FIR, expressions
  * are a subtype of statements.
  */
-class StmtConversionVisitor : FirVisitor<Exp?, StmtConversionContext>() {
+class StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
     // Note that in some cases we don't expect to ever implement it: we are only
     // translating statements here, after all.  It isn't 100% clear how best to
     // communicate this.
     override fun visitElement(element: FirElement, data: StmtConversionContext): Exp =
         TODO("Not yet implemented for $element (${element.source.text})")
 
-    override fun visitReturnExpression(returnExpression: FirReturnExpression, data: StmtConversionContext): Exp? {
+    override fun visitReturnExpression(returnExpression: FirReturnExpression, data: StmtConversionContext): Exp {
         val expr = returnExpression.result.accept(this, data)
         // TODO: respect return-based control flow
-        if (expr != null) {
-            val returnVar = data.methodCtx.returnVar ?: throw Exception("Expression returned in void function")
-            data.statements.add(Stmt.LocalVarAssign(returnVar.toLocalVar(), expr))
-        }
-        return null
+        val returnVar = data.methodCtx.returnVar
+        data.statements.add(Stmt.LocalVarAssign(returnVar.toLocalVar(), expr))
+        return UnitDomain.element
     }
 
-    override fun visitBlock(block: FirBlock, data: StmtConversionContext): Exp? {
+    override fun visitBlock(block: FirBlock, data: StmtConversionContext): Exp {
         // TODO: allow blocks to return values
         block.statements.forEach { it.accept(this, data) }
-        return null
+        return UnitDomain.element
     }
 
     override fun <T> visitConstExpression(constExpression: FirConstExpression<T>, data: StmtConversionContext): Exp =
@@ -59,7 +57,7 @@ class StmtConversionVisitor : FirVisitor<Exp?, StmtConversionContext>() {
             else -> TODO("Constant Expression of type ${constExpression.kind} is not yet implemented.")
         }
 
-    override fun visitWhenExpression(whenExpression: FirWhenExpression, data: StmtConversionContext): Exp? {
+    override fun visitWhenExpression(whenExpression: FirWhenExpression, data: StmtConversionContext): Exp {
         if (whenExpression.usedAsExpression) {
             // The problem with conditional expressions is that Kotlin conditional expressions can have statements whereas Viper
             // conditionals can't. These need to be embedded as Viper statements before the IF, however, one has to carefully consider
@@ -82,7 +80,7 @@ class StmtConversionVisitor : FirVisitor<Exp?, StmtConversionContext>() {
                 elseCtx.convertAndAppend(whenExpression.branches[1].result)
                 data.statements.add(
                     Stmt.If(
-                        cond ?: throw Exception("Missing IF condition"),
+                        cond,
                         thenCtx.block,
                         elseCtx.block
                     )
@@ -90,7 +88,7 @@ class StmtConversionVisitor : FirVisitor<Exp?, StmtConversionContext>() {
             }
             else -> TODO("Can't embed $whenExpression since when expressions with a subject other than null are not yet supported.")
         }
-        return null
+        return UnitDomain.element
     }
 
     override fun visitPropertyAccessExpression(
@@ -102,61 +100,58 @@ class StmtConversionVisitor : FirVisitor<Exp?, StmtConversionContext>() {
         return when (symbol) {
             is FirValueParameterSymbol -> ConvertedVar(
                 symbol.callableId.convertName(),
-                data.methodCtx.programCtx.convertType(type) as ConvertedType
+                data.methodCtx.programCtx.convertType(type)
             ).toLocalVar()
             is FirPropertySymbol -> ConvertedVar(
                 symbol.callableId.convertName(),
-                data.methodCtx.programCtx.convertType(type) as ConvertedType
+                data.methodCtx.programCtx.convertType(type)
             ).toLocalVar()
             else -> TODO("Implement other property accesses")
         }
     }
 
-    override fun visitFunctionCall(functionCall: FirFunctionCall, data: StmtConversionContext): Exp? {
+    override fun visitFunctionCall(functionCall: FirFunctionCall, data: StmtConversionContext): Exp {
         val id = functionCall.calleeReference.toResolvedCallableSymbol()!!.callableId
         // TODO: figure out a more structured way of doing this
-        if (id.packageName.asString() == "kotlin.contracts" && id.callableName.asString() == "contract") return null
+        if (id.packageName.asString() == "kotlin.contracts" && id.callableName.asString() == "contract") return UnitDomain.element
         return when (functionCall.dispatchReceiver) {
             is FirNoReceiverExpression -> {
                 val symbol = functionCall.calleeReference.resolved!!.resolvedSymbol as FirNamedFunctionSymbol
                 val calleeSig = data.methodCtx.programCtx.add(symbol)
                 val args = functionCall.argumentList.arguments.map {
-                    // Note that this rejects some valid Kotlin code: in Kotlin, you are allowed to explicitly
-                    // pass around Unit values, which is not permitted in Viper.  We'll need to fix this eventually.
-                    it.accept(this, data) ?: throw Exception("Argument evaluated to unit value?")
+                    it.accept(this, data)
                 }
-                val returnVar: ConvertedVar? = calleeSig.returnVarType?.let { data.methodCtx.newAnonVar(it) }
-                val returnExp = returnVar?.toLocalVar()
-                val call = Stmt.MethodCall(calleeSig.name.asString, args, listOfNotNull(returnExp))
-                returnVar?.let { data.declarations.add(it.toLocalVarDecl()) }
-                data.statements.add(call)
+                val returnVar = data.methodCtx.newAnonVar(calleeSig.returnType)
+                val returnExp = returnVar.toLocalVar()
+                data.declarations.add(returnVar.toLocalVarDecl())
+                data.statements.add(Stmt.MethodCall(calleeSig.name.asString, args, listOf(returnExp)))
                 returnExp
             }
             else -> TODO("Implement function call visitation with receiver")
         }
     }
 
-    override fun visitProperty(property: FirProperty, data: StmtConversionContext): Exp? {
+    override fun visitProperty(property: FirProperty, data: StmtConversionContext): Exp {
         val symbol = property.symbol
         val type = property.returnTypeRef.coneTypeOrNull!!
         if (!symbol.isLocal) {
             TODO("Implement non-local properties")
         }
-        val cvar = ConvertedVar(symbol.callableId.convertName(), data.methodCtx.programCtx.convertType(type) as ConvertedType)
+        val cvar = ConvertedVar(symbol.callableId.convertName(), data.methodCtx.programCtx.convertType(type))
         val propInitializer = property.initializer
         val initializer = propInitializer?.accept(this, data)
         data.declarations.add(cvar.toLocalVarDecl())
         initializer?.let { data.statements.add(Stmt.LocalVarAssign(cvar.toLocalVar(), it)) }
-        return null
+        return UnitDomain.element
     }
 
-    override fun visitWhileLoop(whileLoop: FirWhileLoop, data: StmtConversionContext): Exp? {
+    override fun visitWhileLoop(whileLoop: FirWhileLoop, data: StmtConversionContext): Exp {
         val cond = whileLoop.condition.accept(this, data)
         val invariants: List<Exp> = emptyList()
         val bodyStmtConversionContext = StmtConversionContext(data.methodCtx)
         bodyStmtConversionContext.convertAndAppend(whileLoop.block)
         val body = bodyStmtConversionContext.block
-        data.statements.add(Stmt.While(cond!!, invariants, body))
-        return null
+        data.statements.add(Stmt.While(cond, invariants, body))
+        return UnitDomain.element
     }
 }

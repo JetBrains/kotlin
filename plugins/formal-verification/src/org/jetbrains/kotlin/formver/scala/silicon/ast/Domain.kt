@@ -52,7 +52,7 @@ class DomainAxiom(
             AnonymousDomainAxiom(exp.toViper(), pos.toViper(), info.toViper(), domainName, trafos.toViper())
 }
 
-class Domain(
+open class Domain(
     val name: String,
     functions: List<DomainFunc>,
     val axioms: List<DomainAxiom>,

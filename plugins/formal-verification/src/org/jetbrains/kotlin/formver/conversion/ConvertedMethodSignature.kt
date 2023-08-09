@@ -8,11 +8,9 @@ package org.jetbrains.kotlin.formver.conversion
 import org.jetbrains.kotlin.formver.scala.silicon.ast.*
 import viper.silver.ast.Method
 
-class ConvertedMethodSignature(val name: ConvertedName, val params: List<ConvertedVar>, val returnType: ConvertedOptionalType) {
-    val returnVarType: ConvertedType?
-        get() = returnType as? ConvertedType
-    val returnVar: ConvertedVar?
-        get() = returnVarType?.let { ConvertedVar(ReturnVariableName, it) }
+class ConvertedMethodSignature(val name: ConvertedName, val params: List<ConvertedVar>, val returnType: ConvertedType) {
+    val returnVar: ConvertedVar
+        get() = ConvertedVar(ReturnVariableName, returnType)
 
     fun toMethod(
         pres: List<Exp>, posts: List<Exp>,
@@ -21,7 +19,7 @@ class ConvertedMethodSignature(val name: ConvertedName, val params: List<Convert
         info: Info = Info.NoInfo,
         trafos: Trafos = Trafos.NoTrafos,
     ): Method {
-        val returns = listOfNotNull(returnVar)
+        val returns = listOf(returnVar)
         return method(
             name.asString,
             params.map { it.toLocalVarDecl() },

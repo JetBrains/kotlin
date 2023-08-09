@@ -1,30 +1,55 @@
-/basic.kt:(4,15): info: field backing_int: Int
+/basic.kt:(4,15): info: domain unit$  {
 
-method global$pkg_$return_unit()
+  unique function unit$element(): unit$
+}
+
+field backing_int: Int
+
+method global$pkg_$return_unit() returns (ret$: unit$)
 {
 }
 
-/basic.kt:(25,35): info: field backing_int: Int
+/basic.kt:(25,35): info: domain unit$  {
+
+  unique function unit$element(): unit$
+}
+
+field backing_int: Int
 
 method global$pkg_$return_int() returns (ret$: Int)
 {
   ret$ := 0
 }
 
-/basic.kt:(60,80): info: field backing_int: Int
+/basic.kt:(60,80): info: domain unit$  {
 
-method global$pkg_$take_int_return_unit(local$x: Int)
+  unique function unit$element(): unit$
+}
+
+field backing_int: Int
+
+method global$pkg_$take_int_return_unit(local$x: Int) returns (ret$: unit$)
 {
 }
 
-/basic.kt:(126,145): info: field backing_int: Int
+/basic.kt:(126,145): info: domain unit$  {
+
+  unique function unit$element(): unit$
+}
+
+field backing_int: Int
 
 method global$pkg_$take_int_return_int(local$x: Int) returns (ret$: Int)
 {
   ret$ := local$x
 }
 
-/basic.kt:(176,200): info: field backing_int: Int
+/basic.kt:(176,200): info: domain unit$  {
+
+  unique function unit$element(): unit$
+}
+
+field backing_int: Int
 
 method global$pkg_$take_int_return_int_expr(local$x: Int)
   returns (ret$: Int)
@@ -32,7 +57,12 @@ method global$pkg_$take_int_return_int_expr(local$x: Int)
   ret$ := local$x
 }
 
-/basic.kt:(222,242): info: field backing_int: Int
+/basic.kt:(222,242): info: domain unit$  {
+
+  unique function unit$element(): unit$
+}
+
+field backing_int: Int
 
 method global$pkg_$with_int_declaration() returns (ret$: Int)
 {

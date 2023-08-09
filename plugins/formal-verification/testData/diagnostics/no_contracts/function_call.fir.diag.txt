@@ -1,16 +1,26 @@
-/function_call.kt:(4,5): info: field backing_int: Int
+/function_call.kt:(4,5): info: domain unit$  {
+
+  unique function unit$element(): unit$
+}
+
+field backing_int: Int
 
 method global$pkg_$f(local$x: Int) returns (ret$: Int)
 {
   ret$ := local$x
 }
 
-/function_call.kt:(27,40): info: field backing_int: Int
+/function_call.kt:(27,40): info: domain unit$  {
+
+  unique function unit$element(): unit$
+}
+
+field backing_int: Int
 
 method global$pkg_$f(local$x: Int) returns (ret$: Int)
 
 
-method global$pkg_$function_call()
+method global$pkg_$function_call() returns (ret$: unit$)
 {
   var anonymous$1: Int
   var anonymous$2: Int
@@ -18,12 +28,17 @@ method global$pkg_$function_call()
   anonymous$2 := global$pkg_$f(0)
 }
 
-/function_call.kt:(69,89): info: field backing_int: Int
+/function_call.kt:(69,89): info: domain unit$  {
+
+  unique function unit$element(): unit$
+}
+
+field backing_int: Int
 
 method global$pkg_$f(local$x: Int) returns (ret$: Int)
 
 
-method global$pkg_$function_call_nested()
+method global$pkg_$function_call_nested() returns (ret$: unit$)
 {
   var anonymous$1: Int
   var anonymous$2: Int

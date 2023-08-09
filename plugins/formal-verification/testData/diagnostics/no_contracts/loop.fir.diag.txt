@@ -1,4 +1,9 @@
-/loop.kt:(4,14): info: field backing_int: Int
+/loop.kt:(4,14): info: domain unit$  {
+
+  unique function unit$element(): unit$
+}
+
+field backing_int: Int
 
 method global$pkg_$while_loop(local$b: Bool) returns (ret$: Int)
 {

@@ -23,7 +23,7 @@ class MethodConversionContext(val programCtx: ProgramConversionContext, val sign
         get() =
             signature.toMethod(listOf(), listOf(), convertedBody)
 
-    val returnVar: ConvertedVar?
+    val returnVar: ConvertedVar
         get() = signature.returnVar
 
     private val convertedBody = body?.let { convertBody(it) }

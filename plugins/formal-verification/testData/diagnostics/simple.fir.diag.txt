@@ -1,11 +1,21 @@
-/simple.kt:(84,100): info: field backing_int: Int
+/simple.kt:(84,100): info: domain unit$  {
 
-method global$pkg_$without_contract()
+  unique function unit$element(): unit$
+}
+
+field backing_int: Int
+
+method global$pkg_$without_contract() returns (ret$: unit$)
 {
 }
 
-/simple.kt:(148,161): info: field backing_int: Int
+/simple.kt:(148,161): info: domain unit$  {
 
-method global$pkg_$with_contract()
+  unique function unit$element(): unit$
+}
+
+field backing_int: Int
+
+method global$pkg_$with_contract() returns (ret$: unit$)
 {
 }

@@ -5,25 +5,23 @@
 
 package org.jetbrains.kotlin.formver.conversion
 
+import org.jetbrains.kotlin.formver.scala.silicon.ast.Domain
+import org.jetbrains.kotlin.formver.scala.silicon.ast.DomainFunc
 import org.jetbrains.kotlin.formver.scala.silicon.ast.Exp
 import org.jetbrains.kotlin.formver.scala.silicon.ast.Type
 
-interface ConvertedOptionalType {
-    val viperType: Type?
+interface ConvertedType {
+    val viperType: Type
     fun preconditions(v: Exp): List<Exp> = emptyList()
     fun postconditions(v: Exp): List<Exp> = emptyList()
 }
 
-interface ConvertedType : ConvertedOptionalType {
-    override val viperType: Type
+object ConvertedUnit : ConvertedType {
+    override val viperType: Type = UnitDomain.toType()
 }
 
-object ConvertedUnit : ConvertedOptionalType {
-    override val viperType: Type? = null
-}
-
-object ConvertedNothing : ConvertedOptionalType {
-    override val viperType: Type? = null
+object ConvertedNothing : ConvertedType {
+    override val viperType: Type = UnitDomain.toType()
 
     override fun preconditions(v: Exp): List<Exp> = listOf(Exp.BoolLit(false))
 }

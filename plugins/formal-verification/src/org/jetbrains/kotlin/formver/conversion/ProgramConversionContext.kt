@@ -31,7 +31,7 @@ class ProgramConversionContext {
 
     val program: Program
         get() = Program(
-            emptySeq(), /* Domains */
+            seqOf(UnitDomain.toViper()), /* Domains */
             seqOf(field(INT_BACKING_FIELD, Type.Int)), /* Fields */
             emptySeq(), /* Functions */
             emptySeq(), /* Predicates */
@@ -64,7 +64,7 @@ class ProgramConversionContext {
         val retType = symbol.resolvedReturnTypeRef.type
 
         val params = symbol.valueParameterSymbols.map {
-            ConvertedVar(it.convertName(), convertVarType(it.resolvedReturnType))
+            ConvertedVar(it.convertName(), convertType(it.resolvedReturnType))
         }
         return ConvertedMethodSignature(
             symbol.callableId.convertName(),
@@ -73,14 +73,11 @@ class ProgramConversionContext {
         )
     }
 
-    fun convertType(type: ConeKotlinType): ConvertedOptionalType = when {
+    fun convertType(type: ConeKotlinType): ConvertedType = when {
         type.isUnit -> ConvertedUnit
         type.isInt -> ConvertedInt
         type.isBoolean -> ConvertedBoolean
         else -> throw NotImplementedError("The embedding for type $type is not yet implemented.")
     }
-
-    fun convertVarType(type: ConeKotlinType): ConvertedType =
-        convertType(type) as? ConvertedType ?: throw Exception("Type $type was expected to be a valid variable type, but isn't.")
 }
 
