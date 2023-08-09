@@ -20,10 +20,8 @@ import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.resolve.directExpansionType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeParameterBasedTypeVariable
 import org.jetbrains.kotlin.fir.resolve.inference.ResolvedCallableReferenceAtom
 import org.jetbrains.kotlin.fir.resolve.inference.csBuilder
-import org.jetbrains.kotlin.fir.resolve.inference.hasBuilderInferenceAnnotation
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExplicitTypeParameterConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
@@ -651,33 +649,6 @@ internal object CheckIncompatibleTypeVariableUpperBounds : ResolutionStage() {
                 )
             }
         }
-}
-
-internal object PostponedVariablesInitializerResolutionStage : ResolutionStage() {
-    override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
-        val argumentMapping = candidate.argumentMapping ?: return
-        if (candidate.typeArgumentMapping is TypeArgumentMapping.Mapped) return
-        for (parameter in argumentMapping.values) {
-            if (!parameter.hasBuilderInferenceAnnotation(context.session)) continue
-            val type = parameter.returnTypeRef.coneType
-            val receiverType = type.receiverType(callInfo.session) ?: continue
-            val dontUseBuilderInferenceIfPossible =
-                context.session.languageVersionSettings.supportsFeature(LanguageFeature.UseBuilderInferenceOnlyIfNeeded)
-            if (dontUseBuilderInferenceIfPossible) continue
-
-            for (freshVariable in candidate.freshVariables) {
-                if (candidate.csBuilder.isPostponedTypeVariable(freshVariable)) continue
-                if (freshVariable !is ConeTypeParameterBasedTypeVariable) continue
-                val typeParameterSymbol = freshVariable.typeParameterSymbol
-                val typeHasVariable = receiverType.contains {
-                    (it as? ConeTypeParameterType)?.lookupTag?.typeParameterSymbol == typeParameterSymbol
-                }
-                if (typeHasVariable) {
-                    candidate.csBuilder.markPostponedVariable(freshVariable)
-                }
-            }
-        }
-    }
 }
 
 internal object CheckCallModifiers : CheckerStage() {
