@@ -48,7 +48,7 @@ buildCache {
         }
     }
 
-    val remoteBuildCacheUrl = buildProperties.buildCacheUrl
+    val remoteBuildCacheUrl = buildProperties.buildCacheUrl?.trim()
     if (!remoteBuildCacheUrl.isNullOrEmpty()) {
         remote<HttpBuildCache> {
             url = uri(remoteBuildCacheUrl)
