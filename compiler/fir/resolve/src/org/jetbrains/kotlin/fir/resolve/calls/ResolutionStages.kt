@@ -682,59 +682,6 @@ internal object CheckIncompatibleTypeVariableUpperBounds : ResolutionStage() {
         }
 }
 
-internal object PostponedVariablesInitializerResolutionStage : ResolutionStage() {
-    override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
-        val argumentMapping = candidate.argumentMapping ?: return
-        if (candidate.typeArgumentMapping is TypeArgumentMapping.Mapped) return
-
-        val atomsToMark = mutableSetOf<FirAnonymousFunction>()
-
-        for ((argument, parameter) in argumentMapping) {
-            if (!parameter.hasBuilderInferenceAnnotation(context.session)) continue
-            val unwrapped = argument.unwrapArgument()
-            if (unwrapped is FirAnonymousFunctionExpression) {
-                atomsToMark.add(unwrapped.anonymousFunction)
-            }
-
-            // TODO (KT-63958): This is effectively dead-code, since UseBuilderInferenceOnlyIfNeeded is always enabled
-            val type = parameter.returnTypeRef.coneType
-            val receiverType = type.receiverType(callInfo.session) ?: continue
-            val dontUseBuilderInferenceIfPossible =
-                context.session.languageVersionSettings.supportsFeature(LanguageFeature.UseBuilderInferenceOnlyIfNeeded)
-            if (dontUseBuilderInferenceIfPossible) continue
-
-            for (freshVariable in candidate.freshVariables) {
-                if (candidate.csBuilder.isPostponedTypeVariable(freshVariable)) continue
-                if (freshVariable !is ConeTypeParameterBasedTypeVariable) continue
-                val typeParameterSymbol = freshVariable.typeParameterSymbol
-                val typeHasVariable = receiverType.contains {
-                    (it as? ConeTypeParameterType)?.lookupTag?.typeParameterSymbol == typeParameterSymbol
-                }
-                if (typeHasVariable) {
-                    candidate.csBuilder.markPostponedVariable(freshVariable)
-                }
-            }
-        }
-
-        candidate.postponedAtoms.forEach { postponedAtomContainer ->
-            when (postponedAtomContainer) {
-                is ResolvedLambdaAtom -> {
-                    if (postponedAtomContainer.atom in atomsToMark) {
-                        postponedAtomContainer.isCorrespondingParameterAnnotatedWithBuilderInference = true
-                    }
-                }
-                is LambdaWithTypeVariableAsExpectedTypeAtom -> {
-                    // Although, one may annotate fun foo(@BuilderInference t: T)
-                    // it makes little sense
-                }
-                is ResolvedCallableReferenceAtom -> {
-                    // Builder inference doesn't apply to such atoms.
-                }
-            }
-        }
-    }
-}
-
 internal object CheckCallModifiers : CheckerStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
         if (callInfo.callSite is FirFunctionCall) {
