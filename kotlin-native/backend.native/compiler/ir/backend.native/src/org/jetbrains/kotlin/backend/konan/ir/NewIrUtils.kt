@@ -110,6 +110,8 @@ val IrPackageFragment.konanLibrary : KotlinLibrary?
         }
         return this.packageFragmentDescriptor.containingDeclaration.konanLibrary
     }
+// Any changes made to konanLibrary here should be ported to the containsDeclaration
+// function in LlvmModuleSpecificationBase in LlvmModuleSpecificationImpl.kt
 val IrDeclaration.konanLibrary: KotlinLibrary?
     get() {
         ((this as? IrMetadataSourceOwner)?.metadata as? KonanMetadata)?.let { return it.konanLibrary }
