@@ -31,6 +31,12 @@ public class Kapt4ToolIntegrationTestGenerated extends AbstractKapt4ToolIntegrat
     }
 
     @Test
+    @TestMetadata("compileModeUnsupported")
+    public void testCompileModeUnsupported() throws Exception {
+        runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/compileModeUnsupported/");
+    }
+
+    @Test
     @TestMetadata("correctErrorTypesOn")
     public void testCorrectErrorTypesOn() throws Exception {
         runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/correctErrorTypesOn/");

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.CommonConfigurationKeys.USE_FIR
 import org.jetbrains.kotlin.fir.extensions.FirAnalysisHandlerExtension
 import org.jetbrains.kotlin.kapt3.KAPT_OPTIONS
+import org.jetbrains.kotlin.kapt3.base.Kapt
 import org.jetbrains.kotlin.kapt3.base.KaptContext
 import org.jetbrains.kotlin.kapt3.base.ProcessorLoader
 import org.jetbrains.kotlin.kapt3.base.doAnnotationProcessing
@@ -44,6 +45,20 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
 
     @OptIn(KtAnalysisApiInternals::class)
     override fun doAnalysis(configuration: CompilerConfiguration): Boolean {
+        val optionsBuilder = configuration[KAPT_OPTIONS]!!
+        val logger = MessageCollectorBackedKaptLogger(
+            KaptFlag.VERBOSE in optionsBuilder.flags,
+            KaptFlag.INFO_AS_WARNINGS in optionsBuilder.flags,
+            configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)!!
+        )
+
+        if (optionsBuilder.mode == AptMode.WITH_COMPILATION) {
+            logger.error("KAPT \"compile\" mode is not supported in Kotlin 2.x. Run kapt with -Kapt-mode=stubsAndApt and use kotlinc for the final compilation step.")
+            return false
+        }
+
+        if (!optionsBuilder.checkOptions(logger, configuration)) return false
+
         val oldLanguageVersionSettings = configuration.languageVersionSettings
         val updatedConfiguration = configuration.copy().apply {
             languageVersionSettings = object : LanguageVersionSettings by oldLanguageVersionSettings {
@@ -67,10 +82,9 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
         val (module, psiFiles) = standaloneAnalysisAPISession.modulesWithFiles.entries.single()
         val ktFiles = psiFiles.filterIsInstance<KtFile>()
 
-        val contentRoots = configuration[CLIConfigurationKeys.CONTENT_ROOTS] ?: emptyList()
-
-        val options = configuration[KAPT_OPTIONS]!!.apply {
+        optionsBuilder.apply {
             projectBaseDir = projectBaseDir ?: module.project.basePath?.let(::File)
+            val contentRoots = configuration[CLIConfigurationKeys.CONTENT_ROOTS] ?: emptyList()
             compileClasspath.addAll(contentRoots.filterIsInstance<JvmClasspathRoot>().map { it.file })
             compileClasspath.addAll(module.directRegularDependencies
                                         .filterIsInstance<KtLibraryModule>()
@@ -78,21 +92,11 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
                                         .map { it.toFile() })
             javaSourceRoots.addAll(contentRoots.filterIsInstance<JavaSourceRoot>().map { it.file })
             classesOutputDir = classesOutputDir ?: configuration.get(JVMConfigurationKeys.OUTPUT_DIRECTORY)
-        }.build()
-
-        val logger = MessageCollectorBackedKaptLogger(
-            options.flags[KaptFlag.VERBOSE],
-            options.flags[KaptFlag.INFO_AS_WARNINGS],
-            configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)!!
-        )
-
-        if (options[KaptFlag.VERBOSE]) {
-            logger.info(options.logString())
         }
 
-        if (options.mode == AptMode.WITH_COMPILATION) {
-            logger.error("KAPT \"compile\" mode is not supported in Kotlin 2.x. Run kapt with -Kapt-mode=stubsAndApt and use kotlinc for the final compilation step.")
-            return false
+        val options = optionsBuilder.build()
+        if (options[KaptFlag.VERBOSE]) {
+            logger.info(options.logString())
         }
 
         return try {
@@ -180,6 +184,44 @@ private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
                 .filter { it.isFile && it.name.endsWith(".java", true) && it !in processedSources }
                 .toList()
         }
+    }
+
+    fun KaptOptions.Builder.checkOptions(logger: KaptLogger, configuration: CompilerConfiguration): Boolean {
+        if (classesOutputDir == null) {
+            if (configuration.get(JVMConfigurationKeys.OUTPUT_JAR) != null) {
+                logger.error("Kapt does not support specifying JAR file outputs. Please specify the classes output directory explicitly.")
+                return false
+            } else {
+                classesOutputDir = configuration.get(JVMConfigurationKeys.OUTPUT_DIRECTORY)
+            }
+        }
+
+        if (processingClasspath.isEmpty()) {
+            // Skip annotation processing if no annotation processors were provided
+            return false
+        }
+
+        if (sourcesOutputDir == null || classesOutputDir == null || stubsOutputDir == null) {
+            if (mode != AptMode.WITH_COMPILATION) {
+                val nonExistentOptionName = when {
+                    sourcesOutputDir == null -> "Sources output directory"
+                    classesOutputDir == null -> "Classes output directory"
+                    stubsOutputDir == null -> "Stubs output directory"
+                    else -> throw IllegalStateException()
+                }
+                val moduleName = configuration.get(CommonConfigurationKeys.MODULE_NAME)
+                    ?: configuration.get(JVMConfigurationKeys.MODULES).orEmpty().joinToString()
+
+                logger.warn("$nonExistentOptionName is not specified for $moduleName, skipping annotation processing")
+            }
+            return false
+        }
+
+        if (!Kapt.checkJavacComponentsAccess(logger)) {
+            return false
+        }
+
+        return true
     }
 }
 
