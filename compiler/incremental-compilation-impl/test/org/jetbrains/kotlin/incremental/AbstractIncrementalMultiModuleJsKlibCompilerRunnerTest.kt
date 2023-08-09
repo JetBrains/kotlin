@@ -91,3 +91,14 @@ abstract class AbstractIncrementalMultiModuleJsKlibCompilerRunnerTest :
         private const val STDLIB_DEPENDENCY = "build/js-ir-runtime/full-runtime.klib"
     }
 }
+
+abstract class AbstractIncrementalMultiModuleJsFirKlibCompilerRunnerTest :
+    AbstractIncrementalMultiModuleJsKlibCompilerRunnerTest() {
+
+    override fun createCompilerArguments(destinationDir: File, testDir: File): K2JSCompilerArguments {
+        return super.createCompilerArguments(destinationDir, testDir).apply {
+            useK2 = true
+            languageVersion = "2.0"
+        }
+    }
+}
