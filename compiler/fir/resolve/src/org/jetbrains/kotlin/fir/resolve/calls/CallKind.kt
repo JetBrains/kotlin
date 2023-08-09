@@ -19,7 +19,6 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
         CheckContextReceivers,
         CheckDslScopeViolation,
         CheckLowPriorityInOverloadResolution,
-        PostponedVariablesInitializerResolutionStage,
         ProcessDynamicExtensionAnnotation,
         LowerPriorityIfDynamic,
         ConstraintSystemForks,
@@ -54,7 +53,6 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
         CheckCallModifiers,
         EagerResolveOfCallableReferences,
         CheckLowPriorityInOverloadResolution,
-        PostponedVariablesInitializerResolutionStage,
         ProcessDynamicExtensionAnnotation,
         LowerPriorityIfDynamic,
         ConstraintSystemForks,
@@ -124,7 +122,6 @@ class ResolutionSequenceBuilder(
     var checkExtensionReceiver: Boolean = false,
     var checkArguments: Boolean = false,
     var checkLowPriorityInOverloadResolution: Boolean = false,
-    var initializePostponedVariables: Boolean = false,
     var mapTypeArguments: Boolean = false,
     var resolveCallableReferenceArguments: Boolean = false,
     var checkCallableReferenceExpectedType: Boolean = false,
@@ -144,7 +141,6 @@ class ResolutionSequenceBuilder(
             if (checkContextReceivers) add(CheckContextReceivers)
             if (resolveCallableReferenceArguments) add(EagerResolveOfCallableReferences)
             if (checkLowPriorityInOverloadResolution) add(CheckLowPriorityInOverloadResolution)
-            if (initializePostponedVariables) add(PostponedVariablesInitializerResolutionStage)
             if (checkCallableReferenceExpectedType) add(CheckCallableReferenceExpectedType)
         }.toTypedArray()
         return CallKind.CustomForIde(*stages)
