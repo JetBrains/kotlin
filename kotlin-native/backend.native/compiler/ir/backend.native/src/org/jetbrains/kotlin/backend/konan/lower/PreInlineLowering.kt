@@ -33,7 +33,7 @@ internal class PreInlineLowering(val context: Context) : BodyLoweringPass {
 
     private val symbols get() = context.ir.symbols
 
-    private val asserts = symbols.asserts
+    private val asserts = symbols.asserts.toSet()
     private val enableAssertions = context.config.configuration.getBoolean(KonanConfigKeys.ENABLE_ASSERTIONS)
 
     override fun lower(irBody: IrBody, container: IrDeclaration) = lower(irBody, container, container.file)

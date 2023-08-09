@@ -43,7 +43,7 @@ internal class BuiltinOperatorLowering(val context: Context) : FileLoweringPass,
         expression.transformChildrenVoid(this)
 
         return when (expression.symbol) {
-            irBuiltins.eqeqSymbol, in ieee754EqualsSymbols() -> lowerEqeq(expression)
+            irBuiltins.eqeqSymbol, in ieee754EqualsSymbols -> lowerEqeq(expression)
 
             irBuiltins.eqeqeqSymbol -> lowerEqeqeq(expression)
 
@@ -70,8 +70,8 @@ internal class BuiltinOperatorLowering(val context: Context) : FileLoweringPass,
         return expression
     }
 
-    private fun ieee754EqualsSymbols(): List<IrSimpleFunctionSymbol> =
-            irBuiltins.ieee754equalsFunByOperandType.values.toList()
+    private val ieee754EqualsSymbols: Set<IrSimpleFunctionSymbol> =
+            irBuiltins.ieee754equalsFunByOperandType.values.toSet()
 
     private fun lowerEqeqeq(expression: IrCall): IrExpression {
         val lhs = expression.getValueArgument(0)!!
@@ -191,7 +191,7 @@ internal class BuiltinOperatorLowering(val context: Context) : FileLoweringPass,
         // TODO: areEqualByValue and ieee754Equals intrinsics are specially treated by code generator
         // and thus can be declared synthetically in the compiler instead of explicitly in the runtime.
         fun callEquals(lhs: IrExpression, rhs: IrExpression) =
-                if (symbol in ieee754EqualsSymbols())
+                if (symbol in ieee754EqualsSymbols)
                 // Find a type-compatible `konan.internal.ieee754Equals` intrinsic:
                     irCall(selectIntrinsic(symbols.ieee754Equals, lhs.type, rhs.type, true)!!).apply {
                         putValueArgument(0, lhs)
@@ -206,7 +206,7 @@ internal class BuiltinOperatorLowering(val context: Context) : FileLoweringPass,
         val lhsIsNotNullable = !lhs.type.isNullable()
         val rhsIsNotNullable = !rhs.type.isNullable()
 
-        return if (symbol in ieee754EqualsSymbols()) {
+        return if (symbol in ieee754EqualsSymbols) {
             if (lhsIsNotNullable && rhsIsNotNullable)
                 callEquals(lhs, rhs)
             else irBlock {

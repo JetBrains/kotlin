@@ -28,8 +28,9 @@ data class File constructor(internal val javaPath: Path) {
         get() = javaPath.toAbsolutePath().toString()
     val absoluteFile: File
         get() = File(absolutePath)
-    val canonicalPath: String
-        get() = javaPath.toFile().canonicalPath
+    val canonicalPath: String by lazy {
+        javaPath.toFile().canonicalPath
+    }
     val canonicalFile: File
         get() = File(canonicalPath)
 

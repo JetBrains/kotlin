@@ -284,11 +284,11 @@ class FakeOverrideBuilder(
     }
 
     fun provideFakeOverrides() {
-        val entries = fakeOverrideCandidates.entries
+        val entries = fakeOverrideCandidates.entries.toMutableList()
         while (entries.isNotEmpty()) {
-            val candidate = entries.last()
-            entries.remove(candidate)
+            val candidate = entries.removeLast()
             provideFakeOverrides(candidate.key, candidate.value)
         }
+        fakeOverrideCandidates.clear()
     }
 }

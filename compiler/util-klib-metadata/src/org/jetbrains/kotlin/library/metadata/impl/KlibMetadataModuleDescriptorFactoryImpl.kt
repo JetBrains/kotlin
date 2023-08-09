@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.*
-import org.jetbrains.kotlin.library.unresolvedDependencies
+import org.jetbrains.kotlin.library.hasDependencies
 import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.parentOrNull
@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.storage.StorageManager
 
 private val ModuleDescriptorImpl.isStdlibModule
-    get() = (this.klibModuleOrigin as? DeserializedKlibModuleOrigin)?.library?.unresolvedDependencies?.isEmpty() ?: false
+    get() = (this.klibModuleOrigin as? DeserializedKlibModuleOrigin)?.library?.let { !it.hasDependencies } ?: false
 
 class KlibMetadataModuleDescriptorFactoryImpl(
     override val descriptorFactory: KlibModuleDescriptorFactory,
