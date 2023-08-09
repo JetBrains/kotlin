@@ -163,11 +163,12 @@ object ExpectedActualResolver {
     }
 }
 
-// FIXME(dsavvinov): review clients, as they won't work properly in HMPP projects
+// FIXME(dsavvinov): review clients, as they won't work properly in HMPP projects. KT-61105
 @JvmOverloads
 fun MemberDescriptor.findCompatibleActualsForExpected(
     platformModule: ModuleDescriptor, moduleFilter: ModuleFilter = allModulesProvidingActualsFor(module, platformModule)
 ): List<MemberDescriptor> =
+    // ?.get(Compatible) is suspicious. Probably, we must check not only Compatible but Incompatible.WeakIncompatible as well
     ExpectedActualResolver.findActualForExpected(this, platformModule, moduleFilter)?.get(Compatible).orEmpty()
 
 @JvmOverloads
