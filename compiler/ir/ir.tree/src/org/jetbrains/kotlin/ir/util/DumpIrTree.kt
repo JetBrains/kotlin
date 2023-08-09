@@ -23,9 +23,11 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrErrorType
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classFqName
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.Printer
 
 fun IrElement.dump(options: DumpIrTreeOptions = DumpIrTreeOptions()): String =
@@ -53,6 +55,8 @@ fun IrFile.dumpTreesFromLineNumber(lineNumber: Int, options: DumpIrTreeOptions =
  * @property printFlagsInDeclarationReferences If `false`, flags like `fake_override`, `inline` etc. are not printed in rendered declaration
  * references.
  * @property printSignatures Whether to print signatures for nodes that have public signatures
+ * @property annotationFilter Whether to print the provided annotation
+ * @property doPrintExternalFlag Whether to print "external" flag for the provided simple function
  */
 data class DumpIrTreeOptions(
     val normalizeNames: Boolean = false,
@@ -62,6 +66,8 @@ data class DumpIrTreeOptions(
     val printFlagsInDeclarationReferences: Boolean = true,
     val printSignatures: Boolean = false,
     val printTypeAbbreviations: Boolean = true,
+    val annotationFilter: (IrConstructorCall) -> Boolean = { true },
+    val doPrintExternalFlag: (IrSimpleFunction) -> Boolean = { it.isExternal },
 )
 
 private fun IrFile.shouldSkipDump(): Boolean {
@@ -182,9 +188,11 @@ class DumpIrTreeVisitor(
     }
 
     private fun dumpAnnotations(element: IrAnnotationContainer) {
-        element.annotations.dumpItems("annotations") { irAnnotation: IrConstructorCall ->
-            printer.println(elementRenderer.renderAsAnnotation(irAnnotation))
-        }
+        element.annotations
+            .filter { options.annotationFilter(it) }
+            .dumpItems("annotations") { irAnnotation: IrConstructorCall ->
+                printer.println(elementRenderer.renderAsAnnotation(irAnnotation))
+            }
     }
 
     private fun IrSymbol.dump(label: String? = null) =

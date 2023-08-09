@@ -23,6 +23,9 @@ dependencies {
     testApiJUnit5()
     testImplementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-metadata-klib"))
     testImplementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
+    if (kotlinBuildProperties.isKotlinNativeEnabled) {
+        testImplementation(project(":kotlin-native:backend.native")) { isTransitive = false }
+    }
 
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
 }

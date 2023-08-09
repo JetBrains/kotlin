@@ -1,6 +1,8 @@
 // IGNORE_BACKEND_K2: JVM_IR
 // IGNORE_BACKEND_K2: JS_IR
 // IGNORE_BACKEND_K2: JS_IR_ES6
+// KT-61141: ACTUAL_WITHOUT_EXPECT: actual class A : Any has no corresponding expected declaration at expectClassInherited.kt:(312,313)
+// IGNORE_BACKEND_K2: NATIVE
 // !LANGUAGE: +MultiPlatformProjects
 
 expect abstract class A protected constructor() {

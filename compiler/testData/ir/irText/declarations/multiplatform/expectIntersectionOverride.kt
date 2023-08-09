@@ -2,6 +2,9 @@
 // IGNORE_BACKEND_K1: JVM_IR, JS_IR
 // !LANGUAGE: +MultiPlatformProjects
 
+// KT-61141: NO_ACTUAL_FOR_EXPECT: Expected class 'C' has no actual declaration in module <common> for Native (21,14) in /common.kt
+// IGNORE_BACKEND_K1: NATIVE
+
 // MODULE: common
 // FILE: common.kt
 

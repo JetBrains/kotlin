@@ -3,6 +3,9 @@
 // IGNORE_BACKEND: JS_IR_ES6
 // !IGNORE_ERRORS
 
+// KT-61141: java.lang.RuntimeException: Loop not found for break expression: break
+// IGNORE_BACKEND: NATIVE
+
 fun test1() {
     break
     continue
