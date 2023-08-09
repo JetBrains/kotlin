@@ -1,0 +1,35 @@
+KT element: KtScript
+FIR element: FirScriptImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
+SCRIPT: [ResolvedTo(BODY_RESOLVE)]
+    [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
+
+    public? final? [ResolvedTo(RAW_FIR)] class ScriptClass : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ScriptClass] constructor(): R|ScriptClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val memberProperty: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ScriptClass] get(): <implicit>
+
+    }
+
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun scriptFunction(): R|kotlin/Int| {
+        ^scriptFunction Int(42)
+    }
+
+    public? final? [ResolvedTo(RAW_FIR)] fun unusedScriptFunction([ResolvedTo(RAW_FIR)] p: String): <implicit> { LAZY_BLOCK }
+
+    R|/scriptFunction|()
+    public final [ResolvedTo(CONTRACTS)] fun foo([ResolvedTo(CONTRACTS)] i: R|kotlin/Int|, [ResolvedTo(CONTRACTS)] action: R|(kotlin/Int) -> kotlin/Unit|): R|kotlin/Unit| {
+        action#(i#)
+    }
+
+    public final [ResolvedTo(BODY_RESOLVE)] val $$result: R|kotlin/Unit| = R|/foo|(R|/scriptFunction|(), <L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function1<kotlin/Int, kotlin/Unit>] foo@fun <anonymous>([ResolvedTo(BODY_RESOLVE)] it: R|kotlin/Int|): R|kotlin/Unit| <inline=NoInline>  {
+        R|/scriptFunction|()
+    }
+    )
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Unit|

@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerC
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerDataContextAllElementsCollector
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.canBePartOfParentDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FirElementsRecorder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.KtToFirMapping
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.RawFirNonLocalDeclarationBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.RawFirReplacement
@@ -25,6 +24,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirResolvableReso
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.codeFragment
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isScriptStatement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalDeclaration
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.builder.buildFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirResolveContextCollector
@@ -68,6 +69,14 @@ object LowLevelFirApiFacadeForResolveOnAir {
         val fakeDeclarationParents = targetDeclaration.parentsOfType<KtDeclaration>().toList()
         originalDeclarationParents.zip(fakeDeclarationParents) { original, fake ->
             fake.originalDeclaration = original
+        }
+
+        if (targetDeclaration is KtScript && originalDeclaration is KtScript) {
+            originalDeclaration.blockExpression.statements.zip(targetDeclaration.blockExpression.statements) { original, fake ->
+                if (original is KtDeclaration && fake is KtDeclaration) {
+                    fake.originalDeclaration = original
+                }
+            }
         }
     }
 
@@ -321,6 +330,17 @@ object LowLevelFirApiFacadeForResolveOnAir {
             rootNonLocalDeclaration = originalDeclaration,
             replacement = replacement,
         )
+
+        /**
+         * We shouldn't touch script declarations because they're independent of a script
+         */
+        if (newFirDeclaration is FirScript && originalFirDeclaration is FirScript) {
+            val newStatements = originalFirDeclaration.statements.zip(newFirDeclaration.statements).map { (original, copied) ->
+                original.takeUnless(FirStatement::isScriptStatement) ?: copied
+            }
+
+            newFirDeclaration.replaceStatements(newStatements)
+        }
 
         session.moduleComponents.firModuleLazyDeclarationResolver.runLazyDesignatedOnAirResolve(
             FirDesignationWithFile(originalDesignationPath.path, newFirDeclaration, originalFirFile),

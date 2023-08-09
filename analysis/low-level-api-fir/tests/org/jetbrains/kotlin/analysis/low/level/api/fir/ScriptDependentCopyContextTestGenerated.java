@@ -35,4 +35,46 @@ public class ScriptDependentCopyContextTestGenerated extends AbstractScriptDepen
     public void testClassScript() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/dependentCopy/classScript.kts");
     }
+
+    @Test
+    @TestMetadata("script.kts")
+    public void testScript() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/dependentCopy/script.kts");
+    }
+
+    @Test
+    @TestMetadata("scriptFunction.kts")
+    public void testScriptFunction() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/dependentCopy/scriptFunction.kts");
+    }
+
+    @Test
+    @TestMetadata("scriptInsideLastStatement.kts")
+    public void testScriptInsideLastStatement() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/dependentCopy/scriptInsideLastStatement.kts");
+    }
+
+    @Test
+    @TestMetadata("scriptLastStatement.kts")
+    public void testScriptLastStatement() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/dependentCopy/scriptLastStatement.kts");
+    }
+
+    @Test
+    @TestMetadata("scriptLastStatementCall.kts")
+    public void testScriptLastStatementCall() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/dependentCopy/scriptLastStatementCall.kts");
+    }
+
+    @Test
+    @TestMetadata("scriptStatement.kts")
+    public void testScriptStatement() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/dependentCopy/scriptStatement.kts");
+    }
+
+    @Test
+    @TestMetadata("scriptStatementCall.kts")
+    public void testScriptStatementCall() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/dependentCopy/scriptStatementCall.kts");
+    }
 }
