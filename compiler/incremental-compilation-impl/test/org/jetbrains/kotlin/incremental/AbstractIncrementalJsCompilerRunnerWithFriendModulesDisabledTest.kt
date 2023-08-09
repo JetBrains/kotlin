@@ -23,5 +23,6 @@ abstract class AbstractIncrementalJsCompilerRunnerWithFriendModulesDisabledTest 
     override fun createCompilerArguments(destinationDir: File, testDir: File): K2JSCompilerArguments =
         super.createCompilerArguments(destinationDir, testDir).apply {
             friendModulesDisabled = true
+            languageVersion = "1.9"
         }
 }

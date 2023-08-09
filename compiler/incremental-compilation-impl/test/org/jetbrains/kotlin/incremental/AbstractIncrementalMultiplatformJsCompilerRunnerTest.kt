@@ -23,6 +23,7 @@ abstract class AbstractIncrementalMultiplatformJsCompilerRunnerTest : AbstractIn
     override fun createCompilerArguments(destinationDir: File, testDir: File): K2JSCompilerArguments {
         return super.createCompilerArguments(destinationDir, testDir).apply {
             multiPlatform = true
+            languageVersion = "1.9"
         }
     }
 }
