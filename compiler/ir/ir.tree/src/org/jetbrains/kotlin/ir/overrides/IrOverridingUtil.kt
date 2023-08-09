@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.overrides
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
@@ -101,7 +102,8 @@ fun buildFakeOverrideMember(
     return CopyIrTreeWithSymbolsForFakeOverrides(member, substitutionMap, clazz, unimplementedOverridesStrategy)
         .copy()
         .apply {
-            if (isPrivateToThisModule(clazz, classifier.owner, friendModules))
+            val isInvisible = isPrivateToThisModule(clazz, classifier.owner, friendModules)
+            if (isInvisible && !member.annotations.hasAnnotation(StandardNames.FqNames.publishedApi))
                 visibility = DescriptorVisibilities.INVISIBLE_FAKE
         }
 }
@@ -249,7 +251,8 @@ class IrOverridingUtil(
             // Note: We do allow overriding multiple FOs at once one of which is `isInline=true`.
             when (isOverridableBy(fromSupertype, fromCurrent, checkIsInlineFlag = true, checkReturnType = false).result) {
                 OverrideCompatibilityInfo.Result.OVERRIDABLE -> {
-                    if (isVisibleForOverride(fromCurrent, fromSupertype.original))
+                    val isVisibleFake = fromSupertype.visibility != DescriptorVisibilities.INVISIBLE_FAKE
+                    if (isVisibleFake && isVisibleForOverride(fromCurrent, fromSupertype.original))
                         overridden += fromSupertype
                     bound += fromSupertype
                 }

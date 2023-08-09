@@ -21,9 +21,9 @@ fun box() = abiTest {
     success("Container.publicToInternalProperty2.v2") { c.publicToInternalProperty2 } // Signature remains the same.
     unlinkedSymbol("/ContainerImpl.publicToInternalProperty2.<get-publicToInternalProperty2>") { ci.publicToInternalProperty2 }  // FOs are not generated for internal members from other module.
     success("Container.publicToInternalPAProperty1.v2") { c.publicToInternalPAProperty1 } // Signature remains the same.
-    unlinkedSymbol("/ContainerImpl.publicToInternalPAProperty1.<get-publicToInternalPAProperty1>") { ci.publicToInternalPAProperty1 }  // FOs are not generated for internal members from other module.
+    success("Container.publicToInternalPAProperty1.v2") { ci.publicToInternalPAProperty1 }  // Signature remains the same.
     success("Container.publicToInternalPAProperty2.v2") { c.publicToInternalPAProperty2 } // Signature remains the same.
-    unlinkedSymbol("/ContainerImpl.publicToInternalPAProperty2.<get-publicToInternalPAProperty2>") { ci.publicToInternalPAProperty2 }  // FOs are not generated for internal members from other module.
+    success("Container.publicToInternalPAProperty2.v2") { ci.publicToInternalPAProperty2 }  // Signature remains the same.
     inaccessible("publicToPrivateProperty1.<get-publicToPrivateProperty1>") { c.publicToPrivateProperty1 } // Inaccessible from other module though signature remains the same.
     unlinkedSymbol("/ContainerImpl.publicToPrivateProperty1.<get-publicToPrivateProperty1>") { ci.publicToPrivateProperty1 } // FOs are not generated for private members.
     inaccessible("publicToPrivateProperty2.<get-publicToPrivateProperty2>") { c.publicToPrivateProperty2 } // Inaccessible from other module though signature remains the same.
@@ -33,16 +33,16 @@ fun box() = abiTest {
     success("Container.publicToProtectedProperty2.v2") { ci.publicToProtectedProperty2Access() } // Signature remains the same.
     unlinkedSymbol("/ContainerImpl.publicToInternalProperty1.<get-publicToInternalProperty1>") { ci.publicToInternalProperty1Access() } // FOs are not generated for internal members from other module.
     unlinkedSymbol("/ContainerImpl.publicToInternalProperty2.<get-publicToInternalProperty2>") { ci.publicToInternalProperty2Access() } // FOs are not generated for internal members from other module.
-    unlinkedSymbol("/ContainerImpl.publicToInternalPAProperty1.<get-publicToInternalPAProperty1>") { ci.publicToInternalPAProperty1Access() } // FOs are not generated for internal members from other module.
-    unlinkedSymbol("/ContainerImpl.publicToInternalPAProperty2.<get-publicToInternalPAProperty2>") { ci.publicToInternalPAProperty2Access() } // FOs are not generated for internal members from other module.
+    success("Container.publicToInternalPAProperty1.v2") { ci.publicToInternalPAProperty1Access() } // Signature remains the same.
+    success("Container.publicToInternalPAProperty2.v2") { ci.publicToInternalPAProperty2Access() } // Signature remains the same.
     unlinkedSymbol("/ContainerImpl.publicToPrivateProperty1.<get-publicToPrivateProperty1>") { ci.publicToPrivateProperty1Access() } // FOs are not generated for private members.
     unlinkedSymbol("/ContainerImpl.publicToPrivateProperty2.<get-publicToPrivateProperty2>") { ci.publicToPrivateProperty2Access() } // FOs are not generated for private members.
     success("Container.protectedToPublicProperty1.v2") { ci.protectedToPublicProperty1Access() } // Signature remains the same.
     success("Container.protectedToPublicProperty2.v2") { ci.protectedToPublicProperty2Access() } // Signature remains the same.
     unlinkedSymbol("/ContainerImpl.protectedToInternalProperty1.<get-protectedToInternalProperty1>") { ci.protectedToInternalProperty1Access() } // FOs are not generated for internal members from other module.
     unlinkedSymbol("/ContainerImpl.protectedToInternalProperty2.<get-protectedToInternalProperty2>") { ci.protectedToInternalProperty2Access() } // FOs are not generated for internal members from other module.
-    unlinkedSymbol("/ContainerImpl.protectedToInternalPAProperty1.<get-protectedToInternalPAProperty1>") { ci.protectedToInternalPAProperty1Access() } // FOs are not generated for internal members from other module.
-    unlinkedSymbol("/ContainerImpl.protectedToInternalPAProperty2.<get-protectedToInternalPAProperty2>") { ci.protectedToInternalPAProperty2Access() } // FOs are not generated for internal members from other module.
+    success("Container.protectedToInternalPAProperty1.v2") { ci.protectedToInternalPAProperty1Access() } // Signature remains the same.
+    success("Container.protectedToInternalPAProperty2.v2") { ci.protectedToInternalPAProperty2Access() } // Signature remains the same.
     unlinkedSymbol("/ContainerImpl.protectedToPrivateProperty1.<get-protectedToPrivateProperty1>") { ci.protectedToPrivateProperty1Access() } // FOs are not generated for private members.
     unlinkedSymbol("/ContainerImpl.protectedToPrivateProperty2.<get-protectedToPrivateProperty2>") { ci.protectedToPrivateProperty2Access() } // FOs are not generated for private members.
 

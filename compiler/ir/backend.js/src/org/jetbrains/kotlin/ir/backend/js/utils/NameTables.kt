@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.utils
 
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.INTERNAL
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
@@ -123,11 +124,27 @@ private fun List<IrType>.joinTypes(context: JsIrBackendContext): String {
     return joinToString("$", "$") { superType -> superType.asString(context) }
 }
 
+private fun IrFunction.findOriginallyContainingModule(): IrModuleFragment? {
+    if (JsLoweredDeclarationOrigin.isBridgeDeclarationOrigin(origin)) {
+        val thisSimpleFunction = this as? IrSimpleFunction ?: error("Bridge must be IrSimpleFunction")
+        val bridgeFrom = thisSimpleFunction.overriddenSymbols.firstOrNull() ?: error("Couldn't find the overridden function for the bridge")
+        return bridgeFrom.owner.findOriginallyContainingModule()
+    }
+    return (getPackageFragment() as? IrFile)?.module
+}
+
 fun calculateJsFunctionSignature(declaration: IrFunction, context: JsIrBackendContext): String {
     val declarationName = declaration.nameIfPropertyAccessor() ?: declaration.getJsNameOrKotlinName().asString()
 
     val nameBuilder = StringBuilder()
     nameBuilder.append(declarationName)
+
+    if (declaration.visibility === INTERNAL && declaration.parentClassOrNull != null) {
+        val containingModule = declaration.findOriginallyContainingModule()
+        if (containingModule != null) {
+            nameBuilder.append("_\$m_").append(containingModule.name.toString())
+        }
+    }
 
     // TODO should we skip type parameters and use upper bound of type parameter when print type of value parameters?
     declaration.typeParameters.ifNotEmpty {

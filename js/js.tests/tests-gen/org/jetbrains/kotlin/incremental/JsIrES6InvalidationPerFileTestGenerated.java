@@ -386,6 +386,12 @@ public class JsIrES6InvalidationPerFileTestGenerated extends AbstractJsIrES6Inva
     }
 
     @Test
+    @TestMetadata("openClassWithInternalField")
+    public void testOpenClassWithInternalField() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/openClassWithInternalField/");
+    }
+
+    @Test
     @TestMetadata("privateDeclarationLeakThroughDefaultParam")
     public void testPrivateDeclarationLeakThroughDefaultParam() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/privateDeclarationLeakThroughDefaultParam/");

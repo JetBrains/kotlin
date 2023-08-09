@@ -14,17 +14,17 @@ fun box() = abiTest {
     success("Container.publicToInternalFunction.v2") { c.publicToInternalFunction() } // Signature remains the same.
     unlinkedSymbol("/ContainerImpl.publicToInternalFunction") { ci.publicToInternalFunction() } // FOs are not generated for internal members from other module.
     success("Container.publicToInternalPAFunction.v2") { c.publicToInternalPAFunction() } // Signature remains the same.
-    unlinkedSymbol("/ContainerImpl.publicToInternalPAFunction") { ci.publicToInternalPAFunction() } // FOs are not generated for internal members from other module.
+    success("Container.publicToInternalPAFunction.v2") { ci.publicToInternalPAFunction() } // Signature remains the same.
     inaccessible("publicToPrivateFunction") { c.publicToPrivateFunction() } // Inaccessible from other module though signature remains the same.
     unlinkedSymbol("/ContainerImpl.publicToPrivateFunction") { ci.publicToPrivateFunction() } // FOs are not generated for private members.
 
     success("Container.publicToProtectedFunction.v2") { ci.publicToProtectedFunctionAccess() } // Signature remains the same.
     unlinkedSymbol("/ContainerImpl.publicToInternalFunction") { ci.publicToInternalFunctionAccess() } // FOs are not generated for internal members from other module.
-    unlinkedSymbol("/ContainerImpl.publicToInternalPAFunction") { ci.publicToInternalPAFunctionAccess() } // FOs are not generated for internal members from other module.
+    success("Container.publicToInternalPAFunction.v2") { ci.publicToInternalPAFunctionAccess() } // Signature remains the same.
     unlinkedSymbol("/ContainerImpl.publicToPrivateFunction") { ci.publicToPrivateFunctionAccess() } // FOs are not generated for private members.
     success("Container.protectedToPublicFunction.v2") { ci.protectedToPublicFunctionAccess() } // Signature remains the same.
     unlinkedSymbol("/ContainerImpl.protectedToInternalFunction") { ci.protectedToInternalFunctionAccess() } // FOs are not generated for internal members from other module.
-    unlinkedSymbol("/ContainerImpl.protectedToInternalPAFunction") { ci.protectedToInternalPAFunctionAccess() } // FOs are not generated for internal members from other module.
+    success("Container.protectedToInternalPAFunction.v2") { ci.protectedToInternalPAFunctionAccess() } // Signature remains the same.
     unlinkedSymbol("/ContainerImpl.protectedToPrivateFunction") { ci.protectedToPrivateFunctionAccess() } // FOs are not generated for private members.
 
     success("ContainerImpl.publicToProtectedOverriddenFunction") { ci.publicToProtectedOverriddenFunction() }

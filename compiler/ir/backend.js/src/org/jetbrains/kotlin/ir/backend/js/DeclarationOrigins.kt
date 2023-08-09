@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js
 
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
 
 object JsLoweredDeclarationOrigin {
@@ -18,4 +19,11 @@ object JsLoweredDeclarationOrigin {
     object JS_SUPER_CONTEXT_PARAMETER : IrDeclarationOriginImpl("JS_SUPER_CONTEXT_PARAMETER")
     object JS_SHADOWED_DEFAULT_PARAMETER : IrDeclarationOriginImpl("JS_SHADOWED_DEFAULT_PARAMETER")
     object ENUM_GET_INSTANCE_FUNCTION : IrDeclarationOriginImpl("ENUM_GET_INSTANCE_FUNCTION")
+
+    fun isBridgeDeclarationOrigin(origin: IrDeclarationOrigin) = when (origin) {
+        is BRIDGE_WITH_STABLE_NAME -> true
+        is BRIDGE_WITHOUT_STABLE_NAME -> true
+        is BRIDGE_PROPERTY_ACCESSOR -> true
+        else -> false
+    }
 }
