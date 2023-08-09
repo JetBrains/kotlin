@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeTransformedMetadataDependencyResolver
 import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
 import org.jetbrains.kotlin.gradle.util.*
-import org.junit.Ignore
 import org.junit.Test
 
 class IdeTransformedMetadataDependencyResolverTest {
@@ -72,7 +71,6 @@ class IdeTransformedMetadataDependencyResolverTest {
     }
 
     @Test
-    @Ignore("stdlib publication migration - test data changes")
     fun `test OKIO in JVM + Android project`() {
         val project = buildProject {
             enableDependencyVerification(false)
