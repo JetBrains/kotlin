@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.FirOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl.Companion.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl.Companion.DEFAULT_STATUS_FOR_SUSPEND_MAIN_FUNCTION
 import org.jetbrains.kotlin.fir.declarations.impl.modifiersRepresentation
+import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
@@ -140,6 +141,7 @@ fun FirDeclarationCollector<FirDeclaration>.collectClassMembers(klass: FirRegula
     val otherDeclarations = mutableMapOf<String, MutableList<FirDeclaration>>()
     val functionDeclarations = mutableMapOf<String, MutableList<FirDeclaration>>()
 
+    // TODO, KT-61243: Use declaredMemberScope
     for (it in klass.declarations) {
         if (!it.isCollectable()) continue
 
@@ -153,9 +155,32 @@ fun FirDeclarationCollector<FirDeclaration>.collectClassMembers(klass: FirRegula
     }
 }
 
-    private fun collect(declaration: FirDeclaration, representation: String, map: MutableMap<String, MutableList<FirDeclaration>>) {
-        map.getOrPut(representation, ::mutableListOf).also {
-            it.add(declaration)
+fun collectConflictingLocalFunctionsFrom(block: FirBlock, context: CheckerContext): Map<FirFunction, Set<FirBasedSymbol<*>>> {
+    val collectables =
+        block.statements.filter {
+            (it is FirSimpleFunction || it is FirRegularClass) && (it as FirDeclaration).isCollectable()
+        }
+
+    if (collectables.isEmpty()) return emptyMap()
+
+    val inspector = FirDeclarationCollector<FirFunction>(context)
+    val functionDeclarations = mutableMapOf<String, MutableList<FirFunction>>()
+
+    for (collectable in collectables) {
+        when (collectable) {
+            is FirSimpleFunction ->
+                inspector.collect(collectable, FirRedeclarationPresenter.represent(collectable), functionDeclarations)
+            is FirRegularClass ->
+                // TODO, KT-61243: Use declaredMemberScope
+                collectable.declarations.filterIsInstance<FirConstructor>().forEach {
+                    inspector.collect(it, FirRedeclarationPresenter.represent(it, collectable), functionDeclarations)
+                }
+            else -> {}
+        }
+    }
+
+    return inspector.declarationConflictingSymbols
+}
 
 private fun <D : FirDeclaration> FirDeclarationCollector<D>.collect(
     declaration: D,
