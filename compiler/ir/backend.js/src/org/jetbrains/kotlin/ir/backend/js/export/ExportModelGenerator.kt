@@ -307,7 +307,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
             val candidate = getExportCandidate(declaration) ?: continue
             if (isImplicitlyExportedClass && candidate !is IrClass) continue
             if (!shouldDeclarationBeExportedImplicitlyOrExplicitly(candidate, context)) continue
-            if (candidate.isFakeOverride && candidate.parentAsClass.isInterface && candidate.parentAsClass.isInterface) continue
+            if (candidate.isFakeOverride && klass.isInterface) continue
 
             val processingResult = specialProcessing(candidate)
             if (processingResult != null) {

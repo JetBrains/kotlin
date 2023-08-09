@@ -40,6 +40,7 @@ function testImmutableList() {
     const list = provideList()
     const listArrayView = list.asJsArrayView()
 
+    assert(listArrayView[0] == 1, "Problem with accessing of element in immutable list array view")
     assert(listArrayView.map(x => x + 1).join("") == "234", "Problem with immutable list array view")
     assert(consumeList(list), "Problem with consumption of a Kotlin list")
     assertThrow(() => { (listArrayView as Array<number>)[1] = 4 }, "Immutable list array view have ability to mutate the list by direct set")
@@ -51,6 +52,7 @@ function testMutableList() {
     const mutableList = provideMutableList()
     const mutableListView = mutableList.asJsArrayView()
 
+    assert(mutableListView[0] == 4, "Problem with accessing of element in mutable list array view")
     assert(mutableListView.map(x => x + 1).join("") == "567", "Problem with mutable list array view")
     assert(!consumeList(mutableList), "Problem with consumption of a Kotlin mutable list as a list")
     assert(consumeMutableList(mutableList), "Problem with consumption of a Kotlin mutable list as a mutable list")
@@ -62,6 +64,7 @@ function testMutableList() {
     const mutableListMutableView = mutableList.asJsArrayMutableView()
     mutableListMutableView.pop()
 
+    assert(mutableListMutableView[0] == 4, "Problem with accessing of element in mutable list mutable array view")
     assert(mutableListMutableView.map(x => x + 1).join("") == "567", "Problem with mutable list mutable array view")
     assert(consumeMutableList(mutableList), "Problem with consumption of a Kotlin mutable list as a mutable list")
     assert(mutableListMutableView.map(x => x + 1).join("") == "5678", "Problem with mutable list mutable array view after original list is mutated")
@@ -88,6 +91,7 @@ function testImmutableSet() {
     const set = provideSet()
     const setView = set.asJsSetView();
 
+    assert(setView.has(1), "Problem with accessing element of immutable set view")
     assert(joinSetOrMap(setView) == "123", "Problem with immutable set view")
     assert(consumeSet(set), "Problem with consumption of a Kotlin set")
     assertThrow(() => { (setView as Set<number>).add(4) }, "Immutable set view have ability to mutate the set by 'add'")
@@ -99,6 +103,7 @@ function testMutableSet() {
     const mutableSet = provideMutableSet()
     const mutableSetView = mutableSet.asJsSetView()
 
+    assert(mutableSetView.has(4), "Problem with accessing element of mutable set view")
     assert(joinSetOrMap(mutableSetView) == "456", "Problem with mutable set view")
     assert(!consumeSet(mutableSet), "Problem with consumption of a Kotlin mutable set as a set")
     assert(consumeMutableSet(mutableSet), "Problem with consumption of a Kotlin mutable set as a mutable set")
@@ -111,6 +116,7 @@ function testMutableSet() {
 
     mutableSetMutableView.delete(7)
 
+    assert(mutableSetMutableView.has(4), "Problem with accessing element of mutable set mutable view")
     assert(joinSetOrMap(mutableSetMutableView) == "456", "Problem with mutable set mutable view")
     assert(consumeMutableSet(mutableSet), "Problem with consumption of a Kotlin mutable set as a mutable set")
     assert(joinSetOrMap(mutableSetMutableView) == "4567", "Problem with mutable set mutable view after original set is mutated")
@@ -128,6 +134,8 @@ function testImmutableMap() {
     const map = provideMap()
     const mapView = map.asJsMapView()
 
+    assert(mapView.has("a"), "Problem with accessing element in immutable map view")
+    assert(mapView.get("a") == 1, "Problem with accessing element in immutable map view")
     assert(joinSetOrMap(mapView) == "[a:1][b:2][c:3]", "Problem with immutable map view")
     assert(consumeMap(map), "Problem with consumption of a Kotlin map")
     assertThrow(() => { (mapView as Map<string, number>).set("d", 4) }, "Immutable map view have ability to mutate the map by 'set'")
@@ -139,6 +147,8 @@ function testMutableMap() {
     const mutableMap = provideMutableMap()
     const mutableMapView = mutableMap.asJsMapView()
 
+    assert(mutableMapView.has("d"), "Problem with accessing element in mutable map view")
+    assert(mutableMapView.get("d") == 4, "Problem with accessing element in mutable map view")
     assert(joinSetOrMap(mutableMapView) == "[d:4][e:5][f:6]", "Problem with mutable map view")
     assert(!consumeMap(mutableMap), "Problem with consumption of a Kotlin mutable map as a map")
     assert(consumeMutableMap(mutableMap), "Problem with consumption of a Kotlin mutable map as a mutable map")
@@ -151,6 +161,8 @@ function testMutableMap() {
 
     mutableMapMutableView.delete("g")
 
+    assert(mutableMapMutableView.has("d"), "Problem with accessing element in mutable map mutable view")
+    assert(mutableMapMutableView.get("d") == 4, "Problem with accessing element in mutable map mutable view")
     assert(joinSetOrMap(mutableMapMutableView) == "[d:4][e:5][f:6]", "Problem with mutable map mutable view")
     assert(consumeMutableMap(mutableMap), "Problem with consumption of a Kotlin mutable map as a mutable map")
     assert(joinSetOrMap(mutableMapMutableView) == "[d:4][e:5][f:6][g:7]", "Problem with mutable map mutable view after original map is mutated")
