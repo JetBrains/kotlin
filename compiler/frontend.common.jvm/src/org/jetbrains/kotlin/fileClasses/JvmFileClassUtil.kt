@@ -35,7 +35,8 @@ object JvmFileClassUtil {
     fun getFacadeClassInternalName(file: KtFile): String =
         getFileClassInfoNoResolve(file).facadeClassFqName.internalNameWithoutInnerClasses
 
-    private fun manglePartName(facadeName: String, fileName: String): String =
+    @JvmStatic
+    fun manglePartName(facadeName: String, fileName: String): String =
         "$facadeName$MULTIFILE_PART_NAME_DELIMITER${PackagePartClassUtils.getFilePartShortName(fileName)}"
 
     @JvmStatic
