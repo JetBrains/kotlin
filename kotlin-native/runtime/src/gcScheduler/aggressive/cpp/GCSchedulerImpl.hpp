@@ -15,6 +15,7 @@
 #include "MutatorAssists.hpp"
 #include "SafePoint.hpp"
 #include "SafePointTracker.hpp"
+#include "EpochScheduler.hpp"
 #include "ThreadData.hpp"
 
 namespace kotlin::gcScheduler {
@@ -56,11 +57,11 @@ public:
                 return;
             case HeapGrowthController::MemoryBoundary::kTrigger:
                 RuntimeLogDebug({kTagGC}, "Scheduling GC by allocation");
-                schedule();
+                scheduleGC_.scheduleNextEpochIfNotInProgress();
                 return;
             case HeapGrowthController::MemoryBoundary::kTarget:
                 RuntimeLogDebug({kTagGC}, "Scheduling GC by allocation");
-                auto epoch = schedule();
+                auto epoch = scheduleGC_.scheduleNextEpochIfNotInProgress();
                 RuntimeLogWarning({kTagGC}, "Pausing the mutators");
                 mutatorAssists_.requestAssists(epoch);
                 return;
@@ -75,6 +76,7 @@ public:
     }
 
     void onGCFinish(int64_t epoch, size_t aliveBytes) noexcept {
+        scheduleGC_.onGCFinish(epoch);
         heapGrowthController_.updateBoundaries(aliveBytes);
         // Must wait for all mutators to be released. GC thread cannot continue.
         // This is the contract between GC and mutators. With regular native state
@@ -85,12 +87,12 @@ public:
         });
     }
 
-    int64_t schedule() noexcept { return scheduleGC_(); }
+    int64_t schedule() noexcept { return scheduleGC_.scheduleNextEpoch(); }
 
     MutatorAssists& mutatorAssists() noexcept { return mutatorAssists_; }
 
 private:
-    std::function<int64_t()> scheduleGC_;
+    EpochScheduler scheduleGC_;
     HeapGrowthController heapGrowthController_;
     SafePointTracker<> safePointTracker_;
     mm::SafePointActivator safePointActivator_;

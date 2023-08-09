@@ -5,7 +5,6 @@
 
 #include "GCSchedulerImpl.hpp"
 
-#include "CallsChecker.hpp"
 #include "GlobalData.hpp"
 #include "Memory.h"
 #include "Logging.hpp"
@@ -23,9 +22,6 @@ gcScheduler::GCScheduler::ThreadData::~ThreadData() = default;
 
 gcScheduler::GCScheduler::Impl::Impl(gcScheduler::GCSchedulerConfig& config) noexcept :
     impl_(config, []() noexcept {
-        // This call acquires a lock, but the lock are always short-lived,
-        // so we ignore thread state switching to avoid recursive safe points.
-        CallsCheckerIgnoreGuard guard;
         return mm::GlobalData::Instance().gc().Schedule();
     }) {}
 
