@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.test.utils.withExtension
 import org.jetbrains.kotlin.test.utils.withSuffixAndExtension
 import java.io.File
 
-class IrTextDumpHandler(
+open class IrTextDumpHandler(
     testServices: TestServices,
     artifactKind: BackendKind<IrBackendInput>,
 ) : AbstractIrHandler(testServices, artifactKind) {
@@ -62,19 +62,18 @@ class IrTextDumpHandler(
 
     private val baseDumper = MultiModuleInfoDumper()
     private val buildersForSeparateFileDumps: MutableMap<File, StringBuilder> = mutableMapOf()
+    open val dumpOptions = DumpIrTreeOptions(
+        normalizeNames = true,
+        printFacadeClassInFqNames = false,
+        printFlagsInDeclarationReferences = false,
+        // KT-60248 Abbreviations should not be rendered to make K2 IR dumps closer to K1 IR dumps during irText tests.
+        // PSI2IR assigns field `abbreviation` with type abbreviation. It serves only debugging purposes, and no compiler functionality relies on it.
+        // FIR2IR does not initialize field `abbreviation` at all.
+        printTypeAbbreviations = false,
+    )
 
     override fun processModule(module: TestModule, info: IrBackendInput) {
         if (DUMP_IR !in module.directives) return
-
-        val dumpOptions = DumpIrTreeOptions(
-            normalizeNames = true,
-            printFacadeClassInFqNames = false,
-            printFlagsInDeclarationReferences = false,
-            // KT-60248 Abbreviations should not be rendered to make K2 IR dumps closer to K1 IR dumps during irText tests.
-            // PSI2IR assigns field `abbreviation` with type abbreviation. It serves only debugging purposes, and no compiler functionality relies on it.
-            // FIR2IR does not initialize field `abbreviation` at all.
-            printTypeAbbreviations = false,
-        )
 
         info.processAllIrModuleFragments(module) { irModuleFragment, moduleName ->
             val builder = baseDumper.builderForModule(moduleName)
@@ -101,7 +100,7 @@ class IrTextDumpHandler(
         assertions.assertAll(
             externalClassIds.map { externalClassId ->
                 {
-                    val classDump = info.irPluginContext.findExternalClass(externalClassId).dump()
+                    val classDump = info.irPluginContext.findExternalClass(externalClassId).dump(dumpOptions)
                     val suffix = ".__${externalClassId.replace("/", ".")}"
                     val expectedFile = baseFile.withSuffixAndExtension(suffix, module.getDumpExtension(ignoreFirIdentical = true))
                     assertions.assertEqualsToFile(expectedFile, classDump)

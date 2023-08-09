@@ -3,6 +3,9 @@
 // IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
 
+// KT-61141: In testLrmFoo1 and testLrmFoo2, `print (message: kotlin.Any?)` instead of `print (message: kotlin.Int)`
+// IGNORE_BACKEND: NATIVE
+
 fun test0() {
     run {
         return

@@ -150,7 +150,7 @@ class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpIrTree
 
                 if (options.printFlagsInDeclarationReferences) {
                     when (declaration) {
-                        is IrSimpleFunction -> append(declaration.renderSimpleFunctionFlags())
+                        is IrSimpleFunction -> append(declaration.renderSimpleFunctionFlags(options))
                         is IrConstructor -> append(declaration.renderConstructorFlags())
                     }
                 }
@@ -266,7 +266,7 @@ class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpIrTree
                     renderTypeParameters() + " " +
                     renderValueParameterTypes() + " " +
                     "returnType:${renderReturnType(this@RenderIrElementVisitor, options)} " +
-                    renderSimpleFunctionFlags()
+                    renderSimpleFunctionFlags(options)
         }
 
     private fun IrFunction.renderValueParameterTypes(): String =
@@ -678,11 +678,11 @@ private fun IrField.renderFieldFlags() =
         "static".takeIf { isStatic },
     )
 
-private fun IrSimpleFunction.renderSimpleFunctionFlags(): String =
+private fun IrSimpleFunction.renderSimpleFunctionFlags(options: DumpIrTreeOptions): String =
     renderFlagsList(
         "tailrec".takeIf { isTailrec },
         "inline".takeIf { isInline },
-        "external".takeIf { isExternal },
+        "external".takeIf { options.doPrintExternalFlag(this) },
         "suspend".takeIf { isSuspend },
         "expect".takeIf { isExpect },
         "fake_override".takeIf { isFakeOverride },

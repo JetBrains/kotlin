@@ -1,6 +1,9 @@
 // !LANGUAGE: +ContextReceivers
 // IGNORE_BACKEND: JS_IR
 
+// KT-61141: kotlin.Comparator instead of java.util.Comparator
+// IGNORE_BACKEND: NATIVE
+
 data class Pair<A, B>(val first: A, val second: B)
 
 context(Comparator<T>)

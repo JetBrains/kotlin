@@ -5,6 +5,9 @@
 // !IGNORE_ERRORS
 // WITH_STDLIB
 
+// KT-61141: NPE at org.jetbrains.kotlin.psi2ir.generators.ArgumentsGenerationUtilsKt.pregenerateValueArgumentsUsing()
+// IGNORE_BACKEND: NATIVE
+
 inline fun foo(block: () -> Unit) { block() }
 
 inline fun bar(block1: () -> Unit, noinline block2: () -> Unit) {

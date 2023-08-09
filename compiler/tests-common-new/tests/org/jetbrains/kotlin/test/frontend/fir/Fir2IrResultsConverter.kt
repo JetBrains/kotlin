@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test.frontend.fir
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.jvm.isJvm
+import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.model.BackendKinds
 import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
@@ -31,6 +32,12 @@ class Fir2IrResultsConverter(
         }
         module.targetPlatform.isJs() -> {
             jsResultsConverter.transform(module, inputArtifact)
+        }
+        module.targetPlatform.isNative() -> {
+            throw NotImplementedError(
+                "Please invoke Fir2IrNativeResultsConverter.transform() directly from `native` module, " +
+                        "since it's unreachable from current module `tests-common-new`"
+            )
         }
         else -> error("Unsupported platform: ${module.targetPlatform}")
     }
