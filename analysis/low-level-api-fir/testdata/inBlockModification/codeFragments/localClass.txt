@@ -1,7 +1,7 @@
 BEFORE MODIFICATION:
 CODE FRAGMENT: {
     local final [ResolvedTo(RAW_FIR)] class Foo : R|kotlin/Any| {
-        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/x] x: R|kotlin/Int|): R|Foo| {
+        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/x] x: R|kotlin/Int|): R|<local>/Foo| {
             super<R|kotlin/Any|>()
         }
 
@@ -9,7 +9,7 @@ CODE FRAGMENT: {
             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] get(): R|kotlin/Int|
 
         public final [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| {
-            this@R|/Foo|.R|<local>/foo|()
+            this@R|<local>/Foo|.R|<local>/foo|()
         }
 
     }

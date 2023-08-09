@@ -101,7 +101,7 @@ FILE: sealedSupertype.kt
     }
     public final fun test(): R|kotlin/Unit| {
         local final class L : R|P| {
-            public constructor(): R|L| {
+            public constructor(): R|<local>/L| {
                 super<R|P|>()
             }
 

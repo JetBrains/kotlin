@@ -1,7 +1,7 @@
 FILE: locals.kt
     public? final? fun withLocals(p: Int): Int {
         local final? class Local : R|kotlin/Any| {
-            public? [ContainingClassKey=Local] constructor([CorrespondingProperty=<local>/pp] pp: Int): R|Local| {
+            public? [ContainingClassKey=Local] constructor([CorrespondingProperty=<local>/pp] pp: Int): R|<local>/Local| {
                 super<R|kotlin/Any|>()
             }
 

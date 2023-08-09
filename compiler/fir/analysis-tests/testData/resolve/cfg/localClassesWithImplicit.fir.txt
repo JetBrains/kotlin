@@ -10,7 +10,7 @@ FILE: localClassesWithImplicit.kt
         }
 
         local final class A : R|kotlin/Any| {
-            public constructor(): R|A| {
+            public constructor(): R|<local>/A| {
                 super<R|kotlin/Any|>()
             }
 
@@ -20,7 +20,7 @@ FILE: localClassesWithImplicit.kt
                     ^ when () {
                         (R|<local>/b| is R|kotlin/String|) ->  {
                             R|<local>/b|.R|kotlin/String.length|
-                            this@R|/A|.R|<local>/bar|()
+                            this@R|<local>/A|.R|<local>/bar|()
                         }
                         else ->  {
                             Int(1)
@@ -35,7 +35,7 @@ FILE: localClassesWithImplicit.kt
                 ^bar R|/myRun|<R|kotlin/Int|>(<L> = myRun@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=UNKNOWN>  {
                     R|<local>/b|.<Unresolved name: length>#
                     R|<local>/a|.R|kotlin/String.length|
-                    ^ this@R|/A|.R|<local>/baz|()
+                    ^ this@R|<local>/A|.R|<local>/baz|()
                 }
                 )
             }

@@ -1,7 +1,7 @@
 FILE: serializerInLocalClass.kt
     public final fun local(): R|kotlin/String| {
         @R|kotlinx/serialization/Serializable|() local final data class Carrier : R|kotlin/Any| {
-            public constructor(i: R|kotlin/Int|): R|Carrier| {
+            public constructor(i: R|kotlin/Int|): R|<local>/Carrier| {
                 super<R|kotlin/Any|>()
             }
 
@@ -10,28 +10,28 @@ FILE: serializerInLocalClass.kt
 
             public final operator fun component1(): R|kotlin/Int|
 
-            public final fun copy(i: R|kotlin/Int| = this@R|/Carrier|.R|<local>/i|): R|Carrier|
+            public final fun copy(i: R|kotlin/Int| = this@R|<local>/Carrier|.R|<local>/i|): R|<local>/Carrier|
 
             public final companion object Companion : R|kotlin/Any| {
-                public final fun serializer(): R|kotlinx/serialization/KSerializer<Carrier>|
+                public final fun serializer(): R|kotlinx/serialization/KSerializer<<local>/Carrier>|
 
-                private constructor(): R|Carrier.Companion| {
+                private constructor(): R|<local>/Carrier.Companion| {
                     super<R|kotlin/Any|>()
                 }
 
             }
 
-            public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<Carrier>| {
-                public final fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|Carrier|): R|kotlin/Unit|
+            public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<<local>/Carrier>| {
+                public final fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|<local>/Carrier|): R|kotlin/Unit|
 
-                public final fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|Carrier|
+                public final fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|<local>/Carrier|
 
                 public final val descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|
                     public get(): R|kotlinx/serialization/descriptors/SerialDescriptor|
 
                 public final fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
 
-                private constructor(): R|Carrier.$serializer| {
+                private constructor(): R|<local>/Carrier.$serializer| {
                     super<R|kotlin/Any|>()
                 }
 
@@ -39,7 +39,7 @@ FILE: serializerInLocalClass.kt
 
         }
 
-        ^local Q|Carrier|.R|/Carrier.Companion.serializer|().R|SubstitutionOverride<kotlinx/serialization/KSerializer.descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|>|.R|kotlin/Any.toString|()
+        ^local Q|<local>/Carrier|.R|<local>/Carrier.Companion.serializer|().R|SubstitutionOverride<kotlinx/serialization/KSerializer.descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|>|.R|kotlin/Any.toString|()
     }
     public final fun box(): R|kotlin/String| {
         lval expected: R|kotlin/String| = String(local.Carrier(i: kotlin.Int))

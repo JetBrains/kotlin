@@ -40,7 +40,7 @@ FILE: [ResolvedTo(IMPORTS)] assignmentStatement.kts
         R|/build|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<Builder, kotlin/Unit>] build@fun R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             this@R|special/anonymous|.R|/Builder.version| = String(123)
             local final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
-                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|A| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|<local>/A| {
                     super<R|kotlin/Any|>()
                 }
 

@@ -18,7 +18,7 @@ FILE: propertiesAndInitBlocks.kt
         }
 
         local final class InitializerLocalClass : R|kotlin/Any| {
-            public constructor(): R|InitializerLocalClass| {
+            public constructor(): R|<local>/InitializerLocalClass| {
                 super<R|kotlin/Any|>()
             }
 
@@ -34,7 +34,7 @@ FILE: propertiesAndInitBlocks.kt
     )
         public get(): R|kotlin/Unit| {
             local final class GetterLocalClass : R|kotlin/Any| {
-                public constructor(): R|GetterLocalClass| {
+                public constructor(): R|<local>/GetterLocalClass| {
                     super<R|kotlin/Any|>()
                 }
 

@@ -1,19 +1,19 @@
 FILE: localClassWithCompanionObject.kt
     public final fun context(): R|kotlin/Unit| {
         @R|org/jetbrains/kotlin/fir/plugin/CompanionWithFoo|() local final class SomeClass : R|kotlin/Any| {
-            public constructor(): R|SomeClass| {
+            public constructor(): R|<local>/SomeClass| {
                 super<R|kotlin/Any|>()
             }
 
             @R|org/jetbrains/kotlin/fir/plugin/CompanionWithFoo|() local final class Nested : R|kotlin/Any| {
-                public constructor(): R|SomeClass.Nested| {
+                public constructor(): R|<local>/SomeClass.Nested| {
                     super<R|kotlin/Any|>()
                 }
 
                 public final companion object Companion : R|kotlin/Any| {
                     public final fun foo(): R|kotlin/Int|
 
-                    private constructor(): R|SomeClass.Nested.Companion| {
+                    private constructor(): R|<local>/SomeClass.Nested.Companion| {
                         super<R|kotlin/Any|>()
                     }
 
@@ -24,7 +24,7 @@ FILE: localClassWithCompanionObject.kt
             public final companion object Companion : R|kotlin/Any| {
                 public final fun foo(): R|kotlin/Int|
 
-                private constructor(): R|SomeClass.Companion| {
+                private constructor(): R|<local>/SomeClass.Companion| {
                     super<R|kotlin/Any|>()
                 }
 
@@ -36,10 +36,10 @@ FILE: localClassWithCompanionObject.kt
         }
 
         local final fun test(): R|kotlin/Unit| {
-            R|<local>/takeInt|(Q|SomeClass|.R|/SomeClass.Companion.foo|())
-            R|<local>/takeInt|(Q|SomeClass.Companion|.R|/SomeClass.Companion.foo|())
-            R|<local>/takeInt|(Q|SomeClass.Nested|.R|/SomeClass.Nested.Companion.foo|())
-            R|<local>/takeInt|(Q|SomeClass.Nested.Companion|.R|/SomeClass.Nested.Companion.foo|())
+            R|<local>/takeInt|(Q|<local>/SomeClass|.R|<local>/SomeClass.Companion.foo|())
+            R|<local>/takeInt|(Q|<local>/SomeClass.Companion|.R|<local>/SomeClass.Companion.foo|())
+            R|<local>/takeInt|(Q|<local>/SomeClass.Nested|.R|<local>/SomeClass.Nested.Companion.foo|())
+            R|<local>/takeInt|(Q|<local>/SomeClass.Nested.Companion|.R|<local>/SomeClass.Nested.Companion.foo|())
         }
 
     }

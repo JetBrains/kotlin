@@ -27,13 +27,13 @@ FILE: inLocalClass.kt
             public final val leaked: R|kotlin/Any|
                 public get(): R|kotlin/Any|
 
-            public constructor(): R|LocalClass| {
+            public constructor(): R|<local>/LocalClass| {
                 super<R|kotlin/Any|>()
                 R|<local>/b|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
             }
 
             init {
-                this@R|/LocalClass|.R|<local>/leaked| = R|<local>/c|
+                this@R|<local>/LocalClass|.R|<local>/leaked| = R|<local>/c|
             }
 
             public final fun run(): R|kotlin/Unit| {

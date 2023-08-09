@@ -1,5 +1,5 @@
-public final [ResolvedTo(BODY_RESOLVE)] class E : R|kotlin/Any| {
-    public [ResolvedTo(BODY_RESOLVE)] constructor(): R|E| {
+local final [ResolvedTo(BODY_RESOLVE)] class E : R|kotlin/Any| {
+    public [ResolvedTo(BODY_RESOLVE)] constructor(): R|<local>/E| {
         super<R|kotlin/Any|>()
     }
 

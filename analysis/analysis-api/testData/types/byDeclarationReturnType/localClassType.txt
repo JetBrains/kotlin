@@ -1,5 +1,5 @@
 annotationsList: []
-classId: A.B
+classId: <local>/B
 classSymbol: KtNamedClassOrObjectSymbol(<local>/B)
 nullability: NON_NULLABLE
 ownTypeArguments: []

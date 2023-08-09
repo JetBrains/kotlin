@@ -6,7 +6,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] declarationsInPropertyInit.kt
 
         public final [ResolvedTo(BODY_RESOLVE)] val a: R|kotlin/Unit| = R|/myRun|<R|kotlin/Unit|>(<L> = [ResolvedTo(BODY_RESOLVE)] myRun@fun <anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
             local final [ResolvedTo(BODY_RESOLVE)] class X : R|kotlin/Any| {
-                public [ResolvedTo(BODY_RESOLVE)] constructor(): R|A.X| {
+                public [ResolvedTo(BODY_RESOLVE)] constructor(): R|<local>/X| {
                     super<R|kotlin/Any|>()
                 }
 

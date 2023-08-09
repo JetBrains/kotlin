@@ -6,7 +6,7 @@ FILE: initBlockWithDeclarations.kt
 
         init {
             local final? class classInInit : R|kotlin/Any| {
-                public? [ContainingClassKey=classInInit] constructor(): R|X.classInInit| {
+                public? [ContainingClassKey=classInInit] constructor(): R|<local>/classInInit| {
                     super<R|kotlin/Any|>()
                 }
 
@@ -28,7 +28,7 @@ FILE: initBlockWithDeclarations.kt
 
         init {
             local final? class classInInit : R|kotlin/Any| {
-                public? [ContainingClassKey=classInInit] constructor(): R|<no name provided>.classInInit| {
+                public? [ContainingClassKey=classInInit] constructor(): R|<local>/classInInit| {
                     super<R|kotlin/Any|>()
                 }
 

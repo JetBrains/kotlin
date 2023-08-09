@@ -188,30 +188,32 @@ class LightTreeRawFirExpressionBuilder(
                 }
             }
 
-            body = if (block != null) {
-                declarationBuilder.convertBlockExpressionWithoutBuilding(block!!).apply {
-                    statements.firstOrNull()?.let {
-                        if (it.isContractBlockFirCheck()) {
-                            this@buildAnonymousFunction.contractDescription = it.toLegacyRawContractDescription()
-                            statements[0] = FirContractCallBlock(it)
-                        }
-                    }
-
-                    if (statements.isEmpty()) {
-                        statements.add(
-                            buildReturnExpression {
-                                source = expressionSource.fakeElement(KtFakeSourceElementKind.ImplicitReturn.FromExpressionBody)
-                                this.target = target
-                                result = buildUnitExpression {
-                                    source = expressionSource.fakeElement(KtFakeSourceElementKind.ImplicitUnit.LambdaCoercion)
-                                }
+            body = withForcedLocalContext {
+                if (block != null) {
+                    declarationBuilder.convertBlockExpressionWithoutBuilding(block!!).apply {
+                        statements.firstOrNull()?.let {
+                            if (it.isContractBlockFirCheck()) {
+                                this@buildAnonymousFunction.contractDescription = it.toLegacyRawContractDescription()
+                                statements[0] = FirContractCallBlock(it)
                             }
-                        )
-                    }
-                    statements.addAll(0, destructuringStatements)
-                }.build()
-            } else {
-                buildSingleExpressionBlock(buildErrorExpression(null, ConeSyntaxDiagnostic("Lambda has no body")))
+                        }
+
+                        if (statements.isEmpty()) {
+                            statements.add(
+                                buildReturnExpression {
+                                    source = expressionSource.fakeElement(KtFakeSourceElementKind.ImplicitReturn.FromExpressionBody)
+                                    this.target = target
+                                    result = buildUnitExpression {
+                                        source = expressionSource.fakeElement(KtFakeSourceElementKind.ImplicitUnit.LambdaCoercion)
+                                    }
+                                }
+                            )
+                        }
+                        statements.addAll(0, destructuringStatements)
+                    }.build()
+                } else {
+                    buildSingleExpressionBlock(buildErrorExpression(null, ConeSyntaxDiagnostic("Lambda has no body")))
+                }
             }
             context.firFunctionTargets.removeLast()
         }.also {

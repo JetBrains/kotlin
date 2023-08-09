@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] compilerRequiredAnnotationOnLocalClassScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -10,7 +10,7 @@ FILE: [ResolvedTo(RAW_FIR)] compilerRequiredAnnotationOnLocalClassScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -19,7 +19,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -28,7 +28,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(COMPANION_GENERATION)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -37,7 +37,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(SUPER_TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -46,7 +46,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -55,7 +55,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -64,7 +64,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -73,7 +73,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(TYPES)] 
+    SCRIPT: [ResolvedTo(TYPES)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
@@ -82,19 +82,19 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(TYPES)] 
+    SCRIPT: [ResolvedTo(TYPES)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(CONTRACTS)] fun resolveMe(): R|kotlin/Unit| {
             @Deprecated[Unresolved](message = String(), replaceWith = ReplaceWith#(expression = String(abc)), level = DeprecationLevel#.ERROR#) local final? [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|<local>/LocalClass| {
                     super<R|kotlin/Any|>()
                 }
 
             }
 
             @Target[Unresolved](AnnotationTarget#.TYPE#) local final? [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|one/two/B| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|<local>/B| {
                     super<R|kotlin/Any|>()
                 }
 
@@ -106,19 +106,19 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(TYPES)] 
+    SCRIPT: [ResolvedTo(TYPES)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
             @Deprecated[Unresolved](message = String(), replaceWith = ReplaceWith#(expression = String(abc)), level = DeprecationLevel#.ERROR#) local final? [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|<local>/LocalClass| {
                     super<R|kotlin/Any|>()
                 }
 
             }
 
             @Target[Unresolved](AnnotationTarget#.TYPE#) local final? [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|one/two/B| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|<local>/B| {
                     super<R|kotlin/Any|>()
                 }
 
@@ -130,19 +130,19 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(TYPES)] 
+    SCRIPT: [ResolvedTo(TYPES)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun resolveMe(): R|kotlin/Unit| {
             @Deprecated[Unresolved](message = String(), replaceWith = ReplaceWith#(expression = String(abc)), level = DeprecationLevel#.ERROR#) local final? [ResolvedTo(RAW_FIR)] class LocalClass : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|<local>/LocalClass| {
                     super<R|kotlin/Any|>()
                 }
 
             }
 
             @Target[Unresolved](AnnotationTarget#.TYPE#) local final? [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
-                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|one/two/B| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|<local>/B| {
                     super<R|kotlin/Any|>()
                 }
 
@@ -154,19 +154,19 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
 BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(TYPES)] 
+    SCRIPT: [ResolvedTo(TYPES)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
             @R|kotlin/Deprecated|[Types](message = String(), replaceWith = R|kotlin/ReplaceWith.ReplaceWith|(expression = String(abc)), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.ERROR|) local final [ResolvedTo(BODY_RESOLVE)] class LocalClass : R|kotlin/Any| {
-                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LocalClass] constructor(): R|<local>/LocalClass| {
                     super<R|kotlin/Any|>()
                 }
 
             }
 
             @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) local final [ResolvedTo(BODY_RESOLVE)] class B : R|kotlin/Any| {
-                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=B] constructor(): R|one/two/B| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=B] constructor(): R|<local>/B| {
                     super<R|kotlin/Any|>()
                 }
 
@@ -178,23 +178,22 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationOnLocalClassScript.kts
 FILE RAW TO BODY:
 FILE: [ResolvedTo(BODY_RESOLVE)] compilerRequiredAnnotationOnLocalClassScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(BODY_RESOLVE)] 
+    SCRIPT: [ResolvedTo(BODY_RESOLVE)]
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
         public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
             @R|kotlin/Deprecated|[Types](message = String(), replaceWith = R|kotlin/ReplaceWith.ReplaceWith|(expression = String(abc)), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.ERROR|) local final [ResolvedTo(BODY_RESOLVE)] class LocalClass : R|kotlin/Any| {
-                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LocalClass] constructor(): R|one/two/LocalClass| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LocalClass] constructor(): R|<local>/LocalClass| {
                     super<R|kotlin/Any|>()
                 }
 
             }
 
             @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) local final [ResolvedTo(BODY_RESOLVE)] class B : R|kotlin/Any| {
-                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=B] constructor(): R|one/two/B| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=B] constructor(): R|<local>/B| {
                     super<R|kotlin/Any|>()
                 }
 
             }
 
         }
-

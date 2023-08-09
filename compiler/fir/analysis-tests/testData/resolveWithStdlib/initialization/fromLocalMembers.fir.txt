@@ -39,7 +39,7 @@ FILE: fromLocalMembers.kt
         lval x: R|kotlin/Int|
         lval y: R|kotlin/Int|
         local final class A : R|kotlin/Any| {
-            public constructor(): R|A| {
+            public constructor(): R|<local>/A| {
                 super<R|kotlin/Any|>()
             }
 

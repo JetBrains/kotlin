@@ -423,6 +423,8 @@ class LightTreeRawFirDeclarationBuilder(
         }
     }
 
+    private val LighterASTNode.isDirectlyInsideEnumEntry get() = getParent()?.getParent()?.elementType == ENUM_ENTRY
+
     /*****    DECLARATIONS    *****/
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseClassOrObject
@@ -462,10 +464,12 @@ class LightTreeRawFirDeclarationBuilder(
         }
 
         val className = identifier.nameAsSafeName(if (modifiers.isCompanion()) "Companion" else "")
-        val isLocal = isClassLocal(classNode) { getParent() }
+        val isLocalWithinParent = classNode.isDirectlyInsideEnumEntry
+                || classNode.getParent()?.elementType != CLASS_BODY && isClassLocal(classNode) { getParent() }
         val classIsExpect = modifiers.hasExpect() || context.containerIsExpect
 
-        return withChildClassName(className, isExpect = classIsExpect, isLocal) {
+        return withChildClassName(className, isExpect = classIsExpect, isLocalWithinParent) {
+            val isLocal = context.inLocalContext
             val status = FirDeclarationStatusImpl(
                 if (isLocal) Visibilities.Local else modifiers.getVisibility(),
                 modifiers.getModality(isClassOrObject = true)
@@ -642,7 +646,7 @@ class LightTreeRawFirDeclarationBuilder(
      * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.visitObjectLiteralExpression
      */
     fun convertObjectLiteral(objectLiteral: LighterASTNode): FirElement {
-        return withChildClassName(SpecialNames.ANONYMOUS, isExpect = false) {
+        return withChildClassName(SpecialNames.ANONYMOUS, forceLocalContext = true, isExpect = false) {
             var delegatedFieldsMap: Map<Int, FirFieldSymbol>? = null
             buildAnonymousObjectExpression {
                 source = objectLiteral.toFirSourceElement()
@@ -998,7 +1002,9 @@ class LightTreeRawFirDeclarationBuilder(
         var firBlock: FirBlock? = null
         anonymousInitializer.forEachChildren {
             when (it.tokenType) {
-                BLOCK -> firBlock = convertBlock(it)
+                BLOCK -> withForcedLocalContext {
+                    firBlock = convertBlock(it)
+                }
             }
         }
 
@@ -1056,7 +1062,9 @@ class LightTreeRawFirDeclarationBuilder(
             annotations += modifiers.annotations
             typeParameters += constructorTypeParametersFromConstructedClass(classWrapper.classBuilder.typeParameters)
             valueParameters += firValueParameters.map { it.firValueParameter }
-            val (body, contractDescription) = convertFunctionBody(block, null, allowLegacyContractDescription = true)
+            val (body, contractDescription) = withForcedLocalContext {
+                convertFunctionBody(block, null, allowLegacyContractDescription = true)
+            }
             this.body = body
             contractDescription?.let { this.contractDescription = it }
             context.firFunctionTargets.removeLast()
@@ -1501,7 +1509,9 @@ class LightTreeRawFirDeclarationBuilder(
                 valueParameters += firValueParameters
             }
             val allowLegacyContractDescription = outerContractDescription == null
-            val bodyWithContractDescription = convertFunctionBody(block, expression, allowLegacyContractDescription)
+            val bodyWithContractDescription = withForcedLocalContext {
+                convertFunctionBody(block, expression, allowLegacyContractDescription)
+            }
             this.body = bodyWithContractDescription.first
             val contractDescription = outerContractDescription ?: bodyWithContractDescription.second
             contractDescription?.let {
@@ -1768,7 +1778,9 @@ class LightTreeRawFirDeclarationBuilder(
                 }
 
                 val allowLegacyContractDescription = outerContractDescription == null
-                val bodyWithContractDescription = convertFunctionBody(block, expression, allowLegacyContractDescription)
+                val bodyWithContractDescription = withForcedLocalContext {
+                    convertFunctionBody(block, expression, allowLegacyContractDescription)
+                }
                 this.body = bodyWithContractDescription.first
                 val contractDescription = outerContractDescription ?: bodyWithContractDescription.second
                 contractDescription?.let {

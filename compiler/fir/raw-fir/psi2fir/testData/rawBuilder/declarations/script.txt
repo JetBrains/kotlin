@@ -40,7 +40,7 @@ FILE: script.kts
         build#(<L> = build@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
             version# = String(123)
             local final? class A : R|kotlin/Any| {
-                public? [ContainingClassKey=A] constructor(): R|A| {
+                public? [ContainingClassKey=A] constructor(): R|<local>/A| {
                     super<R|kotlin/Any|>()
                 }
 

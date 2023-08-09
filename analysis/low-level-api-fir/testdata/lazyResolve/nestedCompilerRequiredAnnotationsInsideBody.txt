@@ -200,7 +200,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBody.kt
     }
     public final [ResolvedTo(CONTRACTS)] fun test(): R|kotlin/Unit| {
         @Deprecated[Unresolved](String(FirstClass)) @Anno[Unresolved](String(FirstClass)) local final? [ResolvedTo(RAW_FIR)] class FirstClass : R|kotlin/Any| {
-            @Deprecated[Unresolved](String(constructor)) @Anno[Unresolved](String(constructor)) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/a] @Deprecated[Unresolved](String(constructorProperty)) @Anno[Unresolved](String(constructorProperty)) a: Int): R|FirstClass| {
+            @Deprecated[Unresolved](String(constructor)) @Anno[Unresolved](String(constructor)) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/a] @Deprecated[Unresolved](String(constructorProperty)) @Anno[Unresolved](String(constructorProperty)) a: Int): R|<local>/FirstClass| {
                 super<R|kotlin/Any|>()
             }
 
@@ -241,7 +241,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBody.kt
     }
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
         @Deprecated[Unresolved](String(FirstClass)) @Anno[Unresolved](String(FirstClass)) local final? [ResolvedTo(RAW_FIR)] class FirstClass : R|kotlin/Any| {
-            @Deprecated[Unresolved](String(constructor)) @Anno[Unresolved](String(constructor)) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/a] @Deprecated[Unresolved](String(constructorProperty)) @Anno[Unresolved](String(constructorProperty)) a: Int): R|FirstClass| {
+            @Deprecated[Unresolved](String(constructor)) @Anno[Unresolved](String(constructor)) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/a] @Deprecated[Unresolved](String(constructorProperty)) @Anno[Unresolved](String(constructorProperty)) a: Int): R|<local>/FirstClass| {
                 super<R|kotlin/Any|>()
             }
 
@@ -282,7 +282,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBody.kt
     }
     public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun test(): R|kotlin/Unit| {
         @Deprecated[Unresolved](String(FirstClass)) @Anno[Unresolved](String(FirstClass)) local final? [ResolvedTo(RAW_FIR)] class FirstClass : R|kotlin/Any| {
-            @Deprecated[Unresolved](String(constructor)) @Anno[Unresolved](String(constructor)) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/a] @Deprecated[Unresolved](String(constructorProperty)) @Anno[Unresolved](String(constructorProperty)) a: Int): R|FirstClass| {
+            @Deprecated[Unresolved](String(constructor)) @Anno[Unresolved](String(constructor)) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/a] @Deprecated[Unresolved](String(constructorProperty)) @Anno[Unresolved](String(constructorProperty)) a: Int): R|<local>/FirstClass| {
                 super<R|kotlin/Any|>()
             }
 
@@ -323,7 +323,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBody.kt
     }
     public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
         @R|kotlin/Deprecated|[Types](message = String(FirstClass)) @R|Anno|[Types](s = String(FirstClass)) local final [ResolvedTo(BODY_RESOLVE)] class FirstClass : R|kotlin/Any| {
-            @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=FirstClass] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=<local>/a] @R|Anno|[Types](s = String(constructorProperty)) a: R|kotlin/Int|): R|FirstClass| {
+            @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=FirstClass] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=<local>/a] @R|Anno|[Types](s = String(constructorProperty)) a: R|kotlin/Int|): R|<local>/FirstClass| {
                 super<R|kotlin/Any|>()
             }
 
@@ -364,7 +364,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] nestedCompilerRequiredAnnotationsInsideBody.kt
     }
     public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
         @R|kotlin/Deprecated|[Types](message = String(FirstClass)) @R|Anno|[Types](s = String(FirstClass)) local final [ResolvedTo(BODY_RESOLVE)] class FirstClass : R|kotlin/Any| {
-            @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=FirstClass] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=<local>/a] @R|Anno|[Types](s = String(constructorProperty)) a: R|kotlin/Int|): R|FirstClass| {
+            @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=FirstClass] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=<local>/a] @R|Anno|[Types](s = String(constructorProperty)) a: R|kotlin/Int|): R|<local>/FirstClass| {
                 super<R|kotlin/Any|>()
             }
 

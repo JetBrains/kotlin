@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.types.KtClassTypeQualifier
 import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.renderer.render
 
 public interface KtClassTypeQualifierRenderer {
@@ -37,7 +38,7 @@ public interface KtClassTypeQualifierRenderer {
         override fun renderClassTypeQualifier(type: KtClassType, printer: PrettyPrinter): Unit = printer {
             ".".separated(
                 {
-                    if (type is KtNonErrorClassType) {
+                    if (type is KtNonErrorClassType && type.classId.packageFqName != CallableId.PACKAGE_FQ_NAME_FOR_LOCAL) {
                         append(type.classId.packageFqName.render())
                     }
                 },

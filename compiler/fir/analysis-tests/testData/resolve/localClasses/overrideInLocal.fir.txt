@@ -1,7 +1,7 @@
 FILE: a.kt
     public final fun main(): R|kotlin/Unit| {
         local final class Local : R|B| {
-            public constructor(): R|Local| {
+            public constructor(): R|<local>/Local| {
                 super<R|B|>()
             }
 
