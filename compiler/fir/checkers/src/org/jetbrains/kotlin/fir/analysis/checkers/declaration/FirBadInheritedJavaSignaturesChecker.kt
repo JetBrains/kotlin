@@ -29,6 +29,9 @@ object FirBadInheritedJavaSignaturesChecker : FirClassChecker() {
             }
 
             val hasBadReturnType = symbol.resolvedReturnType.contains(::containsFunctionN)
+            // NB: This case with receiver is not covered with tests
+            // and was replicated, because it's present in the original
+            // checker.
             val hasBadReceiverType = symbol.resolvedReceiverTypeRef?.type?.contains(::containsFunctionN) == true
             val hasBadValueParameter = symbol is FirFunctionSymbol<*> && symbol.valueParameterSymbols.any { valueParameter ->
                 valueParameter.resolvedReturnType.contains(::containsFunctionN)
