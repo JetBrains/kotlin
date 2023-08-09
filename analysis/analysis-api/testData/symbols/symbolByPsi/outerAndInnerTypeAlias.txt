@@ -100,7 +100,7 @@ KtTypeAliasSymbol:
   isExpect: false
   name: LocalTypeAlias
   origin: SOURCE
-  symbolKind: CLASS_MEMBER
+  symbolKind: LOCAL
   typeParameters: []
   visibility: Public
   getContainingModule: KtSourceModule "Sources of main"
@@ -144,7 +144,7 @@ KtTypeAliasSymbol:
   isExpect: false
   name: LocalTypeAlias
   origin: SOURCE
-  symbolKind: CLASS_MEMBER
+  symbolKind: LOCAL
   typeParameters: []
   visibility: Public
   getContainingModule: KtSourceModule "Sources of main"
@@ -204,7 +204,7 @@ KtFunctionSymbol:
   getDispatchReceiver(): KtUsualClassType:
     annotationsList: []
     ownTypeArguments: []
-    type: A.LocalClass.LocalClass
+    type: <local>/LocalClass
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -269,7 +269,7 @@ KtFunctionSymbol:
   getDispatchReceiver(): KtUsualClassType:
     annotationsList: []
     ownTypeArguments: []
-    type: A.LocalClass
+    type: <local>/LocalClass
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 

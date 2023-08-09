@@ -75,10 +75,21 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
         isExpect: Boolean,
         forceLocalContext: Boolean = false,
         l: () -> T
+    ) = when {
+        forceLocalContext -> withForcedLocalContext {
+            withChildClassNameRegardlessLocalContext(name, isExpect, l)
+        }
+        else -> {
+            withChildClassNameRegardlessLocalContext(name, isExpect, l)
+        }
+    }
+
+    inline fun <T> withChildClassNameRegardlessLocalContext(
+        name: Name,
+        isExpect: Boolean,
+        l: () -> T
     ): T {
         context.className = context.className.child(name)
-        val oldForcedLocalContext = context.forcedLocalContext
-        context.forcedLocalContext = forceLocalContext || context.forcedLocalContext
         val previousIsExpect = context.containerIsExpect
         context.containerIsExpect = previousIsExpect || isExpect
         val dispatchReceiversNumber = context.dispatchReceiverTypesStack.size
@@ -94,8 +105,25 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
             }
 
             context.className = context.className.parent()
-            context.forcedLocalContext = oldForcedLocalContext
             context.containerIsExpect = previousIsExpect
+        }
+    }
+
+    inline fun <R> withForcedLocalContext(block: () -> R): R {
+        val oldForcedLocalContext = context.inLocalContext
+        context.inLocalContext = true
+        val oldClassNameBeforeLocalContext = context.classNameBeforeLocalContext
+        if (!oldForcedLocalContext) {
+            context.classNameBeforeLocalContext = context.className
+        }
+        val oldClassName = context.className
+        context.className = FqName.ROOT
+        return try {
+            block()
+        } finally {
+            context.classNameBeforeLocalContext = oldClassNameBeforeLocalContext
+            context.inLocalContext = oldForcedLocalContext
+            context.className = oldClassName
         }
     }
 
@@ -132,7 +160,11 @@ abstract class AbstractRawFirBuilder<T>(val baseSession: FirSession, val context
             context.inLocalContext -> {
                 val pathFqName =
                     context.firFunctionTargets.fold(
-                        if (context.className.isRoot) context.packageFqName else context.currentClassId.asSingleFqName()
+                        if (context.classNameBeforeLocalContext.isRoot) {
+                            context.packageFqName
+                        } else {
+                            ClassId(context.packageFqName, context.classNameBeforeLocalContext, false).asSingleFqName()
+                        }
                     ) { result, firFunctionTarget ->
                         if (firFunctionTarget.isLambda || firFunctionTarget.labelName == null)
                             result

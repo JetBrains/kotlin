@@ -29,7 +29,7 @@ FILE: localObjects.kt
 
         R|<local>/b|.R|/Foo.foo|()
         local final object B : R|kotlin/Any| {
-            private constructor(): R|B| {
+            private constructor(): R|<local>/B| {
                 super<R|kotlin/Any|>()
             }
 
@@ -38,7 +38,7 @@ FILE: localObjects.kt
 
         }
 
-        Q|B|.R|<local>/foo|()
+        Q|<local>/B|.R|<local>/foo|()
     }
     public final val bb: <ERROR TYPE REF: Unresolved name: foo> = <Unresolved name: B>#.<Unresolved name: foo>#()
         public get(): <ERROR TYPE REF: Unresolved name: foo>

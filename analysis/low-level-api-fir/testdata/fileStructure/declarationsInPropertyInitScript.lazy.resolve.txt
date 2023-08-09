@@ -10,7 +10,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] declarationsInPropertyInitScript.kts
 
             public final [ResolvedTo(BODY_RESOLVE)] val a: R|kotlin/Unit| = this@R|/A|.R|kotlin/run|<R|A|, R|kotlin/Unit|>(<L> = [ResolvedTo(BODY_RESOLVE)] run@fun R|A|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
                 local final [ResolvedTo(BODY_RESOLVE)] class X : R|kotlin/Any| {
-                    public [ResolvedTo(BODY_RESOLVE)] constructor(): R|A.X| {
+                    public [ResolvedTo(BODY_RESOLVE)] constructor(): R|<local>/X| {
                         super<R|kotlin/Any|>()
                     }
 
@@ -26,4 +26,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] declarationsInPropertyInitScript.kts
         public final inline [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] R> run([ResolvedTo(BODY_RESOLVE)] block: R|() -> R|): R|R| {
             ^run R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|R|>|()
         }
-

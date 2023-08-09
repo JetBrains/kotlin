@@ -29,7 +29,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] script.kts
         R|/build|(<L> = [ResolvedTo(BODY_RESOLVE)] build@fun R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             this@R|special/anonymous|.R|/Builder.version| = String(123)
             local final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
-                public [ResolvedTo(BODY_RESOLVE)] constructor(): R|A| {
+                public [ResolvedTo(BODY_RESOLVE)] constructor(): R|<local>/A| {
                     super<R|kotlin/Any|>()
                 }
 
@@ -49,4 +49,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] script.kts
 
         public final [ResolvedTo(BODY_RESOLVE)] val $$result: R|kotlin/Unit| = R|/builder|.R|/Builder.execute|()
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Unit|
-

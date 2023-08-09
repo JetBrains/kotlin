@@ -496,7 +496,9 @@ open class PsiRawFirBuilder(
                             }
                         }
                         val outerContractDescription = this@toFirPropertyAccessor.obtainContractDescription()
-                        val (body, innerContractDescription) = this@toFirPropertyAccessor.buildFirBody()
+                        val (body, innerContractDescription) = withForcedLocalContext {
+                            this@toFirPropertyAccessor.buildFirBody()
+                        }
                         this.body = body
                         val contractDescription = outerContractDescription ?: innerContractDescription
                         contractDescription?.let {
@@ -1331,16 +1333,20 @@ open class PsiRawFirBuilder(
             }
         }
 
+        private val KtElement.isDirectlyInsideEnumEntry get() = parent?.parent is KtEnumEntry
+
         override fun visitClassOrObject(classOrObject: KtClassOrObject, data: FirElement?): FirElement {
             // NB: enum entry nested classes are considered local by FIR design (see discussion in KT-45115)
-            val isLocal = classOrObject.isLocal || classOrObject.getStrictParentOfType<KtEnumEntry>() != null
+            val isLocalWithinParent = classOrObject.isDirectlyInsideEnumEntry
+                    || classOrObject.parent !is KtClassBody && classOrObject.isLocal
             val classIsExpect = classOrObject.hasExpectModifier() || context.containerIsExpect
             val sourceElement = classOrObject.toFirSourceElement()
             return withChildClassName(
                 classOrObject.nameAsSafeName,
                 isExpect = classIsExpect,
-                forceLocalContext = isLocal
+                forceLocalContext = isLocalWithinParent,
             ) {
+                val isLocal = context.inLocalContext
                 val classKind = when (classOrObject) {
                     is KtObjectDeclaration -> ClassKind.OBJECT
                     is KtClass -> when {
@@ -1646,7 +1652,9 @@ open class PsiRawFirBuilder(
                     listOf()
                 withCapturedTypeParameters(true, functionSource, actualTypeParameters) {
                     val outerContractDescription = function.obtainContractDescription()
-                    val (body, innerContractDescription) = function.buildFirBody()
+                    val (body, innerContractDescription) = withForcedLocalContext {
+                        function.buildFirBody()
+                    }
                     this.body = body
                     val contractDescription = outerContractDescription ?: innerContractDescription
                     contractDescription?.let {
@@ -1750,31 +1758,33 @@ open class PsiRawFirBuilder(
                     context.firFunctionTargets += it
                 }
                 val ktBody = literal.bodyExpression
-                body = if (ktBody == null) {
-                    val errorExpression = buildErrorExpression(source, ConeSyntaxDiagnostic("Lambda has no body"))
-                    FirSingleExpressionBlock(errorExpression.toReturn())
-                } else {
-                    configureBlockWithoutBuilding(ktBody).apply {
-                        statements.firstOrNull()?.let {
-                            if (it.isContractBlockFirCheck()) {
-                                this@buildAnonymousFunction.contractDescription = it.toLegacyRawContractDescription()
-                                statements[0] = FirContractCallBlock(it)
-                            }
-                        }
-
-                        if (statements.isEmpty()) {
-                            statements.add(
-                                buildReturnExpression {
-                                    source = expressionSource.fakeElement(KtFakeSourceElementKind.ImplicitReturn.FromExpressionBody)
-                                    this.target = target
-                                    result = buildUnitExpression {
-                                        source = expressionSource.fakeElement(KtFakeSourceElementKind.ImplicitUnit.LambdaCoercion)
-                                    }
+                body = withForcedLocalContext {
+                    if (ktBody == null) {
+                        val errorExpression = buildErrorExpression(source, ConeSyntaxDiagnostic("Lambda has no body"))
+                        FirSingleExpressionBlock(errorExpression.toReturn())
+                    } else {
+                        configureBlockWithoutBuilding(ktBody).apply {
+                            statements.firstOrNull()?.let {
+                                if (it.isContractBlockFirCheck()) {
+                                    this@buildAnonymousFunction.contractDescription = it.toLegacyRawContractDescription()
+                                    statements[0] = FirContractCallBlock(it)
                                 }
-                            )
-                        }
-                        statements.addAll(0, destructuringStatements)
-                    }.build()
+                            }
+
+                            if (statements.isEmpty()) {
+                                statements.add(
+                                    buildReturnExpression {
+                                        source = expressionSource.fakeElement(KtFakeSourceElementKind.ImplicitReturn.FromExpressionBody)
+                                        this.target = target
+                                        result = buildUnitExpression {
+                                            source = expressionSource.fakeElement(KtFakeSourceElementKind.ImplicitUnit.LambdaCoercion)
+                                        }
+                                    }
+                                )
+                            }
+                            statements.addAll(0, destructuringStatements)
+                        }.build()
+                    }
                 }
                 context.firFunctionTargets.removeLast()
             }.also {
@@ -1820,8 +1830,9 @@ open class PsiRawFirBuilder(
                 typeParameters += constructorTypeParametersFromConstructedClass(ownerTypeParameters)
                 extractValueParametersTo(this, symbol, ValueParameterDeclaration.FUNCTION)
 
-
-                val (body, contractDescription) = buildFirBody()
+                val (body, contractDescription) = withForcedLocalContext {
+                    buildFirBody()
+                }
                 contractDescription?.let { this.contractDescription = it }
                 this.body = body
                 this@PsiRawFirBuilder.context.firFunctionTargets.removeLast()
@@ -2027,7 +2038,11 @@ open class PsiRawFirBuilder(
                 source = initializer.toFirSourceElement()
                 moduleData = baseModuleData
                 origin = FirDeclarationOrigin.Source
-                body = buildOrLazyBlock { initializer.body.toFirBlock() }
+                body = buildOrLazyBlock {
+                    withForcedLocalContext {
+                        initializer.body.toFirBlock()
+                    }
+                }
                 dispatchReceiverType = context.dispatchReceiverTypesStack.lastOrNull()
             }
         }

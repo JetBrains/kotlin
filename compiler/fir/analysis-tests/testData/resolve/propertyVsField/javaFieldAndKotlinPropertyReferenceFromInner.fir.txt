@@ -9,7 +9,7 @@ FILE: test.kt
                 private get(): R|kotlin/String|
 
             local final inner class S : R|kotlin/Any| {
-                public <anonymous>.constructor(): R|<anonymous>.S| {
+                public <anonymous>.constructor(): R|<local>/<anonymous>.S| {
                     super<R|kotlin/Any|>()
                 }
 

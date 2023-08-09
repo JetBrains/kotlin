@@ -1,7 +1,7 @@
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] localConstructorScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
@@ -19,7 +19,7 @@ FILE: [ResolvedTo(RAW_FIR)] localConstructorScript.kts
 IMPORTS:
 FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
@@ -37,7 +37,7 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
@@ -55,7 +55,7 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
@@ -73,7 +73,7 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
@@ -91,7 +91,7 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
@@ -109,7 +109,7 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
@@ -127,7 +127,7 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
     context(<script>@kotlin.script.templates.standard.ScriptTemplateWithArgs)
-    SCRIPT: [ResolvedTo(RAW_FIR)] 
+    SCRIPT: [ResolvedTo(RAW_FIR)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
@@ -145,7 +145,7 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(TYPES)] 
+    SCRIPT: [ResolvedTo(TYPES)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
@@ -163,7 +163,7 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
-    SCRIPT: [ResolvedTo(TYPES)] 
+    SCRIPT: [ResolvedTo(TYPES)]
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
         public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
@@ -176,7 +176,7 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
             public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] E, [ResolvedTo(CONTRACTS)] F> foo(): <implicit> {
                 ^foo [ResolvedTo(RAW_FIR)] fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
                     local final? [ResolvedTo(RAW_FIR)] class C<[ResolvedTo(RAW_FIR)] G, [ResolvedTo(CONTRACTS)] Outer(E), [ResolvedTo(CONTRACTS)] Outer(F)> : R|kotlin/Any| {
-                        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor<[ResolvedTo(RAW_FIR)] G>(): R|Q.C<G, E, F>| {
+                        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor<[ResolvedTo(RAW_FIR)] G>(): R|<local>/C<G, E, F>| {
                             super<R|kotlin/Any|>()
                         }
 
@@ -214,10 +214,10 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun <[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] E, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] F> foo(): R|() -> Q.C<F, E, F>| {
-                ^foo [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|Q.C<F, E, F>| <inline=Unknown>  {
+            public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun <[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] E, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] F> foo(): R|() -> <local>/C<F, E, F>| {
+                ^foo [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|<local>/C<F, E, F>| <inline=Unknown>  {
                     local final [ResolvedTo(RAW_FIR)] class C<[ResolvedTo(RAW_FIR)] G, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] Outer(E), [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] Outer(F)> : R|kotlin/Any| {
-                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor<[ResolvedTo(RAW_FIR)] G>(): R|Q.C<G, E, F>| {
+                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor<[ResolvedTo(RAW_FIR)] G>(): R|<local>/C<G, E, F>| {
                             super<R|kotlin/Any|>()
                         }
 
@@ -232,7 +232,7 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
 
                     }
 
-                    ^ R|SubstitutionOverride<<local>/Q.C.C>|<R|F|>()
+                    ^ R|SubstitutionOverride<<local>/C.C>|<R|F|>()
                 }
 
             }
@@ -255,10 +255,10 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun <[ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] E, [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] F> foo(): R|() -> Q.C<F, E, F>| {
-                ^foo [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|Q.C<F, E, F>| <inline=Unknown>  {
+            public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun <[ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] E, [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] F> foo(): R|() -> <local>/C<F, E, F>| {
+                ^foo [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|<local>/C<F, E, F>| <inline=Unknown>  {
                     local final [ResolvedTo(RAW_FIR)] class C<[ResolvedTo(RAW_FIR)] G, [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] Outer(E), [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] Outer(F)> : R|kotlin/Any| {
-                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor<[ResolvedTo(RAW_FIR)] G>(): R|Q.C<G, E, F>| {
+                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor<[ResolvedTo(RAW_FIR)] G>(): R|<local>/C<G, E, F>| {
                             super<R|kotlin/Any|>()
                         }
 
@@ -273,7 +273,7 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
 
                     }
 
-                    ^ R|SubstitutionOverride<<local>/Q.C.C>|<R|F|>()
+                    ^ R|SubstitutionOverride<<local>/C.C>|<R|F|>()
                 }
 
             }
@@ -296,10 +296,10 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
                 LAZY_super<R|kotlin/Any|>
             }
 
-            public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] E, [ResolvedTo(BODY_RESOLVE)] F> foo(): R|() -> Q.C<F, E, F>| {
-                ^foo [ResolvedTo(BODY_RESOLVE)] fun <anonymous>(): R|Q.C<F, E, F>| <inline=Unknown>  {
+            public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] E, [ResolvedTo(BODY_RESOLVE)] F> foo(): R|() -> <local>/C<F, E, F>| {
+                ^foo [ResolvedTo(BODY_RESOLVE)] fun <anonymous>(): R|<local>/C<F, E, F>| <inline=Unknown>  {
                     local final [ResolvedTo(BODY_RESOLVE)] class C<[ResolvedTo(BODY_RESOLVE)] G, [ResolvedTo(BODY_RESOLVE)] Outer(E), [ResolvedTo(BODY_RESOLVE)] Outer(F)> : R|kotlin/Any| {
-                        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] constructor<[ResolvedTo(BODY_RESOLVE)] G>(): R|Q.C<G, E, F>| {
+                        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] constructor<[ResolvedTo(BODY_RESOLVE)] G>(): R|<local>/C<G, E, F>| {
                             super<R|kotlin/Any|>()
                         }
 
@@ -314,7 +314,7 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
 
                     }
 
-                    ^ R|SubstitutionOverride<<local>/Q.C.C>|<R|F|>()
+                    ^ R|SubstitutionOverride<<local>/C.C>|<R|F|>()
                 }
 
             }
@@ -337,10 +337,10 @@ FILE: [ResolvedTo(BODY_RESOLVE)] localConstructorScript.kts
                 super<R|kotlin/Any|>()
             }
 
-            public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] E, [ResolvedTo(BODY_RESOLVE)] F> foo(): R|() -> Q.C<F, E, F>| {
-                ^foo [ResolvedTo(BODY_RESOLVE)] fun <anonymous>(): R|Q.C<F, E, F>| <inline=Unknown>  {
+            public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] E, [ResolvedTo(BODY_RESOLVE)] F> foo(): R|() -> <local>/C<F, E, F>| {
+                ^foo [ResolvedTo(BODY_RESOLVE)] fun <anonymous>(): R|<local>/C<F, E, F>| <inline=Unknown>  {
                     local final [ResolvedTo(BODY_RESOLVE)] class C<[ResolvedTo(BODY_RESOLVE)] G, [ResolvedTo(BODY_RESOLVE)] Outer(E), [ResolvedTo(BODY_RESOLVE)] Outer(F)> : R|kotlin/Any| {
-                        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] constructor<[ResolvedTo(BODY_RESOLVE)] G>(): R|Q.C<G, E, F>| {
+                        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] constructor<[ResolvedTo(BODY_RESOLVE)] G>(): R|<local>/C<G, E, F>| {
                             super<R|kotlin/Any|>()
                         }
 
@@ -355,10 +355,9 @@ FILE: [ResolvedTo(BODY_RESOLVE)] localConstructorScript.kts
 
                     }
 
-                    ^ R|SubstitutionOverride<<local>/Q.C.C>|<R|F|>()
+                    ^ R|SubstitutionOverride<<local>/C.C>|<R|F|>()
                 }
 
             }
 
         }
-

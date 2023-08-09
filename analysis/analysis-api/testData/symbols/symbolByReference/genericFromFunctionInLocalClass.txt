@@ -29,6 +29,6 @@ KtFunctionSymbol:
   getDispatchReceiver(): KtUsualClassType:
     annotationsList: []
     ownTypeArguments: []
-    type: test/Base<Outer>
+    type: <local>/Base<Outer>
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

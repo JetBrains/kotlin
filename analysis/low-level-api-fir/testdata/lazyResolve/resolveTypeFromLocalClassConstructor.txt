@@ -178,7 +178,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructor.kt
     }
     public final [ResolvedTo(CONTRACTS)] fun resolveMe(): R|kotlin/Unit| {
         local final? [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/u] u: UsedClass): R|one/two/Local| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/u] u: UsedClass): R|<local>/Local| {
                 super<R|kotlin/Any|>()
             }
 
@@ -207,7 +207,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructor.kt
     }
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
         local final? [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/u] u: UsedClass): R|one/two/Local| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/u] u: UsedClass): R|<local>/Local| {
                 super<R|kotlin/Any|>()
             }
 
@@ -236,7 +236,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructor.kt
     }
     public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun resolveMe(): R|kotlin/Unit| {
         local final? [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
-            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/u] u: UsedClass): R|one/two/Local| {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=<local>/u] u: UsedClass): R|<local>/Local| {
                 super<R|kotlin/Any|>()
             }
 
@@ -265,7 +265,7 @@ FILE: [ResolvedTo(IMPORTS)] resolveTypeFromLocalClassConstructor.kt
     }
     public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
         local final [ResolvedTo(BODY_RESOLVE)] class Local : R|kotlin/Any| {
-            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Local] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=<local>/u] u: R|one/two/UsedClass|): R|one/two/Local| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Local] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=<local>/u] u: R|one/two/UsedClass|): R|<local>/Local| {
                 super<R|kotlin/Any|>()
             }
 
@@ -294,7 +294,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] resolveTypeFromLocalClassConstructor.kt
     }
     public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
         local final [ResolvedTo(BODY_RESOLVE)] class Local : R|kotlin/Any| {
-            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Local] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=<local>/u] u: R|one/two/UsedClass|): R|one/two/Local| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Local] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=<local>/u] u: R|one/two/UsedClass|): R|<local>/Local| {
                 super<R|kotlin/Any|>()
             }
 

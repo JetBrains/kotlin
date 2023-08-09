@@ -2,15 +2,15 @@ FILE: localVariableInSecondaryConstructor.kt
     public final fun main(): R|kotlin/Unit| {
         lval localVariable: R|kotlin/Int| = Int(0)
         local final class LocalClass : R|kotlin/Any| {
-            public constructor(arg: R|kotlin/Int|): R|LocalClass| {
+            public constructor(arg: R|kotlin/Int|): R|<local>/LocalClass| {
                 super<R|kotlin/Any|>()
             }
 
             public final val arg: R|kotlin/Int| = R|<local>/arg|
                 public get(): R|kotlin/Int|
 
-            public constructor(): R|LocalClass| {
-                this<R|LocalClass|>(R|<local>/localVariable|)
+            public constructor(): R|<local>/LocalClass| {
+                this<R|<local>/LocalClass|>(R|<local>/localVariable|)
             }
 
         }

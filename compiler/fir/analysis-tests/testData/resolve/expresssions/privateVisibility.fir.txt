@@ -64,24 +64,24 @@ FILE: first.kt
     }
     public final fun withLocals(): R|kotlin/Unit| {
         local final class Local : R|kotlin/Any| {
-            public constructor(): R|Local| {
+            public constructor(): R|<local>/Local| {
                 super<R|kotlin/Any|>()
             }
 
             private final fun bar(): R|kotlin/Unit|
 
             public final fun baz(): R|kotlin/Unit| {
-                this@R|/Local|.R|<local>/bar|()
-                this@R|/Local|.R|<local>/Local.Inner.Inner|()
+                this@R|<local>/Local|.R|<local>/bar|()
+                this@R|<local>/Local|.R|<local>/Local.Inner.Inner|()
             }
 
             local final inner class Inner : R|kotlin/Any| {
-                public Local.constructor(): R|Local.Inner| {
+                public <local>/Local.constructor(): R|<local>/Local.Inner| {
                     super<R|kotlin/Any|>()
                 }
 
                 public final fun foo(): R|kotlin/Unit| {
-                    this@R|/Local|.R|<local>/bar|()
+                    this@R|<local>/Local|.R|<local>/bar|()
                 }
 
             }

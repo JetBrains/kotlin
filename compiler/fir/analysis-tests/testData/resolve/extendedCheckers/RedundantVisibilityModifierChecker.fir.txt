@@ -2,7 +2,7 @@ FILE: RedundantVisibilityModifierChecker.kt
     public final fun f(): R|kotlin/Unit| {
         lvar baz: R|kotlin/Int| = Int(0)
         local final class LocalClass : R|kotlin/Any| {
-            public constructor(): R|LocalClass| {
+            public constructor(): R|<local>/LocalClass| {
                 super<R|kotlin/Any|>()
             }
 

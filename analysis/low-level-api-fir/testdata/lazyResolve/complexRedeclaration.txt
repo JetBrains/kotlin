@@ -1298,7 +1298,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] complexRedeclaration.kt
     }
     public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
         local final [ResolvedTo(BODY_RESOLVE)] class L : R|P| {
-            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=L] constructor(): R|L| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=L] constructor(): R|<local>/L| {
                 super<R|P|>()
             }
 

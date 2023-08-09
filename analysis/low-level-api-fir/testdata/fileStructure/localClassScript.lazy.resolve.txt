@@ -5,7 +5,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] localClassScript.kts
 
         public final [ResolvedTo(BODY_RESOLVE)] fun a(): R|kotlin/Unit| {
             local final [ResolvedTo(BODY_RESOLVE)] class X : R|kotlin/Any| {
-                public [ResolvedTo(BODY_RESOLVE)] constructor(): R|X| {
+                public [ResolvedTo(BODY_RESOLVE)] constructor(): R|<local>/X| {
                     super<R|kotlin/Any|>()
                 }
 
@@ -20,7 +20,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] localClassScript.kts
 
             public final [ResolvedTo(BODY_RESOLVE)] fun b(): R|kotlin/Unit| {
                 local final [ResolvedTo(BODY_RESOLVE)] class Z : R|kotlin/Any| {
-                    public [ResolvedTo(BODY_RESOLVE)] constructor(): R|Y.Z| {
+                    public [ResolvedTo(BODY_RESOLVE)] constructor(): R|<local>/Z| {
                         super<R|kotlin/Any|>()
                     }
 
@@ -29,4 +29,3 @@ FILE: [ResolvedTo(BODY_RESOLVE)] localClassScript.kts
             }
 
         }
-
