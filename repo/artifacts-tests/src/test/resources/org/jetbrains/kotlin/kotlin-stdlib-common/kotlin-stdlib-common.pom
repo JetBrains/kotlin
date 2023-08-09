@@ -36,6 +36,7 @@
       <artifactId>kotlin-stdlib</artifactId>
       <version>ArtifactsTest.version</version>
       <scope>compile</scope>
+      <optional>true</optional>
     </dependency>
   </dependencies>
 </project>

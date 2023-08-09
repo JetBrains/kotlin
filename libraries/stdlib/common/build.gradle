@@ -1,13 +1,9 @@
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
-
 plugins {
     id("kotlin-platform-common")
     id("maven-publish")
 }
 
 description = 'Kotlin Common Standard Library'
-
-//RepoArtifacts.publish(project)
 
 JvmToolchain.updateJvmTarget(project, "1.8")
 
@@ -80,16 +76,15 @@ tasks.named("sourcesJar").configure { it.dependsOn(":prepare:build.version:write
 
 classes.setDependsOn(classes.dependsOn.findAll { it != "compileJava" })
 
-def stdlibCommonRuntimeElements = configurations.create("stdlibCommonRuntimeElements") {
+def stdlibCommonElements = configurations.create("stdlibCommonElements") {
     canBeResolved = false
     canBeConsumed = true
     attributes {
         attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category, Category.LIBRARY))
-//        attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage, KotlinUsages.KOTLIN_RUNTIME))
     }
 }
 dependencies {
-    add(stdlibCommonRuntimeElements.name, project(":kotlin-stdlib"))
+    add(stdlibCommonElements.name, project(":kotlin-stdlib"))
 }
 
 class ComponentsFactoryAccess {
@@ -104,7 +99,9 @@ class ComponentsFactoryAccess {
 SoftwareComponentFactory componentFactory = objects.newInstance(ComponentsFactoryAccess).factory
 
 def rootComponent = componentFactory.adhoc("root")
-rootComponent.addVariantsFromConfiguration(stdlibCommonRuntimeElements) {}
+rootComponent.addVariantsFromConfiguration(stdlibCommonElements) {
+    mapToOptional()
+}
 
 plugins.KotlinBuildPublishingPluginKt.configureDefaultPublishing(project)
 
