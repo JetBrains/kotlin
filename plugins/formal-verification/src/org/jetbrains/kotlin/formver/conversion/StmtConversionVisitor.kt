@@ -44,11 +44,9 @@ class StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
         return UnitDomain.element
     }
 
-    override fun visitBlock(block: FirBlock, data: StmtConversionContext): Exp {
-        // TODO: allow blocks to return values
-        block.statements.forEach { it.accept(this, data) }
-        return UnitDomain.element
-    }
+    override fun visitBlock(block: FirBlock, data: StmtConversionContext): Exp =
+        // We ignore the accumulator: we just want to get the result of the last expression.
+        block.statements.fold(UnitDomain.element) { _, it -> it.accept(this, data) }
 
     override fun <T> visitConstExpression(constExpression: FirConstExpression<T>, data: StmtConversionContext): Exp =
         when (constExpression.kind) {
@@ -58,26 +56,24 @@ class StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
         }
 
     override fun visitWhenExpression(whenExpression: FirWhenExpression, data: StmtConversionContext): Exp {
-        if (whenExpression.usedAsExpression) {
-            // The problem with conditional expressions is that Kotlin conditional expressions can have statements whereas Viper
-            // conditionals can't. These need to be embedded as Viper statements before the IF, however, one has to carefully consider
-            // short-circuiting semantics.
-            TODO("Conditionals used as expressions are not yet implemented.")
-        }
-
         if (whenExpression.branches.size != 2) {
             // For now only when expressions with 2 branches are supported so if statements can be encoded.
             // When expressions with more than 2 branches can be embedded as nested if-else chains.
             TODO("When expressions with more that two branches are not yet implemented")
         }
 
-        when (whenExpression.subject) {
+        return when (whenExpression.subject) {
             null -> {
+                val cvar = data.methodCtx.newAnonVar(data.methodCtx.programCtx.convertType(whenExpression.typeRef.coneTypeOrNull!!))
                 val cond = whenExpression.branches[0].condition.accept(this, data)
+                // TODO: tidy this up and split it into helper functions.
                 val thenCtx = StmtConversionContext(data.methodCtx)
-                thenCtx.convertAndAppend(whenExpression.branches[0].result)
+                val thenResult = whenExpression.branches[0].result.accept(this, thenCtx)
+                thenCtx.statements.add(Stmt.LocalVarAssign(cvar.toLocalVar(), thenResult))
                 val elseCtx = StmtConversionContext(data.methodCtx)
-                elseCtx.convertAndAppend(whenExpression.branches[1].result)
+                val elseResult = whenExpression.branches[1].result.accept(this, elseCtx)
+                elseCtx.statements.add(Stmt.LocalVarAssign(cvar.toLocalVar(), elseResult))
+                data.declarations.add(cvar.toLocalVarDecl())
                 data.statements.add(
                     Stmt.If(
                         cond,
@@ -85,10 +81,10 @@ class StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
                         elseCtx.block
                     )
                 )
+                cvar.toLocalVar()
             }
             else -> TODO("Can't embed $whenExpression since when expressions with a subject other than null are not yet supported.")
         }
-        return UnitDomain.element
     }
 
     override fun visitPropertyAccessExpression(

@@ -7,10 +7,14 @@ field backing_int: Int
 
 method global$pkg_$simple_if() returns (ret$: Int)
 {
+  var anonymous$1: unit$
   if (true) {
     ret$ := 0
+    anonymous$1 := unit$element()
   } else {
-    ret$ := 1}
+    ret$ := 1
+    anonymous$1 := unit$element()
+  }
 }
 
 /when.kt:(98,113): info: domain unit$  {
@@ -22,8 +26,42 @@ field backing_int: Int
 
 method global$pkg_$if_on_parameter(local$b: Bool) returns (ret$: Int)
 {
+  var anonymous$1: unit$
   if (local$b) {
     ret$ := 0
+    anonymous$1 := unit$element()
   } else {
-    ret$ := 1}
+    ret$ := 1
+    anonymous$1 := unit$element()
+  }
+}
+
+/when.kt:(205,221): info: domain unit$  {
+
+  unique function unit$element(): unit$
+}
+
+field backing_int: Int
+
+method global$pkg_$simple_if() returns (ret$: Int)
+
+
+method global$pkg_$if_on_parameter(local$b: Bool) returns (ret$: Int)
+
+
+method global$pkg_$if_as_expression() returns (ret$: Bool)
+{
+  var local$b: Bool
+  var anonymous$1: Bool
+  local$b := false
+  if (local$b) {
+    var anonymous$2: Int
+    anonymous$2 := global$pkg_$simple_if()
+    anonymous$1 := false
+  } else {
+    var anonymous$3: Int
+    anonymous$3 := global$pkg_$if_on_parameter(local$b)
+    anonymous$1 := true
+  }
+  ret$ := anonymous$1
 }

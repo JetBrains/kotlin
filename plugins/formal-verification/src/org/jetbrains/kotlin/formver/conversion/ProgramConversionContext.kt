@@ -7,16 +7,11 @@ package org.jetbrains.kotlin.formver.conversion
 
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.isBoolean
-import org.jetbrains.kotlin.fir.types.isInt
-import org.jetbrains.kotlin.fir.types.isUnit
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.formver.scala.emptySeq
 import org.jetbrains.kotlin.formver.scala.seqOf
 import org.jetbrains.kotlin.formver.scala.silicon.ast.*
 import org.jetbrains.kotlin.formver.scala.toScalaSeq
-import org.jetbrains.kotlin.utils.addToStdlib.getOrPut
-import viper.silver.ast.Method
 import viper.silver.ast.Program
 
 const val INT_BACKING_FIELD = "backing_int"
@@ -77,6 +72,7 @@ class ProgramConversionContext {
         type.isUnit -> ConvertedUnit
         type.isInt -> ConvertedInt
         type.isBoolean -> ConvertedBoolean
+        type.isNothing -> ConvertedNothing
         else -> throw NotImplementedError("The embedding for type $type is not yet implemented.")
     }
 }

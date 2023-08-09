@@ -21,3 +21,17 @@ FILE: when.kt
         }
 
     }
+    public final fun if_as_expression(): R|kotlin/Boolean| {
+        lvar b: R|kotlin/Boolean| = Boolean(false)
+        ^if_as_expression when () {
+            R|<local>/b| ->  {
+                R|/simple_if|()
+                Boolean(false)
+            }
+            else ->  {
+                R|/if_on_parameter|(R|<local>/b|)
+                Boolean(true)
+            }
+        }
+
+    }
