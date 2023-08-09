@@ -176,7 +176,7 @@ TEST_F(AdaptiveSchedulerTest, CollectOnTimeoutReached) {
     // Wait until the timer is initialized.
     test_support::manual_clock::waitForPending(test_support::manual_clock::now() + microseconds(10));
 
-    EXPECT_CALL(schedulerTestApi.scheduleGC(), Call());
+    EXPECT_CALL(schedulerTestApi.scheduleGC(), Call()).WillOnce(testing::Return(1));
     schedulerTestApi.advance_time(microseconds(10));
     test_support::manual_clock::waitForPending(test_support::manual_clock::now() + microseconds(10));
     testing::Mock::VerifyAndClearExpectations(&schedulerTestApi.scheduleGC());
@@ -197,7 +197,7 @@ TEST_F(AdaptiveSchedulerTest, FullTimeoutAfterLastGC) {
     test_support::manual_clock::waitForPending(test_support::manual_clock::now() + microseconds(10));
 
     schedulerTestApi.advance_time(microseconds(5));
-    EXPECT_CALL(schedulerTestApi.scheduleGC(), Call());
+    EXPECT_CALL(schedulerTestApi.scheduleGC(), Call()).WillOnce(testing::Return(1));
     schedulerTestApi.Allocate(0, 10).get();
     testing::Mock::VerifyAndClearExpectations(&schedulerTestApi.scheduleGC());
     schedulerTestApi.OnPerformFullGC();
@@ -218,7 +218,7 @@ TEST_F(AdaptiveSchedulerTest, DoNotTuneTargetHeap) {
     config.targetHeapBytes = 10;
     GCSchedulerDataTestApi<mutatorsCount> schedulerTestApi(config);
 
-    EXPECT_CALL(schedulerTestApi.scheduleGC(), Call());
+    EXPECT_CALL(schedulerTestApi.scheduleGC(), Call()).WillOnce(testing::Return(1));
     schedulerTestApi.Allocate(0, 10).get();
     testing::Mock::VerifyAndClearExpectations(&schedulerTestApi.scheduleGC());
     schedulerTestApi.OnPerformFullGC();
@@ -239,7 +239,7 @@ TEST_F(AdaptiveSchedulerTest, TuneTargetHeap) {
     config.maxHeapBytes = 50;
     GCSchedulerDataTestApi<mutatorsCount> schedulerTestApi(config);
 
-    EXPECT_CALL(schedulerTestApi.scheduleGC(), Call());
+    EXPECT_CALL(schedulerTestApi.scheduleGC(), Call()).WillOnce(testing::Return(1));
     schedulerTestApi.Allocate(0, 10).get();
     testing::Mock::VerifyAndClearExpectations(&schedulerTestApi.scheduleGC());
     schedulerTestApi.OnPerformFullGC();
@@ -247,7 +247,7 @@ TEST_F(AdaptiveSchedulerTest, TuneTargetHeap) {
 
     EXPECT_THAT(config.targetHeapBytes.load(), 20);
 
-    EXPECT_CALL(schedulerTestApi.scheduleGC(), Call());
+    EXPECT_CALL(schedulerTestApi.scheduleGC(), Call()).WillOnce(testing::Return(2));
     // For a total heap of 20.
     schedulerTestApi.Allocate(0, 10).get();
     testing::Mock::VerifyAndClearExpectations(&schedulerTestApi.scheduleGC());
@@ -256,7 +256,7 @@ TEST_F(AdaptiveSchedulerTest, TuneTargetHeap) {
 
     EXPECT_THAT(config.targetHeapBytes.load(), 40);
 
-    EXPECT_CALL(schedulerTestApi.scheduleGC(), Call());
+    EXPECT_CALL(schedulerTestApi.scheduleGC(), Call()).WillOnce(testing::Return(3));
     // For a total heap of 60.
     schedulerTestApi.Allocate(0, 40).get();
     testing::Mock::VerifyAndClearExpectations(&schedulerTestApi.scheduleGC());
@@ -266,7 +266,7 @@ TEST_F(AdaptiveSchedulerTest, TuneTargetHeap) {
     // But we will keep the 50, which means we will trigger GC every allocation, until alive set falls down
     EXPECT_THAT(config.targetHeapBytes.load(), 50);
 
-    EXPECT_CALL(schedulerTestApi.scheduleGC(), Call());
+    EXPECT_CALL(schedulerTestApi.scheduleGC(), Call()).WillOnce(testing::Return(4));
     // Keeping total heap of 60.
     schedulerTestApi.Allocate(0, 0).get();
     testing::Mock::VerifyAndClearExpectations(&schedulerTestApi.scheduleGC());
@@ -275,7 +275,7 @@ TEST_F(AdaptiveSchedulerTest, TuneTargetHeap) {
 
     EXPECT_THAT(config.targetHeapBytes.load(), 50);
 
-    EXPECT_CALL(schedulerTestApi.scheduleGC(), Call());
+    EXPECT_CALL(schedulerTestApi.scheduleGC(), Call()).WillOnce(testing::Return(5));
     schedulerTestApi.Allocate(0, 0).get();
     testing::Mock::VerifyAndClearExpectations(&schedulerTestApi.scheduleGC());
     schedulerTestApi.OnPerformFullGC();
@@ -284,7 +284,7 @@ TEST_F(AdaptiveSchedulerTest, TuneTargetHeap) {
 
     EXPECT_THAT(config.targetHeapBytes.load(), 50);
 
-    EXPECT_CALL(schedulerTestApi.scheduleGC(), Call());
+    EXPECT_CALL(schedulerTestApi.scheduleGC(), Call()).WillOnce(testing::Return(6));
     // For a total heap of 50
     schedulerTestApi.Allocate(0, 10).get();
     testing::Mock::VerifyAndClearExpectations(&schedulerTestApi.scheduleGC());
@@ -324,7 +324,7 @@ TEST_F(AdaptiveSchedulerTest, DoNotCollectOnTimerInBackground) {
     // Now go back into the foreground.
     appStateTracking.setState(mm::AppStateTracking::State::kForeground);
 
-    EXPECT_CALL(schedulerTestApi.scheduleGC(), Call());
+    EXPECT_CALL(schedulerTestApi.scheduleGC(), Call()).WillOnce(testing::Return(1));
     schedulerTestApi.advance_time(microseconds(10));
     test_support::manual_clock::waitForPending(test_support::manual_clock::now() + microseconds(10));
     testing::Mock::VerifyAndClearExpectations(&schedulerTestApi.scheduleGC());
