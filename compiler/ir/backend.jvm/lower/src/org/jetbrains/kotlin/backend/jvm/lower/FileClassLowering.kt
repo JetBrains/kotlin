@@ -44,7 +44,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.JvmNames.JVM_MULTIFILE_CLASS_SHORT
 import org.jetbrains.kotlin.name.JvmNames.JVM_NAME_SHORT
 import org.jetbrains.kotlin.name.JvmNames.JVM_PACKAGE_NAME_SHORT
-import org.jetbrains.kotlin.name.JvmNames.MULTIFILE_PART_NAME_DELIMITER
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.inline.INLINE_ONLY_ANNOTATION_FQ_NAME
@@ -177,7 +176,7 @@ fun getFileClassInfoFromIrFile(file: IrFile, fileName: String): JvmFileClassInfo
             val facadeClassFqName = packageFqName.child(Name.identifier(simpleName))
             when {
                 parsedAnnotations.isMultifileClass -> JvmMultifileClassPartInfo(
-                    fileClassFqName = packageFqName.child(Name.identifier(manglePartName(simpleName, fileName))),
+                    fileClassFqName = packageFqName.child(Name.identifier(JvmFileClassUtil.manglePartName(simpleName, fileName))),
                     facadeClassFqName = facadeClassFqName
                 )
                 else -> JvmSimpleFileClassInfo(facadeClassFqName, true)
@@ -215,8 +214,5 @@ private fun getLiteralStringFromAnnotation(annotationCall: IrConstructorCall): S
         }
     }
 }
-
-private fun manglePartName(facadeName: String, fileName: String): String =
-    "$facadeName$MULTIFILE_PART_NAME_DELIMITER${PackagePartClassUtils.getFilePartShortName(fileName)}"
 
 internal class ParsedJvmFileClassAnnotations(val jvmName: String?, val jvmPackageName: FqName?, val isMultifileClass: Boolean)
