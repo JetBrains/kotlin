@@ -151,7 +151,8 @@ open class FirFrontendFacade(
                 dependsOnModules,
                 friendModules,
                 mainModule.targetPlatform,
-                mainModule.targetPlatform.getAnalyzerServices()
+                mainModule.targetPlatform.getAnalyzerServices(),
+                isCommon = module.targetPlatform.isCommon(),
             )
 
             moduleInfoProvider.registerModuleData(module, moduleData)

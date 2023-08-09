@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 
 val FirElementWithResolveState.llFirModuleData: LLFirModuleData
@@ -48,6 +49,8 @@ class LLFirModuleData(
     }
 
     override val platform: TargetPlatform get() = ktModule.platform
+
+    override val isCommon: Boolean get() = ktModule.platform.isCommon()
 
     override val analyzerServices: PlatformDependentAnalyzerServices get() = ktModule.analyzerServices
 
