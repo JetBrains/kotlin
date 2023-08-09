@@ -164,17 +164,17 @@ class IdeJvmAndAndroidDependencyResolutionTest {
         val project = buildProject { configureAndroidAndMultiplatform(enableDefaultStdlib = true) }
         val kotlin = project.multiplatformExtension
         kotlin.sourceSets.getByName("commonMain").dependencies {
-            implementation("com.arkivanov.mvikotlin:mvikotlin:3.0.2")
+            implementation("com.arkivanov.mvikotlin:mvikotlin:3.2.1")
         }
 
         project.evaluate()
 
         val kgpVersion = project.getKotlinPluginVersion()
         val jvmAndAndroidDependencies = listOf(
-            binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin-jvm:3.0.2"),
-            binaryCoordinates("com.arkivanov.essenty:lifecycle-jvm:0.4.2"),
-            binaryCoordinates("com.arkivanov.essenty:instance-keeper-jvm:0.4.2"),
-            binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kgpVersion"), // uplifted to plugin version
+            binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin-jvm:3.2.1"),
+            binaryCoordinates("com.arkivanov.essenty:lifecycle-jvm:1.0.0"),
+            binaryCoordinates("com.arkivanov.essenty:instance-keeper-jvm:1.0.0"),
+            binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kgpVersion"),
             binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kgpVersion"),
             binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib:$kgpVersion"),
             binaryCoordinates("org.jetbrains:annotations:13.0"),
