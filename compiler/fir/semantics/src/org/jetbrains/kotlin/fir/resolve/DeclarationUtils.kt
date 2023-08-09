@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.name.ClassId
 
 fun FirClassLikeDeclaration.getContainingDeclaration(session: FirSession): FirClassLikeDeclaration? {
     if (isLocal) {
-        @OptIn(LookupTagInternals::class)
         return (this as? FirRegularClass)?.containingClassForLocalAttr?.toFirRegularClass(session)
     } else {
         val classId = symbol.classId
