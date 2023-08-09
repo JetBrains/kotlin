@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 
 /**
@@ -38,6 +39,9 @@ import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
  *   of IO operations and false matches. To solve this problem we use single session for all dependencies with single deserialized
  *   symbol provider. And during creation FIR for some declaration symbol provider chose which module this declaration will belong to
  *   basing on path of this declaration and passed compiler arguments
+ *
+ * With MPP mode, all modules have the same platform, but some checkers need info about whether the current module is common or not.
+ *   For this purpose the flag [isCommon] is used
  */
 abstract class FirModuleData : FirSessionComponent {
     abstract val name: Name
@@ -45,6 +49,7 @@ abstract class FirModuleData : FirSessionComponent {
     abstract val dependsOnDependencies: List<FirModuleData>
     abstract val friendDependencies: List<FirModuleData>
     abstract val platform: TargetPlatform
+    abstract val isCommon: Boolean
 
     // TODO: analyzerServices are needed only as default imports providers
     //   refactor them to make API clearer
@@ -77,7 +82,8 @@ class FirModuleDataImpl(
     override val friendDependencies: List<FirModuleData>,
     override val platform: TargetPlatform,
     override val analyzerServices: PlatformDependentAnalyzerServices,
-    override val capabilities: FirModuleCapabilities = FirModuleCapabilities.Empty
+    override val capabilities: FirModuleCapabilities = FirModuleCapabilities.Empty,
+    override val isCommon: Boolean = platform.isCommon(),
 ) : FirModuleData()
 
 val FirSession.nullableModuleData: FirModuleData? by FirSession.nullableSessionComponentAccessor()
