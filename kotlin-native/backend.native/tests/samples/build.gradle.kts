@@ -45,11 +45,11 @@ val buildSamplesWithPlatformLibs by tasks.creating {
     if (!isWindows) {
         dependsOn(":curl:assemble")
     }
-    dependsOn(":echoServer:assemble")
     dependsOn(":globalState:assemble")
     dependsOn(":workers:assemble")
 
     if (isMacos || isLinux) {
+        dependsOn(":echoServer:assemble") // https://youtrack.jetbrains.com/issue/KT-50547
         dependsOn(":nonBlockingEchoServer:assemble")
         dependsOn(":tensorflow:assemble")
     }
