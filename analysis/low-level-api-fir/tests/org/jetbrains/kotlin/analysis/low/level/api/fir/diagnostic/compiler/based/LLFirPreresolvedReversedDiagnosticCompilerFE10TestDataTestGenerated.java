@@ -13834,6 +13834,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
                 }
 
                 @Test
+                @TestMetadata("castAnElementToInnerClassWithTypeParameter.kt")
+                public void testCastAnElementToInnerClassWithTypeParameter() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/generics/innerClasses/castAnElementToInnerClassWithTypeParameter.kt");
+                }
+
+                @Test
                 @TestMetadata("checkBoundsOuter.kt")
                 public void testCheckBoundsOuter() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/generics/innerClasses/checkBoundsOuter.kt");
