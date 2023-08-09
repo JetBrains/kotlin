@@ -39,6 +39,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.PrintStream
 import java.lang.management.ManagementFactory
+import java.util.regex.Pattern
 
 
 private const val FAIL_FAST = true
@@ -71,7 +72,12 @@ internal fun isolate() {
     println("Trying to set affinity, other: '$othersList', isolated: '$isolatedList'")
     if (othersList != null) {
         println("Will move others affinity to '$othersList'")
-        ProcessBuilder().command("bash", "-c", "ps -ae -o pid= | xargs -n 1 taskset -cap $othersList ").inheritIO().start().waitFor()
+        val pidRegex = "[0-9]+".toRegex()
+        File("/proc/").listFiles()?.forEach {
+            if (it.resolve("stat").exists() && it.name.matches(pidRegex)) {
+                ProcessBuilder().command("taskset", "-cap", othersList, it.name).inheritIO().start().waitFor()
+            }
+        }
     }
     if (isolatedList != null) {
         val selfPid = CLibrary.INSTANCE.getpid()
@@ -292,7 +298,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractFrontendModularizedTest() {
 
 class FirCheckersResolveProcessor(
     session: FirSession,
-    scopeSession: ScopeSession
+    scopeSession: ScopeSession,
 ) : FirTransformerBasedResolveProcessor(session, scopeSession, phase = null) {
     val diagnosticCollector: AbstractDiagnosticCollector = FirDiagnosticsCollector.create(session, scopeSession)
 
