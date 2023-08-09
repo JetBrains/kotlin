@@ -61,6 +61,7 @@ class WasmIrToBinary(
     private val sourceLocationMappings: MutableList<SourceLocationMapping>? = null,
     private val watInstructionLocations: Map<WasmInstr, SourceLocation>? = null,
     private val watSourceLocationMappings: MutableList<SourceLocationMapping>? = null,
+    private val wasmInstructionOffsets: MutableMap<WasmInstr, Pair<Int, Int>>? = null
 ) {
     private var b: ByteWriter = ByteWriter.OutputStream(outputStream)
 
@@ -256,12 +257,13 @@ class WasmIrToBinary(
         watInstructionLocations?.get(instr)?.let {
             watSourceLocationMappings?.add(SourceLocationMapping(offset, it))
         }
+        val startOffset = offset.sumOf { it.value }
 
         val opcode = instr.operator.opcode
-
-        if (opcode == WASM_OP_PSEUDO_OPCODE)
+        if (opcode == WASM_OP_PSEUDO_OPCODE) {
+            wasmInstructionOffsets?.put(instr, startOffset to startOffset)
             return
-
+        }
         if (opcode > 0xFF) {
             b.writeByte((opcode ushr 8).toByte())
             b.writeByte((opcode and 0xFF).toByte())
@@ -272,6 +274,8 @@ class WasmIrToBinary(
         instr.immediates.forEach {
             appendImmediate(it)
         }
+        val endOffset = (offsets + Box(b.written)).sumOf { it.value }
+        wasmInstructionOffsets?.put(instr, startOffset to endOffset)
     }
 
     private fun appendImmediate(x: WasmImmediate) {

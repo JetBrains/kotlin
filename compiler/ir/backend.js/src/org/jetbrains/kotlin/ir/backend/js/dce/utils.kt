@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.backend.js.dce
 
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.lower.PrimaryConstructorLowering
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
@@ -32,7 +31,12 @@ internal fun IrDeclaration.fqNameForDceDump(): String {
 
 private data class IrDeclarationDumpInfo(val fqName: String, val type: String, val size: Int)
 
-fun dumpDeclarationIrSizesIfNeed(path: String?, allModules: List<IrModuleFragment>, dceDumpNameCache: DceDumpNameCache) {
+fun dumpDeclarationIrSizesIfNeed(
+    path: String?,
+    allModules: List<IrModuleFragment>,
+    dceDumpNameCache: DceDumpNameCache,
+    symbolOffsets: Map<IrDeclaration, Int>? = null,
+) {
     if (path == null) return
 
     val declarations = linkedSetOf<IrDeclarationDumpInfo>()
@@ -52,11 +56,17 @@ fun dumpDeclarationIrSizesIfNeed(path: String?, allModules: List<IrModuleFragmen
                     else -> null
                 }
                 type?.let {
+                    val size = when {
+                        symbolOffsets == null -> declaration.dumpKotlinLike().length
+                        symbolOffsets[declaration] != null -> symbolOffsets[declaration]!!
+                        type == "field" -> 3
+                        else -> return@let
+                    }
                     declarations.add(
                         IrDeclarationDumpInfo(
                             fqName = dceDumpNameCache.getOrPut(declaration).removeQuotes(),
                             type = it,
-                            size = declaration.dumpKotlinLike().length
+                            size = size
                         )
                     )
                 }

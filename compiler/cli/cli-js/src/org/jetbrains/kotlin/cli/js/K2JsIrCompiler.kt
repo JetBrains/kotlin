@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.ir.backend.js.dce.DceDumpNameCache
 import org.jetbrains.kotlin.ir.backend.js.dce.dumpDeclarationIrSizesIfNeed
 import org.jetbrains.kotlin.ir.backend.js.ic.*
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
 import org.jetbrains.kotlin.ir.linkage.partial.setupPartialLinkageConfig
@@ -358,7 +359,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 dumpDeclarationIrSizesIfNeed(arguments.irDceDumpDeclarationIrSizesToFile, allModules, dceDumpNameCache)
 
                 val generateSourceMaps = configuration.getBoolean(JSConfigurationKeys.SOURCE_MAP)
-
+                val symbolOffsets = if (arguments.irDceDumpDeclarationWasmSizesToFile != null) hashMapOf<IrDeclaration, Int>() else null
                 val res = compileWasm(
                     allModules = allModules,
                     backendContext = backendContext,
@@ -368,6 +369,13 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     generateWat = configuration.get(JSConfigurationKeys.WASM_GENERATE_WAT, false),
                     generateSourceMaps = generateSourceMaps,
                     generateWatSourceMap = configuration.get(JSConfigurationKeys.WASM_GENERATE_WAT_SOURCE_MAP, false),
+                    irDeclarationWasmSizes = symbolOffsets,
+                )
+                dumpDeclarationIrSizesIfNeed(
+                    arguments.irDceDumpDeclarationWasmSizesToFile,
+                    allModules,
+                    dceDumpNameCache,
+                    symbolOffsets
                 )
 
                 writeCompilationResult(

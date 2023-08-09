@@ -322,6 +322,20 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
             field = value
         }
 
+    @Argument(
+        value = "-Xir-dump-declaration-wasm-sizes-to-file",
+        valueDescription = "<path>",
+        description = "Dump the **WASM** size of each declaration to a file. " +
+                "The format will be chosen automatically depending on the file extension. " +
+                "Supported output formats include JSON for .json, JS const initialized with a plain object containing information for .js, " +
+                "and plain text for all other file types."
+    )
+    var irDceDumpDeclarationWasmSizesToFile: String? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     @Argument(value = "-Xir-property-lazy-initialization", description = "Perform lazy initialization for properties")
     var irPropertyLazyInitialization = true
         set(value) {

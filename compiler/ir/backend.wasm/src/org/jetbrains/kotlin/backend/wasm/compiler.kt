@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.SourceMapsInfo
 import org.jetbrains.kotlin.ir.backend.js.loadIr
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.js.config.WasmTarget
 import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver
 import org.jetbrains.kotlin.js.sourceMap.SourceMap3Builder
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.wasm.ir.WasmFunction
 import org.jetbrains.kotlin.wasm.ir.WasmInstr
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToBinary
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToText
@@ -99,6 +101,7 @@ fun compileWasm(
     generateWat: Boolean = false,
     generateSourceMaps: Boolean = false,
     generateWatSourceMap: Boolean = false,
+    irDeclarationWasmSizes: MutableMap<IrDeclaration, Int>? = null,
 ): WasmCompilerResult {
     val compiledWasmModule = WasmCompiledModuleFragment(
         backendContext.irBuiltIns,
@@ -116,6 +119,11 @@ fun compileWasm(
         val watGenerator = WasmIrToText(watWasmInstructionLocation, "$baseFileName.wat")
         watGenerator.appendWasmModule(linkedModule)
         watGenerator.toString()
+    } else {
+        null
+    }
+    val wasmInstructionOffsets = if (irDeclarationWasmSizes != null) {
+        hashMapOf<WasmInstr, Pair<Int, Int>>()
     } else {
         null
     }
@@ -137,10 +145,23 @@ fun compileWasm(
             sourceMapFileName,
             sourceLocationMappings,
             watWasmInstructionLocation,
-            watSourceLocationMappings
+            watSourceLocationMappings,
+            wasmInstructionOffsets
         )
 
     wasmIrToBinary.appendWasmModule()
+
+    if (wasmInstructionOffsets != null && irDeclarationWasmSizes != null) {
+        compiledWasmModule.functions.defined.forEach { (symbol, instr) ->
+            if (instr !is WasmFunction.Defined) {
+                return@forEach
+            }
+            irDeclarationWasmSizes.putBodyLength(symbol.owner, instr.instructions, wasmInstructionOffsets, instr.name)
+        }
+        compiledWasmModule.globalFields.wasmToIr.forEach { (instr, symbol) ->
+            irDeclarationWasmSizes.putBodyLength(symbol.owner, instr.init, wasmInstructionOffsets, instr.name)
+        }
+    }
 
     val byteArray = os.toByteArray()
     val jsUninstantiatedWrapper: String?
@@ -397,4 +418,19 @@ fun writeCompilationResult(
     if (result.watSourceMap != null) {
         File(dir, "$fileNameBase.wat.map").writeText(result.watSourceMap)
     }
+}
+
+private fun MutableMap<IrDeclaration, Int>.putBodyLength(
+    key: IrDeclaration,
+    body: List<WasmInstr>,
+    offsets: Map<WasmInstr, Pair<Int, Int>>,
+    instrName: String
+) {
+    if (body.isEmpty()) {
+        put(key, 0)
+        return
+    }
+    val (startOffset) = offsets[body.first()] ?: error("Couldn't find start offset for $instrName")
+    val (_, endOffset) = offsets[body.last()] ?: error("Couldn't find end offset for $instrName")
+    put(key, endOffset - startOffset)
 }
