@@ -63,12 +63,9 @@ abstract class AbstractFirContextCollectionTest : AbstractLowLevelApiSingleFileT
     }
 
     private fun FileStructureElement.getFirDeclaration(): FirDeclaration = when (this) {
-        is ReanalyzableStructureElement<*, *> -> firSymbol.fir
         is RootStructureElement -> firFile
-        is DanglingTopLevelModifierListStructureElement -> fir
-        is NonReanalyzableClassDeclarationStructureElement -> fir
-        is NonReanalyzableNonClassDeclarationStructureElement -> fir
-        is RootScriptStructureElement -> script
+        is ReanalyzableStructureElement<*, *> -> firSymbol.fir
+        is NonReanalyzableDeclarationStructureElement<*> -> firDeclaration
     }
 
     private class BeforeElementLLFirSessionConfigurator(private val testServices: TestServices) : LLFirSessionConfigurator {

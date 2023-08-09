@@ -214,7 +214,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
             forcedResolvePhase = requiredResolvePhase(minimalCopiedDeclaration, elementToAnalyze),
         )
 
-        val mapping = KtToFirMapping(copiedFirDeclaration, FirElementsRecorder())
+        val mapping = KtToFirMapping(copiedFirDeclaration)
         return LLFirResolveSessionDepended(originalFirResolveSession, collector, mapping)
     }
 
