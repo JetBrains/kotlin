@@ -18,6 +18,7 @@ fun copyK2JSCompilerArguments(from: K2JSCompilerArguments, to: K2JSCompilerArgum
     to.forceDeprecatedLegacyCompilerUsage = from.forceDeprecatedLegacyCompilerUsage
     to.friendModules = from.friendModules
     to.friendModulesDisabled = from.friendModulesDisabled
+    to.functionWatLocationsFilePath = from.functionWatLocationsFilePath
     to.generateDts = from.generateDts
     to.generatePolyfills = from.generatePolyfills
     to.includes = from.includes
@@ -25,6 +26,7 @@ fun copyK2JSCompilerArguments(from: K2JSCompilerArguments, to: K2JSCompilerArgum
     to.irBuildCache = from.irBuildCache
     to.irDce = from.irDce
     to.irDceDumpDeclarationIrSizesToFile = from.irDceDumpDeclarationIrSizesToFile
+    to.irDceDumpDeclarationWasmSizesToFile = from.irDceDumpDeclarationWasmSizesToFile
     to.irDceDumpReachabilityInfoToFile = from.irDceDumpReachabilityInfoToFile
     to.irDcePrintReachabilityInfo = from.irDcePrintReachabilityInfo
     to.irDceRuntimeDiagnostic = from.irDceRuntimeDiagnostic

@@ -17,10 +17,15 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.SourceMapsInfo
+import org.jetbrains.kotlin.ir.backend.js.dce.DceDumpNameCache
+import org.jetbrains.kotlin.ir.backend.js.dce.joinToStringWithGuessedFormat
+import org.jetbrains.kotlin.ir.backend.js.dce.removeQuotes
 import org.jetbrains.kotlin.ir.backend.js.loadIr
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFactory
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
@@ -44,6 +49,7 @@ class WasmCompilerResult(
     val wasm: ByteArray,
     val sourceMap: String?,
     val watSourceMap: String?,
+    val functionsWatPositions: Map<IrDeclaration, SourceLocation>?
 )
 
 fun compileToLoweredIr(
@@ -184,6 +190,7 @@ fun compileWasm(
         wasm = byteArray,
         sourceMap = generateSourceMap(backendContext.configuration, sourceLocationMappings),
         watSourceMap = generateSourceMap(backendContext.configuration, watSourceLocationMappings, relative = false),
+        functionsWatPositions = watWasmInstructionLocation?.let { transformIrWasmMapToLocationMap(compiledWasmModule.functions.defined, it) }
     )
 }
 
@@ -434,3 +441,16 @@ private fun MutableMap<IrDeclaration, Int>.putBodyLength(
     val (_, endOffset) = offsets[body.last()] ?: error("Couldn't find end offset for $instrName")
     put(key, endOffset - startOffset)
 }
+
+private fun transformIrWasmMapToLocationMap(
+    defined: Map<IrFunctionSymbol, WasmFunction>,
+    locations: Map<WasmInstr, SourceLocation>,
+): Map<IrDeclaration, SourceLocation> =
+    defined.asSequence()
+        .filter { (_, v) -> v is WasmFunction.Defined && v.instructions.isNotEmpty() }
+        .map { (k, v) ->
+            require(v is WasmFunction.Defined)
+            val sourceLocation = locations[v.instructions.first()] ?: error("Can't find source location for ${v.name}")
+            k.owner to sourceLocation
+        }
+        .toMap()

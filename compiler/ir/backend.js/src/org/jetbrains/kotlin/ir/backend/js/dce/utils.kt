@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.dce
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.lower.PrimaryConstructorLowering
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -77,13 +78,13 @@ fun dumpDeclarationIrSizesIfNeed(
     }
 
     val out = File(path)
-    val (prefix, postfix, separator, indent) = when (out.extension) {
-        "json" -> listOf("{\n", "\n}", ",\n", "    ")
-        "js" -> listOf("export const kotlinDeclarationsSize = {\n", "\n};\n", ",\n", "    ")
-        else -> listOf("", "", "\n", "")
+    val indent = when (out.extension) {
+        "json" -> "    "
+        "js" -> "    "
+        else -> ""
     }
 
-    val value = declarations.joinToString(separator, prefix, postfix) { declaration ->
+    val value = declarations.joinToStringWithGuessedFormat(out, "kotlinDeclarationsSize") { declaration ->
         """$indent"${declaration.fqName}": {
                 |$indent$indent"size": ${declaration.size},
                 |$indent$indent"type": "${declaration.type}"
@@ -94,6 +95,15 @@ fun dumpDeclarationIrSizesIfNeed(
     out.writeText(value)
 }
 
-internal fun String.removeQuotes() = replace('"'.toString(), "")
+fun String.removeQuotes() = replace('"'.toString(), "")
     .replace("'", "")
     .replace("\\", "\\\\")
+
+fun <T> Collection<T>.joinToStringWithGuessedFormat(file: File, jsName: String, transform: (T) -> String): String {
+    val (prefix, postfix, separator) = when (file.extension) {
+        "json" -> listOf("{\n", "\n}", ",\n")
+        "js" -> listOf("export const $jsName = {\n", "\n};\n", ",\n")
+        else -> listOf("", "", "\n")
+    }
+    return this.joinToString(separator, prefix, postfix, transform = transform)
+}

@@ -10,6 +10,8 @@ where advanced options include:
                              The flag is used only for our inner infrastructure. It will be removed soon, so it's unsafe to use it nowadays.
   -Xfriend-modules=<path>    Paths to friend modules
   -Xfriend-modules-disabled  Disable internal declaration export
+  -Xdump-functions-location-in-wat-to-file=<path>
+                             Dump the location inside .wat file of each declaration to a file. The format will be chosen automatically depending on the file extension. Supported output formats include JSON for .json, JS const initialized with a plain object containing information for .js, and plain text for all other file types.
   -Xgenerate-dts             Generate TypeScript declarations .d.ts file alongside JS file. Available in IR backend only.
   -Xgenerate-polyfills       Generate polyfills for features from the ES6+ standards.
   -Xinclude=<path>           A path to an intermediate library that should be processed in the same manner as source files.

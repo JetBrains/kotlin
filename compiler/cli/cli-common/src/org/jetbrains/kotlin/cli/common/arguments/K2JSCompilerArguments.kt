@@ -643,6 +643,20 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
             field = value
         }
 
+    @Argument(
+        value = "-Xdump-functions-location-in-wat-to-file",
+        valueDescription = "<path>",
+        description = "Dump the location inside .wat file of each declaration to a file. " +
+                "The format will be chosen automatically depending on the file extension. " +
+                "Supported output formats include JSON for .json, JS const initialized with a plain object containing information for .js, " +
+                "and plain text for all other file types."
+    )
+    var functionWatLocationsFilePath: String? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     @Argument(value = "-Xwasm-target", description = "Set up Wasm target (wasm-js or wasm-wasi)")
     var wasmTarget: String? = null
         set(value) {

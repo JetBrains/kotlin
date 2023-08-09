@@ -43,6 +43,8 @@ import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.dce.DceDumpNameCache
 import org.jetbrains.kotlin.ir.backend.js.dce.dumpDeclarationIrSizesIfNeed
+import org.jetbrains.kotlin.ir.backend.js.dce.joinToStringWithGuessedFormat
+import org.jetbrains.kotlin.ir.backend.js.dce.removeQuotes
 import org.jetbrains.kotlin.ir.backend.js.ic.*
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -64,6 +66,7 @@ import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.join
+import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 import java.io.File
 import java.io.IOException
 
@@ -383,6 +386,13 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     dir = outputDir,
                     fileNameBase = outputName,
                 )
+                res.functionsWatPositions?.let {
+                    dumpFunctionWatLocationIfNeeded(
+                        arguments.functionWatLocationsFilePath,
+                        it,
+                        dceDumpNameCache
+                    )
+                }
 
                 return OK
             } else {
@@ -871,4 +881,33 @@ fun loadPluginsForTests(configuration: CompilerConfiguration): ExitCode {
     pluginClasspath = jars.map { it.canonicalPath } + pluginClasspath
 
     return PluginCliParser.loadPluginsSafe(pluginClasspath, listOf(), listOf(), configuration)
+}
+
+fun dumpFunctionWatLocationIfNeeded(
+    path: String?,
+    definedFunctions: Map<IrDeclaration, SourceLocation>,
+    dceDumpNameCache: DceDumpNameCache,
+) {
+    if (path == null) return
+
+    val out = File(path)
+    val indent = when (out.extension) {
+        "json" -> "    "
+        "js" -> "    "
+        else -> ""
+    }
+
+    val value = definedFunctions
+        .toList()
+        .filterIsInstance<Pair<IrDeclaration, SourceLocation.Location>>()
+        .joinToStringWithGuessedFormat(out, "functionsWatLocation") { (declaration, location) ->
+            """$indent"${dceDumpNameCache.getOrPut(declaration)}": {
+                |$indent$indent"file": "${location.file.removeQuotes()}",
+                |$indent$indent"lineNumber": "${location.line}",
+                |$indent$indent"columnNumber": "${location.column}"
+                |$indent}
+            """.trimMargin()
+        }
+
+    out.writeText(value)
 }
