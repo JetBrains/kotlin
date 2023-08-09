@@ -57,6 +57,7 @@ inline void checkAllAliveObjectsMarked() {
     gc::Mark<VerificationMarkTraits>(fakeHandle, markQueue);
 }
 
+// TODO remove?
 // must be called inside STW
 template <typename Heap>
 inline void checkMarkClosureComplete(Heap& heap) {

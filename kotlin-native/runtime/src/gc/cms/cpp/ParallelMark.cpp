@@ -1,5 +1,7 @@
 #include "ParallelMark.hpp"
 
+#include <utility>
+
 #include "MarkAndSweepUtils.hpp"
 #include "GCStatistics.hpp"
 #include "Utils.hpp"
@@ -7,6 +9,7 @@
 
 // required to access gc thread data
 #include "GCImpl.hpp"
+#include "VerificationMark.hpp"
 
 using namespace kotlin;
 
@@ -83,15 +86,14 @@ void gc::mark::ParallelMark::beginMarkingEpoch(gc::GCHandle gcHandle) {
         // main worker is always accounted, so others would not be able to exhaust all the parallelism before main is instantiated
         activeWorkersCount_ = 1;
     }
-}
 
-void gc::mark::ParallelMark::waitForThreadsPauseMutation() noexcept {
-    RuntimeAssert(!kotlin::mm::IsCurrentThreadRegistered(), "Dispatcher thread must not be registered");
-    spinWait([this] {
-        return allMutators([](mm::ThreadData& mut) {
-            return mm::isSuspendedOrNative(mut) || mut.gc().impl().gc().cooperative();
-        });
-    });
+    bool didSuspend = mm::RequestThreadsSuspension();
+    RuntimeAssert(didSuspend, "Only GC thread can request suspension");
+    gcHandle.suspensionRequested();
+
+    waitForThreadsPauseMutation();
+    GCLogDebug(gcHandle.getEpoch(), "All threads have paused mutation");
+    gcHandle.threadsAreSuspended();
 }
 
 void gc::mark::ParallelMark::endMarkingEpoch() {
@@ -108,17 +110,32 @@ void gc::mark::ParallelMark::endMarkingEpoch() {
     parallelProcessor_.destroy();
     resetMutatorFlags();
     lockedMutatorsList_ = std::nullopt;
+
+    // must be in STW
+    // must be in the same alloc-epoch as the mark
+    checkAllAliveObjectsMarked();
 }
 
-void gc::mark::ParallelMark::runMainInSTW() {
+void gc::mark::ParallelMark::waitForThreadsPauseMutation() noexcept {
+    RuntimeAssert(!kotlin::mm::IsCurrentThreadRegistered(), "Dispatcher thread must not be registered");
+    spinWait([this] {
+        return allMutators([](mm::ThreadData& mut) {
+            return mm::isSuspendedOrNative(mut) || mut.gc().impl().gc().cooperative();
+        });
+    });
+}
+
+void gc::mark::ParallelMark::runMain(gc::GCHandle gcHandle) {
+    beginMarkingEpoch(gcHandle);
+    // TODO add global STW flag for asserts
     if (compiler::gcMarkSingleThreaded()) {
         ParallelProcessor::Worker worker(*parallelProcessor_);
-        gc::collectRootSet<MarkTraits>(gcHandle(), worker, [] (mm::ThreadData&) { return true; });
-        gc::Mark<MarkTraits>(gcHandle(), worker);
+        gc::collectRootSet<MarkTraits>(gcHandle, worker, [] (mm::ThreadData&) { return true; });
+        gc::Mark<MarkTraits>(gcHandle, worker);
     } else {
         RuntimeAssert(activeWorkersCount_ > 0, "Main worker must always be accounted");
         ParallelProcessor::Worker mainWorker(*parallelProcessor_);
-        GCLogDebug(gcHandle().getEpoch(), "Creating main (#0) mark worker");
+        GCLogDebug(gcHandle.getEpoch(), "Creating main (#0) mark worker");
 
         pacer_.begin(MarkPacer::Phase::kRootSet);
         completeMutatorsRootSet(mainWorker);
@@ -126,11 +143,12 @@ void gc::mark::ParallelMark::runMainInSTW() {
             return allMutators([](mm::ThreadData& mut) { return mut.gc().impl().gc().published(); });
         });
         // global root set must be collected after all the mutator's global data have been published
-        collectRootSetGlobals<MarkTraits>(gcHandle(), mainWorker);
+        collectRootSetGlobals<MarkTraits>(gcHandle, mainWorker);
 
         pacer_.begin(MarkPacer::Phase::kParallelMark);
         parallelMark(mainWorker);
     }
+    endMarkingEpoch();
 }
 
 void gc::mark::ParallelMark::runOnMutator(mm::ThreadData& mutatorThread) {
@@ -240,3 +258,31 @@ void gc::mark::ParallelMark::resetMutatorFlags() {
         gcData.clearMarkFlags();
     }
 }
+
+#ifdef CUSTOM_ALLOCATOR
+std::optional<int> gc::mark::ParallelMark::isolateMarkedHeapAndFinishMark() {
+    // TODO write a good doc comment
+    // This should really be done by each individual thread while waiting
+    for (auto& thread : kotlin::mm::ThreadRegistry::Instance().LockForIter()) {
+        thread.gc().impl().alloc().PrepareForGC();
+    }
+    auto& heap = mm::GlobalData::Instance().gc().impl().gc().heap(); // FIXME dependancy on GC impl
+    heap.PrepareForGC();
+
+    return std::nullopt;
+}
+#else
+std::optional<std::pair<gc::ObjectFactory::Iterable, mm::ExtraObjectDataFactory::Iterable>> gc::mark::ParallelMark::isolateMarkedHeapAndFinishMark() {
+    for (auto& thread : kotlin::mm::ThreadRegistry::Instance().LockForIter()) {
+        thread.gc().PublishObjectFactory();
+    }
+
+    auto& gc = mm::GlobalData::Instance().gc().impl();
+    // would not publish into the global state at an unexpected time.
+    auto objectFactoryIterable = gc.objectFactory().LockForIter();
+    auto extraObjectFactoryIterable = gc.extraObjectDataFactory().LockForIter();
+
+    return std::pair{std::move(objectFactoryIterable), std::move(extraObjectFactoryIterable)};
+}
+#endif
+

@@ -65,7 +65,7 @@ private:
  * Parallel mark dispatcher.
  * Mark can be performed on one or more threads.
  * Each threads wanting to participate have to execute an appropriate run- routine when ready to mark.
- * There must be exactly one executor of a `runMainInSTW()`.
+ * There must be exactly one executor of a `runMain()`.
  *
  * Mark workers are able to balance work between each other through sharing/stealing.
  */
@@ -109,12 +109,8 @@ public:
 
     ParallelMark(bool mutatorsCooperate);
 
-    void beginMarkingEpoch(gc::GCHandle gcHandle);
-    void waitForThreadsPauseMutation() noexcept;
-    void endMarkingEpoch();
-
-    /** To be run by a single "main" GC thread during STW. */
-    void runMainInSTW();
+    /** To be run by a single "main" GC thread. */
+    void runMain(gc::GCHandle gcHandle);
 
     /**
      * To be run by mutator threads that would like to participate in mark.
@@ -139,8 +135,21 @@ public:
         setParallelismLevel(maxParallelism, mutatorsCooperate);
     }
 
+    // TODO invent proper return type
+#ifdef CUSTOM_ALLOCATOR
+    std::optional<int> isolateMarkedHeapAndFinishMark();
+#else
+    std::optional<std::pair<gc::ObjectFactory::Iterable, mm::ExtraObjectDataFactory::Iterable>> isolateMarkedHeapAndFinishMark();
+#endif
+
 private:
     GCHandle& gcHandle();
+
+    // FIXME rearrange?
+    void beginMarkingEpoch(gc::GCHandle gcHandle);
+    void endMarkingEpoch();
+
+    void waitForThreadsPauseMutation() noexcept;
 
     void setParallelismLevel(size_t maxParallelism, bool mutatorsCooperate);
 

@@ -11,7 +11,7 @@
 #include "Memory.h"
 #include "Utils.hpp"
 
-namespace kotlin::gc {
+namespace kotlin::gc::barriers {
 
 class BarriersThreadData : private Pinned {
 public:
@@ -30,5 +30,7 @@ void EnableWeakRefBarriers() noexcept;
 void DisableWeakRefBarriers() noexcept;
 
 OBJ_GETTER(WeakRefRead, std::atomic<ObjHeader*>& weakReferee) noexcept;
+
+void Allocation(ObjHeader* allocated) noexcept;
 
 } // namespace kotlin::gc

@@ -36,7 +36,7 @@ NO_INLINE ObjHeader* weakRefReadSlowPath(std::atomic<ObjHeader*>& weakReferee) n
     return barrier ? barrier(weak) : weak;
 }
 
-void waitForThreadsToReachCheckpoint() {
+[[maybe_unused]] void waitForThreadsToReachCheckpoint() {
     // Reset checkpoint on all threads.
     for (auto& thr : mm::ThreadRegistry::Instance().LockForIter()) {
         thr.gc().impl().gc().barriers().resetCheckpoint();
@@ -53,28 +53,28 @@ void waitForThreadsToReachCheckpoint() {
 
 } // namespace
 
-void gc::BarriersThreadData::onCheckpoint() noexcept {
+void gc::barriers::BarriersThreadData::onCheckpoint() noexcept {
     visitedCheckpoint_.store(true, std::memory_order_release);
 }
 
-void gc::BarriersThreadData::resetCheckpoint() noexcept {
+void gc::barriers::BarriersThreadData::resetCheckpoint() noexcept {
     visitedCheckpoint_.store(false, std::memory_order_release);
 }
 
-bool gc::BarriersThreadData::visitedCheckpoint() const noexcept {
+bool gc::barriers::BarriersThreadData::visitedCheckpoint() const noexcept {
     return visitedCheckpoint_.load(std::memory_order_acquire);
 }
 
-void gc::EnableWeakRefBarriers() noexcept {
+void gc::barriers::EnableWeakRefBarriers() noexcept {
     weakRefBarrier.store(weakRefBarrierImpl, std::memory_order_seq_cst);
 }
 
-void gc::DisableWeakRefBarriers() noexcept {
+void gc::barriers::DisableWeakRefBarriers() noexcept {
     weakRefBarrier.store(nullptr, std::memory_order_seq_cst);
-    waitForThreadsToReachCheckpoint();
+    //waitForThreadsToReachCheckpoint();
 }
 
-OBJ_GETTER(kotlin::gc::WeakRefRead, std::atomic<ObjHeader*>& weakReferee) noexcept {
+OBJ_GETTER(gc::barriers::WeakRefRead, std::atomic<ObjHeader*>& weakReferee) noexcept {
     // TODO: Make this work with GCs that can stop thread at any point.
 
     if (!compiler::concurrentWeakSweep()) {
@@ -90,4 +90,14 @@ OBJ_GETTER(kotlin::gc::WeakRefRead, std::atomic<ObjHeader*>& weakReferee) noexce
         result = weakReferee.load(std::memory_order_relaxed);
     }
     RETURN_OBJ(result);
+}
+
+void kotlin::gc::barriers::Allocation(ObjHeader* allocated) noexcept {
+    if (compiler::concurrentWeakSweep()) {
+        auto barrier = weakRefBarrier.load(std::memory_order_relaxed);
+        if (__builtin_expect(barrier != nullptr, false)) {
+            auto& objectData = objectDataForObject(allocated);
+            objectData.tryMark();
+        }
+    }
 }

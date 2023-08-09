@@ -35,7 +35,7 @@ public:
 
         Impl& impl() noexcept { return *impl_; }
 
-        void Publish() noexcept;
+        void PublishObjectFactory() noexcept;
         void ClearForTests() noexcept;
 
         ObjHeader* CreateObject(const TypeInfo* typeInfo) noexcept;

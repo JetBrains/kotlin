@@ -20,7 +20,7 @@ gc::GC::ThreadData::ThreadData(GC& gc, mm::ThreadData& threadData) noexcept : im
 
 gc::GC::ThreadData::~ThreadData() = default;
 
-void gc::GC::ThreadData::Publish() noexcept {
+void gc::GC::ThreadData::PublishObjectFactory() noexcept {
 #ifndef CUSTOM_ALLOCATOR
     impl_->extraObjectDataFactoryThreadQueue().Publish();
     impl_->objectFactoryThreadQueue().Publish();

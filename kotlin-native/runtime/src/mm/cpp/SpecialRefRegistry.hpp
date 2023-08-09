@@ -187,6 +187,7 @@ public:
 
         void publish() noexcept {
             for (auto& node : queue_) {
+                // FIXME what about CMS??
                 // No need to synchronize. These two can only be updated in the runnable state.
                 // TODO: If we were to remove this optimization, we could avoid scanning
                 //       the whole queue here and just have the nodes inserted into the roots

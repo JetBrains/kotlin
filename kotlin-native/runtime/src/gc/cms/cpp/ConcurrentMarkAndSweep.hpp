@@ -40,7 +40,7 @@ public:
 
         void safePoint() noexcept { barriers_.onCheckpoint(); }
 
-        BarriersThreadData& barriers() noexcept { return barriers_; }
+        barriers::BarriersThreadData& barriers() noexcept { return barriers_; }
 
         bool tryLockRootSet();
         void beginCooperation();
@@ -55,7 +55,7 @@ public:
         friend ConcurrentMarkAndSweep;
         ConcurrentMarkAndSweep& gc_;
         mm::ThreadData& threadData_;
-        BarriersThreadData barriers_;
+        barriers::BarriersThreadData barriers_;
 
         std::atomic<bool> rootSetLocked_ = false;
         std::atomic<bool> published_ = false;
@@ -93,8 +93,9 @@ private:
     void PerformFullGC(int64_t epoch) noexcept;
 
 #ifndef CUSTOM_ALLOCATOR
-    ObjectFactory& objectFactory_;
-    mm::ExtraObjectDataFactory& extraObjectDataFactory_;
+    // TODO delete?
+    [[maybe_unused]] ObjectFactory& objectFactory_;
+    [[maybe_unused]] mm::ExtraObjectDataFactory& extraObjectDataFactory_;
 #else
     alloc::Heap heap_;
 #endif
