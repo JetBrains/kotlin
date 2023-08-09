@@ -196,7 +196,7 @@ private fun loadResolvedLibraries(
     val dependencies = mutableListOf<ModuleDescriptorImpl>()
 
     return resolvedLibraries.map { resolvedLibrary ->
-        // resolvedLibrary.library.libraryName in fact resolves to (modified) file path, which is confising and maybe should be refactored
+        // resolvedLibrary.library.libraryName in fact resolves to (modified) file path, which is confusing and maybe should be refactored
         testServices.libraryProvider.getOrCreateStdlibByPath(resolvedLibrary.library.libraryName) {
             // TODO: check safety of the approach of creating a separate storage manager per library
             val storageManager = LockBasedStorageManager("ModulesStructure")

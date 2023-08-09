@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LINK_VIA_
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
+import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CodegenHelpersSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
@@ -35,6 +36,8 @@ abstract class AbstractIrTextTest<FrontendOutput : ResultingArtifact.FrontendOut
     abstract val frontend: FrontendKind<*>
     abstract val frontendFacade: Constructor<FrontendFacade<FrontendOutput>>
     abstract val converter: Constructor<Frontend2BackendConverter<FrontendOutput, IrBackendInput>>
+
+    open val irTextDumpHandler = ::IrTextDumpHandler
 
     open fun TestConfigurationBuilder.applyConfigurators() {}
 
@@ -83,7 +86,7 @@ abstract class AbstractIrTextTest<FrontendOutput : ResultingArtifact.FrontendOut
 
         irHandlersStep {
             useHandlers(
-                ::IrTextDumpHandler,
+                irTextDumpHandler,
                 ::IrTreeVerifierHandler,
                 ::IrPrettyKotlinDumpHandler,
                 ::IrMangledNameAndSignatureDumpHandler,
