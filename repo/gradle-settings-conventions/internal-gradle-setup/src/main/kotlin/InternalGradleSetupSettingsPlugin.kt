@@ -18,6 +18,7 @@ private const val DOMAIN_NAME = "kotlin-build-properties.labs.jb.gg"
 private const val SETUP_JSON_URL = "https://$DOMAIN_NAME/setup.json"
 
 private const val PLUGIN_SWITCH_PROPERTY = "kotlin.build.internal.gradle.setup"
+private const val CONSENT_GRADLE_PROPERTY = "kotlin.build.internal.gradle.setup.consent"
 
 abstract class InternalGradleSetupSettingsPlugin : Plugin<Settings> {
     private val log = Logging.getLogger(javaClass)
@@ -33,7 +34,7 @@ abstract class InternalGradleSetupSettingsPlugin : Plugin<Settings> {
         }
         try {
             val modifier = LocalPropertiesModifier(target.rootDir.resolve("local.properties"))
-            val consentManager = ConsentManager(modifier)
+            val consentManager = ConsentManager(modifier, target.providers.gradleProperty(CONSENT_GRADLE_PROPERTY).orNull?.toBoolean())
             val initialDecision = consentManager.getUserDecision()
             if (initialDecision == false) {
                 log.debug("Skipping automatic local.properties configuration as you've opted out")

@@ -50,6 +50,32 @@ class ConsentManagerTest {
     }
 
     @Test
+    @DisplayName("if there's no local consent, but the global one is given")
+    fun testGlobalConsentGiven() {
+        assertEquals(true, ConsentManager(modifier, true).getUserDecision())
+    }
+
+    @Test
+    @DisplayName("if there's no local consent, but the global one is refused")
+    fun testGlobalConsentRefusal() {
+        assertEquals(false, ConsentManager(modifier, false).getUserDecision())
+    }
+
+    @Test
+    @DisplayName("local given consent takes priority over the global one")
+    fun testLocalGivenConsentTakesPriority() {
+        localPropertiesFile.toFile().writeText(USER_CONSENT_MARKER)
+        assertEquals(true, ConsentManager(modifier, false).getUserDecision())
+    }
+
+    @Test
+    @DisplayName("local refused consent takes priority over the global one")
+    fun testLocalRefusedConsentTakesPriority() {
+        localPropertiesFile.toFile().writeText(USER_REFUSAL_MARKER)
+        assertEquals(false, ConsentManager(modifier, true).getUserDecision())
+    }
+
+    @Test
     fun testConsentRequestAgree() = testUserDecision("yes", true, USER_CONSENT_MARKER)
 
     @Test
@@ -76,7 +102,7 @@ class ConsentManagerTest {
         StringInputStream(prompt).bufferedReader().use { input ->
             val outputStream = ByteArrayOutputStream(255)
             PrintStream(outputStream).use { printStream ->
-                val consentManager = ConsentManager(modifier, input, printStream)
+                val consentManager = ConsentManager(modifier, null, input, printStream)
                 val userDecision = consentManager.askForConsent(consentDetailsLink)
                 assertEquals(expectedDecision, userDecision)
                 val content = Files.readAllLines(localPropertiesFile)

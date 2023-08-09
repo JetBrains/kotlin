@@ -36,14 +36,19 @@ internal fun String.formatWithLink(link: String) = replace(linkPlaceholder, link
 
 internal class ConsentManager(
     private val modifier: LocalPropertiesModifier,
+    private val globalConsentGiven: Boolean? = null,
     private val input: BufferedReader = System.`in`.bufferedReader(),
     private val output: PrintStream = System.out,
 ) {
-    fun getUserDecision() = when {
-        modifier.initiallyContains(USER_REFUSAL_MARKER) -> false
-        modifier.initiallyContains(USER_CONSENT_MARKER) -> true
-        isInIdeaSync -> false
-        else -> null
+    fun getUserDecision(): Boolean? {
+        return when {
+            modifier.initiallyContains(USER_REFUSAL_MARKER) -> false
+            modifier.initiallyContains(USER_CONSENT_MARKER) -> true
+            globalConsentGiven == false -> false
+            globalConsentGiven == true -> true
+            isInIdeaSync -> false
+            else -> null
+        }
     }
 
     fun askForConsent(consentDetailsLink: String? = null): Boolean {
