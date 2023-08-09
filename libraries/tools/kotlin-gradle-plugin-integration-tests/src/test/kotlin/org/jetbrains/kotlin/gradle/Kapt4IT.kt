@@ -6,10 +6,8 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
-import org.intellij.lang.annotations.Language
-import org.jetbrains.kotlin.gradle.testbase.GradleTest
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.gradle.testbase.TestProject
-import org.junit.Ignore
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
@@ -18,8 +16,8 @@ import kotlin.io.path.walk
 
 @DisplayName("Kapt 4 base checks")
 class Kapt4IT : Kapt3IT() {
-    override val languageVersion: String
-        get() = "2.0"
+    override val languageVersion: LanguageVersion
+        get() = maxOf(LanguageVersion.LATEST_STABLE, LanguageVersion.KOTLIN_2_0)
 
     override fun TestProject.customizeProject() {
         forceKapt4()
@@ -44,10 +42,10 @@ class Kapt4IT : Kapt3IT() {
     override fun testRepeatableAnnotationsWithOldJvmBackend(gradleVersion: GradleVersion) {}
 }
 
-@DisplayName("Kapt 3 with classloaders cache")
+@DisplayName("Kapt 4 with classloaders cache")
 class Kapt4ClassLoadersCacheIT : Kapt3ClassLoadersCacheIT() {
-    override val languageVersion: String
-        get() = "2.0"
+    override val languageVersion: LanguageVersion
+        get() = maxOf(LanguageVersion.LATEST_STABLE, LanguageVersion.KOTLIN_2_0)
 
     override fun TestProject.customizeProject() {
         forceKapt4()

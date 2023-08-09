@@ -5,14 +5,15 @@
 
 package org.jetbrains.kotlin.gradle.android
 
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.gradle.forceKapt4
 import org.jetbrains.kotlin.gradle.testbase.TestProject
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("android with kapt4 external dependencies tests")
 class Kapt4AndroidExternalIT : Kapt3AndroidExternalIT() {
-    override val languageVersion: String
-        get() = "2.0"
+    override val languageVersion: LanguageVersion
+        get() = maxOf(LanguageVersion.LATEST_STABLE, LanguageVersion.KOTLIN_2_0)
 
     override fun TestProject.customizeProject() {
         forceKapt4()

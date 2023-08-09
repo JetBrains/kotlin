@@ -20,6 +20,7 @@ import org.gradle.api.JavaVersion
 import org.gradle.api.logging.LogLevel
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.gradle.tasks.USING_JVM_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.addBeforeSubstring
@@ -39,8 +40,8 @@ import kotlin.io.path.outputStream
 import kotlin.test.assertEquals
 
 abstract class Kapt3BaseIT : KGPBaseTest() {
-    open val languageVersion: String
-        get() = "1.9"
+    open val languageVersion: LanguageVersion
+        get() = LanguageVersion.KOTLIN_1_9
 
     companion object {
         private const val KAPT_SUCCESSFUL_MESSAGE = "Annotation processing complete, errors: 0"
@@ -49,7 +50,7 @@ abstract class Kapt3BaseIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions
         .copy(
             kaptOptions = this.kaptOptions(),
-            languageVersion = languageVersion,
+            languageVersion = languageVersion.versionString,
         )
 
     protected open fun kaptOptions(): BuildOptions.KaptOptions = BuildOptions.KaptOptions(

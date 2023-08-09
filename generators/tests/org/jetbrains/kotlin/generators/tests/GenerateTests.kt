@@ -33,12 +33,12 @@ import org.jetbrains.kotlin.jvm.abi.AbstractCompareJvmAbiTest
 import org.jetbrains.kotlin.jvm.abi.AbstractCompileAgainstJvmAbiTest
 import org.jetbrains.kotlin.jvm.abi.AbstractJvmAbiContentTest
 import org.jetbrains.kotlin.kapt.cli.test.AbstractArgumentParsingTest
+import org.jetbrains.kotlin.kapt.cli.test.AbstractKapt4ToolIntegrationTest
 import org.jetbrains.kotlin.kapt.cli.test.AbstractKaptToolIntegrationTest
 import org.jetbrains.kotlin.kapt3.test.runners.AbstractClassFileToSourceStubConverterTest
 import org.jetbrains.kotlin.kapt3.test.runners.AbstractIrClassFileToSourceStubConverterTest
 import org.jetbrains.kotlin.kapt3.test.runners.AbstractIrKotlinKaptContextTest
 import org.jetbrains.kotlin.kapt3.test.runners.AbstractKotlinKaptContextTest
-import org.jetbrains.kotlin.kapt4.AbstractKapt4ToolIntegrationTest
 import org.jetbrains.kotlin.kapt4.AbstractKotlinKapt4ContextTest
 import org.jetbrains.kotlin.lombok.*
 import org.jetbrains.kotlin.noarg.*
@@ -372,9 +372,11 @@ fun main(args: Array<String>) {
             testClass<AbstractArgumentParsingTest> {
                 model("argumentParsing", extension = "txt")
             }
-
             testClass<AbstractKaptToolIntegrationTest> {
                 model("integration", recursive = false, extension = null)
+            }
+            testClass<AbstractKapt4ToolIntegrationTest> {
+                model("integration-kapt4", recursive = false, extension = null)
             }
         }
 
@@ -399,11 +401,6 @@ fun main(args: Array<String>) {
         testGroup("plugins/kapt4/tests-gen", "plugins/kapt4/") {
             testClass<AbstractKotlinKapt4ContextTest> {
                 model("../kapt3/kapt3-compiler/testData/converter")
-            }
-        }
-        testGroup("plugins/kapt4/tests-gen", "plugins/kapt4/testData") {
-            testClass<AbstractKapt4ToolIntegrationTest> {
-                model("integration", recursive = false, extension = null)
             }
         }
 

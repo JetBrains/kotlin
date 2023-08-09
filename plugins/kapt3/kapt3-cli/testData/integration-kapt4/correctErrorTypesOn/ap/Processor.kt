@@ -26,6 +26,6 @@ class SampleApt : AbstractProcessor() {
     }
 
     override fun getSupportedOptions() = emptySet<String>()
-    override fun getSupportedSourceVersion() = SourceVersion.RELEASE_11
+    override fun getSupportedSourceVersion() = SourceVersion.RELEASE_8
     override fun getSupportedAnnotationTypes() = setOf("apt.Anno")
 }
