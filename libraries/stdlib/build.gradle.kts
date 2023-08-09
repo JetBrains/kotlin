@@ -477,6 +477,36 @@ dependencies {
     }
 }
 
+/*
+We are using a custom 'kotlin-project-structure-metadata' to ensure 'nativeApiElements' lists 'commonMain' as source set
+ */
+tasks.named("generateProjectStructureMetadata") {
+    val outputFile = file("build/kotlinProjectStructureMetadata/kotlin-project-structure-metadata.json")
+    val outputTestFile = file("kotlin-project-structure-metadata.json.beforePatch")
+    val patchedFile = file("kotlin-project-structure-metadata.json")
+
+    inputs.file(patchedFile)
+    inputs.file(outputTestFile)
+
+    doLast {
+        /*
+        Check that the generated 'outputFile' by default matches our expectations stored in the .beforePatch file
+        This will fail if the kotlin-project-structure-metadata.json file would change unnoticed (w/o updating our patched file)
+         */
+        run {
+            val outputFileText = outputFile.readText().trim()
+            val expectedFileContent = outputTestFile.readText().trim()
+            if (outputFileText != expectedFileContent)
+                error(
+                    "${outputFile.path} file content does not match expected content\n\n" +
+                            "expected:\n\n$expectedFileContent\n\nactual:\n\n$outputFileText"
+                )
+        }
+
+        patchedFile.copyTo(outputFile, overwrite = true)
+    }
+}
+
 tasks {
     val metadataJar by existing(Jar::class) {
         archiveAppendix.set("metadata")
