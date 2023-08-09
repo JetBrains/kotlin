@@ -442,7 +442,7 @@ kotlin {
             kotlin.srcDir(jsCommonTestSrcDir)
         }
 
-        all sourceSet@ {
+        all sourceSet@{
             languageSettings {
                 // TODO: progressiveMode = use build property 'test.progressive.mode'
                 if (this@sourceSet == jvmCompileOnlyDeclarations) {
@@ -461,6 +461,8 @@ kotlin {
 
 dependencies {
     val jvmMainImplementation by configurations.getting
+    val jvmApiElements by configurations.getting
+    val jvmRuntimeElements by configurations.getting
     val commonMainMetadataElementsWithClassifier by configurations.creating
     val metadataApiElements by configurations.getting
     val nativeApiElements by configurations.creating
@@ -471,6 +473,13 @@ dependencies {
         commonMainMetadataElementsWithClassifier(project(":kotlin-stdlib-common"))
         metadataApiElements(project(":kotlin-stdlib-common"))
         nativeApiElements(project(":kotlin-stdlib-common"))
+
+        jvmApiElements(project(":kotlin-stdlib-jdk7"))
+        jvmApiElements(project(":kotlin-stdlib-jdk8"))
+
+        jvmRuntimeElements(project(":kotlin-stdlib-jdk7"))
+        jvmRuntimeElements(project(":kotlin-stdlib-jdk8"))
+
         // to avoid split package and duplicate classes on classpath after moving them from these artifacts in 1.8.0
         jvmMainImplementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.0")
         jvmMainImplementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.0")
