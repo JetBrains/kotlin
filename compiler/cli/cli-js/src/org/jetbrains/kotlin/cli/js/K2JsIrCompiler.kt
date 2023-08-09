@@ -903,8 +903,8 @@ fun dumpFunctionWatLocationIfNeeded(
         .joinToStringWithGuessedFormat(out, "functionsWatLocation") { (declaration, location) ->
             """$indent"${dceDumpNameCache.getOrPut(declaration)}": {
                 |$indent$indent"file": "${location.file.removeQuotes()}",
-                |$indent$indent"lineNumber": "${location.line}",
-                |$indent$indent"columnNumber": "${location.column}"
+                |$indent$indent"lineNumber": ${location.line},
+                |$indent$indent"columnNumber": ${location.column}
                 |$indent}
             """.trimMargin()
         }
