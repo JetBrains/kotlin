@@ -12,13 +12,11 @@ import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.calls.candidate
-import org.jetbrains.kotlin.types.model.*
 
 abstract class FirInferenceSessionForChainedResolve(
     protected val resolutionContext: ResolutionContext
 ) : FirInferenceSession() {
     protected val partiallyResolvedCalls: MutableList<Pair<FirResolvable, Candidate>> = mutableListOf()
-    private val completedCalls: MutableSet<FirResolvable> = mutableSetOf()
 
     protected val components: BodyResolveComponents
         get() = resolutionContext.bodyResolveComponents
@@ -31,13 +29,6 @@ abstract class FirInferenceSessionForChainedResolve(
         partiallyResolvedCalls += call to call.candidate
     }
 
-    override fun registerStubTypes(map: Map<TypeVariableMarker, StubTypeMarker>) {}
-
     protected val FirResolvable.candidate: Candidate
         get() = candidate()!!
-
-    override fun clear() {
-        partiallyResolvedCalls.clear()
-        completedCalls.clear()
-    }
 }
