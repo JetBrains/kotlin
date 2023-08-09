@@ -16,6 +16,7 @@
 #include "RegularIntervalPacer.hpp"
 #include "RepeatedTimer.hpp"
 #include "SafePoint.hpp"
+#include "EpochScheduler.hpp"
 #include "ThreadData.hpp"
 
 namespace kotlin::gcScheduler {
@@ -55,7 +56,7 @@ public:
             }
             if (regularIntervalPacer_.NeedsGC()) {
                 RuntimeLogDebug({kTagGC}, "Scheduling GC by timer");
-                schedule();
+                scheduleGC_.scheduleNextEpochIfNotInProgress();
             }
         }) {
         RuntimeLogInfo({kTagGC}, "Adaptive GC scheduler initialized");
@@ -73,18 +74,19 @@ public:
                 return;
             case HeapGrowthController::MemoryBoundary::kTrigger:
                 RuntimeLogDebug({kTagGC}, "Scheduling GC by allocation");
-                schedule();
+                scheduleGC_.scheduleNextEpochIfNotInProgress();
                 return;
             case HeapGrowthController::MemoryBoundary::kTarget:
                 RuntimeLogDebug({kTagGC}, "Scheduling GC by allocation");
-                auto epoch = schedule();
-                RuntimeLogWarning({kTagGC}, "Pausing the mutators");
+                auto epoch = scheduleGC_.scheduleNextEpochIfNotInProgress();
+                RuntimeLogWarning({kTagGC}, "Pausing the mutators until epoch %" PRId64 " is done", epoch);
                 mutatorAssists_.requestAssists(epoch);
                 return;
         }
     }
 
     void onGCFinish(int64_t epoch, size_t bytes) noexcept {
+        scheduleGC_.onGCFinish(epoch);
         heapGrowthController_.updateBoundaries(bytes);
         // Must wait for all mutators to be released. GC thread cannot continue.
         // This is the contract between GC and mutators. With regular native state
@@ -95,13 +97,13 @@ public:
         });
     }
 
-    int64_t schedule() noexcept { return scheduleGC_(); }
+    int64_t schedule() noexcept { return scheduleGC_.scheduleNextEpoch(); }
 
     MutatorAssists& mutatorAssists() noexcept { return mutatorAssists_; }
 
 private:
     GCSchedulerConfig& config_;
-    std::function<int64_t()> scheduleGC_;
+    EpochScheduler scheduleGC_;
     mm::AppStateTracking& appStateTracking_;
     HeapGrowthController heapGrowthController_;
     RegularIntervalPacer<Clock> regularIntervalPacer_;

@@ -56,25 +56,36 @@ TEST(AggressiveSchedulerTest, TriggerGCOnAllocationThreshold) {
         gcScheduler::internal::GCSchedulerDataAggressive scheduler(config, scheduleGC.AsStdFunction());
 
         int i = 0;
+        std::optional<int64_t> scheduled;
         // We trigger GC on the first iteration, when the unique allocation point is faced,
         // on the second to last iteration when weak target heap size is reached,
         // and on the last iteration when target heap size is reached.
         EXPECT_CALL(scheduleGC, Call())
-                .WillOnce([&i]() {
+                .WillOnce([&]() {
                     EXPECT_THAT(i, 0);
-                    return 0;
-                })
-                .WillOnce([&i]() {
-                    EXPECT_THAT(i, 8);
+                    EXPECT_THAT(scheduled, std::nullopt);
+                    scheduled = 1;
                     return 1;
                 })
-                .WillOnce([&i]() {
-                    EXPECT_THAT(i, 9);
+                .WillOnce([&]() {
+                    EXPECT_THAT(i, 8);
+                    EXPECT_THAT(scheduled, std::nullopt);
+                    scheduled = 2;
                     return 2;
+                })
+                .WillOnce([&]() {
+                    EXPECT_THAT(i, 9);
+                    EXPECT_THAT(scheduled, std::nullopt);
+                    scheduled = 3;
+                    return 3;
                 });
 
         for (; i < 10; i++) {
             scheduler.setAllocatedBytes(i + 1);
+            if (scheduled) {
+                scheduler.onGCFinish(*scheduled, i + 1);
+                scheduled = std::nullopt;
+            }
         }
         testing::Mock::VerifyAndClearExpectations(&scheduleGC);
     }();
