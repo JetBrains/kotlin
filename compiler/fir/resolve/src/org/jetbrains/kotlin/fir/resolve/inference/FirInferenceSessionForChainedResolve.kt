@@ -12,13 +12,15 @@ import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.calls.candidate
-import org.jetbrains.kotlin.types.model.*
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
+import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
+import org.jetbrains.kotlin.types.model.safeSubstitute
 
 abstract class FirInferenceSessionForChainedResolve(
     protected val resolutionContext: ResolutionContext
 ) : FirInferenceSession() {
     protected val partiallyResolvedCalls: MutableList<Pair<FirResolvable, Candidate>> = mutableListOf()
-    private val completedCalls: MutableSet<FirResolvable> = mutableSetOf()
 
     protected val components: BodyResolveComponents
         get() = resolutionContext.bodyResolveComponents
@@ -30,8 +32,6 @@ abstract class FirInferenceSessionForChainedResolve(
     override fun <T> processPartiallyResolvedCall(call: T, resolutionMode: ResolutionMode) where T : FirResolvable, T : FirStatement {
         partiallyResolvedCalls += call to call.candidate
     }
-
-    override fun registerStubTypes(map: Map<TypeVariableMarker, StubTypeMarker>) {}
 
     protected val FirResolvable.candidate: Candidate
         get() = candidate()!!
