@@ -174,7 +174,7 @@ FILE: [ResolvedTo(IMPORTS)] statementTransformation.kts
 
 
 FILE RAW TO BODY:
-FILE: [ResolvedTo(IMPORTS)] statementTransformation.kts
+FILE: [ResolvedTo(BODY_RESOLVE)] statementTransformation.kts
     context(<script>@R|kotlin/script/templates/standard/ScriptTemplateWithArgs|)
     SCRIPT: [ResolvedTo(BODY_RESOLVE)]
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
@@ -191,3 +191,4 @@ FILE: [ResolvedTo(IMPORTS)] statementTransformation.kts
         )
         public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
         }
+
