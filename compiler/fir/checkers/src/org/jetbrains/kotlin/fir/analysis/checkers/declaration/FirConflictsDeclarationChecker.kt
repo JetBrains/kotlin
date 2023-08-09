@@ -9,8 +9,10 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirNameConflictsTrackerComponent
-import org.jetbrains.kotlin.fir.analysis.checkers.FirDeclarationInspector
+import org.jetbrains.kotlin.fir.analysis.checkers.FirDeclarationCollector
 import org.jetbrains.kotlin.fir.analysis.checkers.checkForLocalRedeclarations
+import org.jetbrains.kotlin.fir.analysis.checkers.collectClassMembers
+import org.jetbrains.kotlin.fir.analysis.checkers.collectTopLevel
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
@@ -27,7 +29,7 @@ object FirConflictsDeclarationChecker : FirBasicDeclarationChecker() {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         when (declaration) {
             is FirFile -> {
-                val inspector = FirDeclarationInspector(context)
+                val inspector = FirDeclarationCollector<FirDeclaration>(context)
                 checkFile(declaration, inspector, context)
                 reportConflicts(reporter, context, inspector.declarationConflictingSymbols)
             }
@@ -35,7 +37,7 @@ object FirConflictsDeclarationChecker : FirBasicDeclarationChecker() {
                 if (declaration.source?.kind !is KtFakeSourceElementKind) {
                     checkForLocalRedeclarations(declaration.typeParameters, context, reporter)
                 }
-                val inspector = FirDeclarationInspector(context)
+                val inspector = FirDeclarationCollector<FirDeclaration>(context)
                 inspector.collectClassMembers(declaration)
                 reportConflicts(reporter, context, inspector.declarationConflictingSymbols)
             }
@@ -46,7 +48,6 @@ object FirConflictsDeclarationChecker : FirBasicDeclarationChecker() {
                     }
                     checkForLocalRedeclarations(declaration.typeParameters, context, reporter)
                 }
-                return
             }
         }
     }
@@ -76,7 +77,7 @@ object FirConflictsDeclarationChecker : FirBasicDeclarationChecker() {
         }
     }
 
-    private fun checkFile(file: FirFile, inspector: FirDeclarationInspector, context: CheckerContext) {
+    private fun checkFile(file: FirFile, inspector: FirDeclarationCollector<FirDeclaration>, context: CheckerContext) {
         val packageMemberScope: FirPackageMemberScope = context.sessionHolder.scopeSession.getOrBuild(file.packageFqName, PACKAGE_MEMBER) {
             FirPackageMemberScope(file.packageFqName, context.sessionHolder.session)
         }
