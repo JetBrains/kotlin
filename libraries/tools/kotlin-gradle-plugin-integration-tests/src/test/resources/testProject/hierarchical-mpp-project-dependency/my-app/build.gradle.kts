@@ -20,7 +20,6 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(project(":my-lib-bar"))
-                implementation(kotlin("stdlib-common"))
             }
         }
 

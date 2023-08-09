@@ -21,7 +21,6 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api("com.example.bar:my-lib-bar:1.0")
-                implementation(kotlin("stdlib-common"))
             }
         }
 
