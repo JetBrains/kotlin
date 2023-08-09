@@ -403,26 +403,4 @@ object LowLevelFirApiFacadeForResolveOnAir {
         container is KtScript || container is KtAnonymousInitializer -> true
         else -> false
     } == true
-
-    private fun isInBodyReplacement(ktDeclaration: KtDeclaration, replacement: RawFirReplacement): Boolean {
-        fun check(container: KtElement?): Boolean {
-            return container != null && container.isAncestor(replacement.from, true)
-        }
-
-        return when (ktDeclaration) {
-            is KtNamedFunction -> check(ktDeclaration.bodyBlockExpression)
-            is KtProperty -> {
-                check(ktDeclaration.getter?.bodyBlockExpression)
-                        || check(ktDeclaration.setter?.bodyBlockExpression)
-                        || check(ktDeclaration.initializer)
-            }
-            is KtClassOrObject -> check(ktDeclaration.body)
-            is KtScript -> check(ktDeclaration.blockExpression)
-            is KtCodeFragment -> true
-            is KtTypeAlias -> false
-            else -> errorWithAttachment("Not supported type ${ktDeclaration::class}") {
-                withPsiEntry("declaration", ktDeclaration)
-            }
-        }
-    }
 }
