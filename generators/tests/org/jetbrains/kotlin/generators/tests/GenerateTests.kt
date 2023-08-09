@@ -107,6 +107,10 @@ fun main(args: Array<String>) {
                 model("incremental/multiModule/common", extension = null, excludeParentDirs = true)
             }
 
+            testClass<AbstractIncrementalMultiModuleJsFirKlibCompilerRunnerTest> {
+                model("incremental/multiModule/common", extension = null, excludeParentDirs = true)
+            }
+
             testClass<AbstractIncrementalJsKlibCompilerWithScopeExpansionRunnerTest> {
                 // IC of sealed interfaces are not supported in JS
                 model("incremental/pureKotlin", extension = null, recursive = false, excludedPattern = "^sealed.*")
