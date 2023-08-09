@@ -5,6 +5,9 @@
 // MUTE_SIGNATURE_COMPARISON_K2: ANY
 // ^ KT-57775
 
+// KT-61141: absent enum fake_overrides: finalize(K1), getDeclaringClass(K1), clone(K2),
+// IGNORE_BACKEND: NATIVE
+
 enum class Test0(val x: Int) {
     ZERO;
     constructor() : this(0)

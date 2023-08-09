@@ -6,6 +6,9 @@
 // DIAGNOSTICS: -NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER -BREAK_OR_CONTINUE_OUTSIDE_A_LOOP -UNEXPECTED_TRAILING_LAMBDA_ON_A_NEW_LINE -NO_VALUE_FOR_PARAMETER -NOT_A_LOOP_LABEL -UNRESOLVED_REFERENCE -TYPE_MISMATCH -BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY
 // WITH_STDLIB
 
+// KT-61141: NPE at org.jetbrains.kotlin.psi2ir.generators.ArgumentsGenerationUtilsKt.pregenerateValueArgumentsUsing()
+// IGNORE_BACKEND: NATIVE
+
 inline fun foo(block: () -> Unit) { block() }
 
 inline fun bar(block1: () -> Unit, noinline block2: () -> Unit) {

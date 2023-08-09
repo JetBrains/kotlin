@@ -4,6 +4,9 @@
 // !IGNORE_ERRORS
 // DIAGNOSTICS: -UNRESOLVED_REFERENCE -OVERLOAD_RESOLUTION_AMBIGUITY
 
+// KT-61141: org.jetbrains.kotlin.psi2ir.generators.ErrorExpressionException: null: KtNameReferenceExpression: unresolved
+// IGNORE_BACKEND: NATIVE
+
 val test1 = unresolved
 
 val test2: Unresolved =
