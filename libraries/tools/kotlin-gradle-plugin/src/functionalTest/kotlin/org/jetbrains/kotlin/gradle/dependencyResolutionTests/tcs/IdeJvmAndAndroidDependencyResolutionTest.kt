@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeJvmAndAndro
 import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.utils.androidExtension
-import org.junit.Ignore
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
@@ -161,7 +160,6 @@ class IdeJvmAndAndroidDependencyResolutionTest {
     }
 
     @Test
-    @Ignore("stdlib publication migration - test data changes")
     fun `test - MVIKotlin - binary dependencies - with stdlib enabled by default`() {
         val project = buildProject { configureAndroidAndMultiplatform(enableDefaultStdlib = true) }
         val kotlin = project.multiplatformExtension

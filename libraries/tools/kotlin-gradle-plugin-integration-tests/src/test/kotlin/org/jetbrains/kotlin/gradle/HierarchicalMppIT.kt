@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkedReplace
 import org.jetbrains.kotlin.gradle.util.modify
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
@@ -37,7 +36,6 @@ open class HierarchicalMppIT : KGPBaseTest() {
     private val String.withPrefix get() = "hierarchical-mpp-published-modules/$this"
 
     @GradleTest
-    @Disabled("stdlib publication migration - test data changes")
     @DisplayName("Check build with published third-party library")
     fun testPublishedModules(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
         val buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
@@ -200,7 +198,6 @@ open class HierarchicalMppIT : KGPBaseTest() {
     }
 
     @GradleTest
-    @Disabled("stdlib publication migration - test data changes")
     @DisplayName("Dependencies in project should be correct with third-party library")
     fun testProjectDependencies(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
         publishThirdPartyLib(withGranularMetadata = false, gradleVersion = gradleVersion, localRepoDir = tempDir)
@@ -222,7 +219,6 @@ open class HierarchicalMppIT : KGPBaseTest() {
     }
 
     @GradleTest
-    @Disabled("stdlib publication migration - test data changes")
     @DisplayName("Check that only composite metadata artifacts are transformed")
     fun testOnlyCompositeMetadataArtifactsTransformed(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
         val buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
@@ -1028,7 +1024,6 @@ open class HierarchicalMppIT : KGPBaseTest() {
     }
 
     @GradleTest
-    @Disabled("stdlib publication migration")
     @DisplayName("KT-46417: [UNRESOLVED_REFERENCE] For project to project dependencies of native platform test source sets")
     fun testNativeLeafTestSourceSetsKt46417(gradleVersion: GradleVersion) {
         with(project("kt-46417-ios-test-source-sets", gradleVersion = gradleVersion)) {
