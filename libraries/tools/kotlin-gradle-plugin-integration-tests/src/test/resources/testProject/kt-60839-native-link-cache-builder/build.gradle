@@ -1,0 +1,29 @@
+plugins {
+    id 'org.jetbrains.kotlin.multiplatform'
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+kotlin {
+    <SingleNativeTarget>("host")
+
+    targets.named("host").configure {
+        binaries.test("integrationTests")
+    }
+
+    targets.named("host").configure {
+        binaries.executable()
+    }
+
+    sourceSets {
+        hostTest {
+            dependencies {
+                // This is required as the bug only happens when restoring options to link a native dependency from cache
+                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.3.3")
+            }
+        }
+    }
+}

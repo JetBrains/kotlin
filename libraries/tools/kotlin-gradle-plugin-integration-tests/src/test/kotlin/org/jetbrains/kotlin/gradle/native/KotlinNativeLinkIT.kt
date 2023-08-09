@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.native
 
+import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
@@ -63,6 +65,36 @@ internal class KotlinNativeLinkIT : KGPBaseTest() {
                 ) {
                     printBuildOutput()
                     "Link task arguments does not contain '-e main'!"
+                }
+            }
+        }
+    }
+
+    @DisplayName("KT-60839: should provide correct default value for -Xpartial-linkage")
+    @GradleTest
+    fun defaultValueForPartialLinkage(gradleVersion: GradleVersion) {
+        nativeProject(
+            "kt-60839-native-link-cache-builder",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                logLevel = LogLevel.DEBUG,
+                // KT-60839 only reproduces when the build cache is enabled,
+                // but we must ignore it when running this test in order to
+                // ensure we actually try to pass -Xpartial-linkage to konanc.
+                buildCacheEnabled = true,
+                freeArgs = defaultBuildOptions.freeArgs + "--rerun-tasks",
+                nativeOptions = defaultBuildOptions.nativeOptions.copy(
+                    cacheKind = NativeCacheKind.STATIC,
+                    // Required as this only reproduces from CacheBuilder.
+                    cacheOrchestration = "gradle"
+                )
+            ),
+        ) {
+
+            // Must be an unoptimized debug build.
+            build("linkDebugTestHost") {
+                extractNativeTasksCommandLineArgumentsFromOutput(":linkDebugTestHost") {
+                    assertCommandLineArgumentsContain("-Xpartial-linkage=ENABLE")
                 }
             }
         }

@@ -79,6 +79,7 @@ data class BuildOptions(
         val restrictedDistribution: Boolean? = null,
         val useXcodeMessageStyle: Boolean? = null,
         val version: String? = null,
+        val cacheOrchestration: String? = null,
     )
 
     fun toArguments(
@@ -239,6 +240,9 @@ data class BuildOptions(
         }
         nativeOptions.version?.let {
             arguments.add("-Pkotlin.native.version=${it}")
+        }
+        nativeOptions.cacheOrchestration?.let {
+            arguments.add("-Pkotlin.native.cacheOrchestration=${it}")
         }
 
     }
