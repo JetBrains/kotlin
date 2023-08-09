@@ -201,7 +201,7 @@ public object GC {
      * Note, that if after a collection heapBytes > [targetHeapBytes] (which may happen if [autotune] is false,
      * or [maxHeapBytes] is set too low), the next collection will be triggered almost immediately.
      *
-     * Default: 1 MiB
+     * Default: 100 MiB (10 MiB on watchOS)
      *
      * Unused in legacy MM.
      *
@@ -235,7 +235,7 @@ public object GC {
      * The minimum value for [targetHeapBytes]
      * Only used if [autotune] is true. See [targetHeapBytes] for more details.
      *
-     * Default: 1 MiB
+     * Default: 5 MiB
      *
      * Unused in legacy MM.
      *

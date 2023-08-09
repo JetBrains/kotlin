@@ -11,6 +11,12 @@
 
 namespace kotlin::gcScheduler {
 
+#if KONAN_WATCHOS
+constexpr int64_t kDefaultTargetHeapBytes = 10 * 1024 * 1024;
+#else
+constexpr int64_t kDefaultTargetHeapBytes = 100 * 1024 * 1024;
+#endif
+
 // NOTE: When changing default values, reflect them in GC.kt as well.
 struct GCSchedulerConfig {
     enum class MutatorAssists {
@@ -27,13 +33,13 @@ struct GCSchedulerConfig {
     // become bigger than this value, and `mutatorAssists` are enabled the GC will
     // stop the world and wait until current epoch finishes.
     // Adapts after each GC epoch when `autoTune = true`.
-    std::atomic<int64_t> targetHeapBytes = 1024 * 1024;
+    std::atomic<int64_t> targetHeapBytes = kDefaultTargetHeapBytes;
     // The rate at which `targetHeapBytes` changes when `autoTune = true`. Concretely: if after the collection
     // `N` object bytes remain in the heap, the next `targetHeapBytes` will be `N / targetHeapUtilization` capped
     // between `minHeapBytes` and `maxHeapBytes`.
     std::atomic<double> targetHeapUtilization = 0.5;
     // The minimum value of `targetHeapBytes` for `autoTune = true`
-    std::atomic<int64_t> minHeapBytes = 1024 * 1024;
+    std::atomic<int64_t> minHeapBytes = 5 * 1024 * 1024; // In `custom` allocator pages are 256KiB. 5MiB here is 20 pages.
     // The maximum value of `targetHeapBytes` for `autoTune = true`
     std::atomic<int64_t> maxHeapBytes = std::numeric_limits<int64_t>::max();
     // GC will be triggered when object bytes reach `heapTriggerCoefficient * targetHeapBytes`.
