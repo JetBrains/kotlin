@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
@@ -68,6 +69,11 @@ object ComposableFunctionCallChecker : FirFunctionCallChecker() {
     ) {
         val calleeFunction = expression.calleeReference.toResolvedCallableSymbol()
             ?: return
+
+        // K2 propagates annotation from the fun interface method to the constructor.
+        // https://youtrack.jetbrains.com/issue/KT-47708.
+        if (calleeFunction.origin == FirDeclarationOrigin.SamConstructor) return
+
         if (calleeFunction.isComposable(context.session)) {
             checkComposableCall(expression, calleeFunction, context, reporter)
         } else if (calleeFunction.callableId.isInvoke()) {
