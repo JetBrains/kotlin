@@ -30,6 +30,7 @@ fun main(args: Array<String>) {
 
         with(serverAddr) {
             memset(this.ptr, 0, sockaddr_in.size.convert())
+            @OptIn(UnsafeNumber::class)
             sin_family = AF_INET.convert()
             sin_port = posix_htons(port).convert()
         }
