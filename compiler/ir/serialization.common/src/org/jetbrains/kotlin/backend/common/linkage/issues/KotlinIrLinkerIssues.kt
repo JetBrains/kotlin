@@ -29,6 +29,10 @@ abstract class KotlinIrLinkerIssue {
     }
 }
 
+object PartialLinkageErrorsLogged : KotlinIrLinkerIssue() {
+    override val errorMessage = "There are linkage errors reported by the partial linkage engine"
+}
+
 class UnexpectedUnboundIrSymbols(unboundSymbols: Set<IrSymbol>, whenDetected: String) : KotlinIrLinkerIssue() {
     override val errorMessage = buildString {
         // cause:

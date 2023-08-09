@@ -58,6 +58,8 @@ internal class PartiallyLinkedIrTreePatcher(
     // Used only to generate IR expressions that throw linkage errors.
     private val supportForLowerings by lazy { PartialLinkageSupportForLoweringsImpl(builtIns, logger) }
 
+    val linkageIssuesLogged get() = supportForLowerings.linkageIssuesLogged
+
     fun shouldBeSkipped(declaration: IrDeclaration): Boolean = PLModule.determineModuleFor(declaration).shouldBeSkipped
 
     fun patchModuleFragments(roots: Sequence<IrModuleFragment>) {
@@ -887,7 +889,7 @@ internal class PartiallyLinkedIrTreePatcher(
     }
 
     private inner class AnnotationChecker(currentFile: PLFile) : ExpressionTransformer(currentFile) {
-        private val currentErrorMessagesCount get() = supportForLowerings.errorMessagesRendered
+        private val currentErrorMessagesCount get() = supportForLowerings.linkageIssuesRendered
         private val initialErrorMessagesCount = currentErrorMessagesCount // Memoize the number of PL errors generated to this moment.
 
         var isUsableAnnotation = true

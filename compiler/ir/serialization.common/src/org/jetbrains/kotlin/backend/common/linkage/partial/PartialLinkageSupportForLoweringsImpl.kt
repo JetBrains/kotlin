@@ -33,11 +33,22 @@ internal class PartialLinkageSupportForLoweringsImpl(
 ) : PartialLinkageSupportForLowerings {
     override val isEnabled get() = true
 
-    // N.B. errorMessagesRendered is always >= than throwExpressionsGenerated.
-    var throwExpressionsGenerated = 0 // Track each generate `throw` expression.
+    /** To track the amount of rendered linkage issues. */
+    var linkageIssuesRendered = 0
         private set
 
-    var errorMessagesRendered = 0 // Track each rendered error message.
+    /**
+     * To track the amount of logged linkage issues.
+     * Note that the following condition is always true: [linkageIssuesLogged] <= [linkageIssuesRendered].
+     */
+    var linkageIssuesLogged = 0
+        private set
+
+    /**
+     * To track the amount of generated `throw` expressions.
+     * Note that the following condition is always true: [throwExpressionsGenerated] <= [linkageIssuesRendered].
+     */
+    var throwExpressionsGenerated = 0
         private set
 
     override fun throwLinkageError(
@@ -51,7 +62,7 @@ internal class PartialLinkageSupportForLoweringsImpl(
         else
             renderAndLogLinkageError(partialLinkageCase, element, file) // Render + log with the appropriate severity.
 
-        throwExpressionsGenerated++ // Track each generate `throw` expression.
+        throwExpressionsGenerated++ // Track each generated `throw` expression.
 
         return IrCallImpl(
             startOffset = element.startOffset,
@@ -70,13 +81,14 @@ internal class PartialLinkageSupportForLoweringsImpl(
         val errorMessage = renderLinkageError(partialLinkageCase)
         val locationInSourceCode = file.computeLocationForOffset(element.startOffsetOfFirstDenotableIrElement())
 
+        linkageIssuesLogged++ // Track each logged linkage issue.
         logger.log(errorMessage, locationInSourceCode)
 
         return errorMessage
     }
 
     private fun renderLinkageError(partialLinkageCase: PartialLinkageCase): String {
-        errorMessagesRendered++ // Track each rendered error message.
+        linkageIssuesRendered++ // Track each rendered linkage issue.
         return partialLinkageCase.renderLinkageError()
     }
 
