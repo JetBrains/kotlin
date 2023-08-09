@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.group.UsePartialLinkage
 import org.jetbrains.kotlin.konan.diagnostics.AbstractDiagnosticsNativeTest
 import org.jetbrains.kotlin.konan.diagnostics.AbstractFirLightTreeNativeDiagnosticsTest
 import org.jetbrains.kotlin.konan.diagnostics.AbstractFirPsiNativeDiagnosticsTest
+import org.jetbrains.kotlin.konan.irtext.AbstractClassicNativeIrTextTest
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 import org.junit.jupiter.api.Tag
@@ -75,6 +76,9 @@ fun main() {
             ) {
                 model("codegen/box", targetBackend = TargetBackend.NATIVE)
                 model("codegen/boxInline", targetBackend = TargetBackend.NATIVE)
+            }
+            testClass<AbstractClassicNativeIrTextTest> {
+                model("ir/irText")
             }
         }
 

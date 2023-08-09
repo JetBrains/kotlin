@@ -142,4 +142,18 @@ sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
         override val diagnosticReporter: BaseDiagnosticsCollector
             get() = state.diagnosticReporter as BaseDiagnosticsCollector
     }
+
+    // Actually, class won't be used as a real input for the Native backend during blackbox testing, since such testing is done via a different engine.
+    // In irText tests, this class is used only as Native-specific FIR2IR output to render and dump IR.
+    // So, no source files, icData, error flag, serialization lambda, etc are needed.
+    class NativeBackendInput(
+        override val irModuleFragment: IrModuleFragment,
+        override val dependentIrModuleFragments: List<IrModuleFragment>,
+        override val irPluginContext: IrPluginContext,
+        override val diagnosticReporter: BaseDiagnosticsCollector,
+        override val descriptorMangler: KotlinMangler.DescriptorMangler,
+        override val irMangler: KotlinMangler.IrMangler,
+        override val firMangler: FirMangler?,
+        override var irActualizerResult: IrActualizedResult? = null,
+    ) : IrBackendInput()
 }

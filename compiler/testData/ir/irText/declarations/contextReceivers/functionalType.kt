@@ -1,4 +1,6 @@
 // !LANGUAGE: +ContextReceivers
+// KT-61141: K1/Native does not support context receivers
+// IGNORE_BACKEND_K1: NATIVE
 
 class Param
 class C {

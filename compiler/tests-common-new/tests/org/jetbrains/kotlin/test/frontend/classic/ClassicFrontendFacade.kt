@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.backend.common.CommonKLibResolver
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
-import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
+import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.cli.js.klib.TopDownAnalyzerFacadeForJSIR
 import org.jetbrains.kotlin.cli.js.klib.TopDownAnalyzerFacadeForWasm
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.context.withModule
+import org.jetbrains.kotlin.descriptors.ModuleCapability
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
@@ -42,34 +43,32 @@ import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.ir.backend.js.*
+import org.jetbrains.kotlin.ir.backend.js.JsFactories
+import org.jetbrains.kotlin.ir.backend.js.resolverLogger
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.WasmTarget
+import org.jetbrains.kotlin.library.metadata.CurrentKlibModuleOrigin
+import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
+import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
+import org.jetbrains.kotlin.library.metadata.NullFlexibleTypeDeserializer
 import org.jetbrains.kotlin.library.unresolvedDependencies
 import org.jetbrains.kotlin.load.java.lazy.SingleModuleClassResolver
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.native.FakeTopDownAnalyzerFacadeForNative
-import org.jetbrains.kotlin.platform.CommonPlatforms
+import org.jetbrains.kotlin.platform.*
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.platform.isCommon
-import org.jetbrains.kotlin.platform.isJs
-import org.jetbrains.kotlin.platform.isWasm
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.LazyTopDownAnalyzer
-import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
-import org.jetbrains.kotlin.resolve.TargetEnvironment
-import org.jetbrains.kotlin.resolve.TopDownAnalysisMode
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.model.DependencyRelation
 import org.jetbrains.kotlin.test.model.FrontendFacade
@@ -275,7 +274,11 @@ class ClassicFrontendFacade(
         )
     }
 
-    private fun loadKlib(names: List<String>, configuration: CompilerConfiguration): List<ModuleDescriptor> {
+    private fun loadKlib(
+        factories: KlibMetadataFactories,
+        names: List<String>,
+        configuration: CompilerConfiguration
+    ): List<ModuleDescriptor> {
         val resolvedLibraries = CommonKLibResolver.resolve(
             names,
             configuration.resolverLogger
@@ -289,7 +292,7 @@ class ClassicFrontendFacade(
                 val storageManager = LockBasedStorageManager("ModulesStructure")
                 val isBuiltIns = resolvedLibrary.library.unresolvedDependencies.isEmpty()
 
-                val moduleDescriptor = JsFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
+                val moduleDescriptor = factories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
                     resolvedLibrary.library,
                     configuration.languageVersionSettings,
                     storageManager,
@@ -317,7 +320,7 @@ class ClassicFrontendFacade(
         friendsDescriptors: List<ModuleDescriptor>,
     ): AnalysisResult {
         val runtimeKlibsNames = JsEnvironmentConfigurator.getRuntimePathsForModule(module, testServices)
-        val runtimeKlibs = loadKlib(runtimeKlibsNames, configuration)
+        val runtimeKlibs = loadKlib(JsFactories, runtimeKlibsNames, configuration)
         val transitiveLibraries = getDependencies(module, testServices, DependencyRelation.RegularDependency)
         val friendLibraries = getDependencies(module, testServices, DependencyRelation.FriendDependency)
         val allDependencies = runtimeKlibs + dependencyDescriptors + friendLibraries + friendsDescriptors + transitiveLibraries
@@ -359,7 +362,7 @@ class ClassicFrontendFacade(
                 File(it).absolutePath
             }
 
-        val runtimeKlibs = loadKlib(runtimeKlibsNames, configuration)
+        val runtimeKlibs = loadKlib(JsFactories, runtimeKlibsNames, configuration)
         val transitiveLibraries = getDependencies(module, testServices, DependencyRelation.RegularDependency)
         val friendLibraries = getDependencies(module, testServices, DependencyRelation.FriendDependency)
         val allDependencies = runtimeKlibs + dependencyDescriptors + friendLibraries + friendsDescriptors + transitiveLibraries
@@ -391,15 +394,23 @@ class ClassicFrontendFacade(
     ): AnalysisResult {
         val moduleTrace = NoScopeRecordCliBindingTrace()
         val runtimeKlibsNames = NativeEnvironmentConfigurator.getRuntimePathsForModule(module, testServices)
-        val runtimeKlibs = loadKlib(runtimeKlibsNames, configuration).mapNotNull { it as? ModuleDescriptorImpl }
+        val nativeFactories = KlibMetadataFactories(::KonanBuiltIns, NullFlexibleTypeDeserializer)
+        val runtimeKlibs = loadKlib(nativeFactories, runtimeKlibsNames, configuration).mapNotNull { it as? ModuleDescriptorImpl }
+        val stdlibBuiltInsModule = runtimeKlibs.single { it.name == Name.special("<stdlib>") }.builtIns.builtInsModule
 
         val moduleContext = createModuleContext(
             module, project,
             dependencyDescriptors = dependencyDescriptors + runtimeKlibs,
             friendsDescriptors = friendsDescriptors,
-            dependsOnDescriptors = dependsOnDescriptors
+            dependsOnDescriptors = dependsOnDescriptors,
+            capabilities = mapOf(
+                // provides `klibModuleOrigin` capability needed in `ModuleDescriptor.isFromInteropLibrary()`
+                KlibModuleOrigin.CAPABILITY to CurrentKlibModuleOrigin,
+            ),
         ) {
-            DefaultBuiltIns()
+            KonanBuiltIns(it).apply {
+                builtInsModule = stdlibBuiltInsModule
+            }
         }
         return FakeTopDownAnalyzerFacadeForNative.analyzeFilesWithGivenTrace(
             files,
@@ -472,18 +483,21 @@ class ClassicFrontendFacade(
         dependencyDescriptors: List<ModuleDescriptorImpl>,
         friendsDescriptors: List<ModuleDescriptorImpl>,
         dependsOnDescriptors: List<ModuleDescriptorImpl>,
+        capabilities: Map<ModuleCapability<*>, Any?> = emptyMap(),
         builtInsFactory: (StorageManager) -> KotlinBuiltIns,
     ): ModuleContext {
         val projectContext = ProjectContext(project, "test project context")
         val storageManager = projectContext.storageManager
 
         val builtIns = builtInsFactory(storageManager)
-        val moduleDescriptor = ModuleDescriptorImpl(Name.special("<${module.name}>"), storageManager, builtIns, module.targetPlatform)
-        val dependencies = buildList {
+        val moduleDescriptor = ModuleDescriptorImpl(
+            Name.special("<${module.name}>"), storageManager, builtIns, module.targetPlatform, capabilities
+        )
+        val dependencies = buildSet {
             add(moduleDescriptor)
             add(moduleDescriptor.builtIns.builtInsModule)
             addAll(dependencyDescriptors)
-        }
+        }.toList()
         moduleDescriptor.setDependencies(
             ModuleDependenciesImpl(
                 allDependencies = dependencies,

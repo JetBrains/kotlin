@@ -7,6 +7,9 @@
 // MUTE_SIGNATURE_COMPARISON_K2: ANY
 // ^ KT-57427
 
+// KT-61141: absent enum fake_overrides: finalize, getDeclaringClass, clone
+// IGNORE_BACKEND: NATIVE
+
 class Wrapper(var baseUrl: String)
 
 enum class ConfigurationParameter {
