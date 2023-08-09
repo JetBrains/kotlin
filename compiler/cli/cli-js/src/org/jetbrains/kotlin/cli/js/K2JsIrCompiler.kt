@@ -555,6 +555,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 firOutputs = analyzedOutput.output,
                 fir2IrActualizedResult = fir2IrActualizedResult,
                 outputKlibPath = outputKlibPath,
+                nopack = arguments.irProduceKlibDir,
                 messageCollector = messageCollector,
                 diagnosticsReporter = diagnosticsReporter,
                 jsOutputName = arguments.irPerModuleOutputName,

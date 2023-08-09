@@ -302,6 +302,7 @@ fun serializeFirKlib(
     firOutputs: List<ModuleCompilerAnalyzedOutput>,
     fir2IrActualizedResult: Fir2IrActualizedResult,
     outputKlibPath: String,
+    nopack: Boolean,
     messageCollector: MessageCollector,
     diagnosticsReporter: BaseDiagnosticsCollector,
     jsOutputName: String?,
@@ -320,7 +321,7 @@ fun serializeFirKlib(
         fir2IrActualizedResult.irModuleFragment,
         expectDescriptorToSymbol = mutableMapOf(),
         cleanFiles = icData ?: emptyList(),
-        nopack = true,
+        nopack = nopack,
         perFile = false,
         containsErrorCode = messageCollector.hasErrors() || diagnosticsReporter.hasErrors,
         abiVersion = KotlinAbiVersion.CURRENT, // TODO get from test file data
