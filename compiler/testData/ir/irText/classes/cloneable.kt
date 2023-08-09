@@ -1,7 +1,8 @@
 // FIR_IDENTICAL
 // SKIP_KLIB_TEST
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6
-// STATUS: This should not work in JS, Cloneable is JVM-specific API
+// IGNORE_BACKEND: NATIVE
+// STATUS: This should not work in JS & NATIVE: Cloneable is JVM-specific API
 
 class A : Cloneable
 

@@ -5,6 +5,9 @@
 // MUTE_SIGNATURE_COMPARISON_K2: ANY
 // ^ KT-57430
 
+// KT-61141: `FUN FAKE_OVERRIDE name:equals` has extra annotation `GCUnsafeCall(callee = 'Kotlin_Any_equals')`
+// IGNORE_BACKEND_K1: NATIVE
+
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty

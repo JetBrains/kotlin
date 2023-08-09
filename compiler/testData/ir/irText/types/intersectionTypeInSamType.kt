@@ -2,6 +2,8 @@
 // IGNORE_BACKEND_K1: JS_IR
 // IGNORE_BACKEND_K1: JS_IR_ES6
 
+// KT-61141: difference in IR for implicit cast
+// IGNORE_BACKEND_K1: NATIVE
 interface X
 interface Z
 

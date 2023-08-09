@@ -2,6 +2,9 @@
 // IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
 
+// KT-61141: throws kotlin.RuntimeException instead of java.lang.RuntimeException
+// IGNORE_BACKEND: NATIVE
+
 @Target(AnnotationTarget.TYPE)
 annotation class MySerializable(val c: kotlin.reflect.KClass<*>)
 

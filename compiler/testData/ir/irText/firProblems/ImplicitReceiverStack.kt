@@ -7,6 +7,9 @@
 // MUTE_SIGNATURE_COMPARISON_K2: ANY
 // ^ KT-57788
 
+// KT-61141: ImplicitReceiverStack & PersistentImplicitReceiverStack miss fake overrides `forEach` & `spliterator`
+// IGNORE_BACKEND: NATIVE
+
 interface SymbolOwner<E : SymbolOwner<E>>
 
 interface Symbol<E : SymbolOwner<E>>

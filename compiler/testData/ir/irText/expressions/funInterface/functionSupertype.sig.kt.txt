@@ -7,6 +7,10 @@ fun interface Foo : Function0<Int> {
   //   Mangled name: Foo#invoke(){}kotlin.Int
   //   Public signature: /Foo.invoke|906964710558498066[0]
   //   Public signature debug description: invoke(){}kotlin.Int
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Foo#invoke(){}
+  //   Public signature: /Foo.invoke|-4663091332620260873[0]
+  //   Public signature debug description: invoke(){}
   abstract /* fake */ override operator fun invoke(): Int
 
 }
@@ -15,6 +19,10 @@ fun interface Foo : Function0<Int> {
 //   Mangled name: #id(Foo){}kotlin.Any
 //   Public signature: /id|-7816997914602483733[0]
 //   Public signature debug description: id(Foo){}kotlin.Any
+// CHECK JS_IR NATIVE:
+//   Mangled name: #id(Foo){}
+//   Public signature: /id|-443964874282345181[0]
+//   Public signature debug description: id(Foo){}
 fun id(foo: Foo): Any
 
 // CHECK:

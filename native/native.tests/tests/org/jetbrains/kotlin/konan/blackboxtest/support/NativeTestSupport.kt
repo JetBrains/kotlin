@@ -70,6 +70,10 @@ class NativeSimpleTestSupport : BeforeEachCallback {
     }
 }
 
+internal object CastCompatibleKotlinNativeClassLoader {
+    val kotlinNativeClassLoader = NativeTestSupport.computeNativeClassLoader(this::class.java.classLoader)
+}
+
 private object NativeTestSupport {
     private val NAMESPACE = ExtensionContext.Namespace.create(NativeTestSupport::class.java.simpleName)
 
@@ -93,14 +97,14 @@ private object NativeTestSupport {
 
     private fun computeNativeHome(): KotlinNativeHome = KotlinNativeHome(File(ProcessLevelProperty.KOTLIN_NATIVE_HOME.readValue()))
 
-    private fun computeNativeClassLoader(): KotlinNativeClassLoader = KotlinNativeClassLoader(
+    fun computeNativeClassLoader(parent: ClassLoader? = null): KotlinNativeClassLoader = KotlinNativeClassLoader(
         lazy {
             val nativeClassPath = ProcessLevelProperty.COMPILER_CLASSPATH.readValue()
                 .split(':', ';')
                 .map { File(it).toURI().toURL() }
                 .toTypedArray()
 
-            URLClassLoader(nativeClassPath, /* no parent class loader */ null).apply { setDefaultAssertionStatus(true) }
+            URLClassLoader(nativeClassPath, parent).apply { setDefaultAssertionStatus(true) }
         }
     )
 
