@@ -77,12 +77,6 @@ public class FirLightTreeJsIrTextTestGenerated extends AbstractFirLightTreeJsIrT
         }
 
         @Test
-        @TestMetadata("cloneable.kt")
-        public void testCloneable() throws Exception {
-            runTest("compiler/testData/ir/irText/classes/cloneable.kt");
-        }
-
-        @Test
         @TestMetadata("companionObject.kt")
         public void testCompanionObject() throws Exception {
             runTest("compiler/testData/ir/irText/classes/companionObject.kt");
@@ -2482,12 +2476,6 @@ public class FirLightTreeJsIrTextTestGenerated extends AbstractFirLightTreeJsIrT
         @TestMetadata("typeVariableAfterBuildMap.kt")
         public void testTypeVariableAfterBuildMap() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/typeVariableAfterBuildMap.kt");
-        }
-
-        @Test
-        @TestMetadata("valueClassEquals.kt")
-        public void testValueClassEquals() throws Exception {
-            runTest("compiler/testData/ir/irText/firProblems/valueClassEquals.kt");
         }
 
         @Test

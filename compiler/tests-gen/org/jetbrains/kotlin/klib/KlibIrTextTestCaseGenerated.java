@@ -77,11 +77,6 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
             runTest("compiler/testData/ir/irText/classes/classes.kt");
         }
 
-        @TestMetadata("cloneable.kt")
-        public void testCloneable() throws Exception {
-            runTest("compiler/testData/ir/irText/classes/cloneable.kt");
-        }
-
         @TestMetadata("companionObject.kt")
         public void testCompanionObject() throws Exception {
             runTest("compiler/testData/ir/irText/classes/companionObject.kt");
@@ -2161,11 +2156,6 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
         @TestMetadata("typeVariableAfterBuildMap.kt")
         public void testTypeVariableAfterBuildMap() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/typeVariableAfterBuildMap.kt");
-        }
-
-        @TestMetadata("valueClassEquals.kt")
-        public void testValueClassEquals() throws Exception {
-            runTest("compiler/testData/ir/irText/firProblems/valueClassEquals.kt");
         }
 
         @TestMetadata("VarInInit.kt")
