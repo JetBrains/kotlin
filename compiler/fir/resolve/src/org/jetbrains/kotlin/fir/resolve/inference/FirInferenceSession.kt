@@ -14,8 +14,6 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeVariableTypeConstructor
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
-import org.jetbrains.kotlin.types.model.StubTypeMarker
-import org.jetbrains.kotlin.types.model.TypeVariableMarker
 
 abstract class FirInferenceSession {
     companion object {
@@ -33,8 +31,6 @@ abstract class FirInferenceSession {
     abstract fun <T> processPartiallyResolvedCall(call: T, resolutionMode: ResolutionMode) where T : FirResolvable, T : FirStatement
     abstract fun <T> addCompletedCall(call: T, candidate: Candidate) where T : FirResolvable, T : FirStatement
 
-    abstract fun registerStubTypes(map: Map<TypeVariableMarker, StubTypeMarker>)
-
     abstract fun inferPostponedVariables(
         lambda: ResolvedLambdaAtom,
         constraintSystemBuilder: ConstraintSystemBuilder,
@@ -42,7 +38,6 @@ abstract class FirInferenceSession {
         // TODO: diagnostic holder
     ): Map<ConeTypeVariableTypeConstructor, ConeKotlinType>?
 
-    abstract fun clear()
     open fun <R> onCandidatesResolution(call: FirFunctionCall, candidatesResolutionCallback: () -> R) = candidatesResolutionCallback()
 }
 
@@ -57,9 +52,4 @@ abstract class FirStubInferenceSession : FirInferenceSession() {
         constraintSystemBuilder: ConstraintSystemBuilder,
         completionMode: ConstraintSystemCompletionMode
     ): Map<ConeTypeVariableTypeConstructor, ConeKotlinType>? = null
-
-    override fun registerStubTypes(map: Map<TypeVariableMarker, StubTypeMarker>) {}
-
-    override fun clear() {
-    }
 }

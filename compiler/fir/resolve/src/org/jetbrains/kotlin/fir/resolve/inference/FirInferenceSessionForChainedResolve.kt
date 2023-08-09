@@ -18,13 +18,15 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.InitialConstraint
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
-import org.jetbrains.kotlin.types.model.*
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
+import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
+import org.jetbrains.kotlin.types.model.safeSubstitute
 
 abstract class FirInferenceSessionForChainedResolve(
     protected val resolutionContext: ResolutionContext
 ) : FirInferenceSession() {
     protected val partiallyResolvedCalls: MutableList<Pair<FirResolvable, Candidate>> = mutableListOf()
-    private val completedCalls: MutableSet<FirResolvable> = mutableSetOf()
 
     protected val components: BodyResolveComponents
         get() = resolutionContext.bodyResolveComponents
@@ -37,15 +39,8 @@ abstract class FirInferenceSessionForChainedResolve(
         partiallyResolvedCalls += call to call.candidate
     }
 
-    override fun registerStubTypes(map: Map<TypeVariableMarker, StubTypeMarker>) {}
-
     protected val FirResolvable.candidate: Candidate
         get() = candidate()!!
-
-    override fun clear() {
-        partiallyResolvedCalls.clear()
-        completedCalls.clear()
-    }
 
     protected fun integrateConstraintToSystem(
         commonSystem: NewConstraintSystemImpl,
