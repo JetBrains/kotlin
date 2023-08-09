@@ -83,7 +83,7 @@ class IdeSourcesAndDocumentationResolutionTest {
                 binaryCoordinates("com.arkivanov.essenty:lifecycle:commonMain:0.4.2"),
                 binaryCoordinates("com.arkivanov.essenty:instance-keeper:commonMain:0.4.2"),
                 IdeNativeStdlibDependencyResolver.nativeStdlibCoordinates(project),
-                binaryCoordinates(Regex(".*stdlib-common:.*")) /* KT-56278 */
+                binaryCoordinates(Regex(".*stdlib.*")) /* KT-56278 */
             )
 
             val resolvedDependencies = resolveDependencySources(nativeMain)
