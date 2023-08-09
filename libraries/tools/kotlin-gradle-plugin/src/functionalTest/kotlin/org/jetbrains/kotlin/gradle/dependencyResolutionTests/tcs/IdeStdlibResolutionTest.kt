@@ -11,6 +11,8 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.compilerRunner.konanVersion
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformSourceSetConventionsImpl.commonMain
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformSourceSetConventionsImpl.dependencies
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.assertMatches
@@ -236,6 +238,26 @@ class IdeStdlibResolutionTest {
         // TODO think about jvm + android stdlib
         project.assertStdlibDependencies(kotlin.sourceSets.getByName("commonMain"), emptyList<Any>())
         project.assertStdlibDependencies(kotlin.sourceSets.getByName("commonTest"), emptyList<Any>())
+    }
+
+    @Test
+    fun `test stdlib-common notation is substituted with stdlib`() {
+        val project = createProjectWithDefaultStdlibEnabled()
+        val kotlin = project.multiplatformExtension
+        kotlin.jvm()
+        kotlin.linuxX64()
+        kotlin.linuxArm64()
+
+        kotlin.sourceSets.commonMain.dependencies {
+            implementation(kotlin("stdlib-common"))
+        }
+
+        project.evaluate()
+
+        project.assertStdlibDependencies(
+            kotlin.sourceSets.commonMain.get(),
+            listOf(stdlibCommonMainDependency(kotlin))
+        )
     }
 
     private fun Project.assertStdlibDependencies(sourceSet: KotlinSourceSet, dependencies: Any) {
