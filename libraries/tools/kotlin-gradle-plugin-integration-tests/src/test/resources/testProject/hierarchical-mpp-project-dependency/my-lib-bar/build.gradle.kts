@@ -21,7 +21,6 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(project(":my-lib-foo"))
-                implementation(kotlin("stdlib-common"))
             }
         }
 
