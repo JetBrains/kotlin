@@ -135,7 +135,7 @@ object PartialLinkageUtils {
 }
 
 // A workaround for KT-58837 until KT-58904 is fixed. TODO: Merge with IrMessageLogger.
-class PartialLinkageLogger(private val irLogger: IrMessageLogger, logLevel: PartialLinkageLogLevel) {
+class PartialLinkageLogger(val irLogger: IrMessageLogger, val logLevel: PartialLinkageLogLevel) {
     class Location(val moduleName: String, val filePath: String, val lineNumber: Int, val columnNumber: Int) {
         fun render(): StringBuilder = StringBuilder().apply {
             append(moduleName)
