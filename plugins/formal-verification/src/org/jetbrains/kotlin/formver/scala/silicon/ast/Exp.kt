@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.formver.scala.silicon.ast
 
 import org.jetbrains.kotlin.formver.scala.IntoViper
+import org.jetbrains.kotlin.formver.scala.emptyScalaMap
+import org.jetbrains.kotlin.formver.scala.toScalaSeq
 import scala.math.BigInt
 import viper.silver.ast.*
 
@@ -196,7 +198,8 @@ sealed class Exp : IntoViper<viper.silver.ast.Exp> {
         val info: Info = Info.NoInfo,
         val trafos: Trafos = Trafos.NoTrafos,
     ) : Exp() {
-        override fun toViper(): viper.silver.ast.Exp = viper.silver.ast.BoolLit.apply(value, pos.toViper(), info.toViper(), trafos.toViper())
+        override fun toViper(): viper.silver.ast.Exp =
+            viper.silver.ast.BoolLit.apply(value, pos.toViper(), info.toViper(), trafos.toViper())
     }
 
     data class LocalVar(
@@ -228,4 +231,25 @@ sealed class Exp : IntoViper<viper.silver.ast.Exp> {
         override fun toViper(): viper.silver.ast.Exp = Result(type.toViper(), pos.toViper(), info.toViper(), trafos.toViper())
     }
 
+    data class DomainFuncApp(
+        val domainName: String,
+        val funcname: String,
+        val args: List<Exp>,
+        val typ: Type,
+        val pos: Position = Position.NoPosition,
+        val info: Info = Info.NoInfo,
+        val trafos: Trafos = Trafos.NoTrafos,
+    ) : Exp() {
+        override fun toViper(): viper.silver.ast.Exp =
+            DomainFuncApp(
+                funcname,
+                args.map { it.toViper() }.toScalaSeq(),
+                emptyScalaMap(),
+                pos.toViper(),
+                info.toViper(),
+                typ.toViper(),
+                domainName,
+                trafos.toViper()
+            )
+    }
 }

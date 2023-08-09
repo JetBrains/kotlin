@@ -5,20 +5,19 @@
 
 package org.jetbrains.kotlin.formver.scala.silicon.ast
 
-import org.jetbrains.kotlin.formver.conversion.ConvertedType
-import org.jetbrains.kotlin.formver.conversion.ConvertedVar
 import org.jetbrains.kotlin.formver.scala.IntoViper
 import org.jetbrains.kotlin.formver.scala.emptySeq
 import org.jetbrains.kotlin.formver.scala.toScalaOption
 import org.jetbrains.kotlin.formver.scala.toScalaSeq
 import viper.silver.ast.AnonymousDomainAxiom
+import viper.silver.ast.LocalVarDecl
 import viper.silver.ast.NamedDomainAxiom
 
 // Cannot implement `IntoViper` as we need to pass the domain name.
 class DomainFunc(
     val name: String,
-    val formalArgs: List<ConvertedVar>,
-    val typ: ConvertedType,
+    val formalArgs: List<LocalVarDecl>,
+    val typ: Type,
     val unique: Boolean,
     val pos: Position = Position.NoPosition,
     val info: Info = Info.NoInfo,
@@ -27,8 +26,8 @@ class DomainFunc(
     fun toViper(domainName: String): viper.silver.ast.DomainFunc =
         viper.silver.ast.DomainFunc(
             name,
-            formalArgs.map { it.toLocalVarDecl() }.toScalaSeq(),
-            typ.viperType.toViper(),
+            formalArgs.toScalaSeq(),
+            typ.toViper(),
             unique,
             null.toScalaOption(),
             pos.toViper(),
@@ -55,16 +54,18 @@ class DomainAxiom(
 
 class Domain(
     val name: String,
-    val functions: List<DomainFunc>,
+    functions: List<DomainFunc>,
     val axioms: List<DomainAxiom>,
     val pos: Position = Position.NoPosition,
     val info: Info = Info.NoInfo,
     val trafos: Trafos = Trafos.NoTrafos,
 ) : IntoViper<viper.silver.ast.Domain> {
+    val namedFunctions = functions.associateBy { it.name }
+
     override fun toViper(): viper.silver.ast.Domain =
         viper.silver.ast.Domain(
             name,
-            functions.map { it.toViper(name) }.toScalaSeq(),
+            namedFunctions.map { it.value.toViper(name) }.toScalaSeq(),
             axioms.map { it.toViper(name) }.toScalaSeq(),
             emptySeq(),
             null.toScalaOption(),
@@ -74,4 +75,11 @@ class Domain(
         )
 
     fun toType(): Type.Domain = Type.Domain(name)
+
+    fun getDomainFuncApp(
+        funcName: String, args: List<Exp>,
+        pos: Position = Position.NoPosition,
+        info: Info = Info.NoInfo,
+        trafos: Trafos = Trafos.NoTrafos,
+    ): Exp.DomainFuncApp = Exp.DomainFuncApp(name, funcName, args, namedFunctions.getValue(funcName).typ, pos, info, trafos)
 }
