@@ -62,13 +62,14 @@ import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isFunction
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
+import org.jetbrains.kotlin.ir.util.remapTypes
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.types.Variance
 
 internal class DeepCopyIrTreeWithRemappedComposableTypes(
     private val context: IrPluginContext,
     private val symbolRemapper: DeepCopySymbolRemapper,
-    typeRemapper: TypeRemapper,
+    private val typeRemapper: TypeRemapper,
     symbolRenamer: SymbolRenamer = SymbolRenamer.DEFAULT
 ) : DeepCopyPreservingMetadata(symbolRemapper, typeRemapper, symbolRenamer) {
 
@@ -79,7 +80,17 @@ internal class DeepCopyIrTreeWithRemappedComposableTypes(
         if (declaration.symbol.isBoundButNotRemapped()) {
             symbolRemapper.visitSimpleFunction(declaration)
         }
+
         return super.visitSimpleFunction(declaration).also {
+            it.overriddenSymbols.forEach {
+                if (!it.isBound) {
+                    // symbol will be rebound by deep copy on later iteration
+                    return@forEach
+                }
+                if (it.owner.needsComposableRemapping() && !it.owner.isDecoy()) {
+                    it.owner.remapTypes(typeRemapper)
+                }
+            }
             it.correspondingPropertySymbol = declaration.correspondingPropertySymbol
         }
     }
@@ -182,9 +193,14 @@ internal class DeepCopyIrTreeWithRemappedComposableTypes(
         // case, we want to update those calls as well.
         if (
             containingClass != null &&
-            ownerFn.origin == IrDeclarationOrigin.FAKE_OVERRIDE &&
-            containingClass.defaultType.isFunction() &&
-            expression.dispatchReceiver?.type?.isComposable() == true
+            ownerFn.origin == IrDeclarationOrigin.FAKE_OVERRIDE && (
+                // Fake override refers to composable if container is synthetic composable (K2)
+                // or function type is composable (K1)
+                containingClass.defaultType.isSyntheticComposableFunction() || (
+                    containingClass.defaultType.isFunction() &&
+                        expression.dispatchReceiver?.type?.isComposable() == true
+                )
+            )
         ) {
             val realParams = containingClass.typeParameters.size - 1
             // with composer and changed
