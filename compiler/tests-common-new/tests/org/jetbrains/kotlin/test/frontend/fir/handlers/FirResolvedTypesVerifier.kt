@@ -22,7 +22,8 @@ import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 
-class FirResolvedTypesVerifier(testServices: TestServices) : FirAnalysisHandler(testServices, failureDisablesNextSteps = true) {
+class FirResolvedTypesVerifier(testServices: TestServices) : FirAnalysisHandler(testServices) {
+    override val failureDisablesNextSteps: Boolean = true
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(FirDiagnosticsDirectives)
 

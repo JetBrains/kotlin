@@ -12,54 +12,37 @@ import org.jetbrains.kotlin.test.services.TestServices
 
 abstract class JvmBinaryArtifactHandler(
     testServices: TestServices,
-    failureDisablesNextSteps: Boolean = false,
 ) : BinaryArtifactHandler<BinaryArtifacts.Jvm>(
     testServices,
-    ArtifactKinds.Jvm,
-    failureDisablesNextSteps,
-    doNotRunIfThereWerePreviousFailures = true,
-)
+    ArtifactKinds.Jvm
+) {
+    override val doNotRunIfThereWerePreviousFailures: Boolean = true
+}
 
 abstract class JsBinaryArtifactHandler(
-    testServices: TestServices,
-    failureDisablesNextSteps: Boolean = false,
-    doNotRunIfThereWerePreviousFailures: Boolean = false
+    testServices: TestServices
 ) : BinaryArtifactHandler<BinaryArtifacts.Js>(
     testServices,
-    ArtifactKinds.Js,
-    failureDisablesNextSteps,
-    doNotRunIfThereWerePreviousFailures
+    ArtifactKinds.Js
 )
 
 abstract class KlibArtifactHandler(
-    testServices: TestServices,
-    failureDisablesNextSteps: Boolean = false,
-    doNotRunIfThereWerePreviousFailures: Boolean = false
+    testServices: TestServices
 ) : BinaryArtifactHandler<BinaryArtifacts.KLib>(
     testServices,
-    ArtifactKinds.KLib,
-    failureDisablesNextSteps,
-    doNotRunIfThereWerePreviousFailures
+    ArtifactKinds.KLib
 )
 
 abstract class NativeBinaryArtifactHandler(
     testServices: TestServices,
-    failureDisablesNextSteps: Boolean = false,
-    doNotRunIfThereWerePreviousFailures: Boolean = false
 ) : BinaryArtifactHandler<BinaryArtifacts.Native>(
     testServices,
-    ArtifactKinds.Native,
-    failureDisablesNextSteps,
-    doNotRunIfThereWerePreviousFailures
+    ArtifactKinds.Native
 )
 
 abstract class WasmBinaryArtifactHandler(
     testServices: TestServices,
-    failureDisablesNextSteps: Boolean = false,
-    doNotRunIfThereWerePreviousFailures: Boolean = false
 ) : BinaryArtifactHandler<BinaryArtifacts.Wasm>(
     testServices,
-    ArtifactKinds.Wasm,
-    failureDisablesNextSteps,
-    doNotRunIfThereWerePreviousFailures
+    ArtifactKinds.Wasm
 )

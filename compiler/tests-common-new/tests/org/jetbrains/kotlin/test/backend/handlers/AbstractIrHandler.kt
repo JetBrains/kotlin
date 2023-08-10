@@ -13,7 +13,5 @@ import org.jetbrains.kotlin.test.services.TestServices
 
 abstract class AbstractIrHandler(
     testServices: TestServices,
-    artifactKind: BackendKind<IrBackendInput> = BackendKinds.IrBackend,
-    failureDisablesNextSteps: Boolean = false,
-    doNotRunIfThereWerePreviousFailures: Boolean = false
-) : BackendInputHandler<IrBackendInput>(testServices, artifactKind, failureDisablesNextSteps, doNotRunIfThereWerePreviousFailures)
+    artifactKind: BackendKind<IrBackendInput> = BackendKinds.IrBackend
+) : BackendInputHandler<IrBackendInput>(testServices, artifactKind)

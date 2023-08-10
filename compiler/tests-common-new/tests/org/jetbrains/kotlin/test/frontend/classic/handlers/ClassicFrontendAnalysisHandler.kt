@@ -11,14 +11,10 @@ import org.jetbrains.kotlin.test.model.FrontendOutputHandler
 import org.jetbrains.kotlin.test.services.TestServices
 
 abstract class ClassicFrontendAnalysisHandler(
-    testServices: TestServices,
-    failureDisablesNextSteps: Boolean = false,
-    doNotRunIfThereWerePreviousFailures: Boolean = false
+    testServices: TestServices
 ) : FrontendOutputHandler<ClassicFrontendOutputArtifact>(
     testServices,
-    FrontendKinds.ClassicFrontend,
-    failureDisablesNextSteps,
-    doNotRunIfThereWerePreviousFailures
+    FrontendKinds.ClassicFrontend
 )
 
 
