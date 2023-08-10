@@ -114,6 +114,11 @@ class SubstituteDecoyCallsTransformer(
             return super.visitSimpleFunction(declaration)
         }
 
+        remapOverriddenSymbols(declaration)
+        return super.visitSimpleFunction(declaration)
+    }
+
+    private fun remapOverriddenSymbols(declaration: IrSimpleFunction) {
         val newOverriddenSymbols = declaration.overriddenSymbols.map {
             // It can be an overridden symbol from another module, so access it via `decoyOwner`
             val maybeDecoy = it.decoyOwner
@@ -121,11 +126,13 @@ class SubstituteDecoyCallsTransformer(
                 maybeDecoy.getComposableForDecoy() as IrSimpleFunctionSymbol
             } else {
                 it
+            }.also {
+                // need to fix for entire hierarchy (because of "original" symbols in LazyIR)
+                remapOverriddenSymbols(it.owner)
             }
         }
 
         declaration.overriddenSymbols = newOverriddenSymbols
-        return super.visitSimpleFunction(declaration)
     }
 
     override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
