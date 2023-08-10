@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.KtFakeSourceElement
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -167,7 +169,7 @@ object FirImportsChecker : FirFileChecker() {
                 !import.isAllUnder &&
                         import.importedName?.identifierOrNullIfSpecial?.isNotEmpty() == true &&
                         import.resolvesToClass(context)
-            }
+            }.filterNot { (it.source as? KtFakeSourceElement)?.kind == KtFakeSourceElementKind.ImplicitImport  }
         interestingImports
             .groupBy { it.aliasName ?: it.importedName!! }
             .values
