@@ -52,11 +52,11 @@ internal class NativeExternalDependenciesIT : KGPBaseTest() {
             0 native-external-dependencies
             1 io.ktor:ktor-io,io.ktor:ktor-io-$DEFAULT_CURRENT_PLATFORM_TARGET_NAME_POSTFIX[2.3.3] #0[2.3.3]
             	/some/path/ktor-io.klib
-            2 org.jetbrains.kotlin:kotlin-stdlib[$KOTLIN_VERSION] #0[$KOTLIN_VERSION] #4[$KOTLIN_VERSION] #3[$KOTLIN_VERSION]
-            3 org.jetbrains.kotlin:kotlin-stdlib-jdk7[$KOTLIN_VERSION] #4[$KOTLIN_VERSION]
-            	/some/path/kotlin-stdlib-jdk7-$KOTLIN_VERSION.jar
-            4 org.jetbrains.kotlin:kotlin-stdlib-jdk8[$KOTLIN_VERSION] #6[1.8.20]
-            	/some/path/kotlin-stdlib-jdk8-$KOTLIN_VERSION.jar
+            2 org.jetbrains.kotlin:kotlin-stdlib[$KOTLIN_VERSION] #0[$KOTLIN_VERSION] #4[1.8.20] #3[1.8.20]
+            3 org.jetbrains.kotlin:kotlin-stdlib-jdk7[1.8.20] #4[1.8.20]
+            	/some/path/kotlin-stdlib-jdk7-1.8.20.jar
+            4 org.jetbrains.kotlin:kotlin-stdlib-jdk8[1.8.20] #6[1.8.20]
+            	/some/path/kotlin-stdlib-jdk8-1.8.20.jar
             5 org.jetbrains.kotlinx:atomicfu,org.jetbrains.kotlinx:atomicfu-$DEFAULT_CURRENT_PLATFORM_TARGET_NAME_POSTFIX[0.21.0] #6[0.21.0] #1[0.19.0]
             	/some/path/atomicfu.klib
             	/some/path/atomicfu-cinterop-interop.klib
