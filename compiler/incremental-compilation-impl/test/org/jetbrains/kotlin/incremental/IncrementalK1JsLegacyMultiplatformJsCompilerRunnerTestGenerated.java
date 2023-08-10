@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 @TestMetadata("jps/jps-plugin/testData/incremental/mpp/allPlatforms")
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
-public class IncrementalMultiplatformJsCompilerRunnerTestGenerated extends AbstractIncrementalMultiplatformJsCompilerRunnerTest {
+public class IncrementalK1JsLegacyMultiplatformJsCompilerRunnerTestGenerated extends AbstractIncrementalK1JsLegacyMultiplatformJsCompilerRunnerTest {
     private void runTest(String testDataFilePath) throws Exception {
         KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
@@ -42,7 +42,7 @@ public class IncrementalMultiplatformJsCompilerRunnerTestGenerated extends Abstr
     @TestMetadata("jps/jps-plugin/testData/incremental/mpp/allPlatforms/touchActual")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class TouchActual extends AbstractIncrementalMultiplatformJsCompilerRunnerTest {
+    public static class TouchActual extends AbstractIncrementalK1JsLegacyMultiplatformJsCompilerRunnerTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -55,7 +55,7 @@ public class IncrementalMultiplatformJsCompilerRunnerTestGenerated extends Abstr
     @TestMetadata("jps/jps-plugin/testData/incremental/mpp/allPlatforms/touchExpect")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class TouchExpect extends AbstractIncrementalMultiplatformJsCompilerRunnerTest {
+    public static class TouchExpect extends AbstractIncrementalK1JsLegacyMultiplatformJsCompilerRunnerTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }

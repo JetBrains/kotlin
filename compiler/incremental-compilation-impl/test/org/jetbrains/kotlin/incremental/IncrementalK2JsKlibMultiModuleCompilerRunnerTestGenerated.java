@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/common")
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
-public class IncrementalMultiModuleJsFirKlibCompilerRunnerTestGenerated extends AbstractIncrementalMultiModuleJsFirKlibCompilerRunnerTest {
+public class IncrementalK2JsKlibMultiModuleCompilerRunnerTestGenerated extends AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest {
     private void runTest(String testDataFilePath) throws Exception {
         KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
@@ -152,7 +152,7 @@ public class IncrementalMultiModuleJsFirKlibCompilerRunnerTestGenerated extends 
     @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/common/classAdded")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class ClassAdded extends AbstractIncrementalMultiModuleJsFirKlibCompilerRunnerTest {
+    public static class ClassAdded extends AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -165,7 +165,7 @@ public class IncrementalMultiModuleJsFirKlibCompilerRunnerTestGenerated extends 
     @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/common/classRemoved")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class ClassRemoved extends AbstractIncrementalMultiModuleJsFirKlibCompilerRunnerTest {
+    public static class ClassRemoved extends AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -178,7 +178,7 @@ public class IncrementalMultiModuleJsFirKlibCompilerRunnerTestGenerated extends 
     @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/common/constantValueChanged")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class ConstantValueChanged extends AbstractIncrementalMultiModuleJsFirKlibCompilerRunnerTest {
+    public static class ConstantValueChanged extends AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -191,7 +191,7 @@ public class IncrementalMultiModuleJsFirKlibCompilerRunnerTestGenerated extends 
     @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/common/copyFileToAnotherModule")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class CopyFileToAnotherModule extends AbstractIncrementalMultiModuleJsFirKlibCompilerRunnerTest {
+    public static class CopyFileToAnotherModule extends AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -204,7 +204,7 @@ public class IncrementalMultiModuleJsFirKlibCompilerRunnerTestGenerated extends 
     @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/common/defaultArgumentInConstructorRemoved")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class DefaultArgumentInConstructorRemoved extends AbstractIncrementalMultiModuleJsFirKlibCompilerRunnerTest {
+    public static class DefaultArgumentInConstructorRemoved extends AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -217,7 +217,7 @@ public class IncrementalMultiModuleJsFirKlibCompilerRunnerTestGenerated extends 
     @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/common/defaultParameterAdded")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class DefaultParameterAdded extends AbstractIncrementalMultiModuleJsFirKlibCompilerRunnerTest {
+    public static class DefaultParameterAdded extends AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -230,7 +230,7 @@ public class IncrementalMultiModuleJsFirKlibCompilerRunnerTestGenerated extends 
     @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/common/defaultParameterAddedForTopLevelFun")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class DefaultParameterAddedForTopLevelFun extends AbstractIncrementalMultiModuleJsFirKlibCompilerRunnerTest {
+    public static class DefaultParameterAddedForTopLevelFun extends AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -243,7 +243,7 @@ public class IncrementalMultiModuleJsFirKlibCompilerRunnerTestGenerated extends 
     @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/common/defaultParameterRemoved")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class DefaultParameterRemoved extends AbstractIncrementalMultiModuleJsFirKlibCompilerRunnerTest {
+    public static class DefaultParameterRemoved extends AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -256,7 +256,7 @@ public class IncrementalMultiModuleJsFirKlibCompilerRunnerTestGenerated extends 
     @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/common/defaultParameterRemovedForTopLevelFun")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class DefaultParameterRemovedForTopLevelFun extends AbstractIncrementalMultiModuleJsFirKlibCompilerRunnerTest {
+    public static class DefaultParameterRemovedForTopLevelFun extends AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -269,7 +269,7 @@ public class IncrementalMultiModuleJsFirKlibCompilerRunnerTestGenerated extends 
     @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/common/defaultValueInConstructorRemoved")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class DefaultValueInConstructorRemoved extends AbstractIncrementalMultiModuleJsFirKlibCompilerRunnerTest {
+    public static class DefaultValueInConstructorRemoved extends AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -282,7 +282,7 @@ public class IncrementalMultiModuleJsFirKlibCompilerRunnerTestGenerated extends 
     @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/common/duplicatedClass")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class DuplicatedClass extends AbstractIncrementalMultiModuleJsFirKlibCompilerRunnerTest {
+    public static class DuplicatedClass extends AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -295,7 +295,7 @@ public class IncrementalMultiModuleJsFirKlibCompilerRunnerTestGenerated extends 
     @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/common/exportedDependency")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class ExportedDependency extends AbstractIncrementalMultiModuleJsFirKlibCompilerRunnerTest {
+    public static class ExportedDependency extends AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -308,7 +308,7 @@ public class IncrementalMultiModuleJsFirKlibCompilerRunnerTestGenerated extends 
     @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/common/functionFromDifferentPackageChanged")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class FunctionFromDifferentPackageChanged extends AbstractIncrementalMultiModuleJsFirKlibCompilerRunnerTest {
+    public static class FunctionFromDifferentPackageChanged extends AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -321,7 +321,7 @@ public class IncrementalMultiModuleJsFirKlibCompilerRunnerTestGenerated extends 
     @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/common/inlineFunctionInlined")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class InlineFunctionInlined extends AbstractIncrementalMultiModuleJsFirKlibCompilerRunnerTest {
+    public static class InlineFunctionInlined extends AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -334,7 +334,7 @@ public class IncrementalMultiModuleJsFirKlibCompilerRunnerTestGenerated extends 
     @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/common/inlineFunctionTwoPackageParts")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class InlineFunctionTwoPackageParts extends AbstractIncrementalMultiModuleJsFirKlibCompilerRunnerTest {
+    public static class InlineFunctionTwoPackageParts extends AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -347,7 +347,7 @@ public class IncrementalMultiModuleJsFirKlibCompilerRunnerTestGenerated extends 
     @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/common/moveFileToAnotherModule")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class MoveFileToAnotherModule extends AbstractIncrementalMultiModuleJsFirKlibCompilerRunnerTest {
+    public static class MoveFileToAnotherModule extends AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -360,7 +360,7 @@ public class IncrementalMultiModuleJsFirKlibCompilerRunnerTestGenerated extends 
     @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/common/simple")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class Simple extends AbstractIncrementalMultiModuleJsFirKlibCompilerRunnerTest {
+    public static class Simple extends AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -373,7 +373,7 @@ public class IncrementalMultiModuleJsFirKlibCompilerRunnerTestGenerated extends 
     @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/common/simpleDependency")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class SimpleDependency extends AbstractIncrementalMultiModuleJsFirKlibCompilerRunnerTest {
+    public static class SimpleDependency extends AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -386,7 +386,7 @@ public class IncrementalMultiModuleJsFirKlibCompilerRunnerTestGenerated extends 
     @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/common/simpleDependencyErrorOnAccessToInternal1")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class SimpleDependencyErrorOnAccessToInternal1 extends AbstractIncrementalMultiModuleJsFirKlibCompilerRunnerTest {
+    public static class SimpleDependencyErrorOnAccessToInternal1 extends AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -399,7 +399,7 @@ public class IncrementalMultiModuleJsFirKlibCompilerRunnerTestGenerated extends 
     @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/common/simpleDependencyErrorOnAccessToInternal2")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class SimpleDependencyErrorOnAccessToInternal2 extends AbstractIncrementalMultiModuleJsFirKlibCompilerRunnerTest {
+    public static class SimpleDependencyErrorOnAccessToInternal2 extends AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -412,7 +412,7 @@ public class IncrementalMultiModuleJsFirKlibCompilerRunnerTestGenerated extends 
     @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/common/simpleDependencyUnchanged")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class SimpleDependencyUnchanged extends AbstractIncrementalMultiModuleJsFirKlibCompilerRunnerTest {
+    public static class SimpleDependencyUnchanged extends AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -425,7 +425,7 @@ public class IncrementalMultiModuleJsFirKlibCompilerRunnerTestGenerated extends 
     @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/common/transitiveDependency")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class TransitiveDependency extends AbstractIncrementalMultiModuleJsFirKlibCompilerRunnerTest {
+    public static class TransitiveDependency extends AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -438,7 +438,7 @@ public class IncrementalMultiModuleJsFirKlibCompilerRunnerTestGenerated extends 
     @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/common/transitiveInlining")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class TransitiveInlining extends AbstractIncrementalMultiModuleJsFirKlibCompilerRunnerTest {
+    public static class TransitiveInlining extends AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
@@ -451,7 +451,7 @@ public class IncrementalMultiModuleJsFirKlibCompilerRunnerTestGenerated extends 
     @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/common/twoDependants")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
-    public static class TwoDependants extends AbstractIncrementalMultiModuleJsFirKlibCompilerRunnerTest {
+    public static class TwoDependants extends AbstractIncrementalK2JsKlibMultiModuleCompilerRunnerTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }

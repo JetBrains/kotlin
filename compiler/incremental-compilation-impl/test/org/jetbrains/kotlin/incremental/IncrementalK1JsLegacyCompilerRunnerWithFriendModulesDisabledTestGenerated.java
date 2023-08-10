@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 @TestMetadata("jps/jps-plugin/testData/incremental/js/friendsModuleDisabled")
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
-public class IncrementalJsCompilerRunnerWithFriendModulesDisabledTestGenerated extends AbstractIncrementalJsCompilerRunnerWithFriendModulesDisabledTest {
+public class IncrementalK1JsLegacyCompilerRunnerWithFriendModulesDisabledTestGenerated extends AbstractIncrementalK1JsLegacyCompilerRunnerWithFriendModulesDisabledTest {
     private void runTest(String testDataFilePath) throws Exception {
         KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
