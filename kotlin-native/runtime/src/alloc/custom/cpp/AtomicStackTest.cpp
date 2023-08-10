@@ -26,15 +26,15 @@ struct Element {
 TEST(AtomicStackTest, StressPushPop) {
     alloc::AtomicStack<Element> ready;
     alloc::AtomicStack<Element> used;
-    std_support::vector<Element> elements(1000);
-    std_support::vector<Element*> expected;
+    std::vector<Element> elements(1000);
+    std::vector<Element*> expected;
     for (auto& element : elements) {
         ready.Push(&element);
         expected.push_back(&element);
     }
 
     std::atomic<bool> canStart = false;
-    std_support::vector<ScopedThread> mutators;
+    std::vector<ScopedThread> mutators;
     for (int i = 0; i < kDefaultThreadCount; ++i) {
         mutators.emplace_back([&]() NO_INLINE {
             while (!canStart.load(std::memory_order_relaxed)) {
@@ -48,7 +48,7 @@ TEST(AtomicStackTest, StressPushPop) {
     canStart.store(true, std::memory_order_relaxed);
     mutators.clear();
 
-    std_support::vector<Element*> actual;
+    std::vector<Element*> actual;
     while (auto* element = ready.Pop()) {
         actual.push_back(element);
     }

@@ -7,6 +7,7 @@
 
 #include <string_view>
 #include <cstring>
+#include <unordered_set>
 
 #include "KAssert.h"
 #include "Memory.h"
@@ -15,7 +16,6 @@
 #include "ThreadData.hpp"
 #include "ThreadRegistry.hpp"
 #include "ExecFormat.h"
-#include "std_support/UnorderedSet.hpp"
 
 using namespace kotlin;
 
@@ -313,7 +313,7 @@ public:
     ~KnownFunctionChecker() = delete;
 
 private:
-    std_support::unordered_set<const void*> known_functions_;
+    std::unordered_set<const void*> known_functions_;
     std::string_view good_names_copy_[sizeof(Kotlin_callsCheckerGoodFunctionNames) / sizeof(Kotlin_callsCheckerGoodFunctionNames[0])];
 };
 

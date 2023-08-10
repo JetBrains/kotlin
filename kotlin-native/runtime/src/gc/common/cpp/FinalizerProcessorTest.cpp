@@ -16,7 +16,7 @@ namespace {
 
 class FinalizerProcessorTest : public testing::Test {
 public:
-    using FinalizerQueue = std_support::vector<int>;
+    using FinalizerQueue = std::vector<int>;
 
     struct FinalizerQueueTraits {
         static bool isEmpty(const FinalizerQueue& queue) noexcept { return queue.empty(); }

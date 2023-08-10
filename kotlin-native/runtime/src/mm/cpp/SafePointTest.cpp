@@ -6,13 +6,14 @@
 #include "SafePoint.hpp"
 
 #include <atomic>
+#include <optional>
+#include <vector>
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 #include "ScopedThread.hpp"
 #include "TestSupport.hpp"
-#include "std_support/Vector.hpp"
 
 using namespace kotlin;
 
@@ -60,7 +61,7 @@ TEST(SafePointTest, StressSafePointActivator) {
     std::atomic<size_t> started = 0;
     std::atomic<bool> canStop = false;
     std::atomic<size_t> stopped = 0;
-    std_support::vector<ScopedThread> threads;
+    std::vector<ScopedThread> threads;
     for (int i = 0; i < kDefaultThreadCount; ++i) {
         threads.emplace_back([&]() noexcept {
             initialized.fetch_add(1, std::memory_order_relaxed);

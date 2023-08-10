@@ -146,7 +146,7 @@ TEST(EpochSchedulerTest, StressScheduleNext) {
     };
 
     std::atomic<bool> canStop = false;
-    std_support::vector<ScopedThread> threads;
+    std::vector<ScopedThread> threads;
     for (int i = 0; i < kDefaultThreadCount; ++i) {
         threads.emplace_back([&, i] {
             Epoch pastEpoch = 0;

@@ -7,10 +7,10 @@
 #define CUSTOM_ALLOC_CPP_ATOMICSTACK_HPP_
 
 #include <atomic>
+#include <vector>
 
 #include "KAssert.h"
 #include "Utils.hpp"
-#include "std_support/Vector.hpp"
 
 namespace kotlin::alloc {
 
@@ -91,8 +91,8 @@ public:
     }
 
     // Test method
-    std_support::vector<T*> GetElements() {
-        std_support::vector<T*> elements;
+    std::vector<T*> GetElements() {
+        std::vector<T*> elements;
         T* elm = stack_.load();
         while (elm) {
             elements.push_back(elm);

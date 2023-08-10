@@ -194,11 +194,11 @@ public:
         }
     }
 
-    std_support::vector<ObjHeader*> Sweep() {
+    std::vector<ObjHeader*> Sweep() {
         gc::processWeaks<ProcessWeakTraits>(gc::GCHandle::getByEpoch(0), specialRefRegistry_);
         alloc::SweepExtraObjects<SweepTraits>(gc::GCHandle::getByEpoch(0), extraObjectFactory_);
         auto finalizers = alloc::Sweep<SweepTraits>(gc::GCHandle::getByEpoch(0), objectFactory_);
-        std_support::vector<ObjHeader*> objects;
+        std::vector<ObjHeader*> objects;
         for (auto node : finalizers.IterForTests()) {
             objects.push_back(node.GetObjHeader());
         }
@@ -206,16 +206,16 @@ public:
         return objects;
     }
 
-    std_support::vector<ObjHeader*> Alive() {
-        std_support::vector<ObjHeader*> objects;
+    std::vector<ObjHeader*> Alive() {
+        std::vector<ObjHeader*> objects;
         for (auto node : objectFactory_.LockForIter()) {
             objects.push_back(node.GetObjHeader());
         }
         return objects;
     }
 
-    std_support::vector<mm::ExtraObjectData*> AliveExtraObjects() {
-        std_support::vector<mm::ExtraObjectData*> objects;
+    std::vector<mm::ExtraObjectData*> AliveExtraObjects() {
+        std::vector<mm::ExtraObjectData*> objects;
         for (auto &node : extraObjectFactory_.LockForIter()) {
             objects.push_back(&node);
         }
@@ -273,7 +273,7 @@ private:
     mm::SpecialRefRegistry specialRefRegistry_;
     mm::SpecialRefRegistry::ThreadQueue specialRefRegistryThreadQueue_{specialRefRegistry_};
 
-    std_support::vector<ObjectFactory::FinalizerQueue> finalizers_;
+    std::vector<ObjectFactory::FinalizerQueue> finalizers_;
 };
 
 } // namespace

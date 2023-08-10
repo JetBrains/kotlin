@@ -10,6 +10,7 @@
 #include <cstdlib>
 #include <cinttypes>
 #include <new>
+#include <vector>
 
 #include "CustomAllocConstants.hpp"
 #include "AtomicStack.hpp"
@@ -19,7 +20,6 @@
 #include "GCApi.hpp"
 #include "Memory.h"
 #include "ThreadRegistry.hpp"
-#include "std_support/Vector.hpp"
 
 namespace kotlin::alloc {
 

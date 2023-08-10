@@ -7,14 +7,13 @@
 
 #include "ObjectPtr.hpp"
 
-#include <functional>
-
 #import <Foundation/NSObject.h>
+#include <functional>
+#include <memory>
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
-#include "std_support/Memory.hpp"
 #include "Utils.hpp"
 
 using namespace kotlin;
@@ -38,7 +37,7 @@ private:
 } // namespace
 
 @interface WithDestructorHookObjC : NSObject {
-    std_support::unique_ptr<WithDestructorHook> impl_;
+    std::unique_ptr<WithDestructorHook> impl_;
 }
 
 @property(readonly) WithDestructorHook* impl;
@@ -51,7 +50,7 @@ private:
 
 - (instancetype)initWithDestructorHook:(std::function<DestructorHook>)hook {
     if ((self = [super init])) {
-        impl_ = std_support::make_unique<WithDestructorHook>(hook);
+        impl_ = std::make_unique<WithDestructorHook>(hook);
     }
     return self;
 }

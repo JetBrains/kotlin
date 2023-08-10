@@ -86,8 +86,8 @@ bool FixedBlockPage::Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQ
     return nextFree_.first > 0 || nextFree_.last < end_;
 }
 
-std_support::vector<uint8_t*> FixedBlockPage::GetAllocatedBlocks() noexcept {
-    std_support::vector<uint8_t*> allocated;
+std::vector<uint8_t*> FixedBlockPage::GetAllocatedBlocks() noexcept {
+    std::vector<uint8_t*> allocated;
     CustomAllocInfo("FixedBlockPage(%p)::Sweep()", this);
     FixedCellRange nextFree = nextFree_; // Accessing the previous free list structure.
     for (uint32_t cell = 0 ; cell < end_ ; cell += blockSize_) {

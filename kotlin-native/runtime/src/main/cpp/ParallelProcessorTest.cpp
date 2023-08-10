@@ -3,16 +3,15 @@
  * that can be found in the LICENSE file.
  */
 
+#include "ParallelProcessor.hpp"
+
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 #include <list>
+#include <vector>
 
 #include "IntrusiveList.hpp"
-
-#include "ParallelProcessor.hpp"
-
-#include "std_support/Vector.hpp"
 #include "SingleThreadExecutor.hpp"
 #include "TestSupport.hpp"
 

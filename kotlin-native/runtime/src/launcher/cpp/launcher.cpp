@@ -14,13 +14,14 @@
   * limitations under the License.
   */
 
+#include <cstdlib>
+
 #include "Memory.h"
 #include "Natives.h"
 #include "Runtime.h"
 #include "KString.h"
 #include "Types.h"
 #include "Worker.h"
-#include "std_support/CStdlib.hpp"
 
 #include "launcher.h"
 

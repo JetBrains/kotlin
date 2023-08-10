@@ -16,7 +16,6 @@
 #include "ScopedThread.hpp"
 #include "TestSupportCompilerGenerated.hpp"
 #include "TestSupport.hpp"
-#include "std_support/Memory.hpp"
 
 using namespace kotlin;
 using namespace testing;
@@ -306,8 +305,8 @@ namespace {
 using NativeHandlerMock = NiceMock<MockFunction<void(void)>>;
 using OnUnhandledExceptionMock = NiceMock<MockFunction<void(KRef)>>;
 
-std_support::unique_ptr<NativeHandlerMock> gNativeHandlerMock = nullptr;
-std_support::unique_ptr<test_support::ScopedMockFunction<void(KRef), /* Strict = */ false>> gOnUnhandledExceptionMock = nullptr;
+std::unique_ptr<NativeHandlerMock> gNativeHandlerMock = nullptr;
+std::unique_ptr<test_support::ScopedMockFunction<void(KRef), /* Strict = */ false>> gOnUnhandledExceptionMock = nullptr;
 
 // Google Test's death tests do not fail in case of a failed EXPECT_*/ASSERT_* check in a death statement.
 // To workaround it, manually check the conditions to be asserted, log all failed conditions and then
@@ -323,7 +322,7 @@ void log(const char* message) noexcept {
 }
 
 NativeHandlerMock& setNativeTerminateHandler() noexcept {
-    gNativeHandlerMock = std_support::make_unique<NativeHandlerMock>();
+    gNativeHandlerMock = std::make_unique<NativeHandlerMock>();
     std::set_terminate([]() {
         gNativeHandlerMock->Call();
         std::abort();
@@ -332,7 +331,7 @@ NativeHandlerMock& setNativeTerminateHandler() noexcept {
 }
 
 OnUnhandledExceptionMock& setKotlinTerminationHandler() noexcept {
-    gOnUnhandledExceptionMock = std_support::make_unique<test_support::ScopedMockFunction<void(KRef), /* Strict = */ false>>(
+    gOnUnhandledExceptionMock = std::make_unique<test_support::ScopedMockFunction<void(KRef), /* Strict = */ false>>(
             ScopedKotlin_runUnhandledExceptionHookMock</* Strict = */ false>());
     SetKonanTerminateHandler();
     return gOnUnhandledExceptionMock->get();

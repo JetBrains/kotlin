@@ -5,6 +5,8 @@
 
 #include "GCSchedulerImpl.hpp"
 
+#include <vector>
+
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
@@ -12,7 +14,6 @@
 #include "ClockTestSupport.hpp"
 #include "SingleThreadExecutor.hpp"
 #include "TestSupport.hpp"
-#include "std_support/Vector.hpp"
 
 using namespace kotlin;
 
@@ -44,7 +45,7 @@ public:
     explicit GCSchedulerDataTestApi(gcScheduler::GCSchedulerConfig& config) : scheduler_(config, scheduleGC_.AsStdFunction()) {
         mutators_.reserve(MutatorCount);
         for (int i = 0; i < MutatorCount; ++i) {
-            mutators_.emplace_back(std_support::make_unique<MutatorThread>(scheduler_));
+            mutators_.emplace_back(std::make_unique<MutatorThread>(scheduler_));
         }
     }
 
@@ -72,7 +73,7 @@ public:
 
 private:
     std::atomic<size_t> allocatedBytes_ = 0;
-    std_support::vector<std_support::unique_ptr<MutatorThread>> mutators_;
+    std::vector<std::unique_ptr<MutatorThread>> mutators_;
     testing::MockFunction<int64_t()> scheduleGC_;
     gcScheduler::internal::GCSchedulerDataAdaptive<test_support::manual_clock> scheduler_;
 };
@@ -96,7 +97,7 @@ TEST_F(AdaptiveSchedulerTest, CollectOnTargetHeapReached) {
     GCSchedulerDataTestApi<mutatorsCount> schedulerTestApi(config);
 
     EXPECT_CALL(schedulerTestApi.scheduleGC(), Call()).Times(0);
-    std_support::vector<std::future<void>> futures;
+    std::vector<std::future<void>> futures;
     for (int i = 0; i < mutatorsCount; ++i) {
         futures.push_back(schedulerTestApi.Allocate(i, 9));
     }
@@ -136,7 +137,7 @@ TEST_F(AdaptiveSchedulerTest, CollectOnTargetHeapReachedWithoutAssists) {
     GCSchedulerDataTestApi<mutatorsCount> schedulerTestApi(config);
 
     EXPECT_CALL(schedulerTestApi.scheduleGC(), Call()).Times(0);
-    std_support::vector<std::future<void>> futures;
+    std::vector<std::future<void>> futures;
     for (int i = 0; i < mutatorsCount; ++i) {
         futures.push_back(schedulerTestApi.Allocate(i, 9));
     }

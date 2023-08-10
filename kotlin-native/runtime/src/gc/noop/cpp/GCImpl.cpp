@@ -5,6 +5,7 @@
 
 #include "GCImpl.hpp"
 
+#include "Common.h"
 #include "GCStatistics.hpp"
 #include "KAssert.h"
 #include "Logging.hpp"

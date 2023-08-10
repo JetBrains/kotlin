@@ -6,6 +6,7 @@
 #pragma once
 
 #include <condition_variable>
+#include <deque>
 #include <functional>
 #include <future>
 #include <mutex>
@@ -13,7 +14,6 @@
 
 #include "ScopedThread.hpp"
 #include "Utils.hpp"
-#include "std_support/Deque.hpp"
 
 namespace kotlin {
 
@@ -101,7 +101,7 @@ private:
 
     std::condition_variable workCV_;
     std::mutex workMutex_;
-    std_support::deque<std::packaged_task<void()>> queue_;
+    std::deque<std::packaged_task<void()>> queue_;
     bool shutdownRequested_ = false;
 
     ScopedThread thread_;

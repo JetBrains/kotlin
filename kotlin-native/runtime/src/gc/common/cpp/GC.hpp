@@ -7,12 +7,12 @@
 
 #include <atomic>
 #include <cstdint>
+#include <memory>
 
 #include "ExtraObjectData.hpp"
 #include "GCScheduler.hpp"
 #include "Memory.h"
 #include "Utils.hpp"
-#include "std_support/Memory.hpp"
 
 namespace kotlin {
 
@@ -48,7 +48,7 @@ public:
         void onAllocation(ObjHeader* object) noexcept;
 
     private:
-        std_support::unique_ptr<Impl> impl_;
+        std::unique_ptr<Impl> impl_;
     };
 
     // Header to be placed before each heap object. GC will use this to keep its data if needed.
@@ -80,7 +80,7 @@ public:
     void WaitFinalizers(int64_t epoch) noexcept;
 
 private:
-    std_support::unique_ptr<Impl> impl_;
+    std::unique_ptr<Impl> impl_;
 };
 
 bool isMarked(ObjHeader* object) noexcept;

@@ -5,6 +5,7 @@
 
 #include "MutatorAssists.hpp"
 
+#include <map>
 #include <shared_mutex>
 #include <sstream>
 
@@ -13,7 +14,6 @@
 
 #include "SafePoint.hpp"
 #include "TestSupport.hpp"
-#include "std_support/Map.hpp"
 
 using namespace kotlin;
 
@@ -96,7 +96,7 @@ private:
 
     MutatorAssists assists_;
     RWSpinLock<MutexThreadStateHandling::kIgnore> mutatorMapMutex_;
-    std_support::map<mm::ThreadData*, Mutator*> mutatorMap_;
+    std::map<mm::ThreadData*, Mutator*> mutatorMap_;
 };
 
 TEST_F(MutatorAssistsTest, EnableSafePointsWhenRequestingAssists) {
@@ -124,9 +124,9 @@ TEST_F(MutatorAssistsTest, StressEnableSafePointsByMutators) {
     std::array<std::atomic<bool>, epochsCount> enabled = {false};
     std::atomic<bool> canStart = false;
     std::atomic<bool> canStop = false;
-    std_support::vector<std_support::unique_ptr<Mutator>> mutators;
+    std::vector<std::unique_ptr<Mutator>> mutators;
     for (int i = 0; i < kDefaultThreadCount; ++i) {
-        mutators.emplace_back(std_support::make_unique<Mutator>(*this, [&, i](Mutator&) noexcept {
+        mutators.emplace_back(std::make_unique<Mutator>(*this, [&, i](Mutator&) noexcept {
             while (!canStart.load(std::memory_order_relaxed)) {
                 std::this_thread::yield();
             }
@@ -157,9 +157,9 @@ TEST_F(MutatorAssistsTest, Assist) {
     std::array<std::atomic<size_t>, epochsCount> started = {0};
     std::array<std::atomic<size_t>, epochsCount> finished = {0};
     std::atomic<Epoch> gcCompleted = 0;
-    std_support::vector<std_support::unique_ptr<Mutator>> mutators;
+    std::vector<std::unique_ptr<Mutator>> mutators;
     for (int i = 0; i < kDefaultThreadCount; ++i) {
-        mutators.emplace_back(std_support::make_unique<Mutator>(*this, [&](Mutator&) noexcept {
+        mutators.emplace_back(std::make_unique<Mutator>(*this, [&](Mutator&) noexcept {
             for (Epoch epoch = 0; epoch < epochsCount; ++epoch) {
                 while (!canStart[epoch].load(std::memory_order_relaxed)) {
                     std::this_thread::yield();
@@ -213,9 +213,9 @@ TEST_F(MutatorAssistsTest, AssistNoSync) {
     constexpr Epoch epochsCount = 10000;
     std::atomic<bool> canStop = false;
     std::atomic<size_t> finished = 0;
-    std_support::vector<std_support::unique_ptr<Mutator>> mutators;
+    std::vector<std::unique_ptr<Mutator>> mutators;
     for (int i = 0; i < kDefaultThreadCount; ++i) {
-        mutators.emplace_back(std_support::make_unique<Mutator>(*this, [&](Mutator&) noexcept {
+        mutators.emplace_back(std::make_unique<Mutator>(*this, [&](Mutator&) noexcept {
             while (!canStop.load(std::memory_order_relaxed)) {
                 safePoint();
                 std::this_thread::yield();
@@ -247,9 +247,9 @@ TEST_F(MutatorAssistsTest, AssistWithNativeMutators) {
     constexpr Epoch epochsCount = 10000;
     std::atomic<bool> canStop = false;
     std::atomic<size_t> finished = 0;
-    std_support::vector<std_support::unique_ptr<Mutator>> mutators;
+    std::vector<std::unique_ptr<Mutator>> mutators;
     for (int i = 0; i < kDefaultThreadCount; ++i) {
-        mutators.emplace_back(std_support::make_unique<Mutator>(*this, [&, i](Mutator&) noexcept {
+        mutators.emplace_back(std::make_unique<Mutator>(*this, [&, i](Mutator&) noexcept {
             if (i % 2 == 0) {
                 ThreadStateGuard guard(ThreadState::kNative);
                 while (!canStop.load(std::memory_order_relaxed)) {
@@ -290,9 +290,9 @@ TEST_F(MutatorAssistsTest, AssistNoRequests) {
     std::atomic<bool> canStop = false;
     std::atomic<size_t> started = 0;
     std::atomic<size_t> finished = 0;
-    std_support::vector<std_support::unique_ptr<Mutator>> mutators;
+    std::vector<std::unique_ptr<Mutator>> mutators;
     for (int i = 0; i < kDefaultThreadCount; ++i) {
-        mutators.emplace_back(std_support::make_unique<Mutator>(*this, [&](Mutator&) noexcept {
+        mutators.emplace_back(std::make_unique<Mutator>(*this, [&](Mutator&) noexcept {
             while (!canStart.load(std::memory_order_relaxed)) {
                 std::this_thread::yield();
             }
@@ -331,9 +331,9 @@ TEST_F(MutatorAssistsTest, AssistRequestsByMutators) {
     std::atomic<size_t> started = 0;
     std::atomic<size_t> finished = 0;
     std::atomic<Epoch> currentEpoch = 0;
-    std_support::vector<std_support::unique_ptr<Mutator>> mutators;
+    std::vector<std::unique_ptr<Mutator>> mutators;
     for (int i = 0; i < kDefaultThreadCount; ++i) {
-        mutators.emplace_back(std_support::make_unique<Mutator>(*this, [&, i](Mutator&) noexcept {
+        mutators.emplace_back(std::make_unique<Mutator>(*this, [&, i](Mutator&) noexcept {
             while (!canStart.load(std::memory_order_relaxed)) {
                 std::this_thread::yield();
             }
@@ -385,9 +385,9 @@ TEST_F(MutatorAssistsTest, AssistRequestsByMutatorsIntoTheFuture) {
         scheduledEpoch = currentEpoch + 1;
         return scheduledEpoch;
     };
-    std_support::vector<std_support::unique_ptr<Mutator>> mutators;
+    std::vector<std::unique_ptr<Mutator>> mutators;
     for (int i = 0; i < kDefaultThreadCount; ++i) {
-        mutators.emplace_back(std_support::make_unique<Mutator>(*this, [&, i](Mutator&) noexcept {
+        mutators.emplace_back(std::make_unique<Mutator>(*this, [&, i](Mutator&) noexcept {
             while (!canStart.load(std::memory_order_relaxed)) {
                 std::this_thread::yield();
             }

@@ -7,13 +7,13 @@
 
 #include <condition_variable>
 #include <mutex>
+#include <vector>
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 #include "ScopedThread.hpp"
 #include "TestSupport.hpp"
-#include "std_support/Vector.hpp"
 
 using namespace kotlin;
 
@@ -115,7 +115,7 @@ TYPED_TEST(ConditionVariableTest, WaitAll) {
     CVUnderTest cv;
 
     std::atomic<size_t> waiting = 0;
-    std_support::vector<ScopedThread> threads;
+    std::vector<ScopedThread> threads;
     for (int i = 0; i < kDefaultThreadCount; ++i) {
         threads.emplace_back([&] {
             std::unique_lock guard(m);
@@ -147,7 +147,7 @@ TYPED_TEST(ConditionVariableTest, WaitAllNotifyUnderLock) {
     CVUnderTest cv;
 
     std::atomic<size_t> waiting = 0;
-    std_support::vector<ScopedThread> threads;
+    std::vector<ScopedThread> threads;
     for (int i = 0; i < kDefaultThreadCount; ++i) {
         threads.emplace_back([&] {
             std::unique_lock guard(m);
@@ -235,7 +235,7 @@ TYPED_TEST(ConditionVariableTest, WaitPredicateAll) {
     CVUnderTest cv;
 
     std::atomic<size_t> waiting = 0;
-    std_support::vector<ScopedThread> threads;
+    std::vector<ScopedThread> threads;
     for (int i = 0; i < kDefaultThreadCount; ++i) {
         threads.emplace_back([&] {
             std::unique_lock guard(m);
@@ -266,7 +266,7 @@ TYPED_TEST(ConditionVariableTest, WaitPredicateAllNotifyUnderLock) {
     CVUnderTest cv;
 
     std::atomic<size_t> waiting = 0;
-    std_support::vector<ScopedThread> threads;
+    std::vector<ScopedThread> threads;
     for (int i = 0; i < kDefaultThreadCount; ++i) {
         threads.emplace_back([&] {
             std::unique_lock guard(m);
@@ -308,7 +308,7 @@ TYPED_TEST(ConditionVariableTest, Checkpoint) {
         return epochScheduled;
     };
 
-    std_support::vector<ScopedThread> threads;
+    std::vector<ScopedThread> threads;
     std::array<std::atomic<uint64_t>, kDefaultThreadCount> checkpoints = {0};
     for (int i = 0; i < kDefaultThreadCount; ++i) {
         threads.emplace_back([&, i] {

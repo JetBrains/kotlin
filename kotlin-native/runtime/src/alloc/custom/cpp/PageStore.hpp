@@ -8,11 +8,11 @@
 
 #include <atomic>
 #include <cstdint>
+#include <vector>
 
 #include "AtomicStack.hpp"
 #include "ExtraObjectPage.hpp"
 #include "GCStatistics.hpp"
-#include "std_support/Vector.hpp"
 
 namespace kotlin::alloc {
 
@@ -104,8 +104,8 @@ private:
     }
 
     // Testing method
-    std_support::vector<T*> GetPages() noexcept {
-        std_support::vector<T*> pages;
+    std::vector<T*> GetPages() noexcept {
+        std::vector<T*> pages;
         for (T* page : ready_.GetElements()) pages.push_back(page);
         for (T* page : used_.GetElements()) pages.push_back(page);
         for (T* page : unswept_.GetElements()) pages.push_back(page);

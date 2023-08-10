@@ -8,27 +8,26 @@
 
 #include <atomic>
 #include <list>
+#include <memory>
 #include <mutex>
 
 #include "Mutex.hpp"
 #include "Utils.hpp"
-#include "std_support/List.hpp"
-#include "std_support/Memory.hpp"
 
 namespace kotlin {
 
 // A queue that is constructed by collecting subqueues from several `Producer`s.
-template <typename T, typename Mutex, typename Allocator = std_support::allocator<T>>
+template <typename T, typename Mutex, typename Allocator = std::allocator<T>>
 class MultiSourceQueue {
-    // Using `std_support::list` as it allows to implement `Collect` without memory allocations,
+    // Using `std::list` as it allows to implement `Collect` without memory allocations,
     // which is important for GC mark phase.
     template <typename U>
-    using List = std_support::list<U, typename std::allocator_traits<Allocator>::template rebind_alloc<U>>;
+    using List = std::list<U, typename std::allocator_traits<Allocator>::template rebind_alloc<U>>;
 
 public:
     class Producer;
 
-    // TODO: Consider switching from `std_support::list` to `SingleLockList` to hide the constructor
+    // TODO: Consider switching from `std::list` to `SingleLockList` to hide the constructor
     // and to not store the iterator.
     class Node : private Pinned {
     public:

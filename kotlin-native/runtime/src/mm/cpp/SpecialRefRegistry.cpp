@@ -132,8 +132,8 @@ void mm::SpecialRefRegistry::insertIntoRootsHead(Node& node) noexcept {
     } while (!rootsHead()->nextRoot_.compare_exchange_weak(next, &node, std::memory_order_release, std::memory_order_acquire));
 }
 
-std_support::list<mm::SpecialRefRegistry::Node>::iterator mm::SpecialRefRegistry::findAliveNode(
-        std_support::list<Node>::iterator it) noexcept {
+std::list<mm::SpecialRefRegistry::Node>::iterator mm::SpecialRefRegistry::findAliveNode(
+        std::list<Node>::iterator it) noexcept {
     while (it != all_.end() && it->rc_.load(std::memory_order_relaxed) == Node::disposedMarker) {
         // Synchronization with `Node::dispose()`
         std::atomic_thread_fence(std::memory_order_acquire);

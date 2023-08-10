@@ -7,6 +7,7 @@
 #define RUNTIME_MM_THREAD_DATA_H
 
 #include <atomic>
+#include <vector>
 
 #include "GlobalData.hpp"
 #include "GlobalsRegistry.hpp"
@@ -16,7 +17,6 @@
 #include "ThreadLocalStorage.hpp"
 #include "Utils.hpp"
 #include "ThreadSuspension.hpp"
-#include "std_support/Vector.hpp"
 
 struct ObjHeader;
 
@@ -52,7 +52,7 @@ public:
 
     ShadowStack& shadowStack() noexcept { return shadowStack_; }
 
-    std_support::vector<std::pair<ObjHeader**, ObjHeader*>>& initializingSingletons() noexcept { return initializingSingletons_; }
+    std::vector<std::pair<ObjHeader**, ObjHeader*>>& initializingSingletons() noexcept { return initializingSingletons_; }
 
     gcScheduler::GCScheduler::ThreadData& gcScheduler() noexcept { return gcScheduler_; }
 
@@ -83,7 +83,7 @@ private:
     gcScheduler::GCScheduler::ThreadData gcScheduler_;
     alloc::Allocator::ThreadData allocator_;
     gc::GC::ThreadData gc_;
-    std_support::vector<std::pair<ObjHeader**, ObjHeader*>> initializingSingletons_;
+    std::vector<std::pair<ObjHeader**, ObjHeader*>> initializingSingletons_;
     ThreadSuspensionData suspensionData_;
 };
 

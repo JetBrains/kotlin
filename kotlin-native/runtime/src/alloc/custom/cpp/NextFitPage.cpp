@@ -7,11 +7,11 @@
 
 #include <atomic>
 #include <cstdint>
+#include <vector>
 
 #include "CustomLogging.hpp"
 #include "CustomAllocConstants.hpp"
 #include "GCApi.hpp"
-#include "std_support/Vector.hpp"
 
 namespace kotlin::alloc {
 
@@ -105,8 +105,8 @@ bool NextFitPage::CheckInvariants() noexcept {
     }
 }
 
-std_support::vector<uint8_t*> NextFitPage::GetAllocatedBlocks() noexcept {
-    std_support::vector<uint8_t*> allocated;
+std::vector<uint8_t*> NextFitPage::GetAllocatedBlocks() noexcept {
+    std::vector<uint8_t*> allocated;
     Cell* end = cells_ + NEXT_FIT_PAGE_CELL_COUNT;
     for (Cell* block = cells_ + 1; block != end; block = block->Next()) {
         if (block->isAllocated_) {

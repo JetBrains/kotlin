@@ -124,11 +124,11 @@ int getSourceInfo(void* symbol, SourceInfo *result, int result_len) {
 
 // TODO: this implementation is just a hack, e.g. the result is inexact;
 // however it is better to have an inexact stacktrace than not to have any.
-NO_INLINE std_support::vector<void*> kotlin::internal::GetCurrentStackTrace(size_t skipFrames) noexcept {
+NO_INLINE std::vector<void*> kotlin::internal::GetCurrentStackTrace(size_t skipFrames) noexcept {
     // Skip GetCurrentStackTrace + anything asked by the caller.
     const size_t kSkipFrames = 1 + skipFrames;
 
-    std_support::vector<void*> result;
+    std::vector<void*> result;
 #if USE_GCC_UNWIND
     size_t depth = 0;
     _Unwind_Backtrace(depthCountCallback, static_cast<void*>(&depth));
@@ -257,9 +257,9 @@ KNativePtr adjustAddressForSourceInfo(KNativePtr address) {
 KNativePtr adjustAddressForSourceInfo(KNativePtr address) { return address; }
 #endif
 
-std_support::vector<std_support::string> kotlin::GetStackTraceStrings(std_support::span<void* const> stackTrace) noexcept {
+std::vector<std::string> kotlin::GetStackTraceStrings(std_support::span<void* const> stackTrace) noexcept {
     size_t size = stackTrace.size();
-    std_support::vector<std_support::string> strings;
+    std::vector<std::string> strings;
     strings.reserve(size);
     if (size > 0) {
         SourceInfo buffer[10]; // outside of the loop to avoid calling constructors and destructors each time

@@ -5,14 +5,15 @@
 
 #include "Freezing.hpp"
 
+#include <unordered_set>
+#include <vector>
+
 #include "ExtraObjectData.hpp"
 #include "FreezeHooks.hpp"
 #include "Memory.h"
 #include "Natives.h"
 #include "ObjectTraversal.hpp"
 #include "Types.h"
-#include "std_support/UnorderedSet.hpp"
-#include "std_support/Vector.hpp"
 
 using namespace kotlin;
 
@@ -31,10 +32,10 @@ bool mm::IsFrozen(const ObjHeader* object) noexcept {
 ObjHeader* mm::FreezeSubgraph(ObjHeader* root) noexcept {
     if (IsFrozen(root)) return nullptr;
 
-    std_support::vector<ObjHeader*> objects;
-    std_support::vector<ObjHeader*> stack;
+    std::vector<ObjHeader*> objects;
+    std::vector<ObjHeader*> stack;
     // TODO: This may be a suboptimal container for the job.
-    std_support::unordered_set<ObjHeader*> visited;
+    std::unordered_set<ObjHeader*> visited;
     stack.push_back(root);
     while (!stack.empty()) {
         ObjHeader* object = stack.back();

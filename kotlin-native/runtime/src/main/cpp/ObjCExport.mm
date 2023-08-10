@@ -10,7 +10,12 @@
 
 #if KONAN_OBJC_INTEROP
 
+#include <cstdlib>
+#include <map>
 #import <mutex>
+#include <string>
+#include <unordered_set>
+#include <vector>
 
 #import <Foundation/NSObject.h>
 #import <Foundation/NSValue.h>
@@ -33,11 +38,6 @@
 #import "Mutex.hpp"
 #import "Exceptions.h"
 #import "Natives.h"
-#include "std_support/CStdlib.hpp"
-#include "std_support/Map.hpp"
-#include "std_support/String.hpp"
-#include "std_support/UnorderedSet.hpp"
-#include "std_support/Vector.hpp"
 
 using namespace kotlin;
 
@@ -45,7 +45,7 @@ namespace {
 
 template <typename T>
 inline T* konanAllocArray(size_t length) {
-    return reinterpret_cast<T*>(std_support::calloc(length, sizeof(T)));
+    return reinterpret_cast<T*>(std::calloc(length, sizeof(T)));
 }
 
 }
@@ -563,7 +563,7 @@ static id Kotlin_ObjCExport_refToRetainedObjC_slowpath(ObjHeader* obj) {
   return convertToRetained(obj);
 }
 
-static void buildITable(TypeInfo* result, const std_support::map<ClassId, std_support::vector<VTableElement>>& interfaceVTables) {
+static void buildITable(TypeInfo* result, const std::map<ClassId, std::vector<VTableElement>>& interfaceVTables) {
   // Check if can use fast optimistic version - check if the size of the itable could be 2^k and <= 32.
   bool useFastITable;
   int itableSize = 1;
@@ -597,7 +597,7 @@ static void buildITable(TypeInfo* result, const std_support::map<ClassId, std_su
     }
   } else {
     // Otherwise: conservative version.
-    // The table will be sorted since we're using std_support::map.
+    // The table will be sorted since we're using std::map.
     int index = 0;
     for (auto& pair : interfaceVTables) {
       auto interfaceId = pair.first;
@@ -623,15 +623,15 @@ static void buildITable(TypeInfo* result, const std_support::map<ClassId, std_su
 static const TypeInfo* createTypeInfo(
   const char* className,
   const TypeInfo* superType,
-  const std_support::vector<const TypeInfo*>& superInterfaces,
-  const std_support::vector<VTableElement>& vtable,
-  const std_support::map<ClassId, std_support::vector<VTableElement>>& interfaceVTables,
+  const std::vector<const TypeInfo*>& superInterfaces,
+  const std::vector<VTableElement>& vtable,
+  const std::map<ClassId, std::vector<VTableElement>>& interfaceVTables,
   const InterfaceTableRecord* superItable,
   int superItableSize,
   bool itableEqualsSuper,
   const TypeInfo* fieldsInfo
 ) {
-  TypeInfo* result = (TypeInfo*)std_support::calloc(1, sizeof(TypeInfo) + vtable.size() * sizeof(void*));
+  TypeInfo* result = (TypeInfo*)std::calloc(1, sizeof(TypeInfo) + vtable.size() * sizeof(void*));
   result->typeInfo_ = result;
 
   result->flags_ = TF_OBJC_DYNAMIC;
@@ -656,10 +656,10 @@ static const TypeInfo* createTypeInfo(
 
   result->classId_ = superType->classId_;
 
-  std_support::vector<const TypeInfo*> implementedInterfaces(
+  std::vector<const TypeInfo*> implementedInterfaces(
     superType->implementedInterfaces_, superType->implementedInterfaces_ + superType->implementedInterfacesCount_
   );
-  std_support::unordered_set<const TypeInfo*> usedInterfaces(implementedInterfaces.begin(), implementedInterfaces.end());
+  std::unordered_set<const TypeInfo*> usedInterfaces(implementedInterfaces.begin(), implementedInterfaces.end());
 
   for (const TypeInfo* interface : superInterfaces) {
     if (usedInterfaces.insert(interface).second) {
@@ -685,14 +685,14 @@ static const TypeInfo* createTypeInfo(
 
   result->packageName_ = nullptr;
   result->relativeName_ = CreatePermanentStringFromCString(className);
-  result->writableInfo_ = (WritableTypeInfo*)std_support::calloc(1, sizeof(WritableTypeInfo));
+  result->writableInfo_ = (WritableTypeInfo*)std::calloc(1, sizeof(WritableTypeInfo));
 
   for (size_t i = 0; i < vtable.size(); ++i) result->vtable()[i] = vtable[i];
 
   return result;
 }
 
-static void addDefinedSelectors(Class clazz, std_support::unordered_set<SEL>& result) {
+static void addDefinedSelectors(Class clazz, std::unordered_set<SEL>& result) {
   unsigned int objcMethodCount;
   Method* objcMethods = class_copyMethodList(clazz, &objcMethodCount);
 
@@ -703,10 +703,10 @@ static void addDefinedSelectors(Class clazz, std_support::unordered_set<SEL>& re
   if (objcMethods != nullptr) free(objcMethods);
 }
 
-static std_support::vector<const TypeInfo*> getProtocolsAsInterfaces(Class clazz) {
-  std_support::vector<const TypeInfo*> result;
-  std_support::unordered_set<Protocol*> handledProtocols;
-  std_support::vector<Protocol*> protocolsToHandle;
+static std::vector<const TypeInfo*> getProtocolsAsInterfaces(Class clazz) {
+  std::vector<const TypeInfo*> result;
+  std::unordered_set<Protocol*> handledProtocols;
+  std::vector<Protocol*> protocolsToHandle;
 
   {
     unsigned int protocolCount;
@@ -764,7 +764,7 @@ static void throwIfCantBeOverridden(Class clazz, const KotlinToObjCMethodAdapter
 static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType, const TypeInfo* fieldsInfo) {
   kotlin::NativeOrUnregisteredThreadGuard threadStateGuard(/* reentrant = */ true);
 
-  std_support::unordered_set<SEL> definedSelectors;
+  std::unordered_set<SEL> definedSelectors;
   addDefinedSelectors(clazz, definedSelectors);
 
   const ObjCTypeAdapter* superTypeAdapter = getTypeAdapter(superType);
@@ -787,7 +787,7 @@ static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType, co
 
   if (superVtable == nullptr) superVtable = superType->vtable();
 
-  std_support::vector<const void*> vtable(
+  std::vector<const void*> vtable(
         superVtable,
         superVtable + superVtableSize
   );
@@ -796,7 +796,7 @@ static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType, co
     superITable = superType->interfaceTable_;
     superITableSize = superType->interfaceTableSize_;
   }
-  std_support::map<ClassId, std_support::vector<VTableElement>> interfaceVTables;
+  std::map<ClassId, std::vector<VTableElement>> interfaceVTables;
   if (superITable != nullptr) {
     int actualItableSize = superITableSize >= 0 ? superITableSize + 1 : -superITableSize;
     for (int i = 0; i < actualItableSize; ++i) {
@@ -804,16 +804,16 @@ static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType, co
       auto interfaceId = record.id;
       if (interfaceId == kInvalidInterfaceId) continue;
       int vtableSize = record.vtableSize;
-      std_support::vector<VTableElement> interfaceVTable(vtableSize);
+      std::vector<VTableElement> interfaceVTable(vtableSize);
       for (int j = 0; j < vtableSize; ++j)
         interfaceVTable[j] = record.vtable[j];
       interfaceVTables.emplace(interfaceId, std::move(interfaceVTable));
     }
   }
 
-  std_support::vector<const TypeInfo*> addedInterfaces = getProtocolsAsInterfaces(clazz);
+  std::vector<const TypeInfo*> addedInterfaces = getProtocolsAsInterfaces(clazz);
 
-  std_support::vector<const TypeInfo*> supers(
+  std::vector<const TypeInfo*> supers(
         superType->implementedInterfaces_,
         superType->implementedInterfaces_ + superType->implementedInterfacesCount_
   );
@@ -838,7 +838,7 @@ static const TypeInfo* createTypeInfo(Class clazz, const TypeInfo* superType, co
     auto interfaceVTablesIt = interfaceVTables.find(interfaceId);
     if (interfaceVTablesIt == interfaceVTables.end()) {
       itableEqualsSuper = false;
-      interfaceVTables.emplace(interfaceId, std_support::vector<VTableElement>(itableSize));
+      interfaceVTables.emplace(interfaceId, std::vector<VTableElement>(itableSize));
     } else {
       auto const& interfaceVTable = interfaceVTablesIt->second;
       RuntimeAssert(interfaceVTable.size() == static_cast<size_t>(itableSize), "");
@@ -955,7 +955,7 @@ static Class createClass(const TypeInfo* typeInfo, Class superClass) {
   kotlin::NativeOrUnregisteredThreadGuard threadStateGuard(/* reentrant = */ true);
 
   int classIndex = (anonymousClassNextId++);
-  std_support::string className = Kotlin_ObjCInterop_getUniquePrefix();
+  std::string className = Kotlin_ObjCInterop_getUniquePrefix();
   className += "_kobjcc";
   className += std::to_string(classIndex);
 
@@ -975,7 +975,7 @@ static Class createClass(const TypeInfo* typeInfo, Class superClass) {
     }
   }
 
-  std_support::unordered_set<const TypeInfo*> superImplementedInterfaces(
+  std::unordered_set<const TypeInfo*> superImplementedInterfaces(
           typeInfo->superType_->implementedInterfaces_,
           typeInfo->superType_->implementedInterfaces_ + typeInfo->superType_->implementedInterfacesCount_
   );

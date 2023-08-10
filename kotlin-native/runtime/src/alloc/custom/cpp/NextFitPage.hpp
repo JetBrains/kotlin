@@ -8,12 +8,12 @@
 
 #include <atomic>
 #include <cstdint>
+#include <vector>
 
 #include "AtomicStack.hpp"
 #include "Cell.hpp"
 #include "ExtraObjectPage.hpp"
 #include "GCStatistics.hpp"
-#include "std_support/Vector.hpp"
 
 namespace kotlin::alloc {
 
@@ -36,7 +36,7 @@ public:
     bool CheckInvariants() noexcept;
 
     // Testing method
-    std_support::vector<uint8_t*> GetAllocatedBlocks() noexcept;
+    std::vector<uint8_t*> GetAllocatedBlocks() noexcept;
 
 private:
     explicit NextFitPage(uint32_t cellCount) noexcept;

@@ -5,13 +5,13 @@
 
 #include <array>
 #include <type_traits>
+#include <vector>
 
 #include "KAssert.h"
 #include "Memory.h"
 #include "TypeInfo.h"
 #include "Types.h"
 #include "Utils.hpp"
-#include "std_support/Vector.hpp"
 
 namespace kotlin {
 namespace test_support {
@@ -27,7 +27,7 @@ private:
         virtual ~Builder() = default;
 
         int32_t instanceSize_ = 0;
-        std_support::vector<int32_t> objOffsets_;
+        std::vector<int32_t> objOffsets_;
         int32_t objOffsetsCount_ = 0;
         int32_t flags_ = 0;
         int32_t instanceAlignment_ = 8;
@@ -98,7 +98,7 @@ public:
 
 private:
     TypeInfo typeInfo_{};
-    std_support::vector<int32_t> objOffsets_;
+    std::vector<int32_t> objOffsets_;
 };
 
 class Any : private Pinned {

@@ -5,13 +5,14 @@
 
 #include "RootSet.hpp"
 
+#include <memory>
+#include <vector>
+
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 #include "ShadowStack.hpp"
 #include "StableRef.hpp"
-#include "std_support/Memory.hpp"
-#include "std_support/Vector.hpp"
 
 using namespace kotlin;
 
@@ -24,7 +25,7 @@ class StackEntry : private Pinned {
 public:
     static_assert(LocalsCount > 0, "Must have at least 1 object on stack");
 
-    explicit StackEntry(mm::ShadowStack& shadowStack) : shadowStack_(shadowStack), value_(std_support::make_unique<ObjHeader>()) {
+    explicit StackEntry(mm::ShadowStack& shadowStack) : shadowStack_(shadowStack), value_(std::make_unique<ObjHeader>()) {
         // Fill `locals_` with some values.
         for (size_t i = 0; i < LocalsCount; ++i) {
             (*this)[i] = value_.get() + i;
@@ -39,7 +40,7 @@ public:
 
 private:
     mm::ShadowStack& shadowStack_;
-    std_support::unique_ptr<ObjHeader> value_;
+    std::unique_ptr<ObjHeader> value_;
 
     // The following is what the compiler creates on the stack.
     static inline constexpr int kFrameOverlayCount = sizeof(FrameOverlay) / sizeof(ObjHeader**);
@@ -62,7 +63,7 @@ TEST(ThreadRootSetTest, Basic) {
 
     mm::ThreadRootSet iter(stack, tls);
 
-    std_support::vector<mm::ThreadRootSet::Value> actual;
+    std::vector<mm::ThreadRootSet::Value> actual;
     for (auto object : iter) {
         actual.push_back(object);
     }
@@ -82,7 +83,7 @@ TEST(ThreadRootSetTest, Empty) {
 
     mm::ThreadRootSet iter(stack, tls);
 
-    std_support::vector<mm::ThreadRootSet::Value> actual;
+    std::vector<mm::ThreadRootSet::Value> actual;
     for (auto object : iter) {
         actual.push_back(object);
     }
@@ -112,7 +113,7 @@ TEST(GlobalRootSetTest, Basic) {
 
     mm::GlobalRootSet iter(globals, specialRefsRegistry);
 
-    std_support::vector<mm::GlobalRootSet::Value> actual;
+    std::vector<mm::GlobalRootSet::Value> actual;
     for (auto object : iter) {
         actual.push_back(object);
     }
@@ -135,7 +136,7 @@ TEST(GlobalRootSetTest, Empty) {
 
     mm::GlobalRootSet iter(globals, specialRefsRegistry);
 
-    std_support::vector<mm::GlobalRootSet::Value> actual;
+    std::vector<mm::GlobalRootSet::Value> actual;
     for (auto object : iter) {
         actual.push_back(object);
     }

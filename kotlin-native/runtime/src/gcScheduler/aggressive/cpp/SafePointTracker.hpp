@@ -6,13 +6,13 @@
 #pragma once
 
 #include <cstddef>
+#include <unordered_set>
 
 #include "CallsChecker.hpp"
 #include "KAssert.h"
 #include "Logging.hpp"
 #include "Mutex.hpp"
 #include "StackTrace.hpp"
-#include "std_support/UnorderedSet.hpp"
 
 namespace kotlin::gcScheduler::internal {
 
@@ -49,7 +49,7 @@ private:
 
     // TODO: Consider replacing mutex + global set with thread local sets sychronized on STW.
     SpinLock<MutexThreadStateHandling::kIgnore> mutex_;
-    std_support::unordered_set<SafePointID> metSafePoints_;
+    std::unordered_set<SafePointID> metSafePoints_;
 };
 
 } // namespace kotlin::gcScheduler::internal

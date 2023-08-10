@@ -8,11 +8,11 @@
 
 #include <cstdarg>
 #include <initializer_list>
+#include <memory>
 #include <string_view>
 
 #include "Clock.hpp"
 #include "CompilerConstants.hpp"
-#include "std_support/Memory.hpp"
 #include "std_support/Span.hpp"
 
 namespace kotlin {
@@ -35,7 +35,7 @@ public:
     virtual bool Enabled(Level level, std_support::span<const char* const> tags) const noexcept = 0;
 };
 
-std_support::unique_ptr<LogFilter> CreateLogFilter(std::string_view tagsFilter) noexcept;
+std::unique_ptr<LogFilter> CreateLogFilter(std::string_view tagsFilter) noexcept;
 
 class Logger {
 public:
@@ -44,7 +44,7 @@ public:
     virtual void Log(Level level, std_support::span<const char* const> tags, std::string_view message) const noexcept = 0;
 };
 
-std_support::unique_ptr<Logger> CreateStderrLogger() noexcept;
+std::unique_ptr<Logger> CreateStderrLogger() noexcept;
 
 std_support::span<char> FormatLogEntry(
         std_support::span<char> buffer,

@@ -14,6 +14,7 @@
 #include <cstdio>
 #include <cstdint>
 #include <mutex>
+#include <string>
 
 #include "Memory.h"
 #include "MemorySharedRefs.hpp"
@@ -25,7 +26,6 @@
 #include "StackTrace.hpp"
 #include "Types.h"
 #include "Mutex.hpp"
-#include "std_support/String.hpp"
 
 using namespace kotlin;
 
@@ -240,7 +240,7 @@ NO_EXTERNAL_CALLS_CHECK static Class allocateClass(const KotlinObjCClassInfo* in
     fprintf(stderr, "Class %s has multiple implementations. Which one will be used is undefined.\n", info->name);
   }
 
-  std_support::string className = Kotlin_ObjCInterop_getUniquePrefix();
+  std::string className = Kotlin_ObjCInterop_getUniquePrefix();
 
   if (info->name != nullptr) {
     className += info->name;

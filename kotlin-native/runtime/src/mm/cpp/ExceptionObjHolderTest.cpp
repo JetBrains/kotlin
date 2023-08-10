@@ -4,6 +4,7 @@
  */
 
 #include <thread>
+#include <vector>
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
@@ -12,7 +13,6 @@
 #include "TestSupport.hpp"
 #include "ThreadData.hpp"
 #include "Types.h"
-#include "std_support/Vector.hpp"
 
 using namespace kotlin;
 
@@ -20,9 +20,9 @@ namespace {
 
 class ExceptionObjHolderTest : public ::testing::Test {
 public:
-    static std_support::vector<ObjHeader*> Collect(mm::ThreadData& threadData) {
+    static std::vector<ObjHeader*> Collect(mm::ThreadData& threadData) {
         threadData.specialRefRegistry().publish();
-        std_support::vector<ObjHeader*> result;
+        std::vector<ObjHeader*> result;
         for (const auto& obj : mm::SpecialRefRegistry::instance().roots()) {
             result.push_back(obj);
         }

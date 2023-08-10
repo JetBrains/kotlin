@@ -11,7 +11,6 @@
 #include "CustomLogging.hpp"
 #include "CustomAllocConstants.hpp"
 #include "GCApi.hpp"
-#include "std_support/Vector.hpp"
 
 namespace kotlin::alloc {
 
@@ -47,8 +46,8 @@ bool SingleObjectPage::Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalize
     return false;
 }
 
-std_support::vector<uint8_t*> SingleObjectPage::GetAllocatedBlocks() noexcept {
-    std_support::vector<uint8_t*> allocated;
+std::vector<uint8_t*> SingleObjectPage::GetAllocatedBlocks() noexcept {
+    std::vector<uint8_t*> allocated;
     if (isAllocated_) {
         allocated.push_back(data_);
     }

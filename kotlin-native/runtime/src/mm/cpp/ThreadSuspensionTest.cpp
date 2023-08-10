@@ -3,23 +3,23 @@
  * that can be found in the LICENSE file.
  */
 
+#include "ThreadSuspension.hpp"
+
+#include <future>
+#include <iostream>
+#include <vector>
+
+#include "gtest/gtest.h"
+#include "gmock/gmock.h"
+
 #include "MemoryPrivate.hpp"
 #include "Runtime.h"
 #include "RuntimePrivate.hpp"
 #include "SafePoint.hpp"
 #include "ScopedThread.hpp"
-#include "ThreadSuspension.hpp"
+#include "TestSupport.hpp"
+#include "TestSupportCompilerGenerated.hpp"
 #include "ThreadState.hpp"
-#include "std_support/Vector.hpp"
-
-#include <gtest/gtest.h>
-#include <gmock/gmock.h>
-
-#include <future>
-#include <TestSupport.hpp>
-#include <TestSupportCompilerGenerated.hpp>
-
-#include <iostream>
 
 using namespace kotlin;
 
@@ -33,8 +33,8 @@ constexpr size_t kDefaultIterations = 200;
 constexpr size_t kDefaultReportingStep = 20;
 #endif // #ifdef KONAN_WINDOWS
 
-std_support::vector<mm::ThreadData*> collectThreadData() {
-    std_support::vector<mm::ThreadData*> result;
+std::vector<mm::ThreadData*> collectThreadData() {
+    std::vector<mm::ThreadData*> result;
     auto iter = mm::ThreadRegistry::Instance().LockForIter();
     for (auto& thread : iter) {
         result.push_back(&thread);
@@ -43,14 +43,14 @@ std_support::vector<mm::ThreadData*> collectThreadData() {
 }
 
 template <typename T, typename F>
-std_support::vector<T> collectFromThreadData(F extractFunction) {
-    std_support::vector<T> result;
+std::vector<T> collectFromThreadData(F extractFunction) {
+    std::vector<T> result;
     auto threadData = collectThreadData();
     std::transform(threadData.begin(), threadData.end(), std::back_inserter(result), extractFunction);
     return result;
 }
 
-std_support::vector<bool> collectSuspended() {
+std::vector<bool> collectSuspended() {
     return collectFromThreadData<bool>(
             [](mm::ThreadData* threadData) { return threadData->suspensionData().suspendedOrNative(); });
 }
@@ -84,7 +84,7 @@ public:
     static constexpr size_t kThreadCount = kDefaultThreadCount;
     static constexpr size_t kIterations = kDefaultIterations;
 
-    std_support::vector<ScopedThread> threads;
+    std::vector<ScopedThread> threads;
     std::array<std::atomic<bool>, kThreadCount> ready{false};
     std::atomic<bool> canStart{false};
     std::atomic<bool> shouldStop{false};

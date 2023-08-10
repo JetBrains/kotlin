@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include <cstdlib>
+#include <map>
 #include <mutex>
 #include <optional>
 
@@ -12,8 +14,6 @@
 #include "gtest/gtest.h"
 
 #include "Utils.hpp"
-#include "std_support/CStdlib.hpp"
-#include "std_support/Map.hpp"
 
 namespace kotlin::test_support {
 
@@ -26,8 +26,8 @@ public:
 class SpyAllocatorCore : private Pinned {
 public:
     SpyAllocatorCore() noexcept {
-        ON_CALL(*this, allocate(testing::_)).WillByDefault([](std::size_t size) { return std_support::malloc(size); });
-        ON_CALL(*this, deallocate(testing::_, testing::_)).WillByDefault([](void* ptr, std::size_t size) { std_support::free(ptr); });
+        ON_CALL(*this, allocate(testing::_)).WillByDefault([](std::size_t size) { return std::malloc(size); });
+        ON_CALL(*this, deallocate(testing::_, testing::_)).WillByDefault([](void* ptr, std::size_t size) { std::free(ptr); });
     }
 
     MOCK_METHOD(void*, allocate, (std::size_t), (noexcept));

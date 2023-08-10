@@ -6,6 +6,7 @@
 #include "Cleaner.h"
 
 #include <future>
+#include <vector>
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
@@ -14,7 +15,6 @@
 #include "TestSupport.hpp"
 #include "TestSupportCompilerGenerated.hpp"
 #include "Types.h"
-#include "std_support/Vector.hpp"
 
 using namespace kotlin;
 using namespace kotlin::test_support;
@@ -40,7 +40,7 @@ TEST_F(CleanerTest, ConcurrentCreation) {
 
     int startedThreads = 0;
     bool allowRunning = false;
-    std_support::vector<std::future<KInt>> futures;
+    std::vector<std::future<KInt>> futures;
     for (int i = 0; i < threadCount; ++i) {
         auto future = std::async(std::launch::async, [&startedThreads, &allowRunning]() {
             // Thread state switching requires initilized memory subsystem.
@@ -55,7 +55,7 @@ TEST_F(CleanerTest, ConcurrentCreation) {
     while (atomicGet(&startedThreads) != threadCount) {
     }
     atomicSet(&allowRunning, true);
-    std_support::vector<KInt> values;
+    std::vector<KInt> values;
     for (auto& future : futures) {
         values.push_back(future.get());
     }

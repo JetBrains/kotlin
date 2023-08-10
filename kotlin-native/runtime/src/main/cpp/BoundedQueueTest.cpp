@@ -7,12 +7,12 @@
 #include "gtest/gtest.h"
 
 #include <list>
+#include <vector>
 
 #include "IntrusiveList.hpp"
 
 #include "ParallelProcessor.hpp"
 
-#include "std_support/Vector.hpp"
 #include "SingleThreadExecutor.hpp"
 #include "TestSupport.hpp"
 

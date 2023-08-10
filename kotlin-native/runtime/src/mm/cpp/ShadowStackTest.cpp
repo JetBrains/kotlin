@@ -5,14 +5,15 @@
 
 #include "ShadowStack.hpp"
 
+#include <memory>
+#include <vector>
+
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 #include "Memory.h"
 #include "Types.h"
 #include "Utils.hpp"
-#include "std_support/Memory.hpp"
-#include "std_support/Vector.hpp"
 
 using namespace kotlin;
 
@@ -23,7 +24,7 @@ class StackEntry : private Pinned {
 public:
     static_assert(ParametersCount + LocalsCount > 0, "Must have at least 1 object on stack");
 
-    explicit StackEntry(mm::ShadowStack& shadowStack) : shadowStack_(shadowStack), value_(std_support::make_unique<ObjHeader>()) {
+    explicit StackEntry(mm::ShadowStack& shadowStack) : shadowStack_(shadowStack), value_(std::make_unique<ObjHeader>()) {
         // Fill `locals_` with some values.
         for (size_t i = 0; i < LocalsCount; ++i) {
             (*this)[i] = value_.get() + i;
@@ -38,7 +39,7 @@ public:
 
 private:
     mm::ShadowStack& shadowStack_;
-    std_support::unique_ptr<ObjHeader> value_;
+    std::unique_ptr<ObjHeader> value_;
 
     // The following is what the compiler creates on the stack.
     static inline constexpr int kFrameOverlayCount = sizeof(FrameOverlay) / sizeof(ObjHeader**);
@@ -46,8 +47,8 @@ private:
     std::array<ObjHeader*, kTotalCount> data_;
 };
 
-std_support::vector<ObjHeader*> Collect(mm::ShadowStack& shadowStack) {
-    std_support::vector<ObjHeader*> result;
+std::vector<ObjHeader*> Collect(mm::ShadowStack& shadowStack) {
+    std::vector<ObjHeader*> result;
     for (ObjHeader* local : shadowStack) {
         result.push_back(local);
     }

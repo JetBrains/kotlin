@@ -15,8 +15,10 @@
  */
 
 #include <cstdio>
+#include <cstdlib>
 #include <limits>
 #include <string.h>
+#include <string>
 
 #include "KAssert.h"
 #include "Exceptions.h"
@@ -25,8 +27,6 @@
 #include "KString.h"
 #include "Porting.h"
 #include "Types.h"
-#include "std_support/CStdlib.hpp"
-#include "std_support/String.hpp"
 
 #include "utf8.h"
 
@@ -36,7 +36,7 @@ using namespace kotlin;
 
 namespace {
 
-typedef std::back_insert_iterator<std_support::string> KStdStringInserter;
+typedef std::back_insert_iterator<std::string> KStdStringInserter;
 typedef KChar* utf8to16(const char*, const char*, KChar*);
 typedef KStdStringInserter utf16to8(const KChar*,const KChar*, KStdStringInserter);
 
@@ -62,7 +62,7 @@ template<utf16to8 conversion>
 OBJ_GETTER(unsafeUtf16ToUtf8Impl, KString thiz, KInt start, KInt size) {
   RuntimeAssert(thiz->type_info() == theStringTypeInfo, "Must use String");
   const KChar* utf16 = CharArrayAddressOfElementAt(thiz, start);
-  std_support::string utf8;
+  std::string utf8;
   utf8.reserve(size);
   conversion(utf16, utf16 + size, back_inserter(utf8));
   ArrayHeader* result = AllocArrayInstance(theByteArrayTypeInfo, utf8.size(), OBJ_RESULT)->array();
@@ -127,16 +127,16 @@ char* CreateCStringFromString(KConstRef kref) {
   if (kref == nullptr) return nullptr;
   KString kstring = kref->array();
   const KChar* utf16 = CharArrayAddressOfElementAt(kstring, 0);
-  std_support::string utf8;
+  std::string utf8;
   utf8.reserve(kstring->count_);
   utf8::unchecked::utf16to8(utf16, utf16 + kstring->count_, back_inserter(utf8));
-  char* result = reinterpret_cast<char*>(std_support::calloc(1, utf8.size() + 1));
+  char* result = reinterpret_cast<char*>(std::calloc(1, utf8.size() + 1));
   ::memcpy(result, utf8.c_str(), utf8.size());
   return result;
 }
 
 void DisposeCString(char* cstring) {
-    if (cstring) std_support::free(cstring);
+    if (cstring) std::free(cstring);
 }
 
 ObjHeader* CreatePermanentStringFromCString(const char* nullTerminatedUTF8) {
@@ -148,7 +148,7 @@ ObjHeader* CreatePermanentStringFromCString(const char* nullTerminatedUTF8) {
     size_t headerSize = alignUp(sizeof(ArrayHeader), alignof(char16_t));
     size_t arraySize = headerSize + count * sizeof(char16_t);
 
-    ArrayHeader* header = (ArrayHeader*)std_support::calloc(arraySize, 1);
+    ArrayHeader* header = (ArrayHeader*)std::calloc(arraySize, 1);
     header->obj()->typeInfoOrMeta_ = setPointerBits((TypeInfo *)theStringTypeInfo, OBJECT_TAG_PERMANENT_CONTAINER);
     header->count_ = count;
     utf8::with_replacement::utf8to16(nullTerminatedUTF8, end, CharArrayAddressOfElementAt(header, 0));
@@ -157,7 +157,7 @@ ObjHeader* CreatePermanentStringFromCString(const char* nullTerminatedUTF8) {
 }
 
 void FreePermanentStringForTests(ArrayHeader* header) {
-    std_support::free(header);
+    std::free(header);
 }
 
 // String.kt
