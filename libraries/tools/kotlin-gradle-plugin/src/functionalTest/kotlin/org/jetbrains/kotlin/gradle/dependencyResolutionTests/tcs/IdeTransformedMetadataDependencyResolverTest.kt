@@ -102,16 +102,14 @@ class IdeTransformedMetadataDependencyResolverTest {
         val kgpVersion = project.getKotlinPluginVersion()
         commonMain.binaryDependencies().assertMatches(
             binaryCoordinates("com.squareup.okio:okio-jvm:3.2.0"),
-            binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kgpVersion"),
-            binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kgpVersion"),
+            legacyStdlibJdkDependencies(),
             binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib:$kgpVersion"),
             binaryCoordinates("org.jetbrains:annotations:13.0"),
         )
 
         commonTest.binaryDependencies().assertMatches(
             binaryCoordinates("com.squareup.okio:okio-jvm:3.2.0"),
-            binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kgpVersion"),
-            binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kgpVersion"),
+            legacyStdlibJdkDependencies(),
             binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib:$kgpVersion"),
             binaryCoordinates("org.jetbrains:annotations:13.0"),
         )
