@@ -1,0 +1,18 @@
+// LOOK_UP_FOR_ELEMENT_OF_TYPE: KtScript
+
+fun scriptFunction() = 42
+scriptFunction()
+
+fun unusedScriptFunction(p: String) = 22
+
+scriptFunction()
+
+fun foo(i: Int, action: (Int) -> Unit) {
+    action(i)
+}
+
+foo(scriptFunction()) {
+    scriptFunction()
+}
+
+unusedScriptFunction("str")
