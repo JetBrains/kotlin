@@ -4,5 +4,5 @@ fun <T> f1(l: <!UNRESOLVED_REFERENCE!>List2<T><!>): T {throw Exception()} // ERR
 fun <T> f1(c: Collection<T>): T{throw Exception()}
 
 fun <T> test(l: List<T>) {
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>f1<!>(l)
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>f1<!>(l)
 }

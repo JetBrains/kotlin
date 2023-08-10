@@ -17,7 +17,7 @@ class ConeCompositeConflictResolver(
         var index = 0
         while (currentCandidates.size > 1 && index < conflictResolvers.size) {
             val conflictResolver = conflictResolvers[index++]
-            currentCandidates = conflictResolver.chooseMaximallySpecificCandidates(candidates, discriminateAbstracts)
+            currentCandidates = conflictResolver.chooseMaximallySpecificCandidates(currentCandidates, discriminateAbstracts)
         }
         return currentCandidates
     }
