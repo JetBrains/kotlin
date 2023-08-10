@@ -60,6 +60,7 @@ import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryAndroid
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryJs
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryJvm
 import org.jetbrains.kotlin.incremental.parsing.classesFqNames
+import org.jetbrains.kotlin.incremental.storage.FileLocations
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import java.io.File
@@ -612,20 +613,21 @@ abstract class CompileServiceImplBase(
 
         val workingDir = incrementalCompilationOptions.workingDir
 
-        val projectRoot = incrementalCompilationOptions.rootProjectDir
+        val rootProjectDir = incrementalCompilationOptions.rootProjectDir
+        val buildDir = incrementalCompilationOptions.buildDir
 
         val modulesApiHistory = incrementalCompilationOptions.multiModuleICSettings?.run {
             reporter.info { "Use module detection: $useModuleDetection" }
             val modulesInfo = incrementalCompilationOptions.modulesInfo
                 ?: error("The build is configured to use the history-file based IC approach, but doesn't provide the modulesInfo")
-            check(projectRoot != null) {
+            check(rootProjectDir != null) {
                 "rootProjectDir is expected to be non null when the history-file based IC approach is used"
             }
 
             if (!useModuleDetection) {
-                ModulesApiHistoryJvm(projectRoot, modulesInfo)
+                ModulesApiHistoryJvm(rootProjectDir, modulesInfo)
             } else {
-                ModulesApiHistoryAndroid(projectRoot, modulesInfo)
+                ModulesApiHistoryAndroid(rootProjectDir, modulesInfo)
             }
         } ?: EmptyModulesApiHistory
 
@@ -648,7 +650,12 @@ abstract class CompileServiceImplBase(
             keepIncrementalCompilationCachesInMemory = incrementalCompilationOptions.keepIncrementalCompilationCachesInMemory,
         )
         return try {
-            compiler.compile(allKotlinFiles, k2jvmArgs, compilerMessageCollector, changedFiles, projectRoot)
+            compiler.compile(
+                allKotlinFiles, k2jvmArgs, compilerMessageCollector, changedFiles,
+                fileLocations = if (rootProjectDir != null && buildDir != null) {
+                    FileLocations(rootProjectDir, buildDir)
+                } else null
+            )
         } finally {
             reporter.endMeasureGc()
             reporter.flush()

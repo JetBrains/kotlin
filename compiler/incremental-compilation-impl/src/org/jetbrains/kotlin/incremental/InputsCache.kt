@@ -38,7 +38,7 @@ class InputsCache(
 
     fun removeOutputForSourceFiles(sources: Iterable<File>) {
         for (sourceFile in sources) {
-            sourceToOutputMap.remove(sourceFile).forEach {
+            sourceToOutputMap.getAndRemove(sourceFile)?.forEach {
                 icContext.reporter.debug { "Deleting $it on clearing cache for $sourceFile" }
                 icContext.transaction.deleteFile(it.toPath())
             }
@@ -46,7 +46,7 @@ class InputsCache(
     }
 
     fun getOutputForSourceFiles(sources: Iterable<File>): List<File> = sources.flatMap {
-        sourceToOutputMap[it]
+        sourceToOutputMap[it].orEmpty()
     }
 
     // generatedFiles can contain multiple entries with the same source file

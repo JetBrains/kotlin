@@ -16,6 +16,7 @@ internal class IncrementalCompilationEnvironment(
     val classpathChanges: ClasspathChanges,
     val workingDir: File,
     val rootProjectDir: File,
+    val buildDir: File,
     val usePreciseJavaTracking: Boolean = false,
     val disableMultiModuleIC: Boolean = false,
     val multiModuleICSettings: MultiModuleICSettings,

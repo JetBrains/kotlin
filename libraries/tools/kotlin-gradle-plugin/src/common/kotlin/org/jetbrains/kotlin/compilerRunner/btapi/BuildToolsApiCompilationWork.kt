@@ -96,7 +96,8 @@ internal abstract class BuildToolsApiCompilationWork : WorkAction<BuildToolsApiC
             val classpathChanges = icEnv?.classpathChanges
             if (classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled) {
                 val classpathSnapshotsConfig = jvmCompilationConfig.makeClasspathSnapshotBasedIncrementalCompilationConfiguration()
-                    .useProjectDir(icEnv.rootProjectDir)
+                    .setRootProjectDir(icEnv.rootProjectDir)
+                    .setBuildDir(icEnv.buildDir)
                     .usePreciseJavaTracking(icEnv.usePreciseJavaTracking)
                     .usePreciseCompilationResultsBackup(icEnv.preciseCompilationResultsBackup)
                     .keepIncrementalCompilationCachesInMemory(icEnv.keepIncrementalCompilationCachesInMemory)

@@ -56,7 +56,8 @@ internal val JvmCompilationConfigurationImpl.asDaemonCompilationOptions: Compila
                     outputFiles = options.outputDirs,
                     multiModuleICSettings = null, // required only for the build history approach
                     modulesInfo = null, // required only for the build history approach
-                    rootProjectDir = options.projectDir,
+                    rootProjectDir = options.rootProjectDir,
+                    buildDir = options.buildDir,
                     kotlinScriptExtensions = ktsExtensionsAsArray,
                     withAbiSnapshot = false,
                     preciseCompilationResultsBackup = options.preciseCompilationResultsBackupEnabled,

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.incremental.storage
 
 import java.io.File
 
+/** Converts a [File] to a path of type [String] to store in IC caches, and vice versa. */
 interface FileToPathConverter {
     fun toPath(file: File): String
     fun toFile(path: String): File
