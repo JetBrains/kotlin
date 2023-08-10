@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.JvmNames
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import java.lang.annotation.ElementType
@@ -144,7 +144,7 @@ private fun javaRetentionArguments(kotlinRetentionName: String?): List<KtNamedAn
         name = StandardNames.DEFAULT_VALUE_PARAMETER,
         expression = KtEnumEntryAnnotationValue(
             callableId = CallableId(
-                JvmNames.Annotations.Java.RetentionPolicy,
+                JvmStandardClassIds.Annotations.Java.RetentionPolicy,
                 Name.identifier(retentionMapping(kotlinRetentionName ?: AnnotationRetention.RUNTIME.name)),
             ),
             sourcePsi = null,
@@ -227,7 +227,7 @@ private fun SymbolLightJavaAnnotation.computeTargetJavaAnnotationArguments(): Li
                 values = javaTargetNames.map {
                     KtEnumEntryAnnotationValue(
                         callableId = CallableId(
-                            classId = JvmNames.Annotations.Java.ElementType,
+                            classId = JvmStandardClassIds.Annotations.Java.ElementType,
                             callableName = Name.identifier(it),
                         ),
                         sourcePsi = null,

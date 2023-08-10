@@ -9,7 +9,7 @@ import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiModifierList
 import org.jetbrains.kotlin.light.classes.symbol.toArrayIfNotEmptyOrDefault
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.JvmNames
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.SmartList
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater
@@ -96,7 +96,7 @@ internal class GranularAnnotationsBox(
          * @see org.jetbrains.kotlin.fir.resolve.transformers.plugin.CompilerRequiredAnnotationsHelper
          */
         private val specialAnnotationsListWithSafeArgumentsResolve: Map<String, ClassId> = listOf(
-            JvmNames.Annotations.JvmRecord,
+            JvmStandardClassIds.Annotations.JvmRecord,
         ).associateBy { it.asFqNameString() }
 
         /**

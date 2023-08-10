@@ -257,10 +257,10 @@ internal fun JavaAnnotation.isJavaDeprecatedAnnotation(): Boolean {
 
 private fun JavaAnnotation.toFirAnnotationCall(session: FirSession): FirAnnotation = buildAnnotation {
     val lookupTag = when (classId) {
-        JvmNames.Annotations.Java.Target -> StandardClassIds.Annotations.Target
-        JvmNames.Annotations.Java.Retention -> StandardClassIds.Annotations.Retention
-        JvmNames.Annotations.Java.Documented -> StandardClassIds.Annotations.MustBeDocumented
-        JvmNames.Annotations.Java.Deprecated -> StandardClassIds.Annotations.Deprecated
+        JvmStandardClassIds.Annotations.Java.Target -> StandardClassIds.Annotations.Target
+        JvmStandardClassIds.Annotations.Java.Retention -> StandardClassIds.Annotations.Retention
+        JvmStandardClassIds.Annotations.Java.Documented -> StandardClassIds.Annotations.MustBeDocumented
+        JvmStandardClassIds.Annotations.Java.Deprecated -> StandardClassIds.Annotations.Deprecated
         else -> classId
     }?.toLookupTag()
     annotationTypeRef = if (lookupTag != null) {
@@ -285,7 +285,7 @@ private fun JavaAnnotation.toFirAnnotationCall(session: FirSession): FirAnnotati
 
         override val mapping: Map<Name, FirExpression> by lazy {
             when {
-                classId == JvmNames.Annotations.Java.Target -> {
+                classId == JvmStandardClassIds.Annotations.Java.Target -> {
                     when (val argument = arguments.firstOrNull()) {
                         is JavaArrayAnnotationArgument -> argument.getElements().mapJavaTargetArguments(session)
                         is JavaEnumValueAnnotationArgument -> listOf(argument).mapJavaTargetArguments(session)
@@ -295,13 +295,13 @@ private fun JavaAnnotation.toFirAnnotationCall(session: FirSession): FirAnnotati
                     }
                 }
 
-                classId == JvmNames.Annotations.Java.Retention -> {
+                classId == JvmStandardClassIds.Annotations.Java.Retention -> {
                     arguments.firstOrNull()?.mapJavaRetentionArgument(session)?.let {
                         mapOf(StandardClassIds.Annotations.ParameterNames.retentionValue to it)
                     }
                 }
 
-                classId == JvmNames.Annotations.Java.Deprecated -> {
+                classId == JvmStandardClassIds.Annotations.Java.Deprecated -> {
                     mapOf(
                         StandardClassIds.Annotations.ParameterNames.deprecatedMessage to "Deprecated in Java".createConstantOrError(
                             session,

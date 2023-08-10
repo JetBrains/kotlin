@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.JvmNames
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 
@@ -83,7 +83,7 @@ object FirRepeatableAnnotationChecker : FirBasicDeclarationChecker() {
         }
 
         if (declaration is FirRegularClass) {
-            val javaRepeatable = annotations.getAnnotationByClassId(JvmNames.Annotations.Java.Repeatable, session)
+            val javaRepeatable = annotations.getAnnotationByClassId(JvmStandardClassIds.Annotations.Java.Repeatable, session)
             if (javaRepeatable != null) {
                 checkJavaRepeatableAnnotationDeclaration(javaRepeatable, declaration, context, reporter)
             } else {
@@ -97,7 +97,7 @@ object FirRepeatableAnnotationChecker : FirBasicDeclarationChecker() {
 
     private fun FirClassLikeSymbol<*>.resolveContainerAnnotation(session: FirSession): ClassId? {
         val repeatableAnnotation = getAnnotationByClassId(StandardClassIds.Annotations.Repeatable, session)
-            ?: getAnnotationByClassId(JvmNames.Annotations.Java.Repeatable, session)
+            ?: getAnnotationByClassId(JvmStandardClassIds.Annotations.Java.Repeatable, session)
             ?: return null
         return repeatableAnnotation.resolveContainerAnnotation()
     }

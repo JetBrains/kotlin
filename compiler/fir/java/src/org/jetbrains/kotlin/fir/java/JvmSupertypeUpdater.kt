@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
-import org.jetbrains.kotlin.name.JvmNames
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds
 
 class JvmSupertypeUpdater(private val session: FirSession) : PlatformSupertypeUpdater() {
@@ -33,7 +33,7 @@ class JvmSupertypeUpdater(private val session: FirSession) : PlatformSupertypeUp
 
     override fun updateSupertypesIfNeeded(firClass: FirClass, scopeSession: ScopeSession) {
         if (firClass !is FirRegularClass || !firClass.isData ||
-            !firClass.hasAnnotationSafe(JvmNames.Annotations.JvmRecord, session)
+            !firClass.hasAnnotationSafe(JvmStandardClassIds.Annotations.JvmRecord, session)
         ) return
         var anyFound = false
         var hasExplicitSuperClass = false
@@ -62,7 +62,7 @@ class JvmSupertypeUpdater(private val session: FirSession) : PlatformSupertypeUp
 
     private class DelegatedConstructorCallTransformer(private val session: FirSession) : FirTransformer<ScopeSession>() {
         companion object {
-            val recordType = JvmNames.Java.Record.constructClassLikeType(emptyArray(), isNullable = false)
+            val recordType = JvmStandardClassIds.Java.Record.constructClassLikeType(emptyArray(), isNullable = false)
         }
 
         override fun <E : FirElement> transformElement(element: E, data: ScopeSession): E {
@@ -104,7 +104,7 @@ class JvmSupertypeUpdater(private val session: FirSession) : PlatformSupertypeUp
 
             if (recordConstructorSymbol != null) {
                 val newReference = buildResolvedNamedReference {
-                    name = JvmNames.Java.Record.shortClassName
+                    name = JvmStandardClassIds.Java.Record.shortClassName
                     resolvedSymbol = recordConstructorSymbol
                 }
                 delegatedConstructorCall.replaceCalleeReference(newReference)

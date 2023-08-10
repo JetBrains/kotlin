@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.elements.isSetter
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.name.JvmNames
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.resolve.DataClassResolver
@@ -49,7 +49,7 @@ object LightClassUtil {
     fun getLightClassAccessorMethods(accessor: KtPropertyAccessor): List<PsiMethod> {
         val property = accessor.property
         val customNameAnnoProvided =
-            accessor.annotationEntries.find { JvmNames.JVM_NAME.shortName() == it.shortName } != null || property.isSpecialNameProvided()
+            accessor.annotationEntries.find { JvmStandardClassIds.JVM_NAME.shortName() == it.shortName } != null || property.isSpecialNameProvided()
         val propertyName = accessor.property.name ?: return emptyList()
         val wrappers = getPsiMethodWrappers(property) { wrapper ->
             val wrapperName = wrapper.name
@@ -207,7 +207,7 @@ object LightClassUtil {
 
     private fun KtDeclaration.isSpecialNameProvided(): Boolean {
         return annotationEntries.any { anno ->
-            val target = if (JvmNames.JVM_NAME.shortName() == anno.shortName) anno.useSiteTarget?.getAnnotationUseSiteTarget() else null
+            val target = if (JvmStandardClassIds.JVM_NAME.shortName() == anno.shortName) anno.useSiteTarget?.getAnnotationUseSiteTarget() else null
             target == AnnotationUseSiteTarget.PROPERTY_GETTER || target == AnnotationUseSiteTarget.PROPERTY_SETTER
         }
     }

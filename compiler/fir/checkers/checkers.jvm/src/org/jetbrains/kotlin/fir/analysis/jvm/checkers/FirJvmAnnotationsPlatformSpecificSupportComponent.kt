@@ -15,39 +15,39 @@ import org.jetbrains.kotlin.fir.declarations.FirAnnotationsPlatformSpecificSuppo
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.JvmNames
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds
 
 object FirJvmAnnotationsPlatformSpecificSupportComponent : FirAnnotationsPlatformSpecificSupportComponent() {
     override val requiredAnnotationsWithArguments: Set<ClassId> = setOf(
         StandardClassIds.Annotations.Deprecated,
         StandardClassIds.Annotations.Target,
-        JvmNames.Annotations.Java.Target,
+        JvmStandardClassIds.Annotations.Java.Target,
     )
 
     override val requiredAnnotations: Set<ClassId> = requiredAnnotationsWithArguments + setOf(
-        JvmNames.Annotations.Java.Deprecated,
+        JvmStandardClassIds.Annotations.Java.Deprecated,
         StandardClassIds.Annotations.DeprecatedSinceKotlin,
         StandardClassIds.Annotations.SinceKotlin,
         StandardClassIds.Annotations.WasExperimental,
-        JvmNames.Annotations.JvmRecord,
+        JvmStandardClassIds.Annotations.JvmRecord,
     )
 
     override val volatileAnnotations: Set<ClassId> = setOf(
         StandardClassIds.Annotations.Volatile,
-        JvmNames.Annotations.JvmVolatile,
+        JvmStandardClassIds.Annotations.JvmVolatile,
     )
 
     override val deprecationAnnotationsWithOverridesPropagation: Map<ClassId, Boolean> = mapOf(
         StandardClassIds.Annotations.Deprecated to true,
-        JvmNames.Annotations.Java.Deprecated to false,
+        JvmStandardClassIds.Annotations.Java.Deprecated to false,
         StandardClassIds.Annotations.SinceKotlin to true,
     )
 
     override fun symbolContainsRepeatableAnnotation(symbol: FirClassLikeSymbol<*>, session: FirSession): Boolean {
         if (symbol.getAnnotationByClassId(StandardClassIds.Annotations.Repeatable, session) != null) return true
-        if (symbol.getAnnotationByClassId(JvmNames.Annotations.Java.Repeatable, session) != null ||
-            symbol.getAnnotationByClassId(JvmNames.Annotations.JvmRepeatable, session) != null
+        if (symbol.getAnnotationByClassId(JvmStandardClassIds.Annotations.Java.Repeatable, session) != null ||
+            symbol.getAnnotationByClassId(JvmStandardClassIds.Annotations.JvmRepeatable, session) != null
         ) {
             return session.languageVersionSettings.supportsFeature(LanguageFeature.RepeatableAnnotations) ||
                     symbol.getAnnotationRetention(session) == AnnotationRetention.SOURCE && symbol.origin is FirDeclarationOrigin.Java
@@ -64,7 +64,7 @@ object FirJvmAnnotationsPlatformSpecificSupportComponent : FirAnnotationsPlatfor
         if (propertyAnnotations.isEmpty() || property.backingField == null) return null
 
         val (newBackingFieldAnnotations, newPropertyAnnotations) = propertyAnnotations.partition {
-            it.toAnnotationClassIdSafe(session) == JvmNames.Annotations.Java.Deprecated
+            it.toAnnotationClassIdSafe(session) == JvmStandardClassIds.Annotations.Java.Deprecated
         }
 
         if (newBackingFieldAnnotations.isEmpty()) return null
