@@ -63,7 +63,7 @@ class SerializationPluginContext(baseContext: IrPluginContext, val metadataPlugi
         referenceFunctions(CallableId(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, Name.identifier("intArrayOf"))).first()
 
     // Kotlin stdlib declarations
-    internal val jvmFieldClassSymbol = referenceClass(JvmNames.Annotations.JvmField)!!
+    internal val jvmFieldClassSymbol = referenceClass(JvmStandardClassIds.Annotations.JvmField)!!
 
     internal val lazyModeClass = referenceClass(ClassId.topLevel(SerializationDependencies.LAZY_MODE_FQ))!!.owner
     internal val lazyModePublicationEnumEntry =

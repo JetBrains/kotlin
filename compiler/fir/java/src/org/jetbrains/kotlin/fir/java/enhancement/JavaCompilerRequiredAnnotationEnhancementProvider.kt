@@ -10,13 +10,12 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.CompilerRequiredAnnotationEnhancementProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
-import org.jetbrains.kotlin.name.JvmNames
-import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 
 object JavaCompilerRequiredAnnotationEnhancementProvider : CompilerRequiredAnnotationEnhancementProvider() {
     override fun enhance(enumSymbol: FirClassSymbol<*>, enumEntrySymbol: FirEnumEntrySymbol, session: FirSession): FirEnumEntrySymbol {
         val firRegularClass = enumSymbol.fir as? FirRegularClass ?: return enumEntrySymbol
-        if (enumSymbol.classId != JvmNames.Annotations.Java.ElementType) return enumEntrySymbol
+        if (enumSymbol.classId != JvmStandardClassIds.Annotations.Java.ElementType) return enumEntrySymbol
 
         return FirSignatureEnhancement(firRegularClass, session) { emptyList() }.enhancedProperty(
             enumEntrySymbol,

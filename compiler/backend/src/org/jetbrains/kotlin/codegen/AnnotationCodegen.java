@@ -46,7 +46,7 @@ import org.jetbrains.org.objectweb.asm.*;
 import java.lang.annotation.*;
 import java.util.*;
 
-import static org.jetbrains.kotlin.name.JvmNames.*;
+import static org.jetbrains.kotlin.name.JvmStandardClassIds.*;
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getAnnotationClass;
 
 public abstract class AnnotationCodegen {

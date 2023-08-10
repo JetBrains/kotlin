@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaModifierListOwner
 import org.jetbrains.kotlin.load.java.structure.JavaWildcardType
-import org.jetbrains.kotlin.name.JvmNames
+import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.types.ConstantValueKind
 
 internal val JavaModifierListOwner.modality: Modality
@@ -141,4 +141,4 @@ fun FirProperty.hasJvmFieldAnnotation(session: FirSession): Boolean =
     backingField?.annotations?.any { it.isJvmFieldAnnotation(session) } == true
 
 fun FirAnnotation.isJvmFieldAnnotation(session: FirSession): Boolean =
-    toAnnotationClassId(session) == JvmNames.Annotations.JvmField
+    toAnnotationClassId(session) == JvmStandardClassIds.Annotations.JvmField

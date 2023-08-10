@@ -21,9 +21,9 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
-import org.jetbrains.kotlin.name.JvmNames.JVM_MULTIFILE_CLASS
-import org.jetbrains.kotlin.name.JvmNames.JVM_NAME
-import org.jetbrains.kotlin.name.JvmNames.JVM_PACKAGE_NAME
+import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_MULTIFILE_CLASS
+import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_NAME
+import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_PACKAGE_NAME
 import org.jetbrains.kotlin.name.isValidJavaFqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.AdditionalAnnotationChecker
