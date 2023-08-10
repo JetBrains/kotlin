@@ -66,6 +66,7 @@ val kotlinGradlePluginAndItsRequired = arrayOf(
     ":kotlin-stdlib-jdk8",
     ":kotlin-stdlib-wasm-js",
     ":kotlin-stdlib-wasm-wasi",
+    ":kotlin-dom-api-compat",
     ":examples:annotation-processor-example",
     ":kotlin-assignment-compiler-plugin.embeddable",
     ":kotlin-allopen-compiler-plugin.embeddable",
