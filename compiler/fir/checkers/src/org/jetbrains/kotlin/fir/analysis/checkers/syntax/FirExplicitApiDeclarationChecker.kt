@@ -84,8 +84,6 @@ object FirExplicitApiDeclarationChecker : FirDeclarationSyntaxChecker<FirDeclara
      * 6. Value parameter declaration
      * 7. An anonymous function
      * 8. A local named function
-     *
-     * TODO, KT-59828: Do we need something like @PublicApiFile to disable (or invert) this inspection per-file?
      */
     private fun explicitVisibilityIsNotRequired(declaration: FirMemberDeclaration, context: CheckerContext): Boolean {
         return when (declaration) {
