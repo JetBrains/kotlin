@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 interface X {
     fun foo(a : Int = 1)
 }
@@ -8,9 +7,9 @@ interface Y {
 }
 
 class Z : X, Y {
-    fun <!VIRTUAL_MEMBER_HIDDEN!>foo<!>(a : Int) {}
+    override fun foo(a : Int) {}
 }
 
 object ZO : X, Y {
-    fun <!VIRTUAL_MEMBER_HIDDEN!>foo<!>(a : Int) {}
+    override fun foo(a : Int) {}
 }
