@@ -1072,6 +1072,7 @@ TEST_P(ConcurrentMarkAndSweepTest, MultipleMutatorsWeakNewObj) {
                 return InstallWeakReference(threadData, object.header(), holder.slot());
             })();
             EXPECT_NE(objectWeak.get(), nullptr);
+
             while (!gcDone.load(std::memory_order_relaxed)) {
                 mm::safePoint(threadData);
             }

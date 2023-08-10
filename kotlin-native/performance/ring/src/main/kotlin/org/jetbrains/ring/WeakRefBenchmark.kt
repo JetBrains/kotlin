@@ -6,6 +6,8 @@
 
 package org.jetbrains.ring
 
+import platform.posix.*
+
 import kotlin.native.runtime.GC
 import kotlin.native.ref.WeakReference
 import kotlin.test.assertEquals
@@ -77,6 +79,23 @@ open class WeakRefBenchmark {
         GC.schedule()
 
         Blackhole.consume(ref.stress())
+    }
+
+    // TODO
+    fun waitCleaned() {
+        val ref = ReferenceWrapper.create()
+
+        ref.dispose()
+        GC.schedule()
+
+        var sum = 0
+        while (true) {
+            val value = ref.value
+            if (value == 0) break
+            sum += value
+        }
+
+        Blackhole.consume(sum)
     }
 
     fun clean() {

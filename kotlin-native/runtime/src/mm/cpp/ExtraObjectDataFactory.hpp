@@ -48,6 +48,7 @@ public:
     void ClearForTests() noexcept {
         for (auto& extraObjectData: extraObjects_.LockForIter()) {
             extraObjectData.ClearRegularWeakReferenceImpl();
+            extraObjectData.Uninstall();
         }
         extraObjects_.ClearForTests();
     }

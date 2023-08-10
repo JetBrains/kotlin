@@ -278,6 +278,7 @@ std::optional<std::pair<gc::ObjectFactory::Iterable, mm::ExtraObjectDataFactory:
     }
 
     auto& gc = mm::GlobalData::Instance().gc().impl();
+    // FIXME here was a part of comment lost
     // would not publish into the global state at an unexpected time.
     auto objectFactoryIterable = gc.objectFactory().LockForIter();
     auto extraObjectFactoryIterable = gc.extraObjectDataFactory().LockForIter();

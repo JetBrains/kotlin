@@ -239,6 +239,7 @@ class RingLauncher : Launcher() {
                     "WeakRefBenchmark.aliveReference" to BenchmarkEntryWithInitAndValidation.create(::WeakRefBenchmark, { aliveReference() }, { clean() }),
                     "WeakRefBenchmark.deadReference" to BenchmarkEntryWithInitAndValidation.create(::WeakRefBenchmark, { deadReference() }, { clean() }),
                     "WeakRefBenchmark.dyingReference" to BenchmarkEntryWithInitAndValidation.create(::WeakRefBenchmark, { dyingReference() }, { clean() }),
+                    "WeakRefBenchmark.waitCleaned" to BenchmarkEntryWithInitAndValidation.create(::WeakRefBenchmark, { waitCleaned() }, { clean() }),
             )
 
     init {
