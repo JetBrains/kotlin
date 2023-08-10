@@ -174,8 +174,7 @@ class IdeJvmAndAndroidDependencyResolutionTest {
             binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin-jvm:3.2.1"),
             binaryCoordinates("com.arkivanov.essenty:lifecycle-jvm:1.0.0"),
             binaryCoordinates("com.arkivanov.essenty:instance-keeper-jvm:1.0.0"),
-            binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kgpVersion"),
-            binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kgpVersion"),
+            legacyStdlibJdkDependencies(),
             binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib:$kgpVersion"),
             binaryCoordinates("org.jetbrains:annotations:13.0"),
         )
