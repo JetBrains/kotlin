@@ -20,7 +20,7 @@ gc::GC::ThreadData::ThreadData(GC& gc, mm::ThreadData& threadData) noexcept : im
 
 gc::GC::ThreadData::~ThreadData() = default;
 
-void gc::GC::ThreadData::Publish() noexcept {
+void gc::GC::ThreadData::PublishObjectFactory() noexcept {
 #ifndef CUSTOM_ALLOCATOR
     impl_->extraObjectDataFactoryThreadQueue().Publish();
     impl_->objectFactoryThreadQueue().Publish();
@@ -72,6 +72,8 @@ ALWAYS_INLINE void gc::GC::ThreadData::DestroyUnattachedExtraObjectData(mm::Extr
 void gc::GC::ThreadData::OnSuspendForGC() noexcept { }
 
 void gc::GC::ThreadData::safePoint() noexcept {}
+
+void gc::GC::ThreadData::onThreadRegistration() noexcept {}
 
 gc::GC::GC(gcScheduler::GCScheduler& gcScheduler) noexcept : impl_(std_support::make_unique<Impl>(gcScheduler)) {}
 

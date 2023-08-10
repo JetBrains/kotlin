@@ -63,7 +63,6 @@ public:
         // TODO: These use separate locks, which is inefficient.
         globalsThreadQueue_.Publish();
         specialRefRegistry_.publish();
-        gc_.Publish();
     }
 
     void ClearForTests() noexcept {

@@ -107,7 +107,7 @@ public:
         }
     };
 
-    ParallelMark(bool mutatorsCooperate);
+    explicit ParallelMark(bool mutatorsCooperate);
 
     void beginMarkingEpoch(gc::GCHandle gcHandle);
     void waitForThreadsPauseMutation() noexcept;
@@ -169,7 +169,7 @@ private:
     GCHandle gcHandle_ = GCHandle::invalid();
     MarkPacer pacer_;
     std::optional<mm::ThreadRegistry::Iterable> lockedMutatorsList_;
-    ManuallyScoped<ParallelProcessor> parallelProcessor_;
+    ManuallyScoped<ParallelProcessor> parallelProcessor_{};
 
     std::mutex workerCreationMutex_;
     std::atomic<std::size_t> activeWorkersCount_ = 0;
