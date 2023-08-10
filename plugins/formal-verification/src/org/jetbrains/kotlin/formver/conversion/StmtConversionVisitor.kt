@@ -45,8 +45,8 @@ class StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
     override fun visitReturnExpression(returnExpression: FirReturnExpression, data: StmtConversionContext): Exp {
         val expr = returnExpression.result.accept(this, data)
         // TODO: respect return-based control flow
-        val returnVar = data.methodCtx.returnVar
-        data.statements.add(Stmt.LocalVarAssign(returnVar.toLocalVar(), expr))
+        val returnVar = data.returnVar
+        data.addStatement(Stmt.LocalVarAssign(returnVar.toLocalVar(), expr))
         return UnitDomain.element
     }
 
@@ -70,17 +70,17 @@ class StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
 
         return when (whenExpression.subject) {
             null -> {
-                val cvar = data.methodCtx.newAnonVar(data.methodCtx.programCtx.convertType(whenExpression.typeRef.coneTypeOrNull!!))
+                val cvar = data.newAnonVar(data.convertType(whenExpression.typeRef.coneTypeOrNull!!))
                 val cond = whenExpression.branches[0].condition.accept(this, data)
                 // TODO: tidy this up and split it into helper functions.
-                val thenCtx = StmtConversionContext(data.methodCtx)
+                val thenCtx = StmtConverter(data)
                 val thenResult = whenExpression.branches[0].result.accept(this, thenCtx)
-                thenCtx.statements.add(Stmt.LocalVarAssign(cvar.toLocalVar(), thenResult))
-                val elseCtx = StmtConversionContext(data.methodCtx)
+                thenCtx.addStatement(Stmt.LocalVarAssign(cvar.toLocalVar(), thenResult))
+                val elseCtx = StmtConverter(data)
                 val elseResult = whenExpression.branches[1].result.accept(this, elseCtx)
-                elseCtx.statements.add(Stmt.LocalVarAssign(cvar.toLocalVar(), elseResult))
-                data.declarations.add(cvar.toLocalVarDecl())
-                data.statements.add(
+                elseCtx.addStatement(Stmt.LocalVarAssign(cvar.toLocalVar(), elseResult))
+                data.addDeclaration(cvar.toLocalVarDecl())
+                data.addStatement(
                     Stmt.If(
                         cond,
                         thenCtx.block,
@@ -102,11 +102,11 @@ class StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
         return when (symbol) {
             is FirValueParameterSymbol -> ConvertedVar(
                 symbol.callableId.convertName(),
-                data.methodCtx.programCtx.convertType(type)
+                data.convertType(type)
             ).toLocalVar()
             is FirPropertySymbol -> ConvertedVar(
                 symbol.callableId.convertName(),
-                data.methodCtx.programCtx.convertType(type)
+                data.convertType(type)
             ).toLocalVar()
             else -> TODO("Implement other property accesses")
         }
@@ -119,14 +119,14 @@ class StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
         return when (functionCall.dispatchReceiver) {
             is FirNoReceiverExpression -> {
                 val symbol = functionCall.calleeReference.resolved!!.resolvedSymbol as FirNamedFunctionSymbol
-                val calleeSig = data.methodCtx.programCtx.add(symbol)
+                val calleeSig = data.add(symbol)
                 val args = functionCall.argumentList.arguments.map {
                     it.accept(this, data)
                 }
-                val returnVar = data.methodCtx.newAnonVar(calleeSig.returnType)
+                val returnVar = data.newAnonVar(calleeSig.returnType)
                 val returnExp = returnVar.toLocalVar()
-                data.declarations.add(returnVar.toLocalVarDecl())
-                data.statements.add(Stmt.MethodCall(calleeSig.name.asString, args, listOf(returnExp)))
+                data.addDeclaration(returnVar.toLocalVarDecl())
+                data.addStatement(Stmt.MethodCall(calleeSig.name.asString, args, listOf(returnExp)))
                 returnExp
             }
             else -> TODO("Implement function call visitation with receiver")
@@ -139,21 +139,21 @@ class StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
         if (!symbol.isLocal) {
             TODO("Implement non-local properties")
         }
-        val cvar = ConvertedVar(symbol.callableId.convertName(), data.methodCtx.programCtx.convertType(type))
+        val cvar = ConvertedVar(symbol.callableId.convertName(), data.convertType(type))
         val propInitializer = property.initializer
         val initializer = propInitializer?.accept(this, data)
-        data.declarations.add(cvar.toLocalVarDecl())
-        initializer?.let { data.statements.add(Stmt.LocalVarAssign(cvar.toLocalVar(), it)) }
+        data.addDeclaration(cvar.toLocalVarDecl())
+        initializer?.let { data.addStatement(Stmt.LocalVarAssign(cvar.toLocalVar(), it)) }
         return UnitDomain.element
     }
 
     override fun visitWhileLoop(whileLoop: FirWhileLoop, data: StmtConversionContext): Exp {
         val cond = whileLoop.condition.accept(this, data)
         val invariants: List<Exp> = emptyList()
-        val bodyStmtConversionContext = StmtConversionContext(data.methodCtx)
+        val bodyStmtConversionContext = StmtConverter(data)
         bodyStmtConversionContext.convertAndAppend(whileLoop.block)
         val body = bodyStmtConversionContext.block
-        data.statements.add(Stmt.While(cond, invariants, body))
+        data.addStatement(Stmt.While(cond, invariants, body))
         return UnitDomain.element
     }
 
@@ -163,7 +163,7 @@ class StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
         // not to work.
         val convertedLValue = variableAssignment.lValue.accept(this, data)
         val convertedRValue = variableAssignment.rValue.accept(this, data)
-        data.statements.add(Stmt.assign(convertedLValue, convertedRValue))
+        data.addStatement(Stmt.assign(convertedLValue, convertedRValue))
         return UnitDomain.element
     }
 }

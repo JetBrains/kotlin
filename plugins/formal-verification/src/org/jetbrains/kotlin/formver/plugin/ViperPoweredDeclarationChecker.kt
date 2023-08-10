@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirSimpleFunctionChecker
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.formver.conversion.ProgramConversionContext
+import org.jetbrains.kotlin.formver.conversion.ProgramConverter
 import org.jetbrains.kotlin.formver.scala.Option
 import org.jetbrains.kotlin.formver.scala.emptySeq
 import org.jetbrains.kotlin.formver.scala.seqOf
@@ -26,7 +26,7 @@ import viper.silver.reporter.StdIOReporter
 
 object ViperPoweredDeclarationChecker : FirSimpleFunctionChecker() {
     override fun check(declaration: FirSimpleFunction, context: CheckerContext, reporter: DiagnosticReporter) {
-        val programConversionContext = ProgramConversionContext()
+        val programConversionContext = ProgramConverter()
         programConversionContext.addWithBody(declaration)
         val program = programConversionContext.program
 

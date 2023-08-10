@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.formver.conversion
 
-import org.jetbrains.kotlin.formver.scala.silicon.ast.Domain
-import org.jetbrains.kotlin.formver.scala.silicon.ast.DomainFunc
 import org.jetbrains.kotlin.formver.scala.silicon.ast.Exp
 import org.jetbrains.kotlin.formver.scala.silicon.ast.Type
 

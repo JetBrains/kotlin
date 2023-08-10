@@ -9,19 +9,9 @@ import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.formver.scala.silicon.ast.Stmt
 import viper.silver.ast.Declaration
 
-/**
- * Tracks the results of converting a block of statements.
- * Kotlin statements, declarations, and expressions do not map to Viper ones one-to-one.
- * Converting a statement with multiple function calls may require storing the
- * intermediate results, which requires introducing new names.  We thus need a
- * shared context for finding fresh variable names.
- */
-class StmtConversionContext(val methodCtx: MethodConversionContext) {
-    val statements: MutableList<Stmt> = mutableListOf()
-    val declarations: MutableList<Declaration> = mutableListOf()
-    val block = Stmt.Seqn(statements, declarations)
-
-    fun convertAndAppend(stmt: FirStatement) {
-        stmt.accept(StmtConversionVisitor(), this)
-    }
+interface StmtConversionContext : MethodConversionContext {
+    val block: Stmt.Seqn
+    fun addStatement(stmt: Stmt)
+    fun addDeclaration(declaration: Declaration)
+    fun convertAndAppend(stmt: FirStatement)
 }
