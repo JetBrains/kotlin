@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.codeFragment
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isScriptStatement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalDeclaration
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalKtFile
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
@@ -189,6 +190,8 @@ object LowLevelFirApiFacadeForResolveOnAir {
     ): LLFirResolveSession {
         require(originalFirResolveSession is LLFirResolvableResolveSession)
         require(elementToAnalyze !is KtFile) { "KtFile for dependency element not supported" }
+
+        elementToAnalyze.containingKtFile.originalKtFile = originalKtFile
 
         val minimalCopiedDeclaration = elementToAnalyze.getNonLocalContainingOrThisDeclarationCodeFragmentAware {
             it.isApplicableForOnAirResolve()

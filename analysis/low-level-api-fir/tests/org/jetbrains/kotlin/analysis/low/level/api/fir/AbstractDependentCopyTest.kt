@@ -11,8 +11,11 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLeve
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
+import kotlin.io.path.exists
+import kotlin.io.path.readText
 
 /**
  * This test class is supposed to specify the behavior of [getFirResolveSessionForDependentCopy].
@@ -28,7 +31,18 @@ abstract class AbstractDependentCopyTest : AbstractLowLevelApiSingleFileTest() {
             registeredDirectives = moduleStructure.allDirectives,
         )
 
-        val fileCopy = ktFile.copy() as KtFile
+        val specialContentForCopiedFile = getTestDataFileSiblingPath(
+            extension = "copy.txt",
+            testPrefix = null,
+        ).takeIf { it.exists() }?.readText()
+
+        val fileCopy = KtPsiFactory(ktFile.project).createFile(
+            ktFile.name,
+            specialContentForCopiedFile ?: ktFile.text,
+        )
+
+        fileCopy.originalFile = ktFile
+
         val sameElementInCopy = PsiTreeUtil.findSameElementInCopy(element, fileCopy)
         resolveWithClearCaches(ktFile) { originalSession ->
             val dependentSession = getFirResolveSessionForDependentCopy(
