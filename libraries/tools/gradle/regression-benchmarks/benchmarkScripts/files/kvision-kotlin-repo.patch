@@ -38,7 +38,7 @@ index 9f429bd18d..3204cec9cb 100644
 -    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.0")
 +    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
      implementation("de.marcphilipp.gradle:nexus-publish-plugin:0.4.0")
-     implementation("org.jetbrains.dokka:dokka-gradle-plugin:1.7.20")
+     implementation("org.jetbrains.dokka:dokka-gradle-plugin:1.9.0-dev-218")
      implementation(gradleApi())
 diff --git a/buildSrc/gradle.properties b/buildSrc/gradle.properties
 new file mode 100644
