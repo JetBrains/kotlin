@@ -20,6 +20,7 @@
          <trust group="org.jetbrains.kotlin" name="kotlin-assignment" version="1.9.[2,3]?[0-9](-.+)?" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-assignment-compiler-plugin-embeddable" version="1.9.[2,3]?[0-9](-.+)?" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-build-common" version="1.9.[2,3]?[0-9](-.+)?" regex="true"/>
+         <trust group="org.jetbrains.kotlin" name="kotlin-build-statistics" version="1.9.[2,3]?[0-9](-.+)?" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-build-tools-api" version="1.9.[2,3]?[0-9](-.+)?" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-build-tools-enum-compat" version="1.9.[2,3]?[0-9](-.+)?" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-build-tools-impl" version="1.9.[2,3]?[0-9](-.+)?" regex="true"/>
@@ -30,6 +31,7 @@
          <trust group="org.jetbrains.kotlin" name="kotlin-gradle-plugin" version="1.9.[2,3]?[0-9](-.+)?" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-gradle-plugin-annotations" version="1.9.[2,3]?[0-9](-.+)?" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-gradle-plugin-api" version="1.9.[2,3]?[0-9](-.+)?" regex="true"/>
+         <trust group="org.jetbrains.kotlin" name="kotlin-gradle-plugin-compiler-dependencies" version="1.9.[2,3]?[0-9](-.+)?" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-gradle-plugin-idea" version="1.9.[2,3]?[0-9](-.+)?" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-gradle-plugin-idea-proto" version="1.9.[2,3]?[0-9](-.+)?" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-gradle-plugin-model" version="1.9.[2,3]?[0-9](-.+)?" regex="true"/>
