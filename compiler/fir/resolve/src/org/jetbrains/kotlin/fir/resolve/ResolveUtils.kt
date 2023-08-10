@@ -340,7 +340,9 @@ fun BodyResolveComponents.typeFromCallee(access: FirElement, calleeReference: Fi
                 diagnostic = ConeUnresolvedNameError(Name.identifier("super"))
             }
         }
-        else -> error("Failed to extract type from: $calleeReference")
+        else -> errorWithAttachment("Failed to extract type from: ${calleeReference::class.simpleName}") {
+            withFirEntry("reference", calleeReference)
+        }
     }
 }
 
