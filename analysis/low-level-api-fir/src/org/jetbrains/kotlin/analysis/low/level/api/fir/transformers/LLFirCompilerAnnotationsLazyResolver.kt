@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.forEachDependentDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isScriptDependentDeclaration
+import org.jetbrains.kotlin.fir.declarations.annotationPlatformSupport
 
 internal object LLFirCompilerAnnotationsLazyResolver : LLFirLazyResolver(FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS) {
     override fun resolve(
@@ -197,8 +198,9 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
         fun balanceAnnotations(target: FirElementWithResolveState) {
             if (target !is FirProperty) return
             val backingField = target.backingField ?: return
-            val updatedAnnotations = transformer.annotationTransformer.extractBackingFieldAnnotationsFromProperty(
+            val updatedAnnotations = transformer.session.annotationPlatformSupport.extractBackingFieldAnnotationsFromProperty(
                 target,
+                transformer.session,
                 annotationMap[target].orEmpty(),
                 annotationMap[backingField].orEmpty(),
             ) ?: return

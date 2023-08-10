@@ -21,9 +21,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.forEachType
-import org.jetbrains.kotlin.fir.types.toSymbol
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -123,7 +121,7 @@ fun FirAnnotationContainer.extractDeprecationInfoPerUseSite(
         versionRequirements = this.versionRequirements
     }
     return buildDeprecationAnnotationInfoPerUseSiteStorage {
-        add((customAnnotations ?: annotations).extractDeprecationAnnotationInfoPerUseSite(fromJava, versionRequirements))
+        add((customAnnotations ?: annotations).extractDeprecationAnnotationInfoPerUseSite(fromJava, session, versionRequirements))
         if (this@extractDeprecationInfoPerUseSite is FirProperty) {
             add(
                 getDeprecationsAnnotationInfoByUseSiteFromAccessors(
@@ -179,7 +177,7 @@ fun List<FirAnnotation>.getDeprecationsProviderFromAnnotations(
     fromJava: Boolean,
     versionRequirements: List<VersionRequirement>? = null,
 ): DeprecationsProvider {
-    val deprecationAnnotationByUseSite = extractDeprecationAnnotationInfoPerUseSite(fromJava, versionRequirements)
+    val deprecationAnnotationByUseSite = extractDeprecationAnnotationInfoPerUseSite(fromJava, session, versionRequirements)
     return deprecationAnnotationByUseSite.toDeprecationsProvider(session.firCachesFactory)
 }
 
@@ -252,29 +250,26 @@ private fun FirAnnotation.getDeprecationLevel(): DeprecationLevelValue? {
     return DeprecationLevelValue.values().find { it.name == targetName }
 }
 
-val deprecationAnnotationSimpleNames: Set<String> = setOf(
-    StandardClassIds.Annotations.Deprecated.shortClassName.asString(),
-    StandardClassIds.Annotations.Java.Deprecated.shortClassName.asString(),
-    StandardClassIds.Annotations.SinceKotlin.shortClassName.asString(),
-)
-
 private fun List<FirAnnotation>.extractDeprecationAnnotationInfoPerUseSite(
     fromJava: Boolean,
+    session: FirSession,
     versionRequirements: List<VersionRequirement>?,
 ): DeprecationAnnotationInfoPerUseSiteStorage {
     // NB: We can't expand typealiases (`toAnnotationClassId`), because it
     // requires `lookupTag.tySymbol()`, but we can have cycles in annotations.
     // See the commit message for an example.
 
-    @Suppress("RemoveExplicitTypeArguments")
-    val annotations = buildList<Pair<FirAnnotation, Boolean>> {
-        mapAnnotationsWithClassIdTo(StandardClassIds.Annotations.Deprecated, this) { it to false }
-        mapAnnotationsWithClassIdTo(StandardClassIds.Annotations.Java.Deprecated, this) { it to true }
-        mapAnnotationsWithClassIdTo(StandardClassIds.Annotations.SinceKotlin, this) { it to false }
-    }
+    val annotations = session.annotationPlatformSupport.deprecationAnnotationsWithOverridesPropagation
+        .flatMap { (classId, shouldPropagateToOverrides) ->
+            this.filter {
+                it.unexpandedClassId == classId
+            }.map {
+                it to shouldPropagateToOverrides
+            }
+        }
 
     return buildDeprecationAnnotationInfoPerUseSiteStorage {
-        for ((deprecated, fromJavaAnnotation) in annotations) {
+        for ((deprecated, shouldPropagateToOverrides) in annotations) {
             if (deprecated.unexpandedClassId == StandardClassIds.Annotations.SinceKotlin) {
                 val sinceKotlinSingleArgument = deprecated.findArgumentByName(ParameterNames.sinceKotlinVersion)
                 val apiVersion = ((sinceKotlinSingleArgument as? FirConstExpression<*>)?.value as? String)
@@ -287,7 +282,7 @@ private fun List<FirAnnotation>.extractDeprecationAnnotationInfoPerUseSite(
                 }
             } else {
                 val deprecationLevel = deprecated.getDeprecationLevel() ?: DeprecationLevelValue.WARNING
-                val propagatesToOverride = !fromJavaAnnotation && !fromJava
+                val propagatesToOverride = shouldPropagateToOverrides && !fromJava
                 val deprecatedSinceKotlin = this@extractDeprecationAnnotationInfoPerUseSite.firstOrNull {
                     it.unexpandedClassId == StandardClassIds.Annotations.DeprecatedSinceKotlin
                 }

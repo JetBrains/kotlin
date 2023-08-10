@@ -13,15 +13,15 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.unexpandedClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.JvmNames
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.Repeatable
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.JvmRepeatable
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.Java
+import org.jetbrains.kotlin.name.JvmNames.Annotations.JvmRepeatable
 
 object FirJvmRedundantRepeatableChecker : FirBasicDeclarationChecker() {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         val kotlinRepeatable = declaration.getAnnotationByClassId(Repeatable, context.session)
         val javaRepeatable = declaration.getAnnotationByClassId(JvmRepeatable, context.session)
-            ?: declaration.getAnnotationByClassId(Java.Repeatable, context.session)
+            ?: declaration.getAnnotationByClassId(JvmNames.Annotations.Java.Repeatable, context.session)
 
         if (kotlinRepeatable != null && javaRepeatable != null) {
             reporter.reportOn(

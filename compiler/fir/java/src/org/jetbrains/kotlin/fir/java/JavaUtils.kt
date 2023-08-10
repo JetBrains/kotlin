@@ -8,8 +8,11 @@ package org.jetbrains.kotlin.fir.java
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirArrayLiteral
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
@@ -25,6 +28,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaModifierListOwner
 import org.jetbrains.kotlin.load.java.structure.JavaWildcardType
+import org.jetbrains.kotlin.name.JvmNames
 import org.jetbrains.kotlin.types.ConstantValueKind
 
 internal val JavaModifierListOwner.modality: Modality
@@ -132,3 +136,9 @@ fun extractNullabilityAnnotationOnBoundedWildcard(wildcardType: JavaWildcardType
     require(wildcardType.bound != null) { "Nullability annotations on unbounded wildcards aren't supported" }
     return wildcardType.annotations.find { annotation -> RXJAVA3_ANNOTATIONS.any { annotation.classId?.asSingleFqName() == it } }
 }
+
+fun FirProperty.hasJvmFieldAnnotation(session: FirSession): Boolean =
+    backingField?.annotations?.any { it.isJvmFieldAnnotation(session) } == true
+
+fun FirAnnotation.isJvmFieldAnnotation(session: FirSession): Boolean =
+    toAnnotationClassId(session) == JvmNames.Annotations.JvmField

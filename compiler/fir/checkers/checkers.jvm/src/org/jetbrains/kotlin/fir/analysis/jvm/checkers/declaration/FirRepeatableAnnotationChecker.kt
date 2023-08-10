@@ -12,14 +12,13 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.checkers.containsRepeatableAnnotation
+import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.getAllowedAnnotationTargets
-import org.jetbrains.kotlin.fir.analysis.checkers.getAnnotationRetention
-import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.annotationPlatformSupport
+import org.jetbrains.kotlin.fir.declarations.getAnnotationRetention
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
@@ -33,6 +32,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.JvmNames
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 
@@ -58,7 +58,7 @@ object FirRepeatableAnnotationChecker : FirBasicDeclarationChecker() {
                     existingTargetsForAnnotation.any { (it == null) != (useSiteTarget == null) }
 
             if (duplicateAnnotation &&
-                annotationClass.containsRepeatableAnnotation(session) &&
+                session.annotationPlatformSupport.symbolContainsRepeatableAnnotation(annotationClass, session) &&
                 annotationClass.getAnnotationRetention(session) != AnnotationRetention.SOURCE
             ) {
                 if (session.languageVersionSettings.supportsFeature(LanguageFeature.RepeatableAnnotations)) {
@@ -83,7 +83,7 @@ object FirRepeatableAnnotationChecker : FirBasicDeclarationChecker() {
         }
 
         if (declaration is FirRegularClass) {
-            val javaRepeatable = annotations.getAnnotationByClassId(StandardClassIds.Annotations.Java.Repeatable, session)
+            val javaRepeatable = annotations.getAnnotationByClassId(JvmNames.Annotations.Java.Repeatable, session)
             if (javaRepeatable != null) {
                 checkJavaRepeatableAnnotationDeclaration(javaRepeatable, declaration, context, reporter)
             } else {
@@ -97,7 +97,7 @@ object FirRepeatableAnnotationChecker : FirBasicDeclarationChecker() {
 
     private fun FirClassLikeSymbol<*>.resolveContainerAnnotation(session: FirSession): ClassId? {
         val repeatableAnnotation = getAnnotationByClassId(StandardClassIds.Annotations.Repeatable, session)
-            ?: getAnnotationByClassId(StandardClassIds.Annotations.Java.Repeatable, session)
+            ?: getAnnotationByClassId(JvmNames.Annotations.Java.Repeatable, session)
             ?: return null
         return repeatableAnnotation.resolveContainerAnnotation()
     }

@@ -24,14 +24,14 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.name.JvmNames
 import org.jetbrains.kotlin.name.JvmNames.JVM_RECORD_ANNOTATION_CLASS_ID
-import org.jetbrains.kotlin.name.StandardClassIds
 
 object FirJvmRecordChecker : FirRegularClassChecker() {
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
         declaration.superTypeRefs.firstOrNull()?.let { typeRef ->
             // compiler automatically adds java.lang.Record supertype, so we should check only for explicit type declarations
-            if (typeRef.source != null && typeRef.coneTypeSafe<ConeClassLikeType>()?.fullyExpandedClassId(context.session) == StandardClassIds.Java.Record) {
+            if (typeRef.source != null && typeRef.coneTypeSafe<ConeClassLikeType>()?.fullyExpandedClassId(context.session) == JvmNames.Java.Record) {
                 reporter.reportOn(typeRef.source, FirJvmErrors.ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE, context)
                 return
             }

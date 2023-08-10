@@ -19,12 +19,11 @@ import org.jetbrains.kotlin.fir.declarations.utils.getExplicitBackingField
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirLazyDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.extensions.registeredPluginAnnotations
-import org.jetbrains.kotlin.fir.resolve.transformers.plugin.CompilerRequiredAnnotationsHelper
+import org.jetbrains.kotlin.fir.declarations.annotationPlatformSupport
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 
 internal object FirLazyBodiesCalculator {
@@ -319,15 +318,12 @@ private abstract class FirLazyAnnotationTransformer : FirTransformer<FirLazyAnno
         return element
     }
 
-    private val COMPILER_ANNOTATION_NAMES: Set<Name> = CompilerRequiredAnnotationsHelper.REQUIRED_ANNOTATIONS
-        .mapTo(mutableSetOf()) { it.shortClassName }
-
     private fun canBeCompilerAnnotation(annotationCall: FirAnnotationCall, session: FirSession): Boolean {
         val annotationTypeRef = annotationCall.annotationTypeRef
         if (annotationTypeRef !is FirUserTypeRef) return false
         if (session.registeredPluginAnnotations.annotations.isNotEmpty()) return true
         val name = annotationTypeRef.qualifier.last().name
-        return name in COMPILER_ANNOTATION_NAMES
+        return name in session.annotationPlatformSupport.requiredAnnotationsShortClassNames
     }
 
     override fun transformResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: FirLazyAnnotationTransformerData): FirTypeRef {

@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.name
 
 object JvmNames {
+    val BASE_JVM_PACKAGE = StandardClassIds.BASE_KOTLIN_PACKAGE.child(Name.identifier("jvm"))
+
     @JvmField
     val JVM_NAME: FqName = FqName("kotlin.jvm.JvmName")
 
@@ -67,4 +69,37 @@ object JvmNames {
     val TRANSIENT_ANNOTATION_CLASS_ID = ClassId.topLevel(TRANSIENT_ANNOTATION_FQ_NAME)
 
     const val MULTIFILE_PART_NAME_DELIMITER = "__"
+
+    object Annotations {
+        val JvmStatic = "JvmStatic".jvmId()
+        val JvmName = "JvmName".jvmId()
+        val JvmField = "JvmField".jvmId()
+        val JvmDefault = "JvmDefault".jvmId()
+        val JvmRepeatable = "JvmRepeatable".jvmId()
+        val JvmRecord = "JvmRecord".jvmId()
+        val JvmVolatile = "Volatile".jvmId()
+        val Throws = "Throws".jvmId()
+
+        object Java {
+            val Deprecated = "Deprecated".javaLangId()
+            val Repeatable = "Repeatable".javaAnnotationId()
+            val Retention = "Retention".javaAnnotationId()
+            val Documented = "Documented".javaAnnotationId()
+            val Target = "Target".javaAnnotationId()
+            val ElementType = "ElementType".javaAnnotationId()
+            val RetentionPolicy = "RetentionPolicy".javaAnnotationId()
+        }
+    }
+
+    object Java {
+        val Record = "Record".javaLangId()
+    }
 }
+
+private fun String.jvmId() = ClassId(JvmNames.BASE_JVM_PACKAGE, Name.identifier(this))
+
+private val JAVA_LANG_PACKAGE = FqName("java.lang")
+private val JAVA_LANG_ANNOTATION_PACKAGE = JAVA_LANG_PACKAGE.child(Name.identifier("annotation"))
+
+private fun String.javaLangId() = ClassId(JAVA_LANG_PACKAGE, Name.identifier(this))
+private fun String.javaAnnotationId() = ClassId(JAVA_LANG_ANNOTATION_PACKAGE, Name.identifier(this))

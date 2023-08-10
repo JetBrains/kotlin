@@ -26,16 +26,17 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.JvmNames
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations
 
 object FirJavaAnnotationsChecker : FirAnnotationChecker() {
 
     private val javaToKotlinNameMap: Map<ClassId, ClassId> =
         mapOf(
-            Annotations.Java.Target to Annotations.Target,
-            Annotations.Java.Retention to Annotations.Retention,
-            Annotations.Java.Deprecated to Annotations.Deprecated,
-            Annotations.Java.Documented to Annotations.MustBeDocumented,
+            JvmNames.Annotations.Java.Target to Annotations.Target,
+            JvmNames.Annotations.Java.Retention to Annotations.Retention,
+            JvmNames.Annotations.Java.Deprecated to Annotations.Deprecated,
+            JvmNames.Annotations.Java.Documented to Annotations.MustBeDocumented,
         )
 
     override fun check(expression: FirAnnotation, context: CheckerContext, reporter: DiagnosticReporter) {

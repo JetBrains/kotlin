@@ -9,10 +9,10 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirAnonymousFunctionChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.getAnnotationRetention
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.InlineStatus
+import org.jetbrains.kotlin.fir.declarations.getAnnotationRetention
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassLikeSymbol
 
 object FirInlinedLambdaNonSourceAnnotationsChecker : FirAnonymousFunctionChecker() {

@@ -9,6 +9,7 @@ import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.annotationPlatformSupport
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedQualifier
 import org.jetbrains.kotlin.fir.extensions.*
@@ -21,8 +22,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.ScopeClassDeclaration
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformerDispatcher
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclarationsResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer
-import org.jetbrains.kotlin.fir.resolve.transformers.plugin.CompilerRequiredAnnotationsHelper.REQUIRED_ANNOTATIONS
-import org.jetbrains.kotlin.fir.resolve.transformers.plugin.CompilerRequiredAnnotationsHelper.REQUIRED_ANNOTATIONS_WITH_ARGUMENTS
 import org.jetbrains.kotlin.fir.resolve.transformers.withClassDeclarationCleanup
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.createImportingScopes
@@ -40,37 +39,9 @@ import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
 import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.Deprecated
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.DeprecatedSinceKotlin
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.Java
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.JvmRecord
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.SinceKotlin
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.Target
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.WasExperimental
 import org.jetbrains.kotlin.util.PrivateForInline
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
-
-/**
- * @see org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox.Companion
- */
-object CompilerRequiredAnnotationsHelper {
-    internal val REQUIRED_ANNOTATIONS_WITH_ARGUMENTS: Set<ClassId> = setOf(
-        Deprecated,
-        Target,
-        Java.Target,
-    )
-
-    val REQUIRED_ANNOTATIONS: Set<ClassId> = REQUIRED_ANNOTATIONS_WITH_ARGUMENTS + setOf(
-        Java.Deprecated,
-        DeprecatedSinceKotlin,
-        SinceKotlin,
-        WasExperimental,
-        JvmRecord,
-    )
-}
 
 @OptIn(PrivateForInline::class)
 abstract class AbstractFirSpecificAnnotationResolveTransformer(
@@ -79,10 +50,6 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
     @property:PrivateForInline val computationSession: CompilerRequiredAnnotationsComputationSession,
     containingDeclarations: List<FirDeclaration> = emptyList()
 ) : FirDefaultTransformer<Nothing?>() {
-    companion object {
-        private val REQUIRED_ANNOTATION_NAMES: Set<Name> = REQUIRED_ANNOTATIONS.mapTo(mutableSetOf()) { it.shortClassName }
-    }
-
     inner class FirEnumAnnotationArgumentsTransformerDispatcher : FirAbstractBodyResolveTransformerDispatcher(
         session,
         FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS,
@@ -244,7 +211,9 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
         annotationCall.replaceAnnotationTypeRef(transformedAnnotationType)
         annotationCall.replaceAnnotationResolvePhase(FirAnnotationResolvePhase.CompilerRequiredAnnotations)
 
-        if (transformedAnnotationType.coneTypeSafe<ConeClassLikeType>()?.lookupTag?.classId in REQUIRED_ANNOTATIONS_WITH_ARGUMENTS) {
+        val requiredAnnotationsWithArguments = session.annotationPlatformSupport.requiredAnnotationsWithArguments
+
+        if (transformedAnnotationType.coneTypeSafe<ConeClassLikeType>()?.lookupTag?.classId in requiredAnnotationsWithArguments) {
             argumentsTransformer.transformAnnotation(annotationCall, ResolutionMode.ContextDependent)
         }
     }
@@ -261,13 +230,13 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
     fun shouldRunAnnotationResolve(typeRef: FirUserTypeRef): Boolean {
         val name = typeRef.qualifier.last().name
         if (metaAnnotationsFromPlugins.isNotEmpty()) return true
-        return name in REQUIRED_ANNOTATION_NAMES || annotationsFromPlugins.any { it.shortName() == name }
+        return name in session.annotationPlatformSupport.requiredAnnotationsShortClassNames || annotationsFromPlugins.any { it.shortName() == name }
     }
 
     private fun FirResolvedTypeRef.requiredToSave(): Boolean {
         val classId = type.classId ?: return false
         return when {
-            classId in REQUIRED_ANNOTATIONS -> true
+            classId in session.annotationPlatformSupport.requiredAnnotations -> true
             classId.asSingleFqName() in annotationsFromPlugins -> true
             metaAnnotationsFromPlugins.isEmpty() -> false
             else -> type.markedWithMetaAnnotation(session, metaAnnotationsFromPlugins)
@@ -424,30 +393,10 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
     }
 
     private fun FirProperty.moveJavaDeprecatedAnnotationToBackingField() {
-        val newPosition = extractBackingFieldAnnotationsFromProperty(this) ?: return
+        val newPosition = session.annotationPlatformSupport.extractBackingFieldAnnotationsFromProperty(this, session) ?: return
         this.replaceAnnotations(newPosition.propertyAnnotations)
         backingField?.replaceAnnotations(newPosition.backingFieldAnnotations)
     }
-
-    fun extractBackingFieldAnnotationsFromProperty(
-        property: FirProperty,
-        propertyAnnotations: List<FirAnnotation> = property.annotations,
-        backingFieldAnnotations: List<FirAnnotation> = property.backingField?.annotations.orEmpty(),
-    ): AnnotationsPosition? {
-        if (propertyAnnotations.isEmpty() || property.backingField == null) return null
-
-        val (newBackingFieldAnnotations, newPropertyAnnotations) = propertyAnnotations.partition {
-            it.toAnnotationClassIdSafe(session) == Java.Deprecated
-        }
-
-        if (newBackingFieldAnnotations.isEmpty()) return null
-        return AnnotationsPosition(
-            propertyAnnotations = newPropertyAnnotations,
-            backingFieldAnnotations = backingFieldAnnotations + newBackingFieldAnnotations,
-        )
-    }
-
-    class AnnotationsPosition(val backingFieldAnnotations: List<FirAnnotation>, val propertyAnnotations: List<FirAnnotation>)
 
     override fun transformSimpleFunction(
         simpleFunction: FirSimpleFunction,

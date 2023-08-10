@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -15,11 +14,10 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.analysis.getRetention
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.annotationPlatformSupport
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.FirFromMissingDependenciesNamedReference
 import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -121,26 +119,7 @@ fun FirAnnotation.isRepeatable(session: FirSession): Boolean {
     if (annotationClassId.isLocal) return false
     val annotationClass = session.symbolProvider.getClassLikeSymbolByClassId(annotationClassId) ?: return false
 
-    return annotationClass.containsRepeatableAnnotation(session)
-}
-
-fun FirClassLikeSymbol<*>.containsRepeatableAnnotation(session: FirSession): Boolean {
-    if (getAnnotationByClassId(StandardClassIds.Annotations.Repeatable, session) != null) return true
-    if (getAnnotationByClassId(StandardClassIds.Annotations.Java.Repeatable, session) != null ||
-        getAnnotationByClassId(StandardClassIds.Annotations.JvmRepeatable, session) != null
-    ) {
-        return session.languageVersionSettings.supportsFeature(LanguageFeature.RepeatableAnnotations) ||
-                getAnnotationRetention(session) == AnnotationRetention.SOURCE && origin is FirDeclarationOrigin.Java
-    }
-    return false
-}
-
-fun FirClassLikeSymbol<*>.getExplicitAnnotationRetention(session: FirSession): AnnotationRetention? {
-    return getAnnotationByClassId(StandardClassIds.Annotations.Retention, session)?.getRetention()
-}
-
-fun FirClassLikeSymbol<*>.getAnnotationRetention(session: FirSession): AnnotationRetention {
-    return getExplicitAnnotationRetention(session) ?: AnnotationRetention.RUNTIME
+    return session.annotationPlatformSupport.symbolContainsRepeatableAnnotation(annotationClass, session)
 }
 
 fun FirAnnotationContainer.getDefaultUseSiteTarget(

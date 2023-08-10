@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.JvmNames
 import org.jetbrains.kotlin.name.JvmNames.JVM_OVERLOADS_CLASS_ID
 import org.jetbrains.kotlin.name.JvmNames.JVM_SYNTHETIC_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -52,7 +53,7 @@ internal fun KtAnnotatedSymbol.hasJvmSyntheticAnnotation(
 internal fun KtAnnotatedSymbol.getJvmNameFromAnnotation(
     useSiteTargetFilter: AnnotationUseSiteTargetFilter = AnyAnnotationUseSiteTargetFilter,
 ): String? {
-    val annotation = findAnnotation(StandardClassIds.Annotations.JvmName, useSiteTargetFilter)
+    val annotation = findAnnotation(JvmNames.Annotations.JvmName, useSiteTargetFilter)
     return annotation?.let {
         (it.arguments.firstOrNull()?.expression as? KtConstantAnnotationValue)?.constantValue?.value as? String
     }
@@ -70,7 +71,7 @@ internal fun KtAnnotatedSymbol.isHiddenOrSynthetic(
     useSiteTargetFilter: AnnotationUseSiteTargetFilter = annotationUseSiteTarget.toFilter(),
 ) = isHiddenByDeprecation(this, annotationUseSiteTarget) || hasJvmSyntheticAnnotation(useSiteTargetFilter)
 
-internal fun KtAnnotatedSymbol.hasJvmFieldAnnotation(): Boolean = hasAnnotation(StandardClassIds.Annotations.JvmField)
+internal fun KtAnnotatedSymbol.hasJvmFieldAnnotation(): Boolean = hasAnnotation(JvmNames.Annotations.JvmField)
 
 internal fun KtAnnotatedSymbol.hasPublishedApiAnnotation(
     useSiteTargetFilter: AnnotationUseSiteTargetFilter = AnyAnnotationUseSiteTargetFilter,
@@ -84,7 +85,7 @@ internal fun KtAnnotatedSymbol.hasJvmOverloadsAnnotation(): Boolean = hasAnnotat
 
 internal fun KtAnnotatedSymbol.hasJvmStaticAnnotation(
     useSiteTargetFilter: AnnotationUseSiteTargetFilter = AnyAnnotationUseSiteTargetFilter,
-): Boolean = hasAnnotation(StandardClassIds.Annotations.JvmStatic, useSiteTargetFilter)
+): Boolean = hasAnnotation(JvmNames.Annotations.JvmStatic, useSiteTargetFilter)
 
 internal fun KtAnnotatedSymbol.hasInlineOnlyAnnotation(): Boolean = hasAnnotation(StandardClassIds.Annotations.InlineOnly)
 
@@ -109,7 +110,7 @@ internal fun KtAnnotatedSymbol.computeThrowsList(
         builder.addReference(java.lang.NullPointerException::class.qualifiedName)
     }
 
-    val annoApp = findAnnotation(StandardClassIds.Annotations.Throws, useSiteTargetFilter) ?: return
+    val annoApp = findAnnotation(JvmNames.Annotations.Throws, useSiteTargetFilter) ?: return
 
     fun handleAnnotationValue(annotationValue: KtAnnotationValue) = when (annotationValue) {
         is KtArrayAnnotationValue -> {

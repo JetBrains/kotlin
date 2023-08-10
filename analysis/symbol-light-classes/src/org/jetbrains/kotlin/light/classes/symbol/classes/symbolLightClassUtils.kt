@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.light.classes.symbol.isJvmField
 import org.jetbrains.kotlin.light.classes.symbol.mapType
 import org.jetbrains.kotlin.light.classes.symbol.methods.*
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.name.JvmNames
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
@@ -565,7 +566,7 @@ internal fun KtSymbolWithMembers.createInnerClasses(
     if (containingClass is SymbolLightClassForAnnotationClass &&
         this is KtNamedClassOrObjectSymbol &&
         hasAnnotation(StandardClassIds.Annotations.Repeatable) &&
-        !hasAnnotation(StandardClassIds.Annotations.Java.Repeatable)
+        !hasAnnotation(JvmNames.Annotations.Java.Repeatable)
     ) {
         result.add(SymbolLightClassForRepeatableAnnotationContainer(containingClass))
     }

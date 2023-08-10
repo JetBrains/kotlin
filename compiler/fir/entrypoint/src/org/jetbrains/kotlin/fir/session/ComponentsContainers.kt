@@ -12,15 +12,19 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.CheckersComponent
 import org.jetbrains.kotlin.fir.analysis.FirOverridesBackwardCompatibilityHelper
 import org.jetbrains.kotlin.fir.analysis.checkers.FirInlineCheckerPlatformSpecificComponent
+import org.jetbrains.kotlin.fir.analysis.checkers.FirPrimaryConstructorSuperTypeCheckerPlatformComponent
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirNameConflictsTracker
 import org.jetbrains.kotlin.fir.analysis.jvm.FirJvmOverridesBackwardCompatibilityHelper
+import org.jetbrains.kotlin.fir.analysis.jvm.checkers.FirJvmAnnotationsPlatformSpecificSupportComponent
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.FirJvmInlineCheckerComponent
+import org.jetbrains.kotlin.fir.analysis.jvm.checkers.FirJvmPrimaryConstructorSuperTypeCheckerPlatformComponent
 import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.caches.FirThreadUnsafeCachesFactory
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOverloadabilityHelper
 import org.jetbrains.kotlin.fir.declarations.FirTypeSpecificityComparatorProvider
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProvider
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProviderImpl
+import org.jetbrains.kotlin.fir.declarations.FirAnnotationsPlatformSpecificSupportComponent
 import org.jetbrains.kotlin.fir.deserialization.FirDeserializationExtension
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.java.FirJavaVisibilityChecker
@@ -83,6 +87,8 @@ fun FirSession.registerCommonComponents(languageVersionSettings: LanguageVersion
     register(FirEnumEntriesSupport::class, FirEnumEntriesSupport(this))
     register(FirOverrideChecker::class, FirStandardOverrideChecker(this))
     register(FirDeclarationOverloadabilityHelper::class, FirDeclarationOverloadabilityHelperImpl(this))
+    register(FirAnnotationsPlatformSpecificSupportComponent::class, FirAnnotationsPlatformSpecificSupportComponent.Default)
+    register(FirPrimaryConstructorSuperTypeCheckerPlatformComponent::class, FirPrimaryConstructorSuperTypeCheckerPlatformComponent.Default)
 }
 
 @OptIn(SessionConfiguration::class)
@@ -134,6 +140,8 @@ fun FirSession.registerCommonJavaComponents(
     register(FirDeserializationExtension::class, FirJvmDeserializationExtension(this))
     register(FirEnumEntriesSupport::class, FirJvmEnumEntriesSupport(this))
     register(CompilerRequiredAnnotationEnhancementProvider::class, JavaCompilerRequiredAnnotationEnhancementProvider)
+    register(FirAnnotationsPlatformSpecificSupportComponent::class, FirJvmAnnotationsPlatformSpecificSupportComponent)
+    register(FirPrimaryConstructorSuperTypeCheckerPlatformComponent::class, FirJvmPrimaryConstructorSuperTypeCheckerPlatformComponent)
 }
 
 // -------------------------- Resolve components --------------------------
