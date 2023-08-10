@@ -28,7 +28,7 @@ import java.util.*
 class BuildDiffsStorageTest {
     lateinit var storageFile: File
     private val random = Random(System.currentTimeMillis())
-    private val icContext = IncrementalCompilationContext(null)
+    private val icContext = IncrementalCompilationContext()
 
     @Before
     fun setUp() {

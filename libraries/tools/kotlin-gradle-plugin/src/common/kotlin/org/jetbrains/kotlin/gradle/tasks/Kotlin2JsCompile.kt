@@ -328,7 +328,8 @@ abstract class Kotlin2JsCompile @Inject constructor(
                 getChangedFiles(inputChanges, incrementalProps),
                 ClasspathChanges.NotAvailableForJSCompiler,
                 taskBuildCacheableOutputDirectory.get().asFile,
-                projectRootDir,
+                rootProjectDir = rootProjectDir,
+                buildDir = buildDir,
                 multiModuleICSettings = multiModuleICSettings,
                 preciseCompilationResultsBackup = preciseCompilationResultsBackup.get(),
                 keepIncrementalCompilationCachesInMemory = keepIncrementalCompilationCachesInMemory.get(),
@@ -351,16 +352,17 @@ abstract class Kotlin2JsCompile @Inject constructor(
 
     }
 
-    private val projectRootDir = project.rootDir
+    private val rootProjectDir = project.rootDir
+    private val buildDir = project.buildDir
 
     private fun validateOutputDirectory() {
         val outputFile = outputFileProperty.get()
         val outputDir = outputFile.parentFile
 
-        if (outputDir.isParentOf(projectRootDir)) {
+        if (outputDir.isParentOf(rootProjectDir)) {
             throw InvalidUserDataException(
                 "The output directory '$outputDir' (defined by outputFile of ':$name') contains or " +
-                        "matches the project root directory '${projectRootDir}'.\n" +
+                        "matches the project root directory '${rootProjectDir}'.\n" +
                         "Gradle will not be able to build the project because of the root directory lock.\n" +
                         "To fix this, consider using the default outputFile location instead of providing it explicitly."
             )

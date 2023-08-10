@@ -50,12 +50,18 @@ internal abstract class JvmIncrementalCompilationConfigurationImpl<P : Increment
     override var preciseJavaTrackingEnabled: Boolean = true,
     override var preciseCompilationResultsBackupEnabled: Boolean = false,
     override var incrementalCompilationCachesKeptInMemory: Boolean = false,
-    override var projectDir: File? = null,
+    override var rootProjectDir: File? = null,
+    override var buildDir: File? = null,
     override var forcedNonIncrementalMode: Boolean = false,
     override var outputDirs: Set<File> = emptySet(),
 ) : IncrementalJvmCompilationConfiguration<P> {
-    override fun useProjectDir(projectDir: File): IncrementalJvmCompilationConfiguration<P> {
-        this.projectDir = projectDir
+    override fun setRootProjectDir(rootProjectDir: File): IncrementalJvmCompilationConfiguration<P> {
+        this.rootProjectDir = rootProjectDir
+        return this
+    }
+
+    override fun setBuildDir(buildDir: File): IncrementalJvmCompilationConfiguration<P> {
+        this.buildDir = buildDir
         return this
     }
 
@@ -90,8 +96,13 @@ internal class ClasspathSnapshotBasedIncrementalJvmCompilationConfigurationImpl(
 ) :
     JvmIncrementalCompilationConfigurationImpl<ClasspathSnapshotBasedIncrementalCompilationApproachParameters>(),
     ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration {
-    override fun useProjectDir(projectDir: File): ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration {
-        super.useProjectDir(projectDir)
+    override fun setRootProjectDir(rootProjectDir: File): ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration {
+        super.setRootProjectDir(rootProjectDir)
+        return this
+    }
+
+    override fun setBuildDir(buildDir: File): ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration {
+        super.setBuildDir(buildDir)
         return this
     }
 
