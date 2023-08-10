@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
+import org.jetbrains.kotlin.fir.analysis.js.checkers.FirJsStableName
 import org.jetbrains.kotlin.fir.analysis.js.checkers.getJsName
-import org.jetbrains.kotlin.fir.analysis.js.checkers.getStableNameInJavaScript
 import org.jetbrains.kotlin.fir.analysis.js.checkers.isExportedObject
 import org.jetbrains.kotlin.fir.analysis.js.checkers.sanitizeName
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
@@ -39,8 +39,8 @@ object FirJsNameCharsChecker : FirBasicDeclarationChecker() {
             return
         }
 
-        val stableName = declaration.symbol.getStableNameInJavaScript(context.session) ?: return
-        if ((sanitizeName(stableName) != stableName)) {
+        val stableName = FirJsStableName.createStableNameOrNull(declaration.symbol, context.session) ?: return
+        if ((sanitizeName(stableName.name) != stableName.name)) {
             reporter.reportOn(declaration.source, FirJsErrors.NAME_CONTAINS_ILLEGAL_CHARS, context)
         }
     }

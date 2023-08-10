@@ -10,12 +10,12 @@ package org.jetbrains.kotlin.fir.analysis.js.checkers
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.effectiveVisibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isExternal
 import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
@@ -101,10 +101,23 @@ fun FirBasedSymbol<*>.isNativeInterface(session: FirSession): Boolean {
     return isNativeObject(session) && (fir as? FirClass)?.isInterface == true
 }
 
-private val FirBasedSymbol<*>.isExpect
+fun FirBasedSymbol<*>.isLibraryObject(session: FirSession): Boolean {
+    return hasAnnotationOrInsideAnnotatedClass(JsStandardClassIds.Annotations.JsLibrary, session)
+}
+
+fun FirBasedSymbol<*>.isPresentInGeneratedCode(session: FirSession) = !isNativeObject(session) && !isLibraryObject(session)
+
+internal val FirBasedSymbol<*>.isExpect
     get() = when (this) {
         is FirCallableSymbol<*> -> isExpect
         is FirClassSymbol<*> -> isExpect
+        else -> false
+    }
+
+internal val FirBasedSymbol<*>.isActual
+    get() = when (this) {
+        is FirCallableSymbol<*> -> isActual
+        is FirClassSymbol<*> -> isActual
         else -> false
     }
 
@@ -154,6 +167,8 @@ fun FirBasedSymbol<*>.isPredefinedObject(context: CheckerContext) = isPredefined
 
 fun FirBasedSymbol<*>.isExportedObject(context: CheckerContext) = isExportedObject(context.session)
 
+fun FirBasedSymbol<*>.isLibraryObject(context: CheckerContext) = isLibraryObject(context.session)
+
 internal fun FirClass.superClassNotAny(session: FirSession) = superConeTypes
     .filterNot { it.isAny || it.isNullableAny }
     .find { it.toSymbol(session)?.classKind == ClassKind.CLASS }
@@ -161,39 +176,3 @@ internal fun FirClass.superClassNotAny(session: FirSession) = superConeTypes
 internal fun getRootClassLikeSymbolOrSelf(symbol: FirBasedSymbol<*>, session: FirSession): FirBasedSymbol<*> {
     return symbol.getContainingClassSymbol(session)?.let { getRootClassLikeSymbolOrSelf(it, session) } ?: symbol
 }
-
-internal fun FirBasedSymbol<*>.getStableNameInJavaScript(session: FirSession): String? {
-    val jsName = getJsName(session)
-    if (jsName != null) {
-        return jsName
-    }
-    val hasStableNameInJavaScript = when {
-        isEffectivelyExternal(session) -> true
-        isExportedObject(session) -> true
-        else -> false
-    }
-
-    // TODO: rethink in KT-60554
-    val hasPublicName = when (this) {
-        is FirClassLikeSymbol -> !isLocal
-        is FirCallableSymbol -> {
-            val parentClass = getContainingClassSymbol(session)
-            if (parentClass != null) {
-                when (visibility) {
-                    is Visibilities.Public -> true
-                    is Visibilities.Protected -> !parentClass.isFinal && parentClass.visibility.isPublicAPI
-                    else -> false
-                }
-            } else {
-                !callableId.isLocal && effectiveVisibility.publicApi
-            }
-        }
-        else -> false
-    }
-
-    if (hasStableNameInJavaScript || hasPublicName) {
-        return (fir as? FirMemberDeclaration)?.nameOrSpecialName?.identifierOrNullIfSpecial
-    }
-    return null
-}
-

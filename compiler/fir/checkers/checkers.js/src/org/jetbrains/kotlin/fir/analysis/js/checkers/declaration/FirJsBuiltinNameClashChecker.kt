@@ -11,14 +11,11 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
-import org.jetbrains.kotlin.fir.analysis.js.checkers.getStableNameInJavaScript
+import org.jetbrains.kotlin.fir.analysis.js.checkers.FirJsStableName
 import org.jetbrains.kotlin.fir.analysis.js.checkers.isNativeObject
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
-import org.jetbrains.kotlin.fir.declarations.utils.isLocal
-import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
 
 object FirJsBuiltinNameClashChecker : FirBasicDeclarationChecker() {
     private val PROHIBITED_STATIC_NAMES = setOf("prototype", "length", "\$metadata\$")
@@ -32,12 +29,12 @@ object FirJsBuiltinNameClashChecker : FirBasicDeclarationChecker() {
             return
         }
 
-        val stableName = declaration.symbol.getStableNameInJavaScript(context.session) ?: return
+        val stableName = FirJsStableName.createStableNameOrNull(declaration.symbol, context.session) ?: return
 
-        if (declaration is FirClassLikeDeclaration && stableName in PROHIBITED_STATIC_NAMES) {
+        if (declaration is FirClassLikeDeclaration && stableName.name in PROHIBITED_STATIC_NAMES) {
             reporter.reportOn(declaration.source, FirJsErrors.JS_BUILTIN_NAME_CLASH, "Function.$stableName", context)
         }
-        if (declaration is FirCallableDeclaration && stableName in PROHIBITED_MEMBER_NAMES) {
+        if (declaration is FirCallableDeclaration && stableName.name in PROHIBITED_MEMBER_NAMES) {
             reporter.reportOn(declaration.source, FirJsErrors.JS_BUILTIN_NAME_CLASH, "Object.prototype.$stableName", context)
         }
     }

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 package foo
 
 class A(val x: String) {

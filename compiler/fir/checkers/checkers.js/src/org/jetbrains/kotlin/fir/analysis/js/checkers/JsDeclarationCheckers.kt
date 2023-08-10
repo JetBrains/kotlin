@@ -32,7 +32,8 @@ object JsDeclarationCheckers : DeclarationCheckers() {
             FirJsMultipleInheritanceChecker,
             FirJsDynamicDeclarationChecker,
             FirJsInheritanceClassChecker,
-            FirJsExternalInheritorOnlyChecker
+            FirJsExternalInheritorOnlyChecker,
+            FirJsNameClashClassMembersChecker
         )
 
     override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker>
@@ -45,5 +46,10 @@ object JsDeclarationCheckers : DeclarationCheckers() {
     override val propertyCheckers: Set<FirPropertyChecker>
         get() = setOf(
             FirJsPropertyDelegationByDynamicChecker
+        )
+
+    override val fileCheckers: Set<FirFileChecker>
+        get() = setOf(
+            FirJsNameClashFileTopLevelDeclarationsChecker
         )
 }
