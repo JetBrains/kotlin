@@ -57,6 +57,9 @@ fun KGPBaseTest.project(
     projectPath.addDefaultBuildFiles()
     projectPath.enableCacheRedirector()
     projectPath.enableAndroidSdk()
+    if (buildOptions.languageVersion != null || buildOptions.languageApiVersion != null) {
+        projectPath.applyKotlinCompilerArgsPlugin()
+    }
 
     val gradleRunner = GradleRunner
         .create()
@@ -78,7 +81,6 @@ fun KGPBaseTest.project(
     addHeapDumpOptions.ifTrue { testProject.addHeapDumpOptions() }
     localRepoDir?.let { testProject.configureLocalRepository(localRepoDir) }
     if (buildJdk != null) testProject.setupNonDefaultJdk(buildJdk)
-    testProject.addKotlinCompilerArgumentsPlugin()
 
     val result = runCatching {
         testProject.test()
@@ -144,6 +146,7 @@ fun TestProject.build(
     assertions: BuildResult.() -> Unit = {},
 ) {
     if (enableBuildScan) agreeToBuildScanService()
+    ensureKotlinCompilerArgumentsPluginAppliedCorrectly(buildOptions)
 
     val allBuildArguments = commonBuildSetup(
         buildArguments.toList(),
@@ -181,6 +184,7 @@ fun TestProject.buildAndFail(
     assertions: BuildResult.() -> Unit = {},
 ) {
     if (enableBuildScan) agreeToBuildScanService()
+    ensureKotlinCompilerArgumentsPluginAppliedCorrectly(buildOptions)
 
     val allBuildArguments = commonBuildSetup(
         buildArguments.toList(),
@@ -207,6 +211,14 @@ fun TestProject.buildAndFail(
 private fun BuildResult.additionalAssertions(buildOptions: BuildOptions) {
     if (buildOptions.warningMode != WarningMode.Fail) {
         assertDeprecationWarningsArePresent(buildOptions.warningMode)
+    }
+}
+
+private fun TestProject.ensureKotlinCompilerArgumentsPluginAppliedCorrectly(buildOptions: BuildOptions) {
+    if (this.buildOptions.languageVersion != null || this.buildOptions.languageApiVersion != null) return // plugin is applied
+    // plugin's not applied
+    check(buildOptions.languageVersion == null && buildOptions.languageApiVersion == null) {
+        "Kotlin language or API version passed on the build level, but the plugin wasn't applied"
     }
 }
 
@@ -344,27 +356,6 @@ class TestProject(
     val environmentVariables: EnvironmentalVariables = EnvironmentalVariables(),
 ) : GradleProject(projectName, projectPath) {
     fun subProject(name: String) = GradleProject(name, projectPath.resolve(name))
-
-    fun addKotlinCompilerArgumentsPlugin() {
-        if (buildOptions.languageVersion != null || buildOptions.languageApiVersion != null) {
-            projectPath.toFile().walkTopDown().forEach { file ->
-                when {
-                    file.name.equals("build.gradle") -> file.modify {
-                        it.replaceFirst(
-                            "plugins {",
-                            "plugins {\nid \"org.jetbrains.kotlin.test.kotlin-compiler-args-properties\""
-                        )
-                    }
-                    file.name.equals("build.gradle.kts") -> file.modify {
-                        it.replaceFirst(
-                            "plugins {",
-                            "plugins {\nid(\"org.jetbrains.kotlin.test.kotlin-compiler-args-properties\")"
-                        )
-                    }
-                }
-            }
-        }
-    }
 
     /**
      * Includes another project as a submodule in the current project.

@@ -120,7 +120,7 @@ class MultiplatformGradleIT : BaseGradleIT() {
     @Test
     fun testSubprojectWithAnotherClassLoader() {
         with(Project("multiplatformProject")) {
-            setupWorkingDir()
+            setupWorkingDir(applyLanguageVersion = false)
 
             // Make sure there is a plugin applied with the plugins DSL, so that Gradle loads the
             // plugins separately for the subproject, with a different class loader:
