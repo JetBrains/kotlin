@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
@@ -69,13 +68,6 @@ fun List<FirAnnotation>.nonSourceAnnotations(session: FirSession): List<FirAnnot
 
 fun FirAnnotationContainer.nonSourceAnnotations(session: FirSession): List<FirAnnotation> =
     annotations.nonSourceAnnotations(session)
-
-@Suppress("NOTHING_TO_INLINE")
-inline fun FirProperty.hasJvmFieldAnnotation(session: FirSession): Boolean =
-    backingField?.annotations?.any { it.isJvmFieldAnnotation(session) } == true
-
-fun FirAnnotation.isJvmFieldAnnotation(session: FirSession): Boolean =
-    toAnnotationClassId(session) == StandardClassIds.Annotations.JvmField
 
 fun FirAnnotation.useSiteTargetsFromMetaAnnotation(session: FirSession): Set<AnnotationUseSiteTarget> {
     return toAnnotationClass(session)
@@ -186,18 +178,6 @@ fun List<FirAnnotation>.getAnnotationByClassIds(classIds: Collection<ClassId>, s
     }
 }
 
-inline fun <T> List<FirAnnotation>.mapAnnotationsWithClassIdTo(
-    classId: ClassId,
-    destination: MutableCollection<T>,
-    func: (FirAnnotation) -> T
-) {
-    for (annotation in this) {
-        if (annotation.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag?.classId == classId) {
-            destination.add(func(annotation))
-        }
-    }
-}
-
 fun FirExpression.unwrapVarargValue(): List<FirExpression> {
     return when (this) {
         is FirVarargArgumentsExpression -> arguments
@@ -241,14 +221,6 @@ fun FirAnnotation.getKClassArgument(name: Name): ConeKotlinType? {
 
 fun FirGetClassCall.getTargetType(): ConeKotlinType? {
     return resolvedType.typeArguments.getOrNull(0)?.type
-}
-
-fun FirAnnotationContainer.getJvmNameFromAnnotation(session: FirSession, target: AnnotationUseSiteTarget? = null): String? {
-    val annotationCalls = getAnnotationsByClassId(StandardClassIds.Annotations.JvmName, session)
-    return annotationCalls.firstNotNullOfOrNull { call ->
-        call.getStringArgument(StandardNames.NAME)
-            ?.takeIf { target == null || call.useSiteTarget == target }
-    }
 }
 
 val FirAnnotation.resolved: Boolean

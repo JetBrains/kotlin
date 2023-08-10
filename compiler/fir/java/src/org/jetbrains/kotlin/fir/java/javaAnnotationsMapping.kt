@@ -38,10 +38,7 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.java.structure.impl.JavaElementImpl
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.toKtPsiSourceElement
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
@@ -68,7 +65,7 @@ internal fun JavaAnnotationOwner.convertAnnotationsToFir(
 
 internal object DeprecatedInJavaDocAnnotation : JavaAnnotation {
     override val arguments: Collection<JavaAnnotationArgument> get() = emptyList()
-    override val classId: ClassId get() = StandardClassIds.Annotations.Java.Deprecated
+    override val classId: ClassId get() = JvmStandardClassIds.Annotations.Java.Deprecated
     override fun resolve(): JavaClass? = null
 }
 
@@ -255,15 +252,15 @@ private fun fillAnnotationArgumentMapping(
 }
 
 internal fun JavaAnnotation.isJavaDeprecatedAnnotation(): Boolean {
-    return classId == StandardClassIds.Annotations.Java.Deprecated
+    return classId == JvmStandardClassIds.Annotations.Java.Deprecated
 }
 
 private fun JavaAnnotation.toFirAnnotationCall(session: FirSession): FirAnnotation = buildAnnotation {
     val lookupTag = when (classId) {
-        StandardClassIds.Annotations.Java.Target -> StandardClassIds.Annotations.Target
-        StandardClassIds.Annotations.Java.Retention -> StandardClassIds.Annotations.Retention
-        StandardClassIds.Annotations.Java.Documented -> StandardClassIds.Annotations.MustBeDocumented
-        StandardClassIds.Annotations.Java.Deprecated -> StandardClassIds.Annotations.Deprecated
+        JvmNames.Annotations.Java.Target -> StandardClassIds.Annotations.Target
+        JvmNames.Annotations.Java.Retention -> StandardClassIds.Annotations.Retention
+        JvmNames.Annotations.Java.Documented -> StandardClassIds.Annotations.MustBeDocumented
+        JvmNames.Annotations.Java.Deprecated -> StandardClassIds.Annotations.Deprecated
         else -> classId
     }?.toLookupTag()
     annotationTypeRef = if (lookupTag != null) {
@@ -288,7 +285,7 @@ private fun JavaAnnotation.toFirAnnotationCall(session: FirSession): FirAnnotati
 
         override val mapping: Map<Name, FirExpression> by lazy {
             when {
-                classId == StandardClassIds.Annotations.Java.Target -> {
+                classId == JvmNames.Annotations.Java.Target -> {
                     when (val argument = arguments.firstOrNull()) {
                         is JavaArrayAnnotationArgument -> argument.getElements().mapJavaTargetArguments(session)
                         is JavaEnumValueAnnotationArgument -> listOf(argument).mapJavaTargetArguments(session)
@@ -298,13 +295,13 @@ private fun JavaAnnotation.toFirAnnotationCall(session: FirSession): FirAnnotati
                     }
                 }
 
-                classId == StandardClassIds.Annotations.Java.Retention -> {
+                classId == JvmNames.Annotations.Java.Retention -> {
                     arguments.firstOrNull()?.mapJavaRetentionArgument(session)?.let {
                         mapOf(StandardClassIds.Annotations.ParameterNames.retentionValue to it)
                     }
                 }
 
-                classId == StandardClassIds.Annotations.Java.Deprecated -> {
+                classId == JvmNames.Annotations.Java.Deprecated -> {
                     mapOf(
                         StandardClassIds.Annotations.ParameterNames.deprecatedMessage to "Deprecated in Java".createConstantOrError(
                             session,

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.resolve.getContainingClass
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.resolvedType
+import org.jetbrains.kotlin.name.JvmNames
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 
@@ -58,7 +59,7 @@ object FirJvmNameChecker : FirBasicDeclarationChecker() {
 
     private fun FirDeclaration.findJvmNameAnnotation(): FirAnnotation? {
         return annotations.firstOrNull {
-            it.annotationTypeRef.coneType.classId == StandardClassIds.Annotations.JvmName
+            it.annotationTypeRef.coneType.classId == JvmNames.Annotations.JvmName
         }
     }
 

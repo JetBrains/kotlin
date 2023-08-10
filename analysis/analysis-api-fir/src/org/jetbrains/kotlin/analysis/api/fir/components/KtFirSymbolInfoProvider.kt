@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import org.jetbrains.kotlin.analysis.api.components.KtSymbolInfoProvider
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.analysis.api.fir.getJvmNameFromAnnotation
 import org.jetbrains.kotlin.analysis.api.fir.symbols.*
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.name.JvmNames
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
@@ -61,6 +63,7 @@ internal class KtFirSymbolInfoProvider(
         // Check the simple names of the Java annotations. While presence of such an annotation name does not prove deprecation, it is a
         // necessary condition for it. Type aliases are not a problem here: Java code cannot access Kotlin type aliases. (Currently,
         // deprecation annotation type aliases do not work in Kotlin, either, but this might change in the future.)
+        val deprecationAnnotationSimpleNames = analysisSession.useSiteSession.annotationPlatformSupport.deprecationAnnotationsSimpleNames
         return annotationSimpleNames.any { it != null && it in deprecationAnnotationSimpleNames }
     }
 
@@ -127,7 +130,7 @@ internal class KtFirSymbolInfoProvider(
     }
 
     private fun getJvmName(property: FirProperty, isSetter: Boolean): Name {
-        if (property.backingField?.symbol?.hasAnnotation(StandardClassIds.Annotations.JvmField, analysisSession.useSiteSession) == true) {
+        if (property.backingField?.symbol?.hasAnnotation(JvmNames.Annotations.JvmField, analysisSession.useSiteSession) == true) {
             return property.name
         }
         return Name.identifier(getJvmNameAsString(property, isSetter))

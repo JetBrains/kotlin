@@ -11,12 +11,12 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.containsRepeatableAnnotation
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.isSingleFieldValueClass
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.annotationPlatformSupport
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.dispatchReceiverClassLookupTagOrNull
 import org.jetbrains.kotlin.fir.expressions.*
@@ -79,7 +79,7 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
     context(CheckerContext)
     private fun checkInheritableSerialInfoNotRepeatable(classSymbol: FirClassSymbol<out FirClass>, reporter: DiagnosticReporter) {
         if (classSymbol.classKind != ClassKind.ANNOTATION_CLASS) return
-        if (!classSymbol.containsRepeatableAnnotation(session)) return
+        if (!session.annotationPlatformSupport.symbolContainsRepeatableAnnotation(classSymbol, session)) return
         val anno = classSymbol.resolvedAnnotationsWithClassIds
             .find { it.toAnnotationClassId(session) == SerializationAnnotations.inheritableSerialInfoClassId }
             ?: return

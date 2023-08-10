@@ -15,13 +15,13 @@ import org.jetbrains.kotlin.fir.isNewPlaceForBodyGeneration
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.name.JvmNames
 
 fun <D> FirBasedSymbol<out D>.isCompiledToJvmDefault(
     session: FirSession,
     jvmDefaultMode: JvmDefaultMode,
 ): Boolean where D : FirAnnotationContainer, D : FirDeclaration {
-    if (getAnnotationByClassId(StandardClassIds.Annotations.JvmDefault, session) != null) return true
+    if (getAnnotationByClassId(JvmNames.Annotations.JvmDefault, session) != null) return true
 
     val container = getContainingClassSymbol(session)
     if (container !is FirRegularClassSymbol || container.origin.fromSource) return jvmDefaultMode.forAllMethodsWithBody

@@ -5,12 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.annotations
 
-import org.jetbrains.kotlin.analysis.api.annotations.AnnotationUseSiteTargetFilter
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationInfo
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationWithArgumentsInfo
-import org.jetbrains.kotlin.analysis.api.annotations.KtArrayAnnotationValue
-import org.jetbrains.kotlin.analysis.api.annotations.KtEnumEntryAnnotationValue
-import org.jetbrains.kotlin.analysis.api.annotations.KtNamedAnnotationValue
+import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.analysis.api.fir.toKtAnnotationApplication
 import org.jetbrains.kotlin.analysis.api.fir.toKtAnnotationInfo
 import org.jetbrains.kotlin.analysis.utils.errors.withClassEntry
@@ -18,23 +13,15 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassLookupTag
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.resolvePhase
-import org.jetbrains.kotlin.fir.declarations.resolved
-import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
-import org.jetbrains.kotlin.fir.declarations.toAnnotationClassIdSafe
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
-import org.jetbrains.kotlin.fir.resolve.transformers.plugin.CompilerRequiredAnnotationsHelper
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.resolvedAnnotationsWithArguments
 import org.jetbrains.kotlin.fir.symbols.resolvedAnnotationsWithClassIds
 import org.jetbrains.kotlin.fir.symbols.resolvedCompilerRequiredAnnotations
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
-import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import java.lang.annotation.ElementType
@@ -65,7 +52,7 @@ internal fun annotationsByClassId(
             .mapIndexedToAnnotationApplication(useSiteTargetFilter, useSiteSession, classId) { index, annotation ->
                 annotation.asKtAnnotationApplicationForTargetAnnotation(useSiteSession, index)
             }
-    } else if (classId == StandardClassIds.Annotations.Java.Target && firSymbol.fir.resolvePhase < FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING) {
+    } else if (classId == JvmNames.Annotations.Java.Target && firSymbol.fir.resolvePhase < FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING) {
         annotationContainer.resolvedAnnotationsWithClassIds(firSymbol)
             .mapIndexedToAnnotationApplication(useSiteTargetFilter, useSiteSession, classId) { index, annotation ->
                 annotation.asKtAnnotationApplicationForJavaTargetAnnotation(useSiteSession, index)
@@ -140,7 +127,7 @@ private fun FirAnnotation.asKtAnnotationApplicationForJavaTargetAnnotation(
 ): KtAnnotationApplicationWithArgumentsInfo = asKtAnnotationApplicationForAnnotationWithEnumArgument(
     useSiteSession = useSiteSession,
     index = index,
-    expectedEnumClassId = StandardClassIds.Annotations.Java.ElementType,
+    expectedEnumClassId = JvmNames.Annotations.Java.ElementType,
     annotationParameterName = StandardClassIds.Annotations.ParameterNames.value,
     nameMapper = { ElementType.values().firstOrNull { enumValue -> enumValue.name == it }?.name },
 )
@@ -193,7 +180,7 @@ internal fun hasAnnotation(
     useSiteSession: FirSession,
     annotationContainer: FirAnnotationContainer = firSymbol.fir,
 ): Boolean {
-    return if (firSymbol.isFromCompilerRequiredAnnotationsPhase(classId)) {
+    return if (firSymbol.isFromCompilerRequiredAnnotationsPhase(classId, useSiteSession)) {
         // this loop by index is required to avoid possible ConcurrentModificationException
         val annotations = annotationContainer.resolvedCompilerRequiredAnnotations(firSymbol)
         for (index in annotations.indices) {
@@ -211,5 +198,7 @@ internal fun hasAnnotation(
     }
 }
 
-private fun FirBasedSymbol<*>.isFromCompilerRequiredAnnotationsPhase(classId: ClassId): Boolean =
-    fir.resolvePhase < FirResolvePhase.TYPES && classId in CompilerRequiredAnnotationsHelper.REQUIRED_ANNOTATIONS
+private fun FirBasedSymbol<*>.isFromCompilerRequiredAnnotationsPhase(classId: ClassId, session: FirSession): Boolean {
+    val requiredAnnotations = session.annotationPlatformSupport.requiredAnnotations
+    return fir.resolvePhase < FirResolvePhase.TYPES && classId in requiredAnnotations
+}

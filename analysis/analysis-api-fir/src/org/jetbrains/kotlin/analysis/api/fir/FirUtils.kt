@@ -12,7 +12,12 @@ import org.jetbrains.kotlin.analysis.api.annotations.KtNamedAnnotationValue
 import org.jetbrains.kotlin.analysis.api.fir.annotations.mapAnnotationParameters
 import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirAnnotationValueConverter
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.getAnnotationsByClassId
+import org.jetbrains.kotlin.fir.declarations.getStringArgument
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
@@ -31,6 +36,7 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnosticWithSymbol
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeHiddenCandidateError
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.name.JvmNames
 import org.jetbrains.kotlin.psi.KtCallElement
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -116,3 +122,11 @@ internal fun FirAnnotation.toKtAnnotationInfo(
  */
 internal val FirResolvedQualifier.isImplicitDispatchReceiver: Boolean
     get() = source?.kind == KtFakeSourceElementKind.ImplicitReceiver
+
+fun FirAnnotationContainer.getJvmNameFromAnnotation(session: FirSession, target: AnnotationUseSiteTarget? = null): String? {
+    val annotationCalls = getAnnotationsByClassId(JvmNames.Annotations.JvmName, session)
+    return annotationCalls.firstNotNullOfOrNull { call ->
+        call.getStringArgument(StandardNames.NAME)
+            ?.takeIf { target == null || call.useSiteTarget == target }
+    }
+}
