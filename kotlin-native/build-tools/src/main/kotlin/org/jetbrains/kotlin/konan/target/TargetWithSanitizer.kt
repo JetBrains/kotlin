@@ -49,7 +49,7 @@ fun KonanTarget.withSanitizer(sanitizer: SanitizerKind? = null) = TargetWithSani
  * All known targets with their sanitizers.
  */
 val PlatformManager.allTargetsWithSanitizers
-    get() = this.enabled.flatMap { target ->
+    get() = enabledTargets(this).flatMap { target ->
         listOf(target.withSanitizer()) + target.supportedSanitizers().map {
             target.withSanitizer(it)
         }
