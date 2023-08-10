@@ -1,0 +1,1 @@
+rootProject.name = "stdlib-js-dependency"
