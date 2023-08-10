@@ -3,19 +3,20 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.jvm.compiler
+package org.jetbrains.kotlin.jvm.modules
 
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.cli.AbstractCliTest.getNormalizedCompilerOutput
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
+import org.jetbrains.kotlin.jvm.compiler.AbstractKotlinCompilerIntegrationTest
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 import java.util.concurrent.TimeUnit
 import java.util.jar.Manifest
 import kotlin.test.fail
 
-abstract class JavaModulesIntegrationTest(private val jdkVersion: Int, private val jdkHome: File) :
+abstract class AbstractJavaModulesIntegrationTest(private val jdkVersion: Int, private val jdkHome: File) :
     AbstractKotlinCompilerIntegrationTest() {
     override val testDataPath: String
         get() = "compiler/testData/javaModules/"
