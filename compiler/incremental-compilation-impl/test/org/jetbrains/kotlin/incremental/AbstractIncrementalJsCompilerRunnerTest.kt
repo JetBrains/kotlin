@@ -44,6 +44,7 @@ abstract class AbstractIncrementalJsCompilerRunnerTest : AbstractIncrementalComp
             sourceMap = true
             metaInfo = true
             forceDeprecatedLegacyCompilerUsage = true
+            languageVersion = "1.9"
         }
 
     protected open val scopeExpansionMode = CompileScopeExpansionMode.NEVER
