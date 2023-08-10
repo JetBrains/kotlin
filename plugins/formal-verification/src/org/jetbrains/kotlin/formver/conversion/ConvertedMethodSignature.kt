@@ -24,9 +24,9 @@ class ConvertedMethodSignature(val name: ConvertedName, val params: List<Convert
             name.asString,
             params.map { it.toLocalVarDecl() },
             returns.map { it.toLocalVarDecl() },
-            params.flatMap { it.preconditions() } + pres,
-            params.flatMap { it.postconditions() } +
-                    returns.flatMap { it.preconditions() } + posts,
+            params.flatMap { it.invariants() } + pres,
+            params.flatMap { it.invariants() } +
+                    returns.flatMap { it.invariants() } + posts,
             body, pos, info, trafos,
         )
     }

@@ -12,8 +12,7 @@ import org.jetbrains.kotlin.formver.scala.silicon.ast.Type
 
 interface ConvertedType {
     val viperType: Type
-    fun preconditions(v: Exp): List<Exp> = emptyList()
-    fun postconditions(v: Exp): List<Exp> = emptyList()
+    fun invariants(v: Exp): List<Exp> = emptyList()
 }
 
 object ConvertedUnit : ConvertedType {
@@ -23,7 +22,7 @@ object ConvertedUnit : ConvertedType {
 object ConvertedNothing : ConvertedType {
     override val viperType: Type = UnitDomain.toType()
 
-    override fun preconditions(v: Exp): List<Exp> = listOf(Exp.BoolLit(false))
+    override fun invariants(v: Exp): List<Exp> = listOf(Exp.BoolLit(false))
 }
 
 object ConvertedInt : ConvertedType {
@@ -37,5 +36,5 @@ object ConvertedBoolean : ConvertedType {
 class ConvertedClassType : ConvertedType {
     override val viperType: Type = Type.Ref
 
-    override fun preconditions(v: Exp): List<Exp> = listOf(Exp.NeCmp(v, Exp.NullLit()))
+    override fun invariants(v: Exp): List<Exp> = listOf(Exp.NeCmp(v, Exp.NullLit()))
 }

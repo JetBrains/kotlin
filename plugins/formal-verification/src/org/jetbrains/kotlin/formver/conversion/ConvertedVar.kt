@@ -21,6 +21,5 @@ class ConvertedVar(val name: ConvertedName, val type: ConvertedType) {
         trafos: Trafos = Trafos.NoTrafos,
     ): Exp.LocalVar = Exp.LocalVar(name.asString, type.viperType, pos, info, trafos)
 
-    fun preconditions(): List<Exp> = type.preconditions(toLocalVar())
-    fun postconditions(): List<Exp> = type.postconditions(toLocalVar())
+    fun invariants(): List<Exp> = type.invariants(toLocalVar())
 }
