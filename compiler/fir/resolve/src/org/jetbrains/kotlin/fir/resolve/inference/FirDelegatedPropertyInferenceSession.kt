@@ -17,10 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.calls.candidate
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.ConeTypeVariableTypeConstructor
 import org.jetbrains.kotlin.fir.types.typeContext
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
@@ -75,12 +72,6 @@ class FirDelegatedPropertyInferenceSession(
         val name = calleeReference.name
         return name == OperatorNameConventions.PROVIDE_DELEGATE || name == OperatorNameConventions.GET_VALUE || name == OperatorNameConventions.SET_VALUE
     }
-
-    override fun inferPostponedVariables(
-        lambda: ResolvedLambdaAtom,
-        constraintSystemBuilder: ConstraintSystemBuilder,
-        completionMode: ConstraintSystemCompletionMode
-    ): Map<ConeTypeVariableTypeConstructor, ConeKotlinType>? = null
 
     fun completeCandidates(): List<FirResolvable> {
         val commonSystem = currentConstraintSystem.apply { prepareForGlobalCompletion() }

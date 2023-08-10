@@ -24,9 +24,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
-import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.model.BuilderInferencePosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
@@ -110,40 +108,6 @@ class FirBuilderInferenceSession(
         // if (!DescriptorUtils.isObject(descriptor) && isInLHSOfDoubleColonExpression(callInfo)) return true
 
         return false
-    }
-
-    override fun inferPostponedVariables(
-        lambda: ResolvedLambdaAtom,
-        constraintSystemBuilder: ConstraintSystemBuilder,
-        completionMode: ConstraintSystemCompletionMode
-    ): Map<ConeTypeVariableTypeConstructor, ConeKotlinType>? {
-        val (commonSystem, effectivelyEmptyConstraintSystem) = buildCommonSystem(constraintSystemBuilder.currentStorage())
-        val resultingSubstitutor by lazy { getResultingSubstitutor(commonSystem) }
-
-        if (effectivelyEmptyConstraintSystem) {
-            updateCalls(resultingSubstitutor)
-            return null
-        }
-
-        val context = commonSystem.asConstraintSystemCompleterContext()
-        components.callCompleter.completer.complete(
-            context,
-            completionMode,
-            partiallyResolvedCalls.map { it.first as FirStatement },
-            components.session.builtinTypes.unitType.type, resolutionContext,
-            collectVariablesFromContext = true
-        ) {
-            error("Shouldn't be called in complete constraint system mode")
-        }
-
-        if (completionMode == ConstraintSystemCompletionMode.FULL) {
-            constraintSystemBuilder.substituteFixedVariables(resultingSubstitutor)
-        }
-
-        updateCalls(resultingSubstitutor)
-
-        @Suppress("UNCHECKED_CAST")
-        return commonSystem.fixedTypeVariables as Map<ConeTypeVariableTypeConstructor, ConeKotlinType>
     }
 
     private fun buildCommonSystem(initialStorage: ConstraintStorage): Pair<NewConstraintSystemImpl, Boolean> {
