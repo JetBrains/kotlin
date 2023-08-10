@@ -38,7 +38,7 @@ class FE1FullPipelineModularizedTest : AbstractFullPipelineModularizedTest() {
     }
 
     fun testTotalKotlin() {
-        isolate()
+        pinCurrentThreadToIsolatedCpu()
         for (i in 0 until PASSES) {
             println("Pass $i")
             runTestOnce(i)
