@@ -813,15 +813,22 @@ internal class CodeGeneratorVisitor(
 
         if (!declaration.shouldGenerateBody())
             return
+
         // Some special functions may have empty body, thay are handled separetely.
         val body = declaration.body ?: return
-        val file = if (declaration.origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA)
-            null
-        else ((declaration as? IrSimpleFunction)?.attributeOwnerId as? IrSimpleFunction)?.let { context.irLinker.getFileOf(it) }?.takeIf {
-            (currentCodeContext.fileScope() as FileScope).file != it
+        val file = run {
+            val original = (declaration as? IrSimpleFunction)?.attributeOwnerId ?: return@run null
+            val originalFunction = when (original) {
+                is IrFunctionExpression -> original.function
+                is IrFunction -> original
+                else -> return@run null
+            }
+            context.irLinker.getFileOf(originalFunction)
         }
-        val scope = file?.let {
-            FileScope(it)
+        val scope = if (file != null && file != (currentCodeContext.fileScope() as FileScope).file) {
+            FileScope(file)
+        } else {
+            null
         }
         using(scope) {
             generateFunction(codegen, declaration,

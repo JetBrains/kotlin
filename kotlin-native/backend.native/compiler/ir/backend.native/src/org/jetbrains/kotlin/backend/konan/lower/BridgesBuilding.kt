@@ -70,6 +70,7 @@ internal class BridgesSupport(mapping: NativeMapping, val irBuiltIns: IrBuiltIns
             returnType = bridgeDirections.returnDirection.type() ?: function.returnType
             isSuspend = function.isSuspend
         }.apply {
+            attributeOwnerId = function.attributeOwnerId
             parent = function.parent
             val bridge = this
 

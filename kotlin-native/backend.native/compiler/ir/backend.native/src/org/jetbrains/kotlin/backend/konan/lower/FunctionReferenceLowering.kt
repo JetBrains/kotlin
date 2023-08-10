@@ -542,6 +542,7 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
             returnType = functionReturnType
             isSuspend = superFunction.isSuspend
         }.apply {
+            attributeOwnerId = functionReference.attributeOwnerId
             val function = this
 
             function.createDispatchReceiverParameter()
