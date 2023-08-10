@@ -23,6 +23,7 @@ mm::ThreadRegistry::Node* mm::ThreadRegistry::RegisterCurrentThread() noexcept {
     Node*& currentDataNode = currentThreadDataNode_;
     RuntimeAssert(!IsCurrentThreadRegistered(), "This thread already had some data assigned to it.");
     currentDataNode = threadDataNode;
+    threadDataNode->Get()->gc().onThreadRegistration();
     return threadDataNode;
 }
 

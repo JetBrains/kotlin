@@ -53,10 +53,16 @@ public class RootSetStatistics(
  * @property startTimeNs Time, when garbage collector run is started, meausered by [kotlin.system.getTimeNanos].
  * @property endTimeNs Time, when garbage collector run is ended, measured by [kotlin.system.getTimeNanos].
  *                     After this point, most of the memory is reclaimed, and a new garbage collector run can start.
- * @property pauseStartTimeNs Time, when mutator threads are suspended, mesured by [kotlin.system.getTimeNanos].
- * @property pauseEndTimeNs Time, when mutator threads are unsuspended, mesured by [kotlin.system.getTimeNanos].
+ * @property firstPauseRequestTimeNs Time, when the garbage collector thread requested suspension of mutator threads for the first time,
+ *                                   mesured by [kotlin.system.getTimeNanos].
+ * @property firstPauseStartTimeNs Time, when mutator threads are suspended for the first time, mesured by [kotlin.system.getTimeNanos].
+ * @property firstPauseEndTimeNs Time, when mutator threads are unsuspended for the first time, mesured by [kotlin.system.getTimeNanos].
+ * @property secondPauseRequestTimeNs Time, when the garbage collector thread requested suspension of mutator threads for the second time,
+ *                                    mesured by [kotlin.system.getTimeNanos].
+ * @property secondPauseStartTimeNs Time, when mutator threads are suspended for the second time, mesured by [kotlin.system.getTimeNanos].
+ * @property secondPauseEndTimeNs Time, when mutator threads are unsuspended for the second time, mesured by [kotlin.system.getTimeNanos].
  * @property postGcCleanupTimeNs Time, when all memory is reclaimed, measured by [kotlin.system.getTimeNanos].
- *                                If null, memory reclamation is still in progress.
+ *                               If null, memory reclamation is still in progress.
  * @property rootSet The number of objects in each root set pool. Check [RootSetStatistics] doc for details.
  * @property memoryUsageAfter Memory usage at the start of garbage collector run, separated by memory pools.
  *                            The set of memory pools depends on the collector implementation.
@@ -74,8 +80,12 @@ public class GCInfo(
         val epoch: Long,
         val startTimeNs: Long,
         val endTimeNs: Long,
-        val pauseStartTimeNs: Long,
-        val pauseEndTimeNs: Long,
+        val firstPauseRequestTimeNs: Long,
+        val firstPauseStartTimeNs: Long,
+        val firstPauseEndTimeNs: Long,
+        val secondPauseRequestTimeNs: Long?,
+        val secondPauseStartTimeNs: Long?,
+        val secondPauseEndTimeNs: Long?,
         val postGcCleanupTimeNs: Long?,
         val rootSet: RootSetStatistics,
         val memoryUsageBefore: Map<String, MemoryUsage>,
@@ -89,8 +99,12 @@ public class GCInfo(
                         info.epoch,
                         info.startTimeNs,
                         info.endTimeNs,
-                        info.pauseStartTimeNs,
-                        info.pauseEndTimeNs,
+                        info.firstPauseRequestTimeNs,
+                        info.firstPauseStartTimeNs,
+                        info.firstPauseEndTimeNs,
+                        info.secondPauseRequestTimeNs,
+                        info.secondPauseStartTimeNs,
+                        info.secondPauseEndTimeNs,
                         info.postGcCleanupTimeNs,
                         info.rootSet.let {
                             RootSetStatistics(

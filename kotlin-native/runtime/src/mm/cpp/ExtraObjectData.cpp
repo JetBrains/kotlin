@@ -63,7 +63,10 @@ void mm::ExtraObjectData::ReleaseAssociatedObject() noexcept {
 }
 
 void mm::ExtraObjectData::Uninstall() noexcept {
-    UnlinkFromBaseObject();
+    if (GetBaseObject()) {
+        // if was not uninstalled earlier
+        UnlinkFromBaseObject();
+    }
     ReleaseAssociatedObject();
 }
 

@@ -91,7 +91,6 @@ void gc::ConcurrentMarkAndSweep::ThreadData::OnOOM(size_t size) noexcept {
 
 void gc::ConcurrentMarkAndSweep::ThreadData::OnSuspendForGC() noexcept {
     CallsCheckerIgnoreGuard guard;
-
     gc_.markDispatcher_.runOnMutator(commonThreadData());
 }
 
@@ -131,19 +130,9 @@ mm::ThreadData& gc::ConcurrentMarkAndSweep::ThreadData::commonThreadData() const
     return threadData_;
 }
 
-#ifndef CUSTOM_ALLOCATOR
-gc::ConcurrentMarkAndSweep::ConcurrentMarkAndSweep(
-        mm::ObjectFactory<ConcurrentMarkAndSweep>& objectFactory,
-        mm::ExtraObjectDataFactory& extraObjectDataFactory,
-        gcScheduler::GCScheduler& gcScheduler,
-        bool mutatorsCooperate, std::size_t auxGCThreads) noexcept :
-    objectFactory_(objectFactory),
-    extraObjectDataFactory_(extraObjectDataFactory),
-#else
 gc::ConcurrentMarkAndSweep::ConcurrentMarkAndSweep(
         gcScheduler::GCScheduler& gcScheduler,
         bool mutatorsCooperate, std::size_t auxGCThreads) noexcept :
-#endif
     gcScheduler_(gcScheduler),
     finalizerProcessor_([this](int64_t epoch) {
         GCHandle::getByEpoch(epoch).finalizersDone();
@@ -208,20 +197,9 @@ void gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
     RuntimeAssert(didSuspend, "Only GC thread can request suspension");
     gcHandle.suspensionRequested();
 
-    // TODO (WaitForThreadsReadyToMark())
-    RuntimeAssert(!kotlin::mm::IsCurrentThreadRegistered(), "GC must run on unregistered thread");
-
     markDispatcher_.waitForThreadsPauseMutation();
     GCLogDebug(epoch, "All threads have paused mutation");
     gcHandle.threadsAreSuspended();
-
-#ifdef CUSTOM_ALLOCATOR
-    // This should really be done by each individual thread while waiting
-    for (auto& thread : kotlin::mm::ThreadRegistry::Instance().LockForIter()) {
-        thread.gc().impl().alloc().PrepareForGC();
-    }
-    heap_.PrepareForGC();
-#endif
 
     auto& scheduler = gcScheduler_;
     scheduler.onGCStart();
@@ -232,19 +210,8 @@ void gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
 
     markDispatcher_.endMarkingEpoch();
 
-    mm::WaitForThreadsSuspension();
-
-#ifndef CUSTOM_ALLOCATOR
-    // Taking the locks before the pause is completed. So that any destroying thread
-    // would not publish into the global state at an unexpected time.
-    std::optional extraObjectFactoryIterable = extraObjectDataFactory_.LockForIter();
-    std::optional objectFactoryIterable = objectFactory_.LockForIter();
-    checkMarkCorrectness(*objectFactoryIterable);
-#endif
-
     if (compiler::concurrentWeakSweep()) {
-        // Expected to happen inside STW.
-        gc::EnableWeakRefBarriers();
+        barriers::EnableWeakRefBarriers(epoch);
 
         mm::ResumeThreads();
         gcHandle.threadsAreResumed();
@@ -253,12 +220,40 @@ void gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
     gc::processWeaks<ProcessWeaksTraits>(gcHandle, mm::SpecialRefRegistry::instance());
 
     if (compiler::concurrentWeakSweep()) {
-        // Expected to happen outside STW.
-        gc::DisableWeakRefBarriers();
-    } else {
-        mm::ResumeThreads();
-        gcHandle.threadsAreResumed();
+        bool didSuspend = mm::RequestThreadsSuspension();
+        RuntimeAssert(didSuspend, "Only GC thread can request suspension");
+        gcHandle.suspensionRequested();
+
+        mm::WaitForThreadsSuspension();
+        GCLogDebug(gcHandle.getEpoch(), "All threads have paused mutation");
+        gcHandle.threadsAreSuspended();
+        barriers::DisableWeakRefBarriers();
     }
+
+    // TODO outline as mark_.isolateMarkedHeapAndFinishMark()
+    // By this point all the alive heap must be marked.
+    // All the mutations (incl. allocations) after this method will be subject for the next GC.
+#ifdef CUSTOM_ALLOCATOR
+    // This should really be done by each individual thread while waiting
+    for (auto& thread : kotlin::mm::ThreadRegistry::Instance().LockForIter()) {
+        thread.gc().impl().alloc().PrepareForGC();
+    }
+    auto& heap = mm::GlobalData::Instance().gc().impl().gc().heap();
+    heap.PrepareForGC();
+#else
+    for (auto& thread : kotlin::mm::ThreadRegistry::Instance().LockForIter()) {
+        thread.gc().PublishObjectFactory();
+    }
+
+    auto& gc = mm::GlobalData::Instance().gc().impl();
+    // Taking the locks before the pause is completed. So that any destroying thread
+    // would not publish into the global state at an unexpected time.
+    std::optional objectFactoryIterable = gc.objectFactory().LockForIter();
+    std::optional extraObjectFactoryIterable = gc.extraObjectDataFactory().LockForIter();
+#endif
+
+    mm::ResumeThreads();
+    gcHandle.threadsAreResumed();
 
 #ifndef CUSTOM_ALLOCATOR
     gc::SweepExtraObjects<SweepTraits>(gcHandle, *extraObjectFactoryIterable);

@@ -54,11 +54,13 @@ public:
 
         void OnSuspendForGC() noexcept;
 
-        void safePoint() noexcept { barriers_.onCheckpoint(); }
+        void safePoint() noexcept { barriers_.onSafePoint(); }
+
+        void onThreadRegistration() noexcept { barriers_.onThreadRegistration(); }
 
         Allocator CreateAllocator() noexcept { return Allocator(gc::Allocator(), *this); }
 
-        BarriersThreadData& barriers() noexcept { return barriers_; }
+        barriers::BarriersThreadData& barriers() noexcept { return barriers_; }
 
         bool tryLockRootSet();
         void beginCooperation();
@@ -73,7 +75,7 @@ public:
         friend ConcurrentMarkAndSweep;
         ConcurrentMarkAndSweep& gc_;
         mm::ThreadData& threadData_;
-        BarriersThreadData barriers_;
+        barriers::BarriersThreadData barriers_;
 
         std::atomic<bool> rootSetLocked_ = false;
         std::atomic<bool> published_ = false;
@@ -91,16 +93,7 @@ public:
     using FinalizerQueueTraits = alloc::FinalizerQueueTraits;
 #endif
 
-#ifdef CUSTOM_ALLOCATOR
-    explicit ConcurrentMarkAndSweep(gcScheduler::GCScheduler& scheduler,
-                                    bool mutatorsCooperate, std::size_t auxGCThreads) noexcept;
-#else
-    ConcurrentMarkAndSweep(
-            mm::ObjectFactory<ConcurrentMarkAndSweep>& objectFactory,
-            mm::ExtraObjectDataFactory& extraObjectDataFactory,
-            gcScheduler::GCScheduler& scheduler,
-            bool mutatorsCooperate, std::size_t auxGCThreads) noexcept;
-#endif
+    explicit ConcurrentMarkAndSweep(gcScheduler::GCScheduler& scheduler, bool mutatorsCooperate, std::size_t auxGCThreads) noexcept;
     ~ConcurrentMarkAndSweep();
 
     void StartFinalizerThreadIfNeeded() noexcept;
@@ -120,10 +113,7 @@ private:
     void auxiliaryGCThreadBody();
     void PerformFullGC(int64_t epoch) noexcept;
 
-#ifndef CUSTOM_ALLOCATOR
-    mm::ObjectFactory<ConcurrentMarkAndSweep>& objectFactory_;
-    mm::ExtraObjectDataFactory& extraObjectDataFactory_;
-#else
+#ifdef CUSTOM_ALLOCATOR
     alloc::Heap heap_;
 #endif
     gcScheduler::GCScheduler& gcScheduler_;

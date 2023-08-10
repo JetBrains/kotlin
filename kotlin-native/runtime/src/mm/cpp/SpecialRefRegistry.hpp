@@ -214,7 +214,12 @@ public:
             owner_.all_.splice(owner_.all_.end(), std::move(queue_));
         }
 
-        void clearForTests() noexcept { queue_.clear(); }
+        void clearForTests() noexcept {
+            for (auto& specialRef: queue_) {
+                specialRef.dispose();
+            }
+            queue_.clear();
+        }
 
         [[nodiscard("must be manually disposed")]] StableRef createStableRef(ObjHeader* object) noexcept;
         [[nodiscard("must be manually disposed")]] WeakRef createWeakRef(ObjHeader* object) noexcept;
