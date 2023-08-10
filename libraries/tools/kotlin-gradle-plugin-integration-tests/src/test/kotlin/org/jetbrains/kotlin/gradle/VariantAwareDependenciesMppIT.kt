@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Test
+import java.io.File
 import kotlin.test.assertTrue
 
 class VariantAwareDependenciesMppIT : BaseGradleIT() {
@@ -232,7 +233,13 @@ class VariantAwareDependenciesMppIT : BaseGradleIT() {
             }
         """.trimIndent()
         )
-        testResolveAllConfigurations("sample-lib")
+
+        build(
+            "assemble",
+            projectDir = File(workingDir, "sample-lib"),
+        ) {
+            assertSuccessful()
+        }
     }
 
     @Test
