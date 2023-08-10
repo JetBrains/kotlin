@@ -37,6 +37,12 @@ public class ScriptDependentCopyContextTestGenerated extends AbstractScriptDepen
     }
 
     @Test
+    @TestMetadata("moreStatementsInCopy.kts")
+    public void testMoreStatementsInCopy() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/dependentCopy/moreStatementsInCopy.kts");
+    }
+
+    @Test
     @TestMetadata("script.kts")
     public void testScript() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/dependentCopy/script.kts");
