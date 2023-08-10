@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.incremental.testingUtils.BuildLogFinder
 import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
 import java.io.File
 
-abstract class AbstractIncrementalMultiModuleJsKlibCompilerRunnerTest :
+abstract class AbstractIncrementalK1JsKlibMultiModuleCompilerRunnerTest :
     AbstractIncrementalMultiModuleCompilerRunnerTest<K2JSCompilerArguments, ModulesApiHistoryJs>() {
 
     override fun createCompilerArguments(destinationDir: File, testDir: File): K2JSCompilerArguments =
