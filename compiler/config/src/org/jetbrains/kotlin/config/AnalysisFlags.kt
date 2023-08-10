@@ -19,7 +19,7 @@ object AnalysisFlags {
     val multiPlatformDoNotCheckActual by AnalysisFlag.Delegates.Boolean
 
     @JvmStatic
-    val expectActualLinker by AnalysisFlag.Delegates.Boolean
+    val suppressExpectActualChecker by AnalysisFlag.Delegates.Boolean
 
     @JvmStatic
     val optIn by AnalysisFlag.Delegates.ListOfStrings
