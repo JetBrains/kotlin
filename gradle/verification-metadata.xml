@@ -51,7 +51,7 @@
          <trust group="org.jetbrains.kotlin" name="kotlin-serialization-compiler-plugin-embeddable" version="1.9.[2,3]?[0-9](-.+)?" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-serialization-unshaded" version="1.9.[2,3]?[0-9](-.+)?" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-stdlib" version="1.9.[2,3]?[0-9](-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-stdlib-common" version="1.9.[2,3]?[0-9](-.+)?" regex="true"/>
+         <trust group="org.jetbrains.kotlin" name="kotlin-stdlib-common" version="1.[3,4,7,9].[2,3,7]?[0-9](-.+)?" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-stdlib-jdk7" version="1.9.[2,3]?[0-9](-.+)?" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-stdlib-jdk8" version="1.9.[2,3]?[0-9](-.+)?" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-stdlib-js" version="1.9.[2,3]?[0-9](-.+)?" regex="true"/>
