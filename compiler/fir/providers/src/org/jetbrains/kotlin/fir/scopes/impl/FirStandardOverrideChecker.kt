@@ -122,20 +122,11 @@ class FirStandardOverrideChecker(private val session: FirSession) : FirAbstractO
     }
 
     override fun isOverriddenFunction(overrideCandidate: FirSimpleFunction, baseDeclaration: FirSimpleFunction): Boolean {
-        if (Visibilities.isPrivate(baseDeclaration.visibility)) return false
-
         if (overrideCandidate.valueParameters.size != baseDeclaration.valueParameters.size) return false
 
         val substitutor = buildTypeParametersSubstitutorIfCompatible(overrideCandidate, baseDeclaration) ?: return false
 
-        overrideCandidate.lazyResolveToPhase(FirResolvePhase.TYPES)
-        baseDeclaration.lazyResolveToPhase(FirResolvePhase.TYPES)
-        if (!isEqualReceiverTypes(
-                overrideCandidate.receiverParameter?.typeRef,
-                baseDeclaration.receiverParameter?.typeRef,
-                substitutor,
-            )
-        ) return false
+        if (!commonCallableChecks(overrideCandidate, baseDeclaration, substitutor)) return false
 
         return overrideCandidate.valueParameters.zip(baseDeclaration.valueParameters).all { (memberParam, selfParam) ->
             isEqualTypes(memberParam.returnTypeRef, selfParam.returnTypeRef, substitutor)
@@ -146,12 +137,28 @@ class FirStandardOverrideChecker(private val session: FirSession) : FirAbstractO
         overrideCandidate: FirCallableDeclaration,
         baseDeclaration: FirProperty
     ): Boolean {
-        if (Visibilities.isPrivate(baseDeclaration.visibility)) return false
-
         if (overrideCandidate !is FirProperty) return false
         val substitutor = buildTypeParametersSubstitutorIfCompatible(overrideCandidate, baseDeclaration) ?: return false
+        return commonCallableChecks(overrideCandidate, baseDeclaration, substitutor)
+    }
+
+    private fun FirStandardOverrideChecker.commonCallableChecks(
+        overrideCandidate: FirCallableDeclaration,
+        baseDeclaration: FirCallableDeclaration,
+        substitutor: ConeSubstitutor,
+    ): Boolean {
+        if (Visibilities.isPrivate(baseDeclaration.visibility)) return false
+        if (overrideCandidate.contextReceivers.size != baseDeclaration.contextReceivers.size) return false
+
         overrideCandidate.lazyResolveToPhase(FirResolvePhase.TYPES)
         baseDeclaration.lazyResolveToPhase(FirResolvePhase.TYPES)
-        return isEqualReceiverTypes(overrideCandidate.receiverParameter?.typeRef, baseDeclaration.receiverParameter?.typeRef, substitutor)
+
+        return isEqualReceiverTypes(
+            overrideCandidate.receiverParameter?.typeRef,
+            baseDeclaration.receiverParameter?.typeRef,
+            substitutor
+        ) && overrideCandidate.contextReceivers.zip(baseDeclaration.contextReceivers).all { (memberParam, selfParam) ->
+            isEqualTypes(memberParam.typeRef, selfParam.typeRef, substitutor)
+        }
     }
 }
