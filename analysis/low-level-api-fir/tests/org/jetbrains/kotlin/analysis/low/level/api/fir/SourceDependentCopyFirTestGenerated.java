@@ -35,4 +35,10 @@ public class SourceDependentCopyFirTestGenerated extends AbstractSourceDependent
     public void testClassBody() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/dependentCopy/classBody.kt");
     }
+
+    @Test
+    @TestMetadata("function.kt")
+    public void testFunction() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/dependentCopy/function.kt");
+    }
 }

@@ -1,0 +1,5 @@
+fun foo() {
+    val i = unusedInOriginal()
+}
+
+fun unusedInOriginal() = 42

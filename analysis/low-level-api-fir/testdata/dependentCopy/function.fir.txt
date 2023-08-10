@@ -1,0 +1,8 @@
+KT element: KtNamedFunction
+FIR element: FirSimpleFunctionImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+    [ResolvedTo(BODY_RESOLVE)] lval i: R|kotlin/Int| = R|/unusedInOriginal|()
+}
