@@ -24,14 +24,12 @@ object JvmCallConflictResolverFactory : ConeCallConflictResolverFactory() {
         transformerComponents: BodyResolveComponents
     ): ConeCompositeConflictResolver {
         val specificityComparator = JvmTypeSpecificityComparator(components.session.typeContext)
-        // NB: Please, be aware that adding might not necessarily help you because ConeOverloadConflictResolver doesn't just filter out
-        // less specific candidates, but leave the set the same if there are more than one same-specifity candidates.
-        // Thus, in that case, your new ConeCallConflictResolver might get all the candidates in that case.
+        // NB: Adding new resolvers is strongly discouraged because the results are order-dependent.
         return ConeCompositeConflictResolver(
-            ConeOverloadConflictResolver(specificityComparator, components, transformerComponents),
             ConeEquivalentCallConflictResolver(specificityComparator, components, transformerComponents),
             JvmPlatformOverloadsConflictResolver(components.session),
             ConeIntegerOperatorConflictResolver,
+            ConeOverloadConflictResolver(specificityComparator, components, transformerComponents),
         )
     }
 }
