@@ -104,7 +104,7 @@ abstract class AbstractKlibIrTextTestCase : CodegenTestCase() {
 
         val expected = irModule.dump(DumpIrTreeOptions(stableOrder = true, verboseErrorTypes = false))
 
-        val klibPath = serializeModule(irModule, bindingContext, stdlib, ignoreErrors, expectActualSymbols,)
+        val klibPath = serializeModule(irModule, bindingContext, stdlib, ignoreErrors)
         val libs = loadKlibFromPath(listOf(runtimeKlibPath, klibPath))
         val (stdlib2, klib) = libs
         val deserializedIrModule = deserializeModule(stdlib2, klib)
@@ -142,12 +142,11 @@ abstract class AbstractKlibIrTextTestCase : CodegenTestCase() {
         return serializePackageFragment(moduleDescriptor, memberScope, ktFile.packageFqName)
     }
 
-    protected fun serializeModule(irModuleFragment: IrModuleFragment, bindingContext: BindingContext, stdlib: KotlinLibrary, containsErrorCode: Boolean, expectActualSymbols: MutableMap<DeclarationDescriptor, IrSymbol>): String {
+    protected fun serializeModule(irModuleFragment: IrModuleFragment, bindingContext: BindingContext, stdlib: KotlinLibrary, containsErrorCode: Boolean): String {
         val ktFiles = myFiles.psiFiles
         val serializedIr = JsIrModuleSerializer(
                 IrMessageLogger.None,
                 irModuleFragment.irBuiltins,
-                expectActualSymbols,
                 CompatibilityMode.CURRENT,
                 false,
                 emptyList(),

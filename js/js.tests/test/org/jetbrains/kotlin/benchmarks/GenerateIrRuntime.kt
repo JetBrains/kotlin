@@ -529,7 +529,6 @@ class GenerateIrRuntime {
         val serializedIr = JsIrModuleSerializer(
             IrMessageLogger.None,
             module.irBuiltins,
-            mutableMapOf(),
             CompatibilityMode.CURRENT,
             normalizeAbsolutePaths = false,
             emptyList(),
