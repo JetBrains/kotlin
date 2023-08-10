@@ -88,8 +88,9 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
             }
         }
 
+        var shouldProcessNextModules = true
         for (module in modules) {
-            val shouldProcessNextModules = processModule(module, dependencyProvider)
+            shouldProcessNextModules = processModule(module, dependencyProvider)
             if (!shouldProcessNextModules) break
         }
 
@@ -102,7 +103,7 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
                 }
             }
         }
-        if (testConfiguration.metaInfoHandlerEnabled) {
+        if (testConfiguration.metaInfoHandlerEnabled && shouldProcessNextModules) {
             withAssertionCatching(WrappedException::FromMetaInfoHandler) {
                 globalMetadataInfoHandler.compareAllMetaDataInfos()
             }
@@ -149,9 +150,9 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
                     return false
                 }
                 is TestStep.StepResult.HandlersResult -> {
-                    val (exceptionsFromHandlers, shouldRunNextSteps) = result
+                    val (exceptionsFromHandlers, ranHandlers, shouldRunNextSteps) = result
                     require(step is TestStep.HandlersStep<*>)
-                    allRanHandlers += step.handlers
+                    allRanHandlers += ranHandlers
                     allFailedExceptions += exceptionsFromHandlers
                     if (!shouldRunNextSteps) {
                         return false

@@ -72,6 +72,7 @@ sealed class TestStep<InputArtifact, OutputArtifact>
             thereWereExceptionsOnPreviousSteps: Boolean
         ): StepResult.HandlersResult {
             val exceptions = mutableListOf<WrappedException>()
+            val ranHandlers = mutableSetOf<AnalysisHandler<*>>()
             for (outputHandler in handlers) {
                 if (outputHandler.shouldRun(thereWasAnException = thereWereExceptionsOnPreviousSteps || exceptions.isNotEmpty())) {
                     try {
@@ -79,12 +80,13 @@ sealed class TestStep<InputArtifact, OutputArtifact>
                     } catch (e: Throwable) {
                         exceptions += WrappedException.FromHandler(e, outputHandler)
                         if (outputHandler.failureDisablesNextSteps) {
-                            return StepResult.HandlersResult(exceptions, shouldRunNextSteps = false)
+                            return StepResult.HandlersResult(exceptions, handlers, shouldRunNextSteps = false)
                         }
                     }
+                    ranHandlers.add(outputHandler)
                 }
             }
-            return StepResult.HandlersResult(exceptions, shouldRunNextSteps = true)
+            return StepResult.HandlersResult(exceptions, ranHandlers, shouldRunNextSteps = true)
         }
     }
 
@@ -98,6 +100,7 @@ sealed class TestStep<InputArtifact, OutputArtifact>
 
         data class HandlersResult(
             val exceptionsFromHandlers: Collection<WrappedException>,
+            val ranHandlers: Collection<AnalysisHandler<*>>,
             val shouldRunNextSteps: Boolean
         ) : StepResult<Nothing>()
 

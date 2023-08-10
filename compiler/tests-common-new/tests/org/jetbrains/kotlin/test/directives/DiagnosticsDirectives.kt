@@ -78,4 +78,11 @@ object DiagnosticsDirectives : SimpleDirectivesContainer() {
     val RENDER_IR_DIAGNOSTICS_FULL_TEXT by directive(
         description = "Render IR diagnostic texts to .ir.diag.txt"
     )
+
+    val STOP_ON_FAILURE by directive(
+        description = """
+           Stop tests when a failure is encountered.  This enables both doNotRunIfThereWerePreviousFailures
+           and failureDisablesNextSteps.
+        """
+    )
 }
