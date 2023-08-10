@@ -128,6 +128,8 @@ class CrossModuleDependenciesResolver(
             }
         }
 
+        headerToBuilder.forEach { it.value.buildExportNames() }
+
         return headers.associateWith { headerToBuilder[it]!!.buildCrossModuleRefs() }
     }
 }
@@ -145,13 +147,12 @@ private class JsIrModuleCrossModuleReferenceBuilder(
 
     private lateinit var exportNames: Map<String, String> // tag -> index
 
-    private fun buildExportNames() {
+    fun buildExportNames() {
         var index = 0
         exportNames = exports.sorted().associateWith { index++.toJsIdentifier() }
     }
 
     fun buildCrossModuleRefs(): CrossModuleReferences {
-        buildExportNames()
         val isImportOptional = moduleKind == ModuleKind.ES
         val importedModules = mutableMapOf<JsIrModuleHeader, JsImportedModule>()
 

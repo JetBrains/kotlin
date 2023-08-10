@@ -620,6 +620,16 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
             }
         }
     }
+
+    @DisplayName("Cross modules work correctly with compose dependency ('KT60852')")
+    @GradleTest
+    fun crossModulesWorkCorrectlyWithComposeDependencyKT60852(gradleVersion: GradleVersion) {
+        project("kotlin-js-compose-dependency", gradleVersion) {
+            build("compileDevelopmentExecutableKotlinJs") {
+                assertTasksExecuted(":compileDevelopmentExecutableKotlinJs")
+            }
+        }
+    }
 }
 
 @JsGradlePluginTests
