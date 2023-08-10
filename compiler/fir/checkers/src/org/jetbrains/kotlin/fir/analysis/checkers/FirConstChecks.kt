@@ -101,7 +101,6 @@ internal fun checkConstantArguments(
             //DO NOTHING
         }
         expressionSymbol is FirFieldSymbol -> {
-            //TODO, KT-59821: fix checking of Java fields initializer
             if (!expressionSymbol.isStatic || expressionSymbol.modality != Modality.FINAL) {
                 return ConstantArgumentKind.NOT_CONST
             }
