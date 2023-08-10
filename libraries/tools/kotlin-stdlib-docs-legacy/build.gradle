@@ -10,10 +10,11 @@ configurations {
     dokka
 }
 
-final String dokka_version = findProperty("dokka_version") ?: "0.10.2-stdlib-2"
+final String dokka_version = findProperty("dokka_version") ?: "1.9.0-dev-218"
 
 repositories {
     mavenLocal()
+    maven { url = "https://maven.pkg.jetbrains.space/kotlin/p/dokka/dev/" }
     if (dokka_version.contains("stdlib")) {
         maven {
             url "https://teamcity.jetbrains.com/guestAuth/app/rest/builds/buildType:(id:KotlinTools_Dokka_DokkaForStdlib),number:$dokka_version,pinned:true/artifacts/content/maven/"

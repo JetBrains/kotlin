@@ -482,6 +482,7 @@ allprojects {
         maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies")
 
         mavenCentral()
+        maven("https://maven.pkg.jetbrains.space/kotlin/p/dokka/dev/")
         maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
         maven("https://dl.google.com/dl/android/maven2")
 
