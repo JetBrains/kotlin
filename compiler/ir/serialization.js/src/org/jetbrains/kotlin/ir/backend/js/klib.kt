@@ -685,7 +685,6 @@ fun serializeModuleIntoKlib(
             moduleFragment.irBuiltins,
             expectDescriptorToSymbol,
             compatibilityMode,
-            skipExpects = !configuration.expectActualLinker,
             normalizeAbsolutePaths = absolutePathNormalization,
             sourceBaseDirs = sourceBaseDirs,
             configuration.languageVersionSettings,

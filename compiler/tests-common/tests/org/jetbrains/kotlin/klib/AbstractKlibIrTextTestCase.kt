@@ -104,9 +104,7 @@ abstract class AbstractKlibIrTextTestCase : CodegenTestCase() {
 
         val expected = irModule.dump(DumpIrTreeOptions(stableOrder = true, verboseErrorTypes = false))
 
-        val mppProject =
-            myEnvironment.configuration.languageVersionSettings.getFeatureSupport(LanguageFeature.MultiPlatformProjects) == LanguageFeature.State.ENABLED
-        val klibPath = serializeModule(irModule, bindingContext, stdlib, ignoreErrors, expectActualSymbols, !mppProject)
+        val klibPath = serializeModule(irModule, bindingContext, stdlib, ignoreErrors, expectActualSymbols,)
         val libs = loadKlibFromPath(listOf(runtimeKlibPath, klibPath))
         val (stdlib2, klib) = libs
         val deserializedIrModule = deserializeModule(stdlib2, klib)
@@ -144,14 +142,13 @@ abstract class AbstractKlibIrTextTestCase : CodegenTestCase() {
         return serializePackageFragment(moduleDescriptor, memberScope, ktFile.packageFqName)
     }
 
-    protected fun serializeModule(irModuleFragment: IrModuleFragment, bindingContext: BindingContext, stdlib: KotlinLibrary, containsErrorCode: Boolean, expectActualSymbols: MutableMap<DeclarationDescriptor, IrSymbol>, skipExpect: Boolean): String {
+    protected fun serializeModule(irModuleFragment: IrModuleFragment, bindingContext: BindingContext, stdlib: KotlinLibrary, containsErrorCode: Boolean, expectActualSymbols: MutableMap<DeclarationDescriptor, IrSymbol>): String {
         val ktFiles = myFiles.psiFiles
         val serializedIr = JsIrModuleSerializer(
                 IrMessageLogger.None,
                 irModuleFragment.irBuiltins,
                 expectActualSymbols,
                 CompatibilityMode.CURRENT,
-                skipExpect,
                 false,
                 emptyList(),
                 myEnvironment.configuration.languageVersionSettings,

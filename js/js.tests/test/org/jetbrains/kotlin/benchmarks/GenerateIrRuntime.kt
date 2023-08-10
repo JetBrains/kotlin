@@ -531,7 +531,6 @@ class GenerateIrRuntime {
             module.irBuiltins,
             mutableMapOf(),
             CompatibilityMode.CURRENT,
-            skipExpects = true,
             normalizeAbsolutePaths = false,
             emptyList(),
             configuration.languageVersionSettings,
