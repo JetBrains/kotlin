@@ -24,11 +24,11 @@ class JvmIrSerializerSession(
     private val mode: JvmSerializeIrMode,
     private val fileClassFqName: FqName,
     languageVersionSettings: LanguageVersionSettings,
-    skipExpects: Boolean = false,
 ) : IrFileSerializer(
-    messageLogger, declarationTable, CompatibilityMode.CURRENT, languageVersionSettings,
+    messageLogger, declarationTable, compatibilityMode = CompatibilityMode.CURRENT,
+    languageVersionSettings = languageVersionSettings,
     bodiesOnlyForInlines = mode == JvmSerializeIrMode.INLINE,
-    skipExpects, normalizeAbsolutePaths = false, sourceBaseDirs = emptyList()
+    normalizeAbsolutePaths = false, sourceBaseDirs = emptyList()
 ) {
     init {
         assert(mode != JvmSerializeIrMode.NONE)
