@@ -25273,6 +25273,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("contextReceivers.kt")
+            public void testContextReceivers() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/override/contextReceivers.kt");
+            }
+
+            @Test
             @TestMetadata("DefaultParameterValueInOverride.kt")
             public void testDefaultParameterValueInOverride() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/override/DefaultParameterValueInOverride.kt");
