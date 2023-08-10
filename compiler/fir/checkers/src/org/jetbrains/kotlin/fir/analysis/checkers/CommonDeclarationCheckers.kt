@@ -129,7 +129,6 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirOuterClassArgumentsRequiredChecker,
             FirPropertyInitializationChecker,
             FirDelegateFieldTypeMismatchChecker,
-            FirMultipleDefaultsInheritedFromSupertypesChecker,
             FirFiniteBoundRestrictionChecker,
         )
 

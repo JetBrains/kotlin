@@ -304,6 +304,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         }
 
         @Test
+        @TestMetadata("duplicateDirrectOverriddenCallables.kt")
+        public void testDuplicateDirrectOverriddenCallables() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/duplicateDirrectOverriddenCallables.kt");
+        }
+
+        @Test
         @TestMetadata("emptyLhsClassLiterals.kt")
         public void testEmptyLhsClassLiterals() throws Exception {
             runTest("compiler/testData/diagnostics/tests/emptyLhsClassLiterals.kt");
@@ -343,6 +349,24 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         @TestMetadata("ExternalAndAbstract.kt")
         public void testExternalAndAbstract() throws Exception {
             runTest("compiler/testData/diagnostics/tests/ExternalAndAbstract.kt");
+        }
+
+        @Test
+        @TestMetadata("falseNegativeDuplicateDefaultValues1.kt")
+        public void testFalseNegativeDuplicateDefaultValues1() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/falseNegativeDuplicateDefaultValues1.kt");
+        }
+
+        @Test
+        @TestMetadata("falseNegativeDuplicateDefaultValues2.kt")
+        public void testFalseNegativeDuplicateDefaultValues2() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/falseNegativeDuplicateDefaultValues2.kt");
+        }
+
+        @Test
+        @TestMetadata("falseNegativeDuplicateDefaultValues3.kt")
+        public void testFalseNegativeDuplicateDefaultValues3() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/falseNegativeDuplicateDefaultValues3.kt");
         }
 
         @Test
@@ -727,6 +751,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         @TestMetadata("MultipleBounds.kt")
         public void testMultipleBounds() throws Exception {
             runTest("compiler/testData/diagnostics/tests/MultipleBounds.kt");
+        }
+
+        @Test
+        @TestMetadata("multipleDefaultsNoSource.kt")
+        public void testMultipleDefaultsNoSource() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multipleDefaultsNoSource.kt");
         }
 
         @Test
