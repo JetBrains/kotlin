@@ -65,9 +65,7 @@ dependencies {
     commonCompileOnly(project(":daemon-common"))
     commonCompileOnly(project(":kotlin-daemon-client"))
     commonCompileOnly(project(":kotlin-gradle-compiler-types"))
-    commonCompileOnly(project(":kotlin-android-extensions"))
     commonCompileOnly(project(":kotlin-compiler-runner-unshaded"))
-    commonCompileOnly(project(":kotlin-annotation-processing"))
     commonCompileOnly(project(":kotlin-scripting-compiler"))
     commonCompileOnly(project(":kotlin-gradle-statistics"))
     commonCompileOnly(project(":kotlin-gradle-build-metrics"))
@@ -109,7 +107,6 @@ dependencies {
     commonImplementation(project(":compiler:build-tools:kotlin-build-tools-api"))
 
     commonRuntimeOnly(project(":kotlin-compiler-embeddable"))
-    commonRuntimeOnly(project(":kotlin-android-extensions"))
     commonRuntimeOnly(project(":kotlin-compiler-runner")) {
         // Excluding dependency with not-relocated 'com.intellij' types
         exclude(group = "org.jetbrains.kotlin", module = "kotlin-build-common")
@@ -144,7 +141,6 @@ dependencies {
 
     testImplementation(commonDependency("org.jetbrains.teamcity:serviceMessages"))
     testImplementation(projectTests(":kotlin-build-common"))
-    testImplementation(project(":kotlin-android-extensions"))
     testImplementation(project(":kotlin-compiler-runner"))
     testImplementation(project(":kotlin-test:kotlin-test-junit"))
     testImplementation(commonDependency("junit:junit"))
