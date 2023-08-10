@@ -247,3 +247,11 @@ FILE fqName:<root> fileName:/inlineCollectionOfInlineClass.kt
               CONST Boolean type=kotlin.Boolean value=false
         RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.InlineMutableSet'
           CONST Boolean type=kotlin.Boolean value=true
+    FUN FAKE_OVERRIDE name:asJsSetMutableView visibility:public modality:OPEN <> ($this:kotlin.collections.MutableSet<E of kotlin.collections.MutableSet>) returnType:kotlin.collections.JsMutableSet<<root>.IT> [fake_override]
+      overridden:
+        public open fun asJsSetMutableView (): kotlin.collections.JsMutableSet<E of kotlin.collections.MutableSet> declared in kotlin.collections.MutableSet
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.MutableSet<E of kotlin.collections.MutableSet>
+    FUN FAKE_OVERRIDE name:asJsSetView visibility:public modality:OPEN <> ($this:kotlin.collections.Set<E of kotlin.collections.Set>) returnType:kotlin.collections.JsImmutableSet<<root>.IT> [fake_override]
+      overridden:
+        public open fun asJsSetView (): kotlin.collections.JsImmutableSet<E of kotlin.collections.MutableSet> declared in kotlin.collections.MutableSet
+      $this: VALUE_PARAMETER name:<this> type:kotlin.collections.Set<E of kotlin.collections.Set>

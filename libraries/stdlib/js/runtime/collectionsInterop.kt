@@ -5,13 +5,6 @@
 
 package kotlin.collections
 
-
-@JsName("Array")
-internal external abstract class JsMutableArray<E> : JsImmutableArray<E>
-
-@JsName("ReadonlyArray")
-internal external interface JsImmutableArray<out E>
-
 private class JsArrayView<E> : JsMutableArray<E>()
 
 private fun UNSUPPORTED_OPERATION() { throw UnsupportedOperationException() }
@@ -66,13 +59,6 @@ private fun <E> createJsArrayMutableViewWith(
        }) 
     """)
 }
-
-
-@JsName("ReadonlySet")
-internal external interface JsImmutableSet<out E>
-
-@JsName("Set")
-internal external abstract class JsMutableSet<E> : JsImmutableArray<E>
 
 private class JsSetView<E> : JsMutableSet<E>()
 
@@ -130,12 +116,6 @@ private fun <E> createJsSetImmutableViewWith(
     """)
 }
 
-
-@JsName("ReadonlyMap")
-internal external interface JsImmutableMap<K, out V>
-
-@JsName("Map")
-internal external abstract class JsMutableMap<K, V> : JsImmutableMap<K, V>
 
 private class JsMapView<K, V> : JsMutableMap<K, V>()
 

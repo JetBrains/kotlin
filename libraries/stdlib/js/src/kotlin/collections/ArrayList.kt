@@ -178,9 +178,9 @@ public actual open class ArrayList<E> internal constructor(private var array: Ar
         return js("[]").slice.call(array)
     }
 
-    @Suppress("NOTHING_TO_OVERRIDE")
+    @Suppress("NOTHING_TO_OVERRIDE", "EXPOSED_FUNCTION_RETURN_TYPE")
     // TODO: Remove after the classical backend will be removed
-    override fun asJsArrayMutableView() = array.asDynamic()
+    override fun asJsArrayMutableView() = array.unsafeCast<JsMutableArray<E>>()
 
     internal override fun checkIsMutable() {
         if (isReadOnly) throw UnsupportedOperationException()
