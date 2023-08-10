@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.incremental.testingUtils.BuildLogFinder
 import java.io.File
 
-abstract class AbstractIncrementalJsKlibCompilerRunnerTest : AbstractIncrementalJsCompilerRunnerTest() {
+abstract class AbstractIncrementalK1JsKlibCompilerRunnerTest : AbstractIncrementalK1JsLegacyCompilerRunnerTest() {
     override fun createCompilerArguments(destinationDir: File, testDir: File): K2JSCompilerArguments =
         K2JSCompilerArguments().apply {
             libraries = "build/js-ir-runtime/full-runtime.klib"
@@ -21,11 +21,11 @@ abstract class AbstractIncrementalJsKlibCompilerRunnerTest : AbstractIncremental
         get() = super.buildLogFinder.copy(isKlibEnabled = true)
 }
 
-abstract class AbstractIncrementalJsKlibCompilerWithScopeExpansionRunnerTest : AbstractIncrementalJsKlibCompilerRunnerTest() {
+abstract class AbstractIncrementalK1JsKlibCompilerWithScopeExpansionRunnerTest : AbstractIncrementalK1JsKlibCompilerRunnerTest() {
     override val scopeExpansionMode = CompileScopeExpansionMode.ALWAYS
 }
 
-abstract class AbstractIncrementalJsFirKlibCompilerWithScopeExpansionRunnerTest : AbstractIncrementalJsKlibCompilerWithScopeExpansionRunnerTest() {
+abstract class AbstractIncrementalK2JsKlibCompilerWithScopeExpansionRunnerTest : AbstractIncrementalK1JsKlibCompilerWithScopeExpansionRunnerTest() {
     override fun createCompilerArguments(destinationDir: File, testDir: File): K2JSCompilerArguments {
         return super.createCompilerArguments(destinationDir, testDir).apply {
             useK2 = true
