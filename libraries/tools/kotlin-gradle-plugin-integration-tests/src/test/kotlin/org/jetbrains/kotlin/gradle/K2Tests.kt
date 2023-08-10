@@ -44,7 +44,11 @@ class CustomK2Tests : KGPBaseTest() {
     @GradleTest
     @DisplayName("Serialization plugin in common source set. KT-56911")
     fun testHmppDependenciesInJsTests(gradleVersion: GradleVersion) {
-        project("k2-serialization-plugin-in-common-sourceset", gradleVersion) {
+        project(
+            "k2-serialization-plugin-in-common-sourceset",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(languageVersion = "2.0"),
+        ) {
             val taskToExecute = ":compileKotlinJs"
             build(taskToExecute) {
                 assertTasksExecuted(taskToExecute)
@@ -152,6 +156,21 @@ class CustomK2Tests : KGPBaseTest() {
             build(taskToExecute) {
                 assertTasksExecuted(taskToExecute)
                 assertOutputDoesNotContain("Opt-in requirement marker foo.bar.MyOptIn is unresolved")
+            }
+        }
+    }
+
+    @GradleTest
+    @DisplayName("Common metadata compilation. KT-60943")
+    fun kt60943CommonMetadataCompilation(gradleVersion: GradleVersion) {
+        project(
+            "k2-serialization-plugin-in-common-sourceset",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(languageVersion = "2.0"),
+        ) {
+            val taskToExecute = ":compileCommonMainKotlinMetadata"
+            build(taskToExecute) {
+                assertTasksExecuted(taskToExecute)
             }
         }
     }

@@ -131,13 +131,13 @@ fun main() {
     val list10 = buildList {
         add("one")
 
-        foo0(get(0), 0f)
+        <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo0<!>(get(0), 0f)
     }
     val list11 = buildList {
         add("one")
 
         val x = get(0)
-        foo0(x, 0f)
+        <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo0<!>(x, 0f)
     }
     val list12 = buildList {
         add("one")

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.AbstractConeCallConflictResolver
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
-import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.scopes.impl.FirStandardOverrideChecker
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.resolve.calls.results.FlatSignature
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
@@ -64,20 +64,23 @@ class ConeEquivalentCallConflictResolver(
     ): Boolean {
         if (first.symbol.callableId != second.symbol.callableId) return false
         if (first.isExpect != second.isExpect) return false
-        if (first.receiverParameter?.typeRef?.coneType != second.receiverParameter?.typeRef?.coneType) {
-            return false
-        }
         if (first is FirVariable != second is FirVariable) {
             return false
         }
         if (!firstCandidate.mappedArgumentsOrderRepresentation.contentEquals(secondCandidate.mappedArgumentsOrderRepresentation)) {
             return false
         }
-        val firstSignature = createFlatSignature(firstCandidate, first)
-        val secondSignature = createFlatSignature(secondCandidate, second)
-        return compareCallsByUsedArguments(firstSignature, secondSignature, discriminateGenerics = false, useOriginalSamTypes = false) &&
-                compareCallsByUsedArguments(secondSignature, firstSignature, discriminateGenerics = false, useOriginalSamTypes = false)
+
+        val overrideChecker = FirStandardOverrideChecker(inferenceComponents.session)
+        return if (first is FirProperty && second is FirProperty) {
+            overrideChecker.isOverriddenProperty(first, second) && overrideChecker.isOverriddenProperty(second, first)
+        } else if (first is FirSimpleFunction && second is FirSimpleFunction) {
+            overrideChecker.isOverriddenFunction(first, second) && overrideChecker.isOverriddenFunction(second, first)
+        } else {
+            false
+        }
     }
+
 
     /**
      * If the candidate is a function, then the arguments
@@ -99,15 +102,4 @@ class ConeEquivalentCallConflictResolver(
             }
             return result
         }
-
-    private fun createFlatSignature(call: Candidate, declaration: FirCallableDeclaration): FlatSignature<Candidate> {
-        return when (declaration) {
-            is FirSimpleFunction -> createFlatSignature(call, declaration)
-            is FirConstructor -> createFlatSignature(call, declaration)
-            is FirVariable -> createFlatSignature(call, declaration)
-            else -> errorWithAttachment("Not supported: ${this::class}") {
-                withFirEntry("declaration", declaration)
-            }
-        }
-    }
 }

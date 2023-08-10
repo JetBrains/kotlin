@@ -11,8 +11,8 @@ private val validVal = 1
 private val <!REDECLARATION!>invalidProp0<!> = 1
 
 // NB invalidFun0 and invalidProp0 are conflicting overloads, since the following is an ambiguity:
-fun useInvalidFun0() = invalidFun0()
-fun useInvalidProp0() = invalidProp0
+fun useInvalidFun0() = <!OVERLOAD_RESOLUTION_AMBIGUITY!>invalidFun0<!>()
+fun useInvalidProp0() = <!OVERLOAD_RESOLUTION_AMBIGUITY!>invalidProp0<!>
 
 <!CONFLICTING_OVERLOADS!>private fun invalidFun1()<!> {}
 <!CONFLICTING_OVERLOADS!>private fun invalidFun1()<!> {}

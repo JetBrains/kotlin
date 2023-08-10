@@ -36,7 +36,7 @@ fun case1() {
     val a: Boolean? = false
     checkSubtype<Boolean?>(a)
     val x4 = <!CONDITION_TYPE_MISMATCH!>a<!> || true
-    x4 <!OVERLOAD_RESOLUTION_AMBIGUITY!>checkType<!> { <!NONE_APPLICABLE!>check<!><Boolean>() }
+    x4 checkType { check<Boolean>() }
 }
 
 // TESTCASE NUMBER: 2
@@ -44,7 +44,7 @@ fun case2() {
     val a: Any = false
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>a<!>
     val x4 = <!CONDITION_TYPE_MISMATCH!>a<!> || true
-    x4 <!OVERLOAD_RESOLUTION_AMBIGUITY!>checkType<!> { <!NONE_APPLICABLE!>check<!><Boolean>() }
+    x4 checkType { check<Boolean>() }
 }
 
 // TESTCASE NUMBER: 3
@@ -56,7 +56,7 @@ fun case3() {
     val x3 = a1 || <!CONDITION_TYPE_MISMATCH!>a2<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean")!>x3<!>
 
-    x3 <!OVERLOAD_RESOLUTION_AMBIGUITY!>checkType<!> { <!NONE_APPLICABLE!>check<!><Boolean>() }
+    x3 checkType { check<Boolean>() }
 }
 
 // TESTCASE NUMBER: 4
