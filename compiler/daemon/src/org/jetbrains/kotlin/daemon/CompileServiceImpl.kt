@@ -60,6 +60,7 @@ import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryAndroid
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryJs
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryJvm
 import org.jetbrains.kotlin.incremental.parsing.classesFqNames
+import org.jetbrains.kotlin.incremental.storage.FileLocations
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import java.io.File
@@ -648,7 +649,10 @@ abstract class CompileServiceImplBase(
             keepIncrementalCompilationCachesInMemory = incrementalCompilationOptions.keepIncrementalCompilationCachesInMemory,
         )
         return try {
-            compiler.compile(allKotlinFiles, k2jvmArgs, compilerMessageCollector, changedFiles, projectRoot)
+            compiler.compile(
+                allKotlinFiles, k2jvmArgs, compilerMessageCollector, changedFiles,
+                projectRoot?.let { FileLocations(it, k2jvmArgs.destinationAsFile) }
+            )
         } finally {
             reporter.endMeasureGc()
             reporter.flush()

@@ -125,7 +125,7 @@ class InMemoryStorageWrapperTest {
         val storageFile = storageRoot.resolve("lookup").toFile()
         val fileToPathConverter = RelativeFileToPathConverter(storageFile)
         val icContext = IncrementalCompilationContext(
-            pathConverter = fileToPathConverter,
+            pathConverterForSourceFiles = fileToPathConverter,
             keepIncrementalCompilationCachesInMemory = useInMemoryWrapper
         )
         icContext.transaction.runWithin { transaction ->
