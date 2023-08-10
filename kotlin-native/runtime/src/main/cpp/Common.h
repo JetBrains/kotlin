@@ -40,11 +40,7 @@
 
 #define OPTNONE __attribute__((optnone))
 
-#if KONAN_NO_THREADS
-#define THREAD_LOCAL_VARIABLE
-#else
 #define THREAD_LOCAL_VARIABLE __thread
-#endif
 
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
 

@@ -7,6 +7,7 @@
 
 #include <algorithm>
 #include <cinttypes>
+#include <cstdlib>
 #include <memory>
 #include <mutex>
 #include <type_traits>
@@ -105,7 +106,7 @@ public:
                 // TODO: This should throw OutOfMemoryError in the future if we add hard memory limits instead
                 //       of limiting at virtual address space boundary.
                 konan::consoleErrorf("Out of memory trying to allocate %" PRIu64 " bytes. Aborting.\n", totalSize);
-                konan::abort();
+                std::abort();
             }
             RuntimeAssert(IsAligned(ptr, DataAlignment), "Allocator returned unaligned to %zu pointer %p", DataAlignment, ptr);
             return unique_ptr<Node>(new (ptr) Node());

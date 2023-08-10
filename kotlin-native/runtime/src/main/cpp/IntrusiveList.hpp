@@ -8,10 +8,10 @@
 #include <cstddef>
 #include <iterator>
 #include <limits>
+#include <optional>
 
 #include "KAssert.h"
 #include "Utils.hpp"
-#include "std_support/Optional.hpp"
 
 namespace kotlin {
 

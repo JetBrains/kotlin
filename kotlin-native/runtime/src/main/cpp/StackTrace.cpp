@@ -5,9 +5,7 @@
 
 #include "StackTrace.hpp"
 
-#if KONAN_NO_BACKTRACE
-// Nothing to include
-#elif USE_GCC_UNWIND
+#if USE_GCC_UNWIND
 // GCC unwinder for backtrace.
 #include <unwind.h>
 #if __MINGW64__
@@ -118,21 +116,15 @@ NO_INLINE size_t winAPIUnwind(size_t skipCount, std_support::span<void*> result)
 
 THREAD_LOCAL_VARIABLE bool disallowSourceInfo = false;
 
-#if !KONAN_NO_BACKTRACE
 int getSourceInfo(void* symbol, SourceInfo *result, int result_len) {
     return disallowSourceInfo ? 0 : compiler::getSourceInfo(symbol, result, result_len);
 }
-#endif
 
 } // namespace
 
 // TODO: this implementation is just a hack, e.g. the result is inexact;
 // however it is better to have an inexact stacktrace than not to have any.
 NO_INLINE std_support::vector<void*> kotlin::internal::GetCurrentStackTrace(size_t skipFrames) noexcept {
-#if KONAN_NO_BACKTRACE
-    return {};
-#else
-
     // Skip GetCurrentStackTrace + anything asked by the caller.
     const size_t kSkipFrames = 1 + skipFrames;
 
@@ -167,16 +159,11 @@ NO_INLINE std_support::vector<void*> kotlin::internal::GetCurrentStackTrace(size
     result.erase(result.begin(), std::next(result.begin(), kSkipFrames));
     return result;
 #endif // !USE_GCC_UNWIND
-#endif // !KONAN_NO_BACKTRACE
 }
 
 // TODO: this implementation is just a hack, e.g. the result is inexact;
 // however it is better to have an inexact stacktrace than not to have any.
 NO_INLINE size_t kotlin::internal::GetCurrentStackTrace(size_t skipFrames, std_support::span<void*> buffer) noexcept {
-#if KONAN_NO_BACKTRACE
-    return {};
-#else
-
     // Skip GetCurrentStackTrace + anything asked by the caller.
     const size_t kSkipFrames = 1 + skipFrames;
 
@@ -197,10 +184,8 @@ NO_INLINE size_t kotlin::internal::GetCurrentStackTrace(size_t skipFrames, std_s
     std::copy_n(std::begin(tmpBuffer) + kSkipFrames, elementsCount, std::begin(buffer));
     return elementsCount;
 #endif // !USE_GCC_UNWIND
-#endif // !KONAN_NO_BACKTRACE
 }
 
-#if ! KONAN_NO_BACKTRACE
 #include <cstdarg>
 #include <cstring>
 #include "std_support/Span.hpp"
@@ -245,7 +230,6 @@ static size_t snprintf_with_addr(char* buf, size_t size, size_t frame, const voi
     va_end(args);
     return size - buffer.size();
 }
-#endif // ! KONAN_NO_BACKTRACE
 
 
 /*
@@ -274,11 +258,6 @@ KNativePtr adjustAddressForSourceInfo(KNativePtr address) { return address; }
 #endif
 
 std_support::vector<std_support::string> kotlin::GetStackTraceStrings(std_support::span<void* const> stackTrace) noexcept {
-#if KONAN_NO_BACKTRACE
-    std_support::vector<std_support::string> strings;
-    strings.push_back("<UNIMPLEMENTED>");
-    return strings;
-#else
     size_t size = stackTrace.size();
     std_support::vector<std_support::string> strings;
     strings.reserve(size);
@@ -329,7 +308,6 @@ std_support::vector<std_support::string> kotlin::GetStackTraceStrings(std_suppor
         }
     }
     return strings;
-#endif // !KONAN_NO_BACKTRACE
 }
 
 void kotlin::DisallowSourceInfo() {

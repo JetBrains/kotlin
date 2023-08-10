@@ -77,11 +77,7 @@ struct ObjHeader {
    * Hardware guaranties on many supported platforms doesn't allow this to happen.
    */
   const TypeInfo* type_info() const {
-#ifdef KONAN_TARGET_HAS_ADDRESS_DEPENDENCY
       return atomicGetRelaxed(&clearPointerBits(typeInfoOrMetaRelaxed(), OBJECT_TAG_MASK)->typeInfo_);
-#else
-      return atomicGetRelaxed(&clearPointerBits(typeInfoOrMetaAcquire(), OBJECT_TAG_MASK)->typeInfo_);
-#endif
   }
 
   bool has_meta_object() const {
@@ -145,7 +141,6 @@ struct ArrayHeader {
 };
 static_assert(alignof(ArrayHeader) <= kotlin::kObjectAlignment);
 
-#ifndef KONAN_WASM
 namespace kotlin {
 
 struct ObjectBody;
@@ -197,7 +192,6 @@ struct type_layout::descriptor<ArrayBody> {
 };
 
 } // namespace kotlin
-#endif
 
 ALWAYS_INLINE bool isPermanentOrFrozen(const ObjHeader* obj);
 ALWAYS_INLINE bool isShareable(const ObjHeader* obj);
@@ -461,11 +455,9 @@ class ObjHolder {
 
 class ExceptionObjHolder {
 public:
-#if !KONAN_NO_EXCEPTIONS
     static void Throw(ObjHeader* exception) RUNTIME_NORETURN;
 
     ObjHeader* GetExceptionObject() noexcept;
-#endif
 
     // Exceptions are not on a hot path, so having virtual dispatch is fine.
     virtual ~ExceptionObjHolder() = default;

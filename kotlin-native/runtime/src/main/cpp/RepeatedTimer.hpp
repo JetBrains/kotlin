@@ -5,8 +5,6 @@
 
 #pragma once
 
-#ifndef KONAN_NO_THREADS
-
 #include <condition_variable>
 #include <mutex>
 #include <string_view>
@@ -80,5 +78,3 @@ private:
 };
 
 } // namespace kotlin
-
-#endif // !KONAN_NO_THREADS

@@ -177,26 +177,3 @@ val KonanTarget.supportsGrandCentralDispatch
         Family.WATCHOS, Family.IOS, Family.TVOS, Family.OSX -> true
         else -> false
     }
-
-// TODO: this is bad function. It should be replaced by capabilities functions like above
-// but two affected targets are too strange, so we postpone it
-fun KonanTarget.customArgsForKonanSources() = when (this) {
-    KonanTarget.WASM32 -> listOf(
-            "KONAN_NO_FFI=1",
-            "KONAN_INTERNAL_DLMALLOC=1",
-            "KONAN_INTERNAL_SNPRINTF=1",
-            "KONAN_INTERNAL_NOW=1",
-            "KONAN_NO_CTORS_SECTION=1",
-            "KONAN_NO_BACKTRACE=1",
-            "KONAN_NO_EXTERNAL_CALLS_CHECKER=1",
-    )
-    is KonanTarget.ZEPHYR -> listOf(
-            "KONAN_NO_FFI=1",
-            "KONAN_NO_MATH=1",
-            "KONAN_INTERNAL_SNPRINTF=1",
-            "KONAN_INTERNAL_NOW=1",
-            "KONAN_NO_CTORS_SECTION=1",
-            "KONAN_NO_BACKTRACE=1"
-    )
-    else -> emptyList()
-}

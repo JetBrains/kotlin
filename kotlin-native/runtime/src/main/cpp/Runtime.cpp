@@ -18,10 +18,8 @@
 #include "KString.h"
 #include "std_support/New.hpp"
 #include <atomic>
-
-#ifndef KONAN_NO_THREADS
+#include <cstdlib>
 #include <thread>
-#endif
 
 using namespace kotlin;
 
@@ -107,7 +105,7 @@ RuntimeState* initRuntime() {
           firstRuntime = atomicAdd(&aliveRuntimesCount, 1) == 1;
           if (!kotlin::kSupportsMultipleMutators && !firstRuntime) {
               konan::consoleErrorf("This GC implementation does not support multiple mutator threads.");
-              konan::abort();
+              std::abort();
           }
           break;
       case kotlin::compiler::DestroyRuntimeMode::kOnShutdown:
@@ -121,7 +119,7 @@ RuntimeState* initRuntime() {
           firstRuntime = lastStatus == kGlobalRuntimeUninitialized;
           if (!kotlin::kSupportsMultipleMutators && !firstRuntime) {
               konan::consoleErrorf("This GC implementation does not support multiple mutator threads.");
-              konan::abort();
+              std::abort();
           }
           result->memoryState = InitMemory(firstRuntime);
           // Switch thread state because worker and globals inits require the runnable state.
@@ -277,7 +275,7 @@ void Kotlin_shutdownRuntime() {
         if (Kotlin_forceCheckedShutdown()) {
             if (otherRuntimesCount > 0) {
                 konan::consoleErrorf("Cannot run checkers when there are %d alive runtimes at the shutdown", otherRuntimesCount);
-                konan::abort();
+                std::abort();
             }
         } else {
             // Cannot destroy runtime globally if there're some other threads with Kotlin runtime on them.
@@ -315,8 +313,6 @@ KInt Konan_Platform_getOsFamily() {
   return 4;
 #elif KONAN_ANDROID
   return 5;
-#elif KONAN_WASM
-  return 6;
 #elif KONAN_TVOS
   return 7;
 #elif KONAN_WATCHOS
@@ -336,12 +332,6 @@ KInt Konan_Platform_getCpuArchitecture() {
   return 3;
 #elif KONAN_X64
   return 4;
-#elif KONAN_MIPS32
-  return 5;
-#elif KONAN_MIPSEL32
-  return 6;
-#elif KONAN_WASM
-  return 7;
 #else
 #warning "Unknown CPU"
   return 0;
@@ -369,9 +359,6 @@ KBoolean Konan_Platform_getMemoryLeakChecker() {
 }
 
 KInt Konan_Platform_getAvailableProcessors() {
-#ifdef KONAN_NO_THREADS
-    return 1;
-#else
     auto res = std::thread::hardware_concurrency();
     // C++ standard says that if this function can return 0 if value is not "well defined or not computable"
     // In current libstdc++ implementation, seems it can happen only on unsupported targets.
@@ -384,7 +371,6 @@ KInt Konan_Platform_getAvailableProcessors() {
         res = std::numeric_limits<int>::max();
     }
     return static_cast<KInt>(res);
-#endif
 }
 
 OBJ_GETTER0(Konan_Platform_getAvailableProcessorsEnv) {
@@ -484,9 +470,6 @@ NO_INLINE void CallInitGlobalPossiblyLock(int* state, void (*init)()) {
     }
     if (compareAndSwap(state, FILE_NOT_INITIALIZED, FILE_BEING_INITIALIZED | (threadId << 2)) == FILE_NOT_INITIALIZED) {
         // actual initialization
-#if KONAN_NO_EXCEPTIONS
-        init();
-#else
         try {
             CurrentFrameGuard guard;
             init();
@@ -496,7 +479,6 @@ NO_INLINE void CallInitGlobalPossiblyLock(int* state, void (*init)()) {
             atomicSetRelease(state, FILE_FAILED_TO_INITIALIZE);
             ThrowFileFailedToInitializeException(exception);
         }
-#endif
         atomicSetRelease(state, FILE_INITIALIZED);
     } else {
         CallInitGlobalAwaitInitialized(state);
@@ -507,9 +489,6 @@ void CallInitThreadLocal(int volatile* globalState, int* localState, void (*init
     if (*localState == FILE_FAILED_TO_INITIALIZE || (globalState != nullptr && *globalState == FILE_FAILED_TO_INITIALIZE))
         ThrowFileFailedToInitializeException(nullptr);
     *localState = FILE_INITIALIZED;
-#if KONAN_NO_EXCEPTIONS
-    init();
-#else
     try {
         CurrentFrameGuard guard;
         init();
@@ -519,7 +498,6 @@ void CallInitThreadLocal(int volatile* globalState, int* localState, void (*init
         *localState = FILE_FAILED_TO_INITIALIZE;
         ThrowFileFailedToInitializeException(exception);
     }
-#endif
 }
 
 }  // extern "C"

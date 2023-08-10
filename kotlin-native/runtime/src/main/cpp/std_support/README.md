@@ -25,4 +25,3 @@ Adjustments:
   `std_support::kdelete` as a replacement for operator `delete` for objects created with custom `new`.
 * `Deque.hpp`, `ForwardList.hpp`, `List.hpp`, `Map.hpp`, `Set.hpp`, `String.hpp`, `UnorderedMap.hpp`, `UnorderedSet.hpp`, `Vector.hpp` -
   standard containers and `std_support::string` that default to using `std_support::allocator`.
-* `Optional.hpp` - wrapper choosing correct way to include on different platforms. 

@@ -2,8 +2,6 @@
 #include "Porting.h"
 #include <typeinfo>
 
-#ifndef KONAN_NO_EXCEPTIONS
-
 std::type_info const* ExceptionObjHolderRTTI;
 
 // Just some DCE-surviving code referencing RTTI of ExceptionObjHolder.
@@ -11,5 +9,3 @@ std::type_info const* ExceptionObjHolderRTTI;
 void referenceExceptionObjHolderRTTI() {
   ExceptionObjHolderRTTI = &typeid(ExceptionObjHolder);
 }
-
-#endif

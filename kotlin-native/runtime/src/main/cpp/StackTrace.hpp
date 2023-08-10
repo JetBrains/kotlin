@@ -24,9 +24,7 @@ enum class StackTraceCapacityKind {
 
 template <StackTraceCapacityKind kind>
 constexpr size_t GetMaxStackTraceDepth() noexcept {
-#if KONAN_NO_BACKTRACE
-    return 0;
-#elif USE_GCC_UNWIND
+#if USE_GCC_UNWIND
     return std::numeric_limits<size_t>::max();
 #else
     switch (kind) {

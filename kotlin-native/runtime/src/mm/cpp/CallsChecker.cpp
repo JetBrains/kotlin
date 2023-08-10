@@ -5,7 +5,6 @@
 
 #include "CallsChecker.hpp"
 
-#ifndef KONAN_NO_EXTERNAL_CALLS_CHECKER
 #include <string_view>
 #include <cstring>
 
@@ -373,8 +372,3 @@ extern "C" RUNTIME_NOTHROW RUNTIME_NODEBUG void Kotlin_mm_checkStateAtExternalFu
 
 CallsCheckerIgnoreGuard::CallsCheckerIgnoreGuard() noexcept { ++ignoreGuardsCount; }
 CallsCheckerIgnoreGuard::~CallsCheckerIgnoreGuard() { --ignoreGuardsCount; }
-
-#else
-kotlin::CallsCheckerIgnoreGuard::CallsCheckerIgnoreGuard() noexcept {}
-kotlin::CallsCheckerIgnoreGuard::~CallsCheckerIgnoreGuard() {}
-#endif // KONAN_NO_EXTERNAL_CALLS_CHECKER

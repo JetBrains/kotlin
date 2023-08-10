@@ -3,8 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-#ifndef KONAN_NO_THREADS
-
 #include "ScopedThread.hpp"
 
 #include <cstring>
@@ -28,5 +26,3 @@ void internal::setCurrentThreadName(std::string_view name) noexcept {
     }
 #endif
 }
-
-#endif // !KONAN_NO_THREADS

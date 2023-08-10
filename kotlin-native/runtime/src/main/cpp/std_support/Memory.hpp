@@ -57,10 +57,6 @@ T* allocator_new(const Allocator& allocator, Args&&... args) {
     auto a = TAllocator(allocator);
     T* ptr = TAllocatorTraits::allocate(a, 1);
 
-#if KONAN_NO_EXCEPTIONS
-    TAllocatorTraits::construct(a, ptr, std::forward<Args>(args)...);
-    return ptr;
-#else
     try {
         TAllocatorTraits::construct(a, ptr, std::forward<Args>(args)...);
         return ptr;
@@ -68,7 +64,6 @@ T* allocator_new(const Allocator& allocator, Args&&... args) {
         TAllocatorTraits::deallocate(a, ptr, 1);
         throw;
     }
-#endif
 }
 
 template <typename T, typename Allocator>

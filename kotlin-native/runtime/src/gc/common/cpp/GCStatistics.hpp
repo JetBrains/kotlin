@@ -6,13 +6,12 @@
 #pragma once
 
 #include <cstdint>
-#include <pthread.h>
+#include <optional>
 
 #include "Common.h"
 #include "Logging.hpp"
 #include "Porting.h"
 #include "Utils.hpp"
-#include "std_support/Optional.hpp"
 
 #define GCLogInfo(epoch, format, ...) RuntimeLogInfo({kTagGC}, "Epoch #%" PRIu64 ": " format, epoch, ##__VA_ARGS__)
 #define GCLogDebug(epoch, format, ...) RuntimeLogDebug({kTagGC}, "Epoch #%" PRIu64 ": " format, epoch, ##__VA_ARGS__)

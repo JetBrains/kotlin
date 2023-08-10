@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-
 #include "ExecFormat.h"
+
+#include <cstdio>
+
 #include "Porting.h"
 #include "std_support/CStdlib.hpp"
 #include "std_support/New.hpp"
@@ -357,7 +359,7 @@ extern "C" bool AddressToSymbol(const void* address, char* resultBuffer, size_t 
     } else if (info.dli_fname) {
         result = info.dli_fname;
         resultOffset = reinterpret_cast<ptrdiff_t>(address) - reinterpret_cast<ptrdiff_t>(info.dli_fbase);
-    } else if (0 < konan::snprintf(symbuf, sizeof(symbuf), "%p", info.dli_saddr)) {
+    } else if (0 < std::snprintf(symbuf, sizeof(symbuf), "%p", info.dli_saddr)) {
         result = symbuf;
         resultOffset = reinterpret_cast<ptrdiff_t>(address) - reinterpret_cast<ptrdiff_t>(info.dli_saddr);
     } else {

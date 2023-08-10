@@ -5,8 +5,6 @@
 
 #pragma once
 
-#ifndef KONAN_WASM
-
 #include <algorithm>
 #include <cinttypes>
 #include <cstddef>
@@ -194,5 +192,3 @@ public:
 };
 
 } // namespace kotlin::type_layout
-
-#endif

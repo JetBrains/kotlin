@@ -4,15 +4,16 @@
  */
 
 #include "GCStatistics.hpp"
-#include "Mutex.hpp"
-#include "Porting.h"
 
-#include "Types.h"
-#include "Logging.hpp"
-#include "ThreadData.hpp"
-#include "std_support/Optional.hpp"
 #include <cinttypes>
 #include <limits>
+#include <optional>
+
+#include "Logging.hpp"
+#include "Mutex.hpp"
+#include "Porting.h"
+#include "ThreadData.hpp"
+#include "Types.h"
 
 using namespace kotlin;
 

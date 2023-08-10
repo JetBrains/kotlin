@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+#include <cstdio>
 #include <limits>
 #include <string.h>
 
@@ -40,10 +41,12 @@ typedef KChar* utf8to16(const char*, const char*, KChar*);
 typedef KStdStringInserter utf16to8(const KChar*,const KChar*, KStdStringInserter);
 
 KStdStringInserter utf16toUtf8OrThrow(const KChar* start, const KChar* end, KStdStringInserter result) {
-  TRY_CATCH(result = utf8::utf16to8(start, end, result),
-            result = utf8::unchecked::utf16to8(start, end, result),
-            ThrowCharacterCodingException());
-  return result;
+    try {
+        result = utf8::utf16to8(start, end, result);
+        return result;
+    } catch (...) {
+        ThrowCharacterCodingException();
+    }
 }
 
 template<utf8to16 conversion>
@@ -70,9 +73,11 @@ OBJ_GETTER(unsafeUtf16ToUtf8Impl, KString thiz, KInt start, KInt size) {
 OBJ_GETTER(utf8ToUtf16OrThrow, const char* rawString, size_t rawStringLength) {
   const char* end = rawString + rawStringLength;
   uint32_t charCount;
-  TRY_CATCH(charCount = utf8::utf16_length(rawString, end),
-            charCount = utf8::unchecked::utf16_length(rawString, end),
-            ThrowCharacterCodingException());
+  try {
+      charCount = utf8::utf16_length(rawString, end);
+  } catch (...) {
+      ThrowCharacterCodingException();
+  }
   RETURN_RESULT_OF(utf8ToUtf16Impl<utf8::unchecked::utf8to16>, rawString, end, charCount);
 }
 
@@ -307,7 +312,7 @@ KInt Kotlin_StringBuilder_insertInt(KRef builder, KInt position, KInt value) {
   auto toArray = builder->array();
   RuntimeAssert(toArray->count_ >= static_cast<uint32_t>(11 + position), "must be true");
   char cstring[12];
-  auto length = konan::snprintf(cstring, sizeof(cstring), "%d", value);
+  auto length = std::snprintf(cstring, sizeof(cstring), "%d", value);
   RuntimeAssert(length >= 0, "This should never happen"); // may be overkill
   RuntimeAssert(static_cast<size_t>(length) < sizeof(cstring), "Unexpectedly large value"); // Can't be, but this is what sNprintf for
   auto* from = &cstring[0];

@@ -104,7 +104,7 @@ void Kotlin_interop_free(void* ptr) {
 }
 
 void Kotlin_system_exitProcess(KInt status) {
-  konan::exit(status);
+  std::exit(status);
 }
 
 const void* Kotlin_Any_getTypeInfo(KConstRef obj) {

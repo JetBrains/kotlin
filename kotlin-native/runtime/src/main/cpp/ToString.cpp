@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
+#include <cstdio>
 #include <limits.h>
-#include <stdio.h>
 #include <string.h>
 
 #include "KAssert.h"
@@ -71,7 +71,7 @@ extern "C" {
 
 OBJ_GETTER(Kotlin_Byte_toString, KByte value) {
   char cstring[8];
-  konan::snprintf(cstring, sizeof(cstring), "%d", value);
+  std::snprintf(cstring, sizeof(cstring), "%d", value);
   RETURN_RESULT_OF(CreateStringFromCString, cstring);
 }
 
@@ -83,13 +83,13 @@ OBJ_GETTER(Kotlin_Char_toString, KChar value) {
 
 OBJ_GETTER(Kotlin_Short_toString, KShort value) {
   char cstring[8];
-  konan::snprintf(cstring, sizeof(cstring), "%d", value);
+  std::snprintf(cstring, sizeof(cstring), "%d", value);
   RETURN_RESULT_OF(CreateStringFromCString, cstring);
 }
 
 OBJ_GETTER(Kotlin_Int_toString, KInt value) {
   char cstring[16];
-  konan::snprintf(cstring, sizeof(cstring), "%d", value);
+  std::snprintf(cstring, sizeof(cstring), "%d", value);
   RETURN_RESULT_OF(CreateStringFromCString, cstring);
 }
 
@@ -99,7 +99,7 @@ OBJ_GETTER(Kotlin_Int_toStringRadix, KInt value, KInt radix) {
 
 OBJ_GETTER(Kotlin_Long_toString, KLong value) {
   char cstring[32];
-  konan::snprintf(cstring, sizeof(cstring), "%lld", static_cast<long long>(value));
+  std::snprintf(cstring, sizeof(cstring), "%lld", static_cast<long long>(value));
   RETURN_RESULT_OF(CreateStringFromCString, cstring);
 }
 
@@ -109,7 +109,7 @@ OBJ_GETTER(Kotlin_Long_toStringRadix, KLong value, KInt radix) {
 
 OBJ_GETTER(Kotlin_DurationValue_formatToExactDecimals, KDouble value, KInt decimals) {
   char cstring[40]; // log(2^62*1_000_000) + 2 (sign, decimal point) + 12 (max decimals)
-  konan::snprintf(cstring, sizeof(cstring), "%.*f", decimals, value);
+  std::snprintf(cstring, sizeof(cstring), "%.*f", decimals, value);
   RETURN_RESULT_OF(CreateStringFromCString, cstring)
 }
 

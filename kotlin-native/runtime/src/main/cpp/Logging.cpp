@@ -7,6 +7,7 @@
 
 #include <array>
 #include <cinttypes>
+#include <optional>
 
 #include "CallsChecker.hpp"
 #include "Format.h"
@@ -14,7 +15,6 @@
 #include "Porting.h"
 #include "std_support/Map.hpp"
 #include "std_support/String.hpp"
-#include "std_support/Optional.hpp"
 
 using namespace kotlin;
 

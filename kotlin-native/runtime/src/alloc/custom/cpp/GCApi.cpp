@@ -7,6 +7,7 @@
 
 #include <atomic>
 #include <cstdint>
+#include <cstdlib>
 #include <cstring>
 #include <limits>
 
@@ -77,7 +78,7 @@ bool SweepExtraObject(mm::ExtraObjectData* extraObject, gc::GCHandle::GCSweepExt
 void* SafeAlloc(uint64_t size) noexcept {
     if (size > std::numeric_limits<size_t>::max()) {
         konan::consoleErrorf("Out of memory trying to allocate %" PRIu64 "bytes. Aborting.\n", size);
-        konan::abort();
+        std::abort();
     }
     void* memory;
     bool error;
@@ -97,7 +98,7 @@ void* SafeAlloc(uint64_t size) noexcept {
     }
     if (error) {
         konan::consoleErrorf("Out of memory trying to allocate %" PRIu64 "bytes: %s. Aborting.\n", size, strerror(errno));
-        konan::abort();
+        std::abort();
     }
     auto previousSize = allocatedBytesCounter.fetch_add(static_cast<size_t>(size), std::memory_order_relaxed);
     OnMemoryAllocation(previousSize + static_cast<size_t>(size));

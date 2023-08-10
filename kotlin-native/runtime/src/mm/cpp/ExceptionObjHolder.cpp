@@ -13,7 +13,6 @@ using namespace kotlin;
 
 namespace {
 
-#if !KONAN_NO_EXCEPTIONS
 class ExceptionObjHolderImpl : public ExceptionObjHolder, private Pinned {
 public:
     explicit ExceptionObjHolderImpl(ObjHeader* obj) noexcept : stableRef_(mm::StableRef::create(obj)) {}
@@ -25,11 +24,9 @@ public:
 private:
     mm::StableRef stableRef_;
 };
-#endif
 
 } // namespace
 
-#if !KONAN_NO_EXCEPTIONS
 // static
 RUNTIME_NORETURN void ExceptionObjHolder::Throw(ObjHeader* exception) {
     throw ExceptionObjHolderImpl(exception);
@@ -38,4 +35,3 @@ RUNTIME_NORETURN void ExceptionObjHolder::Throw(ObjHeader* exception) {
 ObjHeader* ExceptionObjHolder::GetExceptionObject() noexcept {
     return static_cast<ExceptionObjHolderImpl*>(this)->obj();
 }
-#endif

@@ -31,8 +31,6 @@ DEALINGS IN THE SOFTWARE.
 #include "utf8/unchecked.h"
 #include "utf8/with_replacement.h"
 
-#if !KONAN_NO_EXCEPTIONS
 #include "utf8/checked.h"
-#endif
 
 #endif // header guard

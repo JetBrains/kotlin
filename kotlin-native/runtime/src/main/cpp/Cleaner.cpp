@@ -51,9 +51,6 @@ void disposeCleaner(CleanerImpl* thiz) {
 } // namespace
 
 RUNTIME_NOTHROW void DisposeCleaner(KRef thiz) {
-#if KONAN_NO_EXCEPTIONS
-    disposeCleaner(reinterpret_cast<CleanerImpl*>(thiz));
-#else
     try {
         disposeCleaner(reinterpret_cast<CleanerImpl*>(thiz));
     } catch (...) {
@@ -61,7 +58,6 @@ RUNTIME_NOTHROW void DisposeCleaner(KRef thiz) {
         // and write to iOS crash log.
         std::terminate();
     }
-#endif
 }
 
 void ShutdownCleaners(bool executeScheduledCleaners) {

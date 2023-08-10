@@ -48,11 +48,6 @@ extern "C" KInt Konan_run_start(int argc, const char** argv) {
 }
 
 extern "C" RUNTIME_USED int Init_and_run_start(int argc, const char** argv, int memoryDeInit) {
-#ifdef KONAN_NO_CTORS_SECTION
-  extern void _Konan_constructors(void);
-  _Konan_constructors();
-#endif
-
   Kotlin_initRuntimeIfNeeded();
   Kotlin_mm_switchThreadStateRunnable();
 
@@ -72,20 +67,3 @@ extern "C" RUNTIME_USED int Konan_main_standalone(int argc, const char** argv) {
 #endif
     return Init_and_run_start(argc, argv, 1);
 }
-
-#ifdef KONAN_WASM
-// Before we pass control to Konan_main, we need to obtain argv elements
-// from the javascript world.
-extern "C" int Konan_js_arg_size(int index);
-extern "C" int Konan_js_fetch_arg(int index, char* ptr);
-
-extern "C" RUNTIME_USED int Konan_js_main(int argc, int memoryDeInit) {
-    char** argv = (char**)std_support::calloc(1, argc);
-    for (int i = 0; i< argc; ++i) {
-        argv[i] = (char*)std_support::calloc(1, Konan_js_arg_size(i));
-        Konan_js_fetch_arg(i, argv[i]);
-    }
-    return Init_and_run_start(argc, (const char**)argv, memoryDeInit);
-}
-
-#endif

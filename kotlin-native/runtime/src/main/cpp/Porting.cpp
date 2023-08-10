@@ -17,14 +17,12 @@
 #ifdef KONAN_ANDROID
 #include <android/log.h>
 #endif
+#include <cstdio>
 #include <stdarg.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include <stdio.h>
 #include <string.h>
-#if !KONAN_NO_THREADS
 #include <pthread.h>
-#endif
 #include <unistd.h>
 #if KONAN_WINDOWS
 #include <windows.h>
@@ -39,15 +37,6 @@
 #include "std_support/CStdlib.hpp"
 
 using namespace kotlin;
-
-#if KONAN_WASM || KONAN_ZEPHYR
-extern "C" RUNTIME_NORETURN void Konan_abort(const char*);
-extern "C" RUNTIME_NORETURN void Konan_exit(int32_t status);
-#endif
-#ifdef KONAN_ZEPHYR
-// In Zephyr's Newlib strnlen(3) is not included from string.h by default.
-extern "C" size_t strnlen(const char* buffer, size_t maxSize);
-#endif
 
 namespace konan {
 
@@ -104,9 +93,7 @@ int getLastErrorMessage(char* message, uint32_t size) {
 #endif
 
 int32_t consoleReadUtf8(void* utf8, uint32_t maxSizeBytes) {
-#ifdef KONAN_ZEPHYR
-  return 0;
-#elif KONAN_WINDOWS
+#if KONAN_WINDOWS
   auto length = 0;
   void *stdInHandle = ::GetStdHandle(STD_INPUT_HANDLE);
   if (::GetFileType(stdInHandle) == FILE_TYPE_CHAR) {
@@ -153,18 +140,11 @@ int32_t consoleReadUtf8(void* utf8, uint32_t maxSizeBytes) {
   return length;
 }
 
-#if KONAN_INTERNAL_SNPRINTF
-extern "C" int rpl_vsnprintf(char *, size_t, const char *, va_list);
-#define vsnprintf_impl rpl_vsnprintf
-#else
-#define vsnprintf_impl ::vsnprintf
-#endif
-
 NO_EXTERNAL_CALLS_CHECK void consolePrintf(const char* format, ...) {
   char buffer[1024];
   va_list args;
   va_start(args, format);
-  int rv = vsnprintf_impl(buffer, sizeof(buffer), format, args);
+  int rv = std::vsnprintf(buffer, sizeof(buffer), format, args);
   if (rv < 0) return; // TODO: this may be too much exotic, but should i try to print itoa(error) and terminate?
   if (static_cast<size_t>(rv) >= sizeof(buffer)) rv = sizeof(buffer) - 1;  // TODO: Consider realloc or report truncating.
   va_end(args);
@@ -176,7 +156,7 @@ NO_EXTERNAL_CALLS_CHECK void consoleErrorf(const char* format, ...) {
   char buffer[1024];
   va_list args;
   va_start(args, format);
-  int rv = vsnprintf_impl(buffer, sizeof(buffer), format, args);
+  int rv = std::vsnprintf(buffer, sizeof(buffer), format, args);
   if (rv < 0) return; // TODO: this may be too much exotic, but should i try to print itoa(error) and terminate?
   if (static_cast<size_t>(rv) >= sizeof(buffer)) rv = sizeof(buffer) - 1;  // TODO: Consider realloc or report truncating.
   va_end(args);
@@ -187,9 +167,6 @@ void consoleFlush() {
   ::fflush(stdout);
   ::fflush(stderr);
 }
-
-// Thread execution.
-#if !KONAN_NO_THREADS
 
 pthread_key_t terminationKey;
 pthread_once_t terminationKeyOnceControl = PTHREAD_ONCE_INIT;
@@ -233,16 +210,7 @@ static void onThreadExitInit() {
   pthread_key_create(&terminationKey, onThreadExitCallback);
 }
 
-#endif  // !KONAN_NO_THREADS
-
 void onThreadExit(void (*destructor)(void*), void* destructorParameter) {
-#if KONAN_NO_THREADS
-#if KONAN_WASM || KONAN_ZEPHYR
-  // No way to do that.
-#else
-#error "How to do onThreadExit()?"
-#endif
-#else  // !KONAN_NO_THREADS
   // We cannot use pthread_cleanup_push() as it is lexical scope bound.
   pthread_once(&terminationKeyOnceControl, onThreadExitInit);
   DestructorRecord* destructorRecord = (DestructorRecord*)std_support::calloc(1, sizeof(DestructorRecord));
@@ -251,7 +219,6 @@ void onThreadExit(void (*destructor)(void*), void* destructorParameter) {
   destructorRecord->next =
       reinterpret_cast<DestructorRecord*>(pthread_getspecific(terminationKey));
   pthread_setspecific(terminationKey, destructorRecord);
-#endif  // !KONAN_NO_THREADS
 }
 
 #if KONAN_LINUX
@@ -268,14 +235,6 @@ NO_EXTERNAL_CALLS_CHECK NO_INLINE int gettid() {
 #endif
 
 NO_EXTERNAL_CALLS_CHECK int currentThreadId() {
-#if KONAN_NO_THREADS
-#if KONAN_WASM || KONAN_ZEPHYR
-    // No way to do that.
-    return 0;
-#else
-#error "How to find currentThreadId()?"
-#endif
-#else  // !KONAN_NO_THREADS
 #if defined(KONAN_OSX) or defined(KONAN_IOS) or defined(KONAN_TVOS) or defined(KONAN_WATCHOS)
     uint64_t tid;
     pthread_t self = pthread_self();
@@ -291,23 +250,7 @@ NO_EXTERNAL_CALLS_CHECK int currentThreadId() {
 #else
 #error "How to find currentThreadId()?"
 #endif
-#endif  // !KONAN_NO_THREADS
 }
-
-// Process execution.
-void abort(void) {
-  ::abort();
-}
-
-#if KONAN_WASM || KONAN_ZEPHYR
-void exit(int32_t status) {
-  Konan_exit(status);
-}
-#else
-void exit(int32_t status) {
-  ::exit(status);
-}
-#endif
 
 // String/byte operations.
 // memcpy/memmove are not here intentionally, as frequently implemented/optimized
@@ -325,49 +268,6 @@ void* memmem(const void *big, size_t bigLen, const void *little, size_t littleLe
 
 }
 
-// The sprintf family.
-int snprintf(char* buffer, size_t size, const char* format, ...) {
-  va_list args;
-  va_start(args, format);
-  int rv = vsnprintf(buffer, size, format, args);
-  va_end(args);
-  return rv;
-}
-
-int vsnprintf(char* buffer, size_t size, const char* format, va_list args) {
-  return vsnprintf_impl(buffer, size, format, args);
-}
-
-size_t strnlen(const char* buffer, size_t maxSize) {
-  return ::strnlen(buffer, maxSize);
-}
-
-#if KONAN_INTERNAL_NOW
-
-#ifdef KONAN_ZEPHYR
-void Konan_date_now(uint64_t* arg) {
-    // TODO: so how will we support time for embedded?
-    *arg = 0LL;
-}
-#else
-extern "C" void Konan_date_now(uint64_t*);
-#endif
-
-uint64_t getTimeMillis() {
-    uint64_t now;
-    Konan_date_now(&now);
-    return now;
-}
-
-uint64_t getTimeMicros() {
-    return getTimeMillis() * 1000ULL;
-}
-
-uint64_t getTimeNanos() {
-    return getTimeMillis() * 1000000ULL;
-}
-
-#else
 // Time operations.
 using namespace std::chrono;
 
@@ -385,156 +285,5 @@ uint64_t getTimeNanos() {
 uint64_t getTimeMicros() {
   return duration_cast<microseconds>(steady_time_clock::now().time_since_epoch()).count();
 }
-#endif
 
 }  // namespace konan
-
-extern "C" {
-// TODO: get rid of these.
-#if (KONAN_WASM || KONAN_ZEPHYR)
-    void _ZNKSt3__120__vector_base_commonILb1EE20__throw_length_errorEv(void) {
-        Konan_abort("TODO: throw_length_error not implemented.");
-    }
-    void _ZNKSt3__220__vector_base_commonILb1EE20__throw_length_errorEv(void) {
-        Konan_abort("TODO: throw_length_error not implemented.");
-    }
-    void _ZNKSt3__121__basic_string_commonILb1EE20__throw_length_errorEv(void) {
-        Konan_abort("TODO: throw_length_error not implemented.");
-    }
-    void _ZNKSt3__221__basic_string_commonILb1EE20__throw_length_errorEv(void) {
-        Konan_abort("TODO: throw_length_error not implemented.");
-    }
-    int _ZNSt3__212__next_primeEj(unsigned long n) {
-        static unsigned long primes[] = {
-                11UL,
-                101UL,
-                1009UL,
-                10007UL,
-                100003UL,
-                1000003UL,
-                10000019UL,
-                100000007UL,
-                1000000007UL
-        };
-        size_t table_length = sizeof(primes)/sizeof(unsigned long);
-
-        if (n > primes[table_length - 1]) konan::abort();
-
-        unsigned long prime = primes[0];
-        for (unsigned long i=0; i< table_length; i++) {
-            prime = primes[i];
-            if (prime >= n) break;
-        }
-        return prime;
-    }
-
-    int _ZNSt3__212__next_primeEm(int n) {
-       return _ZNSt3__212__next_primeEj(n);
-    }
-
-    int _ZNSt3__112__next_primeEj(unsigned long n) {
-        return _ZNSt3__212__next_primeEj(n);
-    }
-    void __assert_fail(const char* assertion, const char* file, int line, const char* function) {
-        char buf[1024];
-        konan::snprintf(buf, sizeof(buf), "%s:%d in %s: runtime assert: %s\n", file, line, function, assertion);
-        Konan_abort(buf);
-    }
-    int* __errno_location() {
-        static int theErrno = 0;
-        return &theErrno;
-    }
-
-    // Some math.h functions.
-
-    double pow(double x, double y) {
-        return __builtin_pow(x, y);
-    }
-#endif
-
-#ifdef KONAN_WASM
-    // Some string.h functions.
-    void *memcpy(void *dst, const void *src, size_t n) {
-        for (size_t i = 0; i != n; ++i)
-            *((char*)dst + i) = *((char*)src + i);
-        return dst;
-    }
-
-    void *memmove(void *dst, const void *src, size_t len)  {
-        if (src < dst) {
-            for (long i = len; i != 0; --i) {
-                *((char*)dst + i - 1) = *((char*)src + i - 1);
-            }
-        } else {
-            memcpy(dst, src, len);
-        }
-        return dst;
-    }
-
-    int memcmp(const void *s1, const void *s2, size_t n) {
-        for (size_t i = 0; i != n; ++i) {
-            if (*((char*)s1 + i) != *((char*)s2 + i)) {
-                return *((char*)s1 + i) - *((char*)s2 + i);
-            }
-        }
-        return 0;
-    }
-
-    void *memset(void *b, int c, size_t len) {
-        for (size_t i = 0; i != len; ++i) {
-            *((char*)b + i) = c;
-        }
-        return b;
-    }
-
-    size_t strlen(const char *s) {
-        for (long i = 0;; ++i) {
-            if (s[i] == 0) return i;
-        }
-    }
-
-    size_t strnlen(const char *s, size_t maxlen) {
-        for (size_t i = 0; i<=maxlen; ++i) {
-            if (s[i] == 0) return i;
-        }
-        return maxlen;
-    }
-#endif
-
-#ifdef KONAN_ZEPHYR
-    RUNTIME_USED void Konan_abort(const char*) {
-        while(1) {}
-    }
-#endif // KONAN_ZEPHYR
-
-#if defined(KONAN_MIPS32) || defined(KONAN_MIPSEL32)
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Watomic-alignment"
-
-// By some reasons clang generates __sync functions instead of __atomic ones,
-// but they are not actually available on mips. So let's implement them ourselfs using existing __atomic ones.
-
-
-int64_t replace_sync_fetch_and_add_8(int64_t *ptr, int64_t value) asm("__sync_fetch_and_add_8");
-RUNTIME_USED int64_t replace_sync_fetch_and_add_8(int64_t *ptr, int64_t value) {
-    return __atomic_fetch_add(ptr, value, __ATOMIC_SEQ_CST);
-}
-int64_t replace_sync_val_compare_and_swap(int64_t *ptr, int64_t oldval, int64_t newval) asm("__sync_val_compare_and_swap_8");
-RUNTIME_USED int64_t replace_sync_val_compare_and_swap (int64_t *ptr, int64_t oldval, int64_t newval) {
-    __atomic_compare_exchange_n(ptr, &oldval, newval, false, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST);
-    return oldval;
-}
-
-int64_t replace_sync_lock_test_and_set(int64_t *ptr, int64_t value) asm("__sync_lock_test_and_set_8");
-RUNTIME_USED int64_t replace_sync_lock_test_and_set(int64_t *ptr, int64_t value) {
-    return __atomic_exchange_n(ptr, value, __ATOMIC_SEQ_CST);
-}
-
-
-#pragma clang diagnostic pop
-
-#endif
-
-
-}  // extern "C"

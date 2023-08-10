@@ -5,6 +5,7 @@
 
 #include "StackTrace.hpp"
 
+#include <cstdlib>
 #include <signal.h>
 
 #include "gmock/gmock.h"
@@ -50,7 +51,7 @@ OPTNONE StackTrace<Capacity> GetDeepStackTrace(size_t depth) {
 
 NO_INLINE void AbortWithStackTrace(int) {
     PrintStackTraceStderr();
-    konan::abort();
+    std::abort();
 }
 
 } // namespace
