@@ -44,7 +44,6 @@ internal val SerializerPhase = createSimpleNamedCompilerPhase<PhaseContext, Seri
         val ir = it.irModule
         KonanIrModuleSerializer(
                 messageLogger, ir.irBuiltins, it.expectDescriptorToSymbol,
-                skipExpects = !expectActualLinker,
                 compatibilityMode = CompatibilityMode.CURRENT,
                 normalizeAbsolutePaths = normalizeAbsolutePaths,
                 sourceBaseDirs = relativePathBase,

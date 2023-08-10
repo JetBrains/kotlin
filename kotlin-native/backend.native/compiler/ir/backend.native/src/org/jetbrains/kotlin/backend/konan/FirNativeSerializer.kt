@@ -121,14 +121,12 @@ internal fun PhaseContext.serializeNativeModule(
 
     val sourceBaseDirs = configuration[CommonConfigurationKeys.KLIB_RELATIVE_PATH_BASES] ?: emptyList()
     val absolutePathNormalization = configuration[CommonConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH] ?: false
-    val expectActualLinker = config.configuration.get(CommonConfigurationKeys.EXPECT_ACTUAL_LINKER) ?: false
 
     val serializedIr = moduleFragment?.let {
         KonanIrModuleSerializer(
                 messageLogger,
                 moduleFragment.irBuiltins,
                 expectDescriptorToSymbol,
-                skipExpects = !expectActualLinker,
                 CompatibilityMode.CURRENT,
                 normalizeAbsolutePaths = absolutePathNormalization,
                 sourceBaseDirs = sourceBaseDirs,
