@@ -145,6 +145,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             if (configuration.getBoolean(CommonConfigurationKeys.USE_FIR) && configuration.getBoolean(CommonConfigurationKeys.USE_LIGHT_TREE)) {
                 val projectEnvironment =
                     createProjectEnvironment(configuration, rootDisposable, EnvironmentConfigFiles.JVM_CONFIG_FILES, messageCollector)
+                if (messageCollector.hasErrors()) return COMPILATION_ERROR
 
                 compileModulesUsingFrontendIrAndLightTree(
                     projectEnvironment, configuration, messageCollector, buildFile, chunk, targetDescription

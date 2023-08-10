@@ -165,8 +165,7 @@ abstract class AbstractJavaModulesIntegrationTest(
         module("moduleB", listOf(module("moduleA")), addModules = emptyList())
     }
 
-    // TODO (KT-61156): do not try to run compilation if there were errors during calculation of Java module graph.
-    fun testReleaseFlagWrongValue() = muteForK2 {
+    fun testReleaseFlagWrongValue() {
         module("module5", additionalKotlinArguments = listOf("-Xjdk-release=5"), checkKotlinOutput = { output ->
             assertTrue(output, "error: unknown JDK release version: 5" in output)
             assertTrue(output, "error: unknown JVM target version: 5" in output)
