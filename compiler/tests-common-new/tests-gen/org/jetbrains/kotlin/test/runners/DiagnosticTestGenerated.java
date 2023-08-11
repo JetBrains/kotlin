@@ -22777,6 +22777,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("defaultParams_inheritanceByDelegation_negative.kt")
+            public void testDefaultParams_inheritanceByDelegation_negative() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/multiplatform/defaultParams_inheritanceByDelegation_negative.kt");
+            }
+
+            @Test
+            @TestMetadata("defaultParams_inheritanceByDelegation_positive.kt")
+            public void testDefaultParams_inheritanceByDelegation_positive() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/multiplatform/defaultParams_inheritanceByDelegation_positive.kt");
+            }
+
+            @Test
             @TestMetadata("expectAbstractToString.kt")
             public void testExpectAbstractToString() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/multiplatform/expectAbstractToString.kt");
