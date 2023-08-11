@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -188,6 +189,9 @@ private class CodeFragmentCapturedValueVisitor(
                         else -> CodeFragmentCapturedValue.Local(symbol.name, symbol.isMutated, isCrossingInlineBounds)
                     }
                     register(CodeFragmentCapturedSymbol(capturedValue, symbol, symbol.resolvedReturnTypeRef))
+                } else {
+                    // Property call generation depends on complete backing field resolution (Fir2IrLazyProperty.backingField)
+                    symbol.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
                 }
             }
             is FirBackingFieldSymbol -> {
