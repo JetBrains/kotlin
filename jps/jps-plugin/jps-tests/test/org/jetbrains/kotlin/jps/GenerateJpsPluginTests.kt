@@ -35,6 +35,7 @@ fun main(args: Array<String>) {
                 model("incremental/inlineFunCallSite", extension = null, excludeParentDirs = true, targetBackend = targetBackend)
                 model("incremental/withJava", extension = null, excludeParentDirs = true, targetBackend = targetBackend)
                 model("incremental/incrementalJvmCompilerOnly", extension = null, excludeParentDirs = true, targetBackend = targetBackend)
+                model("incremental/multiModule/withJavaUsedInKotlin", extension = null, excludeParentDirs = true, targetBackend = targetBackend)
             }
 
             // IR
