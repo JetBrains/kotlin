@@ -574,7 +574,7 @@ open class FirDeclarationsResolveTransformer(
             action()
         }
 
-        val controlFlowGraph = dataFlowAnalyzer.exitClass()
+        val controlFlowGraph = dataFlowAnalyzer.exitClass(regularClass)
         if (controlFlowGraph != null) {
             result.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(controlFlowGraph))
         }
@@ -595,7 +595,7 @@ open class FirDeclarationsResolveTransformer(
         val result = context.withAnonymousObject(anonymousObject, components) {
             transformDeclarationContent(anonymousObject, data) as FirAnonymousObject
         }
-        val graph = dataFlowAnalyzer.exitClass()
+        val graph = dataFlowAnalyzer.exitClass(anonymousObject)
         if (graph != null) {
             result.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(graph))
         }

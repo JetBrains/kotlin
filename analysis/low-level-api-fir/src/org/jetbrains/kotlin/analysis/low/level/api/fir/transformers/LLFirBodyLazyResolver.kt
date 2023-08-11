@@ -138,7 +138,7 @@ private class LLFirBodyTargetResolver(
 
         val dataFlowAnalyzer = transformer.declarationsTransformer.dataFlowAnalyzer
         dataFlowAnalyzer.enterClass(target, buildGraph = true)
-        val controlFlowGraph = dataFlowAnalyzer.exitClass()
+        val controlFlowGraph = dataFlowAnalyzer.exitClass(target)
             ?: errorWithAttachment("CFG should not be 'null' as 'buildGraph' is specified") {
                 withFirEntry("firClass", target)
             }
