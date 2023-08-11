@@ -2737,4 +2737,35 @@ public class IncrementalK2JvmJpsTestGenerated extends AbstractIncrementalK2JvmJp
             }
         }
     }
+
+    @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/withJavaUsedInKotlin")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class WithJavaUsedInKotlin extends AbstractIncrementalK2JvmJpsTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInWithJavaUsedInKotlin() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/withJavaUsedInKotlin"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @TestMetadata("importedClassRemoved")
+        public void testImportedClassRemoved() throws Exception {
+            runTest("jps/jps-plugin/testData/incremental/multiModule/withJavaUsedInKotlin/importedClassRemoved/");
+        }
+
+        @TestMetadata("jps/jps-plugin/testData/incremental/multiModule/withJavaUsedInKotlin/importedClassRemoved")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ImportedClassRemoved extends AbstractIncrementalK2JvmJpsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInImportedClassRemoved() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/multiModule/withJavaUsedInKotlin/importedClassRemoved"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+            }
+        }
+    }
 }
