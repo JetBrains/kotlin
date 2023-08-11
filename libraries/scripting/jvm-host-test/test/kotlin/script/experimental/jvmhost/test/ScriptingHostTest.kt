@@ -468,7 +468,8 @@ class ScriptingHostTest : TestCase() {
             compilerOptions("-no-stdlib")
         }
         assertTrue(res1 is ResultWithDiagnostics.Failure)
-        res1.reports.find { it.message.startsWith("Unresolved reference: println") }
+        val regex = "Unresolved reference\\W+println".toRegex()
+        res1.reports.find { it.message.contains(regex) }
             ?: fail("Expected unresolved reference report. Reported:\n  ${res1.reports.joinToString("\n  ") { it.message }}")
 
         val res2 = evalScriptWithConfiguration(script) {

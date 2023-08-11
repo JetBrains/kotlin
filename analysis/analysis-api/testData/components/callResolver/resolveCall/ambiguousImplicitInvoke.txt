@@ -47,4 +47,4 @@ KtErrorCallInfo:
       typeArgumentsMapping = {}
       argumentMapping = {}
   ]
-  diagnostic = ERROR<NONE_APPLICABLE: None of the following functions are applicable: [fun Int.invoke(a: String): Unit, fun Int.invoke(b: Boolean): Unit]>
+  diagnostic = ERROR<NONE_APPLICABLE: None of the following functions is applicable: [fun Int.invoke(a: String): Unit, fun Int.invoke(b: Boolean): Unit]>

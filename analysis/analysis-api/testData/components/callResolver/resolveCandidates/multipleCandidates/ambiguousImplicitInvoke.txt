@@ -1,5 +1,5 @@
 KtInapplicableCallCandidateInfo:
-  diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'a'>
+  diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'a'.>
   candidate = KtSimpleFunctionCall:
     isImplicitInvoke = true
     partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
@@ -26,7 +26,7 @@ KtInapplicableCallCandidateInfo:
   isInBestCandidates = true
 
 KtInapplicableCallCandidateInfo:
-  diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'b'>
+  diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'b'.>
   candidate = KtSimpleFunctionCall:
     isImplicitInvoke = true
     partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
@@ -53,7 +53,7 @@ KtInapplicableCallCandidateInfo:
   isInBestCandidates = true
 
 KtInapplicableCallCandidateInfo:
-  diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'c'>
+  diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'c'.>
   candidate = KtSimpleFunctionCall:
     isImplicitInvoke = false
     partiallyAppliedSymbol = KtPartiallyAppliedSymbol:

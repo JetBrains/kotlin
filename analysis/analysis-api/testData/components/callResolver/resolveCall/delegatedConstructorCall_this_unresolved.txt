@@ -47,4 +47,4 @@ KtErrorCallInfo:
       typeArgumentsMapping = {}
       argumentMapping = {}
   ]
-  diagnostic = ERROR<NONE_APPLICABLE: None of the following functions are applicable: [constructor(p: Int): Sub, constructor(i: Int, j: Int): Sub]>
+  diagnostic = ERROR<NONE_APPLICABLE: None of the following functions is applicable: [constructor(p: Int): Sub, constructor(i: Int, j: Int): Sub]>

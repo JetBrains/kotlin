@@ -14,4 +14,4 @@ KtErrorCallInfo:
       typeArgumentsMapping = {}
       argumentMapping = {}
   ]
-  diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public final fun /foo(): kotlin/Unit>
+  diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'public final fun /foo(): kotlin/Unit'.>

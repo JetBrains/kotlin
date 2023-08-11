@@ -7,7 +7,7 @@ import kotlin.contracts.*
 
 fun foo(y: Boolean) {
     val x: Int = 42
-    <!CONTRACT_NOT_ALLOWED("Contract should be the first statement")!>contract<!> {
+    <!CONTRACT_NOT_ALLOWED("Contract should be the first statement.")!>contract<!> {
         returns() implies y
     }
 }
@@ -23,14 +23,14 @@ inline fun case1(block: () -> Unit) {
     block()
 }
 
-inline fun case_2(block: () -> Unit) = <!CONTRACT_NOT_ALLOWED("Contracts are only allowed in function body blocks")!>contract<!> {
+inline fun case_2(block: () -> Unit) = <!CONTRACT_NOT_ALLOWED("Contracts are only allowed in function body blocks.")!>contract<!> {
     callsInPlace(<!USAGE_IS_NOT_INLINABLE!>block<!>, InvocationKind.EXACTLY_ONCE)
 }
 
 fun case_3(block: () -> Unit) {
     class Class {
         fun innerFun(block2: () -> Unit) {
-            <!CONTRACT_NOT_ALLOWED("Contracts are not allowed for local functions")!>contract<!> {
+            <!CONTRACT_NOT_ALLOWED("Contracts are not allowed for local functions.")!>contract<!> {
                 callsInPlace(block2, InvocationKind.EXACTLY_ONCE)
             }
             block2()

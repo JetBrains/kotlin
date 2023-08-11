@@ -1,0 +1,3 @@
+KtErrorCallInfo:
+  candidateCalls = []
+  diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference: a>

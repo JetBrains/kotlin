@@ -27,8 +27,8 @@ class EnumEntriesWithOutdatedStdlibTest : KGPBaseTest() {
             buildGradleKts.replaceText("\"1.9\" // <language-version>", "\"2.0\" // <language-version>")
 
             buildAndFail(":compileKotlin") {
-                assertOutputContains("Main.kt:13:20 Unresolved reference: entries")
-                assertOutputContains("Main.kt:14:30 Unresolved reference: entries")
+                assertOutputContains("Main.kt:13:20 Unresolved reference 'entries'.")
+                assertOutputContains("Main.kt:14:30 Unresolved reference 'entries'.")
             }
         }
     }

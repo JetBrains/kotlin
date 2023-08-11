@@ -1,5 +1,5 @@
 KtInapplicableCallCandidateInfo:
-  diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for protected constructor(): A>
+  diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for 'protected constructor(): A'.>
   candidate = KtDelegatedConstructorCall:
     kind = SUPER_CALL
     partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
@@ -16,7 +16,7 @@ KtInapplicableCallCandidateInfo:
   isInBestCandidates = false
 
 KtInapplicableCallCandidateInfo:
-  diagnostic = ERROR<INVISIBLE_REFERENCE: Cannot access 'constructor(p: String): A': it is private in '/A'>
+  diagnostic = ERROR<INVISIBLE_REFERENCE: Cannot access 'constructor(p: String): A': it is private in '/A'.>
   candidate = KtDelegatedConstructorCall:
     kind = SUPER_CALL
     partiallyAppliedSymbol = KtPartiallyAppliedSymbol:

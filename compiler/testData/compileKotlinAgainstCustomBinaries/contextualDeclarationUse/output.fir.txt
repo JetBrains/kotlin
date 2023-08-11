@@ -1,0 +1,16 @@
+compiler/testData/compileKotlinAgainstCustomBinaries/contextualDeclarationUse/contextualDeclarationUse.kt:6:9: error: to use contextual declarations, specify the '-Xcontext-receivers' compiler option.
+        f()
+        ^
+compiler/testData/compileKotlinAgainstCustomBinaries/contextualDeclarationUse/contextualDeclarationUse.kt:7:17: error: to use contextual declarations, specify the '-Xcontext-receivers' compiler option.
+        val a = A()
+                ^
+compiler/testData/compileKotlinAgainstCustomBinaries/contextualDeclarationUse/contextualDeclarationUse.kt:8:11: error: to use contextual declarations, specify the '-Xcontext-receivers' compiler option.
+        a.p
+          ^
+compiler/testData/compileKotlinAgainstCustomBinaries/contextualDeclarationUse/contextualDeclarationUse.kt:9:11: error: to use contextual declarations, specify the '-Xcontext-receivers' compiler option.
+        a.m()
+          ^
+compiler/testData/compileKotlinAgainstCustomBinaries/contextualDeclarationUse/contextualDeclarationUse.kt:10:9: error: to use contextual declarations, specify the '-Xcontext-receivers' compiler option.
+        p
+        ^
+COMPILATION_ERROR

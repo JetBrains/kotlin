@@ -1,20 +1,20 @@
 warning: language version 2.0 is experimental, there are no backwards compatibility guarantees for new language and library features
-compiler/testData/cli/jvm/firError.kt:1:13: error: 'val' on function parameter is not allowed
+compiler/testData/cli/jvm/firError.kt:1:13: error: 'val' on function parameter is prohibited.
 fun println(val x: Int) {}
             ^
-compiler/testData/cli/jvm/firError.kt:5:13: error: variable 'x' must be initialized
+compiler/testData/cli/jvm/firError.kt:5:13: error: variable 'x' must be initialized.
     println(x)
             ^
-compiler/testData/cli/jvm/firError.kt:10:16: error: public subclass exposes its private-in-file supertype 'Private'
+compiler/testData/cli/jvm/firError.kt:10:16: error: subclass 'public' exposes its 'private-in-file' supertype 'Private'.
 class Public : Private() {
                ^
-compiler/testData/cli/jvm/firError.kt:10:16: error: this type is final, so it cannot be inherited from
+compiler/testData/cli/jvm/firError.kt:10:16: error: this type is final, so it cannot be extended.
 class Public : Private() {
                ^
-compiler/testData/cli/jvm/firError.kt:11:5: error: property must be initialized or be abstract
+compiler/testData/cli/jvm/firError.kt:11:5: error: property must be initialized or be abstract.
     val x: Private
     ^
-compiler/testData/cli/jvm/firError.kt:11:9: error: public property exposes its private-in-file type 'Private'
+compiler/testData/cli/jvm/firError.kt:11:9: error: property 'public' exposes its 'private-in-file' type 'Private'.
     val x: Private
         ^
 COMPILATION_ERROR

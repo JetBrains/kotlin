@@ -1,7 +1,7 @@
-/kt55179.fir.kt:(217,223): warning: Expected performance impact from inlining is insignificant. Inlining works best for functions with parameters of functional types
+/kt55179.fir.kt:(217,223): warning: Expected performance impact from inlining is insignificant. Inlining works best for functions with parameters of function types.
 
-/kt55179.fir.kt:(240,243): error: Non-private inline function 'fun foo(): Unit' cannot access members of private classes: 'constructor(): Foo'
+/kt55179.fir.kt:(240,243): error: Non-private inline function 'fun foo(): Unit' cannot access members of private class 'constructor(): Foo'.
 
-/kt55179.fir.kt:(254,263): error: Non-private inline function 'fun foo(): Unit' cannot access members of private classes: 'companion object Companion : Any'
+/kt55179.fir.kt:(254,263): error: Non-private inline function 'fun foo(): Unit' cannot access members of private class 'companion object Companion : Any'.
 
-/kt55179.fir.kt:(272,280): error: Non-private inline function 'fun foo(): Unit' cannot access members of private classes: 'fun buildFoo(): Foo'
+/kt55179.fir.kt:(272,280): error: Non-private inline function 'fun foo(): Unit' cannot access members of private class 'fun buildFoo(): Foo'.

@@ -1,0 +1,77 @@
+KtInapplicableCallCandidateInfo:
+  diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'a'>
+  candidate = KtSimpleFunctionCall:
+    isImplicitInvoke = true
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = KtExplicitReceiverValue:
+        expression = x
+        isSafeNavigation = false
+        type = kotlin.Int
+      signature = KtFunctionLikeSignature:
+        receiverType = kotlin.Int
+        returnType = kotlin.Unit
+        symbol = invoke(<extension receiver>: kotlin.Int, a: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = a
+            receiverType = null
+            returnType = kotlin.String
+            symbol = a: kotlin.String
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {}
+  isInBestCandidates = true
+
+KtInapplicableCallCandidateInfo:
+  diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'b'>
+  candidate = KtSimpleFunctionCall:
+    isImplicitInvoke = true
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = KtExplicitReceiverValue:
+        expression = x
+        isSafeNavigation = false
+        type = kotlin.Int
+      signature = KtFunctionLikeSignature:
+        receiverType = kotlin.Int
+        returnType = kotlin.Unit
+        symbol = invoke(<extension receiver>: kotlin.Int, b: kotlin.Boolean): kotlin.Unit
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = b
+            receiverType = null
+            returnType = kotlin.Boolean
+            symbol = b: kotlin.Boolean
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = null
+    typeArgumentsMapping = {}
+    argumentMapping = {}
+  isInBestCandidates = true
+
+KtInapplicableCallCandidateInfo:
+  diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'c'>
+  candidate = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /x(c: kotlin.Char): kotlin.Unit
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = c
+            receiverType = null
+            returnType = kotlin.Char
+            symbol = c: kotlin.Char
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = /x
+    typeArgumentsMapping = {}
+    argumentMapping = {}
+  isInBestCandidates = false
