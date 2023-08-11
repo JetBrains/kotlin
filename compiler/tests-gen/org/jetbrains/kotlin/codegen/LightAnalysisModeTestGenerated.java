@@ -28466,6 +28466,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/multiplatform/kt59613.kt");
         }
 
+        @TestMetadata("kt60854.kt")
+        public void testKt60854() throws Exception {
+            runTest("compiler/testData/codegen/box/multiplatform/kt60854.kt");
+        }
+
         @TestMetadata("noArgActualConstructor.kt")
         public void testNoArgActualConstructor() throws Exception {
             runTest("compiler/testData/codegen/box/multiplatform/noArgActualConstructor.kt");
