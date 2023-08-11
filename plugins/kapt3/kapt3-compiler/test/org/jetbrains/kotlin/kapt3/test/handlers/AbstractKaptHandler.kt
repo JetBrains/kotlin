@@ -11,10 +11,10 @@ import org.jetbrains.kotlin.test.model.TestArtifactKind
 import org.jetbrains.kotlin.test.services.TestServices
 
 abstract class AbstractKaptHandler(testServices: TestServices) : AnalysisHandler<KaptContextBinaryArtifact>(
-    testServices,
-    failureDisablesNextSteps = true,
-    doNotRunIfThereWerePreviousFailures = true
+    testServices
 ) {
+    override val failureDisablesNextSteps: Boolean = true
+    override val doNotRunIfThereWerePreviousFailures: Boolean = true
     override val artifactKind: TestArtifactKind<KaptContextBinaryArtifact>
         get() = KaptContextBinaryArtifact.Kind
 }
