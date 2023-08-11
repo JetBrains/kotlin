@@ -13,11 +13,13 @@ fun Project.configureTestRetriesForTestTasks() {
         ?.toString()?.toInt()
         ?: (if (kotlinBuildProperties.isTeamcityBuild) 3 else 0)
 
-    tasks.withType<Test>().configureEach {
-        retry {
-            maxRetries.set(testRetryMaxRetries)
-            maxFailures.set(20)
-            failOnPassedAfterRetry.set(false)
+    pluginManager.withPlugin("gradle-enterprise") {
+        tasks.withType<Test>().configureEach {
+            retry {
+                maxRetries.set(testRetryMaxRetries)
+                maxFailures.set(20)
+                failOnPassedAfterRetry.set(false)
+            }
         }
     }
 }
