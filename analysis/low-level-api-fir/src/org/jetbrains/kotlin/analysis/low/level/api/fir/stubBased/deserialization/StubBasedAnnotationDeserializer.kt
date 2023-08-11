@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinClassTypeBean
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyStubImpl
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
-import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 class StubBasedAnnotationDeserializer(
     private val session: FirSession,
@@ -109,15 +108,14 @@ class StubBasedAnnotationDeserializer(
                 source = KtRealPsiSourceElement(sourceElement)
                 val lookupTag = (value.value as KClassValue.Value.NormalClass).classId.toLookupTag()
                 val referencedType = lookupTag.constructType(ConeTypeProjection.EMPTY_ARRAY, isNullable = false)
-                val resolvedTypeRef = buildResolvedTypeRef {
-                    type = StandardClassIds.KClass.constructClassLikeType(arrayOf(referencedType), false)
-                }
+                val resolvedType = StandardClassIds.KClass.constructClassLikeType(arrayOf(referencedType), false)
                 argumentList = buildUnaryArgumentList(
                     buildClassReferenceExpression {
                         classTypeRef = buildResolvedTypeRef { type = referencedType }
-                        type = resolvedTypeRef.type
+                        type = resolvedType
                     }
                 )
+                type = resolvedType
             }
             is ArrayValue -> {
                 buildArrayLiteral {
