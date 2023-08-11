@@ -164,7 +164,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                     if (!transformedCallee.isAcceptableResolvedQualifiedAccess()) {
                         return qualifiedAccessExpression
                     }
-                    callCompleter.completeCall(transformedCallee, data)
+                    callCompleter.completeCall(transformedCallee, data).result
                 } else {
                     transformedCallee
                 }
@@ -437,10 +437,10 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 callResolver.resolveCallAndSelectCandidate(withTransformedArguments)
             }
 
-            val completeInference = callCompleter.completeCall(resultExpression, data)
+            val (completeInference, callCompleted) = callCompleter.completeCall(resultExpression, data)
             val result = completeInference.transformToIntegerOperatorCallOrApproximateItIfNeeded(data)
             if (!resolvingAugmentedAssignment) {
-                dataFlowAnalyzer.exitFunctionCall(result, data.forceFullCompletion)
+                dataFlowAnalyzer.exitFunctionCall(result, callCompleted && data.forceFullCompletion)
             }
 
             addReceiversFromExtensions(result)
@@ -956,11 +956,11 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             .transformAnnotations(transformer, ResolutionMode.ContextIndependent)
             .replaceArgumentList(checkNotNullCall.argumentList.transform(transformer, ResolutionMode.ContextDependent))
 
-        val result = callCompleter.completeCall(
+        val (result, callCompleted) = callCompleter.completeCall(
             components.syntheticCallGenerator.generateCalleeForCheckNotNullCall(checkNotNullCall, resolutionContext), data
         )
 
-        dataFlowAnalyzer.exitCheckNotNullCall(result, data.forceFullCompletion)
+        dataFlowAnalyzer.exitCheckNotNullCall(result, callCompleted && data.forceFullCompletion)
         return result
     }
 
@@ -1308,8 +1308,8 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
         // it seems that we may leave this code as is
         // without adding `context.withTowerDataContext(context.getTowerDataContextForConstructorResolution())`
-        val result = callCompleter.completeCall(resolvedCall, ResolutionMode.ContextIndependent)
-        dataFlowAnalyzer.exitDelegatedConstructorCall(result, data.forceFullCompletion)
+        val (result, callCompleted) = callCompleter.completeCall(resolvedCall, ResolutionMode.ContextIndependent)
+        dataFlowAnalyzer.exitDelegatedConstructorCall(result, callCompleted && data.forceFullCompletion)
         return result
     }
 
