@@ -15,7 +15,7 @@ public interface KtScriptInitializerRenderer {
     public fun renderInitializer(symbol: KtScriptSymbol, printer: PrettyPrinter)
 
     public object NO_INITIALIZER : KtScriptInitializerRenderer {
-        context(KtAnalysisSession)
+        context(KtAnalysisSession, KtDeclarationRenderer)
         override fun renderInitializer(symbol: KtScriptSymbol, printer: PrettyPrinter) {
         }
     }
