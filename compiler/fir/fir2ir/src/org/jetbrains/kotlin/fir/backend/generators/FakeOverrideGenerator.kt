@@ -99,7 +99,10 @@ class FakeOverrideGenerator(
         if (none { it is IrProperty }) {
             FirSyntheticPropertiesScope.createIfSyntheticNamesProviderIsDefined(session, firClass.defaultType(), useSiteMemberScope)?.let {
                 generateFakeOverridesForName(
-                    irClass, it, name, firClass, this,
+                    irClass, it, name, firClass,
+                    // We pass result = null so that the IR declaration is not added to the class' list of declarations
+                    // but is still cached in the declaration storage.
+                    result = null,
                     // This parameter is only needed for data-class methods that is irrelevant for lazy library classes
                     realDeclarationSymbols = emptySet()
                 )
@@ -120,7 +123,7 @@ class FakeOverrideGenerator(
         useSiteOrStaticScope: FirScope,
         name: Name,
         firClass: FirClass,
-        result: MutableList<IrDeclaration>,
+        result: MutableList<IrDeclaration>?,
         realDeclarationSymbols: Set<FirBasedSymbol<*>>
     ) {
         val isLocal = firClass !is FirRegularClass || firClass.isLocal
@@ -239,7 +242,7 @@ class FakeOverrideGenerator(
         createIrDeclaration: (firDeclaration: D, irParent: IrClass, thisReceiverOwner: IrClass?, origin: IrDeclarationOrigin, isLocal: Boolean) -> I,
         createFakeOverrideSymbol: (firDeclaration: D, baseSymbol: S) -> S,
         baseSymbols: MutableMap<I, List<S>>,
-        result: MutableList<in I>,
+        result: MutableList<in I>?,
         containsErrorTypes: (I) -> Boolean,
         realDeclarationSymbols: Set<FirBasedSymbol<*>>,
         computeDirectOverridden: FirTypeScope.(S) -> List<S>,
@@ -295,7 +298,8 @@ class FakeOverrideGenerator(
             return
         }
         baseSymbols[irDeclaration] = baseFirSymbolsForFakeOverride
-        result += irDeclaration
+
+        result?.add(irDeclaration)
     }
 
     private inline fun <D : FirCallableDeclaration, reified S : FirCallableSymbol<D>> createFirFakeOverride(
