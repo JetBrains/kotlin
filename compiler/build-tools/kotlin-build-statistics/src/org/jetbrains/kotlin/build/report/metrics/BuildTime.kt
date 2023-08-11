@@ -21,9 +21,11 @@ interface BuildTime : Serializable {
 
 
 enum class JpsBuildTime(private val parent: JpsBuildTime? = null, private val readableString: String) : BuildTime {
-
-    JPS_ITERATION(readableString = "Jps iteration")
+    // @formatter:off
+    JPS_ITERATION(readableString = "Jps iteration"),
+        COMPILATION_ROUND(JPS_ITERATION, "Sources compilation round"),
     ;
+    // @formatter:on
 
     override fun getReadableString(): String = readableString
     override fun getParent(): BuildTime? = parent
