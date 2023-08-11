@@ -5,13 +5,17 @@
 
 package org.jetbrains.kotlin.fir.java.deserialization
 
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.getDeprecationsProvider
-import org.jetbrains.kotlin.fir.deserialization.*
+import org.jetbrains.kotlin.fir.deserialization.AbstractFirDeserializedSymbolProvider
+import org.jetbrains.kotlin.fir.deserialization.FirDeserializationContext
+import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
+import org.jetbrains.kotlin.fir.deserialization.PackagePartsCacheData
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.java.FirJavaFacade
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
@@ -101,7 +105,8 @@ class JvmClassFileBasedSymbolProvider(
 
     private val KotlinJvmBinaryClass.incompatibility: IncompatibleVersionErrorData<JvmMetadataVersion>?
         get() {
-            // TODO: skipMetadataVersionCheck
+            if (session.languageVersionSettings.getFlag(AnalysisFlags.skipMetadataVersionCheck)) return null
+
             if (classHeader.metadataVersion.isCompatible(ownMetadataVersion)) return null
             return IncompatibleVersionErrorData(
                 actualVersion = classHeader.metadataVersion,

@@ -306,8 +306,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         })
     }
 
-    // KT-60795 K2: missing INCOMPATIBLE_CLASS and corresponding CLI error
-    fun testWrongMetadataVersionSkipVersionCheck() = muteForK2 {
+    fun testWrongMetadataVersionSkipVersionCheck() {
         doTestKotlinLibraryWithWrongMetadataVersion("library", null, "-Xskip-metadata-version-check")
     }
 
