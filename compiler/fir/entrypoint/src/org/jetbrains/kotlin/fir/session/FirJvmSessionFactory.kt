@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
+import org.jetbrains.kotlin.incremental.components.ImportTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.Name
@@ -89,6 +90,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
         languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
         lookupTracker: LookupTracker? = null,
         enumWhenTracker: EnumWhenTracker? = null,
+        importTracker: ImportTracker? = null,
         needRegisterJavaElementFinder: Boolean,
         registerExtraComponents: ((FirSession) -> Unit) = {},
         init: FirSessionConfigurator.() -> Unit = {}
@@ -100,6 +102,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory() {
             languageVersionSettings,
             lookupTracker,
             enumWhenTracker,
+            importTracker,
             init,
             registerExtraComponents = {
                 it.registerCommonJavaComponents(projectEnvironment.getJavaModuleResolver())

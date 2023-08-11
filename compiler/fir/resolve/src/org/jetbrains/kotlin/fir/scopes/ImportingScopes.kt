@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.fir.scopes
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.importTracker
 import org.jetbrains.kotlin.fir.packageFqName
+import org.jetbrains.kotlin.fir.reportImportDirectives
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.scopeSessionKey
 import org.jetbrains.kotlin.fir.scopes.impl.*
@@ -18,13 +20,14 @@ import org.jetbrains.kotlin.name.FqName
 private val ALL_IMPORTS = scopeSessionKey<FirFile, ListStorageFirScope>()
 private val DEFAULT_STAR_IMPORT = scopeSessionKey<DefaultStarImportKey, FirSingleLevelDefaultStarImportingScope>()
 private val DEFAULT_SIMPLE_IMPORT = scopeSessionKey<DefaultImportPriority, FirDefaultSimpleImportingScope>()
+
 private data class DefaultStarImportKey(val priority: DefaultImportPriority, val excludedImportNames: Set<FqName>)
 
 fun createImportingScopes(
     file: FirFile,
     session: FirSession,
     scopeSession: ScopeSession,
-    useCaching: Boolean = true
+    useCaching: Boolean = true,
 ): List<FirScope> = if (useCaching) {
     scopeSession.getOrBuild(file, ALL_IMPORTS) {
         ListStorageFirScope(computeImportingScopes(file, session, scopeSession))
@@ -48,6 +51,12 @@ internal fun computeImportingScopes(
         excludedImportNames.mapNotNullTo(mutableSetOf()) {
             if (it.parent() == file.packageFqName) it.shortName() else null
         }
+
+    session.importTracker?.let { tracker ->
+        file.imports.map { import ->
+            tracker.reportImportDirectives(file.sourceFile?.path, import.importedFqName?.asString())
+        }
+    }
 
     return buildList {
         if (includeDefaultImports) {

@@ -11,6 +11,7 @@ import com.intellij.util.io.URLUtil
 import org.jetbrains.jps.ModuleChunk
 import org.jetbrains.jps.builders.java.JavaBuilderUtil
 import org.jetbrains.jps.builders.java.dependencyView.Callbacks
+import org.jetbrains.jps.builders.java.dependencyView.Callbacks.Backend
 import org.jetbrains.jps.builders.storage.BuildDataPaths
 import org.jetbrains.jps.incremental.*
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
@@ -27,10 +28,7 @@ import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.*
-import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
-import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
-import org.jetbrains.kotlin.incremental.components.InlineConstTracker
-import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.components.*
 import org.jetbrains.kotlin.jps.build.KotlinBuilder
 import org.jetbrains.kotlin.jps.build.KotlinCompileContext
 import org.jetbrains.kotlin.jps.build.KotlinDirtySourceFilesHolder
@@ -81,9 +79,10 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
         lookupTracker: LookupTracker,
         exceptActualTracer: ExpectActualTracker,
         inlineConstTracker: InlineConstTracker,
-        enumWhenTracker: EnumWhenTracker
+        enumWhenTracker: EnumWhenTracker,
+        importTracker: ImportTracker
     ) {
-        super.makeServices(builder, incrementalCaches, lookupTracker, exceptActualTracer, inlineConstTracker, enumWhenTracker)
+        super.makeServices(builder, incrementalCaches, lookupTracker, exceptActualTracer, inlineConstTracker, enumWhenTracker, importTracker)
 
         with(builder) {
             register(
@@ -365,6 +364,7 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
         val callback = JavaBuilderUtil.getDependenciesRegistrar(localContext)
         val inlineConstTracker = environment.services[InlineConstTracker::class.java] as InlineConstTrackerImpl
         val enumWhenTracker = environment.services[EnumWhenTracker::class.java] as EnumWhenTrackerImpl
+        val importTracker = environment.services[ImportTracker::class.java] as ImportTrackerImpl
 
         val targetDirtyFiles: Map<ModuleBuildTarget, Set<File>> = chunk.targets.keysToMap {
             val files = HashSet<File>()
@@ -393,10 +393,10 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
                 sourceFiles.removeAll(targetDirtyFiles[target] ?: emptySet())
                 sourceFiles.addAll(output.sourceFiles)
 
-                // process inlineConstTracker
+                // process trackers
                 for (sourceFile: File in sourceFiles) {
                     processInlineConstTracker(inlineConstTracker, sourceFile, output, callback)
-                    processEnumWhenTracker(enumWhenTracker, sourceFile, output, callback)
+                    processBothEnumWhenAndImportTrackers(enumWhenTracker, importTracker, sourceFile, output, callback)
                 }
 
                 callback.associate(
@@ -412,7 +412,7 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
         JavaBuilderUtil.registerSuccessfullyCompiled(localContext, allCompiled)
     }
 
-    private fun processInlineConstTracker(inlineConstTracker: InlineConstTrackerImpl, sourceFile: File, output: GeneratedJvmClass, callback: Callbacks.Backend) {
+    private fun processInlineConstTracker(inlineConstTracker: InlineConstTrackerImpl, sourceFile: File, output: GeneratedJvmClass, callback: Backend) {
         val cRefs = inlineConstTracker.inlineConstMap[sourceFile.path]?.mapNotNull { cRef: ConstantRef ->
             val descriptor = when (cRef.constType) {
                 "Byte" -> "B"
@@ -433,8 +433,11 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
         callback.registerConstantReferences(className, cRefs)
     }
 
-    private fun processEnumWhenTracker(enumWhenTracker: EnumWhenTrackerImpl, sourceFile: File, output: GeneratedJvmClass, callback: Callbacks.Backend) {
-        val enumFqNameClasses = enumWhenTracker.whenExpressionFilePathToEnumClassMap[sourceFile.path]?.map { "$it.*" } ?: return
-        callback.registerImports(output.outputClass.className.internalName, listOf(), enumFqNameClasses)
+    private fun processBothEnumWhenAndImportTrackers(enumWhenTracker: EnumWhenTrackerImpl, importTracker: ImportTrackerImpl, sourceFile: File, output: GeneratedJvmClass, callback: Backend) {
+        val enumFqNameClasses = enumWhenTracker.whenExpressionFilePathToEnumClassMap[sourceFile.path]?.map { "$it.*" }
+        val importedFqNames = importTracker.filePathToImportedFqNamesMap[sourceFile.path]
+        if (enumFqNameClasses == null && importedFqNames == null) return
+
+        callback.registerImports(output.outputClass.className.internalName, importedFqNames ?: listOf(), enumFqNameClasses ?: listOf())
     }
 }

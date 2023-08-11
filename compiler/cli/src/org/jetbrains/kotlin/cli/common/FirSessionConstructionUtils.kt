@@ -100,6 +100,7 @@ fun <F> prepareJvmSessions(
             configuration.languageVersionSettings,
             configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER),
             configuration.get(CommonConfigurationKeys.ENUM_WHEN_TRACKER),
+            configuration.get(CommonConfigurationKeys.IMPORT_TRACKER),
             needRegisterJavaElementFinder = true,
             registerExtraComponents = {},
             sessionConfigurator,
@@ -293,6 +294,7 @@ fun <F> prepareCommonSessions(
             configuration.languageVersionSettings,
             lookupTracker = configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER),
             enumWhenTracker = configuration.get(CommonConfigurationKeys.ENUM_WHEN_TRACKER),
+            importTracker = configuration.get(CommonConfigurationKeys.IMPORT_TRACKER),
             registerExtraComponents = {},
             init = sessionConfigurator
         )

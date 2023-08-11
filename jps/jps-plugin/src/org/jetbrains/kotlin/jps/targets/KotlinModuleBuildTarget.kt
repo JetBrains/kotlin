@@ -22,10 +22,7 @@ import org.jetbrains.kotlin.compilerRunner.JpsCompilerEnvironment
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.incremental.ChangesCollector
 import org.jetbrains.kotlin.incremental.ExpectActualTrackerImpl
-import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
-import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
-import org.jetbrains.kotlin.incremental.components.InlineConstTracker
-import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.components.*
 import org.jetbrains.kotlin.jps.KotlinJpsBundle
 import org.jetbrains.kotlin.jps.build.*
 import org.jetbrains.kotlin.jps.incremental.CacheAttributesDiff
@@ -272,7 +269,8 @@ abstract class KotlinModuleBuildTarget<BuildMetaInfoType : BuildMetaInfo> intern
         lookupTracker: LookupTracker,
         exceptActualTracer: ExpectActualTracker,
         inlineConstTracker: InlineConstTracker,
-        enumWhenTracker: EnumWhenTracker
+        enumWhenTracker: EnumWhenTracker,
+        importTracker: ImportTracker
     ) {
         with(builder) {
             register(LookupTracker::class.java, lookupTracker)
@@ -284,6 +282,7 @@ abstract class KotlinModuleBuildTarget<BuildMetaInfoType : BuildMetaInfo> intern
             })
             register(InlineConstTracker::class.java, inlineConstTracker)
             register(EnumWhenTracker::class.java, enumWhenTracker)
+            register(ImportTracker::class.java, importTracker)
         }
     }
 

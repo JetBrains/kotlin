@@ -75,6 +75,7 @@ object FirNativeSessionFactory : FirAbstractSessionFactory() {
             languageVersionSettings,
             null,
             null,
+            null,
             init,
             registerExtraComponents = {
                 it.register(FirVisibilityChecker::class, FirVisibilityChecker.Default)

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
+import org.jetbrains.kotlin.incremental.components.ImportTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.name.Name
 
@@ -83,6 +84,7 @@ abstract class FirAbstractSessionFactory {
         languageVersionSettings: LanguageVersionSettings,
         lookupTracker: LookupTracker?,
         enumWhenTracker: EnumWhenTracker?,
+        importTracker: ImportTracker?,
         init: FirSessionConfigurator.() -> Unit,
         registerExtraComponents: ((FirSession) -> Unit),
         registerExtraCheckers: ((FirSessionConfigurator) -> Unit)?,
@@ -99,7 +101,7 @@ abstract class FirAbstractSessionFactory {
             registerModuleData(moduleData)
             registerCliCompilerOnlyComponents()
             registerCommonComponents(languageVersionSettings)
-            registerResolveComponents(lookupTracker, enumWhenTracker)
+            registerResolveComponents(lookupTracker, enumWhenTracker, importTracker)
             registerExtraComponents(this)
 
             val kotlinScopeProvider = createKotlinScopeProvider.invoke()

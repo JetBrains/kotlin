@@ -35,10 +35,7 @@ import org.jetbrains.kotlin.config.KotlinModuleKind
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.common.isDaemonEnabled
 import org.jetbrains.kotlin.incremental.*
-import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
-import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
-import org.jetbrains.kotlin.incremental.components.InlineConstTracker
-import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.components.*
 import org.jetbrains.kotlin.jps.KotlinJpsBundle
 import org.jetbrains.kotlin.jps.incremental.JpsIncrementalCache
 import org.jetbrains.kotlin.jps.incremental.JpsLookupStorageManager
@@ -245,6 +242,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             ExpectActualTracker.DoNothing,
             InlineConstTracker.DoNothing,
             EnumWhenTracker.DoNothing,
+            ImportTracker.DoNothing,
             chunk,
             messageCollector
         ) ?: return
@@ -420,18 +418,21 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
         val project = projectDescriptor.project
         val lookupTracker = getLookupTracker(project, representativeTarget)
-        val exceptActualTracer = ExpectActualTrackerImpl()
+        val exceptActualTracker = ExpectActualTrackerImpl()
         val incrementalCaches = kotlinChunk.loadCaches()
         val inlineConstTracker = InlineConstTrackerImpl()
         val enumWhenTracker = EnumWhenTrackerImpl()
+        val importTracker = ImportTrackerImpl()
+
         val environment = createCompileEnvironment(
             context,
             representativeTarget,
             incrementalCaches,
             lookupTracker,
-            exceptActualTracer,
+            exceptActualTracker,
             inlineConstTracker,
             enumWhenTracker,
+            importTracker,
             chunk,
             messageCollector
         ) ?: return ABORT
@@ -625,6 +626,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         exceptActualTracer: ExpectActualTracker,
         inlineConstTracker: InlineConstTracker,
         enumWhenTracker: EnumWhenTracker,
+        importTracker: ImportTracker,
         chunk: ModuleChunk,
         messageCollector: MessageCollectorAdapter
     ): JpsCompilerEnvironment? {
@@ -635,7 +637,8 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
                 lookupTracker,
                 exceptActualTracer,
                 inlineConstTracker,
-                enumWhenTracker
+                enumWhenTracker,
+                importTracker
             )
             build()
         }

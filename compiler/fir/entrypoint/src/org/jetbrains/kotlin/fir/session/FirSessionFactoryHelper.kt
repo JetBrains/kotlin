@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
+import org.jetbrains.kotlin.incremental.components.ImportTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -33,6 +34,7 @@ object FirSessionFactoryHelper {
         librariesScope: AbstractProjectFileSearchScope,
         lookupTracker: LookupTracker?,
         enumWhenTracker: EnumWhenTracker?,
+        importTracker: ImportTracker?,
         incrementalCompilationContext: IncrementalCompilationContext?,
         extensionRegistrars: List<FirExtensionRegistrar>,
         needRegisterJavaElementFinder: Boolean,
@@ -73,6 +75,7 @@ object FirSessionFactoryHelper {
             languageVersionSettings,
             lookupTracker,
             enumWhenTracker,
+            importTracker,
             needRegisterJavaElementFinder,
             registerExtraComponents = {},
             sessionConfigurator,

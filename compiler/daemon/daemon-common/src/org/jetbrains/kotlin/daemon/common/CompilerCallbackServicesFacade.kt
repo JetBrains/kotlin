@@ -55,6 +55,9 @@ interface CompilerCallbackServicesFacade : Remote {
     fun hasEnumWhenTracker(): Boolean
 
     @Throws(RemoteException::class)
+    fun hasImportTracker(): Boolean
+
+    @Throws(RemoteException::class)
     fun hasIncrementalResultsConsumer(): Boolean
 
     @Throws(RemoteException::class)
@@ -116,6 +119,11 @@ interface CompilerCallbackServicesFacade : Remote {
     // EnumWhenTracker
     @Throws(RemoteException::class)
     fun enumWhenTracker_report(whenUsageClassPath: String, enumClassFqName: String)
+
+    // ---------------------------------------------------
+    // ImportTracker
+    @Throws(RemoteException::class)
+    fun importTracker_report(filePath: String, importedFqName: String)
 
     // ---------------------------------------------------
     // IncrementalResultsConsumer (js)

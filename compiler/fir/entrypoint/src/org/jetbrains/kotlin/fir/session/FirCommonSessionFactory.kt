@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.scopes.FirPlatformClassMapper
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
+import org.jetbrains.kotlin.incremental.components.ImportTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.load.kotlin.PackageAndMetadataPartProvider
@@ -91,6 +92,7 @@ object FirCommonSessionFactory : FirAbstractSessionFactory() {
         languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
         lookupTracker: LookupTracker? = null,
         enumWhenTracker: EnumWhenTracker? = null,
+        importTracker: ImportTracker? = null,
         registerExtraComponents: ((FirSession) -> Unit) = {},
         init: FirSessionConfigurator.() -> Unit = {}
     ): FirSession {
@@ -101,6 +103,7 @@ object FirCommonSessionFactory : FirAbstractSessionFactory() {
             languageVersionSettings,
             lookupTracker,
             enumWhenTracker,
+            importTracker,
             init,
             registerExtraComponents = {
                 it.register(FirVisibilityChecker::class, FirVisibilityChecker.Default)

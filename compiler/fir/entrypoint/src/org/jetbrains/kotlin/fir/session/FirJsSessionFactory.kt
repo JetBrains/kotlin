@@ -52,6 +52,7 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
             compilerConfiguration.languageVersionSettings,
             lookupTracker,
             null,
+            null,
             init,
             registerExtraComponents = { session ->
                 session.registerJsSpecificComponents(compilerConfiguration)
