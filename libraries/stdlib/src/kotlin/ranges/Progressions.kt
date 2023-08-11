@@ -66,6 +66,7 @@ public open class CharProgression
          * In order to go backwards the [step] must be negative.
          *
          * [step] must be greater than `Int.MIN_VALUE` and not equal to zero.
+         * @sample samples.ranges.Progressions.fromClosedRangeChar
          */
         public fun fromClosedRange(rangeStart: Char, rangeEnd: Char, step: Int): CharProgression = CharProgression(rangeStart, rangeEnd, step)
     }
@@ -128,6 +129,7 @@ public open class IntProgression
          * In order to go backwards the [step] must be negative.
          *
          * [step] must be greater than `Int.MIN_VALUE` and not equal to zero.
+         * @sample samples.ranges.Progressions.fromClosedRangeInt
          */
         public fun fromClosedRange(rangeStart: Int, rangeEnd: Int, step: Int): IntProgression = IntProgression(rangeStart, rangeEnd, step)
     }
@@ -190,6 +192,7 @@ public open class LongProgression
          * In order to go backwards the [step] must be negative.
          *
          * [step] must be greater than `Long.MIN_VALUE` and not equal to zero.
+         * @sample samples.ranges.Progressions.fromClosedRangeLong
          */
         public fun fromClosedRange(rangeStart: Long, rangeEnd: Long, step: Long): LongProgression = LongProgression(rangeStart, rangeEnd, step)
     }
