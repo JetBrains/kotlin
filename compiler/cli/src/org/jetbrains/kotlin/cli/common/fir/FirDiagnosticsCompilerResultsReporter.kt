@@ -28,7 +28,7 @@ object FirDiagnosticsCompilerResultsReporter {
         }.also {
             AnalyzerWithCompilerReport.reportSpecialErrors(
                 diagnosticsCollector.diagnostics.any { it.factory == FirJvmErrors.INCOMPATIBLE_CLASS },
-                hasPrereleaseClasses = false,   // TODO (KT-60780): missing PRE_RELEASE_CLASS
+                diagnosticsCollector.diagnostics.any { it.factory == FirJvmErrors.PRE_RELEASE_CLASS },
                 hasUnstableClasses = false,     // TODO (KT-61598): report FIR_COMPILED_CLASS and IR_WITH_UNSTABLE_ABI_COMPILED_CLASS
                 hasFirUnstableClasses = false,  // TODO (KT-61598): report FIR_COMPILED_CLASS and IR_WITH_UNSTABLE_ABI_COMPILED_CLASS
                 messageCollector,

@@ -106,7 +106,8 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
     ) {
         // Compiles the library with some non-stable language version, then compiles a usage of this library with stable LV.
         // If there's no non-stable language version yet, the test does nothing.
-        val someNonStableVersion = LanguageVersion.entries.firstOrNull { it > LanguageVersion.LATEST_STABLE } ?: return
+        val someNonStableVersion =
+            LanguageVersion.entries.firstOrNull { it > languageVersion && it > LanguageVersion.LATEST_STABLE } ?: return
 
         val libraryOptions = listOf(
             "-language-version", someNonStableVersion.versionString,
@@ -244,17 +245,17 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         doTestBrokenLibrary("library", "test/A\$Anno.class")
     }
 
-    // KT-60780 K2: missing PRE_RELEASE_CLASS
+    // TODO: unmute this test after switching LanguageVersion.LATEST_STABLE to 2.0.
     fun testReleaseCompilerAgainstPreReleaseLibrary() = muteForK2 {
         doTestPreReleaseKotlinLibrary(K2JVMCompiler(), "library", tmpdir)
     }
 
-    // KT-60780 K2: missing PRE_RELEASE_CLASS
+    // KT-61596 K2 JS: support reporting PRE_RELEASE_CLASS
     fun testReleaseCompilerAgainstPreReleaseLibraryJs() = muteForK2 {
         doTestPreReleaseKotlinLibrary(K2JSCompiler(), "library", File(tmpdir, "usage.js"))
     }
 
-    // KT-60780 K2: missing PRE_RELEASE_CLASS
+    // TODO: unmute this test after switching LanguageVersion.LATEST_STABLE to 2.0.
     fun testReleaseCompilerAgainstPreReleaseLibrarySkipPrereleaseCheck() = muteForK2 {
         doTestPreReleaseKotlinLibrary(K2JVMCompiler(), "library", tmpdir, "-Xskip-prerelease-check")
     }
@@ -263,12 +264,12 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         doTestPreReleaseKotlinLibrary(K2JSCompiler(), "library", File(tmpdir, "usage.js"), "-Xskip-prerelease-check")
     }
 
-    // KT-60780 K2: missing PRE_RELEASE_CLASS
-    fun testReleaseCompilerAgainstPreReleaseLibrarySkipMetadataVersionCheck() = muteForK2 {
+    fun testReleaseCompilerAgainstPreReleaseLibrarySkipMetadataVersionCheck() {
         doTestPreReleaseKotlinLibrary(K2JVMCompiler(), "library", tmpdir, "-Xskip-metadata-version-check")
     }
 
-    fun testReleaseCompilerAgainstPreReleaseLibrarySkipPrereleaseCheckAllowUnstableDependencies() {
+    // TODO: unmute this test after switching LanguageVersion.LATEST_STABLE to 2.0.
+    fun testReleaseCompilerAgainstPreReleaseLibrarySkipPrereleaseCheckAllowUnstableDependencies() = muteForK2 {
         doTestPreReleaseKotlinLibrary(K2JVMCompiler(), "library", tmpdir, "-Xallow-unstable-dependencies", "-Xskip-prerelease-check")
     }
 

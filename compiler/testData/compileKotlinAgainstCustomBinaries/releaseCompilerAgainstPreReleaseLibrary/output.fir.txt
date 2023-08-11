@@ -1,0 +1,32 @@
+error: pre-release classes were found in dependencies. Remove them from the classpath, recompile with a release compiler or use '-Xskip-prerelease-check' to suppress errors
+compiler/testData/compileKotlinAgainstCustomBinaries/releaseCompilerAgainstPreReleaseLibrary/source.kt:5:16: error: class 'a.A' is compiled by a pre-release version of Kotlin and cannot be loaded by this version of the compiler
+fun baz(param: A, nested: A.Nested) {
+               ^
+compiler/testData/compileKotlinAgainstCustomBinaries/releaseCompilerAgainstPreReleaseLibrary/source.kt:5:27: error: class 'a.A.Nested' is compiled by a pre-release version of Kotlin and cannot be loaded by this version of the compiler
+fun baz(param: A, nested: A.Nested) {
+                          ^
+compiler/testData/compileKotlinAgainstCustomBinaries/releaseCompilerAgainstPreReleaseLibrary/source.kt:6:23: error: class 'a.A' is compiled by a pre-release version of Kotlin and cannot be loaded by this version of the compiler
+    val constructor = A()
+                      ^
+compiler/testData/compileKotlinAgainstCustomBinaries/releaseCompilerAgainstPreReleaseLibrary/source.kt:7:18: error: class 'a.A.Nested' is compiled by a pre-release version of Kotlin and cannot be loaded by this version of the compiler
+    val nested = A.Nested()
+                 ^
+compiler/testData/compileKotlinAgainstCustomBinaries/releaseCompilerAgainstPreReleaseLibrary/source.kt:8:22: error: class 'a.A' is compiled by a pre-release version of Kotlin and cannot be loaded by this version of the compiler
+    val methodCall = param.method()
+                     ^
+compiler/testData/compileKotlinAgainstCustomBinaries/releaseCompilerAgainstPreReleaseLibrary/source.kt:8:28: error: unresolved reference 'method'.
+    val methodCall = param.method()
+                           ^
+compiler/testData/compileKotlinAgainstCustomBinaries/releaseCompilerAgainstPreReleaseLibrary/source.kt:9:30: error: class 'a.A' is compiled by a pre-release version of Kotlin and cannot be loaded by this version of the compiler
+    val supertype = object : A() {}
+                             ^
+compiler/testData/compileKotlinAgainstCustomBinaries/releaseCompilerAgainstPreReleaseLibrary/source.kt:11:13: error: class 'a.AKt' is compiled by a pre-release version of Kotlin and cannot be loaded by this version of the compiler
+    val x = foo()
+            ^
+compiler/testData/compileKotlinAgainstCustomBinaries/releaseCompilerAgainstPreReleaseLibrary/source.kt:12:13: error: class 'a.AKt' is compiled by a pre-release version of Kotlin and cannot be loaded by this version of the compiler
+    val y = bar
+            ^
+compiler/testData/compileKotlinAgainstCustomBinaries/releaseCompilerAgainstPreReleaseLibrary/source.kt:13:5: error: class 'a.AKt' is compiled by a pre-release version of Kotlin and cannot be loaded by this version of the compiler
+    bar = 239
+    ^
+COMPILATION_ERROR

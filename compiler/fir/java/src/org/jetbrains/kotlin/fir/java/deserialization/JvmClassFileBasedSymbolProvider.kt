@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerAbiStability
 import org.jetbrains.kotlin.utils.toMetadataVersion
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -58,6 +59,9 @@ class JvmClassFileBasedSymbolProvider(
 ) {
     private val annotationsLoader = AnnotationsLoader(session, kotlinClassFinder)
     private val ownMetadataVersion: JvmMetadataVersion = session.languageVersionSettings.languageVersion.toMetadataVersion()
+
+    private val reportErrorsOnPreReleaseDependencies =
+        !session.languageVersionSettings.getFlag(AnalysisFlags.skipPrereleaseCheck) && !session.languageVersionSettings.isPreRelease()
 
     override fun computePackagePartsInfos(packageFqName: FqName): List<PackagePartsCacheData> =
         packagePartProvider.findPackageParts(packageFqName.asString()).mapNotNull { partName ->
@@ -89,6 +93,7 @@ class JvmClassFileBasedSymbolProvider(
 
         val source = JvmPackagePartSource(
             kotlinClass, packageProto, nameResolver, kotlinClass.incompatibility, kotlinClass.isPreReleaseInvisible,
+            kotlinClass.abiStability,
         )
 
         return PackagePartsCacheData(
@@ -121,8 +126,20 @@ class JvmClassFileBasedSymbolProvider(
             )
         }
 
+    /**
+     * @return true if the class is invisible because it's compiled by a pre-release compiler, and this compiler is either released
+     * or is run with a released language version.
+     */
     private val KotlinJvmBinaryClass.isPreReleaseInvisible: Boolean
-        get() = classHeader.isPreRelease
+        get() = reportErrorsOnPreReleaseDependencies && classHeader.isPreRelease
+
+    private val KotlinJvmBinaryClass.abiStability: DeserializedContainerAbiStability
+        get() = when {
+            session.languageVersionSettings.getFlag(AnalysisFlags.allowUnstableDependencies) -> DeserializedContainerAbiStability.STABLE
+            classHeader.isUnstableFirBinary -> DeserializedContainerAbiStability.FIR_UNSTABLE
+            classHeader.isUnstableJvmIrBinary -> DeserializedContainerAbiStability.IR_UNSTABLE
+            else -> DeserializedContainerAbiStability.STABLE
+        }
 
     override fun extractClassMetadata(classId: ClassId, parentContext: FirDeserializationContext?): ClassMetadataFindResult? {
         // Kotlin classes are annotated Java classes, so this check also looks for them.
@@ -154,7 +171,9 @@ class JvmClassFileBasedSymbolProvider(
             classProto,
             JvmBinaryAnnotationDeserializer(session, kotlinClass, kotlinClassFinder, result.byteContent),
             moduleDataProvider.getModuleData(kotlinClass.containingLibrary?.toPath()),
-            KotlinJvmBinarySourceElement(kotlinClass, kotlinClass.incompatibility),
+            KotlinJvmBinarySourceElement(
+                kotlinClass, kotlinClass.incompatibility, kotlinClass.isPreReleaseInvisible, kotlinClass.abiStability,
+            ),
             classPostProcessor = { loadAnnotationsFromClassFile(result, it) }
         )
     }

@@ -122,6 +122,7 @@ object FirJvmErrors {
     val JAVA_SAM_INTERFACE_CONSTRUCTOR_REFERENCE by error0<PsiElement>()
     val NO_REFLECTION_IN_CLASS_PATH by warning0<PsiElement>()
     val INCOMPATIBLE_CLASS by error2<PsiElement, String, IncompatibleVersionErrorData<*>>()
+    val PRE_RELEASE_CLASS by error1<PsiElement, String>()
 
     init {
         RootDiagnosticRendererFactory.registerFactory(FirJvmErrorsDefaultMessages)

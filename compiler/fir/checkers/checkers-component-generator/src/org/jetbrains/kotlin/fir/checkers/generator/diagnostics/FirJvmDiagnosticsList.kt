@@ -181,5 +181,8 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
             parameter<String>("presentableString")
             parameter<IncompatibleVersionErrorData<*>>("incompatibility")
         }
+        val PRE_RELEASE_CLASS by error<PsiElement> {
+            parameter<String>("presentableString")
+        }
     }
 }

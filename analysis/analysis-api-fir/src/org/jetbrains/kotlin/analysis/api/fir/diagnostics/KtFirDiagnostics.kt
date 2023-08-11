@@ -3698,6 +3698,11 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val incompatibility: IncompatibleVersionErrorData<*>
     }
 
+    interface PreReleaseClass : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = PreReleaseClass::class
+        val presentableString: String
+    }
+
     interface ImplementingFunctionInterface : KtFirDiagnostic<KtClassOrObject> {
         override val diagnosticClass get() = ImplementingFunctionInterface::class
     }

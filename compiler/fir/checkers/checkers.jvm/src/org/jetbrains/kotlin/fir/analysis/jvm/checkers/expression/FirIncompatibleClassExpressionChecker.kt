@@ -50,5 +50,8 @@ object FirIncompatibleClassExpressionChecker : FirQualifiedAccessExpressionCheck
         if (incompatibility != null) {
             reporter.reportOn(element.source, FirJvmErrors.INCOMPATIBLE_CLASS, source.presentableString, incompatibility, context)
         }
+        if (source.isPreReleaseInvisible) {
+            reporter.reportOn(element.source, FirJvmErrors.PRE_RELEASE_CLASS, source.presentableString, context)
+        }
     }
 }
