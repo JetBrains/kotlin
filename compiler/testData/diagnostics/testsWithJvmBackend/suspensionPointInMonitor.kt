@@ -28,8 +28,6 @@ inline fun monitorInFinally(a: () -> Unit, b: () -> Unit) {
 
 fun builder(c: suspend () -> Unit) {}
 
-private val lock = Any()
-
 suspend fun suspensionPoint() {}
 
 fun test() {
