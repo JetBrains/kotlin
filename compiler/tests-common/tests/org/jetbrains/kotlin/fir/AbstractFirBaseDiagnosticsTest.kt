@@ -99,6 +99,7 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
                 librariesScope = PsiBasedProjectFileSearchScope(allProjectScope),
                 lookupTracker = null,
                 enumWhenTracker = null,
+                importTracker = null,
                 incrementalCompilationContext = null,
                 extensionRegistrars = emptyList(),
                 needRegisterJavaElementFinder = true

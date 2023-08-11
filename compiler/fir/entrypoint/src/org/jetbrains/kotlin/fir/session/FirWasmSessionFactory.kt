@@ -44,6 +44,7 @@ object FirWasmSessionFactory : FirAbstractSessionFactory() {
             languageVersionSettings,
             lookupTracker,
             null,
+            null,
             init,
             registerExtraComponents = { session ->
                 session.registerWasmSpecificComponents()

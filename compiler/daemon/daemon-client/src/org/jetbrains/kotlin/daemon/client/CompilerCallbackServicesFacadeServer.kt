@@ -36,6 +36,7 @@ open class CompilerCallbackServicesFacadeServer(
     val expectActualTracker: ExpectActualTracker? = null,
     val inlineConstTracker: InlineConstTracker? = null,
     val enumWhenTracker: EnumWhenTracker? = null,
+    val importTracker: ImportTracker? = null,
     val incrementalResultsConsumer: IncrementalResultsConsumer? = null,
     val incrementalDataProvider: IncrementalDataProvider? = null,
     port: Int = SOCKET_ANY_FREE_PORT
@@ -56,6 +57,8 @@ open class CompilerCallbackServicesFacadeServer(
     override fun hasInlineConstTracker(): Boolean = inlineConstTracker != null
 
     override fun hasEnumWhenTracker(): Boolean = enumWhenTracker != null
+
+    override fun hasImportTracker(): Boolean = importTracker != null
 
     override fun hasIncrementalResultsConsumer(): Boolean = incrementalResultsConsumer != null
 
@@ -126,6 +129,10 @@ open class CompilerCallbackServicesFacadeServer(
 
     override fun enumWhenTracker_report(whenUsageClassPath: String, enumClassFqName: String) {
         enumWhenTracker?.report(whenUsageClassPath, enumClassFqName) ?: throw NullPointerException("enumWhenTracker was not initialized")
+    }
+
+    override fun importTracker_report(filePath: String, importedFqName: String) {
+        importTracker?.report(filePath, importedFqName) ?: throw NullPointerException("importTracker was not initialized")
     }
 
     override fun incrementalResultsConsumer_processHeader(headerMetadata: ByteArray) {
