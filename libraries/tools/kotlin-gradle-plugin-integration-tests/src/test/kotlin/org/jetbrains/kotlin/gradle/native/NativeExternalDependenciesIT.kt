@@ -37,7 +37,7 @@ internal class NativeExternalDependenciesIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("Should build with ktor 1.5.4 and coroutines 1.5.0-RC-native-mt")
+    @DisplayName("Should build with ktor 2.3.3 and coroutines 1.7.2")
     @GradleTest
     fun shouldUseOldKtorAndCoroutinesExternalDependencies(gradleVersion: GradleVersion) {
 
