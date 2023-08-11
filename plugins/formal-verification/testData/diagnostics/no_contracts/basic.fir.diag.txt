@@ -64,8 +64,6 @@ method global$pkg_$with_int_declaration() returns (ret$: Int)
   unique function unit$element(): unit$
 }
 
-field backing_int: Int
-
 method global$pkg_$int_assignment() returns (ret$: unit$)
 {
   var local$x: Int

@@ -37,8 +37,6 @@ method global$pkg_$if_on_parameter(local$b: Bool) returns (ret$: Int)
   unique function unit$element(): unit$
 }
 
-field backing_int: Int
-
 method global$pkg_$simple_if() returns (ret$: Int)
 
 
