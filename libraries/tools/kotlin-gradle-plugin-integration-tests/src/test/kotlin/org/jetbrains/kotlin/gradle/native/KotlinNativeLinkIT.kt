@@ -10,6 +10,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.appendText
 
 @DisplayName("KotlinNativeLink task tests")
@@ -72,6 +73,10 @@ internal class KotlinNativeLinkIT : KGPBaseTest() {
 
     @DisplayName("KT-60839: should provide correct default value for -Xpartial-linkage")
     @GradleTest
+    @OsCondition(
+        supportedOn = [OS.LINUX, OS.MAC], // Don't run it on Windows. Caches are not supported there yet.
+        enabledOnCI = [OS.LINUX]
+    )
     fun defaultValueForPartialLinkage(gradleVersion: GradleVersion) {
         nativeProject(
             "kt-60839-native-link-cache-builder",
