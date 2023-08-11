@@ -43,4 +43,17 @@ class Tuples {
         assertPrints(intList, "[0, 1, 2]")
     }
 
+
+    @Sample
+    fun quadrupleToList() {
+        val mixedList: List<Any> = Quadruple(1, "a", 0.5, 1L).toList()
+        assertPrints(mixedList, "[1, a, 0.5, 1]")
+        assertTrue(mixedList[0] is Int)
+        assertTrue(mixedList[1] is String)
+        assertTrue(mixedList[2] is Double)
+        assertTrue(mixedList[3] is Long)
+
+        val intList: List<Int> = Quadruple(0, 1, 2, 3).toList()
+        assertPrints(intList, "[0, 1, 2, 3]")
+    }
 }

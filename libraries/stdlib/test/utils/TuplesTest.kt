@@ -104,3 +104,58 @@ class TripleTest {
         assertEquals(listOf(1, 2, "3"), (Triple(1, 2, "3")).toList())
     }
 }
+
+class QuadrupleTest {
+    val t = Quadruple(1, "a", 0.07, 2L)
+
+    @Test fun quadrupleFirstAndSecond() {
+        assertEquals(1, t.first)
+        assertEquals("a", t.second)
+        assertEquals(0.07, t.third)
+        assertEquals(2L, t.fourth)
+    }
+
+    @Test fun quadrupleMultiAssignment() {
+        val (a, b, c, d) = t
+        assertEquals(1, a)
+        assertEquals("a", b)
+        assertEquals(0.07, c)
+        assertEquals(2L, d)
+    }
+
+    @Test fun quadrupleToString() {
+        assertEquals("(1, a, 0.07, 2)", t.toString())
+    }
+
+    @Test fun quadrupleEquals() {
+        assertEquals(Quadruple(1, "a", 0.07, 2L), t)
+        assertNotEquals(Quadruple(2, "a", 0.07, 2L), t)
+        assertNotEquals(Quadruple(1, "b", 0.07, 2L), t)
+        assertNotEquals(Quadruple(1, "a", 0.1, 2L), t)
+        assertNotEquals(Quadruple(1, "a", 0.07, 3L), t)
+        assertTrue(!t.equals(null))
+        assertNotEquals("", (t as Any))
+    }
+
+    @Test fun quadrupleHashCode() {
+        assertEquals(Quadruple(1, "a", 0.07, 2L).hashCode(), t.hashCode())
+        assertNotEquals(Quadruple(2, "a", 0.07, 2L).hashCode(), t.hashCode())
+        assertNotEquals(0, Quadruple(null, "b", 0.07, 2L).hashCode())
+        assertNotEquals(0, Quadruple("b", null, 0.07, 2L).hashCode())
+        assertNotEquals(0, Quadruple("b", 1, null, 2L).hashCode())
+        assertNotEquals(0, Quadruple("b", 1, 0.07, null).hashCode())
+        assertEquals(0, Quadruple(null, null, null, null).hashCode())
+    }
+
+    @Test fun quadrupleHashSet() {
+        val s = hashSetOf(Quadruple(1, "a", 0.07, 2L), Quadruple(1, "b", 0.07, 2L), Quadruple(1, "a", 0.07, 2L))
+        assertEquals(2, s.size)
+        assertTrue(s.contains(t))
+    }
+
+    @Test fun quadrupleToList() {
+        assertEquals(listOf(1, 2, 3, 4), (Quadruple(1, 2, 3, 4)).toList())
+        assertEquals(listOf(1, null, 3, 4), (Quadruple(1, null, 3, 4)).toList())
+        assertEquals(listOf(1, 2, "3", 4), (Quadruple(1, 2, "3", 4)).toList())
+    }
+}
