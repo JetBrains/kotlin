@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
@@ -82,7 +83,9 @@ class JvmClassFileBasedSymbolProvider(
         val header = kotlinClass.classHeader
         val data = header.data ?: header.incompatibleData ?: return null
         val strings = header.strings ?: return null
-        val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(data, strings)
+        val (nameResolver, packageProto) = parseProto(kotlinClass) {
+            JvmProtoBufUtil.readPackageDataFrom(data, strings)
+        } ?: return null
 
         val source = JvmPackagePartSource(
             kotlinClass, packageProto, nameResolver, kotlinClass.incompatibility, kotlinClass.isPreReleaseInvisible,
@@ -142,7 +145,9 @@ class JvmClassFileBasedSymbolProvider(
         if (kotlinClass.classHeader.kind != KotlinClassHeader.Kind.CLASS || kotlinClass.classId != classId) return null
         val data = kotlinClass.classHeader.data ?: kotlinClass.classHeader.incompatibleData ?: return null
         val strings = kotlinClass.classHeader.strings ?: return null
-        val (nameResolver, classProto) = JvmProtoBufUtil.readClassDataFrom(data, strings)
+        val (nameResolver, classProto) = parseProto(kotlinClass) {
+            JvmProtoBufUtil.readClassDataFrom(data, strings)
+        } ?: return null
 
         return ClassMetadataFindResult.Metadata(
             nameResolver,
@@ -190,4 +195,19 @@ class JvmClassFileBasedSymbolProvider(
     private fun String?.toPath(): Path? {
         return this?.let { Paths.get(it).normalize() }
     }
+
+    private inline fun <T : Any> parseProto(klass: KotlinJvmBinaryClass, block: () -> T): T? =
+        try {
+            block()
+        } catch (e: Throwable) {
+            if (session.languageVersionSettings.getFlag(AnalysisFlags.skipMetadataVersionCheck) ||
+                klass.classHeader.metadataVersion.isCompatible(ownMetadataVersion)
+            ) {
+                throw if (e is InvalidProtocolBufferException)
+                    IllegalStateException("Could not read data from ${klass.location}", e)
+                else e
+            }
+
+            null
+        }
 }

@@ -286,8 +286,11 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         doTestKotlinLibraryWithWrongMetadataVersion("library", null)
     }
 
-    // KT-60795 K2: missing INCOMPATIBLE_CLASS and corresponding CLI error
-    fun testWrongMetadataVersionBadMetadata() = muteForK2 {
+    // This test compiles a library with a "future" metadata version, then intentionally inserts some gibberish to the metadata, and tries
+    // to compile something against this library. It emulates the scenario when a future Kotlin version has a completely different metadata
+    // format -- so different that reading it as if it's the current (protobuf-based) format would most likely result in an exception.
+    // Expected result is that the compiler does NOT try to read it, and instead reports incompatible version & unresolved reference errors.
+    fun testWrongMetadataVersionBadMetadata() {
         doTestKotlinLibraryWithWrongMetadataVersion("library", { name, value ->
             if (JvmAnnotationNames.METADATA_DATA_FIELD_NAME == name) {
                 @Suppress("UNCHECKED_CAST")
@@ -299,8 +302,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         })
     }
 
-    // KT-60795 K2: missing INCOMPATIBLE_CLASS and corresponding CLI error
-    fun testWrongMetadataVersionBadMetadata2() = muteForK2 {
+    fun testWrongMetadataVersionBadMetadata2() {
         doTestKotlinLibraryWithWrongMetadataVersion("library", { name, _ ->
             if (JvmAnnotationNames.METADATA_STRINGS_FIELD_NAME == name) arrayOf<String>() else null
         })
