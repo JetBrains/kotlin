@@ -28,6 +28,12 @@ import org.jetbrains.kotlin.types.ConstantValueKind
  * declarations into the context, returning a reference to the
  * expression containing the result.  Note that in the FIR, expressions
  * are a subtype of statements.
+ *
+ * In many cases, we introduce a temporary variable to represent this
+ * result (since, for example, a method call is not an expression).
+ * When the result is an lvalue, it is important to return an expression
+ * that refers to location, not just the same value, and so introducing
+ * a temporary variable for the result is not acceptable in those cases.
  */
 class StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
     // Note that in some cases we don't expect to ever implement it: we are only
@@ -148,6 +154,16 @@ class StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
         bodyStmtConversionContext.convertAndAppend(whileLoop.block)
         val body = bodyStmtConversionContext.block
         data.statements.add(Stmt.While(cond, invariants, body))
+        return UnitDomain.element
+    }
+
+    override fun visitVariableAssignment(variableAssignment: FirVariableAssignment, data: StmtConversionContext): Exp {
+        // It is not entirely clear whether we can get away with ignoring the distinction between
+        // lvalues and rvalues, but let's try to at first, and we'll fix it later if it turns out
+        // not to work.
+        val convertedLValue = variableAssignment.lValue.accept(this, data)
+        val convertedRValue = variableAssignment.rValue.accept(this, data)
+        data.statements.add(Stmt.assign(convertedLValue, convertedRValue))
         return UnitDomain.element
     }
 }

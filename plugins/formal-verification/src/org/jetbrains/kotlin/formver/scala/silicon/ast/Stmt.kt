@@ -36,6 +36,22 @@ sealed class Stmt : IntoViper<viper.silver.ast.Stmt> {
             viper.silver.ast.FieldAssign(lhs.toViper() as FieldAccess, rhs.toViper(), position.toViper(), info.toViper(), trafos.toViper())
     }
 
+    companion object {
+        fun assign(
+            lhs: Exp,
+            rhs: Exp,
+            position: Position = Position.NoPosition,
+            info: Info = Info.NoInfo,
+            trafos: Trafos = Trafos.NoTrafos,
+        ): Stmt = when (lhs) {
+            is Exp.LocalVar ->
+                LocalVarAssign(lhs, rhs, position, info, trafos)
+            is Exp.FieldAccess ->
+                FieldAssign(lhs, rhs, position, info, trafos)
+            else -> throw IllegalArgumentException("Expected an lvalue on the left-hand side of an assignment, but lhs was $lhs.")
+        }
+    }
+
     data class MethodCall(
         val methodName: String,
         val args: List<Exp>,

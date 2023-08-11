@@ -16,3 +16,7 @@ FILE: basic.kt
         lval x: R|kotlin/Int| = Int(0)
         ^with_int_declaration R|<local>/x|
     }
+    public final fun int_assignment(): R|kotlin/Unit| {
+        lvar x: R|kotlin/Int| = Int(0)
+        R|<local>/x| = Int(1)
+    }

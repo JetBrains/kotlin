@@ -7,3 +7,7 @@ fun <!VIPER_TEXT!>with_int_declaration<!>(): Int {
     val x = 0
     return x
 }
+fun <!VIPER_TEXT!>int_assignment<!>() {
+    var x = 0
+    x = 1
+}
