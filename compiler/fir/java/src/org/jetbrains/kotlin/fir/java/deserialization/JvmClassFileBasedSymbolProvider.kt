@@ -52,45 +52,47 @@ class JvmClassFileBasedSymbolProvider(
     session, moduleDataProvider, kotlinScopeProvider, defaultDeserializationOrigin, BuiltInSerializerProtocol
 ) {
     private val annotationsLoader = AnnotationsLoader(session, kotlinClassFinder)
+    private val ownMetadataVersion: JvmMetadataVersion = session.languageVersionSettings.languageVersion.toMetadataVersion()
 
-    override fun computePackagePartsInfos(packageFqName: FqName): List<PackagePartsCacheData> {
-        return packagePartProvider.findPackageParts(packageFqName.asString()).mapNotNull { partName ->
-            if (partName in KotlinBuiltins) return@mapNotNull null
-            val classId = ClassId.topLevel(JvmClassName.byInternalName(partName).fqNameForTopLevelClassMaybeWithDollars)
-            if (!javaFacade.hasTopLevelClassOf(classId)) return@mapNotNull null
-            val jvmMetadataVersion = session.languageVersionSettings.languageVersion.toMetadataVersion()
-            val (kotlinJvmBinaryClass, byteContent) = kotlinClassFinder.findKotlinClassOrContent(
-                classId, jvmMetadataVersion
-            ) as? KotlinClassFinder.Result.KotlinClass ?: return@mapNotNull null
-
-            val facadeName = kotlinJvmBinaryClass.classHeader.multifileClassName?.takeIf { it.isNotEmpty() }
-            val facadeFqName = facadeName?.let { JvmClassName.byInternalName(it).fqNameForTopLevelClassMaybeWithDollars }
-            val facadeBinaryClass = facadeFqName?.let {
-                kotlinClassFinder.findKotlinClass(ClassId.topLevel(it), jvmMetadataVersion)
-            }
-
-            val moduleData = moduleDataProvider.getModuleData(kotlinJvmBinaryClass.containingLibrary.toPath()) ?: return@mapNotNull null
-
-            val header = kotlinJvmBinaryClass.classHeader
-            val data = header.data ?: header.incompatibleData ?: return@mapNotNull null
-            val strings = header.strings ?: return@mapNotNull null
-            val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(data, strings)
-
-            val source = JvmPackagePartSource(
-                kotlinJvmBinaryClass, packageProto, nameResolver,
-                kotlinJvmBinaryClass.incompatibility, kotlinJvmBinaryClass.isPreReleaseInvisible,
-            )
-
-            PackagePartsCacheData(
-                packageProto,
-                FirDeserializationContext.createForPackage(
-                    packageFqName, packageProto, nameResolver, moduleData,
-                    JvmBinaryAnnotationDeserializer(session, kotlinJvmBinaryClass, kotlinClassFinder, byteContent),
-                    FirJvmConstDeserializer(session, facadeBinaryClass ?: kotlinJvmBinaryClass, BuiltInSerializerProtocol),
-                    source
-                ),
-            )
+    override fun computePackagePartsInfos(packageFqName: FqName): List<PackagePartsCacheData> =
+        packagePartProvider.findPackageParts(packageFqName.asString()).mapNotNull { partName ->
+            computePackagePartInfo(packageFqName, partName)
         }
+
+    private fun computePackagePartInfo(packageFqName: FqName, partName: String): PackagePartsCacheData? {
+        if (partName in KotlinBuiltins) return null
+
+        val classId = ClassId.topLevel(JvmClassName.byInternalName(partName).fqNameForTopLevelClassMaybeWithDollars)
+        if (!javaFacade.hasTopLevelClassOf(classId)) return null
+        val (kotlinClass, byteContent) =
+            kotlinClassFinder.findKotlinClassOrContent(classId, ownMetadataVersion) as? KotlinClassFinder.Result.KotlinClass ?: return null
+
+        val facadeName = kotlinClass.classHeader.multifileClassName?.takeIf { it.isNotEmpty() }
+        val facadeFqName = facadeName?.let { JvmClassName.byInternalName(it).fqNameForTopLevelClassMaybeWithDollars }
+        val facadeBinaryClass = facadeFqName?.let {
+            kotlinClassFinder.findKotlinClass(ClassId.topLevel(it), ownMetadataVersion)
+        }
+
+        val moduleData = moduleDataProvider.getModuleData(kotlinClass.containingLibrary.toPath()) ?: return null
+
+        val header = kotlinClass.classHeader
+        val data = header.data ?: header.incompatibleData ?: return null
+        val strings = header.strings ?: return null
+        val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(data, strings)
+
+        val source = JvmPackagePartSource(
+            kotlinClass, packageProto, nameResolver, kotlinClass.incompatibility, kotlinClass.isPreReleaseInvisible,
+        )
+
+        return PackagePartsCacheData(
+            packageProto,
+            FirDeserializationContext.createForPackage(
+                packageFqName, packageProto, nameResolver, moduleData,
+                JvmBinaryAnnotationDeserializer(session, kotlinClass, kotlinClassFinder, byteContent),
+                FirJvmConstDeserializer(session, facadeBinaryClass ?: kotlinClass, BuiltInSerializerProtocol),
+                source
+            ),
+        )
     }
 
     override fun computePackageSetWithNonClassDeclarations(): Set<String> = packagePartProvider.computePackageSetWithNonClassDeclarations()
@@ -100,13 +102,12 @@ class JvmClassFileBasedSymbolProvider(
     private val KotlinJvmBinaryClass.incompatibility: IncompatibleVersionErrorData<JvmMetadataVersion>?
         get() {
             // TODO: skipMetadataVersionCheck
-            val metadataVersionFromLanguageVersion = session.languageVersionSettings.languageVersion.toMetadataVersion()
-            if (classHeader.metadataVersion.isCompatible(metadataVersionFromLanguageVersion)) return null
+            if (classHeader.metadataVersion.isCompatible(ownMetadataVersion)) return null
             return IncompatibleVersionErrorData(
                 actualVersion = classHeader.metadataVersion,
                 compilerVersion = JvmMetadataVersion.INSTANCE,
-                languageVersion = metadataVersionFromLanguageVersion,
-                expectedVersion = metadataVersionFromLanguageVersion.lastSupportedVersionWithThisLanguageVersion(classHeader.metadataVersion.isStrictSemantics),
+                languageVersion = ownMetadataVersion,
+                expectedVersion = ownMetadataVersion.lastSupportedVersionWithThisLanguageVersion(classHeader.metadataVersion.isStrictSemantics),
                 filePath = location,
                 classId = classId
             )
@@ -119,9 +120,7 @@ class JvmClassFileBasedSymbolProvider(
         // Kotlin classes are annotated Java classes, so this check also looks for them.
         if (!javaFacade.hasTopLevelClassOf(classId)) return null
 
-        val result = kotlinClassFinder.findKotlinClassOrContent(
-            classId, session.languageVersionSettings.languageVersion.toMetadataVersion()
-        )
+        val result = kotlinClassFinder.findKotlinClassOrContent(classId, ownMetadataVersion)
         if (result !is KotlinClassFinder.Result.KotlinClass) {
             if (parentContext != null || (classId.isNestedClass && getClass(classId.outermostClassId)?.fir !is FirJavaClass)) {
                 // Nested class of Kotlin class should have been a Kotlin class.
