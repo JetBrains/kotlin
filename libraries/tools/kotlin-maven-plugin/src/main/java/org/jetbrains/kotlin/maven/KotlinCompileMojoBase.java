@@ -203,7 +203,7 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
                 " (JRE " + System.getProperty("java.runtime.version") + ")");
 
         if (!hasKotlinFilesInSources()) {
-            getLog().info("No sources found skipping Kotlin compile");
+            getLog().info("No sources to compile");
             return;
         }
 
