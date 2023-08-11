@@ -124,10 +124,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
                 else -> throw UnsupportedOperationException(compiler.toString())
             }
 
-        compileKotlin(
-            "source.kt", usageDestination, listOf(result), compiler,
-            additionalOptions.toList() + listOf("-language-version", LanguageVersion.LATEST_STABLE.versionString)
-        )
+        compileKotlin("source.kt", usageDestination, listOf(result), compiler, additionalOptions.toList())
     }
 
     // ------------------------------------------------------------------------------
@@ -247,7 +244,8 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
         doTestBrokenLibrary("library", "test/A\$Anno.class")
     }
 
-    fun testReleaseCompilerAgainstPreReleaseLibrary() {
+    // KT-60780 K2: missing PRE_RELEASE_CLASS
+    fun testReleaseCompilerAgainstPreReleaseLibrary() = muteForK2 {
         doTestPreReleaseKotlinLibrary(K2JVMCompiler(), "library", tmpdir)
     }
 
@@ -256,7 +254,8 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
 //        doTestPreReleaseKotlinLibrary(K2JSCompiler(), "library", File(tmpdir, "usage.js"))
 //    }
 
-    fun testReleaseCompilerAgainstPreReleaseLibrarySkipPrereleaseCheck() {
+    // KT-60780 K2: missing PRE_RELEASE_CLASS
+    fun testReleaseCompilerAgainstPreReleaseLibrarySkipPrereleaseCheck() = muteForK2 {
         doTestPreReleaseKotlinLibrary(K2JVMCompiler(), "library", tmpdir, "-Xskip-prerelease-check")
     }
 
@@ -265,7 +264,8 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
 //        doTestPreReleaseKotlinLibrary(K2JSCompiler(), "library", File(tmpdir, "usage.js"), "-Xskip-prerelease-check")
 //    }
 
-    fun testReleaseCompilerAgainstPreReleaseLibrarySkipMetadataVersionCheck() {
+    // KT-60780 K2: missing PRE_RELEASE_CLASS
+    fun testReleaseCompilerAgainstPreReleaseLibrarySkipMetadataVersionCheck() = muteForK2 {
         doTestPreReleaseKotlinLibrary(K2JVMCompiler(), "library", tmpdir, "-Xskip-metadata-version-check")
     }
 
