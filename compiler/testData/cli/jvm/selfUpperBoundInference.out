@@ -1,3 +1,4 @@
+warning: language version 1.5 is deprecated and its support will be removed in a future version of Kotlin
 compiler/testData/cli/jvm/selfUpperBoundInference.kt:40:25: warning: unchecked cast: WriterAppender.Builder1<B> to B
             return this as B
                         ^
