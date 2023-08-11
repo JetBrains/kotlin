@@ -3,8 +3,6 @@
   unique function unit$element(): unit$
 }
 
-field backing_int: Int
-
 method global$pkg_$return_unit() returns (ret$: unit$)
 {
 }
@@ -13,8 +11,6 @@ method global$pkg_$return_unit() returns (ret$: unit$)
 
   unique function unit$element(): unit$
 }
-
-field backing_int: Int
 
 method global$pkg_$return_int() returns (ret$: Int)
 {
@@ -26,8 +22,6 @@ method global$pkg_$return_int() returns (ret$: Int)
   unique function unit$element(): unit$
 }
 
-field backing_int: Int
-
 method global$pkg_$take_int_return_unit(local$x: Int) returns (ret$: unit$)
 {
 }
@@ -36,8 +30,6 @@ method global$pkg_$take_int_return_unit(local$x: Int) returns (ret$: unit$)
 
   unique function unit$element(): unit$
 }
-
-field backing_int: Int
 
 method global$pkg_$take_int_return_int(local$x: Int) returns (ret$: Int)
 {
@@ -49,8 +41,6 @@ method global$pkg_$take_int_return_int(local$x: Int) returns (ret$: Int)
   unique function unit$element(): unit$
 }
 
-field backing_int: Int
-
 method global$pkg_$take_int_return_int_expr(local$x: Int)
   returns (ret$: Int)
 {
@@ -61,8 +51,6 @@ method global$pkg_$take_int_return_int_expr(local$x: Int)
 
   unique function unit$element(): unit$
 }
-
-field backing_int: Int
 
 method global$pkg_$with_int_declaration() returns (ret$: Int)
 {

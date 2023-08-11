@@ -3,8 +3,6 @@
   unique function unit$element(): unit$
 }
 
-field backing_int: Int
-
 method global$pkg_$while_loop(local$b: Bool) returns (ret$: Int)
 {
   while (local$b) {

@@ -3,8 +3,6 @@
   unique function unit$element(): unit$
 }
 
-field backing_int: Int
-
 method global$pkg_$f(local$x: Int) returns (ret$: Int)
 {
   ret$ := local$x
@@ -14,8 +12,6 @@ method global$pkg_$f(local$x: Int) returns (ret$: Int)
 
   unique function unit$element(): unit$
 }
-
-field backing_int: Int
 
 method global$pkg_$f(local$x: Int) returns (ret$: Int)
 
@@ -32,8 +28,6 @@ method global$pkg_$function_call() returns (ret$: unit$)
 
   unique function unit$element(): unit$
 }
-
-field backing_int: Int
 
 method global$pkg_$f(local$x: Int) returns (ret$: Int)
 
