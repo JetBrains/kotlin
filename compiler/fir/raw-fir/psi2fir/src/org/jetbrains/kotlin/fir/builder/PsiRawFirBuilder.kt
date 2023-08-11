@@ -47,10 +47,7 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
-import org.jetbrains.kotlin.utils.addToStdlib.runUnless
-import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
+import org.jetbrains.kotlin.utils.addToStdlib.*
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
@@ -297,28 +294,33 @@ open class PsiRawFirBuilder(
         ): FirExpression = toFirExpression { ConeSimpleDiagnostic(errorReason, kind) }
 
         private inline fun KtElement?.toFirExpression(
-            sourceWhenThisIsNull: PsiElement? = null,
+            sourceWhenThisIsNull: KtElement? = null,
+            sourceWhenInvalidExpression: KtElement? = this,
+            isValidExpression: (FirExpression) -> Boolean = { !it.isStatementLikeExpression },
             diagnosticFn: () -> ConeDiagnostic,
         ): FirExpression {
             if (this == null) {
                 return buildErrorExpression(source = sourceWhenThisIsNull?.toFirSourceElement(), diagnosticFn())
             }
 
-            val result = when (val fir = convertElement(this, null)) {
-                is FirExpression -> fir
-                else -> {
-                    return buildErrorExpression {
+            return when (val fir = convertElement(this, null)) {
+                is FirExpression -> when {
+                    isValidExpression(fir) -> checkSelectorInvariant(fir)
+                    else -> buildErrorExpression {
                         nonExpressionElement = fir
                         diagnostic = diagnosticFn()
-                        source = toFirSourceElement()
+                        source = sourceWhenInvalidExpression?.toFirSourceElement()
                     }
                 }
+                else -> buildErrorExpression {
+                    nonExpressionElement = fir
+                    diagnostic = diagnosticFn()
+                    source = fir?.source?.withForcedKindFrom(this@PsiRawFirBuilder.context) ?: toFirSourceElement()
+                }
             }
-
-            return toFirExpression(result)
         }
 
-        private fun KtElement.toFirExpression(result: FirExpression): FirExpression {
+        private fun KtElement.checkSelectorInvariant(result: FirExpression): FirExpression {
             val callExpressionCallee = (this as? KtCallExpression)?.calleeExpression?.unwrapParenthesesLabelsAndAnnotations()
 
             if (this is KtNameReferenceExpression ||
@@ -2700,7 +2702,15 @@ open class PsiRawFirBuilder(
                         leftArgument.annotations,
                         expression.right,
                     ) {
-                        (this as KtExpression).toFirExpression("Incorrect expression in assignment: ${expression.text}")
+                        (this as KtExpression).toFirExpression(
+                            sourceWhenInvalidExpression = expression,
+                            isValidExpression = { !it.isStatementLikeExpression || it.isArraySet },
+                        ) {
+                            ConeSimpleDiagnostic(
+                                "Incorrect expression in assignment: ${expression.text}",
+                                DiagnosticKind.ExpressionExpected
+                            )
+                        }
                     }
                 } else {
                     buildEqualityOperatorCall {
@@ -2926,11 +2936,7 @@ open class PsiRawFirBuilder(
 
         override fun visitParenthesizedExpression(expression: KtParenthesizedExpression, data: FirElement?): FirElement {
             context.forwardLabelUsagePermission(expression, expression.expression)
-            return expression.expression?.accept(this, data)
-                ?: buildErrorExpression(
-                    expression.toFirSourceElement(),
-                    ConeSyntaxDiagnostic("Empty parentheses")
-                )
+            return expression.expression.toFirExpression("Empty parentheses")
         }
 
         override fun visitLabeledExpression(expression: KtLabeledExpression, data: FirElement?): FirElement {

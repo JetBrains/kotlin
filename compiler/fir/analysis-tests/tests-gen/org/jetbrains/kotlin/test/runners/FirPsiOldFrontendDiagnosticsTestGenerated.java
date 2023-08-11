@@ -94,6 +94,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         }
 
         @Test
+        @TestMetadata("assigningAssignments.kt")
+        public void testAssigningAssignments() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/assigningAssignments.kt");
+        }
+
+        @Test
         @TestMetadata("AutoCreatedIt.kt")
         public void testAutoCreatedIt() throws Exception {
             runTest("compiler/testData/diagnostics/tests/AutoCreatedIt.kt");

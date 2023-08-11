@@ -143,7 +143,7 @@ class LightTreeRawFirDeclarationBuilder(
                 DESTRUCTURING_DECLARATION -> container += convertDestructingDeclaration(node).toFirDestructingDeclaration(baseModuleData)
                 TYPEALIAS -> container += convertTypeAlias(node) as FirStatement
                 CLASS_INITIALIZER -> container += convertAnonymousInitializer(node) as FirStatement
-                else -> if (node.isExpression()) container += expressionConverter.getAsFirExpression<FirStatement>(node)
+                else -> if (node.isExpression()) container += expressionConverter.getAsFirStatement(node)
             }
         }
         return FirBlockBuilder().apply {
@@ -1839,7 +1839,7 @@ class LightTreeRawFirDeclarationBuilder(
         if (block == null) return buildEmptyExpressionBlock()
         if (block.tokenType != BLOCK) {
             return FirSingleExpressionBlock(
-                expressionConverter.getAsFirExpression(block)
+                expressionConverter.getAsFirStatement(block)
             )
         }
 

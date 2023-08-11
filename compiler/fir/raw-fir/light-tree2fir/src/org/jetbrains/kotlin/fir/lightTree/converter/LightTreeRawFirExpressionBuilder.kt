@@ -60,15 +60,41 @@ class LightTreeRawFirExpressionBuilder(
     context: Context<LighterASTNode> = Context(),
 ) : AbstractLightTreeRawFirBuilder(session, tree, context) {
 
-    inline fun <reified R : FirElement> getAsFirExpression(expression: LighterASTNode?, errorReason: String = ""): R {
+    inline fun <reified R : FirExpression> getAsFirExpression(
+        expression: LighterASTNode?,
+        errorReason: String = "",
+        sourceWhenInvalidExpression: LighterASTNode? = expression,
+        isValidExpression: (R) -> Boolean = { !it.isStatementLikeExpression },
+    ): R {
         val converted = expression?.let { convertExpression(it, errorReason) }
-        return converted as? R
-            ?: buildErrorExpression(
-                expression?.toFirSourceElement(),
+
+        return when {
+            converted is R -> when {
+                isValidExpression(converted) -> converted
+                else -> buildErrorExpression(
+                    sourceWhenInvalidExpression?.toFirSourceElement(),
+                    ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionExpected),
+                    converted,
+                )
+            }
+            else -> buildErrorExpression(
+                converted?.source?.withForcedKindFrom(context) ?: expression?.toFirSourceElement(),
                 if (expression == null) ConeSyntaxDiagnostic(errorReason)
                 else ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionExpected),
                 converted,
-            ) as R
+            )
+        } as R
+    }
+
+    fun getAsFirStatement(expression: LighterASTNode, errorReason: String = ""): FirStatement {
+        return when (val converted = convertExpression(expression, errorReason)) {
+            is FirStatement -> converted
+            else -> buildErrorExpression(
+                expression.toFirSourceElement(),
+                ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionExpected),
+                converted,
+            )
+        }
     }
 
     /*****    EXPRESSIONS    *****/
@@ -316,7 +342,14 @@ class LightTreeRawFirExpressionBuilder(
                     firOperation,
                     leftArgAsFir.annotations,
                     rightArg,
-                ) { getAsFirExpression(this) }
+                ) {
+                    getAsFirExpression<FirExpression>(
+                        this,
+                        "Incorrect expression in assignment: ${binaryExpression.asText}",
+                        sourceWhenInvalidExpression = binaryExpression,
+                        isValidExpression = { !it.isStatementLikeExpression || it.isArraySet },
+                    )
+                }
             } else {
                 buildEqualityOperatorCall {
                     source = binaryExpression.toFirSourceElement()
@@ -379,7 +412,7 @@ class LightTreeRawFirExpressionBuilder(
                 }
                 BLOCK -> firExpression = declarationBuilder.convertBlock(it)
                 PROPERTY -> firExpression = declarationBuilder.convertPropertyDeclaration(it)
-                else -> if (it.isExpression()) firExpression = getAsFirExpression(it)
+                else -> if (it.isExpression()) firExpression = getAsFirStatement(it)
             }
         }
 
@@ -457,7 +490,7 @@ class LightTreeRawFirExpressionBuilder(
                 BLOCK -> firExpression = declarationBuilder.convertBlockExpression(it)
                 else -> if (it.isExpression()) {
                     context.forwardLabelUsagePermission(annotatedExpression, it)
-                    firExpression = getAsFirExpression(it)
+                    firExpression = getAsFirStatement(it)
                 }
             }
         }
@@ -1209,10 +1242,10 @@ class LightTreeRawFirExpressionBuilder(
                     if (it.getChildNodeByType(BLOCK) != null) {
                         firBlock = getAsFirExpression(it)
                     } else {
-                        firStatement = getAsFirExpression(it)
+                        firStatement = getAsFirStatement(it)
                     }
                 }
-                else -> if (it.isExpression()) firStatement = getAsFirExpression(it)
+                else -> if (it.isExpression()) firStatement = getAsFirStatement(it)
             }
         }
 

@@ -47,7 +47,6 @@ import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.types.model.safeSubstitute
-import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import kotlin.contracts.ExperimentalContracts
@@ -490,7 +489,7 @@ fun FirSafeCallExpression.propagateTypeFromQualifiedAccessAfterNullCheck(
     val selector = selector
 
     val resultingType = when {
-        selector is FirExpression && !selector.isCallToStatementLikeFunction -> {
+        selector is FirExpression && !selector.isStatementLikeExpression -> {
             val type = selector.coneTypeSafe<ConeKotlinType>() ?: return
             type.withNullability(ConeNullability.NULLABLE, session.typeContext)
         }
@@ -505,12 +504,6 @@ fun FirSafeCallExpression.propagateTypeFromQualifiedAccessAfterNullCheck(
     replaceConeTypeOrNull(independentInstance)
     session.lookupTracker?.recordTypeResolveAsLookup(independentInstance, source, file.source)
 }
-
-private val FirExpression.isCallToStatementLikeFunction: Boolean
-    get() {
-        val symbol = (this as? FirFunctionCall)?.calleeReference?.toResolvedNamedFunctionSymbol() ?: return false
-        return origin == FirFunctionCallOrigin.Operator && symbol.name in OperatorNameConventions.STATEMENT_LIKE_OPERATORS
-    }
 
 fun FirAnnotation.getCorrespondingClassSymbolOrNull(session: FirSession): FirRegularClassSymbol? {
     return annotationTypeRef.coneType.fullyExpandedType(session).toRegularClassSymbol(session)

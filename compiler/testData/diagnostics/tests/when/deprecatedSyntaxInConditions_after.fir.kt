@@ -122,12 +122,12 @@ fun testWithSubject_bad_4(b: B) {
     }
     // also bad
     when (b) {
-        <!EXPRESSION_EXPECTED!>(x = b)<!> -> {}
-        <!EXPRESSION_EXPECTED!>(b += b)<!> -> {}
-        <!EXPRESSION_EXPECTED!>(b -= b)<!> -> {}
-        <!EXPRESSION_EXPECTED!>(b *= b)<!> -> {}
-        <!EXPRESSION_EXPECTED!>(b /= b)<!> -> {}
-        <!EXPRESSION_EXPECTED!>(b %= b)<!> -> {}
+        (<!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>x = b<!>) -> {}
+        (<!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>b += b<!>) -> {}
+        (<!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>b -= b<!>) -> {}
+        (<!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>b *= b<!>) -> {}
+        (<!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>b /= b<!>) -> {}
+        (<!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>b %= b<!>) -> {}
     }
 }
 
@@ -226,11 +226,11 @@ fun testWithRange_bad_4(b: B) {
     }
     // also bad
     when (b) {
-        in <!EXPRESSION_EXPECTED!>(x = b)<!> -> {}
-        in <!EXPRESSION_EXPECTED!>(b += b)<!> -> {}
-        in <!EXPRESSION_EXPECTED!>(b -= b)<!> -> {}
-        in <!EXPRESSION_EXPECTED!>(b *= b)<!> -> {}
-        in <!EXPRESSION_EXPECTED!>(b /= b)<!> -> {}
-        in <!EXPRESSION_EXPECTED!>(b %= b)<!> -> {}
+        in (<!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>x = b<!>) -> {}
+        in (<!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>b += b<!>) -> {}
+        in (<!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>b -= b<!>) -> {}
+        in (<!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>b *= b<!>) -> {}
+        in (<!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>b /= b<!>) -> {}
+        in (<!ASSIGNMENT_IN_EXPRESSION_CONTEXT!>b %= b<!>) -> {}
     }
 }
