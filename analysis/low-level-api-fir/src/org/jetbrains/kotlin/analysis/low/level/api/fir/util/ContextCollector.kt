@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLoc
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector.ContextKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector.Context
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector.FilterResponse
+import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
@@ -234,7 +235,7 @@ private class ContextCollectorVisitor(
     override fun visitRegularClass(regularClass: FirRegularClass) = withProcessor {
         dumpContext(regularClass.psi, ContextKind.SELF)
 
-        processSignatureAnnotations(regularClass)
+        processAnnotations(regularClass)
 
         onActiveBody {
             regularClass.lazyResolveToPhase(FirResolvePhase.STATUS)
@@ -262,7 +263,7 @@ private class ContextCollectorVisitor(
     override fun visitConstructor(constructor: FirConstructor) = withProcessor {
         dumpContext(constructor.psi, ContextKind.SELF)
 
-        processSignatureAnnotations(constructor)
+        processAnnotations(constructor)
 
         onActiveBody {
             constructor.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
@@ -315,7 +316,7 @@ private class ContextCollectorVisitor(
     override fun visitSimpleFunction(simpleFunction: FirSimpleFunction) = withProcessor {
         dumpContext(simpleFunction.psi, ContextKind.SELF)
 
-        processSignatureAnnotations(simpleFunction)
+        processAnnotations(simpleFunction)
 
         onActiveBody {
             simpleFunction.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
@@ -341,7 +342,7 @@ private class ContextCollectorVisitor(
     override fun visitProperty(property: FirProperty) = withProcessor {
         dumpContext(property.psi, ContextKind.SELF)
 
-        processSignatureAnnotations(property)
+        processAnnotations(property)
 
         onActiveBody {
             property.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
@@ -377,7 +378,7 @@ private class ContextCollectorVisitor(
     override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor) = withProcessor {
         dumpContext(propertyAccessor.psi, ContextKind.SELF)
 
-        processSignatureAnnotations(propertyAccessor)
+        processAnnotations(propertyAccessor)
 
         onActiveBody {
             context.withPropertyAccessor(propertyAccessor.propertySymbol.fir, propertyAccessor, holder) {
@@ -393,7 +394,7 @@ private class ContextCollectorVisitor(
     override fun visitValueParameter(valueParameter: FirValueParameter) = withProcessor {
         dumpContext(valueParameter.psi, ContextKind.SELF)
 
-        processSignatureAnnotations(valueParameter)
+        processAnnotations(valueParameter)
 
         onActiveBody {
             context.withValueParameter(valueParameter, session) {
@@ -410,7 +411,7 @@ private class ContextCollectorVisitor(
     override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer) = withProcessor {
         dumpContext(anonymousInitializer.psi, ContextKind.SELF)
 
-        processSignatureAnnotations(anonymousInitializer)
+        processAnnotations(anonymousInitializer)
 
         onActiveBody {
             context.withAnonymousInitializer(anonymousInitializer, session) {
@@ -427,7 +428,7 @@ private class ContextCollectorVisitor(
     override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction) = withProcessor {
         dumpContext(anonymousFunction.psi, ContextKind.SELF)
 
-        processSignatureAnnotations(anonymousFunction)
+        processAnnotations(anonymousFunction)
 
         onActiveBody {
             context.withAnonymousFunction(anonymousFunction, holder, ResolutionMode.ContextIndependent) {
@@ -453,7 +454,7 @@ private class ContextCollectorVisitor(
     override fun visitAnonymousObject(anonymousObject: FirAnonymousObject) = withProcessor {
         dumpContext(anonymousObject.psi, ContextKind.SELF)
 
-        processSignatureAnnotations(anonymousObject)
+        processAnnotations(anonymousObject)
 
         onActiveBody {
             context.withAnonymousObject(anonymousObject, holder) {
@@ -470,6 +471,8 @@ private class ContextCollectorVisitor(
     override fun visitBlock(block: FirBlock) = withProcessor {
         dumpContext(block.psi, ContextKind.SELF)
 
+        processAnnotations(block)
+
         onActiveBody {
             context.forBlock(session) {
                 processChildren(block)
@@ -479,14 +482,18 @@ private class ContextCollectorVisitor(
         }
     }
 
-    override fun visitSmartCastExpression(smartCastExpression: FirSmartCastExpression) {
+    override fun visitSmartCastExpression(smartCastExpression: FirSmartCastExpression) = withProcessor {
+        dumpContext(smartCastExpression.psi, ContextKind.SELF)
+
+        processAnnotations(smartCastExpression)
+
         if (smartCastExpression.isStable) {
             val symbol = smartCastExpression.originalExpression.toResolvedCallableSymbol()
             if (symbol != null) {
                 val previousSmartCasts = smartCasts
                 try {
                     smartCasts = smartCasts.put(symbol, smartCastExpression.typesFromSmartCast.toSet())
-                    super.visitSmartCastExpression(smartCastExpression)
+                    processChildren(smartCastExpression)
                     return
                 } finally {
                     smartCasts = previousSmartCasts
@@ -494,12 +501,12 @@ private class ContextCollectorVisitor(
             }
         }
 
-        super.visitSmartCastExpression(smartCastExpression)
+        processChildren(smartCastExpression)
     }
 
     @ContextCollectorDsl
-    private fun Processor.processSignatureAnnotations(declaration: FirDeclaration) {
-        for (annotation in declaration.annotations) {
+    private fun Processor.processAnnotations(container: FirAnnotationContainer) {
+        for (annotation in container.annotations) {
             onActive {
                 process(annotation)
             }
