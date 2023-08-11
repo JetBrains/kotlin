@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import junit.framework.TestCase
 import org.jetbrains.kotlin.backend.common.CommonKLibResolver
+import org.jetbrains.kotlin.backend.common.ir.isExpect
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
@@ -25,16 +26,18 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.AbstractIrGeneratorTestCase
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.JsFactories
 import org.jetbrains.kotlin.ir.backend.js.KotlinFileSerializedData
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrModuleSerializer
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
@@ -94,15 +97,20 @@ abstract class AbstractKlibIrTextTestCase : CodegenTestCase() {
     fun doTest(wholeFile: File) {
         val expectActualSymbols = mutableMapOf<DeclarationDescriptor, IrSymbol>()
         val ignoreErrors = AbstractIrGeneratorTestCase.shouldIgnoreErrors(wholeFile)
+
         val stdlib = loadKlibFromPath(listOf(runtimeKlibPath)).single()
-        val (irModule, bindingContext) = buildFragmentAndLinkIt(stdlib, ignoreErrors, expectActualSymbols)
+        val (irModule, bindingContext) = generateIrModule(stdlib, ignoreErrors, expectActualSymbols)
+        irModule.cleanUpFromExpectDeclarations()
+
         val expected = irModule.dump(DumpIrTreeOptions(stableOrder = true, verboseErrorTypes = false))
+
         val mppProject =
             myEnvironment.configuration.languageVersionSettings.getFeatureSupport(LanguageFeature.MultiPlatformProjects) == LanguageFeature.State.ENABLED
         val klibPath = serializeModule(irModule, bindingContext, stdlib, ignoreErrors, expectActualSymbols, !mppProject)
         val libs = loadKlibFromPath(listOf(runtimeKlibPath, klibPath))
         val (stdlib2, klib) = libs
         val deserializedIrModule = deserializeModule(stdlib2, klib)
+
         val actual = deserializedIrModule.dump(DumpIrTreeOptions(stableOrder = true, verboseErrorTypes = false))
 
         try {
@@ -242,8 +250,28 @@ abstract class AbstractKlibIrTextTestCase : CodegenTestCase() {
 
     private val runtimeKlibPath = "libraries/stdlib/build/classes/kotlin/js/main"
 
-    private fun buildFragmentAndLinkIt(stdlib: KotlinLibrary, ignoreErrors: Boolean, expectActualSymbols: MutableMap<DeclarationDescriptor, IrSymbol>): Pair<IrModuleFragment, BindingContext> {
-        return generateIrModule(stdlib, ignoreErrors, expectActualSymbols)
+    /**
+     * In multiplatform projects there may be `expect` declarations. Such declarations do not survive during KLIB serialization.
+     * So, it's necessary to explicitly filter them out from the [IrModuleFragment] in order for tests that compare dumped IR
+     * before and after serialization to pass successfully.
+     */
+    private fun IrModuleFragment.cleanUpFromExpectDeclarations() {
+        val languageVersionSettings = myEnvironment.configuration.languageVersionSettings
+        val multiPlatformProjects = languageVersionSettings.getFeatureSupport(LanguageFeature.MultiPlatformProjects)
+        if (multiPlatformProjects != LanguageFeature.State.ENABLED)
+            return
+
+        acceptVoid(object : IrElementVisitorVoid {
+            override fun visitElement(element: IrElement) = element.acceptChildrenVoid(this)
+
+            override fun visitPackageFragment(declaration: IrPackageFragment) = visitDeclarationContainer(declaration)
+            override fun visitClass(declaration: IrClass) = visitDeclarationContainer(declaration)
+
+            private fun visitDeclarationContainer(container: IrDeclarationContainer) {
+                container.declarations.removeIf(IrDeclaration::isExpect)
+                visitElement(container)
+            }
+        })
     }
 
     fun getModuleDescriptor(current: KotlinLibrary, builtins: ModuleDescriptorImpl? = null): ModuleDescriptorImpl {
