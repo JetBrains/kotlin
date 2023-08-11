@@ -124,7 +124,7 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         )
         override val callCompleter: FirCallCompleter = FirCallCompleter(transformer, this)
         override val dataFlowAnalyzer: FirDataFlowAnalyzer =
-            FirDataFlowAnalyzer.createFirDataFlowAnalyzer(this, context.dataFlowAnalyzerContext)
+            FirDataFlowAnalyzer.createFirDataFlowAnalyzer(this, context.dataFlowAnalyzerContext, context.dataFlowCollector)
         override val syntheticCallGenerator: FirSyntheticCallGenerator = FirSyntheticCallGenerator(this)
         override val doubleColonExpressionResolver: FirDoubleColonExpressionResolver = FirDoubleColonExpressionResolver(session)
         override val outerClassManager: FirOuterClassManager = FirOuterClassManager(session, context.outerLocalClassForNested)

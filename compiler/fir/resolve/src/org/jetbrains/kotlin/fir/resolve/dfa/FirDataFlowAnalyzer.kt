@@ -69,7 +69,8 @@ abstract class FirDataFlowAnalyzer(
     companion object {
         fun createFirDataFlowAnalyzer(
             components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents,
-            dataFlowAnalyzerContext: DataFlowAnalyzerContext
+            dataFlowAnalyzerContext: DataFlowAnalyzerContext,
+            dataFlowCollector: DataFlowCollector?
         ): FirDataFlowAnalyzer =
             object : FirDataFlowAnalyzer(components, dataFlowAnalyzerContext) {
                 override val receiverStack: PersistentImplicitReceiverStack
@@ -84,6 +85,13 @@ abstract class FirDataFlowAnalyzer(
                         if (index != null) {
                             val originalType = receiverStack.getOriginalType(index)
                             receiverStack.replaceReceiverType(index, info.smartCastedType(typeContext, originalType))
+                        }
+                    }
+
+                    if (info != null) {
+                        val containingDeclaration = components.context.containerIfAny
+                        if (containingDeclaration != null) {
+                            dataFlowCollector?.symbolTypeUpdated(symbol, info.exactType, fir, containingDeclaration)
                         }
                     }
                 }

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
 
@@ -18,6 +19,7 @@ open class FirBodyResolveTransformer(
     scopeSession: ScopeSession,
     returnTypeCalculator: ReturnTypeCalculator = ReturnTypeCalculatorForFullBodyResolve.Default,
     outerBodyResolveContext: BodyResolveContext? = null,
+    dataFlowCollector: DataFlowCollector? = null,
     firResolveContextCollector: FirResolveContextCollector? = null
 ) : FirAbstractBodyResolveTransformerDispatcher(
     session,
@@ -26,6 +28,7 @@ open class FirBodyResolveTransformer(
     scopeSession,
     returnTypeCalculator,
     outerBodyResolveContext,
+    dataFlowCollector,
     firResolveContextCollector
 ) {
     final override val expressionsTransformer = FirExpressionsResolveTransformer(this)
