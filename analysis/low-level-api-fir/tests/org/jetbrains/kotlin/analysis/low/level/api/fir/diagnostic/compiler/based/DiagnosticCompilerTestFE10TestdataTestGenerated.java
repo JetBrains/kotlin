@@ -1132,6 +1132,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         }
 
         @Test
+        @TestMetadata("suppressInWhen.kt")
+        public void testSuppressInWhen() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/suppressInWhen.kt");
+        }
+
+        @Test
         @TestMetadata("SyntaxErrorInTestHighlighting.kt")
         public void testSyntaxErrorInTestHighlighting() throws Exception {
             runTest("compiler/testData/diagnostics/tests/SyntaxErrorInTestHighlighting.kt");

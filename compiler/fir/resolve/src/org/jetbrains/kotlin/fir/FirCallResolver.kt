@@ -258,8 +258,7 @@ class FirCallResolver(
             (qualifiedAccess.explicitReceiver as? FirResolvedQualifier)
                 ?.continueQualifier(
                     callee,
-                    qualifiedAccess.source,
-                    qualifiedAccess.typeArguments,
+                    qualifiedAccess,
                     nonFatalDiagnosticFromExpression,
                     session,
                     components
@@ -283,7 +282,7 @@ class FirCallResolver(
             // }
             if (!result.applicability.isSuccess || (isUsedAsReceiver && result.candidates.all { it.symbol is FirClassLikeSymbol })) {
                 components.resolveRootPartOfQualifier(
-                    callee, qualifiedAccess.source, qualifiedAccess.typeArguments, nonFatalDiagnosticFromExpression,
+                    callee, qualifiedAccess, nonFatalDiagnosticFromExpression,
                 )?.let { return it }
             }
         }
