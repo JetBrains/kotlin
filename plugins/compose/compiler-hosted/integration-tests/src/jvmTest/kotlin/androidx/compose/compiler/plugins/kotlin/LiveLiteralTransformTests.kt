@@ -51,14 +51,8 @@ class LiveLiteralTransformTests(useFir: Boolean) : AbstractLiveLiteralTransformT
 
     @Test
     fun testDispatchReceiver() {
-        // K2 constant folds the toString call.
-        val printOneToStringKey = if (useFir) {
-            "String%arg-0%call-print%fun-Test"
-        } else {
-            "Int%%this%call-toString%arg-0%call-print%fun-Test"
-        }
         assertKeys(
-            printOneToStringKey,
+            "Int%%this%call-toString%arg-0%call-print%fun-Test",
             "Int%arg-0%call-print-1%fun-Test"
         ) {
             """
