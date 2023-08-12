@@ -117,6 +117,7 @@ abstract class KotlinCompilerFacade(val environment: KotlinCoreEnvironment) {
                 put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, TestMessageCollector)
                 put(IrMessageLogger.IR_MESSAGE_LOGGER, IrMessageCollector(TestMessageCollector))
                 updateConfiguration()
+                put(CommonConfigurationKeys.USE_FIR, languageVersionSettings.languageVersion.usesK2)
             }
 
             val environment = KotlinCoreEnvironment.createForTests(
