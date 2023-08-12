@@ -224,8 +224,7 @@ if (splitGradleIntegrationTestTasks) {
 
 val KGP_TEST_TASKS_GROUP = "Kotlin Gradle Plugin Verification"
 val memoryPerGradleTestWorkerMb = 6000
-val maxParallelTestForks =
-    (totalMaxMemoryForTestsMb / memoryPerGradleTestWorkerMb).coerceIn(1, Runtime.getRuntime().availableProcessors())
+val maxParallelTestForks = 1
 
 val allParallelTestsTask = tasks.register<Test>("kgpAllParallelTests") {
     group = KGP_TEST_TASKS_GROUP
@@ -270,6 +269,10 @@ val nativeTestsTask = tasks.register<Test>("kgpNativeTests") {
         excludeTags("JvmKGP", "JsKGP", "DaemonsKGP", "OtherKGP", "MppKGP", "AndroidKGP")
         includeEngines("junit-jupiter")
     }
+
+    systemProperties["junit.jupiter.execution.parallel.enabled"] = "true"
+    systemProperties["junit.jupiter.execution.parallel.mode.default"] = "concurrent"
+    systemProperties["junit.jupiter.execution.parallel.mode.classes.default"] = "concurrent"
 }
 
 // Daemon tests could run only sequentially as they could not be shared between parallel test builds
