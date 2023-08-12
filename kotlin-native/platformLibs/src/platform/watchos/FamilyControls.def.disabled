@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.FamilyControls
+
+modules = FamilyControls
+compilerOpts = -framework FamilyControls
+linkerOpts = -framework FamilyControls
+#Disabled: Not officially available for watchos

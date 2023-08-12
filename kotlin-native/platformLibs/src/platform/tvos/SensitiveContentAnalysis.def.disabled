@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.SensitiveContentAnalysis
+
+modules = SensitiveContentAnalysis
+compilerOpts = -framework SensitiveContentAnalysis
+linkerOpts = -framework SensitiveContentAnalysis
+#Disabled: Not officially available for tvos

@@ -1,0 +1,7 @@
+language = Objective-C
+package = platform.CoreMediaIO
+
+modules = CoreMediaIO
+compilerOpts = -framework CoreMediaIO
+linkerOpts = -framework CoreMediaIO
+#Disabled: Not officially available for tvos

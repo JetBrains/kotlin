@@ -1,0 +1,11 @@
+language = Objective-C
+package = platform.Cinematic
+
+modules.ios_arm32 = Cinematic
+compilerOpts.ios_arm32 = -framework Cinematic
+linkerOpts.ios_arm32 = -framework Cinematic
+
+modules.ios_arm64 = Cinematic
+compilerOpts.ios_arm64 = -framework Cinematic
+linkerOpts.ios_arm64 = -framework Cinematic
+#Disabled: Check that framework is not available for simulators
