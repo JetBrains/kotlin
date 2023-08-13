@@ -269,9 +269,9 @@ val nativeTestsTask = tasks.register<Test>("kgpNativeTests") {
         excludeTags("JvmKGP", "JsKGP", "DaemonsKGP", "OtherKGP", "MppKGP", "AndroidKGP")
         includeEngines("junit-jupiter")
     }
-
+    
     systemProperties["junit.jupiter.execution.parallel.enabled"] = "true"
-    systemProperties["junit.jupiter.execution.parallel.mode.default"] = "concurrent"
+    systemProperties["junit.jupiter.execution.parallel.mode.default"] = "same_thread"
     systemProperties["junit.jupiter.execution.parallel.mode.classes.default"] = "concurrent"
 }
 
