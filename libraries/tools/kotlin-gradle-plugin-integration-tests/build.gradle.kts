@@ -269,10 +269,13 @@ val nativeTestsTask = tasks.register<Test>("kgpNativeTests") {
         excludeTags("JvmKGP", "JsKGP", "DaemonsKGP", "OtherKGP", "MppKGP", "AndroidKGP")
         includeEngines("junit-jupiter")
     }
-    
+
+//    ""
     systemProperties["junit.jupiter.execution.parallel.enabled"] = "true"
-    systemProperties["junit.jupiter.execution.parallel.mode.default"] = "same_thread"
+    systemProperties["junit.jupiter.execution.parallel.mode.default"] = "concurrent"
     systemProperties["junit.jupiter.execution.parallel.mode.classes.default"] = "concurrent"
+    systemProperties["junit.jupiter.execution.parallel.config.strategy"] = "fixed"
+    systemProperties["junit.jupiter.execution.parallel.config.fixed.parallelism"] = "4"
 }
 
 // Daemon tests could run only sequentially as they could not be shared between parallel test builds
