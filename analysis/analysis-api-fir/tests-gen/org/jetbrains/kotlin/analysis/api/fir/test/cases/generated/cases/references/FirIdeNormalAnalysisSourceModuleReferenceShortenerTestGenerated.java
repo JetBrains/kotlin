@@ -245,6 +245,18 @@ public class FirIdeNormalAnalysisSourceModuleReferenceShortenerTestGenerated ext
     }
 
     @Test
+    @TestMetadata("extensionFunction_objectReceiverWithOtherThisInScope.kt")
+    public void testExtensionFunction_objectReceiverWithOtherThisInScope() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/extensionFunction_objectReceiverWithOtherThisInScope.kt");
+    }
+
+    @Test
+    @TestMetadata("extensionProperty_objectReceiverWithOtherThisInScope.kt")
+    public void testExtensionProperty_objectReceiverWithOtherThisInScope() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/extensionProperty_objectReceiverWithOtherThisInScope.kt");
+    }
+
+    @Test
     @TestMetadata("kdoc.kt")
     public void testKdoc() throws Exception {
         runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/kdoc.kt");

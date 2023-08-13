@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerContextProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.AllCandidatesResolver
 import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.declarations.*
@@ -985,6 +984,9 @@ private class ElementsToShortenCollector(
     }
 
     private fun processPropertyAccess(firPropertyAccess: FirPropertyAccessExpression) {
+        // if explicit receiver is a property access or a function call, we cannot shorten it
+        if (!canBePossibleToDropReceiver(firPropertyAccess)) return
+
         val propertyReferenceExpression = firPropertyAccess.correspondingNameReference ?: return
         if (!propertyReferenceExpression.textRange.intersects(selection)) return
 
@@ -996,10 +998,6 @@ private class ElementsToShortenCollector(
 
         val scopes = shorteningContext.findScopesAtPosition(qualifiedProperty, getNamesToImport(), towerContextProvider) ?: return
         val availableCallables = shorteningContext.findPropertiesInScopes(scopes, propertySymbol.name)
-
-        // if explicit receiver is a property access or a function call, we cannot shorten it
-        if (firPropertyAccess.explicitReceiver !is FirResolvedQualifier) return
-
         if (availableCallables.isNotEmpty() && shortenIfAlreadyImported(firPropertyAccess, propertySymbol, qualifiedProperty)) {
             addElementToShorten(ShortenQualifier(qualifiedProperty))
             return
@@ -1100,15 +1098,12 @@ private class ElementsToShortenCollector(
         callToShorten?.let(::addElementToShorten)
     }
 
-    private fun canBePossibleToDropReceiver(functionCall: FirFunctionCall): Boolean {
+    private fun canBePossibleToDropReceiver(qualifiedAccess: FirQualifiedAccessExpression): Boolean {
         // we can remove receiver only if it is a qualifier
-        val explicitReceiver = functionCall.explicitReceiver as? FirResolvedQualifier ?: return false
+        if (qualifiedAccess.explicitReceiver !is FirResolvedQualifier) return false
 
         // if there is no extension receiver necessary, then it can be removed
-        if (functionCall.extensionReceiver is FirNoReceiverExpression) return true
-
-        val receiverType = shorteningContext.getRegularClass(explicitReceiver.typeRef) ?: return true
-        return receiverType.classKind != ClassKind.OBJECT
+        return qualifiedAccess.extensionReceiver is FirNoReceiverExpression
     }
 
     private fun findUnambiguousReferencedCallableId(namedReference: FirNamedReference): FirCallableSymbol<*>? {
