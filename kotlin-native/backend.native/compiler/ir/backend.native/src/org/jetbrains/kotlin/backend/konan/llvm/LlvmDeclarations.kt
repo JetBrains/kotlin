@@ -420,10 +420,3 @@ internal sealed class KonanMetadata(override val name: Name?, val konanLibrary: 
     class StaticField(irField: IrField, val llvm: StaticFieldLlvmDeclarations) : Declaration<IrField>(irField)
 }
 
-private class CodegenStaticFieldMetadata(
-        name: Name?,
-        konanLibrary: KotlinLibrary?,
-        val llvm: StaticFieldLlvmDeclarations
-) : KonanMetadata(name, konanLibrary), MetadataSource.Property {
-    override val isConst = false
-}
