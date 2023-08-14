@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -594,7 +595,7 @@ internal class KonanIrLinker(
                 else DeserializationStrategy.ON_DEMAND
             }, klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT, containsErrorCode
     ) {
-        override val moduleFragment: IrModuleFragment = KonanIrModuleFragmentImpl(moduleDescriptor, builtIns)
+        override val moduleFragment: IrModuleFragment = IrModuleFragmentImpl(moduleDescriptor, builtIns)
 
         val files by lazy { fileDeserializationStates.map { it.file } }
 
@@ -1091,7 +1092,7 @@ internal class KonanIrLinker(
 
         override fun deserializedSymbolNotFound(idSig: IdSignature): Nothing = error("No descriptor found for $idSig")
 
-        override val moduleFragment: IrModuleFragment = KonanIrModuleFragmentImpl(moduleDescriptor, builtIns)
+        override val moduleFragment: IrModuleFragment = IrModuleFragmentImpl(moduleDescriptor, builtIns)
         override val moduleDependencies: Collection<IrModuleDeserializer> = listOfNotNull(forwardDeclarationDeserializer)
 
         override val kind get() = IrModuleDeserializerKind.DESERIALIZED
@@ -1143,7 +1144,7 @@ internal class KonanIrLinker(
 
         override fun deserializedSymbolNotFound(idSig: IdSignature): Nothing = error("No descriptor found for $idSig")
 
-        override val moduleFragment: IrModuleFragment = KonanIrModuleFragmentImpl(moduleDescriptor, builtIns)
+        override val moduleFragment: IrModuleFragment = IrModuleFragmentImpl(moduleDescriptor, builtIns)
         override val moduleDependencies: Collection<IrModuleDeserializer> = emptyList()
 
         override val kind get() = IrModuleDeserializerKind.SYNTHETIC
@@ -1162,34 +1163,7 @@ internal class KonanIrLinker(
         }
 }
 
-class KonanIrModuleFragmentImpl(
-        override val descriptor: ModuleDescriptor,
-        override val irBuiltins: IrBuiltIns,
-        files: List<IrFile> = emptyList(),
-) : IrModuleFragment() {
-    override val name: Name get() = descriptor.name // TODO
-
-    override val files: MutableList<IrFile> = files.toMutableList()
-
-    val konanLibrary = (descriptor.klibModuleOrigin as? DeserializedKlibModuleOrigin)?.library
-
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-            visitor.visitModuleFragment(this, data)
-
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        files.forEach { it.accept(visitor, data) }
-    }
-
-    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        files.forEachIndexed { i, irFile ->
-            files[i] = irFile.transform(transformer, data)
-        }
-    }
-}
-
-fun IrModuleFragment.toKonanModule() = KonanIrModuleFragmentImpl(descriptor, irBuiltins, files)
-
-class KonanFileMetadataSource(val module: KonanIrModuleFragmentImpl) : MetadataSource.File {
+class KonanFileMetadataSource(val module: IrModuleFragment) : MetadataSource.File {
     override val name: Name? = null
     override var serializedIr: ByteArray? = null
 }

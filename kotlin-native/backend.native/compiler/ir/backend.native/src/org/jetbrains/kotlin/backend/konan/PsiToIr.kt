@@ -216,7 +216,7 @@ internal fun PsiToIrContext.psiToIr(
             environment.getSourceFiles(),
             irProviders = listOf(irDeserializer),
             linkerExtensions = pluginExtensions,
-    ).toKonanModule()
+    )
 
     irDeserializer.postProcess(inOrAfterLinkageStep = true)
 
@@ -250,7 +250,7 @@ internal fun PsiToIrContext.psiToIr(
 
     mainModule.files.forEach { it.metadata = KonanFileMetadataSource(mainModule) }
     modules.values.forEach { module ->
-        module.files.forEach { it.metadata = KonanFileMetadataSource(module as KonanIrModuleFragmentImpl) }
+        module.files.forEach { it.metadata = KonanFileMetadataSource(module) }
     }
 
     return if (isProducingLibrary) {
