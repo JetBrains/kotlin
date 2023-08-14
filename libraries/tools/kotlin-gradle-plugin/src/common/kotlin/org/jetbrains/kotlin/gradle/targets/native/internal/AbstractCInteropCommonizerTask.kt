@@ -23,8 +23,6 @@ import java.io.File
 internal abstract class AbstractCInteropCommonizerTask : DefaultTask(), UsesBuildMetricsService {
     @get:OutputDirectory
     abstract val outputDirectory: File
-
-    internal abstract suspend fun findInteropsGroup(dependent: CInteropCommonizerDependent): CInteropCommonizerGroup?
 }
 
 internal fun AbstractCInteropCommonizerTask.outputDirectory(group: CInteropCommonizerGroup): File {
@@ -48,7 +46,7 @@ internal fun AbstractCInteropCommonizerTask.commonizedOutputLibraries(dependent:
 }
 
 internal suspend fun AbstractCInteropCommonizerTask.commonizedOutputDirectory(dependent: CInteropCommonizerDependent): File? {
-    val group = findInteropsGroup(dependent) ?: return null
+    val group = project.findCInteropCommonizerGroup(dependent) ?: return null
     return CommonizerOutputFileLayout
         .resolveCommonizedDirectory(outputDirectory(group), dependent.target)
 }

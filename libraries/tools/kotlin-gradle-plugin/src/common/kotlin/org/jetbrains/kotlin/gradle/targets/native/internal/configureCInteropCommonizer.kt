@@ -7,18 +7,11 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
+import org.jetbrains.kotlin.commonizer.CommonizerOutputFileLayout
 
 internal suspend fun Project.configureCInteropCommonizer() {
     val interopTask = commonizeCInteropTask() ?: return
-
-    val cinteropGroups = getCInteropGroups()
-    configureCInteropCommonizerConsumableConfigurations(cinteropGroups, interopTask)
-
-    interopTask.configure {
-        it.allInteropGroups.complete(cinteropGroups)
-    }
+    configureCInteropCommonizerConsumableConfigurations(kotlinCInteropGroups.await(), interopTask)
 }
 
 private fun Project.configureCInteropCommonizerConsumableConfigurations(
@@ -29,57 +22,14 @@ private fun Project.configureCInteropCommonizerConsumableConfigurations(
         for (sharedCommonizerTargets in commonizerGroup.targets) {
             val configuration = locateOrCreateCommonizedCInteropApiElementsConfiguration(sharedCommonizerTargets)
             val commonizerTargetOutputDir = interopTask.map { task ->
-                task.outputDirectoriesOfCommonizerGroup(commonizerGroup)[sharedCommonizerTargets]
-                    ?: error("Can't find output of Shared Commonizer Target $sharedCommonizerTargets")
+                CommonizerOutputFileLayout.resolveCommonizedDirectory(task.outputDirectory(commonizerGroup), sharedCommonizerTargets)
             }
+
             project.artifacts.add(configuration.name, commonizerTargetOutputDir) { artifact ->
-                artifact.extension = "klib"
-                artifact.type = "klib"
-                artifact.classifier = "cinterop-" + sharedCommonizerTargets.dashedIdentityString()
+                artifact.extension = CInteropCommonizerArtifactTypeAttribute.KLIB_COLLECTION_DIR
+                artifact.type = CInteropCommonizerArtifactTypeAttribute.KLIB_COLLECTION_DIR
                 artifact.builtBy(interopTask)
             }
         }
     }
-}
-
-private suspend fun Project.allCinteropCommonizerDependents(): Set<CInteropCommonizerDependent> {
-    val multiplatformExtension = project.multiplatformExtensionOrNull ?: return emptySet()
-
-    val fromSharedNativeCompilations = multiplatformExtension
-        .targets.flatMap { target -> target.compilations }
-        .filterIsInstance<KotlinSharedNativeCompilation>()
-        .mapNotNull { compilation -> CInteropCommonizerDependent.from(compilation) }
-        .toSet()
-
-    val fromSourceSets = multiplatformExtension.awaitSourceSets()
-        .mapNotNull { sourceSet -> CInteropCommonizerDependent.from(sourceSet) }
-        .toSet()
-
-    val fromSourceSetsAssociateCompilations = multiplatformExtension.awaitSourceSets()
-        .mapNotNull { sourceSet -> CInteropCommonizerDependent.fromAssociateCompilations(sourceSet) }
-        .toSet()
-
-    return (fromSharedNativeCompilations + fromSourceSets + fromSourceSetsAssociateCompilations)
-}
-
-private suspend fun Project.getCInteropGroups(): Set<CInteropCommonizerGroup> {
-    val dependents = allCinteropCommonizerDependents()
-
-    val allScopeSets = dependents.map { it.scopes }.toSet()
-    val rootScopeSets = allScopeSets.filter { scopeSet ->
-        allScopeSets.none { otherScopeSet -> otherScopeSet != scopeSet && otherScopeSet.containsAll(scopeSet) }
-    }
-
-    val result = rootScopeSets.map { scopeSet ->
-        val dependentsForScopes = dependents.filter { dependent ->
-            scopeSet.containsAll(dependent.scopes)
-        }
-
-        CInteropCommonizerGroup(
-            targets = dependentsForScopes.map { it.target }.toSet(),
-            interops = dependentsForScopes.flatMap { it.interops }.toSet()
-        )
-    }.toSet()
-
-    return result
 }
