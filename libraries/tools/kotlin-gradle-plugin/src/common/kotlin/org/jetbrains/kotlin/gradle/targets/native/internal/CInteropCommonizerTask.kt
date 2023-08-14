@@ -91,10 +91,6 @@ internal abstract class CInteropCommonizerTask
 
     override val outputDirectory: File get() = projectLayout.buildDirectory.get().asFile.resolve("classes/kotlin/commonizer")
 
-    internal fun outputDirectoriesOfCommonizerGroup(group: CInteropCommonizerGroup): Map<SharedCommonizerTarget, File> = group
-        .targets
-        .associateWith { target -> CommonizerOutputFileLayout.resolveCommonizedDirectory(outputDirectory, target) }
-
     @get:Internal
     internal val kotlinPluginVersion: Property<String> = objectFactory
         .property<String>()
@@ -214,7 +210,9 @@ internal abstract class CInteropCommonizerTask
 
     private fun commonize(group: CInteropCommonizerGroup) {
         val cinteropsForTarget = cinterops.get().filter { cinterop -> cinterop.identifier in group.interops }
-        outputDirectory(group).deleteRecursively()
+        val outputDirectory = outputDirectory(group)
+        outputDirectory.deleteRecursively()
+        CInteropCommonizerTaskOutputFileMarker.putMarkerInOutputDir(outputDirectory)
         if (cinteropsForTarget.isEmpty()) return
 
         val commonizerRunner = KotlinNativeCommonizerToolRunner(
@@ -228,7 +226,7 @@ internal abstract class CInteropCommonizerTask
             outputTargets = group.targets,
             inputLibraries = cinteropsForTarget.map { it.libraryFile.get() }.filter { it.exists() }.toSet(),
             dependencyLibraries = getCInteropCommonizerGroupDependencies(group),
-            outputDirectory = outputDirectory(group),
+            outputDirectory = outputDirectory,
             logLevel = commonizerLogLevel,
             additionalSettings = additionalCommonizerSettings,
         )
@@ -240,12 +238,13 @@ internal abstract class CInteropCommonizerTask
                 dependencies.files
                     .filter { file -> file.exists() && (file.isDirectory || file.extension == "klib") }
                     .flatMap flatMap2@{ dir ->
-                        // FIXME: dir can be either a klib dir or parent dir of few klib dirs
-                        // FIXME: Find a way to expose exact klib-dirs in consumable configuration
-                        if (!dir.isDirectory) return@flatMap2 listOf(dir)
-                        val subDirs = dir.listFiles().orEmpty().toList()
-                        fun List<File>.isKlibDir() = any { it.isDirectory && it.name == "default" }
-                        if (subDirs.isKlibDir()) return@flatMap2 listOf(dir) else subDirs
+                        // If given directory contains CInteropCommonizerTaskOutputFileMarker then
+                        // return all sub directories as KLIBs.
+                        if (CInteropCommonizerTaskOutputFileMarker.containsMarker(dir)) {
+                            dir?.listFiles().orEmpty().toList()
+                        } else {
+                            listOf(dir)
+                        }
                     }
                     .map { file -> TargetedCommonizerDependency(target, file) }
             }
@@ -287,4 +286,25 @@ private fun CInteropProcess.toGist(): CInteropGist {
         libraryFile = outputFileProvider,
         dependencies = libraries
     )
+}
+
+/**
+ * K/Native commonizer tool can generate multiple Klibs directories in a given target directory "./out"
+ * commonizer -output out/ [other arguments]
+ *    ./out/(ios_x64, ios_arm64)/foo
+ *    ./out/(ios_x64, ios_arm64)/bar
+ * Mark "./out" directory with this file marker to let consumers known when they get "./out/(ios_x64, ios_arm64)/"
+ * that this folder is a container of multiple klibs and one needs list them.
+ */
+private object CInteropCommonizerTaskOutputFileMarker {
+    private const val MARKER_FILE_NAME = ".CInteropCommonizerTaskOutputs"
+    fun putMarkerInOutputDir(outputDir: File) {
+        outputDir.mkdirs()
+        outputDir.resolve(MARKER_FILE_NAME).createNewFile()
+    }
+
+    fun containsMarker(dir: File): Boolean {
+        val parent = dir.parentFile ?: return false
+        return parent.listFiles()?.any { it.name == MARKER_FILE_NAME } == true
+    }
 }

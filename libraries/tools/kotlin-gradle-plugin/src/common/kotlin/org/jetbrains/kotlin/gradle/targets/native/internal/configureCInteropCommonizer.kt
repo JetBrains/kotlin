@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
+import org.jetbrains.kotlin.commonizer.CommonizerOutputFileLayout
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
 
@@ -29,8 +30,7 @@ private fun Project.configureCInteropCommonizerConsumableConfigurations(
         for (sharedCommonizerTargets in commonizerGroup.targets) {
             val configuration = locateOrCreateCommonizedCInteropApiElementsConfiguration(sharedCommonizerTargets)
             val commonizerTargetOutputDir = interopTask.map { task ->
-                task.outputDirectoriesOfCommonizerGroup(commonizerGroup)[sharedCommonizerTargets]
-                    ?: error("Can't find output of Shared Commonizer Target $sharedCommonizerTargets")
+                CommonizerOutputFileLayout.resolveCommonizedDirectory(task.outputDirectory(commonizerGroup), sharedCommonizerTargets)
             }
             project.artifacts.add(configuration.name, commonizerTargetOutputDir) { artifact ->
                 artifact.extension = "klib"
