@@ -2384,6 +2384,7 @@ open class PsiRawFirBuilder(
                         symbol = FirPropertySymbol(name)
                         isLocal = true
                         status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
+                        ktSubjectExpression.extractAnnotationsTo(this)
                     }
                 }
                 else -> null
