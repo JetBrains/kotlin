@@ -105,6 +105,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<CallableId>("callableId")
         }
         val INNER_ON_TOP_LEVEL_SCRIPT_CLASS by deprecationError<PsiElement>(LanguageFeature.ProhibitScriptTopLevelInnerClasses)
+        val ERROR_SUPPRESSION by warning<PsiElement> {
+            parameter<String>("diagnosticName")
+        }
     }
 
     val UNRESOLVED by object : DiagnosticGroup("Unresolved") {

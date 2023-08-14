@@ -232,6 +232,11 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = InnerOnTopLevelScriptClassWarning::class
     }
 
+    interface ErrorSuppression : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = ErrorSuppression::class
+        val diagnosticName: String
+    }
+
     interface InvisibleReference : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = InvisibleReference::class
         val reference: KtSymbol

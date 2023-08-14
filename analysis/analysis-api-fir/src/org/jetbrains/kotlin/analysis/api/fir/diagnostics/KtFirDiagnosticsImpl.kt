@@ -264,6 +264,12 @@ internal class InnerOnTopLevelScriptClassWarningImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.InnerOnTopLevelScriptClassWarning
 
+internal class ErrorSuppressionImpl(
+    override val diagnosticName: String,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.ErrorSuppression
+
 internal class InvisibleReferenceImpl(
     override val reference: KtSymbol,
     override val visible: Visibility,
