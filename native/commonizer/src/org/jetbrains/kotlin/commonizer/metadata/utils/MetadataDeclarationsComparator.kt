@@ -3,8 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("DEPRECATION") // TODO: kotlinx.metadata Flags API. Usage here is too big.
-
 package org.jetbrains.kotlin.commonizer.metadata.utils
 
 import com.intellij.util.containers.FactoryMap
@@ -30,7 +28,7 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.error
 import kotlin.let
 import kotlin.reflect.KProperty
-import kotlin.reflect.KProperty0
+import kotlin.reflect.KProperty1
 
 /**
  * Compares two metadata modules ([KlibModuleMetadata]). Returns [Result], which may hold a list
@@ -519,7 +517,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         classA: KmClass,
         classB: KmClass
     ) {
-        compareFlags(classContext, classA.flags, classB.flags, CLASS_FLAGS)
+        compareFlags(classContext, classA, classB, CLASS_FLAGS)
         compareAnnotationLists(classContext, classA.annotations, classB.annotations)
 
         compareTypeParameterLists(classContext, classA.typeParameters, classB.typeParameters)
@@ -553,7 +551,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         typeAliasA: KmTypeAlias,
         typeAliasB: KmTypeAlias
     ) {
-        compareFlags(typeAliasContext, typeAliasA.flags, typeAliasB.flags, TYPE_ALIAS_FLAGS)
+        compareFlags(typeAliasContext, typeAliasA, typeAliasB, TYPE_ALIAS_FLAGS)
         compareAnnotationLists(typeAliasContext, typeAliasA.annotations, typeAliasB.annotations)
 
         compareTypeParameterLists(typeAliasContext, typeAliasA.typeParameters, typeAliasB.typeParameters)
@@ -580,9 +578,11 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         propertyA: KmProperty,
         propertyB: KmProperty
     ) {
-        compareFlags(propertyContext, propertyA.flags, propertyB.flags, PROPERTY_FLAGS)
-        compareFlags(propertyContext, propertyA.getterFlags, propertyB.getterFlags, PROPERTY_ACCESSOR_FLAGS, FlagKind.GETTER)
-        compareFlags(propertyContext, propertyA.setterFlags, propertyB.setterFlags, PROPERTY_ACCESSOR_FLAGS, FlagKind.SETTER)
+        compareFlags(propertyContext, propertyA, propertyB, PROPERTY_FLAGS)
+        compareFlags(propertyContext, propertyA.getter, propertyB.getter, PROPERTY_ACCESSOR_FLAGS, FlagKind.GETTER)
+        compareValues(propertyContext, propertyA.setter != null, propertyB.setter != null, FlagKind.REGULAR, "hasSetter")
+        if (propertyA.setter != null && propertyB.setter != null)
+            compareFlags(propertyContext, propertyA.setter!!, propertyB.setter!!, PROPERTY_ACCESSOR_FLAGS, FlagKind.SETTER)
 
         compareAnnotationLists(propertyContext, propertyA.annotations, propertyB.annotations)
         compareAnnotationLists(propertyContext, propertyA.getterAnnotations, propertyB.getterAnnotations, AnnotationKind.GETTER)
@@ -623,7 +623,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         functionA: KmFunction,
         functionB: KmFunction
     ) {
-        compareFlags(functionContext, functionA.flags, functionB.flags, FUNCTION_FLAGS)
+        compareFlags(functionContext, functionA, functionB, FUNCTION_FLAGS)
         compareAnnotationLists(functionContext, functionA.annotations, functionB.annotations)
 
         compareTypeParameterLists(functionContext, functionA.typeParameters, functionB.typeParameters)
@@ -683,7 +683,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         constructorA: KmConstructor,
         constructorB: KmConstructor
     ) {
-        compareFlags(constructorContext, constructorA.flags, constructorB.flags, CONSTRUCTOR_FLAGS)
+        compareFlags(constructorContext, constructorA, constructorB, CONSTRUCTOR_FLAGS)
         compareAnnotationLists(constructorContext, constructorA.annotations, constructorB.annotations)
 
         compareValueParameterLists(constructorContext, constructorA.valueParameters, constructorB.valueParameters)
@@ -694,7 +694,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         valueParameterA: KmValueParameter,
         valueParameterB: KmValueParameter
     ) {
-        compareFlags(valueParameterContext, valueParameterA.flags, valueParameterB.flags, VALUE_PARAMETER_FLAGS)
+        compareFlags(valueParameterContext, valueParameterA, valueParameterB, VALUE_PARAMETER_FLAGS)
         compareAnnotationLists(valueParameterContext, valueParameterA.annotations, valueParameterB.annotations)
 
         compareNullableEntities(
@@ -718,7 +718,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         typeA: KmType,
         typeB: KmType
     ) {
-        compareFlags(typeContext, typeA.flags, typeB.flags, TYPE_FLAGS)
+        compareFlags(typeContext, typeA, typeB, TYPE_FLAGS)
         compareAnnotationLists(typeContext, typeA.annotations, typeB.annotations)
 
         compareValues(typeContext, typeA.classifier, typeB.classifier, EntityKind.Classifier)
@@ -787,7 +787,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         typeParameterA: KmTypeParameter,
         typeParameterB: KmTypeParameter
     ) {
-        compareFlags(typeParameterContext, typeParameterA.flags, typeParameterB.flags, TYPE_PARAMETER_FLAGS)
+        compareFlags(typeParameterContext, typeParameterA, typeParameterB, TYPE_PARAMETER_FLAGS)
         compareAnnotationLists(typeParameterContext, typeParameterA.annotations, typeParameterB.annotations)
 
         compareValues(typeParameterContext, typeParameterA.id, typeParameterB.id, EntityKind.TypeParameterId)
@@ -803,7 +803,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         effectExpressionA: KmEffectExpression,
         effectExpressionB: KmEffectExpression
     ) {
-        compareFlags(effectExpressionContext, effectExpressionA.flags, effectExpressionB.flags, EFFECT_EXPRESSION_FLAGS)
+        compareFlags(effectExpressionContext, effectExpressionA, effectExpressionB, EFFECT_EXPRESSION_FLAGS)
         compareNullableValues(
             containerContext = effectExpressionContext,
             valueA = effectExpressionA.parameterIndex,
@@ -972,16 +972,16 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         }
     }
 
-    private fun compareFlags(
+    private fun <T> compareFlags(
         containerContext: Context,
-        flagsA: Int,
-        flagsB: Int,
-        flagsToCompare: Array<KProperty0<Flag>>,
+        flagsA: T,
+        flagsB: T,
+        flagsToCompare: Array<out KProperty1<T, Any>>,
         flagKind: FlagKind = FlagKind.REGULAR
     ) {
         for (flag in flagsToCompare) {
-            val valueA = flag.get()(flagsA)
-            val valueB = flag.get()(flagsB)
+            val valueA = flag.get(flagsA)
+            val valueB = flag.get(flagsB)
 
             compareValues(containerContext, valueA, valueB, flagKind, flag.name)
         }
@@ -994,119 +994,90 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
             config: Config = Config.Default
         ): Result = MetadataDeclarationsComparator(config).compareModules(metadataA, metadataB)
 
-        private val VISIBILITY_FLAGS: Array<KProperty0<Flag>> = arrayOf(
-            Flag.Common::IS_INTERNAL,
-            Flag.Common::IS_PRIVATE,
-            Flag.Common::IS_PROTECTED,
-            Flag.Common::IS_PUBLIC,
-            Flag.Common::IS_PRIVATE_TO_THIS,
-            Flag.Common::IS_LOCAL
+        private val CLASS_FLAGS: Array<KProperty1<KmClass, Any>> = arrayOf(
+            KmClass::hasAnnotations,
+            KmClass::visibility,
+            KmClass::modality,
+            KmClass::kind,
+            KmClass::isInner,
+            KmClass::isData,
+            KmClass::isExternal,
+            KmClass::isExpect,
+            KmClass::isValue,
+            KmClass::isFunInterface,
+            KmClass::hasEnumEntries
         )
 
-        private val MODALITY_FLAGS: Array<KProperty0<Flag>> = arrayOf(
-            Flag.Common::IS_FINAL,
-            Flag.Common::IS_OPEN,
-            Flag.Common::IS_ABSTRACT,
-            Flag.Common::IS_SEALED
+        private val TYPE_ALIAS_FLAGS: Array<KProperty1<KmTypeAlias, Any>> = arrayOf(
+            KmTypeAlias::hasAnnotations,
+            KmTypeAlias::visibility
         )
 
-        private val CLASS_FLAGS: Array<KProperty0<Flag>> = arrayOf(
-            Flag.Common::HAS_ANNOTATIONS,
-            *VISIBILITY_FLAGS,
-            *MODALITY_FLAGS,
-            Flag.Class::IS_CLASS,
-            Flag.Class::IS_INTERFACE,
-            Flag.Class::IS_ENUM_CLASS,
-            Flag.Class::IS_ENUM_ENTRY,
-            Flag.Class::IS_ANNOTATION_CLASS,
-            Flag.Class::IS_OBJECT,
-            Flag.Class::IS_COMPANION_OBJECT,
-            Flag.Class::IS_INNER,
-            Flag.Class::IS_DATA,
-            Flag.Class::IS_EXTERNAL,
-            Flag.Class::IS_EXPECT,
-            Flag.Class::IS_VALUE,
-            Flag.Class::IS_FUN,
-            Flag.Class::HAS_ENUM_ENTRIES,
+        private val CONSTRUCTOR_FLAGS: Array<KProperty1<KmConstructor, Any>> = arrayOf(
+            KmConstructor::hasAnnotations,
+            KmConstructor::visibility,
+            KmConstructor::isSecondary,
+            KmConstructor::hasNonStableParameterNames
         )
 
-        private val TYPE_ALIAS_FLAGS: Array<KProperty0<Flag>> = arrayOf(
-            Flag.Common::HAS_ANNOTATIONS,
-            *VISIBILITY_FLAGS
+        private val FUNCTION_FLAGS: Array<KProperty1<KmFunction, Any>> = arrayOf(
+            KmFunction::hasAnnotations,
+            KmFunction::visibility,
+            KmFunction::modality,
+            KmFunction::kind,
+            KmFunction::isOperator,
+            KmFunction::isInfix,
+            KmFunction::isInline,
+            KmFunction::isTailrec,
+            KmFunction::isExternal,
+            KmFunction::isSuspend,
+            KmFunction::isExpect,
+            KmFunction::hasNonStableParameterNames
         )
 
-        private val CONSTRUCTOR_FLAGS: Array<KProperty0<Flag>> = arrayOf(
-            Flag.Common::HAS_ANNOTATIONS,
-            *VISIBILITY_FLAGS,
-            Flag.Constructor::IS_SECONDARY,
-            Flag.Constructor::HAS_NON_STABLE_PARAMETER_NAMES
+        private val PROPERTY_FLAGS: Array<KProperty1<KmProperty, Any>> = arrayOf(
+            KmProperty::hasAnnotations,
+            KmProperty::visibility,
+            KmProperty::modality,
+            KmProperty::kind,
+            KmProperty::isVar,
+            KmProperty::isConst,
+            KmProperty::isLateinit,
+            KmProperty::hasConstant,
+            KmProperty::isExternal,
+            KmProperty::isDelegated,
+            KmProperty::isExpect
         )
 
-        private val FUNCTION_FLAGS: Array<KProperty0<Flag>> = arrayOf(
-            Flag.Common::HAS_ANNOTATIONS,
-            *VISIBILITY_FLAGS,
-            *MODALITY_FLAGS,
-            Flag.Function::IS_DECLARATION,
-            Flag.Function::IS_FAKE_OVERRIDE,
-            Flag.Function::IS_DELEGATION,
-            Flag.Function::IS_SYNTHESIZED,
-            Flag.Function::IS_OPERATOR,
-            Flag.Function::IS_INFIX,
-            Flag.Function::IS_INLINE,
-            Flag.Function::IS_TAILREC,
-            Flag.Function::IS_EXTERNAL,
-            Flag.Function::IS_SUSPEND,
-            Flag.Function::IS_EXPECT,
-            Flag.Function::HAS_NON_STABLE_PARAMETER_NAMES
+        private val PROPERTY_ACCESSOR_FLAGS: Array<KProperty1<KmPropertyAccessorAttributes, Any>> = arrayOf(
+            KmPropertyAccessorAttributes::hasAnnotations,
+            KmPropertyAccessorAttributes::visibility,
+            KmPropertyAccessorAttributes::modality,
+            KmPropertyAccessorAttributes::isNotDefault,
+            KmPropertyAccessorAttributes::isExternal,
+            KmPropertyAccessorAttributes::isInline
         )
 
-        private val PROPERTY_FLAGS: Array<KProperty0<Flag>> = arrayOf(
-            Flag.Common::HAS_ANNOTATIONS,
-            *VISIBILITY_FLAGS,
-            *MODALITY_FLAGS,
-            Flag.Property::IS_DECLARATION,
-            Flag.Property::IS_FAKE_OVERRIDE,
-            Flag.Property::IS_DELEGATION,
-            Flag.Property::IS_SYNTHESIZED,
-            Flag.Property::IS_VAR,
-            Flag.Property::HAS_GETTER,
-            Flag.Property::HAS_SETTER,
-            Flag.Property::IS_CONST,
-            Flag.Property::IS_LATEINIT,
-            Flag.Property::HAS_CONSTANT,
-            Flag.Property::IS_EXTERNAL,
-            Flag.Property::IS_DELEGATED,
-            Flag.Property::IS_EXPECT
+        private val TYPE_FLAGS: Array<KProperty1<KmType, Boolean>> = arrayOf(
+            KmType::isNullable,
+            KmType::isSuspend,
         )
 
-        private val PROPERTY_ACCESSOR_FLAGS: Array<KProperty0<Flag>> = arrayOf(
-            Flag.Common::HAS_ANNOTATIONS,
-            *VISIBILITY_FLAGS,
-            *MODALITY_FLAGS,
-            Flag.PropertyAccessor::IS_NOT_DEFAULT,
-            Flag.PropertyAccessor::IS_EXTERNAL,
-            Flag.PropertyAccessor::IS_INLINE
+        private val TYPE_PARAMETER_FLAGS: Array<KProperty1<KmTypeParameter, Boolean>> = arrayOf(
+            KmTypeParameter::isReified
         )
 
-        private val TYPE_FLAGS: Array<KProperty0<Flag>> = arrayOf(
-            Flag.Type::IS_NULLABLE,
-            Flag.Type::IS_SUSPEND
+        private val VALUE_PARAMETER_FLAGS: Array<KProperty1<KmValueParameter, Boolean>> = arrayOf(
+            KmValueParameter::hasAnnotations,
+            KmValueParameter::declaresDefaultValue,
+            KmValueParameter::isCrossinline,
+            KmValueParameter::isNoinline
         )
 
-        private val TYPE_PARAMETER_FLAGS: Array<KProperty0<Flag>> = arrayOf(
-            Flag.TypeParameter::IS_REIFIED
-        )
-
-        private val VALUE_PARAMETER_FLAGS: Array<KProperty0<Flag>> = arrayOf(
-            Flag.Common::HAS_ANNOTATIONS,
-            Flag.ValueParameter::DECLARES_DEFAULT_VALUE,
-            Flag.ValueParameter::IS_CROSSINLINE,
-            Flag.ValueParameter::IS_NOINLINE
-        )
-
-        private val EFFECT_EXPRESSION_FLAGS: Array<KProperty0<Flag>> = arrayOf(
-            Flag.EffectExpression::IS_NEGATED,
-            Flag.EffectExpression::IS_NULL_CHECK_PREDICATE
+        @ExperimentalContracts
+        private val EFFECT_EXPRESSION_FLAGS: Array<KProperty1<KmEffectExpression, Boolean>> = arrayOf(
+            KmEffectExpression::isNegated,
+            KmEffectExpression::isNullCheckPredicate
         )
 
         /**
