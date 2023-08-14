@@ -1,0 +1,4 @@
+FILE: boolean_logic.kt
+    public final fun negation(x: R|kotlin/Boolean|): R|kotlin/Unit| {
+        lval y: R|kotlin/Boolean| = R|<local>/x|.R|kotlin/Boolean.not|()
+    }

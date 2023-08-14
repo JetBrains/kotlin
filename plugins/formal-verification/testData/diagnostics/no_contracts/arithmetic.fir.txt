@@ -1,0 +1,13 @@
+FILE: arithmetic.kt
+    public final fun addition(x: R|kotlin/Int|): R|kotlin/Unit| {
+        lval y: R|kotlin/Int| = R|<local>/x|.R|kotlin/Int.plus|(R|<local>/x|)
+    }
+    public final fun subtraction(x: R|kotlin/Int|): R|kotlin/Unit| {
+        lval y: R|kotlin/Int| = R|<local>/x|.R|kotlin/Int.minus|(R|<local>/x|)
+    }
+    public final fun multiplication(x: R|kotlin/Int|): R|kotlin/Unit| {
+        lval y: R|kotlin/Int| = R|<local>/x|.R|kotlin/Int.times|(R|<local>/x|)
+    }
+    public final fun division(x: R|kotlin/Int|): R|kotlin/Unit| {
+        lval y: R|kotlin/Int| = R|<local>/x|.R|kotlin/Int.div|(R|<local>/x|)
+    }

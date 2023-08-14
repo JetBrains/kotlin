@@ -115,23 +115,32 @@ class StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
 
     override fun visitFunctionCall(functionCall: FirFunctionCall, data: StmtConversionContext): Exp {
         val id = functionCall.calleeReference.toResolvedCallableSymbol()!!.callableId
-        // TODO: figure out a more structured way of doing this
-        if (id.packageName.asString() == "kotlin.contracts" && id.callableName.asString() == "contract") return UnitDomain.element
-        return when (functionCall.dispatchReceiver) {
-            is FirNoReceiverExpression -> {
-                val symbol = functionCall.calleeReference.resolved!!.resolvedSymbol as FirNamedFunctionSymbol
-                val calleeSig = data.add(symbol)
-                val args = functionCall.argumentList.arguments.map {
-                    it.accept(this, data)
-                }
-                val returnVar = data.newAnonVar(calleeSig.returnType)
-                val returnExp = returnVar.toLocalVar()
-                data.addDeclaration(returnVar.toLocalVarDecl())
-                data.addStatement(Stmt.MethodCall(calleeSig.name.asString, args, listOf(returnExp)))
-                returnExp
-            }
-            else -> TODO("Implement function call visitation with receiver")
+        val specialFunc = SpecialFunctions.byCallableId[id]
+        val getArgs = { getFunctionCallArguments(functionCall).map { it.accept(this, data) } }
+        if (specialFunc != null) {
+            if (specialFunc !is SpecialFunctionImplementation) return UnitDomain.element
+            return specialFunc.convertCall(getArgs(), data)
         }
+
+        val args = getArgs()
+        val symbol = functionCall.calleeReference.resolved!!.resolvedSymbol as FirNamedFunctionSymbol
+        val calleeSig = data.add(symbol)
+        val returnVar = data.newAnonVar(calleeSig.returnType)
+        val returnExp = returnVar.toLocalVar()
+        data.addDeclaration(returnVar.toLocalVarDecl())
+        data.addStatement(Stmt.MethodCall(calleeSig.name.asString, args, listOf(returnExp)))
+        return returnExp
+    }
+
+    private fun getFunctionCallArguments(functionCall: FirFunctionCall): List<FirExpression> {
+        // I'm sure there's a nicer and more functional way of writing this, feel free to
+        // refactor if you know how. :)
+        val receiver = if (functionCall.dispatchReceiver !is FirNoReceiverExpression) {
+            listOf(functionCall.dispatchReceiver)
+        } else {
+            emptyList()
+        }
+        return receiver + functionCall.argumentList.arguments
     }
 
     override fun visitProperty(property: FirProperty, data: StmtConversionContext): Exp {

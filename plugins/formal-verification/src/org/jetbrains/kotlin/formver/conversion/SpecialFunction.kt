@@ -1,0 +1,76 @@
+/*
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.formver.conversion
+
+import org.jetbrains.kotlin.formver.scala.silicon.ast.Exp
+import org.jetbrains.kotlin.formver.scala.silicon.ast.Exp.*
+import org.jetbrains.kotlin.formver.scala.silicon.ast.Stmt
+import org.jetbrains.kotlin.formver.scala.toScalaBigInt
+import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+
+interface SpecialFunction {
+    // We use strings here instead of FqNames as a lightweight approximation; perhaps
+    // we'll need to rethink this down the line.
+    val callableId: CallableId
+}
+
+object KotlinContractFunction : SpecialFunction {
+    override val callableId = CallableId(FqName.fromSegments(listOf("kotlin", "contracts")), null, Name.identifier("contract"))
+}
+
+interface SpecialFunctionImplementation : SpecialFunction {
+    fun convertCall(args: List<Exp>, ctx: StmtConversionContext): Exp
+}
+
+object KotlinIntPlusFunctionImplementation : SpecialFunctionImplementation {
+    override val callableId = CallableId(FqName("kotlin"), FqName("Int"), Name.identifier("plus"))
+
+    override fun convertCall(args: List<Exp>, ctx: StmtConversionContext): Exp =
+        Add(args[0], args[1])
+}
+
+object KotlinIntMinusFunctionImplementation : SpecialFunctionImplementation {
+    override val callableId = CallableId(FqName("kotlin"), FqName("Int"), Name.identifier("minus"))
+
+    override fun convertCall(args: List<Exp>, ctx: StmtConversionContext): Exp =
+        Sub(args[0], args[1])
+}
+
+object KotlinIntTimesFunctionImplementation : SpecialFunctionImplementation {
+    override val callableId = CallableId(FqName("kotlin"), FqName("Int"), Name.identifier("times"))
+
+    override fun convertCall(args: List<Exp>, ctx: StmtConversionContext): Exp =
+        Mul(args[0], args[1])
+}
+
+object KotlinIntDivFunctionImplementation : SpecialFunctionImplementation {
+    override val callableId = CallableId(FqName("kotlin"), FqName("Int"), Name.identifier("div"))
+
+    override fun convertCall(args: List<Exp>, ctx: StmtConversionContext): Exp {
+        ctx.addStatement(Stmt.Inhale(NeCmp(args[1], IntLit(0.toScalaBigInt()))))
+        return Div(args[0], args[1])
+    }
+}
+
+object KotlinBooleanNotFunctionImplementation : SpecialFunctionImplementation {
+    override val callableId = CallableId(FqName("kotlin"), FqName("Boolean"), Name.identifier("not"))
+
+    override fun convertCall(args: List<Exp>, ctx: StmtConversionContext): Exp =
+        Not(args[0])
+}
+
+object SpecialFunctions {
+    val byCallableId = listOf(
+        KotlinContractFunction,
+        KotlinIntPlusFunctionImplementation,
+        KotlinIntMinusFunctionImplementation,
+        KotlinIntTimesFunctionImplementation,
+        KotlinIntDivFunctionImplementation,
+        KotlinBooleanNotFunctionImplementation,
+    ).associateBy { it.callableId }
+}

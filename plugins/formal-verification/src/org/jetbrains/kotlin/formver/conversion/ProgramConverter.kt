@@ -11,7 +11,9 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.formver.scala.emptySeq
 import org.jetbrains.kotlin.formver.scala.seqOf
-import org.jetbrains.kotlin.formver.scala.silicon.ast.*
+import org.jetbrains.kotlin.formver.scala.silicon.ast.Info
+import org.jetbrains.kotlin.formver.scala.silicon.ast.Position
+import org.jetbrains.kotlin.formver.scala.silicon.ast.Trafos
 import org.jetbrains.kotlin.formver.scala.toScalaSeq
 import viper.silver.ast.Program
 

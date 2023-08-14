@@ -1,0 +1,44 @@
+/arithmetic.kt:(4,12): info: domain unit$  {
+
+  unique function unit$element(): unit$
+}
+
+method global$pkg_$addition(local$x: Int) returns (ret$: unit$)
+{
+  var local$y: Int
+  local$y := local$x + local$x
+}
+
+/arithmetic.kt:(47,58): info: domain unit$  {
+
+  unique function unit$element(): unit$
+}
+
+method global$pkg_$subtraction(local$x: Int) returns (ret$: unit$)
+{
+  var local$y: Int
+  local$y := local$x - local$x
+}
+
+/arithmetic.kt:(93,107): info: domain unit$  {
+
+  unique function unit$element(): unit$
+}
+
+method global$pkg_$multiplication(local$x: Int) returns (ret$: unit$)
+{
+  var local$y: Int
+  local$y := local$x * local$x
+}
+
+/arithmetic.kt:(142,150): info: domain unit$  {
+
+  unique function unit$element(): unit$
+}
+
+method global$pkg_$division(local$x: Int) returns (ret$: unit$)
+{
+  var local$y: Int
+  inhale local$x != 0
+  local$y := local$x / local$x
+}

@@ -173,6 +173,16 @@ sealed class Exp : IntoViper<viper.silver.ast.Exp> {
         override fun toViper(): viper.silver.ast.Exp =
             Implies(left.toViper(), right.toViper(), pos.toViper(), info.toViper(), trafos.toViper())
     }
+
+    data class Not(
+        val arg: Exp,
+        val pos: Position = Position.NoPosition,
+        val info: Info = Info.NoInfo,
+        val trafos: Trafos = Trafos.NoTrafos,
+    ) : Exp() {
+        override fun toViper(): viper.silver.ast.Exp =
+            Not(arg.toViper(), pos.toViper(), info.toViper(), trafos.toViper())
+    }
     //endregion
 
     data class IntLit(

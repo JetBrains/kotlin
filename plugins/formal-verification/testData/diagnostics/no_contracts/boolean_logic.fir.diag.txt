@@ -1,0 +1,10 @@
+/boolean_logic.kt:(4,12): info: domain unit$  {
+
+  unique function unit$element(): unit$
+}
+
+method global$pkg_$negation(local$x: Bool) returns (ret$: unit$)
+{
+  var local$y: Bool
+  local$y := !local$x
+}
