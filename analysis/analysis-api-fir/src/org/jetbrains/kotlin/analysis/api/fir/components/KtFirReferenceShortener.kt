@@ -973,7 +973,7 @@ private class ElementsToShortenCollector(
         val scopes = shorteningContext.findScopesAtPosition(qualifiedProperty, getNamesToImport(), towerContextProvider) ?: return
         val availableCallables = shorteningContext.findPropertiesInScopes(scopes, callableSymbol.name)
 
-        val firPropertyAccess = qualifiedProperty.getCorrespondingPropertyAccessExpression() ?: return
+        val firPropertyAccess = qualifiedProperty.getOrBuildFir(firResolveSession) as? FirQualifiedAccessExpression ?: return
 
         // if explicit receiver is a property access or a function call, we cannot shorten it
         if (firPropertyAccess.explicitReceiver !is FirResolvedQualifier) return
@@ -990,15 +990,6 @@ private class ElementsToShortenCollector(
             qualifiedProperty,
             availableCallables,
         )
-    }
-
-    private fun KtDotQualifiedExpression.getCorrespondingPropertyAccessExpression(): FirPropertyAccessExpression? {
-        val accessExpression = when (val fir = getOrBuildFir(firResolveSession)) {
-            is FirVariableAssignment -> fir.unwrapLValue()
-            else -> fir
-        }
-
-        return accessExpression as? FirPropertyAccessExpression
     }
 
     private fun processFunctionCall(functionCall: FirFunctionCall) {

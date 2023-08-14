@@ -1,7 +1,0 @@
-Before shortening: dependency.foo = 20
-with DO_NOT_SHORTEN:
-with SHORTEN_IF_ALREADY_IMPORTED:
-with SHORTEN_AND_IMPORT:
-[qualifier] dependency.foo
-with SHORTEN_AND_STAR_IMPORT:
-[qualifier] dependency.foo
