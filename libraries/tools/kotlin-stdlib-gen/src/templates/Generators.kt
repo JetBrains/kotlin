@@ -93,7 +93,7 @@ object Generators : TemplateGroupBase() {
             doc { "Returns a sequence containing all elements of the original sequence and then the given [element]." }
             body {
                 """
-                return sequenceOf(this, sequenceOf(element)).flatten()
+                val seq = this; return sequence { yieldAll(seq); yield(element) }
                 """
             }
         }
@@ -160,7 +160,7 @@ object Generators : TemplateGroupBase() {
             sequenceClassification(intermediate, stateless)
             body {
                 """
-                return sequenceOf(this, elements.asSequence()).flatten()
+                val seq = this; return sequence { yieldAll(seq); yieldAll(elements) }
                 """
             }
         }
@@ -286,7 +286,7 @@ object Generators : TemplateGroupBase() {
             sequenceClassification(intermediate, stateless)
             body {
                 """
-                return sequenceOf(this, elements).flatten()
+                val seq = this; return sequence { yieldAll(seq); yieldAll(elements) }
                 """
             }
         }
