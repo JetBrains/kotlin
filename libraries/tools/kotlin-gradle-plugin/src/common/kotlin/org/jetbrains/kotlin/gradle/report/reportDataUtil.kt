@@ -11,8 +11,8 @@ import org.gradle.tooling.events.task.TaskSkippedResult
 import org.gradle.tooling.events.task.TaskSuccessResult
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.statistics.StatTag
+import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.gradle.report.data.BuildOperationRecord
-import org.jetbrains.kotlin.incremental.ChangedFiles
 import java.util.concurrent.TimeUnit
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.report.data.GradleCompileStatisticsData
@@ -71,8 +71,8 @@ internal fun prepareData(
         buildMetrics, startTime, System.currentTimeMillis()
     )
     val buildAttributes = collectBuildAttributes(buildMetrics)
-    val changes = if (buildOperationRecord is TaskRecord && buildOperationRecord.changedFiles is ChangedFiles.Known) {
-        buildOperationRecord.changedFiles.modified.map { it.absolutePath } + buildOperationRecord.changedFiles.removed.map { it.absolutePath }
+    val changes = if (buildOperationRecord is TaskRecord && buildOperationRecord.changedFiles is SourcesChanges.Known) {
+        buildOperationRecord.changedFiles.modifiedFiles.map { it.absolutePath } + buildOperationRecord.changedFiles.removedFiles.map { it.absolutePath }
     } else {
         emptyList<String>()
     }

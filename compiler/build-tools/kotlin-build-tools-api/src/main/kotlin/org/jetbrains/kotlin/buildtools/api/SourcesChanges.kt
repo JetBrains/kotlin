@@ -6,12 +6,12 @@
 package org.jetbrains.kotlin.buildtools.api
 
 import java.io.File
+import java.io.Serializable
 
 /**
  * A hierarchy representing source files changes for incremental compilation
  */
-@ExperimentalBuildToolsApi
-public sealed interface SourcesChanges {
+public sealed interface SourcesChanges : Serializable {
     /**
      * A marker object stating that the API consumer cannot calculate changes (either because it's an initial build or for some other reason).
      * The Build Tools API will not enable its source file changes detector in this mode, expecting the API consumer to provide file changes as [Known] for the consequent builds.

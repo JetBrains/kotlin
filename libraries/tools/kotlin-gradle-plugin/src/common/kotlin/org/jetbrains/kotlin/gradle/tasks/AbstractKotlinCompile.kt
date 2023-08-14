@@ -15,6 +15,7 @@ import org.gradle.api.tasks.*
 import org.gradle.work.*
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.build.report.metrics.*
+import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.CompilerExecutionSettings
@@ -37,7 +38,6 @@ import org.jetbrains.kotlin.gradle.plugin.internal.UsesBuildIdProviderService
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.report.*
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.incremental.IncrementalCompilerRunner
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
@@ -332,7 +332,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
         inputChanges: InputChanges,
         incrementalProps: List<FileCollection>
     ) = if (!inputChanges.isIncremental) {
-        ChangedFiles.Unknown()
+        SourcesChanges.Unknown
     } else {
         incrementalProps
             .fold(mutableListOf<File>() to mutableListOf<File>()) { (modified, removed), prop ->
@@ -346,7 +346,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
                 modified to removed
             }
             .run {
-                ChangedFiles.Known(first, second)
+                SourcesChanges.Known(first, second)
             }
     }
 
