@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.compilerRunner
 
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.containers.Stack
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -43,7 +42,7 @@ object CompilerOutputParser {
             @Throws(IOException::class)
             override fun read(cbuf: CharArray, off: Int, len: Int): Int {
                 val read = reader.read(cbuf, off, len)
-                stringBuilder.append(cbuf, off, len)
+                stringBuilder.appendRange(cbuf, off, off + len)
                 return read
             }
 
@@ -68,7 +67,7 @@ object CompilerOutputParser {
             // Load all the text into the stringBuilder
             try {
                 // This will not close the reader (see the wrapper above)
-                FileUtil.loadTextAndClose(wrappingReader)
+                wrappingReader.readText()
             } catch (ioException: IOException) {
                 reportException(messageCollector, ioException)
             }
