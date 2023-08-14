@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.konan.descriptors.allOverriddenFunctions
 import org.jetbrains.kotlin.backend.konan.descriptors.isFromInteropLibrary
 import org.jetbrains.kotlin.backend.konan.descriptors.isInteropLibrary
 import org.jetbrains.kotlin.backend.konan.llvm.KonanMetadata
-import org.jetbrains.kotlin.backend.konan.serialization.KonanFileMetadataSource
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -99,13 +98,14 @@ private fun IrClass.getOverridingOf(function: IrFunction) = (function as? IrSimp
 }
 
 val ModuleDescriptor.konanLibrary get() = (this.klibModuleOrigin as? DeserializedKlibModuleOrigin)?.library
-val IrModuleFragment.konanLibrary get() = descriptor.konanLibrary
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-val IrPackageFragment.konanLibrary : KotlinLibrary?
+val IrPackageFragment.konanLibrary: KotlinLibrary?
     get() {
         if (this is IrFile) {
-            (metadata as? KonanFileMetadataSource)?.module?.konanLibrary?.let { return it }
+            val fileMetadata = metadata as? DescriptorMetadataSource.File
+            val moduleDescriptor = fileMetadata?.descriptors?.singleOrNull() as? ModuleDescriptor
+            moduleDescriptor?.konanLibrary?.let { return it }
         }
         return this.packageFragmentDescriptor.containingDeclaration.konanLibrary
     }

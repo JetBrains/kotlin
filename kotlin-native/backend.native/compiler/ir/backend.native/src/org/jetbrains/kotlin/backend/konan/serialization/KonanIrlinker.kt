@@ -1162,8 +1162,3 @@ internal class KonanIrLinker(
                     }
         }
 }
-
-class KonanFileMetadataSource(val module: IrModuleFragment) : MetadataSource.File {
-    override val name: Name? = null
-    override var serializedIr: ByteArray? = null
-}
