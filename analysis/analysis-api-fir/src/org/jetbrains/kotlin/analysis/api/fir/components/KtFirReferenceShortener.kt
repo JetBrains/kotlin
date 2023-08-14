@@ -401,16 +401,16 @@ private class ElementsToShortenCollector(
         processTypeQualifier(errorResolvedQualifier)
     }
 
+    override fun visitResolvedNamedReference(resolvedNamedReference: FirResolvedNamedReference) {
+        super.visitResolvedNamedReference(resolvedNamedReference)
+
+        processPropertyReference(resolvedNamedReference)
+    }
+
     override fun visitFunctionCall(functionCall: FirFunctionCall) {
         super.visitFunctionCall(functionCall)
 
         processFunctionCall(functionCall)
-    }
-
-    override fun visitPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression) {
-        super.visitPropertyAccessExpression(propertyAccessExpression)
-
-        processPropertyAccess(propertyAccessExpression)
     }
 
     private fun processTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
@@ -960,38 +960,46 @@ private class ElementsToShortenCollector(
         return false
     }
 
-    private fun processPropertyAccess(firPropertyAccess: FirPropertyAccessExpression) {
-        val propertyReferenceExpression = (firPropertyAccess.psi as? KtDotQualifiedExpression)?.selectorExpression as? KtNameReferenceExpression ?: return
-        if (!propertyReferenceExpression.textRange.intersects(selection)) return
+    private fun processPropertyReference(resolvedNamedReference: FirResolvedNamedReference) {
+        val referenceExpression = resolvedNamedReference.psi as? KtNameReferenceExpression ?: return
+        if (!referenceExpression.textRange.intersects(selection)) return
+        val qualifiedProperty = referenceExpression.getDotQualifiedExpressionForSelector() ?: return
 
-        val qualifiedProperty = propertyReferenceExpression.getQualifiedElement() as? KtDotQualifiedExpression ?: return
-        val propertySymbol = firPropertyAccess.referencedSymbol ?: return
+        val callableSymbol = resolvedNamedReference.resolvedSymbol as? FirCallableSymbol<*> ?: return
 
-        val option = callableShortenOption(propertySymbol)
+        val option = callableShortenOption(callableSymbol)
         if (option == ShortenOption.DO_NOT_SHORTEN) return
 
         val scopes = shorteningContext.findScopesAtPosition(qualifiedProperty, getNamesToImport(), towerContextProvider) ?: return
-        val availableCallables = shorteningContext.findPropertiesInScopes(scopes, propertySymbol.name)
+        val availableCallables = shorteningContext.findPropertiesInScopes(scopes, callableSymbol.name)
+
+        val firPropertyAccess = qualifiedProperty.getCorrespondingPropertyAccessExpression() ?: return
 
         // if explicit receiver is a property access or a function call, we cannot shorten it
         if (firPropertyAccess.explicitReceiver !is FirResolvedQualifier) return
 
-        if (availableCallables.isNotEmpty() && shortenIfAlreadyImported(firPropertyAccess, propertySymbol, qualifiedProperty)) {
+        if (availableCallables.isNotEmpty() && shortenIfAlreadyImported(firPropertyAccess, callableSymbol, referenceExpression)) {
             addElementToShorten(ShortenQualifier(qualifiedProperty))
             return
         }
         if (option == ShortenOption.SHORTEN_IF_ALREADY_IMPORTED) return
 
         processCallableQualifiedAccess(
-            propertySymbol,
+            callableSymbol,
             option,
             qualifiedProperty,
             availableCallables,
         )
     }
 
-    private val FirPropertyAccessExpression.referencedSymbol: FirVariableSymbol<*>?
-        get() = (calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirVariableSymbol<*>
+    private fun KtDotQualifiedExpression.getCorrespondingPropertyAccessExpression(): FirPropertyAccessExpression? {
+        val accessExpression = when (val fir = getOrBuildFir(firResolveSession)) {
+            is FirVariableAssignment -> fir.unwrapLValue()
+            else -> fir
+        }
+
+        return accessExpression as? FirPropertyAccessExpression
+    }
 
     private fun processFunctionCall(functionCall: FirFunctionCall) {
         if (!canBePossibleToDropReceiver(functionCall)) return
