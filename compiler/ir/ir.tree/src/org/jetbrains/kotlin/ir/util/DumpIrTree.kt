@@ -61,6 +61,7 @@ data class DumpIrTreeOptions(
     val printFacadeClassInFqNames: Boolean = true,
     val printFlagsInDeclarationReferences: Boolean = true,
     val printSignatures: Boolean = false,
+    val printTypeAbbreviations: Boolean = true,
 )
 
 private fun IrFile.shouldSkipDump(): Boolean {

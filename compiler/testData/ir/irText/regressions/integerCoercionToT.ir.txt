@@ -86,12 +86,12 @@ FILE fqName:<root> fileName:/integerCoercionToT.kt
       overridden:
         public open fun toString (): kotlin.String declared in <root>.CPointed
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  FUN name:foo visibility:public modality:FINAL <> (value:<root>.IdType, cv:<root>.CInt32VarX<kotlin.Int>{ <root>.CInt32Var }) returnType:kotlin.Unit
+  FUN name:foo visibility:public modality:FINAL <> (value:<root>.IdType, cv:<root>.CInt32VarX<kotlin.Int>) returnType:kotlin.Unit
     VALUE_PARAMETER name:value index:0 type:<root>.IdType
-    VALUE_PARAMETER name:cv index:1 type:<root>.CInt32VarX<kotlin.Int>{ <root>.CInt32Var }
+    VALUE_PARAMETER name:cv index:1 type:<root>.CInt32VarX<kotlin.Int>
     BLOCK_BODY
       CALL 'public final fun <set-value> <T_INT> (value: T_INT of <root>.<set-value>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
         <T_INT>: kotlin.Int
-        $receiver: GET_VAR 'cv: <root>.CInt32VarX<kotlin.Int>{ <root>.CInt32Var } declared in <root>.foo' type=<root>.CInt32VarX<kotlin.Int>{ <root>.CInt32Var } origin=null
+        $receiver: GET_VAR 'cv: <root>.CInt32VarX<kotlin.Int> declared in <root>.foo' type=<root>.CInt32VarX<kotlin.Int> origin=null
         value: CALL 'public final fun <get-value> (): kotlin.Int declared in <root>.IdType' type=kotlin.Int origin=GET_PROPERTY
           $this: GET_VAR 'value: <root>.IdType declared in <root>.foo' type=<root>.IdType origin=null

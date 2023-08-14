@@ -3,20 +3,20 @@ FILE fqName:a fileName:/a.kt
   TYPEALIAS name:A visibility:public expandedType:kotlin.String
 Module: b
 FILE fqName:b fileName:/b.kt
-  FUN name:foo visibility:public modality:FINAL <> (f:kotlin.Function0<kotlin.String{ a.A }>) returnType:kotlin.String{ a.A }
-    VALUE_PARAMETER name:f index:0 type:kotlin.Function0<kotlin.String{ a.A }>
+  FUN name:foo visibility:public modality:FINAL <> (f:kotlin.Function0<kotlin.String>) returnType:kotlin.String
+    VALUE_PARAMETER name:f index:0 type:kotlin.Function0<kotlin.String>
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun foo (f: kotlin.Function0<kotlin.String{ a.A }>): kotlin.String{ a.A } declared in b'
-        CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.String{ a.A } origin=INVOKE
-          $this: GET_VAR 'f: kotlin.Function0<kotlin.String{ a.A }> declared in b.foo' type=kotlin.Function0<kotlin.String{ a.A }> origin=VARIABLE_AS_FUNCTION
+      RETURN type=kotlin.Nothing from='public final fun foo (f: kotlin.Function0<kotlin.String>): kotlin.String declared in b'
+        CALL 'public abstract fun invoke (): R of kotlin.Function0 declared in kotlin.Function0' type=kotlin.String origin=INVOKE
+          $this: GET_VAR 'f: kotlin.Function0<kotlin.String> declared in b.foo' type=kotlin.Function0<kotlin.String> origin=VARIABLE_AS_FUNCTION
 Module: c
 FILE fqName:<root> fileName:/c.kt
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
-        CALL 'public final fun foo (f: kotlin.Function0<kotlin.String{ a.A }>): kotlin.String{ a.A } declared in b' type=kotlin.String{ a.A } origin=null
-          f: FUN_EXPR type=kotlin.Function0<kotlin.String{ a.A }> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.String{ a.A }
+        CALL 'public final fun foo (f: kotlin.Function0<kotlin.String>): kotlin.String declared in b' type=kotlin.String origin=null
+          f: FUN_EXPR type=kotlin.Function0<kotlin.String> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.String
               BLOCK_BODY
-                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String{ a.A } declared in <root>.box'
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String declared in <root>.box'
                   CONST String type=kotlin.String value="OK"

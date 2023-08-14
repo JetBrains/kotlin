@@ -12,8 +12,8 @@ FILE fqName:<root> fileName:/kt48806.kt
             try: BLOCK type=kotlin.Nothing origin=null
               THROW type=kotlin.Nothing
                 CONSTRUCTOR_CALL 'public constructor <init> () declared in java.lang.RuntimeException' type=java.lang.RuntimeException origin=null
-            CATCH parameter=val e: java.lang.Exception{ kotlin.Exception } declared in <root>.A.test_1
-              VAR CATCH_PARAMETER name:e type:java.lang.Exception{ kotlin.Exception } [val]
+            CATCH parameter=val e: java.lang.Exception declared in <root>.A.test_1
+              VAR CATCH_PARAMETER name:e type:java.lang.Exception [val]
               BLOCK type=kotlin.Int origin=null
                 CONST Int type=kotlin.Int value=1
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test_1> visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.Int
@@ -29,8 +29,8 @@ FILE fqName:<root> fileName:/kt48806.kt
           TRY type=kotlin.Int
             try: BLOCK type=kotlin.Int origin=null
               CONST Int type=kotlin.Int value=1
-            CATCH parameter=val e: java.lang.Exception{ kotlin.Exception } declared in <root>.A.test_2
-              VAR CATCH_PARAMETER name:e type:java.lang.Exception{ kotlin.Exception } [val]
+            CATCH parameter=val e: java.lang.Exception declared in <root>.A.test_2
+              VAR CATCH_PARAMETER name:e type:java.lang.Exception [val]
               BLOCK type=kotlin.Nothing origin=null
                 THROW type=kotlin.Nothing
                   CONSTRUCTOR_CALL 'public constructor <init> () declared in java.lang.RuntimeException' type=java.lang.RuntimeException origin=null

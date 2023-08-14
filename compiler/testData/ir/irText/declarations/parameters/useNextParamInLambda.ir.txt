@@ -27,8 +27,8 @@ FILE fqName:<root> fileName:/useNextParamInLambda.kt
         try: BLOCK type=kotlin.Unit origin=null
           TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
             CALL 'public final fun f (f1: kotlin.Function0<kotlin.String>, f2: kotlin.Function0<kotlin.String>): kotlin.String declared in <root>' type=kotlin.String origin=null
-        CATCH parameter=val e: java.lang.Exception{ kotlin.Exception } declared in <root>.box
-          VAR CATCH_PARAMETER name:e type:java.lang.Exception{ kotlin.Exception } [val]
+        CATCH parameter=val e: java.lang.Exception declared in <root>.box
+          VAR CATCH_PARAMETER name:e type:java.lang.Exception [val]
           BLOCK type=kotlin.Unit origin=null
             SET_VAR 'var result: kotlin.String declared in <root>.box' type=kotlin.Unit origin=EQ
               CONST String type=kotlin.String value="OK"

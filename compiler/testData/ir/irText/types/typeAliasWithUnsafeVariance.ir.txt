@@ -4,39 +4,39 @@ FILE fqName:<root> fileName:/typeAliasWithUnsafeVariance.kt
   CLASS CLASS name:Tag modality:FINAL visibility:public [data] superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Tag<RenderingT of <root>.Tag>
     TYPE_PARAMETER name:RenderingT index:0 variance:out superTypes:[kotlin.Any?] reified:false
-    CONSTRUCTOR visibility:public <> (action:kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit>{ <root>.Action<RenderingT of <root>.Tag> }) returnType:<root>.Tag<RenderingT of <root>.Tag> [primary]
-      VALUE_PARAMETER name:action index:0 type:kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit>{ <root>.Action<RenderingT of <root>.Tag> }
+    CONSTRUCTOR visibility:public <> (action:kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit>) returnType:<root>.Tag<RenderingT of <root>.Tag> [primary]
+      VALUE_PARAMETER name:action index:0 type:kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit>
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Tag modality:FINAL visibility:public [data] superTypes:[kotlin.Any]'
     PROPERTY name:action visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:action type:kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit>{ <root>.Action<RenderingT of <root>.Tag> } visibility:private [final]
+      FIELD PROPERTY_BACKING_FIELD name:action type:kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit> visibility:private [final]
         EXPRESSION_BODY
-          GET_VAR 'action: kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit>{ <root>.Action<RenderingT of <root>.Tag> } declared in <root>.Tag.<init>' type=kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit>{ <root>.Action<RenderingT of <root>.Tag> } origin=INITIALIZE_PROPERTY_FROM_PARAMETER
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-action> visibility:public modality:FINAL <> ($this:<root>.Tag<RenderingT of <root>.Tag>) returnType:kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit>{ <root>.Action<RenderingT of <root>.Tag> }
+          GET_VAR 'action: kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit> declared in <root>.Tag.<init>' type=kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-action> visibility:public modality:FINAL <> ($this:<root>.Tag<RenderingT of <root>.Tag>) returnType:kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit>
         correspondingProperty: PROPERTY name:action visibility:public modality:FINAL [val]
         $this: VALUE_PARAMETER name:<this> type:<root>.Tag<RenderingT of <root>.Tag>
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-action> (): kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit>{ <root>.Action<RenderingT of <root>.Tag> } declared in <root>.Tag'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:action type:kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit>{ <root>.Action<RenderingT of <root>.Tag> } visibility:private [final]' type=kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit>{ <root>.Action<RenderingT of <root>.Tag> } origin=null
+          RETURN type=kotlin.Nothing from='public final fun <get-action> (): kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit> declared in <root>.Tag'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:action type:kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit> visibility:private [final]' type=kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit> origin=null
               receiver: GET_VAR '<this>: <root>.Tag<RenderingT of <root>.Tag> declared in <root>.Tag.<get-action>' type=<root>.Tag<RenderingT of <root>.Tag> origin=null
-    FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.Tag<RenderingT of <root>.Tag>) returnType:kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit>{ <root>.Action<RenderingT of <root>.Tag> } [operator]
+    FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.Tag<RenderingT of <root>.Tag>) returnType:kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit> [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.Tag<RenderingT of <root>.Tag>
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit>{ <root>.Action<RenderingT of <root>.Tag> } declared in <root>.Tag'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:action type:kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit>{ <root>.Action<RenderingT of <root>.Tag> } visibility:private [final]' type=kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit>{ <root>.Action<RenderingT of <root>.Tag> } origin=null
+        RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit> declared in <root>.Tag'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:action type:kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit> visibility:private [final]' type=kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit> origin=null
             receiver: GET_VAR '<this>: <root>.Tag<RenderingT of <root>.Tag> declared in <root>.Tag.component1' type=<root>.Tag<RenderingT of <root>.Tag> origin=null
-    FUN GENERATED_DATA_CLASS_MEMBER name:copy visibility:public modality:FINAL <> ($this:<root>.Tag<RenderingT of <root>.Tag>, action:kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit>{ <root>.Action<RenderingT of <root>.Tag> }) returnType:<root>.Tag<RenderingT of <root>.Tag>
+    FUN GENERATED_DATA_CLASS_MEMBER name:copy visibility:public modality:FINAL <> ($this:<root>.Tag<RenderingT of <root>.Tag>, action:kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit>) returnType:<root>.Tag<RenderingT of <root>.Tag>
       $this: VALUE_PARAMETER name:<this> type:<root>.Tag<RenderingT of <root>.Tag>
-      VALUE_PARAMETER name:action index:0 type:kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit>{ <root>.Action<RenderingT of <root>.Tag> }
+      VALUE_PARAMETER name:action index:0 type:kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit>
         EXPRESSION_BODY
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:action type:kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit>{ <root>.Action<RenderingT of <root>.Tag> } visibility:private [final]' type=kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit>{ <root>.Action<RenderingT of <root>.Tag> } origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:action type:kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit> visibility:private [final]' type=kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit> origin=null
             receiver: GET_VAR '<this>: <root>.Tag<RenderingT of <root>.Tag> declared in <root>.Tag.copy' type=<root>.Tag<RenderingT of <root>.Tag> origin=null
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun copy (action: kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit>{ <root>.Action<RenderingT of <root>.Tag> }): <root>.Tag<RenderingT of <root>.Tag> declared in <root>.Tag'
-          CONSTRUCTOR_CALL 'public constructor <init> (action: kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit>{ <root>.Action<RenderingT of <root>.Tag> }) declared in <root>.Tag' type=<root>.Tag<RenderingT of <root>.Tag> origin=null
+        RETURN type=kotlin.Nothing from='public final fun copy (action: kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit>): <root>.Tag<RenderingT of <root>.Tag> declared in <root>.Tag'
+          CONSTRUCTOR_CALL 'public constructor <init> (action: kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit>) declared in <root>.Tag' type=<root>.Tag<RenderingT of <root>.Tag> origin=null
             <class: RenderingT>: RenderingT of <root>.Tag
-            action: GET_VAR 'action: kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit>{ <root>.Action<RenderingT of <root>.Tag> } declared in <root>.Tag.copy' type=kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit>{ <root>.Action<RenderingT of <root>.Tag> } origin=null
+            action: GET_VAR 'action: kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit> declared in <root>.Tag.copy' type=kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit> origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.Tag<RenderingT of <root>.Tag>) returnType:kotlin.String
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
@@ -46,7 +46,7 @@ FILE fqName:<root> fileName:/typeAliasWithUnsafeVariance.kt
           STRING_CONCATENATION type=kotlin.String
             CONST String type=kotlin.String value="Tag("
             CONST String type=kotlin.String value="action="
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:action type:kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit>{ <root>.Action<RenderingT of <root>.Tag> } visibility:private [final]' type=kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit>{ <root>.Action<RenderingT of <root>.Tag> } origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:action type:kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit> visibility:private [final]' type=kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit> origin=null
               receiver: GET_VAR '<this>: <root>.Tag<RenderingT of <root>.Tag> declared in <root>.Tag.toString' type=<root>.Tag<RenderingT of <root>.Tag> origin=null
             CONST String type=kotlin.String value=")"
     FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.Tag<RenderingT of <root>.Tag>) returnType:kotlin.Int
@@ -56,7 +56,7 @@ FILE fqName:<root> fileName:/typeAliasWithUnsafeVariance.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.Tag'
           CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Function1' type=kotlin.Int origin=null
-            $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:action type:kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit>{ <root>.Action<RenderingT of <root>.Tag> } visibility:private [final]' type=kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit>{ <root>.Action<RenderingT of <root>.Tag> } origin=null
+            $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:action type:kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit> visibility:private [final]' type=kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit> origin=null
               receiver: GET_VAR '<this>: <root>.Tag<RenderingT of <root>.Tag> declared in <root>.Tag.hashCode' type=<root>.Tag<RenderingT of <root>.Tag> origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.Tag<RenderingT of <root>.Tag>, other:kotlin.Any?) returnType:kotlin.Boolean [operator]
       overridden:
@@ -84,9 +84,9 @@ FILE fqName:<root> fileName:/typeAliasWithUnsafeVariance.kt
           BRANCH
             if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
               $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-                arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:action type:kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit>{ <root>.Action<RenderingT of <root>.Tag> } visibility:private [final]' type=kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit>{ <root>.Action<RenderingT of <root>.Tag> } origin=null
+                arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:action type:kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit> visibility:private [final]' type=kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit> origin=null
                   receiver: GET_VAR '<this>: <root>.Tag<RenderingT of <root>.Tag> declared in <root>.Tag.equals' type=<root>.Tag<RenderingT of <root>.Tag> origin=null
-                arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:action type:kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit>{ <root>.Action<RenderingT of <root>.Tag> } visibility:private [final]' type=kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit>{ <root>.Action<RenderingT of <root>.Tag> } origin=null
+                arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:action type:kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit> visibility:private [final]' type=kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit> origin=null
                   receiver: GET_VAR 'val tmp_0: <root>.Tag<RenderingT of <root>.Tag> declared in <root>.Tag.equals' type=<root>.Tag<RenderingT of <root>.Tag> origin=null
             then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Tag'
               CONST Boolean type=kotlin.Boolean value=false
@@ -99,5 +99,5 @@ FILE fqName:<root> fileName:/typeAliasWithUnsafeVariance.kt
   FUN name:doAction visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        CALL 'public final fun <get-action> (): kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit>{ <root>.Action<RenderingT of <root>.Tag> } declared in <root>.Tag' type=kotlin.Function1<kotlin.Any?, kotlin.Unit>{ <root>.Action<kotlin.Any?> } origin=GET_PROPERTY
+        CALL 'public final fun <get-action> (): kotlin.Function1<@[UnsafeVariance] RenderingT of <root>.Tag, kotlin.Unit> declared in <root>.Tag' type=kotlin.Function1<kotlin.Any?, kotlin.Unit> origin=GET_PROPERTY
           $this: CALL 'public final fun getTag (): <root>.Tag<*> declared in <root>' type=<root>.Tag<*> origin=null

@@ -123,16 +123,16 @@ FILE fqName:<root> fileName:/ClashResolutionDescriptor.kt
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   PROPERTY name:registrationMap visibility:private modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:registrationMap type:java.util.HashMap<java.lang.reflect.Type, kotlin.Any>{ kotlin.collections.HashMap<java.lang.reflect.Type, kotlin.Any> } visibility:private [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:registrationMap type:java.util.HashMap<java.lang.reflect.Type, kotlin.Any> visibility:private [final,static]
       EXPRESSION_BODY
-        CALL 'public final fun hashMapOf <K, V> (): java.util.HashMap<K of kotlin.collections.hashMapOf, V of kotlin.collections.hashMapOf>{ kotlin.collections.HashMap<K of kotlin.collections.hashMapOf, V of kotlin.collections.hashMapOf> } declared in kotlin.collections' type=java.util.HashMap<java.lang.reflect.Type, kotlin.Any>{ kotlin.collections.HashMap<java.lang.reflect.Type, kotlin.Any> } origin=null
+        CALL 'public final fun hashMapOf <K, V> (): java.util.HashMap<K of kotlin.collections.hashMapOf, V of kotlin.collections.hashMapOf> declared in kotlin.collections' type=java.util.HashMap<java.lang.reflect.Type, kotlin.Any> origin=null
           <K>: java.lang.reflect.Type
           <V>: kotlin.Any
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-registrationMap> visibility:private modality:FINAL <> () returnType:java.util.HashMap<java.lang.reflect.Type, kotlin.Any>{ kotlin.collections.HashMap<java.lang.reflect.Type, kotlin.Any> }
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-registrationMap> visibility:private modality:FINAL <> () returnType:java.util.HashMap<java.lang.reflect.Type, kotlin.Any>
       correspondingProperty: PROPERTY name:registrationMap visibility:private modality:FINAL [val]
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='private final fun <get-registrationMap> (): java.util.HashMap<java.lang.reflect.Type, kotlin.Any>{ kotlin.collections.HashMap<java.lang.reflect.Type, kotlin.Any> } declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:registrationMap type:java.util.HashMap<java.lang.reflect.Type, kotlin.Any>{ kotlin.collections.HashMap<java.lang.reflect.Type, kotlin.Any> } visibility:private [final,static]' type=java.util.HashMap<java.lang.reflect.Type, kotlin.Any>{ kotlin.collections.HashMap<java.lang.reflect.Type, kotlin.Any> } origin=null
+        RETURN type=kotlin.Nothing from='private final fun <get-registrationMap> (): java.util.HashMap<java.lang.reflect.Type, kotlin.Any> declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:registrationMap type:java.util.HashMap<java.lang.reflect.Type, kotlin.Any> visibility:private [final,static]' type=java.util.HashMap<java.lang.reflect.Type, kotlin.Any> origin=null
   FUN name:resolveClashesIfAny visibility:public modality:FINAL <> (container:<root>.ComponentContainer, clashResolvers:kotlin.collections.List<<root>.PlatformExtensionsClashResolver<*>>) returnType:kotlin.Unit
     VALUE_PARAMETER name:container index:0 type:<root>.ComponentContainer
     VALUE_PARAMETER name:clashResolvers index:1 type:kotlin.collections.List<<root>.PlatformExtensionsClashResolver<*>>
@@ -154,7 +154,7 @@ FILE fqName:<root> fileName:/ClashResolutionDescriptor.kt
                   VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.collections.Collection<<root>.ComponentDescriptor>? [val]
                     TYPE_OP type=kotlin.collections.Collection<<root>.ComponentDescriptor>? origin=SAFE_CAST typeOperand=kotlin.collections.Collection<<root>.ComponentDescriptor>
                       CALL 'public open fun get (key: @[EnhancedNullability] K of java.util.HashMap): @[EnhancedNullability] V of java.util.HashMap? declared in java.util.HashMap' type=@[EnhancedNullability] kotlin.Any? origin=GET_ARRAY_ELEMENT
-                        $this: CALL 'private final fun <get-registrationMap> (): java.util.HashMap<java.lang.reflect.Type, kotlin.Any>{ kotlin.collections.HashMap<java.lang.reflect.Type, kotlin.Any> } declared in <root>' type=java.util.HashMap<java.lang.reflect.Type, kotlin.Any>{ kotlin.collections.HashMap<java.lang.reflect.Type, kotlin.Any> } origin=GET_PROPERTY
+                        $this: CALL 'private final fun <get-registrationMap> (): java.util.HashMap<java.lang.reflect.Type, kotlin.Any> declared in <root>' type=java.util.HashMap<java.lang.reflect.Type, kotlin.Any> origin=GET_PROPERTY
                         key: CALL 'public final fun <get-applicableTo> (): java.lang.Class<E of <root>.PlatformExtensionsClashResolver> declared in <root>.PlatformExtensionsClashResolver' type=java.lang.Class<out <root>.PlatformSpecificExtension<*>> origin=GET_PROPERTY
                           $this: GET_VAR 'val resolver: <root>.PlatformExtensionsClashResolver<*> declared in <root>.resolveClashesIfAny' type=<root>.PlatformExtensionsClashResolver<*> origin=null
                   WHEN type=kotlin.collections.Collection<<root>.ComponentDescriptor> origin=null
