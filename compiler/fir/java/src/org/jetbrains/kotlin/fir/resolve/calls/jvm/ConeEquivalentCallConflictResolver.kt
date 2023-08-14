@@ -13,17 +13,19 @@ import org.jetbrains.kotlin.fir.resolve.calls.AbstractConeCallConflictResolver
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.scopes.impl.FirStandardOverrideChecker
-import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
-import org.jetbrains.kotlin.resolve.calls.results.FlatSignature
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
-import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
-// This conflict resolver filters JVM equivalent top-level functions
-// like emptyArray() from intrinsics and built-ins
+/**
+ * Resolver that filters out equivalent calls, mainly to deduplicate multiples of the same declaration coming from different versions
+ * of the same dependency, e.g., multiple stdlibs.
+ *
+ * Currently, it will also consider a declaration from source and one from binary equivalent if all conditions are met for backward
+ * compatibility with K1.
+ */
 class ConeEquivalentCallConflictResolver(
     specificityComparator: TypeSpecificityComparator,
     inferenceComponents: InferenceComponents,
-    transformerComponents: BodyResolveComponents
+    transformerComponents: BodyResolveComponents,
 ) : AbstractConeCallConflictResolver(
     specificityComparator,
     inferenceComponents,
@@ -38,8 +40,13 @@ class ConeEquivalentCallConflictResolver(
     }
 
     private fun filterOutEquivalentCalls(candidates: Collection<Candidate>): Set<Candidate> {
+        // Since we can consider a declaration from source and one from binary equivalent, we need to make sure we favor the one from
+        // source, otherwise we might get a behavior change to K1.
+        // See org.jetbrains.kotlin.resolve.calls.results.OverloadingConflictResolver.filterOutEquivalentCalls.
+        val fromSourceFirst = candidates.sortedBy { it.symbol.fir.source == null }
+
         val result = mutableSetOf<Candidate>()
-        outerLoop@ for (myCandidate in candidates) {
+        outerLoop@ for (myCandidate in fromSourceFirst) {
             val me = myCandidate.symbol.fir
             if (me is FirCallableDeclaration && me.symbol.containingClassLookupTag() == null) {
                 for (otherCandidate in result) {
@@ -63,6 +70,11 @@ class ConeEquivalentCallConflictResolver(
         secondCandidate: Candidate
     ): Boolean {
         if (first.symbol.callableId != second.symbol.callableId) return false
+        // Emulate behavior from K1 where declarations from the same module are never equivalent.
+        // We expect REDECLARATION or CONFLICTING_OVERLOADS to be reported in those cases.
+        // See a.containingDeclaration == b.containingDeclaration check in
+        // org.jetbrains.kotlin.resolve.DescriptorEquivalenceForOverrides.areCallableDescriptorsEquivalent.
+        if (first.moduleData == second.moduleData) return false
         if (first.isExpect != second.isExpect) return false
         if (first is FirVariable != second is FirVariable) {
             return false
@@ -73,14 +85,15 @@ class ConeEquivalentCallConflictResolver(
 
         val overrideChecker = FirStandardOverrideChecker(inferenceComponents.session)
         return if (first is FirProperty && second is FirProperty) {
-            overrideChecker.isOverriddenProperty(first, second) && overrideChecker.isOverriddenProperty(second, first)
+            overrideChecker.isOverriddenProperty(first, second, ignoreVisibility = true) &&
+                    overrideChecker.isOverriddenProperty(second, first, ignoreVisibility = true)
         } else if (first is FirSimpleFunction && second is FirSimpleFunction) {
-            overrideChecker.isOverriddenFunction(first, second) && overrideChecker.isOverriddenFunction(second, first)
+            overrideChecker.isOverriddenFunction(first, second, ignoreVisibility = true) &&
+                    overrideChecker.isOverriddenFunction(second, first, ignoreVisibility = true)
         } else {
             false
         }
     }
-
 
     /**
      * If the candidate is a function, then the arguments

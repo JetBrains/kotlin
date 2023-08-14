@@ -305,6 +305,16 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         doTestPreReleaseKotlinLibrary(K2JVMCompiler(), "library", tmpdir, "-Xallow-unstable-dependencies", "-Xskip-prerelease-check")
     }
 
+    // KT-61051 K1/K2 difference on extension functions with specific extension receiver types when compiling code that has itself as a dependency
+    fun testDependencyOnItself() {
+        val compiledLibrary = compileLibrary("library")
+        compileKotlin(
+            "library/sample.kt",
+            output = tmpdir,
+            classpath = listOf(compiledLibrary),
+        )
+    }
+
     fun testWrongMetadataVersion() {
         doTestKotlinLibraryWithWrongMetadataVersion("library", null)
     }
