@@ -9,14 +9,11 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.*
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.commonizer.CommonizerOutputFileLayout
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinNativeTargetConfigurator.NativeArtifactFormat
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinaliseDsl
-import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.internal.artifactTypeAttribute
-import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
@@ -38,23 +35,6 @@ internal fun createCInteropApiElementsKlibArtifact(
         artifact.type = "klib"
         artifact.classifier = "cinterop-${settings.name}"
         artifact.builtBy(interopTask)
-    }
-}
-
-internal suspend fun Project.createCommonizedCInteropApiElementsKlibArtifact() {
-    // TODO: Find a way to not materialize task. i.e. initialize only outputDirectory and allInteropGroups
-    val interopTask = project.commonizeCInteropTask()?.get() ?: return
-    for (commonizerGroup in interopTask.allInteropGroups.await()) {
-        for (sharedCommonizerTargets in commonizerGroup.targets) {
-            val configuration = locateOrCreateCommonizedCInteropApiElementsConfiguration(sharedCommonizerTargets)
-            val artifactPath = CommonizerOutputFileLayout.resolveCommonizedDirectory(interopTask.outputDirectory(commonizerGroup), sharedCommonizerTargets)
-            project.artifacts.add(configuration.name, artifactPath) { artifact ->
-                artifact.extension = "klib"
-                artifact.type = "klib"
-                artifact.classifier = "cinterop-" + sharedCommonizerTargets.dashedIdentityString()
-                artifact.builtBy(interopTask)
-            }
-        }
     }
 }
 
@@ -162,7 +142,7 @@ private fun cInteropApiElementsConfigurationName(target: KotlinTarget): String {
 /**
  * Same as [org.jetbrains.kotlin.commonizer.identityString] but target segments separated with dash
  */
-private fun SharedCommonizerTarget.dashedIdentityString() = targets.map { it.name }.sorted().joinToString("-")
+internal fun SharedCommonizerTarget.dashedIdentityString() = targets.map { it.name }.sorted().joinToString("-")
 private fun commonizedCInteropApiElementsConfigurationName(commonizerTarget: SharedCommonizerTarget): String {
     return commonizerTarget.dashedIdentityString() + "CInteropApiElements"
 }
