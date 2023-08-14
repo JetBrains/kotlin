@@ -53,6 +53,24 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceShortenerTestGenera
     }
 
     @Test
+    @TestMetadata("anonymousFunction_annotation.kt")
+    public void testAnonymousFunction_annotation() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/anonymousFunction_annotation.kt");
+    }
+
+    @Test
+    @TestMetadata("anonymousFunction_receiverType.kt")
+    public void testAnonymousFunction_receiverType() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/anonymousFunction_receiverType.kt");
+    }
+
+    @Test
+    @TestMetadata("anonymousFunction_returnType.kt")
+    public void testAnonymousFunction_returnType() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/anonymousFunction_returnType.kt");
+    }
+
+    @Test
     @TestMetadata("callInsideScriptExpression.kts")
     public void testCallInsideScriptExpression() throws Exception {
         runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/callInsideScriptExpression.kts");
