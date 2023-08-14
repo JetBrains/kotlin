@@ -65,7 +65,7 @@ public final class org/jetbrains/kotlin/buildtools/api/SharedApiClassesClassLoad
 	public static final fun newInstance ()Ljava/lang/ClassLoader;
 }
 
-public abstract interface class org/jetbrains/kotlin/buildtools/api/SourcesChanges {
+public abstract interface class org/jetbrains/kotlin/buildtools/api/SourcesChanges : java/io/Serializable {
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/SourcesChanges$Known : org/jetbrains/kotlin/buildtools/api/SourcesChanges {
