@@ -51,8 +51,9 @@ class ProgramConverter : ProgramConversionContext {
 
     override fun add(symbol: FirNamedFunctionSymbol): ConvertedMethodSignature {
         val signature = convertSignature(symbol)
+        val contractDescription = symbol.resolvedContractDescription
         methods.getOrPut(signature.name) {
-            MethodConverter(this, signature, null, null)
+            MethodConverter(this, signature, null, contractDescription)
         }
         return signature
     }

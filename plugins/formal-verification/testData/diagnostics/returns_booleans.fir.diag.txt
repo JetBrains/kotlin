@@ -35,3 +35,26 @@ method global$pkg_$conditional(local$a: Bool, local$b: Bool)
 {
   ret$ := true
 }
+
+/returns_booleans.kt:(686,709): info: domain unit$  {
+
+  unique function unit$element(): unit$
+}
+
+method global$pkg_$conditional(local$a: Bool, local$b: Bool)
+  returns (ret$: Bool)
+  ensures ret$ == true ==> true
+  ensures ret$ == false ==> local$b && false
+  ensures ret$ == true ==> (true || local$a) && (local$b || true)
+
+
+method global$pkg_$call_fun_with_contracts(local$b: Bool)
+  returns (ret$: Bool)
+  ensures ret$ == true
+{
+  var anonymous$1: Bool
+  var local$a: Bool
+  anonymous$1 := global$pkg_$conditional(local$b, local$b)
+  local$a := anonymous$1
+  ret$ := local$a
+}

@@ -28,3 +28,12 @@ fun <!VIPER_TEXT!>conditional<!>(a: Boolean, b: Boolean): Boolean {
     }
     return true
 }
+
+@OptIn(ExperimentalContracts::class)
+fun <!VIPER_TEXT!>call_fun_with_contracts<!>(b: Boolean): Boolean {
+    contract {
+        returns(true)
+    }
+    val a = conditional(b, b)
+    return a
+}
