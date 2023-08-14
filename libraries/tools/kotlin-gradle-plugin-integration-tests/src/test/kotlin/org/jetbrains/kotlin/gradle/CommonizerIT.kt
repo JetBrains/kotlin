@@ -168,25 +168,32 @@ open class CommonizerIT : KGPBaseTest() {
 
     @DisplayName("Commonize Curl Interop copy CommonizeCInterop for Ide")
     @GradleTest
-    fun testCommonizeCurlInteropcopyCommonizeCInteropForIde(gradleVersion: GradleVersion) {
+    fun testCommonizeCurlInteropcopyCommonizeCInteropForIde(
+        gradleVersion: GradleVersion,
+        @TempDir tempDir: Path,
+    ) {
         nativeProject("commonizeCurlInterop", gradleVersion) {
 
             configureCommonizerTargets()
 
-            val expectedOutputDirectoryForIde = projectPath.resolve(".kotlin/commonizer")
+            fun expectedOutputDirectoryForIde(): Path = tempDir
+                .resolve("projects-1")
+                .findInPath("commonizer") ?: throw IllegalStateException("Failed to find 'commonizer' directory!")
+
             val expectedOutputDirectoryForBuild = projectPath.resolve("build/classes/kotlin/commonizer")
 
-            build(":copyCommonizeCInteropForIde") {
+            build(":copyCommonizeCInteropForIde", "-Pkotlin.user.home=${tempDir.absolutePathString()}") {
                 assertTasksExecuted(":cinteropCurlTargetB")
                 assertTasksExecuted(":commonizeCInterop")
 
-                assertDirectoryExists(expectedOutputDirectoryForIde, "Missing output directory for IDE")
+                val commonizerIdeOutput = expectedOutputDirectoryForIde()
+                assertDirectoryExists(commonizerIdeOutput, "Missing output directory for IDE")
                 assertDirectoryExists(expectedOutputDirectoryForBuild, "Missing output directory for build")
-                assertEqualDirectories(expectedOutputDirectoryForBuild.toFile(), expectedOutputDirectoryForIde.toFile(), false)
+                assertEqualDirectories(expectedOutputDirectoryForBuild.toFile(), commonizerIdeOutput.toFile(), false)
             }
 
-            build(":clean") {
-                assertDirectoryExists(expectedOutputDirectoryForIde, "Expected ide output directory to survive cleaning")
+            build(":clean", "-Pkotlin.user.home=${tempDir.absolutePathString()}") {
+                assertDirectoryExists(expectedOutputDirectoryForIde(), "Expected ide output directory to survive cleaning")
                 assertFileNotExists(expectedOutputDirectoryForBuild, "Expected output directory for build to be cleaned")
             }
         }
@@ -535,23 +542,28 @@ open class CommonizerIT : KGPBaseTest() {
 
     @DisplayName("KT-58223 test commonized libraries for IDE can be stored in different data dir")
     @GradleTest
-    fun testCommonizedLibrariesForIDECanBeStoredInDifferentDir(gradleVersion: GradleVersion) {
+    fun testCommonizedLibrariesForIDECanBeStoredInDifferentDir(
+        gradleVersion: GradleVersion,
+        @TempDir tempDir: Path,
+    ) {
         nativeProject("commonizeCurlInterop", gradleVersion) {
-            gradleProperties.append("kotlin.persistent.gradle.data.dir=.kotlin_custom")
+            gradleProperties.append("kotlin.persistent.gradle.data.dir=${tempDir.absolutePathString()}")
 
             configureCommonizerTargets()
 
-            val expectedOutputDirectoryForIde = projectPath.resolve(".kotlin_custom/commonizer")
+            fun expectedOutputDirectoryForIde(): Path = tempDir
+                .resolve("projects-1")
+                .findInPath("commonizer") ?: throw IllegalStateException("Failed to find 'commonizer' directory!")
 
             build(":copyCommonizeCInteropForIde") {
                 assertTasksExecuted(":cinteropCurlTargetB")
                 assertTasksExecuted(":commonizeCInterop")
 
-                assertDirectoryExists(expectedOutputDirectoryForIde, "Missing output directory for IDE")
+                assertDirectoryExists(expectedOutputDirectoryForIde(), "Missing output directory for IDE")
             }
 
             build(":clean") {
-                assertDirectoryExists(expectedOutputDirectoryForIde, "Expected ide output directory to survive cleaning")
+                assertDirectoryExists(expectedOutputDirectoryForIde(), "Expected ide output directory to survive cleaning")
             }
         }
     }

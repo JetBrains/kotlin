@@ -15,8 +15,8 @@ import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.compilerRunner.addBuildMetricsForTaskAction
 import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
+import org.jetbrains.kotlin.gradle.utils.kotlinMetadataDir
 import org.jetbrains.kotlin.gradle.utils.property
-import org.jetbrains.kotlin.gradle.plugin.mpp.kotlinGradleDataDirCompat
 import java.io.File
 import javax.inject.Inject
 
@@ -33,8 +33,7 @@ internal abstract class CopyCommonizeCInteropForIdeTask @Inject constructor(
         commonizeCInteropTask.map { it.allOutputDirectories }
 
     @get:OutputDirectory
-    override val outputDirectory: File = project.rootDir
-        .resolve(project.kotlinGradleDataDirCompat)
+    override val outputDirectory: File = project.kotlinMetadataDir
         .resolve("commonizer")
         .resolve(project.path.removePrefix(":").replace(":", "/"))
 
