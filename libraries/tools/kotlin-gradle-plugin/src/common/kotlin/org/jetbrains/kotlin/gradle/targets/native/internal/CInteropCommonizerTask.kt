@@ -42,7 +42,7 @@ internal abstract class CInteropCommonizerTask
 @Inject constructor(
     private val objectFactory: ObjectFactory,
     private val execOperations: ExecOperations,
-    private val projectLayout: ProjectLayout
+    private val projectLayout: ProjectLayout,
 ) : AbstractCInteropCommonizerTask() {
 
     internal class CInteropGist(
@@ -54,7 +54,7 @@ internal abstract class CInteropCommonizerTask
         val libraryFile: Provider<File>,
 
         @get:Classpath
-        val dependencies: FileCollection
+        val dependencies: FileCollection,
     ) {
         @Suppress("unused") // Used for UP-TO-DATE check
         @get:Input
@@ -91,10 +91,6 @@ internal abstract class CInteropCommonizerTask
 
     override val outputDirectory: File get() = projectLayout.buildDirectory.get().asFile.resolve("classes/kotlin/commonizer")
 
-    internal fun outputDirectoriesOfCommonizerGroup(group: CInteropCommonizerGroup): Map<SharedCommonizerTarget, File> = group
-        .targets
-        .associateWith { target -> CommonizerOutputFileLayout.resolveCommonizedDirectory(outputDirectory, target) }
-
     @get:Internal
     internal val kotlinPluginVersion: Property<String> = objectFactory
         .property<String>()
@@ -123,7 +119,7 @@ internal abstract class CInteropCommonizerTask
 
     data class CInteropCommonizerDependencies(
         val commonizerTarget: CommonizerTarget,
-        val dependencies: FileCollection
+        val dependencies: FileCollection,
     )
 
     /**
@@ -135,7 +131,7 @@ internal abstract class CInteropCommonizerTask
 
         val sourceSetsByTarget = multiplatformExtension.sourceSets.groupBy { sourceSet -> sourceSet.commonizerTarget.getOrThrow() }
         val sourceSetsByGroup = multiplatformExtension.sourceSets.groupBy { sourceSet ->
-            CInteropCommonizerDependent.from(sourceSet)?.let { findInteropsGroup(it) }
+            CInteropCommonizerDependent.from(sourceSet)?.let { findCInteropCommonizerGroup(it) }
         }
 
         allInteropGroups.await().associateWith { group ->
@@ -158,19 +154,7 @@ internal abstract class CInteropCommonizerTask
                             will provide the same dependencies (since cinterops are just based upon KonanTarget)
                              */
                             .take(1)
-                            .map { sourceSet ->
-                                val configuration = project.locateOrCreateCommonizedCInteropDependencyConfiguration(sourceSet)
-                                if (configuration != null) {
-                                    configuration.incoming
-                                        // Lenient is required since not every dependency exposes commonized CInterop KLibs
-                                        // Only Projects with CInterops would expose their commonization results.
-                                        // See: [createCommonizedCInteropApiElementsKlibArtifact]
-                                        .artifactView { it.isLenient = true }
-                                        .files
-                                } else {
-                                    project.files()
-                                }
-                            }
+                            .map { sourceSet -> project.createCommonizedCInteropDependencyConfigurationView(sourceSet) }
                     }
                 }
 
@@ -214,7 +198,8 @@ internal abstract class CInteropCommonizerTask
 
     private fun commonize(group: CInteropCommonizerGroup) {
         val cinteropsForTarget = cinterops.get().filter { cinterop -> cinterop.identifier in group.interops }
-        outputDirectory(group).deleteRecursively()
+        val outputDirectory = outputDirectory(group)
+        outputDirectory.deleteRecursively()
         if (cinteropsForTarget.isEmpty()) return
 
         val commonizerRunner = KotlinNativeCommonizerToolRunner(
@@ -228,7 +213,7 @@ internal abstract class CInteropCommonizerTask
             outputTargets = group.targets,
             inputLibraries = cinteropsForTarget.map { it.libraryFile.get() }.filter { it.exists() }.toSet(),
             dependencyLibraries = getCInteropCommonizerGroupDependencies(group),
-            outputDirectory = outputDirectory(group),
+            outputDirectory = outputDirectory,
             logLevel = commonizerLogLevel,
             additionalSettings = additionalCommonizerSettings,
         )
@@ -239,14 +224,6 @@ internal abstract class CInteropCommonizerTask
             ?.flatMap { (target, dependencies) ->
                 dependencies.files
                     .filter { file -> file.exists() && (file.isDirectory || file.extension == "klib") }
-                    .flatMap flatMap2@{ dir ->
-                        // FIXME: dir can be either a klib dir or parent dir of few klib dirs
-                        // FIXME: Find a way to expose exact klib-dirs in consumable configuration
-                        if (!dir.isDirectory) return@flatMap2 listOf(dir)
-                        val subDirs = dir.listFiles().orEmpty().toList()
-                        fun List<File>.isKlibDir() = any { it.isDirectory && it.name == "default" }
-                        if (subDirs.isKlibDir()) return@flatMap2 listOf(dir) else subDirs
-                    }
                     .map { file -> TargetedCommonizerDependency(target, file) }
             }
             ?.toSet()
@@ -256,23 +233,11 @@ internal abstract class CInteropCommonizerTask
     }
 
     @get:Internal
-    internal val allInteropGroups: CompletableFuture<Set<CInteropCommonizerGroup>> = CompletableFuture()
+    internal val allInteropGroups: Future<Set<CInteropCommonizerGroup>> = project.kotlinCInteropGroups
 
-    @get:Nested
+    @Nested
     @Suppress("unused") // UP-TO-DATE check
-    protected val allInteropGroupsOrThrow get() = allInteropGroups.getOrThrow()
-
-    override suspend fun findInteropsGroup(dependent: CInteropCommonizerDependent): CInteropCommonizerGroup? {
-        val suitableGroups = allInteropGroups.await().filter { group ->
-            group.interops.containsAll(dependent.interops) && group.targets.contains(dependent.target)
-        }
-
-        assert(suitableGroups.size <= 1) {
-            "CInteropCommonizerTask: Unnecessary work detected: More than one suitable group found for cinterop dependent."
-        }
-
-        return suitableGroups.firstOrNull()
-    }
+    protected fun getAllInteropGroupsForUpToDateCheck() = allInteropGroups.getOrThrow()
 }
 
 private fun CInteropProcess.toGist(): CInteropGist {

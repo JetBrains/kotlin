@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerTask
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerGroup
 import org.jetbrains.kotlin.gradle.targets.native.internal.commonizeCInteropTask
+import org.jetbrains.kotlin.gradle.targets.native.internal.findCInteropCommonizerGroup
 import org.jetbrains.kotlin.gradle.util.enableCInteropCommonization
 import org.jetbrains.kotlin.gradle.util.main
 import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
@@ -78,7 +79,7 @@ class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
                 setOf(CommonizerTarget(LINUX_X64, MACOS_X64)),
                 setOf(linuxInterop.identifier, macosInterop.identifier)
             ),
-            task.findInteropsGroup(expectCInteropCommonizerDependent(nativeMain))
+            project.findCInteropCommonizerGroup(expectCInteropCommonizerDependent(nativeMain))
         )
     }
 
@@ -148,8 +149,8 @@ class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
         assertCInteropDependentEqualsForSourceSetAndCompilation(nativeMain)
         assertCInteropDependentEqualsForSourceSetAndCompilation(iosMain)
 
-        assertEquals(group, task.findInteropsGroup(expectCInteropCommonizerDependent(nativeMain)))
-        assertEquals(group, task.findInteropsGroup(expectCInteropCommonizerDependent(iosMain)))
+        assertEquals(group, findCInteropCommonizerGroup(expectCInteropCommonizerDependent(nativeMain)))
+        assertEquals(group, findCInteropCommonizerGroup(expectCInteropCommonizerDependent(iosMain)))
     }
 
     @Test
@@ -207,7 +208,7 @@ class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
         )
 
         assertEquals(
-            group, task.findInteropsGroup(expectCInteropCommonizerDependent(nativeMain))
+            group, findCInteropCommonizerGroup(expectCInteropCommonizerDependent(nativeMain))
         )
 
         assertNull(
@@ -267,11 +268,11 @@ class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
         )
 
         assertEquals(
-            group, task.findInteropsGroup(expectCInteropCommonizerDependent(nativeMain))
+            group, findCInteropCommonizerGroup(expectCInteropCommonizerDependent(nativeMain))
         )
 
         assertEquals(
-            group, task.findInteropsGroup(expectCInteropCommonizerDependent(expectSharedNativeCompilation(nativeMain)))
+            group, findCInteropCommonizerGroup(expectCInteropCommonizerDependent(expectSharedNativeCompilation(nativeMain)))
         )
 
         assertNull(
@@ -436,37 +437,37 @@ class CInteropCommonizerTaskTest : MultiplatformExtensionTest() {
         )
 
         assertEquals(
-            mainGroup, task.findInteropsGroup(expectCInteropCommonizerDependent(nativeMain)),
+            mainGroup, findCInteropCommonizerGroup(expectCInteropCommonizerDependent(nativeMain)),
             "Expected nativeMain being part of the mainGroup"
         )
 
         assertEquals(
-            mainGroup, task.findInteropsGroup(expectCInteropCommonizerDependent(unixMain)),
+            mainGroup, findCInteropCommonizerGroup(expectCInteropCommonizerDependent(unixMain)),
             "Expected unixMain being part of the mainGroup"
         )
 
         assertEquals(
-            mainGroup, task.findInteropsGroup(expectCInteropCommonizerDependent(appleMain)),
+            mainGroup, findCInteropCommonizerGroup(expectCInteropCommonizerDependent(appleMain)),
             "Expected appleMain being part of the mainGroup"
         )
 
         assertEquals(
-            mainGroup, task.findInteropsGroup(expectCInteropCommonizerDependent(iosMain)),
+            mainGroup, findCInteropCommonizerGroup(expectCInteropCommonizerDependent(iosMain)),
             "Expected iosMain being part of the mainGroup"
         )
 
         assertEquals(
-            testGroup, task.findInteropsGroup(expectCInteropCommonizerDependent(nativeTest)),
+            testGroup, findCInteropCommonizerGroup(expectCInteropCommonizerDependent(nativeTest)),
             "Expected nativeTest being part of the testGroup"
         )
 
         assertEquals(
-            testGroup, task.findInteropsGroup(expectCInteropCommonizerDependent(appleTest)),
+            testGroup, findCInteropCommonizerGroup(expectCInteropCommonizerDependent(appleTest)),
             "Expected appleTest being part of the testGroup"
         )
 
         assertEquals(
-            testGroup, task.findInteropsGroup(expectCInteropCommonizerDependent(iosTest)),
+            testGroup, findCInteropCommonizerGroup(expectCInteropCommonizerDependent(iosTest)),
             "Expected iosTest being part of the testGroup"
         )
 
