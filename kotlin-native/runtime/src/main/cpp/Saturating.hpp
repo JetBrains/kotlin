@@ -188,6 +188,21 @@ constexpr auto saturating_mul(T lhs, U rhs) noexcept {
     return result;
 }
 
+template <typename T, typename U>
+constexpr auto saturating_div(T lhs, U rhs) noexcept {
+    static_assert(std::is_integral_v<T>, "T must be integral");
+    static_assert(std::is_integral_v<U>, "U must be integral");
+    static_assert(std::is_signed_v<T> == std::is_signed_v<U>, "T and U must have the same sign");
+    using Result = internal::wider_t<T, U>;
+    // TODO: What to do with rhs==0?
+    if constexpr (std::is_signed_v<Result>) {
+        if (lhs == std::numeric_limits<Result>::min() && rhs == -1) {
+            return std::numeric_limits<Result>::max();
+        }
+    }
+    return static_cast<Result>(static_cast<Result>(lhs) / static_cast<Result>(rhs));
+}
+
 template <typename T>
 struct saturating {
     static_assert(std::is_integral_v<T>, "saturating is only defined for integers.");
@@ -281,7 +296,24 @@ constexpr saturating<T>& operator*=(saturating<T>& lhs, saturating<U> rhs) noexc
     return lhs;
 }
 
-// TODO: Saturated division and modulo. (there are no builtins for that)
+// Saturated division.
+template <typename T, typename U>
+constexpr auto operator/(saturating<T> lhs, saturating<U> rhs) noexcept {
+    return saturating(saturating_div(lhs.value, rhs.value));
+}
+
+// Saturated division.
+template <typename T, typename U>
+constexpr saturating<T>& operator/=(saturating<T>& lhs, saturating<U> rhs) noexcept {
+    auto result = lhs / rhs;
+    lhs = saturating<T>(result);
+    return lhs;
+}
+
+// TODO: Saturated modulo: how to handle -MIN % -1? To satisfy
+//       `(lhs / rhs) * rhs + lhs % rhs == lhs` from
+//       https://en.cppreference.com/w/cpp/language/operator_arithmetic#Multiplicative_operators
+//       we'll need to return `-1`, which is weird because it's equal to rhs.
 // TODO: Saturated negation: for signed types -MIN overflows MAX; but what to do for unsigned types?
 
 using int_sat8_t = saturating<int8_t>;
