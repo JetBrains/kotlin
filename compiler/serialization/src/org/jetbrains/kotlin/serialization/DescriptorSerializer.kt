@@ -163,8 +163,8 @@ class DescriptorSerializer private constructor(
         classDescriptor.inlineClassRepresentation?.let { inlineClassRepresentation ->
             builder.inlineClassUnderlyingPropertyName = getSimpleNameIndex(inlineClassRepresentation.underlyingPropertyName)
 
-            // The underlying property might be missing from `callableMembers` if the inline class is not part of the public API,
-            // and we are producing a header klib.
+            // The underlying property might be missing from `callableMembers` if we are producing a header klib and
+            // the inline class is part of the public API but the underlying property is not.
             val property = callableMembers.singleOrNull {
                 it is PropertyDescriptor && it.extensionReceiverParameter == null && it.name == inlineClassRepresentation.underlyingPropertyName
             }

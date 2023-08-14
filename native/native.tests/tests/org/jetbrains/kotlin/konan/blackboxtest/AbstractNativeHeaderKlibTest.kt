@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.konan.blackboxtest
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.konan.blackboxtest.support.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationArtifact
+import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.UsePartialLinkage
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Timeouts
@@ -41,7 +42,7 @@ private fun AbstractNativeSimpleTest.generateTestcaseFromDirectory(source: File,
         initialize(null, null)
     }
 }
-@Tag("header-klib-compare")
+@Tag("klib")
 @UsePartialLinkage(UsePartialLinkage.Mode.ENABLED_WITH_ERROR)
 abstract class AbstractNativeHeaderKlibCompareTest : AbstractNativeSimpleTest() {
 
@@ -49,7 +50,7 @@ abstract class AbstractNativeHeaderKlibCompareTest : AbstractNativeSimpleTest() 
         val testPathFull = getAbsoluteFile(testPath)
 
         val testCaseBase: TestCase = generateTestcaseFromDirectory(testPathFull, "base", listOf())
-        compileToLibrary(testCaseBase)
+        compileToLibrary(testCaseBase).assertSuccess()
         val headerKlibBase = File(getHeaderPath("base"))
         assert(headerKlibBase.exists())
 
@@ -60,7 +61,7 @@ abstract class AbstractNativeHeaderKlibCompareTest : AbstractNativeSimpleTest() 
 
         if (sameAbiDir.exists()) {
             val testCaseSameAbi: TestCase = generateTestcaseFromDirectory(testPathFull, "sameAbi", listOf())
-            compileToLibrary(testCaseSameAbi)
+            compileToLibrary(testCaseSameAbi).assertSuccess()
             val headerKlibSameAbi = File(getHeaderPath("sameAbi"))
             assert(headerKlibSameAbi.exists())
             assertContentEquals(headerKlibBase.readBytes(), headerKlibSameAbi.readBytes())
@@ -68,7 +69,7 @@ abstract class AbstractNativeHeaderKlibCompareTest : AbstractNativeSimpleTest() 
 
         if (differentAbiDir.exists()) {
             val testCaseDifferentAbi: TestCase = generateTestcaseFromDirectory(testPathFull, "differentAbi", listOf())
-            compileToLibrary(testCaseDifferentAbi)
+            compileToLibrary(testCaseDifferentAbi).assertSuccess()
             val headerKlibDifferentAbi = File(getHeaderPath("differentAbi"))
             assert(headerKlibDifferentAbi.exists())
             assertFailsWith<AssertionError>("base and differentAbi header klib are equal") {
@@ -79,7 +80,7 @@ abstract class AbstractNativeHeaderKlibCompareTest : AbstractNativeSimpleTest() 
 
 }
 
-@Tag("header-klib-compile")
+@Tag("klib")
 @UsePartialLinkage(UsePartialLinkage.Mode.ENABLED_WITH_ERROR)
 abstract class AbstractNativeHeaderKlibCompileTest : AbstractNativeSimpleTest() {
 
