@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.formver.conversion
 
+import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -37,18 +38,19 @@ class ProgramConverter : ProgramConversionContext {
 
     fun addWithBody(declaration: FirSimpleFunction) {
         val signature = convertSignature(declaration.symbol)
+        val contractDescription = declaration.contractDescription as? FirResolvedContractDescription
         // NOTE: we have a problem here if we initially specify a method without a body,
         // and then later decide to add a body anyway.  It's not a problem for now, but
         // worth being aware of.
         methods.getOrPut(signature.name) {
-            MethodConverter(this, signature, declaration.body)
+            MethodConverter(this, signature, declaration.body, contractDescription)
         }
     }
 
     override fun add(symbol: FirNamedFunctionSymbol): ConvertedMethodSignature {
         val signature = convertSignature(symbol)
         methods.getOrPut(signature.name) {
-            MethodConverter(this, signature, null)
+            MethodConverter(this, signature, null, null)
         }
         return signature
     }

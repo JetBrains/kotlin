@@ -13,5 +13,6 @@ method global$pkg_$without_contract() returns (ret$: unit$)
 }
 
 method global$pkg_$with_contract() returns (ret$: unit$)
+  ensures true
 {
 }
