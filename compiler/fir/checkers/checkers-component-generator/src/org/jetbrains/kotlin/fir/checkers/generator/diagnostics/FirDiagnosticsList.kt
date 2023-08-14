@@ -125,6 +125,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val DEPRECATION_ERROR by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
             parameter<Symbol>("reference")
             parameter<String>("message")
+            isSuppressible = true
         }
 
         val DEPRECATION by warning<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
@@ -150,6 +151,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<Symbol>("alias")
             parameter<Symbol>("reference")
             parameter<String>("message")
+            isSuppressible = true
         }
         val TYPEALIAS_EXPANSION_DEPRECATION by warning<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
             parameter<Symbol>("alias")
