@@ -39,7 +39,6 @@ private val ChangedFiles.asSourcesChanges: SourcesChanges
         is ChangedFiles.Unknown -> SourcesChanges.Unknown
     }
 
-@OptIn(ExperimentalBuildToolsApi::class)
 internal abstract class BuildToolsApiCompilationWork : WorkAction<BuildToolsApiCompilationWork.BuildToolsApiCompilationParameters> {
     internal interface BuildToolsApiCompilationParameters : WorkParameters {
         val buildIdService: Property<BuildIdService>
@@ -142,7 +141,6 @@ internal abstract class BuildToolsApiCompilationWork : WorkAction<BuildToolsApiC
         }
 }
 
-@OptIn(ExperimentalBuildToolsApi::class)
 internal object SharedApiClassesClassLoaderProvider : ParentClassLoaderProvider {
     override fun getClassLoader() = SharedApiClassesClassLoader()
 
