@@ -2,7 +2,6 @@ package model
 
 import org.jetbrains.dokka.DokkaSourceSetID
 import org.jetbrains.dokka.model.CompositeSourceSetID
-import org.jetbrains.dokka.model.plus
 import kotlin.test.*
 
 class CompositeSourceSetIDTest {
@@ -65,4 +64,9 @@ class CompositeSourceSetIDTest {
             "Expected all three source sets being merged in order"
         )
     }
+
+    operator fun DokkaSourceSetID.plus(other: DokkaSourceSetID): CompositeSourceSetID {
+        return CompositeSourceSetID(listOf(this, other))
+    }
+
 }
