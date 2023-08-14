@@ -16,6 +16,7 @@ private const val PROJECTS_CACHE_NAME_FULL = "$PROJECTS_CACHE_NAME-$PROJECTS_CAC
 
 private const val SESSIONS_DIR_NAME = "sessions"
 private const val METADATA_DIR_NAME = "metadata"
+private const val ERRORS_DIR_NAME = "errors"
 
 internal val Project.basePersistentDir
     get() = kotlinPropertiesProvider.kotlinUserHomeDir?.let { File(it) }
@@ -26,6 +27,9 @@ internal val Project.kotlinSessionsDir
 
 internal val Project.kotlinMetadataDir
     get() = basePersistentDir.projectSpecificCache(rootDir).resolve(METADATA_DIR_NAME)
+
+internal val Project.kotlinErrorsDir
+    get() = basePersistentDir.projectSpecificCache(rootDir).resolve(ERRORS_DIR_NAME)
 
 private val md5Digest by lazy { MessageDigest.getInstance("MD5") }
 

@@ -168,7 +168,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     @get:Internal
     protected val gradleCompileTaskProvider: Provider<GradleCompileTaskProvider> = objectFactory
         .property(
-            objectFactory.newInstance<GradleCompileTaskProvider>(project.gradle, this, project, incrementalModuleInfoProvider)
+            objectFactory.newInstance<GradleCompileTaskProvider>(this, project, incrementalModuleInfoProvider)
         )
 
     @get:Internal

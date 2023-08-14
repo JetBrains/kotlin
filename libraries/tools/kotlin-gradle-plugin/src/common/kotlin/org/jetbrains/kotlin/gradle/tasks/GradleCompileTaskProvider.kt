@@ -9,13 +9,13 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.ProjectLayout
-import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logger
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Internal
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner.Companion.normalizeForFlagFile
 import org.jetbrains.kotlin.gradle.incremental.IncrementalModuleInfoProvider
+import org.jetbrains.kotlin.gradle.utils.kotlinErrorsDir
 import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.gradle.utils.kotlinSessionsDir
 import java.io.File
@@ -24,7 +24,6 @@ import javax.inject.Inject
 abstract class GradleCompileTaskProvider @Inject constructor(
     objectFactory: ObjectFactory,
     projectLayout: ProjectLayout,
-    gradle: Gradle,
     task: Task,
     project: Project,
     incrementalModuleInfoProvider: Provider<IncrementalModuleInfoProvider>
@@ -56,8 +55,9 @@ abstract class GradleCompileTaskProvider @Inject constructor(
         .property(incrementalModuleInfoProvider)
 
     @get:Internal
-    val errorsFile: Provider<File?> = objectFactory
+    val errorsFile: Provider<File> = objectFactory
         .property(
-            gradle.rootProject.rootDir.resolve(".gradle/kotlin/errors/").also { it.mkdirs() }
-                .resolve("errors-${System.currentTimeMillis()}.log"))
+            project.kotlinErrorsDir.also { it.mkdirs() }
+                .resolve("errors-${System.currentTimeMillis()}.log")
+        )
 }
