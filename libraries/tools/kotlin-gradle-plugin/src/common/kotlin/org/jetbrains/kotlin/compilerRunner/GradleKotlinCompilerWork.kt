@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.build.report.statistics.StatTag
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.common.*
@@ -23,8 +24,6 @@ import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.stackTraceAsString
 import org.jetbrains.kotlin.incremental.ClasspathChanges
 import org.jetbrains.kotlin.incremental.IncrementalModuleInfo
-import org.jetbrains.kotlin.incremental.util.ExceptionLocation
-import org.jetbrains.kotlin.incremental.util.reportException
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.slf4j.LoggerFactory
@@ -174,7 +173,10 @@ internal class GradleKotlinCompilerWork @Inject constructor(
             try {
                 return compileWithDaemon(messageCollector) to KotlinCompilerExecutionStrategy.DAEMON
             } catch (e: Throwable) {
-                messageCollector.reportException(e, ExceptionLocation.DAEMON)
+                messageCollector.report(
+                    severity = CompilerMessageSeverity.EXCEPTION,
+                    message = "Daemon compilation failed: ${e.message}\n${e.stackTraceToString()}"
+                )
                 if (!compilerExecutionSettings.useDaemonFallbackStrategy) {
                     throw RuntimeException(
                         "Failed to compile with Kotlin daemon. Fallback strategy (compiling without Kotlin daemon) is turned off. " +
