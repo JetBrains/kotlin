@@ -20,7 +20,10 @@ import org.jetbrains.kotlin.native.interop.tool.*
  * Otherwise returns array of compiler args.
  */
 fun invokeInterop(flavor: String, args: Array<String>, runFromDaemon: Boolean): Array<String>? {
-    val arguments = if (flavor == "native") CInteropArguments() else JSInteropArguments()
+    check(flavor == "native") {
+        "wasm target in Kotlin/Native is removed. See https://kotl.in/native-targets-tiers"
+    }
+    val arguments = CInteropArguments()
     arguments.argParser.parse(args)
     val outputFileName = arguments.output
     val noDefaultLibs = arguments.nodefaultlibs || arguments.nodefaultlibsDeprecated
@@ -38,24 +41,20 @@ fun invokeInterop(flavor: String, args: Array<String>, runFromDaemon: Boolean): 
     val cstubsName ="cstubs"
     val libraries = arguments.library
     val repos = arguments.repo
-    val targetRequest = if (arguments is CInteropArguments) arguments.target
-        else (arguments as JSInteropArguments).target.toString()
+    val targetRequest = arguments.target
     val target = PlatformManager(
             KonanHomeProvider.determineKonanHome(),
             konanDataDir = arguments.konanDataDir).targetManager(targetRequest).target
 
-    val cinteropArgsToCompiler = Interop().interop(flavor, args,
+    val cinteropArgsToCompiler = Interop().interop("native", args,
             InternalInteropOptions(generatedDir.absolutePath,
                     nativesDir.absolutePath,manifest.path,
-                    cstubsName.takeIf { flavor == "native" }
+                    cstubsName
             ),
             runFromDaemon
     ) ?: return null // There is no need in compiler invocation if we're generating only metadata.
 
     val nativeStubs =
-        if (flavor == "wasm")
-            arrayOf("-include-binary", File(nativesDir, "js_stubs.js").path)
-        else
             arrayOf("-native-library", File(nativesDir, "$cstubsName.bc").path)
 
     return arrayOf(

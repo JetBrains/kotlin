@@ -141,17 +141,6 @@ open class CInteropArguments(argParser: ArgParser =
             description = "Don't add @ExperimentalForeignApi to generated Kotlin declarations")
 }
 
-class JSInteropArguments(argParser: ArgParser = ArgParser("jsinterop",
-        prefixStyle = ArgParser.OptionPrefixStyle.JVM)): CommonInteropArguments(argParser) {
-    enum class TargetType {
-        WASM32;
-
-        override fun toString() = name.lowercase()
-    }
-    val target by argParser.option(ArgType.Choice<TargetType>(),
-            description = "wasm target to compile to").default(TargetType.WASM32)
-}
-
 internal fun warn(msg: String) {
     println("warning: $msg")
 }

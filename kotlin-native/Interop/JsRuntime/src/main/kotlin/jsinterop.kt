@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION", "TYPEALIAS_EXPANSION_DEPRECATION") // Everything is scheduled for removal
+@file:Suppress("DEPRECATION_ERROR", "TYPEALIAS_EXPANSION_DEPRECATION_ERROR", "UNUSED_PARAMETER") // Everything is scheduled for removal
 @file:OptIn(ExperimentalForeignApi::class)
 
 package kotlinx.wasm.jsinterop
@@ -23,74 +23,60 @@ import kotlin.native.*
 import kotlin.native.internal.*
 import kotlinx.cinterop.*
 
-@Deprecated(WASM_TARGET_IS_DEPRECATED, level = DeprecationLevel.WARNING)
+@Deprecated(WASM_TARGET_IS_DEPRECATED, level = DeprecationLevel.ERROR)
 typealias Arena = Int
-@Deprecated(WASM_TARGET_IS_DEPRECATED, level = DeprecationLevel.WARNING)
+@Deprecated(WASM_TARGET_IS_DEPRECATED, level = DeprecationLevel.ERROR)
 typealias Object = Int
-@Deprecated(WASM_TARGET_IS_DEPRECATED, level = DeprecationLevel.WARNING)
+@Deprecated(WASM_TARGET_IS_DEPRECATED, level = DeprecationLevel.ERROR)
 typealias Pointer = Int
 
-private const val WASM_TARGET_IS_DEPRECATED = "K/N WASM target and all related API is deprecated for removal. " +
+private const val WASM_TARGET_IS_DEPRECATED = "K/N WASM target was removed and all related API is deprecated for removal. " +
         "See https://blog.jetbrains.com/kotlin/2023/02/update-regarding-kotlin-native-targets for additional details"
 
 /**
  * @Retain annotation is required to preserve functions from internalization and DCE.
  */
-@RetainForTarget("wasm32")
-@GCUnsafeCall("Konan_js_allocateArena")
-@Deprecated(WASM_TARGET_IS_DEPRECATED, level = DeprecationLevel.WARNING)
-external public fun allocateArena(): Arena
+@Deprecated(WASM_TARGET_IS_DEPRECATED, level = DeprecationLevel.ERROR)
+public fun allocateArena(): Arena = error(WASM_TARGET_IS_DEPRECATED)
 
-@RetainForTarget("wasm32")
-@GCUnsafeCall("Konan_js_freeArena")
-@Deprecated(WASM_TARGET_IS_DEPRECATED, level = DeprecationLevel.WARNING)
-external public fun freeArena(arena: Arena)
+@Deprecated(WASM_TARGET_IS_DEPRECATED, level = DeprecationLevel.ERROR)
+public fun freeArena(arena: Arena) { error(WASM_TARGET_IS_DEPRECATED) }
 
-@RetainForTarget("wasm32")
-@GCUnsafeCall("Konan_js_pushIntToArena")
-@Deprecated(WASM_TARGET_IS_DEPRECATED, level = DeprecationLevel.WARNING)
-external public fun pushIntToArena(arena: Arena, value: Int)
+@Deprecated(WASM_TARGET_IS_DEPRECATED, level = DeprecationLevel.ERROR)
+public fun pushIntToArena(arena: Arena, value: Int) { error(WASM_TARGET_IS_DEPRECATED) }
 
-@Deprecated(WASM_TARGET_IS_DEPRECATED, level = DeprecationLevel.WARNING)
+@Deprecated(WASM_TARGET_IS_DEPRECATED, level = DeprecationLevel.ERROR)
 const val upperWord = 0xffffffff.toLong() shl 32
 
-@ExportForCppRuntime
-@Deprecated(WASM_TARGET_IS_DEPRECATED, level = DeprecationLevel.WARNING)
+@Deprecated(WASM_TARGET_IS_DEPRECATED, level = DeprecationLevel.ERROR)
 fun doubleUpper(value: Double): Int =
     ((value.toBits() and upperWord) ushr 32) .toInt()
 
-@ExportForCppRuntime
-@Deprecated(WASM_TARGET_IS_DEPRECATED, level = DeprecationLevel.WARNING)
+@Deprecated(WASM_TARGET_IS_DEPRECATED, level = DeprecationLevel.ERROR)
 fun doubleLower(value: Double): Int =
     (value.toBits() and 0x00000000ffffffff) .toInt()
 
-@RetainForTarget("wasm32")
-@GCUnsafeCall("ReturnSlot_getDouble")
-@Deprecated(WASM_TARGET_IS_DEPRECATED, level = DeprecationLevel.WARNING)
-external public fun ReturnSlot_getDouble(): Double
+@Deprecated(WASM_TARGET_IS_DEPRECATED, level = DeprecationLevel.ERROR)
+public fun ReturnSlot_getDouble(): Double = error(WASM_TARGET_IS_DEPRECATED)
 
-@RetainForTarget("wasm32")
 @GCUnsafeCall("Kotlin_String_utf16pointer")
-@Deprecated(WASM_TARGET_IS_DEPRECATED, level = DeprecationLevel.WARNING)
+@Deprecated(WASM_TARGET_IS_DEPRECATED, level = DeprecationLevel.ERROR)
 external public fun stringPointer(message: String): Pointer
 
-@RetainForTarget("wasm32")
-@Deprecated(WASM_TARGET_IS_DEPRECATED, level = DeprecationLevel.WARNING)
+@Deprecated(WASM_TARGET_IS_DEPRECATED, level = DeprecationLevel.ERROR)
 @GCUnsafeCall("Kotlin_String_utf16length")
 external public fun stringLengthBytes(message: String): Int
 
-@Deprecated(WASM_TARGET_IS_DEPRECATED, level = DeprecationLevel.WARNING)
+@Deprecated(WASM_TARGET_IS_DEPRECATED, level = DeprecationLevel.ERROR)
 typealias KtFunction <R> = ((ArrayList<JsValue>)->R)
 
-@Deprecated(WASM_TARGET_IS_DEPRECATED, level = DeprecationLevel.WARNING)
+@Deprecated(WASM_TARGET_IS_DEPRECATED, level = DeprecationLevel.ERROR)
 fun <R> wrapFunction(func: KtFunction<R>): Int {
     val ptr: Long = StableRef.create(func).asCPointer().toLong() 
     return ptr.toInt() // TODO: LP64 unsafe.
 }
 
-@RetainForTarget("wasm32")
-@ExportForCppRuntime("Konan_js_runLambda")
-@Deprecated(WASM_TARGET_IS_DEPRECATED, level = DeprecationLevel.WARNING)
+@Deprecated(WASM_TARGET_IS_DEPRECATED, level = DeprecationLevel.ERROR)
 fun runLambda(pointer: Int, argumentsArena: Arena, argumentsArenaSize: Int): Int {
     val arguments = arrayListOf<JsValue>()
     for (i in 0 until argumentsArenaSize) {
@@ -106,7 +92,7 @@ fun runLambda(pointer: Int, argumentsArena: Arena, argumentsArenaSize: Int): Int
     return result.index
 }
 
-@Deprecated(WASM_TARGET_IS_DEPRECATED, level = DeprecationLevel.WARNING)
+@Deprecated(WASM_TARGET_IS_DEPRECATED, level = DeprecationLevel.ERROR)
 open class JsValue(val arena: Arena, val index: Object) {
     fun getInt(property: String): Int {
         return getInt(ArenaManager.currentArena, index, stringPointer(property), stringLengthBytes(property))
@@ -116,7 +102,7 @@ open class JsValue(val arena: Arena, val index: Object) {
     }
 }
 
-@Deprecated(WASM_TARGET_IS_DEPRECATED, level = DeprecationLevel.WARNING)
+@Deprecated(WASM_TARGET_IS_DEPRECATED, level = DeprecationLevel.ERROR)
 open class JsArray(arena: Arena, index: Object): JsValue(arena, index) {
     constructor(jsValue: JsValue): this(jsValue.arena, jsValue.index)        
     operator fun get(index: Int): JsValue {
@@ -127,48 +113,40 @@ open class JsArray(arena: Arena, index: Object): JsValue(arena, index) {
         get() = this.getInt("length")
 }
 
-@RetainForTarget("wasm32")
-@GCUnsafeCall("Konan_js_getInt")
-@Deprecated(WASM_TARGET_IS_DEPRECATED, level = DeprecationLevel.WARNING)
-external public fun getInt(arena: Arena, obj: Object, propertyPtr: Pointer, propertyLen: Int): Int;
+@Deprecated(WASM_TARGET_IS_DEPRECATED, level = DeprecationLevel.ERROR)
+public fun getInt(arena: Arena, obj: Object, propertyPtr: Pointer, propertyLen: Int): Int = error(WASM_TARGET_IS_DEPRECATED)
 
-@RetainForTarget("wasm32")
-@GCUnsafeCall("Konan_js_getProperty")
-@Deprecated(WASM_TARGET_IS_DEPRECATED, level = DeprecationLevel.WARNING)
-external public fun Konan_js_getProperty(arena: Arena, obj: Object, propertyPtr: Pointer, propertyLen: Int): Int;
+@Deprecated(WASM_TARGET_IS_DEPRECATED, level = DeprecationLevel.ERROR)
+public fun Konan_js_getProperty(arena: Arena, obj: Object, propertyPtr: Pointer, propertyLen: Int): Int = error(WASM_TARGET_IS_DEPRECATED)
 
-@RetainForTarget("wasm32")
-@GCUnsafeCall("Konan_js_setFunction")
-@Deprecated(WASM_TARGET_IS_DEPRECATED, level = DeprecationLevel.WARNING)
-external public fun setFunction(arena: Arena, obj: Object, propertyName: Pointer, propertyLength: Int , function: Int)
+@Deprecated(WASM_TARGET_IS_DEPRECATED, level = DeprecationLevel.ERROR)
+public fun setFunction(arena: Arena, obj: Object, propertyName: Pointer, propertyLength: Int , function: Int) { error(WASM_TARGET_IS_DEPRECATED) }
 
-@RetainForTarget("wasm32")
-@GCUnsafeCall("Konan_js_setString")
-@Deprecated(WASM_TARGET_IS_DEPRECATED, level = DeprecationLevel.WARNING)
-external public fun setString(arena: Arena, obj: Object, propertyName: Pointer, propertyLength: Int, stringPtr: Pointer, stringLength: Int )
+@Deprecated(WASM_TARGET_IS_DEPRECATED, level = DeprecationLevel.ERROR)
+public fun setString(arena: Arena, obj: Object, propertyName: Pointer, propertyLength: Int, stringPtr: Pointer, stringLength: Int ) { error(WASM_TARGET_IS_DEPRECATED) }
 
-@Deprecated(WASM_TARGET_IS_DEPRECATED, level = DeprecationLevel.WARNING)
+@Deprecated(WASM_TARGET_IS_DEPRECATED, level = DeprecationLevel.ERROR)
 fun setter(obj: JsValue, property: String, string: String) {
     setString(obj.arena, obj.index, stringPointer(property), stringLengthBytes(property), stringPointer(string), stringLengthBytes(string))
 }
 
-@Deprecated(WASM_TARGET_IS_DEPRECATED, level = DeprecationLevel.WARNING)
+@Deprecated(WASM_TARGET_IS_DEPRECATED, level = DeprecationLevel.ERROR)
 fun setter(obj: JsValue, property: String, lambda: KtFunction<Unit>) {
     val pointer = wrapFunction(lambda);
     setFunction(obj.arena, obj.index, stringPointer(property), stringLengthBytes(property), pointer)
 }
 
-@Deprecated(WASM_TARGET_IS_DEPRECATED, level = DeprecationLevel.WARNING)
+@Deprecated(WASM_TARGET_IS_DEPRECATED, level = DeprecationLevel.ERROR)
 fun JsValue.setter(property: String, lambda: KtFunction<Unit>) {
     setter(this, property, lambda)
 }
 
-@Deprecated(WASM_TARGET_IS_DEPRECATED, level = DeprecationLevel.WARNING)
+@Deprecated(WASM_TARGET_IS_DEPRECATED, level = DeprecationLevel.ERROR)
 fun JsValue.setter(property: String, string: String) {
     setter(this, property, string)
 }
 
-@Deprecated(WASM_TARGET_IS_DEPRECATED, level = DeprecationLevel.WARNING)
+@Deprecated(WASM_TARGET_IS_DEPRECATED, level = DeprecationLevel.ERROR)
 object ArenaManager {
     val globalArena = allocateArena()
 

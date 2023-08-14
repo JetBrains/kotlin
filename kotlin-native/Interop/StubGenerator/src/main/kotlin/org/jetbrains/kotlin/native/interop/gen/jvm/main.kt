@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.library.metadata.resolver.impl.libraryResolver
 import org.jetbrains.kotlin.library.packageFqName
 import org.jetbrains.kotlin.library.toUnresolvedLibraries
 import org.jetbrains.kotlin.native.interop.gen.*
-import org.jetbrains.kotlin.native.interop.gen.wasm.processIdlLib
 import org.jetbrains.kotlin.native.interop.indexer.*
 import org.jetbrains.kotlin.native.interop.tool.*
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
@@ -100,7 +99,7 @@ class Interop {
             val platform = KotlinPlatform.values().single { it.name.equals(flavor, ignoreCase = true) }
             processCLibSafe(platform, cinteropArguments, additionalArgs, runFromDaemon)
         }
-        "wasm" -> processIdlLib(args, additionalArgs)
+        "wasm" -> error("wasm target in Kotlin/Native is removed. See https://kotl.in/native-targets-tiers")
         else -> error("Unexpected flavor")
     }
 }

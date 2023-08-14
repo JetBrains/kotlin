@@ -433,14 +433,6 @@ targetList.each { target ->
         dependsOn "${target}CrossDistBitcodeCopy"
 
         destinationDir project.file("$distDir/$stdlibDefaultComponent")
-
-        if (target == 'wasm32') {
-            into("targets/wasm32/included") {
-                from(project(':kotlin-native:runtime').file('src/main/js'))
-                from(project(':kotlin-native:runtime').file('src/launcher/js'))
-                from(project(':kotlin-native:Interop:JsRuntime').file('src/main/js'))
-            }
-        }
     }
 
     tasks.register("${target}PlatformLibs") {

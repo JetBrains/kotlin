@@ -24,8 +24,7 @@ private fun mainImpl(args: Array<String>, runFromDaemon: Boolean, konancMain: (A
             konancArgs?.let { konancMain(it) }
         }
         "jsinterop" -> {
-            val konancArgs = invokeInterop("wasm", utilityArgs, runFromDaemon)
-            konancArgs?.let { konancMain(it) }
+            error("wasm target in Kotlin/Native is removed. See https://kotl.in/native-targets-tiers")
         }
         "klib" ->
             klibMain(utilityArgs)
