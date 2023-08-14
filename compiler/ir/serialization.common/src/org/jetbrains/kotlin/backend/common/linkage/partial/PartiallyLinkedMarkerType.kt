@@ -23,7 +23,6 @@ internal class PartiallyLinkedMarkerType(
     override val classifier = builtIns.anyClass
     override val nullability get() = SimpleTypeNullability.MARKED_NULLABLE
     override val arguments get() = emptyList<IrTypeArgument>()
-    override val abbreviation: IrTypeAbbreviation? get() = null
     override val variance get() = Variance.INVARIANT
 
     override fun equals(other: Any?) = (other as? PartiallyLinkedMarkerType)?.unusableClassifier == unusableClassifier

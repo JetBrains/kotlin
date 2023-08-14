@@ -34,7 +34,6 @@ class IrTypeParameterRemapper(
                 type.nullability,
                 type.arguments.memoryOptimizedMap { it.remap() },
                 type.annotations,
-                type.abbreviation?.remap()
             ).apply {
                 annotations.forEach { it.remapTypes(this@IrTypeParameterRemapper) }
             }

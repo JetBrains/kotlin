@@ -127,7 +127,6 @@ abstract class TypeTranslator(
             this.kotlinType = approximatedType
             this.nullability = SimpleTypeNullability.fromHasQuestionMark(upperType.isMarkedNullable)
             this.variance = variance
-            this.abbreviation = upperType.getAbbreviation()?.toIrTypeAbbreviation()
 
             when (upperTypeDescriptor) {
                 is TypeParameterDescriptor -> {

@@ -23,7 +23,6 @@ abstract class IrAbstractSimpleType(kotlinType: KotlinType?) : IrSimpleType(kotl
     abstract override val nullability: SimpleTypeNullability
     abstract override val arguments: List<IrTypeArgument>
     abstract override val annotations: List<IrConstructorCall>
-    abstract override val abbreviation: IrTypeAbbreviation?
 
     override fun equals(other: Any?): Boolean =
         other is IrAbstractSimpleType &&
@@ -47,8 +46,6 @@ abstract class IrDelegatedSimpleType(kotlinType: KotlinType? = null) : IrAbstrac
         get() = delegate.nullability
     override val arguments: List<IrTypeArgument>
         get() = delegate.arguments
-    override val abbreviation: IrTypeAbbreviation?
-        get() = delegate.abbreviation
     override val annotations: List<IrConstructorCall>
         get() = delegate.annotations
 }
@@ -59,7 +56,6 @@ class IrSimpleTypeImpl(
     nullability: SimpleTypeNullability,
     override val arguments: List<IrTypeArgument>,
     override val annotations: List<IrConstructorCall>,
-    override val abbreviation: IrTypeAbbreviation? = null
 ) : IrAbstractSimpleType(kotlinType) {
 
     override val nullability =
@@ -74,16 +70,14 @@ class IrSimpleTypeImpl(
         nullability: SimpleTypeNullability,
         arguments: List<IrTypeArgument>,
         annotations: List<IrConstructorCall>,
-        abbreviation: IrTypeAbbreviation? = null
-    ) : this(null, classifier, nullability, arguments, annotations, abbreviation)
+    ) : this(null, classifier, nullability, arguments, annotations)
 
     constructor(
         classifier: IrClassifierSymbol,
         hasQuestionMark: Boolean,
         arguments: List<IrTypeArgument>,
         annotations: List<IrConstructorCall>,
-        abbreviation: IrTypeAbbreviation? = null
-    ) : this(null, classifier, SimpleTypeNullability.fromHasQuestionMark(hasQuestionMark), arguments, annotations, abbreviation)
+    ) : this(null, classifier, SimpleTypeNullability.fromHasQuestionMark(hasQuestionMark), arguments, annotations)
 }
 
 class IrSimpleTypeBuilder {
@@ -92,7 +86,6 @@ class IrSimpleTypeBuilder {
     var nullability = SimpleTypeNullability.NOT_SPECIFIED
     var arguments: List<IrTypeArgument> = emptyList()
     var annotations: List<IrConstructorCall> = emptyList()
-    var abbreviation: IrTypeAbbreviation? = null
     var variance = Variance.INVARIANT
 }
 
@@ -103,7 +96,6 @@ fun IrSimpleType.toBuilder() =
         b.nullability = nullability
         b.arguments = arguments
         b.annotations = annotations
-        b.abbreviation = abbreviation
     }
 
 fun IrSimpleTypeBuilder.buildSimpleType() =
@@ -113,7 +105,6 @@ fun IrSimpleTypeBuilder.buildSimpleType() =
         nullability,
         arguments.compactIfPossible(),
         annotations.compactIfPossible(),
-        abbreviation
     )
 
 fun IrSimpleTypeBuilder.buildTypeProjection() =

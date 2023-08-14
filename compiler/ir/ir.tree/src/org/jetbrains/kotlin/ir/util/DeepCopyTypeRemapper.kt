@@ -35,7 +35,6 @@ class DeepCopyTypeRemapper(
                 type.nullability,
                 type.arguments.memoryOptimizedMap { remapTypeArgument(it) },
                 type.annotations.memoryOptimizedMap { it.transform(deepCopy, null) as IrConstructorCall },
-                type.abbreviation?.remapTypeAbbreviation()
             )
             else -> type
         }

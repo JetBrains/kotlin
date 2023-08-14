@@ -91,7 +91,6 @@ class ComposableFunctionsTransformer(val pluginContext: IrPluginContext) : IrEle
                 type.nullability,
                 newArguments,
                 type.annotations,
-                type.abbreviation
             )
         }
 

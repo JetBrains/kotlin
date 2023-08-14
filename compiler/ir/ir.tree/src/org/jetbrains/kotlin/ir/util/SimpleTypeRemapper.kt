@@ -37,7 +37,6 @@ class SimpleTypeRemapper(
                     type.nullability,
                     arguments,
                     type.annotations,
-                    type.abbreviation?.remapTypeAbbreviation()
                 )
             }
         }

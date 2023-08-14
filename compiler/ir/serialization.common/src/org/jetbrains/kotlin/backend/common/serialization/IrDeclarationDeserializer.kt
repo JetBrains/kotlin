@@ -126,7 +126,6 @@ class IrDeclarationDeserializer(
 
         val arguments = proto.argumentList.memoryOptimizedMap { deserializeIrTypeArgument(it) }
         val annotations = deserializeAnnotations(proto.annotationList)
-        val abbreviation = if (proto.hasAbbreviation()) deserializeTypeAbbreviation(proto.abbreviation) else null
 
         return IrSimpleTypeImpl(
             null,
@@ -134,7 +133,6 @@ class IrDeclarationDeserializer(
             deserializeSimpleTypeNullability(proto.nullability),
             arguments,
             annotations,
-            abbreviation
         )
     }
 
@@ -144,7 +142,6 @@ class IrDeclarationDeserializer(
 
         val arguments = proto.argumentList.memoryOptimizedMap { deserializeIrTypeArgument(it) }
         val annotations = deserializeAnnotations(proto.annotationList)
-        val abbreviation = if (proto.hasAbbreviation()) deserializeTypeAbbreviation(proto.abbreviation) else null
 
         return IrSimpleTypeImpl(
             null,
@@ -152,7 +149,6 @@ class IrDeclarationDeserializer(
             SimpleTypeNullability.fromHasQuestionMark(proto.hasQuestionMark),
             arguments,
             annotations,
-            abbreviation
         )
     }
 

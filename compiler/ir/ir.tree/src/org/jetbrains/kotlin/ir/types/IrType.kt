@@ -75,7 +75,6 @@ abstract class IrSimpleType(kotlinType: KotlinType?) : IrTypeBase(kotlinType), S
      */
     abstract val nullability: SimpleTypeNullability
     abstract val arguments: List<IrTypeArgument>
-    abstract val abbreviation: IrTypeAbbreviation?
 
     /**
      * This property was deprecated and replaced with [nullability] property.

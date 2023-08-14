@@ -393,9 +393,6 @@ open class IrFileSerializer(
         if (type.nullability != SimpleTypeNullability.NOT_SPECIFIED) {
             proto.setNullability(serializeNullability(type.nullability))
         }
-        type.abbreviation?.let { ta ->
-            proto.setAbbreviation(serializeIrTypeAbbreviation(ta))
-        }
         type.arguments.forEach {
             proto.addArgument(serializeTypeArgument(it))
         }
@@ -454,7 +451,6 @@ open class IrFileSerializer(
         val nullability: SimpleTypeNullability?,
         val arguments: List<IrTypeArgumentKey>?,
         val annotations: List<IrConstructorCall>,
-        val abbreviation: IrTypeAbbreviation?
     )
 
     data class IrTypeArgumentKey(
@@ -477,7 +473,6 @@ open class IrFileSerializer(
                 nullability = (type as? IrSimpleType)?.nullability,
                 arguments = (type as? IrSimpleType)?.arguments?.map { it.toIrTypeArgumentKey },
                 annotations = type.annotations,
-                abbreviation = (type as? IrSimpleType)?.abbreviation
             )
         }
 

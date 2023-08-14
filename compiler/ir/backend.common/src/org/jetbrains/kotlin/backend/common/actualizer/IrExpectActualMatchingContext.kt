@@ -382,7 +382,6 @@ internal abstract class IrExpectActualMatchingContext(
                 type.nullability,
                 newArguments,
                 type.annotations,
-                type.abbreviation
             )
         }
 
