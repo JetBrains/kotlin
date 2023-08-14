@@ -48,8 +48,6 @@ import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnable
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableDueToMissingClasspathSnapshot
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableForNonIncrementalRun
 import org.jetbrains.kotlin.incremental.ClasspathSnapshotFiles
-import org.jetbrains.kotlin.incremental.classpathAsList
-import org.jetbrains.kotlin.incremental.destinationAsFile
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import javax.inject.Inject
 

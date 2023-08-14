@@ -34,10 +34,10 @@ import org.jetbrains.kotlin.gradle.report.BuildReportMode
 import org.jetbrains.kotlin.gradle.tasks.KaptGenerateStubs
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.toSingleCompilerPluginOptions
+import org.jetbrains.kotlin.gradle.utils.classpathAsList
 import org.jetbrains.kotlin.gradle.utils.configureExperimentalTryK2
+import org.jetbrains.kotlin.gradle.utils.destinationAsFile
 import org.jetbrains.kotlin.gradle.utils.toPathsArray
-import org.jetbrains.kotlin.incremental.classpathAsList
-import org.jetbrains.kotlin.incremental.destinationAsFile
 import javax.inject.Inject
 
 @CacheableTask
