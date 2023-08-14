@@ -20,13 +20,9 @@ import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.commonizer.*
 import org.jetbrains.kotlin.compilerRunner.*
-import org.jetbrains.kotlin.compilerRunner.GradleCliCommonizer
-import org.jetbrains.kotlin.compilerRunner.KotlinNativeCommonizerToolRunner
-import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.withDependsOnClosure
 import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
@@ -94,6 +90,10 @@ internal abstract class CInteropCommonizerTask
     }
 
     override val outputDirectory: File get() = projectLayout.buildDirectory.get().asFile.resolve("classes/kotlin/commonizer")
+
+    internal fun outputDirectoriesOfCommonizerGroup(group: CInteropCommonizerGroup): Map<SharedCommonizerTarget, File> = group
+        .targets
+        .associateWith { target -> CommonizerOutputFileLayout.resolveCommonizedDirectory(outputDirectory, target) }
 
     @get:Internal
     internal val kotlinPluginVersion: Property<String> = objectFactory
@@ -256,24 +256,7 @@ internal abstract class CInteropCommonizerTask
     }
 
     @get:Internal
-    internal val allInteropGroups: Future<Set<CInteropCommonizerGroup>> = project.lazyFuture {
-        val dependents = allDependents.await()
-        val allScopeSets = dependents.map { it.scopes }.toSet()
-        val rootScopeSets = allScopeSets.filter { scopeSet ->
-            allScopeSets.none { otherScopeSet -> otherScopeSet != scopeSet && otherScopeSet.containsAll(scopeSet) }
-        }
-
-        rootScopeSets.map { scopeSet ->
-            val dependentsForScopes = dependents.filter { dependent ->
-                scopeSet.containsAll(dependent.scopes)
-            }
-
-            CInteropCommonizerGroup(
-                targets = dependentsForScopes.map { it.target }.toSet(),
-                interops = dependentsForScopes.flatMap { it.interops }.toSet()
-            )
-        }.toSet()
-    }
+    internal val allInteropGroups: CompletableFuture<Set<CInteropCommonizerGroup>> = CompletableFuture()
 
     @get:Nested
     @Suppress("unused") // UP-TO-DATE check
@@ -289,26 +272,6 @@ internal abstract class CInteropCommonizerTask
         }
 
         return suitableGroups.firstOrNull()
-    }
-
-    private val allDependents: Future<Set<CInteropCommonizerDependent>> = project.lazyFuture {
-        val multiplatformExtension = project.multiplatformExtensionOrNull ?: return@lazyFuture emptySet()
-
-        val fromSharedNativeCompilations = multiplatformExtension
-            .targets.flatMap { target -> target.compilations }
-            .filterIsInstance<KotlinSharedNativeCompilation>()
-            .mapNotNull { compilation -> CInteropCommonizerDependent.from(compilation) }
-            .toSet()
-
-        val fromSourceSets = multiplatformExtension.awaitSourceSets()
-            .mapNotNull { sourceSet -> CInteropCommonizerDependent.from(sourceSet) }
-            .toSet()
-
-        val fromSourceSetsAssociateCompilations = multiplatformExtension.awaitSourceSets()
-            .mapNotNull { sourceSet -> CInteropCommonizerDependent.fromAssociateCompilations(sourceSet) }
-            .toSet()
-
-        (fromSharedNativeCompilations + fromSourceSets + fromSourceSetsAssociateCompilations)
     }
 }
 

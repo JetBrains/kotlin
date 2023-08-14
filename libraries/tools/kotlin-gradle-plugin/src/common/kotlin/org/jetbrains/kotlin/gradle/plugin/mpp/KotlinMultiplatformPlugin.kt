@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaBasePlugin
-import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.customizeKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -28,8 +27,7 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTargetPreset
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinWasmTargetPreset
 import org.jetbrains.kotlin.gradle.targets.native.createFatFrameworks
-import org.jetbrains.kotlin.gradle.targets.native.internal.commonizeCInteropTask
-import org.jetbrains.kotlin.gradle.targets.native.internal.createCommonizedCInteropApiElementsKlibArtifact
+import org.jetbrains.kotlin.gradle.targets.native.internal.configureCInteropCommonizer
 import org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.registerKotlinArtifactsExtension
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompileTool
 import org.jetbrains.kotlin.gradle.utils.checkGradleCompatibility
@@ -75,7 +73,7 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
         // Ensure that the instance is created and configured during apply
         project.kotlinIdeMultiplatformImport
         project.locateOrRegisterIdeResolveDependenciesTask()
-        project.launch { project.createCommonizedCInteropApiElementsKlibArtifact() }
+        project.launch { project.configureCInteropCommonizer() }
         project.addBuildListenerForXcode()
         project.whenEvaluated { kotlinMultiplatformExtension.createFatFrameworks() }
     }
