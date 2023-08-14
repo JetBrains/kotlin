@@ -59,4 +59,7 @@ object AnalysisFlags {
 
     @JvmStatic
     val eagerResolveOfLightClasses by AnalysisFlag.Delegates.Boolean
+
+    @JvmStatic
+    val dontWarnOnErrorSuppression by AnalysisFlag.Delegates.Boolean
 }

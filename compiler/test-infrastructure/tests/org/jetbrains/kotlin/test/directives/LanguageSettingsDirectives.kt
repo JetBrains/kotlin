@@ -99,6 +99,7 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
     val GENERATE_PROPERTY_ANNOTATIONS_METHODS by directive(
         description = "Enables corresponding analysis flag (JvmAnalysisFlags.generatePropertyAnnotationsMethods)"
     )
+    val DONT_WARN_ON_ERROR_SUPPRESSION by directive("Don't emit warning when an error is suppressed")
 
 
     // --------------------- Utils ---------------------

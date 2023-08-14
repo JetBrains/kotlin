@@ -405,6 +405,16 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/enumEntriesNotEnabled.args");
         }
 
+        @TestMetadata("errorSuppressionNoWarning.args")
+        public void testErrorSuppressionNoWarning() throws Exception {
+            runTest("compiler/testData/cli/jvm/errorSuppressionNoWarning.args");
+        }
+
+        @TestMetadata("errorSuppressionWarning.args")
+        public void testErrorSuppressionWarning() throws Exception {
+            runTest("compiler/testData/cli/jvm/errorSuppressionWarning.args");
+        }
+
         @TestMetadata("experimentalDeprecated.args")
         public void testExperimentalDeprecated() throws Exception {
             runTest("compiler/testData/cli/jvm/experimentalDeprecated.args");

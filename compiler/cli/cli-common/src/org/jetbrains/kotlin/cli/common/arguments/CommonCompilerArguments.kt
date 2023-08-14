@@ -763,6 +763,16 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             field = value
         }
 
+    @Argument(
+        value = "-Xdont-warn-on-error-suppression",
+        description = "Don't report a warning when an error is suppressed. Only affects K2."
+    )
+    var dontWarnOnErrorSuppression = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     @OptIn(IDEAPluginsCompatibilityAPI::class)
     open fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
@@ -787,6 +797,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             put(AnalysisFlags.allowKotlinPackage, allowKotlinPackage)
             put(AnalysisFlags.builtInsFromSources, builtInsFromSources)
             put(AnalysisFlags.allowFullyQualifiedNameInKClass, true)
+            put(AnalysisFlags.dontWarnOnErrorSuppression, dontWarnOnErrorSuppression)
         }
     }
 

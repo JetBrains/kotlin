@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
@@ -234,6 +235,7 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker() {
         reporter: DiagnosticReporter,
         context: CheckerContext,
     ) {
+        if (context.languageVersionSettings.getFlag(AnalysisFlags.dontWarnOnErrorSuppression)) return
         if (annotationClassId != StandardClassIds.Annotations.Suppress) return
         val nameExpressions = argumentMapping[StandardClassIds.Annotations.ParameterNames.suppressNames]?.unwrapVarargValue() ?: return
         for (nameExpression in nameExpressions) {
