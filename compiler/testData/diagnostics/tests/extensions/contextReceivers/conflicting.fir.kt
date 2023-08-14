@@ -10,9 +10,9 @@ fun f(): Unit<!> = TODO()
 fun f(): Unit<!> = TODO()
 
 fun test(a: A, b: B) {
-    with(a) {
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>with<!>(a) {
         with(b) {
-            f()
+            <!OVERLOAD_RESOLUTION_AMBIGUITY!>f<!>()
         }
     }
 }

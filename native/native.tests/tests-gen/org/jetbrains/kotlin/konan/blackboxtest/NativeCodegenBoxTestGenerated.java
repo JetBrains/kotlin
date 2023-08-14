@@ -14098,6 +14098,24 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/box/equivalentCalls")
+        @TestDataPath("$PROJECT_ROOT")
+        @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/box/multiplatform/migratedOldTests/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
+        public class EquivalentCalls {
+            @Test
+            public void testAllFilesPresentInEquivalentCalls() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/equivalentCalls"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+            }
+
+            @Test
+            @TestMetadata("localEquivalentWins.kt")
+            public void testLocalEquivalentWins() throws Exception {
+                runTest("compiler/testData/codegen/box/equivalentCalls/localEquivalentWins.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/box/evaluate")
         @TestDataPath("$PROJECT_ROOT")
         @UseExtTestCaseGroupProvider()

@@ -14598,6 +14598,27 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/box/equivalentCalls")
+        @TestDataPath("$PROJECT_ROOT")
+        @Tag("frontend-fir")
+        @FirPipeline()
+        @UseExtTestCaseGroupProvider()
+        @UsePartialLinkage(mode = Mode.DISABLED)
+        @Tag("no-partial-linkage-may-be-skipped")
+        public class EquivalentCalls {
+            @Test
+            public void testAllFilesPresentInEquivalentCalls() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/equivalentCalls"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+            }
+
+            @Test
+            @TestMetadata("localEquivalentWins.kt")
+            public void testLocalEquivalentWins() throws Exception {
+                runTest("compiler/testData/codegen/box/equivalentCalls/localEquivalentWins.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/box/evaluate")
         @TestDataPath("$PROJECT_ROOT")
         @Tag("frontend-fir")

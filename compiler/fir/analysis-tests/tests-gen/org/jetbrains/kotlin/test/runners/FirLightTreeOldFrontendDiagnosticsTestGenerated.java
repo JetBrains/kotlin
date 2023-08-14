@@ -28144,6 +28144,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 }
 
                 @Test
+                @TestMetadata("equivalentCallsDifferentVisibility.kt")
+                public void testEquivalentCallsDifferentVisibility() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/resolve/overloadConflicts/equivalentCallsDifferentVisibility.kt");
+                }
+
+                @Test
                 @TestMetadata("extensionReceiverAndVarargs.kt")
                 public void testExtensionReceiverAndVarargs() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/resolve/overloadConflicts/extensionReceiverAndVarargs.kt");

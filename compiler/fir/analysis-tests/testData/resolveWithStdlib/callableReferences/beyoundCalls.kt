@@ -6,7 +6,7 @@ fun <T, R> foobaz(x: T): R = TODO()
 
 fun foo() {
     val x: (String) -> Int = ::bar
-    val y = ::bar
+    val y = ::<!OVERLOAD_RESOLUTION_AMBIGUITY!>bar<!>
     val z = ::baz
     val w: (String) -> Int = ::foobaz
 

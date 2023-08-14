@@ -12,13 +12,13 @@ FILE: mixingImplicitAndExplicitReceivers.kt
         public final fun withThis(): R|kotlin/Unit| {
             when () {
                 !=(this@R|/Wrapper|.R|/Wrapper.s|, Null(null)) ->  {
-                    R|/takeString|(this@R|/Wrapper|.R|/Wrapper.s|)
+                    <Ambiguity: takeString, [/takeString, /takeString]>#(this@R|/Wrapper|.R|/Wrapper.s|)
                 }
             }
 
             when () {
                 !=(this@R|/Wrapper|.R|/Wrapper.s|, Null(null)) ->  {
-                    R|/takeString|(this@R|/Wrapper|.R|/Wrapper.s|)
+                    <Ambiguity: takeString, [/takeString, /takeString]>#(this@R|/Wrapper|.R|/Wrapper.s|)
                 }
             }
 

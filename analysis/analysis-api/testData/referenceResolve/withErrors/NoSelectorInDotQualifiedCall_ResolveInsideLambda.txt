@@ -1,2 +1,3 @@
 Resolved to:
 0: (in testing) fun test()
+1: (in testing) fun test()
