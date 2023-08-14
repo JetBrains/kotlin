@@ -14,7 +14,6 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.Internal
 import org.jetbrains.kotlin.buildtools.api.CompilationService
-import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity.CLASS_LEVEL
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity.CLASS_MEMBER_LEVEL
@@ -24,7 +23,6 @@ import java.io.File
 
 /** Transform to create a snapshot of a classpath entry (directory or jar). */
 @CacheableTransform
-@OptIn(ExperimentalBuildToolsApi::class)
 abstract class BuildToolsApiClasspathEntrySnapshotTransform : TransformAction<BuildToolsApiClasspathEntrySnapshotTransform.Parameters> {
 
     abstract class Parameters : TransformParameters {

@@ -31,6 +31,7 @@ kotlin {
                 "org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi",
                 "org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi",
                 "org.jetbrains.kotlin.gradle.DeprecatedTargetPresetApi",
+                "org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi",
             )
         )
         suppressWarnings = true
