@@ -961,7 +961,7 @@ private class ElementsToShortenCollector(
     }
 
     private fun processPropertyAccess(firPropertyAccess: FirPropertyAccessExpression) {
-        val propertyReferenceExpression = firPropertyAccess.correspondingNameReference ?: return
+        val propertyReferenceExpression = (firPropertyAccess.psi as? KtDotQualifiedExpression)?.selectorExpression as? KtNameReferenceExpression ?: return
         if (!propertyReferenceExpression.textRange.intersects(selection)) return
 
         val qualifiedProperty = propertyReferenceExpression.getQualifiedElement() as? KtDotQualifiedExpression ?: return
@@ -989,19 +989,6 @@ private class ElementsToShortenCollector(
             availableCallables,
         )
     }
-
-    private val FirPropertyAccessExpression.correspondingNameReference: KtNameReferenceExpression?
-        get() {
-            val nameReference = when (val sourcePsi = psi) {
-                // usual `foo.bar.baz` case
-                is KtDotQualifiedExpression -> sourcePsi.selectorExpression
-
-                // short `foo` case, or implicit invoke call like `foo.bar.baz()`
-                else -> sourcePsi
-            }
-
-            return nameReference as? KtNameReferenceExpression
-        }
 
     private val FirPropertyAccessExpression.referencedSymbol: FirVariableSymbol<*>?
         get() = (calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirVariableSymbol<*>
