@@ -539,13 +539,11 @@ internal class PropertiesProvider private constructor(private val project: Proje
     internal fun get(propertyName: String): String? = propertiesBuildService.get(propertyName, project)
 
     /**
-     * The directory where persistent data for Kotlin Gradle Plugin is stored.
-     * This data is not cleaned by gradle clean task. This dir can be used to store data
-     * for IDE import i.e. `./gradlew clean` will not break IDE import state.
+     * The directory where Kotlin global caches, logs, or project persistent data are stored.
      *
      * If the property is not set, the plugin will use `<user_home>/.kotlin` as default.
      */
-    val kotlinPersistentGradleDataDir: String? = get(PropertyNames.KOTLIN_PERSISTENT_GRADLE_DATA_DIR)
+    val kotlinUserHomeDir: String? = get(PropertyNames.KOTLIN_USER_HOME_DIR)
 
     /**
      * Retrieves a comma-separated list of browsers to use when running karma tests for [target]
@@ -637,7 +635,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KONAN_DATA_DIR = property("konan.data.dir")
         val KOTLIN_SUPPRESS_BUILD_TOOLS_API_VERSION_CONSISTENCY_CHECKS =
             property("kotlin.internal.suppress.buildToolsApiVersionConsistencyChecks")
-        val KOTLIN_PERSISTENT_GRADLE_DATA_DIR = property("kotlin.persistent.gradle.data.dir")
+        val KOTLIN_USER_HOME_DIR = property("kotlin.user.home")
 
         /**
          * Internal properties: builds get big non-suppressible warning when such properties are used

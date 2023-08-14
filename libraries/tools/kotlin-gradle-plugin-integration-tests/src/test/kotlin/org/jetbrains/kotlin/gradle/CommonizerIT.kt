@@ -547,7 +547,7 @@ open class CommonizerIT : KGPBaseTest() {
         @TempDir tempDir: Path,
     ) {
         nativeProject("commonizeCurlInterop", gradleVersion) {
-            gradleProperties.append("kotlin.persistent.gradle.data.dir=${tempDir.absolutePathString()}")
+            gradleProperties.append("kotlin.user.home=${tempDir.absolutePathString()}")
 
             configureCommonizerTargets()
 

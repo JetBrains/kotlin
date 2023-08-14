@@ -18,7 +18,7 @@ private const val SESSIONS_DIR_NAME = "sessions"
 private const val METADATA_DIR_NAME = "metadata"
 
 internal val Project.basePersistentDir
-    get() = kotlinPropertiesProvider.kotlinPersistentGradleDataDir?.let { File(it) }
+    get() = kotlinPropertiesProvider.kotlinUserHomeDir?.let { File(it) }
         ?: File(System.getProperty("user.home")).resolve(".kotlin")
 
 internal val Project.kotlinSessionsDir
