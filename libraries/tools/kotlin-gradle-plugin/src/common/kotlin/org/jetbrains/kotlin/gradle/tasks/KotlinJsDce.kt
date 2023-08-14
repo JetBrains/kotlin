@@ -26,7 +26,6 @@ import org.gradle.work.InputChanges
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.cli.common.arguments.DevModeOverwritingStrategies
 import org.jetbrains.kotlin.cli.common.arguments.K2JSDceArguments
-import org.jetbrains.kotlin.cli.js.dce.K2JSDce
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.compilerRunner.runToolInSeparateProcess
 import org.jetbrains.kotlin.gradle.dsl.*
@@ -131,7 +130,7 @@ abstract class KotlinJsDce @Inject constructor(
 
         val exitCode = runToolInSeparateProcess(
             ArgumentUtils.convertArgumentsToStringList(arguments).toTypedArray(),
-            K2JSDce::class.java.name,
+            dceToolMainClassName,
             defaultCompilerClasspath,
             GradleKotlinLogger(logger),
             buildDir.get().asFile,
@@ -155,6 +154,7 @@ abstract class KotlinJsDce @Inject constructor(
     companion object {
         const val strategyAllArg = "-Xdev-mode-overwriting-strategy=${DevModeOverwritingStrategies.ALL}"
         const val strategyOlderArg = "-Xdev-mode-overwriting-strategy=${DevModeOverwritingStrategies.OLDER}"
+        const val dceToolMainClassName = "org.jetbrains.kotlin.cli.js.dce.K2JSDce"
     }
 
     @Suppress("DeprecatedCallableAddReplaceWith")
