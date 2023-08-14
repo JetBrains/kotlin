@@ -1,4 +1,4 @@
-FILE: implicitNothingInDelegate.kt
+FILE: implicitNothingInDelegate.fir.kt
     @R|kotlin/Suppress|(names = vararg(String(INVISIBLE_REFERENCE), String(INVISIBLE_MEMBER))) public final operator fun <V, V1 : R|V|> R|kotlin/collections/Map<in kotlin/String, @Exact V>|.getValue(thisRef: R|kotlin/Any?|, property: R|kotlin/reflect/KProperty<*>|): R|V1| {
         ^getValue Null(null)!!
     }

@@ -1,6 +1,6 @@
 // ISSUE: KT-54478
 
-@file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
+@file:Suppress(<!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>, "INVISIBLE_MEMBER")
 
 import kotlin.internal.NoInfer
 

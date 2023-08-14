@@ -1,5 +1,3 @@
-// FIR_IDENTICAL
-
 import kotlin.reflect.KClass
 
 typealias MyString = String

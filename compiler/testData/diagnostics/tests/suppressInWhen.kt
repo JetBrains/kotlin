@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // ISSUE: KT-61065
 // FILE: PrivateObjekt.kt
 

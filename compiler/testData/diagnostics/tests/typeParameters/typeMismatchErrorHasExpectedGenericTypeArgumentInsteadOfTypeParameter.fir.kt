@@ -1,6 +1,6 @@
 // ISSUE: KT-49035, KT-51201
 
-@file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+@file:Suppress("INVISIBLE_MEMBER", <!ERROR_SUPPRESSION!>"INVISIBLE_REFERENCE"<!>)
 
 fun <T> foo(it: @kotlin.internal.Exact T) {}
 
