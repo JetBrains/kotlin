@@ -3,7 +3,6 @@
  * that can be found in the LICENSE file.
  */
 
-
 /*
  * An implementation of Dmitry Vyukov's Bounded Multi-producer/multi-consumer bounded queue.
  *
@@ -22,8 +21,6 @@
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *  The views and conclusions contained in the software and documentation are those of the authors and should not be interpreted
  *  as representing official policies, either expressed or implied, of Dmitry Vyukov.
- *
- *  TODO what about a binary distribution?
  */
 
 #pragma once
