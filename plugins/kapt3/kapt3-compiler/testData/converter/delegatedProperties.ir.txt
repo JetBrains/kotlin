@@ -16,6 +16,11 @@ package test;
  *   public final (* delegated *) val b: test/C<kotlin/String>
  *     public final (* non-default *) get
  *
+ *   // field: c$delegate:Lkotlin/reflect/KProperty0;
+ *   // getter: getC()Ltest/C;
+ *   public final (* delegated *) val c: test/C<kotlin/String>
+ *     public final (* non-default *) get
+ *
  *   // field: x$delegate:Lkotlin/Lazy;
  *   // getter: getX()Lkotlin/Unit;
  *   // synthetic method for annotations: getX$annotations()V
@@ -47,6 +52,8 @@ public final class A {
     private final kotlin.Lazy a$delegate = null;
     @org.jetbrains.annotations.NotNull()
     private final kotlin.Lazy b$delegate = null;
+    @org.jetbrains.annotations.NotNull()
+    private final kotlin.reflect.KProperty0 c$delegate = null;
 
     public A() {
         super();
@@ -79,6 +86,11 @@ public final class A {
 
     @org.jetbrains.annotations.NotNull()
     public final test.C<java.lang.String> getB() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final test.C<java.lang.String> getC() {
         return null;
     }
 }
