@@ -712,6 +712,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         }
 
         @Test
+        @TestMetadata("missingWrongAnnotationTarget.kt")
+        public void testMissingWrongAnnotationTarget() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/missingWrongAnnotationTarget.kt");
+        }
+
+        @Test
         @TestMetadata("MultilineStringTemplates.kt")
         public void testMultilineStringTemplates() throws Exception {
             runTest("compiler/testData/diagnostics/tests/MultilineStringTemplates.kt");

@@ -728,6 +728,7 @@ class LightTreeRawFirExpressionBuilder(
                         symbol = FirPropertySymbol(variable.name)
                         isLocal = true
                         status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
+                        annotations += variable.annotations
                     }
                 }
                 DESTRUCTURING_DECLARATION -> subjectExpression =
