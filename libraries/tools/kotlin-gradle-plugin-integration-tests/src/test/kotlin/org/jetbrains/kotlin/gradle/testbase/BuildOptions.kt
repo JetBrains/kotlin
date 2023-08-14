@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.junit.jupiter.api.condition.OS
 import java.nio.file.Path
 import java.util.*
+import kotlin.io.path.absolutePathString
 
 data class BuildOptions(
     val logLevel: LogLevel = LogLevel.INFO,
@@ -53,6 +54,7 @@ data class BuildOptions(
     val compilerExecutionStrategy: KotlinCompilerExecutionStrategy? = null,
     val runViaBuildToolsApi: Boolean? = null,
     val konanDataDir: Path? = konanDir, // null can be used only if you are using custom 'kotlin.native.home' or 'org.jetbrains.kotlin.native.home' property instead of konanDir
+    val kotlinUserHome: Path? = testKitDir.resolve(".kotlin"),
 ) {
     val isK2ByDefault
         get() = KotlinVersion.DEFAULT >= KotlinVersion.KOTLIN_2_0
@@ -215,6 +217,10 @@ data class BuildOptions(
 
         konanDataDir?.let {
             arguments.add("-Pkonan.data.dir=${konanDataDir.toAbsolutePath().normalize()}")
+        }
+
+        if (kotlinUserHome != null) {
+            arguments.add("-Pkotlin.user.home=${kotlinUserHome.absolutePathString()}")
         }
 
         arguments.addAll(freeArgs)

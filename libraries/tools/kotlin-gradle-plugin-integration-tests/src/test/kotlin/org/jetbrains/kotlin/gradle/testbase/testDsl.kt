@@ -489,7 +489,7 @@ val konanDir
 /**
  * On changing test kit dir location update related location in 'cleanTestKitCache' task.
  */
-private val testKitDir get() = Paths.get(".").resolve("build").resolve("testKitCache")
+internal val testKitDir get() = Paths.get(".").resolve("build").resolve("testKitCache")
 
 private val hashAlphabet: List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
 private fun randomHash(length: Int = 15): String {
