@@ -120,3 +120,21 @@ fun Path.getSingleFileInDir(relativePath: String): Path {
     }
 }
 
+/**
+ * Get a path for per-project persistent cache directory from this base persistent cache directory.
+ */
+fun Path.projectsPersistentCache() = resolve("projects-1")
+
+/**
+ * Searches for the specified directory in the projects persistent cache.
+ *
+ * @param directoryName The name of the directory to search for.
+ * @return The path of the directory if found.
+ *
+ * @throws IllegalStateException if the directory does not exist in the projects cache. Usually they are populated after some build.
+ */
+fun Path.inProjectsPersistentCache(
+    directoryName: String
+) = projectsPersistentCache().findInPath(directoryName)
+    ?: throw IllegalStateException("$directoryName does not exist in the projects cache under ${this.absolutePathString()}")
+

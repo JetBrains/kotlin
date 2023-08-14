@@ -280,10 +280,7 @@ class BuildReportsIT : KGPBaseTest() {
         ) {
 
             val lookupsTab = projectPath.resolve("build/kotlin/compileKotlin/cacheable/caches-jvm/lookups/lookups.tab")
-            fun kotlinErrorPath() = tempDir
-                .resolve("projects-1")
-                .findInPath("errors")
-                ?: throw IllegalStateException("Could not find global Kotlin errors directory!")
+            fun kotlinErrorPath() = tempDir.inProjectsPersistentCache("errors")
 
             buildGradle.appendText(
                 """
@@ -334,10 +331,7 @@ class BuildReportsIT : KGPBaseTest() {
             gradleVersion = gradleVersion,
             buildOptions = defaultBuildOptions.copy(kotlinUserHome = tempDir)
         ) {
-            fun kotlinErrorPath() = tempDir
-                .resolve("projects-1")
-                .findInPath("errors")
-                ?: throw IllegalStateException("Could not find global Kotlin errors directory!")
+            fun kotlinErrorPath() = tempDir.inProjectsPersistentCache("errors")
 
             build("compileKotlin", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
                 assertOutputDoesNotContain("errors were stored into file")

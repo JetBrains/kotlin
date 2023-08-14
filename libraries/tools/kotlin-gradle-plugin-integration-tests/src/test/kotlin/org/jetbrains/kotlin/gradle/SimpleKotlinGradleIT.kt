@@ -6,8 +6,11 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.io.TempDir
+import java.nio.file.Path
 import java.util.zip.ZipFile
 import kotlin.io.path.*
+import kotlin.test.assertEquals
 
 @JvmGradlePluginTests
 @DisplayName("KGP simple tests")
@@ -286,6 +289,37 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
                                 jar.entries().asSequence().map { it.name }.joinToString()
                     }
                 }
+            }
+        }
+    }
+
+    @DisplayName("Possible to override kotlin.user.home location")
+    @GradleTest
+    fun overrideKotlinUserHome(
+        gradleVersion: GradleVersion,
+        @TempDir tempDir: Path,
+    ) {
+        project(
+            projectName = "simpleProject",
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.copy(kotlinUserHome = null)
+        ) {
+            gradleProperties.appendText(
+                """
+                |
+                |kotlin.user.home=${tempDir.absolutePathString().normalizePath()}
+                """.trimMargin()
+            )
+
+            build("compileKotlin") {
+                assertTasksExecuted(":compileKotlin")
+
+                val baseProjectsDir = tempDir.resolve("projects-1")
+                assertDirectoryExists(baseProjectsDir)
+                val projectsDirs = baseProjectsDir.listDirectoryEntries()
+                assertEquals(1, projectsDirs.size, message = "More then 1 child! Actual content ${projectsDirs.joinToString { it.pathString }}")
+                assertDirectoryExists(projectsDirs.first().resolve("sessions"))
+                assertDirectoryExists(projectsDirs.first().resolve("errors"))
             }
         }
     }

@@ -176,9 +176,7 @@ open class CommonizerIT : KGPBaseTest() {
 
             configureCommonizerTargets()
 
-            fun expectedOutputDirectoryForIde(): Path = tempDir
-                .resolve("projects-1")
-                .findInPath("commonizer") ?: throw IllegalStateException("Failed to find 'commonizer' directory!")
+            fun expectedOutputDirectoryForIde(): Path = tempDir.inProjectsPersistentCache("commonizer")
 
             val expectedOutputDirectoryForBuild = projectPath.resolve("build/classes/kotlin/commonizer")
 
@@ -551,9 +549,7 @@ open class CommonizerIT : KGPBaseTest() {
 
             configureCommonizerTargets()
 
-            fun expectedOutputDirectoryForIde(): Path = tempDir
-                .resolve("projects-1")
-                .findInPath("commonizer") ?: throw IllegalStateException("Failed to find 'commonizer' directory!")
+            fun expectedOutputDirectoryForIde(): Path = tempDir.inProjectsPersistentCache("commonizer")
 
             build(":copyCommonizeCInteropForIde") {
                 assertTasksExecuted(":cinteropCurlTargetB")
