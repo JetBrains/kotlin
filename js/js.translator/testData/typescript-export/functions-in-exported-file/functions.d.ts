@@ -1,10 +1,10 @@
 declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
     namespace kotlin.collections {
-        interface KotlinList<E> /* extends kotlin.collections.Collection<E> */ {
+        interface KtList<E> /* extends kotlin.collections.Collection<E> */ {
             asJsArrayView(): ReadonlyArray<E>;
             readonly __doNotUseOrImplementIt: {
-                readonly "kotlin.collections.KotlinList": unique symbol;
+                readonly "kotlin.collections.KtList": unique symbol;
             };
         }
     }
@@ -26,8 +26,8 @@ declare namespace JS_TESTS {
         function genericWithMultipleConstraints<T extends unknown/* kotlin.Comparable<T> */ & foo.SomeExternalInterface & Error>(x: T): T;
         function generic3<A, B, C, D, E>(a: A, b: B, c: C, d: D): Nullable<E>;
         function inlineFun(x: number, callback: (p0: number) => void): void;
-        function formatList(value: kotlin.collections.KotlinList<any /*UnknownType **/>): string;
-        function createList(): kotlin.collections.KotlinList<any /*UnknownType **/>;
+        function formatList(value: kotlin.collections.KtList<any /*UnknownType **/>): string;
+        function createList(): kotlin.collections.KtList<any /*UnknownType **/>;
         function defaultParametersAtTheBegining(a: string | undefined, b: string): string;
         function nonDefaultParameterInBetween(a: string | undefined, b: string, c?: string): string;
     }

@@ -92,7 +92,6 @@ public interface Collection<out E> : Iterable<E> {
  */
 public interface MutableCollection<E> : Collection<E>, MutableIterable<E> {
     // Query Operations
-    @JsExport.Ignore
     override fun iterator(): MutableIterator<E>
 
     // Modification Operations
@@ -145,32 +144,24 @@ public interface MutableCollection<E> : Collection<E>, MutableIterable<E> {
  * read/write access is supported through the [MutableList] interface.
  * @param E the type of elements contained in the list. The list is covariant in its element type.
  */
-@JsName("KotlinList")
-@JsImplicitExport(couldBeConvertedToExplicitExport = true)
 public interface List<out E> : Collection<E> {
     // Query Operations
 
-    @JsExport.Ignore
     override val size: Int
 
-    @JsExport.Ignore
     override fun isEmpty(): Boolean
 
-    @JsExport.Ignore
     override fun contains(element: @UnsafeVariance E): Boolean
 
-    @JsExport.Ignore
     override fun iterator(): Iterator<E>
 
     // Bulk Operations
-    @JsExport.Ignore
     override fun containsAll(elements: Collection<@UnsafeVariance E>): Boolean
 
     // Positional Access Operations
     /**
      * Returns the element at the specified index in the list.
      */
-    @JsExport.Ignore
     public operator fun get(index: Int): E
 
     // Search Operations
@@ -178,27 +169,23 @@ public interface List<out E> : Collection<E> {
      * Returns the index of the first occurrence of the specified element in the list, or -1 if the specified
      * element is not contained in the list.
      */
-    @JsExport.Ignore
     public fun indexOf(element: @UnsafeVariance E): Int
 
     /**
      * Returns the index of the last occurrence of the specified element in the list, or -1 if the specified
      * element is not contained in the list.
      */
-    @JsExport.Ignore
     public fun lastIndexOf(element: @UnsafeVariance E): Int
 
     // List Iterators
     /**
      * Returns a list iterator over the elements in this list (in proper sequence).
      */
-    @JsExport.Ignore
     public fun listIterator(): ListIterator<E>
 
     /**
      * Returns a list iterator over the elements in this list (in proper sequence), starting at the specified [index].
      */
-    @JsExport.Ignore
     public fun listIterator(index: Int): ListIterator<E>
 
     // View
@@ -208,7 +195,6 @@ public interface List<out E> : Collection<E> {
      *
      * Structural changes in the base list make the behavior of the view undefined.
      */
-    @JsExport.Ignore
     public fun subList(fromIndex: Int, toIndex: Int): List<E>
 
     public fun asJsArrayView() = createJsArrayImmutableViewFrom(this)
@@ -218,8 +204,6 @@ public interface List<out E> : Collection<E> {
  * A generic ordered collection of elements that supports adding and removing elements.
  * @param E the type of elements contained in the list. The mutable list is invariant in its element type.
  */
-@JsName("KotlinMutableList")
-@JsImplicitExport(couldBeConvertedToExplicitExport = true)
 public interface MutableList<E> : List<E>, MutableCollection<E> {
     // Modification Operations
     /**
@@ -227,10 +211,8 @@ public interface MutableList<E> : List<E>, MutableCollection<E> {
      *
      * @return `true` because the list is always modified as the result of this operation.
      */
-    @JsExport.Ignore
     override fun add(element: E): Boolean
 
-    @JsExport.Ignore
     override fun remove(element: E): Boolean
 
     // Bulk Modification Operations
@@ -241,7 +223,6 @@ public interface MutableList<E> : List<E>, MutableCollection<E> {
      *
      * @return `true` if the list was changed as the result of the operation.
      */
-    @JsExport.Ignore
     override fun addAll(elements: Collection<E>): Boolean
 
     /**
@@ -249,16 +230,12 @@ public interface MutableList<E> : List<E>, MutableCollection<E> {
      *
      * @return `true` if the list was changed as the result of the operation.
      */
-    @JsExport.Ignore
     public fun addAll(index: Int, elements: Collection<E>): Boolean
 
-    @JsExport.Ignore
     override fun removeAll(elements: Collection<E>): Boolean
 
-    @JsExport.Ignore
     override fun retainAll(elements: Collection<E>): Boolean
 
-    @JsExport.Ignore
     override fun clear(): Unit
 
     // Positional Access Operations
@@ -267,13 +244,11 @@ public interface MutableList<E> : List<E>, MutableCollection<E> {
      *
      * @return the element previously at the specified position.
      */
-    @JsExport.Ignore
     public operator fun set(index: Int, element: E): E
 
     /**
      * Inserts an element into the list at the specified [index].
      */
-    @JsExport.Ignore
     public fun add(index: Int, element: E): Unit
 
     /**
@@ -281,18 +256,14 @@ public interface MutableList<E> : List<E>, MutableCollection<E> {
      *
      * @return the element that has been removed.
      */
-    @JsExport.Ignore
     public fun removeAt(index: Int): E
 
     // List Iterators
-    @JsExport.Ignore
     override fun listIterator(): MutableListIterator<E>
 
-    @JsExport.Ignore
     override fun listIterator(index: Int): MutableListIterator<E>
 
     // View
-    @JsExport.Ignore
     override fun subList(fromIndex: Int, toIndex: Int): MutableList<E>
 
     public fun asJsArrayMutableView() = createJsArrayMutableViewFrom(this)
@@ -304,25 +275,18 @@ public interface MutableList<E> : List<E>, MutableCollection<E> {
  * read/write access is supported through the [MutableSet] interface.
  * @param E the type of elements contained in the set. The set is covariant in its element type.
  */
-@JsName("KotlinSet")
-@JsImplicitExport(couldBeConvertedToExplicitExport = true)
 public interface Set<out E> : Collection<E> {
     // Query Operations
 
-    @JsExport.Ignore
     override val size: Int
 
-    @JsExport.Ignore
     override fun isEmpty(): Boolean
 
-    @JsExport.Ignore
     override fun contains(element: @UnsafeVariance E): Boolean
 
-    @JsExport.Ignore
     override fun iterator(): Iterator<E>
 
     // Bulk Operations
-    @JsExport.Ignore
     override fun containsAll(elements: Collection<@UnsafeVariance E>): Boolean
 
     public fun asJsSetView() = createJsSetImmutableViewFrom(this)
@@ -333,11 +297,8 @@ public interface Set<out E> : Collection<E> {
  * adding and removing elements.
  * @param E the type of elements contained in the set. The mutable set is invariant in its element type.
  */
-@JsName("KotlinMutableSet")
-@JsImplicitExport(couldBeConvertedToExplicitExport = true)
 public interface MutableSet<E> : Set<E>, MutableCollection<E> {
     // Query Operations
-    @JsExport.Ignore
     override fun iterator(): MutableIterator<E>
 
     // Modification Operations
@@ -347,24 +308,18 @@ public interface MutableSet<E> : Set<E>, MutableCollection<E> {
      *
      * @return `true` if the element has been added, `false` if the element is already contained in the set.
      */
-    @JsExport.Ignore
     override fun add(element: E): Boolean
 
-    @JsExport.Ignore
     override fun remove(element: E): Boolean
 
     // Bulk Modification Operations
 
-    @JsExport.Ignore
     override fun addAll(elements: Collection<E>): Boolean
 
-    @JsExport.Ignore
     override fun removeAll(elements: Collection<E>): Boolean
 
-    @JsExport.Ignore
     override fun retainAll(elements: Collection<E>): Boolean
 
-    @JsExport.Ignore
     override fun clear(): Unit
 
     public fun asJsSetMutableView() = createJsSetMutableViewFrom(this)
@@ -379,63 +334,52 @@ public interface MutableSet<E> : Set<E>, MutableCollection<E> {
  *          can accept key as a parameter (of [containsKey] for example) and return it in [keys] set.
  * @param V the type of map values. The map is covariant in its value type.
  */
-@JsName("KotlinMap")
-@JsImplicitExport(couldBeConvertedToExplicitExport = true)
 public interface Map<K, out V> {
     // Query Operations
     /**
      * Returns the number of key/value pairs in the map.
      */
-    @JsExport.Ignore
     public val size: Int
 
     /**
      * Returns `true` if the map is empty (contains no elements), `false` otherwise.
      */
-    @JsExport.Ignore
     public fun isEmpty(): Boolean
 
     /**
      * Returns `true` if the map contains the specified [key].
      */
-    @JsExport.Ignore
     public fun containsKey(key: K): Boolean
 
     /**
      * Returns `true` if the map maps one or more keys to the specified [value].
      */
-    @JsExport.Ignore
     public fun containsValue(value: @UnsafeVariance V): Boolean
 
     /**
      * Returns the value corresponding to the given [key], or `null` if such a key is not present in the map.
      */
-    @JsExport.Ignore
     public operator fun get(key: K): V?
 
     // Views
     /**
      * Returns a read-only [Set] of all keys in this map.
      */
-    @JsExport.Ignore
     public val keys: Set<K>
 
     /**
      * Returns a read-only [Collection] of all values in this map. Note that this collection may contain duplicate values.
      */
-    @JsExport.Ignore
     public val values: Collection<V>
 
     /**
      * Returns a read-only [Set] of all key/value pairs in this map.
      */
-    @JsExport.Ignore
     public val entries: Set<Map.Entry<K, V>>
 
     /**
      * Represents a key/value pair held by a [Map].
      */
-    @JsExport.Ignore
     public interface Entry<out K, out V> {
         /**
          * Returns the key of this key/value pair.
@@ -457,8 +401,6 @@ public interface Map<K, out V> {
  * @param K the type of map keys. The map is invariant in its key type.
  * @param V the type of map values. The mutable map is invariant in its value type.
  */
-@JsName("KotlinMutableMap")
-@JsImplicitExport(couldBeConvertedToExplicitExport = true)
 public interface MutableMap<K, V> : Map<K, V> {
     // Modification Operations
     /**
@@ -466,7 +408,6 @@ public interface MutableMap<K, V> : Map<K, V> {
      *
      * @return the previous value associated with the key, or `null` if the key was not present in the map.
      */
-    @JsExport.Ignore
     public fun put(key: K, value: V): V?
 
     /**
@@ -474,45 +415,38 @@ public interface MutableMap<K, V> : Map<K, V> {
      *
      * @return the previous value associated with the key, or `null` if the key was not present in the map.
      */
-    @JsExport.Ignore
     public fun remove(key: K): V?
 
     // Bulk Modification Operations
     /**
      * Updates this map with key/value pairs from the specified map [from].
      */
-    @JsExport.Ignore
     public fun putAll(from: Map<out K, V>): Unit
 
     /**
      * Removes all elements from this map.
      */
-    @JsExport.Ignore
     public fun clear(): Unit
 
     // Views
     /**
      * Returns a [MutableSet] of all keys in this map.
      */
-    @JsExport.Ignore
     override val keys: MutableSet<K>
 
     /**
      * Returns a [MutableCollection] of all values in this map. Note that this collection may contain duplicate values.
      */
-    @JsExport.Ignore
     override val values: MutableCollection<V>
 
     /**
      * Returns a [MutableSet] of all key/value pairs in this map.
      */
-    @JsExport.Ignore
     override val entries: MutableSet<MutableMap.MutableEntry<K, V>>
 
     /**
      * Represents a key/value pair held by a [MutableMap].
      */
-    @JsExport.Ignore
     public interface MutableEntry<K, V> : Map.Entry<K, V> {
         /**
          * Changes the value associated with the key of this entry.

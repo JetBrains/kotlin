@@ -10400,42 +10400,29 @@ public open class LinkedHashSet<E> : kotlin.collections.HashSet<E>, kotlin.colle
     public constructor LinkedHashSet<E>(elements: kotlin.collections.Collection<E>)
 }
 
-@kotlin.js.JsName(name = "KotlinList")
-@kotlin.js.JsImplicitExport(couldBeConvertedToExplicitExport = true)
 public interface List<out E> : kotlin.collections.Collection<E> {
-    @kotlin.js.JsExport.Ignore
     public abstract override val size: kotlin.Int { get; }
 
     public open fun asJsArrayView(): kotlin.collections.JsImmutableArray<E>
 
-    @kotlin.js.JsExport.Ignore
     public abstract override operator fun contains(element: E): kotlin.Boolean
 
-    @kotlin.js.JsExport.Ignore
     public abstract override fun containsAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
 
-    @kotlin.js.JsExport.Ignore
     public abstract operator fun get(index: kotlin.Int): E
 
-    @kotlin.js.JsExport.Ignore
     public abstract fun indexOf(element: E): kotlin.Int
 
-    @kotlin.js.JsExport.Ignore
     public abstract override fun isEmpty(): kotlin.Boolean
 
-    @kotlin.js.JsExport.Ignore
     public abstract override operator fun iterator(): kotlin.collections.Iterator<E>
 
-    @kotlin.js.JsExport.Ignore
     public abstract fun lastIndexOf(element: E): kotlin.Int
 
-    @kotlin.js.JsExport.Ignore
     public abstract fun listIterator(): kotlin.collections.ListIterator<E>
 
-    @kotlin.js.JsExport.Ignore
     public abstract fun listIterator(index: kotlin.Int): kotlin.collections.ListIterator<E>
 
-    @kotlin.js.JsExport.Ignore
     public abstract fun subList(fromIndex: kotlin.Int, toIndex: kotlin.Int): kotlin.collections.List<E>
 }
 
@@ -10461,36 +10448,25 @@ public abstract class LongIterator : kotlin.collections.Iterator<kotlin.Long> {
     public abstract fun nextLong(): kotlin.Long
 }
 
-@kotlin.js.JsName(name = "KotlinMap")
-@kotlin.js.JsImplicitExport(couldBeConvertedToExplicitExport = true)
 public interface Map<K, out V> {
-    @kotlin.js.JsExport.Ignore
     public abstract val entries: kotlin.collections.Set<kotlin.collections.Map.Entry<K, V>> { get; }
 
-    @kotlin.js.JsExport.Ignore
     public abstract val keys: kotlin.collections.Set<K> { get; }
 
-    @kotlin.js.JsExport.Ignore
     public abstract val size: kotlin.Int { get; }
 
-    @kotlin.js.JsExport.Ignore
     public abstract val values: kotlin.collections.Collection<V> { get; }
 
     public open fun asJsMapView(): kotlin.collections.JsImmutableMap<K, V>
 
-    @kotlin.js.JsExport.Ignore
     public abstract fun containsKey(key: K): kotlin.Boolean
 
-    @kotlin.js.JsExport.Ignore
     public abstract fun containsValue(value: V): kotlin.Boolean
 
-    @kotlin.js.JsExport.Ignore
     public abstract operator fun get(key: K): V?
 
-    @kotlin.js.JsExport.Ignore
     public abstract fun isEmpty(): kotlin.Boolean
 
-    @kotlin.js.JsExport.Ignore
     public interface Entry<out K, out V> {
         public abstract val key: K { get; }
 
@@ -10505,7 +10481,6 @@ public interface MutableCollection<E> : kotlin.collections.Collection<E>, kotlin
 
     public abstract fun clear(): kotlin.Unit
 
-    @kotlin.js.JsExport.Ignore
     public abstract override operator fun iterator(): kotlin.collections.MutableIterator<E>
 
     public abstract fun remove(element: E): kotlin.Boolean
@@ -10523,48 +10498,33 @@ public interface MutableIterator<out T> : kotlin.collections.Iterator<T> {
     public abstract fun remove(): kotlin.Unit
 }
 
-@kotlin.js.JsName(name = "KotlinMutableList")
-@kotlin.js.JsImplicitExport(couldBeConvertedToExplicitExport = true)
 public interface MutableList<E> : kotlin.collections.List<E>, kotlin.collections.MutableCollection<E> {
-    @kotlin.js.JsExport.Ignore
     public abstract override fun add(element: E): kotlin.Boolean
 
-    @kotlin.js.JsExport.Ignore
     public abstract fun add(index: kotlin.Int, element: E): kotlin.Unit
 
-    @kotlin.js.JsExport.Ignore
     public abstract fun addAll(index: kotlin.Int, elements: kotlin.collections.Collection<E>): kotlin.Boolean
 
-    @kotlin.js.JsExport.Ignore
     public abstract override fun addAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
 
     public open fun asJsArrayMutableView(): kotlin.collections.JsMutableArray<E>
 
-    @kotlin.js.JsExport.Ignore
     public abstract override fun clear(): kotlin.Unit
 
-    @kotlin.js.JsExport.Ignore
     public abstract override fun listIterator(): kotlin.collections.MutableListIterator<E>
 
-    @kotlin.js.JsExport.Ignore
     public abstract override fun listIterator(index: kotlin.Int): kotlin.collections.MutableListIterator<E>
 
-    @kotlin.js.JsExport.Ignore
     public abstract override fun remove(element: E): kotlin.Boolean
 
-    @kotlin.js.JsExport.Ignore
     public abstract override fun removeAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
 
-    @kotlin.js.JsExport.Ignore
     public abstract fun removeAt(index: kotlin.Int): E
 
-    @kotlin.js.JsExport.Ignore
     public abstract override fun retainAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
 
-    @kotlin.js.JsExport.Ignore
     public abstract operator fun set(index: kotlin.Int, element: E): E
 
-    @kotlin.js.JsExport.Ignore
     public abstract override fun subList(fromIndex: kotlin.Int, toIndex: kotlin.Int): kotlin.collections.MutableList<E>
 }
 
@@ -10580,86 +10540,60 @@ public interface MutableListIterator<T> : kotlin.collections.ListIterator<T>, ko
     public abstract fun set(element: T): kotlin.Unit
 }
 
-@kotlin.js.JsName(name = "KotlinMutableMap")
-@kotlin.js.JsImplicitExport(couldBeConvertedToExplicitExport = true)
 public interface MutableMap<K, V> : kotlin.collections.Map<K, V> {
-    @kotlin.js.JsExport.Ignore
     public abstract override val entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<K, V>> { get; }
 
-    @kotlin.js.JsExport.Ignore
     public abstract override val keys: kotlin.collections.MutableSet<K> { get; }
 
-    @kotlin.js.JsExport.Ignore
     public abstract override val values: kotlin.collections.MutableCollection<V> { get; }
 
     public open fun asJsMapMutableView(): kotlin.collections.JsMutableMap<K, V>
 
-    @kotlin.js.JsExport.Ignore
     public abstract fun clear(): kotlin.Unit
 
-    @kotlin.js.JsExport.Ignore
     public abstract fun put(key: K, value: V): V?
 
-    @kotlin.js.JsExport.Ignore
     public abstract fun putAll(from: kotlin.collections.Map<out K, V>): kotlin.Unit
 
-    @kotlin.js.JsExport.Ignore
     public abstract fun remove(key: K): V?
 
-    @kotlin.js.JsExport.Ignore
     public interface MutableEntry<K, V> : kotlin.collections.Map.Entry<K, V> {
         public abstract fun setValue(newValue: V): V
     }
 }
 
-@kotlin.js.JsName(name = "KotlinMutableSet")
-@kotlin.js.JsImplicitExport(couldBeConvertedToExplicitExport = true)
 public interface MutableSet<E> : kotlin.collections.Set<E>, kotlin.collections.MutableCollection<E> {
-    @kotlin.js.JsExport.Ignore
     public abstract override fun add(element: E): kotlin.Boolean
 
-    @kotlin.js.JsExport.Ignore
     public abstract override fun addAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
 
     public open fun asJsSetMutableView(): kotlin.collections.JsMutableSet<E>
 
-    @kotlin.js.JsExport.Ignore
     public abstract override fun clear(): kotlin.Unit
 
-    @kotlin.js.JsExport.Ignore
     public abstract override operator fun iterator(): kotlin.collections.MutableIterator<E>
 
-    @kotlin.js.JsExport.Ignore
     public abstract override fun remove(element: E): kotlin.Boolean
 
-    @kotlin.js.JsExport.Ignore
     public abstract override fun removeAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
 
-    @kotlin.js.JsExport.Ignore
     public abstract override fun retainAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
 }
 
 public interface RandomAccess {
 }
 
-@kotlin.js.JsName(name = "KotlinSet")
-@kotlin.js.JsImplicitExport(couldBeConvertedToExplicitExport = true)
 public interface Set<out E> : kotlin.collections.Collection<E> {
-    @kotlin.js.JsExport.Ignore
     public abstract override val size: kotlin.Int { get; }
 
     public open fun asJsSetView(): kotlin.collections.JsImmutableSet<E>
 
-    @kotlin.js.JsExport.Ignore
     public abstract override operator fun contains(element: E): kotlin.Boolean
 
-    @kotlin.js.JsExport.Ignore
     public abstract override fun containsAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
 
-    @kotlin.js.JsExport.Ignore
     public abstract override fun isEmpty(): kotlin.Boolean
 
-    @kotlin.js.JsExport.Ignore
     public abstract override operator fun iterator(): kotlin.collections.Iterator<E>
 }
 
