@@ -8,7 +8,11 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.KtAssert.assertEquals
 import org.junit.jupiter.api.DisplayName
+import kotlin.io.path.name
+import kotlin.io.path.pathString
+import kotlin.io.path.readText
 
 @DisplayName("Build FUS statistics")
 class BuildFusStatisticsIT : KGPDaemonsBaseTest() {
@@ -36,5 +40,51 @@ class BuildFusStatisticsIT : KGPDaemonsBaseTest() {
             }
         }
     }
+
+    @DisplayName("smoke test for fus-statistics-gradle-plugin")
+    @GradleTest
+    fun smokeTestForFusStatisticsPlugin(gradleVersion: GradleVersion) {
+        val metricName = "METRIC_NAME"
+        val metricValue = 1
+        project("simpleProject", gradleVersion) {
+            buildGradle.modify {
+                """
+                ${
+                    it.replace(
+                        "plugins {",
+                        """
+                               plugins {
+                                  id "org.jetbrains.kotlin.fus-statistics-gradle-plugin" version "${'$'}kotlin_version"
+                           """.trimIndent()
+                    )
+                }
+                
+                import org.jetbrains.kotlin.gradle.fus.GradleBuildFusStatistics
+                class TestFusTask extends DefaultTask implements org.jetbrains.kotlin.gradle.fus.UsesGradleBuildFusStatisticsService {
+                  private Property<GradleBuildFusStatistics> fusStatisticsBuildService = project.objects.property(GradleBuildFusStatistics.class)
+
+                  org.gradle.api.provider.Property getFusStatisticsBuildService(){
+                    return fusStatisticsBuildService
+                  }
+
+                }
+                tasks.register("test-fus", TestFusTask.class).get().doLast {
+                  fusStatisticsBuildService.get().reportMetric("$metricName", $metricValue, null)
+                }
+                """.trimIndent()
+            }
+
+            val reportRelativePath = "reports"
+            build("test-fus", "-Pkotlin.fus.statistics.path=${projectPath.resolve(reportRelativePath).pathString}") {
+                val fusReport = projectPath.getSingleFileInDir("$reportRelativePath/kotlin-fus")
+                assertFileContains(
+                    fusReport,
+                    "METRIC_NAME=1",
+                    "BUILD FINISHED"
+                )
+            }
+        }
+    }
+
 
 }
