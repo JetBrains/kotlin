@@ -9,6 +9,7 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
+import kotlin.io.path.pathString
 
 @DisplayName("Build FUS statistics")
 class BuildFusStatisticsIT : KGPDaemonsBaseTest() {
@@ -39,6 +40,89 @@ class BuildFusStatisticsIT : KGPDaemonsBaseTest() {
                     1
                 )
                 assertOutputDoesNotContain("[org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatHandler] Could not execute")
+            }
+        }
+    }
+
+    @DisplayName("smoke test for fus-statistics-gradle-plugin")
+    @GradleTest
+    fun smokeTestForFusStatisticsPlugin(gradleVersion: GradleVersion) {
+        val metricName = "METRIC_NAME"
+        val metricValue = 1
+        project("simpleProject", gradleVersion) {
+            buildGradle.modify {
+                """
+                ${applyFusStatisticPlugin(it)}
+                
+                ${createTestFusTaskClass()}
+                
+                tasks.register("test-fus", TestFusTask.class).get().doLast {
+                  fusStatisticsBuildService.get().reportMetric("$metricName", $metricValue, null)
+                }
+                """.trimIndent()
+            }
+
+            val reportRelativePath = "reports"
+            build("test-fus", "-Pkotlin.fus.statistics.path=${projectPath.resolve(reportRelativePath).pathString}") {
+                val fusReport = projectPath.getSingleFileInDir("$reportRelativePath/kotlin-fus")
+                assertFileContains(
+                    fusReport,
+                    "METRIC_NAME=1",
+                    "BUILD FINISHED"
+                )
+            }
+        }
+    }
+
+    private fun applyFusStatisticPlugin(it: String) = it.replace(
+        "plugins {",
+        """
+                                   plugins {
+                                      id "org.jetbrains.kotlin.fus-statistics-gradle-plugin" version "${'$'}kotlin_version"
+                               """.trimIndent()
+    )
+
+    private fun createTestFusTaskClass() = """import org.jetbrains.kotlin.gradle.fus.GradleBuildFusStatisticsService
+                    class TestFusTask extends DefaultTask implements org.jetbrains.kotlin.gradle.fus.UsesGradleBuildFusStatisticsService {
+                      private Property<GradleBuildFusStatisticsService> fusStatisticsBuildService = project.objects.property(GradleBuildFusStatisticsService.class)
+    
+                      org.gradle.api.provider.Property getFusStatisticsBuildService(){
+                        return fusStatisticsBuildService
+                      }
+    
+                    }"""
+
+    @DisplayName("test override metrics for fus-statistics-gradle-plugin")
+    @GradleTest
+    fun testMetricsOverrideForFusStatisticsPlugin(gradleVersion: GradleVersion) {
+        val metricName = "METRIC_NAME"
+        val metricValue = 1
+        project("simpleProject", gradleVersion) {
+            buildGradle.modify {
+                """
+                ${applyFusStatisticPlugin(it)}
+                
+                ${createTestFusTaskClass()}
+                
+                tasks.register("test-fus", TestFusTask.class).get().doLast {
+                  fusStatisticsBuildService.get().reportMetric("$metricName", $metricValue, null)
+                }
+                
+                tasks.register("test-fus-second", TestFusTask.class).get().doLast {
+                  fusStatisticsBuildService.get().reportMetric("$metricName", 2, null)
+                }
+                """.trimIndent()
+            }
+
+            val reportRelativePath = "reports"
+            build("test-fus", "test-fus-second", "-Pkotlin.fus.statistics.path=${projectPath.resolve(reportRelativePath).pathString}") {
+                assertOutputContains("Try to override $metricName metric: current value is \"1\", new value is \"2\"")
+                val fusReport = projectPath.getSingleFileInDir("$reportRelativePath/kotlin-fus")
+                assertFileContains(
+                    fusReport,
+                    "METRIC_NAME=1",
+                    "BUILD FINISHED"
+                )
             }
         }
     }
