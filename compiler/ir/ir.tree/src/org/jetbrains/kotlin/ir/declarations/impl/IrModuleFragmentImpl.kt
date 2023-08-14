@@ -27,7 +27,7 @@ class IrModuleFragmentImpl(
     override val irBuiltins: IrBuiltIns,
     files: List<IrFile> = emptyList(),
 ) : IrModuleFragment() {
-    override val name: Name get() = descriptor.name // TODO
+    override val name: Name get() = descriptor.name
 
     override val files: MutableList<IrFile> = files.toMutableList()
 }
