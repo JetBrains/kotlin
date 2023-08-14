@@ -18,9 +18,12 @@ private const val kotlinTransformedCInteropMetadataLibraries = "kotlinTransforme
 internal fun ProjectLayout.kotlinTransformedMetadataLibraryDirectoryForBuild(sourceSetName: String): File =
     buildDirectory.get().asFile.resolve(kotlinTransformedMetadataLibraries).resolve(sourceSetName)
 
+internal val Project.kotlinGradleDataDirCompat
+    get() = kotlinPropertiesProvider.kotlinPersistentGradleDataDir ?: ".kotlin"
+
 internal val Project.kotlinTransformedMetadataLibraryDirectoryForIde: File
     get() = compositeBuildRootProject.rootDir
-        .resolve(project.kotlinPropertiesProvider.kotlinPersistentGradleDataDir)
+        .resolve(project.kotlinGradleDataDirCompat)
         .resolve(kotlinTransformedMetadataLibraries)
 
 internal fun ProjectLayout.kotlinTransformedCInteropMetadataLibraryDirectoryForBuild(sourceSetName: String): File =
@@ -28,10 +31,10 @@ internal fun ProjectLayout.kotlinTransformedCInteropMetadataLibraryDirectoryForB
 
 internal val Project.kotlinCInteropLibraryDirectoryForIde: File
     get() = compositeBuildRootProject.rootDir
-        .resolve(project.kotlinPropertiesProvider.kotlinPersistentGradleDataDir)
+        .resolve(project.kotlinGradleDataDirCompat)
         .resolve(kotlinCInteropLibraries)
 
 internal val Project.kotlinTransformedCInteropMetadataLibraryDirectoryForIde: File
     get() = compositeBuildRootProject.rootDir
-        .resolve(project.kotlinPropertiesProvider.kotlinPersistentGradleDataDir)
+        .resolve(project.kotlinGradleDataDirCompat)
         .resolve(kotlinTransformedCInteropMetadataLibraries)

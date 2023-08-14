@@ -543,10 +543,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
      * This data is not cleaned by gradle clean task. This dir can be used to store data
      * for IDE import i.e. `./gradlew clean` will not break IDE import state.
      *
-     * If the property is not set, the default value `$ROOT_DIR/.kotlin` is used.
+     * If the property is not set, the plugin will use `<user_home>/.kotlin` as default.
      */
-    val kotlinPersistentGradleDataDir: String
-        get() = get(PropertyNames.KOTLIN_PERSISTENT_GRADLE_DATA_DIR) ?: ".kotlin"
+    val kotlinPersistentGradleDataDir: String? = get(PropertyNames.KOTLIN_PERSISTENT_GRADLE_DATA_DIR)
 
     /**
      * Retrieves a comma-separated list of browsers to use when running karma tests for [target]

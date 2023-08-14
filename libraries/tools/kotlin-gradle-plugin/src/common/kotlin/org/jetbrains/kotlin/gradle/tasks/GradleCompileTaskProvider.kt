@@ -14,11 +14,10 @@ import org.gradle.api.logging.Logger
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Internal
-import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner.Companion.normalizeForFlagFile
 import org.jetbrains.kotlin.gradle.incremental.IncrementalModuleInfoProvider
-import org.jetbrains.kotlin.gradle.utils.projectCacheDir
 import org.jetbrains.kotlin.gradle.utils.property
+import org.jetbrains.kotlin.gradle.utils.kotlinSessionsDir
 import java.io.File
 import javax.inject.Inject
 
@@ -45,12 +44,8 @@ abstract class GradleCompileTaskProvider @Inject constructor(
         .property(project.rootProject.projectDir)
 
     @get:Internal
-    val projectCacheDir: Provider<File> = objectFactory
-        .property(gradle.projectCacheDir)
-
-    @get:Internal
     val sessionsDir: Provider<File> = objectFactory
-        .property(GradleCompilerRunner.sessionsDir(gradle.projectCacheDir))
+        .property(project.kotlinSessionsDir)
 
     @get:Internal
     val projectName: Provider<String> = objectFactory

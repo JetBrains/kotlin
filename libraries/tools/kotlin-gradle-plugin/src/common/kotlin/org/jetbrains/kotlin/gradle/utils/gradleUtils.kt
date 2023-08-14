@@ -18,9 +18,6 @@ import org.gradle.api.services.BuildServiceSpec
 import org.gradle.util.GradleVersion
 import kotlin.reflect.KClass
 
-val Gradle.projectCacheDir
-    get() = startParameter.projectCacheDir ?: this.rootProject.projectDir.resolve(".gradle")
-
 internal val Project.compositeBuildRootGradle: Gradle get() = generateSequence(project.gradle) { it.parent }.last()
 internal val Project.compositeBuildRootProject: Project get() = compositeBuildRootGradle.rootProject
 

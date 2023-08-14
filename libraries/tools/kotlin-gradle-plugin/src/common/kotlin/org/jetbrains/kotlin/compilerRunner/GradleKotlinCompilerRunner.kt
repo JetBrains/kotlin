@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.daemon.common.configureDaemonJVMOptions
 import org.jetbrains.kotlin.daemon.common.filterExtractProps
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
@@ -47,6 +46,9 @@ import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import java.io.File
 import java.lang.ref.WeakReference
+import java.util.concurrent.locks.ReentrantReadWriteLock
+import kotlin.concurrent.read
+import kotlin.concurrent.write
 
 
 const val CREATED_CLIENT_FILE_PREFIX = "Created client-is-alive flag file: "
@@ -105,7 +107,6 @@ internal open class GradleCompilerRunner(
     internal val loggerProvider = taskProvider.logger.get()
     internal val buildDirProvider = taskProvider.buildDir.get().asFile
     internal val projectDirProvider = taskProvider.projectDir.get()
-    internal val projectCacheDirProvider = taskProvider.projectCacheDir.get()
     internal val sessionDirProvider = taskProvider.sessionsDir.get()
     internal val projectNameProvider = taskProvider.projectName.get()
     internal val incrementalModuleInfoProvider = taskProvider.buildModulesInfo
@@ -216,7 +217,6 @@ internal open class GradleCompilerRunner(
                 projectDirProvider,
                 buildDirProvider,
                 projectNameProvider,
-                projectCacheDirProvider,
                 sessionDirProvider
             ),
             compilerFullClasspath = environment.compilerFullClasspath(jdkToolsJar),
@@ -456,25 +456,44 @@ internal open class GradleCompilerRunner(
         }
 
         // session is created per build
-        @Volatile
         private var sessionFlagFile: File? = null
 
+        private val sessionFileLock = ReentrantReadWriteLock(true)
+
         // session files are deleted at org.jetbrains.kotlin.gradle.plugin.KotlinGradleBuildServices.buildFinished
-        @Synchronized
-        internal fun getOrCreateSessionFlagFile(log: Logger, sessionsDir: File, projectCacheDirProvider: File): File {
-            if (sessionFlagFile == null || !sessionFlagFile!!.exists()) {
-                val sessionFilesDir = sessionsDir.apply { mkdirs() }
-                sessionFlagFile = newTmpFile(prefix = "kotlin-compiler-", suffix = ".salive", directory = sessionFilesDir)
-                log.kotlinDebug { CREATED_SESSION_FILE_PREFIX + sessionFlagFile!!.relativeOrAbsolute(projectCacheDirProvider) }
-            } else {
-                log.kotlinDebug { EXISTING_SESSION_FILE_PREFIX + sessionFlagFile!!.relativeOrAbsolute(projectCacheDirProvider) }
+
+        internal fun getOrCreateSessionFlagFile(
+            log: Logger,
+            sessionsDir: File,
+        ): File {
+            sessionFileLock.read {
+                val sessionFlagRead = sessionFlagFile
+                if (sessionFlagRead != null && sessionFlagRead.exists()) {
+                    return sessionFlagRead.sessionFileFlagExists(log)
+                }
             }
 
-            return sessionFlagFile!!
+            sessionFileLock.write {
+                val sessionFlagWrite = sessionFlagFile
+                if (sessionFlagWrite != null && sessionFlagWrite.exists()) {
+                    return sessionFlagWrite.sessionFileFlagExists(log)
+                }
+
+                return newTmpFile(
+                    prefix = "kotlin-compiler-",
+                    suffix = ".salive",
+                    directory = sessionsDir.apply { mkdirs() })
+                    .also {
+                        sessionFlagFile = it
+                        log.kotlinDebug { CREATED_SESSION_FILE_PREFIX + it.absolutePath }
+                    }
+            }
         }
 
-        internal fun sessionsDir(projectCacheDir: File): File =
-            File(File(projectCacheDir, "kotlin"), "sessions")
+        private fun File.sessionFileFlagExists(log: Logger): File {
+            log.kotlinDebug { EXISTING_SESSION_FILE_PREFIX + absolutePath }
+            return this
+        }
     }
 }
 
