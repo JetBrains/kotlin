@@ -86,7 +86,7 @@ internal class KtFirReferenceShortener(
         val declarationToVisit = file.findSmallestElementOfTypeContainingSelection<KtDeclaration>(selection)
             ?: file
 
-        val firDeclaration = declarationToVisit.getOrBuildFir(firResolveSession) as? FirDeclaration ?: return ShortenCommandImpl(
+        val firDeclaration = declarationToVisit.getCorrespondingFirDeclaration() ?: return ShortenCommandImpl(
             file.createSmartPointer(),
             importsToAdd = emptySet(),
             starImportsToAdd = emptySet(),
@@ -141,6 +141,18 @@ internal class KtFirReferenceShortener(
         )
     }
 
+    private fun KtElement.getCorrespondingFirDeclaration(): FirDeclaration? {
+        require(this is KtFile || this is KtDeclaration)
+
+        val firElement = getOrBuildFir(firResolveSession)
+
+        return when (firElement) {
+            is FirDeclaration -> firElement
+            is FirAnonymousFunctionExpression -> firElement.anonymousFunction
+            else -> null
+        }
+    }
+
     private fun buildSymbol(firSymbol: FirBasedSymbol<*>): KtSymbol = analysisSession.firSymbolBuilder.buildSymbol(firSymbol)
 }
 
@@ -153,10 +165,13 @@ private fun FqName.dropFakeRootPrefixIfPresent(): FqName {
 
 private data class AdditionalImports(val simpleImports: Set<FqName>, val starImports: Set<FqName>)
 
-private inline fun <reified T : KtElement> KtFile.findSmallestElementOfTypeContainingSelection(selection: TextRange): T? =
-    findElementAt(selection.startOffset)
-        ?.parentsOfType<T>(withSelf = true)
-        ?.firstOrNull { selection in it.textRange }
+private inline fun <reified T : KtElement> KtFile.findSmallestElementOfTypeContainingSelection(selection: TextRange): T? {
+    val parents = findElementAt(selection.startOffset)
+        ?.parentsWithSelf
+        ?.toList()
+
+    return parents?.filterIsInstance<T>()?.firstOrNull { selection in it.textRange }
+}
 
 /**
  * How a symbol is imported. The order of the enum entry represents the priority of imports. If a symbol is available from multiple kinds of
