@@ -38,12 +38,13 @@ import org.jetbrains.kotlin.gradle.plugin.internal.UsesBuildIdProviderService
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.report.*
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.incremental.IncrementalCompilerRunner
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import java.io.File
 import javax.inject.Inject
 import org.jetbrains.kotlin.gradle.tasks.cleanOutputsAndLocalState as cleanOutputsAndLocalStateUtil
+
+private const val ABI_SNAPSHOT_FILE_NAME = "abi-snapshot.bin"
 
 @DisableCachingByDefault(because = "Abstract super-class, not to be instantiated directly")
 abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constructor(
@@ -141,12 +142,12 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
 
     @get:Internal
     val abiSnapshotFile
-        get() = taskBuildCacheableOutputDirectory.file(IncrementalCompilerRunner.ABI_SNAPSHOT_FILE_NAME)
+        get() = taskBuildCacheableOutputDirectory.file(ABI_SNAPSHOT_FILE_NAME)
 
     @get:Input
     val abiSnapshotRelativePath: Property<String> = objectFactory.property(String::class.java).value(
         //TODO update to support any jar changes
-        "$name/${IncrementalCompilerRunner.ABI_SNAPSHOT_FILE_NAME}"
+        "$name/${ABI_SNAPSHOT_FILE_NAME}"
     )
 
     @get:Internal
