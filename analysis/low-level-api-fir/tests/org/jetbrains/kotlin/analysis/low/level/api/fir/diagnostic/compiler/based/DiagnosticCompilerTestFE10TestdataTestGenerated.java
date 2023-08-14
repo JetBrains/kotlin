@@ -1138,6 +1138,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         }
 
         @Test
+        @TestMetadata("suspendFunAndPrivateJava.kt")
+        public void testSuspendFunAndPrivateJava() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/suspendFunAndPrivateJava.kt");
+        }
+
+        @Test
         @TestMetadata("SyntaxErrorInTestHighlighting.kt")
         public void testSyntaxErrorInTestHighlighting() throws Exception {
             runTest("compiler/testData/diagnostics/tests/SyntaxErrorInTestHighlighting.kt");
