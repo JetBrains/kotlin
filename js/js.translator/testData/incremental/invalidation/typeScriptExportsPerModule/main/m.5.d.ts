@@ -1,39 +1,39 @@
 type Nullable<T> = T | null | undefined
-export declare interface KotlinList<E> /* extends Collection<E> */ {
+export declare interface KtList<E> /* extends Collection<E> */ {
     asJsArrayView(): ReadonlyArray<E>;
     readonly __doNotUseOrImplementIt: {
-        readonly "kotlin.collections.KotlinList": unique symbol;
+        readonly "kotlin.collections.KtList": unique symbol;
     };
 }
-export declare interface KotlinSet<E> /* extends Collection<E> */ {
+export declare interface KtSet<E> /* extends Collection<E> */ {
     asJsSetView(): ReadonlySet<E>;
     readonly __doNotUseOrImplementIt: {
-        readonly "kotlin.collections.KotlinSet": unique symbol;
+        readonly "kotlin.collections.KtSet": unique symbol;
     };
 }
-export declare interface KotlinMap<K, V> {
+export declare interface KtMap<K, V> {
     asJsMapView(): ReadonlyMap<K, V>;
     readonly __doNotUseOrImplementIt: {
-        readonly "kotlin.collections.KotlinMap": unique symbol;
+        readonly "kotlin.collections.KtMap": unique symbol;
     };
 }
-export declare interface KotlinMutableSet<E> extends KotlinSet<E>/*, MutableCollection<E> */ {
+export declare interface KtMutableSet<E> extends KtSet<E>/*, MutableCollection<E> */ {
     asJsSetMutableView(): Set<E>;
     readonly __doNotUseOrImplementIt: {
-        readonly "kotlin.collections.KotlinMutableSet": unique symbol;
-    } & KotlinSet<E>["__doNotUseOrImplementIt"];
+        readonly "kotlin.collections.KtMutableSet": unique symbol;
+    } & KtSet<E>["__doNotUseOrImplementIt"];
 }
-export declare interface KotlinMutableList<E> extends KotlinList<E>/*, MutableCollection<E> */ {
+export declare interface KtMutableList<E> extends KtList<E>/*, MutableCollection<E> */ {
     asJsArrayMutableView(): Array<E>;
     readonly __doNotUseOrImplementIt: {
-        readonly "kotlin.collections.KotlinMutableList": unique symbol;
-    } & KotlinList<E>["__doNotUseOrImplementIt"];
+        readonly "kotlin.collections.KtMutableList": unique symbol;
+    } & KtList<E>["__doNotUseOrImplementIt"];
 }
-export declare interface KotlinMutableMap<K, V> extends KotlinMap<K, V> {
+export declare interface KtMutableMap<K, V> extends KtMap<K, V> {
     asJsMapMutableView(): Map<K, V>;
     readonly __doNotUseOrImplementIt: {
-        readonly "kotlin.collections.KotlinMutableMap": unique symbol;
-    } & KotlinMap<K, V>["__doNotUseOrImplementIt"];
+        readonly "kotlin.collections.KtMutableMap": unique symbol;
+    } & KtMap<K, V>["__doNotUseOrImplementIt"];
 }
 export declare class MyClass {
     constructor(stepId: number);
