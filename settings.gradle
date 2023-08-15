@@ -601,11 +601,14 @@ if (buildProperties.inJpsBuildIdeaSync) {
             ":kotlin-test:kotlin-test-js:kotlin-test-js-it",
             ":kotlin-test:kotlin-test-js-ir:kotlin-test-js-ir-it",
             ":kotlin-test:kotlin-test-wasm-js",
-            ":kotlin-test:kotlin-test-wasm-wasi",
-            ":native:native.tests"
+            ":kotlin-test:kotlin-test-wasm-wasi"
 
     if (!stdlibMpp) include ":kotlin-stdlib-js", ":kotlin-stdlib-js-ir"
     if (!stdlibMpp) include ":kotlin-stdlib-mpp"
+
+    if (buildProperties.isKotlinNativeEnabled) {
+        include ":native:native.tests"
+    }
 
     project(':kotlin-stdlib-common').projectDir = "$rootDir/libraries/stdlib/common" as File
     project(':kotlin-stdlib').projectDir = "$rootDir/libraries/stdlib" + (stdlibMpp ? "" : "/jvm") as File
@@ -633,7 +636,9 @@ if (buildProperties.inJpsBuildIdeaSync) {
     project(':kotlin-test:kotlin-test-js-ir:kotlin-test-js-ir-it').projectDir = "$rootDir/libraries/kotlin.test/js-ir/it" as File
     project(':kotlin-test:kotlin-test-wasm-js').projectDir = "$rootDir/libraries/kotlin.test/wasm/js" as File
     project(':kotlin-test:kotlin-test-wasm-wasi').projectDir = "$rootDir/libraries/kotlin.test/wasm/wasi" as File
-    project(':native:native.tests').projectDir = "$rootDir/native/native.tests" as File
+    if (buildProperties.isKotlinNativeEnabled) {
+        project(':native:native.tests').projectDir = "$rootDir/native/native.tests" as File
+    }
 }
 include ":compiler:android-tests"
 
