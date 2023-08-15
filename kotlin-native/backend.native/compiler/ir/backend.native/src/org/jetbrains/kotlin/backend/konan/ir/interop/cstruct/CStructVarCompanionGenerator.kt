@@ -4,6 +4,7 @@
  */
 package org.jetbrains.kotlin.backend.konan.ir.interop.cstruct
 
+import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.descriptors.getArgumentValueOrNull
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
@@ -68,7 +69,7 @@ internal class CStructVarCompanionGenerator(
         if (companionObjectDescriptor.containingDeclaration.annotations.hasAnnotation(RuntimeNames.managedType)) {
             return createConstructor(companionObjectDescriptor.unsubstitutedPrimaryConstructor!!).also { irConstructor ->
                 postLinkageSteps.add {
-                    irConstructor.body = irBuilder(irBuiltIns, irConstructor.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
+                    irConstructor.body = irBuiltIns.createIrBuilder(irConstructor.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
                         +IrDelegatingConstructorCallImpl.fromSymbolOwner(
                                 startOffset, endOffset, context.irBuiltIns.unitType,
                                 irBuiltIns.anyClass.owner.primaryConstructor!!.symbol
@@ -80,7 +81,7 @@ internal class CStructVarCompanionGenerator(
         } else {
             return createConstructor(companionObjectDescriptor.unsubstitutedPrimaryConstructor!!).also { irConstructor ->
                 postLinkageSteps.add {
-                    irConstructor.body = irBuilder(irBuiltIns, irConstructor.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
+                    irConstructor.body = irBuiltIns.createIrBuilder(irConstructor.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
                         +IrDelegatingConstructorCallImpl.fromSymbolOwner(
                                 startOffset, endOffset, context.irBuiltIns.unitType,
                                 symbols.structVarPrimaryConstructor

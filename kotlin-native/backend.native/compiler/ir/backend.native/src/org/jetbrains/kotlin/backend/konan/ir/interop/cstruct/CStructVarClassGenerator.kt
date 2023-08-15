@@ -4,6 +4,7 @@
  */
 package org.jetbrains.kotlin.backend.konan.ir.interop.cstruct
 
+import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.ir.interop.DescriptorToIrTranslationMixin
@@ -101,7 +102,7 @@ internal class CStructVarClassGenerator(
 
         val getPtr = symbols.interopGetPtr
 
-        destroy.body = irBuilder(irBuiltIns, destroy.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET)
+        destroy.body = irBuiltIns.createIrBuilder(destroy.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET)
                 .irBlockBody {
                     +irCall(companionDestroy).apply {
                         dispatchReceiver = irGetObject(irClass.companionObject()!!.symbol)
@@ -157,12 +158,12 @@ internal class CStructVarClassGenerator(
                 DescriptorVisibilities.PRIVATE
         ).also {
             it.parent = irClass
-            it.initializer = irBuilder(irBuiltIns, it.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).run {
+            it.initializer = irBuiltIns.createIrBuilder(it.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).run {
                 irExprBody(irGet(irClass.primaryConstructor!!.valueParameters[1]))
             }
         }
 
-        managedVal.getter!!.body = irBuilder(irBuiltIns, managedVal.getter!!.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET)
+        managedVal.getter!!.body = irBuiltIns.createIrBuilder(managedVal.getter!!.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET)
                 .irBlockBody {
                     +irReturn(irGetField(irGet(managedVal.getter!!.dispatchReceiverParameter!!), managedVal.backingField!!))
 
@@ -181,7 +182,7 @@ internal class CStructVarClassGenerator(
                 isExternal = false,
         ).also { field ->
             field.parent = irClass
-            field.initializer = irBuilder(irBuiltIns, field.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).run {
+            field.initializer = irBuiltIns.createIrBuilder(field.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).run {
                 val lambda = context.irFactory.buildFun {
                     startOffset = SYNTHETIC_OFFSET
                     endOffset = SYNTHETIC_OFFSET
@@ -268,7 +269,7 @@ internal class CStructVarClassGenerator(
         if (!irClass.descriptor.annotations.hasAnnotation(RuntimeNames.managedType)) {
             return createConstructor(irClass.descriptor.unsubstitutedPrimaryConstructor!!).also { irConstructor ->
                 postLinkageSteps.add {
-                    irConstructor.body = irBuilder(irBuiltIns, irConstructor.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
+                    irConstructor.body = irBuiltIns.createIrBuilder(irConstructor.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
                         +IrDelegatingConstructorCallImpl.fromSymbolOwner(
                                 startOffset, endOffset,
                                 context.irBuiltIns.unitType, symbols.cStructVarConstructorSymbol
@@ -282,7 +283,7 @@ internal class CStructVarClassGenerator(
         } else {
             return createConstructor(irClass.descriptor.unsubstitutedPrimaryConstructor!!).also { irConstructor ->
                 postLinkageSteps.add {
-                    irConstructor.body = irBuilder(irBuiltIns, irConstructor.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
+                    irConstructor.body = irBuiltIns.createIrBuilder(irConstructor.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
                         +IrDelegatingConstructorCallImpl.fromSymbolOwner(
                                 startOffset, endOffset,
                                 context.irBuiltIns.unitType, symbols.managedTypeConstructor
@@ -300,7 +301,7 @@ internal class CStructVarClassGenerator(
     private fun createSecondaryConstructor(descriptor: ClassConstructorDescriptor): IrConstructor {
         return createConstructor(descriptor).also {
             postLinkageSteps.add {
-                it.body = irBuilder(irBuiltIns, it.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
+                it.body = irBuiltIns.createIrBuilder(it.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
                     // Empty. The real body is constructed at the call site by the interop lowering phase.
                 }
             }

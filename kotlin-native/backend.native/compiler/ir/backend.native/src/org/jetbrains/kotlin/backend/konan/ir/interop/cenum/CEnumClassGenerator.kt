@@ -4,6 +4,7 @@
  */
 package org.jetbrains.kotlin.backend.konan.ir.interop.cenum
 
+import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.descriptors.enumEntries
 import org.jetbrains.kotlin.backend.konan.ir.interop.DescriptorToIrTranslationMixin
 import org.jetbrains.kotlin.backend.konan.ir.interop.findDeclarationByName
@@ -101,7 +102,7 @@ internal class CEnumClassGenerator(
                     propertyDescriptor, propertyDescriptor.type.toIrType(), DescriptorVisibilities.PRIVATE
             ).also {
                 postLinkageSteps.add {
-                    it.initializer = irBuilder(irBuiltIns, it.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).run {
+                    it.initializer = irBuiltIns.createIrBuilder(it.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).run {
                         irExprBody(irGet(irClass.primaryConstructor!!.valueParameters[0]))
                     }
                 }
@@ -110,7 +111,7 @@ internal class CEnumClassGenerator(
         val getter = irProperty.getter!!
         getter.correspondingPropertySymbol = irProperty.symbol
         postLinkageSteps.add {
-            getter.body = irBuilder(irBuiltIns, getter.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
+            getter.body = irBuiltIns.createIrBuilder(getter.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
                 +irReturn(
                         irGetField(
                                 irGet(getter.dispatchReceiverParameter!!),
@@ -161,7 +162,7 @@ internal class CEnumClassGenerator(
         val classSymbol = symbolTable.descriptorExtension.referenceClass(descriptor)
         val type = descriptor.defaultType.toIrType()
         postLinkageSteps.add {
-            irConstructor.body = irBuilder(irBuiltIns, irConstructor.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET)
+            irConstructor.body = irBuiltIns.createIrBuilder(irConstructor.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET)
                     .irBlockBody {
                         +IrEnumConstructorCallImpl(
                                 startOffset, endOffset,
