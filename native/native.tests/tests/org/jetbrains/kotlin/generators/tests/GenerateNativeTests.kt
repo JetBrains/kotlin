@@ -111,7 +111,7 @@ fun main() {
             testClass<AbstractNativePartialLinkageTest>(
                 suiteTestClassName = "NativePartialLinkageTestGenerated"
             ) {
-                model("klibABI/", pattern = "^([^_](.+))$", recursive = false)
+                model("klib/partial-linkage/", pattern = "^([^_](.+))$", recursive = false)
             }
             testClass<AbstractNativePartialLinkageTest>(
                 suiteTestClassName = "FirNativePartialLinkageTestGenerated",
@@ -119,7 +119,7 @@ fun main() {
                     *frontendFir()
                 )
             ) {
-                model("klibABI/", pattern = "^([^_](.+))$", recursive = false)
+                model("klib/partial-linkage/", pattern = "^([^_](.+))$", recursive = false)
             }
         }
 

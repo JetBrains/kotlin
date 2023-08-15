@@ -50,22 +50,22 @@ fun main(args: Array<String>) {
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup("js/js.tests/tests-gen", "compiler/testData") {
             testClass<AbstractJsPartialLinkageWithICTestCase> {
-                model("klibABI/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
+                model("klib/partial-linkage/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
             }
         }
         testGroup("js/js.tests/tests-gen", "compiler/testData") {
             testClass<AbstractJsPartialLinkageNoICTestCase> {
-                model("klibABI/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
+                model("klib/partial-linkage/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
             }
         }
         testGroup("js/js.tests/tests-gen", "compiler/testData") {
             testClass<AbstractJsPartialLinkageNoICES6TestCase> {
-                model("klibABI/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR_ES6, recursive = false)
+                model("klib/partial-linkage/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR_ES6, recursive = false)
             }
         }
         testGroup("js/js.tests/tests-gen", "compiler/testData") {
             testClass<AbstractFirJsPartialLinkageNoICTestCase> {
-                model("klibABI/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
+                model("klib/partial-linkage/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
             }
         }
 
