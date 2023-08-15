@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.types.asSimpleType
 import java.lang.reflect.Member
 import java.lang.reflect.Method
 import java.lang.reflect.Type
+import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
 import kotlin.reflect.jvm.internal.KDeclarationContainerImpl
 import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
 import kotlin.reflect.jvm.internal.defaultPrimitiveValue
@@ -186,6 +187,7 @@ internal class ValueClassAwareCaller<out M : Member?>(
         }
 
         val result = caller.call(unboxedArguments)
+        if (result === COROUTINE_SUSPENDED) return result
 
         // box is not null only for inline classes
         return box?.invoke(null, result) ?: result

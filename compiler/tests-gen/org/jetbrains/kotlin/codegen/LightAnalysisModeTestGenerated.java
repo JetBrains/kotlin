@@ -35131,6 +35131,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                     runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/internalPrimaryValOfInlineClass.kt");
                 }
 
+                @TestMetadata("kt58887.kt")
+                public void testKt58887() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/kt58887.kt");
+                }
+
                 @TestMetadata("primaryValOfInlineClass.kt")
                 public void testPrimaryValOfInlineClass() throws Exception {
                     runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/primaryValOfInlineClass.kt");
