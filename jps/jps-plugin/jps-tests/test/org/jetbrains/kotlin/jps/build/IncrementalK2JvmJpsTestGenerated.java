@@ -587,6 +587,11 @@ public class IncrementalK2JvmJpsTestGenerated extends AbstractIncrementalK2JvmJp
             runTest("jps/jps-plugin/testData/incremental/pureKotlin/returnTypeChanged/");
         }
 
+        @TestMetadata("samConversion")
+        public void testSamConversion() throws Exception {
+            runTest("jps/jps-plugin/testData/incremental/pureKotlin/samConversion/");
+        }
+
         @TestMetadata("sealedClassesAddImplements")
         public void testSealedClassesAddImplements() throws Exception {
             runTest("jps/jps-plugin/testData/incremental/pureKotlin/sealedClassesAddImplements/");

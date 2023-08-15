@@ -591,6 +591,11 @@ public class IncrementalK1JsKlibCompilerWithScopeExpansionRunnerTestGenerated ex
             runTest("jps/jps-plugin/testData/incremental/pureKotlin/returnTypeChanged/");
         }
 
+        @TestMetadata("samConversion")
+        public void testSamConversion() throws Exception {
+            runTest("jps/jps-plugin/testData/incremental/pureKotlin/samConversion/");
+        }
+
         @TestMetadata("secondaryConstructorInlined")
         public void testSecondaryConstructorInlined() throws Exception {
             runTest("jps/jps-plugin/testData/incremental/pureKotlin/secondaryConstructorInlined/");

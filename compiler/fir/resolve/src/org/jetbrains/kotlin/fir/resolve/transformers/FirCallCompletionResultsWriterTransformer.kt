@@ -560,20 +560,7 @@ class FirCallCompletionResultsWriterTransformer(
                 // a built-in functional type, no-brainer
                 expectedArgumentType.isSomeFunctionType(session) -> expectedArgumentType
                 // fun interface (a.k.a. SAM), then unwrap it and build a functional type from that interface function
-                expectedArgumentType is ConeClassLikeType -> {
-                    expectedArgumentType.lookupTag.toFirRegularClass(session)?.let answer@{ firRegularClass ->
-                        val functionType = samResolver.getFunctionTypeForPossibleSamType(firRegularClass.defaultType())
-                            ?: return@answer null
-                        val kind = functionType.functionTypeKind(session) ?: FunctionTypeKind.Function
-                        createFunctionType(
-                            kind,
-                            functionType.typeArguments.dropLast(1).map { it as ConeKotlinType },
-                            null,
-                            functionType.typeArguments.last() as ConeKotlinType
-                        )
-                    }
-                }
-                else -> null
+                else -> samResolver.getFunctionTypeForPossibleSamType(expectedArgumentType)?.lowerBoundIfFlexible()
             }
         }
 
