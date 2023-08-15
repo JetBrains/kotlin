@@ -32,6 +32,7 @@ fun ClassNode.isEffectivelyPublic(classVisibility: ClassVisibility?) =
             && !isLocal()
             && !isWhenMappings()
             && !isSyntheticAnnotationClass()
+            && !isEnumEntriesMappings()
             && (classVisibility?.isPublic(isPublishedApi()) ?: true)
 
 
@@ -40,6 +41,7 @@ fun ClassNode.isLocal() = outerMethod != null
 fun ClassNode.isInner() = innerClassNode != null
 fun ClassNode.isWhenMappings() = isSynthetic(access) && name.endsWith("\$WhenMappings")
 fun ClassNode.isSyntheticAnnotationClass() = isSynthetic(access) && name.contains("\$annotationImpl\$")
+fun ClassNode.isEnumEntriesMappings() = isSynthetic(access) && name.endsWith("\$EntriesMappings")
 
 val ClassNode.effectiveAccess: Int get() = innerClassNode?.access ?: access
 val ClassNode.outerClassName: String? get() = innerClassNode?.outerName

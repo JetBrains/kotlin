@@ -55,6 +55,8 @@ class CasesPublicAPITest {
 
     @Test fun whenMappings() { snapshotAPIAndCompare(testName.methodName) }
 
+    @Test fun enums() { snapshotAPIAndCompare(testName.methodName) }
+
     private fun snapshotAPIAndCompare(testClassRelativePath: String, nonPublicMarkers: Set<String> = emptySet()) {
         val testClassPaths = baseClassPaths.map { it.resolve(testClassRelativePath) }
         val testClasses = testClassPaths.flatMap { it.listFiles().orEmpty().asIterable() }

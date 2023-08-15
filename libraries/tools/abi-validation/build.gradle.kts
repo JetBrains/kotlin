@@ -66,12 +66,6 @@ val createClasspathManifest = tasks.register("createClasspathManifest") {
 val kotlinVersion: String by project
 val androidGradlePluginVersion: String = "7.2.2"
 
-configurations.implementation {
-    exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib")
-    exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-jdk7")
-    exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib-jdk8")
-}
-
 dependencies {
     implementation(gradleApi())
     implementation("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.6.2")
@@ -116,7 +110,8 @@ java {
 tasks {
     compileTestKotlin {
         kotlinOptions {
-            languageVersion = "1.6"
+            languageVersion = "1.9"
+            freeCompilerArgs += "-Xsuppress-version-warnings"
         }
     }
     test {
