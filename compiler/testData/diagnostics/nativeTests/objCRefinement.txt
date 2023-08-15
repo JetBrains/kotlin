@@ -140,6 +140,7 @@ internal final class InternalInheritsFromNested : OuterHidden.Nested.Nested {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<MyHiddenEnum>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): MyHiddenEnum
     public final /*synthesized*/ fun values(): kotlin.Array<MyHiddenEnum>
 }
@@ -162,6 +163,7 @@ internal final class InternalInheritsFromNested : OuterHidden.Nested.Nested {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<MyHiddenNonTrivialEnum>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): MyHiddenNonTrivialEnum
     public final /*synthesized*/ fun values(): kotlin.Array<MyHiddenNonTrivialEnum>
 }

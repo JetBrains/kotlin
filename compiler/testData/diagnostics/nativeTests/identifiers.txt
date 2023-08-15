@@ -50,6 +50,7 @@ package totally {
                 public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
                 // Static members
+                public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<totally.normal.pkg.`Check>Enum>Entry`>
                 public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): totally.normal.pkg.`Check>Enum>Entry`
                 public final /*synthesized*/ fun values(): kotlin.Array<totally.normal.pkg.`Check>Enum>Entry`>
             }
