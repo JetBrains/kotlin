@@ -47,11 +47,13 @@ kotlin {
         binaries.executable()
 
         compilations.named("main") {
+            val nameOfModule = this@named.name
             packageJson {
                 customField("customField1", mapOf("one" to 1, "two" to 2))
                 customField("customField2", null)
                 customField("customField3" to null)
                 customField("customField4", mapOf("foo" to null))
+                customField("customField5", "@as/${nameOfModule}")
             }
         }
     }

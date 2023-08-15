@@ -109,13 +109,6 @@ open class NodeJsRootPlugin : Plugin<Project> {
                     nodeJs.resolver.close()
                 }
             )
-            it.parameters.packageJsonHandlers.set(
-                objectFactory.providerWithLazyConvention {
-                    nodeJs.resolver.compilations.associate { compilation ->
-                        "${compilation.project.path}:${compilation.disambiguatedName}" to compilation.packageJsonHandlers
-                    }
-                }
-            )
             it.parameters.gradleNodeModulesProvider.set(gradleNodeModulesProvider)
         }
 

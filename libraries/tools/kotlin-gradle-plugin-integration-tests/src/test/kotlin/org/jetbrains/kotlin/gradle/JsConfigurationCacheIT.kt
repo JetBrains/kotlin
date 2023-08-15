@@ -53,7 +53,7 @@ abstract class JsIrConfigurationCacheIT : KGPBaseTest() {
     }
 
     @DisplayName("configuration cache is reused when idea.version system property is changed in browser project")
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_5)
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_8_0)
     @GradleTest
     fun testBrowserDistributionOnIdeaPropertyChange(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-project", gradleVersion) {

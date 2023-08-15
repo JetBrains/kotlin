@@ -32,7 +32,7 @@ class KotlinRootNpmResolution(
         synchronized(projects) {
             npmResolutionManager.parameters.gradleNodeModulesProvider.get().close()
 
-            val projectResolutions: List<PreparedKotlinCompilationNpmResolution> = projects.values.flatMap { it.npmProjects }.map { it.close(npmResolutionManager, logger) }
+            val projectResolutions: List<PreparedKotlinCompilationNpmResolution> = projects.values.flatMap { it.npmProjects }.map { it.close() }
             npmEnvironment.packageManager.prepareRootProject(
                 npmEnvironment,
                 rootProjectName,
