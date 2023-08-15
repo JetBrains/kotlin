@@ -97,15 +97,6 @@ inline fun <reified T> stub(name: String): T {
     } as T
 }
 
-fun IrDeclarationContainer.addChildren(declarations: List<IrDeclaration>) {
-    declarations.forEach { this.addChild(it) }
-}
-
-fun IrDeclarationContainer.addChild(declaration: IrDeclaration) {
-    this.declarations += declaration
-    declaration.accept(SetDeclarationsParentVisitor, this)
-}
-
 tailrec fun IrDeclaration.getContainingFile(): IrFile? {
     val parent = this.parent
 
