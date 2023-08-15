@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.backend.common.serialization.encodings.BinaryNameAnd
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.backend.common.serialization.encodings.FunctionFlags
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.descriptors.findPackage
 import org.jetbrains.kotlin.backend.konan.descriptors.isForwardDeclarationModule
 import org.jetbrains.kotlin.backend.konan.descriptors.isFromInteropLibrary
 import org.jetbrains.kotlin.backend.konan.descriptors.isInteropLibrary
@@ -39,7 +38,6 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -470,7 +468,9 @@ internal class KonanIrLinker(
 
     override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean = moduleDescriptor.isNativeStdlib()
 
-    private val forwardDeclarationDeserializer = forwardModuleDescriptor?.let { KonanForwardDeclarationModuleDeserializer(it) }
+    private val forwardDeclarationDeserializer = forwardModuleDescriptor?.let {
+        KonanForwardDeclarationModuleDeserializer(it, this, stubGenerator)
+    }
 
     override val fakeOverrideBuilder = FakeOverrideBuilder(
             linker = this,
@@ -557,7 +557,11 @@ internal class KonanIrLinker(
         else -> error("Unknown package fragment kind ${packageFragment::class.java}")
     }
 
-    private inner class KonanForwardDeclarationModuleDeserializer(moduleDescriptor: ModuleDescriptor) : IrModuleDeserializer(moduleDescriptor, KotlinAbiVersion.CURRENT) {
+    private class KonanForwardDeclarationModuleDeserializer(
+            moduleDescriptor: ModuleDescriptor,
+            private val linker: KotlinIrLinker,
+            private val stubGenerator: DeclarationStubGenerator,
+    ) : IrModuleDeserializer(moduleDescriptor, KotlinAbiVersion.CURRENT) {
         init {
             require(moduleDescriptor.isForwardDeclarationModule)
         }
@@ -593,9 +597,9 @@ internal class KonanIrLinker(
             val descriptor = resolveDescriptor(idSig) ?: return null
             val actualModule = descriptor.module
             if (actualModule !== moduleDescriptor) {
-                val moduleDeserializer = resolveModuleDeserializer(actualModule, idSig)
+                val moduleDeserializer = linker.resolveModuleDeserializer(actualModule, idSig)
                 moduleDeserializer.addModuleReachableTopLevel(idSig)
-                return symbolTable.referenceClass(idSig)
+                return linker.symbolTable.referenceClass(idSig)
             }
 
             return declaredDeclaration.getOrPut(idSig) { buildForwardDeclarationStub(descriptor) }.symbol
@@ -603,7 +607,7 @@ internal class KonanIrLinker(
 
         override fun deserializedSymbolNotFound(idSig: IdSignature): Nothing = error("No descriptor found for $idSig")
 
-        override val moduleFragment: IrModuleFragment = IrModuleFragmentImpl(moduleDescriptor, builtIns)
+        override val moduleFragment: IrModuleFragment = IrModuleFragmentImpl(moduleDescriptor, linker.builtIns)
         override val moduleDependencies: Collection<IrModuleDeserializer> = emptyList()
 
         override val kind get() = IrModuleDeserializerKind.SYNTHETIC
