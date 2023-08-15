@@ -285,14 +285,6 @@ fun main() {
                     model("content", targetBackend = TargetBackend.NATIVE)
                 }
             }
-            testClass<AbstractNativeHeaderKlibCompareTest>(
-                suiteTestClassName = "FirNativeHeaderKlibCompareTestGenerated",
-                annotations = listOf(*frontendFir()),
-            ) {
-                model("headerKlibs/compare", extension = null, recursive = false)
-            }
-        }
-
             testGroup("native/native.tests/tests-gen", "compiler/util-klib-abi/testData") {
                 testClass<AbstractNativeCInteropLibraryAbiReaderTest>(
                     suiteTestClassName = "NativeCInteropLibraryAbiReaderTest"
@@ -318,6 +310,14 @@ fun main() {
                     model("headerKlibs/compare", extension = null, recursive = false)
                 }
             }
+            testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
+                testClass<AbstractNativeHeaderKlibCompareTest>(
+                    suiteTestClassName = "FirNativeHeaderKlibCompareTestGenerated",
+                    annotations = listOf(*frontendFir()),
+                ) {
+                    model("headerKlibs/compare", extension = null, recursive = false)
+                }
+            }
 
             // Header klib compilation tests
             testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
@@ -327,11 +327,13 @@ fun main() {
                     model("headerKlibs/compile", extension = null, recursive = false)
                 }
             }
-            testClass<AbstractNativeHeaderKlibCompileTest>(
-                suiteTestClassName = "FirNativeHeaderKlibCompileTestGenerated",
-                annotations = listOf(*frontendFir()),
-            ) {
-                model("headerKlibs/compile", extension = null, recursive = false)
+            testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
+                testClass<AbstractNativeHeaderKlibCompileTest>(
+                    suiteTestClassName = "FirNativeHeaderKlibCompileTestGenerated",
+                    annotations = listOf(*frontendFir()),
+                ) {
+                    model("headerKlibs/compile", extension = null, recursive = false)
+                }
             }
         }
     }
