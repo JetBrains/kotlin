@@ -212,22 +212,22 @@ fun main() {
             }
         }
 
-        // Klib ir tests
+        // Dump KLIB IR tests
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
-            testClass<AbstractNativeKlibIrTest>(
-                suiteTestClassName = "NativeKlibIrTestGenerated",
+            testClass<AbstractNativeKlibDumpIrTest>(
+                suiteTestClassName = "NativeKlibDumpIrTestGenerated",
             ) {
-                model("klibIr", pattern = "^([^_](.+)).kt$", recursive = true)
+                model("klib/dump-ir", pattern = "^([^_](.+)).kt$", recursive = true)
             }
         }
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
-            testClass<AbstractNativeKlibIrTest>(
-                suiteTestClassName = "FirNativeKlibIrTestGenerated",
+            testClass<AbstractNativeKlibDumpIrTest>(
+                suiteTestClassName = "FirNativeKlibDumpIrTestGenerated",
                 annotations = listOf(
                     *frontendFir()
                 )
             ) {
-                model("klibIr", pattern = "^([^_](.+)).kt$", recursive = true)
+                model("klib/dump-ir", pattern = "^([^_](.+)).kt$", recursive = true)
             }
         }
 

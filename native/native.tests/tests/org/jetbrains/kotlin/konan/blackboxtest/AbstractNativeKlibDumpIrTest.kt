@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Tag
 import java.io.File
 
 @Tag("klib")
-abstract class AbstractNativeKlibIrTest : AbstractNativeSimpleTest() {
+abstract class AbstractNativeKlibDumpIrTest : AbstractNativeSimpleTest() {
     protected fun runTest(@TestDataFile testPath: String) {
         val testPathFull = getAbsoluteFile(testPath)
         muteTestIfNecessary(testPathFull)
