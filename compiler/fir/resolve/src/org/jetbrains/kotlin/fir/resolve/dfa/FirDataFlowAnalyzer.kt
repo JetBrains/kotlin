@@ -78,14 +78,10 @@ abstract class FirDataFlowAnalyzer(
                 private val visibilityChecker = components.session.visibilityChecker
                 private val typeContext = components.session.typeContext
 
-                override fun symbolTypeUpdated(symbol: FirBasedSymbol<*>, info: TypeStatement?, isReceiver: Boolean) {
-                    if (isReceiver) {
-                        val index = receiverStack.getReceiverIndex(symbol)
-                        if (index != null) {
-                            val originalType = receiverStack.getOriginalType(index)
-                            receiverStack.replaceReceiverType(index, info.smartCastedType(typeContext, originalType))
-                        }
-                    }
+                override fun receiverUpdated(symbol: FirBasedSymbol<*>, info: TypeStatement?) {
+                    val index = receiverStack.getReceiverIndex(symbol) ?: return
+                    val originalType = receiverStack.getOriginalType(index)
+                    receiverStack.replaceReceiverType(index, info.smartCastedType(typeContext, originalType))
                 }
 
                 override val logicSystem: LogicSystem =
@@ -120,8 +116,7 @@ abstract class FirDataFlowAnalyzer(
 
     protected abstract val logicSystem: LogicSystem
     protected abstract val receiverStack: Iterable<ImplicitReceiverValue<*>>
-
-    protected abstract fun symbolTypeUpdated(symbol: FirBasedSymbol<*>, info: TypeStatement?, isReceiver: Boolean)
+    protected abstract fun receiverUpdated(symbol: FirBasedSymbol<*>, info: TypeStatement?)
 
     private val graphBuilder get() = context.graphBuilder
     private val variableStorage get() = context.variableStorage
@@ -1281,7 +1276,7 @@ abstract class FirDataFlowAnalyzer(
             variableStorage.getLocalVariable(it.boundSymbol)?.let { variable ->
                 val newStatement = to?.getTypeStatement(variable)
                 if (newStatement != from?.getTypeStatement(variable)) {
-                    symbolTypeUpdated(it.boundSymbol, newStatement, isReceiver = true)
+                    receiverUpdated(it.boundSymbol, newStatement)
                 }
             }
         }
@@ -1293,8 +1288,9 @@ abstract class FirDataFlowAnalyzer(
 
     private fun MutableFlow.addTypeStatement(info: TypeStatement) {
         val newStatement = logicSystem.addTypeStatement(this, info) ?: return
-        val isReceiver = newStatement.variable.isThisReference && this === currentReceiverState
-        symbolTypeUpdated(newStatement.variable.identifier.symbol, newStatement, isReceiver)
+        if (newStatement.variable.isThisReference && this === currentReceiverState) {
+            receiverUpdated(newStatement.variable.identifier.symbol, newStatement)
+        }
     }
 
     private fun MutableFlow.addAllStatements(statements: TypeStatements) =
