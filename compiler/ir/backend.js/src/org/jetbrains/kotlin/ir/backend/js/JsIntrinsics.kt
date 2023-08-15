@@ -325,12 +325,9 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
         context.symbolTable.descriptorExtension.referenceClass(context.getJsInternalClass("DoNotIntrinsify"))
     val jsFunAnnotationSymbol = context.symbolTable.descriptorExtension.referenceClass(context.getJsInternalClass("JsFun"))
     val jsNameAnnotationSymbol = context.symbolTable.descriptorExtension.referenceClass(context.getJsInternalClass("JsName"))
+    val jsExportAnnotationSymbol = context.symbolTable.descriptorExtension.referenceClass(context.getJsInternalClass("JsExport"))
 
-    val jsExportAnnotationSymbol by lazy(LazyThreadSafetyMode.NONE) {
-        context.symbolTable.descriptorExtension.referenceClass(context.getJsInternalClass("JsExport"))
-    }
-
-    val jsExportIgnoreAnnotationSymbol by lazy(LazyThreadSafetyMode.NONE) {
+    val jsExportIgnoreAnnotationSymbol by context.lazy2 {
         jsExportAnnotationSymbol.owner
             .findDeclaration<IrClass> { it.fqNameWhenAvailable == FqName("kotlin.js.JsExport.Ignore") }
             ?.symbol ?: error("can't find kotlin.js.JsExport.Ignore annotation")
