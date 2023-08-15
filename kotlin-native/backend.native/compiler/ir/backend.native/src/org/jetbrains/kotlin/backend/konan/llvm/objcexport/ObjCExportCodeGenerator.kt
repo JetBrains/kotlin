@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.backend.konan.llvm.objc.ObjCCodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.objc.ObjCDataGenerator
 import org.jetbrains.kotlin.backend.konan.lower.getObjectClassInstanceFunction
 import org.jetbrains.kotlin.backend.konan.objcexport.*
-import org.jetbrains.kotlin.backend.konan.serialization.resolveFakeOverrideMaybeAbstract
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -1535,7 +1534,7 @@ private fun ObjCExportCodeGenerator.itablePlace(irFunction: IrSimpleFunction): C
     assert(irFunction.isOverridable)
     val irClass = irFunction.parentAsClass
     return if (irClass.isInterface
-            && (irFunction.isReal || irFunction.resolveFakeOverrideMaybeAbstract().parent != context.irBuiltIns.anyClass.owner)
+            && (irFunction.isReal || irFunction.resolveFakeOverride(allowAbstract = true)?.parent != context.irBuiltIns.anyClass.owner)
     ) {
         context.getLayoutBuilder(irClass).itablePlace(irFunction)
     } else {
