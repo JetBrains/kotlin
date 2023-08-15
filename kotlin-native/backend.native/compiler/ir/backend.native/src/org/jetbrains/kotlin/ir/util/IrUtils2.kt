@@ -191,20 +191,6 @@ fun IrBuilderWithScope.irCatch(type: IrType) =
                 }
         )
 
-fun CommonBackendContext.createArrayOfExpression(
-        startOffset: Int, endOffset: Int,
-        arrayElementType: IrType,
-        arrayElements: List<IrExpression>
-): IrExpression {
-
-    val arrayType = ir.symbols.array.typeWith(arrayElementType)
-    val arg0 = IrVarargImpl(startOffset, endOffset, arrayType, arrayElementType, arrayElements)
-
-    return irCall(startOffset, endOffset, ir.symbols.arrayOf.owner, listOf(arrayElementType)).apply {
-        putValueArgument(0, arg0)
-    }
-}
-
 fun createField(
         startOffset: Int,
         endOffset: Int,
