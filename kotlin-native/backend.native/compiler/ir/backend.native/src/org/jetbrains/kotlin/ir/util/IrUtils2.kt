@@ -86,17 +86,6 @@ fun IrModuleFragment.addFile(fileEntry: IrFileEntry, packageFqName: FqName): IrF
             .also { this.files += it }
 }
 
-inline fun <reified T> stub(name: String): T {
-    return Proxy.newProxyInstance(T::class.java.classLoader, arrayOf(T::class.java)) {
-        _ /* proxy */, method, _ /* methodArgs */ ->
-        if (method.name == "toString" && method.parameterCount == 0) {
-            "${T::class.simpleName} stub for $name"
-        } else {
-            error("${T::class.simpleName}.${method.name} is not supported for $name")
-        }
-    } as T
-}
-
 fun IrFunctionAccessExpression.addArguments(args: Map<IrValueParameter, IrExpression>) {
     val unhandledParameters = args.keys.toMutableSet()
     fun getArg(parameter: IrValueParameter) = args[parameter]?.also { unhandledParameters -= parameter }
