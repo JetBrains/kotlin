@@ -52,6 +52,10 @@ internal class KonanPartialModuleDeserializer(
             else DeserializationStrategy.ON_DEMAND
         }, klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT, containsErrorCode
 ) {
+    companion object {
+        private const val INVALID_INDEX = -1
+    }
+
     private val descriptorSignatures = mutableMapOf<DeclarationDescriptor, IdSignature>()
 
     val files by lazy { fileDeserializationStates.map { it.file } }
@@ -150,15 +154,15 @@ internal class KonanPartialModuleDeserializer(
         val defaultValues = mutableListOf<Int>()
         val valueParameterSigs = (0 until protoFunction.base.valueParameterCount).map {
             val valueParameter = protoFunction.base.getValueParameter(it)
-            defaultValues.add(if (valueParameter.hasDefaultValue()) valueParameter.defaultValue else KonanIrLinker.INVALID_INDEX)
+            defaultValues.add(if (valueParameter.hasDefaultValue()) valueParameter.defaultValue else INVALID_INDEX)
             BinarySymbolData.decode(valueParameter.base.symbol).signatureId
         }
         val extensionReceiverSig = irFunction.extensionReceiverParameter?.let {
             BinarySymbolData.decode(protoFunction.base.extensionReceiver.base.symbol).signatureId
-        } ?: KonanIrLinker.INVALID_INDEX
+        } ?: INVALID_INDEX
         val dispatchReceiverSig = irFunction.dispatchReceiverParameter?.let {
             BinarySymbolData.decode(protoFunction.base.dispatchReceiver.base.symbol).signatureId
-        } ?: KonanIrLinker.INVALID_INDEX
+        } ?: INVALID_INDEX
 
         return SerializedInlineFunctionReference(
             SerializedFileReference(fileDeserializationState.file),
@@ -238,8 +242,8 @@ internal class KonanPartialModuleDeserializer(
                     val nameAndType = BinaryNameAndType.decode(outerProtoClass.thisReceiver.nameType)
 
                     SerializedClassFieldInfo(
-                        name = KonanIrLinker.INVALID_INDEX,
-                        binaryType = KonanIrLinker.INVALID_INDEX,
+                        name = INVALID_INDEX,
+                        binaryType = INVALID_INDEX,
                         nameAndType.typeIndex,
                         flags = 0,
                         field.alignment
@@ -256,9 +260,9 @@ internal class KonanPartialModuleDeserializer(
 
                     SerializedClassFieldInfo(
                         nameAndType.nameIndex,
-                        primitiveBinaryType?.ordinal ?: KonanIrLinker.INVALID_INDEX,
+                        primitiveBinaryType?.ordinal ?: INVALID_INDEX,
                         if (with(KonanManglerIr) { (classifier as? IrClassSymbol)?.owner?.isExported(compatibleMode) } == false)
-                            KonanIrLinker.INVALID_INDEX
+                            INVALID_INDEX
                         else nameAndType.typeIndex,
                         flags,
                         field.alignment
@@ -378,12 +382,12 @@ internal class KonanPartialModuleDeserializer(
             }
             function.extensionReceiverParameter?.let { parameter ->
                 val sigIndex = inlineFunctionReference.extensionReceiverSig
-                require(sigIndex != KonanIrLinker.INVALID_INDEX) { "Expected a valid sig reference to the extension receiver for ${function.render()}" }
+                require(sigIndex != INVALID_INDEX) { "Expected a valid sig reference to the extension receiver for ${function.render()}" }
                 referenceIrSymbol(symbolDeserializer, sigIndex, parameter.symbol)
             }
             function.dispatchReceiverParameter?.let { parameter ->
                 val sigIndex = inlineFunctionReference.dispatchReceiverSig
-                require(sigIndex != KonanIrLinker.INVALID_INDEX) { "Expected a valid sig reference to the dispatch receiver for ${function.render()}" }
+                require(sigIndex != INVALID_INDEX) { "Expected a valid sig reference to the dispatch receiver for ${function.render()}" }
                 referenceIrSymbol(symbolDeserializer, sigIndex, parameter.symbol)
             }
             for (index in 0 until outerClasses.size - 1) {
@@ -397,7 +401,7 @@ internal class KonanPartialModuleDeserializer(
                 body = (deserializeStatementBody(inlineFunctionReference.body) as IrBody)
                 valueParameters.forEachIndexed { index, parameter ->
                     val defaultValueIndex = inlineFunctionReference.defaultValues[index]
-                    if (defaultValueIndex != KonanIrLinker.INVALID_INDEX)
+                    if (defaultValueIndex != INVALID_INDEX)
                         parameter.defaultValue = deserializeExpressionBody(defaultValueIndex)
                 }
             }
@@ -477,8 +481,8 @@ internal class KonanPartialModuleDeserializer(
             } else {
                 val name = fileDeserializationState.fileReader.string(field.name)
                 val type = when {
-                    field.type != KonanIrLinker.INVALID_INDEX -> declarationDeserializer.deserializeIrType(field.type)
-                    field.binaryType == KonanIrLinker.INVALID_INDEX -> builtIns.anyNType
+                    field.type != INVALID_INDEX -> declarationDeserializer.deserializeIrType(field.type)
+                    field.binaryType == INVALID_INDEX -> builtIns.anyNType
                     else -> when (PrimitiveBinaryType.values().getOrNull(field.binaryType)) {
                         PrimitiveBinaryType.BOOLEAN -> builtIns.booleanType
                         PrimitiveBinaryType.BYTE -> builtIns.byteType

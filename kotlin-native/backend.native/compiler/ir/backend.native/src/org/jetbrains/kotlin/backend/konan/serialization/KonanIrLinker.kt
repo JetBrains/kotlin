@@ -454,7 +454,6 @@ internal class KonanIrLinker(
 ) : KotlinIrLinker(currentModule, messageLogger, builtIns, symbolTable, exportedDependencies) {
 
     companion object {
-        const val INVALID_INDEX = -1
         val FORWARD_DECLARATION_ORIGIN = object : IrDeclarationOriginImpl("FORWARD_DECLARATION_ORIGIN") {}
     }
 
