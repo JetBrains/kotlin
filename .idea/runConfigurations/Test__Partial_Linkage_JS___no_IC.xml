@@ -15,6 +15,8 @@
           <option value="&quot;org.jetbrains.kotlin.js.test.ir.JsPartialLinkageNoICTestCaseGenerated&quot;" />
           <option value="--tests" />
           <option value="&quot;org.jetbrains.kotlin.js.test.ir.FirJsPartialLinkageNoICTestCaseGenerated&quot;" />
+          <option value="--tests" />
+          <option value="&quot;org.jetbrains.kotlin.js.test.ir.JsPartialLinkageNoICES6TestCaseGenerated&quot;" />
         </list>
       </option>
       <option name="vmOptions" />
@@ -22,6 +24,7 @@
     <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
     <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
     <DebugAllEnabled>false</DebugAllEnabled>
+    <RunAsTest>true</RunAsTest>
     <method v="2" />
   </configuration>
 </component>
