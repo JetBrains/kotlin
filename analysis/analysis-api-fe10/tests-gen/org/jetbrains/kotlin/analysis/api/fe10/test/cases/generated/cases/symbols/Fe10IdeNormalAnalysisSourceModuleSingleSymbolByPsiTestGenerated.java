@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("analysis/analysis-api/testData/symbols/singleSymbolByPsi")
 @TestDataPath("$PROJECT_ROOT")
-public class Fe10IdeNormalAnalysisSourceModuleSingleSymbolByPsiGenerated extends AbstractSingleSymbolByPsiTest {
+public class Fe10IdeNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerated extends AbstractSingleSymbolByPsiTest {
     @NotNull
     @Override
     public AnalysisApiTestConfigurator getConfigurator() {

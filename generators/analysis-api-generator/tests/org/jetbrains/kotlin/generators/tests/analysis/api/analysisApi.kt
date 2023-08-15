@@ -108,7 +108,7 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
             model("symbolByPsi")
         }
 
-        test(AbstractSingleSymbolByPsi::class) {
+        test(AbstractSingleSymbolByPsiTest::class) {
             model("singleSymbolByPsi")
         }
 

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 
-abstract class AbstractSingleSymbolByPsi : AbstractSymbolTest() {
+abstract class AbstractSingleSymbolByPsiTest : AbstractSymbolTest() {
     override fun KtAnalysisSession.collectSymbols(ktFile: KtFile, testServices: TestServices): SymbolsData {
         val declaration = testServices.expressionMarkerProvider.getSelectedElementOrElementAtCaretOfTypeByDirective(
             ktFile, testServices.moduleStructure.modules.first(),
