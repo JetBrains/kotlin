@@ -225,7 +225,7 @@ internal class KotlinCallBuilder(private val irBuilder: IrBuilderWithScope, priv
                     // Note: generating try-catch as finally blocks are already lowered.
                     val result = irTemporary(IrTryImpl(startOffset, endOffset, kotlinCall.type).apply {
                         tryResult = kotlinCall
-                        catches += irCatch(context.irBuiltIns.throwableType).apply {
+                        catches += irCatch().apply {
                             result = irBlock(kotlinCall) {
                                 cleanup.forEach { +it() }
                                 +irThrow(irGet(catchParameter))

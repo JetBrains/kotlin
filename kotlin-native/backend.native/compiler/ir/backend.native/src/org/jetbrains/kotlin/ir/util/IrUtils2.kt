@@ -9,18 +9,16 @@ import org.jetbrains.kotlin.backend.konan.KonanBackendContext
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
+import org.jetbrains.kotlin.ir.builders.declarations.buildVariable
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.parent
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCatchImpl
@@ -28,8 +26,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.makeNullable
@@ -131,22 +127,20 @@ internal fun irCall(startOffset: Int, endOffset: Int, irFunction: IrSimpleFuncti
             }
         }
 
-fun IrBuilderWithScope.irCatch(type: IrType) =
+fun IrBuilderWithScope.irCatch() =
         IrCatchImpl(
                 startOffset, endOffset,
-                IrVariableImpl(
+                buildVariable(
+                        this@irCatch.parent,
                         startOffset,
                         endOffset,
                         IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
-                        IrVariableSymbolImpl(),
                         Name.identifier("e"),
-                        type,
-                        false,
-                        false,
-                        false
-                ).apply {
-                    parent = this@irCatch.parent
-                }
+                        context.irBuiltIns.throwableType,
+                        isVar = false,
+                        isConst = false,
+                        isLateinit = false
+                )
         )
 
 fun IrClass.defaultOrNullableType(hasQuestionMark: Boolean) =

@@ -64,7 +64,7 @@ internal fun makeEntryPoint(generationState: NativeGenerationState): IrFunction 
                 }
                 +irReturn(irInt(0))
             }
-            catches += irCatch(context.irBuiltIns.throwableType).apply {
+            catches += irCatch().apply {
                 result = irBlock {
                     +irCall(context.ir.symbols.processUnhandledException).apply {
                         putValueArgument(0, irGet(catchParameter))
