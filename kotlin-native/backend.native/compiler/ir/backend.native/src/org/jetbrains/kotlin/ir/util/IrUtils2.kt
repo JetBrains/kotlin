@@ -149,22 +149,6 @@ fun IrBuilderWithScope.irCatch(type: IrType) =
                 }
         )
 
-fun IrValueParameter.copy(newDescriptor: ParameterDescriptor): IrValueParameter {
-    // Aggressive use of IrBasedDescriptors during deserialization
-    // makes these types different.
-    // Let's hope they not really used afterwards.
-    //assert(this.descriptor.type == newDescriptor.type) {
-     //   "type1 = ${this.descriptor.type} != type2 = ${newDescriptor.type}"
-    //}
-
-    return IrValueParameterImpl(
-        startOffset, endOffset, IrDeclarationOrigin.DEFINED, IrValueParameterSymbolImpl(newDescriptor),
-        newDescriptor.name, newDescriptor.indexOrMinusOne, type, varargElementType,
-        newDescriptor.isCrossinline, newDescriptor.isNoinline,
-        isHidden = false, isAssignable = false
-    )
-}
-
 fun IrClass.defaultOrNullableType(hasQuestionMark: Boolean) =
         if (hasQuestionMark) this.defaultType.makeNullable() else this.defaultType
 
