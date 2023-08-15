@@ -65,7 +65,6 @@ abstract class AbstractDiagnosticsNativeTestBase<R : ResultingArtifact.FrontendO
         forTestsMatching("testData/diagnostics/nativeTests/*") {
             defaultDirectives {
                 +LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
-                +ConfigurationDirectives.WITH_STDLIB
             }
         }
         forTestsMatching("testData/diagnostics/nativeTests/testsWithStdLib/*") {
@@ -121,6 +120,9 @@ abstract class AbstractFirNativeDiagnosticsTestBase(val parser: FirParser) : Abs
 
             forTestsMatching("compiler/testData/diagnostics/*") {
                 configurationForClassicAndFirTestsAlongside()
+                defaultDirectives {
+                    +ConfigurationDirectives.WITH_STDLIB
+                }
             }
         }
     }

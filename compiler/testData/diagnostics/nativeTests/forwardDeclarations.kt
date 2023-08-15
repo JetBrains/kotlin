@@ -1,5 +1,4 @@
 // FIR_IDENTICAL
-// WITH_STDLIB
 
 // FILE: stdlib.kt
 
