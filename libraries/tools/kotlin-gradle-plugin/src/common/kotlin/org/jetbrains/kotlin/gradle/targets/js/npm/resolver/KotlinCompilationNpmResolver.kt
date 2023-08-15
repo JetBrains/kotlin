@@ -72,6 +72,7 @@ class KotlinCompilationNpmResolver(
             it.dependsOn(packageJsonTaskHolder)
 
             it.compilationDisambiguatedName.set(compilation.disambiguatedName)
+            it.packageJsonHandlers.set(compilation.packageJsonHandlers)
 
             it.npmResolutionManager.value(npmResolutionManager)
                 .disallowChanges()

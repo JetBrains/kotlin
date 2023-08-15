@@ -1136,6 +1136,7 @@ class Kotlin2JsIrGradlePluginIT : KGPBaseTest() {
                 assertEquals(JsonNull.INSTANCE, jso.get("customField2").asJsonNull)
                 assertEquals(JsonNull.INSTANCE, jso.get("customField3").asJsonNull)
                 assertEquals(JsonNull.INSTANCE, jso.get("customField4").asJsonObject.get("foo").asJsonNull)
+                assertEquals("@as/main", jso.get("customField5").asString)
             }
         }
     }

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import org.gradle.api.Task
 import org.gradle.api.logging.Logger
-import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
@@ -46,9 +45,6 @@ abstract class KotlinNpmResolutionManager : BuildService<KotlinNpmResolutionMana
 
     interface Parameters : BuildServiceParameters {
         val resolution: Property<KotlinRootNpmResolution>
-
-        // pulled up from compilation resolver since it was failing with ClassNotFoundException on deserialization, see KT-49061
-        val packageJsonHandlers: MapProperty<String, List<PackageJson.() -> Unit>>
 
         val gradleNodeModulesProvider: Property<GradleNodeModulesCache>
     }

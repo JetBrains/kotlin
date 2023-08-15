@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm.resolver
 
+import org.gradle.api.Action
 import org.gradle.api.logging.Logger
+import org.gradle.api.provider.ListProperty
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.TasksRequirements
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.PreparedKotlinCompilationNpmResolution
@@ -39,12 +41,13 @@ class KotlinCompilationNpmResolution(
         )
 
     private var closed = false
-    private var resolution: PreparedKotlinCompilationNpmResolution? = null
+    internal var resolution: PreparedKotlinCompilationNpmResolution? = null
 
     @Synchronized
     fun prepareWithDependencies(
         skipWriting: Boolean = false,
         npmResolutionManager: KotlinNpmResolutionManager,
+        packageJsonHandlers: ListProperty<Action<PackageJson>>,
         logger: Logger
     ): PreparedKotlinCompilationNpmResolution {
         check(resolution == null) { "$this already resolved" }
@@ -52,6 +55,7 @@ class KotlinCompilationNpmResolution(
         return createPreparedResolution(
             skipWriting,
             npmResolutionManager,
+            packageJsonHandlers,
             logger
         ).also {
             resolution = it
@@ -61,29 +65,29 @@ class KotlinCompilationNpmResolution(
     @Synchronized
     fun getResolutionOrPrepare(
         npmResolutionManager: KotlinNpmResolutionManager,
+        packageJsonHandlers: ListProperty<Action<PackageJson>>,
         logger: Logger,
     ): PreparedKotlinCompilationNpmResolution {
 
         return resolution ?: prepareWithDependencies(
             skipWriting = true,
             npmResolutionManager,
+            packageJsonHandlers,
             logger
         )
     }
 
     @Synchronized
-    fun close(
-        npmResolutionManager: KotlinNpmResolutionManager,
-        logger: Logger,
-    ): PreparedKotlinCompilationNpmResolution {
+    fun close(): PreparedKotlinCompilationNpmResolution {
         check(!closed) { "$this already closed" }
         closed = true
-        return getResolutionOrPrepare(npmResolutionManager, logger)
+        return resolution!!
     }
 
     fun createPreparedResolution(
         skipWriting: Boolean,
         npmResolutionManager: KotlinNpmResolutionManager,
+        packageJsonHandlers: ListProperty<Action<PackageJson>>,
         logger: Logger
     ): PreparedKotlinCompilationNpmResolution {
         val rootResolver = npmResolutionManager.parameters.resolution.get()
@@ -93,6 +97,7 @@ class KotlinCompilationNpmResolution(
                 val compilationNpmResolution: KotlinCompilationNpmResolution = rootResolver[it.projectPath][it.compilationName]
                 compilationNpmResolution.getResolutionOrPrepare(
                     npmResolutionManager,
+                    packageJsonHandlers,
                     logger
                 )
             }
@@ -120,20 +125,17 @@ class KotlinCompilationNpmResolution(
 
         val otherNpmDependencies = toolsNpmDependencies + transitiveNpmDependencies
         val allNpmDependencies = disambiguateDependencies(externalNpmDependencies, otherNpmDependencies, logger)
-        val packageJsonHandlers =
-            npmResolutionManager.parameters.packageJsonHandlers.get()["$projectPath:${compilationDisambiguatedName}"]
-                ?: emptyList()
 
         val packageJson = packageJson(
             npmProjectName,
             npmProjectVersion,
             npmProjectMain,
             allNpmDependencies,
-            packageJsonHandlers
+            packageJsonHandlers.get()
         )
 
-        packageJsonHandlers.forEach {
-            it(packageJson)
+        packageJsonHandlers.get().forEach {
+            it.execute(packageJson)
         }
 
         if (!skipWriting) {

@@ -5,9 +5,12 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm.tasks
 
+import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
@@ -55,18 +58,18 @@ abstract class KotlinPackageJsonTask :
     @get:Internal
     abstract val compilationDisambiguatedName: Property<String>
 
-    private val packageJsonHandlers: List<PackageJson.() -> Unit>
-        get() = npmResolutionManager.get().parameters.packageJsonHandlers.get()
-            .getValue("$projectPath:${compilationDisambiguatedName.get()}")
+    @get:Internal
+    abstract val packageJsonHandlers: ListProperty<Action<PackageJson>>
 
     @get:Input
-    val packageJsonCustomFields: Map<String, Any?> by lazy {
-        PackageJson(fakePackageJsonValue, fakePackageJsonValue)
-            .apply {
-                packageJsonHandlers.forEach { it() }
-            }.customFields
+    internal val packageJsonInputHandlers: Provider<PackageJson> by lazy {
+        packageJsonHandlers.map { packageJsonHandlersList ->
+            PackageJson(fakePackageJsonValue, fakePackageJsonValue)
+                .apply {
+                    packageJsonHandlersList.forEach { it.execute(this) }
+                }
+        }
     }
-
 
     @get:Input
     internal val toolsNpmDependencies: List<String> by lazy {
@@ -112,6 +115,7 @@ abstract class KotlinPackageJsonTask :
         npmResolutionManager.get().resolution.get()[projectPath][compilationDisambiguatedName.get()]
             .prepareWithDependencies(
                 npmResolutionManager = npmResolutionManager.get(),
+                packageJsonHandlers = packageJsonHandlers,
                 logger = logger
             )
     }
@@ -130,6 +134,7 @@ abstract class KotlinPackageJsonTask :
             val gradleNodeModules = GradleNodeModulesCache.registerIfAbsent(project, null, null)
             val packageJsonTask = project.registerTask<KotlinPackageJsonTask>(packageJsonTaskName) { task ->
                 task.compilationDisambiguatedName.set(compilation.disambiguatedName)
+                task.packageJsonHandlers.set(compilation.packageJsonHandlers)
                 task.description = "Create package.json file for $compilation"
                 task.group = NodeJsRootPlugin.TASKS_GROUP_NAME
 
