@@ -1142,11 +1142,11 @@ private fun ObjCExportCodeGenerator.effectiveThrowsClasses(method: IrFunction, s
     val throwsVararg = throwsAnnotation.getValueArgument(0)
             ?: return emptyList()
 
-    if (throwsVararg !is IrVararg) error(method.getContainingFile(), throwsVararg, "unexpected vararg")
+    if (throwsVararg !is IrVararg) error(method.fileOrNull, throwsVararg, "unexpected vararg")
 
     return throwsVararg.elements.map {
         (it as? IrClassReference)?.symbol?.owner as? IrClass
-                ?: error(method.getContainingFile(), it, "unexpected @Throws argument")
+                ?: error(method.fileOrNull, it, "unexpected @Throws argument")
     }
 }
 

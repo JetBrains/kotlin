@@ -467,7 +467,7 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
         val result = mutableMapOf<IrClass, IrClass>()
 
         irClass.annotations.forEach {
-            val irFile = irClass.getContainingFile()
+            val irFile = irClass.fileOrNull
 
             val annotationClass = (it.symbol.owner as? IrConstructor)?.constructedClass
                     ?: error(irFile, it, "unexpected annotation")

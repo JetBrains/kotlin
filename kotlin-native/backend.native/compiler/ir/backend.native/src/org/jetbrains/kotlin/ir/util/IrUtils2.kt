@@ -97,16 +97,6 @@ inline fun <reified T> stub(name: String): T {
     } as T
 }
 
-tailrec fun IrDeclaration.getContainingFile(): IrFile? {
-    val parent = this.parent
-
-    return when (parent) {
-        is IrFile -> parent
-        is IrDeclaration -> parent.getContainingFile()
-        else -> null
-    }
-}
-
 fun IrFunctionAccessExpression.addArguments(args: Map<IrValueParameter, IrExpression>) {
     val unhandledParameters = args.keys.toMutableSet()
     fun getArg(parameter: IrValueParameter) = args[parameter]?.also { unhandledParameters -= parameter }

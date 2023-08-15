@@ -509,7 +509,7 @@ internal object DataFlowIR {
                 type.vtable += layoutBuilder.vtableEntries.map {
                     val implementation = it.getImplementation(context)
                             ?: error(
-                                    irClass.getContainingFile(),
+                                    irClass.fileOrNull,
                                     irClass,
                                     """
                                         no implementation found for ${it.overriddenFunction.render()}
@@ -524,7 +524,7 @@ internal object DataFlowIR {
                     type.itable[iface.classId] = iface.interfaceVTableEntries.map {
                         val implementation = layoutBuilder.overridingOf(it)
                                 ?: error(
-                                        irClass.getContainingFile(),
+                                        irClass.fileOrNull,
                                         irClass,
                                         """
                                             no implementation found for ${it.render()}
