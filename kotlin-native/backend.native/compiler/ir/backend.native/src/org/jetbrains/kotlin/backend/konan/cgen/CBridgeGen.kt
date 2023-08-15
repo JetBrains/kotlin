@@ -17,18 +17,12 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
+import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.konan.ForeignExceptionMode
@@ -1128,13 +1122,18 @@ private class ObjCBlockPointerValuePassing(
         irClass.superTypes += stubs.irBuiltIns.anyType
         irClass.superTypes += functionType.makeNotNull()
 
-        val blockHolderField = createField(
+        val blockHolderField = IrFieldImpl(
                 startOffset, endOffset,
                 OBJC_BLOCK_FUNCTION_IMPL,
-                stubs.irBuiltIns.anyType,
+                IrFieldSymbolImpl(),
                 Name.identifier("blockHolder"),
-                isMutable = false, owner = irClass
+                stubs.irBuiltIns.anyType,
+                DescriptorVisibilities.PRIVATE,
+                isFinal = true,
+                isStatic = false,
+                isExternal = false
         )
+        irClass.addChild(blockHolderField)
 
         val constructor = IrConstructorImpl(
                 startOffset, endOffset,

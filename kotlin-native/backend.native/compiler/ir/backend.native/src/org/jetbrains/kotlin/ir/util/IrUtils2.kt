@@ -160,30 +160,6 @@ fun IrBuilderWithScope.irCatch(type: IrType) =
                 }
         )
 
-fun createField(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        type: IrType,
-        name: Name,
-        isMutable: Boolean,
-        owner: IrClass
-) =
-    IrFieldImpl(
-            startOffset, endOffset,
-            origin,
-            IrFieldSymbolImpl(),
-            name,
-            type,
-            DescriptorVisibilities.PRIVATE,
-            !isMutable,
-            false,
-            false,
-    ).apply {
-        owner.declarations += this
-        parent = owner
-    }
-
 fun IrValueParameter.copy(newDescriptor: ParameterDescriptor): IrValueParameter {
     // Aggressive use of IrBasedDescriptors during deserialization
     // makes these types different.
