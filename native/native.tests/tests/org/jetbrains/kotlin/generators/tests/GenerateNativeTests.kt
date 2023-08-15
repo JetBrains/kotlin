@@ -128,7 +128,7 @@ fun main() {
             testClass<AbstractNativeKlibEvolutionTest>(
                 suiteTestClassName = "NativeKlibEvolutionTestGenerated"
             ) {
-                model("binaryCompatibility/klibEvolution", recursive = false)
+                model("klib/evolution", recursive = false)
             }
             testClass<AbstractNativeKlibEvolutionTest>(
                 suiteTestClassName = "FirNativeKlibEvolutionTestGenerated",
@@ -136,7 +136,7 @@ fun main() {
                     *frontendFir()
                 )
             ) {
-                model("binaryCompatibility/klibEvolution", recursive = false)
+                model("klib/evolution", recursive = false)
             }
         }
 

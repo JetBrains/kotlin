@@ -37,12 +37,12 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("js/js.tests/tests-gen", "compiler/testData/binaryCompatibility", testRunnerMethodName = "runTest0") {
+        testGroup("js/js.tests/tests-gen", "compiler/testData", testRunnerMethodName = "runTest0") {
             testClass<AbstractClassicJsKlibEvolutionTest> {
-                model("klibEvolution", targetBackend = TargetBackend.JS_IR)
+                model("klib/evolution", targetBackend = TargetBackend.JS_IR)
             }
             testClass<AbstractFirJsKlibEvolutionTest> {
-                model("klibEvolution", targetBackend = TargetBackend.JS_IR)
+                model("klib/evolution", targetBackend = TargetBackend.JS_IR)
             }
         }
     }
