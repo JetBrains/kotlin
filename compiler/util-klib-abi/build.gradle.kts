@@ -25,7 +25,7 @@ sourceSets {
     }
 }
 
-val testDataDir = projectDir.resolve("testData")
+val testDataDir = project(":compiler").projectDir.resolve("testData/klib/dump-abi/content")
 
 projectTest(jUnitMode = JUnitMode.JUnit5) {
     inputs.dir(testDataDir)

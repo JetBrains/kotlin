@@ -278,14 +278,14 @@ fun main() {
         }
 
         generateTestGroupSuiteWithJUnit5 {
-            testGroup("native/native.tests/tests-gen", "compiler/util-klib-abi/testData") {
+            testGroup("native/native.tests/tests-gen", "compiler/testData/klib/dump-abi") {
                 testClass<AbstractNativeLibraryAbiReaderTest>(
                     suiteTestClassName = "NativeLibraryAbiReaderTest"
                 ) {
                     model("content", targetBackend = TargetBackend.NATIVE)
                 }
             }
-            testGroup("native/native.tests/tests-gen", "compiler/util-klib-abi/testData") {
+            testGroup("native/native.tests/tests-gen", "compiler/testData/klib/dump-abi") {
                 testClass<AbstractNativeLibraryAbiReaderTest>(
                     suiteTestClassName = "FirNativeLibraryAbiReaderTest",
                     annotations = listOf(
@@ -296,14 +296,14 @@ fun main() {
                 }
             }
 
-            testGroup("native/native.tests/tests-gen", "compiler/util-klib-abi/testData") {
+            testGroup("native/native.tests/tests-gen", "compiler/testData/klib/dump-abi") {
                 testClass<AbstractNativeCInteropLibraryAbiReaderTest>(
                     suiteTestClassName = "NativeCInteropLibraryAbiReaderTest"
                 ) {
                     model("cinterop")
                 }
             }
-            testGroup("native/native.tests/tests-gen", "compiler/util-klib-abi/testData") {
+            testGroup("native/native.tests/tests-gen", "compiler/testData/klib/dump-abi") {
                 testClass<AbstractNativeCInteropLibraryAbiReaderTest>(
                     suiteTestClassName = "FirNativeCInteropLibraryAbiReaderTest",
                     annotations = listOf(
