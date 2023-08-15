@@ -1,0 +1,53 @@
+Tower Data Context:
+    Element 0
+        Scope: FirDefaultStarImportingScope
+    Element 1
+        Scope: FirDefaultSimpleImportingScope
+    Element 2
+        Scope: FirExplicitStarImportingScope
+    Element 3
+        Scope: FirDefaultSimpleImportingScope
+    Element 4
+        Scope: FirDefaultSimpleImportingScope
+    Element 5
+        Scope: FirPackageMemberScope
+    Element 6
+        Scope: FirExplicitSimpleImportingScope
+    Element 7
+        Scope: FirLocalScope
+            Properties:
+                FirValueParameterSymbol initialValue: R|Foo|
+    Element 8
+        Scope: FirLocalScope
+            Properties:
+                FirPropertySymbol lvar current: R|kotlin/Any|
+    Element 9
+        Scope: ContextCollectorStateScope
+            FirPropertySymbol lvar current: R|kotlin/Any|
+            New types:
+                Foo
+                kotlin/Any
+    Element 10
+        Scope: FirLocalScope
+Smart Casts:
+    FirPropertySymbol lvar current: R|kotlin/Any|
+    Types:
+        Foo
+        kotlin/Any
+
+FILE: [ResolvedTo(IMPORTS)] localTypeCheck.kt
+    public abstract [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
+        public abstract [ResolvedTo(CONTRACTS)] val parent: R|kotlin/Any|
+            public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Any|
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun test([ResolvedTo(BODY_RESOLVE)] initialValue: R|Foo|): R|kotlin/Unit| {
+        [ResolvedTo(BODY_RESOLVE)] lvar current: R|kotlin/Any| = R|<local>/initialValue|
+        while((R|<local>/current| is R|Foo|)) {
+            R|/consume|(R|<local>/current|)
+            R|<local>/current| = R|<local>/current|.R|/Foo.parent|
+        }
+
+    }
+    public final [ResolvedTo(CONTRACTS)] fun consume([ResolvedTo(CONTRACTS)] foo: R|Foo|): R|kotlin/Unit| {
+    }

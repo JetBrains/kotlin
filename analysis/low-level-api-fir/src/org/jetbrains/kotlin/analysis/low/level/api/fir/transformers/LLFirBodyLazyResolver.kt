@@ -97,6 +97,7 @@ private class LLFirBodyTargetResolver(
         implicitTypeOnly = false,
         scopeSession = scopeSession,
         returnTypeCalculator = createReturnTypeCalculator(firResolveContextCollector = firResolveContextCollector),
+        dataFlowCollector = LLDataFlowCollector(),
         firResolveContextCollector = firResolveContextCollector,
     ) {
         override val preserveCFGForClasses: Boolean get() = false
@@ -220,6 +221,14 @@ private class LLFirBodyTargetResolver(
 }
 
 internal object BodyStateKeepers {
+    val DECLARATION: StateKeeper<FirDeclaration, FirDesignationWithFile> = stateKeeper { _, _ ->
+        add(
+            provider = { declaration -> declaration.dataFlow },
+            mutator = { declaration, value -> declaration.dataFlow = value },
+            arranger = { _ -> LLDeclarationDataFlow() }
+        )
+    }
+
     val SCRIPT: StateKeeper<FirScript, FirDesignationWithFile> = stateKeeper { script, designation ->
         val oldStatements = script.statements
         if (oldStatements.none { it.isScriptStatement } || script.isCertainlyResolved) return@stateKeeper
@@ -245,7 +254,9 @@ internal object BodyStateKeepers {
         }
     }
 
-    private val RESULT_PROPERTY: StateKeeper<FirScript, FirDesignationWithFile> = stateKeeper { script, _ ->
+    private val RESULT_PROPERTY: StateKeeper<FirScript, FirDesignationWithFile> = stateKeeper { script, designation ->
+        add(DECLARATION, designation)
+
         val resultedProperty = script.findResultProperty() ?: return@stateKeeper
         add(
             provider = { resultedProperty.bodyResolveState },
@@ -263,16 +274,20 @@ internal object BodyStateKeepers {
         )
     }
 
-    val CODE_FRAGMENT: StateKeeper<FirCodeFragment, FirDesignationWithFile> = stateKeeper { _, _ ->
+    val CODE_FRAGMENT: StateKeeper<FirCodeFragment, FirDesignationWithFile> = stateKeeper { _, designation ->
+        add(DECLARATION, designation)
         add(FirCodeFragment::block, FirCodeFragment::replaceBlock, ::blockGuard)
     }
 
-    val ANONYMOUS_INITIALIZER: StateKeeper<FirAnonymousInitializer, FirDesignationWithFile> = stateKeeper { _, _ ->
+    val ANONYMOUS_INITIALIZER: StateKeeper<FirAnonymousInitializer, FirDesignationWithFile> = stateKeeper { _, designation ->
+        add(DECLARATION, designation)
         add(FirAnonymousInitializer::body, FirAnonymousInitializer::replaceBody, ::blockGuard)
         add(FirAnonymousInitializer::controlFlowGraphReference, FirAnonymousInitializer::replaceControlFlowGraphReference)
     }
 
     val FUNCTION: StateKeeper<FirFunction, FirDesignationWithFile> = stateKeeper { function, designation ->
+        add(DECLARATION, designation)
+
         if (function.isCertainlyResolved) {
             return@stateKeeper
         }
@@ -294,7 +309,8 @@ internal object BodyStateKeepers {
         add(FirConstructor::delegatedConstructor, FirConstructor::replaceDelegatedConstructor, ::delegatedConstructorCallGuard)
     }
 
-    val VARIABLE: StateKeeper<FirVariable, FirDesignationWithFile> = stateKeeper { variable, _ ->
+    val VARIABLE: StateKeeper<FirVariable, FirDesignationWithFile> = stateKeeper { variable, designation ->
+        add(DECLARATION, designation)
         add(FirVariable::returnTypeRef, FirVariable::replaceReturnTypeRef)
 
         if (!isCallableWithSpecialBody(variable)) {
@@ -303,7 +319,9 @@ internal object BodyStateKeepers {
         }
     }
 
-    private val VALUE_PARAMETER: StateKeeper<FirValueParameter, FirDesignationWithFile> = stateKeeper { valueParameter, _ ->
+    private val VALUE_PARAMETER: StateKeeper<FirValueParameter, FirDesignationWithFile> = stateKeeper { valueParameter, designation ->
+        add(DECLARATION, designation)
+
         if (valueParameter.defaultValue != null) {
             add(FirValueParameter::defaultValue, FirValueParameter::replaceDefaultValue, ::expressionGuard)
         }

@@ -59,8 +59,9 @@ internal class LLFirImplicitBodyTargetResolver(
         phase = resolverPhase,
         implicitTypeOnly = true,
         scopeSession = scopeSession,
-        firResolveContextCollector = firResolveContextCollector,
         returnTypeCalculator = createReturnTypeCalculator(firResolveContextCollector = firResolveContextCollector),
+        dataFlowCollector = LLDataFlowCollector(),
+        firResolveContextCollector = firResolveContextCollector,
     ) {
         override val preserveCFGForClasses: Boolean get() = false
     }

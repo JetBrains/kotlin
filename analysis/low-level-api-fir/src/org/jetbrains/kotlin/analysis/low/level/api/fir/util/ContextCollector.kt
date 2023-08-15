@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.psi.PsiElement
-import kotlinx.collections.immutable.PersistentMap
-import kotlinx.collections.immutable.persistentMapOf
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
+import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLElementDataFlow
+import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.dataFlow
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector.ContextKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector.Context
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector.FilterResponse
@@ -26,12 +26,15 @@ import org.jetbrains.kotlin.fir.resolve.SessionHolder
 import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowAnalyzerContext
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
+import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+import org.jetbrains.kotlin.util.PrivateForInline
 
 internal object ContextCollector {
     enum class ContextKind {
@@ -172,8 +175,6 @@ private class ContextCollectorVisitor(
         dataFlowAnalyzerContext = DataFlowAnalyzerContext(session)
     )
 
-    private var smartCasts: PersistentMap<FirBasedSymbol<*>, Set<ConeKotlinType>> = persistentMapOf()
-
     private val result = HashMap<ContextKey, Context>()
 
     override fun visitElement(element: FirElement) {
@@ -182,6 +183,8 @@ private class ContextCollectorVisitor(
         onActive {
             element.acceptChildren(this)
         }
+
+        applyDataFlow(element)
     }
 
     private fun dumpContext(psi: PsiElement?, kind: ContextKind) {
@@ -202,6 +205,16 @@ private class ContextCollectorVisitor(
 
         val response = filter(psi)
         if (response != FilterResponse.SKIP) {
+            val towerDataContext = context.towerDataContext
+
+            val smartCasts = buildMap {
+                for (towerDataElement in towerDataContext.towerDataElements) {
+                    val scope = towerDataElement.scope as? ContextCollectorStateScope ?: continue
+                    val elementDataFlow = scope.dataFlow
+                    put(elementDataFlow.symbol, elementDataFlow.types)
+                }
+            }
+
             result[key] = Context(context.towerDataContext, smartCasts)
         }
 
@@ -405,7 +418,6 @@ private class ContextCollectorVisitor(
                 }
             }
         }
-
     }
 
     override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer) = withProcessor {
@@ -426,11 +438,7 @@ private class ContextCollectorVisitor(
     }
 
     override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction) = withProcessor {
-        dumpContext(anonymousFunction.psi, ContextKind.SELF)
-
-        processAnnotations(anonymousFunction)
-
-        onActiveBody {
+        processStatement(anonymousFunction) {
             context.withAnonymousFunction(anonymousFunction, holder, ResolutionMode.ContextIndependent) {
                 for (parameter in anonymousFunction.valueParameters) {
                     process(parameter)
@@ -448,15 +456,10 @@ private class ContextCollectorVisitor(
                 }
             }
         }
-
     }
 
     override fun visitAnonymousObject(anonymousObject: FirAnonymousObject) = withProcessor {
-        dumpContext(anonymousObject.psi, ContextKind.SELF)
-
-        processAnnotations(anonymousObject)
-
-        onActiveBody {
+        processStatement(anonymousObject) {
             context.withAnonymousObject(anonymousObject, holder) {
                 dumpContext(anonymousObject.psi, ContextKind.BODY)
 
@@ -465,15 +468,10 @@ private class ContextCollectorVisitor(
                 }
             }
         }
-
     }
 
     override fun visitBlock(block: FirBlock) = withProcessor {
-        dumpContext(block.psi, ContextKind.SELF)
-
-        processAnnotations(block)
-
-        onActiveBody {
+        processStatement(block) {
             context.forBlock(session) {
                 processChildren(block)
 
@@ -482,26 +480,53 @@ private class ContextCollectorVisitor(
         }
     }
 
-    override fun visitSmartCastExpression(smartCastExpression: FirSmartCastExpression) = withProcessor {
-        dumpContext(smartCastExpression.psi, ContextKind.SELF)
+    @OptIn(PrivateForInline::class)
+    override fun visitWhileLoop(whileLoop: FirWhileLoop) = withProcessor {
+        processStatement(whileLoop) {
+            context.withTowerDataCleanup {
+                process(whileLoop.condition)
 
-        processAnnotations(smartCastExpression)
+                dumpContext(whileLoop.psi, ContextKind.BODY)
 
-        if (smartCastExpression.isStable) {
-            val symbol = smartCastExpression.originalExpression.toResolvedCallableSymbol()
-            if (symbol != null) {
-                val previousSmartCasts = smartCasts
-                try {
-                    smartCasts = smartCasts.put(symbol, smartCastExpression.typesFromSmartCast.toSet())
-                    processChildren(smartCastExpression)
-                    return
-                } finally {
-                    smartCasts = previousSmartCasts
+                onActive {
+                    processChildren(whileLoop)
                 }
             }
         }
+    }
 
-        processChildren(smartCastExpression)
+    @OptIn(PrivateForInline::class)
+    override fun visitWhenExpression(whenExpression: FirWhenExpression) = withProcessor {
+        processStatement(whenExpression) {
+            context.withWhenExpression(whenExpression, session) {
+                dumpContext(whenExpression.psi, ContextKind.BODY)
+                processChildren(whenExpression)
+            }
+        }
+    }
+
+    @OptIn(PrivateForInline::class)
+    override fun visitWhenBranch(whenBranch: FirWhenBranch) {
+        context.withTowerDataCleanup {
+            super.visitWhenBranch(whenBranch)
+        }
+    }
+
+    @OptIn(PrivateForInline::class)
+    private fun applyDataFlow(element: FirElement) {
+        val dataFlow = context.containerIfAny?.dataFlow?.get(element) ?: return
+        val collectorScope = ContextCollectorStateScope(dataFlow)
+        context.replaceTowerDataContext(context.towerDataContext.addNonLocalScope(collectorScope))
+    }
+
+    private inline fun Processor.processStatement(statement: FirStatement, block: () -> Unit) {
+        dumpContext(statement.psi, ContextKind.SELF)
+
+        processAnnotations(statement)
+
+        onActiveBody(block)
+
+        applyDataFlow(statement)
     }
 
     @ContextCollectorDsl
@@ -570,6 +595,16 @@ private class ContextCollectorVisitor(
         if (isActive || shouldCollectBodyContext) {
             block()
         }
+    }
+}
+
+internal class ContextCollectorStateScope(val dataFlow: LLElementDataFlow) : FirScope() {
+    override fun mayContainName(name: Name): Boolean {
+        return false
+    }
+
+    override fun toString(): String {
+        return "Context collector state scope"
     }
 }
 
