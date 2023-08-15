@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.createCurrentScopeList
 import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowAnalyzerContext
-import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
 import org.jetbrains.kotlin.fir.resolve.transformers.ScopeClassDeclaration
@@ -27,14 +26,13 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
     scopeSession: ScopeSession,
     val returnTypeCalculator: ReturnTypeCalculator = ReturnTypeCalculatorForFullBodyResolve.Default,
     outerBodyResolveContext: BodyResolveContext? = null,
-    val dataFlowCollector: DataFlowCollector? = null,
     val firResolveContextCollector: FirResolveContextCollector? = null,
 ) : FirAbstractBodyResolveTransformer(phase) {
 
     open val preserveCFGForClasses: Boolean get() = !implicitTypeOnly
 
     final override val context: BodyResolveContext =
-        outerBodyResolveContext ?: BodyResolveContext(returnTypeCalculator, DataFlowAnalyzerContext(session), dataFlowCollector)
+        outerBodyResolveContext ?: BodyResolveContext(returnTypeCalculator, DataFlowAnalyzerContext(session))
     final override val components: BodyResolveTransformerComponents =
         BodyResolveTransformerComponents(session, scopeSession, this, context)
 

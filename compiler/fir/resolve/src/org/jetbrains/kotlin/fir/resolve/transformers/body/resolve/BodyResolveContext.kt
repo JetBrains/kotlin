@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.InaccessibleImplicitReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowAnalyzerContext
-import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowCollector
 import org.jetbrains.kotlin.fir.resolve.inference.FirBuilderInferenceSession
 import org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleter
 import org.jetbrains.kotlin.fir.resolve.inference.FirDelegatedPropertyInferenceSession
@@ -44,9 +43,8 @@ import org.jetbrains.kotlin.util.PrivateForInline
 class BodyResolveContext(
     val returnTypeCalculator: ReturnTypeCalculator,
     val dataFlowAnalyzerContext: DataFlowAnalyzerContext,
-    val dataFlowCollector: DataFlowCollector? = null,
     val targetedLocalClasses: Set<FirClassLikeDeclaration> = emptySet(),
-    val outerLocalClassForNested: MutableMap<FirClassLikeSymbol<*>, FirClassLikeSymbol<*>> = mutableMapOf(),
+    val outerLocalClassForNested: MutableMap<FirClassLikeSymbol<*>, FirClassLikeSymbol<*>> = mutableMapOf()
 ) {
     val fileImportsScope: MutableList<FirScope> = mutableListOf()
 
@@ -340,13 +338,7 @@ class BodyResolveContext(
         returnTypeCalculator: ReturnTypeCalculator,
         targetedLocalClasses: Set<FirClassLikeDeclaration>
     ): BodyResolveContext =
-        BodyResolveContext(
-            returnTypeCalculator,
-            dataFlowAnalyzerContext,
-            dataFlowCollector,
-            targetedLocalClasses,
-            outerLocalClassForNested
-        ).apply {
+        BodyResolveContext(returnTypeCalculator, dataFlowAnalyzerContext, targetedLocalClasses, outerLocalClassForNested).apply {
             file = this@BodyResolveContext.file
             fileImportsScope += this@BodyResolveContext.fileImportsScope
             specialTowerDataContexts.putAll(this@BodyResolveContext.specialTowerDataContexts)
