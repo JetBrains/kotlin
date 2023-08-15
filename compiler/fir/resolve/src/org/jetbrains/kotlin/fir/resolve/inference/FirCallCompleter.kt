@@ -97,7 +97,8 @@ class FirCallCompleter(
                             session.typeApproximator,
                             components.dataFlowAnalyzer,
                             components.integerLiteralAndOperatorApproximationTransformer,
-                            components.context
+                            components.samResolver,
+                            components.context,
                         ),
                         null
                     )
@@ -215,8 +216,9 @@ class FirCallCompleter(
             session.typeApproximator,
             components.dataFlowAnalyzer,
             components.integerLiteralAndOperatorApproximationTransformer,
+            components.samResolver,
             components.context,
-            mode
+            mode,
         )
     }
 
