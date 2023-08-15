@@ -44,6 +44,7 @@ abstract class AbstractDiagnosticsNativeTestBase<R : ResultingArtifact.FrontendO
 
         defaultDirectives {
             +JvmEnvironmentConfigurationDirectives.USE_PSI_CLASS_FILES_READING
+            +ConfigurationDirectives.WITH_STDLIB
         }
 
         enableMetaInfoHandler()
@@ -66,12 +67,6 @@ abstract class AbstractDiagnosticsNativeTestBase<R : ResultingArtifact.FrontendO
         forTestsMatching("testData/diagnostics/nativeTests/*") {
             defaultDirectives {
                 +LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
-                +ConfigurationDirectives.WITH_STDLIB
-            }
-        }
-        forTestsMatching("testData/diagnostics/nativeTests/testsWithStdLib/*") {
-            defaultDirectives {
-                +ConfigurationDirectives.WITH_STDLIB
             }
         }
     }
