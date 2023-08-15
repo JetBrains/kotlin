@@ -173,9 +173,6 @@ fun IrBuilderWithScope.irCallOp(
             putValueArgument(0, argument)
         }
 
-fun IrBuilderWithScope.irSetVar(variable: IrVariable, value: IrExpression) =
-        irSet(variable.symbol, value)
-
 fun IrBuilderWithScope.irCatch(type: IrType) =
         IrCatchImpl(
                 startOffset, endOffset,

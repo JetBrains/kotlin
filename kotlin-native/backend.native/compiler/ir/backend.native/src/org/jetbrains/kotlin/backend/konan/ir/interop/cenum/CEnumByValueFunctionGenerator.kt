@@ -82,7 +82,7 @@ internal class CEnumByValueFunctionGenerator(
                                     type = irBuiltIns.unitType,
                                     condition = irEquals(entryValue, irGet(irValueParameter)),
                                     thenPart = irReturn(irGet(entry)),
-                                    elsePart = irSetVar(
+                                    elsePart = irSet(
                                             inductionVariable,
                                             irCallOp(plusFun, irBuiltIns.intType,
                                                     irGet(inductionVariable),

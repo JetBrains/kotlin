@@ -159,7 +159,7 @@ internal class NativeSuspendFunctionsLowering(
                                     val scope = liveLocals[suspensionPoint]!!
                                     return irBlock(expression) {
                                         scope.forEach {
-                                            +irSetVar(localsMap[it]
+                                            +irSet(localsMap[it]
                                                     ?: it, irGetField(irGet(thisReceiver), localToPropertyMap[it.symbol]!!))
                                         }
                                     }
