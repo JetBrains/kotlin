@@ -119,7 +119,6 @@ class Fir2IrWasmResultsConverter(
             mainPluginContext,
             sourceFiles,
             configuration.incrementalDataProvider?.getSerializedData(sourceFiles) ?: emptyList(),
-            expectDescriptorToSymbol = mutableMapOf(),
             diagnosticReporter = diagnosticReporter,
             hasErrors = inputArtifact.hasErrors,
             descriptorMangler = commonMemberStorage.symbolTable.signaturer.mangler,

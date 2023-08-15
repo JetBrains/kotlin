@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.descriptors.IrDescriptorBasedFunctionFactory
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.linkage.partial.partialLinkageConfig
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.analyze.AbstractTopDownAnalyzerFacadeForWeb
@@ -129,7 +128,6 @@ fun generateKLib(
     abiVersion: KotlinAbiVersion = KotlinAbiVersion.CURRENT,
     jsOutputName: String?,
     icData: List<KotlinFileSerializedData>,
-    expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
     moduleFragment: IrModuleFragment,
     builtInsPlatform: BuiltInsPlatform = BuiltInsPlatform.JS,
     serializeSingleFile: (KtSourceFile) -> ProtoBuf.PackageFragment
@@ -147,7 +145,6 @@ fun generateKLib(
         outputKlibPath,
         allDependencies,
         moduleFragment,
-        expectDescriptorToSymbol,
         icData,
         nopack,
         perFile = false,
@@ -413,7 +410,6 @@ fun GeneratorContext.generateModuleFragmentWithPlugins(
     files: List<KtFile>,
     irLinker: IrDeserializer,
     messageLogger: IrMessageLogger,
-    expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>? = null,
     stubGenerator: DeclarationStubGenerator? = null
 ): Pair<IrModuleFragment, IrPluginContext> {
     val psi2Ir = Psi2IrTranslator(languageVersionSettings, configuration, messageLogger::checkNoUnboundSymbols)
@@ -449,8 +445,7 @@ fun GeneratorContext.generateModuleFragmentWithPlugins(
         this,
         files,
         listOf(stubGenerator ?: irLinker),
-        extensions,
-        expectDescriptorToSymbol
+        extensions
     ) to pluginContext
 }
 
@@ -662,7 +657,6 @@ fun serializeModuleIntoKlib(
     klibPath: String,
     dependencies: List<KotlinLibrary>,
     moduleFragment: IrModuleFragment,
-    @Suppress("UNUSED_PARAMETER") expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>, // TODO: to be removed later
     cleanFiles: List<KotlinFileSerializedData>,
     nopack: Boolean,
     perFile: Boolean,

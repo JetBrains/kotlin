@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrModuleSeria
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
@@ -95,11 +94,10 @@ abstract class AbstractKlibIrTextTestCase : CodegenTestCase() {
     }
 
     fun doTest(wholeFile: File) {
-        val expectActualSymbols = mutableMapOf<DeclarationDescriptor, IrSymbol>()
         val ignoreErrors = AbstractIrGeneratorTestCase.shouldIgnoreErrors(wholeFile)
 
         val stdlib = loadKlibFromPath(listOf(runtimeKlibPath)).single()
-        val (irModule, bindingContext) = generateIrModule(stdlib, ignoreErrors, expectActualSymbols)
+        val (irModule, bindingContext) = generateIrModule(stdlib, ignoreErrors)
         irModule.cleanUpFromExpectDeclarations()
 
         val expected = irModule.dump(DumpIrTreeOptions(stableOrder = true, verboseErrorTypes = false))
@@ -287,7 +285,6 @@ abstract class AbstractKlibIrTextTestCase : CodegenTestCase() {
     private fun generateIrModule(
         stdlib: KotlinLibrary,
         ignoreErrors: Boolean,
-        expectActualSymbols: MutableMap<DeclarationDescriptor, IrSymbol>
     ): Pair<IrModuleFragment, BindingContext> {
         val stdlibDescriptor = getModuleDescriptor(stdlib)
 
@@ -319,7 +316,7 @@ abstract class AbstractKlibIrTextTestCase : CodegenTestCase() {
         val irLinker = JsIrLinker(moduleDescriptor, messageLogger, irBuiltIns, symbolTable, PartialLinkageSupportForLinker.DISABLED, null)
         irLinker.deserializeIrModuleHeader(stdlibDescriptor, stdlib)
 
-        return psi2Ir.generateModuleFragment(context, ktFiles, listOf(irLinker), emptyList(), expectActualSymbols) to bindingContext
+        return psi2Ir.generateModuleFragment(context, ktFiles, listOf(irLinker), emptyList()) to bindingContext
     }
 }
 
