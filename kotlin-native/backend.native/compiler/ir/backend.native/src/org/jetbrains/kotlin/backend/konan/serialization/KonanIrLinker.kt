@@ -506,7 +506,15 @@ internal class KonanIrLinker(
                     error("Expecting kotlin library for $moduleDescriptor")
                 }
                 klib.isInteropLibrary() -> {
-                    KonanInteropModuleDeserializer(moduleDescriptor, klib, cachedLibraries.isLibraryCached(klib))
+                    KonanInteropModuleDeserializer(
+                            moduleDescriptor,
+                            klib,
+                            listOfNotNull(forwardDeclarationDeserializer),
+                            cachedLibraries.isLibraryCached(klib),
+                            cenumsProvider,
+                            stubGenerator,
+                            builtIns
+                    )
                 }
                 else -> {
                     val deserializationStrategy = when {
@@ -549,10 +557,14 @@ internal class KonanIrLinker(
         else -> error("Unknown package fragment kind ${packageFragment::class.java}")
     }
 
-    private inner class KonanInteropModuleDeserializer(
+    private class KonanInteropModuleDeserializer(
             moduleDescriptor: ModuleDescriptor,
             override val klib: KotlinLibrary,
-            private val isLibraryCached: Boolean
+            override val moduleDependencies: Collection<IrModuleDeserializer>,
+            private val isLibraryCached: Boolean,
+            private val cenumsProvider: IrProviderForCEnumAndCStructStubs,
+            private val stubGenerator: DeclarationStubGenerator,
+            private val builtIns: IrBuiltIns,
     ) : IrModuleDeserializer(moduleDescriptor, klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT) {
         init {
             require(klib.isInteropLibrary())
@@ -604,7 +616,6 @@ internal class KonanIrLinker(
         override fun deserializedSymbolNotFound(idSig: IdSignature): Nothing = error("No descriptor found for $idSig")
 
         override val moduleFragment: IrModuleFragment = IrModuleFragmentImpl(moduleDescriptor, builtIns)
-        override val moduleDependencies: Collection<IrModuleDeserializer> = listOfNotNull(forwardDeclarationDeserializer)
 
         override val kind get() = IrModuleDeserializerKind.DESERIALIZED
     }
