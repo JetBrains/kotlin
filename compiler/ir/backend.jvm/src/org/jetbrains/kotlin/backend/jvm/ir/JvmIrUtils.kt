@@ -529,11 +529,12 @@ fun IrClass.isEnumClassWhichRequiresExternalEntries(): Boolean =
     isEnumClass && (isFromJava() || !hasEnumEntriesFunction())
 
 private fun IrClass.hasEnumEntriesFunction(): Boolean {
-    // Enums from other modules are always loaded with a property `entries` which has a getter `<get-entries>`.
     // Enums from the current module will have a property `entries` if they are unlowered yet (i.e. enum is declared in another file
     // which will be lowered after the file with the call site), or a function `<get-entries>` if they are already lowered.
-    return functions.any { it.isGetEntries() }
-            || (properties.any { it.getter?.isGetEntries() == true } && isInCurrentModule())
+    // Enums from other modules have `entries` if and only if the flag `hasEnumEntries` is true.
+    return if (isInCurrentModule())
+        functions.any { it.isGetEntries() } || properties.any { it.getter?.isGetEntries() == true }
+    else hasEnumEntries
 }
 
 private fun IrSimpleFunction.isGetEntries(): Boolean =

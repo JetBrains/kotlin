@@ -212,6 +212,11 @@ public class IncrementalK2LightTreeJvmJpsTestGenerated extends AbstractIncrement
             runTest("jps/jps-plugin/testData/incremental/pureKotlin/dependencyClassReferenced/");
         }
 
+        @TestMetadata("entriesMappings")
+        public void testEntriesMappings() throws Exception {
+            runTest("jps/jps-plugin/testData/incremental/pureKotlin/entriesMappings/");
+        }
+
         @TestMetadata("fileWithConstantRemoved")
         public void testFileWithConstantRemoved() throws Exception {
             runTest("jps/jps-plugin/testData/incremental/pureKotlin/fileWithConstantRemoved/");

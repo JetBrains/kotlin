@@ -2255,6 +2255,12 @@ public class FirPsiBytecodeTextTestGenerated extends AbstractFirPsiBytecodeTextT
         }
 
         @Test
+        @TestMetadata("enumEntriesNoMapping.kt")
+        public void testEnumEntriesNoMapping() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/enum/enumEntriesNoMapping.kt");
+        }
+
+        @Test
         @TestMetadata("kt18731.kt")
         public void testKt18731() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/enum/kt18731.kt");

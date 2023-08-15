@@ -216,6 +216,11 @@ public class IncrementalK2JsKlibCompilerWithScopeExpansionRunnerTestGenerated ex
             runTest("jps/jps-plugin/testData/incremental/pureKotlin/dependencyClassReferenced/");
         }
 
+        @TestMetadata("entriesMappings")
+        public void testEntriesMappings() throws Exception {
+            runTest("jps/jps-plugin/testData/incremental/pureKotlin/entriesMappings/");
+        }
+
         @TestMetadata("fileWithInlineFunctionRemoved")
         public void testFileWithInlineFunctionRemoved() throws Exception {
             runTest("jps/jps-plugin/testData/incremental/pureKotlin/fileWithInlineFunctionRemoved/");
