@@ -251,6 +251,9 @@ class Fir2IrVisitor(
                 for (statement in script.statements) {
                     val irStatement = if (statement is FirDeclaration) {
                         when {
+                            statement is FirProperty && statement.name == SpecialNames.UNDERSCORE_FOR_UNUSED_VAR -> {
+                                continue
+                            }
                             statement is FirProperty && statement.origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty -> {
                                 // Generating the result property only for expressions with a meaningful result type
                                 // otherwise skip the property and convert the expression into the statement
@@ -820,6 +823,7 @@ class Fir2IrVisitor(
         }
         if (this is FirContractCallBlock) return null
         if (this is FirBlock) return convertToIrExpression(this)
+        if (this is FirProperty && name == SpecialNames.UNDERSCORE_FOR_UNUSED_VAR) return null
         return accept(this@Fir2IrVisitor, null) as IrStatement
     }
 

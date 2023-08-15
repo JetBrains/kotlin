@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isBasicFunctionType
+import org.jetbrains.kotlin.name.SpecialNames
 
 object UnusedChecker : AbstractFirPropertyInitializationChecker() {
     override fun analyze(data: PropertyInitializationInfoData, reporter: DiagnosticReporter, context: CheckerContext) {
@@ -62,6 +63,7 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker() {
             val variableSymbol = node.fir.symbol
             if (node.fir.source == null) return
             if (variableSymbol.isLoopIterator) return
+            if (variableSymbol.name == SpecialNames.UNDERSCORE_FOR_UNUSED_VAR) return
             val dataPerNode = data[node] ?: return
 
             val data = dataPerNode.values.mapNotNull { it[variableSymbol] }.reduceOrNull { acc, it -> acc.merge(it) }

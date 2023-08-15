@@ -315,6 +315,46 @@ public class Fe10IdeNormalAnalysisSourceModuleSingleSymbolByPsiGenerated extends
     }
 
     @Nested
+    @TestMetadata("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Destructuring {
+        @Test
+        public void testAllFilesPresentInDestructuring() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("destructuringDeclarationParameterInLambda.kt")
+        public void testDestructuringDeclarationParameterInLambda() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/destructuringDeclarationParameterInLambda.kt");
+        }
+
+        @Test
+        @TestMetadata("entryInDestructuringDeclaration.kt")
+        public void testEntryInDestructuringDeclaration() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/entryInDestructuringDeclaration.kt");
+        }
+
+        @Test
+        @TestMetadata("entryInDestructuringDeclarationParameterInLambda.kt")
+        public void testEntryInDestructuringDeclarationParameterInLambda() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/entryInDestructuringDeclarationParameterInLambda.kt");
+        }
+
+        @Test
+        @TestMetadata("entryUnderscoreInDestructuringDeclaration.kt")
+        public void testEntryUnderscoreInDestructuringDeclaration() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/entryUnderscoreInDestructuringDeclaration.kt");
+        }
+
+        @Test
+        @TestMetadata("entryUnderscoreInDestructuringDeclarationParameterInLambda.kt")
+        public void testEntryUnderscoreInDestructuringDeclarationParameterInLambda() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/destructuring/entryUnderscoreInDestructuringDeclarationParameterInLambda.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("analysis/analysis-api/testData/symbols/singleSymbolByPsi/errors")
     @TestDataPath("$PROJECT_ROOT")
     public class Errors {

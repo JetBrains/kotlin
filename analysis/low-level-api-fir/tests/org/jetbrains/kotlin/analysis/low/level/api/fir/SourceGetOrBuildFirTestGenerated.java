@@ -606,6 +606,18 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
         public void testEntryInDestructuringDeclarationParameterInLambda() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/destructuring/entryInDestructuringDeclarationParameterInLambda.kt");
         }
+
+        @Test
+        @TestMetadata("entryUnderscoreInDestructuringDeclaration.kt")
+        public void testEntryUnderscoreInDestructuringDeclaration() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/destructuring/entryUnderscoreInDestructuringDeclaration.kt");
+        }
+
+        @Test
+        @TestMetadata("entryUnderscoreInDestructuringDeclarationParameterInLambda.kt")
+        public void testEntryUnderscoreInDestructuringDeclarationParameterInLambda() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/destructuring/entryUnderscoreInDestructuringDeclarationParameterInLambda.kt");
+        }
     }
 
     @Nested

@@ -1390,8 +1390,11 @@ class LightTreeRawFirDeclarationBuilder(
             }
         }
 
-        if (identifier == "_") return null
-        val name = identifier.nameAsSafeName()
+        val name = if (identifier == "_") {
+            SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
+        } else {
+            identifier.nameAsSafeName()
+        }
         return buildProperty {
             source = entry.toFirSourceElement()
             moduleData = baseModuleData

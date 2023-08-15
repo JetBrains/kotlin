@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.psi
@@ -128,6 +129,11 @@ internal class KtFirImportOptimizer(
             override fun visitImplicitInvokeCall(implicitInvokeCall: FirImplicitInvokeCall) {
                 processImplicitFunctionCall(implicitInvokeCall)
                 super.visitImplicitInvokeCall(implicitInvokeCall)
+            }
+
+            override fun visitProperty(property: FirProperty) {
+                if (property.name == SpecialNames.UNDERSCORE_FOR_UNUSED_VAR) return
+                super.visitProperty(property)
             }
 
             override fun visitComponentCall(componentCall: FirComponentCall) {

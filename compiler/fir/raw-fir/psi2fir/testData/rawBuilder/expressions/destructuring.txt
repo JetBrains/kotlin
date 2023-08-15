@@ -34,5 +34,6 @@ FILE: destructuring.kt
     public? final? fun bar(some: Some): R|kotlin/Unit| {
         lval <destruct>: <implicit> = some#
         lval a: <implicit> = R|<local>/<destruct>|.component1#()
+        lval <unused var>: <implicit> = R|<local>/<destruct>|.component2#()
         lval _: <implicit> = R|<local>/<destruct>|.component3#()
     }

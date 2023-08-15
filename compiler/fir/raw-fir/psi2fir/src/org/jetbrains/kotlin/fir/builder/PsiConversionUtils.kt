@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
 
 internal fun KtWhenCondition.toFirWhenCondition(
@@ -135,9 +136,12 @@ internal fun generateDestructuringBlock(
         }
         val isVar = multiDeclaration.isVar
         for ((index, entry) in multiDeclaration.entries.withIndex()) {
-            if (entry.nameIdentifier?.text == "_") continue
+            val name = if (entry.nameIdentifier?.text == "_") {
+                SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
+            } else {
+                entry.nameAsSafeName
+            }
             val entrySource = entry.toKtPsiSourceElement()
-            val name = entry.nameAsSafeName
             statements += buildProperty {
                 source = entrySource
                 this.moduleData = moduleData

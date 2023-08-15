@@ -48,4 +48,5 @@ FILE: RedeclaredValsAndVars.fir.kt
 
         lval <destruct>: R|A| = R|/A.A|()
         lval _: R|kotlin/Int| = R|<local>/<destruct>|.R|/A.component1|()
+        lval <unused var>: R|kotlin/String| = R|<local>/<destruct>|.R|/A.component2|()
     }

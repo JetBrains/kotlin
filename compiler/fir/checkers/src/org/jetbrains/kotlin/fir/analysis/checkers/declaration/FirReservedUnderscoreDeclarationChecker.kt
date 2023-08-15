@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.isCatchParameter
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirUserTypeRef
+import org.jetbrains.kotlin.name.SpecialNames
 
 object FirReservedUnderscoreDeclarationChecker : FirBasicDeclarationChecker() {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -55,7 +56,10 @@ object FirReservedUnderscoreDeclarationChecker : FirBasicDeclarationChecker() {
         isSingleUnderscoreAllowed: Boolean = false
     ) {
         val declarationSource = declaration.source
-        if (declarationSource != null && declarationSource.kind !is KtFakeSourceElementKind) {
+        if (declarationSource != null &&
+            declarationSource.kind !is KtFakeSourceElementKind &&
+            (declaration as? FirProperty)?.name != SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
+        ) {
             with(SourceNavigator.forElement(declaration)) {
                 val rawName = declaration.getRawName()
                 if (rawName?.isUnderscore == true && !(isSingleUnderscoreAllowed && rawName == "_")) {
