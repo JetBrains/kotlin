@@ -163,16 +163,6 @@ internal fun irCall(startOffset: Int, endOffset: Int, irFunction: IrSimpleFuncti
             }
         }
 
-fun IrBuilderWithScope.irCallOp(
-        callee: IrFunction,
-        dispatchReceiver: IrExpression,
-        argument: IrExpression
-) =
-        irCall(callee).apply {
-            this.dispatchReceiver = dispatchReceiver
-            putValueArgument(0, argument)
-        }
-
 fun IrBuilderWithScope.irCatch(type: IrType) =
         IrCatchImpl(
                 startOffset, endOffset,
