@@ -4,9 +4,6 @@
  */
 package org.jetbrains.kotlin.gradle.fus
 interface GradleBuildFusStatistics {
-    fun reportBoolean(name: String, value: Boolean, subprojectName: String?, weight: Long?): Boolean
+    fun reportMetric(name: String, value: Any, subprojectName: String?)
 
-    fun reportNumber(name: String, value: Long, subprojectName: String?, weight: Long?): Boolean
-
-    fun reportString(name: String, value: String, subprojectName: String?, weight: Long?): Boolean
 }

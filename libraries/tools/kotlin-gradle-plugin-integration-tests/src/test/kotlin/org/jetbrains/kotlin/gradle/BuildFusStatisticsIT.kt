@@ -9,6 +9,7 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
+import kotlin.io.path.name
 
 @DisplayName("Build FUS statistics")
 class BuildFusStatisticsIT : KGPDaemonsBaseTest() {
@@ -36,5 +37,25 @@ class BuildFusStatisticsIT : KGPDaemonsBaseTest() {
             }
         }
     }
+
+    @DisplayName("smoke test for fus-statistics-gradle-plugin")
+    @GradleTest
+    fun smokeTestForFusStatisticsPlugin(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            val fusDir = projectPath.resolve("reports/").name
+            buildGradle.modify {
+                it.replace("plugins {",
+                           """
+                               plugins {
+                                 id "fus-statistics-gradle-plugin"
+                           """.trimIndent()
+                           )
+            }
+            build("assemble", "-D") {
+
+            }
+        }
+    }
+
 
 }

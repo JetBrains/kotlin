@@ -9,11 +9,13 @@ import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.tasks.Internal
 import org.gradle.kotlin.dsl.withType
+import java.io.File
+import java.util.UUID
 
 
-internal interface UsesGradleBuildFusStatisticsService : Task {
+interface UsesGradleBuildFusStatisticsService : Task {
     @get:Internal
-    val fusStatisticsBuildService: Property<GradleBuildFusStatisticsService?>
+    val fusStatisticsBuildService: Property<GradleBuildFusStatistics?>
 }
 
 internal abstract class GradleBuildFusStatisticsService : GradleBuildFusStatistics,
@@ -21,19 +23,34 @@ internal abstract class GradleBuildFusStatisticsService : GradleBuildFusStatisti
 
     interface Parameters : BuildServiceParameters {
         val path: Property<String>
-        val statisticsIsEnabled: Property<Boolean>
+        val uuid: Property<String>
     }
 
+    private val metrics = HashMap<Metric, Any>()
+
     override fun close() {
+        val reportFile = File(parameters.path.get())
+            .resolve(STATISTICS_FOLDER_NAME)
+            .also { it.mkdirs() }
+            .resolve(parameters.uuid.get())
+        reportFile.createNewFile()
+
+        for ((metric, value) in metrics) {
+            reportFile.writeText("$metric=$value")
+        }
+
+        reportFile.writeText(BUILD_SESSION_SEPARATOR)
+    }
+
+    override fun reportMetric(name: String, value: Any, subprojectName: String?) {
+        metrics[Metric(name, subprojectName)] = value
     }
 
     companion object {
-        private const val CUSTOM_LOGGER_ROOT_PATH = "kotlin.session.logger.root.path"
+        private const val FUS_STATISTICS_PATH = "kotlin.fus.statistics.path"
         private const val STATISTICS_FOLDER_NAME = "kotlin-fus"
-        private const val STATISTICS_FILE_NAME_PATTERN = "\\d{4}-\\d{2}-\\d{2}-\\d{2}-\\d{2}-\\d{2}-\\d{3}(.\\d+)?.profile"
 
         private const val BUILD_SESSION_SEPARATOR = "BUILD FINISHED"
-
 
         private var statisticsIsEnabled: Boolean = true //KT-59629 Wait for user confirmation before start to collect metrics
         private val serviceClass = GradleBuildFusStatisticsService::class.java
@@ -47,12 +64,13 @@ internal abstract class GradleBuildFusStatisticsService : GradleBuildFusStatisti
 
             return if (statisticsIsEnabled) {
                 project.gradle.sharedServices.registerIfAbsent(serviceName, serviceClass) {
-                    val customPath: String = if (project.rootProject.hasProperty(CUSTOM_LOGGER_ROOT_PATH)) {
-                        project.rootProject.property(CUSTOM_LOGGER_ROOT_PATH) as String
+                    val customPath: String = if (project.rootProject.hasProperty(FUS_STATISTICS_PATH)) {
+                        project.rootProject.property(FUS_STATISTICS_PATH) as String
                     } else {
                         project.gradle.gradleUserHomeDir.path //fix
                     }
                     it.parameters.path.set(customPath)
+                    it.parameters.uuid.set(UUID.randomUUID().toString())
                 }
             } else {
                 project.gradle.sharedServices.registerIfAbsent(serviceName, DummyGradleBuildFusStatisticsService::class.java) {}
@@ -70,19 +88,27 @@ internal abstract class GradleBuildFusStatisticsService : GradleBuildFusStatisti
 }
 
 internal abstract class DummyGradleBuildFusStatisticsService : GradleBuildFusStatisticsService() {
-    override fun reportBoolean(name: String, value: Boolean, subprojectName: String?, weight: Long?): Boolean {
+    override fun reportMetric(name: String, value: Any, subprojectName: String?) {
         //do nothing
-        return true
     }
 
-    override fun reportNumber(name: String, value: Long, subprojectName: String?, weight: Long?): Boolean {
+    override fun close() {
         //do nothing
-        return true
+    }
+}
+
+data class Metric(val name: String, val projectHash: String?) : Comparable<Metric> {
+    override fun compareTo(other: Metric): Int {
+        val compareNames = name.compareTo(other.name)
+        return when {
+            compareNames != 0 -> compareNames
+            projectHash == other.projectHash -> 0
+            else -> (projectHash ?: "").compareTo(other.projectHash ?: "")
+        }
     }
 
-    override fun reportString(name: String, value: String, subprojectName: String?, weight: Long?): Boolean {
-        //do nothing
-        return true
+    override fun toString(): String {
+        val suffix = if (projectHash == null) "" else ".${projectHash}"
+        return name + suffix
     }
-
 }
