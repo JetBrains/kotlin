@@ -193,22 +193,22 @@ fun main() {
             }
         }
 
-        // Klib contents tests
+        // Dump KLIB metadata tests
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
-            testClass<AbstractNativeKlibContentsTest>(
-                suiteTestClassName = "NativeKlibContentsTestGenerated"
+            testClass<AbstractNativeKlibDumpMetadataTest>(
+                suiteTestClassName = "NativeKlibDumpMetadataTestGenerated"
             ) {
-                model("klibContents", pattern = "^([^_](.+)).kt$", recursive = true)
+                model("klib/dump-metadata", pattern = "^([^_](.+)).kt$", recursive = true)
             }
         }
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
-            testClass<AbstractNativeKlibContentsTest>(
-                suiteTestClassName = "FirNativeKlibContentsTestGenerated",
+            testClass<AbstractNativeKlibDumpMetadataTest>(
+                suiteTestClassName = "FirNativeKlibDumpMetadataTestGenerated",
                 annotations = listOf(
                     *frontendFir()
                 )
             ) {
-                model("klibContents", pattern = "^([^_](.+)).kt$", recursive = true)
+                model("klib/dump-metadata", pattern = "^([^_](.+)).kt$", recursive = true)
             }
         }
 

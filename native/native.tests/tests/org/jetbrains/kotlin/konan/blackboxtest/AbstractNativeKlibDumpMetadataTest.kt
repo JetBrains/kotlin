@@ -21,7 +21,7 @@ import java.io.File
 
 @Tag("klib")
 @UsePartialLinkage(UsePartialLinkage.Mode.DISABLED)
-abstract class AbstractNativeKlibContentsTest : AbstractNativeSimpleTest() {
+abstract class AbstractNativeKlibDumpMetadataTest : AbstractNativeSimpleTest() {
 
     protected fun runTest(@TestDataFile testPath: String) {
         val testPathFull = getAbsoluteFile(testPath)
