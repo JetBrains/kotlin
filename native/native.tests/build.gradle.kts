@@ -16,7 +16,7 @@ dependencies {
     testImplementation(projectTests(":compiler:tests-common-new"))
     testImplementation(projectTests(":compiler:test-infrastructure"))
     testImplementation(projectTests(":generators:test-generator"))
-    testImplementation(project(":kotlin-native:backend.native")) { isTransitive = false }
+    implementation(project(":kotlin-native:backend.native")) { isTransitive = false }
     testImplementation(project(":native:kotlin-native-utils"))
     testImplementation(project(":native:executors"))
     testImplementation(project(":kotlin-util-klib-abi"))
