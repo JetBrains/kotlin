@@ -1020,7 +1020,7 @@ private class ObjCReferenceValuePassing(
 
     override fun IrBuilderWithScope.bridgedToKotlin(expression: IrExpression, symbols: KonanSymbols): IrExpression =
             convertPossiblyRetainedObjCPointer(symbols, retained, expression) {
-                irCall(symbols.interopInterpretObjCPointerOrNull, listOf(type)).apply {
+                irCallWithSubstitutedType(symbols.interopInterpretObjCPointerOrNull, listOf(type)).apply {
                     putValueArgument(0, it)
                 }
             }

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetField
+import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
@@ -164,23 +165,33 @@ internal class ImportCachesAbiTransformer(val generationState: NativeGenerationS
         val irClass = field.parentClassOrNull
         val property = field.correspondingPropertySymbol?.owner
 
+        // Actual scope for builder is the current function that we don't have access to. So we put a new symbol as scope here,
+        // but it will not affect the result because we are not creating any declarations here.
+        fun createIrBuilder() = generationState.context.irBuiltIns.createIrBuilder(
+                IrSimpleFunctionSymbolImpl(), expression.startOffset, expression.endOffset
+        )
+
         return when {
             generationState.llvmModuleSpecification.containsDeclaration(field) -> expression
 
             irClass?.isInner == true && innerClassesSupport.getOuterThisField(irClass) == field -> {
                 val accessor = cachesAbiSupport.getOuterThisAccessor(irClass)
                 dependenciesTracker.add(irClass)
-                return irCall(expression.startOffset, expression.endOffset, accessor, emptyList()).apply {
-                    putValueArgument(0, expression.receiver)
+                createIrBuilder().run {
+                    irCall(accessor).apply {
+                        putValueArgument(0, expression.receiver)
+                    }
                 }
             }
 
             property?.isLateinit == true -> {
                 val accessor = cachesAbiSupport.getLateinitPropertyAccessor(property)
                 dependenciesTracker.add(property)
-                return irCall(expression.startOffset, expression.endOffset, accessor, emptyList()).apply {
-                    if (irClass != null)
-                        putValueArgument(0, expression.receiver)
+                createIrBuilder().run {
+                    irCall(accessor).apply {
+                        if (irClass != null)
+                            putValueArgument(0, expression.receiver)
+                    }
                 }
             }
 

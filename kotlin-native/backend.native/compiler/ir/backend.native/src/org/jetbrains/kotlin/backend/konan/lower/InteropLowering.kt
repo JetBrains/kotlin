@@ -271,7 +271,7 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
 
             result.body = context.createIrBuilder(result.symbol).irBlockBody(result) {
                 +irReturn(
-                        irCall(symbols.interopObjCObjectInitBy, listOf(irClass.defaultType)).apply {
+                    irCallWithSubstitutedType(symbols.interopObjCObjectInitBy, listOf(irClass.defaultType)).apply {
                             extensionReceiver = irGet(result.dispatchReceiverParameter!!)
                             putValueArgument(0, irCall(constructor).also {
                                 result.valueParameters.forEach { parameter ->
@@ -415,7 +415,7 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
             symbols.interopInterpretObjCPointer
         }
 
-        return irCall(callee, listOf(type)).apply {
+        return irCallWithSubstitutedType(callee, listOf(type)).apply {
             putValueArgument(0, expression)
         }
     }

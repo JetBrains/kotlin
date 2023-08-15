@@ -6,14 +6,17 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.lower.DefaultParameterInjector
+import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.KonanBackendContext
 import org.jetbrains.kotlin.backend.konan.PrimitiveBinaryType
 import org.jetbrains.kotlin.backend.konan.computePrimitiveBinaryTypeOrNull
 import org.jetbrains.kotlin.backend.konan.getInlinedClassNative
+import org.jetbrains.kotlin.ir.builders.irCall
+import org.jetbrains.kotlin.ir.builders.irCallWithSubstitutedType
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.irCall
 
 internal class NativeDefaultParameterInjector(context: KonanBackendContext) : DefaultParameterInjector<KonanBackendContext>(
         context = context,
@@ -23,6 +26,10 @@ internal class NativeDefaultParameterInjector(context: KonanBackendContext) : De
 
     override fun nullConst(startOffset: Int, endOffset: Int, type: IrType): IrExpression {
         val symbols = context.ir.symbols
+
+        // Actual scope for builder is the current function that we don't have access to. So we put a new symbol as scope here,
+        // but it will not affect the result because we are not creating any declarations here.
+        fun createIrBuilder() = context.irBuiltIns.createIrBuilder(IrSimpleFunctionSymbolImpl(), startOffset, endOffset)
 
         val nullConstOfEquivalentType = when (type.computePrimitiveBinaryTypeOrNull()) {
             null -> IrConstImpl.constNull(startOffset, endOffset, context.irBuiltIns.nothingNType)
@@ -36,17 +43,14 @@ internal class NativeDefaultParameterInjector(context: KonanBackendContext) : De
             PrimitiveBinaryType.LONG -> IrConstImpl.long(startOffset, endOffset, type, 0)
             PrimitiveBinaryType.FLOAT -> IrConstImpl.float(startOffset, endOffset, type, 0.0F)
             PrimitiveBinaryType.DOUBLE -> IrConstImpl.double(startOffset, endOffset, type, 0.0)
-            PrimitiveBinaryType.POINTER -> irCall(startOffset, endOffset, symbols.getNativeNullPtr.owner, emptyList())
+            PrimitiveBinaryType.POINTER -> with(createIrBuilder()) { irCall(symbols.getNativeNullPtr.owner) }
             PrimitiveBinaryType.VECTOR128 -> TODO()
         }
 
-        return irCall(
-                startOffset,
-                endOffset,
-                symbols.reinterpret.owner,
-                listOf(nullConstOfEquivalentType.type, type)
-        ).apply {
-            extensionReceiver = nullConstOfEquivalentType
+        return with(createIrBuilder()) {
+            irCallWithSubstitutedType(symbols.reinterpret, listOf(nullConstOfEquivalentType.type, type)).apply {
+                extensionReceiver = nullConstOfEquivalentType
+            }
         }
     }
 }

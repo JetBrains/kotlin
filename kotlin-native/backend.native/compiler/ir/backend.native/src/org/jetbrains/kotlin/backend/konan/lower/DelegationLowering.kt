@@ -250,7 +250,7 @@ internal class PropertyDelegationLowering(val generationState: NativeGenerationS
                         put("setter", setterCallableReference.convert())
                     }
                 })
-            } else irCall(clazz.constructors.single(), receiverTypes + listOf(returnType)).apply {
+            } else irCallWithSubstitutedType(clazz.constructors.single(), receiverTypes + listOf(returnType)).apply {
                 putValueArgument(0, name)
                 putValueArgument(1, getterCallableReference)
                 if (setterCallableReference != null)

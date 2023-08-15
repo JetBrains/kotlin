@@ -283,7 +283,7 @@ private fun InteropCallContext.readObjectiveCReferenceFromMemory(
         type: IrType
 ): IrExpression {
     val readMemory = readValueFromMemory(nativePtr, symbols.nativePtrType)
-    return builder.irCall(symbols.interopInterpretObjCPointerOrNull, listOf(type)).apply {
+    return builder.irCallWithSubstitutedType(symbols.interopInterpretObjCPointerOrNull, listOf(type)).apply {
         putValueArgument(0, readMemory)
     }
 }

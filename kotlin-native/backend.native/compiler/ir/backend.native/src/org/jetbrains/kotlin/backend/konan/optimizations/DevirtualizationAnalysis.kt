@@ -1524,7 +1524,7 @@ internal object DevirtualizationAnalysis {
                         possibleCallees.isEmpty() -> irBlock(expression) {
                             val throwExpr = irCall(symbols.throwInvalidReceiverTypeException.owner).apply {
                                 putValueArgument(0,
-                                        irCall(symbols.kClassImplConstructor.owner, listOf(dispatchReceiver.type)).apply {
+                                        irCallWithSubstitutedType(symbols.kClassImplConstructor.owner, listOf(dispatchReceiver.type)).apply {
                                             putValueArgument(0,
                                                     irCall(symbols.getObjectTypeInfo.owner).apply {
                                                         putValueArgument(0, dispatchReceiver)
@@ -1582,7 +1582,7 @@ internal object DevirtualizationAnalysis {
                                                         }
                                                     } else {
                                                         val receiverType = actualCallee.irFunction!!.parentAsClass
-                                                        irCall(isSubtype, listOf(receiverType.defaultType)).apply {
+                                                        irCallWithSubstitutedType(isSubtype, listOf(receiverType.defaultType)).apply {
                                                             putValueArgument(0, irGet(typeInfo))
                                                         }
                                                     }
@@ -1601,7 +1601,7 @@ internal object DevirtualizationAnalysis {
                                         condition = irTrue(),
                                         result = irCall(symbols.throwInvalidReceiverTypeException).apply {
                                             putValueArgument(0,
-                                                    irCall(symbols.kClassImplConstructor, listOf(dispatchReceiver.type)).apply {
+                                                    irCallWithSubstitutedType(symbols.kClassImplConstructor, listOf(dispatchReceiver.type)).apply {
                                                         putValueArgument(0, irGet(typeInfo))
                                                     }
                                             )

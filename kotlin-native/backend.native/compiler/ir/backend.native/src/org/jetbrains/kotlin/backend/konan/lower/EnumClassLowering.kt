@@ -154,7 +154,7 @@ internal class EnumUsageLowering(val context: Context) : IrElementTransformer<Ir
                 } else {
                     // fallback for enums from old klibs
                     val valuesFunction = irClass.findStaticMethod(Name.identifier("values"))
-                    data.irCall(context.ir.symbols.createEnumEntries, listOf(irClass.defaultType)).apply {
+                    data.irCallWithSubstitutedType(context.ir.symbols.createEnumEntries, listOf(irClass.defaultType)).apply {
                         putValueArgument(0, data.irCall(valuesFunction))
                     }
                 }
@@ -244,14 +244,14 @@ internal class EnumClassLowering(val context: Context) : FileLoweringPass {
                 if (body is IrSyntheticBody) {
                     declaration.body = when (body.kind) {
                         IrSyntheticBodyKind.ENUM_VALUEOF -> context.createIrBuilder(declaration.symbol).irBlockBody(declaration) {
-                            +irReturn(irCall(symbols.valueOfForEnum, listOf(irClass.defaultType)).apply {
+                            +irReturn(irCallWithSubstitutedType(symbols.valueOfForEnum, listOf(irClass.defaultType)).apply {
                                 putValueArgument(0, irGet(declaration.valueParameters[0]))
                                 putValueArgument(1, irGetField(null, valuesField))
                             })
                         }
 
                         IrSyntheticBodyKind.ENUM_VALUES -> context.createIrBuilder(declaration.symbol).irBlockBody(declaration) {
-                            +irReturn(irCall(symbols.valuesForEnum, listOf(irClass.defaultType)).apply {
+                            +irReturn(irCallWithSubstitutedType(symbols.valuesForEnum, listOf(irClass.defaultType)).apply {
                                 putValueArgument(0, irGetField(null, valuesField))
                             })
                         }
@@ -307,7 +307,7 @@ internal class EnumClassLowering(val context: Context) : FileLoweringPass {
                                     }
                                     val entryClass = entryConstructorCall.symbol.owner.constructedClass
 
-                                    irCall(createUninitializedInstance, listOf(entryClass.defaultType))
+                                    irCallWithSubstitutedType(createUninitializedInstance, listOf(entryClass.defaultType))
                                 }
                 )
                 val instances = irTemporary(irValuesInitializer)
@@ -338,7 +338,7 @@ internal class EnumClassLowering(val context: Context) : FileLoweringPass {
                                     }
                                 }
                 )
-                +irCall(createEnumEntries, listOf(irClass.defaultType)).apply {
+                +irCallWithSubstitutedType(createEnumEntries, listOf(irClass.defaultType)).apply {
                     putValueArgument(0, irEntriesArray)
                 }
             })

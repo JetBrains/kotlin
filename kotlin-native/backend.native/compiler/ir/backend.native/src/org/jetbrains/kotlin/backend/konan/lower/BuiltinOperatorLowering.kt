@@ -90,7 +90,7 @@ internal class BuiltinOperatorLowering(val context: Context) : FileLoweringPass,
             reinterpret(expression, expression.type, toType)
 
     private fun IrBuilderWithScope.reinterpret(expression: IrExpression, fromType: IrType, toType: IrType) =
-            irCall(symbols.reinterpret.owner, listOf(fromType, toType)).apply {
+            irCallWithSubstitutedType(symbols.reinterpret.owner, listOf(fromType, toType)).apply {
                 extensionReceiver = expression
             }
 

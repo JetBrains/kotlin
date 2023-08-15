@@ -14,22 +14,19 @@ import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.declarations.buildVariable
-import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.parent
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
-import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.IrConst
+import org.jetbrains.kotlin.ir.expressions.IrConstantValue
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrCatchImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.makeNullable
-import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.checkers.isRestrictsSuspensionReceiver
@@ -96,36 +93,6 @@ fun IrFunctionAccessExpression.addArguments(args: Map<IrValueParameter, IrExpres
         }
     }
 }
-
-private fun IrFunction.substitutedReturnType(typeArguments: List<IrType>): IrType {
-    val unsubstituted = this.returnType
-    if (typeArguments.isEmpty()) return unsubstituted // Fast path.
-    if (this is IrConstructor) {
-        // Workaround for missing type parameters in constructors. TODO: remove.
-        return this.returnType.classifierOrFail.typeWith(typeArguments)
-    }
-
-    assert(this.typeParameters.size >= typeArguments.size) // TODO: check equality.
-    // TODO: receiver type must also be considered.
-    return unsubstituted.substitute(this.typeParameters.map { it.symbol }.zip(typeArguments).toMap())
-}
-
-// TODO: this function must be avoided since it takes symbol's owner implicitly.
-fun IrBuilderWithScope.irCall(symbol: IrFunctionSymbol, typeArguments: List<IrType> = emptyList()) =
-        this.irCall(symbol, symbol.owner.substitutedReturnType(typeArguments), typeArguments)
-
-fun IrBuilderWithScope.irCall(irFunction: IrFunction, typeArguments: List<IrType> = emptyList()) =
-        irCall(irFunction.symbol, typeArguments)
-
-internal fun irCall(startOffset: Int, endOffset: Int, irFunction: IrSimpleFunction, typeArguments: List<IrType>): IrCall =
-        IrCallImpl.fromSymbolOwner(
-                startOffset, endOffset, irFunction.substitutedReturnType(typeArguments),
-                irFunction.symbol, typeArguments.size, irFunction.valueParameters.size
-        ).apply {
-            typeArguments.forEachIndexed { index, irType ->
-                this.putTypeArgument(index, irType)
-            }
-        }
 
 fun IrBuilderWithScope.irCatch() =
         IrCatchImpl(

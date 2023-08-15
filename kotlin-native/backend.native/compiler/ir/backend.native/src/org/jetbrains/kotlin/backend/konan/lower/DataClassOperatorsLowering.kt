@@ -10,12 +10,12 @@ import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.builders.irCallWithSubstitutedType
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.classifierOrFail
-import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 
 internal class DataClassOperatorsLowering(val context: Context) : FileLoweringPass, IrElementTransformer<IrFunction?> {
@@ -54,7 +54,7 @@ internal class DataClassOperatorsLowering(val context: Context) : FileLoweringPa
             // TODO: use more precise type arguments.
             val typeArguments = (0 until newCallee.typeParameters.size).map { irBuiltins.anyNType }
 
-            irCall(newCallee, typeArguments).apply {
+            irCallWithSubstitutedType(newCallee, typeArguments).apply {
                 extensionReceiver = argument
             }
         }
