@@ -452,11 +452,6 @@ internal class KonanIrLinker(
         private val libraryBeingCached: PartialCacheInfo?,
         override val userVisibleIrModulesSupport: UserVisibleIrModulesSupport
 ) : KotlinIrLinker(currentModule, messageLogger, builtIns, symbolTable, exportedDependencies) {
-
-    companion object {
-        val FORWARD_DECLARATION_ORIGIN = object : IrDeclarationOriginImpl("FORWARD_DECLARATION_ORIGIN") {}
-    }
-
     override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean = moduleDescriptor.isNativeStdlib()
 
     private val forwardDeclarationDeserializer = forwardModuleDescriptor?.let {

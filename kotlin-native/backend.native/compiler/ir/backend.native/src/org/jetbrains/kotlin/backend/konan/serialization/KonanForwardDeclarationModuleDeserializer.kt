@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -32,6 +33,10 @@ internal class KonanForwardDeclarationModuleDeserializer(
 ) : IrModuleDeserializer(moduleDescriptor, KotlinAbiVersion.CURRENT) {
     init {
         require(moduleDescriptor.isForwardDeclarationModule)
+    }
+
+    companion object {
+        private val FORWARD_DECLARATION_ORIGIN = object : IrDeclarationOriginImpl("FORWARD_DECLARATION_ORIGIN") {}
     }
 
     private val declaredDeclaration = mutableMapOf<IdSignature, IrClass>()
@@ -54,7 +59,7 @@ internal class KonanForwardDeclarationModuleDeserializer(
 
     private fun buildForwardDeclarationStub(descriptor: ClassDescriptor): IrClass {
         return stubGenerator.generateClassStub(descriptor).also {
-            it.origin = KonanIrLinker.FORWARD_DECLARATION_ORIGIN
+            it.origin = FORWARD_DECLARATION_ORIGIN
         }
     }
 
