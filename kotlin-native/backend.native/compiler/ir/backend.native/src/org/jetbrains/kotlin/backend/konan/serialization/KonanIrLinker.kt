@@ -119,7 +119,7 @@ data class SerializedFileReference(val fqName: String, val path: String) {
     constructor(irFile: IrFile) : this(irFile.packageFqName.asString(), irFile.path)
 }
 
-private class StringTableBuilder {
+internal class StringTableBuilder {
     private val indices = mutableMapOf<String, Int>()
     private var index = 0
 
@@ -130,13 +130,13 @@ private class StringTableBuilder {
     fun build() = StringTable(indices)
 }
 
-private inline fun buildStringTable(block: StringTableBuilder.() -> Unit): StringTable {
+internal inline fun buildStringTable(block: StringTableBuilder.() -> Unit): StringTable {
     val builder = StringTableBuilder()
     builder.block()
     return builder.build()
 }
 
-private class StringTable(val indices: Map<String, Int>) {
+internal class StringTable(val indices: Map<String, Int>) {
     val sizeBytes: Int get() = Int.SIZE_BYTES + indices.keys.sumOf { Int.SIZE_BYTES + it.length * Char.SIZE_BYTES }
 
     fun serialize(stream: ByteArrayStream) {
