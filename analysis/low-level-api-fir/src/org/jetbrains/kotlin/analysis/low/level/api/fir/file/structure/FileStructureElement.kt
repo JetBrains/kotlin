@@ -114,6 +114,8 @@ internal class KtToFirMapping(firElement: FirElement) {
             }
             // Enum entries/annotation entries constructor calls
             is KtConstructorCalleeExpression -> getElement(current.parent as KtCallElement)
+            // KtParameter for destructuring declaration
+            is KtParameter -> getElement(current as KtElement)
             else -> null
         }
     }

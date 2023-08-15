@@ -413,6 +413,16 @@ public class ScriptGetOrBuildFirTestGenerated extends AbstractScriptGetOrBuildFi
     }
 
     @Nested
+    @TestMetadata("analysis/low-level-api-fir/testdata/getOrBuildFir/destructuring")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Destructuring {
+        @Test
+        public void testAllFilesPresentInDestructuring() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/getOrBuildFir/destructuring"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+        }
+    }
+
+    @Nested
     @TestMetadata("analysis/low-level-api-fir/testdata/getOrBuildFir/expressions")
     @TestDataPath("$PROJECT_ROOT")
     public class Expressions {
