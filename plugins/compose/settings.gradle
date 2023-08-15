@@ -22,7 +22,7 @@ pluginManagement {
         }
         gradlePluginPortal()
     }
-    includeBuild "../../playground-common/playground-plugin"
+    apply from: "../../playground-common/configure-plugin-management.gradle", to: it
 }
 plugins {
     id "playground"
@@ -38,4 +38,3 @@ playground {
         return false
     })
 }
-
