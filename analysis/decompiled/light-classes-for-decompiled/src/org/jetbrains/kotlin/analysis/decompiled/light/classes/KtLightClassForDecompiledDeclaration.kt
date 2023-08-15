@@ -44,7 +44,7 @@ open class KtLightClassForDecompiledDeclaration(
         ClassInnerStuffCache(
             /* aClass = */ this,
             /* generateEnumMethods = */ true,
-            /* modificationTracker = */ project.createAllLibrariesModificationTracker(),
+            /* modificationTrackers = */ listOf(project.createAllLibrariesModificationTracker()),
         )
     }
 

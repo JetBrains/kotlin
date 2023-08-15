@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.classes
 
+import com.intellij.openapi.util.ModificationTracker
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiModifier
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
+import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
@@ -66,6 +68,16 @@ internal fun createLightClassNoCache(ktClassOrObject: KtClassOrObject, ktModule:
     ktClassOrObject is KtClass && ktClassOrObject.isAnnotation() -> SymbolLightClassForAnnotationClass(ktClassOrObject, ktModule)
     ktClassOrObject is KtClass && ktClassOrObject.isInterface() -> SymbolLightClassForInterface(ktClassOrObject, ktModule)
     else -> SymbolLightClassForClassOrObject(ktClassOrObject, ktModule)
+}
+
+internal fun KtClassOrObject.modificationTrackerForClassInnerStuff(): List<ModificationTracker> {
+    val outOfBlockTracker = project.createProjectWideOutOfBlockModificationTracker()
+    return if (isLocal) {
+        val file = containingKtFile
+        listOf(outOfBlockTracker, ModificationTracker { file.modificationStamp })
+    } else {
+        listOf(outOfBlockTracker)
+    }
 }
 
 context(KtAnalysisSession)
