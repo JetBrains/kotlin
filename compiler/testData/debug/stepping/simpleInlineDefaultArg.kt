@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // FILE: test.kt
 
 inline fun alsoInline() = "OK"
@@ -28,14 +29,14 @@ fun box(): String {
 // the `$i$f$alsoInline` variable life time.
 
 // EXPECTATIONS JVM JVM_IR
-// test.kt:10 box
-// test.kt:5 box
-// test.kt:3 box
-// EXPECTATIONS JVM_IR
-// test.kt:5 box
-// EXPECTATIONS JVM JVM_IR
+// test.kt:11 box
 // test.kt:6 box
-// test.kt:10 box
+// test.kt:4 box
+// EXPECTATIONS JVM_IR
+// test.kt:6 box
+// EXPECTATIONS JVM JVM_IR
+// test.kt:7 box
+// test.kt:11 box
 
 // EXPECTATIONS JS_IR
-// test.kt:10 box
+// test.kt:11 box

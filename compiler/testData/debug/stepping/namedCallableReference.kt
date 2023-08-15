@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // FILE: test.kt
 fun box() {
     var x = false
@@ -17,24 +18,24 @@ fun g() {}
 // up for JVM_IR.
 
 // EXPECTATIONS JVM JVM_IR
-// test.kt:3 box
 // test.kt:4 box
-// test.kt:8 f
-// EXPECTATIONS JVM_IR
-// test.kt:4 invoke
-// EXPECTATIONS JVM JVM_IR
-// test.kt:11 g
-// test.kt:4 invoke
-// test.kt:8 f
-// test.kt:9 f
 // test.kt:5 box
+// test.kt:9 f
+// EXPECTATIONS JVM_IR
+// test.kt:5 invoke
+// EXPECTATIONS JVM JVM_IR
+// test.kt:12 g
+// test.kt:5 invoke
+// test.kt:9 f
+// test.kt:10 f
+// test.kt:6 box
 
 // EXPECTATIONS JS_IR
-// test.kt:3 box
 // test.kt:4 box
-// test.kt:4 g$ref
-// test.kt:4 box
-// test.kt:8 f
-// test.kt:11 g
-// test.kt:9 f
 // test.kt:5 box
+// test.kt:5 g$ref
+// test.kt:5 box
+// test.kt:9 f
+// test.kt:12 g
+// test.kt:10 f
+// test.kt:6 box

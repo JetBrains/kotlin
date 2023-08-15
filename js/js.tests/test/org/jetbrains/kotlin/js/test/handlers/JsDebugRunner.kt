@@ -352,24 +352,6 @@ private fun URI.withAuthority(newAuthority: String?) =
 
 private fun Debugger.Location.toCodePosition() = CodePosition(lineNumber, columnNumber ?: -1)
 
-private fun SourceMap.segmentForGeneratedLocation(lineNumber: Int, columnNumber: Int?): SourceMapSegment? {
-
-    val group = groups.getOrNull(lineNumber)?.takeIf { it.segments.isNotEmpty() } ?: return null
-    return if (columnNumber == null || columnNumber <= group.segments[0].generatedColumnNumber) {
-        group.segments[0]
-    } else {
-        val candidateIndex = group.segments.indexOfFirst {
-            columnNumber <= it.generatedColumnNumber
-        }
-        if (candidateIndex < 0)
-            null
-        else if (candidateIndex == 0 || group.segments[candidateIndex].generatedColumnNumber == columnNumber)
-            group.segments[candidateIndex]
-        else
-            group.segments[candidateIndex - 1]
-    }
-}
-
 @Serializable
 private class ValueDescription(val isNull: Boolean, val isReferenceType: Boolean, val valueDescription: String, val typeName: String) {
     fun toLocalVariableRecord(variableName: String) = LocalVariableRecord(

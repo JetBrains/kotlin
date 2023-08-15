@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // FILE: test.kt
 
 interface I {
@@ -18,24 +19,24 @@ fun box() {
 }
 
 // EXPECTATIONS JVM JVM_IR
-// test.kt:16 box
-// test.kt:13 <init>
-// EXPECTATIONS JVM
-// test.kt:7 <clinit>
-// EXPECTATIONS JVM JVM_IR
-// test.kt:16 box
 // test.kt:17 box
-// test.kt:10 f
-// test.kt:-1 f
+// test.kt:14 <init>
+// EXPECTATIONS JVM
+// test.kt:8 <clinit>
+// EXPECTATIONS JVM JVM_IR
+// test.kt:17 box
 // test.kt:18 box
+// test.kt:11 f
+// test.kt:-1 f
+// test.kt:19 box
 
 // EXPECTATIONS JS_IR
-// test.kt:16 box
-// test.kt:13 <init>
-// test.kt:7 <init>
-// test.kt:13 <init>
 // test.kt:17 box
-// test.kt:1 f
-// test.kt:10 f
-// test.kt:1 f
+// test.kt:14 <init>
+// test.kt:8 <init>
+// test.kt:14 <init>
 // test.kt:18 box
+// test.kt:1 f
+// test.kt:11 f
+// test.kt:1 f
+// test.kt:19 box

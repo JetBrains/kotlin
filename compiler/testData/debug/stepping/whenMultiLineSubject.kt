@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // FILE: test.kt
 
 fun foo(x: Int): Int {
@@ -29,46 +30,46 @@ fun box() {
 }
 
 // EXPECTATIONS JVM JVM_IR
-// test.kt:26 box
-// test.kt:4 foo
-// test.kt:6 foo
-// test.kt:13 foo
-// test.kt:15 foo
-// test.kt:13 foo
-// test.kt:22 foo
-// test.kt:26 box
 // test.kt:27 box
-// test.kt:4 foo
-// test.kt:8 foo
-// test.kt:13 foo
-// test.kt:17 foo
-// test.kt:13 foo
-// test.kt:22 foo
+// test.kt:5 foo
+// test.kt:7 foo
+// test.kt:14 foo
+// test.kt:16 foo
+// test.kt:14 foo
+// test.kt:23 foo
 // test.kt:27 box
 // test.kt:28 box
-// test.kt:4 foo
-// test.kt:10 foo
-// test.kt:13 foo
-// test.kt:19 foo
-// test.kt:13 foo
-// test.kt:22 foo
+// test.kt:5 foo
+// test.kt:9 foo
+// test.kt:14 foo
+// test.kt:18 foo
+// test.kt:14 foo
+// test.kt:23 foo
 // test.kt:28 box
 // test.kt:29 box
+// test.kt:5 foo
+// test.kt:11 foo
+// test.kt:14 foo
+// test.kt:20 foo
+// test.kt:14 foo
+// test.kt:23 foo
+// test.kt:29 box
+// test.kt:30 box
 
 // EXPECTATIONS JS_IR
-// test.kt:26 box
-// test.kt:4 foo
-// test.kt:13 foo
-// test.kt:15 foo
-// test.kt:22 foo
 // test.kt:27 box
-// test.kt:4 foo
-// test.kt:13 foo
-// test.kt:17 foo
-// test.kt:22 foo
+// test.kt:5 foo
+// test.kt:14 foo
+// test.kt:16 foo
+// test.kt:23 foo
 // test.kt:28 box
-// test.kt:4 foo
-// test.kt:13 foo
-// test.kt:19 foo
-// test.kt:22 foo
+// test.kt:5 foo
+// test.kt:14 foo
+// test.kt:18 foo
+// test.kt:23 foo
 // test.kt:29 box
+// test.kt:5 foo
+// test.kt:14 foo
+// test.kt:20 foo
+// test.kt:23 foo
+// test.kt:30 box

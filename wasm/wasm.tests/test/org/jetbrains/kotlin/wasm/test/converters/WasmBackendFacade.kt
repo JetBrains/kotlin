@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.js.config.WasmTarget
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.test.DebugMode
+import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.model.AbstractTestFacade
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
@@ -43,6 +44,7 @@ class WasmBackendFacade(
 
     override fun transform(module: TestModule, inputArtifact: BinaryArtifacts.KLib): BinaryArtifacts.Wasm? {
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
+        val generateSourceMaps = WasmEnvironmentConfigurationDirectives.GENERATE_SOURCE_MAP in testServices.moduleStructure.allDirectives
 
         // Enforce PL with the ERROR log level to fail any tests where PL detected any incompatibilities.
         configuration.setupPartialLinkageConfig(PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.ERROR))
@@ -104,6 +106,7 @@ class WasmBackendFacade(
             emitNameSection = true,
             allowIncompleteImplementations = false,
             generateWat = generateWat,
+            generateSourceMaps = generateSourceMaps
         )
 
         val dceDumpNameCache = DceDumpNameCache()
@@ -118,6 +121,7 @@ class WasmBackendFacade(
             emitNameSection = true,
             allowIncompleteImplementations = true,
             generateWat = generateWat,
+            generateSourceMaps = generateSourceMaps
         )
 
         return BinaryArtifacts.Wasm(

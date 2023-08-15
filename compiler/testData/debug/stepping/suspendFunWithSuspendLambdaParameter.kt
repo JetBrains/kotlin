@@ -1,5 +1,6 @@
-
+// IGNORE_BACKEND: WASM
 // WITH_STDLIB
+
 // FILE: test.kt
 suspend fun foo(block: suspend Long.() -> String): String {
     return 1L.block()
@@ -17,16 +18,16 @@ suspend fun box() {
 // called via code in the kotlin package.
 
 // EXPECTATIONS JVM JVM_IR
-// test.kt:9 box
-// test.kt:5 foo
-// test.kt:9 box
-// test.kt:12 box
+// test.kt:10 box
+// test.kt:6 foo
+// test.kt:10 box
+// test.kt:13 box
 
 // EXPECTATIONS JS_IR
-// test.kt:9 doResume
-// test.kt:9 box$slambda
-// test.kt:9 doResume
-// test.kt:6 foo
-// test.kt:5 foo
 // test.kt:10 doResume
-// test.kt:12 doResume
+// test.kt:10 box$slambda
+// test.kt:10 doResume
+// test.kt:7 foo
+// test.kt:6 foo
+// test.kt:11 doResume
+// test.kt:13 doResume

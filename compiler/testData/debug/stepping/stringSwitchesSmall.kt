@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // FILE: test.kt
 
 fun stringSwitch(x: String) {
@@ -38,86 +39,86 @@ fun box() {
 // last two whens.
 
 // EXPECTATIONS JVM JVM_IR
-// test.kt:26 box
-// test.kt:4 stringSwitch
-// test.kt:5 stringSwitch
-// test.kt:4 stringSwitch
-// test.kt:10 stringSwitch
-// test.kt:11 stringSwitch
-// test.kt:10 stringSwitch
-// test.kt:17 stringSwitch
-// EXPECTATIONS JVM_IR
-// test.kt:16 stringSwitch
-// EXPECTATIONS JVM JVM_IR
-// test.kt:19 stringSwitch
-// test.kt:16 stringSwitch
-// test.kt:23 stringSwitch
 // test.kt:27 box
-// test.kt:4 stringSwitch
 // test.kt:5 stringSwitch
 // test.kt:6 stringSwitch
-// test.kt:4 stringSwitch
-// test.kt:10 stringSwitch
-// EXPECTATIONS JVM_IR
+// test.kt:5 stringSwitch
 // test.kt:11 stringSwitch
-// EXPECTATIONS JVM JVM_IR
 // test.kt:12 stringSwitch
-// test.kt:10 stringSwitch
-// test.kt:17 stringSwitch
+// test.kt:11 stringSwitch
+// test.kt:18 stringSwitch
 // EXPECTATIONS JVM_IR
-// test.kt:16 stringSwitch
-// test.kt:19 stringSwitch
+// test.kt:17 stringSwitch
 // EXPECTATIONS JVM JVM_IR
 // test.kt:20 stringSwitch
-// test.kt:16 stringSwitch
-// test.kt:23 stringSwitch
+// test.kt:17 stringSwitch
+// test.kt:24 stringSwitch
 // test.kt:28 box
-// test.kt:4 stringSwitch
 // test.kt:5 stringSwitch
 // test.kt:6 stringSwitch
 // test.kt:7 stringSwitch
-// test.kt:4 stringSwitch
-// test.kt:10 stringSwitch
-// EXPECTATIONS JVM_IR
+// test.kt:5 stringSwitch
 // test.kt:11 stringSwitch
+// EXPECTATIONS JVM_IR
 // test.kt:12 stringSwitch
 // EXPECTATIONS JVM JVM_IR
 // test.kt:13 stringSwitch
-// test.kt:10 stringSwitch
-// test.kt:17 stringSwitch
+// test.kt:11 stringSwitch
+// test.kt:18 stringSwitch
 // EXPECTATIONS JVM_IR
-// test.kt:16 stringSwitch
-// test.kt:19 stringSwitch
+// test.kt:17 stringSwitch
 // test.kt:20 stringSwitch
 // EXPECTATIONS JVM JVM_IR
 // test.kt:21 stringSwitch
-// test.kt:16 stringSwitch
-// test.kt:23 stringSwitch
+// test.kt:17 stringSwitch
+// test.kt:24 stringSwitch
 // test.kt:29 box
+// test.kt:5 stringSwitch
+// test.kt:6 stringSwitch
+// test.kt:7 stringSwitch
+// test.kt:8 stringSwitch
+// test.kt:5 stringSwitch
+// test.kt:11 stringSwitch
+// EXPECTATIONS JVM_IR
+// test.kt:12 stringSwitch
+// test.kt:13 stringSwitch
+// EXPECTATIONS JVM JVM_IR
+// test.kt:14 stringSwitch
+// test.kt:11 stringSwitch
+// test.kt:18 stringSwitch
+// EXPECTATIONS JVM_IR
+// test.kt:17 stringSwitch
+// test.kt:20 stringSwitch
+// test.kt:21 stringSwitch
+// EXPECTATIONS JVM JVM_IR
+// test.kt:22 stringSwitch
+// test.kt:17 stringSwitch
+// test.kt:24 stringSwitch
+// test.kt:30 box
 
 // EXPECTATIONS JS_IR
-// test.kt:26 box
-// test.kt:4 stringSwitch
-// test.kt:5 stringSwitch
-// test.kt:10 stringSwitch
-// test.kt:11 stringSwitch
-// test.kt:16 stringSwitch
-// test.kt:19 stringSwitch
-// test.kt:23 stringSwitch
 // test.kt:27 box
-// test.kt:4 stringSwitch
+// test.kt:5 stringSwitch
 // test.kt:6 stringSwitch
-// test.kt:10 stringSwitch
+// test.kt:11 stringSwitch
 // test.kt:12 stringSwitch
-// test.kt:16 stringSwitch
+// test.kt:17 stringSwitch
 // test.kt:20 stringSwitch
-// test.kt:23 stringSwitch
+// test.kt:24 stringSwitch
 // test.kt:28 box
-// test.kt:4 stringSwitch
+// test.kt:5 stringSwitch
 // test.kt:7 stringSwitch
-// test.kt:10 stringSwitch
+// test.kt:11 stringSwitch
 // test.kt:13 stringSwitch
-// test.kt:16 stringSwitch
+// test.kt:17 stringSwitch
 // test.kt:21 stringSwitch
-// test.kt:23 stringSwitch
+// test.kt:24 stringSwitch
 // test.kt:29 box
+// test.kt:5 stringSwitch
+// test.kt:8 stringSwitch
+// test.kt:11 stringSwitch
+// test.kt:14 stringSwitch
+// test.kt:17 stringSwitch
+// test.kt:22 stringSwitch
+// test.kt:24 stringSwitch
+// test.kt:30 box

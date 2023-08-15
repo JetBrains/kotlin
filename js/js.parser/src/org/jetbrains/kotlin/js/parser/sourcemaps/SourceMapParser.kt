@@ -142,7 +142,7 @@ object SourceMapParser {
             }
 
             when {
-                stream.isEof -> return stream.createError("Unexpected EOF, ',' or ';' expected")
+                stream.isEof -> break
                 stream.isGroupTerminator -> {
                     currentGroup = SourceMapGroup().also { sourceMap.groups += it }
                     jsColumn = 0

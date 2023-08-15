@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // FILE: test.kt
 
 class A {
@@ -13,21 +14,21 @@ fun box() {
 
 // FORCE_STEP_INTO
 // EXPECTATIONS JVM JVM_IR
-// test.kt:11 box
-// test.kt:3 <init>
-// test.kt:11 box
-// test.kt:6 foo$default (synthetic)
-// test.kt:4 computeParam
-// test.kt:6 foo$default (synthetic)
-// test.kt:7 foo
-// test.kt:6 foo$default (synthetic)
 // test.kt:12 box
+// test.kt:4 <init>
+// test.kt:12 box
+// test.kt:7 foo$default (synthetic)
+// test.kt:5 computeParam
+// test.kt:7 foo$default (synthetic)
+// test.kt:8 foo
+// test.kt:7 foo$default (synthetic)
+// test.kt:13 box
 
 // EXPECTATIONS JS_IR
-// test.kt:11 box
-// test.kt:3 <init>
-// test.kt:11 box
-// test.kt:6 foo$default
-// test.kt:4 computeParam
-// test.kt:7 foo
 // test.kt:12 box
+// test.kt:4 <init>
+// test.kt:12 box
+// test.kt:7 foo$default
+// test.kt:5 computeParam
+// test.kt:8 foo
+// test.kt:13 box
