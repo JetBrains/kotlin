@@ -303,3 +303,19 @@
 
 # This class is needed for test framework
 -keep class com.intellij.openapi.util.text.StringUtil { *; }
+
+
+# This is used from standalone analysis API, which is NOT a part of the compiler but is bundled into kotlin-annotation-processing.
+-keepclassmembers class com.intellij.openapi.vfs.VirtualFileManager {
+    com.intellij.openapi.vfs.VirtualFile findFileByNioPath(java.nio.file.Path);
+}
+-keepclassmembers class com.intellij.openapi.application.Application {
+    void addApplicationListener(com.intellij.openapi.application.ApplicationListener, com.intellij.openapi.Disposable);
+}
+-keepclassmembers class com.intellij.openapi.extensions.ExtensionPointName {
+    java.util.List getExtensionList(com.intellij.openapi.extensions.AreaInstance);
+}
+-keepclassmembers class kotlinx.collections.immutable.ExtensionsKt {
+    kotlinx.collections.immutable.PersistentMap toPersistentHashMap(java.util.Map);
+    kotlinx.collections.immutable.PersistentSet persistentHashSetOf(java.lang.Object[]);
+}
