@@ -105,7 +105,10 @@ class InlineClassLowering(val context: CommonBackendContext) {
                                     }
                                     expression.transformChildrenVoid()
                                     if (isMemberFieldSet) {
-                                        return expression.value
+                                        return expression.value.coerceToUnit(
+                                            context.irBuiltIns,
+                                            this@InlineClassLowering.context.typeSystem
+                                        )
                                     }
                                     return expression
                                 }
