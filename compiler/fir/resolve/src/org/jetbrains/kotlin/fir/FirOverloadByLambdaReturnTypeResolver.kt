@@ -137,7 +137,6 @@ class FirOverloadByLambdaReturnTypeResolver(
                 firstCandidate.system,
                 firstAtom,
                 firstCandidate,
-                ConstraintSystemCompletionMode.FULL,
             )
             while (iterator.hasNext()) {
                 val (candidate, atom) = iterator.next()
@@ -147,7 +146,6 @@ class FirOverloadByLambdaReturnTypeResolver(
                     atom,
                     candidate,
                     results,
-                    ConstraintSystemCompletionMode.FULL,
                 )
             }
 

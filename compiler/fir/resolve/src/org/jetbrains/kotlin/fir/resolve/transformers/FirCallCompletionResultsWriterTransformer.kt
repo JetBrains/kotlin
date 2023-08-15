@@ -154,6 +154,12 @@ class FirCallCompletionResultsWriterTransformer(
             extensionReceiver = extensionReceiver.transformSingle(integerOperatorApproximator, expectedExtensionReceiverType)
         }
 
+        if (subCandidate.usedOuterCs) {
+            val updaterForThisReferences = TypeUpdaterForThisReferences()
+            dispatchReceiver = dispatchReceiver.transformSingle(updaterForThisReferences, null)
+            extensionReceiver = dispatchReceiver.transformSingle(updaterForThisReferences, null)
+        }
+
         (qualifiedAccessExpression as? FirQualifiedAccessExpression)?.apply {
             replaceCalleeReference(calleeReference.toResolvedReference())
             replaceDispatchReceiver(dispatchReceiver)
@@ -176,7 +182,17 @@ class FirCallCompletionResultsWriterTransformer(
         if (declaration !is FirErrorFunction) {
             qualifiedAccessExpression.replaceTypeArguments(typeArguments)
         }
+
+        for (postponedCall in subCandidate.postponedCalls) {
+            postponedCall.transformSingle(this, null)
+        }
+
+        for (declarationToUpdate in subCandidate.updateDeclarations) {
+            declarationToUpdate()
+        }
+
         session.lookupTracker?.recordTypeResolveAsLookup(typeRef, qualifiedAccessExpression.source, context.file.source)
+
         return qualifiedAccessExpression
     }
 
@@ -497,17 +513,31 @@ class FirCallCompletionResultsWriterTransformer(
             qualifiedAccessExpression: FirQualifiedAccessExpression,
             data: Any?,
         ): FirStatement {
-            val originalType = qualifiedAccessExpression.typeRef.coneType
-            val substitutedReceiverType = finallySubstituteOrNull(originalType) ?: return qualifiedAccessExpression
-            val resolvedTypeRef = qualifiedAccessExpression.typeRef.resolvedTypeFromPrototype(substitutedReceiverType)
-            qualifiedAccessExpression.replaceTypeRef(resolvedTypeRef)
-            session.lookupTracker?.recordTypeResolveAsLookup(resolvedTypeRef, qualifiedAccessExpression.source, context.file.source)
-            return qualifiedAccessExpression
+            return transformTypeRefForQualifiedAccess(qualifiedAccessExpression)
         }
 
         override fun transformPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression, data: Any?): FirStatement {
             return transformQualifiedAccessExpression(propertyAccessExpression, data)
         }
+    }
+
+    private inner class TypeUpdaterForThisReferences : FirTransformer<Any?>() {
+        override fun <E : FirElement> transformElement(element: E, data: Any?): E {
+            return element
+        }
+
+        override fun transformThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression, data: Any?): FirStatement {
+            return transformTypeRefForQualifiedAccess(thisReceiverExpression)
+        }
+    }
+
+    private fun transformTypeRefForQualifiedAccess(qualifiedAccessExpression: FirQualifiedAccessExpression): FirQualifiedAccessExpression {
+        val originalType = qualifiedAccessExpression.typeRef.coneType
+        val substitutedReceiverType = finallySubstituteOrNull(originalType) ?: return qualifiedAccessExpression
+        val resolvedTypeRef = qualifiedAccessExpression.typeRef.resolvedTypeFromPrototype(substitutedReceiverType)
+        qualifiedAccessExpression.replaceTypeRef(resolvedTypeRef)
+        session.lookupTracker?.recordTypeResolveAsLookup(resolvedTypeRef, qualifiedAccessExpression.source, context.file.source)
+        return qualifiedAccessExpression
     }
 
     private fun FirTypeRef.substitute(candidate: Candidate): ConeKotlinType =

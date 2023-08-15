@@ -196,28 +196,11 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
 
         // We assume useBuilderInferenceWithoutAnnotation = true for FIR
 
-        val builder = getBuilder()
         for (argument in lambdaArguments) {
-            val notFixedInputTypeVariables = argument.inputTypes
-                .flatMap { it.extractTypeVariables() }.filter { it !in fixedTypeVariables }
-
-            if (notFixedInputTypeVariables.isEmpty()) continue
-
-            for (variable in notFixedInputTypeVariables) {
-                builder.markPostponedVariable(notFixedTypeVariables.getValue(variable).typeVariable)
-            }
-
             analyze(argument)
         }
 
-        val variableForFixation = variableFixationFinder.findFirstVariableForFixation(
-            this, allTypeVariables, postponedArguments, completionMode, topLevelType
-        )
-
-        // continue completion (rerun stages) only if ready for fixation variables with proper constraints have appeared
-        // (after analysing a lambda with the builder inference)
-        // otherwise we don't continue and report "not enough type information" error
-        return variableForFixation?.hasProperConstraint == true
+        return true
     }
 
     private fun transformToAtomWithNewFunctionExpectedType(
@@ -387,12 +370,12 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
                 }
             }
 
-        require(result.size == notFixedTypeVariablesToUse.size) {
-            val notFoundTypeVariables = notFixedTypeVariablesToUse.toMutableSet().apply {
-                removeAll(result)
-            }
-            "Not all type variables found: $notFoundTypeVariables"
-        }
+//        require(result.size == notFixedTypeVariablesToUse.size) {
+//            val notFoundTypeVariables = notFixedTypeVariablesToUse.toMutableSet().apply {
+//                removeAll(result)
+//            }
+//            "Not all type variables found: $notFoundTypeVariables"
+//        }
     }
 
     private fun fixVariable(
@@ -548,12 +531,20 @@ private fun FirResolvable.processCandidateIfApplicable(
     val candidate = (calleeReference as? FirNamedReferenceWithCandidate)?.candidate ?: return
     processor(candidate)
 
+    val visited = mutableSetOf<FirStatement>()
+
     for (atom in candidate.postponedAtoms) {
         if (atom !is ResolvedLambdaAtom || !atom.analyzed) continue
 
         atom.returnStatements.forEach {
+            visited += it
             it.processAllContainingCallCandidates(processBlocks, processor)
         }
+    }
+
+    for (call in candidate.postponedCalls) {
+        if (!visited.add(call)) continue
+        call.processAllContainingCallCandidates(processBlocks, processor)
     }
 }
 

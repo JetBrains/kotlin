@@ -1,8 +1,8 @@
+
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
-import org.jetbrains.kotlin.gradle.targets.js.d8.D8RootPlugin
 import org.jetbrains.kotlin.konan.target.HostManager
 
 description = "Atomicfu Compiler Plugin"

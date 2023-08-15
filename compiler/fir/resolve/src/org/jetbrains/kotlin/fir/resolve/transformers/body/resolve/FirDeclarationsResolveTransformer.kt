@@ -487,7 +487,7 @@ open class FirDeclarationsResolveTransformer(
             // left in the backingField (witch is always present).
             variable.transformBackingField(transformer, withExpectedType(variable.returnTypeRef))
         } else {
-            val resolutionMode = withExpectedType(variable.returnTypeRef)
+            val resolutionMode = withExpectedType(variable.returnTypeRef) { storeVariableReturnType(variable) }
             if (variable.initializer != null) {
                 variable.transformInitializer(transformer, resolutionMode)
                 storeVariableReturnType(variable)

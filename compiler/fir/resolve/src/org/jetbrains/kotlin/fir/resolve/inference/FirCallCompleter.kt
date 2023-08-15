@@ -38,8 +38,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompat
 import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
-import org.jetbrains.kotlin.types.model.StubTypeMarker
-import org.jetbrains.kotlin.types.model.TypeVariableMarker
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.safeSubstitute
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -125,7 +124,7 @@ class FirCallCompleter(
 
             ConstraintSystemCompletionMode.PARTIAL -> {
                 runCompletionForCall(candidate, completionMode, call, initialType, analyzer)
-                if (inferenceSession is FirDelegatedPropertyInferenceSession) {
+                if (inferenceSession is FirDelegatedPropertyInferenceSession || inferenceSession is FirBuilderInferenceSession2) {
                     inferenceSession.processPartiallyResolvedCall(call, resolutionMode)
                 }
 
@@ -192,7 +191,7 @@ class FirCallCompleter(
             initialType,
             transformer.resolutionContext
         ) {
-            analyzer.analyze(candidate.system, it, candidate, completionMode)
+            analyzer.analyze(candidate.system, it, candidate)
         }
     }
 
@@ -248,8 +247,9 @@ class FirCallCompleter(
             contextReceivers: List<ConeKotlinType>,
             parameters: List<ConeKotlinType>,
             expectedReturnType: ConeKotlinType?,
-            stubsForPostponedVariables: Map<TypeVariableMarker, StubTypeMarker>,
-            candidate: Candidate
+            candidate: Candidate,
+            notFixedTypeVariablesInInputTypes: Set<TypeConstructorMarker>,
+            currentSubstitutor: ConeSubstitutor,
         ): ReturnArgumentsAnalysisResult {
             val lambdaArgument: FirAnonymousFunction = lambdaAtom.atom
             val needItParam = lambdaArgument.valueParameters.isEmpty() && parameters.size == 1
@@ -339,16 +339,20 @@ class FirCallCompleter(
                 } ?: components.noExpectedType
             )
 
-            val builderInferenceSession = runIf(stubsForPostponedVariables.isNotEmpty()) {
-                @Suppress("UNCHECKED_CAST")
-                FirBuilderInferenceSession(
-                    lambdaArgument,
-                    transformer.resolutionContext,
-                    stubsForPostponedVariables as Map<ConeTypeVariable, ConeStubType>
-                )
-            }
-
             transformer.context.withAnonymousFunctionTowerDataContext(lambdaArgument.symbol) {
+                for (implicitReceiverValue in transformer.context.towerDataContext.implicitReceiverStack) {
+                    val newType = currentSubstitutor.substituteOrNull(implicitReceiverValue.type) ?: continue
+                    // TODO: recreate implicit receivers?
+                    @Suppress("DEPRECATION_ERROR")
+                    implicitReceiverValue.updateTypeInBuilderInference(newType)
+                }
+
+                val builderInferenceSession =
+                    // TODO: Think of delegation+PCLA combination
+                    runIf(notFixedTypeVariablesInInputTypes.isNotEmpty() && transformer.context.inferenceSession !is FirBuilderInferenceSession2) {
+                        FirBuilderInferenceSession2(candidate)
+                    }
+
                 if (builderInferenceSession != null) {
                     transformer.context.withInferenceSession(builderInferenceSession) {
                         lambdaArgument.transformSingle(transformer, ResolutionMode.LambdaResolution(expectedReturnTypeRef))
@@ -361,7 +365,7 @@ class FirCallCompleter(
 
             val returnArguments = components.dataFlowAnalyzer.returnExpressionsOfAnonymousFunction(lambdaArgument).map { it.expression }
 
-            return ReturnArgumentsAnalysisResult(returnArguments, builderInferenceSession)
+            return ReturnArgumentsAnalysisResult(returnArguments, null)
         }
     }
 

@@ -92,7 +92,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         transformQualifiedAccessExpression(qualifiedAccessExpression, data, isUsedAsReceiver = false)
     }
 
-    fun transformQualifiedAccessExpression(
+    private fun transformQualifiedAccessExpression(
         qualifiedAccessExpression: FirQualifiedAccessExpression,
         data: ResolutionMode,
         isUsedAsReceiver: Boolean,
