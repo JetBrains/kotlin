@@ -22,10 +22,10 @@ import org.jetbrains.kotlin.test.utils.withExtension
 @OptIn(ExperimentalLibraryAbiReader::class)
 class LibraryAbiDumpHandler(testServices: TestServices) : BinaryArtifactHandler<BinaryArtifacts.KLib>(
     testServices,
-    ArtifactKinds.KLib,
-    failureDisablesNextSteps = true,
-    doNotRunIfThereWerePreviousFailures = true,
+    ArtifactKinds.KLib
 ) {
+    override val failureDisablesNextSteps: Boolean = true
+    override val doNotRunIfThereWerePreviousFailures: Boolean = true
     override val directiveContainers get() = listOf(LibraryAbiDumpDirectives)
 
     private val dumpers = KotlinIrSignatureVersion.CURRENTLY_SUPPORTED_VERSIONS.map { irSignatureVersion ->

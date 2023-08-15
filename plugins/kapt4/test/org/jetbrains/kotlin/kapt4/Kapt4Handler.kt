@@ -33,10 +33,10 @@ import java.io.File
 import java.util.*
 
 internal class Kapt4Handler(testServices: TestServices) : AnalysisHandler<Kapt4ContextBinaryArtifact>(
-    testServices,
-    failureDisablesNextSteps = true,
-    doNotRunIfThereWerePreviousFailures = true
+    testServices
 ) {
+    override val failureDisablesNextSteps: Boolean = true
+    override val doNotRunIfThereWerePreviousFailures: Boolean = true
     override val artifactKind: TestArtifactKind<Kapt4ContextBinaryArtifact>
         get() = Kapt4ContextBinaryArtifact.Kind
 
