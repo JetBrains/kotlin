@@ -29,10 +29,6 @@ tailrec fun DeclarationDescriptor.findPackage(): PackageFragmentDescriptor {
     else this.containingDeclaration!!.findPackage()
 }
 
-// This is Native specific. Try to eliminate.
-val ModuleDescriptor.isForwardDeclarationModule get() =
-    name == Name.special("<forward declarations>")
-
 private fun sourceByIndex(descriptor: CallableMemberDescriptor, index: Int): SourceFile {
     val fragment = descriptor.findPackage() as KlibMetadataDeserializedPackageFragment
     val fileName = fragment.proto.strings.stringList[index]

@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolD
 import org.jetbrains.kotlin.backend.common.serialization.encodings.FunctionFlags
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.findPackage
+import org.jetbrains.kotlin.backend.konan.descriptors.isForwardDeclarationModule
 import org.jetbrains.kotlin.backend.konan.descriptors.isFromInteropLibrary
 import org.jetbrains.kotlin.backend.konan.descriptors.isInteropLibrary
 import org.jetbrains.kotlin.backend.konan.ir.interop.IrProviderForCEnumAndCStructStubs
@@ -48,6 +49,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl.Companion.FORWARD_DECLARATIONS_MODULE_NAME
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
 import org.jetbrains.kotlin.name.FqName
@@ -659,7 +661,7 @@ internal class KonanIrLinker(
         override val kind get() = IrModuleDeserializerKind.SYNTHETIC
     }
 
-    private val String.isForwardDeclarationModuleName: Boolean get() = this == "<forward declarations>"
+    private val String.isForwardDeclarationModuleName: Boolean get() = this == FORWARD_DECLARATIONS_MODULE_NAME.asString()
 
     val modules: Map<String, IrModuleFragment>
         get() = mutableMapOf<String, IrModuleFragment>().apply {

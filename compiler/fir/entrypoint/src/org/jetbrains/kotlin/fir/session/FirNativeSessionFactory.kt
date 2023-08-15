@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFuncti
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirExtensionSyntheticFunctionInterfaceProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.scopes.FirPlatformClassMapper
+import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl.Companion.FORWARD_DECLARATIONS_MODULE_NAME
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.name.Name
 
@@ -43,7 +44,7 @@ object FirNativeSessionFactory : FirAbstractSessionFactory() {
             createKotlinScopeProvider = { FirKotlinScopeProvider() },
             createProviders = { session, builtinsModuleData, kotlinScopeProvider, syntheticFunctionInterfaceProvider ->
                 val forwardDeclarationsModuleData = BinaryModuleData.createDependencyModuleData(
-                    Name.special("<forward declarations>"),
+                    FORWARD_DECLARATIONS_MODULE_NAME,
                     moduleDataProvider.platform,
                     moduleDataProvider.analyzerServices,
                 ).apply {

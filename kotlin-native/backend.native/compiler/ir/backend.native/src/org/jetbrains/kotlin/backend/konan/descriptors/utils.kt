@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.library.BaseKotlinLibrary
 import org.jetbrains.kotlin.library.irProviderName
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.KlibDeserializedContainerSource
+import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl.Companion.FORWARD_DECLARATIONS_MODULE_NAME
 import org.jetbrains.kotlin.library.metadata.klibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.kotlinLibrary
 import org.jetbrains.kotlin.name.Name
@@ -46,11 +47,7 @@ private fun IrDeclaration.propertyIfAccessor(): IrDeclaration =
         (this as? IrSimpleFunction)?.correspondingPropertySymbol?.owner ?: this
 
 val ModuleDescriptor.isForwardDeclarationModule: Boolean
-    get() {
-        // TODO: use KlibResolvedModuleDescriptorsFactoryImpl.FORWARD_DECLARATIONS_MODULE_NAME instead of
-        //  manually created Name instance
-        return name == Name.special("<forward declarations>")
-    }
+    get() = name == FORWARD_DECLARATIONS_MODULE_NAME
 
 fun BaseKotlinLibrary.isInteropLibrary() = irProviderName == KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
 
