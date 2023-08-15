@@ -3,12 +3,11 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("DEPRECATION")
+@file:Suppress("DEPRECATION_ERROR")
 
 package kotlinx.metadata.jvm
 
 import kotlinx.metadata.Flag
-import kotlinx.metadata.internal.FlagImpl
 import org.jetbrains.kotlin.metadata.deserialization.Flags as F
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmFlags as JF
 
@@ -20,12 +19,12 @@ private const val prefix = "Flag API is deprecated. Please use"
  * @see Flag
  * @see Flags
  */
-@Deprecated("$prefix corresponding extensions on Km nodes, such as KmClass.hasMethodBodiesInInterface")
+@Deprecated("$prefix corresponding extensions on Km nodes, such as KmClass.hasMethodBodiesInInterface", level = DeprecationLevel.ERROR)
 public object JvmFlag {
     /**
      * JVM-specific property flags in addition to common property flags declared in [Flag.Property].
      */
-    @Deprecated("$prefix corresponding extension on KmProperty: KmProperty.isMovedFromInterfaceCompanion")
+    @Deprecated("$prefix corresponding extension on KmProperty: KmProperty.isMovedFromInterfaceCompanion", level = DeprecationLevel.ERROR)
     public object Property {
         /**
          * Applied to a property declared in an interface's companion object, signifies that its backing field is declared as a static
@@ -34,14 +33,14 @@ public object JvmFlag {
          * Has no effect if the property is not declared in a companion object of some interface.
          */
         @JvmField
-        @Deprecated("$prefix KmProperty.isMovedFromInterfaceCompanion")
+        @Deprecated("$prefix KmProperty.isMovedFromInterfaceCompanion", level = DeprecationLevel.ERROR)
         public val IS_MOVED_FROM_INTERFACE_COMPANION: Flag = booleanFlag(JF.IS_MOVED_FROM_INTERFACE_COMPANION)
     }
 
     /**
      * JVM-specific class flags in addition to common class flags declared in [Flag.Class].
      */
-    @Deprecated("$prefix corresponding extensions on KmClass")
+    @Deprecated("$prefix corresponding extensions on KmClass", level = DeprecationLevel.ERROR)
     public object Class {
         /**
          * Applied to an interface compiled with -Xjvm-default=all or all-compatibility.
@@ -51,7 +50,7 @@ public object JvmFlag {
          * class.
          */
         @JvmField
-        @Deprecated("$prefix KmClass.hasMethodBodiesInInterface")
+        @Deprecated("$prefix KmClass.hasMethodBodiesInInterface", level = DeprecationLevel.ERROR)
         public val HAS_METHOD_BODIES_IN_INTERFACE: Flag = booleanFlag(JF.IS_COMPILED_IN_JVM_DEFAULT_MODE)
 
         /**
@@ -62,10 +61,10 @@ public object JvmFlag {
          * clients compiled without all-compatibility.
          */
         @JvmField
-        @Deprecated("$prefix KmClass.isCompiledInCompatibilityMode")
+        @Deprecated("$prefix KmClass.isCompiledInCompatibilityMode", level = DeprecationLevel.ERROR)
         public val IS_COMPILED_IN_COMPATIBILITY_MODE: Flag = booleanFlag(JF.IS_COMPILED_IN_COMPATIBILITY_MODE)
     }
 
     internal fun booleanFlag(f: F.BooleanFlagField): Flag =
-        FlagImpl(f.offset, f.bitWidth, 1)
+        Flag(f.offset, f.bitWidth, 1)
 }

@@ -7,9 +7,8 @@
 
 package kotlinx.metadata
 
-import kotlinx.metadata.internal.Flag
+import kotlinx.metadata.internal.FlagImpl
 import kotlinx.metadata.internal.extensions.*
-import kotlinx.metadata.internal.getDefaultPropertyAccessorFlags
 import kotlinx.metadata.internal.propertyBooleanFlag
 import org.jetbrains.kotlin.metadata.deserialization.Flags
 import kotlin.contracts.ExperimentalContracts
@@ -46,7 +45,7 @@ public class KmClass : KmClassVisitor(), KmDeclarationContainer {
     /**
      * Class flags, consisting of [Flag.HAS_ANNOTATIONS], visibility flag, modality flag and [Flag.Class] flags.
      */
-    @Deprecated("$flagAccessPrefix KmClass, such as KmClass.visibility")
+    @Deprecated("$flagAccessPrefix KmClass, such as KmClass.visibility", level = DeprecationLevel.ERROR)
     public var flags: Int = 0
 
     /**
@@ -317,8 +316,8 @@ public class KmLambda : KmLambdaVisitor() {
  * such as [KmConstructor.visibility] or [KmConstructor.isSecondary].
  */
 @Suppress("DEPRECATION", "DEPRECATION_ERROR")
-public class KmConstructor @Deprecated(flagsCtorDeprecated) constructor(
-    @Deprecated("$flagAccessPrefix KmConstructor, such as KmConstructor.visibility") public var flags: Int,
+public class KmConstructor @Deprecated(flagsCtorDeprecated, level = DeprecationLevel.ERROR) constructor(
+    @Deprecated("$flagAccessPrefix KmConstructor, such as KmConstructor.visibility", level = DeprecationLevel.ERROR) public var flags: Int,
 ) :
     KmConstructorVisitor() {
     public constructor() : this(0)
@@ -371,8 +370,8 @@ public class KmConstructor @Deprecated(flagsCtorDeprecated) constructor(
  * @property name the name of the function
  */
 @Suppress("DEPRECATION", "DEPRECATION_ERROR")
-public class KmFunction @Deprecated(flagsCtorDeprecated) constructor(
-    @Deprecated("$flagAccessPrefix KmFunction, such as KmFunction.visibility") public var flags: Int,
+public class KmFunction @Deprecated(flagsCtorDeprecated, level = DeprecationLevel.ERROR) constructor(
+    @Deprecated("$flagAccessPrefix KmFunction, such as KmFunction.visibility", level = DeprecationLevel.ERROR) public var flags: Int,
     public var name: String,
 ) : KmFunctionVisitor() {
 
@@ -493,8 +492,8 @@ public class KmPropertyAccessorAttributes internal constructor(internal var flag
  * @property name the name of the property
  */
 @Suppress("DEPRECATION", "DEPRECATION_ERROR")
-public class KmProperty @Deprecated(flagsCtorDeprecated) constructor(
-    @Deprecated("$flagAccessPrefix KmProperty, such as KmProperty.visibility") public var flags: Int,
+public class KmProperty @Deprecated(flagsCtorDeprecated, level = DeprecationLevel.ERROR) constructor(
+    @Deprecated("$flagAccessPrefix KmProperty, such as KmProperty.visibility", level = DeprecationLevel.ERROR) public var flags: Int,
     public var name: String,
     getterFlags: Int,
     setterFlags: Int,
@@ -503,8 +502,8 @@ public class KmProperty @Deprecated(flagsCtorDeprecated) constructor(
     public constructor(name: String) : this(0, name, 0, 0)
 
     // needed for reading/writing flags back to protobuf as a whole pack
-    private var _hasSetter: Boolean by propertyBooleanFlag(Flag(Flags.HAS_SETTER))
-    private var _hasGetter: Boolean by propertyBooleanFlag(Flag(Flags.HAS_GETTER))
+    private var _hasSetter: Boolean by propertyBooleanFlag(FlagImpl(Flags.HAS_SETTER))
+    private var _hasGetter: Boolean by propertyBooleanFlag(FlagImpl(Flags.HAS_GETTER))
 
     /**
      * Attributes of the getter of this property.
@@ -534,7 +533,7 @@ public class KmProperty @Deprecated(flagsCtorDeprecated) constructor(
      * Property accessor flags, consisting of [Flag.HAS_ANNOTATIONS], visibility flag, modality flag
      * and [Flag.PropertyAccessor] flags.
      */
-    @Deprecated("$flagAccessPrefix KmProperty.getter, such as KmProperty.getter.isNotDefault")
+    @Deprecated("$flagAccessPrefix KmProperty.getter, such as KmProperty.getter.isNotDefault", level = DeprecationLevel.ERROR)
     public var getterFlags: Int
         get() = getter.flags
         set(value) {
@@ -555,7 +554,7 @@ public class KmProperty @Deprecated(flagsCtorDeprecated) constructor(
      * Setting this property when setter is absent changes the value, but does not create new [setter].
      * This behavior is for compatibility only and will be removed in future versions.
      */
-    @Deprecated("$flagAccessPrefix KmProperty.setter, such as KmProperty.setter.isNotDefault")
+    @Deprecated("$flagAccessPrefix KmProperty.setter, such as KmProperty.setter.isNotDefault", level = DeprecationLevel.ERROR)
     public var setterFlags: Int = setterFlags // It's either the correct flags from deserializer, or always 0 in the case of hand-created property
         get() = setter?.flags ?: field
         set(value) {
@@ -662,8 +661,8 @@ public class KmProperty @Deprecated(flagsCtorDeprecated) constructor(
  * @property name the name of the type alias
  */
 @Suppress("DEPRECATION", "DEPRECATION_ERROR")
-public class KmTypeAlias @Deprecated(flagsCtorDeprecated) constructor(
-    @Deprecated("$flagAccessPrefix KmTypeAlias, such as KmTypeAlias.visibility") public var flags: Int,
+public class KmTypeAlias @Deprecated(flagsCtorDeprecated, level = DeprecationLevel.ERROR) constructor(
+    @Deprecated("$flagAccessPrefix KmTypeAlias, such as KmTypeAlias.visibility", level = DeprecationLevel.ERROR) public var flags: Int,
     public var name: String,
 ) : KmTypeAliasVisitor() {
 
@@ -749,8 +748,11 @@ public class KmTypeAlias @Deprecated(flagsCtorDeprecated) constructor(
  * @property name the name of the value parameter
  */
 @Suppress("DEPRECATION", "DEPRECATION_ERROR")
-public class KmValueParameter @Deprecated(flagsCtorDeprecated) constructor(
-    @Deprecated("$flagAccessPrefix KmValueParameter, such as KmValueParameter.declaresDefaultValue") public var flags: Int,
+public class KmValueParameter @Deprecated(flagsCtorDeprecated, level = DeprecationLevel.ERROR) constructor(
+    @Deprecated(
+        "$flagAccessPrefix KmValueParameter, such as KmValueParameter.declaresDefaultValue",
+        level = DeprecationLevel.ERROR
+    ) public var flags: Int,
     public var name: String,
 ) : KmValueParameterVisitor() {
 
@@ -808,8 +810,11 @@ public class KmValueParameter @Deprecated(flagsCtorDeprecated) constructor(
  * @property variance the declaration-site variance of the type parameter
  */
 @Suppress("DEPRECATION", "DEPRECATION_ERROR")
-public class KmTypeParameter @Deprecated(flagsCtorDeprecated) constructor(
-    @Deprecated("$flagAccessPrefix KmTypeParameter, such as KmTypeParameter.isReified") public var flags: Int,
+public class KmTypeParameter @Deprecated(flagsCtorDeprecated, level = DeprecationLevel.ERROR) constructor(
+    @Deprecated(
+        "$flagAccessPrefix KmTypeParameter, such as KmTypeParameter.isReified",
+        level = DeprecationLevel.ERROR
+    ) public var flags: Int,
     public var name: String,
     public var id: Int,
     public var variance: KmVariance,
@@ -853,8 +858,8 @@ public class KmTypeParameter @Deprecated(flagsCtorDeprecated) constructor(
  * such as [KmType.isNullable].
  */
 @Suppress("DEPRECATION", "DEPRECATION_ERROR")
-public class KmType @Deprecated(flagsCtorDeprecated) constructor(
-    @Deprecated("$flagAccessPrefix KmType, such as KmType.isNullable") public var flags: Int
+public class KmType @Deprecated(flagsCtorDeprecated, level = DeprecationLevel.ERROR) constructor(
+    @Deprecated("$flagAccessPrefix KmType, such as KmType.isNullable", level = DeprecationLevel.ERROR) public var flags: Int,
 ) : KmTypeVisitor() {
 
     public constructor() : this(0)
@@ -1124,7 +1129,7 @@ public class KmEffectExpression : KmEffectExpressionVisitor() {
     /**
      * Effect expression flags, consisting of [Flag.EffectExpression] flags.
      */
-    @Deprecated("$flagAccessPrefix KmEffectExpression, such as KmEffectExpression.isNegated")
+    @Deprecated("$flagAccessPrefix KmEffectExpression, such as KmEffectExpression.isNegated", level = DeprecationLevel.ERROR)
     public var flags: Int = flagsOf()
 
     /**

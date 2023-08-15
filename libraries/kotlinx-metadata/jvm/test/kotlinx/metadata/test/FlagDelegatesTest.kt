@@ -10,7 +10,7 @@ import org.junit.Test
 import kotlin.reflect.KMutableProperty0
 import kotlin.test.*
 
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION", "DEPRECATION_ERROR") // flags will become internal eventually
 class FlagDelegatesTest {
     private class Private
 

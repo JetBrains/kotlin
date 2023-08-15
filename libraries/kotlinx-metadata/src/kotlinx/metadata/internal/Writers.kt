@@ -2,7 +2,7 @@
  * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-@file:Suppress("DEPRECATION") // flags
+@file:Suppress("DEPRECATION_ERROR") // flags will become internal eventually
 package kotlinx.metadata.internal
 
 import kotlinx.metadata.*

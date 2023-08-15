@@ -5,7 +5,7 @@
 
 package kotlinx.metadata
 
-import kotlinx.metadata.internal.Flag
+import kotlinx.metadata.internal.FlagImpl
 import org.jetbrains.kotlin.metadata.deserialization.Flags as ProtoFlags
 import org.jetbrains.kotlin.metadata.ProtoBuf.Class.Kind as ProtoClassKind
 import org.jetbrains.kotlin.metadata.ProtoBuf.Visibility as ProtoVisibility
@@ -71,7 +71,7 @@ public enum class Visibility(kind: Int) {
     LOCAL(ProtoVisibility.LOCAL_VALUE)
     ;
 
-    internal val flag = Flag(ProtoFlags.VISIBILITY, kind)
+    internal val flag = FlagImpl(ProtoFlags.VISIBILITY, kind)
 }
 
 /**
@@ -104,7 +104,7 @@ public enum class Modality(kind: Int) {
     SEALED(ProtoModality.SEALED_VALUE)
     ;
 
-    internal val flag = Flag(ProtoFlags.MODALITY, kind)
+    internal val flag = FlagImpl(ProtoFlags.MODALITY, kind)
 }
 
 /**
@@ -147,7 +147,7 @@ public enum class ClassKind(kind: Int) {
     COMPANION_OBJECT(ProtoClassKind.COMPANION_OBJECT_VALUE)
     ;
 
-    internal val flag = Flag(ProtoFlags.CLASS_KIND, kind)
+    internal val flag = FlagImpl(ProtoFlags.CLASS_KIND, kind)
 }
 
 /**
@@ -187,5 +187,5 @@ public enum class MemberKind(kind: Int) {
     SYNTHESIZED(ProtoMemberKind.SYNTHESIZED_VALUE)
     ;
 
-    internal val flag = Flag(ProtoFlags.MEMBER_KIND, kind)
+    internal val flag = FlagImpl(ProtoFlags.MEMBER_KIND, kind)
 }

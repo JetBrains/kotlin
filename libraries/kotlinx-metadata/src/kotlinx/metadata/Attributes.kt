@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("DEPRECATION")
+@file:Suppress("DEPRECATION_ERROR") // flags will become internal eventually
 @file:JvmName("Attributes")
 
 package kotlinx.metadata
@@ -127,23 +127,23 @@ public var KmClass.kind: ClassKind by EnumFlagDelegate(
 /**
  * Indicates that the corresponding class is `inner`.
  */
-public var KmClass.isInner: Boolean by classBooleanFlag(Flag(ProtoFlags.IS_INNER))
+public var KmClass.isInner: Boolean by classBooleanFlag(FlagImpl(ProtoFlags.IS_INNER))
 
 /**
  * Indicates that the corresponding `class` or `object` is `data`.
  * Always false for other kinds.
  */
-public var KmClass.isData: Boolean by classBooleanFlag(Flag(ProtoFlags.IS_DATA))
+public var KmClass.isData: Boolean by classBooleanFlag(FlagImpl(ProtoFlags.IS_DATA))
 
 /**
  * Indicates that the corresponding class is `external`.
  */
-public var KmClass.isExternal: Boolean by classBooleanFlag(Flag(ProtoFlags.IS_EXTERNAL_CLASS))
+public var KmClass.isExternal: Boolean by classBooleanFlag(FlagImpl(ProtoFlags.IS_EXTERNAL_CLASS))
 
 /**
  * Indicates that the corresponding class is `expect`.
  */
-public var KmClass.isExpect: Boolean by classBooleanFlag(Flag(ProtoFlags.IS_EXPECT_CLASS))
+public var KmClass.isExpect: Boolean by classBooleanFlag(FlagImpl(ProtoFlags.IS_EXPECT_CLASS))
 
 /**
  * Indicates that the corresponding class is either a pre-Kotlin-1.5 `inline` class, or a 1.5+ `value` class.
@@ -151,14 +151,14 @@ public var KmClass.isExpect: Boolean by classBooleanFlag(Flag(ProtoFlags.IS_EXPE
  * Note that it does not imply that the class has [JvmInline] annotation and will be inlined.
  * Currently, it is impossible to declare a value class without this annotation, but this can be changed in the future.
  */
-public var KmClass.isValue: Boolean by classBooleanFlag(Flag(ProtoFlags.IS_VALUE_CLASS))
+public var KmClass.isValue: Boolean by classBooleanFlag(FlagImpl(ProtoFlags.IS_VALUE_CLASS))
 
 /**
  * Indicates that the corresponding class is a functional interface, i.e., marked with the keyword `fun`.
  *
  * Always `false` if [KmClass.kind] is not an interface.
  */
-public var KmClass.isFunInterface: Boolean by classBooleanFlag(Flag(ProtoFlags.IS_FUN_INTERFACE))
+public var KmClass.isFunInterface: Boolean by classBooleanFlag(FlagImpl(ProtoFlags.IS_FUN_INTERFACE))
 
 /**
  * Indicates that the corresponding enum class has synthetic ".entries" property in bytecode.
@@ -166,7 +166,7 @@ public var KmClass.isFunInterface: Boolean by classBooleanFlag(Flag(ProtoFlags.I
  * Always `false` if [KmClass.kind] is not an enum.
  * Enum classes always have enum entries property starting from Kotlin 1.9.0.
  */
-public var KmClass.hasEnumEntries: Boolean by classBooleanFlag(Flag(ProtoFlags.HAS_ENUM_ENTRIES))
+public var KmClass.hasEnumEntries: Boolean by classBooleanFlag(FlagImpl(ProtoFlags.HAS_ENUM_ENTRIES))
 
 // --- CONSTRUCTOR ---
 
@@ -181,7 +181,7 @@ public var KmConstructor.visibility: Visibility by visibilityDelegate(KmConstruc
 /**
  * Indicates that the corresponding constructor is secondary, i.e., declared not in the class header, but in the class body.
  */
-public var KmConstructor.isSecondary: Boolean by constructorBooleanFlag(Flag(ProtoFlags.IS_SECONDARY))
+public var KmConstructor.isSecondary: Boolean by constructorBooleanFlag(FlagImpl(ProtoFlags.IS_SECONDARY))
 
 /**
  * Indicates that the corresponding constructor has non-stable parameter names, i.e., cannot be called with named arguments.
@@ -189,7 +189,7 @@ public var KmConstructor.isSecondary: Boolean by constructorBooleanFlag(Flag(Pro
  * Currently, this attribute is Kotlin/Native-specific and is never set by Kotlin/JVM compiler.
  * This may be changed in the future.
  */
-public var KmConstructor.hasNonStableParameterNames: Boolean by constructorBooleanFlag(Flag(ProtoFlags.IS_CONSTRUCTOR_WITH_NON_STABLE_PARAMETER_NAMES))
+public var KmConstructor.hasNonStableParameterNames: Boolean by constructorBooleanFlag(FlagImpl(ProtoFlags.IS_CONSTRUCTOR_WITH_NON_STABLE_PARAMETER_NAMES))
 
 // --- FUNCTION ---
 
@@ -221,37 +221,37 @@ public var KmFunction.modality: Modality by modalityDelegate(KmFunction::flags)
 /**
  * Indicates that the corresponding function is `operator`.
  */
-public var KmFunction.isOperator: Boolean by functionBooleanFlag(Flag(ProtoFlags.IS_OPERATOR))
+public var KmFunction.isOperator: Boolean by functionBooleanFlag(FlagImpl(ProtoFlags.IS_OPERATOR))
 
 /**
  * Indicates that the corresponding function is `infix`.
  */
-public var KmFunction.isInfix: Boolean by functionBooleanFlag(Flag(ProtoFlags.IS_INFIX))
+public var KmFunction.isInfix: Boolean by functionBooleanFlag(FlagImpl(ProtoFlags.IS_INFIX))
 
 /**
  * Indicates that the corresponding function is `inline`.
  */
-public var KmFunction.isInline: Boolean by functionBooleanFlag(Flag(ProtoFlags.IS_INLINE))
+public var KmFunction.isInline: Boolean by functionBooleanFlag(FlagImpl(ProtoFlags.IS_INLINE))
 
 /**
  * Indicates that the corresponding function is `tailrec`.
  */
-public var KmFunction.isTailrec: Boolean by functionBooleanFlag(Flag(ProtoFlags.IS_TAILREC))
+public var KmFunction.isTailrec: Boolean by functionBooleanFlag(FlagImpl(ProtoFlags.IS_TAILREC))
 
 /**
  * Indicates that the corresponding function is `external`.
  */
-public var KmFunction.isExternal: Boolean by functionBooleanFlag(Flag(ProtoFlags.IS_EXTERNAL_FUNCTION))
+public var KmFunction.isExternal: Boolean by functionBooleanFlag(FlagImpl(ProtoFlags.IS_EXTERNAL_FUNCTION))
 
 /**
  * Indicates that the corresponding function is `suspend`.
  */
-public var KmFunction.isSuspend: Boolean by functionBooleanFlag(Flag(ProtoFlags.IS_SUSPEND))
+public var KmFunction.isSuspend: Boolean by functionBooleanFlag(FlagImpl(ProtoFlags.IS_SUSPEND))
 
 /**
  * Indicates that the corresponding function is `expect`.
  */
-public var KmFunction.isExpect: Boolean by functionBooleanFlag(Flag(ProtoFlags.IS_EXPECT_FUNCTION))
+public var KmFunction.isExpect: Boolean by functionBooleanFlag(FlagImpl(ProtoFlags.IS_EXPECT_FUNCTION))
 
 /**
  * Indicates that the corresponding function has non-stable parameter names, i.e., cannot be called with named arguments.
@@ -259,7 +259,7 @@ public var KmFunction.isExpect: Boolean by functionBooleanFlag(Flag(ProtoFlags.I
  * Currently, this attribute is Kotlin/Native-specific and is never set by Kotlin/JVM compiler.
  * This may be changed in the future.
  */
-public var KmFunction.hasNonStableParameterNames: Boolean by functionBooleanFlag(Flag(ProtoFlags.IS_FUNCTION_WITH_NON_STABLE_PARAMETER_NAMES))
+public var KmFunction.hasNonStableParameterNames: Boolean by functionBooleanFlag(FlagImpl(ProtoFlags.IS_FUNCTION_WITH_NON_STABLE_PARAMETER_NAMES))
 
 // --- PROPERTY ---
 
@@ -293,29 +293,29 @@ public var KmProperty.kind: MemberKind by memberKindDelegate(KmProperty::flags)
  *
  * Note that setting [KmProperty.isVar] to true does not automatically create [KmProperty.setter] and vice versa. This has to be done explicitly.
  */
-public var KmProperty.isVar: Boolean by propertyBooleanFlag(Flag(ProtoFlags.IS_VAR))
+public var KmProperty.isVar: Boolean by propertyBooleanFlag(FlagImpl(ProtoFlags.IS_VAR))
 
 /**
  * Indicates that the corresponding property has a getter.
  */
 @Deprecated("Kotlin properties always have getters", ReplaceWith("true"), DeprecationLevel.WARNING)
-public var KmProperty.hasGetter: Boolean by propertyBooleanFlag(Flag(ProtoFlags.HAS_GETTER))
+public var KmProperty.hasGetter: Boolean by propertyBooleanFlag(FlagImpl(ProtoFlags.HAS_GETTER))
 
 /**
  * Indicates that the corresponding property has a setter.
  */
 @Deprecated("Check .setter for nullability instead", ReplaceWith("this.setter != null"), DeprecationLevel.WARNING)
-public var KmProperty.hasSetter: Boolean by propertyBooleanFlag(Flag(ProtoFlags.HAS_SETTER))
+public var KmProperty.hasSetter: Boolean by propertyBooleanFlag(FlagImpl(ProtoFlags.HAS_SETTER))
 
 /**
  * Indicates that the corresponding property is `const`.
  */
-public var KmProperty.isConst: Boolean by propertyBooleanFlag(Flag(ProtoFlags.IS_CONST))
+public var KmProperty.isConst: Boolean by propertyBooleanFlag(FlagImpl(ProtoFlags.IS_CONST))
 
 /**
  * Indicates that the corresponding property is `lateinit`.
  */
-public var KmProperty.isLateinit: Boolean by propertyBooleanFlag(Flag(ProtoFlags.IS_LATEINIT))
+public var KmProperty.isLateinit: Boolean by propertyBooleanFlag(FlagImpl(ProtoFlags.IS_LATEINIT))
 
 /**
  * Indicates that the corresponding property has a constant value. On JVM, this flag allows an optimization similarly to
@@ -338,12 +338,12 @@ public var KmProperty.isLateinit: Boolean by propertyBooleanFlag(Flag(ProtoFlags
  * }
  * ```
  */
-public var KmProperty.hasConstant: Boolean by propertyBooleanFlag(Flag(ProtoFlags.HAS_CONSTANT))
+public var KmProperty.hasConstant: Boolean by propertyBooleanFlag(FlagImpl(ProtoFlags.HAS_CONSTANT))
 
 /**
  * Indicates that the corresponding property is `external`.
  */
-public var KmProperty.isExternal: Boolean by propertyBooleanFlag(Flag(ProtoFlags.IS_EXTERNAL_PROPERTY))
+public var KmProperty.isExternal: Boolean by propertyBooleanFlag(FlagImpl(ProtoFlags.IS_EXTERNAL_PROPERTY))
 
 /**
  * Indicates that the corresponding property is a delegated property.
@@ -351,12 +351,12 @@ public var KmProperty.isExternal: Boolean by propertyBooleanFlag(Flag(ProtoFlags
  * Not to be confused with interface delegation.
  * If a property was produced by interface delegation, it would have the corresponding [KmProperty.kind].
  */
-public var KmProperty.isDelegated: Boolean by propertyBooleanFlag(Flag(ProtoFlags.IS_DELEGATED))
+public var KmProperty.isDelegated: Boolean by propertyBooleanFlag(FlagImpl(ProtoFlags.IS_DELEGATED))
 
 /**
  * Indicates that the corresponding property is `expect`.
  */
-public var KmProperty.isExpect: Boolean by propertyBooleanFlag(Flag(ProtoFlags.IS_EXPECT_PROPERTY))
+public var KmProperty.isExpect: Boolean by propertyBooleanFlag(FlagImpl(ProtoFlags.IS_EXPECT_PROPERTY))
 
 // --- PROPERTY ACCESSOR ---
 
@@ -382,17 +382,17 @@ public var KmPropertyAccessorAttributes.modality: Modality by modalityDelegate(K
  * Indicates that the corresponding property accessor is not default, i.e. it has a body and/or annotations in the source code,
  * or the property is delegated.
  */
-public var KmPropertyAccessorAttributes.isNotDefault: Boolean by propertyAccessorBooleanFlag(Flag(ProtoFlags.IS_NOT_DEFAULT))
+public var KmPropertyAccessorAttributes.isNotDefault: Boolean by propertyAccessorBooleanFlag(FlagImpl(ProtoFlags.IS_NOT_DEFAULT))
 
 /**
  * Indicates that the corresponding property accessor is `external`.
  */
-public var KmPropertyAccessorAttributes.isExternal: Boolean by propertyAccessorBooleanFlag(Flag(ProtoFlags.IS_EXTERNAL_ACCESSOR))
+public var KmPropertyAccessorAttributes.isExternal: Boolean by propertyAccessorBooleanFlag(FlagImpl(ProtoFlags.IS_EXTERNAL_ACCESSOR))
 
 /**
  * Indicates that the corresponding property accessor is `inline`.
  */
-public var KmPropertyAccessorAttributes.isInline: Boolean by propertyAccessorBooleanFlag(Flag(ProtoFlags.IS_INLINE_ACCESSOR))
+public var KmPropertyAccessorAttributes.isInline: Boolean by propertyAccessorBooleanFlag(FlagImpl(ProtoFlags.IS_INLINE_ACCESSOR))
 
 // --- TYPE & TYPE_PARAM
 
@@ -443,17 +443,17 @@ public var KmTypeAlias.visibility: Visibility by visibilityDelegate(KmTypeAlias:
  * parameter in the derived method does _not_ declare the default value, but the parameter is
  * still optional at the call site because the default value from the base method is used.
  */
-public var KmValueParameter.declaresDefaultValue: Boolean by valueParameterBooleanFlag(Flag(ProtoFlags.DECLARES_DEFAULT_VALUE))
+public var KmValueParameter.declaresDefaultValue: Boolean by valueParameterBooleanFlag(FlagImpl(ProtoFlags.DECLARES_DEFAULT_VALUE))
 
 /**
  * Indicates that the corresponding value parameter is `crossinline`.
  */
-public var KmValueParameter.isCrossinline: Boolean by valueParameterBooleanFlag(Flag(ProtoFlags.IS_CROSSINLINE))
+public var KmValueParameter.isCrossinline: Boolean by valueParameterBooleanFlag(FlagImpl(ProtoFlags.IS_CROSSINLINE))
 
 /**
  * Indicates that the corresponding value parameter is `noinline`.
  */
-public var KmValueParameter.isNoinline: Boolean by valueParameterBooleanFlag(Flag(ProtoFlags.IS_NOINLINE))
+public var KmValueParameter.isNoinline: Boolean by valueParameterBooleanFlag(FlagImpl(ProtoFlags.IS_NOINLINE))
 
 // --- EFFECT EXPRESSION ---
 
@@ -464,7 +464,7 @@ public var KmValueParameter.isNoinline: Boolean by valueParameterBooleanFlag(Fla
  * may change in a subsequent release.
  */
 @ExperimentalContracts
-public var KmEffectExpression.isNegated: Boolean by BooleanFlagDelegate(KmEffectExpression::flags, Flag(ProtoFlags.IS_NEGATED))
+public var KmEffectExpression.isNegated: Boolean by BooleanFlagDelegate(KmEffectExpression::flags, FlagImpl(ProtoFlags.IS_NEGATED))
 
 /**
  * Indicates that the corresponding effect expression checks whether a value of some variable is `null`.
@@ -473,4 +473,4 @@ public var KmEffectExpression.isNegated: Boolean by BooleanFlagDelegate(KmEffect
  * may change in a subsequent release.
  */
 @ExperimentalContracts
-public var KmEffectExpression.isNullCheckPredicate: Boolean by BooleanFlagDelegate(KmEffectExpression::flags, Flag(ProtoFlags.IS_NULL_CHECK_PREDICATE))
+public var KmEffectExpression.isNullCheckPredicate: Boolean by BooleanFlagDelegate(KmEffectExpression::flags, FlagImpl(ProtoFlags.IS_NULL_CHECK_PREDICATE))

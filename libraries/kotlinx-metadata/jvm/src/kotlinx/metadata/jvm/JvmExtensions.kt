@@ -45,7 +45,10 @@ public var KmClass.anonymousObjectOriginName: String?
 /**
  * JVM-specific flags of the class, consisting of [JvmFlag.Class] flags.
  */
-@Deprecated("Flag API is deprecated. Please use corresponding member extensions on KmClass, such as KmClass.hasMethodBodiesInInterface")
+@Deprecated(
+    "Flag API is deprecated. Please use corresponding member extensions on KmClass, such as KmClass.hasMethodBodiesInInterface",
+    level = DeprecationLevel.ERROR
+)
 public var KmClass.jvmFlags: Int
     get() = jvm.jvmFlags
     set(value) {
@@ -97,7 +100,10 @@ public var KmFunction.lambdaClassOriginName: String?
 /**
  * JVM-specific flags of the property, consisting of [JvmFlag.Property] flags.
  */
-@Deprecated("Flag API is deprecated. Please use corresponding member extensions on KmProperty, such as KmProperty.isMovedFromInterfaceCompanion")
+@Deprecated(
+    "Flag API is deprecated. Please use corresponding member extensions on KmProperty, such as KmProperty.isMovedFromInterfaceCompanion",
+    level = DeprecationLevel.ERROR
+)
 public var KmProperty.jvmFlags: Int
     get() = jvm.jvmFlags
     set(value) {
