@@ -133,28 +133,6 @@ fun IrFunctionAccessExpression.addArguments(args: Map<IrValueParameter, IrExpres
     }
 }
 
-fun IrType.substitute(map: Map<IrTypeParameterSymbol, IrType>): IrType {
-    if (this !is IrSimpleType) return this
-
-    return when (val classifier = this.classifier) {
-        is IrTypeParameterSymbol ->
-            map[classifier]?.mergeNullability(this) ?: this
-        is IrClassSymbol -> if (this.arguments.isEmpty()) {
-            this // Fast path.
-        } else {
-            val newArguments = this.arguments.map {
-                when (it) {
-                    is IrTypeProjection -> makeTypeProjection(it.type.substitute(map), it.variance)
-                    is IrStarProjection -> it
-                }
-            }
-            IrSimpleTypeImpl(classifier, nullability, newArguments, annotations)
-        }
-        is IrScriptSymbol -> classifier.unexpectedSymbolKind<IrClassifierSymbol>()
-    }
-
-}
-
 private fun IrFunction.substitutedReturnType(typeArguments: List<IrType>): IrType {
     val unsubstituted = this.returnType
     if (typeArguments.isEmpty()) return unsubstituted // Fast path.
