@@ -90,85 +90,15 @@ public class ContextCollectorTestGenerated extends AbstractContextCollectorTest 
         runTest("analysis/low-level-api-fir/testdata/contextCollector/simple.kt");
     }
 
-    @Nested
-    @TestMetadata("analysis/low-level-api-fir/testdata/contextCollector/smartCast")
-    @TestDataPath("$PROJECT_ROOT")
-    public class SmartCast {
-        @Test
-        public void testAllFilesPresentInSmartCast() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/contextCollector/smartCast"), Pattern.compile("^(.+)\\.kt$"), null, true);
-        }
+    @Test
+    @TestMetadata("smartCastArgument.kt")
+    public void testSmartCastArgument() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/contextCollector/smartCastArgument.kt");
+    }
 
-        @Nested
-        @TestMetadata("analysis/low-level-api-fir/testdata/contextCollector/smartCast/contracts")
-        @TestDataPath("$PROJECT_ROOT")
-        public class Contracts {
-            @Test
-            public void testAllFilesPresentInContracts() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/contextCollector/smartCast/contracts"), Pattern.compile("^(.+)\\.kt$"), null, true);
-            }
-
-            @Test
-            @TestMetadata("run.kt")
-            public void testRun() throws Exception {
-                runTest("analysis/low-level-api-fir/testdata/contextCollector/smartCast/contracts/run.kt");
-            }
-        }
-
-        @Nested
-        @TestMetadata("analysis/low-level-api-fir/testdata/contextCollector/smartCast/if")
-        @TestDataPath("$PROJECT_ROOT")
-        public class If {
-            @Test
-            @TestMetadata("after.kt")
-            public void testAfter() throws Exception {
-                runTest("analysis/low-level-api-fir/testdata/contextCollector/smartCast/if/after.kt");
-            }
-
-            @Test
-            public void testAllFilesPresentInIf() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/contextCollector/smartCast/if"), Pattern.compile("^(.+)\\.kt$"), null, true);
-            }
-
-            @Test
-            @TestMetadata("argumentTypeCheck.kt")
-            public void testArgumentTypeCheck() throws Exception {
-                runTest("analysis/low-level-api-fir/testdata/contextCollector/smartCast/if/argumentTypeCheck.kt");
-            }
-
-            @Test
-            @TestMetadata("argumentTypeCheckReceiver.kt")
-            public void testArgumentTypeCheckReceiver() throws Exception {
-                runTest("analysis/low-level-api-fir/testdata/contextCollector/smartCast/if/argumentTypeCheckReceiver.kt");
-            }
-        }
-
-        @Nested
-        @TestMetadata("analysis/low-level-api-fir/testdata/contextCollector/smartCast/while")
-        @TestDataPath("$PROJECT_ROOT")
-        public class While {
-            @Test
-            @TestMetadata("after.kt")
-            public void testAfter() throws Exception {
-                runTest("analysis/low-level-api-fir/testdata/contextCollector/smartCast/while/after.kt");
-            }
-
-            @Test
-            @TestMetadata("afterNullCheck.kt")
-            public void testAfterNullCheck() throws Exception {
-                runTest("analysis/low-level-api-fir/testdata/contextCollector/smartCast/while/afterNullCheck.kt");
-            }
-
-            @Test
-            public void testAllFilesPresentInWhile() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/contextCollector/smartCast/while"), Pattern.compile("^(.+)\\.kt$"), null, true);
-            }
-
-            @Test
-            @TestMetadata("localTypeCheck.kt")
-            public void testLocalTypeCheck() throws Exception {
-                runTest("analysis/low-level-api-fir/testdata/contextCollector/smartCast/while/localTypeCheck.kt");
-            }
-        }
+    @Test
+    @TestMetadata("smartCastReceiverArgument.kt")
+    public void testSmartCastReceiverArgument() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/contextCollector/smartCastReceiverArgument.kt");
     }
 }

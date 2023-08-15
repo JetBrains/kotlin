@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollector
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ContextCollectorStateScope
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedSingleModuleTest
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
@@ -150,14 +149,6 @@ internal object ElementContextRenderer {
                 appendDeclarations("Classifiers:", classifierNames, scope::processClassifiersByName)
                 appendDeclarations("Functions", callableNames, scope::processFunctionsByName)
                 appendDeclarations("Properties:", callableNames, scope::processPropertiesByName)
-            }
-            is ContextCollectorStateScope -> {
-                appendSymbol(scope.dataFlow.symbol).appendLine()
-                appendBlock("New types:") {
-                    for (smartCastType in scope.dataFlow.types) {
-                        appendType(smartCastType).appendLine()
-                    }
-                }
             }
             else -> {
                 throw IllegalArgumentException("Unexpected scope type: " + scope.javaClass.name)

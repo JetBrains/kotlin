@@ -2,8 +2,8 @@ interface Foo {}
 
 fun test(obj: Any) {
     if (obj is Foo) {
-        <expr>consume(obj)</expr>
+        consume(<expr>obj</expr>)
     }
 }
 
-fun consume(obj: Foo) {}
+fun consume(obj: Any) {}
