@@ -84,7 +84,7 @@ class KotlinCompileContext(val jpsContext: CompileContext) {
 
     val icContext = IncrementalCompilationContext(
         pathConverterForSourceFiles = fileToPathConverter,
-        pathConverterForClassFiles = fileToPathConverter
+        pathConverterForOutputFiles = fileToPathConverter
     )
 
     val lookupStorageManager = JpsLookupStorageManager(dataManager, icContext)

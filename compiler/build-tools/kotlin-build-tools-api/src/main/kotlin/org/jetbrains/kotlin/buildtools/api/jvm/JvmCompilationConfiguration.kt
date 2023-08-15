@@ -78,20 +78,36 @@ public interface JvmCompilationConfiguration {
  */
 @ExperimentalBuildToolsApi
 public interface IncrementalJvmCompilationConfiguration<P : IncrementalCompilationApproachParameters> {
-    /**
-     * A directory used as a base path for computing relative paths in the incremental compilation caches.
-     *
-     * If is not specified, incremental compilation caches will be non-relocatable
-     *
-     * Managed by [useProjectDir]
-     * Default values is `null`
-     */
-    public val projectDir: File?
 
     /**
-     * @see [IncrementalJvmCompilationConfiguration.projectDir]
+     * The root project directory, used for computing relative paths in the incremental compilation caches.
+     *
+     * If it is not specified, incremental compilation caches will be non-relocatable.
+     *
+     * Managed by [setRootProjectDir]
+     * Default value is `null`
      */
-    public fun useProjectDir(projectDir: File): IncrementalJvmCompilationConfiguration<P>
+    public val rootProjectDir: File?
+
+    /**
+     * @see [IncrementalJvmCompilationConfiguration.rootProjectDir]
+     */
+    public fun setRootProjectDir(rootProjectDir: File): IncrementalJvmCompilationConfiguration<P>
+
+    /**
+     * The build directory, used for computing relative paths in the incremental compilation caches.
+     *
+     * If it is not specified, incremental compilation caches will be non-relocatable.
+     *
+     * Managed by [setBuildDir]
+     * Default value is `null`
+     */
+    public val buildDir: File?
+
+    /**
+     * @see [IncrementalJvmCompilationConfiguration.buildDir]
+     */
+    public fun setBuildDir(buildDir: File): IncrementalJvmCompilationConfiguration<P>
 
     /**
      * An indicator whether incremental compilation will analyze Java files precisely for better changes detection
@@ -186,7 +202,9 @@ public interface ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration :
      */
     public fun assureNoClasspathSnapshotsChanges(value: Boolean = true): ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration
 
-    override fun useProjectDir(projectDir: File): ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration
+    override fun setRootProjectDir(rootProjectDir: File): ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration
+
+    override fun setBuildDir(buildDir: File): ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration
 
     override fun usePreciseJavaTracking(value: Boolean): ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration
 

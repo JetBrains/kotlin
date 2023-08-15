@@ -14,11 +14,11 @@ class SourceToOutputFilesMap(
     icContext: IncrementalCompilationContext,
 ) : BasicStringMap<Collection<String>>(storageFile, PathStringDescriptor, StringCollectionExternalizer, icContext) {
     operator fun set(sourceFile: File, outputFiles: Collection<File>) {
-        storage[icContext.pathConverterForSourceFiles.toPath(sourceFile)] = outputFiles.map(icContext.pathConverterForClassFiles::toPath)
+        storage[icContext.pathConverterForSourceFiles.toPath(sourceFile)] = outputFiles.map(icContext.pathConverterForOutputFiles::toPath)
     }
 
     operator fun get(sourceFile: File): Collection<File>? =
-        storage[icContext.pathConverterForSourceFiles.toPath(sourceFile)]?.map(icContext.pathConverterForClassFiles::toFile)
+        storage[icContext.pathConverterForSourceFiles.toPath(sourceFile)]?.map(icContext.pathConverterForOutputFiles::toFile)
 
     override fun dumpValue(value: Collection<String>) =
         value.dumpCollection()

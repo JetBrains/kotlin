@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.parsing.classesFqNames
 import org.jetbrains.kotlin.incremental.storage.FileLocations
 import org.jetbrains.kotlin.incremental.storage.FileToAbsolutePathConverter
-import org.jetbrains.kotlin.incremental.storage.RelocatableFileToPathConverter
 import org.jetbrains.kotlin.incremental.util.BufferingMessageCollector
 import org.jetbrains.kotlin.incremental.util.ExceptionLocation
 import org.jetbrains.kotlin.incremental.util.reportException
@@ -91,9 +90,8 @@ abstract class IncrementalCompilerRunner<
         fileLocations: FileLocations?,
         transaction: CompilationTransaction,
     ) = IncrementalCompilationContext(
-        pathConverterForSourceFiles = fileLocations?.let { RelocatableFileToPathConverter(it.rootProjectDir) }
-            ?: FileToAbsolutePathConverter,
-        pathConverterForClassFiles = fileLocations?.let { RelocatableFileToPathConverter(it.classesDir) } ?: FileToAbsolutePathConverter,
+        pathConverterForSourceFiles = fileLocations?.let { it.getRelocatablePathConverterForSourceFiles() } ?: FileToAbsolutePathConverter,
+        pathConverterForOutputFiles = fileLocations?.let { it.getRelocatablePathConverterForOutputFiles() } ?: FileToAbsolutePathConverter,
         transaction = transaction,
         reporter = reporter,
         trackChangesInLookupCache = shouldTrackChangesInLookupCache,

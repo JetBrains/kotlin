@@ -33,13 +33,22 @@ class RelocatableFileToPathConverter(private val baseDir: File) : FileToPathConv
 }
 
 /**
- * File locations to support build cache relocatability (see [RelocatableFileToPathConverter]). These include:
- *   - The root directory (or root directories) of the source files. Ideally, they should be the most specific root directories
- *   (e.g., `/path/to/MyApplication/app/src/main/kotlin`), but for simplicity we're using the root project directory ([rootProjectDir])
- *   for now (e.g., `/path/to/MyApplication`).
- *   - The root directory of the compiled class files ([classesDir]).
+ * File locations to support build cache relocatability (see [RelocatableFileToPathConverter]).
+ *
+ * These are the root directories of
+ *   - Source files
+ *   - Output files, which include .class files and possibly additional output files such as `.java` stub files for KaptGenerateStubs tasks.
+ *
+ * Ideally, they  should be the most specific root directories (e.g., `/path/to/MyApplication/app/src/main/kotlin` for source files and
+ * `/path/to/MyApplication/app/build/tmp/kotlin-classes/debug` for output .class files). However, for simplicity we are using the root
+ * project directory ([rootProjectDir]) for source files and ([buildDir]) for output files.
  */
 class FileLocations(
     val rootProjectDir: File,
-    val classesDir: File,
-)
+    val buildDir: File,
+) {
+
+    fun getRelocatablePathConverterForSourceFiles() = RelocatableFileToPathConverter(rootProjectDir)
+
+    fun getRelocatablePathConverterForOutputFiles() = RelocatableFileToPathConverter(buildDir)
+}

@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.compilerRunner
 
 import org.gradle.api.logging.Logger
 import org.jetbrains.kotlin.build.report.metrics.*
+import org.jetbrains.kotlin.build.report.statistics.StatTag
+import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.Services
@@ -15,13 +17,8 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.logging.*
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskLoggers
-import org.jetbrains.kotlin.build.report.statistics.StatTag
-import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.gradle.report.*
 import org.jetbrains.kotlin.gradle.tasks.*
-import org.jetbrains.kotlin.gradle.tasks.OOMErrorException
-import org.jetbrains.kotlin.gradle.tasks.cleanOutputsAndLocalState
-import org.jetbrains.kotlin.gradle.tasks.kotlinDaemonOOMHelperMessage
 import org.jetbrains.kotlin.gradle.utils.stackTraceAsString
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.incremental.ClasspathChanges
@@ -38,7 +35,6 @@ import java.util.*
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
 import javax.inject.Inject
-import kotlin.collections.HashSet
 
 internal class ProjectFilesForCompilation(
     val projectRootFile: File,
@@ -331,6 +327,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
             multiModuleICSettings = icEnv.multiModuleICSettings,
             modulesInfo = incrementalModuleInfo!!,
             rootProjectDir = icEnv.rootProjectDir,
+            buildDir = icEnv.buildDir,
             kotlinScriptExtensions = kotlinScriptExtensions,
             withAbiSnapshot = icEnv.withAbiSnapshot,
             preciseCompilationResultsBackup = icEnv.preciseCompilationResultsBackup,

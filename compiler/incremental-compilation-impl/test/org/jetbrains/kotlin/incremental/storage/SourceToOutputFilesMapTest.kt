@@ -40,7 +40,7 @@ class SourceToOutputFilesMapTest {
             storageFile = workingDir.resolve("stof.tab"),
             icContext = IncrementalCompilationContext(
                 pathConverterForSourceFiles = RelocatableFileToPathConverter(srcDir),
-                pathConverterForClassFiles = RelocatableFileToPathConverter(classesDir),
+                pathConverterForOutputFiles = RelocatableFileToPathConverter(classesDir),
             )
         )
 

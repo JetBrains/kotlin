@@ -613,20 +613,21 @@ abstract class CompileServiceImplBase(
 
         val workingDir = incrementalCompilationOptions.workingDir
 
-        val projectRoot = incrementalCompilationOptions.rootProjectDir
+        val rootProjectDir = incrementalCompilationOptions.rootProjectDir
+        val buildDir = incrementalCompilationOptions.buildDir
 
         val modulesApiHistory = incrementalCompilationOptions.multiModuleICSettings?.run {
             reporter.info { "Use module detection: $useModuleDetection" }
             val modulesInfo = incrementalCompilationOptions.modulesInfo
                 ?: error("The build is configured to use the history-file based IC approach, but doesn't provide the modulesInfo")
-            check(projectRoot != null) {
+            check(rootProjectDir != null) {
                 "rootProjectDir is expected to be non null when the history-file based IC approach is used"
             }
 
             if (!useModuleDetection) {
-                ModulesApiHistoryJvm(projectRoot, modulesInfo)
+                ModulesApiHistoryJvm(rootProjectDir, modulesInfo)
             } else {
-                ModulesApiHistoryAndroid(projectRoot, modulesInfo)
+                ModulesApiHistoryAndroid(rootProjectDir, modulesInfo)
             }
         } ?: EmptyModulesApiHistory
 
@@ -651,7 +652,9 @@ abstract class CompileServiceImplBase(
         return try {
             compiler.compile(
                 allKotlinFiles, k2jvmArgs, compilerMessageCollector, changedFiles,
-                projectRoot?.let { FileLocations(it, k2jvmArgs.destinationAsFile) }
+                fileLocations = if (rootProjectDir != null && buildDir != null) {
+                    FileLocations(rootProjectDir, buildDir)
+                } else null
             )
         } finally {
             reporter.endMeasureGc()
