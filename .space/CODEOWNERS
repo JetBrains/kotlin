@@ -94,7 +94,6 @@
 
 /compiler/testData/asJava/findClasses/ "Kotlin Compiler Core"
 /compiler/testData/asJava/lightClasses/ "IntelliJ Kotlin Plugin"
-/compiler/testData/binaryCompatibility/klibEvolution/ "Kotlin Native"
 /compiler/testData/builtin-classes/ "Kotlin Libraries"
 /compiler/testData/capturedTypeApproximation/ "Kotlin Compiler Core"
 /compiler/testData/cfg/ "Kotlin Compiler Core"
@@ -152,7 +151,7 @@
 /compiler/testData/ir/klibLayout/ "Kotlin Native"
 /compiler/testData/ir/sourceRanges/ "Kotlin Compiler Core"
 /compiler/testData/javaModules/ "Kotlin JVM"
-/compiler/testData/klibABI/ "Kotlin Native"
+/compiler/testData/klib/ "Kotlin Native"
 /compiler/testData/kotlinClassFinder/ "Kotlin Compiler Core"
 # UNKNOWN: /compiler/testData/launcher/
 /compiler/testData/lexer/ "Kotlin Compiler Core"
