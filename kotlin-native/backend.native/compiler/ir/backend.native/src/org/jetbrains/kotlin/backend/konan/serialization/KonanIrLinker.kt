@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.backend.common.serialization.encodings.BinaryNameAnd
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.backend.common.serialization.encodings.FunctionFlags
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.descriptors.isForwardDeclarationModule
 import org.jetbrains.kotlin.backend.konan.descriptors.isFromInteropLibrary
 import org.jetbrains.kotlin.backend.konan.descriptors.isInteropLibrary
 import org.jetbrains.kotlin.backend.konan.ir.interop.IrProviderForCEnumAndCStructStubs
@@ -38,20 +37,13 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrPublicSymbolBase
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsFactoryImpl.Companion.FORWARD_DECLARATIONS_MODULE_NAME
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.NativeForwardDeclarationKind
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import sun.misc.Unsafe
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrClass as ProtoClass
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration as ProtoDeclaration
@@ -555,62 +547,6 @@ internal class KonanIrLinker(
         }
 
         else -> error("Unknown package fragment kind ${packageFragment::class.java}")
-    }
-
-    private class KonanForwardDeclarationModuleDeserializer(
-            moduleDescriptor: ModuleDescriptor,
-            private val linker: KotlinIrLinker,
-            private val stubGenerator: DeclarationStubGenerator,
-    ) : IrModuleDeserializer(moduleDescriptor, KotlinAbiVersion.CURRENT) {
-        init {
-            require(moduleDescriptor.isForwardDeclarationModule)
-        }
-
-        private val declaredDeclaration = mutableMapOf<IdSignature, IrClass>()
-
-        private fun IdSignature.isForwardDeclarationSignature(): Boolean {
-            if (isPubliclyVisible) {
-                return packageFqName() in NativeForwardDeclarationKind.packageFqNameToKind
-            }
-
-            return false
-        }
-
-        override fun contains(idSig: IdSignature): Boolean = idSig.isForwardDeclarationSignature()
-
-        private fun resolveDescriptor(idSig: IdSignature): ClassDescriptor? =
-                with(idSig as IdSignature.CommonSignature) {
-                    val classId = ClassId(packageFqName(), FqName(declarationFqName), false)
-                    moduleDescriptor.findClassAcrossModuleDependencies(classId)
-                }
-
-        private fun buildForwardDeclarationStub(descriptor: ClassDescriptor): IrClass {
-            return stubGenerator.generateClassStub(descriptor).also {
-                it.origin = FORWARD_DECLARATION_ORIGIN
-            }
-        }
-
-        override fun tryDeserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol? {
-            require(symbolKind == BinarySymbolData.SymbolKind.CLASS_SYMBOL) {
-                "Only class could be a Forward declaration $idSig (kind $symbolKind)"
-            }
-            val descriptor = resolveDescriptor(idSig) ?: return null
-            val actualModule = descriptor.module
-            if (actualModule !== moduleDescriptor) {
-                val moduleDeserializer = linker.resolveModuleDeserializer(actualModule, idSig)
-                moduleDeserializer.addModuleReachableTopLevel(idSig)
-                return linker.symbolTable.referenceClass(idSig)
-            }
-
-            return declaredDeclaration.getOrPut(idSig) { buildForwardDeclarationStub(descriptor) }.symbol
-        }
-
-        override fun deserializedSymbolNotFound(idSig: IdSignature): Nothing = error("No descriptor found for $idSig")
-
-        override val moduleFragment: IrModuleFragment = IrModuleFragmentImpl(moduleDescriptor, linker.builtIns)
-        override val moduleDependencies: Collection<IrModuleDeserializer> = emptyList()
-
-        override val kind get() = IrModuleDeserializerKind.SYNTHETIC
     }
 
     private val String.isForwardDeclarationModuleName: Boolean get() = this == FORWARD_DECLARATIONS_MODULE_NAME.asString()
