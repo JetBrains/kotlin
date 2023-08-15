@@ -179,7 +179,7 @@ public actual open class ArrayList<E> internal constructor(private var array: Ar
     }
 
     @Suppress("NOTHING_TO_OVERRIDE", "EXPOSED_FUNCTION_RETURN_TYPE")
-    // TODO: Remove after the classical backend will be removed
+    // TODO: Remove after the legacy backend will be removed
     override fun asJsArrayMutableView() = array.unsafeCast<JsMutableArray<E>>()
 
     internal override fun checkIsMutable() {
