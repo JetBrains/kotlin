@@ -185,7 +185,7 @@ internal open class StubBasedFirDeserializedSymbolProvider(
             }
             is KotlinStubOrigin.MultiFileFacade -> {
                 val className = JvmClassName.byInternalName(origin.className)
-                val facadeClassName = JvmClassName.byInternalName(origin.className)
+                val facadeClassName = JvmClassName.byInternalName(origin.facadeClassName)
                 JvmStubDeserializedFacadeContainerSource(className, facadeClassName)
             }
             else -> {
