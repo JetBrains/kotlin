@@ -41,9 +41,8 @@ sealed class KotlinStubOrigin {
         val className: String // Internal name of the package part class
     ) : KotlinStubOrigin() {
         companion object {
-            const val KIND = 1
-
-            fun deserializeContent(dataStream: StubInputStream): Facade? {
+            @JvmStatic
+            internal fun deserializeContent(dataStream: StubInputStream): Facade? {
                 val className = dataStream.readNameString() ?: return null
                 return Facade(className)
             }
@@ -61,9 +60,8 @@ sealed class KotlinStubOrigin {
         val facadeClassName: String // Internal name of the facade class
     ) : KotlinStubOrigin() {
         companion object {
-            const val KIND = 2
-
-            fun deserializeContent(dataStream: StubInputStream): MultiFileFacade? {
+            @JvmStatic
+            internal fun deserializeContent(dataStream: StubInputStream): MultiFileFacade? {
                 val classId = dataStream.readNameString() ?: return null
                 val facadeClassId = dataStream.readNameString() ?: return null
                 return MultiFileFacade(classId, facadeClassId)
