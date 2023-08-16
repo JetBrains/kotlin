@@ -125,7 +125,7 @@ private class LLFirBodyTargetResolver(
             }
         }
 
-        return false
+        return super.doResolveWithoutLock(target)
     }
 
     private fun calculateControlFlowGraph(target: FirRegularClass) {

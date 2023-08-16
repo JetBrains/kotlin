@@ -102,7 +102,10 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
     }
 
     override fun doResolveWithoutLock(target: FirElementWithResolveState): Boolean {
-        if (target is FirFile) return false
+        if (target is FirFile) {
+            resolveFileAnnotationContainerIfNeeded(target)
+            return false
+        }
 
         when (target) {
             is FirRegularClass, is FirScript, is FirCodeFragment -> {}

@@ -1,5 +1,6 @@
 // RESOLVE_FILE
 
+@file:[Deprecated("deprecated file") Anno(1)]
 package one
 
 annotation class Anno(val i: Int)
