@@ -89,6 +89,7 @@ object ComposeFqNames {
     private fun internalFqNameFor(cname: String) = FqName("$internalRoot.$cname")
     private fun composablesFqNameFor(cname: String) = fqNameFor("ComposablesKt.$cname")
 
+    val InternalPackage = internalRootFqName
     val Composable = ComposeClassIds.Composable.asSingleFqName()
     val ComposableTarget = ComposeClassIds.ComposableTarget.asSingleFqName()
     val ComposableTargetMarker = fqNameFor("ComposableTargetMarker")
