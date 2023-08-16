@@ -10,7 +10,7 @@ dependencies {
     testImplementation(project(":kotlin-test:kotlin-test-jvm"))
     testImplementation(project(":kotlin-daemon"))
     testImplementation(project(":kotlin-daemon-client"))
-    testImplementation(commonDependency("junit:junit"))
+    testImplementation(libs.junit4)
     testImplementation(projectTests(":compiler:tests-common"))
     testImplementation(intellijCore())
 }

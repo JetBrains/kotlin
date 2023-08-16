@@ -45,7 +45,7 @@ dependencies {
     embedded(project(":core:metadata.jvm"))
     embedded(protobufLite())
     testImplementation(project(":kotlin-test:kotlin-test-junit"))
-    testImplementation(commonDependency("junit:junit"))
+    testImplementation(libs.junit4)
     testImplementation(commonDependency("org.jetbrains.intellij.deps:asm-all"))
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 }

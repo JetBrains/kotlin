@@ -37,7 +37,7 @@ dependencies {
     testApi(project(":compiler:backend"))
     testApi(project(":compiler:cli"))
     testApi(projectTests(":compiler:tests-common"))
-    testApi(commonDependency("junit:junit"))
+    testApi(libs.junit4)
 }
 
 sourceSets {

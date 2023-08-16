@@ -54,7 +54,7 @@ dependencies {
 
     implementation(kotlinStdlib())
     implementation(kotlinxCollectionsImmutable())
-    testImplementation(commonDependency("junit:junit"))
+    testImplementation(libs.junit4)
     testCompileOnly(project(":kotlin-test:kotlin-test-jvm"))
     testCompileOnly(project(":kotlin-test:kotlin-test-junit"))
     testImplementation(projectTests(":compiler:tests-common"))

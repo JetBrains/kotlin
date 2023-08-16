@@ -11,7 +11,7 @@ val embeddableTestRuntime by configurations.creating {
 }
 
 dependencies {
-    allTestsRuntime(commonDependency("junit"))
+    allTestsRuntime(libs.junit4)
     allTestsRuntime(intellijCore())
     testApi(project(":kotlin-scripting-jvm-host-unshaded"))
     testApi(projectTests(":compiler:tests-common"))

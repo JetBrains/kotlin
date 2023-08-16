@@ -18,7 +18,7 @@ dependencies {
     compileOnly(kotlinStdlib())
 
     testImplementation(project(":kotlin-test:kotlin-test-junit"))
-    testImplementation(commonDependency("junit"))
+    testImplementation(libs.junit4)
 }
 
 projectTest {

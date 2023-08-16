@@ -19,7 +19,7 @@ val embeddableTestRuntime by configurations.creating {
 }
 
 dependencies {
-    allTestsRuntime(commonDependency("junit"))
+    allTestsRuntime(libs.junit4)
     testApi(kotlinStdlib("jdk8"))
     testApi(project(":kotlin-scripting-ide-services-unshaded"))
     testApi(project(":kotlin-scripting-compiler"))

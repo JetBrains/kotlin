@@ -18,7 +18,7 @@ dependencies {
     compileOnly(intellijCore())
     compileOnly(libs.guava)
 
-    testImplementation(commonDependency("junit:junit"))
+    testImplementation(libs.junit4)
     testImplementation(projectTests(":compiler:tests-common"))
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 

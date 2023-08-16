@@ -39,7 +39,7 @@ dependencies {
     embedded("org.apache.maven.wagon:wagon-http:3.5.3")
     embedded("commons-io:commons-io:2.11.0")
 
-    testImplementation(commonDependency("junit"))
+    testImplementation(libs.junit4)
     testRuntimeOnly("org.slf4j:slf4j-nop:1.7.36")
     testImplementation(project(":kotlin-scripting-dependencies-maven-all"))
 }

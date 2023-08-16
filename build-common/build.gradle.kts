@@ -23,7 +23,7 @@ dependencies {
 
     testCompileOnly(project(":compiler:cli-common"))
     testApi(projectTests(":compiler:tests-common"))
-    testApi(commonDependency("junit:junit"))
+    testApi(libs.junit4)
     testApi(protobufFull())
     testApi(kotlinStdlib())
     testImplementation(project(":compiler:build-tools:kotlin-build-statistics"))

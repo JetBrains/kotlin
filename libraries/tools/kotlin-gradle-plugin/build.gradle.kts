@@ -141,7 +141,7 @@ dependencies {
     testImplementation(projectTests(":kotlin-build-common"))
     testImplementation(project(":kotlin-compiler-runner"))
     testImplementation(project(":kotlin-test:kotlin-test-junit"))
-    testImplementation(commonDependency("junit:junit"))
+    testImplementation(libs.junit4)
     testImplementation(project(":kotlin-gradle-statistics"))
     testImplementation(project(":kotlin-tooling-metadata"))
 }

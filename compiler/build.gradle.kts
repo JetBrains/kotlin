@@ -16,7 +16,7 @@ dependencies {
     
     testApi(kotlinStdlib())
 
-    testApi(commonDependency("junit:junit"))
+    testApi(libs.junit4)
     testCompileOnly(project(":kotlin-test:kotlin-test-jvm"))
     testCompileOnly(project(":kotlin-test:kotlin-test-junit"))
     testApi(projectTests(":compiler:tests-common"))

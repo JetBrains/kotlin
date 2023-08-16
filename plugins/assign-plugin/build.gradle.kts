@@ -20,7 +20,7 @@ dependencies {
     testApi(projectTests(":compiler:tests-common-new"))
 
     testImplementation(projectTests(":compiler:tests-common"))
-    testImplementation(commonDependency("junit:junit"))
+    testImplementation(libs.junit4)
 
     testCompileOnly(project(":kotlin-reflect-api"))
     testRuntimeOnly(project(":kotlin-reflect"))

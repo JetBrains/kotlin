@@ -19,6 +19,14 @@ plugins {
     id("kotlin-daemon-config")
 }
 
+dependencyResolutionManagement {
+    versionCatalogs {
+        create("libs") {
+            from(files("../../gradle/libs.versions.toml"))
+        }
+    }
+}
+
 buildscript {
     val buildGradlePluginVersion = extra["kotlin.build.gradlePlugin.version"]
     dependencies {
