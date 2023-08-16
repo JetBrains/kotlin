@@ -36,11 +36,6 @@ using namespace kotlin;
 
 extern "C" {
 
-// Any.kt
-KBoolean Kotlin_Any_equals(KConstRef thiz, KConstRef other) {
-  return thiz == other;
-}
-
 KInt Kotlin_Any_hashCode(KConstRef thiz) {
   // NOTE: `Any?.identityHashCode()` is used in Blackhole implementations of both kotlinx-benchmark and
   //        K/N's own benchmarks. These usages rely on this being an intrinsic property of the object.
