@@ -36,7 +36,7 @@ dependencies {
 
     testRuntimeOnly(project(":core:descriptors.runtime"))
 
-    testApi(commonDependency("junit:junit"))
+    testApi(libs.junit4)
 
     testRuntimeOnly(commonDependency("com.google.guava:guava"))
     testRuntimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))

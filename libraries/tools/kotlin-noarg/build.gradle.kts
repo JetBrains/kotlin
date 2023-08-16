@@ -17,7 +17,7 @@ dependencies {
     commonCompileOnly(project(":kotlin-noarg-compiler-plugin"))
 
     testImplementation(gradleApi())
-    testImplementation(commonDependency("junit"))
+    testImplementation(libs.junit4)
 }
 
 gradlePlugin {

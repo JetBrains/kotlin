@@ -21,7 +21,7 @@ dependencies {
     testCompileOnly(project(":kotlinx-metadata"))
     testCompileOnly(project(":kotlinx-metadata-jvm"))
 
-    testImplementation(commonDependency("junit:junit"))
+    testImplementation(libs.junit4)
     testImplementation(projectTests(":compiler:tests-common"))
     testImplementation(projectTests(":generators:test-generator"))
 

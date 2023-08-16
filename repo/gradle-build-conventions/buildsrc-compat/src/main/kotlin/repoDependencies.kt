@@ -14,11 +14,14 @@ import org.gradle.api.file.FileCollection
 import org.gradle.internal.jvm.Jvm
 import org.gradle.kotlin.dsl.closureOf
 import org.gradle.kotlin.dsl.extra
+import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.project
 import java.io.File
 
 private val Project.isEAPIntellij get() = rootProject.extra["versions.intellijSdk"].toString().contains("-EAP-")
 private val Project.isNightlyIntellij get() = rootProject.extra["versions.intellijSdk"].toString().endsWith("SNAPSHOT") && !isEAPIntellij
+
+private val Project.libsVersionCatalog get() = extensions.getByType<VersionCatalogsExtension>().named("libs")
 
 val Project.intellijRepo
     get() =
@@ -197,44 +200,56 @@ fun Project.testApiJUnit5(
     jupiterParams: Boolean = false
 ) {
     with(dependencies) {
-        val platformVersion = commonDependencyVersion("org.junit", "junit-bom")
-        testApi(platform("org.junit:junit-bom:$platformVersion"))
-        testApi("org.junit.jupiter:junit-jupiter")
+        val libsVersionCatalog = libsVersionCatalog
+        testApi(platform(libsVersionCatalog.findLibrary("junit-bom").orElseThrow { GradleException("No version for `junit-bom`") }))
+        testApi(libsVersionCatalog.findLibrary("junit-jupyter").orElseThrow { GradleException("No version for `junit-jupyter`") })
         if (vintageEngine) {
-            testApi("org.junit.vintage:junit-vintage-engine:$platformVersion")
+            testRuntimeOnly(
+                libsVersionCatalog.findLibrary("junit-vintage-engine")
+                    .orElseThrow { GradleException("No version for `junit-vintage-engine`") })
         }
 
         if (jupiterParams) {
-            testApi("org.junit.jupiter:junit-jupiter-params:$platformVersion")
+            testApi(
+                libsVersionCatalog.findLibrary("junit-jupyter-params")
+                    .orElseThrow { GradleException("No version for `junit-jupyter-params`") })
         }
 
-        val componentsVersion = commonDependencyVersion("org.junit.platform", "")
-
-        val components = mutableListOf(
-            "org.junit.platform:junit-platform-commons",
-            "org.junit.platform:junit-platform-launcher"
-        )
+        testApi(
+            libsVersionCatalog.findLibrary("junit-platform-commons")
+                .orElseThrow { GradleException("No version for `junit-platform-commons`") })
+        testApi(
+            libsVersionCatalog.findLibrary("junit-platform-launcher")
+                .orElseThrow { GradleException("No version for `junit-platform-launcher`") })
         if (runner) {
-            components += "org.junit.platform:junit-platform-runner"
+            testApi(
+                libsVersionCatalog.findLibrary("junit-platform-runner")
+                    .orElseThrow { GradleException("No version for `junit-platform-runner`") })
         }
         if (suiteApi) {
-            components += "org.junit.platform:junit-platform-suite-api"
-        }
-
-        for (component in components) {
-            testApi("$component:$componentsVersion")
+            testApi(
+                libsVersionCatalog.findLibrary("junit-platform-suite-api")
+                    .orElseThrow { GradleException("No version for `junit-platform-suite-api`") })
         }
 
         // This dependency is needed only for FileComparisonFailure
-        add("testImplementation", intellijJavaRt())
+        testImplementation(intellijJavaRt())
 
         // This is needed only for using FileComparisonFailure, which relies on JUnit 3 classes
-        add("testRuntimeOnly", commonDependency("junit:junit"))
+        testRuntimeOnly(libsVersionCatalog.findLibrary("junit4").orElseThrow { GradleException("No version for `junit4`") })
     }
 }
 
 private fun DependencyHandler.testApi(dependencyNotation: Any) {
     add("testApi", dependencyNotation)
+}
+
+private fun DependencyHandler.testImplementation(dependencyNotation: Any) {
+    add("testImplementation", dependencyNotation)
+}
+
+private fun DependencyHandler.testRuntimeOnly(dependencyNotation: Any) {
+    add("testRuntimeOnly", dependencyNotation)
 }
 
 val Project.protobufRelocatedVersion: String get() = findProperty("versions.protobuf-relocated") as String

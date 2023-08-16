@@ -61,7 +61,7 @@ val jsShell by configurations.creating {
 }
 
 dependencies {
-    testApi(commonDependency("junit:junit"))
+    testApi(libs.junit4)
     testApi(projectTests(":compiler:tests-common"))
     testApi(projectTests(":compiler:tests-common-new"))
     testApi(intellijCore())

@@ -8,7 +8,7 @@ project.updateJvmTarget("1.8")
 dependencies {
     api(kotlinStdlib())
     api(project(":kotlin-scripting-common"))
-    testApi(commonDependency("junit"))
+    testApi(libs.junit4)
     testImplementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core"))
 }
 

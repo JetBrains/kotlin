@@ -17,13 +17,11 @@ dependencies {
 
     testApi(kotlinStdlib())
     testApi(projectTests(":compiler:tests-common"))
-    testApi(commonDependency("junit:junit"))
+    testApi(libs.junit4)
     testApi(projectTests(":compiler:test-infrastructure"))
     testApi(projectTests(":compiler:test-infrastructure-utils"))
     testApi(projectTests(":compiler:tests-compiler-utils"))
     testApi(projectTests(":compiler:tests-common-new"))
-
-    testApi(commonDependency("junit:junit"))
 
     testApi(jpsModel())
     testApi(jpsBuildTest())
@@ -31,7 +29,7 @@ dependencies {
     testRuntimeOnly(intellijCore())
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.jna:jna"))
 
-    testApi("org.junit.platform:junit-platform-launcher:${commonDependencyVersion("org.junit.platform", "")}")
+    testApi(libs.junit.platform.launcher)
 }
 
 sourceSets {

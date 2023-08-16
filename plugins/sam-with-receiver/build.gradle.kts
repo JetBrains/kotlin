@@ -24,7 +24,7 @@ dependencies {
     testApi(projectTests(":compiler:test-infrastructure-utils"))
 
     testImplementation(projectTests(":compiler:tests-common"))
-    testImplementation(commonDependency("junit:junit"))
+    testImplementation(libs.junit4)
 
     testRuntimeOnly(project(":core:descriptors.runtime"))
     testRuntimeOnly(project(":compiler:fir:fir-serialization"))

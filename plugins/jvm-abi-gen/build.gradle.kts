@@ -40,7 +40,7 @@ dependencies {
     compileOnly(intellijCore())
     compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
 
-    testImplementation(commonDependency("junit:junit"))
+    testImplementation(libs.junit4)
     testImplementation(projectTests(":compiler:tests-common"))
     testImplementation(projectTests(":compiler:incremental-compilation-impl"))
 }

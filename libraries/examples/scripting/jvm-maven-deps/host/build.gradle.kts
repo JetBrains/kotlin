@@ -12,7 +12,7 @@ dependencies {
     testRuntimeOnly(project(":kotlin-compiler"))
     testRuntimeOnly(project(":kotlin-scripting-compiler"))
 
-    testApi(commonDependency("junit"))
+    testApi(libs.junit4)
 }
 
 sourceSets {

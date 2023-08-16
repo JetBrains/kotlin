@@ -16,7 +16,7 @@ dependencies {
     commonCompileOnly(project(":compiler"))
     commonCompileOnly(project(":kotlin-assignment-compiler-plugin"))
 
-    testImplementation(commonDependency("junit"))
+    testImplementation(libs.junit4)
 }
 
 gradlePlugin {

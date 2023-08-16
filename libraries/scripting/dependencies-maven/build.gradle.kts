@@ -18,7 +18,7 @@ dependencies {
     implementation("commons-io:commons-io:2.11.0")
 
     testImplementation(projectTests(":kotlin-scripting-dependencies"))
-    testImplementation(commonDependency("junit"))
+    testImplementation(libs.junit4)
     testRuntimeOnly("org.slf4j:slf4j-nop:1.7.36")
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testImplementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core"))

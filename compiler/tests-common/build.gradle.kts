@@ -53,7 +53,7 @@ dependencies {
     testApi(project(":kotlin-test:kotlin-test-jvm"))
     testApi(project(":kotlin-scripting-compiler-impl"))
     testApi(projectTests(":compiler:test-infrastructure-utils"))
-    testApi(commonDependency("junit:junit"))
+    testApi(libs.junit4)
     testApi(commonDependency("com.android.tools:r8"))
     testApi(project(":analysis:analysis-internal-utils"))
     testCompileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }

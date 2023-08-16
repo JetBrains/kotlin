@@ -93,8 +93,7 @@ dependencies {
         project.rootProject.projectDir.resolve("gradle/versions.properties").inputStream().use { propInput ->
             versionProperties.load(propInput)
         }
-        val platformVersion = versionProperties["versions.junit-bom"]
-        testApi(platform("org.junit:junit-bom:$platformVersion"))
-        testApi("org.junit.jupiter:junit-jupiter")
+        testApi(platform(libs.junit.bom))
+        testApi(libs.junit.jupyter)
     }
 }

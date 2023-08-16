@@ -6290,7 +6290,7 @@ dependencies {
 
     implementation kotlinCompilerModule
     api project(path: ':kotlin-native:backend.native', configuration: 'cli_bcApiElements')
-    api RepoDependencies.commonDependency(project, "junit")
+    api libs.junit4
 }
 
 // Configure build for iOS device targets.

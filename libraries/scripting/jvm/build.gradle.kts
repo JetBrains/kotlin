@@ -9,7 +9,7 @@ dependencies {
     api(project(":kotlin-script-runtime"))
     api(kotlinStdlib())
     api(project(":kotlin-scripting-common"))
-    testApi(commonDependency("junit"))
+    testApi(libs.junit4)
 }
 
 sourceSets {
