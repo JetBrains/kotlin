@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.types.toSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.native.interop.ObjCMethodInfo
 
-class FirNativeKotlinMangler : FirMangler() {
+object FirNativeKotlinMangler : FirMangler() {
     override fun getMangleComputer(mode: MangleMode, compatibleMode: Boolean): KotlinMangleComputer<FirDeclaration> {
         return FirNativeKotlinMangleComputer(StringBuilder(256), mode)
     }

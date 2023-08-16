@@ -154,8 +154,8 @@ sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
     }
 
     // Actually, class won't be used as a real input for the Native backend during blackbox testing, since such testing is done via a different engine.
-    // In irText tests, this class is used only as Native-specific FIR2IR output to render and dump IR.
-    // So, no source files, icData, error flag, serialization lambda, etc are needed.
+    // In irText tests, this class is used only to hold Native-specific FIR2IR output (module fragments) to render and dump IR.
+    // So, other fields are actually not needed: source files, icData, error flag, serialization lambda, etc...
     class NativeBackendInput(
         override val irModuleFragment: IrModuleFragment,
         override val dependentIrModuleFragments: List<IrModuleFragment>,

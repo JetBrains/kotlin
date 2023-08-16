@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.konan.test.diagnostics.AbstractDiagnosticsNativeTest
 import org.jetbrains.kotlin.konan.test.diagnostics.AbstractFirLightTreeNativeDiagnosticsTest
 import org.jetbrains.kotlin.konan.test.diagnostics.AbstractFirPsiNativeDiagnosticsTest
 import org.jetbrains.kotlin.konan.test.irtext.AbstractClassicNativeIrTextTest
+import org.jetbrains.kotlin.konan.test.irtext.AbstractFirLightTreeNativeIrTextTest
+import org.jetbrains.kotlin.konan.test.irtext.AbstractFirPsiNativeIrTextTest
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 import org.junit.jupiter.api.Tag
@@ -75,6 +77,12 @@ fun main() {
                 model("codegen/boxInline", targetBackend = TargetBackend.NATIVE)
             }
             testClass<AbstractClassicNativeIrTextTest> {
+                model("ir/irText")
+            }
+            testClass<AbstractFirLightTreeNativeIrTextTest> {
+                model("ir/irText")
+            }
+            testClass<AbstractFirPsiNativeIrTextTest> {
                 model("ir/irText")
             }
         }
