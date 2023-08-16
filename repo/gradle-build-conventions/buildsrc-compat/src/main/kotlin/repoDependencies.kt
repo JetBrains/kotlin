@@ -232,12 +232,6 @@ fun Project.testApiJUnit5(
                 libsVersionCatalog.findLibrary("junit-platform-suite-api")
                     .orElseThrow { GradleException("No version for `junit-platform-suite-api`") })
         }
-
-        // This dependency is needed only for FileComparisonFailure
-        testImplementation(intellijJavaRt())
-
-        // This is needed only for using FileComparisonFailure, which relies on JUnit 3 classes
-        testRuntimeOnly(libsVersionCatalog.findLibrary("junit4").orElseThrow { GradleException("No version for `junit4`") })
     }
 }
 
