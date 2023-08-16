@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerContextProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingDeclaration
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.retryOnInvalidSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionCache
@@ -80,17 +79,13 @@ internal abstract class LLFirResolvableResolveSession(
     }
 
     override fun getOrBuildFirFor(element: KtElement): FirElement? {
-        retryOnInvalidSession {
-            val moduleComponents = getModuleComponentsForElement(element)
-            return moduleComponents.elementsBuilder.getOrBuildFirFor(element, this)
-        }
+        val moduleComponents = getModuleComponentsForElement(element)
+        return moduleComponents.elementsBuilder.getOrBuildFirFor(element, this)
     }
 
     override fun getOrBuildFirFile(ktFile: KtFile): FirFile {
-        retryOnInvalidSession {
-            val moduleComponents = getModuleComponentsForElement(ktFile)
-            return moduleComponents.firFileBuilder.buildRawFirFileWithCaching(ktFile)
-        }
+        val moduleComponents = getModuleComponentsForElement(ktFile)
+        return moduleComponents.firFileBuilder.buildRawFirFileWithCaching(ktFile)
     }
 
     protected fun getModuleComponentsForElement(element: KtElement): LLFirModuleResolveComponents {
@@ -100,15 +95,13 @@ internal abstract class LLFirResolvableResolveSession(
 
     override fun resolveToFirSymbol(
         ktDeclaration: KtDeclaration,
-        phase: FirResolvePhase
+        phase: FirResolvePhase,
     ): FirBasedSymbol<*> {
         val containingKtFile = ktDeclaration.containingKtFile
         val module = getModule(containingKtFile.originalKtFile ?: containingKtFile)
-        retryOnInvalidSession {
-            return when (getModuleKind(module)) {
-                ModuleKind.RESOLVABLE_MODULE -> findSourceFirSymbol(ktDeclaration, module).also { resolveFirToPhase(it.fir, phase) }
-                ModuleKind.BINARY_MODULE -> findFirCompiledSymbol(ktDeclaration, module)
-            }
+        return when (getModuleKind(module)) {
+            ModuleKind.RESOLVABLE_MODULE -> findSourceFirSymbol(ktDeclaration, module).also { resolveFirToPhase(it.fir, phase) }
+            ModuleKind.BINARY_MODULE -> findFirCompiledSymbol(ktDeclaration, module)
         }
     }
 
