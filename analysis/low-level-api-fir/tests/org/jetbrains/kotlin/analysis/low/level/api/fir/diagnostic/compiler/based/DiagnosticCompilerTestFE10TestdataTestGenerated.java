@@ -754,6 +754,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         }
 
         @Test
+        @TestMetadata("nonConstNotCall.kt")
+        public void testNonConstNotCall() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/nonConstNotCall.kt");
+        }
+
+        @Test
         @TestMetadata("Nullability.kt")
         public void testNullability() throws Exception {
             runTest("compiler/testData/diagnostics/tests/Nullability.kt");

@@ -21381,12 +21381,6 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
             }
 
             @Test
-            @TestMetadata("ifConstVal.kt")
-            public void testIfConstVal() throws Exception {
-                runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/ifConstVal.kt");
-            }
-
-            @Test
             @TestMetadata("kCallableName.kt")
             public void testKCallableName() throws Exception {
                 runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/kCallableName.kt");
