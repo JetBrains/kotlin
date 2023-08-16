@@ -826,6 +826,7 @@ object FirErrors {
     val MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND by error0<PsiElement>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
     val MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND_FUN by deprecationError0<PsiElement>(ModifierNonBuiltinSuspendFunError, SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
     val RETURN_FOR_BUILT_IN_SUSPEND by error0<KtReturnExpression>()
+    val MIXING_SUSPEND_AND_NON_SUSPEND_SUPERTYPES by error0<PsiElement>(SourceElementPositioningStrategies.SUPERTYPES_LIST)
 
     // label
     val REDUNDANT_LABEL_WARNING by warning0<KtLabelReferenceExpression>(SourceElementPositioningStrategies.LABEL)

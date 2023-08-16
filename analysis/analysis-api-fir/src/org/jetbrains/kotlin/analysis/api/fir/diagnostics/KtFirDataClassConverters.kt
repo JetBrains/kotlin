@@ -4665,6 +4665,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.MIXING_SUSPEND_AND_NON_SUSPEND_SUPERTYPES) { firDiagnostic ->
+        MixingSuspendAndNonSuspendSupertypesImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.REDUNDANT_LABEL_WARNING) { firDiagnostic ->
         RedundantLabelWarningImpl(
             firDiagnostic as KtPsiDiagnostic,

@@ -65,7 +65,7 @@ object PositioningStrategies {
     val SUPERTYPES_LIST: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
         override fun mark(element: PsiElement): List<TextRange> {
             val supertypes = ((
-                    element as? KtClass
+                    element as? KtClassOrObject
                     ) ?: return markElement(element)
                     ).superTypeListEntries
             return if (supertypes.isEmpty())
