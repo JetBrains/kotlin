@@ -144,6 +144,9 @@ fun KotlinType.isRestrictsSuspensionReceiver() = (listOf(this) + this.supertypes
     ) == true
 }
 
+fun FunctionDescriptor.isRestrictedSuspendFunction(): Boolean =
+    extensionReceiverParameter?.type?.isRestrictsSuspensionReceiver() == true
+
 private fun checkRestrictsSuspension(
     enclosingSuspendCallableDescriptor: CallableDescriptor,
     resolvedCall: ResolvedCall<*>,

@@ -75,10 +75,6 @@ fun IrBuilderWithScope.irCatch() =
                 )
         )
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
-fun IrFunction.isRestrictedSuspendFunction(): Boolean =
-        this.descriptor.extensionReceiverParameter?.type?.isRestrictsSuspensionReceiver() == true
-
 fun IrBuilderWithScope.irByte(value: Byte) =
         IrConstImpl.byte(startOffset, endOffset, context.irBuiltIns.byteType, value)
 

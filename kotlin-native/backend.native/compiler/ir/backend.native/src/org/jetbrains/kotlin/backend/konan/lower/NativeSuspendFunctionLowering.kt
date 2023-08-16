@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.declarations.*
@@ -26,6 +27,8 @@ import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.calls.checkers.isRestrictedSuspendFunction
+import org.jetbrains.kotlin.resolve.calls.checkers.isRestrictsSuspensionReceiver
 
 internal class NativeSuspendFunctionsLowering(
         generationState: NativeGenerationState
@@ -35,12 +38,13 @@ internal class NativeSuspendFunctionsLowering(
 
     override val stateMachineMethodName = Name.identifier("invokeSuspend")
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun getCoroutineBaseClass(function: IrFunction): IrClassSymbol =
-            (if (function.isRestrictedSuspendFunction()) {
+            if (function.descriptor.isRestrictedSuspendFunction()) {
                 symbols.restrictedContinuationImpl
             } else {
                 symbols.continuationImpl
-            })
+            }
 
     override fun nameForCoroutineClass(function: IrFunction) =
             fileLowerState.getCoroutineImplUniqueName(function).synthesizedName
