@@ -22,4 +22,4 @@ class MyBlockingAdapter() {
     }
 }
 
-// 1 LOCALVARIABLE \$this\$extensionFun\$iv\$iv LAtomicInt;
+// 1 LOCALVARIABLE \$this\$extensionFun\\2 LAtomicInt;

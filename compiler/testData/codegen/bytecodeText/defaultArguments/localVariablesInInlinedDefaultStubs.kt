@@ -12,5 +12,5 @@ fun box() : String {
 // 2 LOCALVARIABLE x I
 
 // The $iv suffix should be present in box
-// 1 LOCALVARIABLE p\$iv Ljava/lang/String;
-// 1 LOCALVARIABLE x\$iv I
+// 1 LOCALVARIABLE p\\1 Ljava/lang/String;
+// 1 LOCALVARIABLE x\\1 I

@@ -35,11 +35,11 @@ fun box() {
 // test.kt:30 box:
 // test.kt:17 compute:
 // test.kt:18 compute:
-// test.kt:6 compute: $i$f$g:int=0:int
-// test.kt:7 compute: $i$f$g:int=0:int
-// test.kt:8 compute: $i$f$g:int=0:int, gLocal$iv:java.lang.String="gLocal":java.lang.String
-// test.kt:19 compute: $i$f$g:int=0:int, gLocal$iv:java.lang.String="gLocal":java.lang.String, $i$a$-g-TestKt$compute$1:int=0:int
-// test.kt:20 compute: $i$f$g:int=0:int, gLocal$iv:java.lang.String="gLocal":java.lang.String, $i$a$-g-TestKt$compute$1:int=0:int, b:java.lang.String="b":java.lang.String
+// test.kt:6 compute: $i$f$g\1:int=0:int
+// test.kt:7 compute: $i$f$g\1:int=0:int
+// test.kt:8 compute: $i$f$g\1:int=0:int, gLocal\1:java.lang.String="gLocal":java.lang.String
+// test.kt:19 compute: $i$f$g\1:int=0:int, gLocal\1:java.lang.String="gLocal":java.lang.String, $i$a$-g-TestKt$compute$1\2\0:int=0:int
+// test.kt:20 compute: $i$f$g\1:int=0:int, gLocal\1:java.lang.String="gLocal":java.lang.String, $i$a$-g-TestKt$compute$1\2\0:int=0:int, b\2:java.lang.String="b":java.lang.String
 // test.kt:10 compute:
 // test.kt:24 compute:
 // test.kt:30 box:

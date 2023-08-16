@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.OperationKind.SAFE
 import org.jetbrains.kotlin.codegen.intrinsics.TypeIntrinsics
 import org.jetbrains.kotlin.codegen.pseudoInsns.fakeAlwaysFalseIfeq
 import org.jetbrains.kotlin.codegen.pseudoInsns.fixStackAndJump
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -154,6 +155,13 @@ class ExpressionCodegen(
     val methodSignatureMapper = classCodegen.methodSignatureMapper
 
     val state = context.state
+
+    override val inlineScopesGenerator =
+        if (state.configuration.getBoolean(JVMConfigurationKeys.ENABLE_INLINE_SCOPES_NUMBERS)) {
+            InlineScopesGenerator()
+        } else {
+            null
+        }
 
     override val visitor: InstructionAdapter
         get() = mv

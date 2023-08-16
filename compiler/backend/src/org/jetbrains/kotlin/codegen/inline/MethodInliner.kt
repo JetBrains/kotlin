@@ -303,9 +303,11 @@ class MethodInliner(
                     )
 
                     val varRemapper = LocalVarRemapper(lambdaParameters, valueParamShift)
+
                     //TODO add skipped this and receiver
                     val lambdaResult =
                         inliner.doInline(localVariablesSorter, varRemapper, true, info.returnLabels, invokeCall.finallyDepthShift)
+
                     result.mergeWithNotChangeInfo(lambdaResult)
                     result.reifiedTypeParametersUsages.mergeAll(lambdaResult.reifiedTypeParametersUsages)
                     result.reifiedTypeParametersUsages.mergeAll(info.reifiedTypeParametersUsages)
@@ -414,6 +416,11 @@ class MethodInliner(
             node.signature, node.exceptions?.toTypedArray()
         )
 
+        val inlineScopesGenerator = inliningContext.inlineScopesGenerator
+        if (inlineScopesGenerator != null && node.localVariables.isNotEmpty()) {
+            inlineScopesGenerator.addInlineScopesInfo(node)
+        }
+
         val transformationVisitor = object : InlineMethodInstructionAdapter(transformedNode) {
             private val GENERATE_DEBUG_INFO = GENERATE_SMAP && !isInlineOnlyMethod
 
@@ -484,12 +491,28 @@ class MethodInliner(
                 val isInlineFunctionMarker = name.startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION)
                 val newName = when {
                     inliningContext.isRoot && !isInlineFunctionMarker -> {
-                        val namePrefix = if (name == AsmUtil.THIS) AsmUtil.INLINE_DECLARATION_SITE_THIS else name
-                        namePrefix + INLINE_FUN_VAR_SUFFIX
+                        if (inliningContext.inlineScopesGenerator != null) {
+                            calculateNewNameUsingScopeNumbers(name)
+                        } else {
+                            calculateNewNameUsingTheOldScheme(name)
+                        }
                     }
                     else -> name
                 }
                 super.visitLocalVariable(newName, desc, signature, start, end, getNewIndex(index))
+            }
+
+            private fun calculateNewNameUsingScopeNumbers(name: String): String {
+                if (name.startsWith(AsmUtil.THIS)) {
+                    val scopeNumber = name.getScopeNumber() ?: return AsmUtil.INLINE_DECLARATION_SITE_THIS
+                    return "${AsmUtil.INLINE_DECLARATION_SITE_THIS}$INLINE_SCOPE_NUMBER_SEPARATOR$scopeNumber"
+                }
+                return name
+            }
+
+            private fun calculateNewNameUsingTheOldScheme(name: String): String {
+                val namePrefix = if (name == AsmUtil.THIS) AsmUtil.INLINE_DECLARATION_SITE_THIS else name
+                return namePrefix + INLINE_FUN_VAR_SUFFIX
             }
         }
 

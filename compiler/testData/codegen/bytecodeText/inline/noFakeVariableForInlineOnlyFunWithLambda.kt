@@ -6,8 +6,8 @@ fun test() = run {
 }
 
 // 2 LOCALVARIABLE
-// 1 LOCALVARIABLE tmp I
-// 1 LOCALVARIABLE \$i\$a\$-run-NoFakeVariableForInlineOnlyFunWithLambdaKt\$test\$1 I
+// 1 LOCALVARIABLE tmp\\1 I
+// 1 LOCALVARIABLE \$i\$a\$-run-NoFakeVariableForInlineOnlyFunWithLambdaKt\$test\$1\\1\\0 I
 
 // 0 LDC 0
 // 2 ICONST_0

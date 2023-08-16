@@ -98,7 +98,8 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
 
         val info = RootInliningContext(
             state, codegen.inlineNameGenerator.subGenerator(jvmSignature.asmMethod.name),
-            sourceCompiler, sourceCompiler.inlineCallSiteInfo, reifiedTypeInliner, typeParameterMappings
+            sourceCompiler, sourceCompiler.inlineCallSiteInfo, reifiedTypeInliner, typeParameterMappings,
+            codegen.inlineScopesGenerator
         )
 
         val sourceMapper = sourceCompiler.sourceMapper
