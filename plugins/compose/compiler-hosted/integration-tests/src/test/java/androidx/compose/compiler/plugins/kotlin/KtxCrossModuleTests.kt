@@ -23,6 +23,7 @@ import java.io.File
 import java.net.URLClassLoader
 import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
@@ -1103,6 +1104,63 @@ class KtxCrossModuleTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
                     """
                 )
             )
+        )
+    }
+
+    @Test
+    fun testFunctionInterfaceReturningComposable() {
+        compile(
+            mapOf(
+                "Base" to mapOf(
+                    "base/Base.kt" to """
+                    package base
+
+                    import androidx.compose.runtime.Composable
+
+                    fun interface Base {
+                        fun getContent(b: @Composable () -> Unit): @Composable () -> Unit
+                    }
+                    """
+                ),
+                "Main" to mapOf(
+                    "Main.kt" to """
+                    package main
+
+                    import base.Base
+
+                    val funInterfaceReturnComposable = Base {
+                        it
+                    }
+
+                    fun main() {
+                       funInterfaceReturnComposable.getContent {}
+                    }
+                    """
+                )
+            ),
+            validate = {
+                val indyExpr = Regex("INVOKEDYNAMIC.*?\\[([\\w\\W]*?)]").find(it)
+                val indyParams = indyExpr?.groupValues?.first()
+
+                assertTrue(
+                    "Could not find INVOKEDYNAMIC call",
+                    indyParams != null
+                )
+                assertEquals(
+                    indyParams!!.lines().joinToString("\n") { it.trimEnd() },
+                    """
+                        INVOKEDYNAMIC getContent()Lbase/Base; [
+                              // handle kind 0x6 : INVOKESTATIC
+                              java/lang/invoke/LambdaMetafactory.metafactory(Ljava/lang/invoke/MethodHandles%Lookup;Ljava/lang/String;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodType;Ljava/lang/invoke/MethodHandle;Ljava/lang/invoke/MethodType;)Ljava/lang/invoke/CallSite;
+                              // arguments:
+                              (Lkotlin/jvm/functions/Function2;)Lkotlin/jvm/functions/Function2;,
+                              // handle kind 0x6 : INVOKESTATIC
+                              main/MainKt.funInterfaceReturnComposable%lambda%0(Lkotlin/jvm/functions/Function2;)Lkotlin/jvm/functions/Function2;,
+                              (Lkotlin/jvm/functions/Function2;)Lkotlin/jvm/functions/Function2;
+                            ]
+                    """.trimIndent()
+                )
+            },
         )
     }
 

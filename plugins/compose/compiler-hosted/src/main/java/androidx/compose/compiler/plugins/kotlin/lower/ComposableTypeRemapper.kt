@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.peek
 import org.jetbrains.kotlin.backend.common.pop
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -36,6 +36,8 @@ import org.jetbrains.kotlin.ir.declarations.copyAttributes
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.expressions.IrWhen
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
@@ -46,7 +48,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeAbbreviation
 import org.jetbrains.kotlin.ir.types.IrTypeArgument
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
-import org.jetbrains.kotlin.ir.types.classifierOrNull
+import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrTypeAbbreviationImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
@@ -60,10 +62,12 @@ import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isFunction
+import org.jetbrains.kotlin.ir.util.packageFqName
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.remapTypes
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
 internal class DeepCopyIrTreeWithRemappedComposableTypes(
@@ -159,6 +163,44 @@ internal class DeepCopyIrTreeWithRemappedComposableTypes(
             }.copyAttributes(expression)
         }
         return super.visitConstructorCall(expression)
+    }
+
+    override fun visitTypeOperator(expression: IrTypeOperatorCall): IrTypeOperatorCall {
+        if (expression.operator != IrTypeOperator.SAM_CONVERSION) {
+            return super.visitTypeOperator(expression)
+        }
+
+        /*
+         * SAM_CONVERSION types from IR stubs are not remapped normally, as the fun interface is
+         * technically not a function type. This part goes over types involved in SAM_CONVERSION and
+         * ensures that parameter/return types of IR stubs are remapped correctly.
+         * Classes extending fun interfaces with composable types will be processed by visitFunction
+         * above as normal.
+         */
+        val type = expression.typeOperand
+        val clsSymbol = type.classOrNull ?: return super.visitTypeOperator(expression)
+
+        // Unbound symbols indicate they are in the current module and have not been
+        // processed by copier yet.
+        if (
+            clsSymbol.isBound &&
+                clsSymbol.owner.origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB &&
+                // Only process fun interfaces with @Composable types
+                clsSymbol.owner.isFun &&
+                clsSymbol.functions.any { it.owner.needsComposableRemapping() }
+        ) {
+            // We always assume the current subtree has not been copied yet.
+            // If the old symbol is the same as in remapper, it means we never reached it, so
+            // we have to remap it now.
+            if (clsSymbol == symbolRemapper.getReferencedClass(clsSymbol)) {
+                symbolRemapper.visitClass(clsSymbol.owner)
+                clsSymbol.owner.transform().also {
+                    it.patchDeclarationParents(clsSymbol.owner.parent)
+                }
+            }
+        }
+
+        return super.visitTypeOperator(expression)
     }
 
     private fun IrFunction.needsComposableRemapping(): Boolean {
@@ -384,13 +426,13 @@ class ComposerTypeRemapper(
         scopeStack.pop()
     }
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun IrType.isFunction(): Boolean {
-        val classifier = classifierOrNull ?: return false
-        val name = classifier.descriptor.name.asString()
+        val cls = classOrNull ?: return false
+        val name = cls.owner.name.asString()
         if (!name.startsWith("Function")) return false
-        classifier.descriptor.name
-        return true
+        val packageFqName = cls.owner.packageFqName
+        return packageFqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME ||
+            packageFqName == KotlinFunctionsBuiltInsPackageFqName
     }
 
     private fun IrType.isComposableFunction(): Boolean {
@@ -466,3 +508,7 @@ class ComposerTypeRemapper(
 
 private fun IrConstructorCall.isComposableAnnotation() =
     this.symbol.owner.parent.fqNameForIrSerialization == ComposeFqNames.Composable
+
+private val KotlinFunctionsBuiltInsPackageFqName = StandardNames.BUILT_INS_PACKAGE_FQ_NAME
+    .child(Name.identifier("jvm"))
+    .child(Name.identifier("functions"))
