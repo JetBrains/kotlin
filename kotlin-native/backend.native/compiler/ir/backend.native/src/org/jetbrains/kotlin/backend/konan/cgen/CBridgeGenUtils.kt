@@ -2,13 +2,15 @@ package org.jetbrains.kotlin.backend.konan.cgen
 
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
+import org.jetbrains.kotlin.backend.common.lower.irCatch
 import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.declarations.buildVariable
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
@@ -19,8 +21,8 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
-import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.util.irCatch
+import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.simpleFunctions
 import org.jetbrains.kotlin.konan.ForeignExceptionMode
 import org.jetbrains.kotlin.name.Name
 
@@ -225,12 +227,19 @@ internal class KotlinCallBuilder(private val irBuilder: IrBuilderWithScope, priv
                     // Note: generating try-catch as finally blocks are already lowered.
                     val result = irTemporary(IrTryImpl(startOffset, endOffset, kotlinCall.type).apply {
                         tryResult = kotlinCall
-                        catches += irCatch().apply {
-                            result = irBlock(kotlinCall) {
-                                cleanup.forEach { +it() }
-                                +irThrow(irGet(catchParameter))
-                            }
-                        }
+                        val catchParameter = buildVariable(
+                                irBuilder.parent, startOffset, endOffset,
+                                IrDeclarationOrigin.CATCH_PARAMETER,
+                                Name.identifier("e"),
+                                context.irBuiltIns.throwableType
+                        )
+                        catches += irCatch(
+                                catchParameter = catchParameter,
+                                result = irBlock(kotlinCall) {
+                                    cleanup.forEach { +it() }
+                                    +irThrow(irGet(catchParameter))
+                                }
+                        )
                     })
                     // TODO: consider handling a cleanup failure properly.
                     cleanup.forEach { +it() }
