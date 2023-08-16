@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -16,9 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
-import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -76,7 +75,7 @@ internal fun checkConstantArguments(
         }
         expression is FirStringConcatenationCall || expression is FirEqualityOperatorCall -> {
             for (exp in (expression as FirCall).arguments) {
-                if (exp is FirResolvedQualifier) {
+                if (exp is FirResolvedQualifier || expression.isForbiddenComplexConstant(session)) {
                     return ConstantArgumentKind.NOT_CONST
                 }
                 checkConstantArguments(exp, session)?.let { return it }
@@ -132,7 +131,7 @@ internal fun checkConstantArguments(
             if (calleeReference !is FirResolvedNamedReference) return ConstantArgumentKind.NOT_CONST
             val symbol = calleeReference.resolvedSymbol as? FirNamedFunctionSymbol ?: return ConstantArgumentKind.NOT_CONST
 
-            if (!symbol.canBeEvaluated() && !expression.isCompileTimeBuiltinCall()) {
+            if (!symbol.canBeEvaluated() && !expression.isCompileTimeBuiltinCall() || expression.isForbiddenComplexConstant(session)) {
                 return ConstantArgumentKind.NOT_CONST
             }
 
@@ -183,6 +182,33 @@ internal fun checkConstantArguments(
     }
     return null
 }
+
+private fun FirExpression.isForbiddenComplexConstant(session: FirSession): Boolean {
+    val forbidComplexBooleanExpressions = session.languageVersionSettings.supportsFeature(
+        LanguageFeature.ProhibitSimplificationOfNonTrivialConstBooleanExpressions
+    )
+    return isComplexBooleanConstant && forbidComplexBooleanExpressions
+}
+
+private val FirExpression.isComplexBooleanConstant
+    get(): Boolean = when {
+        !typeRef.coneType.isBoolean -> false
+        this is FirConstExpression<*> -> false
+        usesVariableAsConstant -> false
+        else -> true
+    }
+
+/**
+ * See: org.jetbranis.kotlin.resolve.constants.CompileTimeConstant.Parameters.usesVariableAsConstant
+ */
+@Suppress("RecursivePropertyAccessor")
+private val FirExpression.usesVariableAsConstant
+    get(): Boolean {
+        val isConst = this is FirQualifiedAccessExpression && toResolvedCallableSymbol()?.isConst == true
+        val hasSimpleReceiver = this is FirQualifiedAccessExpression && explicitReceiver?.usesVariableAsConstant != false
+        val hasSimpleValueParameter = this is FirCall && this.arguments.any { it.usesVariableAsConstant }
+        return isConst || hasSimpleReceiver || hasSimpleValueParameter
+    }
 
 private val compileTimeFunctions = setOf(
     *OperatorNameConventions.BINARY_OPERATION_NAMES.toTypedArray(), *OperatorNameConventions.UNARY_OPERATION_NAMES.toTypedArray(),
