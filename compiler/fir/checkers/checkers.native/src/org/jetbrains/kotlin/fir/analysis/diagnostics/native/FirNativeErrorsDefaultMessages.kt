@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.NON_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.SUBTYPE_OF_HIDDEN_FROM_OBJC
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.THROWS_LIST_EMPTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.UNCHECKED_CAST_TO_FORWARD_DECLARATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.CONFLICTING_OBJC_OVERLOADS
 
 object FirNativeErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
     override val MAP = KtDiagnosticFactoryToRendererMap("FIR").also { map ->
@@ -107,6 +108,11 @@ object FirNativeErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             FORWARD_DECLARATION_AS_CLASS_LITERAL,
             "Can't refer to forward declaration ''{0}'' from class literal",
             FirDiagnosticRenderers.RENDER_TYPE
+        )
+        map.put(
+            CONFLICTING_OBJC_OVERLOADS,
+            "Conflicting overloads: {0}. Add @ExperimentalObjCSignature to allow collision for functions inherited from objective-C.",
+            SYMBOLS
         )
     }
 }

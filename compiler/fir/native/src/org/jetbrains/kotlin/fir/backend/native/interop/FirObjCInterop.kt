@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.name.Name
@@ -32,22 +33,21 @@ import org.jetbrains.kotlin.native.interop.ObjCMethodInfo
 import org.jetbrains.kotlin.utils.DFS
 
 
-@OptIn(SymbolInternals::class)
-internal fun FirFunction.getObjCMethodInfoFromOverriddenFunctions(session: FirSession, scopeSession: ScopeSession): ObjCMethodInfo? {
+fun FirFunctionSymbol<*>.getObjCMethodInfoFromOverriddenFunctions(session: FirSession, scopeSession: ScopeSession): ObjCMethodInfo? {
     decodeObjCMethodAnnotation(session)?.let {
         return it
     }
     // recursively find ObjCMethod annotation in getDirectOverriddenFunctions() (same as `overriddenDescriptors` in K1)
-    return when (val symbol = this.symbol) {
+    return when (this) {
         is FirNamedFunctionSymbol -> {
             val firClassSymbol = containingClassLookupTag()?.toSymbol(session) as FirClassSymbol<*>?
             firClassSymbol?.let {
                 val unsubstitutedScope = it.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false, memberRequiredPhase = null)
                 // call of `processFunctionsByName()` is needed only for necessary side-effect before `getDirectOverriddenFunctions` call
-                unsubstitutedScope.processFunctionsByName(symbol.name) {}
-                unsubstitutedScope.getDirectOverriddenFunctions(symbol).firstNotNullOfOrNull {
-                    assert(it.fir != this) { "Function ${symbol.name}() is wrongly contained in its own getDirectOverriddenFunctions" }
-                    it.fir.getObjCMethodInfoFromOverriddenFunctions(session, scopeSession)
+                unsubstitutedScope.processFunctionsByName(name) {}
+                unsubstitutedScope.getDirectOverriddenFunctions(this).firstNotNullOfOrNull {
+                    assert(it != this) { "Function ${name}() is wrongly contained in its own getDirectOverriddenFunctions" }
+                    it.getObjCMethodInfoFromOverriddenFunctions(session, scopeSession)
                 }
             }
         }
@@ -78,7 +78,7 @@ private fun FirConstructor.getObjCInitMethod(session: FirSession, scopeSession: 
 /**
  * mimics FunctionDescriptor.decodeObjCMethodAnnotation()
  */
-internal fun FirFunction.decodeObjCMethodAnnotation(session: FirSession): ObjCMethodInfo? =
+internal fun FirFunctionSymbol<*>.decodeObjCMethodAnnotation(session: FirSession): ObjCMethodInfo? =
         annotations.getAnnotationByClassId(NativeStandardInteropNames.objCMethodClassId, session)?.let {
             ObjCMethodInfo(
                     selector = it.constStringArgument("selector"),
@@ -87,6 +87,9 @@ internal fun FirFunction.decodeObjCMethodAnnotation(session: FirSession): ObjCMe
                     directSymbol = annotations.getAnnotationByClassId(NativeStandardInteropNames.objCDirectClassId, session)?.constStringArgument("symbol"),
             )
         }
+internal fun FirFunction.decodeObjCMethodAnnotation(session: FirSession): ObjCMethodInfo? =
+        symbol.decodeObjCMethodAnnotation(session)
+
 
 
 private fun FirAnnotation.constStringArgument(argumentName: String): String =

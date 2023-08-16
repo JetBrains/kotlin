@@ -79,5 +79,8 @@ object NATIVE_DIAGNOSTICS_LIST : DiagnosticList("FirNativeErrors") {
         val FORWARD_DECLARATION_AS_CLASS_LITERAL by error<KtElement> {
             parameter<ConeKotlinType>("type")
         }
+        val CONFLICTING_OBJC_OVERLOADS by error<PsiElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
+            parameter<Collection<Symbol>>("conflictingOverloads")
+        }
     }
 }

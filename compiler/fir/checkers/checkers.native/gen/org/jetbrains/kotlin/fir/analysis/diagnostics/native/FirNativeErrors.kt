@@ -52,6 +52,7 @@ object FirNativeErrors {
     val UNCHECKED_CAST_TO_FORWARD_DECLARATION by warning2<KtElement, ConeKotlinType, ConeKotlinType>()
     val FORWARD_DECLARATION_AS_REIFIED_TYPE_ARGUMENT by error1<KtElement, ConeKotlinType>()
     val FORWARD_DECLARATION_AS_CLASS_LITERAL by error1<KtElement, ConeKotlinType>()
+    val CONFLICTING_OBJC_OVERLOADS by error1<PsiElement, Collection<FirBasedSymbol<*>>>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
 
     init {
         RootDiagnosticRendererFactory.registerFactory(FirNativeErrorsDefaultMessages)

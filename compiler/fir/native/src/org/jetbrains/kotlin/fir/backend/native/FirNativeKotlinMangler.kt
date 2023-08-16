@@ -83,6 +83,7 @@ class FirNativeKotlinMangleComputer(
         val session = moduleData.session
         val scopeSession = ScopeSession()
         getInitMethodIfObjCConstructor(session, scopeSession)
+                ?.symbol
                 ?.getObjCMethodInfoFromOverriddenFunctions(session, scopeSession)
                 ?.let {
                     return buildString {

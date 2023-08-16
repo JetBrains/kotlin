@@ -63,3 +63,8 @@ public annotation class BetaInteropApi
 @Retention(AnnotationRetention.BINARY)
 @RequiresOptIn(level = RequiresOptIn.Level.ERROR)
 public annotation class ExperimentalForeignApi
+
+
+@Target(AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.BINARY)
+public annotation class ExperimentalObjCSignature
