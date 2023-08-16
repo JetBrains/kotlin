@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.isEmpty
 import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.backend.*
+import org.jetbrains.kotlin.fir.backend.native.FirNativeKotlinMangler
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.pipeline.convertToIrAndActualize
 import org.jetbrains.kotlin.fir.signaturer.Ir2FirManglerAdapter

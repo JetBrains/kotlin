@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.backend.konan
+package org.jetbrains.kotlin.fir.backend.native
 
 import org.jetbrains.kotlin.backend.common.serialization.mangle.KotlinExportChecker
 import org.jetbrains.kotlin.backend.common.serialization.mangle.KotlinMangleComputer
@@ -13,16 +13,18 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.FirMangler
 import org.jetbrains.kotlin.fir.backend.FirExportCheckerVisitor
 import org.jetbrains.kotlin.fir.backend.FirMangleComputer
+import org.jetbrains.kotlin.fir.backend.native.interop.*
+import org.jetbrains.kotlin.fir.backend.native.interop.hasObjCFactoryAnnotation
+import org.jetbrains.kotlin.fir.backend.native.interop.hasObjCMethodAnnotation
+import org.jetbrains.kotlin.fir.backend.native.interop.isObjCClassMethod
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.toSymbol
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.NativeRuntimeNames
 
 class FirNativeKotlinMangler : FirMangler() {
     override fun getMangleComputer(mode: MangleMode, compatibleMode: Boolean): KotlinMangleComputer<FirDeclaration> {
@@ -40,28 +42,26 @@ class FirNativeExportCheckerVisitor : FirExportCheckerVisitor() {
      * mimics AbstractKonanDescriptorMangler::DeclarationDescriptor.isPlatformSpecificExport()
      */
     override fun FirDeclaration.isPlatformSpecificExported(): Boolean {
-        fun List<FirAnnotation>.hasAnnotation(fqName: FqName) = hasAnnotation(ClassId.topLevel(fqName), moduleData.session)
-
         if (this is FirCallableDeclaration && isSubstitutionOrIntersectionOverride)
             return false
 
-        if (annotations.hasAnnotation(RuntimeNames.symbolNameAnnotation)) {
+        if (annotations.hasAnnotation(NativeRuntimeNames.Annotations.symbolNameClassId, moduleData.session)) {
             // Treat any `@SymbolName` declaration as exported.
             return true
         }
-        if (annotations.hasAnnotation(KonanFqNames.gcUnsafeCall)) {
+        if (annotations.hasAnnotation(NativeRuntimeNames.Annotations.gcUnsafeCallClassId, moduleData.session)) {
             // Treat any `@GCUnsafeCall` declaration as exported.
             return true
         }
-        if (annotations.hasAnnotation(RuntimeNames.exportForCppRuntime)) {
+        if (annotations.hasAnnotation(NativeRuntimeNames.Annotations.exportForCppRuntimeClassId, moduleData.session)) {
             // Treat any `@ExportForCppRuntime` declaration as exported.
             return true
         }
-        if (annotations.hasAnnotation(RuntimeNames.cnameAnnotation)) {
+        if (annotations.hasAnnotation(NativeRuntimeNames.Annotations.cNameClassId, moduleData.session)) {
             // Treat `@CName` declaration as exported.
             return true
         }
-        if (annotations.hasAnnotation(RuntimeNames.exportForCompilerAnnotation)) {
+        if (annotations.hasAnnotation(NativeRuntimeNames.Annotations.exportForCompilerClassId, moduleData.session)) {
             return true
         }
 

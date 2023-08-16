@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.backend.native.FirNativeOverrideChecker
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.FirResult
 import org.jetbrains.kotlin.fir.pipeline.ModuleCompilerAnalyzedOutput
