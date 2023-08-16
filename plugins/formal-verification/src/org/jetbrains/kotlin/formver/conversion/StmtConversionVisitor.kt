@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.formver.conversion
 
+import org.jetbrains.kotlin.contracts.description.LogicOperationKind
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.expressions.*
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.fir.types.isNullable
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.formver.domains.NullableDomain
 import org.jetbrains.kotlin.formver.domains.UnitDomain
+import org.jetbrains.kotlin.formver.embeddings.BooleanTypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.VariableEmbedding
 import org.jetbrains.kotlin.formver.embeddings.embedName
 import org.jetbrains.kotlin.formver.scala.silicon.ast.Exp
@@ -210,5 +212,33 @@ class StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
             return NullableDomain.valOfApp(exp, data.embedType(newType).type)
         }
         TODO("Handle other kinds of smart casts.")
+    }
+
+    override fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression, data: StmtConversionContext): Exp {
+        val returnVar = data.newAnonVar(BooleanTypeEmbedding)
+        data.addDeclaration(returnVar.toLocalVarDecl())
+        val left = binaryLogicExpression.leftOperand.accept(this, data)
+        val rightSubStmt = StmtConverter(data)
+        val right = binaryLogicExpression.rightOperand.accept(this, rightSubStmt)
+        rightSubStmt.addStatement(Stmt.LocalVarAssign(returnVar.toLocalVar(), right))
+        when (binaryLogicExpression.kind) {
+            LogicOperationKind.AND ->
+                data.addStatement(
+                    Stmt.If(
+                        left,
+                        rightSubStmt.block,
+                        Stmt.Seqn(listOf(Stmt.LocalVarAssign(returnVar.toLocalVar(), Exp.BoolLit(false))), listOf())
+                    )
+                )
+            LogicOperationKind.OR ->
+                data.addStatement(
+                    Stmt.If(
+                        left,
+                        Stmt.Seqn(listOf(Stmt.LocalVarAssign(returnVar.toLocalVar(), Exp.BoolLit(true))), listOf()),
+                        rightSubStmt.block
+                    )
+                )
+        }
+        return returnVar.toLocalVar()
     }
 }

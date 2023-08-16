@@ -1,4 +1,13 @@
 FILE: boolean_logic.kt
-    public final fun negation(x: R|kotlin/Boolean|): R|kotlin/Unit| {
-        lval y: R|kotlin/Boolean| = R|<local>/x|.R|kotlin/Boolean.not|()
+    public final fun negation(x: R|kotlin/Boolean|): R|kotlin/Boolean| {
+        ^negation R|<local>/x|.R|kotlin/Boolean.not|()
+    }
+    public final fun conjunction(x: R|kotlin/Boolean|, y: R|kotlin/Boolean|): R|kotlin/Boolean| {
+        ^conjunction R|<local>/x| && R|<local>/y|
+    }
+    public final fun conjunction_side_effects(x: R|kotlin/Boolean|, y: R|kotlin/Boolean|): R|kotlin/Boolean| {
+        ^conjunction_side_effects R|/negation|(R|<local>/x|) && R|/negation|(R|<local>/y|)
+    }
+    public final fun disjunction(x: R|kotlin/Boolean|, y: R|kotlin/Boolean|): R|kotlin/Boolean| {
+        ^disjunction R|<local>/x| || R|<local>/y|
     }
