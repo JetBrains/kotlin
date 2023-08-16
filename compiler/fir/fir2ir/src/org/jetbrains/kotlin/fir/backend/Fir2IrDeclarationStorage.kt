@@ -47,7 +47,6 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.GeneratedByPlugi
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.IrSyntheticBodyKind
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.symbols.*
@@ -161,6 +160,7 @@ class Fir2IrDeclarationStorage(
 
     private val localStorage: Fir2IrLocalCallableStorage by threadLocal { Fir2IrLocalCallableStorage() }
 
+    @OptIn(IrSymbolInternals::class)
     private fun areCompatible(firFunction: FirFunction, irFunction: IrFunction): Boolean {
         if (firFunction is FirSimpleFunction && irFunction is IrSimpleFunction) {
             if (irFunction.name != firFunction.name) return false
@@ -578,6 +578,7 @@ class Fir2IrDeclarationStorage(
         return getCachedIrFunction(function, fakeOverrideOwnerLookupTag = null) { signatureComposer.composeSignature(function) }
     }
 
+    @OptIn(IrSymbolInternals::class)
     fun getCachedIrFunction(
         function: FirSimpleFunction,
         fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag?,
@@ -753,6 +754,7 @@ class Fir2IrDeclarationStorage(
         }
     }
 
+    @OptIn(IrSymbolInternals::class)
     fun getCachedIrConstructor(
         constructor: FirConstructor,
         signatureCalculator: () -> IdSignature? = { null }
@@ -1161,6 +1163,7 @@ class Fir2IrDeclarationStorage(
         }
     }
 
+    @OptIn(IrSymbolInternals::class)
     fun getCachedIrProperty(
         property: FirProperty,
         fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag?,
@@ -1564,6 +1567,7 @@ class Fir2IrDeclarationStorage(
         ) as IrConstructorSymbol
     }
 
+    @OptIn(IrSymbolInternals::class)
     fun getIrFunctionSymbol(
         firFunctionSymbol: FirFunctionSymbol<*>,
         fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag? = null,
@@ -1634,6 +1638,7 @@ class Fir2IrDeclarationStorage(
         return irFunction
     }
 
+    @OptIn(IrSymbolInternals::class)
     fun getIrPropertySymbol(
         firPropertySymbol: FirPropertySymbol,
         fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag? = null,
@@ -1686,6 +1691,7 @@ class Fir2IrDeclarationStorage(
         }
     }
 
+    @OptIn(IrSymbolInternals::class)
     private fun createIrLazyProperty(
         fir: FirProperty,
         signature: IdSignature,
@@ -1725,6 +1731,7 @@ class Fir2IrDeclarationStorage(
         return irProperty
     }
 
+    @OptIn(IrSymbolInternals::class)
     private inline fun <reified S : IrSymbol, reified D : IrOverridableDeclaration<S>> ConeClassLookupTagWithFixedSymbol.findIrFakeOverride(
         name: Name, originalDeclaration: IrOverridableDeclaration<S>
     ): IrSymbol? {
@@ -1735,6 +1742,7 @@ class Fir2IrDeclarationStorage(
         }?.symbol
     }
 
+    @OptIn(IrSymbolInternals::class)
     private fun generateLazyFakeOverrides(name: Name, fakeOverrideOwnerLookupTag: ConeClassLikeLookupTag?) {
         val firClassSymbol = fakeOverrideOwnerLookupTag?.toSymbol(session) as? FirClassSymbol
         if (firClassSymbol != null) {

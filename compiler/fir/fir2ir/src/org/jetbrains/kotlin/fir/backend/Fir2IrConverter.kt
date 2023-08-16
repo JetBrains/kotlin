@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterEnvironment
 import org.jetbrains.kotlin.ir.interpreter.checker.EvaluationMode
 import org.jetbrains.kotlin.ir.interpreter.transformer.transformConst
+import org.jetbrains.kotlin.ir.symbols.IrSymbolInternals
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
 import org.jetbrains.kotlin.ir.util.defaultType
@@ -239,6 +240,7 @@ class Fir2IrConverter(
         return irClass
     }
 
+    @OptIn(IrSymbolInternals::class)
     private fun processCodeFragmentMembers(
         codeFragment: FirCodeFragment,
         irClass: IrClass = classifierStorage.getCachedIrCodeFragment(codeFragment)!!

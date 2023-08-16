@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbolInternals
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.getSimpleFunction
 
@@ -235,6 +236,7 @@ internal class OperatorExpressionGenerator(
     private fun IrExpression.negate(origin: IrStatementOrigin) =
         primitiveOp1(startOffset, endOffset, irBuiltIns.booleanNotSymbol, irBuiltIns.booleanType, origin, this)
 
+    @OptIn(IrSymbolInternals::class)
     private fun FirExpression.convertToIrExpression(
         comparisonInfo: PrimitiveConeNumericComparisonInfo?,
         isLeftType: Boolean

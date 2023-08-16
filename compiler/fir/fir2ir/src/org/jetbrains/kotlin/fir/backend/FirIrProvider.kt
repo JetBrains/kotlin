@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.ir.declarations.*
@@ -24,7 +23,6 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-@OptIn(SymbolInternals::class)
 class FirIrProvider(val fir2IrComponents: Fir2IrComponents) : IrProvider {
     private val symbolProvider = fir2IrComponents.session.symbolProvider
     private val declarationStorage = fir2IrComponents.declarationStorage
@@ -64,6 +62,7 @@ class FirIrProvider(val fir2IrComponents: Fir2IrComponents) : IrProvider {
         return getDeclarationForSignature(signature.nearestPublicSig(), kind)
     }
 
+    @OptIn(IrSymbolInternals::class)
     private fun getDeclarationForCommonSignature(signature: IdSignature.CommonSignature, kind: SymbolKind): IrDeclaration? {
         val packageFqName = FqName(signature.packageFqName)
         val nameSegments = signature.nameSegments

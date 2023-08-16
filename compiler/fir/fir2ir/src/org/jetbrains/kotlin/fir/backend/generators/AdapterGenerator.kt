@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbolInternals
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
@@ -134,6 +135,7 @@ internal class AdapterGenerator(
         }
     }
 
+    @OptIn(IrSymbolInternals::class)
     internal fun generateAdaptedCallableReference(
         callableReferenceAccess: FirCallableReferenceAccess,
         explicitReceiverExpression: IrExpression?,
@@ -283,6 +285,7 @@ internal class AdapterGenerator(
     private fun IrValueDeclaration.toIrGetValue(startOffset: Int, endOffset: Int): IrGetValue =
         IrGetValueImpl(startOffset, endOffset, this.type, this.symbol)
 
+    @OptIn(IrSymbolInternals::class)
     private fun createAdapteeCallForCallableReference(
         callableReferenceAccess: FirCallableReferenceAccess,
         firAdaptee: FirFunction,

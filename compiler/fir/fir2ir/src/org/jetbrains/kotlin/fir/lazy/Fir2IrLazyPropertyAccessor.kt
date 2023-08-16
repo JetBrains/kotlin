@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbolInternals
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.isFacadeClass
 import org.jetbrains.kotlin.name.Name
@@ -112,6 +113,7 @@ class Fir2IrLazyPropertyAccessor(
         firParentProperty.generateOverriddenAccessorSymbols(firParentClass, !isSetter)
     }
 
+    @OptIn(IrSymbolInternals::class)
     override val initialSignatureFunction: IrFunction? by lazy {
         (fir as? FirSyntheticPropertyAccessor)?.delegate?.let { declarationStorage.getIrFunctionSymbol(it.symbol).owner }
     }

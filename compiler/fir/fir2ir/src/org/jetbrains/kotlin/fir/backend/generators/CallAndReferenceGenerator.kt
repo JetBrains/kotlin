@@ -67,6 +67,7 @@ class CallAndReferenceGenerator(
     private fun ConeKotlinType.toIrType(): IrType =
         with(typeConverter) { toIrType(conversionScope.defaultConversionTypeOrigin()) }
 
+    @OptIn(IrSymbolInternals::class)
     fun convertToIrCallableReference(
         callableReferenceAccess: FirCallableReferenceAccess,
         explicitReceiverExpression: IrExpression?,
@@ -364,6 +365,7 @@ class CallAndReferenceGenerator(
         return IrGetValueImpl(startOffset, endOffset, type, injectedValue.irParameterSymbol, origin)
     }
 
+    @OptIn(IrSymbolInternals::class)
     fun convertToIrCall(
         qualifiedAccess: FirQualifiedAccessExpression,
         typeRef: FirTypeRef,
@@ -575,6 +577,7 @@ class CallAndReferenceGenerator(
 
     internal fun findInjectedValue(calleeReference: FirReference) = extensions.findInjectedValue(calleeReference, conversionScope)
 
+    @OptIn(IrSymbolInternals::class)
     fun convertToIrSetCall(variableAssignment: FirVariableAssignment, explicitReceiverExpression: IrExpression?): IrExpression {
         try {
             val type = irBuiltIns.unitType
@@ -692,6 +695,7 @@ class CallAndReferenceGenerator(
         }
     }
 
+    @OptIn(IrSymbolInternals::class)
     private fun IrProperty.overriddenBackingFieldOrNull(): IrField? {
         return overriddenSymbols.firstNotNullOfOrNull {
             val owner = it.owner
@@ -699,6 +703,7 @@ class CallAndReferenceGenerator(
         }
     }
 
+    @OptIn(IrSymbolInternals::class)
     fun convertToIrConstructorCall(annotation: FirAnnotation): IrExpression {
         val coneType = annotation.annotationTypeRef.coneTypeSafe<ConeLookupTagBasedType>()
             ?.fullyExpandedType(session) as? ConeLookupTagBasedType
@@ -834,6 +839,7 @@ class CallAndReferenceGenerator(
         return Triple(valueParameters, argumentMapping, substitutor)
     }
 
+    @OptIn(IrSymbolInternals::class)
     internal fun IrExpression.applyCallArguments(
         statement: FirStatement?,
     ): IrExpression {
@@ -1045,6 +1051,7 @@ class CallAndReferenceGenerator(
         return this
     }
 
+    @OptIn(IrSymbolInternals::class)
     private fun IrExpression.applyImplicitIntegerCoercionIfNeeded(
         argument: FirExpression,
         parameter: FirValueParameter?
@@ -1154,6 +1161,7 @@ class CallAndReferenceGenerator(
             }
     }
 
+    @OptIn(IrSymbolInternals::class)
     private fun IrExpression.applyTypeArguments(
         typeArguments: List<FirTypeProjection>?,
         typeParameters: List<FirTypeParameter>?,
@@ -1207,6 +1215,7 @@ class CallAndReferenceGenerator(
             ?: explicitReceiverExpression
     }
 
+    @OptIn(IrSymbolInternals::class)
     private fun IrExpression.applyReceivers(
         qualifiedAccess: FirQualifiedAccessExpression,
         explicitReceiverExpression: IrExpression?,

@@ -180,6 +180,7 @@ private fun FirBasedSymbol<*>.toSymbolForCall(
 }
 
 context(Fir2IrComponents)
+@OptIn(IrSymbolInternals::class)
 fun FirReference.toSymbolForCall(
     dispatchReceiver: FirExpression,
     conversionScope: Fir2IrConversionScope,
@@ -464,6 +465,7 @@ fun FirTypeScope.processOverriddenPropertiesFromSuperClasses(
     }
 
 context(Fir2IrComponents)
+@OptIn(IrSymbolInternals::class)
 private fun FirClass.getSuperTypesAsIrClasses(): Set<IrClass>? {
     val irClass =
         declarationStorage.classifierStorage.getIrClassSymbol(symbol).owner as? IrClass ?: return null
@@ -510,6 +512,7 @@ internal fun FirProperty.generateOverriddenPropertySymbols(containingClass: FirC
 }
 
 context(Fir2IrComponents)
+@OptIn(IrSymbolInternals::class)
 internal fun FirProperty.generateOverriddenAccessorSymbols(containingClass: FirClass, isGetter: Boolean): List<IrSimpleFunctionSymbol> {
     val scope = containingClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true, memberRequiredPhase = null)
     scope.processPropertiesByName(name) {}
@@ -620,6 +623,7 @@ fun FirClass.irOrigin(firProvider: FirProvider): IrDeclarationOrigin = when {
     }
 }
 
+@OptIn(IrSymbolInternals::class)
 val IrType.isSamType: Boolean
     get() {
         val irClass = classOrNull ?: return false

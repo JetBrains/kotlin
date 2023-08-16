@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbolInternals
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrErrorClassImpl
@@ -656,6 +657,7 @@ class Fir2IrVisitor(
                 !((scopeOwner is IrFunction || scopeOwner is IrProperty || scopeOwner is IrField) && (scopeOwner as IrDeclaration).parent == irClass) // Members of object
     }
 
+    @OptIn(IrSymbolInternals::class)
     override fun visitThisReceiverExpression(
         thisReceiverExpression: FirThisReceiverExpression,
         data: Any?

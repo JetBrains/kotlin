@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbolInternals
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.parentAsClass
@@ -427,6 +428,7 @@ class FakeOverrideGenerator(
         ) { declarationStorage.getIrPropertySymbol(it) as IrPropertySymbol }
     }
 
+    @OptIn(IrSymbolInternals::class)
     private fun <I : IrDeclaration, S : IrSymbol, F : FirCallableSymbol<*>> getOverriddenSymbolsInSupertypes(
         declaration: I,
         baseSymbols: List<F>,
@@ -440,6 +442,7 @@ class FakeOverrideGenerator(
         }.distinct()
     }
 
+    @OptIn(IrSymbolInternals::class)
     private fun <F : FirCallableSymbol<*>, S : IrSymbol> getOverriddenSymbolsInSupertypes(
         overridden: F,
         superClasses: Set<IrClass>,
@@ -505,6 +508,7 @@ class FakeOverrideGenerator(
         }
     }
 
+    @OptIn(IrSymbolInternals::class)
     private fun IrProperty.setOverriddenSymbolsForProperty(
         declarationStorage: Fir2IrDeclarationStorage,
         isVar: Boolean,

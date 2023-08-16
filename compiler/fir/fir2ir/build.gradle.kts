@@ -48,7 +48,6 @@ dependencies {
     testRuntimeOnly(jpsModelImpl())
 }
 
-optInToIrSymbolInternals()
 optInToObsoleteDescriptorBasedAPI()
 
 val generationRoot = projectDir.resolve("tests-gen")

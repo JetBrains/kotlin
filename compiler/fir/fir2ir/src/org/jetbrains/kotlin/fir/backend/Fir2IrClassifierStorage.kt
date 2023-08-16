@@ -71,6 +71,7 @@ class Fir2IrClassifierStorage(
     private fun FirTypeRef.toIrType(typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT): IrType =
         with(typeConverter) { toIrType(typeOrigin) }
 
+    @OptIn(IrSymbolInternals::class)
     fun preCacheBuiltinClasses() {
         for ((classId, irBuiltinSymbol) in typeConverter.classIdToSymbolMap) {
             // toSymbol() can return null when using an old stdlib that's missing some types
@@ -582,6 +583,7 @@ class Fir2IrClassifierStorage(
         )
     }
 
+    @OptIn(IrSymbolInternals::class)
     fun findIrClass(lookupTag: ConeClassLikeLookupTag): IrClass? {
         return if (lookupTag.classId.isLocal) {
             getCachedLocalClass(lookupTag)
@@ -670,6 +672,7 @@ class Fir2IrClassifierStorage(
         return irClass.symbol
     }
 
+    @OptIn(IrSymbolInternals::class)
     fun getIrClassSymbolForNotFoundClass(classLikeLookupTag: ConeClassLikeLookupTag): IrClassSymbol {
         val classId = classLikeLookupTag.classId
         val signature = IdSignature.CommonSignature(

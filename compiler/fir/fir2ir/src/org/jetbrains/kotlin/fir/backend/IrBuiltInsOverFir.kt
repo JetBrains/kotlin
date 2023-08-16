@@ -61,6 +61,7 @@ class IrBuiltInsOverFir(
 
     private val irSignatureBuilder = PublicIdSignatureComputer(irMangler)
 
+    @OptIn(IrSymbolInternals::class)
     override val booleanNotSymbol: IrSimpleFunctionSymbol by lazy {
         boolean.ensureLazyContentsCreated()
         booleanClass.owner.functions.first { it.name == OperatorNameConventions.NOT && it.returnType == booleanType }.symbol
@@ -122,6 +123,7 @@ class IrBuiltInsOverFir(
     override val booleanType: IrType get() = boolean.type
     override val booleanClass: IrClassSymbol get() = boolean.klass
 
+    @OptIn(IrSymbolInternals::class)
     private val char by createClass(kotlinIrPackage, IdSignatureValues._char) {
         configureSuperTypes(number)
         createStandardNumericAndCharMembers(charType)
@@ -201,6 +203,7 @@ class IrBuiltInsOverFir(
     override val stringType: IrType get() = string.type
 
     private val intrinsicConstAnnotationFqName = kotlinInternalPackage.child(Name.identifier("IntrinsicConstEvaluation"))
+    @OptIn(IrSymbolInternals::class)
     internal val intrinsicConst = kotlinInternalIrPackage.createClass(intrinsicConstAnnotationFqName).apply {
         owner.createConstructor()
         owner.finalizeClassDefinition()
@@ -222,7 +225,9 @@ class IrBuiltInsOverFir(
     }
     override val arrayClass: IrClassSymbol get() = array.klass
 
+    @OptIn(IrSymbolInternals::class)
     private val intRangeType by lazy { referenceClassByClassId(StandardClassIds.IntRange)!!.owner.defaultType }
+    @OptIn(IrSymbolInternals::class)
     private val longRangeType by lazy { referenceClassByClassId(StandardClassIds.LongRange)!!.owner.defaultType }
 
     private val annotation by loadClass(StandardClassIds.Annotation)
@@ -403,6 +408,7 @@ class IrBuiltInsOverFir(
     override var dataClassArrayMemberToStringSymbol: IrSimpleFunctionSymbol private set
 
     override var checkNotNullSymbol: IrSimpleFunctionSymbol private set
+    @OptIn(IrSymbolInternals::class)
     override val arrayOfNulls: IrSimpleFunctionSymbol by lazy {
         findFunctions(kotlinPackage, Name.identifier("arrayOfNulls")).first {
             it.owner.dispatchReceiverParameter == null && it.owner.valueParameters.size == 1 &&
@@ -502,6 +508,7 @@ class IrBuiltInsOverFir(
         }.toMap()
     }
 
+    @OptIn(IrSymbolInternals::class)
     override val unsignedArraysElementTypes: Map<IrClassSymbol, IrType?> by lazy {
         unsignedTypesToUnsignedArrays.map { (k,v) -> v to referenceClassByClassId(k.classId)?.owner?.defaultType }.toMap()
     }
@@ -516,33 +523,39 @@ class IrBuiltInsOverFir(
     private val enum by loadClass(StandardClassIds.Enum)
     override val enumClass: IrClassSymbol get() = enum.klass
 
+    @OptIn(IrSymbolInternals::class)
     override val intPlusSymbol: IrSimpleFunctionSymbol
         get() = intClass.functions.single {
             it.owner.name == OperatorNameConventions.PLUS && it.owner.valueParameters[0].type == intType
         }
 
+    @OptIn(IrSymbolInternals::class)
     override val intTimesSymbol: IrSimpleFunctionSymbol
         get() = intClass.functions.single {
             it.owner.name == OperatorNameConventions.TIMES && it.owner.valueParameters[0].type == intType
         }
 
+    @OptIn(IrSymbolInternals::class)
     override val intXorSymbol: IrSimpleFunctionSymbol
         get() = intClass.functions.single {
             it.owner.name == OperatorNameConventions.XOR && it.owner.valueParameters[0].type == intType
         }
 
+    @OptIn(IrSymbolInternals::class)
     override val extensionToString: IrSimpleFunctionSymbol by lazy {
         findFunctions(kotlinPackage, OperatorNameConventions.TO_STRING).single { function ->
             function.owner.extensionReceiverParameter?.let { receiver -> receiver.type == anyNType } ?: false
         }
     }
 
+    @OptIn(IrSymbolInternals::class)
     override val memberToString: IrSimpleFunctionSymbol by lazy {
         findBuiltInClassMemberFunctions(anyClass, OperatorNameConventions.TO_STRING).single { function ->
             function.owner.valueParameters.isEmpty()
         }
     }
 
+    @OptIn(IrSymbolInternals::class)
     override val extensionStringPlus: IrSimpleFunctionSymbol by lazy {
         findFunctions(kotlinPackage, OperatorNameConventions.PLUS).single { function ->
             val isStringExtension =
@@ -552,6 +565,7 @@ class IrBuiltInsOverFir(
         }
     }
 
+    @OptIn(IrSymbolInternals::class)
     override val memberStringPlus: IrSimpleFunctionSymbol by lazy {
         findBuiltInClassMemberFunctions(stringClass, OperatorNameConventions.PLUS).single { function ->
             function.owner.valueParameters.size == 1 && function.owner.valueParameters[0].type == anyNType
@@ -578,6 +592,7 @@ class IrBuiltInsOverFir(
         return result
     }
 
+    @OptIn(IrSymbolInternals::class)
     override fun getNonBuiltInFunctionsByExtensionReceiver(
         name: Name, vararg packageNameSegments: String
     ): Map<IrClassifierSymbol, IrSimpleFunctionSymbol> =
@@ -585,6 +600,7 @@ class IrBuiltInsOverFir(
             fn.owner.extensionReceiverParameter?.type?.classifierOrNull
         }
 
+    @OptIn(IrSymbolInternals::class)
     override fun getNonBuiltinFunctionsByReturnType(
         name: Name, vararg packageNameSegments: String
     ): Map<IrClassifierSymbol, IrSimpleFunctionSymbol> =
@@ -597,18 +613,22 @@ class IrBuiltInsOverFir(
     private val suspendFunctionNMap = mutableMapOf<Int, IrClass>()
     private val kSuspendFunctionNMap = mutableMapOf<Int, IrClass>()
 
+    @OptIn(IrSymbolInternals::class)
     override fun functionN(arity: Int): IrClass = functionNMap.getOrPut(arity) {
         referenceClassByClassId(StandardClassIds.FunctionN(arity))!!.owner
     }
 
+    @OptIn(IrSymbolInternals::class)
     override fun kFunctionN(arity: Int): IrClass = kFunctionNMap.getOrPut(arity) {
         referenceClassByClassId(StandardClassIds.KFunctionN(arity))!!.owner
     }
 
+    @OptIn(IrSymbolInternals::class)
     override fun suspendFunctionN(arity: Int): IrClass = suspendFunctionNMap.getOrPut(arity) {
         referenceClassByClassId(StandardClassIds.SuspendFunctionN(arity))!!.owner
     }
 
+    @OptIn(IrSymbolInternals::class)
     override fun kSuspendFunctionN(arity: Int): IrClass = kSuspendFunctionNMap.getOrPut(arity) {
         referenceClassByClassId(StandardClassIds.KSuspendFunctionN(arity))!!.owner
     }
@@ -635,6 +655,7 @@ class IrBuiltInsOverFir(
         setOf(anyClass)
     }
 
+    @OptIn(IrSymbolInternals::class)
     override fun findBuiltInClassMemberFunctions(builtInClass: IrClassSymbol, name: Name): Iterable<IrSimpleFunctionSymbol> {
         require(builtInClass in builtInClasses)
         return builtInClass.functions.filter { it.owner.name == name }.asIterable()
@@ -660,6 +681,7 @@ class IrBuiltInsOverFir(
         private val generatedClass: IrClassSymbol,
         private var lazyContents: (IrClass.() -> Unit)?
     ) {
+        @OptIn(IrSymbolInternals::class)
         fun ensureLazyContentsCreated() {
             if (lazyContents != null) synchronized(this) {
                 lazyContents?.invoke(generatedClass.owner)
@@ -754,6 +776,7 @@ class IrBuiltInsOverFir(
         return components.classifierStorage.getIrClassSymbol(firClassSymbol)
     }
 
+    @OptIn(IrSymbolInternals::class)
     private fun IrType.getMaybeBuiltinClass(): IrClass? {
         val lhsClassFqName = classFqName!!
         return baseIrTypes.find { it.classFqName == lhsClassFqName }?.getClass()
@@ -996,6 +1019,7 @@ class IrBuiltInsOverFir(
         createMemberFunction(OperatorNameConventions.ITERATOR, iteratorType, isOperator = true)
     }
 
+    @OptIn(IrSymbolInternals::class)
     private fun IrClass.createProperty(
         propertyName: String, returnType: IrType,
         modality: Modality = Modality.FINAL,
@@ -1142,6 +1166,7 @@ class IrBuiltInsOverFir(
             finalizeClassDefinition()
         }
 
+    @OptIn(IrSymbolInternals::class)
     private fun IrClass.createCompanionObject(block: IrClass.() -> Unit = {}): IrClassSymbol =
         this.createClass(
             kotlinFqName.child(Name.identifier("Companion")), classKind = ClassKind.OBJECT, builderBlock = {
