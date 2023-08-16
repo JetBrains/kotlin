@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.toSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.NativeRuntimeNames
 
 class FirNativeKotlinMangler : FirMangler() {
     override fun getMangleComputer(mode: MangleMode, compatibleMode: Boolean): KotlinMangleComputer<FirDeclaration> {
@@ -40,28 +41,26 @@ class FirNativeExportCheckerVisitor : FirExportCheckerVisitor() {
      * mimics AbstractKonanDescriptorMangler::DeclarationDescriptor.isPlatformSpecificExport()
      */
     override fun FirDeclaration.isPlatformSpecificExported(): Boolean {
-        fun List<FirAnnotation>.hasAnnotation(fqName: FqName) = hasAnnotation(ClassId.topLevel(fqName), moduleData.session)
-
         if (this is FirCallableDeclaration && isSubstitutionOrIntersectionOverride)
             return false
 
-        if (annotations.hasAnnotation(RuntimeNames.symbolNameAnnotation)) {
+        if (annotations.hasAnnotation(NativeRuntimeNames.Annotations.symbolNameClassId, moduleData.session)) {
             // Treat any `@SymbolName` declaration as exported.
             return true
         }
-        if (annotations.hasAnnotation(KonanFqNames.gcUnsafeCall)) {
+        if (annotations.hasAnnotation(NativeRuntimeNames.Annotations.gcUnsafeCallClassId, moduleData.session)) {
             // Treat any `@GCUnsafeCall` declaration as exported.
             return true
         }
-        if (annotations.hasAnnotation(RuntimeNames.exportForCppRuntime)) {
+        if (annotations.hasAnnotation(NativeRuntimeNames.Annotations.exportForCppRuntimeClassId, moduleData.session)) {
             // Treat any `@ExportForCppRuntime` declaration as exported.
             return true
         }
-        if (annotations.hasAnnotation(RuntimeNames.cnameAnnotation)) {
+        if (annotations.hasAnnotation(NativeRuntimeNames.Annotations.cNameClassId, moduleData.session)) {
             // Treat `@CName` declaration as exported.
             return true
         }
-        if (annotations.hasAnnotation(RuntimeNames.exportForCompilerAnnotation)) {
+        if (annotations.hasAnnotation(NativeRuntimeNames.Annotations.exportForCompilerClassId, moduleData.session)) {
             return true
         }
 

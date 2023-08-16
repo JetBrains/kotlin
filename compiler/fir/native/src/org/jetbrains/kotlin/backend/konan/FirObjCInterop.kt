@@ -26,16 +26,11 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.classId
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.NativeStandardInteropNames
+import org.jetbrains.kotlin.native.interop.ObjCMethodInfo
 import org.jetbrains.kotlin.utils.DFS
 
-private val objCDirectClassId = ClassId.topLevel(objCDirectFqName)
-private val objCMethodClassId = ClassId.topLevel(objCMethodFqName)
-private val objCObjectClassId = ClassId.topLevel(objCObjectFqName)
-private val objCFactoryClassId = ClassId.topLevel(objCFactoryFqName)
-private val objCConstructorClassId = ClassId.topLevel(objCConstructorFqName)
-private val externalObjCClassClassId = ClassId.topLevel(externalObjCClassFqName)
 
 @OptIn(SymbolInternals::class)
 internal fun FirFunction.getObjCMethodInfoFromOverriddenFunctions(session: FirSession, scopeSession: ScopeSession): ObjCMethodInfo? {
@@ -65,7 +60,7 @@ internal fun FirFunction.getObjCMethodInfoFromOverriddenFunctions(session: FirSe
  */
 @OptIn(SymbolInternals::class)
 private fun FirConstructor.getObjCInitMethod(session: FirSession, scopeSession: ScopeSession): FirFunction? {
-    this.annotations.getAnnotationByClassId(objCConstructorClassId, session)?.let { annotation ->
+    this.annotations.getAnnotationByClassId(NativeStandardInteropNames.objCConstructorClassId, session)?.let { annotation ->
         val initSelector: String = annotation.constStringArgument("initSelector")
         val classSymbol = containingClassLookupTag()?.toSymbol(session) as FirClassSymbol<*>
         val initSelectors = mutableListOf<FirFunction>()
@@ -84,12 +79,12 @@ private fun FirConstructor.getObjCInitMethod(session: FirSession, scopeSession: 
  * mimics FunctionDescriptor.decodeObjCMethodAnnotation()
  */
 internal fun FirFunction.decodeObjCMethodAnnotation(session: FirSession): ObjCMethodInfo? =
-        annotations.getAnnotationByClassId(objCMethodClassId, session)?.let {
+        annotations.getAnnotationByClassId(NativeStandardInteropNames.objCMethodClassId, session)?.let {
             ObjCMethodInfo(
                     selector = it.constStringArgument("selector"),
                     encoding = it.constStringArgument("encoding"),
                     isStret = it.constBooleanArgumentOrNull("isStret") ?: false,
-                    directSymbol = annotations.getAnnotationByClassId(objCDirectClassId, session)?.constStringArgument("symbol"),
+                    directSymbol = annotations.getAnnotationByClassId(NativeStandardInteropNames.objCDirectClassId, session)?.constStringArgument("symbol"),
             )
         }
 
@@ -103,9 +98,9 @@ private fun FirAnnotation.constBooleanArgumentOrNull(argumentName: String): Bool
 private fun FirAnnotation.constArgument(argumentName: String) =
         (argumentMapping.mapping[Name.identifier(argumentName)] as? FirConstExpression<*>)?.value
 
-internal fun FirFunction.hasObjCFactoryAnnotation(session: FirSession) = this.annotations.hasAnnotation(objCFactoryClassId, session)
+internal fun FirFunction.hasObjCFactoryAnnotation(session: FirSession) = this.annotations.hasAnnotation(NativeStandardInteropNames.objCFactoryClassId, session)
 
-internal fun FirFunction.hasObjCMethodAnnotation(session: FirSession) = this.annotations.hasAnnotation(objCMethodClassId, session)
+internal fun FirFunction.hasObjCMethodAnnotation(session: FirSession) = this.annotations.hasAnnotation(NativeStandardInteropNames.objCMethodClassId, session)
 
 /**
  * almost mimics FunctionDescriptor.isObjCClassMethod(), apart from `it.isObjCClass()` changed to `it.symbol.isObjCClass(session)` for simplicity
@@ -117,14 +112,14 @@ internal fun FirFunction.isObjCClassMethod(session: FirSession) =
  * mimics ConstructorDescriptor.isObjCConstructor()
  */
 internal fun FirConstructor.isObjCConstructor(session: FirSession) =
-        this.annotations.hasAnnotation(objCConstructorClassId, session)
+        this.annotations.hasAnnotation(NativeStandardInteropNames.objCConstructorClassId, session)
 
 /**
  * mimics IrClass.isObjCClass()
  */
-private fun FirClassSymbol<*>.isObjCClass(session: FirSession) = classId.packageFqName != interopPackageName &&
+private fun FirClassSymbol<*>.isObjCClass(session: FirSession) = classId.packageFqName != NativeStandardInteropNames.cInteropPackage &&
         selfOrAnySuperClass(session) {
-            it.classId == objCObjectClassId
+            it.classId == NativeStandardInteropNames.objCObjectClassId
         }
 
 /**
@@ -153,7 +148,7 @@ internal fun FirProperty.isExternalObjCClassProperty(session: FirSession) =
 internal fun FirClassSymbol<*>.isExternalObjCClass(session: FirSession): Boolean =
         isObjCClass(session) &&
                 parentsWithSelf(session).filterIsInstance<FirClass>().any {
-                    it.hasAnnotation(externalObjCClassClassId, session)
+                    it.hasAnnotation(NativeStandardInteropNames.externalObjCClassClassId, session)
                 }
 
 @OptIn(SymbolInternals::class)
