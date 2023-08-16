@@ -11,6 +11,6 @@ import viper.silver.ast.`NoTrafos$`
 
 sealed class Trafos : IntoViper<ErrorTrafo> {
     data object NoTrafos : Trafos() {
-        override fun toViper(): viper.silver.ast.ErrorTrafo = `NoTrafos$`.`MODULE$`
+        override fun toViper(): ErrorTrafo = `NoTrafos$`.`MODULE$`
     }
 }

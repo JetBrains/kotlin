@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.formver.scala.silicon.ast
 
-import org.jetbrains.kotlin.formver.conversion.ConvertedDomainAxiomName
-import org.jetbrains.kotlin.formver.conversion.ConvertedDomainFuncName
-import org.jetbrains.kotlin.formver.conversion.ConvertedDomainName
+import org.jetbrains.kotlin.formver.embeddings.DomainAxiomName
+import org.jetbrains.kotlin.formver.embeddings.DomainFuncName
+import org.jetbrains.kotlin.formver.embeddings.DomainName
 import org.jetbrains.kotlin.formver.scala.IntoViper
 import org.jetbrains.kotlin.formver.scala.toScalaOption
 import org.jetbrains.kotlin.formver.scala.toScalaSeq
@@ -17,7 +17,7 @@ import viper.silver.ast.NamedDomainAxiom
 
 // Cannot implement `IntoViper` as we need to pass the domain name.
 class DomainFunc(
-    val name: ConvertedDomainFuncName,
+    val name: DomainFuncName,
     val formalArgs: List<LocalVarDecl>,
     val typ: Type,
     val unique: Boolean,
@@ -27,7 +27,7 @@ class DomainFunc(
 ) {
     fun toViper(domainName: String): viper.silver.ast.DomainFunc =
         viper.silver.ast.DomainFunc(
-            name.asString,
+            name.mangled,
             formalArgs.toScalaSeq(),
             typ.toViper(),
             unique,
@@ -41,7 +41,7 @@ class DomainFunc(
 
 // Cannot implement `IntoViper` as we need to pass the domain name.
 class DomainAxiom(
-    val name: ConvertedDomainAxiomName?,
+    val name: DomainAxiomName?,
     val exp: Exp,
     val pos: Position = Position.NoPosition,
     val info: Info = Info.NoInfo,
@@ -49,13 +49,13 @@ class DomainAxiom(
 ) {
     fun toViper(domainName: String): viper.silver.ast.DomainAxiom =
         if (name != null)
-            NamedDomainAxiom(name.asString, exp.toViper(), pos.toViper(), info.toViper(), domainName, trafos.toViper())
+            NamedDomainAxiom(name.mangled, exp.toViper(), pos.toViper(), info.toViper(), domainName, trafos.toViper())
         else
             AnonymousDomainAxiom(exp.toViper(), pos.toViper(), info.toViper(), domainName, trafos.toViper())
 }
 
 abstract class Domain(
-    val name: ConvertedDomainName,
+    val name: DomainName,
     val pos: Position = Position.NoPosition,
     val info: Info = Info.NoInfo,
     val trafos: Trafos = Trafos.NoTrafos,
@@ -67,9 +67,9 @@ abstract class Domain(
 
     override fun toViper(): viper.silver.ast.Domain =
         viper.silver.ast.Domain(
-            name.asString,
-            functions.map { it.toViper(name.asString) }.toScalaSeq(),
-            axioms.map { it.toViper(name.asString) }.toScalaSeq(),
+            name.mangled,
+            functions.map { it.toViper(name.mangled) }.toScalaSeq(),
+            axioms.map { it.toViper(name.mangled) }.toScalaSeq(),
             typeVars.map { it.toViper() }.toScalaSeq(),
             null.toScalaOption(),
             pos.toViper(),
@@ -78,13 +78,13 @@ abstract class Domain(
         )
 
     fun toType(typeParamSubst: Map<Type.TypeVar, Type> = typeVars.associateWith { it }): Type.Domain =
-        Type.Domain(name.asString, typeVars, typeParamSubst)
+        Type.Domain(name.mangled, typeVars, typeParamSubst)
 
     fun createDomainFunc(funcName: String, args: List<LocalVarDecl>, type: Type, unique: Boolean = false) =
-        DomainFunc(ConvertedDomainFuncName(this.name, funcName), args, type, unique)
+        DomainFunc(DomainFuncName(this.name, funcName), args, type, unique)
 
     fun createDomainAxiom(axiomName: String?, exp: Exp): DomainAxiom =
-        DomainAxiom(axiomName?.let { ConvertedDomainAxiomName(this.name, it) }, exp)
+        DomainAxiom(axiomName?.let { DomainAxiomName(this.name, it) }, exp)
 
     fun funcApp(
         func: DomainFunc,
@@ -93,5 +93,5 @@ abstract class Domain(
         pos: Position = Position.NoPosition,
         info: Info = Info.NoInfo,
         trafos: Trafos = Trafos.NoTrafos,
-    ): Exp.DomainFuncApp = Exp.DomainFuncApp(name.asString, func.name.asString, args, typeVarMap, func.typ, pos, info, trafos)
+    ): Exp.DomainFuncApp = Exp.DomainFuncApp(name.mangled, func.name.mangled, args, typeVarMap, func.typ, pos, info, trafos)
 }

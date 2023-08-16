@@ -3,8 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.formver.conversion
+package org.jetbrains.kotlin.formver.domains
 
+import org.jetbrains.kotlin.formver.embeddings.DomainName
 import org.jetbrains.kotlin.formver.scala.silicon.ast.*
 
 /** A representation of the unit type as a Viper domain.
@@ -14,7 +15,7 @@ import org.jetbrains.kotlin.formver.scala.silicon.ast.*
  * seem to suffice (hence why it is not present here).  It isn't quite clear why this is the case, but
  * since we don't generally need to talk about equality of units this should be fine.
  */
-object UnitDomain : Domain(ConvertedDomainName("Unit")) {
+object UnitDomain : Domain(DomainName("Unit")) {
     override val typeVars: List<Type.TypeVar> = emptyList()
 
     val elementFunc = createDomainFunc("element", emptyList(), toType())

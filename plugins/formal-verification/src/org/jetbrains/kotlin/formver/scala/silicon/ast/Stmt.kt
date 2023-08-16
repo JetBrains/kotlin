@@ -163,7 +163,7 @@ sealed class Stmt : IntoViper<viper.silver.ast.Stmt> {
     data class While(
         val cond: Exp,
         val invariants: List<Exp>,
-        val body: Stmt.Seqn,
+        val body: Seqn,
         val position: Position = Position.NoPosition,
         val info: Info = Info.NoInfo,
         val trafos: Trafos = Trafos.NoTrafos,

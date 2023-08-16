@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.formver.scala.silicon.ast
 
-import org.jetbrains.kotlin.formver.scala.*
+import org.jetbrains.kotlin.formver.scala.IntoViper
+import org.jetbrains.kotlin.formver.scala.toScalaMap
+import org.jetbrains.kotlin.formver.scala.toScalaSeq
+import org.jetbrains.kotlin.formver.scala.toViper
 import scala.math.BigInt
 import viper.silver.ast.*
 

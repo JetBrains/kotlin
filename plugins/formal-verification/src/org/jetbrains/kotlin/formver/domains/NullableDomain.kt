@@ -3,8 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.formver.conversion
+package org.jetbrains.kotlin.formver.domains
 
+import org.jetbrains.kotlin.formver.domains.NullableDomain.T
+import org.jetbrains.kotlin.formver.embeddings.DomainName
 import org.jetbrains.kotlin.formver.scala.silicon.ast.*
 import org.jetbrains.kotlin.formver.scala.silicon.ast.Exp.*
 
@@ -31,7 +33,7 @@ import org.jetbrains.kotlin.formver.scala.silicon.ast.Exp.*
  * }
  */
 
-object NullableDomain : Domain(ConvertedDomainName("Nullable")) {
+object NullableDomain : Domain(DomainName("Nullable")) {
     val T = Type.TypeVar("T")
     override val typeVars: List<Type.TypeVar> = listOf(T)
     val Nullable: Type = this.toType()

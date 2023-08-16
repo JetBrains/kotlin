@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.formver.conversion
 
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.formver.embeddings.MethodSignatureEmbedding
+import org.jetbrains.kotlin.formver.embeddings.TypeEmbedding
 
 interface ProgramConversionContext {
-    fun add(symbol: FirNamedFunctionSymbol): ConvertedMethodSignature
-    fun convertType(type: ConeKotlinType): ConvertedType
+    fun add(symbol: FirNamedFunctionSymbol): MethodSignatureEmbedding
+    fun embedType(type: ConeKotlinType): TypeEmbedding
 }

@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.formver.scala.silicon.ast
 
-import org.jetbrains.kotlin.formver.scala.*
+import org.jetbrains.kotlin.formver.scala.IntoViper
+import org.jetbrains.kotlin.formver.scala.toScalaMap
+import org.jetbrains.kotlin.formver.scala.toScalaSeq
 import viper.silver.ast.*
 
 sealed class Type : IntoViper<viper.silver.ast.Type> {
@@ -53,7 +55,7 @@ sealed class Type : IntoViper<viper.silver.ast.Type> {
     data class Domain(
         val domainName: String,
         val typeParams: List<TypeVar> = emptyList(),
-        val typeSubstitutions: kotlin.collections.Map<TypeVar, Type> = emptyMap()
+        val typeSubstitutions: kotlin.collections.Map<TypeVar, Type> = emptyMap(),
     ) : Type() {
         override fun toViper(): DomainType =
             DomainType(

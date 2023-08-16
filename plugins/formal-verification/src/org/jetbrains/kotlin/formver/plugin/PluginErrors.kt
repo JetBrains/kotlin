@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.formver.plugin
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.diagnostics.*
+import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
+import org.jetbrains.kotlin.diagnostics.info2
 import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
+import org.jetbrains.kotlin.diagnostics.warning1
 
 object PluginErrors {
     val FUNCTION_WITH_UNVERIFIED_CONTRACT by warning1<PsiElement, String>(SourceElementPositioningStrategies.DECLARATION_NAME)

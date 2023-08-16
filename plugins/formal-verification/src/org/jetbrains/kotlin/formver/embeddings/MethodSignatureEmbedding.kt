@@ -3,14 +3,14 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.formver.conversion
+package org.jetbrains.kotlin.formver.embeddings
 
 import org.jetbrains.kotlin.formver.scala.silicon.ast.*
 import viper.silver.ast.Method
 
-class ConvertedMethodSignature(val name: ConvertedName, val params: List<ConvertedVar>, val returnType: ConvertedType) {
-    val returnVar: ConvertedVar
-        get() = ConvertedVar(ReturnVariableName, returnType)
+class MethodSignatureEmbedding(val name: MangledName, val params: List<VariableEmbedding>, val returnType: TypeEmbedding) {
+    val returnVar: VariableEmbedding
+        get() = VariableEmbedding(ReturnVariableName, returnType)
 
     fun toMethod(
         pres: List<Exp>, posts: List<Exp>,
@@ -21,7 +21,7 @@ class ConvertedMethodSignature(val name: ConvertedName, val params: List<Convert
     ): Method {
         val returns = listOf(returnVar)
         return method(
-            name.asString,
+            name.mangled,
             params.map { it.toLocalVarDecl() },
             returns.map { it.toLocalVarDecl() },
             params.flatMap { it.invariants() } + pres,

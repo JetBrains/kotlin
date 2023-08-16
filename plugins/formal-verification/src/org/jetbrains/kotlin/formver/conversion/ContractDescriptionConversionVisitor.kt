@@ -9,31 +9,40 @@ import org.jetbrains.kotlin.contracts.description.*
 import org.jetbrains.kotlin.fir.contracts.description.ConeContractConstantValues
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.formver.domains.NullableDomain
+import org.jetbrains.kotlin.formver.embeddings.BooleanTypeEmbedding
+import org.jetbrains.kotlin.formver.embeddings.MangledName
+import org.jetbrains.kotlin.formver.embeddings.NullableTypeEmbedding
+import org.jetbrains.kotlin.formver.embeddings.VariableEmbedding
 import org.jetbrains.kotlin.formver.scala.silicon.ast.Exp
 import org.jetbrains.kotlin.formver.scala.silicon.ast.Exp.*
 
 class ContractDescriptionConversionVisitor : KtContractDescriptionVisitor<Exp, MethodConversionContext, ConeKotlinType, ConeDiagnostic>() {
-    private fun KtValueParameterReference<ConeKotlinType, ConeDiagnostic>.convertedVar(data: MethodConversionContext): ConvertedVar {
+    private fun KtValueParameterReference<ConeKotlinType, ConeDiagnostic>.embeddedVar(data: MethodConversionContext): VariableEmbedding {
         val name = data.signature.params[parameterIndex].name
         val type = data.signature.params[parameterIndex].type
-        return ConvertedVar(name, type)
+        return VariableEmbedding(name, type)
     }
 
-    private fun ConvertedVar.nullCmp(isNegated: Boolean): Exp {
-        return if (type is ConvertedNullable) {
+    private fun VariableEmbedding.nullCmp(isNegated: Boolean): Exp {
+        return if (type is NullableTypeEmbedding) {
             if (isNegated) {
-                NeCmp(toLocalVar(), NullableDomain.nullVal(type.elementType.viperType))
+                NeCmp(toLocalVar(), NullableDomain.nullVal(type.elementType.type))
             } else {
-                EqCmp(toLocalVar(), NullableDomain.nullVal(type.elementType.viperType))
+                EqCmp(toLocalVar(), NullableDomain.nullVal(type.elementType.type))
             }
         } else {
             BoolLit(isNegated)
         }
     }
 
+    private fun KtValueParameterReference<ConeKotlinType, ConeDiagnostic>.embeddedName(data: MethodConversionContext): MangledName {
+        return data.signature.params[parameterIndex].name
+    }
+
     override fun visitBooleanConstantDescriptor(
         booleanConstantDescriptor: KtBooleanConstantReference<ConeKotlinType, ConeDiagnostic>,
-        data: MethodConversionContext
+        data: MethodConversionContext,
     ): Exp {
         return when (booleanConstantDescriptor) {
             ConeContractConstantValues.TRUE -> BoolLit(true)
@@ -44,9 +53,9 @@ class ContractDescriptionConversionVisitor : KtContractDescriptionVisitor<Exp, M
 
     override fun visitReturnsEffectDeclaration(
         returnsEffect: KtReturnsEffectDeclaration<ConeKotlinType, ConeDiagnostic>,
-        data: MethodConversionContext
+        data: MethodConversionContext,
     ): Exp {
-        val retVar = data.returnVar.toLocalVar()
+        val retVar = data.signature.returnVar.toLocalVar()
         return when (returnsEffect.value) {
             ConeContractConstantValues.WILDCARD -> BoolLit(true)
             /* NOTE: in a function that has a non-nullable return type, the compiler will not complain if there is an effect like
@@ -54,8 +63,8 @@ class ContractDescriptionConversionVisitor : KtContractDescriptionVisitor<Exp, M
              * values and null. In a function that has a non-nullable return type, returnsNotNull() is mapped to true and returns(null)
              * is mapped to false
              */
-            ConeContractConstantValues.NULL -> data.returnVar.nullCmp(false)
-            ConeContractConstantValues.NOT_NULL -> data.returnVar.nullCmp(true)
+            ConeContractConstantValues.NULL -> data.signature.returnVar.nullCmp(false)
+            ConeContractConstantValues.NOT_NULL -> data.signature.returnVar.nullCmp(true)
             ConeContractConstantValues.TRUE -> EqCmp(retVar, BoolLit(true))
             ConeContractConstantValues.FALSE -> EqCmp(retVar, BoolLit(false))
             else -> throw Exception("Unexpected constant: ${returnsEffect.value}")
@@ -65,7 +74,7 @@ class ContractDescriptionConversionVisitor : KtContractDescriptionVisitor<Exp, M
     override fun visitValueParameterReference(
         valueParameterReference: KtValueParameterReference<ConeKotlinType, ConeDiagnostic>,
         data: MethodConversionContext
-    ): Exp = valueParameterReference.convertedVar(data).toLocalVar()
+    ): Exp = valueParameterReference.embeddedVar(data).toLocalVar()
 
     override fun visitIsNullPredicate(
         isNullPredicate: KtIsNullPredicate<ConeKotlinType, ConeDiagnostic>,
@@ -81,7 +90,7 @@ class ContractDescriptionConversionVisitor : KtContractDescriptionVisitor<Exp, M
 
     override fun visitLogicalBinaryOperationContractExpression(
         binaryLogicExpression: KtBinaryLogicExpression<ConeKotlinType, ConeDiagnostic>,
-        data: MethodConversionContext
+        data: MethodConversionContext,
     ): Exp {
         val left = binaryLogicExpression.left.accept(this, data)
         val right = binaryLogicExpression.right.accept(this, data)
@@ -98,7 +107,7 @@ class ContractDescriptionConversionVisitor : KtContractDescriptionVisitor<Exp, M
 
     override fun visitConditionalEffectDeclaration(
         conditionalEffect: KtConditionalEffectDeclaration<ConeKotlinType, ConeDiagnostic>,
-        data: MethodConversionContext
+        data: MethodConversionContext,
     ): Exp {
         val effect = conditionalEffect.effect.accept(this, data)
         val cond = conditionalEffect.condition.accept(this, data)

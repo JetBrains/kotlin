@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.formver.conversion
 
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.contracts.FirEffectDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
@@ -20,6 +19,10 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.coneTypeOrNull
 import org.jetbrains.kotlin.fir.types.isNullable
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.formver.domains.NullableDomain
+import org.jetbrains.kotlin.formver.domains.UnitDomain
+import org.jetbrains.kotlin.formver.embeddings.VariableEmbedding
+import org.jetbrains.kotlin.formver.embeddings.embedName
 import org.jetbrains.kotlin.formver.scala.silicon.ast.Exp
 import org.jetbrains.kotlin.formver.scala.silicon.ast.Stmt
 import org.jetbrains.kotlin.formver.scala.silicon.ast.Type
@@ -49,7 +52,7 @@ class StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
     override fun visitReturnExpression(returnExpression: FirReturnExpression, data: StmtConversionContext): Exp {
         val expr = returnExpression.result.accept(this, data)
         // TODO: respect return-based control flow
-        val returnVar = data.returnVar
+        val returnVar = data.signature.returnVar
         data.addStatement(Stmt.LocalVarAssign(returnVar.toLocalVar(), expr))
         return UnitDomain.element
     }
@@ -79,7 +82,7 @@ class StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
 
         return when (whenExpression.subject) {
             null -> {
-                val cvar = data.newAnonVar(data.convertType(whenExpression.typeRef.coneTypeOrNull!!))
+                val cvar = data.newAnonVar(data.embedType(whenExpression.typeRef.coneTypeOrNull!!))
                 val cond = whenExpression.branches[0].condition.accept(this, data)
                 // TODO: tidy this up and split it into helper functions.
                 val thenCtx = StmtConverter(data)
@@ -109,13 +112,13 @@ class StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
         val symbol = propertyAccessExpression.calleeReference.toResolvedBaseSymbol()!!
         val type = propertyAccessExpression.typeRef.coneTypeOrNull!!
         return when (symbol) {
-            is FirValueParameterSymbol -> ConvertedVar(
-                symbol.callableId.convertName(),
-                data.convertType(type)
+            is FirValueParameterSymbol -> VariableEmbedding(
+                symbol.callableId.embedName(),
+                data.embedType(type)
             ).toLocalVar()
-            is FirPropertySymbol -> ConvertedVar(
-                symbol.callableId.convertName(),
-                data.convertType(type)
+            is FirPropertySymbol -> VariableEmbedding(
+                symbol.callableId.embedName(),
+                data.embedType(type)
             ).toLocalVar()
             else -> TODO("Implement other property accesses")
         }
@@ -150,7 +153,7 @@ class StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
         val returnVar = data.newAnonVar(calleeSig.returnType)
         val returnExp = returnVar.toLocalVar()
         data.addDeclaration(returnVar.toLocalVarDecl())
-        data.addStatement(Stmt.MethodCall(calleeSig.name.asString, args, listOf(returnExp)))
+        data.addStatement(Stmt.MethodCall(calleeSig.name.mangled, args, listOf(returnExp)))
         return returnExp
     }
 
@@ -171,7 +174,7 @@ class StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
         if (!symbol.isLocal) {
             TODO("Implement non-local properties")
         }
-        val cvar = ConvertedVar(symbol.callableId.convertName(), data.convertType(type))
+        val cvar = VariableEmbedding(symbol.callableId.embedName(), data.embedType(type))
         val propInitializer = property.initializer
         val initializer = propInitializer?.accept(this, data)
         data.addDeclaration(cvar.toLocalVarDecl())
@@ -204,7 +207,7 @@ class StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
         val newType = smartCastExpression.smartcastType.coneType
         if (oldType.isNullable && !newType.isNullable) {
             val exp = smartCastExpression.originalExpression.accept(this, data)
-            return NullableDomain.valOfApp(exp, data.convertType(newType).viperType)
+            return NullableDomain.valOfApp(exp, data.embedType(newType).type)
         }
         TODO("Handle other kinds of smart casts.")
     }

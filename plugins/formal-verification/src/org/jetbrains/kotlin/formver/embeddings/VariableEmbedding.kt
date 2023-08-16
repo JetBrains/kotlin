@@ -3,23 +3,23 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.formver.conversion
+package org.jetbrains.kotlin.formver.embeddings
 
 import org.jetbrains.kotlin.formver.scala.silicon.ast.*
 import viper.silver.ast.LocalVarDecl
 
-class ConvertedVar(val name: ConvertedName, val type: ConvertedType) {
+class VariableEmbedding(val name: MangledName, val type: TypeEmbedding) {
     fun toLocalVarDecl(
         pos: Position = Position.NoPosition,
         info: Info = Info.NoInfo,
         trafos: Trafos = Trafos.NoTrafos,
-    ): LocalVarDecl = localVarDecl(name.asString, type.viperType, pos, info, trafos)
+    ): LocalVarDecl = localVarDecl(name.mangled, type.type, pos, info, trafos)
 
     fun toLocalVar(
         pos: Position = Position.NoPosition,
         info: Info = Info.NoInfo,
         trafos: Trafos = Trafos.NoTrafos,
-    ): Exp.LocalVar = Exp.LocalVar(name.asString, type.viperType, pos, info, trafos)
+    ): Exp.LocalVar = Exp.LocalVar(name.mangled, type.type, pos, info, trafos)
 
     fun invariants(): List<Exp> = type.invariants(toLocalVar())
 }
