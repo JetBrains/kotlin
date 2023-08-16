@@ -41,4 +41,10 @@ public class ScriptNonLocalDeclarationAnchorTestGenerated extends AbstractScript
     public void testStatements() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/nonLocalDeclarationAnchors/statements.kts");
     }
+
+    @Test
+    @TestMetadata("topLevelFor.kts")
+    public void testTopLevelFor() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/nonLocalDeclarationAnchors/topLevelFor.kts");
+    }
 }

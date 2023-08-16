@@ -1,0 +1,4 @@
+/* anchor --> */for (/* anchor --> */(index, _)/* <-- */ in emptyList<Int>().withIndex()) {
+
+}
+/* <-- */
