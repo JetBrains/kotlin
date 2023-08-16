@@ -1,4 +1,5 @@
-/basic.kt:(4,15): info: domain dom$Unit  {
+/basic.kt:(4,15): info: Generated Viper text for return_unit:
+domain dom$Unit  {
 
   function dom$Unit$element(): dom$Unit
 }
@@ -38,7 +39,8 @@ method global$pkg_$return_unit() returns (ret$: dom$Unit)
 {
 }
 
-/basic.kt:(25,35): info: domain dom$Unit  {
+/basic.kt:(25,35): info: Generated Viper text for return_int:
+domain dom$Unit  {
 
   function dom$Unit$element(): dom$Unit
 }
@@ -79,7 +81,8 @@ method global$pkg_$return_int() returns (ret$: Int)
   ret$ := 0
 }
 
-/basic.kt:(60,80): info: domain dom$Unit  {
+/basic.kt:(60,80): info: Generated Viper text for take_int_return_unit:
+domain dom$Unit  {
 
   function dom$Unit$element(): dom$Unit
 }
@@ -120,7 +123,8 @@ method global$pkg_$take_int_return_unit(local$x: Int)
 {
 }
 
-/basic.kt:(126,145): info: domain dom$Unit  {
+/basic.kt:(126,145): info: Generated Viper text for take_int_return_int:
+domain dom$Unit  {
 
   function dom$Unit$element(): dom$Unit
 }
@@ -161,7 +165,8 @@ method global$pkg_$take_int_return_int(local$x: Int) returns (ret$: Int)
   ret$ := local$x
 }
 
-/basic.kt:(176,200): info: domain dom$Unit  {
+/basic.kt:(176,200): info: Generated Viper text for take_int_return_int_expr:
+domain dom$Unit  {
 
   function dom$Unit$element(): dom$Unit
 }
@@ -203,7 +208,8 @@ method global$pkg_$take_int_return_int_expr(local$x: Int)
   ret$ := local$x
 }
 
-/basic.kt:(222,242): info: domain dom$Unit  {
+/basic.kt:(222,242): info: Generated Viper text for with_int_declaration:
+domain dom$Unit  {
 
   function dom$Unit$element(): dom$Unit
 }
@@ -246,7 +252,8 @@ method global$pkg_$with_int_declaration() returns (ret$: Int)
   ret$ := local$x
 }
 
-/basic.kt:(285,299): info: domain dom$Unit  {
+/basic.kt:(285,299): info: Generated Viper text for int_assignment:
+domain dom$Unit  {
 
   function dom$Unit$element(): dom$Unit
 }

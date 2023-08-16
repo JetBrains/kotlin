@@ -1,4 +1,5 @@
-/arithmetic.kt:(4,12): info: domain dom$Unit  {
+/arithmetic.kt:(4,12): info: Generated Viper text for addition:
+domain dom$Unit  {
 
   function dom$Unit$element(): dom$Unit
 }
@@ -40,7 +41,8 @@ method global$pkg_$addition(local$x: Int) returns (ret$: dom$Unit)
   local$y := local$x + local$x
 }
 
-/arithmetic.kt:(47,58): info: domain dom$Unit  {
+/arithmetic.kt:(47,58): info: Generated Viper text for subtraction:
+domain dom$Unit  {
 
   function dom$Unit$element(): dom$Unit
 }
@@ -82,7 +84,8 @@ method global$pkg_$subtraction(local$x: Int) returns (ret$: dom$Unit)
   local$y := local$x - local$x
 }
 
-/arithmetic.kt:(93,107): info: domain dom$Unit  {
+/arithmetic.kt:(93,107): info: Generated Viper text for multiplication:
+domain dom$Unit  {
 
   function dom$Unit$element(): dom$Unit
 }
@@ -124,7 +127,8 @@ method global$pkg_$multiplication(local$x: Int) returns (ret$: dom$Unit)
   local$y := local$x * local$x
 }
 
-/arithmetic.kt:(142,150): info: domain dom$Unit  {
+/arithmetic.kt:(142,150): info: Generated Viper text for division:
+domain dom$Unit  {
 
   function dom$Unit$element(): dom$Unit
 }

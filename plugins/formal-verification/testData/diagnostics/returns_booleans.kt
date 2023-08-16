@@ -20,6 +20,14 @@ fun <!VIPER_TEXT!>returns_false<!>(): Boolean {
 }
 
 @OptIn(ExperimentalContracts::class)
+fun <!FUNCTION_WITH_UNVERIFIED_CONTRACT, VIPER_ERROR, VIPER_TEXT!>incorrectly_returns_false<!>(): Boolean {
+    contract {
+        returns(true)
+    }
+    return false
+}
+
+@OptIn(ExperimentalContracts::class)
 fun <!VIPER_TEXT!>conditional_basic<!>(b: Boolean): Boolean {
     contract {
         returns(true) implies (true)

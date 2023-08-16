@@ -1,4 +1,5 @@
-/simple.kt:(84,100): info: domain dom$Unit  {
+/simple.kt:(84,100): info: Generated Viper text for without_contract:
+domain dom$Unit  {
 
   function dom$Unit$element(): dom$Unit
 }
@@ -38,7 +39,8 @@ method global$pkg_$without_contract() returns (ret$: dom$Unit)
 {
 }
 
-/simple.kt:(148,161): info: domain dom$Unit  {
+/simple.kt:(148,161): info: Generated Viper text for with_contract:
+domain dom$Unit  {
 
   function dom$Unit$element(): dom$Unit
 }

@@ -1,4 +1,5 @@
-/boolean_logic.kt:(4,12): info: domain dom$Unit  {
+/boolean_logic.kt:(4,12): info: Generated Viper text for negation:
+domain dom$Unit  {
 
   function dom$Unit$element(): dom$Unit
 }

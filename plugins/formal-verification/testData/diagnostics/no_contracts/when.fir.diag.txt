@@ -1,4 +1,5 @@
-/when.kt:(4,13): info: domain dom$Unit  {
+/when.kt:(4,13): info: Generated Viper text for simple_if:
+domain dom$Unit  {
 
   function dom$Unit$element(): dom$Unit
 }
@@ -46,7 +47,8 @@ method global$pkg_$simple_if() returns (ret$: Int)
   }
 }
 
-/when.kt:(98,113): info: domain dom$Unit  {
+/when.kt:(98,113): info: Generated Viper text for if_on_parameter:
+domain dom$Unit  {
 
   function dom$Unit$element(): dom$Unit
 }
@@ -94,7 +96,8 @@ method global$pkg_$if_on_parameter(local$b: Bool) returns (ret$: Int)
   }
 }
 
-/when.kt:(205,221): info: domain dom$Unit  {
+/when.kt:(205,221): info: Generated Viper text for if_as_expression:
+domain dom$Unit  {
 
   function dom$Unit$element(): dom$Unit
 }

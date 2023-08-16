@@ -1,4 +1,5 @@
-/function_call.kt:(4,5): info: domain dom$Unit  {
+/function_call.kt:(4,5): info: Generated Viper text for f:
+domain dom$Unit  {
 
   function dom$Unit$element(): dom$Unit
 }
@@ -39,7 +40,8 @@ method global$pkg_$f(local$x: Int) returns (ret$: Int)
   ret$ := local$x
 }
 
-/function_call.kt:(27,40): info: domain dom$Unit  {
+/function_call.kt:(27,40): info: Generated Viper text for function_call:
+domain dom$Unit  {
 
   function dom$Unit$element(): dom$Unit
 }
@@ -86,7 +88,8 @@ method global$pkg_$function_call() returns (ret$: dom$Unit)
   anonymous$2 := global$pkg_$f(0)
 }
 
-/function_call.kt:(69,89): info: domain dom$Unit  {
+/function_call.kt:(69,89): info: Generated Viper text for function_call_nested:
+domain dom$Unit  {
 
   function dom$Unit$element(): dom$Unit
 }

@@ -31,7 +31,7 @@ class ViperPoweredDeclarationChecker(val session: FirSession) : FirSimpleFunctio
         programConversionContext.addWithBody(declaration)
         val program = programConversionContext.program
 
-        reporter.reportOn(declaration.source, PluginErrors.VIPER_TEXT, program.toString(), context)
+        reporter.reportOn(declaration.source, PluginErrors.VIPER_TEXT, declaration.name.asString(), program.toString(), context)
 
         try {
             val verifier = newVerifier()
@@ -45,7 +45,7 @@ class ViperPoweredDeclarationChecker(val session: FirSession) : FirSimpleFunctio
                 }
             }
             if (anyErrors) {
-                reporter.reportOn(declaration.source, PluginErrors.FUNCTION_WITH_UNVERIFIED_CONTRACT, context)
+                reporter.reportOn(declaration.source, PluginErrors.FUNCTION_WITH_UNVERIFIED_CONTRACT, declaration.name.asString(), context)
             }
         } catch (e: Exception) {
             System.err.println("Viper verification failed with an exception.  Viper text:\n$program\nException: $e")

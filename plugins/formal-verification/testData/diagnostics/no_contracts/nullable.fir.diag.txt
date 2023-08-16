@@ -1,4 +1,5 @@
-/nullable.kt:(4,19): info: domain dom$Unit  {
+/nullable.kt:(4,19): info: Generated Viper text for return_nullable:
+domain dom$Unit  {
 
   function dom$Unit$element(): dom$Unit
 }
@@ -39,7 +40,8 @@ method global$pkg_$return_nullable() returns (ret$: dom$Nullable[Int])
   ret$ := 0
 }
 
-/nullable.kt:(50,60): info: domain dom$Unit  {
+/nullable.kt:(50,60): info: Generated Viper text for smart_cast:
+domain dom$Unit  {
 
   function dom$Unit$element(): dom$Unit
 }
@@ -88,7 +90,8 @@ method global$pkg_$smart_cast(local$x: dom$Nullable[Int])
   }
 }
 
-/nullable.kt:(158,176): info: domain dom$Unit  {
+/nullable.kt:(158,176): info: Generated Viper text for use_nullable_twice:
+domain dom$Unit  {
 
   function dom$Unit$element(): dom$Unit
 }
@@ -134,7 +137,8 @@ method global$pkg_$use_nullable_twice(local$x: dom$Nullable[Int])
   ret$ := local$a
 }
 
-/nullable.kt:(242,265): info: domain dom$Unit  {
+/nullable.kt:(242,265): info: Generated Viper text for pass_nullable_parameter:
+domain dom$Unit  {
 
   function dom$Unit$element(): dom$Unit
 }
