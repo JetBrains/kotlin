@@ -490,9 +490,13 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
             maxParallelUsages.set(1)
         }
 
-        // TODO: remove when tests compilation does not consume so much memory.
         private val compileTestsSemaphore = project.gradle.sharedServices.registerIfAbsent("compileTestsSemaphore", CompileTestsSemaphore::class.java) {
-            maxParallelUsages.set(5)
+            // TODO: Make the default always null when tests compilation stops consuming so much memory.
+            val defaultParallelism = if (project.kotlinBuildProperties.isTeamcityBuild) 2 else null
+            val parallelism = project.kotlinBuildProperties.getOrNull("kotlin.native.runtimeTestsCompilationParallelism")?.toString()?.toInt() ?: defaultParallelism
+            parallelism?.let {
+                maxParallelUsages.set(it)
+            }
         }
 
         private val modules: NamedDomainObjectContainer<Module> = project.objects.polymorphicDomainObjectContainer(Module::class.java).apply {
