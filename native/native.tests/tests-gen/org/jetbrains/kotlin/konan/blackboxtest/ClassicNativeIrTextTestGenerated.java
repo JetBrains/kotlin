@@ -3,10 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.konan.irText;
+package org.jetbrains.kotlin.konan.blackboxtest;
 
 import com.intellij.testFramework.TestDataPath;
-import org.jetbrains.kotlin.konan.blackboxtest.AbstractClassicNativeIrTextTest;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
@@ -75,12 +74,6 @@ public class ClassicNativeIrTextTestGenerated extends AbstractClassicNativeIrTex
         @TestMetadata("classes.kt")
         public void testClasses() throws Exception {
             runTest("compiler/testData/ir/irText/classes/classes.kt");
-        }
-
-        @Test
-        @TestMetadata("cloneable.kt")
-        public void testCloneable() throws Exception {
-            runTest("compiler/testData/ir/irText/classes/cloneable.kt");
         }
 
         @Test
@@ -2483,12 +2476,6 @@ public class ClassicNativeIrTextTestGenerated extends AbstractClassicNativeIrTex
         @TestMetadata("typeVariableAfterBuildMap.kt")
         public void testTypeVariableAfterBuildMap() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/typeVariableAfterBuildMap.kt");
-        }
-
-        @Test
-        @TestMetadata("valueClassEquals.kt")
-        public void testValueClassEquals() throws Exception {
-            runTest("compiler/testData/ir/irText/firProblems/valueClassEquals.kt");
         }
 
         @Test
