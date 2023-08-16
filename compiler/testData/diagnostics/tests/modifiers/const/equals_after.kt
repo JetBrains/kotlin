@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +IntrinsicConstEvaluation
 
 const val equalsBoolean1 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>true.equals(true)<!>
