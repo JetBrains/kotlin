@@ -6,9 +6,8 @@ description "Dokka Plugin to transform the samples from stdlib"
 final String dokka_version = property("dokka_version")
 
 dependencies {
-    implementation "org.jetbrains.dokka:dokka-base:$dokka_version"
     compileOnly "org.jetbrains.dokka:dokka-core:$dokka_version"
-    compileOnly "org.jetbrains.dokka:dokka-analysis:$dokka_version"
+    compileOnly "org.jetbrains.dokka:analysis-kotlin-descriptors:$dokka_version"
 }
 
 kotlin {
