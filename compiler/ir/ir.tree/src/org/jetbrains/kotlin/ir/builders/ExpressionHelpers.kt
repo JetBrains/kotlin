@@ -345,6 +345,12 @@ fun IrBuilderWithScope.irReinterpretCast(argument: IrExpression, type: IrType) =
 fun IrBuilderWithScope.irSamConversion(argument: IrExpression, type: IrType) =
     typeOperator(type, argument, IrTypeOperator.SAM_CONVERSION, type)
 
+fun IrBuilderWithScope.irByte(value: Byte) =
+    IrConstImpl.byte(startOffset, endOffset, context.irBuiltIns.byteType, value)
+
+fun IrBuilderWithScope.irShort(value: Short) =
+    IrConstImpl.short(startOffset, endOffset, context.irBuiltIns.shortType, value)
+
 fun IrBuilderWithScope.irInt(value: Int, type: IrType = context.irBuiltIns.intType) =
     IrConstImpl.int(startOffset, endOffset, type, value)
 

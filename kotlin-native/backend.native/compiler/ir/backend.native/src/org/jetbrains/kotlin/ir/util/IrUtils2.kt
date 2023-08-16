@@ -32,8 +32,5 @@ fun IrBuilderWithScope.irCatch() =
                 )
         )
 
-fun IrBuilderWithScope.irByte(value: Byte) =
-        IrConstImpl.byte(startOffset, endOffset, context.irBuiltIns.byteType, value)
-
 val IrField.hasNonConstInitializer: Boolean
     get() = initializer?.expression.let { it != null && it !is IrConst<*> && it !is IrConstantValue }
