@@ -1,4 +1,6 @@
+
 ERR:
 error: error while writing [Temp]/noPermissionDir/Test.class (Permission denied)
+error: error while writing [Temp]/noPermissionDir/META-INF/main.kotlin_module (Permission denied)
 
 Return code: 1
