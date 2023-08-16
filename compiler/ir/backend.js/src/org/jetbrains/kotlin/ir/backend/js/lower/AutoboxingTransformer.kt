@@ -31,7 +31,10 @@ import org.jetbrains.kotlin.ir.util.render
 
 // Copied and adapted from Kotlin/Native
 
-abstract class AbstractValueUsageLowering(val context: JsCommonBackendContext) : AbstractValueUsageTransformer(context.irBuiltIns),
+abstract class AbstractValueUsageLowering(
+    val context: JsCommonBackendContext,
+    private val shouldCalculateActualTypeForInlinedFunction: Boolean = false
+) : AbstractValueUsageTransformer(context.irBuiltIns),
     BodyLoweringPass {
 
     val icUtils = context.inlineClassesUtils
@@ -52,10 +55,18 @@ abstract class AbstractValueUsageLowering(val context: JsCommonBackendContext) :
 
     abstract fun IrExpression.useExpressionAsType(actualType: IrType, expectedType: IrType): IrExpression
 
-    protected fun IrExpression.getActualType() = when (this) {
+    protected fun IrExpression.getActualType(): IrType = when (this) {
         is IrConstructorCall -> symbol.owner.returnType
         is IrCall -> symbol.owner.realOverrideTarget.returnType
         is IrGetField -> this.symbol.owner.type
+
+        is IrInlinedFunctionBlock -> {
+            if (shouldCalculateActualTypeForInlinedFunction) {
+                inlineCall.getActualType()
+            } else {
+                this.type
+            }
+        }
 
         is IrTypeOperatorCall -> {
             if (operator == IrTypeOperator.REINTERPRET_CAST) {
@@ -120,7 +131,10 @@ abstract class AbstractValueUsageLowering(val context: JsCommonBackendContext) :
         )
 }
 
-class AutoboxingTransformer(context: JsCommonBackendContext) : AbstractValueUsageLowering(context) {
+class AutoboxingTransformer(
+    context: JsCommonBackendContext,
+    shouldCalculateActualTypeForInlinedFunction: Boolean = false
+) : AbstractValueUsageLowering(context, shouldCalculateActualTypeForInlinedFunction) {
     private var processingReturnStack = mutableListOf<IrReturn>()
 
     private fun IrExpression.useReturnableExpressionAsType(expectedType: IrType): IrExpression {

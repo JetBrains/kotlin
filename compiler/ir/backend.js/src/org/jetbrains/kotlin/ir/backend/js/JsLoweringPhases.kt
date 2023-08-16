@@ -727,7 +727,7 @@ private val inlineClassUsageLoweringPhase = makeBodyLoweringPhase(
 )
 
 private val autoboxingTransformerPhase = makeBodyLoweringPhase(
-    ::AutoboxingTransformer,
+    { AutoboxingTransformer(it, shouldCalculateActualTypeForInlinedFunction = true) },
     name = "AutoboxingTransformer",
     description = "Insert box/unbox intrinsics"
 )
