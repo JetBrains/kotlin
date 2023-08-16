@@ -27,17 +27,16 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.util.toIrConst
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
@@ -149,6 +148,8 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
     private val eagerTopLevelInitializers = mutableListOf<IrExpression>()
     private val newTopLevelDeclarations = mutableListOf<IrDeclaration>()
 
+    private var topLevelInitializersCounter = 0
+
     override val irFile: IrFile
         get() = currentFile
 
@@ -166,6 +167,31 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
 
         irFile.addChildren(newTopLevelDeclarations)
         newTopLevelDeclarations.clear()
+    }
+
+    private fun IrFile.addTopLevelInitializer(expression: IrExpression, context: KonanBackendContext, threadLocal: Boolean, eager: Boolean) {
+        val irField = IrFieldImpl(
+                expression.startOffset, expression.endOffset,
+                IrDeclarationOrigin.DEFINED,
+                IrFieldSymbolImpl(),
+                "topLevelInitializer${topLevelInitializersCounter++}".synthesizedName,
+                expression.type,
+                DescriptorVisibilities.PRIVATE,
+                isFinal = true,
+                isExternal = false,
+                isStatic = true,
+        ).apply {
+            expression.setDeclarationsParent(this)
+
+            if (threadLocal)
+                annotations += buildSimpleAnnotation(context.irBuiltIns, startOffset, endOffset, context.ir.symbols.threadLocal.owner)
+
+            if (eager)
+                annotations += buildSimpleAnnotation(context.irBuiltIns, startOffset, endOffset, context.ir.symbols.eagerInitialization.owner)
+
+            initializer = IrExpressionBodyImpl(startOffset, endOffset, expression)
+        }
+        addChild(irField)
     }
 
     private fun IrBuilderWithScope.callAlloc(classPtr: IrExpression): IrExpression =
