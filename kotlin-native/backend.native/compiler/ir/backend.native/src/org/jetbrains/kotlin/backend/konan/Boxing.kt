@@ -38,11 +38,10 @@ private fun Context.getTypeConversionImpl(
     if (actualInlinedClass == expectedInlinedClass) return null
 
     return when {
-        actualInlinedClass == null && expectedInlinedClass == null -> null
         actualInlinedClass != null && expectedInlinedClass == null -> getBoxFunction(actualInlinedClass)
         actualInlinedClass == null && expectedInlinedClass != null -> getUnboxFunction(expectedInlinedClass)
         else -> error("actual type is ${actualInlinedClass?.fqNameForIrSerialization}, expected ${expectedInlinedClass?.fqNameForIrSerialization}")
-    }?.symbol
+    }.symbol
 }
 
 internal object DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION : IrDeclarationOriginImpl("INLINE_CLASS_SPECIAL_FUNCTION")

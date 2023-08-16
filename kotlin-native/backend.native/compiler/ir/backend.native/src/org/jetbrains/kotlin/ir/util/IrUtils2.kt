@@ -68,32 +68,6 @@ fun IrModuleFragment.addFile(fileEntry: IrFileEntry, packageFqName: FqName): IrF
             .also { this.files += it }
 }
 
-fun IrFunctionAccessExpression.addArguments(args: Map<IrValueParameter, IrExpression>) {
-    val unhandledParameters = args.keys.toMutableSet()
-    fun getArg(parameter: IrValueParameter) = args[parameter]?.also { unhandledParameters -= parameter }
-
-    symbol.owner.dispatchReceiverParameter?.let {
-        val arg = getArg(it)
-        if (arg != null) {
-            this.dispatchReceiver = arg
-        }
-    }
-
-    symbol.owner.extensionReceiverParameter?.let {
-        val arg = getArg(it)
-        if (arg != null) {
-            this.extensionReceiver = arg
-        }
-    }
-
-    symbol.owner.valueParameters.forEach {
-        val arg = getArg(it)
-        if (arg != null) {
-            this.putValueArgument(it.index, arg)
-        }
-    }
-}
-
 fun IrBuilderWithScope.irCatch() =
         IrCatchImpl(
                 startOffset, endOffset,
