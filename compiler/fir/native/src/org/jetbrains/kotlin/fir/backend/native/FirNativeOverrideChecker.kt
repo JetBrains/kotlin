@@ -3,9 +3,11 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.backend.konan
+package org.jetbrains.kotlin.fir.backend.native
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.backend.native.interop.decodeObjCMethodAnnotation
+import org.jetbrains.kotlin.fir.backend.native.interop.isExternalObjCClassProperty
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction

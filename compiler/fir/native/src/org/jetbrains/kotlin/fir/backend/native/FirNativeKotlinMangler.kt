@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.backend.konan
+package org.jetbrains.kotlin.fir.backend.native
 
 import org.jetbrains.kotlin.backend.common.serialization.mangle.KotlinExportChecker
 import org.jetbrains.kotlin.backend.common.serialization.mangle.KotlinMangleComputer
@@ -13,16 +13,17 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.FirMangler
 import org.jetbrains.kotlin.fir.backend.FirExportCheckerVisitor
 import org.jetbrains.kotlin.fir.backend.FirMangleComputer
+import org.jetbrains.kotlin.fir.backend.native.interop.*
+import org.jetbrains.kotlin.fir.backend.native.interop.hasObjCFactoryAnnotation
+import org.jetbrains.kotlin.fir.backend.native.interop.hasObjCMethodAnnotation
+import org.jetbrains.kotlin.fir.backend.native.interop.isObjCClassMethod
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.toSymbol
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.NativeRuntimeNames
 
 class FirNativeKotlinMangler : FirMangler() {
