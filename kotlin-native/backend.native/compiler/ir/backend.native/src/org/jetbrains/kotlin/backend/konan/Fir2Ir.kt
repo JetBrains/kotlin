@@ -88,7 +88,7 @@ internal fun PhaseContext.fir2Ir(
             IrGenerationExtension.getInstances(config.project),
             signatureComposer = DescriptorSignatureComposerStub(KonanManglerDesc),
             irMangler = KonanManglerIr,
-            firMangler = FirNativeKotlinMangler(),
+            firMangler = FirNativeKotlinMangler,
             visibilityConverter = Fir2IrVisibilityConverter.Default,
             kotlinBuiltIns = builtInsModule ?: DefaultBuiltIns.Instance,
             actualizerTypeContextProvider = ::IrTypeSystemContextImpl,
@@ -97,7 +97,7 @@ internal fun PhaseContext.fir2Ir(
                 irModuleFragment.acceptVoid(
                         ManglerChecker(
                                 KonanManglerIr,
-                                Ir2FirManglerAdapter(FirNativeKotlinMangler()),
+                                Ir2FirManglerAdapter(FirNativeKotlinMangler),
                                 needsChecking = { false }, // FIXME(KT-60648): Re-enable
                         )
                 )

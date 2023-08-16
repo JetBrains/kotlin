@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.toSymbol
 import org.jetbrains.kotlin.name.NativeRuntimeNames
 
-class FirNativeKotlinMangler : FirMangler() {
+object FirNativeKotlinMangler : FirMangler() {
     override fun getMangleComputer(mode: MangleMode, compatibleMode: Boolean): KotlinMangleComputer<FirDeclaration> {
         return FirNativeKotlinMangleComputer(StringBuilder(256), mode)
     }
