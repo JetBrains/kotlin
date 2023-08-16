@@ -16,7 +16,7 @@ dependencies {
 
     testRuntimeOnly(project(":core:descriptors.runtime"))
 
-    testApiJUnit5(vintageEngine = true)
+    testApiJUnit5(vintageEngine = true, jupiterParams = true)
 }
 
 sourceSets {

@@ -94,6 +94,7 @@ dependencies {
             versionProperties.load(propInput)
         }
         testApi(platform(libs.junit.bom))
-        testApi(libs.junit.jupyter)
+        testApi(libs.junit.jupyter.api)
+        testRuntimeOnly(libs.junit.jupyter.engine)
     }
 }
