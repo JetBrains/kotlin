@@ -18,6 +18,7 @@
 package androidx.compose.compiler.plugins.kotlin.lower
 
 import androidx.compose.compiler.plugins.kotlin.ComposeFqNames
+import androidx.compose.compiler.plugins.kotlin.ComposeFqNames.InternalPackage
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
@@ -31,13 +32,14 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classFqName
+import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isFunction
 import org.jetbrains.kotlin.ir.util.isLambda
 import org.jetbrains.kotlin.ir.util.isSuspendFunction
+import org.jetbrains.kotlin.ir.util.packageFqName
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -126,6 +128,7 @@ private fun IrValueParameter.isInlineParameter(): Boolean =
         (!type.isNullable() || defaultValue?.expression?.type?.isNullable() == false)
 
 fun IrType.isSyntheticComposableFunction() =
-    classFqName?.asString()?.startsWith(
-        "androidx.compose.runtime.internal.ComposableFunction"
-    ) == true
+    classOrNull?.owner?.let {
+        it.name.asString().startsWith("ComposableFunction") &&
+            it.packageFqName == InternalPackage
+    } ?: false
