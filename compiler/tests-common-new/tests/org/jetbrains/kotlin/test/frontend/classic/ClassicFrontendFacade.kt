@@ -77,6 +77,7 @@ import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.getDependencies
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.types.typeUtil.closure
@@ -168,7 +169,7 @@ class ClassicFrontendFacade(
                 module, project, configuration, compilerEnvironment, files, dependencyDescriptors, friendsDescriptors
             )
             targetPlatform.isNative() -> performNativeModuleResolve(
-                module, project, compilerEnvironment, files, dependencyDescriptors, friendsDescriptors, dependsOnDescriptors
+                module, project, configuration, compilerEnvironment, files, dependencyDescriptors, friendsDescriptors, dependsOnDescriptors
             )
             targetPlatform.isCommon() -> performCommonModuleResolve(
                 module,
@@ -381,6 +382,7 @@ class ClassicFrontendFacade(
     private fun performNativeModuleResolve(
         module: TestModule,
         project: Project,
+        configuration: CompilerConfiguration,
         compilerEnvironment: TargetEnvironment,
         files: List<KtFile>,
         dependencyDescriptors: List<ModuleDescriptorImpl>,
@@ -388,9 +390,12 @@ class ClassicFrontendFacade(
         dependsOnDescriptors: List<ModuleDescriptorImpl>,
     ): AnalysisResult {
         val moduleTrace = NoScopeRecordCliBindingTrace()
+        val runtimeKlibsNames = NativeEnvironmentConfigurator.getRuntimePathsForModule(module, testServices)
+        val runtimeKlibs = loadKlib(runtimeKlibsNames, configuration).mapNotNull { it as? ModuleDescriptorImpl }
+
         val moduleContext = createModuleContext(
             module, project,
-            dependencyDescriptors = dependencyDescriptors,
+            dependencyDescriptors = dependencyDescriptors + runtimeKlibs,
             friendsDescriptors = friendsDescriptors,
             dependsOnDescriptors = dependsOnDescriptors
         ) {
