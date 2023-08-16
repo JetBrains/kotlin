@@ -42,6 +42,11 @@ KBoolean Kotlin_Any_equals(KConstRef thiz, KConstRef other) {
 }
 
 KInt Kotlin_Any_hashCode(KConstRef thiz) {
+  // NOTE: `Any?.identityHashCode()` is used in Blackhole implementations of both kotlinx-benchmark and
+  //        K/N's own benchmarks. These usages rely on this being an intrinsic property of the object.
+  //        So, calling `obj.identityHashCode()` should be seen by the optimizer as reading the entire
+  //        `obj` memory, and any changes to `obj` beforehand couldn't be optimized away. Additionally,
+  //        it should be very cheap to call in order not to pollute the time measurements.
   // Here we will use different mechanism for stable hashcode, using meta-objects
   // if moving collector will be used.
   return reinterpret_cast<uintptr_t>(thiz);
