@@ -9,7 +9,6 @@ import com.intellij.openapi.util.SystemInfo
 import org.jetbrains.kotlin.cli.common.arguments.readArgumentsFromArgFile
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.util.KtTestUtil
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInfo
 import java.io.File
@@ -126,7 +125,7 @@ abstract class AbstractKaptToolIntegrationTest {
     private fun transformArguments(args: List<String>): List<String> {
         return args.map {
             val arg = it.replace("%KOTLIN_STDLIB%", File("dist/kotlinc/lib/kotlin-stdlib.jar").absolutePath)
-            if (SystemInfo.isWindows && (arg.contains("=") || arg.contains(":"))) {
+            if (SystemInfo.isWindows && (arg.contains("=") || arg.contains(":") || args.contains(";"))) {
                 "\"" + arg + "\""
             } else {
                 arg
