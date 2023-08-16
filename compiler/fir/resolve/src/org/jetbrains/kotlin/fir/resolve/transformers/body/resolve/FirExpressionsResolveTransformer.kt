@@ -1527,15 +1527,17 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         lhsGetCall: FirFunctionCall,
         transformedRhs: FirExpression
     ): AugmentedArraySetAsGetSetCallDesugaringInfo {
+        val initializer = lhsGetCall.explicitReceiver ?: buildErrorExpression {
+            source = augmentedArraySetCall.source
+                ?.fakeElement(KtFakeSourceElementKind.DesugaredCompoundAssignment)
+            diagnostic = ConeSyntaxDiagnostic("No receiver for array access")
+        }
         val arrayVariable = generateTemporaryVariable(
             session.moduleData,
             source = lhsGetCall.explicitReceiver?.source?.fakeElement(KtFakeSourceElementKind.DesugaredCompoundAssignment),
             name = SpecialNames.ARRAY,
-            initializer = lhsGetCall.explicitReceiver ?: buildErrorExpression {
-                source = augmentedArraySetCall.source
-                    ?.fakeElement(KtFakeSourceElementKind.DesugaredCompoundAssignment)
-                diagnostic = ConeSyntaxDiagnostic("No receiver for array access")
-            }
+            initializer = initializer,
+            typeRef = initializer.typeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DesugaredCompoundAssignment),
         )
 
         val indexVariables = lhsGetCall.arguments.flatMap {
