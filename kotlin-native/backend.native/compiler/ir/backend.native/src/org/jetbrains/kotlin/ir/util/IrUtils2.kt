@@ -110,9 +110,6 @@ fun IrBuilderWithScope.irCatch() =
                 )
         )
 
-fun IrClass.defaultOrNullableType(hasQuestionMark: Boolean) =
-        if (hasQuestionMark) this.defaultType.makeNullable() else this.defaultType
-
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 fun IrFunction.isRestrictedSuspendFunction(): Boolean =
         this.descriptor.extensionReceiverParameter?.type?.isRestrictsSuspensionReceiver() == true

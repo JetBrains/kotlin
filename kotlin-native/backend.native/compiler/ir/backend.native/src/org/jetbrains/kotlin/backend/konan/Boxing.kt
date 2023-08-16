@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrConstantPrimitive
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.defaultOrNullableType
+import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -47,6 +47,9 @@ private fun Context.getTypeConversionImpl(
 
 internal object DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION : IrDeclarationOriginImpl("INLINE_CLASS_SPECIAL_FUNCTION")
 
+private fun IrClass.defaultOrNullableType(hasQuestionMark: Boolean) =
+        if (hasQuestionMark) this.defaultType.makeNullable() else this.defaultType
+
 internal fun Context.getBoxFunction(inlinedClass: IrClass): IrSimpleFunction = mapping.boxFunctions.getOrPut(inlinedClass) {
     require(inlinedClass.isUsedAsBoxClass())
     val classes = mutableListOf(inlinedClass)
@@ -59,7 +62,7 @@ internal fun Context.getBoxFunction(inlinedClass: IrClass): IrSimpleFunction = m
 
     val isNullable = inlinedClass.inlinedClassIsNullable()
     val unboxedType = inlinedClass.defaultOrNullableType(isNullable)
-    val boxedType = ir.symbols.any.owner.defaultOrNullableType(isNullable)
+    val boxedType = if (isNullable) ir.symbols.irBuiltIns.anyNType else ir.symbols.irBuiltIns.anyType
 
     irFactory.buildFun {
         startOffset = inlinedClass.startOffset
@@ -90,11 +93,9 @@ internal fun Context.getUnboxFunction(inlinedClass: IrClass): IrSimpleFunction =
     }
     require(parent is IrFile || parent is IrExternalPackageFragment) { "Local inline classes are not supported" }
 
-    val symbols = ir.symbols
-
     val isNullable = inlinedClass.inlinedClassIsNullable()
     val unboxedType = inlinedClass.defaultOrNullableType(isNullable)
-    val boxedType = symbols.any.owner.defaultOrNullableType(isNullable)
+    val boxedType = if (isNullable) ir.symbols.irBuiltIns.anyNType else ir.symbols.irBuiltIns.anyType
 
     irFactory.buildFun {
         startOffset = inlinedClass.startOffset
