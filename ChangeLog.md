@@ -1,3 +1,35 @@
+## 1.9.10
+
+### Compiler
+
+- [`KT-60769`](https://youtrack.jetbrains.com/issue/KT-60769) Partially revert KT-58371
+- [`KT-60659`](https://youtrack.jetbrains.com/issue/KT-60659) Incorrect 'unresolved reference: addFirst' error with JDK 21
+- [`KT-60371`](https://youtrack.jetbrains.com/issue/KT-60371) Native custom allocator link error
+- [`KT-60986`](https://youtrack.jetbrains.com/issue/KT-60986) Native: static caches with custom runtime options are broken on Linux
+- [`KT-60770`](https://youtrack.jetbrains.com/issue/KT-60770) Fix false-positive ABSTRACT_MEMBER_NOT_IMPLEMENTED on toArray with JDK 21
+- [`KT-60231`](https://youtrack.jetbrains.com/issue/KT-60231) NoClassDefFoundError: $$$$$NON_LOCAL_RETURN$$$$$ after upgrade to Kotlin 1.9.0
+
+### JavaScript
+
+- [`KT-60785`](https://youtrack.jetbrains.com/issue/KT-60785) KJS: Destructured value class in suspend function fails with Uncaught TypeError: can't convert to primitive type error
+- [`KT-60852`](https://youtrack.jetbrains.com/issue/KT-60852) Kotlin JS(IR): IllegalArgumentException: Cross module dependency resolution failed when updating to Kotlin 1.9.0
+- [`KT-57509`](https://youtrack.jetbrains.com/issue/KT-57509) KJS: Compiler generates native JS operator  == for comparing values with Any type
+
+### Native
+
+- [`KT-60230`](https://youtrack.jetbrains.com/issue/KT-60230) Native: "unknown options: -ios_simulator_version_min -sdk_version" with Xcode 15 beta 3
+- [`KT-60758`](https://youtrack.jetbrains.com/issue/KT-60758) Native: Building for 'iOS-simulator', but linking in dylib built for 'iOS' in Xcode 15 beta 4
+
+### Native. C and ObjC Import
+
+- [`KT-59167`](https://youtrack.jetbrains.com/issue/KT-59167) Native: cinterop is unable to build interop libraries against the Xcode 15 Beta 1
+
+### Tools. Gradle
+
+- [`KT-61147`](https://youtrack.jetbrains.com/issue/KT-61147) Kotlin Compiler 1.9.0 bundles a stripped unshadowed version of Gson
+- [`KT-60543`](https://youtrack.jetbrains.com/issue/KT-60543) NoClassDefFoundError for com/gradle/scan/plugin/BuildScanExtension
+
+
 ## 1.9.0
 
 ### Analysis API
