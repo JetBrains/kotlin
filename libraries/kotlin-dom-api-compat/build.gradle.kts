@@ -29,8 +29,10 @@ kotlin {
         val test by compilations.getting
         // TODO: Remove together with kotlin.js.compiler.publish.attribute=false property
         listOf(main, test).forEach { compilation ->
-            configurations[compilation.compileDependencyConfigurationName].attributes {
-                attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir)
+            listOf(compilation.compileDependencyConfigurationName, compilation.runtimeDependencyConfigurationName).forEach { configurationName ->
+                configurations[configurationName].attributes {
+                    attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir)
+                }
             }
         }
     }
