@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveT
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirSingleResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirWholeClassResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirWholeFileResolveTarget
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.InvalidSessionException
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
@@ -209,10 +208,6 @@ private fun handleExceptionFromResolve(
     fromPhase: FirResolvePhase,
     toPhase: FirResolvePhase,
 ): Nothing {
-    if (exception is InvalidSessionException) {
-        throw exception
-    }
-
     val session = firDeclarationToResolve.llFirSession
     val moduleData = firDeclarationToResolve.llFirModuleData
     val module = moduleData.ktModule
@@ -242,10 +237,6 @@ private fun handleExceptionFromResolve(
     designation: LLFirResolveTarget,
     toPhase: FirResolvePhase,
 ): Nothing {
-    if (exception is InvalidSessionException) {
-        throw exception
-    }
-
     val session = designation.firFile.llFirSession
     val moduleData = session.llFirModuleData
     val module = moduleData.ktModule

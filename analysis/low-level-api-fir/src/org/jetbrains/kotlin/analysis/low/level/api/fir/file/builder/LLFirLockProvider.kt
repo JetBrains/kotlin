@@ -35,14 +35,7 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
     ): R {
         if (!globalLockEnabled) return action()
 
-        return globalLock.lockWithPCECheck(lockingIntervalMs) {
-            val session = key.llFirSession
-            if (!session.isValid) {
-                val description = session.ktModule.moduleDescription
-                throw InvalidSessionException("Session '$description' is invalid", description)
-            }
-            action()
-        }
+        return globalLock.lockWithPCECheck(lockingIntervalMs, action)
     }
 
     fun withGlobalPhaseLock(
@@ -230,5 +223,3 @@ private val globalLockEnabled: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION)
 }
 
 private const val DEFAULT_LOCKING_INTERVAL = 50L
-
-internal class InvalidSessionException(message: String, val moduleDescription: String) : RuntimeException(message)
