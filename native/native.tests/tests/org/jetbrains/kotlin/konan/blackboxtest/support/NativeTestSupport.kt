@@ -97,6 +97,16 @@ private object NativeTestSupport {
 
     private fun computeNativeHome(): KotlinNativeHome = KotlinNativeHome(File(ProcessLevelProperty.KOTLIN_NATIVE_HOME.readValue()))
 
+    /**
+     * - For Codegen native tests, no parent classloader should be provided,
+     * since compiler `class K2Native: CLICompiler` is invoked via reflection with kotlinNativeClassLoader,
+     * so both classes K2Native and CLICompiler need to be loaded with same nativeclassloader.
+     * This way, `K2Native.doExecute()` method would define abstract method `CLICompiler.doExecute()`.
+     * With parent classloader, these two classes would be loaded by different classloaders and AbstractMethodError is thrown
+     * - For irText tests, classloaded mangler instance is passed to generate mangles to IR dumps files.
+     * For this, a cast of mangler object(within K/N classloader) to mangler interface(within app classloader) is needed,
+     * which is possible when app classloader is provided as parent.
+     */
     fun computeNativeClassLoader(parent: ClassLoader? = null): KotlinNativeClassLoader = KotlinNativeClassLoader(
         lazy {
             val nativeClassPath = ProcessLevelProperty.COMPILER_CLASSPATH.readValue()

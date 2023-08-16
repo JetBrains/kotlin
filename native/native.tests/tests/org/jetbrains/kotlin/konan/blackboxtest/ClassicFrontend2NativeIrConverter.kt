@@ -65,11 +65,13 @@ class ClassicFrontend2NativeIrConverter(
             testServices.libraryProvider.getDescriptorByCompiledLibrary(it)
         }
 
+        // KT-61248: TODO Replace reflection for direct import of mangler object, when it would extracted out of `backend.native` module
         val konanManglerIrClass = Class.forName(
             "org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr",
             true,
             CastCompatibleKotlinNativeClassLoader.kotlinNativeClassLoader.classLoader
         )
+        val konanIrMangler = konanManglerIrClass.kotlin.objectInstance as KotlinMangler.IrMangler
 
         return IrBackendInput.NativeBackendInput(
             moduleFragment,
@@ -77,7 +79,7 @@ class ClassicFrontend2NativeIrConverter(
             pluginContext,
             diagnosticReporter = DiagnosticReporterFactory.createReporter(),
             descriptorMangler = (pluginContext.symbolTable as SymbolTable).signaturer.mangler,
-            irMangler = konanManglerIrClass.kotlin.objectInstance as KotlinMangler.IrMangler,
+            irMangler = konanIrMangler,
             firMangler = null,
         )
     }

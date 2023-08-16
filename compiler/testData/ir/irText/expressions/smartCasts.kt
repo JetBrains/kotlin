@@ -3,7 +3,7 @@
 // IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
 
-// KT-61141: `println (message: kotlin.Any?)` instead of `println (message: kotlin.Any?)`
+// KT-61141: `println (message: kotlin.Any?)` instead of `println (message: kotlin.Int)`
 // IGNORE_BACKEND: NATIVE
 fun expectsString(s: String) {}
 fun expectsInt(i: Int) {}
