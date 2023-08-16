@@ -59,15 +59,6 @@ internal fun IrFile.addTopLevelInitializer(expression: IrExpression, context: Ko
     addChild(irField)
 }
 
-fun IrModuleFragment.addFile(fileEntry: IrFileEntry, packageFqName: FqName): IrFile {
-    val packageFragmentDescriptor = object : PackageFragmentDescriptorImpl(this.descriptor, packageFqName) {
-        override fun getMemberScope(): MemberScope = MemberScope.Empty
-    }
-
-    return IrFileImpl(fileEntry, packageFragmentDescriptor)
-            .also { this.files += it }
-}
-
 fun IrBuilderWithScope.irCatch() =
         IrCatchImpl(
                 startOffset, endOffset,
