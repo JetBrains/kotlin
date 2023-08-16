@@ -60,6 +60,11 @@ class ContractDescriptionConversionVisitor : KtContractDescriptionVisitor<Exp, M
         }
     }
 
+    override fun visitLogicalNot(logicalNot: KtLogicalNot<ConeKotlinType, ConeDiagnostic>, data: MethodConversionContext): Exp {
+        val arg = logicalNot.arg.accept(this, data)
+        return Not(arg)
+    }
+
     override fun visitConditionalEffectDeclaration(
         conditionalEffect: KtConditionalEffectDeclaration<ConeKotlinType, ConeDiagnostic>,
         data: MethodConversionContext

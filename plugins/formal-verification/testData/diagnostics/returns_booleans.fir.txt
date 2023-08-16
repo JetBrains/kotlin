@@ -33,24 +33,56 @@ FILE: returns_booleans.kt
 
         ^returns_false Boolean(false)
     }
-    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun conditional(a: R|kotlin/Boolean|, b: R|kotlin/Boolean|): R|kotlin/Boolean|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun conditional_basic(b: R|kotlin/Boolean|): R|kotlin/Boolean|
         [R|Contract description]
          <
             Returns(TRUE) -> TRUE
+            Returns(FALSE) -> b
+        >
+     {
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|(Boolean(true)).R|kotlin/contracts/SimpleEffect.implies|(Boolean(true))
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|(Boolean(false)).R|kotlin/contracts/SimpleEffect.implies|(R|<local>/b|)
+            }
+            )
+        }
+
+        ^conditional_basic Boolean(true)
+    }
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun binary_logic_expressions(a: R|kotlin/Boolean|, b: R|kotlin/Boolean|): R|kotlin/Boolean|
+        [R|Contract description]
+         <
             Returns(FALSE) -> b && FALSE
             Returns(TRUE) -> TRUE || a && b || TRUE
         >
      {
          {
             R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
-                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|(Boolean(true)).R|kotlin/contracts/SimpleEffect.implies|(Boolean(true))
                 this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|(Boolean(false)).R|kotlin/contracts/SimpleEffect.implies|(R|<local>/b| && Boolean(false))
                 this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|(Boolean(true)).R|kotlin/contracts/SimpleEffect.implies|(Boolean(true) || R|<local>/a| && R|<local>/b| || Boolean(true))
             }
             )
         }
 
-        ^conditional Boolean(true)
+        ^binary_logic_expressions Boolean(true)
+    }
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun logical_not(b: R|kotlin/Boolean|): R|kotlin/Boolean|
+        [R|Contract description]
+         <
+            Returns(TRUE) -> (!b) && b
+            Returns(FALSE) -> b || (!b)
+        >
+     {
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|(Boolean(true)).R|kotlin/contracts/SimpleEffect.implies|(R|<local>/b|.R|kotlin/Boolean.not|() && R|<local>/b|)
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|(Boolean(false)).R|kotlin/contracts/SimpleEffect.implies|(R|<local>/b| || R|<local>/b|.R|kotlin/Boolean.not|())
+            }
+            )
+        }
+
+        ^logical_not Boolean(false)
     }
     @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun call_fun_with_contracts(b: R|kotlin/Boolean|): R|kotlin/Boolean|
         [R|Contract description]
@@ -65,6 +97,6 @@ FILE: returns_booleans.kt
             )
         }
 
-        lval a: R|kotlin/Boolean| = R|/conditional|(R|<local>/b|, R|<local>/b|)
+        lval a: R|kotlin/Boolean| = R|/binary_logic_expressions|(R|<local>/b|, R|<local>/b|)
         ^call_fun_with_contracts R|<local>/a|
     }
