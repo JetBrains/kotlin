@@ -41,8 +41,6 @@ val atomicfuNativeKlib by configurations.creating {
         attribute(KotlinNativeTarget.konanTargetAttribute, nativeTargetName)
         attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
         attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
-        // todo: don't add platform specific attribute
-        attribute(KotlinNativeTarget.konanTargetAttribute, org.jetbrains.kotlin.konan.target.KonanTarget.MACOS_X64.toString())
     }
 }
 
@@ -53,6 +51,8 @@ val atomicfuJsIrRuntimeForTests by configurations.creating {
         attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_RUNTIME))
     }
 }
+
+val atomicfuCompilerPluginForTests by configurations.creating
 
 repositories {
     mavenCentral()
@@ -105,7 +105,7 @@ dependencies {
     testImplementation(projectTests(":compiler:tests-common"))
     testImplementation(projectTests(":compiler:tests-common-new"))
     testImplementation(projectTests(":compiler:test-infrastructure"))
-    testCompileOnly("org.jetbrains.kotlinx:atomicfu:0.17.1") // todo: do not hardcode atomicfu version
+    testCompileOnly("org.jetbrains.kotlinx:atomicfu:0.21.0")
 
     testApiJUnit5()
 
@@ -114,10 +114,32 @@ dependencies {
     testRuntimeOnly(project(":compiler:backend-common"))
     testRuntimeOnly(commonDependency("org.fusesource.jansi", "jansi"))
 
-    atomicfuJsClasspath("org.jetbrains.kotlinx:atomicfu-js:0.17.1") { isTransitive = false }
+    atomicfuJsClasspath("org.jetbrains.kotlinx:atomicfu-js:0.21.0") { isTransitive = false }
     atomicfuJsIrRuntimeForTests(project(":kotlinx-atomicfu-runtime"))  { isTransitive = false }
-    atomicfuJvmClasspath("org.jetbrains.kotlinx:atomicfu:0.17.1") { isTransitive = false }
-    atomicfuNativeKlib("org.jetbrains.kotlinx:atomicfu:0.17.1") { isTransitive = false }
+    atomicfuJvmClasspath("org.jetbrains.kotlinx:atomicfu:0.21.0") { isTransitive = false }
+    atomicfuNativeKlib("org.jetbrains.kotlinx:atomicfu:0.21.0") { isTransitive = false }
+    atomicfuCompilerPluginForTests(project(":kotlin-atomicfu-compiler-plugin"))
+    // Implicit dependencies on native artifacts to run native tests on CI
+    implicitDependencies("org.jetbrains.kotlinx:atomicfu-linuxx64:0.21.0") {
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
+        }
+    }
+    implicitDependencies("org.jetbrains.kotlinx:atomicfu-macosarm64:0.21.0"){
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
+        }
+    }
+    implicitDependencies("org.jetbrains.kotlinx:atomicfu-macosx64:0.21.0"){
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
+        }
+    }
+    implicitDependencies("org.jetbrains.kotlinx:atomicfu-mingwx64:0.21.0"){
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
+        }
+    }
 
     embedded(project(":kotlinx-atomicfu-runtime")) {
         attributes {
@@ -128,7 +150,7 @@ dependencies {
         isTransitive = false
     }
 
-    testImplementation("org.jetbrains.kotlinx:atomicfu:0.17.1")
+    testImplementation("org.jetbrains.kotlinx:atomicfu:0.21.0")
 
     testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.9.1")
 }
@@ -146,13 +168,22 @@ testsJar()
 useD8Plugin()
 
 projectTest(jUnitMode = JUnitMode.JUnit5) {
-    useJUnitPlatform()
+    useJUnitPlatform {
+        // Exclude all tests with the "atomicfu-native" tag. They should be launched by another test task.
+        excludeTags("atomicfu-native")
+    }
     useJsIrBoxTests(version = version, buildDir = "$buildDir/")
 
     workingDir = rootDir
 
     dependsOn(":dist")
     dependsOn(atomicfuJsIrRuntimeForTests)
+
+    // Depend on the test task that launches Native tests so that it will also run together with tests
+    // for all other targets if K/N is enabled
+    if (kotlinBuildProperties.isKotlinNativeEnabled) {
+        dependsOn(nativeTest)
+    }
 
     val localAtomicfuJsIrRuntimeForTests: FileCollection = atomicfuJsIrRuntimeForTests
     val localAtomicfuJsClasspath: FileCollection = atomicfuJsClasspath
@@ -168,10 +199,11 @@ projectTest(jUnitMode = JUnitMode.JUnit5) {
 publish()
 standardPublicJars()
 
-val nativeBoxTest = nativeTest(
-    taskName = "nativeBoxTest",
-    tag = "atomicfu",
+val nativeTest = nativeTest(
+    taskName = "nativeTest",
+    tag = "atomicfu-native", // Include all tests with the "atomicfu-native" tag.
     requirePlatformLibs = true,
-    customDependencies = listOf(atomicfuJvmClasspath),
-    customKlibDependencies = listOf(atomicfuNativeKlib)
+    customCompilerDependencies = listOf(atomicfuJvmClasspath),
+    customTestDependencies = listOf(atomicfuNativeKlib),
+    compilerPluginDependencies = listOf(atomicfuCompilerPluginForTests)
 )

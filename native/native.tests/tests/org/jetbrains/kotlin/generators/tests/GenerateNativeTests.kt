@@ -267,6 +267,16 @@ fun main() {
             }
         }
 
+        // Atomicfu compiler plugin native tests.
+        testGroup("plugins/atomicfu/atomicfu-compiler/test", "plugins/atomicfu/atomicfu-compiler/testData") {
+            testClass<AbstractNativeBlackBoxTest>(
+                suiteTestClassName = "AtomicfuNativeTestGenerated",
+                annotations = listOf(atomicfuNative(), provider<UseStandardTestCaseGroupProvider>())
+            ) {
+                model("nativeBox")
+            }
+        }
+
         generateTestGroupSuiteWithJUnit5 {
             testGroup("native/native.tests/tests-gen", "compiler/util-klib-abi/testData") {
                 testClass<AbstractNativeLibraryAbiReaderTest>(
@@ -345,4 +355,4 @@ private fun debugger() = annotation(Tag::class.java, "debugger")
 private fun infrastructure() = annotation(Tag::class.java, "infrastructure")
 private fun k1libContents() = annotation(Tag::class.java, "k1libContents")
 private fun k2libContents() = annotation(Tag::class.java, "k2libContents")
-private fun atomicfu() = annotation(Tag::class.java, "atomicfu")
+private fun atomicfuNative() = annotation(Tag::class.java, "atomicfu-native")

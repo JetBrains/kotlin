@@ -190,6 +190,7 @@ private object NativeTestSupport {
         output += sanitizer
         output += CacheMode::class to cacheMode
         output += computeTestMode(enforcedProperties)
+        output += computeCompilerPlugins(enforcedProperties)
         output += computeCustomKlibs(enforcedProperties)
         output += computeForcedStandaloneTestKind(enforcedProperties)
         output += computeForcedNoopTestRunner(enforcedProperties)
@@ -276,6 +277,15 @@ private object NativeTestSupport {
 
     private fun computeTestMode(enforcedProperties: EnforcedProperties): TestMode =
         ClassLevelProperty.TEST_MODE.readValue(enforcedProperties, TestMode.values(), default = TestMode.TWO_STAGE_MULTI_MODULE)
+
+    private fun computeCompilerPlugins(enforcedProperties: EnforcedProperties): CompilerPlugins =
+        CompilerPlugins(
+            ClassLevelProperty.COMPILER_PLUGINS.readValue(
+                enforcedProperties,
+                { it.split(':', ';').mapToSet(::File) },
+                default = emptySet()
+            )
+        )
 
     private fun computeCustomKlibs(enforcedProperties: EnforcedProperties): CustomKlibs =
         CustomKlibs(
