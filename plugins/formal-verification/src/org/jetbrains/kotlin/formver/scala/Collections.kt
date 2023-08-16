@@ -11,6 +11,7 @@
 
 package org.jetbrains.kotlin.formver.scala
 
+import scala.Tuple2
 import scala.collection.immutable.Map
 import scala.collection.immutable.`Map$`
 import scala.collection.immutable.Seq
@@ -37,6 +38,9 @@ fun Long.toScalaBigInt(): scala.math.BigInt = scala.math.BigInt.apply(this)
 fun <T> T?.toScalaOption(): scala.Option<T> = scala.Option.apply(this)
 
 fun <K, V> emptyScalaMap(): Map<K, V> = `Map$`.`MODULE$`.empty()
+
+fun <K, V> kotlin.collections.Map<K, V>.toScalaMap(): Map<K, V> =
+    `Map$`.`MODULE$`.from(entries.map { Tuple2(it.key, it.value) }.toScalaSeq())
 
 fun <T> emptySeq(): Seq<T> = CollectionConverters.asScala(emptyList<T>()).toSeq()
 

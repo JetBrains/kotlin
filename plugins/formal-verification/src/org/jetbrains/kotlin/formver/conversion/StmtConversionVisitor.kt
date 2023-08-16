@@ -16,10 +16,13 @@ import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.coneTypeOrNull
+import org.jetbrains.kotlin.fir.types.isNullable
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.formver.scala.silicon.ast.Exp
 import org.jetbrains.kotlin.formver.scala.silicon.ast.Stmt
+import org.jetbrains.kotlin.formver.scala.silicon.ast.Type
 import org.jetbrains.kotlin.formver.scala.toScalaBigInt
 import org.jetbrains.kotlin.text
 import org.jetbrains.kotlin.types.ConstantValueKind
@@ -59,6 +62,11 @@ class StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
         when (constExpression.kind) {
             ConstantValueKind.Int -> Exp.IntLit((constExpression.value as Long).toInt().toScalaBigInt())
             ConstantValueKind.Boolean -> Exp.BoolLit(constExpression.value as Boolean)
+            /* TODO: For now null is always hard-coded to be of type Nullable[Int].
+             * This needs to be generalized and for this the type of the return expressions needs to be known.
+             * This type should maybe be passed as function argument.
+             */
+            ConstantValueKind.Null -> NullableDomain.nullVal(Type.Int)
             else -> TODO("Constant Expression of type ${constExpression.kind} is not yet implemented.")
         }
 
@@ -110,6 +118,20 @@ class StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
                 data.convertType(type)
             ).toLocalVar()
             else -> TODO("Implement other property accesses")
+        }
+    }
+
+    override fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall, data: StmtConversionContext): Exp {
+        if (equalityOperatorCall.arguments.size != 2) {
+            throw IllegalArgumentException("Invalid equality comparison $equalityOperatorCall, can only compare 2 elements.")
+        }
+        val left = equalityOperatorCall.arguments[0].accept(this, data)
+        val right = equalityOperatorCall.arguments[1].accept(this, data)
+
+        return when (equalityOperatorCall.operation) {
+            FirOperation.EQ -> Exp.EqCmp(left, right)
+            FirOperation.NOT_EQ -> Exp.NeCmp(left, right)
+            else -> TODO("Equality comparison operation ${equalityOperatorCall.operation} not yet implemented.")
         }
     }
 
@@ -175,5 +197,15 @@ class StmtConversionVisitor : FirVisitor<Exp, StmtConversionContext>() {
         val convertedRValue = variableAssignment.rValue.accept(this, data)
         data.addStatement(Stmt.assign(convertedLValue, convertedRValue))
         return UnitDomain.element
+    }
+
+    override fun visitSmartCastExpression(smartCastExpression: FirSmartCastExpression, data: StmtConversionContext): Exp {
+        val oldType = smartCastExpression.originalExpression.typeRef.coneType
+        val newType = smartCastExpression.smartcastType.coneType
+        if (oldType.isNullable && !newType.isNullable) {
+            val exp = smartCastExpression.originalExpression.accept(this, data)
+            return NullableDomain.valOfApp(exp, data.convertType(newType).viperType)
+        }
+        TODO("Handle other kinds of smart casts.")
     }
 }

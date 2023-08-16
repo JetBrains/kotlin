@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.formver.plugin
 
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirSimpleFunctionChecker
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
@@ -24,9 +25,9 @@ import viper.silver.cfg.silver.SilverCfg
 import viper.silver.reporter.StdIOReporter
 
 
-object ViperPoweredDeclarationChecker : FirSimpleFunctionChecker() {
+class ViperPoweredDeclarationChecker(val session: FirSession) : FirSimpleFunctionChecker() {
     override fun check(declaration: FirSimpleFunction, context: CheckerContext, reporter: DiagnosticReporter) {
-        val programConversionContext = ProgramConverter()
+        val programConversionContext = ProgramConverter(session)
         programConversionContext.addWithBody(declaration)
         val program = programConversionContext.program
 

@@ -51,5 +51,22 @@ data object ReturnVariableName : ConvertedName {
         get() = "ret\$"
 }
 
+/**
+ * We also convert domain names and their function and axiom names as
+ * they have to be globally unique as well.
+ */
+data class ConvertedDomainName(val name: String) : ConvertedName {
+    // Info: Can't use 'domain' as prefix as Viper recognizes it as a keyword
+    override val asString: String = "dom\$$name"
+}
+
+data class ConvertedDomainFuncName(val domainName: ConvertedDomainName, val funcName: String) : ConvertedName {
+    override val asString: String = "${domainName.asString}\$${funcName}"
+}
+
+data class ConvertedDomainAxiomName(val domainName: ConvertedDomainName, val axiomName: String) : ConvertedName {
+    override val asString: String = "${domainName.asString}\$${axiomName}"
+}
+
 fun FirValueParameterSymbol.convertName(): LocalName = LocalName(name)
 fun CallableId.convertName(): ConvertedName = if (isLocal) LocalName(callableName) else GlobalName(packageName, callableName)

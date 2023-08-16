@@ -1,6 +1,37 @@
-/function_call.kt:(4,5): info: domain unit$  {
+/function_call.kt:(4,5): info: domain dom$Unit  {
 
-  unique function unit$element(): unit$
+  function dom$Unit$element(): dom$Unit
+}
+
+domain dom$Nullable[T]  {
+
+  function dom$Nullable$null(): dom$Nullable[T]
+
+  function dom$Nullable$nullable_of(x: T): dom$Nullable[T]
+
+  function dom$Nullable$val_of(x: dom$Nullable[T]): T
+
+  axiom dom$Nullable$some_not_null {
+    (forall x: T ::
+      { (dom$Nullable$nullable_of(x): dom$Nullable[T]) }
+      (dom$Nullable$nullable_of(x): dom$Nullable[T]) !=
+      (dom$Nullable$null(): dom$Nullable[T]))
+  }
+
+  axiom dom$Nullable$val_of_nullable_of_val {
+    (forall x: T ::
+      { (dom$Nullable$val_of((dom$Nullable$nullable_of(x): dom$Nullable[T])): T) }
+      (dom$Nullable$val_of((dom$Nullable$nullable_of(x): dom$Nullable[T])): T) ==
+      x)
+  }
+
+  axiom dom$Nullable$nullable_of_val_of_nullable {
+    (forall x: dom$Nullable[T] ::
+      { (dom$Nullable$nullable_of((dom$Nullable$val_of(x): T)): dom$Nullable[T]) }
+      x != (dom$Nullable$null(): dom$Nullable[T]) ==>
+      (dom$Nullable$nullable_of((dom$Nullable$val_of(x): T)): dom$Nullable[T]) ==
+      x)
+  }
 }
 
 method global$pkg_$f(local$x: Int) returns (ret$: Int)
@@ -8,15 +39,46 @@ method global$pkg_$f(local$x: Int) returns (ret$: Int)
   ret$ := local$x
 }
 
-/function_call.kt:(27,40): info: domain unit$  {
+/function_call.kt:(27,40): info: domain dom$Unit  {
 
-  unique function unit$element(): unit$
+  function dom$Unit$element(): dom$Unit
+}
+
+domain dom$Nullable[T]  {
+
+  function dom$Nullable$null(): dom$Nullable[T]
+
+  function dom$Nullable$nullable_of(x: T): dom$Nullable[T]
+
+  function dom$Nullable$val_of(x: dom$Nullable[T]): T
+
+  axiom dom$Nullable$some_not_null {
+    (forall x: T ::
+      { (dom$Nullable$nullable_of(x): dom$Nullable[T]) }
+      (dom$Nullable$nullable_of(x): dom$Nullable[T]) !=
+      (dom$Nullable$null(): dom$Nullable[T]))
+  }
+
+  axiom dom$Nullable$val_of_nullable_of_val {
+    (forall x: T ::
+      { (dom$Nullable$val_of((dom$Nullable$nullable_of(x): dom$Nullable[T])): T) }
+      (dom$Nullable$val_of((dom$Nullable$nullable_of(x): dom$Nullable[T])): T) ==
+      x)
+  }
+
+  axiom dom$Nullable$nullable_of_val_of_nullable {
+    (forall x: dom$Nullable[T] ::
+      { (dom$Nullable$nullable_of((dom$Nullable$val_of(x): T)): dom$Nullable[T]) }
+      x != (dom$Nullable$null(): dom$Nullable[T]) ==>
+      (dom$Nullable$nullable_of((dom$Nullable$val_of(x): T)): dom$Nullable[T]) ==
+      x)
+  }
 }
 
 method global$pkg_$f(local$x: Int) returns (ret$: Int)
 
 
-method global$pkg_$function_call() returns (ret$: unit$)
+method global$pkg_$function_call() returns (ret$: dom$Unit)
 {
   var anonymous$1: Int
   var anonymous$2: Int
@@ -24,15 +86,46 @@ method global$pkg_$function_call() returns (ret$: unit$)
   anonymous$2 := global$pkg_$f(0)
 }
 
-/function_call.kt:(69,89): info: domain unit$  {
+/function_call.kt:(69,89): info: domain dom$Unit  {
 
-  unique function unit$element(): unit$
+  function dom$Unit$element(): dom$Unit
+}
+
+domain dom$Nullable[T]  {
+
+  function dom$Nullable$null(): dom$Nullable[T]
+
+  function dom$Nullable$nullable_of(x: T): dom$Nullable[T]
+
+  function dom$Nullable$val_of(x: dom$Nullable[T]): T
+
+  axiom dom$Nullable$some_not_null {
+    (forall x: T ::
+      { (dom$Nullable$nullable_of(x): dom$Nullable[T]) }
+      (dom$Nullable$nullable_of(x): dom$Nullable[T]) !=
+      (dom$Nullable$null(): dom$Nullable[T]))
+  }
+
+  axiom dom$Nullable$val_of_nullable_of_val {
+    (forall x: T ::
+      { (dom$Nullable$val_of((dom$Nullable$nullable_of(x): dom$Nullable[T])): T) }
+      (dom$Nullable$val_of((dom$Nullable$nullable_of(x): dom$Nullable[T])): T) ==
+      x)
+  }
+
+  axiom dom$Nullable$nullable_of_val_of_nullable {
+    (forall x: dom$Nullable[T] ::
+      { (dom$Nullable$nullable_of((dom$Nullable$val_of(x): T)): dom$Nullable[T]) }
+      x != (dom$Nullable$null(): dom$Nullable[T]) ==>
+      (dom$Nullable$nullable_of((dom$Nullable$val_of(x): T)): dom$Nullable[T]) ==
+      x)
+  }
 }
 
 method global$pkg_$f(local$x: Int) returns (ret$: Int)
 
 
-method global$pkg_$function_call_nested() returns (ret$: unit$)
+method global$pkg_$function_call_nested() returns (ret$: dom$Unit)
 {
   var anonymous$1: Int
   var anonymous$2: Int

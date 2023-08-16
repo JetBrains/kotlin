@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.formver.scala.silicon.ast
 
+import org.jetbrains.kotlin.formver.conversion.ConvertedDomainAxiomName
+import org.jetbrains.kotlin.formver.conversion.ConvertedDomainFuncName
+import org.jetbrains.kotlin.formver.conversion.ConvertedDomainName
 import org.jetbrains.kotlin.formver.scala.IntoViper
-import org.jetbrains.kotlin.formver.scala.emptySeq
 import org.jetbrains.kotlin.formver.scala.toScalaOption
 import org.jetbrains.kotlin.formver.scala.toScalaSeq
 import viper.silver.ast.AnonymousDomainAxiom
@@ -15,7 +17,7 @@ import viper.silver.ast.NamedDomainAxiom
 
 // Cannot implement `IntoViper` as we need to pass the domain name.
 class DomainFunc(
-    val name: String,
+    val name: ConvertedDomainFuncName,
     val formalArgs: List<LocalVarDecl>,
     val typ: Type,
     val unique: Boolean,
@@ -25,7 +27,7 @@ class DomainFunc(
 ) {
     fun toViper(domainName: String): viper.silver.ast.DomainFunc =
         viper.silver.ast.DomainFunc(
-            name,
+            name.asString,
             formalArgs.toScalaSeq(),
             typ.toViper(),
             unique,
@@ -39,7 +41,7 @@ class DomainFunc(
 
 // Cannot implement `IntoViper` as we need to pass the domain name.
 class DomainAxiom(
-    val name: String?,
+    val name: ConvertedDomainAxiomName?,
     val exp: Exp,
     val pos: Position = Position.NoPosition,
     val info: Info = Info.NoInfo,
@@ -47,39 +49,48 @@ class DomainAxiom(
 ) {
     fun toViper(domainName: String): viper.silver.ast.DomainAxiom =
         if (name != null)
-            NamedDomainAxiom(name, exp.toViper(), pos.toViper(), info.toViper(), domainName, trafos.toViper())
+            NamedDomainAxiom(name.asString, exp.toViper(), pos.toViper(), info.toViper(), domainName, trafos.toViper())
         else
             AnonymousDomainAxiom(exp.toViper(), pos.toViper(), info.toViper(), domainName, trafos.toViper())
 }
 
-open class Domain(
-    val name: String,
-    functions: List<DomainFunc>,
-    val axioms: List<DomainAxiom>,
+abstract class Domain(
+    val name: ConvertedDomainName,
     val pos: Position = Position.NoPosition,
     val info: Info = Info.NoInfo,
     val trafos: Trafos = Trafos.NoTrafos,
 ) : IntoViper<viper.silver.ast.Domain> {
-    val namedFunctions = functions.associateBy { it.name }
+
+    abstract val typeVars: List<Type.TypeVar>
+    abstract val functions: List<DomainFunc>
+    abstract val axioms: List<DomainAxiom>
 
     override fun toViper(): viper.silver.ast.Domain =
         viper.silver.ast.Domain(
-            name,
-            namedFunctions.map { it.value.toViper(name) }.toScalaSeq(),
-            axioms.map { it.toViper(name) }.toScalaSeq(),
-            emptySeq(),
+            name.asString,
+            functions.map { it.toViper(name.asString) }.toScalaSeq(),
+            axioms.map { it.toViper(name.asString) }.toScalaSeq(),
+            typeVars.map { it.toViper() }.toScalaSeq(),
             null.toScalaOption(),
             pos.toViper(),
             info.toViper(),
             trafos.toViper()
         )
 
-    fun toType(): Type.Domain = Type.Domain(name)
+    fun toType(typeParamSubst: Map<Type.TypeVar, Type> = emptyMap()): Type.Domain = Type.Domain(name.asString, typeVars, typeParamSubst)
 
-    fun getDomainFuncApp(
-        funcName: String, args: List<Exp>,
+    fun createDomainFunc(funcName: String, args: List<LocalVarDecl>, type: Type, unique: Boolean = false) =
+        DomainFunc(ConvertedDomainFuncName(this.name, funcName), args, type, unique)
+
+    fun createDomainAxiom(axiomName: String?, exp: Exp): DomainAxiom =
+        DomainAxiom(axiomName?.let { ConvertedDomainAxiomName(this.name, it) }, exp)
+
+    fun funcApp(
+        func: DomainFunc,
+        args: List<Exp>,
+        typeVarMap: Map<Type.TypeVar, Type> = typeVars.associateWith { it },
         pos: Position = Position.NoPosition,
         info: Info = Info.NoInfo,
         trafos: Trafos = Trafos.NoTrafos,
-    ): Exp.DomainFuncApp = Exp.DomainFuncApp(name, funcName, args, namedFunctions.getValue(funcName).typ, pos, info, trafos)
+    ): Exp.DomainFuncApp = Exp.DomainFuncApp(name.asString, func.name.asString, args, typeVarMap, func.typ, pos, info, trafos)
 }

@@ -1,0 +1,24 @@
+FILE: nullable.kt
+    public final fun return_nullable(): R|kotlin/Int?| {
+        ^return_nullable Int(0)
+    }
+    public final fun smart_cast(x: R|kotlin/Int?|): R|kotlin/Int| {
+        when () {
+            ==(R|<local>/x|, Null(null)) ->  {
+                ^smart_cast Int(0)
+            }
+            else ->  {
+                ^smart_cast R|<local>/x|
+            }
+        }
+
+    }
+    public final fun use_nullable_twice(x: R|kotlin/Int?|): R|kotlin/Int?| {
+        lval a: R|kotlin/Int?| = R|<local>/x|
+        lval b: R|kotlin/Int?| = R|<local>/x|
+        ^use_nullable_twice R|<local>/a|
+    }
+    public final fun pass_nullable_parameter(x: R|kotlin/Int?|): R|kotlin/Int?| {
+        R|/use_nullable_twice|(R|<local>/x|)
+        ^pass_nullable_parameter R|<local>/x|
+    }

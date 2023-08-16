@@ -5,6 +5,12 @@
 
 package org.jetbrains.kotlin.formver.scala
 
-interface IntoViper<T> {
+interface IntoViper<out T> {
     fun toViper(): T
 }
+
+fun <T, V> List<T>.toViper(): List<V> where T : IntoViper<V> =
+    map { it.toViper() }
+
+fun <K, V, K2, V2> Map<K, V>.toViper(): Map<K2, V2> where K : IntoViper<K2>, V : IntoViper<V2> =
+    this.mapKeys { it.key.toViper() }.mapValues { it.value.toViper() }

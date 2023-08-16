@@ -36,3 +36,11 @@ class ConvertedClassType : ConvertedType {
 
     override fun invariants(v: Exp): List<Exp> = listOf(Exp.NeCmp(v, Exp.NullLit()))
 }
+
+class ConvertedTypeVar(val name: String) : ConvertedType {
+    override val viperType: Type = Type.TypeVar(name)
+}
+
+class ConvertedNullable(val elementType: ConvertedType) : ConvertedType {
+    override val viperType: Type = NullableDomain.toType(mapOf(NullableDomain.T to elementType.viperType))
+}

@@ -1,6 +1,37 @@
-/returns_booleans.kt:(121,133): info: domain unit$  {
+/returns_booleans.kt:(121,133): info: domain dom$Unit  {
 
-  unique function unit$element(): unit$
+  function dom$Unit$element(): dom$Unit
+}
+
+domain dom$Nullable[T]  {
+
+  function dom$Nullable$null(): dom$Nullable[T]
+
+  function dom$Nullable$nullable_of(x: T): dom$Nullable[T]
+
+  function dom$Nullable$val_of(x: dom$Nullable[T]): T
+
+  axiom dom$Nullable$some_not_null {
+    (forall x: T ::
+      { (dom$Nullable$nullable_of(x): dom$Nullable[T]) }
+      (dom$Nullable$nullable_of(x): dom$Nullable[T]) !=
+      (dom$Nullable$null(): dom$Nullable[T]))
+  }
+
+  axiom dom$Nullable$val_of_nullable_of_val {
+    (forall x: T ::
+      { (dom$Nullable$val_of((dom$Nullable$nullable_of(x): dom$Nullable[T])): T) }
+      (dom$Nullable$val_of((dom$Nullable$nullable_of(x): dom$Nullable[T])): T) ==
+      x)
+  }
+
+  axiom dom$Nullable$nullable_of_val_of_nullable {
+    (forall x: dom$Nullable[T] ::
+      { (dom$Nullable$nullable_of((dom$Nullable$val_of(x): T)): dom$Nullable[T]) }
+      x != (dom$Nullable$null(): dom$Nullable[T]) ==>
+      (dom$Nullable$nullable_of((dom$Nullable$val_of(x): T)): dom$Nullable[T]) ==
+      x)
+  }
 }
 
 method global$pkg_$returns_true() returns (ret$: Bool)
@@ -10,9 +41,40 @@ method global$pkg_$returns_true() returns (ret$: Bool)
   ret$ := true
 }
 
-/returns_booleans.kt:(268,281): info: domain unit$  {
+/returns_booleans.kt:(268,281): info: domain dom$Unit  {
 
-  unique function unit$element(): unit$
+  function dom$Unit$element(): dom$Unit
+}
+
+domain dom$Nullable[T]  {
+
+  function dom$Nullable$null(): dom$Nullable[T]
+
+  function dom$Nullable$nullable_of(x: T): dom$Nullable[T]
+
+  function dom$Nullable$val_of(x: dom$Nullable[T]): T
+
+  axiom dom$Nullable$some_not_null {
+    (forall x: T ::
+      { (dom$Nullable$nullable_of(x): dom$Nullable[T]) }
+      (dom$Nullable$nullable_of(x): dom$Nullable[T]) !=
+      (dom$Nullable$null(): dom$Nullable[T]))
+  }
+
+  axiom dom$Nullable$val_of_nullable_of_val {
+    (forall x: T ::
+      { (dom$Nullable$val_of((dom$Nullable$nullable_of(x): dom$Nullable[T])): T) }
+      (dom$Nullable$val_of((dom$Nullable$nullable_of(x): dom$Nullable[T])): T) ==
+      x)
+  }
+
+  axiom dom$Nullable$nullable_of_val_of_nullable {
+    (forall x: dom$Nullable[T] ::
+      { (dom$Nullable$nullable_of((dom$Nullable$val_of(x): T)): dom$Nullable[T]) }
+      x != (dom$Nullable$null(): dom$Nullable[T]) ==>
+      (dom$Nullable$nullable_of((dom$Nullable$val_of(x): T)): dom$Nullable[T]) ==
+      x)
+  }
 }
 
 method global$pkg_$returns_false() returns (ret$: Bool)
@@ -22,9 +84,40 @@ method global$pkg_$returns_false() returns (ret$: Bool)
   ret$ := false
 }
 
-/returns_booleans.kt:(418,435): info: domain unit$  {
+/returns_booleans.kt:(418,435): info: domain dom$Unit  {
 
-  unique function unit$element(): unit$
+  function dom$Unit$element(): dom$Unit
+}
+
+domain dom$Nullable[T]  {
+
+  function dom$Nullable$null(): dom$Nullable[T]
+
+  function dom$Nullable$nullable_of(x: T): dom$Nullable[T]
+
+  function dom$Nullable$val_of(x: dom$Nullable[T]): T
+
+  axiom dom$Nullable$some_not_null {
+    (forall x: T ::
+      { (dom$Nullable$nullable_of(x): dom$Nullable[T]) }
+      (dom$Nullable$nullable_of(x): dom$Nullable[T]) !=
+      (dom$Nullable$null(): dom$Nullable[T]))
+  }
+
+  axiom dom$Nullable$val_of_nullable_of_val {
+    (forall x: T ::
+      { (dom$Nullable$val_of((dom$Nullable$nullable_of(x): dom$Nullable[T])): T) }
+      (dom$Nullable$val_of((dom$Nullable$nullable_of(x): dom$Nullable[T])): T) ==
+      x)
+  }
+
+  axiom dom$Nullable$nullable_of_val_of_nullable {
+    (forall x: dom$Nullable[T] ::
+      { (dom$Nullable$nullable_of((dom$Nullable$val_of(x): T)): dom$Nullable[T]) }
+      x != (dom$Nullable$null(): dom$Nullable[T]) ==>
+      (dom$Nullable$nullable_of((dom$Nullable$val_of(x): T)): dom$Nullable[T]) ==
+      x)
+  }
 }
 
 method global$pkg_$conditional_basic(local$b: Bool) returns (ret$: Bool)
@@ -34,9 +127,40 @@ method global$pkg_$conditional_basic(local$b: Bool) returns (ret$: Bool)
   ret$ := true
 }
 
-/returns_booleans.kt:(612,636): info: domain unit$  {
+/returns_booleans.kt:(612,636): info: domain dom$Unit  {
 
-  unique function unit$element(): unit$
+  function dom$Unit$element(): dom$Unit
+}
+
+domain dom$Nullable[T]  {
+
+  function dom$Nullable$null(): dom$Nullable[T]
+
+  function dom$Nullable$nullable_of(x: T): dom$Nullable[T]
+
+  function dom$Nullable$val_of(x: dom$Nullable[T]): T
+
+  axiom dom$Nullable$some_not_null {
+    (forall x: T ::
+      { (dom$Nullable$nullable_of(x): dom$Nullable[T]) }
+      (dom$Nullable$nullable_of(x): dom$Nullable[T]) !=
+      (dom$Nullable$null(): dom$Nullable[T]))
+  }
+
+  axiom dom$Nullable$val_of_nullable_of_val {
+    (forall x: T ::
+      { (dom$Nullable$val_of((dom$Nullable$nullable_of(x): dom$Nullable[T])): T) }
+      (dom$Nullable$val_of((dom$Nullable$nullable_of(x): dom$Nullable[T])): T) ==
+      x)
+  }
+
+  axiom dom$Nullable$nullable_of_val_of_nullable {
+    (forall x: dom$Nullable[T] ::
+      { (dom$Nullable$nullable_of((dom$Nullable$val_of(x): T)): dom$Nullable[T]) }
+      x != (dom$Nullable$null(): dom$Nullable[T]) ==>
+      (dom$Nullable$nullable_of((dom$Nullable$val_of(x): T)): dom$Nullable[T]) ==
+      x)
+  }
 }
 
 method global$pkg_$binary_logic_expressions(local$a: Bool, local$b: Bool)
@@ -47,9 +171,40 @@ method global$pkg_$binary_logic_expressions(local$a: Bool, local$b: Bool)
   ret$ := true
 }
 
-/returns_booleans.kt:(855,866): info: domain unit$  {
+/returns_booleans.kt:(855,866): info: domain dom$Unit  {
 
-  unique function unit$element(): unit$
+  function dom$Unit$element(): dom$Unit
+}
+
+domain dom$Nullable[T]  {
+
+  function dom$Nullable$null(): dom$Nullable[T]
+
+  function dom$Nullable$nullable_of(x: T): dom$Nullable[T]
+
+  function dom$Nullable$val_of(x: dom$Nullable[T]): T
+
+  axiom dom$Nullable$some_not_null {
+    (forall x: T ::
+      { (dom$Nullable$nullable_of(x): dom$Nullable[T]) }
+      (dom$Nullable$nullable_of(x): dom$Nullable[T]) !=
+      (dom$Nullable$null(): dom$Nullable[T]))
+  }
+
+  axiom dom$Nullable$val_of_nullable_of_val {
+    (forall x: T ::
+      { (dom$Nullable$val_of((dom$Nullable$nullable_of(x): dom$Nullable[T])): T) }
+      (dom$Nullable$val_of((dom$Nullable$nullable_of(x): dom$Nullable[T])): T) ==
+      x)
+  }
+
+  axiom dom$Nullable$nullable_of_val_of_nullable {
+    (forall x: dom$Nullable[T] ::
+      { (dom$Nullable$nullable_of((dom$Nullable$val_of(x): T)): dom$Nullable[T]) }
+      x != (dom$Nullable$null(): dom$Nullable[T]) ==>
+      (dom$Nullable$nullable_of((dom$Nullable$val_of(x): T)): dom$Nullable[T]) ==
+      x)
+  }
 }
 
 method global$pkg_$logical_not(local$b: Bool) returns (ret$: Bool)
@@ -59,9 +214,40 @@ method global$pkg_$logical_not(local$b: Bool) returns (ret$: Bool)
   ret$ := false
 }
 
-/returns_booleans.kt:(1052,1075): info: domain unit$  {
+/returns_booleans.kt:(1052,1075): info: domain dom$Unit  {
 
-  unique function unit$element(): unit$
+  function dom$Unit$element(): dom$Unit
+}
+
+domain dom$Nullable[T]  {
+
+  function dom$Nullable$null(): dom$Nullable[T]
+
+  function dom$Nullable$nullable_of(x: T): dom$Nullable[T]
+
+  function dom$Nullable$val_of(x: dom$Nullable[T]): T
+
+  axiom dom$Nullable$some_not_null {
+    (forall x: T ::
+      { (dom$Nullable$nullable_of(x): dom$Nullable[T]) }
+      (dom$Nullable$nullable_of(x): dom$Nullable[T]) !=
+      (dom$Nullable$null(): dom$Nullable[T]))
+  }
+
+  axiom dom$Nullable$val_of_nullable_of_val {
+    (forall x: T ::
+      { (dom$Nullable$val_of((dom$Nullable$nullable_of(x): dom$Nullable[T])): T) }
+      (dom$Nullable$val_of((dom$Nullable$nullable_of(x): dom$Nullable[T])): T) ==
+      x)
+  }
+
+  axiom dom$Nullable$nullable_of_val_of_nullable {
+    (forall x: dom$Nullable[T] ::
+      { (dom$Nullable$nullable_of((dom$Nullable$val_of(x): T)): dom$Nullable[T]) }
+      x != (dom$Nullable$null(): dom$Nullable[T]) ==>
+      (dom$Nullable$nullable_of((dom$Nullable$val_of(x): T)): dom$Nullable[T]) ==
+      x)
+  }
 }
 
 method global$pkg_$binary_logic_expressions(local$a: Bool, local$b: Bool)

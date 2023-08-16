@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.formver.conversion
 
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -21,13 +22,14 @@ import viper.silver.ast.Program
  * Tracks the top-level information about the program.
  * Conversions for global entities like types should generally be
  * performed via this context to ensure they can be deduplicated.
+ * We need the FirSession to get access to the TypeContext.
  */
-class ProgramConverter : ProgramConversionContext {
+class ProgramConverter(val session: FirSession) : ProgramConversionContext {
     private val methods: MutableMap<ConvertedName, MethodConverter> = mutableMapOf()
 
     val program: Program
         get() = Program(
-            seqOf(UnitDomain.toViper()), /* Domains */
+            seqOf(UnitDomain.toViper(), NullableDomain.toViper()), /* Domains */
             seqOf(), /* Fields */
             emptySeq(), /* Functions */
             emptySeq(), /* Predicates */
@@ -76,6 +78,7 @@ class ProgramConverter : ProgramConversionContext {
         type.isInt -> ConvertedInt
         type.isBoolean -> ConvertedBoolean
         type.isNothing -> ConvertedNothing
+        type.isNullable -> ConvertedNullable(convertType(type.withNullability(ConeNullability.NOT_NULL, session.typeContext)))
         else -> throw NotImplementedError("The embedding for type $type is not yet implemented.")
     }
 }

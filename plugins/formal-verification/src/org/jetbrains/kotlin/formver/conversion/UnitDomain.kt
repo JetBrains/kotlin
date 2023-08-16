@@ -5,13 +5,7 @@
 
 package org.jetbrains.kotlin.formver.conversion
 
-import org.jetbrains.kotlin.formver.scala.silicon.ast.Domain
-import org.jetbrains.kotlin.formver.scala.silicon.ast.DomainFunc
-import org.jetbrains.kotlin.formver.scala.silicon.ast.Exp
-import org.jetbrains.kotlin.formver.scala.silicon.ast.Type
-
-const val UNIT_DOMAIN_NAME: String = "unit$"
-const val UNIT_DOMAIN_ELEMENT: String = "unit\$element"
+import org.jetbrains.kotlin.formver.scala.silicon.ast.*
 
 /** A representation of the unit type as a Viper domain.
  *
@@ -20,12 +14,12 @@ const val UNIT_DOMAIN_ELEMENT: String = "unit\$element"
  * seem to suffice (hence why it is not present here).  It isn't quite clear why this is the case, but
  * since we don't generally need to talk about equality of units this should be fine.
  */
-object UnitDomain : Domain(
-    UNIT_DOMAIN_NAME,
-    listOf(
-        DomainFunc(UNIT_DOMAIN_ELEMENT, listOf(), Type.Domain(UNIT_DOMAIN_NAME), true)
-    ),
-    listOf(),
-) {
-    val element: Exp = getDomainFuncApp(UNIT_DOMAIN_ELEMENT, listOf())
+object UnitDomain : Domain(ConvertedDomainName("Unit")) {
+    override val typeVars: List<Type.TypeVar> = emptyList()
+
+    val elementFunc = createDomainFunc("element", emptyList(), toType())
+    val element: Exp = funcApp(elementFunc, listOf())
+
+    override val functions: List<DomainFunc> = listOf(elementFunc)
+    override val axioms: List<DomainAxiom> = emptyList()
 }
