@@ -10,6 +10,7 @@ dependencies {
     testImplementation(commonDependency("commons-lang:commons-lang"))
     testImplementation(commonDependency("org.jetbrains.teamcity:serviceMessages"))
     testImplementation(project(":kotlin-compiler-runner-unshaded"))
+    testImplementation(project(":compiler:fir:native"))
     testImplementation(projectTests(":compiler:tests-common"))
     testImplementation(projectTests(":compiler:tests-common-new"))
     testImplementation(projectTests(":compiler:test-infrastructure"))
