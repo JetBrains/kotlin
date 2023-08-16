@@ -156,7 +156,8 @@ class MainKtsTest {
     fun testCyclicImportError() {
         val res = evalFile(File("$TEST_DATA_ROOT/import-cycle-1.main.kts"))
         // TODO: the second error is due to the late cycle detection, see TODO in makeCompiledScript$makeOtherScripts
-        assertFailedAny("Unable to handle recursive script dependencies", "is already bound", res = res)
+        // TODO: third error is due to the early IR backend error, consider processing it in makeCompiledScript$makeOtherScripts
+        assertFailedAny("Unable to handle recursive script dependencies", "is already bound", "Duplicate JVM class name", res = res)
     }
 
     @Test
