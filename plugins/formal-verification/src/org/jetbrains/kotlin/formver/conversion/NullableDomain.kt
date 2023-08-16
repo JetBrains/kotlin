@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.formver.scala.silicon.ast.Exp.*
  *     }
  *     axiom nullable_of_val_of_nullable {
  *         forall x: Nullable[T] :: { nullable_of(val_of(x)) }
- *             !is_null(x) ==> nullable_of(val_of(x)) == x
+ *             x != null_val() ==> nullable_of(val_of(x)) == x
  *     }
  * }
  */
