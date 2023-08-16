@@ -3940,6 +3940,11 @@ internal class ReturnForBuiltInSuspendImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<KtReturnExpression>(firDiagnostic, token), KtFirDiagnostic.ReturnForBuiltInSuspend
 
+internal class MixingSuspendAndNonSuspendSupertypesImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.MixingSuspendAndNonSuspendSupertypes
+
 internal class RedundantLabelWarningImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,

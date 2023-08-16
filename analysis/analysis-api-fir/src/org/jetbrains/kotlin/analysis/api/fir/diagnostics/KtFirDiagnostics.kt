@@ -3266,6 +3266,10 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ReturnForBuiltInSuspend::class
     }
 
+    interface MixingSuspendAndNonSuspendSupertypes : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = MixingSuspendAndNonSuspendSupertypes::class
+    }
+
     interface RedundantLabelWarning : KtFirDiagnostic<KtLabelReferenceExpression> {
         override val diagnosticClass get() = RedundantLabelWarning::class
     }
