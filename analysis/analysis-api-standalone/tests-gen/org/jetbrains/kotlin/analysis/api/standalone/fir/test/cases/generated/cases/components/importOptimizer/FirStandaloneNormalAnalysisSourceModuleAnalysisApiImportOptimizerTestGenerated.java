@@ -242,6 +242,18 @@ public class FirStandaloneNormalAnalysisSourceModuleAnalysisApiImportOptimizerTe
         }
 
         @Test
+        @TestMetadata("ambiguousFunction.kt")
+        public void testAmbiguousFunction() throws Exception {
+            runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/referencesWithErrors/ambiguousFunction.kt");
+        }
+
+        @Test
+        @TestMetadata("missingFunctionCall.kt")
+        public void testMissingFunctionCall() throws Exception {
+            runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/referencesWithErrors/missingFunctionCall.kt");
+        }
+
+        @Test
         @TestMetadata("unresolvedFunction.kt")
         public void testUnresolvedFunction() throws Exception {
             runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/referencesWithErrors/unresolvedFunction.kt");

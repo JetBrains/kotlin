@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedReferenceError
@@ -300,9 +301,10 @@ internal class KtFirImportOptimizer(
 }
 
 private val FirErrorNamedReference.unresolvedName: Name?
-    get() {
-        val diagnostic = diagnostic as? ConeUnresolvedError ?: return null
-        return diagnostic.unresolvedName
+    get() = when (val diagnostic = diagnostic) {
+        is ConeUnresolvedError -> diagnostic.unresolvedName
+        is ConeAmbiguityError -> diagnostic.name
+        else -> null
     }
 
 private val ConeUnresolvedError.unresolvedName: Name?
