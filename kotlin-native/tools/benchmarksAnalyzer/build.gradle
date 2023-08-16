@@ -50,7 +50,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation "org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion"
+                implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
             }
             kotlin.srcDir '../benchmarks/shared/src'
             kotlin.srcDir 'src/main/kotlin'
@@ -58,21 +58,13 @@ kotlin {
         }
         commonTest {
             dependencies {
-                implementation "org.jetbrains.kotlin:kotlin-test-common:$kotlinVersion"
-                implementation "org.jetbrains.kotlin:kotlin-test-annotations-common:$kotlinVersion"
+                implementation "org.jetbrains.kotlin:kotlin-test:$kotlinVersion"
             }
             kotlin.srcDir 'src/tests'
         }
         jvmTest {
-            dependencies {
-                implementation "org.jetbrains.kotlin:kotlin-test:$kotlinVersion"
-                implementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion"
-            }
         }
         jsTest {
-            dependencies {
-                implementation "org.jetbrains.kotlin:kotlin-test-js:$kotlinVersion"
-            }
         }
         nativeMain {
             dependsOn commonMain
@@ -80,16 +72,10 @@ kotlin {
             kotlin.srcDir '../../endorsedLibraries/kotlinx.cli/src/main/kotlin-native'
         }
         jvmMain {
-            dependencies {
-                implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
-            }
             kotlin.srcDir 'src/main/kotlin-jvm'
             kotlin.srcDir '../../endorsedLibraries/kotlinx.cli/src/main/kotlin-jvm'
         }
         jsMain {
-            dependencies {
-                implementation "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlinVersion"
-            }
             kotlin.srcDir 'src/main/kotlin-js'
             kotlin.srcDir '../../endorsedLibraries/kotlinx.cli/src/main/kotlin-js'
         }

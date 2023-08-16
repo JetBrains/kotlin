@@ -36,13 +36,12 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion")
+                implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
             }
             kotlin.srcDir("../benchmarks/shared/src")
         }
         val jsMain by creating {
             dependencies {
-                implementation("org.jetbrains.kotlin:kotlin-stdlib-js:$kotlinVersion")
                 implementation(npm("body-parser", "~1.20.0"))
                 implementation(npm("debug", "~4.3.4"))
                 implementation(npm("ejs", "~3.1.7"))
