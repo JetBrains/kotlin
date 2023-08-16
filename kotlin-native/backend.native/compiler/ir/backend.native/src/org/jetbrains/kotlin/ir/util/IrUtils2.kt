@@ -31,6 +31,3 @@ fun IrBuilderWithScope.irCatch() =
                         isLateinit = false
                 )
         )
-
-val IrField.hasNonConstInitializer: Boolean
-    get() = initializer?.expression.let { it != null && it !is IrConst<*> && it !is IrConstantValue }
