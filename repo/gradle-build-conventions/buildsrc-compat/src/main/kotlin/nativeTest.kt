@@ -12,6 +12,7 @@ private enum class TestProperty(shortName: String) {
     // effect on other Gradle tasks (ex: :kotlin-native:dist) that might be executed along with test task.
     KOTLIN_NATIVE_HOME("nativeHome"),
     COMPILER_CLASSPATH("compilerClasspath"),
+    COMPILER_PLUGINS("compilerPlugins"),
     CUSTOM_KLIBS("customKlibs"),
     TEST_TARGET("target"),
     TEST_MODE("mode"),
@@ -77,12 +78,23 @@ private class ComputedTestProperties(private val task: Test) {
 private fun Test.ComputedTestProperties(init: ComputedTestProperties.() -> Unit): ComputedTestProperties =
     ComputedTestProperties(this).apply { init() }
 
+/**
+ * @param taskName Name of Gradle task.
+ * @param tag Optional JUnit test tag. See https://junit.org/junit5/docs/current/user-guide/#writing-tests-tagging-and-filtering
+ * @param requirePlatformLibs Where platform KLIBs from the Kotlin/Native distribution are required for running this test.
+ * @param customCompilerDependencies The [Configuration]s that provide additional JARs to be added to the compiler's classpath.
+ * @param customTestDependencies The [Configuration]s that provide KLIBs to be added to Kotlin/Native compiler dependencies list
+ *   along with Kotlin/Native stdlib KLIB and Kotlin/Native platform KLIBs (the latter only if [requirePlatformLibs] is `true`).
+ * @param compilerPluginDependencies The [Configuration]s that provide compiler plugins to be enabled for the Kotlin/Native compiler
+ *   for the duration of test execution.
+ */
 fun Project.nativeTest(
     taskName: String,
     tag: String?,
     requirePlatformLibs: Boolean = false,
-    customDependencies: List<Configuration> = emptyList(),
-    customKlibDependencies: List<Configuration> = emptyList()
+    customCompilerDependencies: List<Configuration> = emptyList(),
+    customTestDependencies: List<Configuration> = emptyList(),
+    compilerPluginDependencies: List<Configuration> = emptyList()
 ) = projectTest(
     taskName,
     jUnitMode = JUnitMode.JUnit5,
@@ -141,7 +153,7 @@ fun Project.nativeTest(
                 else
                     null
 
-                customDependencies.forEach(::dependsOn)
+                customCompilerDependencies.forEach(::dependsOn)
 
                 lazyClassPath {
                     if (customNativeHome == null) {
@@ -151,13 +163,18 @@ fun Project.nativeTest(
                         this += file(customNativeHome).resolve("konan/lib/trove4j.jar")
                     }
 
-                    customDependencies.flatMapTo(this) { it.files }
+                    customCompilerDependencies.flatMapTo(this) { it.files }
                 }
             }
 
+            computeLazy(COMPILER_PLUGINS) {
+                compilerPluginDependencies.forEach(::dependsOn)
+                lazyClassPath { compilerPluginDependencies.flatMapTo(this) { it.files } }
+            }
+
             computeLazy(CUSTOM_KLIBS) {
-                customKlibDependencies.forEach(::dependsOn)
-                lazyClassPath { customKlibDependencies.flatMapTo(this) { it.files } }
+                customTestDependencies.forEach(::dependsOn)
+                lazyClassPath { customTestDependencies.flatMapTo(this) { it.files } }
             }
 
             // Pass Gradle properties as JVM properties so test process can read them.

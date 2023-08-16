@@ -35,6 +35,7 @@ internal abstract class BasicCompilation<A : TestCompilationArtifact>(
     private val optimizationMode: OptimizationMode,
     private val compilerOutputInterceptor: CompilerOutputInterceptor,
     protected val freeCompilerArgs: TestCompilerArgs,
+    protected val compilerPlugins: CompilerPlugins,
     protected val dependencies: CategorizedDependencies,
     protected val expectedArtifact: A
 ) : TestCompilation<A>() {
@@ -67,6 +68,10 @@ internal abstract class BasicCompilation<A : TestCompilationArtifact>(
         add(freeCompilerArgs.compilerArgs)
     }
 
+    private fun ArgsBuilder.applyCompilerPlugins() {
+        add(compilerPlugins.compilerPluginJars) { compilerPluginJar -> "-Xplugin=${compilerPluginJar.path}" }
+    }
+
     private fun ArgsBuilder.applySources() {
         addFlattenedTwice(sourceModules, { it.files }) { it.location.path }
     }
@@ -79,6 +84,7 @@ internal abstract class BasicCompilation<A : TestCompilationArtifact>(
             applySpecificArgs(this)
             applyDependencies(this)
             applyFreeArgs()
+            applyCompilerPlugins()
             applySources()
         }
 
@@ -135,6 +141,7 @@ internal abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
     private val allocator: Allocator,
     private val pipelineType: PipelineType,
     freeCompilerArgs: TestCompilerArgs,
+    compilerPlugins: CompilerPlugins,
     override val sourceModules: Collection<TestModule>,
     dependencies: CategorizedDependencies,
     expectedArtifact: A
@@ -145,6 +152,7 @@ internal abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
     optimizationMode = optimizationMode,
     compilerOutputInterceptor = compilerOutputInterceptor,
     freeCompilerArgs = freeCompilerArgs,
+    compilerPlugins = compilerPlugins,
     dependencies = dependencies,
     expectedArtifact = expectedArtifact
 ) {
@@ -197,6 +205,7 @@ internal class LibraryCompilation(
     allocator = settings.get(),
     pipelineType = settings.get(),
     freeCompilerArgs = freeCompilerArgs,
+    compilerPlugins = settings.get(),
     sourceModules = sourceModules,
     dependencies = CategorizedDependencies(dependencies),
     expectedArtifact = expectedArtifact
@@ -231,6 +240,7 @@ internal class ObjCFrameworkCompilation(
     allocator = settings.get(),
     pipelineType = settings.getStageDependentPipelineType(),
     freeCompilerArgs = freeCompilerArgs,
+    compilerPlugins = settings.get(),
     sourceModules = sourceModules,
     dependencies = CategorizedDependencies(dependencies),
     expectedArtifact = expectedArtifact
@@ -317,6 +327,7 @@ internal class ExecutableCompilation(
     allocator = settings.get(),
     pipelineType = settings.getStageDependentPipelineType(),
     freeCompilerArgs = freeCompilerArgs,
+    compilerPlugins = settings.get(),
     sourceModules = sourceModules,
     dependencies = CategorizedDependencies(dependencies),
     expectedArtifact = expectedArtifact
@@ -409,6 +420,7 @@ internal class StaticCacheCompilation(
     optimizationMode = settings.get(),
     compilerOutputInterceptor = settings.get(),
     freeCompilerArgs = freeCompilerArgs,
+    compilerPlugins = settings.get(),
     dependencies = CategorizedDependencies(dependencies),
     expectedArtifact = expectedArtifact
 ) {

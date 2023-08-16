@@ -78,6 +78,19 @@ internal enum class TestMode(private val description: String) {
 }
 
 /**
+ * Kotlin compiler plugins to be used together with the the Kotlin/Native compiler.
+ */
+@JvmInline
+internal value class CompilerPlugins(val compilerPluginJars: Set<File>) {
+    init {
+        val invalidJars = compilerPluginJars.filterNot { it.isDirectory || (it.isFile && it.extension == "jar") }
+        assertTrue(invalidJars.isEmpty()) {
+            "There are invalid compiler plugin JARs that should be passed for the Kotlin/Native compiler: ${invalidJars.joinToString { "[$it]" }}"
+        }
+    }
+}
+
+/**
  * The set of custom (external) klibs that should be passed to the Kotlin/Native compiler.
  */
 @JvmInline

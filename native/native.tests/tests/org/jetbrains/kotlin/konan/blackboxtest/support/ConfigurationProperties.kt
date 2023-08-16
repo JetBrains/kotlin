@@ -56,6 +56,7 @@ internal class EnforcedProperties(testClass: Class<*>) {
 internal enum class ClassLevelProperty(shortName: String) {
     TEST_TARGET("target"),
     TEST_MODE("mode"),
+    COMPILER_PLUGINS("compilerPlugins"),
     CUSTOM_KLIBS("customKlibs"),
     FORCE_STANDALONE("forceStandalone"),
     COMPILE_ONLY("compileOnly"),
