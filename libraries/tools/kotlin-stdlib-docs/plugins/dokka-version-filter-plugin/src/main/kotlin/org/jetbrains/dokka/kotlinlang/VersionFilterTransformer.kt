@@ -8,7 +8,6 @@ import org.jetbrains.dokka.model.doc.Text
 import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.plugability.configuration
 import org.jetbrains.dokka.transformers.documentation.DocumentableTransformer
-import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 class VersionFilterTransformer(private val dokkaContext: DokkaContext) :
     DocumentableTransformer {
@@ -120,4 +119,6 @@ class VersionFilterTransformer(private val dokkaContext: DokkaContext) :
         return documentation[sourceSet]?.children?.find { it is CustomTagWrapper && it.name == "Since Kotlin" }
             ?.let { (it.children[0] as? Text)?.body?.let { txt -> SinceKotlinVersion(txt) } }
     }
+
+    inline fun <T, C : Collection<T>, O> C.ifNotEmpty(body: C.() -> O?): O? = if (isNotEmpty()) this.body() else null
 }

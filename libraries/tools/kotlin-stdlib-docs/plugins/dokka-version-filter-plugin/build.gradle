@@ -8,7 +8,6 @@ final String dokka_version = property("dokka_version")
 dependencies {
     implementation "org.jetbrains.dokka:dokka-base:$dokka_version"
     compileOnly "org.jetbrains.dokka:dokka-core:$dokka_version"
-    compileOnly "org.jetbrains.dokka:dokka-analysis:$dokka_version"
     testImplementation 'org.jetbrains.kotlin:kotlin-test'}
 
 kotlin {

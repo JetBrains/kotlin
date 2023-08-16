@@ -1,3 +1,5 @@
+@file:OptIn(InternalDokkaApi::class)
+
 package org.jetbrains.dokka.kotlinlang
 
 import com.intellij.psi.PsiDocumentManager
@@ -6,19 +8,24 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.dokka.base.transformers.pages.samples.SamplesTransformer
+import org.jetbrains.dokka.InternalDokkaApi
+import org.jetbrains.dokka.analysis.kotlin.descriptors.compiler.impl.KotlinSampleProvider
+import org.jetbrains.dokka.analysis.kotlin.internal.SampleProvider
+import org.jetbrains.dokka.analysis.kotlin.internal.SampleProviderFactory
 import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.psi.psiUtil.prevLeaf
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.ImportPath
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.io.PrintWriter
 import java.io.StringWriter
 
-class KotlinWebsiteSamplesTransformer(context: DokkaContext): SamplesTransformer(context) {
+class KotlinWebsiteSampleProviderFactory(private val context: DokkaContext) : SampleProviderFactory {
+    override fun build(): SampleProvider = KotlinWebsiteSampleProvider(context)
+}
 
+class KotlinWebsiteSampleProvider(context: DokkaContext): KotlinSampleProvider(context) {
     private class SampleBuilder : KtTreeVisitorVoid() {
         val builder = StringBuilder()
         val text: String
@@ -156,7 +163,7 @@ class KotlinWebsiteSamplesTransformer(context: DokkaContext): SamplesTransformer
             val pw = PrintWriter(sw)
             it.e.printStackTrace(pw)
 
-            this@KotlinWebsiteSamplesTransformer.context.logger.error("${containingFile.name}: (${it.loc}): Exception thrown while converting \n```\n${it.text}\n```\n$sw")
+            this@KotlinWebsiteSampleProvider.context.logger.error("${containingFile.name}: (${it.loc}): Exception thrown while converting \n```\n${it.text}\n```\n$sw")
         }
         return sampleBuilder.text
     }
@@ -165,7 +172,7 @@ class KotlinWebsiteSamplesTransformer(context: DokkaContext): SamplesTransformer
 
     override fun processImports(psiElement: PsiElement): String {
         val psiFile = psiElement.containingFile
-        return when(val text = psiFile.safeAs<KtFile>()?.importList) {
+        return when(val text = (psiFile as? KtFile)?.importList) {
             is KtImportList -> text.let {
                 it.allChildren.filter {
                     it !is KtImportDirective || it.importPath !in importsToIgnore
