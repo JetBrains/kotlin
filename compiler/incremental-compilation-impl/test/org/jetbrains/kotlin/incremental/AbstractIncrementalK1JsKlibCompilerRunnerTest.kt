@@ -15,6 +15,7 @@ abstract class AbstractIncrementalK1JsKlibCompilerRunnerTest : AbstractIncrement
             irProduceKlibDir = false
             irProduceKlibFile = true
             irOnly = true
+            languageVersion = "1.9"
         }
 
     override val buildLogFinder: BuildLogFinder
