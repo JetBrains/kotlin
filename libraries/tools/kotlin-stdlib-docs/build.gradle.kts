@@ -52,7 +52,6 @@ val prepare by tasks.registering {
 
 dependencies {
     dokkaPlugin(project(":plugins:dokka-samples-transformer-plugin"))
-    dokkaPlugin(project(":plugins:dokka-stdlib-configuration-plugin"))
     dokkaPlugin(project(":plugins:dokka-version-filter-plugin"))
     dokkaPlugin("org.jetbrains.dokka:versioning-plugin:$dokka_version")
 }
@@ -84,7 +83,7 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
         val moduleDirName = "kotlin-stdlib"
         with(pluginsMapConfiguration) {
             put("org.jetbrains.dokka.base.DokkaBase"                      , """{ "mergeImplicitExpectActualDeclarations": "true", "templatesDir": "$templatesDir" }""")
-            put("org.jetbrains.dokka.kotlinlang.StdLibConfigurationPlugin", """{ "ignoreCommonBuiltIns": "true" }""")
+            put("org.jetbrains.dokka.analysis.kotlin.descriptors.compiler.CompilerDescriptorAnalysisPlugin", """{ "ignoreCommonBuiltIns": "true" }""")
             put("org.jetbrains.dokka.versioning.VersioningPlugin"         , """{ "version": "$version" }" }""")
         }
         if (isLatest) {
