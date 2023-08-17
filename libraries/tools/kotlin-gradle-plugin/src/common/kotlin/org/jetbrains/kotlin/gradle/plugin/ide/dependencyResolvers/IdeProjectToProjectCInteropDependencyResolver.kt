@@ -5,18 +5,21 @@
 
 package org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers
 
+import org.gradle.api.Project
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.targets.native.internal.locateOrCreateCInteropDependencyConfiguration
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-internal object IdeProjectToProjectCInteropDependencyResolver : IdeDependencyResolver {
+internal object IdeProjectToProjectCInteropDependencyResolver : IdeDependencyResolver, IdeDependencyResolver.WithBuildDependencies {
 
     override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
         if (sourceSet !is DefaultKotlinSourceSet) return emptySet()
@@ -33,5 +36,12 @@ internal object IdeProjectToProjectCInteropDependencyResolver : IdeDependencyRes
         }.files
 
         return project.resolveCInteropDependencies(cinteropFiles)
+    }
+
+    override fun dependencies(project: Project): Iterable<Any> {
+        val extension = project.multiplatformExtensionOrNull ?: return emptySet()
+        return extension.targets.filterIsInstance<KotlinNativeTarget>().flatMap { it.compilations }.mapNotNull { compilation ->
+            project.locateOrCreateCInteropDependencyConfiguration(compilation)
+        }
     }
 }
