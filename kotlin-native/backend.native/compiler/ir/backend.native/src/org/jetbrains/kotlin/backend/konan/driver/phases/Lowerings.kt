@@ -8,7 +8,10 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToNonLocalSuspendFunctionsLowering
-import org.jetbrains.kotlin.backend.common.lower.inline.*
+import org.jetbrains.kotlin.backend.common.lower.inline.FunctionInlining
+import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesExtractionFromInlineFunctionsLowering
+import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineFunctionsLowering
+import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
 import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
 import org.jetbrains.kotlin.backend.common.lower.optimizations.PropertyAccessorInlineLowering
 import org.jetbrains.kotlin.backend.common.phaser.AbstractNamedCompilerPhase
@@ -337,8 +340,7 @@ private val inlinePhase = createFileLoweringPhase(
                             context.context,
                             NativeInlineFunctionResolver(context.context, context),
                             alwaysCreateTemporaryVariablesForArguments = context.shouldContainDebugInfo(),
-                            inlineArgumentsWithTheirOriginalTypeAndOffset = true,
-                            defaultNonReifiedTypeParameterRemappingMode = NonReifiedTypeParameterRemappingMode.ERASE
+                            inlineArgumentsWithTheirOriginalTypeAndOffset = true
                     ).lower(irFile)
                 }
             }

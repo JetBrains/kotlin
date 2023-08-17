@@ -86,8 +86,7 @@ class FunctionInlining(
     private val inlineArgumentsWithTheirOriginalTypeAndOffset: Boolean = false,
     private val allowExternalInlining: Boolean = false,
     private val useTypeParameterUpperBound: Boolean = false,
-    private val defaultNonReifiedTypeParameterRemappingMode: NonReifiedTypeParameterRemappingMode
-    = NonReifiedTypeParameterRemappingMode.SUBSTITUTE,
+    private val shouldNotEraseWhenInliningTo: (IrDeclarationParent?) -> Boolean = { false },
 ) : IrElementTransformerVoidWithContext(), BodyLoweringPass {
     private var containerScope: ScopeWithIr? = null
 
@@ -166,7 +165,13 @@ class FunctionInlining(
                 (0 until callSite.typeArgumentsCount).associate {
                     typeParameters[it].symbol to callSite.getTypeArgument(it)
                 }
-            DeepCopyIrTreeWithSymbolsForInliner(typeArguments, parent, defaultNonReifiedTypeParameterRemappingMode)
+
+            val mode = if (shouldNotEraseWhenInliningTo(parent))
+                NonReifiedTypeParameterRemappingMode.SUBSTITUTE
+            else
+                NonReifiedTypeParameterRemappingMode.ERASE
+
+            DeepCopyIrTreeWithSymbolsForInliner(typeArguments, parent, mode)
         }
 
         val substituteMap = mutableMapOf<IrValueParameter, IrExpression>()
@@ -321,14 +326,16 @@ class FunctionInlining(
                 }
 
                 val receiverFromField = propertyReference.dispatchReceiver ?: propertyReference.extensionReceiver
-                getterCall.dispatchReceiver = getterCall.symbol.owner.dispatchReceiverParameter?.let {
-                    receiverFromField ?: tryToGetArg(0)
+                getterCall.dispatchReceiver = getterCall.symbol.owner.dispatchReceiverParameter?.let { dispatchReceiverParam ->
+                    val dispatchReceiverArgument = receiverFromField ?: tryToGetArg(0)
+                    dispatchReceiverArgument?.implicitCastIfNeededTo(dispatchReceiverParam.type)
                 }
-                getterCall.extensionReceiver = getterCall.symbol.owner.extensionReceiverParameter?.let {
-                    when (getterCall.symbol.owner.dispatchReceiverParameter) {
+                getterCall.extensionReceiver = getterCall.symbol.owner.extensionReceiverParameter?.let { extensionReceiverParam ->
+                    val extensionReceiverArgument = when (getterCall.symbol.owner.dispatchReceiverParameter) {
                         null -> receiverFromField ?: tryToGetArg(0)
                         else -> tryToGetArg(if (receiverFromField != null) 0 else 1)
                     }
+                    extensionReceiverArgument?.implicitCastIfNeededTo(extensionReceiverParam.type)
                 }
 
                 return wrapInStubFunction(super.visitExpression(getterCall), expression, propertyReference)
