@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerContextProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.AllCandidatesResolver
-import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.declarations.*
@@ -1308,8 +1307,8 @@ private fun KtUserType.hasFakeRootPrefix(): Boolean =
 private fun KtDotQualifiedExpression.hasFakeRootPrefix(): Boolean =
     (receiverExpression as? KtNameReferenceExpression)?.getReferencedName() == ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE
 
-internal fun KtElement.getDotQualifiedExpressionForSelector(): KtDotQualifiedExpression? =
-    getQualifiedExpressionForSelector() as? KtDotQualifiedExpression
+internal fun KtSimpleNameExpression.getDotQualifiedExpressionForSelector(): KtDotQualifiedExpression? =
+    getQualifiedElement() as? KtDotQualifiedExpression
 
 private fun KtElement.getQualifier(): KtElement? = when (this) {
     is KtUserType -> qualifier

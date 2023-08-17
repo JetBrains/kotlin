@@ -119,6 +119,12 @@ public class Fe10IdeNormalAnalysisSourceModuleAnalysisApiImportOptimizerTestGene
     }
 
     @Test
+    @TestMetadata("unusedObject_invokeOperator.kt")
+    public void testUnusedObject_invokeOperator() throws Exception {
+        runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/unusedObject_invokeOperator.kt");
+    }
+
+    @Test
     @TestMetadata("unusedStaticFunctionImportFromJavaChildClass.kt")
     public void testUnusedStaticFunctionImportFromJavaChildClass() throws Exception {
         runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/unusedStaticFunctionImportFromJavaChildClass.kt");
@@ -212,6 +218,12 @@ public class Fe10IdeNormalAnalysisSourceModuleAnalysisApiImportOptimizerTestGene
     @TestMetadata("usedInvokeOperatorImport.kt")
     public void testUsedInvokeOperatorImport() throws Exception {
         runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedInvokeOperatorImport.kt");
+    }
+
+    @Test
+    @TestMetadata("usedObject_invokeOperator.kt")
+    public void testUsedObject_invokeOperator() throws Exception {
+        runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedObject_invokeOperator.kt");
     }
 
     @Test

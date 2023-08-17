@@ -500,7 +500,12 @@ private sealed interface TypeQualifier {
 
     companion object {
         val FirResolvedQualifier.isPresentInSource: Boolean
-            get() = source?.kind is KtRealSourceElementKind
+            get() = when (source?.kind) {
+                is KtRealSourceElementKind -> true
+                is KtFakeSourceElementKind.ImplicitInvokeCall -> true
+
+                else -> false
+            }
 
         fun createFor(qualifier: FirResolvedQualifier): TypeQualifier? {
             if (!qualifier.isPresentInSource) return null

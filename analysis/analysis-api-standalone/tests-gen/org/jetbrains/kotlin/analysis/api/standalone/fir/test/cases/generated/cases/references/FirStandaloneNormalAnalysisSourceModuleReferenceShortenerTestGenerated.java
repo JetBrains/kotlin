@@ -317,6 +317,12 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceShortenerTestGenera
     }
 
     @Test
+    @TestMetadata("objectWithInvokeOperator.kt")
+    public void testObjectWithInvokeOperator() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/objectWithInvokeOperator.kt");
+    }
+
+    @Test
     @TestMetadata("parameterTypeTopLevelTypeLoses.kt")
     public void testParameterTypeTopLevelTypeLoses() throws Exception {
         runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/parameterTypeTopLevelTypeLoses.kt");
