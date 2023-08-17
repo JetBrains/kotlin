@@ -31,7 +31,7 @@ internal abstract class LLFirTargetResolver(
     /**
      * Must be executed without a lock
      */
-    protected fun LLFirTargetResolver.resolveFileAnnotationContainerIfNeeded(elementWithResolveState: FirElementWithResolveState) {
+    protected fun resolveFileAnnotationContainerIfNeeded(elementWithResolveState: FirElementWithResolveState) {
         if (elementWithResolveState !is FirFile) return
         val annotationContainer = elementWithResolveState.annotationsContainer ?: return
         withFile(elementWithResolveState) {
