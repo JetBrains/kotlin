@@ -125,6 +125,7 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
             STRIP_METADATA_OPTION -> setFlag(KaptFlag.STRIP_METADATA, value)
             KEEP_KDOC_COMMENTS_IN_STUBS -> setFlag(KaptFlag.KEEP_KDOC_COMMENTS_IN_STUBS, value)
             USE_JVM_IR -> setFlag(KaptFlag.USE_JVM_IR, value)
+            USE_K2 -> setFlag(KaptFlag.USE_K2, value)
 
             SHOW_PROCESSOR_STATS -> setFlag(KaptFlag.SHOW_PROCESSOR_STATS, value)
             DUMP_PROCESSOR_STATS -> processorsStatsReportFile = File(value)
@@ -171,11 +172,13 @@ class Kapt3ComponentRegistrar : ComponentRegistrar {
         get() = false
 
     override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
-        if (configuration.getBoolean(USE_FIR)) return
+        val optionsBuilder = (configuration[KAPT_OPTIONS] ?: KaptOptions.Builder())
+        if (configuration.getBoolean(USE_FIR) || KaptFlag.USE_K2 in optionsBuilder.flags) return
+
         doOpenInternalPackagesIfRequired()
         val contentRoots = configuration[CLIConfigurationKeys.CONTENT_ROOTS] ?: emptyList()
 
-        val optionsBuilder = (configuration[KAPT_OPTIONS] ?: KaptOptions.Builder()).apply {
+        optionsBuilder.apply {
             projectBaseDir = project.basePath?.let(::File)
             compileClasspath.addAll(contentRoots.filterIsInstance<JvmClasspathRoot>().map { it.file })
             javaSourceRoots.addAll(contentRoots.filterIsInstance<JavaSourceRoot>().map { it.file })

@@ -49,6 +49,12 @@ public class Kapt4ToolIntegrationTestGenerated extends AbstractKapt4ToolIntegrat
     }
 
     @Test
+    @TestMetadata("kaptUseK2Flag")
+    public void testKaptUseK2Flag() throws Exception {
+        runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/kaptUseK2Flag/");
+    }
+
+    @Test
     @TestMetadata("kotlinFileGeneration")
     public void testKotlinFileGeneration() throws Exception {
         runTest("plugins/kapt3/kapt3-cli/testData/integration-kapt4/kotlinFileGeneration/");

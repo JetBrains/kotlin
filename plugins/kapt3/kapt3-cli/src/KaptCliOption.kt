@@ -221,6 +221,13 @@ enum class KaptCliOption(
         cliToolOption = CliToolOption("-Kapt-use-jvm-ir", FLAG)
     ),
 
+    USE_K2(
+        "useK2",
+        "true | false",
+        "Use K2",
+        cliToolOption = CliToolOption("-Kapt-use-k2", FLAG)
+    ),
+
     DETECT_MEMORY_LEAKS_OPTION("detectMemoryLeaks", "true | false", "Detect memory leaks in annotation processors"),
     INCLUDE_COMPILE_CLASSPATH(
         "includeCompileClasspath",

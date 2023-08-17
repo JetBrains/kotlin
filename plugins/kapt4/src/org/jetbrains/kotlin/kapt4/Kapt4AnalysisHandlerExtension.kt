@@ -31,8 +31,10 @@ import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
 
 private class Kapt4AnalysisHandlerExtension : FirAnalysisHandlerExtension() {
-    override fun isApplicable(configuration: CompilerConfiguration): Boolean =
-        configuration.getBoolean(USE_FIR) && configuration[KAPT_OPTIONS] != null
+    override fun isApplicable(configuration: CompilerConfiguration): Boolean {
+        val options = configuration[KAPT_OPTIONS]
+        return options != null && (configuration.getBoolean(USE_FIR) || KaptFlag.USE_K2 in options.flags)
+    }
 
     @OptIn(KtAnalysisApiInternals::class)
     override fun doAnalysis(configuration: CompilerConfiguration): Boolean {

@@ -17,9 +17,10 @@
 package org.jetbrains.kotlin.gradle.internal
 
 import org.gradle.api.Project
-import org.gradle.api.file.*
-import org.gradle.api.model.ObjectFactory
 import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.FileCollection
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.work.Incremental
@@ -64,6 +65,9 @@ abstract class KaptGenerateStubsTask @Inject constructor(
 
     @get:Input
     abstract val verbose: Property<Boolean>
+
+    @get:Input
+    abstract val useK2Kapt: Property<Boolean>
 
     /**
      * Changes in this additional sources will trigger stubs regeneration,
@@ -125,6 +129,10 @@ abstract class KaptGenerateStubsTask @Inject constructor(
 
             args.verbose = verbose.get()
             args.destinationAsFile = destinationDirectory.get().asFile
+
+            if (useK2Kapt.get()) {
+                args.freeArgs += "-Xuse-kapt4"
+            }
         }
 
         pluginClasspath { args ->

@@ -107,6 +107,7 @@ private fun transformKaptToolArgs(args: List<String>, messageCollector: MessageC
             }
             KaptCliOption.APT_MODE_OPTION -> aptModePassed = true
             KaptCliOption.VERBOSE_MODE_OPTION -> kaptVerboseModePassed = true
+            KaptCliOption.USE_K2 -> transformed.add("-Xuse-kapt4")
             else -> {}
         }
 
