@@ -46,6 +46,7 @@ object ExpectedActualResolver {
                     AbstractExpectActualCompatibilityChecker.getClassifiersCompatibility(
                         expected,
                         actual,
+                        checkClassScopesCompatibility = true,
                         context
                     )
                 }
@@ -58,6 +59,7 @@ object ExpectedActualResolver {
         actual: MemberDescriptor,
         actualClass: ClassDescriptor,
         expectClass: ClassDescriptor,
+        checkClassScopesCompatibility: Boolean,
         context: ClassicExpectActualMatchingContext,
     ): Map<ExpectActualCompatibility<MemberDescriptor>, List<MemberDescriptor>> {
         val candidates = with(context) {
@@ -76,6 +78,7 @@ object ExpectedActualResolver {
                 matchActualClassAgainstPotentialExpects(
                     actual,
                     candidates.filterIsInstance<ClassifierDescriptorWithTypeParameters>(),
+                    checkClassScopesCompatibility,
                     context
                 )
             }
@@ -110,7 +113,7 @@ object ExpectedActualResolver {
             }
             is ClassifierDescriptorWithTypeParameters -> {
                 val candidates = context.findClassifiersFromModule(actual.classId, actual.module, moduleFilter)
-                matchActualClassAgainstPotentialExpects(actual, candidates, context)
+                matchActualClassAgainstPotentialExpects(actual, candidates, checkClassScopesCompatibility = true, context)
             }
             else -> null
         }
@@ -158,6 +161,7 @@ object ExpectedActualResolver {
     private fun matchActualClassAgainstPotentialExpects(
         actual: ClassifierDescriptorWithTypeParameters,
         candidates: Collection<ClassifierDescriptorWithTypeParameters>,
+        checkClassScopesCompatibility: Boolean,
         context: ClassicExpectActualMatchingContext,
     ): Map<ExpectActualCompatibility<MemberDescriptor>, List<ClassifierDescriptorWithTypeParameters>> {
         return candidates.filter { declaration ->
@@ -166,6 +170,7 @@ object ExpectedActualResolver {
             AbstractExpectActualCompatibilityChecker.getClassifiersCompatibility(
                 expected as ClassDescriptor,
                 actual,
+                checkClassScopesCompatibility,
                 context
             )
         }

@@ -154,7 +154,14 @@ object AbstractExpectActualAnnotationMatchChecker {
             if (skipCheckingAnnotationsOfActualClassMember(actualMember)) {
                 continue
             }
-            val expectToCompatibilityMap = findPotentialExpectClassMembersForActual(expectClass, actualClass, actualMember)
+            val expectToCompatibilityMap = findPotentialExpectClassMembersForActual(
+                expectClass, actualClass, actualMember,
+                // Optimization: don't check class scopes, because:
+                // 1. Annotation checker runs no matter if found expect class is compatible or not.
+                // 2. Class always has at most one corresponding `expect` class (unlike for functions, which may have several overrides),
+                //    so we are sure that we found the right member.
+                checkClassScopesCompatibility = false,
+            )
             val expectMember = expectToCompatibilityMap.filter { it.value == ExpectActualCompatibility.Compatible }.keys.singleOrNull()
             // Check also incompatible members if only one is found
                 ?: expectToCompatibilityMap.keys.singleOrNull()

@@ -23457,6 +23457,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             @TestDataPath("$PROJECT_ROOT")
             public class AnnotationMatching {
                 @Test
+                @TestMetadata("actualInnerClassMissingMember.kt")
+                public void testActualInnerClassMissingMember() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/annotationMatching/actualInnerClassMissingMember.kt");
+                }
+
+                @Test
                 public void testAllFilesPresentInAnnotationMatching() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/annotationMatching"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }

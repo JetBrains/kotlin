@@ -396,11 +396,13 @@ class ClassicExpectActualMatchingContext(
         expectClass: RegularClassSymbolMarker,
         actualClass: RegularClassSymbolMarker,
         actualMember: DeclarationSymbolMarker,
+        checkClassScopesCompatibility: Boolean,
     ): Map<MemberDescriptor, ExpectActualCompatibility<*>> {
         val compatibilityToExpects = ExpectedActualResolver.findExpectForActualClassMember(
             actualMember as MemberDescriptor,
             actualClass as ClassDescriptor,
             expectClass as ClassDescriptor,
+            checkClassScopesCompatibility,
             this,
         )
         return buildMap {
