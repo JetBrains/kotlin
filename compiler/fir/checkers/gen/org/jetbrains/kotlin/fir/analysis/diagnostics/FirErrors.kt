@@ -153,6 +153,7 @@ object FirErrors {
     val INVISIBLE_SETTER by error3<PsiElement, FirPropertySymbol, Visibility, CallableId>(SourceElementPositioningStrategies.SELECTOR_BY_QUALIFIED)
     val INNER_ON_TOP_LEVEL_SCRIPT_CLASS by deprecationError0<PsiElement>(ProhibitScriptTopLevelInnerClasses)
     val ERROR_SUPPRESSION by warning1<PsiElement, String>()
+    val MISSING_CONSTRUCTOR_KEYWORD by error0<PsiElement>()
 
     // Unresolved
     val INVISIBLE_REFERENCE by error3<PsiElement, FirBasedSymbol<*>, Visibility, ClassId?>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)

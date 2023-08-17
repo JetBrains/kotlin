@@ -904,14 +904,17 @@ class LightTreeRawFirDeclarationBuilder(
         }
 
         val constructorSymbol = FirConstructorSymbol(callableIdForClassConstructor())
-        var modifiers = Modifier()
+        var modifiersIfPresent: Modifier? = null
         val valueParameters = mutableListOf<ValueParameter>()
+        var hasConstructorKeyword = false
         primaryConstructor?.forEachChildren {
             when (it.tokenType) {
-                MODIFIER_LIST -> modifiers = convertModifierList(it)
+                MODIFIER_LIST -> modifiersIfPresent = convertModifierList(it)
+                CONSTRUCTOR_KEYWORD -> hasConstructorKeyword = true
                 VALUE_PARAMETER_LIST -> valueParameters += convertValueParameters(it, constructorSymbol, ValueParameterDeclaration.PRIMARY_CONSTRUCTOR)
             }
         }
+        val modifiers = modifiersIfPresent ?: Modifier()
 
         val defaultVisibility = classWrapper.defaultConstructorVisibility()
         val firDelegatedCall = runUnless(containingClassIsExpectClass) {
@@ -968,12 +971,10 @@ class LightTreeRawFirDeclarationBuilder(
             isFromEnumClass = classWrapper.isEnum()
         }
 
-        val builder = if (isErrorConstructor) {
-            FirErrorConstructorBuilder().apply {
-                diagnostic = ConeNoConstructorError
-            }
-        } else {
-            FirPrimaryConstructorBuilder()
+        val builder = when {
+            modifiersIfPresent != null && !hasConstructorKeyword -> createErrorConstructorBuilder(ConeMissingConstructorKeyword)
+            isErrorConstructor -> createErrorConstructorBuilder(ConeNoConstructorError)
+            else -> FirPrimaryConstructorBuilder()
         }
         builder.apply {
             source = primaryConstructor?.toFirSourceElement()

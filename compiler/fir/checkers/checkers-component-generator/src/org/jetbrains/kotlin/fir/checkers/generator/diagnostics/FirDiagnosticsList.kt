@@ -108,6 +108,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val ERROR_SUPPRESSION by warning<PsiElement> {
             parameter<String>("diagnosticName")
         }
+        val MISSING_CONSTRUCTOR_KEYWORD by error<PsiElement>()
     }
 
     val UNRESOLVED by object : DiagnosticGroup("Unresolved") {

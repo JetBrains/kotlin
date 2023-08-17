@@ -1,9 +1,9 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 annotation class Ann(val x: Int = 1)
-class A private (val x: Int) {
-inner class B @Ann(2) (val y: Int)
+class A <!MISSING_CONSTRUCTOR_KEYWORD!>private (val x: Int)<!> {
+    inner class B <!MISSING_CONSTRUCTOR_KEYWORD!>@Ann(2) (val y: Int)<!>
 
-fun foo() {
-    class C private @Ann(3) (args: Int)
+    fun foo() {
+        class C <!MISSING_CONSTRUCTOR_KEYWORD!>private @Ann(3) (args: Int)<!>
     }
 }

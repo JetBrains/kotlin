@@ -270,6 +270,11 @@ internal class ErrorSuppressionImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.ErrorSuppression
 
+internal class MissingConstructorKeywordImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.MissingConstructorKeyword
+
 internal class InvisibleReferenceImpl(
     override val reference: KtSymbol,
     override val visible: Visibility,
