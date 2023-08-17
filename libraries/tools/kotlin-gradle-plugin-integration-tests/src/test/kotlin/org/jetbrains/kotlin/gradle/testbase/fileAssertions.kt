@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.testbase
 
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
+import java.lang.StringBuilder
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.zip.ZipFile
@@ -154,6 +155,43 @@ fun assertDirectoriesExist(
             if (notDirectories.isNotEmpty()) {
                 appendLine("Following files should be directories:")
                 appendLine(notExist.joinToString(separator = "\n"))
+            }
+        }
+    }
+}
+
+private const val appendIndentationIncrement = 2U
+private fun StringBuilder.appendDirectory(dirPath: Path, indentation: UInt = 0U) {
+    Files.newDirectoryStream(dirPath).use { stream ->
+        for (entry in stream) {
+            append("${"–".repeat(indentation.toInt())} ${entry.fileName}")
+            val isDirectory = Files.isDirectory(entry)
+            appendLine(if (isDirectory) " \\" else " (file)")
+            if (isDirectory) {
+                appendDirectory(entry, indentation + appendIndentationIncrement)
+            }
+        }
+        appendLine()
+    }
+}
+
+fun GradleProject.assertDirectoryInProjectDoesNotExist(
+    dirName: String,
+) {
+    assertDirectoryDoesNotExist(projectPath.resolve(dirName))
+}
+
+fun assertDirectoryDoesNotExist(
+    dirPath: Path,
+) {
+    assert(!Files.exists(dirPath)) {
+        buildString {
+            append("Directory $dirPath is expected to not exist. ")
+            if (Files.isDirectory(dirPath)) {
+                appendLine("The directory contents: ")
+                appendDirectory(dirPath)
+            } else {
+                append("However, it is not even a directory.")
             }
         }
     }
