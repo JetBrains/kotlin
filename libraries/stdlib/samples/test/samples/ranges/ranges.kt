@@ -52,4 +52,34 @@ class Ranges {
         assertTrue(3.14f in range)
         assertFalse(100.1f in range)
     }
+
+    @Sample
+    fun intStep() {
+        val range = 1..6 step 2
+        assertPrints(range, "[1, 3, 5]")
+
+        assertTrue(1 in range)
+        assertFalse(2 in range)
+        assertTrue(3 in range)
+    }
+
+    @Sample
+    fun longStep() {
+        val range = 1L..6L step 2L
+        assertPrints(range, "[1, 3, 5]")
+
+        assertTrue(1L in range)
+        assertFalse(2L in range)
+        assertTrue(3L in range)
+    }
+
+    @Sample
+    fun charStep() {
+        val range = 'a'..'e' step 2
+        assertPrints(range, "[a, c, e]")
+
+        assertTrue('a' in range)
+        assertFalse('b' in range)
+        assertTrue('c' in range)
+    }
 }
