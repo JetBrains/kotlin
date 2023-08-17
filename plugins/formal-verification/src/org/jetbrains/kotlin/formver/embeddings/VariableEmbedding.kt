@@ -5,21 +5,21 @@
 
 package org.jetbrains.kotlin.formver.embeddings
 
+import org.jetbrains.kotlin.formver.scala.MangledName
 import org.jetbrains.kotlin.formver.scala.silicon.ast.*
-import viper.silver.ast.LocalVarDecl
 
 class VariableEmbedding(val name: MangledName, val type: TypeEmbedding) {
     fun toLocalVarDecl(
         pos: Position = Position.NoPosition,
         info: Info = Info.NoInfo,
         trafos: Trafos = Trafos.NoTrafos,
-    ): LocalVarDecl = localVarDecl(name.mangled, type.type, pos, info, trafos)
+    ): Declaration.LocalVarDecl = Declaration.LocalVarDecl(name, type.type, pos, info, trafos)
 
     fun toLocalVar(
         pos: Position = Position.NoPosition,
         info: Info = Info.NoInfo,
         trafos: Trafos = Trafos.NoTrafos,
-    ): Exp.LocalVar = Exp.LocalVar(name.mangled, type.type, pos, info, trafos)
+    ): Exp.LocalVar = Exp.LocalVar(name, type.type, pos, info, trafos)
 
     fun invariants(): List<Exp> = type.invariants(toLocalVar())
 }

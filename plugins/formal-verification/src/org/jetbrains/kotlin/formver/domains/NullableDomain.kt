@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.formver.domains
 
 import org.jetbrains.kotlin.formver.domains.NullableDomain.T
-import org.jetbrains.kotlin.formver.embeddings.DomainName
 import org.jetbrains.kotlin.formver.scala.silicon.ast.*
 import org.jetbrains.kotlin.formver.scala.silicon.ast.Exp.*
 
@@ -33,14 +32,17 @@ import org.jetbrains.kotlin.formver.scala.silicon.ast.Exp.*
  * }
  */
 
-object NullableDomain : Domain(DomainName("Nullable")) {
+object NullableDomain : Domain("Nullable") {
     val T = Type.TypeVar("T")
     override val typeVars: List<Type.TypeVar> = listOf(T)
     val Nullable: Type = this.toType()
 
+    private val xVar = Var("x", T)
+    private val nxVar = Var("nx", Nullable)
+
     val nullFunc = createDomainFunc("null", emptyList(), Nullable)
-    val nullableOf = createDomainFunc("nullable_of", listOf(localVarDecl("x", T)), Nullable)
-    val valOf = createDomainFunc("val_of", listOf(localVarDecl("x", Nullable)), T)
+    val nullableOf = createDomainFunc("nullable_of", listOf(xVar.decl()), Nullable)
+    val valOf = createDomainFunc("val_of", listOf(nxVar.decl()), T)
     override val functions: List<DomainFunc> = listOf(nullFunc, nullableOf, valOf)
 
     // You need to specify the type if the expression expects a certain nullable type,
@@ -57,34 +59,34 @@ object NullableDomain : Domain(DomainName("Nullable")) {
         funcApp(valOf, listOf(nullable), mapOf(T to elemType))
 
     val someNotNull =
-        createDomainAxiom(
+        createNamedDomainAxiom(
             "some_not_null",
             Forall(
-                listOf(localVarDecl("x", T)),
-                listOf(Trigger(listOf(funcApp(nullableOf, listOf(LocalVar("x", T)))))),
-                NeCmp(funcApp(nullableOf, listOf(LocalVar("x", T))), nullVal(T))
+                listOf(xVar.decl()),
+                listOf(Trigger(listOf(funcApp(nullableOf, listOf(xVar.use()))))),
+                NeCmp(funcApp(nullableOf, listOf(xVar.use())), nullVal(T))
             )
         )
     val valOfNullableOfVal =
-        createDomainAxiom(
+        createNamedDomainAxiom(
             "val_of_nullable_of_val",
             Forall(
-                listOf(localVarDecl("x", T)),
-                listOf(Trigger(listOf(funcApp(valOf, listOf(funcApp(nullableOf, listOf(LocalVar("x", T)))))))),
-                EqCmp(funcApp(valOf, listOf(funcApp(nullableOf, listOf(LocalVar("x", T))))), LocalVar("x", T))
+                listOf(xVar.decl()),
+                listOf(Trigger(listOf(funcApp(valOf, listOf(funcApp(nullableOf, listOf(xVar.use()))))))),
+                EqCmp(funcApp(valOf, listOf(funcApp(nullableOf, listOf(xVar.use())))), xVar.use())
             )
         )
     val nullableOfValOfNullable =
-        createDomainAxiom(
+        createNamedDomainAxiom(
             "nullable_of_val_of_nullable",
             Forall(
-                listOf(localVarDecl("x", Nullable)),
-                listOf(Trigger(listOf(funcApp(nullableOf, listOf(funcApp(valOf, listOf(LocalVar("x", Nullable)))))))),
+                listOf(nxVar.decl()),
+                listOf(Trigger(listOf(funcApp(nullableOf, listOf(funcApp(valOf, listOf(nxVar.use()))))))),
                 Implies(
-                    NeCmp(LocalVar("x", Nullable), nullVal(T)),
+                    NeCmp(nxVar.use(), nullVal(T)),
                     EqCmp(
-                        funcApp(nullableOf, listOf(funcApp(valOf, listOf(LocalVar("x", Nullable))))),
-                        LocalVar("x", Nullable)
+                        funcApp(nullableOf, listOf(funcApp(valOf, listOf(nxVar.use())))),
+                        nxVar.use()
                     )
                 )
             )

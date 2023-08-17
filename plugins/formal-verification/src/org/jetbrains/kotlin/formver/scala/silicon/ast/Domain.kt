@@ -5,61 +5,95 @@
 
 package org.jetbrains.kotlin.formver.scala.silicon.ast
 
-import org.jetbrains.kotlin.formver.embeddings.DomainAxiomName
-import org.jetbrains.kotlin.formver.embeddings.DomainFuncName
-import org.jetbrains.kotlin.formver.embeddings.DomainName
-import org.jetbrains.kotlin.formver.scala.IntoViper
-import org.jetbrains.kotlin.formver.scala.toScalaOption
-import org.jetbrains.kotlin.formver.scala.toScalaSeq
+import org.jetbrains.kotlin.formver.scala.*
 import viper.silver.ast.AnonymousDomainAxiom
-import viper.silver.ast.LocalVarDecl
 import viper.silver.ast.NamedDomainAxiom
 
-// Cannot implement `IntoViper` as we need to pass the domain name.
+/**
+ * We also convert domain names and their function and axiom names as
+ * they have to be globally unique as well.
+ */
+data class DomainName(val name: String) : MangledName {
+    // Info: Can't use 'domain' as prefix as Viper recognizes it as a keyword
+    override val mangled: String = "dom\$$name"
+}
+
+data class DomainFuncName(val domainName: DomainName, val funcName: String) : MangledName {
+    override val mangled: String = "${domainName.mangled}\$${funcName}"
+}
+
+/** Represents the name of a possible anonymous axiom.
+ *
+ * We need the domain name regardless because of how Viper is set up, hence the somewhat
+ * unusual
+ */
+sealed interface OptionalDomainAxiomLabel {
+    val domainName: DomainName
+}
+
+data class NamedDomainAxiomLabel(override val domainName: DomainName, val axiomName: String) : OptionalDomainAxiomLabel, MangledName {
+    override val mangled: String = "${domainName.mangled}\$${axiomName}"
+}
+
+data class AnonymousDomainAxiomLabel(override val domainName: DomainName) : OptionalDomainAxiomLabel
+
 class DomainFunc(
     val name: DomainFuncName,
-    val formalArgs: List<LocalVarDecl>,
+    val formalArgs: List<Declaration.LocalVarDecl>,
     val typ: Type,
     val unique: Boolean,
     val pos: Position = Position.NoPosition,
     val info: Info = Info.NoInfo,
     val trafos: Trafos = Trafos.NoTrafos,
-) {
-    fun toViper(domainName: String): viper.silver.ast.DomainFunc =
+) : IntoViper<viper.silver.ast.DomainFunc> {
+    override fun toViper(): viper.silver.ast.DomainFunc =
         viper.silver.ast.DomainFunc(
             name.mangled,
-            formalArgs.toScalaSeq(),
+            formalArgs.map { it.toViper() }.toScalaSeq(),
             typ.toViper(),
             unique,
             null.toScalaOption(),
             pos.toViper(),
             info.toViper(),
-            domainName,
+            name.domainName.mangled,
             trafos.toViper()
         )
 }
 
-// Cannot implement `IntoViper` as we need to pass the domain name.
 class DomainAxiom(
-    val name: DomainAxiomName?,
+    val name: OptionalDomainAxiomLabel,
     val exp: Exp,
     val pos: Position = Position.NoPosition,
     val info: Info = Info.NoInfo,
     val trafos: Trafos = Trafos.NoTrafos,
-) {
-    fun toViper(domainName: String): viper.silver.ast.DomainAxiom =
-        if (name != null)
-            NamedDomainAxiom(name.mangled, exp.toViper(), pos.toViper(), info.toViper(), domainName, trafos.toViper())
-        else
-            AnonymousDomainAxiom(exp.toViper(), pos.toViper(), info.toViper(), domainName, trafos.toViper())
+) : IntoViper<viper.silver.ast.DomainAxiom> {
+    override fun toViper(): viper.silver.ast.DomainAxiom =
+        when (name) {
+            is NamedDomainAxiomLabel -> NamedDomainAxiom(
+                name.mangled,
+                exp.toViper(),
+                pos.toViper(),
+                info.toViper(),
+                name.domainName.mangled,
+                trafos.toViper()
+            )
+            is AnonymousDomainAxiomLabel -> AnonymousDomainAxiom(
+                exp.toViper(),
+                pos.toViper(),
+                info.toViper(),
+                name.domainName.mangled,
+                trafos.toViper()
+            )
+        }
 }
 
 abstract class Domain(
-    val name: DomainName,
+    baseName: String,
     val pos: Position = Position.NoPosition,
     val info: Info = Info.NoInfo,
     val trafos: Trafos = Trafos.NoTrafos,
 ) : IntoViper<viper.silver.ast.Domain> {
+    val name = DomainName(baseName)
 
     abstract val typeVars: List<Type.TypeVar>
     abstract val functions: List<DomainFunc>
@@ -68,8 +102,9 @@ abstract class Domain(
     override fun toViper(): viper.silver.ast.Domain =
         viper.silver.ast.Domain(
             name.mangled,
-            functions.map { it.toViper(name.mangled) }.toScalaSeq(),
-            axioms.map { it.toViper(name.mangled) }.toScalaSeq(),
+            functions.toViper().toScalaSeq(),
+            axioms.toViper().toScalaSeq(),
+            // Can't use List.toViper directly here as the type would end up being `List<Type>` instead of `List<TypeVar`.
             typeVars.map { it.toViper() }.toScalaSeq(),
             null.toScalaOption(),
             pos.toViper(),
@@ -80,11 +115,11 @@ abstract class Domain(
     fun toType(typeParamSubst: Map<Type.TypeVar, Type> = typeVars.associateWith { it }): Type.Domain =
         Type.Domain(name.mangled, typeVars, typeParamSubst)
 
-    fun createDomainFunc(funcName: String, args: List<LocalVarDecl>, type: Type, unique: Boolean = false) =
+    fun createDomainFunc(funcName: String, args: List<Declaration.LocalVarDecl>, type: Type, unique: Boolean = false) =
         DomainFunc(DomainFuncName(this.name, funcName), args, type, unique)
 
-    fun createDomainAxiom(axiomName: String?, exp: Exp): DomainAxiom =
-        DomainAxiom(axiomName?.let { DomainAxiomName(this.name, it) }, exp)
+    fun createNamedDomainAxiom(axiomName: String, exp: Exp): DomainAxiom = DomainAxiom(NamedDomainAxiomLabel(this.name, axiomName), exp)
+    fun createAnonymousDomainAxiom(exp: Exp): DomainAxiom = DomainAxiom(AnonymousDomainAxiomLabel(this.name), exp)
 
     fun funcApp(
         func: DomainFunc,
@@ -93,5 +128,5 @@ abstract class Domain(
         pos: Position = Position.NoPosition,
         info: Info = Info.NoInfo,
         trafos: Trafos = Trafos.NoTrafos,
-    ): Exp.DomainFuncApp = Exp.DomainFuncApp(name.mangled, func.name.mangled, args, typeVarMap, func.typ, pos, info, trafos)
+    ): Exp.DomainFuncApp = Exp.DomainFuncApp(func.name, args, typeVarMap, func.typ, pos, info, trafos)
 }

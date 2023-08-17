@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.formver.conversion
 
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.formver.scala.silicon.ast.Declaration
 import org.jetbrains.kotlin.formver.scala.silicon.ast.Stmt
-import viper.silver.ast.Declaration
 
 interface StmtConversionContext : MethodConversionContext {
     val block: Stmt.Seqn

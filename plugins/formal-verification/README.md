@@ -28,6 +28,8 @@ A few notes:
 - The name `toViper` should be used exclusively for functions that go from step 3 to step 4.
 - For getting the conversion results as stage 3 structures, use either a property named after the
   thing to be returned (e.g. `program`, `method`) or a function named after it (e.g. `toLocalVar`, `toType`).
+- Utility functions of stage 3 nodes for constructing other stage 3 nodes should be named after the
+  node they construct (e.g. `funcApp`).
 
 ## Directory structure:
 

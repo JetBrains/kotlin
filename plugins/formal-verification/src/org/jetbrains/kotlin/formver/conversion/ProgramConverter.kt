@@ -13,14 +13,9 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.formver.domains.NullableDomain
 import org.jetbrains.kotlin.formver.domains.UnitDomain
 import org.jetbrains.kotlin.formver.embeddings.*
-import org.jetbrains.kotlin.formver.scala.emptySeq
-import org.jetbrains.kotlin.formver.scala.seqOf
-import org.jetbrains.kotlin.formver.scala.silicon.ast.Info
-import org.jetbrains.kotlin.formver.scala.silicon.ast.Position
-import org.jetbrains.kotlin.formver.scala.silicon.ast.Trafos
-import org.jetbrains.kotlin.formver.scala.toScalaSeq
-import viper.silver.ast.Method
-import viper.silver.ast.Program
+import org.jetbrains.kotlin.formver.scala.MangledName
+import org.jetbrains.kotlin.formver.scala.silicon.ast.Method
+import org.jetbrains.kotlin.formver.scala.silicon.ast.Program
 
 /**
  * Tracks the top-level information about the program.
@@ -33,15 +28,9 @@ class ProgramConverter(val session: FirSession) : ProgramConversionContext {
 
     val program: Program
         get() = Program(
-            seqOf(UnitDomain.toViper(), NullableDomain.toViper()), /* Domains */
-            seqOf(), /* Fields */
-            emptySeq(), /* Functions */
-            emptySeq(), /* Predicates */
-            methods.values.toList().toScalaSeq(), /* Functions */
-            emptySeq(), /* Extensions */
-            Position.NoPosition.toViper(),
-            Info.NoInfo.toViper(),
-            Trafos.NoTrafos.toViper()
+            listOf(UnitDomain, NullableDomain), /* Domains */
+            listOf(), /* Fields */
+            methods.values.toList(), /* Methods */
         )
 
     fun addWithBody(declaration: FirSimpleFunction) {

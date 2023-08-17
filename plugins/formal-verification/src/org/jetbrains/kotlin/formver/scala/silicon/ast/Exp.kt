@@ -5,14 +5,11 @@
 
 package org.jetbrains.kotlin.formver.scala.silicon.ast
 
-import org.jetbrains.kotlin.formver.scala.IntoViper
-import org.jetbrains.kotlin.formver.scala.toScalaMap
-import org.jetbrains.kotlin.formver.scala.toScalaSeq
-import org.jetbrains.kotlin.formver.scala.toViper
+import org.jetbrains.kotlin.formver.scala.*
 import scala.math.BigInt
 import viper.silver.ast.*
 
-sealed class Exp : IntoViper<viper.silver.ast.Exp> {
+sealed interface Exp : IntoViper<viper.silver.ast.Exp> {
 
     //region Arithmetic Expressions
     data class Add(
@@ -21,8 +18,8 @@ sealed class Exp : IntoViper<viper.silver.ast.Exp> {
         val pos: Position = Position.NoPosition,
         val info: Info = Info.NoInfo,
         val trafos: Trafos = Trafos.NoTrafos,
-    ) : Exp() {
-        override fun toViper(): viper.silver.ast.Exp =
+    ) : Exp {
+        override fun toViper(): viper.silver.ast.Add =
             Add(left.toViper(), right.toViper(), pos.toViper(), info.toViper(), trafos.toViper())
     }
 
@@ -32,8 +29,8 @@ sealed class Exp : IntoViper<viper.silver.ast.Exp> {
         val pos: Position = Position.NoPosition,
         val info: Info = Info.NoInfo,
         val trafos: Trafos = Trafos.NoTrafos,
-    ) : Exp() {
-        override fun toViper(): viper.silver.ast.Exp =
+    ) : Exp {
+        override fun toViper(): viper.silver.ast.Sub =
             Sub(left.toViper(), right.toViper(), pos.toViper(), info.toViper(), trafos.toViper())
     }
 
@@ -43,8 +40,8 @@ sealed class Exp : IntoViper<viper.silver.ast.Exp> {
         val pos: Position = Position.NoPosition,
         val info: Info = Info.NoInfo,
         val trafos: Trafos = Trafos.NoTrafos,
-    ) : Exp() {
-        override fun toViper(): viper.silver.ast.Exp =
+    ) : Exp {
+        override fun toViper(): viper.silver.ast.Mul =
             Mul(left.toViper(), right.toViper(), pos.toViper(), info.toViper(), trafos.toViper())
     }
 
@@ -54,8 +51,8 @@ sealed class Exp : IntoViper<viper.silver.ast.Exp> {
         val pos: Position = Position.NoPosition,
         val info: Info = Info.NoInfo,
         val trafos: Trafos = Trafos.NoTrafos,
-    ) : Exp() {
-        override fun toViper(): viper.silver.ast.Exp =
+    ) : Exp {
+        override fun toViper(): viper.silver.ast.Div =
             Div(left.toViper(), right.toViper(), pos.toViper(), info.toViper(), trafos.toViper())
     }
 
@@ -65,21 +62,21 @@ sealed class Exp : IntoViper<viper.silver.ast.Exp> {
         val pos: Position = Position.NoPosition,
         val info: Info = Info.NoInfo,
         val trafos: Trafos = Trafos.NoTrafos,
-    ) : Exp() {
-        override fun toViper(): viper.silver.ast.Exp =
+    ) : Exp {
+        override fun toViper(): viper.silver.ast.Mod =
             Mod(left.toViper(), right.toViper(), pos.toViper(), info.toViper(), trafos.toViper())
     }
     //endregion
 
-    //region Integer comparison Expressions
+    //region Integer Comparison Expressions
     data class LtCmp(
         val left: Exp,
         val right: Exp,
         val pos: Position = Position.NoPosition,
         val info: Info = Info.NoInfo,
         val trafos: Trafos = Trafos.NoTrafos,
-    ) : Exp() {
-        override fun toViper(): viper.silver.ast.Exp =
+    ) : Exp {
+        override fun toViper(): viper.silver.ast.LtCmp =
             LtCmp(left.toViper(), right.toViper(), pos.toViper(), info.toViper(), trafos.toViper())
     }
 
@@ -89,8 +86,8 @@ sealed class Exp : IntoViper<viper.silver.ast.Exp> {
         val pos: Position = Position.NoPosition,
         val info: Info = Info.NoInfo,
         val trafos: Trafos = Trafos.NoTrafos,
-    ) : Exp() {
-        override fun toViper(): viper.silver.ast.Exp =
+    ) : Exp {
+        override fun toViper(): viper.silver.ast.LeCmp =
             LeCmp(left.toViper(), right.toViper(), pos.toViper(), info.toViper(), trafos.toViper())
     }
 
@@ -100,8 +97,8 @@ sealed class Exp : IntoViper<viper.silver.ast.Exp> {
         val pos: Position = Position.NoPosition,
         val info: Info = Info.NoInfo,
         val trafos: Trafos = Trafos.NoTrafos,
-    ) : Exp() {
-        override fun toViper(): viper.silver.ast.Exp =
+    ) : Exp {
+        override fun toViper(): viper.silver.ast.GtCmp =
             GtCmp(left.toViper(), right.toViper(), pos.toViper(), info.toViper(), trafos.toViper())
     }
 
@@ -111,8 +108,8 @@ sealed class Exp : IntoViper<viper.silver.ast.Exp> {
         val pos: Position = Position.NoPosition,
         val info: Info = Info.NoInfo,
         val trafos: Trafos = Trafos.NoTrafos,
-    ) : Exp() {
-        override fun toViper(): viper.silver.ast.Exp =
+    ) : Exp {
+        override fun toViper(): viper.silver.ast.GeCmp =
             GeCmp(left.toViper(), right.toViper(), pos.toViper(), info.toViper(), trafos.toViper())
     }
     //endregion
@@ -124,8 +121,8 @@ sealed class Exp : IntoViper<viper.silver.ast.Exp> {
         val pos: Position = Position.NoPosition,
         val info: Info = Info.NoInfo,
         val trafos: Trafos = Trafos.NoTrafos,
-    ) : Exp() {
-        override fun toViper(): viper.silver.ast.Exp =
+    ) : Exp {
+        override fun toViper(): viper.silver.ast.EqCmp =
             EqCmp(left.toViper(), right.toViper(), pos.toViper(), info.toViper(), trafos.toViper())
     }
 
@@ -135,8 +132,8 @@ sealed class Exp : IntoViper<viper.silver.ast.Exp> {
         val pos: Position = Position.NoPosition,
         val info: Info = Info.NoInfo,
         val trafos: Trafos = Trafos.NoTrafos,
-    ) : Exp() {
-        override fun toViper(): viper.silver.ast.Exp =
+    ) : Exp {
+        override fun toViper(): viper.silver.ast.NeCmp =
             NeCmp(left.toViper(), right.toViper(), pos.toViper(), info.toViper(), trafos.toViper())
     }
     //endregion
@@ -148,8 +145,8 @@ sealed class Exp : IntoViper<viper.silver.ast.Exp> {
         val pos: Position = Position.NoPosition,
         val info: Info = Info.NoInfo,
         val trafos: Trafos = Trafos.NoTrafos,
-    ) : Exp() {
-        override fun toViper(): viper.silver.ast.Exp =
+    ) : Exp {
+        override fun toViper(): viper.silver.ast.And =
             And(left.toViper(), right.toViper(), pos.toViper(), info.toViper(), trafos.toViper())
     }
 
@@ -159,8 +156,8 @@ sealed class Exp : IntoViper<viper.silver.ast.Exp> {
         val pos: Position = Position.NoPosition,
         val info: Info = Info.NoInfo,
         val trafos: Trafos = Trafos.NoTrafos,
-    ) : Exp() {
-        override fun toViper(): viper.silver.ast.Exp =
+    ) : Exp {
+        override fun toViper(): viper.silver.ast.Or =
             Or(left.toViper(), right.toViper(), pos.toViper(), info.toViper(), trafos.toViper())
     }
 
@@ -170,8 +167,8 @@ sealed class Exp : IntoViper<viper.silver.ast.Exp> {
         val pos: Position = Position.NoPosition,
         val info: Info = Info.NoInfo,
         val trafos: Trafos = Trafos.NoTrafos,
-    ) : Exp() {
-        override fun toViper(): viper.silver.ast.Exp =
+    ) : Exp {
+        override fun toViper(): viper.silver.ast.Implies =
             Implies(left.toViper(), right.toViper(), pos.toViper(), info.toViper(), trafos.toViper())
     }
 
@@ -180,8 +177,8 @@ sealed class Exp : IntoViper<viper.silver.ast.Exp> {
         val pos: Position = Position.NoPosition,
         val info: Info = Info.NoInfo,
         val trafos: Trafos = Trafos.NoTrafos,
-    ) : Exp() {
-        override fun toViper(): viper.silver.ast.Exp =
+    ) : Exp {
+        override fun toViper(): viper.silver.ast.Not =
             Not(arg.toViper(), pos.toViper(), info.toViper(), trafos.toViper())
     }
 
@@ -196,16 +193,16 @@ sealed class Exp : IntoViper<viper.silver.ast.Exp> {
     }
 
     data class Forall(
-        val variables: List<LocalVarDecl>,
+        val variables: List<Declaration.LocalVarDecl>,
         val triggers: List<Trigger>,
         val exp: Exp,
         val pos: Position = Position.NoPosition,
         val info: Info = Info.NoInfo,
         val trafos: Trafos = Trafos.NoTrafos,
-    ) : Exp() {
-        override fun toViper(): viper.silver.ast.Exp =
+    ) : Exp {
+        override fun toViper(): viper.silver.ast.Forall =
             Forall(
-                variables.toScalaSeq(),
+                variables.map { it.toViper() }.toScalaSeq(),
                 triggers.toViper().toScalaSeq(),
                 exp.toViper(),
                 pos.toViper(),
@@ -215,16 +212,16 @@ sealed class Exp : IntoViper<viper.silver.ast.Exp> {
     }
 
     data class Exists(
-        val variables: List<LocalVarDecl>,
+        val variables: List<Declaration.LocalVarDecl>,
         val triggers: List<Trigger>,
         val exp: Exp,
         val pos: Position = Position.NoPosition,
         val info: Info = Info.NoInfo,
         val trafos: Trafos = Trafos.NoTrafos,
-    ) : Exp() {
-        override fun toViper(): viper.silver.ast.Exp =
+    ) : Exp {
+        override fun toViper(): viper.silver.ast.Exists =
             Exists(
-                variables.toScalaSeq(),
+                variables.map { it.toViper() }.toScalaSeq(),
                 triggers.toViper().toScalaSeq(),
                 exp.toViper(),
                 pos.toViper(),
@@ -234,21 +231,22 @@ sealed class Exp : IntoViper<viper.silver.ast.Exp> {
     }
     //endregion
 
+    //region Literals
     data class IntLit(
         val value: BigInt,
         val pos: Position = Position.NoPosition,
         val info: Info = Info.NoInfo,
         val trafos: Trafos = Trafos.NoTrafos,
-    ) : Exp() {
-        override fun toViper(): viper.silver.ast.Exp = IntLit(value, pos.toViper(), info.toViper(), trafos.toViper())
+    ) : Exp {
+        override fun toViper(): viper.silver.ast.IntLit = IntLit(value, pos.toViper(), info.toViper(), trafos.toViper())
     }
 
     data class NullLit(
         val pos: Position = Position.NoPosition,
         val info: Info = Info.NoInfo,
         val trafos: Trafos = Trafos.NoTrafos,
-    ) : Exp() {
-        override fun toViper(): viper.silver.ast.Exp = NullLit(pos.toViper(), info.toViper(), trafos.toViper())
+    ) : Exp {
+        override fun toViper(): viper.silver.ast.NullLit = NullLit(pos.toViper(), info.toViper(), trafos.toViper())
     }
 
     data class BoolLit(
@@ -256,19 +254,21 @@ sealed class Exp : IntoViper<viper.silver.ast.Exp> {
         val pos: Position = Position.NoPosition,
         val info: Info = Info.NoInfo,
         val trafos: Trafos = Trafos.NoTrafos,
-    ) : Exp() {
-        override fun toViper(): viper.silver.ast.Exp =
+    ) : Exp {
+        override fun toViper(): viper.silver.ast.BoolLit =
             viper.silver.ast.BoolLit.apply(value, pos.toViper(), info.toViper(), trafos.toViper())
     }
+    //endregion
 
     data class LocalVar(
-        val name: String,
+        val name: MangledName,
         val type: Type,
         val pos: Position = Position.NoPosition,
         val info: Info = Info.NoInfo,
         val trafos: Trafos = Trafos.NoTrafos,
-    ) : Exp() {
-        override fun toViper(): viper.silver.ast.Exp = LocalVar(name, type.toViper(), pos.toViper(), info.toViper(), trafos.toViper())
+    ) : Exp {
+        override fun toViper(): viper.silver.ast.LocalVar =
+            LocalVar(name.mangled, type.toViper(), pos.toViper(), info.toViper(), trafos.toViper())
     }
 
     data class FieldAccess(
@@ -277,8 +277,9 @@ sealed class Exp : IntoViper<viper.silver.ast.Exp> {
         val pos: Position = Position.NoPosition,
         val info: Info = Info.NoInfo,
         val trafos: Trafos = Trafos.NoTrafos,
-    ) : Exp() {
-        override fun toViper(): viper.silver.ast.Exp = FieldAccess(rcv.toViper(), field, pos.toViper(), info.toViper(), trafos.toViper())
+    ) : Exp {
+        override fun toViper(): viper.silver.ast.FieldAccess =
+            FieldAccess(rcv.toViper(), field.toViper(), pos.toViper(), info.toViper(), trafos.toViper())
     }
 
     data class Result(
@@ -286,8 +287,8 @@ sealed class Exp : IntoViper<viper.silver.ast.Exp> {
         val pos: Position = Position.NoPosition,
         val info: Info = Info.NoInfo,
         val trafos: Trafos = Trafos.NoTrafos,
-    ) : Exp() {
-        override fun toViper(): viper.silver.ast.Exp = Result(type.toViper(), pos.toViper(), info.toViper(), trafos.toViper())
+    ) : Exp {
+        override fun toViper(): viper.silver.ast.Result = Result(type.toViper(), pos.toViper(), info.toViper(), trafos.toViper())
     }
 
     /**
@@ -298,26 +299,24 @@ sealed class Exp : IntoViper<viper.silver.ast.Exp> {
      * supplied.
      */
     data class DomainFuncApp(
-        val domainName: String,
-        val funcname: String,
+        val funcname: DomainFuncName,
         val args: List<Exp>,
         val typeVarMap: Map<Type.TypeVar, Type>,
         val typ: Type,
         val pos: Position = Position.NoPosition,
         val info: Info = Info.NoInfo,
         val trafos: Trafos = Trafos.NoTrafos,
-    ) : Exp() {
-
-        val scalaTypeVarMap = typeVarMap.mapKeys { it.key.toViper() }.mapValues { it.value.toViper() }.toScalaMap()
+    ) : Exp {
+        private val scalaTypeVarMap = typeVarMap.mapKeys { it.key.toViper() }.mapValues { it.value.toViper() }.toScalaMap()
         override fun toViper(): viper.silver.ast.Exp =
             DomainFuncApp(
-                funcname,
+                funcname.mangled,
                 args.toViper().toScalaSeq(),
                 scalaTypeVarMap,
                 pos.toViper(),
                 info.toViper(),
                 typ.toViper().substitute(scalaTypeVarMap),
-                domainName,
+                funcname.domainName.mangled,
                 trafos.toViper()
             )
     }

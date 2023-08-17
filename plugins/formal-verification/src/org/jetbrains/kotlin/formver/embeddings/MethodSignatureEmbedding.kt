@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.formver.embeddings
 
+import org.jetbrains.kotlin.formver.conversion.ReturnVariableName
+import org.jetbrains.kotlin.formver.scala.MangledName
 import org.jetbrains.kotlin.formver.scala.silicon.ast.*
-import viper.silver.ast.Method
 
 class MethodSignatureEmbedding(val name: MangledName, val params: List<VariableEmbedding>, val returnType: TypeEmbedding) {
     val returnVar: VariableEmbedding
@@ -20,8 +21,8 @@ class MethodSignatureEmbedding(val name: MangledName, val params: List<VariableE
         trafos: Trafos = Trafos.NoTrafos,
     ): Method {
         val returns = listOf(returnVar)
-        return method(
-            name.mangled,
+        return Method(
+            name,
             params.map { it.toLocalVarDecl() },
             returns.map { it.toLocalVarDecl() },
             params.flatMap { it.invariants() } + pres,

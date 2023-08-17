@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.formver.embeddings
 
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
+import org.jetbrains.kotlin.formver.scala.MangledName
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name

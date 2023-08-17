@@ -10,10 +10,9 @@ import org.jetbrains.kotlin.fir.contracts.description.ConeContractConstantValues
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.formver.domains.NullableDomain
-import org.jetbrains.kotlin.formver.embeddings.BooleanTypeEmbedding
-import org.jetbrains.kotlin.formver.embeddings.MangledName
 import org.jetbrains.kotlin.formver.embeddings.NullableTypeEmbedding
 import org.jetbrains.kotlin.formver.embeddings.VariableEmbedding
+import org.jetbrains.kotlin.formver.scala.MangledName
 import org.jetbrains.kotlin.formver.scala.silicon.ast.Exp
 import org.jetbrains.kotlin.formver.scala.silicon.ast.Exp.*
 
@@ -73,12 +72,12 @@ class ContractDescriptionConversionVisitor : KtContractDescriptionVisitor<Exp, M
 
     override fun visitValueParameterReference(
         valueParameterReference: KtValueParameterReference<ConeKotlinType, ConeDiagnostic>,
-        data: MethodConversionContext
+        data: MethodConversionContext,
     ): Exp = valueParameterReference.embeddedVar(data).toLocalVar()
 
     override fun visitIsNullPredicate(
         isNullPredicate: KtIsNullPredicate<ConeKotlinType, ConeDiagnostic>,
-        data: MethodConversionContext
+        data: MethodConversionContext,
     ): Exp {
         /* NOTE: useless comparisons like x != null with x non-nullable will compile with just a warning.
          * So it is necessary to take care of these cases in order to avoid comparison between non-nullable

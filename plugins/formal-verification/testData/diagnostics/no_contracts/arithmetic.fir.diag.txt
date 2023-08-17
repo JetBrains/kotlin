@@ -10,7 +10,7 @@ domain dom$Nullable[T]  {
 
   function dom$Nullable$nullable_of(x: T): dom$Nullable[T]
 
-  function dom$Nullable$val_of(x: dom$Nullable[T]): T
+  function dom$Nullable$val_of(nx: dom$Nullable[T]): T
 
   axiom dom$Nullable$some_not_null {
     (forall x: T ::
@@ -27,11 +27,11 @@ domain dom$Nullable[T]  {
   }
 
   axiom dom$Nullable$nullable_of_val_of_nullable {
-    (forall x: dom$Nullable[T] ::
-      { (dom$Nullable$nullable_of((dom$Nullable$val_of(x): T)): dom$Nullable[T]) }
-      x != (dom$Nullable$null(): dom$Nullable[T]) ==>
-      (dom$Nullable$nullable_of((dom$Nullable$val_of(x): T)): dom$Nullable[T]) ==
-      x)
+    (forall nx: dom$Nullable[T] ::
+      { (dom$Nullable$nullable_of((dom$Nullable$val_of(nx): T)): dom$Nullable[T]) }
+      nx != (dom$Nullable$null(): dom$Nullable[T]) ==>
+      (dom$Nullable$nullable_of((dom$Nullable$val_of(nx): T)): dom$Nullable[T]) ==
+      nx)
   }
 }
 
@@ -53,7 +53,7 @@ domain dom$Nullable[T]  {
 
   function dom$Nullable$nullable_of(x: T): dom$Nullable[T]
 
-  function dom$Nullable$val_of(x: dom$Nullable[T]): T
+  function dom$Nullable$val_of(nx: dom$Nullable[T]): T
 
   axiom dom$Nullable$some_not_null {
     (forall x: T ::
@@ -70,11 +70,11 @@ domain dom$Nullable[T]  {
   }
 
   axiom dom$Nullable$nullable_of_val_of_nullable {
-    (forall x: dom$Nullable[T] ::
-      { (dom$Nullable$nullable_of((dom$Nullable$val_of(x): T)): dom$Nullable[T]) }
-      x != (dom$Nullable$null(): dom$Nullable[T]) ==>
-      (dom$Nullable$nullable_of((dom$Nullable$val_of(x): T)): dom$Nullable[T]) ==
-      x)
+    (forall nx: dom$Nullable[T] ::
+      { (dom$Nullable$nullable_of((dom$Nullable$val_of(nx): T)): dom$Nullable[T]) }
+      nx != (dom$Nullable$null(): dom$Nullable[T]) ==>
+      (dom$Nullable$nullable_of((dom$Nullable$val_of(nx): T)): dom$Nullable[T]) ==
+      nx)
   }
 }
 
@@ -96,7 +96,7 @@ domain dom$Nullable[T]  {
 
   function dom$Nullable$nullable_of(x: T): dom$Nullable[T]
 
-  function dom$Nullable$val_of(x: dom$Nullable[T]): T
+  function dom$Nullable$val_of(nx: dom$Nullable[T]): T
 
   axiom dom$Nullable$some_not_null {
     (forall x: T ::
@@ -113,11 +113,11 @@ domain dom$Nullable[T]  {
   }
 
   axiom dom$Nullable$nullable_of_val_of_nullable {
-    (forall x: dom$Nullable[T] ::
-      { (dom$Nullable$nullable_of((dom$Nullable$val_of(x): T)): dom$Nullable[T]) }
-      x != (dom$Nullable$null(): dom$Nullable[T]) ==>
-      (dom$Nullable$nullable_of((dom$Nullable$val_of(x): T)): dom$Nullable[T]) ==
-      x)
+    (forall nx: dom$Nullable[T] ::
+      { (dom$Nullable$nullable_of((dom$Nullable$val_of(nx): T)): dom$Nullable[T]) }
+      nx != (dom$Nullable$null(): dom$Nullable[T]) ==>
+      (dom$Nullable$nullable_of((dom$Nullable$val_of(nx): T)): dom$Nullable[T]) ==
+      nx)
   }
 }
 
@@ -139,7 +139,7 @@ domain dom$Nullable[T]  {
 
   function dom$Nullable$nullable_of(x: T): dom$Nullable[T]
 
-  function dom$Nullable$val_of(x: dom$Nullable[T]): T
+  function dom$Nullable$val_of(nx: dom$Nullable[T]): T
 
   axiom dom$Nullable$some_not_null {
     (forall x: T ::
@@ -156,11 +156,11 @@ domain dom$Nullable[T]  {
   }
 
   axiom dom$Nullable$nullable_of_val_of_nullable {
-    (forall x: dom$Nullable[T] ::
-      { (dom$Nullable$nullable_of((dom$Nullable$val_of(x): T)): dom$Nullable[T]) }
-      x != (dom$Nullable$null(): dom$Nullable[T]) ==>
-      (dom$Nullable$nullable_of((dom$Nullable$val_of(x): T)): dom$Nullable[T]) ==
-      x)
+    (forall nx: dom$Nullable[T] ::
+      { (dom$Nullable$nullable_of((dom$Nullable$val_of(nx): T)): dom$Nullable[T]) }
+      nx != (dom$Nullable$null(): dom$Nullable[T]) ==>
+      (dom$Nullable$nullable_of((dom$Nullable$val_of(nx): T)): dom$Nullable[T]) ==
+      nx)
   }
 }
 
