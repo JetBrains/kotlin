@@ -14,6 +14,7 @@ import org.gradle.api.artifacts.Dependency
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
 import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.internal.plugins.DefaultArtifactPublicationSet
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.provider.Provider
@@ -135,7 +136,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
             )
 
             val interopTask = registerTask<CInteropProcess>(interop.interopProcessingTaskName, listOf(params)) {
-                it.destinationDir = provider { klibOutputDirectory(compilationInfo).resolve("cinterop") }
+                it.destinationDir = klibOutputDirectory(compilationInfo).dir("cinterop").map { it.asFile }
                 it.group = INTEROP_GROUP
                 it.description = "Generates Kotlin/Native interop library '${interop.name}' " +
                         "for compilation '${compilation.compilationName}'" +
@@ -390,7 +391,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
                         "compilation in target '${compilationInfo.targetDisambiguationClassifier}'."
                 it.enabled = konanTarget.enabledOnCurrentHost
 
-                it.destinationDirectory.set(project.klibOutputDirectory(compilationInfo).resolve("klib"))
+                it.destinationDirectory.set(project.klibOutputDirectory(compilationInfo).dir("klib"))
                 val propertiesProvider = PropertiesProvider(project)
                 if (propertiesProvider.useK2 == true) {
                     it.compilerOptions.useK2.set(true)
@@ -443,9 +444,11 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
 
         private fun Project.klibOutputDirectory(
             compilation: KotlinCompilationInfo,
-        ): File {
+        ): DirectoryProperty {
             val targetSubDirectory = compilation.targetDisambiguationClassifier?.let { "$it/" }.orEmpty()
-            return buildDir.resolve("classes/kotlin/$targetSubDirectory${compilation.compilationName}")
+            return project.objects.directoryProperty().value(
+                layout.buildDirectory.dir("classes/kotlin/$targetSubDirectory${compilation.compilationName}")
+            )
         }
 
         private fun addCompilerPlugins(compilation: AbstractKotlinNativeCompilation) {
