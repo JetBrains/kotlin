@@ -12,17 +12,18 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.declarations.DeprecationsProvider
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
+import org.jetbrains.kotlin.fir.declarations.FirErrorPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirResolveState
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.asResolveState
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
@@ -41,7 +42,7 @@ import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirErrorConstructor @FirImplementationDetail constructor(
+class FirErrorPrimaryConstructorImpl @FirImplementationDetail constructor(
     override val source: KtSourceElement?,
     resolvePhase: FirResolvePhase,
     override val moduleData: FirModuleData,
@@ -61,9 +62,10 @@ class FirErrorConstructor @FirImplementationDetail constructor(
     override val symbol: FirConstructorSymbol,
     override var delegatedConstructor: FirDelegatedConstructorCall?,
     override var body: FirBlock?,
-) : FirConstructor() {
+    override val diagnostic: ConeDiagnostic,
+) : FirErrorPrimaryConstructor() {
     override var controlFlowGraphReference: FirControlFlowGraphReference? = null
-    override val isPrimary: Boolean get() = false
+    override val isPrimary: Boolean get() = true
 
     init {
         symbol.bind(this)
@@ -85,7 +87,7 @@ class FirErrorConstructor @FirImplementationDetail constructor(
         body?.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirErrorConstructor {
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirErrorPrimaryConstructorImpl {
         transformTypeParameters(transformer, data)
         transformStatus(transformer, data)
         transformReturnTypeRef(transformer, data)
@@ -100,47 +102,47 @@ class FirErrorConstructor @FirImplementationDetail constructor(
         return this
     }
 
-    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirErrorConstructor {
+    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirErrorPrimaryConstructorImpl {
         typeParameters.transformInplace(transformer, data)
         return this
     }
 
-    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirErrorConstructor {
+    override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirErrorPrimaryConstructorImpl {
         status = status.transform(transformer, data)
         return this
     }
 
-    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirErrorConstructor {
+    override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirErrorPrimaryConstructorImpl {
         returnTypeRef = returnTypeRef.transform(transformer, data)
         return this
     }
 
-    override fun <D> transformReceiverParameter(transformer: FirTransformer<D>, data: D): FirErrorConstructor {
+    override fun <D> transformReceiverParameter(transformer: FirTransformer<D>, data: D): FirErrorPrimaryConstructorImpl {
         receiverParameter = receiverParameter?.transform(transformer, data)
         return this
     }
 
-    override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirErrorConstructor {
+    override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirErrorPrimaryConstructorImpl {
         valueParameters.transformInplace(transformer, data)
         return this
     }
 
-    override fun <D> transformContractDescription(transformer: FirTransformer<D>, data: D): FirErrorConstructor {
+    override fun <D> transformContractDescription(transformer: FirTransformer<D>, data: D): FirErrorPrimaryConstructorImpl {
         contractDescription = contractDescription.transform(transformer, data)
         return this
     }
 
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirErrorConstructor {
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirErrorPrimaryConstructorImpl {
         annotations.transformInplace(transformer, data)
         return this
     }
 
-    override fun <D> transformDelegatedConstructor(transformer: FirTransformer<D>, data: D): FirErrorConstructor {
+    override fun <D> transformDelegatedConstructor(transformer: FirTransformer<D>, data: D): FirErrorPrimaryConstructorImpl {
         delegatedConstructor = delegatedConstructor?.transform(transformer, data)
         return this
     }
 
-    override fun <D> transformBody(transformer: FirTransformer<D>, data: D): FirErrorConstructor {
+    override fun <D> transformBody(transformer: FirTransformer<D>, data: D): FirErrorPrimaryConstructorImpl {
         body = body?.transform(transformer, data)
         return this
     }

@@ -480,6 +480,9 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
         } as FirConstructor
     }
 
+    override fun transformErrorPrimaryConstructor(errorPrimaryConstructor: FirErrorPrimaryConstructor, data: Nothing?) =
+        transformConstructor(errorPrimaryConstructor, data)
+
     override fun transformEnumEntry(enumEntry: FirEnumEntry, data: Nothing?): FirStatement {
         return transformCallableDeclarationForDeprecations(enumEntry, data)
     }

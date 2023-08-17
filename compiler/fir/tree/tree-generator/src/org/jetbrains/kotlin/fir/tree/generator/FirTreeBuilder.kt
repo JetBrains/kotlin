@@ -124,6 +124,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val errorExpression by element(Expression, expression, diagnosticHolder)
     val errorFunction by element(Declaration, function, diagnosticHolder)
     val errorProperty by element(Declaration, variable, diagnosticHolder)
+    val errorPrimaryConstructor by element(Declaration, constructor, diagnosticHolder)
     val danglingModifierList by element(Declaration, declaration, diagnosticHolder)
     val qualifiedAccessExpression by element(Expression, expression, resolvable, contextReceiverArgumentListOwner)
     val qualifiedErrorAccessExpression by element(Expression, expression, diagnosticHolder)
