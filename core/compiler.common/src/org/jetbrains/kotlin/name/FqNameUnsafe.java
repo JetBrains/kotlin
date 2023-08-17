@@ -42,32 +42,13 @@ public final class FqNameUnsafe {
     @NotNull
     private final String fqName;
 
-    // cache
-    private transient FqNameUnsafe parent;
-
-
     public FqNameUnsafe(@NotNull String fqName) {
         this.fqName = fqName;
-    }
-
-    private FqNameUnsafe(@NotNull String fqName, FqNameUnsafe parent) {
-        this.fqName = fqName;
-        this.parent = parent;
     }
 
     public static boolean isValid(@Nullable String qualifiedName) {
         // TODO: There's a valid name with escape char ``
         return qualifiedName != null && qualifiedName.indexOf('/') < 0 && qualifiedName.indexOf('*') < 0;
-    }
-
-    private void compute() {
-        int lastDot = fqName.lastIndexOf('.');
-        if (lastDot >= 0) {
-            parent = new FqNameUnsafe(fqName.substring(0, lastDot));
-        }
-        else {
-            parent = FqName.ROOT.toUnsafe();
-        }
     }
 
     @NotNull
@@ -90,17 +71,17 @@ public final class FqNameUnsafe {
 
     @NotNull
     public FqNameUnsafe parent() {
-        if (parent != null) {
-            return parent;
-        }
-
         if (isRoot()) {
             throw new IllegalStateException("root");
         }
 
-        compute();
-
-        return parent;
+        int lastDot = fqName.lastIndexOf('.');
+        if (lastDot >= 0) {
+            return new FqNameUnsafe(fqName.substring(0, lastDot));
+        }
+        else {
+            return FqName.ROOT.toUnsafe();
+        }
     }
 
     @NotNull
@@ -112,7 +93,7 @@ public final class FqNameUnsafe {
         else {
             childFqName = fqName + "." + name.asString();
         }
-        return new FqNameUnsafe(childFqName, this);
+        return new FqNameUnsafe(childFqName);
     }
 
     @NotNull
@@ -169,7 +150,7 @@ public final class FqNameUnsafe {
 
     @NotNull
     public static FqNameUnsafe topLevel(@NotNull Name shortName) {
-        return new FqNameUnsafe(shortName.asString(), FqName.ROOT.toUnsafe());
+        return new FqNameUnsafe(shortName.asString());
     }
 
     @Override
