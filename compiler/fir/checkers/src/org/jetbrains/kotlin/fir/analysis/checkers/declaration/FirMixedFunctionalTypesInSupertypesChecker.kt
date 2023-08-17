@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.types.functionTypeKind
 
-object FirSuspendFunctionAsSupertypeChecker : FirClassChecker() {
+object FirMixedFunctionalTypesInSupertypesChecker : FirClassChecker() {
     override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
         val superKinds = lookupSuperTypes(declaration.symbol, lookupInterfaces = true, deep = true, context.session)
             .mapNotNullTo(mutableSetOf()) { it.functionTypeKind(context.session)?.nonReflectKind() }
