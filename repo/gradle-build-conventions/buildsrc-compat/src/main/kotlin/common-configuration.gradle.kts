@@ -51,6 +51,10 @@ afterEvaluate {
         configurations.findByName("kotlinCompilerClasspath")?.let {
             dependencies.add(it.name, files(bootstrapCompilerClasspath))
         }
+        val bootstrapBuildToolsApiClasspath by rootProject.buildscript.configurations
+        configurations.findByName("kotlinBuildToolsApiClasspath")?.let {
+            dependencies.add(it.name, files(bootstrapBuildToolsApiClasspath))
+        }
 
         configurations.findByName("kotlinCompilerPluginClasspath")
             ?.exclude("org.jetbrains.kotlin", "kotlin-scripting-compiler-embeddable")
