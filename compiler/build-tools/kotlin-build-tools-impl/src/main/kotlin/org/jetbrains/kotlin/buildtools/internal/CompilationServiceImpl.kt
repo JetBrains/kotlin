@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.cli.common.arguments.validateArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
+import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.compilerRunner.KotlinCompilerRunnerUtils
 import org.jetbrains.kotlin.config.Services
@@ -20,9 +22,12 @@ import org.jetbrains.kotlin.daemon.common.CompilerId
 import org.jetbrains.kotlin.daemon.common.configureDaemonJVMOptions
 import org.jetbrains.kotlin.daemon.common.filterExtractProps
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathEntrySnapshotter
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.reporter
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsFromClasspathDiscoverySource
 import java.io.File
 import java.net.URLClassLoader
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
 private val ExitCode.asCompilationResult
     get() = when (this) {
@@ -75,6 +80,16 @@ internal object CompilationServiceImpl : CompilationService {
     override fun finishProjectCompilation(projectId: ProjectId) {
         val file = buildIdToSessionFlagFile.remove(projectId) ?: return
         file.delete()
+    }
+
+    override fun getCustomKotlinScriptFilenameExtensions(classpath: List<File>): Collection<String> {
+        val definitions = ScriptDefinitionsFromClasspathDiscoverySource(
+            classpath,
+            defaultJvmScriptingHostConfiguration,
+            PrintingMessageCollector(System.out, MessageRenderer.WITHOUT_PATHS, false).reporter
+        ).definitions
+
+        return definitions.mapTo(arrayListOf()) { it.fileExtension }
     }
 
     private fun compileInProcess(

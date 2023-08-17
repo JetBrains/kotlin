@@ -7,33 +7,31 @@
 
 package org.jetbrains.kotlin.gradle.scripting.internal
 
+import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.dsl.DependencyHandler
-import org.gradle.api.artifacts.transform.CacheableTransform
-import org.gradle.api.artifacts.transform.InputArtifact
-import org.gradle.api.artifacts.transform.TransformAction
-import org.gradle.api.artifacts.transform.TransformOutputs
-import org.gradle.api.artifacts.transform.TransformParameters
+import org.gradle.api.artifacts.transform.*
 import org.gradle.api.attributes.Attribute
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileSystemLocation
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Classpath
+import org.gradle.api.tasks.Internal
 import org.gradle.work.NormalizeLineEndings
-import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
-import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
+import org.jetbrains.kotlin.buildtools.api.CompilationService
+import org.jetbrains.kotlin.compilerRunner.btapi.SharedApiClassesClassLoaderProvider
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
+import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessor
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.scripting.ScriptingExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.kotlin.scripting.compiler.plugin.impl.reporter
-import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsFromClasspathDiscoverySource
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
-import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
 private const val SCRIPTING_LOG_PREFIX = "kotlin scripting plugin:"
 
@@ -114,11 +112,21 @@ private fun configureDiscoveryTransformation(
         attributes.attribute(artifactType, scriptFilesExtensions)
         extendsFrom(discoveryConfiguration)
     }
-    project.dependencies.registerOnceDiscoverScriptExtensionsTransform()
+    val classLoadersCachingService = ClassLoadersCachingBuildService.registerIfAbsent(project)
+    val compilerClasspath = project.configurations.named(BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME)
+    project.dependencies.registerOnceDiscoverScriptExtensionsTransform(classLoadersCachingService, compilerClasspath)
 }
 
 @CacheableTransform
-internal abstract class DiscoverScriptExtensionsTransformAction : TransformAction<TransformParameters.None> {
+internal abstract class DiscoverScriptExtensionsTransformAction : TransformAction<DiscoverScriptExtensionsTransformAction.Parameters> {
+    interface Parameters : TransformParameters {
+        @get:Internal
+        val classLoadersCachingService: Property<ClassLoadersCachingBuildService>
+
+        @get:Classpath
+        val compilerClasspath: ConfigurableFileCollection
+    }
+
     @get:Classpath
     @get:InputArtifact
     @get:NormalizeLineEndings
@@ -127,14 +135,11 @@ internal abstract class DiscoverScriptExtensionsTransformAction : TransformActio
     override fun transform(outputs: TransformOutputs) {
         val input = inputArtifact.get().asFile
 
-        val definitions =
-            ScriptDefinitionsFromClasspathDiscoverySource(
-                listOf(input),
-                defaultJvmScriptingHostConfiguration,
-                PrintingMessageCollector(System.out, MessageRenderer.WITHOUT_PATHS, false).reporter
-            ).definitions
+        val classLoader = parameters.classLoadersCachingService.get()
+            .getClassLoader(parameters.compilerClasspath.toList(), SharedApiClassesClassLoaderProvider)
+        val compilationService = CompilationService.loadImplementation(classLoader)
 
-        val extensions = definitions.mapTo(arrayListOf()) { it.fileExtension }
+        val extensions = compilationService.getCustomKotlinScriptFilenameExtensions(listOf(input))
 
         if (extensions.isNotEmpty()) {
             val outputFile = outputs.file("${input.nameWithoutExtension}.discoveredScriptsExtensions.txt")
@@ -143,21 +148,33 @@ internal abstract class DiscoverScriptExtensionsTransformAction : TransformActio
     }
 }
 
-private fun DependencyHandler.registerDiscoverScriptExtensionsTransform() {
+private fun DependencyHandler.registerDiscoverScriptExtensionsTransform(
+    classLoadersCachingService: Provider<ClassLoadersCachingBuildService>,
+    compilerClasspath: NamedDomainObjectProvider<Configuration>,
+) {
+    fun TransformSpec<DiscoverScriptExtensionsTransformAction.Parameters>.configureCommonParameters() {
+        parameters.classLoadersCachingService.set(classLoadersCachingService)
+        parameters.compilerClasspath.from(compilerClasspath)
+    }
     registerTransform(DiscoverScriptExtensionsTransformAction::class.java) { transformSpec ->
         transformSpec.from.attribute(artifactType, "jar")
         transformSpec.to.attribute(artifactType, scriptFilesExtensions)
+        transformSpec.configureCommonParameters()
     }
 
     registerTransform(DiscoverScriptExtensionsTransformAction::class.java) { transformSpec ->
         transformSpec.from.attribute(artifactType, "classes")
         transformSpec.to.attribute(artifactType, scriptFilesExtensions)
+        transformSpec.configureCommonParameters()
     }
 }
 
-private fun DependencyHandler.registerOnceDiscoverScriptExtensionsTransform() {
+private fun DependencyHandler.registerOnceDiscoverScriptExtensionsTransform(
+    classLoadersCachingService: Provider<ClassLoadersCachingBuildService>,
+    compilerClasspath: NamedDomainObjectProvider<Configuration>
+) {
     if (!extensions.extraProperties.has("DiscoverScriptExtensionsTransform")) {
-        registerDiscoverScriptExtensionsTransform()
+        registerDiscoverScriptExtensionsTransform(classLoadersCachingService, compilerClasspath)
         extensions.extraProperties["DiscoverScriptExtensionsTransform"] = true
     }
 }
@@ -166,22 +183,15 @@ private val artifactType = Attribute.of("artifactType", String::class.java)
 
 private const val scriptFilesExtensions = "script-files-extensions"
 
-private fun Configuration.discoverScriptExtensionsFiles() =
-    incoming.artifactView {
-        attributes {
-            it.attribute(artifactType, scriptFilesExtensions)
-        }
-    }.artifacts.artifactFiles
-
 
 class ScriptingKotlinGradleSubplugin : KotlinCompilerPluginSupportPlugin {
     companion object {
         const val SCRIPTING_ARTIFACT_NAME = "kotlin-scripting-compiler-embeddable"
 
-        val SCRIPT_DEFINITIONS_OPTION = "script-definitions"
-        val SCRIPT_DEFINITIONS_CLASSPATH_OPTION = "script-definitions-classpath"
-        val DISABLE_SCRIPT_DEFINITIONS_FROM_CLSSPATH_OPTION = "disable-script-definitions-from-classpath"
-        val LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION = "script-resolver-environment"
+        const val SCRIPT_DEFINITIONS_OPTION = "script-definitions"
+        const val SCRIPT_DEFINITIONS_CLASSPATH_OPTION = "script-definitions-classpath"
+        const val DISABLE_SCRIPT_DEFINITIONS_FROM_CLASSPATH_OPTION = "disable-script-definitions-from-classpath"
+        const val LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION = "script-resolver-environment"
     }
 
     override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean = kotlinCompilation !is AbstractKotlinNativeCompilation
@@ -204,7 +214,7 @@ class ScriptingKotlinGradleSubplugin : KotlinCompilerPluginSupportPlugin {
                 options += SubpluginOption(SCRIPT_DEFINITIONS_CLASSPATH_OPTION, path)
             }
             if (scriptingExtension.myDisableScriptDefinitionsFromClasspath) {
-                options += SubpluginOption(DISABLE_SCRIPT_DEFINITIONS_FROM_CLSSPATH_OPTION, "true")
+                options += SubpluginOption(DISABLE_SCRIPT_DEFINITIONS_FROM_CLASSPATH_OPTION, "true")
             }
             for (pair in scriptingExtension.myScriptResolverEnvironment) {
                 options += SubpluginOption(LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION, "${pair.key}=${pair.value}")

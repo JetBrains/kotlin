@@ -70,6 +70,14 @@ public interface CompilationService {
      */
     public fun finishProjectCompilation(projectId: ProjectId)
 
+    /**
+     * Retrieves the custom Kotlin script filename extensions based on script definitions from the specified classpath.
+     *
+     * @param classpath The list of files representing the classpath.
+     * @return A collection of strings representing the custom Kotlin script filename extensions.
+     */
+    public fun getCustomKotlinScriptFilenameExtensions(classpath: List<File>): Collection<String>
+
     @ExperimentalBuildToolsApi
     public companion object {
         @JvmStatic
