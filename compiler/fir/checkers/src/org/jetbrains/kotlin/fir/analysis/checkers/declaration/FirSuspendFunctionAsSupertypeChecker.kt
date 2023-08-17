@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.builtins.functions.isBasicFunctionOrKFunction
-import org.jetbrains.kotlin.builtins.functions.isSuspendOrKSuspendFunction
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind.Function
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind.SuspendFunction
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -17,14 +17,17 @@ import org.jetbrains.kotlin.fir.types.functionTypeKind
 
 object FirSuspendFunctionAsSupertypeChecker : FirClassChecker() {
     override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
-        val supertypes = lookupSuperTypes(declaration.symbol, lookupInterfaces = true, deep = true, context.session)
-            .mapNotNull { it.functionTypeKind(context.session) }
+        val superKinds = lookupSuperTypes(declaration.symbol, lookupInterfaces = true, deep = true, context.session)
+            .mapNotNullTo(mutableSetOf()) { it.functionTypeKind(context.session)?.nonReflectKind() }
 
-        if (
-            supertypes.any { it.isSuspendOrKSuspendFunction } &&
-            supertypes.any { it.isBasicFunctionOrKFunction }
-        ) {
-            reporter.reportOn(declaration.source, FirErrors.MIXING_SUSPEND_AND_NON_SUSPEND_SUPERTYPES, context)
+        when {
+            superKinds.size <= 1 -> {}
+            superKinds == setOf(Function, SuspendFunction) -> {
+                reporter.reportOn(declaration.source, FirErrors.MIXING_SUSPEND_AND_NON_SUSPEND_SUPERTYPES, context)
+            }
+            else -> {
+                reporter.reportOn(declaration.source, FirErrors.MIXING_FUNCTIONAL_KINDS_IN_SUPERTYPES, superKinds, context)
+            }
         }
     }
 }

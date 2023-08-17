@@ -4685,6 +4685,15 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.MIXING_FUNCTIONAL_KINDS_IN_SUPERTYPES) { firDiagnostic ->
+        MixingFunctionalKindsInSupertypesImpl(
+            firDiagnostic.a.map { functionTypeKind ->
+                functionTypeKind
+            },
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.REDUNDANT_LABEL_WARNING) { firDiagnostic ->
         RedundantLabelWarningImpl(
             firDiagnostic as KtPsiDiagnostic,

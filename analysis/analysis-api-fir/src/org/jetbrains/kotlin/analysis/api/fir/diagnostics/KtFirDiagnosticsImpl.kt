@@ -3945,6 +3945,12 @@ internal class MixingSuspendAndNonSuspendSupertypesImpl(
     token: KtLifetimeToken,
 ) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.MixingSuspendAndNonSuspendSupertypes
 
+internal class MixingFunctionalKindsInSupertypesImpl(
+    override val kinds: List<FunctionTypeKind>,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KtLifetimeToken,
+) : KtAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KtFirDiagnostic.MixingFunctionalKindsInSupertypes
+
 internal class RedundantLabelWarningImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KtLifetimeToken,
