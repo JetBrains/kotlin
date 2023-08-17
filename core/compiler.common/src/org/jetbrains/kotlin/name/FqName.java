@@ -33,9 +33,6 @@ public final class FqName {
     @NotNull
     private final FqNameUnsafe fqName;
 
-    // cache
-    private transient FqName parent;
-
     public FqName(@NotNull String fqName) {
         this.fqName = new FqNameUnsafe(fqName);
     }
@@ -44,10 +41,6 @@ public final class FqName {
         this.fqName = fqName;
     }
 
-    private FqName(@NotNull FqNameUnsafe fqName, FqName parent) {
-        this.fqName = fqName;
-        this.parent = parent;
-    }
 
     @NotNull
     public String asString() {
@@ -65,22 +58,12 @@ public final class FqName {
 
     @NotNull
     public FqName parent() {
-        if (parent != null) {
-            return parent;
-        }
-
-        if (isRoot()) {
-            throw new IllegalStateException("root");
-        }
-
-        parent = new FqName(fqName.parent());
-
-        return parent;
+        return new FqName(fqName.parent());
     }
 
     @NotNull
     public FqName child(@NotNull Name name) {
-        return new FqName(fqName.child(name), this);
+        return new FqName(fqName.child(name));
     }
 
     @NotNull
