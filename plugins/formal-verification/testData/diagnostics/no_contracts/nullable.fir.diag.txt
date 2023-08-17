@@ -1,96 +1,4 @@
-/nullable.kt:(4,19): info: Generated Viper text for return_nullable:
-domain dom$Unit  {
-
-  function dom$Unit$element(): dom$Unit
-}
-
-domain dom$Nullable[T]  {
-
-  function dom$Nullable$null(): dom$Nullable[T]
-
-  function dom$Nullable$nullable_of(x: T): dom$Nullable[T]
-
-  function dom$Nullable$val_of(x: dom$Nullable[T]): T
-
-  axiom dom$Nullable$some_not_null {
-    (forall x: T ::
-      { (dom$Nullable$nullable_of(x): dom$Nullable[T]) }
-      (dom$Nullable$nullable_of(x): dom$Nullable[T]) !=
-      (dom$Nullable$null(): dom$Nullable[T]))
-  }
-
-  axiom dom$Nullable$val_of_nullable_of_val {
-    (forall x: T ::
-      { (dom$Nullable$val_of((dom$Nullable$nullable_of(x): dom$Nullable[T])): T) }
-      (dom$Nullable$val_of((dom$Nullable$nullable_of(x): dom$Nullable[T])): T) ==
-      x)
-  }
-
-  axiom dom$Nullable$nullable_of_val_of_nullable {
-    (forall x: dom$Nullable[T] ::
-      { (dom$Nullable$nullable_of((dom$Nullable$val_of(x): T)): dom$Nullable[T]) }
-      x != (dom$Nullable$null(): dom$Nullable[T]) ==>
-      (dom$Nullable$nullable_of((dom$Nullable$val_of(x): T)): dom$Nullable[T]) ==
-      x)
-  }
-}
-
-method global$pkg_$return_nullable() returns (ret$: dom$Nullable[Int])
-{
-  ret$ := 0
-}
-
-/nullable.kt:(50,60): info: Generated Viper text for smart_cast:
-domain dom$Unit  {
-
-  function dom$Unit$element(): dom$Unit
-}
-
-domain dom$Nullable[T]  {
-
-  function dom$Nullable$null(): dom$Nullable[T]
-
-  function dom$Nullable$nullable_of(x: T): dom$Nullable[T]
-
-  function dom$Nullable$val_of(x: dom$Nullable[T]): T
-
-  axiom dom$Nullable$some_not_null {
-    (forall x: T ::
-      { (dom$Nullable$nullable_of(x): dom$Nullable[T]) }
-      (dom$Nullable$nullable_of(x): dom$Nullable[T]) !=
-      (dom$Nullable$null(): dom$Nullable[T]))
-  }
-
-  axiom dom$Nullable$val_of_nullable_of_val {
-    (forall x: T ::
-      { (dom$Nullable$val_of((dom$Nullable$nullable_of(x): dom$Nullable[T])): T) }
-      (dom$Nullable$val_of((dom$Nullable$nullable_of(x): dom$Nullable[T])): T) ==
-      x)
-  }
-
-  axiom dom$Nullable$nullable_of_val_of_nullable {
-    (forall x: dom$Nullable[T] ::
-      { (dom$Nullable$nullable_of((dom$Nullable$val_of(x): T)): dom$Nullable[T]) }
-      x != (dom$Nullable$null(): dom$Nullable[T]) ==>
-      (dom$Nullable$nullable_of((dom$Nullable$val_of(x): T)): dom$Nullable[T]) ==
-      x)
-  }
-}
-
-method global$pkg_$smart_cast(local$x: dom$Nullable[Int])
-  returns (ret$: Int)
-{
-  var anonymous$1: dom$Unit
-  if (local$x == (dom$Nullable$null(): dom$Nullable[Int])) {
-    ret$ := 0
-    anonymous$1 := dom$Unit$element()
-  } else {
-    ret$ := (dom$Nullable$val_of(local$x): Int)
-    anonymous$1 := dom$Unit$element()
-  }
-}
-
-/nullable.kt:(158,176): info: Generated Viper text for use_nullable_twice:
+/nullable.kt:(4,22): info: Generated Viper text for use_nullable_twice:
 domain dom$Unit  {
 
   function dom$Unit$element(): dom$Unit
@@ -137,7 +45,7 @@ method global$pkg_$use_nullable_twice(local$x: dom$Nullable[Int])
   ret$ := local$a
 }
 
-/nullable.kt:(242,265): info: Generated Viper text for pass_nullable_parameter:
+/nullable.kt:(88,111): info: Generated Viper text for pass_nullable_parameter:
 domain dom$Unit  {
 
   function dom$Unit$element(): dom$Unit

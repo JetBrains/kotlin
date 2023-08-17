@@ -41,7 +41,7 @@ fun <!VIPER_TEXT!>non_nullable_returns_not_null<!>(x: Int): Int {
 }
 
 @OptIn(ExperimentalContracts::class)
-fun <!FUNCTION_WITH_UNVERIFIED_CONTRACT, VIPER_ERROR, VIPER_TEXT!>non_nullable_returns_null<!>(x: Int): Int {
+fun <!FUNCTION_WITH_UNVERIFIED_CONTRACT, VIPER_TEXT, VIPER_VERIFICATION_ERROR!>non_nullable_returns_null<!>(x: Int): Int {
     contract {
         returns(null)
     }
