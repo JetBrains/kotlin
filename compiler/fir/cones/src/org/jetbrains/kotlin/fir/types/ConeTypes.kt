@@ -144,7 +144,7 @@ data class ConeCapturedType(
     )
 
     override val typeArguments: Array<out ConeTypeProjection>
-        get() = emptyArray()
+        get() = EMPTY_ARRAY
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -220,7 +220,7 @@ class ConeIntersectionType(
     val alternativeType: ConeKotlinType? = null,
 ) : ConeSimpleKotlinType(), IntersectionTypeConstructorMarker {
     override val typeArguments: Array<out ConeTypeProjection>
-        get() = emptyArray()
+        get() = EMPTY_ARRAY
 
     override val nullability: ConeNullability
         get() = ConeNullability.NOT_NULL

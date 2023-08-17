@@ -84,7 +84,7 @@ class ConeIntegerLiteralConstantTypeImpl(
         }
 
         private fun createType(classId: ClassId): ConeClassLikeType {
-            return ConeClassLikeTypeImpl(classId.toLookupTag(), emptyArray(), false)
+            return ConeClassLikeTypeImpl(classId.toLookupTag(), EMPTY_ARRAY, false)
         }
 
         private val INT_RANGE = Int.MIN_VALUE.toLong()..Int.MAX_VALUE.toLong()
@@ -147,7 +147,7 @@ private object ConeIntegerLiteralTypeExtensions {
     }
 
     fun createClassLikeType(classId: ClassId): ConeClassLikeType {
-        return ConeClassLikeTypeImpl(classId.toLookupTag(), emptyArray(), false)
+        return ConeClassLikeTypeImpl(classId.toLookupTag(), ConeTypeProjection.EMPTY_ARRAY, false)
     }
 
     fun ConeIntegerLiteralType.getApproximatedTypeImpl(expectedType: ConeKotlinType?): ConeClassLikeType {

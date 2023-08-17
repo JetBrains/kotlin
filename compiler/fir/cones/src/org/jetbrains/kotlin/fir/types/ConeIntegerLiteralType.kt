@@ -14,7 +14,7 @@ sealed class ConeIntegerLiteralType(
     abstract val possibleTypes: Collection<ConeClassLikeType>
     abstract val supertypes: List<ConeClassLikeType>
 
-    final override val typeArguments: Array<out ConeTypeProjection> = emptyArray()
+    final override val typeArguments: Array<out ConeTypeProjection> get() = EMPTY_ARRAY
     final override val attributes: ConeAttributes get() = ConeAttributes.Empty
 
     abstract fun getApproximatedType(expectedType: ConeKotlinType? = null): ConeClassLikeType

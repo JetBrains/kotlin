@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.ConeTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.FirUserTypeRef
@@ -787,7 +788,7 @@ class LightTreeRawFirDeclarationBuilder(
                             delegatedSelfTypeRef = buildResolvedTypeRef {
                                 type = ConeClassLikeTypeImpl(
                                     this@buildAnonymousObject.symbol.toLookupTag(),
-                                    emptyArray(),
+                                    ConeTypeProjection.EMPTY_ARRAY,
                                     isNullable = false
                                 )
                             }.also { registerSelfType(it) },

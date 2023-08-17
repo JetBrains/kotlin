@@ -217,7 +217,7 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
                 else -> lowerBound?.typeArguments
             }
 
-            lookupTag.constructClassType(mappedTypeArguments ?: emptyArray(), isNullable = lowerBound != null, attributes)
+            lookupTag.constructClassType(mappedTypeArguments ?: ConeTypeProjection.EMPTY_ARRAY, isNullable = lowerBound != null, attributes)
         }
 
         is JavaTypeParameter -> {

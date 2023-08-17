@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildEmptyExpressionBlock
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
+import org.jetbrains.kotlin.fir.types.ConeTypeProjection
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.toLookupTag
@@ -50,7 +51,11 @@ fun FirRegularClassBuilder.generateValuesFunction(
             type = ConeClassLikeTypeImpl(
                 StandardClassIds.Array.toLookupTag(),
                 arrayOf(
-                    ConeClassLikeTypeImpl(this@generateValuesFunction.symbol.toLookupTag(), emptyArray(), isNullable = false)
+                    ConeClassLikeTypeImpl(
+                        this@generateValuesFunction.symbol.toLookupTag(),
+                        ConeTypeProjection.EMPTY_ARRAY,
+                        isNullable = false
+                    )
                 ),
                 isNullable = false
             )
@@ -145,7 +150,7 @@ fun FirRegularClassBuilder.generateEntriesGetter(
             type = ConeClassLikeTypeImpl(
                 StandardClassIds.EnumEntries.toLookupTag(),
                 arrayOf(
-                    ConeClassLikeTypeImpl(this@generateEntriesGetter.symbol.toLookupTag(), emptyArray(), isNullable = false)
+                    ConeClassLikeTypeImpl(this@generateEntriesGetter.symbol.toLookupTag(), ConeTypeProjection.EMPTY_ARRAY, isNullable = false)
                 ),
                 isNullable = false
             )

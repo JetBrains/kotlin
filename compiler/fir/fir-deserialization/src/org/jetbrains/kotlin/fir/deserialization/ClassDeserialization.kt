@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.ConeTypeProjection
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -168,7 +169,7 @@ fun deserializeClassToSymbol(
             classProto.enumEntryList.mapNotNull { enumEntryProto ->
                 val enumEntryName = nameResolver.getName(enumEntryProto.name)
 
-                val enumType = ConeClassLikeTypeImpl(symbol.toLookupTag(), emptyArray(), false)
+                val enumType = ConeClassLikeTypeImpl(symbol.toLookupTag(), ConeTypeProjection.EMPTY_ARRAY, false)
                 val property = buildEnumEntry {
                     this.moduleData = moduleData
                     this.origin = FirDeclarationOrigin.Library
@@ -265,7 +266,7 @@ fun FirRegularClassBuilder.addCloneForArrayIfNeeded(classId: ClassId, dispatchRe
     superTypeRefs += buildResolvedTypeRef {
         type = ConeClassLikeTypeImpl(
             StandardClassIds.Cloneable.toLookupTag(),
-            typeArguments = emptyArray(),
+            typeArguments = ConeTypeProjection.EMPTY_ARRAY,
             isNullable = false
         )
     }

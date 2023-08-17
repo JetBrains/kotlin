@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.builder.FirRegularClassBuilder
 import org.jetbrains.kotlin.fir.deserialization.FirConstDeserializer
 import org.jetbrains.kotlin.fir.deserialization.FirDeserializationExtension
+import org.jetbrains.kotlin.fir.types.ConeTypeProjection
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.toLookupTag
@@ -43,7 +44,7 @@ class FirJvmDeserializationExtension(session: FirSession) : FirDeserializationEx
         superTypeRefs += buildResolvedTypeRef {
             type = ConeClassLikeTypeImpl(
                 JAVA_IO_SERIALIZABLE.toLookupTag(),
-                typeArguments = emptyArray(),
+                typeArguments = ConeTypeProjection.EMPTY_ARRAY,
                 isNullable = false
             )
         }

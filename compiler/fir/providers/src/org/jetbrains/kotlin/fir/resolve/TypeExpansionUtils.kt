@@ -106,7 +106,7 @@ private fun mapTypeAliasArguments(
     useSiteSession: FirSession,
 ): ConeKotlinType {
     if (typeAlias.typeParameters.isNotEmpty() && abbreviatedType.typeArguments.isEmpty()) {
-        return resultingType.lookupTag.constructClassType(emptyArray(), resultingType.isNullable)
+        return resultingType.lookupTag.constructClassType(ConeTypeProjection.EMPTY_ARRAY, resultingType.isNullable)
     }
     val typeAliasMap = typeAlias.typeParameters.map { it.symbol }.zip(abbreviatedType.typeArguments).toMap()
 

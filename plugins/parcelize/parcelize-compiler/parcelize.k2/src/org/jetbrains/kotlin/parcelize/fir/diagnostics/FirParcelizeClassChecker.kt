@@ -78,7 +78,7 @@ object FirParcelizeClassChecker : FirClassChecker() {
             val superType = superTypeRef.coneType
             val parcelableType = ConeClassLikeTypeImpl(
                 PARCELABLE_ID.toLookupTag(),
-                emptyArray(),
+                ConeTypeProjection.EMPTY_ARRAY,
                 isNullable = false
             )
             if (superType.isSubtypeOf(parcelableType, context.session)) {

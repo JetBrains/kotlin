@@ -16,7 +16,7 @@ class ConeTypeVariableType(
     override val lookupTag: ConeTypeVariableTypeConstructor,
     override val attributes: ConeAttributes = ConeAttributes.Empty,
 ) : ConeLookupTagBasedType() {
-    override val typeArguments: Array<out ConeTypeProjection> get() = emptyArray()
+    override val typeArguments: Array<out ConeTypeProjection> get() = EMPTY_ARRAY
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is ConeTypeVariableType) return false
@@ -65,7 +65,7 @@ sealed class ConeStubType(val constructor: ConeStubTypeConstructor, override val
     ConeSimpleKotlinType() {
 
     override val typeArguments: Array<out ConeTypeProjection>
-        get() = emptyArray()
+        get() = EMPTY_ARRAY
 
     override val attributes: ConeAttributes
         get() = ConeAttributes.Empty

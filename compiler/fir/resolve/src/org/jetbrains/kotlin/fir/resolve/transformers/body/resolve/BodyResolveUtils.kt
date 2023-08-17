@@ -104,7 +104,7 @@ fun ConstantValueKind<*>.expectedConeType(session: FirSession): ConeKotlinType {
     fun constructLiteralType(classId: ClassId, isNullable: Boolean = false): ConeKotlinType {
         val symbol = session.symbolProvider.getClassLikeSymbolByClassId(classId)
             ?: return ConeErrorType(ConeSimpleDiagnostic("Missing stdlib class: $classId", DiagnosticKind.MissingStdlibClass))
-        return symbol.toLookupTag().constructClassType(emptyArray(), isNullable)
+        return symbol.toLookupTag().constructClassType(ConeTypeProjection.EMPTY_ARRAY, isNullable)
     }
     return when (this) {
         ConstantValueKind.Null -> session.builtinTypes.nullableNothingType.type

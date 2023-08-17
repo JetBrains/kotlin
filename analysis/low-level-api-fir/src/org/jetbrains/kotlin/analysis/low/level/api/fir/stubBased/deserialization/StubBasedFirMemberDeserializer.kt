@@ -572,7 +572,7 @@ internal class StubBasedFirMemberDeserializer(
                 withPsiEntry("declaration", declaration)
             }
 
-        val enumType = ConeClassLikeTypeImpl(symbol.toLookupTag(), emptyArray(), false)
+        val enumType = ConeClassLikeTypeImpl(symbol.toLookupTag(), ConeTypeProjection.EMPTY_ARRAY, false)
         val enumEntry = buildEnumEntry {
             source = KtRealPsiSourceElement(declaration)
             this.moduleData = c.moduleData
