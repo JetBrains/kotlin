@@ -237,6 +237,10 @@ sealed interface KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         val diagnosticName: String
     }
 
+    interface MissingConstructorKeyword : KtFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = MissingConstructorKeyword::class
+    }
+
     interface InvisibleReference : KtFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = InvisibleReference::class
         val reference: KtSymbol

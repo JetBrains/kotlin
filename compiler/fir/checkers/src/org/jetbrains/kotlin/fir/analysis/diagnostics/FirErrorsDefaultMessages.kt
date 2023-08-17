@@ -355,6 +355,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MANY_INTERFACES_M
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MANY_LAMBDA_EXPRESSION_ARGUMENTS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISPLACED_TYPE_PARAMETER_CONSTRAINTS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_CONSTRUCTOR_KEYWORD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_STDLIB_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_VAL_ON_ANNOTATION_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MIXING_FUNCTIONAL_KINDS_IN_SUPERTYPES
@@ -765,6 +766,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "This code uses error suppression for ''{0}''. While it might compile and work, the compiler behavior is UNSPECIFIED and WON''T BE PRESERVED. Please report your use case to the Kotlin issue tracker instead: https://kotl.in/issue",
             TO_STRING
         )
+        map.put(MISSING_CONSTRUCTOR_KEYWORD, "Use the 'constructor' keyword after the modifiers of the primary constructor.")
         map.put(UNRESOLVED_REFERENCE, "Unresolved reference ''{0}''.", NULLABLE_STRING)
         map.put(UNRESOLVED_IMPORT, "Unresolved reference ''{0}''.", NULLABLE_STRING) // &
         map.put(UNRESOLVED_LABEL, "Unresolved label.")
