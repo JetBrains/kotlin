@@ -6,18 +6,61 @@ import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.LibraryElements
 import org.gradle.api.attributes.Usage
 import org.gradle.api.file.FileCollection
+import org.jetbrains.kotlin.commonizer.CommonizerOutputFileLayout
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.commonizer.identityString
-import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.categoryByName
+import org.jetbrains.kotlin.gradle.plugin.launch
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
+import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
+import org.jetbrains.kotlin.gradle.targets.metadata.awaitMetadataCompilationsCreated
+import org.jetbrains.kotlin.gradle.targets.metadata.findMetadataCompilation
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropKlibLibraryElements.cinteropKlibLibraryElements
 import org.jetbrains.kotlin.gradle.utils.markConsumable
 import org.jetbrains.kotlin.gradle.utils.markResolvable
 import org.jetbrains.kotlin.tooling.core.UnsafeApi
 
 /* Elements configuration */
+
+internal suspend fun Project.setupCInteropCommonizedCInteropApiElementsConfigurations() {
+    val extension = multiplatformExtensionOrNull ?: return
+    val cinteropCommonizerTask = commonizeCInteropTask() ?: return
+
+    /*
+    Expose api dependencies from Source Sets to the elements configuration
+    */
+    extension.awaitSourceSets().forEach { sourceSet ->
+        val commonizerTarget = sourceSet.commonizerTarget.await() as? SharedCommonizerTarget ?: return@forEach
+        val configuration = locateOrCreateCommonizedCInteropApiElementsConfiguration(commonizerTarget)
+        val metadataCompilation = findMetadataCompilation(sourceSet) ?: return@forEach
+        configuration.extendsFrom(metadataCompilation.internal.configurations.apiConfiguration)
+    }
+
+    /*
+    Expose artifacts from cinterop commonizer
+     */
+    for (commonizerGroup in kotlinCInteropGroups.await()) {
+        for (target in commonizerGroup.targets) {
+            val configuration = locateOrCreateCommonizedCInteropApiElementsConfiguration(target)
+            val commonizerTargetOutputDir = cinteropCommonizerTask.map { task ->
+                CommonizerOutputFileLayout.resolveCommonizedDirectory(task.outputDirectory(commonizerGroup), target)
+            }
+
+            project.artifacts.add(configuration.name, commonizerTargetOutputDir) { artifact ->
+                artifact.extension = CInteropCommonizerArtifactTypeAttribute.KLIB_COLLECTION_DIR
+                artifact.type = CInteropCommonizerArtifactTypeAttribute.KLIB_COLLECTION_DIR
+                artifact.builtBy(cinteropCommonizerTask)
+            }
+        }
+    }
+}
 
 internal fun Project.locateOrCreateCommonizedCInteropApiElementsConfiguration(commonizerTarget: SharedCommonizerTarget): Configuration {
     val configurationName = commonizerTarget.identityString + "CInteropApiElements"
@@ -26,6 +69,13 @@ internal fun Project.locateOrCreateCommonizedCInteropApiElementsConfiguration(co
     return configurations.create(configurationName) { configuration ->
         configuration.markConsumable()
         setupBasicCommonizedCInteropConfigurationAttributes(configuration, commonizerTarget)
+
+        launch {
+            val metadataTarget = multiplatformExtension.metadata() as KotlinMetadataTarget
+            metadataTarget.awaitMetadataCompilationsCreated()
+                .filter { compilation -> compilation.commonizerTarget.await() == commonizerTarget }
+                .forEach { compilation -> configuration.extendsFrom(compilation.internal.configurations.apiConfiguration) }
+        }
     }
 }
 

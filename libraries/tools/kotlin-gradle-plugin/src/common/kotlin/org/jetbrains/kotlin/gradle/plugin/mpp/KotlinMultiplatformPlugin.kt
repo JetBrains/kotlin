@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinWasmTargetType
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTargetPreset
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinWasmTargetPreset
 import org.jetbrains.kotlin.gradle.targets.native.createFatFrameworks
-import org.jetbrains.kotlin.gradle.targets.native.internal.configureCInteropCommonizer
+import org.jetbrains.kotlin.gradle.targets.native.internal.setupCInteropCommonizedCInteropApiElementsConfigurations
 import org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.registerKotlinArtifactsExtension
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompileTool
 import org.jetbrains.kotlin.gradle.utils.checkGradleCompatibility
@@ -73,7 +73,7 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
         // Ensure that the instance is created and configured during apply
         project.kotlinIdeMultiplatformImport
         project.locateOrRegisterIdeResolveDependenciesTask()
-        project.launch { project.configureCInteropCommonizer() }
+        project.launch { project.setupCInteropCommonizedCInteropApiElementsConfigurations() }
         project.addBuildListenerForXcode()
         project.whenEvaluated { kotlinMultiplatformExtension.createFatFrameworks() }
     }
