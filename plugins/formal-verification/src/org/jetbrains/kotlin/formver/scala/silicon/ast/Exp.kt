@@ -181,7 +181,9 @@ sealed interface Exp : IntoViper<viper.silver.ast.Exp> {
         override fun toViper(): viper.silver.ast.Not =
             Not(arg.toViper(), pos.toViper(), info.toViper(), trafos.toViper())
     }
+    //endregion
 
+    //region Quantifier Expressions
     class Trigger(
         val exps: List<Exp>,
         val pos: Position = Position.NoPosition,
@@ -228,6 +230,34 @@ sealed interface Exp : IntoViper<viper.silver.ast.Exp> {
                 info.toViper(),
                 trafos.toViper()
             )
+    }
+
+    companion object {
+        fun Trigger1(
+            exp: Exp,
+            pos: Position = Position.NoPosition,
+            info: Info = Info.NoInfo,
+            trafos: Trafos = Trafos.NoTrafos,
+        ): Trigger = Trigger(listOf(exp), pos, info, trafos)
+
+        fun Forall1(
+            variable: Declaration.LocalVarDecl,
+            trigger: Trigger,
+            exp: Exp,
+            pos: Position = Position.NoPosition,
+            info: Info = Info.NoInfo,
+            trafos: Trafos = Trafos.NoTrafos,
+        ): Forall = Forall(listOf(variable), listOf(trigger), exp, pos, info, trafos)
+
+
+        fun Exists1(
+            variable: Declaration.LocalVarDecl,
+            trigger: Trigger,
+            exp: Exp,
+            pos: Position = Position.NoPosition,
+            info: Info = Info.NoInfo,
+            trafos: Trafos = Trafos.NoTrafos,
+        ): Exists = Exists(listOf(variable), listOf(trigger), exp, pos, info, trafos)
     }
     //endregion
 

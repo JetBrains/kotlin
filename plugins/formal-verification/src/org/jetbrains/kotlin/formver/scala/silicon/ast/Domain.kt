@@ -40,6 +40,7 @@ data class AnonymousDomainAxiomLabel(override val domainName: DomainName) : Opti
 class DomainFunc(
     val name: DomainFuncName,
     val formalArgs: List<Declaration.LocalVarDecl>,
+    val typeArgs: List<Type.TypeVar>,
     val typ: Type,
     val unique: Boolean,
     val pos: Position = Position.NoPosition,
@@ -58,6 +59,9 @@ class DomainFunc(
             name.domainName.mangled,
             trafos.toViper()
         )
+
+    operator fun invoke(vararg args: Exp): Exp.DomainFuncApp =
+        Exp.DomainFuncApp(name, args.toList(), typeArgs.associateWith { it }, typ)
 }
 
 class DomainAxiom(
@@ -116,7 +120,7 @@ abstract class Domain(
         Type.Domain(name.mangled, typeVars, typeParamSubst)
 
     fun createDomainFunc(funcName: String, args: List<Declaration.LocalVarDecl>, type: Type, unique: Boolean = false) =
-        DomainFunc(DomainFuncName(this.name, funcName), args, type, unique)
+        DomainFunc(DomainFuncName(this.name, funcName), args, typeVars, type, unique)
 
     fun createNamedDomainAxiom(axiomName: String, exp: Exp): DomainAxiom = DomainAxiom(NamedDomainAxiomLabel(this.name, axiomName), exp)
     fun createAnonymousDomainAxiom(exp: Exp): DomainAxiom = DomainAxiom(AnonymousDomainAxiomLabel(this.name), exp)

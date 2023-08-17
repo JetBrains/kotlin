@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.formver.domains
 import org.jetbrains.kotlin.formver.domains.NullableDomain.T
 import org.jetbrains.kotlin.formver.scala.silicon.ast.*
 import org.jetbrains.kotlin.formver.scala.silicon.ast.Exp.*
+import org.jetbrains.kotlin.formver.scala.silicon.ast.Exp.Companion.Forall1
+import org.jetbrains.kotlin.formver.scala.silicon.ast.Exp.Companion.Trigger1
 
 /**
  * The domain in Viper code is as follows:
@@ -61,31 +63,31 @@ object NullableDomain : Domain("Nullable") {
     val someNotNull =
         createNamedDomainAxiom(
             "some_not_null",
-            Forall(
-                listOf(xVar.decl()),
-                listOf(Trigger(listOf(funcApp(nullableOf, listOf(xVar.use()))))),
-                NeCmp(funcApp(nullableOf, listOf(xVar.use())), nullVal(T))
+            Forall1(
+                xVar.decl(),
+                Trigger1(nullableOf(xVar.use())),
+                NeCmp(nullableOf(xVar.use()), nullFunc())
             )
         )
     val valOfNullableOfVal =
         createNamedDomainAxiom(
             "val_of_nullable_of_val",
-            Forall(
-                listOf(xVar.decl()),
-                listOf(Trigger(listOf(funcApp(valOf, listOf(funcApp(nullableOf, listOf(xVar.use()))))))),
-                EqCmp(funcApp(valOf, listOf(funcApp(nullableOf, listOf(xVar.use())))), xVar.use())
+            Forall1(
+                xVar.decl(),
+                Trigger1(valOf(nullableOf(xVar.use()))),
+                EqCmp(valOf(nullableOf(xVar.use())), xVar.use())
             )
         )
     val nullableOfValOfNullable =
         createNamedDomainAxiom(
             "nullable_of_val_of_nullable",
-            Forall(
-                listOf(nxVar.decl()),
-                listOf(Trigger(listOf(funcApp(nullableOf, listOf(funcApp(valOf, listOf(nxVar.use()))))))),
+            Forall1(
+                nxVar.decl(),
+                Trigger1(nullableOf(valOf(nxVar.use()))),
                 Implies(
                     NeCmp(nxVar.use(), nullVal(T)),
                     EqCmp(
-                        funcApp(nullableOf, listOf(funcApp(valOf, listOf(nxVar.use())))),
+                        nullableOf(valOf(nxVar.use())),
                         nxVar.use()
                     )
                 )
