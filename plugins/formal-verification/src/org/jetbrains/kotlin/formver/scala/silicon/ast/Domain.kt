@@ -77,7 +77,8 @@ abstract class Domain(
             trafos.toViper()
         )
 
-    fun toType(typeParamSubst: Map<Type.TypeVar, Type> = emptyMap()): Type.Domain = Type.Domain(name.asString, typeVars, typeParamSubst)
+    fun toType(typeParamSubst: Map<Type.TypeVar, Type> = typeVars.associateWith { it }): Type.Domain =
+        Type.Domain(name.asString, typeVars, typeParamSubst)
 
     fun createDomainFunc(funcName: String, args: List<LocalVarDecl>, type: Type, unique: Boolean = false) =
         DomainFunc(ConvertedDomainFuncName(this.name, funcName), args, type, unique)

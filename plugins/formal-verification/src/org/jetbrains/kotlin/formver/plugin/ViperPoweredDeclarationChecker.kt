@@ -34,16 +34,26 @@ class ViperPoweredDeclarationChecker(val session: FirSession) : FirSimpleFunctio
         reporter.reportOn(declaration.source, PluginErrors.VIPER_TEXT, declaration.name.asString(), program.toString(), context)
 
         try {
-            val verifier = newVerifier()
-            val results = verifier.verify(program, emptySeq<SilverCfg>(), Option.None<String>().toScala())
-
             var anyErrors = false
-            for (result in results) {
-                if (result.isFatal) {
-                    reporter.reportOn(declaration.source, PluginErrors.VIPER_ERROR, result.toString(), context)
-                    anyErrors = true
+
+            val consistencyResults = program.checkTransitively()
+            for (result in consistencyResults) {
+                reporter.reportOn(declaration.source, PluginErrors.VIPER_CONSISTENCY_ERROR, result.toString(), context)
+                anyErrors = true
+            }
+
+            if (!anyErrors) {
+                val verifier = newVerifier()
+                val results = verifier.verify(program, emptySeq<SilverCfg>(), Option.None<String>().toScala())
+
+                for (result in results) {
+                    if (result.isFatal) {
+                        reporter.reportOn(declaration.source, PluginErrors.VIPER_VERIFICATION_ERROR, result.toString(), context)
+                        anyErrors = true
+                    }
                 }
             }
+
             if (anyErrors) {
                 reporter.reportOn(declaration.source, PluginErrors.FUNCTION_WITH_UNVERIFIED_CONTRACT, declaration.name.asString(), context)
             }
@@ -59,7 +69,7 @@ class ViperPoweredDeclarationChecker(val session: FirSession) : FirSimpleFunctio
         val verifier = DefaultMainVerifier(
             config,
             StdIOReporter("stdout_reporter", true),
-            `NoopSymbExLog$`.`MODULE$` as SymbExLogger<out MemberSymbExLogger>
+            `NoopSymbExLog$`.`MODULE$` as SymbExLogger<out MemberSymbExLogger>,
         )
         verifier.start()
         return verifier

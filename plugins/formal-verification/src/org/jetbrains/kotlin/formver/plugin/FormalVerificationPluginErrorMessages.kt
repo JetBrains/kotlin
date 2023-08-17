@@ -18,7 +18,12 @@ object FormalVerificationPluginErrorMessages : BaseDiagnosticRendererFactory() {
             CommonRenderers.STRING,
         )
         put(
-            PluginErrors.VIPER_ERROR,
+            PluginErrors.VIPER_CONSISTENCY_ERROR,
+            "Viper consistency error: {0}",
+            CommonRenderers.STRING,
+        )
+        put(
+            PluginErrors.VIPER_VERIFICATION_ERROR,
             "Viper verification error: {0}",
             CommonRenderers.STRING,
         )

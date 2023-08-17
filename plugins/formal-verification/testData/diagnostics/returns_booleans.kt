@@ -20,7 +20,7 @@ fun <!VIPER_TEXT!>returns_false<!>(): Boolean {
 }
 
 @OptIn(ExperimentalContracts::class)
-fun <!FUNCTION_WITH_UNVERIFIED_CONTRACT, VIPER_ERROR, VIPER_TEXT!>incorrectly_returns_false<!>(): Boolean {
+fun <!FUNCTION_WITH_UNVERIFIED_CONTRACT, VIPER_TEXT, VIPER_VERIFICATION_ERROR!>incorrectly_returns_false<!>(): Boolean {
     contract {
         returns(true)
     }
