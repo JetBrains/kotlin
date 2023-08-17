@@ -37,6 +37,9 @@ class Kapt4IT : Kapt3IT() {
     override fun fallBackModeWithLanguageVersion2_0(gradleVersion: GradleVersion) {}
 
     @Disabled("Doesn't make sense in Kapt 4")
+    override fun useK2KaptProperty(gradleVersion: GradleVersion) {}
+
+    @Disabled("Doesn't make sense in Kapt 4")
     override fun testRepeatableAnnotationsWithOldJvmBackend(gradleVersion: GradleVersion) {}
 
    @Disabled("Doesn't work in 2.0. Neither with Kapt 3 nor with Kapt 4")

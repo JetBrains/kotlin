@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
 import org.jetbrains.kotlin.gradle.internal.*
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.KAPT_SUBPLUGIN_ID
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.isIncludeCompileClasspath
+import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.isUseK2
 import org.jetbrains.kotlin.gradle.plugin.KaptExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
@@ -49,6 +50,7 @@ internal class KaptGenerateStubsConfig : BaseKotlinCompileConfig<KaptGenerateStu
         configureTask { task ->
             task.verbose.set(KaptTask.queryKaptVerboseProperty(project))
             task.pluginOptions.add(buildOptions(kaptExtension, task))
+            task.useK2Kapt.value(project.isUseK2()).finalizeValueOnRead()
 
             if (!isIncludeCompileClasspath(kaptExtension)) {
                 task.onlyIf {
