@@ -13,8 +13,22 @@ import org.jetbrains.kotlin.formver.scala.silicon.ast.Exp
 import org.jetbrains.kotlin.formver.scala.silicon.ast.Exp.*
 
 class ContractDescriptionConversionVisitor : KtContractDescriptionVisitor<Exp, MethodConversionContext, ConeKotlinType, ConeDiagnostic>() {
-    private fun KtValueParameterReference<ConeKotlinType, ConeDiagnostic>.convertedName(data: MethodConversionContext): ConvertedName {
-        return data.signature.params[parameterIndex].name
+    private fun KtValueParameterReference<ConeKotlinType, ConeDiagnostic>.convertedVar(data: MethodConversionContext): ConvertedVar {
+        val name = data.signature.params[parameterIndex].name
+        val type = data.signature.params[parameterIndex].type
+        return ConvertedVar(name, type)
+    }
+
+    private fun ConvertedVar.nullCmp(isNegated: Boolean): Exp {
+        return if (type is ConvertedNullable) {
+            if (isNegated) {
+                NeCmp(toLocalVar(), NullableDomain.nullVal(type.elementType.viperType))
+            } else {
+                EqCmp(toLocalVar(), NullableDomain.nullVal(type.elementType.viperType))
+            }
+        } else {
+            BoolLit(isNegated)
+        }
     }
 
     override fun visitBooleanConstantDescriptor(
@@ -35,18 +49,35 @@ class ContractDescriptionConversionVisitor : KtContractDescriptionVisitor<Exp, M
         val retVar = data.returnVar.toLocalVar()
         return when (returnsEffect.value) {
             ConeContractConstantValues.WILDCARD -> BoolLit(true)
-            ConeContractConstantValues.NULL -> EqCmp(retVar, NullLit())
-            ConeContractConstantValues.NOT_NULL -> NeCmp(retVar, NullLit())
+            /* NOTE: in a function that has a non-nullable return type, the compiler will not complain if there is an effect like
+             * returnsNotNull(). So it is necessary to take care of these cases in order to avoid comparison between non-nullable
+             * values and null. In a function that has a non-nullable return type, returnsNotNull() is mapped to true and returns(null)
+             * is mapped to false
+             */
+            ConeContractConstantValues.NULL -> data.returnVar.nullCmp(false)
+            ConeContractConstantValues.NOT_NULL -> data.returnVar.nullCmp(true)
             ConeContractConstantValues.TRUE -> EqCmp(retVar, BoolLit(true))
             ConeContractConstantValues.FALSE -> EqCmp(retVar, BoolLit(false))
             else -> throw Exception("Unexpected constant: ${returnsEffect.value}")
         }
     }
 
-    override fun visitBooleanValueParameterReference(
-        booleanValueParameterReference: KtBooleanValueParameterReference<ConeKotlinType, ConeDiagnostic>,
+    override fun visitValueParameterReference(
+        valueParameterReference: KtValueParameterReference<ConeKotlinType, ConeDiagnostic>,
         data: MethodConversionContext
-    ): Exp = ConvertedVar(booleanValueParameterReference.convertedName(data), ConvertedBoolean).toLocalVar()
+    ): Exp = valueParameterReference.convertedVar(data).toLocalVar()
+
+    override fun visitIsNullPredicate(
+        isNullPredicate: KtIsNullPredicate<ConeKotlinType, ConeDiagnostic>,
+        data: MethodConversionContext
+    ): Exp {
+        /* NOTE: useless comparisons like x != null with x non-nullable will compile with just a warning.
+         * So it is necessary to take care of these cases in order to avoid comparison between non-nullable
+         * values and null. Let x be a non-nullable variable, then x == null is mapped to false and x != null is mapped to true
+         */
+        val arg = data.signature.params[isNullPredicate.arg.parameterIndex]
+        return arg.nullCmp(isNullPredicate.isNegated)
+    }
 
     override fun visitLogicalBinaryOperationContractExpression(
         binaryLogicExpression: KtBinaryLogicExpression<ConeKotlinType, ConeDiagnostic>,
