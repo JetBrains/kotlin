@@ -564,8 +564,7 @@ class Fir2IrConverter(
             components.visibilityConverter = visibilityConverter
             components.typeConverter = Fir2IrTypeConverter(components)
             val irBuiltIns = initializedIrBuiltIns ?: IrBuiltInsOverFir(
-                components, fir2IrConfiguration.languageVersionSettings, moduleDescriptor, irMangler,
-                fir2IrConfiguration.languageVersionSettings.getFlag(AnalysisFlags.builtInsFromSources) || kotlinBuiltIns !== DefaultBuiltIns.Instance
+                components, fir2IrConfiguration.languageVersionSettings, moduleDescriptor, irMangler
             )
             components.irBuiltIns = irBuiltIns
             val conversionScope = Fir2IrConversionScope()
@@ -578,6 +577,7 @@ class Fir2IrConverter(
             components.annotationsFromPluginRegistrar = Fir2IrAnnotationsFromPluginRegistrar(components)
 
             fir2IrExtensions.registerDeclarations(commonMemberStorage.symbolTable)
+            irBuiltIns.initialize()
 
             val irModuleFragment = IrModuleFragmentImpl(moduleDescriptor, irBuiltIns)
 

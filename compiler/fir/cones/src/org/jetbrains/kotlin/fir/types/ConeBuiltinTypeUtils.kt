@@ -31,6 +31,7 @@ val ConeKotlinType.isThrowableOrNullableThrowable: Boolean get() = isAnyOfBuilti
 val ConeKotlinType.isChar: Boolean get() = isBuiltinType(StandardClassIds.Char, false)
 val ConeKotlinType.isCharOrNullableChar: Boolean get() = isAnyOfBuiltinType(setOf(StandardClassIds.Char))
 val ConeKotlinType.isString: Boolean get() = isBuiltinType(StandardClassIds.String, false)
+val ConeKotlinType.isNullableString: Boolean get() = isBuiltinType(StandardClassIds.String, true)
 
 val ConeKotlinType.isEnum: Boolean get() = isBuiltinType(StandardClassIds.Enum, false)
 
