@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
+
 buildscript {
     // workaround for KGP build metrics reports: https://github.com/gradle/gradle/issues/20001
     project.extensions.extraProperties["kotlin.build.report.output"] = null
@@ -13,9 +15,34 @@ buildscript {
     }
 }
 
-logger.info("buildSrcKotlinVersion: " + extra["bootstrapKotlinVersion"])
-logger.info("buildSrc kotlin compiler version: " + org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION)
-logger.info("buildSrc stdlib version: " + KotlinVersion.CURRENT)
+logger.info("buildSrcKotlinVersion: " + project.getKotlinPluginVersion())
+
+configurations {
+    fun NamedDomainObjectProvider<Configuration>.printResolvedDependencyVersion(formatString: String, group: String, name: String) {
+        configure {
+            incoming.afterResolve {
+                val dependency = resolutionResult.allDependencies
+                    .filterIsInstance<ResolvedDependencyResult>()
+                    .map { it.selected.id }
+                    .filterIsInstance<ModuleComponentIdentifier>()
+                    .find { it.group == group && it.module == name }
+                if (dependency != null) {
+                    logger.info(formatString, dependency.version)
+                }
+            }
+        }
+    }
+    kotlinCompilerClasspath.printResolvedDependencyVersion(
+        "buildSrc kotlin compiler version: {}",
+        "org.jetbrains.kotlin",
+        "kotlin-compiler-embeddable"
+    )
+    compileClasspath.printResolvedDependencyVersion(
+        "buildSrc stdlib version: {}",
+        "org.jetbrains.kotlin",
+        "kotlin-stdlib"
+    )
+}
 
 plugins {
     `kotlin-dsl`
