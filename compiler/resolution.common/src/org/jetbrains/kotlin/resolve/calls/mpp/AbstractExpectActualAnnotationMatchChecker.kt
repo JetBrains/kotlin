@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.resolve.calls.mpp
 
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.mpp.*
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
@@ -79,6 +81,9 @@ object AbstractExpectActualAnnotationMatchChecker {
 
         if (checkClassScopesForAnnotationCompatibility) {
             checkAnnotationsInClassMemberScope(expectSymbol, actualSymbol)?.let { return it }
+        }
+        if (expectSymbol.classKind == ClassKind.ENUM_CLASS && actualSymbol.classKind == ClassKind.ENUM_CLASS) {
+            checkAnnotationsOnEnumEntries(expectSymbol, actualSymbol)?.let { return it }
         }
 
         return null
@@ -167,6 +172,29 @@ object AbstractExpectActualAnnotationMatchChecker {
                 ?: expectToCompatibilityMap.keys.singleOrNull()
                 ?: continue
             areAnnotationsCompatible(expectMember, actualMember)?.let { return it }
+        }
+        return null
+    }
+
+    context (ExpectActualMatchingContext<*>)
+    private fun checkAnnotationsOnEnumEntries(
+        expectClassSymbol: RegularClassSymbolMarker,
+        actualClassSymbol: RegularClassSymbolMarker,
+    ): Incompatibility? {
+        fun DeclarationSymbolMarker.getEnumEntryName(): Name =
+            when (this) {
+                is CallableSymbolMarker -> callableId.callableName
+                is RegularClassSymbolMarker -> classId.shortClassName
+                else -> error("Unexpected type $this")
+            }
+
+        val expectEnumEntries = expectClassSymbol.collectEnumEntries()
+        val actualEnumEntriesByName = actualClassSymbol.collectEnumEntries().associateBy { it.getEnumEntryName() }
+
+        for (expectEnumEntry in expectEnumEntries) {
+            val actualEnumEntry = actualEnumEntriesByName[expectEnumEntry.getEnumEntryName()] ?: continue
+            areAnnotationsSetOnDeclarationsCompatible(expectEnumEntry, actualEnumEntry)
+                ?.let { return it }
         }
         return null
     }

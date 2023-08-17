@@ -176,11 +176,14 @@ class ClassicExpectActualMatchingContext(
     }
 
     override fun RegularClassSymbolMarker.collectEnumEntryNames(): List<Name> {
+        return collectEnumEntries().map { it.name }
+    }
+
+    override fun RegularClassSymbolMarker.collectEnumEntries(): List<DeclarationDescriptor> {
         return asDescriptor()
             .unsubstitutedMemberScope
             .getDescriptorsFiltered()
             .filter(DescriptorUtils::isEnumEntry)
-            .map { it.name }
     }
 
     override val CallableSymbolMarker.dispatchReceiverType: KotlinTypeMarker?

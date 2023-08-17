@@ -267,6 +267,10 @@ internal abstract class IrExpectActualMatchingContext(
         return asIr().declarations.filterIsInstance<IrEnumEntry>().map { it.name }
     }
 
+    override fun RegularClassSymbolMarker.collectEnumEntries(): List<DeclarationSymbolMarker> {
+        return asIr().declarations.filterIsInstance<IrEnumEntry>().map { it.symbol }
+    }
+
     override val CallableSymbolMarker.dispatchReceiverType: KotlinTypeMarker?
         get() = (asIr().parent as? IrClass)?.defaultType
 

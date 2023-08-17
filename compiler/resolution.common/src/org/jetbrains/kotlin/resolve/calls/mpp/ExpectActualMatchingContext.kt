@@ -111,6 +111,7 @@ interface ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemC
     fun RegularClassSymbolMarker.getMembersForExpectClass(name: Name): List<DeclarationSymbolMarker>
 
     fun RegularClassSymbolMarker.collectEnumEntryNames(): List<Name>
+    fun RegularClassSymbolMarker.collectEnumEntries(): List<DeclarationSymbolMarker>
 
     val CallableSymbolMarker.dispatchReceiverType: KotlinTypeMarker?
     val CallableSymbolMarker.extensionReceiverType: KotlinTypeMarker?

@@ -238,6 +238,10 @@ class FirExpectActualMatchingContextImpl private constructor(
         return asSymbol().fir.collectEnumEntries().map { it.name }
     }
 
+    override fun RegularClassSymbolMarker.collectEnumEntries(): List<DeclarationSymbolMarker> {
+        return asSymbol().fir.collectEnumEntries().map { it.symbol }
+    }
+
     override val CallableSymbolMarker.dispatchReceiverType: SimpleTypeMarker?
         get() = asSymbol().dispatchReceiverType
     override val CallableSymbolMarker.extensionReceiverType: KotlinTypeMarker?
