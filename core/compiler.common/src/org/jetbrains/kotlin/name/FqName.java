@@ -37,7 +37,7 @@ public final class FqName {
     private transient FqName parent;
 
     public FqName(@NotNull String fqName) {
-        this.fqName = new FqNameUnsafe(fqName, this);
+        this.fqName = new FqNameUnsafe(fqName);
     }
 
     public FqName(@NotNull FqNameUnsafe fqName) {

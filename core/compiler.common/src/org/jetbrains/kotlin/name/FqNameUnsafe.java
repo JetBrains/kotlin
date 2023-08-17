@@ -43,14 +43,9 @@ public final class FqNameUnsafe {
     private final String fqName;
 
     // cache
-    private transient FqName safe;
     private transient FqNameUnsafe parent;
     private transient Name shortName;
 
-    FqNameUnsafe(@NotNull String fqName, @NotNull FqName safe) {
-        this.fqName = fqName;
-        this.safe = safe;
-    }
 
     public FqNameUnsafe(@NotNull String fqName) {
         this.fqName = fqName;
@@ -85,16 +80,12 @@ public final class FqNameUnsafe {
     }
 
     public boolean isSafe() {
-        return safe != null || asString().indexOf('<') < 0;
+        return asString().indexOf('<') < 0;
     }
 
     @NotNull
     public FqName toSafe() {
-        if (safe != null) {
-            return safe;
-        }
-        safe = new FqName(this);
-        return safe;
+        return new FqName(this);
     }
 
     public boolean isRoot() {

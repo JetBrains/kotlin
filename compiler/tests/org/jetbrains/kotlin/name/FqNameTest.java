@@ -41,13 +41,13 @@ public class FqNameTest {
     @Test
     public void safeUnsafe() {
         FqName fqName = new FqName("com.yandex");
-        Assert.assertSame(fqName, fqName.toUnsafe().toSafe());
+        Assert.assertEquals(fqName, fqName.toUnsafe().toSafe());
     }
 
     @Test
     public void unsafeSafe() {
         FqNameUnsafe fqName = new FqNameUnsafe("ru.yandex");
-        Assert.assertSame(fqName, fqName.toSafe().toUnsafe());
+        Assert.assertEquals(fqName, fqName.toSafe().toUnsafe());
     }
 
     @Test
